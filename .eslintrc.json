@@ -1,0 +1,30 @@
+{
+  "plugins": [
+    "react",
+    "react-hooks",
+    "prettier",
+    "@typescript-eslint",
+    "cypress"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "next",
+    "next/core-web-vitals",
+    "plugin:prettier/recommended",
+    "plugin:cypress/recommended"
+  ],
+  "rules": {
+    "indent": ["error", 4],
+    "linebreak-style": ["error", "unix"],
+    "quotes": ["error", "double"],
+    "semi": ["error", "always"],
+    "eol-last": ["error", "always"],
+    "prefer-const": "error",
+    "@typescript-eslint/explicit-function-return-type": ["error", {
+      "allowExpressions": true
+    }],
+    "react/react-in-jsx-scope": "off",
+    "curly": "error"
+  },
+  "ignorePatterns": ["database_types_file.ts"]
+}
