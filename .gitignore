@@ -43,3 +43,4 @@ coverage
 
 # cypress temp files
 cypress/videos
+cypress/screenshots
