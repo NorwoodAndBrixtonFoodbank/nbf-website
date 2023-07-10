@@ -1,4 +1,5 @@
 import StyleManager from "@/app/themes";
+import StyledComponentsRegistry from "./registry";
 import NavBar from "@/components/NavBar";
 import { Metadata } from "next";
 
@@ -12,12 +13,14 @@ const App: React.FC<Props> = ({ children }) => (
     <html lang="en">
         <body>
             <React.StrictMode>
-                <StyleManager>
-                    <>
-                        <NavBar />
-                        {children}
-                    </>
-                </StyleManager>
+                <StyledComponentsRegistry>
+                    <StyleManager>
+                        <>
+                            <NavBar />
+                            {children}
+                        </>
+                    </StyleManager>
+                </StyledComponentsRegistry>
             </React.StrictMode>
         </body>
     </html>
