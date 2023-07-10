@@ -1,15 +1,15 @@
 "use client";
 
-import React, { Key } from "react";
+import React, { Key, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin from "@fullcalendar/interaction";
+import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 
 interface CalendarProps {
     // timezone is "local" by default
     view: string;
-    events: EventProps[]; // TODO: static for now -> interactive aspects not needed
+    initialEvents: EventObjects[]; // TODO: static for now -> interactive aspects not needed
 
     // can be edited on event basis as well (need to modify EventProps)
     editable?: boolean; // all events can be dragged (change start) and resized (change duration)
@@ -20,16 +20,16 @@ interface CalendarProps {
                         "list-item" - in dayGrid view: dots 
                         "background" - in dayGrid view: timed event disappears. In both views, rendered as a color-fill. 
                         */;
-    
-    // TODO: Check out content injection and eventContent for popups when clicked on event 
+
+    // TODO: Check out content injection and eventContent for popups when clicked on event
 }
 
-export interface EventProps {
+export interface EventObjects {
     // TODO: consider using Resources -> but this requires premium. Maybe can do manually.
-    id: string; // TODO: needs to be unique - perhaps username + timestamp? needs to be stable
+    id: string; // TODO: needs to be unique - perhaps username + timestamp? counter? needs to be stable;
     title: string;
-    start: string;
-    end?: string; // exclusive, and defaults to 00:00:00 if only date and no time specified
+    start: Date;
+    end?: Date; // exclusive, and defaults to 00:00:00 if only date and no time specified
     daysOfWeek?: number[];
     startRecur?: string;
     endRecur?: string;
@@ -41,15 +41,51 @@ export interface EventProps {
     textColor?: string;
 }
 
-const CalendarComponent: React.FC<CalendarProps> = ({ view, events, editable, eventOverlap, eventDisplay }) => {
+let counter = 0;
+
+const CalendarComponent: React.FC<CalendarProps> = ({ view, initialEvents, editable, eventOverlap, eventDisplay }) => {
+
+    // Interaction
+    const [events, setEvents] = useState(initialEvents);
+
+    const handleDateClick = (info: DateClickArg) => {
+        console.log("Date Clicked");
+        // TODO: get the info.dateStr and pass into Calendar.addEvent (need to first sort out Calendar object)
+    };    
+
+    // Calendar 
     return (
         <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            initialView={view}
+            initialView={view} // TODO: use this instead
+                                // headerToolbar={{
+                                //     left: "prev,next today",
+                                //     center: "title",
+                                //     right: "dayGridMonth,timeGridWeek,timeGridDay",
+                                // }}
             events={events}
             editable={editable ?? false}
             eventOverlap={eventOverlap ?? true}
             eventDisplay={eventDisplay ?? "auto"}
+
+            // Interaction
+            dateClick={handleDateClick} // TODO: check if this is actually needed
+            eventAdd={() => console.log("Add")}
+            select={(e) => {
+                const newEvent = {
+                    id: `${counter++}`,
+                    title: "Whaddup",
+                    end: e.end,
+                    start: e.start,
+                };
+                console.log(JSON.stringify(newEvent));
+                setEvents (
+                    [...events, newEvent]
+                );
+            }}
+            // eventClick={handleEventClick}
+            // eventsSet={handleEvents}
+            // Can add some eventBackgroundColor, eventBorderColor and evenTextColor for default styling
         />
     );
 };
