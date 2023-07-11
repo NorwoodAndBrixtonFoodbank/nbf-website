@@ -10,6 +10,7 @@ have been delivered to clients. See [their website](https://vauxhall.foodbank.or
 * Supabase for hosting (PostgreSQL database, custom authentication)
 * NextJS for full-stack application ('App Router')
 * Styled Components for CSS (CSS-in-JS)
+* Material UI for component library
 * Cypress for both component unit tests and integration tests (may add Jest in the future!)
 
 ## Development
