@@ -5,27 +5,44 @@ import { Metadata } from "next";
 import React, { useState } from "react";
 import DataViewer from "@/components/DataViewer/DataViewer";
 
+interface ViewerProps {
+    data: { [key: string]: string | null };
+}
+
 const dataFetch: () => Promise<Schema["clients"][] | null> = async () => {
     const response = await supabase.from("clients").select();
     return response.data;
 };
 
-const Clients: () => Promise<React.ReactElement> = async () => {
-    const [isOpen, setIsOpen] = useState(false);
+const Viewer: React.FC<ViewerProps> = ({ data }) => {
+    const [viewerIsOpen, setViewerIsOpen] = useState(false);
 
     const openModal: () => void = () => {
-        setIsOpen(true);
+        setViewerIsOpen(true);
     };
 
     const closeModal: () => void = () => {
-        setIsOpen(false);
+        setViewerIsOpen(false);
     };
 
+    return (
+        <>
+            <button onClick={openModal}>Open</button>
+            <DataViewer
+                data={data}
+                title="Client details"
+                isOpen={viewerIsOpen}
+                onRequestClose={closeModal}
+            />
+        </>
+    );
+};
+
+const Clients: () => Promise<React.ReactElement> = async () => {
     const data = await dataFetch();
     return (
         <main>
             <h1> Clients Page </h1>
-            <button onClick={openModal}>Open</button>
 
             {/* This should be a separate component which is passed data via props */}
             {/* <pre>{JSON.stringify(data, null, 4)}</pre> */}
