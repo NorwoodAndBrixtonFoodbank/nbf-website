@@ -6,7 +6,7 @@ interface Props {
     onHoverText?: string;
 }
 const SpeechBubbleIcon: React.FC<Props> = (props) => {
-    return <Icon icon={faComment} onHoverText={props.onHoverText} />;
+    return <Icon icon={faComment} onHoverText={props.onHoverText} color={"blue"} />;
 };
 
 export default SpeechBubbleIcon;
