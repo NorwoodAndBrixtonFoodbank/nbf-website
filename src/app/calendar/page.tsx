@@ -7,14 +7,14 @@ import CalendarComponent, { EventObjects as EventObjects } from "./calendar-comp
 const SampleCalendar: React.FC<{}> = () => {
     const sampleEvents: EventObjects[] = [
         {
-            id: "1", // TODO: when properly implemented should be generated instead of passed in (i.e. in handleDateClick)
+            id: "a", // TODO: when properly implemented should be generated instead of passed in (i.e. in handleDateClick)
             title: "event1",
-            start: new Date("2023-07-11"),
-            end: new Date("2023-07-13"), // for overlapping
+            start: new Date("2023-07-11"), // TODO: Bug here -> possibly timezone 
+            end: new Date("2023-07-12"), // for overlapping
             backgroundColor: "red",
         },
         {
-            id: "2",
+            id: "b",
             title: "event2",
             start: new Date("2023-07-12"),
             end: new Date("2023-07-13"), // end date exclusive
@@ -24,13 +24,22 @@ const SampleCalendar: React.FC<{}> = () => {
             borderColor: "yellow",
         },
         {
-            id: "3",
+            id: "c",
             title: "event3",
             start: new Date("2023-07-13T12:30:00"), // time specified; default duration used
             textColor: "pink",
         },
     ];
-    return <CalendarComponent view={"timeGridWeek"} initialEvents={sampleEvents} editable={true} />;
+
+    // TODO: do something about this please TT
+    return <> 
+        <style>{`
+    .fc {
+        height: calc(100vh - 120px)
+    }
+    `}</style>
+        <CalendarComponent initialEvents={sampleEvents} editable={true} />;
+    </>
 };
 
 export const metadata: Metadata = {
