@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-
     "start": "npm run build && next start",
     "lint": "next lint --dir src --dir cypress",
     "lint_fix": "next lint --fix --dir src --dir cypress",
@@ -13,7 +12,6 @@
     "test:component": "start-server-and-test dev http://localhost:3000 test:runner_component",
     "test:e2e": "start-server-and-test dev http://localhost:3000 test:runner_e2e",
     "test:coverage": "npm run coverage:generate && npm run coverage:run_tests && npm run coverage:report",
-
     "test:runner": "npm run test:runner_component && npm run test:runner_e2e",
     "test:runner_component": "npx cypress run --component",
     "test:runner_e2e": "npx cypress run",
