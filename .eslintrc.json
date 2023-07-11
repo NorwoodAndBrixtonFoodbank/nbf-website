@@ -24,7 +24,10 @@
       "allowExpressions": true
     }],
     "react/react-in-jsx-scope": "off",
-    "curly": "error"
+    "curly": "error",
+    // to deal with false positives in type annotations, turn on typescript-specific rules
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "error"
   },
   "ignorePatterns": ["database_types_file.ts"]
 }
