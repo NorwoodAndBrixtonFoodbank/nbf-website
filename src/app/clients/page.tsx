@@ -1,7 +1,9 @@
+"use client";
 import supabase, { Schema } from "@/supabase";
 import { Metadata } from "next";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import DataViewer from "@/components/DataViewer/DataViewer";
 
 const dataFetch: () => Promise<Schema["clients"][] | null> = async () => {
     const response = await supabase.from("clients").select();
@@ -9,16 +11,36 @@ const dataFetch: () => Promise<Schema["clients"][] | null> = async () => {
 };
 
 const Clients: () => Promise<React.ReactElement> = async () => {
-    const data = await dataFetch();
+    const [isOpen, setIsOpen] = useState(false);
+    console.log("rendered");
+    console.log(isOpen);
 
+    useEffect(() => {
+        setIsOpen(true);
+        console.log("useEffect");
+    }, []);
+
+    const closeModal: () => void = () => {
+        setIsOpen(false);
+        console.log(isOpen);
+    };
+
+    const data = await dataFetch();
     return (
         <main>
             <h1> Clients Page </h1>
 
-            <p> Testing Supabase fetching </p>
-
             {/* This should be a separate component which is passed data via props */}
-            <pre>{JSON.stringify(data, null, 4)}</pre>
+            {/* <pre>{JSON.stringify(data, null, 4)}</pre> */}
+
+            {data !== null && (
+                <DataViewer
+                    data={data[0]}
+                    title="Client details"
+                    isOpen={isOpen}
+                    onRequestClose={closeModal}
+                />
+            )}
         </main>
     );
 };
