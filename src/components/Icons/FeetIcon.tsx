@@ -11,7 +11,7 @@ const FeetIcon: React.FC<Props> = (props) => {
         <Icon
             icon={faShoePrints}
             onHoverText={`Collection at ${props.collectionPoint}`}
-            color={"black"}
+            color="black"
         />
     );
 };

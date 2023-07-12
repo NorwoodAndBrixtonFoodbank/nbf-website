@@ -43,8 +43,8 @@ describe("Icons", () => {
     });
 
     it("Speech Bubble icon text is correct", () => {
-        cy.mount(<SpeechBubbleIcon onHoverText={"Text On HoVeR"} />);
-        cy.get("svg").find("title").should("have.text", "Text On HoVeR");
+        cy.mount(<SpeechBubbleIcon onHoverText={"Text On Hover"} />);
+        cy.get("svg").find("title").should("have.text", "Text On Hover");
     });
 
     it("Flag icon default colour is set", () => {
