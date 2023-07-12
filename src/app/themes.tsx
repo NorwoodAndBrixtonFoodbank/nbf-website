@@ -5,7 +5,7 @@ import { useServerInsertedHTML } from "next/navigation";
 import React, { useState } from "react";
 import { ServerStyleSheet, StyleSheetManager, ThemeProvider } from "styled-components";
 
-const currentTheme = {
+export const currentTheme = {
     foregroundColor: "#000",
     backgroundColor: "#DDD",
     fillColor: "lightgreen",

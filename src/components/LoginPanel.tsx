@@ -1,5 +1,6 @@
 "use client";
 
+import { currentTheme } from "@/app/themes";
 import { DatabaseAutoType } from "@/supabase";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Auth } from "@supabase/auth-ui-react";
@@ -23,7 +24,20 @@ const LoginPanel: React.FC<{}> = () => {
             <Auth
                 supabaseClient={supabase}
                 providers={[]}
-                appearance={{ theme: ThemeSupa }}
+                appearance={{
+                    theme: ThemeSupa,
+                    variables: {
+                        default: {
+                            colors: {
+                                inputLabelText: currentTheme.foregroundColor,
+                                anchorTextColor: currentTheme.foregroundColor,
+                                brand: currentTheme.fillColor,
+                                brandAccent: currentTheme.fillColor,
+                                brandButtonText: currentTheme.foregroundColor
+                            },
+                        },
+                    },
+                }}
                 redirectTo="http://localhost:3000/auth/callback"
             />
         </MiddleDiv>

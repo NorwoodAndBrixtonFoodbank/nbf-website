@@ -30,7 +30,7 @@ const Gap = styled.div`
 
 const NavBar: React.FC<{}> = () => {
     return (
-        <>
+        <header>
             <Container>
                 <Logo alt="Vauxhall Foodbank Logo" src="/logo.png" />
 
@@ -39,13 +39,12 @@ const NavBar: React.FC<{}> = () => {
                 <Button href="/lists"> Lists </Button>
 
                 <Button href="/calendar">Calendar</Button>
-
                 <Gap />
 
                 <ButtonPost text="Sign out" url="/auth/signout" />
             </Container>
             <Divider />
-        </>
+        </header>
     );
 };
 
