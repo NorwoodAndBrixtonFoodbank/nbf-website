@@ -2,7 +2,7 @@ import supabase, { Schema } from "@/supabase";
 import { Metadata } from "next";
 
 import React from "react";
-import Viewer from "./Viewer";
+import DataViewerWithButton from "../../components/DataViewer/DataViewerWithButton";
 
 const dataFetch: () => Promise<Schema["clients"][] | null> = async () => {
     const response = await supabase.from("clients").select();

@@ -5,7 +5,7 @@ import styled from "styled-components";
 import Modal from "react-modal";
 
 interface DataViewerProps {
-    data: { [key: string]: string | null };
+    data: { [key: string]: string | number | null };
     title: string;
     isOpen: boolean;
     onRequestClose: (event: MouseEvent<Element, MouseEvent> | KeyboardEvent<Element>) => void;
@@ -14,31 +14,28 @@ interface DataViewerProps {
 const Header = styled.div`
     display: flex;
     justify-content: space-between;
-    background-color: pink;
-    padding: 0;
-    gap: 2px;
+    background-color: #eeeeee;
+    margin-bottom: 1rem;
+    margin-top: 0;
+    padding: 0.5rem;
 `;
 
 const EachItem = styled.div`
     display: flex;
     flex-direction: column;
-    background-color: red;
-    padding-bottom: 5px;
-    gap: 2px;
+    padding-bottom: 1rem;
 `;
 
 const ContentWrapper = styled.div`
     overflow: scroll;
-    overflow-x: hidden;
-    height: 90%;
-    margin: 20px;
+    height: calc(100% - 5rem);
+    margin: 1.5rem;
 `;
 
 const ModalWrapper = styled.div`
     width: 100%;
     height: 100%;
     overflow: hidden;
-    padding-bottom: 0px;
 `;
 
 const Key = styled.div`
