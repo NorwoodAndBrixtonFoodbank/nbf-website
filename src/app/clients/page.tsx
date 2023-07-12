@@ -1,41 +1,12 @@
-"use client";
 import supabase, { Schema } from "@/supabase";
 import { Metadata } from "next";
 
-import React, { useState } from "react";
-import DataViewer from "@/components/DataViewer/DataViewer";
-
-interface ViewerProps {
-    data: { [key: string]: string | null };
-}
+import React from "react";
+import Viewer from "./Viewer";
 
 const dataFetch: () => Promise<Schema["clients"][] | null> = async () => {
     const response = await supabase.from("clients").select();
     return response.data;
-};
-
-const Viewer: React.FC<ViewerProps> = ({ data }) => {
-    const [viewerIsOpen, setViewerIsOpen] = useState(false);
-
-    const openModal: () => void = () => {
-        setViewerIsOpen(true);
-    };
-
-    const closeModal: () => void = () => {
-        setViewerIsOpen(false);
-    };
-
-    return (
-        <>
-            <button onClick={openModal}>Open</button>
-            <DataViewer
-                data={data}
-                title="Client details"
-                isOpen={viewerIsOpen}
-                onRequestClose={closeModal}
-            />
-        </>
-    );
 };
 
 const Clients: () => Promise<React.ReactElement> = async () => {

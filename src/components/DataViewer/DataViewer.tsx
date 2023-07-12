@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "react-modal";
 
@@ -27,9 +27,30 @@ const EachItem = styled.div`
     gap: 2px;
 `;
 
+const ContentWrapper = styled.div`
+    overflow: scroll;
+    height: 90%;
+    margin: 20px;
+`;
+
+const ModalWrapper = styled.div`
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    padding-bottom: 0px;
+`;
+
+const Key = styled.div`
+    color: grey;
+    font-size: small;
+`;
+
+const Value = styled.div`
+    font-size: medium;
+`;
+
 const DataViewer: React.FC<DataViewerProps> = (props) => {
     const [localIsOpen, setLocalIsOpen] = useState(false);
-
     useEffect(() => {
         setLocalIsOpen(props.isOpen);
         console.log("useEffectLocal");
