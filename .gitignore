@@ -43,4 +43,8 @@ coverage
 
 # cypress temp files
 cypress/videos
+<<<<<<< HEAD
 cypress/screenshots
+=======
+cypress/screenshots
+>>>>>>> 8dd604a (Fix linting errors and update .gitignore to include cypress/screenshots)
