@@ -33,7 +33,6 @@ const StyleManager: React.FC<Props> = ({ children }) => {
         return <>{children}</>;
     }
 
-
     return (
         <StyleSheetManager sheet={serverStyleSheet.instance}>
             <ThemeProvider theme={currentTheme}>
