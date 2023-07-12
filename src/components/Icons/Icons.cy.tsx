@@ -10,15 +10,15 @@ import TruckIcon from "@/components/Icons/TruckIcon";
 describe("Icons", () => {
     it("All Render", () => {
         cy.mount(<CongestionChargeAppliedIcon />);
-        cy.mount(<FeetIcon collectionPoint={"Next Door"} />);
+        cy.mount(<FeetIcon collectionPoint="Next Door" />);
         cy.mount(<FlagIcon />);
         cy.mount(<PhoneIcon />);
-        cy.mount(<SpeechBubbleIcon onHoverText={"Some Bubble Text"} />);
+        cy.mount(<SpeechBubbleIcon onHoverText="Some Bubble Text" />);
         cy.mount(<TruckIcon />);
     });
 
     it("Feet icon text is correct", () => {
-        cy.mount(<FeetIcon collectionPoint={"Next Door"} />);
+        cy.mount(<FeetIcon collectionPoint="Next Door" />);
         cy.get("svg").find("title").should("have.text", "Collection at Next Door");
     });
 
@@ -43,7 +43,7 @@ describe("Icons", () => {
     });
 
     it("Speech Bubble icon text is correct", () => {
-        cy.mount(<SpeechBubbleIcon onHoverText={"Text On Hover"} />);
+        cy.mount(<SpeechBubbleIcon onHoverText="Text On Hover" />);
         cy.get("svg").find("title").should("have.text", "Text On Hover");
     });
 
