@@ -33,7 +33,7 @@ const LoginPanel: React.FC<{}> = () => {
                                 anchorTextColor: currentTheme.foregroundColor,
                                 brand: currentTheme.fillColor,
                                 brandAccent: currentTheme.fillColor,
-                                brandButtonText: currentTheme.foregroundColor
+                                brandButtonText: currentTheme.foregroundColor,
                             },
                         },
                     },
