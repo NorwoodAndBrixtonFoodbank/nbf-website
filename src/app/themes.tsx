@@ -29,6 +29,10 @@ const StyleManager: React.FC<Props> = ({ children }) => {
         return <>{styles}</>;
     });
 
+    if (typeof window !== "undefined") {
+        return <>{children}</>;
+    }
+
     return (
         <StyleSheetManager sheet={serverStyleSheet.instance}>
             <ThemeProvider theme={currentTheme}>
