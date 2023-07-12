@@ -29,6 +29,7 @@ const EachItem = styled.div`
 
 const ContentWrapper = styled.div`
     overflow: scroll;
+    overflow-x: hidden;
     height: 90%;
     margin: 20px;
 `;
@@ -37,7 +38,7 @@ const ModalWrapper = styled.div`
     width: 100%;
     height: 100%;
     overflow: hidden;
-    padding-bottom: 0px;
+    padding-bottom: 30px;
 `;
 
 const Key = styled.div`
