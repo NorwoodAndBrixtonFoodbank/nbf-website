@@ -12,14 +12,14 @@ const Clients: () => Promise<React.ReactElement> = async () => {
     const data = await dataFetch();
 
     return (
-        <>
+        <main>
             <h1> Clients Page </h1>
 
             <p> Testing Supabase fetching </p>
 
             {/* This should be a separate component which is passed data via props */}
             <pre>{JSON.stringify(data, null, 4)}</pre>
-        </>
+        </main>
     );
 };
 
