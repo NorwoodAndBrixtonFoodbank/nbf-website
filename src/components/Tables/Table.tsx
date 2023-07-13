@@ -4,19 +4,31 @@ import React, { useState, useMemo, useEffect } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar from "./TableFilterBar";
 
+interface Row {
+    [key: string]: string | number;
+}
+
+interface Data {
+    [key: string]: string | number | null;
+}
+
+interface Headers {
+    [key: string]: string;
+}
+
 interface Props {
-    data: { [key: string]: string | number | null }[];
-    headers: { [key: string]: string };
+    data: Data[];
+    headers: Headers;
 }
 
 interface SubHeaderComponentProps {
-    filterText: { [key: string]: string };
+    filterText: Headers;
     setFilterText: React.Dispatch<
         React.SetStateAction<{
             [key: string]: string;
         }>
     >;
-    headers: { [key: string]: string };
+    headers: Headers;
 }
 
 const subHeaderComponent: React.FC<SubHeaderComponentProps> = (props) => {
@@ -39,15 +51,28 @@ const subHeaderComponent: React.FC<SubHeaderComponentProps> = (props) => {
     );
 };
 
-const checkIfItemIncludesFilterText =  (itemKey: string | number | null, filterTextKey: string | null): boolean => {
+const checkIfItemIncludesFilterText = (
+    itemKey: string | number | null,
+    filterTextKey: string | null
+): boolean => {
     return (itemKey ?? "")
         .toString()
         .toLowerCase()
         .includes((filterTextKey ?? "").toLowerCase());
 };
 
+const replaceNullData = (dataArray: Data[], headers: Headers): Row[] => {
+    return dataArray.map((item) => {
+        let newItem: Row = {};
+        for (const key of Object.keys(headers)) {
+            newItem[key] = item[key] ?? "";
+        }
+        return newItem;
+    });
+};
+
 const Table: React.FC<Props> = (props) => {
-    const [filterText, setFilterText] = useState<{ [key: string]: string }>({});
+    const [filterText, setFilterText] = useState<Headers>({});
 
     // Fixes hydration error by re-rendering when the DOM is ready - https://nextjs.org/docs/messages/react-hydration-error
     const [domLoaded, setDomLoaded] = useState(false);
@@ -55,7 +80,7 @@ const Table: React.FC<Props> = (props) => {
         setDomLoaded(true);
     }, []);
 
-    const filteredItems = props.data.filter((item) => {
+    const filteredItems: Data[] = props.data.filter((item) => {
         for (const key of Object.keys(props.headers)) {
             if (!checkIfItemIncludesFilterText(item[key], filterText[key])) {
                 return false;
@@ -64,10 +89,10 @@ const Table: React.FC<Props> = (props) => {
         return true;
     });
 
-    const columns: TableColumn<any>[] = Object.entries(props.headers).map(([key, value]) => {
+    const columns: TableColumn<Row>[] = Object.entries(props.headers).map(([key, value]) => {
         return {
             name: value,
-            selector: (row: any) => row[key],
+            selector: (row: Row) => row[key],
             sortable: true,
         };
     });
@@ -77,7 +102,7 @@ const Table: React.FC<Props> = (props) => {
             {domLoaded && (
                 <DataTable
                     columns={columns}
-                    data={filteredItems}
+                    data={replaceNullData(filteredItems, props.headers)}
                     subHeader
                     subHeaderComponent={subHeaderComponent({
                         filterText,

@@ -6,7 +6,7 @@ interface Props {
     filterText: { [key: string]: string };
     onFilter: (e: React.ChangeEvent<HTMLInputElement>, filterField: string) => void; // eslint-disable-line no-unused-vars
     onClear: () => void;
-    headers: { [key: string]: string | number | null };
+    headers: { [key: string]: string };
 }
 
 const TableFilterBar: React.FC<Props> = ({ filterText, onFilter, onClear, headers }) => {
