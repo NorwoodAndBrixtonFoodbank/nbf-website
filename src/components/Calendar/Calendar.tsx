@@ -30,6 +30,19 @@ export interface CalendarEvent {
     textColor?: string;
 }
 
+const CalendarWrapper = styled.div`
+    /* width: min(80%, 1366px); */
+    /* aspect-ratio: 1; */
+    height: 100%;
+    overflow: auto;
+`;
+
+const StyledCalendar = styled(FullCalendar)`
+    /* width: 100%;
+    height: 100%;
+    margin: 0 auto; */
+`;
+
 const StyledDialog = styled(Dialog)`
     // root
 
@@ -94,11 +107,25 @@ const Calendar: React.FC<CalendarProps> = ({ initialEvents, view, editable, hand
                     </p>
                 </ModalInner>
             </StyledDialog>
+            <style>
+                {`
+                    .fc-button {
+                        height: max(3vmin, 25px)!important;
+                        font-size: max(1.5vmin, 10px)!important;
+                        text-align: center;
+                        vertical-align: middle;
+                        padding: 0 10px 0 10px  !important;
+                    }
+
+                    .fc-icon {
+                    }
+                `}
+            </style>
             <FullCalendar
                 viewClassNames="calendar-view"
                 plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                 headerToolbar={{
-                    left: "prev,next today",
+                    left: "prev,next",
                     center: "title",
                     right: "dayGridMonth,timeGridWeek,timeGridDay",
                 }}

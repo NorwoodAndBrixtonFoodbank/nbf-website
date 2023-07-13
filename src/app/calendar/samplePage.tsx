@@ -4,6 +4,16 @@ import React from "react";
 import Calendar, { CalendarEvent as CalendarEvent } from "../../components/Calendar/Calendar";
 import { styled } from "styled-components";
 
+const Centerer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`
+const SizedAspectRatio = styled.div`
+    width: 100vmin;
+    height: 100vmin;
+`;
+
 const SampleCalendar: React.FC<{}> = () => {
     const sampleEvents: CalendarEvent[] = [
         {
@@ -31,11 +41,11 @@ const SampleCalendar: React.FC<{}> = () => {
         },
     ];
 
-    return <StyledCalendar initialEvents={sampleEvents} editable={true} />;
+    return <Centerer>
+        <SizedAspectRatio>
+            <Calendar initialEvents={sampleEvents} editable={true} />
+        </SizedAspectRatio>
+    </Centerer>;
 };
-
-const StyledCalendar = styled(Calendar)`
-    height: calc(100vh - 120px);
-`;
 
 export default SampleCalendar;

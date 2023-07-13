@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import SampleCalendar from "./clientPage";
+import SampleCalendar from "./samplePage";
 import React from "react";
 
 export const metadata: Metadata = {
@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 const CalendarPage: React.FC<{}> = () => {
     return (
         <>
-            <h1>Calendar Page</h1>
             <SampleCalendar />;
         </>
     );
