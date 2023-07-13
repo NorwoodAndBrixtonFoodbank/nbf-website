@@ -12,12 +12,12 @@ const App: React.FC<Props> = ({ children }) => (
     <html lang="en">
         <body>
             <React.StrictMode>
-                    <StyleManager>
-                        <>
-                            <NavBar />
-                            {children}
-                        </>
-                    </StyleManager>
+                <StyleManager>
+                    <>
+                        <NavBar />
+                        {children}
+                    </>
+                </StyleManager>
             </React.StrictMode>
         </body>
     </html>
