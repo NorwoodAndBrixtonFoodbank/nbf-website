@@ -34,11 +34,10 @@ export interface CalendarEvent {
 
 const StyledDialog = styled(Dialog)`
     // root
-
-    // container
     & > div {
-        //Paper
+        // container
         > div {
+            //Paper
             width: min(50%, 600px);
             border-radius: 2rem;
             padding: 1.5rem;
@@ -59,7 +58,12 @@ const ModalInner = styled.div`
     row-gap: 1rem;
 `;
 
-const Calendar: React.FC<CalendarProps> = ({ initialEvents, view, editable, handleDateClick }) => {
+const Calendar: React.FC<CalendarProps> = ({
+    initialEvents,
+    view = "dayGridMonth",
+    editable = false,
+    handleDateClick,
+}) => {
     const [modalViewEvent, setModalViewEvent] = useState(false);
     const [eventClick, setEventClick] = useState<EventImpl | null>(null);
 
@@ -120,8 +124,8 @@ const Calendar: React.FC<CalendarProps> = ({ initialEvents, view, editable, hand
                     right: "dayGridMonth,timeGridWeek,timeGridDay",
                 }}
                 events={initialEvents}
-                initialView={view ?? "dayGridMonth"}
-                editable={editable ?? false}
+                initialView={view}
+                editable={editable}
                 selectable={editable}
                 dateClick={handleDateClick}
                 eventClick={handleEventClick}
