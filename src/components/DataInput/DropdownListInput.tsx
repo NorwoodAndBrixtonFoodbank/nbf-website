@@ -1,28 +1,27 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import React from "react";
 import { MenuItem, InputLabel, Select, FormControl, SelectChangeEvent } from "@mui/material";
 
 interface Props {
-    optionLabels: string[];
-    optionValues: string[];
-    listLabel?: string;
+    labelsAndValues: [string, string][];
+    listTitle?: string;
     defaultValue?: string;
-    onChange: (event: SelectChangeEvent<string>, child: ReactNode) => void; // eslint-disable-line no-unused-vars
+    onChange: (event: SelectChangeEvent<unknown>) => void;
 }
 
 const DropdownListInput: React.FC<Props> = (props) => {
     return (
         <FormControl fullWidth>
-            <InputLabel>{props.listLabel}</InputLabel>
+            <InputLabel>{props.listTitle}</InputLabel>
             <Select
                 defaultValue={props.defaultValue ?? ""}
-                label={props.listLabel}
+                label={props.listTitle}
                 onChange={props.onChange}
             >
-                {props.optionLabels.map((label, index) => {
+                {props.labelsAndValues.map(([label, value], index) => {
                     return (
-                        <MenuItem key={index} value={props.optionValues[index]}>
+                        <MenuItem key={index} value={value}>
                             {label}
                         </MenuItem>
                     );

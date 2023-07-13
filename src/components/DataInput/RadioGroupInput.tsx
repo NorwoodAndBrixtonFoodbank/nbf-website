@@ -6,23 +6,22 @@ import RadioGroup from "@mui/material/RadioGroup";
 import { FormControl, FormControlLabel, FormLabel, Radio } from "@mui/material";
 
 interface Props {
-    optionLabels: string[];
-    optionValues: string[];
-    groupLabel?: string;
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void; // eslint-disable-line no-unused-vars
+    labelsAndValues: [string, string][];
+    groupTitle?: string;
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const RadioGroupInput: React.FC<Props> = (props) => {
     return (
         <FormControl>
-            <FormLabel>{props.groupLabel}</FormLabel>
+            <FormLabel>{props.groupTitle}</FormLabel>
             <RadioGroup onChange={props.onChange}>
-                {props.optionLabels.map((label, index) => {
+                {props.labelsAndValues.map(([label, value], index) => {
                     return (
                         <FormControlLabel
                             key={index}
                             label={label}
-                            value={props.optionValues[index]}
+                            value={value}
                             control={<Radio />}
                         />
                     );

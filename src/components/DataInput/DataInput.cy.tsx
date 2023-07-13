@@ -3,69 +3,80 @@ import CheckboxInput from "@/components/DataInput/CheckboxInput";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import RadioGroupInput from "@/components/DataInput/RadioGroupInput";
-import { handleChangeFactory } from "@/components/DataInput/changeHandlerFactories";
+import {
+    getFreeFormTextHandler,
+    getCheckboxHandler,
+    getDropdownListHandler,
+    getRadioGroupHandler,
+} from "@/components/DataInput/inputHandlerFactories";
 
 describe("Data Input Components", () => {
     it("renders", () => {
         cy.mount(
             <CheckboxInput
-                optionLabels={["A", "B", "C"]}
-                optionKeys={["a", "b", "c"]}
-                groupLabel={"Check Group"}
-                onChange={handleChangeFactory(() => console.log("Checkbox Changed"))}
+                label="LABEL"
+                onChange={getCheckboxHandler(() => console.log("Checkbox Changed"))}
             />
         );
         cy.mount(
             <DropdownListInput
-                optionLabels={["A", "B", "C"]}
-                optionValues={["a", "b", "c"]}
-                listLabel={"Dropdown List"}
-                defaultValue={"Default"}
-                onChange={handleChangeFactory(() => console.log("Dropdown Changed"))}
+                labelsAndValues={[
+                    ["A", "a"],
+                    ["B", "b"],
+                    ["C", "c"],
+                ]}
+                listTitle="Dropdown List"
+                defaultValue="Default"
+                onChange={getDropdownListHandler(() => console.log("Dropdown Changed"))}
             />
         );
         cy.mount(
             <FreeFormTextInput
-                label={"FreeForm"}
-                defaultValue={"default"}
-                onChange={handleChangeFactory(() => console.log("Freeform Changed"))}
+                label="FreeForm"
+                defaultValue="default"
+                onChange={getFreeFormTextHandler(() => console.log("Freeform Changed"))}
             />
         );
         cy.mount(
             <RadioGroupInput
-                optionLabels={["A", "B", "C"]}
-                optionValues={["a", "b", "c"]}
-                groupLabel={"Radio Group"}
-                onChange={handleChangeFactory(() => console.log("Radio Changed"))}
+                labelsAndValues={[
+                    ["A", "a"],
+                    ["B", "b"],
+                    ["C", "c"],
+                ]}
+                groupTitle="Radio Group"
+                onChange={getRadioGroupHandler(() => console.log("Radio Changed"))}
             />
         );
     });
 
     it("renders without optional props", () => {
         cy.mount(
-            <CheckboxInput
-                optionLabels={["A", "B", "C"]}
-                optionKeys={["a", "b", "c"]}
-                onChange={handleChangeFactory(() => console.log("Checkbox Changed"))}
-            />
+            <CheckboxInput onChange={getCheckboxHandler(() => console.log("Checkbox Changed"))} />
         );
         cy.mount(
             <DropdownListInput
-                optionLabels={["A", "B", "C"]}
-                optionValues={["a", "b", "c"]}
-                onChange={handleChangeFactory(() => console.log("Dropdown Changed"))}
+                labelsAndValues={[
+                    ["A", "a"],
+                    ["B", "b"],
+                    ["C", "c"],
+                ]}
+                onChange={getDropdownListHandler(() => console.log("Dropdown Changed"))}
             />
         );
         cy.mount(
             <FreeFormTextInput
-                onChange={handleChangeFactory(() => console.log("Freeform Changed"))}
+                onChange={getFreeFormTextHandler(() => console.log("Freeform Changed"))}
             />
         );
         cy.mount(
             <RadioGroupInput
-                optionLabels={["A", "B", "C"]}
-                optionValues={["a", "b", "c"]}
-                onChange={handleChangeFactory(() => console.log("Radio Changed"))}
+                labelsAndValues={[
+                    ["A", "a"],
+                    ["B", "b"],
+                    ["C", "c"],
+                ]}
+                onChange={getRadioGroupHandler(() => console.log("Radio Changed"))}
             />
         );
     });
@@ -77,23 +88,13 @@ describe("Data Input Components", () => {
                 onChangeSpy(e.target.checked);
             };
 
-            cy.mount(
-                <CheckboxInput
-                    optionLabels={["A", "B", "C"]}
-                    optionKeys={["a", "b", "c"]}
-                    groupLabel={"Check Group"}
-                    onChange={unwrapEvent}
-                />
-            );
+            cy.mount(<CheckboxInput label="A" onChange={unwrapEvent} />);
 
-            cy.get("input[name='a']").click();
+            cy.get("input").click();
             cy.get("@onChangeSpy").should("have.been.calledWith", true);
 
-            cy.get("input[name='a']").click();
+            cy.get("input").click();
             cy.get("@onChangeSpy").should("have.been.calledWith", false);
-
-            cy.get("input[name='c']").click();
-            cy.get("@onChangeSpy").should("have.been.calledWith", true);
         });
 
         it("Change handler for dropdown works", () => {
@@ -104,10 +105,13 @@ describe("Data Input Components", () => {
 
             cy.mount(
                 <DropdownListInput
-                    optionLabels={["A", "B", "C"]}
-                    optionValues={["a", "b", "c"]}
-                    listLabel={"Dropdown List"}
-                    defaultValue={"Default"}
+                    labelsAndValues={[
+                        ["A", "a"],
+                        ["B", "b"],
+                        ["C", "c"],
+                    ]}
+                    listTitle="Dropdown List"
+                    defaultValue="Default"
                     onChange={unwrapEvent}
                 />
             );
@@ -130,7 +134,7 @@ describe("Data Input Components", () => {
                 onChangeSpy(e.target.value);
             };
 
-            cy.mount(<FreeFormTextInput label={"FreeForm"} onChange={unwrapEvent} />);
+            cy.mount(<FreeFormTextInput label="FreeForm" onChange={unwrapEvent} />);
 
             cy.get("input[class^='MuiInputBase']").type("TEST_TEXT");
             cy.get("@onChangeSpy").should("have.been.calledWith", "TEST_TEXT");
@@ -144,9 +148,12 @@ describe("Data Input Components", () => {
 
             cy.mount(
                 <RadioGroupInput
-                    optionLabels={["A", "B", "C"]}
-                    optionValues={["a", "b", "c"]}
-                    groupLabel={"Radio Group"}
+                    labelsAndValues={[
+                        ["A", "a"],
+                        ["B", "b"],
+                        ["C", "c"],
+                    ]}
+                    groupTitle="Radio Group"
                     onChange={unwrapEvent}
                 />
             );
