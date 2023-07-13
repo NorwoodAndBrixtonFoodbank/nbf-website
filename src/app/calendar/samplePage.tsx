@@ -22,6 +22,7 @@ const SampleCalendar: React.FC<{}> = () => {
             start: new Date("2023-07-11"), // default Date constructor assumes UTC by default
             end: new Date("2023-07-12"),
             backgroundColor: "red",
+            textColor: "black",
             allDay: true,
         },
         {
@@ -33,6 +34,7 @@ const SampleCalendar: React.FC<{}> = () => {
             startRecur: "2023-07-12",
             endRecur: "2023-08-25",
             borderColor: "yellow",
+            textColor: "black",
         },
         {
             id: "c",
@@ -40,6 +42,7 @@ const SampleCalendar: React.FC<{}> = () => {
             start: new Date("2023-07-13T12:30:00"),
             end: new Date("2023-07-13T13:30:00"),
             textColor: "pink",
+            backgroundColor: "black",
             description: "This is a cool event",
         },
     ];
