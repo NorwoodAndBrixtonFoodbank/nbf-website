@@ -20,7 +20,6 @@ interface SubHeaderComponentProps {
 }
 
 const subHeaderComponent: React.FC<SubHeaderComponentProps> = (props) => {
-
     const handleClear: () => void = () => {
         if (props.filterText) {
             props.setFilterText({});
@@ -40,6 +39,13 @@ const subHeaderComponent: React.FC<SubHeaderComponentProps> = (props) => {
     );
 };
 
+const checkIfItemIncludesFilterText =  (itemKey: string | number | null, filterTextKey: string | null): boolean => {
+    return (itemKey ?? "")
+        .toString()
+        .toLowerCase()
+        .includes((filterTextKey ?? "").toLowerCase());
+};
+
 const Table: React.FC<Props> = (props) => {
     const [filterText, setFilterText] = useState<{ [key: string]: string }>({});
 
@@ -51,12 +57,7 @@ const Table: React.FC<Props> = (props) => {
 
     const filteredItems = props.data.filter((item) => {
         for (const key of Object.keys(props.headers)) {
-            if (
-                !(item[key] ?? "")
-                    .toString()
-                    .toLowerCase()
-                    .includes((filterText[key] ?? "").toLowerCase())
-            ) {
+            if (!checkIfItemIncludesFilterText(item[key], filterText[key])) {
                 return false;
             }
         }
@@ -72,7 +73,7 @@ const Table: React.FC<Props> = (props) => {
     });
 
     return (
-        <div>
+        <>
             {domLoaded && (
                 <DataTable
                     columns={columns}
@@ -81,14 +82,14 @@ const Table: React.FC<Props> = (props) => {
                     subHeaderComponent={subHeaderComponent({
                         filterText,
                         setFilterText,
-                        headers: props.headers
+                        headers: props.headers,
                     })}
                     pagination
                     selectableRows
                     persistTableHead
                 />
             )}
-        </div>
+        </>
     );
 };
 
