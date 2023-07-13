@@ -28,6 +28,7 @@ declare global {
         interface Chainable {
             mount: typeof mount;
             login: () => void;
+            checkAccessibility: () => void;
         }
     }
     /* eslint-enable no-unused-vars */

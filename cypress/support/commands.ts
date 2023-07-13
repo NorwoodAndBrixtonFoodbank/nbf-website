@@ -30,3 +30,8 @@ Cypress.Commands.add("login", () => {
 
     cy.url().should("include", "/clients");
 });
+
+Cypress.Commands.add("checkAccessibility", () => {
+    cy.injectAxe();
+    cy.checkA11y();
+});
