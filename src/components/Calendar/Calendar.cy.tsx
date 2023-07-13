@@ -17,11 +17,13 @@ describe("<CalendarComponent />", () => {
             id: "a",
             title: "event1",
             start: new Date("2023-07-11"),
+            end: new Date("2023-07-12"),
         },
         {
             id: "b",
             title: "event2",
             start: new Date("2023-07-12"),
+            end: new Date("2023-07-13"),
         },
     ];
 

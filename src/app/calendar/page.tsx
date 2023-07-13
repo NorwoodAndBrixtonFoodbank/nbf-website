@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 const CalendarPage: React.FC<{}> = () => {
     return (
         <>
-            <SampleCalendar />;
+            <SampleCalendar />
         </>
     );
 };

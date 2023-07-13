@@ -1,5 +1,5 @@
 import StyleManager from "@/app/themes";
-import StyledComponentsRegistry from "./registry";
+import StyledComponentsRegistry from "./themes";
 import NavBar from "@/components/NavBar";
 import { Metadata } from "next";
 

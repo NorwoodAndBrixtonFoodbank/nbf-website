@@ -20,28 +20,17 @@ interface CalendarProps {
 export interface CalendarEvent {
     id: string;
     title: string;
-    start?: Date;
-    end?: Date;
+    start: Date;
+    end: Date;
+    description?: string;
     daysOfWeek?: number[];
     startRecur?: string;
     endRecur?: string;
     backgroundColor?: string;
     borderColor?: string;
     textColor?: string;
+    allDay?: boolean;
 }
-
-const CalendarWrapper = styled.div`
-    /* width: min(80%, 1366px); */
-    /* aspect-ratio: 1; */
-    height: 100%;
-    overflow: auto;
-`;
-
-const StyledCalendar = styled(FullCalendar)`
-    /* width: 100%;
-    height: 100%;
-    margin: 0 auto; */
-`;
 
 const StyledDialog = styled(Dialog)`
     // root
@@ -105,6 +94,7 @@ const Calendar: React.FC<CalendarProps> = ({ initialEvents, view, editable, hand
                         End:
                         {new Date(eventClick?.endStr!).toLocaleString("en-GB", dateFormatOptions)}
                     </p>
+                    <p>Description: {eventClick?.extendedProps.description}</p>
                 </ModalInner>
             </StyledDialog>
             <style>
