@@ -15,12 +15,19 @@ const SizedAspectRatio = styled.div`
 `;
 
 const SampleCalendar: React.FC<{}> = () => {
+    /*
+    unless a timezone is specified, the ISO8601 standard assumes UTC (and therefore so does the date constructer). 
+    The calendar will then display the date in the local timezone, which is why the date displayed is 1 hour 
+    later than the date specified when in BST. When printing to the console, a JS Date object will also be displayed 
+    in the local timezone but is internally stored as UTC.
+    Methods like Date.prototype.getHours() etc. return values in local time. 
+ */
     const sampleEvents: CalendarEvent[] = [
         {
             id: "a",
             title: "event1",
-            start: new Date("2023-07-11"), // unless a timezone is specified, the ISO8601 standard assumes UTC (and therefore so does the date constructer). the calendar will then display the date in the local timezone,
-            end: new Date("2023-07-12"), // which is why the date displayed is 1 hour later than the date specified when in BST. When printing to the console, a JS Date object will also be displayed in the local timezone but is internally stored as UTC.
+            start: new Date("2023-07-11"),
+            end: new Date("2023-07-12"),
             backgroundColor: "red",
             textColor: "black",
             allDay: true,
@@ -30,9 +37,6 @@ const SampleCalendar: React.FC<{}> = () => {
             title: "event2",
             start: new Date("2023-07-12"),
             end: new Date("2023-07-13"),
-            daysOfWeek: [3],
-            startRecur: "2023-07-12",
-            endRecur: "2023-08-25",
             borderColor: "yellow",
             textColor: "black",
         },

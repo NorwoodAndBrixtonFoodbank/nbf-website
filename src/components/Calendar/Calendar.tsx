@@ -7,7 +7,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import { EventClickArg } from "@fullcalendar/core";
 import styled from "styled-components";
-import { Dialog } from "@mui/material";
+import Modal from "./Modal";
 
 interface CalendarProps {
     initialEvents: CalendarEvent[];
@@ -22,40 +22,11 @@ export interface CalendarEvent {
     start: Date;
     end: Date;
     description?: string;
-    daysOfWeek?: number[];
-    startRecur?: string;
-    endRecur?: string;
     backgroundColor?: string;
     borderColor?: string;
     textColor?: string;
     allDay?: boolean;
 }
-
-const StyledDialog = styled(Dialog)`
-    // root
-    & > div {
-        // container
-        > div {
-            //Paper
-            width: min(50%, 600px);
-            border-radius: 2rem;
-            padding: 1.5rem;
-            text-align: center;
-        }
-    }
-`;
-
-const StyledCancelButton = styled.button`
-    position: absolute;
-    right: 20px;
-    top: 20px;
-`;
-
-const ModalInner = styled.div`
-    display: flex;
-    flex-direction: column;
-    row-gap: 1rem;
-`;
 
 const CalendarStyling = styled.div`
     .fc {
@@ -69,6 +40,7 @@ const CalendarStyling = styled.div`
         font-size: 1.5rem;
     }
 
+    // group of buttons in the toolbar
     .fc .fc-toolbar-chunk {
         margin: 0 0.5rem;
     }
@@ -96,13 +68,6 @@ const CalendarStyling = styled.div`
         border-color: ${(props) => props.theme.fillColor};
         color: black;
     }
-
-    .fc .fc-button-primary:not(:disabled).fc-button-active,
-    .fc .fc-button-primary:not(:disabled):active {
-        background-color: ${(props) => props.theme.fillColor};
-        border-color: ${(props) => props.theme.fillColor};
-        color: black;
-    }
 `;
 
 const Calendar: React.FC<CalendarProps> = ({
@@ -113,42 +78,14 @@ const Calendar: React.FC<CalendarProps> = ({
 }) => {
     const [eventClick, setEventClick] = useState<CalendarEvent | null>(null);
 
-    function handleEventClick(info: EventClickArg): void {
+    const handleEventClick = (info: EventClickArg): void => {
         const id = info.event.id;
         setEventClick(initialEvents.find((e) => e.id === id) ?? null);
-    }
-
-    const dateFormatOptions: Intl.DateTimeFormatOptions = {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
     };
 
     return (
         <>
-            <StyledDialog open={eventClick !== null} onClose={() => setEventClick(null)}>
-                <StyledCancelButton type="button" onClick={() => setEventClick(null)}>
-                    close
-                </StyledCancelButton>
-                <ModalInner>
-                    <h2>View Event</h2>
-                    <p>Event Title: {eventClick?.title}</p>
-                    <p>
-                        Start:
-                        {eventClick &&
-                            new Date(eventClick.start).toLocaleString("en-GB", dateFormatOptions)}
-                    </p>
-                    <p>
-                        End:
-                        {eventClick &&
-                            new Date(eventClick.end).toLocaleString("en-GB", dateFormatOptions)}
-                    </p>
-                    <p>Description: {eventClick && eventClick.description}</p>
-                </ModalInner>
-            </StyledDialog>
+            {eventClick && <Modal eventClick={eventClick} setEventClick={setEventClick} />}
             <CalendarStyling>
                 <FullCalendar
                     viewClassNames="calendar-view"
