@@ -41,7 +41,7 @@ const Modal: React.FC<{
         return <></>;
     }
     return (
-        <StyledDialog open={eventClick !== null} onClose={() => setEventClick(null)}>
+        <StyledDialog open={true} onClose={() => setEventClick(null)}>
             <StyledCloseButton type="button" onClick={() => setEventClick(null)}>
                 close
             </StyledCloseButton>

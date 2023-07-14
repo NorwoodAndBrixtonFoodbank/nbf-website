@@ -72,7 +72,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
     const handleEventClick = (info: EventClickArg): void => {
         const id = info.event.id;
-        setEventClick(initialEvents.find((e) => e.id === id) ?? null);
+        setEventClick(initialEvents.find((event) => event.id === id) ?? null);
     };
 
     return (

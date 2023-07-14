@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Calendar, { CalendarEvent } from "../../components/Calendar/Calendar";
+import Calendar, { CalendarEvent } from "@/components/Calendar/Calendar";
 import { styled } from "styled-components";
 
 const Centerer = styled.div`
