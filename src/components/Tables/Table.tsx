@@ -54,11 +54,7 @@ const subHeaderComponent: React.FC<SubHeaderComponentProps> = (props) => {
     );
 };
 
-const itemIncludesFilterText: (headers: Headers, item: Datum, filterText: FilterText) => boolean = (
-    headers,
-    item,
-    filterText
-) => {
+const itemIncludesFilterText = (headers: Headers, item: Datum, filterText: FilterText): boolean => {
     for (const key of Object.keys(headers)) {
         if (
             !(item[key] ?? "")
@@ -72,11 +68,7 @@ const itemIncludesFilterText: (headers: Headers, item: Datum, filterText: Filter
     return true;
 };
 
-const filteredNoNullItems: (headers: Headers, data: Datum[], filterText: FilterText) => Row[] = (
-    headers,
-    data,
-    filterText
-) => {
+const filteredNoNullItems = (headers: Headers, data: Datum[], filterText: FilterText): Row[] => {
     return data.reduce((filteredNoNullItems: Row[], item: Datum) => {
         if (itemIncludesFilterText(headers, item, filterText)) {
             const noNullItem: Row = {};
