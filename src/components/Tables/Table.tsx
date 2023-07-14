@@ -61,6 +61,7 @@ const Table: React.FC<Props> = (props) => {
             name: value,
             selector: (row: Row) => row[key],
             sortable: true,
+            title: value,
         };
     });
 
