@@ -58,6 +58,72 @@ const ModalInner = styled.div`
     row-gap: 1rem;
 `;
 
+// const StyledCalendar = styled(FullCalendar)`
+//     /* & > div > div > div > button {
+//         height: max(3vmin, 25px)!important;
+//         font-size: max(1.5vmin, 10px)!important;
+//         text-align: center;
+//         vertical-align: middle;
+//         padding: 0 10px 0 10px  !important;
+//     }
+
+//     .fc-icon {
+//         font-size: max(1.5vmin, 10px)!important;
+//     } */
+//     background-color: orange!important;
+//     > div {
+//         transform: translate(50%, 50%);
+//     }
+// `;
+
+const CalendarStyling = styled.div`
+    .fc {
+        background-color: white;
+        border-radius: 2rem;
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 1.5rem;
+    }
+
+    .fc .fc-toolbar-chunk {
+        margin: 0 0.5rem;
+    }
+
+    .fc .fc-button {
+        height: max(3vmin, 30px);
+        font-size: max(1.5vmin, 15px);
+        text-align: center;
+        vertical-align: middle;
+        padding: 0 10px 0 10px;
+    }
+
+    .fc .fc-icon {
+        font-size: max(1.5vmin, 15px);
+    }
+
+    .fc .fc-button-primary {
+        background-color: ${(props) => props.theme.fillColor};
+        border-color: ${(props) => props.theme.fillColor};
+        color: black;
+    }
+
+    .fc .fc-button-primary:hover {
+        background-color: ${(props) => props.theme.fillColor};
+        border-color: ${(props) => props.theme.fillColor};
+        color: black;
+    }
+
+    .fc .fc-button-primary:not(:disabled).fc-button-active,
+    .fc .fc-button-primary:not(:disabled):active {
+        background-color: ${(props) => props.theme.fillColor};
+        border-color: ${(props) => props.theme.fillColor};
+        color: black;
+    }
+`;
+
 const Calendar: React.FC<CalendarProps> = ({
     initialEvents,
     view = "dayGridMonth",
@@ -101,35 +167,23 @@ const Calendar: React.FC<CalendarProps> = ({
                     <p>Description: {eventClick?.extendedProps.description}</p>
                 </ModalInner>
             </StyledDialog>
-            <style>
-                {`
-                    .fc-button {
-                        height: max(3vmin, 25px)!important;
-                        font-size: max(1.5vmin, 10px)!important;
-                        text-align: center;
-                        vertical-align: middle;
-                        padding: 0 10px 0 10px  !important;
-                    }
-
-                    .fc-icon {
-                    }
-                `}
-            </style>
-            <FullCalendar
-                viewClassNames="calendar-view"
-                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                headerToolbar={{
-                    left: "prev,next",
-                    center: "title",
-                    right: "dayGridMonth,timeGridWeek,timeGridDay",
-                }}
-                events={initialEvents}
-                initialView={view}
-                editable={editable}
-                selectable={editable}
-                dateClick={handleDateClick}
-                eventClick={handleEventClick}
-            />
+            <CalendarStyling>
+                <FullCalendar
+                    viewClassNames="calendar-view"
+                    plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                    headerToolbar={{
+                        left: "prev,next",
+                        center: "title",
+                        right: "dayGridMonth,timeGridWeek,timeGridDay",
+                    }}
+                    events={initialEvents}
+                    initialView={view}
+                    editable={editable}
+                    selectable={editable}
+                    dateClick={handleDateClick}
+                    eventClick={handleEventClick}
+                />
+            </CalendarStyling>
         </>
     );
 };
