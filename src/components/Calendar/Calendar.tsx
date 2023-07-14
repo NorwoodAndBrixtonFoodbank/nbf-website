@@ -7,7 +7,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import { EventClickArg } from "@fullcalendar/core";
 import styled from "styled-components";
-import Modal from "./Modal";
+import Modal from "@/components/Calendar/Modal";
 
 interface CalendarProps {
     initialEvents: CalendarEvent[];
@@ -50,7 +50,7 @@ const CalendarStyling = styled.div`
         font-size: max(1.5vmin, 15px);
         text-align: center;
         vertical-align: middle;
-        padding: 0 10px 0 10px;
+        padding: 0 10px;
         background-color: ${(props) => props.theme.fillColor};
         border-color: ${(props) => props.theme.fillColor};
         color: black;

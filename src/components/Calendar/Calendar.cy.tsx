@@ -1,7 +1,7 @@
 import React from "react";
-import Calendar, { CalendarEvent } from "./Calendar";
+import Calendar, { CalendarEvent } from "@/components/Calendar/Calendar";
 
-describe("<CalendarComponent />", () => {
+describe("<Calendar />", () => {
     const today = new Date();
     const tomorrow = new Date();
     tomorrow.setDate(today.getDate() + 1);
