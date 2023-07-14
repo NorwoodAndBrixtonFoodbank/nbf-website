@@ -1,41 +1,46 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
+import React, { ReactElement } from "react";
 import styled from "styled-components";
 import Modal from "react-modal";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface DataViewerProps {
     data: { [key: string]: string | number | null };
-    title: string;
+    header: ReactElement | string;
     isOpen: boolean;
     onRequestClose: (event: MouseEvent<Element, MouseEvent> | KeyboardEvent<Element>) => void;
 }
 
-const Header = styled.div`
-    display: flex;
-    justify-content: space-between;
-    background-color: #eeeeee;
-    margin-bottom: 1rem;
-    margin-top: 0;
-    padding: 0.5rem;
-`;
-
-const EachItem = styled.div`
+const StyledModal = styled(Modal)`
     display: flex;
     flex-direction: column;
-    padding-bottom: 1rem;
-`;
-
-const ContentWrapper = styled.div`
-    overflow: scroll;
-    height: calc(100% - 5rem);
-    margin: 1.5rem;
-`;
-
-const ModalWrapper = styled.div`
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 0;
+    border-radius: 5px;
+    outline: none;
+    padding: 0;
+    width: 80%;
+    max-height: 80%;
+    background: rgb(255, 255, 255);
+    box-shadow: rgb(200, 200, 200) 0 2px 10px;
     overflow: hidden;
+`;
+
+const Header = styled.h3`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #eeeeee;
+    padding: 0.5rem;
+    margin-top: 0;
+`;
+
+const Content = styled.div`
+    overflow: scroll;
+    margin: 1.5rem;
+    margin-top: 1rem;
 `;
 
 const Key = styled.div`
@@ -47,18 +52,32 @@ const Value = styled.div`
     font-size: medium;
 `;
 
-const DataViewer: React.FC<DataViewerProps> = (props) => {
-    const [localIsOpen, setLocalIsOpen] = useState(false);
-    useEffect(() => {
-        setLocalIsOpen(props.isOpen);
-        console.log("useEffectLocal");
-    }, [props.isOpen]);
+const EachItem = styled.div`
+    padding-bottom: 1rem;
+`;
 
-    const ClearButton: React.FC = () => {
-        return <button onClick={closeModel}>X</button>;
-    };
+const CloseButton = styled.button`
+    border: 0;
+    background-color: red;
+    color: white;
+    display: flex;
+    justify-content: center;
+`;
 
-    const JSONContent = Object.entries(props.data).map(([key, value]) => {
+interface ClearButtonProps {
+    closeModal: () => void;
+}
+
+const ClearButton: React.FC<ClearButtonProps> = (props) => {
+    return (
+        <CloseButton onClick={props.closeModal}>
+            <CloseIcon />
+        </CloseButton>
+    );
+};
+
+const JSONContent: React.FC<{ [key: string]: string | number | null }> = (data) => {
+    return Object.entries(data).map(([key, value]) => {
         return (
             <EachItem key={key}>
                 <div>{key.toUpperCase().replace("_", " ")}</div>
@@ -66,12 +85,11 @@ const DataViewer: React.FC<DataViewerProps> = (props) => {
             </EachItem>
         );
     });
+};
 
-    const closeModel: (event: MouseEvent<Element, MouseEvent> | KeyboardEvent<Element>) => void = (
-        e
-    ) => {
-        props.onRequestClose(e);
-        setLocalIsOpen(props.isOpen);
+const DataViewer: React.FC<DataViewerProps> = (props) => {
+    const closeModal: () => void = () => {
+        props.onRequestClose();
     };
 
     // const M = styled(Modal)`
@@ -82,18 +100,18 @@ const DataViewer: React.FC<DataViewerProps> = (props) => {
     console.log("localisOpen", localIsOpen);
 
     return (
-        <Modal
-            isOpen={localIsOpen}
-            onRequestClose={closeModel}
+        <StyledModal
+            isOpen={true}
+            onRequestClose={closeModal}
             ariaHideApp={false}
-            contentLabel="JSON Modal"
+            contentLabel="Data viewer"
         >
             <Header>
-                {props.title}
-                <ClearButton />
+                {props.header}
+                <ClearButton closeModal={closeModal} />
             </Header>
-            <div>{JSONContent}</div>
-        </Modal>
+            <Content>{JSONContent(props.data)}</Content>
+        </StyledModal>
     );
 };
 

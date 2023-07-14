@@ -1,5 +1,5 @@
 import React from "react";
-import DataViewerWithButton from "./DataViewerWithButton";
+import DataViewerWithButton from "./SampleDataViewerWithButton";
 
 const data = {
     id: "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
@@ -27,8 +27,22 @@ describe("<DataViewerWithButton />", () => {
 
         cy.get("button").click();
 
-        cy.get("button").contains("X").click();
+        cy.get("button").children("svg").click();
 
         cy.get("body").should("not.have.value", "FULL NAME");
+    });
+
+    it("modal shows expected values", () => {
+        cy.mount(<DataViewerWithButton data={data} />);
+
+        cy.get("button").click();
+
+        cy.contains(
+            "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
+        );
+        cy.contains(
+            "John With A Very Very Very Very Very Very Very Very Very Very Very Very Very Long Name"
+        );
+        cy.contains("1234567");
     });
 });

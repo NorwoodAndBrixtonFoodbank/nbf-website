@@ -1,17 +1,27 @@
 "use client";
 import React, { useState } from "react";
 import DataViewer from "@/components/DataViewer/DataViewer";
+import PhoneIcon from "../Icons/PhoneIcon";
+import styled from "styled-components";
 
 interface ViewerProps {
     data: { [key: string]: string | number | null };
 }
 
-const DataViewerWithButton: React.FC<ViewerProps> = ({ data }) => {
+const Header = styled.span`
+    display: flex;
+    align-items: center;
+`;
+
+const Title = styled.span`
+    margin-left: 0.5rem;
+`;
+
+const SampleDataViewerWithButton: React.FC<ViewerProps> = ({ data }) => {
     const [viewerIsOpen, setViewerIsOpen] = useState(false);
 
     const openModal: () => void = () => {
         setViewerIsOpen(true);
-        console.log("openModal", viewerIsOpen);
     };
 
     const closeModal: () => void = () => {
@@ -23,7 +33,12 @@ const DataViewerWithButton: React.FC<ViewerProps> = ({ data }) => {
             <button onClick={openModal}>Open</button>
             <DataViewer
                 data={data}
-                title="Client details"
+                header={
+                    <Header>
+                        <PhoneIcon />
+                        <Title>Client Details</Title>
+                    </Header>
+                }
                 isOpen={viewerIsOpen}
                 onRequestClose={closeModal}
             />
@@ -31,4 +46,4 @@ const DataViewerWithButton: React.FC<ViewerProps> = ({ data }) => {
     );
 };
 
-export default DataViewerWithButton;
+export default SampleDataViewerWithButton;
