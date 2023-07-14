@@ -34,7 +34,7 @@ const dateFormatOptions: Intl.DateTimeFormatOptions = {
 };
 
 const Modal: React.FC<{
-    eventClick: CalendarEvent;
+    eventClick: CalendarEvent | null;
     setEventClick: (data: CalendarEvent | null) => void;
 }> = ({ eventClick, setEventClick }) => {
     return (
@@ -42,19 +42,23 @@ const Modal: React.FC<{
             <StyledCancelButton type="button" onClick={() => setEventClick(null)}>
                 close
             </StyledCancelButton>
-            <ModalInner>
-                <h2>View Event</h2>
-                <p>Event Title: {eventClick.title}</p>
-                <p>
-                    Start:
-                    {new Date(eventClick.start).toLocaleString("en-GB", dateFormatOptions)}
-                </p>
-                <p>
-                    End:
-                    {new Date(eventClick.end).toLocaleString("en-GB", dateFormatOptions)}
-                </p>
-                <p>Description: {eventClick.description}</p>
-            </ModalInner>
+            {eventClick ? (
+                <ModalInner>
+                    <h2>View Event</h2>
+                    <p>Event Title: {eventClick.title}</p>
+                    <p>
+                        Start:
+                        {new Date(eventClick.start).toLocaleString("en-GB", dateFormatOptions)}
+                    </p>
+                    <p>
+                        End:
+                        {new Date(eventClick.end).toLocaleString("en-GB", dateFormatOptions)}
+                    </p>
+                    <p>Description: {eventClick.description}</p>
+                </ModalInner>
+            ) : (
+                <></>
+            )}
         </StyledDialog>
     );
 };

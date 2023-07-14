@@ -51,22 +51,14 @@ const CalendarStyling = styled.div`
         text-align: center;
         vertical-align: middle;
         padding: 0 10px 0 10px;
+        background-color: ${(props) => props.theme.fillColor};
+        border-color: ${(props) => props.theme.fillColor};
+        color: black;
     }
 
+    // prev and next arrow icons
     .fc .fc-icon {
         font-size: max(1.5vmin, 15px);
-    }
-
-    .fc .fc-button-primary {
-        background-color: ${(props) => props.theme.fillColor};
-        border-color: ${(props) => props.theme.fillColor};
-        color: black;
-    }
-
-    .fc .fc-button-primary:hover {
-        background-color: ${(props) => props.theme.fillColor};
-        border-color: ${(props) => props.theme.fillColor};
-        color: black;
     }
 `;
 
@@ -85,7 +77,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
     return (
         <>
-            {eventClick && <Modal eventClick={eventClick} setEventClick={setEventClick} />}
+            <Modal eventClick={eventClick} setEventClick={setEventClick} />
             <CalendarStyling>
                 <FullCalendar
                     viewClassNames="calendar-view"

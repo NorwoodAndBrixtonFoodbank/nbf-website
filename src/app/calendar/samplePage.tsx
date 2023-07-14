@@ -16,7 +16,7 @@ const SizedAspectRatio = styled.div`
 
 const SampleCalendar: React.FC<{}> = () => {
     /*
-    unless a timezone is specified, the ISO8601 standard assumes UTC (and therefore so does the date constructer). 
+    unless a timezone is specified, the ISO8601 standard assumes UTC (and therefore so does the date constructor). 
     The calendar will then display the date in the local timezone, which is why the date displayed is 1 hour 
     later than the date specified when in BST. When printing to the console, a JS Date object will also be displayed 
     in the local timezone but is internally stored as UTC.
