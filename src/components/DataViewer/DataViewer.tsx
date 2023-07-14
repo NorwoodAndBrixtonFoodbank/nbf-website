@@ -29,7 +29,7 @@ const Header = styled.h3`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #EEEEEE;
+    background-color: #eeeeee;
     padding: 0.5rem;
     margin-top: 0;
 `;
