@@ -27,8 +27,6 @@
   "dependencies": {
     "@cypress/code-coverage": "^3.10.7",
     "@emotion/is-prop-valid": "^1.2.1",
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
@@ -76,11 +74,5 @@
     "styled-components": "^6.0.0-rc.3",
     "supabase": "^1.68.6",
     "typescript": "5.0.4"
-  },
-  "devDependencies": {
-    "@babel/plugin-transform-typescript": "^7.22.5",
-    "@babel/preset-typescript": "^7.22.5",
-    "@types/react-modal": "^3.16.0",
-    "babel-plugin-styled-components": "^2.1.4"
   }
 }

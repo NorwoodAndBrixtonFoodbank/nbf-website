@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Calendar, { CalendarEvent as CalendarEvent } from "../../components/Calendar/Calendar";
+import Calendar, { CalendarEvent } from "../../components/Calendar/Calendar";
 import { styled } from "styled-components";
 
 const Centerer = styled.div`
@@ -19,8 +19,8 @@ const SampleCalendar: React.FC<{}> = () => {
         {
             id: "a",
             title: "event1",
-            start: new Date("2023-07-11"), // default Date constructor assumes UTC by default
-            end: new Date("2023-07-12"),
+            start: new Date("2023-07-11"), // unless a timezone is specified, the ISO8601 standard assumes UTC (and therefore so does the date constructer). the calendar will then display the date in the local timezone,
+            end: new Date("2023-07-12"), // which is why the date displayed is 1 hour later than the date specified when in BST. When printing to the console, a JS Date object will also be displayed in the local timezone but is internally stored as UTC.
             backgroundColor: "red",
             textColor: "black",
             allDay: true,
