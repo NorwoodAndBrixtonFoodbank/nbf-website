@@ -2,15 +2,7 @@ import React from "react";
 import Calendar, { CalendarEvent } from "./Calendar";
 
 describe("<CalendarComponent />", () => {
-    let today: Date;
-    let currentMonth: string;
-    let currentYear: number;
-
-    beforeEach(() => {
-        today = new Date();
-        currentMonth = today.toLocaleDateString("en-GB", { month: "long" });
-        currentYear = today.getFullYear();
-    });
+    const today: Date = new Date();
 
     const sampleEvents: CalendarEvent[] = [
         {
@@ -32,8 +24,13 @@ describe("<CalendarComponent />", () => {
     });
 
     it("calendar is set to the current month when rendered in dayGridMonth", () => {
+        const currentMonthYear = today.toLocaleDateString("en-GB", {
+            month: "long",
+            year: "numeric",
+        });
+
         cy.mount(<Calendar initialEvents={[]} />);
-        cy.get(".fc-toolbar-title").should("have.text", `${currentMonth} ${currentYear}`);
+        cy.get(".fc-toolbar-title").should("have.text", currentMonthYear);
     });
 
     it("events render", () => {
@@ -53,28 +50,29 @@ describe("<CalendarComponent />", () => {
     });
 
     it("can change view between months in dayGridMonth", () => {
+        const prevMonth: Date = new Date(today.getTime());
+        prevMonth.setMonth((today.getMonth() + 11) % 12);
+        const prevMonthYear = prevMonth.toLocaleString("en-GB", { month: "long", year: "numeric" });
+
         cy.mount(<Calendar initialEvents={[]} />);
         cy.get("button.fc-prev-button").click();
 
-        today.setMonth(today.getMonth() + 11);
-
-        cy.get(".fc-toolbar-title").should(
-            "have.text",
-            `${today.toLocaleString("en-GB", { month: "long" })} ${currentYear}`
-        );
+        cy.get(".fc-toolbar-title").should("have.text", prevMonthYear);
     });
 
     it("can change view between days in timeGridDay", () => {
+        const yesterday: Date = new Date(today.getTime());
+        yesterday.setDate(today.getDate() + 1);
+        const yesterdayDMY = yesterday
+            .toLocaleString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+            .split(" ");
+
         cy.mount(<Calendar initialEvents={[]} view="timeGridDay" />);
         cy.get("button.fc-next-button").click();
 
-        today.setDate(today.getDate() + 1);
-
         cy.get(".fc-toolbar-title").should(
             "have.text",
-            `${today.toLocaleString("en-GB", { month: "long" })} ${today.toLocaleString("en-GB", {
-                day: "numeric",
-            })}, ${currentYear}`
+            `${yesterdayDMY[1]} ${yesterdayDMY[0]}, ${yesterdayDMY[2]}`
         );
     });
 
