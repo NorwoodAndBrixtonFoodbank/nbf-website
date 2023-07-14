@@ -28,6 +28,7 @@ const [bool, setBool] = useState(false);
 ```typescript jsx
 <CheckboxInput label="Option 1" onChange={getCheckboxHandler(setBool)} />
 ````
+
 \
 Similarly, for a `<DropdownListInput />` component:
 

@@ -2,7 +2,7 @@ import React from "react";
 import { SelectChangeEvent } from "@mui/material";
 
 type valueSetter = {
-    (value: any): void;
+    (value: string): void;
 };
 
 type booleanSetter = {
@@ -14,12 +14,12 @@ type changeEventHandler = {
 };
 
 type selectChangeEventHandler = {
-    (event: SelectChangeEvent<unknown>): void;
+    (event: SelectChangeEvent): void;
 };
 
 const getValueChangeHandler = (setValue: valueSetter): changeEventHandler => {
     return (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValue((event.target as HTMLInputElement).value);
+        setValue(event.target.value);
     };
 };
 
@@ -32,13 +32,13 @@ export const getRadioGroupHandler = (setValue: valueSetter): changeEventHandler 
 };
 
 export const getDropdownListHandler = (setValue: valueSetter): selectChangeEventHandler => {
-    return (event: SelectChangeEvent<unknown>) => {
+    return (event: SelectChangeEvent) => {
         setValue(event.target.value);
     };
 };
 
 export const getCheckboxHandler = (setBoolean: booleanSetter): changeEventHandler => {
     return (event: React.ChangeEvent<HTMLInputElement>) => {
-        setBoolean((event.target as HTMLInputElement).checked);
+        setBoolean(event.target.checked);
     };
 };

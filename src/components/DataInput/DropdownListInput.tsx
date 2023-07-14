@@ -7,7 +7,7 @@ interface Props {
     labelsAndValues: [string, string][];
     listTitle?: string;
     defaultValue?: string;
-    onChange?: (event: SelectChangeEvent<unknown>) => void;
+    onChange?: (event: SelectChangeEvent) => void;
 }
 
 const DropdownListInput: React.FC<Props> = (props) => {

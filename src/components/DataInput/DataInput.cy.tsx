@@ -52,9 +52,8 @@ describe("Data Input Components", () => {
     });
 
     it("renders without optional props", () => {
-        cy.mount(
-            <CheckboxInput onChange={getCheckboxHandler(() => console.log("Checkbox Changed"))} />
-        );
+        cy.mount(<CheckboxInput />);
+        cy.mount(<FreeFormTextInput />);
         cy.mount(
             <DropdownListInput
                 labelsAndValues={[
@@ -62,12 +61,6 @@ describe("Data Input Components", () => {
                     ["B", "b"],
                     ["C", "c"],
                 ]}
-                onChange={getDropdownListHandler(() => console.log("Dropdown Changed"))}
-            />
-        );
-        cy.mount(
-            <FreeFormTextInput
-                onChange={getFreeFormTextHandler(() => console.log("Freeform Changed"))}
             />
         );
         cy.mount(
@@ -77,7 +70,6 @@ describe("Data Input Components", () => {
                     ["B", "b"],
                     ["C", "c"],
                 ]}
-                onChange={getRadioGroupHandler(() => console.log("Radio Changed"))}
             />
         );
     });
@@ -100,7 +92,7 @@ describe("Data Input Components", () => {
 
         it("Change handler for dropdown works", () => {
             const onChangeSpy = cy.spy().as("onChangeSpy");
-            const unwrapEvent = (e: SelectChangeEvent<unknown>): void => {
+            const unwrapEvent = (e: SelectChangeEvent): void => {
                 onChangeSpy(e.target.value);
             };
 
