@@ -2,20 +2,17 @@ import React from "react";
 import Calendar, { CalendarEvent } from "./Calendar";
 
 describe("<CalendarComponent />", () => {
-    const today: Date = new Date();
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
 
     const sampleEvents: CalendarEvent[] = [
         {
             id: "a",
             title: "event1",
-            start: new Date("2023-07-11"),
-            end: new Date("2023-07-12"),
-        },
-        {
-            id: "b",
-            title: "event2",
-            start: new Date("2023-07-12"),
-            end: new Date("2023-07-13"),
+            start: today,
+            end: tomorrow,
+            allDay: true,
         },
     ];
 
@@ -35,6 +32,7 @@ describe("<CalendarComponent />", () => {
 
     it("events render", () => {
         cy.mount(<Calendar initialEvents={sampleEvents} />);
+        cy.get(".fc-event").should("be.visible");
     });
 
     it("can change view to timeGridDay", () => {
@@ -50,7 +48,7 @@ describe("<CalendarComponent />", () => {
     });
 
     it("can change view between months in dayGridMonth", () => {
-        const prevMonth: Date = new Date(today.getTime());
+        const prevMonth: Date = new Date();
         prevMonth.setMonth((today.getMonth() + 11) % 12);
         const prevMonthYear = prevMonth.toLocaleString("en-GB", { month: "long", year: "numeric" });
 
@@ -61,9 +59,7 @@ describe("<CalendarComponent />", () => {
     });
 
     it("can change view between days in timeGridDay", () => {
-        const yesterday: Date = new Date(today.getTime());
-        yesterday.setDate(today.getDate() + 1);
-        const yesterdayDMY = yesterday
+        const tomorrowDMY = tomorrow
             .toLocaleString("en-GB", { day: "numeric", month: "long", year: "numeric" })
             .split(" ");
 
@@ -72,7 +68,7 @@ describe("<CalendarComponent />", () => {
 
         cy.get(".fc-toolbar-title").should(
             "have.text",
-            `${yesterdayDMY[1]} ${yesterdayDMY[0]}, ${yesterdayDMY[2]}`
+            `${tomorrowDMY[1]} ${tomorrowDMY[0]}, ${tomorrowDMY[2]}`
         );
     });
 
