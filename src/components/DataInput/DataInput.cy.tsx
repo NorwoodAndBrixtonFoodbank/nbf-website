@@ -9,6 +9,7 @@ import {
     getDropdownListHandler,
     getRadioGroupHandler,
 } from "@/components/DataInput/inputHandlerFactories";
+import { SelectChangeEvent } from "@mui/material";
 
 describe("Data Input Components", () => {
     it("renders", () => {
@@ -84,7 +85,7 @@ describe("Data Input Components", () => {
     describe("Change Handlers", () => {
         it("Change handler for checkbox works", () => {
             const onChangeSpy = cy.spy().as("onChangeSpy");
-            const unwrapEvent = (e: any): void => {
+            const unwrapEvent = (e: React.ChangeEvent<HTMLInputElement>): void => {
                 onChangeSpy(e.target.checked);
             };
 
@@ -99,7 +100,7 @@ describe("Data Input Components", () => {
 
         it("Change handler for dropdown works", () => {
             const onChangeSpy = cy.spy().as("onChangeSpy");
-            const unwrapEvent = (e: any): void => {
+            const unwrapEvent = (e: SelectChangeEvent<unknown>): void => {
                 onChangeSpy(e.target.value);
             };
 
@@ -116,7 +117,7 @@ describe("Data Input Components", () => {
                 />
             );
 
-            cy.get("div[class^='MuiSelect'").click();
+            cy.get("div[class^='MuiSelect']").click();
 
             cy.get("li[data-value='a']").click();
             cy.get("@onChangeSpy").should("have.been.calledWith", "a");
@@ -130,7 +131,7 @@ describe("Data Input Components", () => {
 
         it("Change handler for freeform text works", () => {
             const onChangeSpy = cy.spy().as("onChangeSpy");
-            const unwrapEvent = (e: any): void => {
+            const unwrapEvent = (e: React.ChangeEvent<HTMLInputElement>): void => {
                 onChangeSpy(e.target.value);
             };
 
@@ -142,7 +143,7 @@ describe("Data Input Components", () => {
 
         it("Change handler for radio group works", () => {
             const onChangeSpy = cy.spy().as("onChangeSpy");
-            const unwrapEvent = (e: any): void => {
+            const unwrapEvent = (e: React.ChangeEvent<HTMLInputElement>): void => {
                 onChangeSpy(e.target.value);
             };
 

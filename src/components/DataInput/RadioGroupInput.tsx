@@ -8,7 +8,7 @@ import { FormControl, FormControlLabel, FormLabel, Radio } from "@mui/material";
 interface Props {
     labelsAndValues: [string, string][];
     groupTitle?: string;
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const RadioGroupInput: React.FC<Props> = (props) => {

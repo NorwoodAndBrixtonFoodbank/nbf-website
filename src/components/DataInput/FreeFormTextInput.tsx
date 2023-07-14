@@ -6,7 +6,7 @@ import { TextField } from "@mui/material";
 interface Props {
     label?: string;
     defaultValue?: string;
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const FreeFormTextInput: React.FC<Props> = (props) => {

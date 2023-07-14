@@ -5,7 +5,7 @@ import { Checkbox, FormControl, FormControlLabel } from "@mui/material";
 
 interface Props {
     label?: string;
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const CheckboxInput: React.FC<Props> = (props) => {

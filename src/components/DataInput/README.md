@@ -6,7 +6,7 @@ The following document contains information on how to use the input handler fact
 * `<DropdownListInput />`
 * `<CheckboxInput />`
 
-Each component has an `onChange` prop used to handle change events on the values of the input component *e.g.* when someone clicks an option on a dropdown list. 
+Each component has an `onChange` prop used to handle change events on the values of the input component -  for example, when someone clicks an option on a dropdown list. 
 
 ## Input Handler Factories
 For most use cases, the event handler function passed to the `onChange` prop will be used to set the value of some state variable in the parent component.
@@ -20,23 +20,31 @@ The provided factory functions are as follows:
 * `getCheckboxHandler(setBoolean)`
 
 For example, in changing a state variable `bool` using a `<CheckboxInput />` component, the event handler `getCheckboxHandler` may be used in the following manner:
-    
-`const [bool, setBool] = useState(false);`
 
-    <CheckboxInput label="Option 1" onChange={getCheckboxHandler(setBool)} />
+```typescript jsx
+const [bool, setBool] = useState(false);
+```
+
+```typescript jsx
+<CheckboxInput label="Option 1" onChange={getCheckboxHandler(setBool)} />
+````
 \
 Similarly, for a `<DropdownListInput />` component:
 
-`const [selectedValue, setSelectedValue] = useState("");`
+```typescript jsx
+const [selectedValue, setSelectedValue] = useState("");
+```
 
-    <DropdownListInput
-        labelsAndValues={[
-            ["Option 1", "value_1"],
-            ["Option 2", "value_2"],
-            ["Option 3", "value_3"],
-        ]}
-        listTitle="w"
-        onChange={getDropdownListHandler(setSelectedValue)}
-    />
+```typescript jsx
+<DropdownListInput
+    labelsAndValues={[
+        ["Option 1", "value_1"],
+        ["Option 2", "value_2"],
+        ["Option 3", "value_3"],
+    ]}
+    listTitle="w"
+    onChange={getDropdownListHandler(setSelectedValue)}
+/>
+```
 
 
