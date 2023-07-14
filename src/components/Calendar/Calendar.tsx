@@ -8,7 +8,6 @@ import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import { EventClickArg } from "@fullcalendar/core";
 import styled from "styled-components";
 import { Dialog } from "@mui/material";
-import { EventImpl } from "@fullcalendar/core/internal";
 
 interface CalendarProps {
     initialEvents: CalendarEvent[];
@@ -139,13 +138,15 @@ const Calendar: React.FC<CalendarProps> = ({
                     <p>Event Title: {eventClick?.title}</p>
                     <p>
                         Start:
-                        {eventClick && new Date(eventClick.start).toLocaleString("en-GB", dateFormatOptions)}
+                        {eventClick &&
+                            new Date(eventClick.start).toLocaleString("en-GB", dateFormatOptions)}
                     </p>
                     <p>
                         End:
-                        {eventClick && new Date(eventClick.end).toLocaleString("en-GB", dateFormatOptions)}
+                        {eventClick &&
+                            new Date(eventClick.end).toLocaleString("en-GB", dateFormatOptions)}
                     </p>
-                    <p>Description: {eventClick && eventClick.description}</p> 
+                    <p>Description: {eventClick && eventClick.description}</p>
                 </ModalInner>
             </StyledDialog>
             <CalendarStyling>
