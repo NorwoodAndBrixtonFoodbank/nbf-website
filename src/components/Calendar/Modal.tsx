@@ -12,7 +12,7 @@ const StyledDialog = styled(Dialog)`
     }
 `;
 
-const StyledCancelButton = styled.button`
+const StyledCloseButton = styled.button`
     position: absolute;
     right: 20px;
     top: 20px;
@@ -37,28 +37,27 @@ const Modal: React.FC<{
     eventClick: CalendarEvent | null;
     setEventClick: (data: CalendarEvent | null) => void;
 }> = ({ eventClick, setEventClick }) => {
+    if (!eventClick) {
+        return <></>;
+    }
     return (
         <StyledDialog open={eventClick !== null} onClose={() => setEventClick(null)}>
-            <StyledCancelButton type="button" onClick={() => setEventClick(null)}>
+            <StyledCloseButton type="button" onClick={() => setEventClick(null)}>
                 close
-            </StyledCancelButton>
-            {eventClick ? (
-                <ModalInner>
-                    <h2>View Event</h2>
-                    <p>Event Title: {eventClick.title}</p>
-                    <p>
-                        Start:
-                        {new Date(eventClick.start).toLocaleString("en-GB", dateFormatOptions)}
-                    </p>
-                    <p>
-                        End:
-                        {new Date(eventClick.end).toLocaleString("en-GB", dateFormatOptions)}
-                    </p>
-                    <p>Description: {eventClick.description}</p>
-                </ModalInner>
-            ) : (
-                <></>
-            )}
+            </StyledCloseButton>
+            <ModalInner>
+                <h2>View Event</h2>
+                <p>Event Title: {eventClick.title}</p>
+                <p>
+                    Start:
+                    {new Date(eventClick.start).toLocaleString("en-GB", dateFormatOptions)}
+                </p>
+                <p>
+                    End:
+                    {new Date(eventClick.end).toLocaleString("en-GB", dateFormatOptions)}
+                </p>
+                <p>Description: {eventClick.description}</p>
+            </ModalInner>
         </StyledDialog>
     );
 };
