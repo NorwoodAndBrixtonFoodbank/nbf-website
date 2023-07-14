@@ -65,8 +65,8 @@ const Table: React.FC<Props> = (props) => {
     });
 
     const onFilter = (e: React.ChangeEvent<HTMLInputElement>, filterField: string): void => {
-        setFilterText({...filterText, [filterField]: e.target.value })
-    }
+        setFilterText({ ...filterText, [filterField]: e.target.value });
+    };
 
     const handleClear: () => void = () => {
         if (filterText) {
@@ -81,7 +81,12 @@ const Table: React.FC<Props> = (props) => {
                     columns={columns}
                     data={filteredNoNullItems(props.headers, props.data, filterText)}
                     subHeader
-                    subHeaderComponent={TableFilterBar({filterText, onFilter, handleClear, headers: props.headers})}
+                    subHeaderComponent={TableFilterBar({
+                        filterText,
+                        onFilter,
+                        handleClear,
+                        headers: props.headers,
+                    })}
                     pagination
                     selectableRows
                     persistTableHead
