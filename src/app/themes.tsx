@@ -5,12 +5,30 @@ import { useServerInsertedHTML } from "next/navigation";
 import React, { useState } from "react";
 import { ServerStyleSheet, StyleSheetManager, ThemeProvider } from "styled-components";
 
-export const currentTheme = {
+export const lightTheme = {
     foregroundColor: "#000",
-    backgroundColor: "#DDD",
-    fillColor: "lightgreen",
-    fonts: ["Comic Sans MS", "Comic Sans", "cursive"],
+    backgroundColor: "#fff",
+    primaryForegroundColor: "#fff",
+    primaryBackgroundColor: "#007947",
+    secondaryForegroundColor: "#000",
+    secondaryBackgroundColor: "#63a036",
+    accentColor: "#3889cd",
+    surfaceForegroundColor: "#000",
+    surfaceBackgroundColor: "#b3dbd1",
+    errorColor: "#ff624e"
 };
+
+
+// tertiaryColor
+// disabledColor
+// pressedColor
+
+
+export const darkTheme = {
+    ...lightTheme, 
+    backgroundColor: "#1f1a24",
+    foregroundColor: "#fff",
+}
 
 interface Props {
     children: React.ReactElement;
@@ -35,7 +53,7 @@ const StyleManager: React.FC<Props> = ({ children }) => {
 
     return (
         <StyleSheetManager sheet={serverStyleSheet.instance}>
-            <ThemeProvider theme={currentTheme}>
+            <ThemeProvider theme={darkTheme}>
                 <>
                     <GlobalStyle />
                     {children}

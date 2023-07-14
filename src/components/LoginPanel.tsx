@@ -1,6 +1,6 @@
 "use client";
 
-import { currentTheme } from "@/app/themes";
+import { lightTheme } from "@/app/themes";
 import { DatabaseAutoType } from "@/supabase";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Auth } from "@supabase/auth-ui-react";
@@ -29,11 +29,11 @@ const LoginPanel: React.FC<{}> = () => {
                     variables: {
                         default: {
                             colors: {
-                                inputLabelText: currentTheme.foregroundColor,
-                                anchorTextColor: currentTheme.foregroundColor,
-                                brand: currentTheme.fillColor,
-                                brandAccent: currentTheme.fillColor,
-                                brandButtonText: currentTheme.foregroundColor,
+                                inputLabelText: lightTheme.foregroundColor,
+                                anchorTextColor: lightTheme.foregroundColor,
+                                brand: lightTheme.surfaceBackgroundColor,
+                                brandAccent: lightTheme.surfaceBackgroundColor,
+                                brandButtonText: lightTheme.foregroundColor,
                             },
                         },
                     },
