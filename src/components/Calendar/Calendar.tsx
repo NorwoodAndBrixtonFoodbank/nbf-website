@@ -112,12 +112,11 @@ const Calendar: React.FC<CalendarProps> = ({
     editable = false,
     handleDateClick,
 }) => {
-    const [modalViewEvent, setModalViewEvent] = useState(false);
-    const [eventClick, setEventClick] = useState<EventImpl | null>(null);
+    const [eventClick, setEventClick] = useState<CalendarEvent | null>(null);
 
     function handleEventClick(info: EventClickArg): void {
-        setModalViewEvent(true);
-        setEventClick(info.event);
+        const id = info.event.id;
+        setEventClick(initialEvents.find((e) => e.id === id) ?? null);
     }
 
     const dateFormatOptions: Intl.DateTimeFormatOptions = {
@@ -131,8 +130,8 @@ const Calendar: React.FC<CalendarProps> = ({
 
     return (
         <>
-            <StyledDialog open={modalViewEvent} onClose={() => setModalViewEvent(false)}>
-                <StyledCancelButton type="button" onClick={() => setModalViewEvent(false)}>
+            <StyledDialog open={eventClick !== null} onClose={() => setEventClick(null)}>
+                <StyledCancelButton type="button" onClick={() => setEventClick(null)}>
                     close
                 </StyledCancelButton>
                 <ModalInner>
@@ -140,13 +139,13 @@ const Calendar: React.FC<CalendarProps> = ({
                     <p>Event Title: {eventClick?.title}</p>
                     <p>
                         Start:
-                        {new Date(eventClick?.startStr!).toLocaleString("en-GB", dateFormatOptions)}
+                        {eventClick && new Date(eventClick.start).toLocaleString("en-GB", dateFormatOptions)}
                     </p>
                     <p>
                         End:
-                        {new Date(eventClick?.endStr!).toLocaleString("en-GB", dateFormatOptions)}
+                        {eventClick && new Date(eventClick.end).toLocaleString("en-GB", dateFormatOptions)}
                     </p>
-                    <p>Description: {eventClick?.extendedProps.description}</p>
+                    <p>Description: {eventClick && eventClick.description}</p> 
                 </ModalInner>
             </StyledDialog>
             <CalendarStyling>
