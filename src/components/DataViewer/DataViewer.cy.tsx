@@ -1,10 +1,13 @@
 import React from "react";
-import DataViewerWithButton from "./SampleDataViewerWithButton";
+import DataViewerWithButton from "@/components/DataViewer/SampleDataViewerWithButton";
+
+const longString = "abcdefghijklmnopqrstuvwxyz".repeat(20);
+
+const longName = `John With A ${"Very ".repeat(20)}Long Name`;
 
 const data = {
-    id: "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
-    full_name:
-        "John With A Very Very Very Very Very Very Very Very Very Very Very Very Very Long Name",
+    id: longString,
+    full_name: longName,
     phone_number: 1234567,
     dietary_requirements: null,
 };
@@ -37,12 +40,10 @@ describe("<DataViewerWithButton />", () => {
 
         cy.get("button").click();
 
-        cy.contains(
-            "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
-        );
-        cy.contains(
-            "John With A Very Very Very Very Very Very Very Very Very Very Very Very Very Long Name"
-        );
+        cy.contains(longString);
+        cy.contains(longName);
         cy.contains("1234567");
+
+        cy.contains("DIETARY REQUIREMENTS");
     });
 });

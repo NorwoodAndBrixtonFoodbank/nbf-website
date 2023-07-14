@@ -2,12 +2,11 @@ import React, { ReactElement } from "react";
 import styled from "styled-components";
 import Modal from "react-modal";
 import CloseIcon from "@mui/icons-material/Close";
-interface DataViewerProps {
-    data: { [key: string]: string | number | null };
-    header: ReactElement | string;
-    isOpen: boolean;
-    onRequestClose: () => void;
+
+export interface Data {
+    [key: string]: string | number | null;
 }
+
 const StyledModal = styled(Modal)`
     display: flex;
     flex-direction: column;
@@ -65,7 +64,7 @@ const ClearButton: React.FC<ClearButtonProps> = (props) => {
         </CloseButton>
     );
 };
-const JSONContent: React.FC<{ [key: string]: string | number | null }> = (data) => {
+const JSONContent: React.FC<Data> = (data) => {
     return Object.entries(data).map(([key, value]) => {
         return (
             <EachItem key={key}>
@@ -75,6 +74,15 @@ const JSONContent: React.FC<{ [key: string]: string | number | null }> = (data) 
         );
     });
 };
+
+interface DataViewerProps {
+    data: Data;
+    header: ReactElement | string;
+    isOpen: boolean;
+    onRequestClose: () => void;
+}
+
+
 const DataViewer: React.FC<DataViewerProps> = (props) => {
     const closeModal: () => void = () => {
         props.onRequestClose();
@@ -82,11 +90,14 @@ const DataViewer: React.FC<DataViewerProps> = (props) => {
     if (!props.isOpen) {
         return <></>;
     }
+
+    Modal.setAppElement('#modal-parent');
+
     return (
         <StyledModal
             isOpen={true}
             onRequestClose={closeModal}
-            ariaHideApp={false}
+            ariaHideApp={true}
             contentLabel="Data viewer"
         >
             <Header>
