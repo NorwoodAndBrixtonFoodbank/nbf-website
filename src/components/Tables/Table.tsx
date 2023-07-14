@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import TableFilterBar from "./TableFilterBar";
+import TableFilterBar, { FilterText } from "./TableFilterBar";
 
 interface Row {
     [key: string]: string | number;
@@ -11,48 +11,14 @@ interface Headers {
     [key: string]: string;
 }
 
-interface Datum {
+export interface Datum {
     [key: string]: string | number | null;
-}
-
-interface FilterText {
-    [key: string]: string;
 }
 
 interface Props {
     data: Datum[];
     headers: Headers;
 }
-
-interface SubHeaderComponentProps {
-    filterText: Headers;
-    setFilterText: React.Dispatch<
-        React.SetStateAction<{
-            [key: string]: string;
-        }>
-    >;
-    headers: Headers;
-}
-
-const subHeaderComponent: React.FC<SubHeaderComponentProps> = (props) => {
-    const handleClear: () => void = () => {
-        if (props.filterText) {
-            props.setFilterText({});
-        }
-    };
-    return (
-        <TableFilterBar
-            onFilter={(e: React.ChangeEvent<HTMLInputElement>, filterField: string): void => {
-                const filterTextCopy = { ...props.filterText };
-                filterTextCopy[filterField] = e.target.value;
-                props.setFilterText(filterTextCopy);
-            }}
-            onClear={handleClear}
-            filterText={props.filterText}
-            headers={props.headers}
-        />
-    );
-};
 
 const itemIncludesFilterText = (headers: Headers, item: Datum, filterText: FilterText): boolean => {
     for (const key of Object.keys(headers)) {
@@ -98,6 +64,16 @@ const Table: React.FC<Props> = (props) => {
         };
     });
 
+    const onFilter = (e: React.ChangeEvent<HTMLInputElement>, filterField: string): void => {
+        setFilterText({...filterText, [filterField]: e.target.value })
+    }
+
+    const handleClear: () => void = () => {
+        if (filterText) {
+            setFilterText({});
+        }
+    };
+
     return (
         <>
             {domLoaded && (
@@ -105,11 +81,7 @@ const Table: React.FC<Props> = (props) => {
                     columns={columns}
                     data={filteredNoNullItems(props.headers, props.data, filterText)}
                     subHeader
-                    subHeaderComponent={subHeaderComponent({
-                        filterText,
-                        setFilterText,
-                        headers: props.headers,
-                    })}
+                    subHeaderComponent={TableFilterBar({filterText, onFilter, handleClear, headers: props.headers})}
                     pagination
                     selectableRows
                     persistTableHead

@@ -1,6 +1,6 @@
 import supabase, { Schema } from "@/supabase";
 import { Metadata } from "next";
-import Table from "@/components/Tables/Table";
+import Table, { Datum } from "@/components/Tables/Table";
 import React from "react";
 
 const dataFetch: () => Promise<Schema["clients"][] | null> = async () => {
@@ -9,15 +9,10 @@ const dataFetch: () => Promise<Schema["clients"][] | null> = async () => {
 };
 
 const Clients: () => Promise<React.ReactElement> = async () => {
-    const data = await dataFetch();
+    let data: Datum[] | null = await dataFetch();
 
     if (data === null) {
-        return (
-            <main>
-                <h1> Clients Page </h1>
-                <p> Error: Data not found</p>
-            </main>
-        );
+        data = [];
     }
 
     const headers: { [key: string]: string } = {
