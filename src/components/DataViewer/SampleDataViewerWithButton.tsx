@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import DataViewer from "@/components/DataViewer/DataViewer";
-import PhoneIcon from "../Icons/PhoneIcon";
+// import PhoneIcon from "../Icons/PhoneIcon";
 import styled from "styled-components";
 
 interface ViewerProps {
@@ -35,7 +35,7 @@ const SampleDataViewerWithButton: React.FC<ViewerProps> = ({ data }) => {
                 data={data}
                 header={
                     <Header>
-                        <PhoneIcon />
+                        {/* <PhoneIcon /> */}
                         <Title>Client Details</Title>
                     </Header>
                 }
