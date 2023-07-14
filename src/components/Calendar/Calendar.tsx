@@ -58,24 +58,6 @@ const ModalInner = styled.div`
     row-gap: 1rem;
 `;
 
-// const StyledCalendar = styled(FullCalendar)`
-//     /* & > div > div > div > button {
-//         height: max(3vmin, 25px)!important;
-//         font-size: max(1.5vmin, 10px)!important;
-//         text-align: center;
-//         vertical-align: middle;
-//         padding: 0 10px 0 10px  !important;
-//     }
-
-//     .fc-icon {
-//         font-size: max(1.5vmin, 10px)!important;
-//     } */
-//     background-color: orange!important;
-//     > div {
-//         transform: translate(50%, 50%);
-//     }
-// `;
-
 const CalendarStyling = styled.div`
     .fc {
         background-color: white;
