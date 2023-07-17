@@ -26,6 +26,9 @@
   },
   "dependencies": {
     "@cypress/code-coverage": "^3.10.7",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/roboto": "^5.0.5",
     "@emotion/is-prop-valid": "^1.2.1",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
