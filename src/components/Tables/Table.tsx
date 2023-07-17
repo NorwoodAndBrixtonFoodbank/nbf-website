@@ -110,6 +110,7 @@ const Table: React.FC<Props> = (props) => {
                 onClick={() => toggleOwnCheckBox(Number(row.checkBoxKey))}
             />
         ),
+        width: "47px",
     });
 
     const onFilter = (event: React.ChangeEvent<HTMLInputElement>, filterField: string): void => {
