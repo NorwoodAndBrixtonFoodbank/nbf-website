@@ -92,7 +92,7 @@ describe("<Table />", () => {
     it("sorting is correct", () => {
         cy.mount(<Table data={data} headers={headers} />);
         cy.get("div").contains("Name").parent().click();
-        cy.get("div[data-column-id='1'][role='cell']").as("table");
+        cy.get("div[data-column-id='2'][role='cell']").as("table");
         cy.get("@table").eq(0).contains("Adrian Key");
         cy.get("@table").eq(1).contains("Agnes Rosales");
         cy.get("div").contains("Name").parent().click();
@@ -110,7 +110,7 @@ describe("<Table />", () => {
 
     it("pagination page change is working", () => {
         cy.mount(<Table data={data} headers={headers} />);
-        cy.get("div[data-column-id='1'][role='cell']").as("table");
+        cy.get("div[data-column-id='2'][role='cell']").as("table");
         cy.get("@table").eq(0).contains("Tom");
         cy.get("button[id='pagination-next-page']").click();
         cy.get("@table").eq(0).contains("Forbes Doyle");
@@ -119,7 +119,7 @@ describe("<Table />", () => {
     it("pagination number of items is working", () => {
         cy.mount(<Table data={data} headers={headers} />);
         cy.get("select[aria-label='Rows per page:']").select("15");
-        cy.get("div[data-column-id='1'][role='cell']").as("table");
+        cy.get("div[data-column-id='2'][role='cell']").as("table");
         cy.get("@table").eq(14).contains("Chloe");
         cy.get("@table").eq(15).should("not.exist");
     });
