@@ -1,12 +1,10 @@
 import { Metadata } from "next";
 import React from "react";
-import SampleCalendar from "./samplePage";
 
 const CalendarPage: React.FC<{}> = () => {
     return (
         <main>
             <h1>Calendar Page</h1>
-            <SampleCalendar />
         </main>
     );
 };
