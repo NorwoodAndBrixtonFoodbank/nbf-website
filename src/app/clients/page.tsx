@@ -9,7 +9,7 @@ const dataFetch: () => Promise<Schema["clients"][] | null> = async () => {
 };
 
 const Clients: () => Promise<React.ReactElement> = async () => {
-    const data: Datum[] | null = (await dataFetch()) ?? [];
+    const data: Datum[] = (await dataFetch()) ?? [];
 
     const headers = {
         full_name: "Name",

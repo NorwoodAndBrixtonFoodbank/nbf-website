@@ -5,7 +5,7 @@ import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
 
 interface Row {
-    checkBoxKey: number;
+    id: number;
     [key: string]: string | number;
 }
 interface Headers {
@@ -35,20 +35,23 @@ const itemIncludesFilterText = (headers: Headers, item: Datum, filterText: Filte
     return true;
 };
 
-const filteredNoNullItems = (headers: Headers, data: Datum[], filterText: FilterText): Row[] => {
-    let row = 0;
-    return data.reduce((filteredNoNullList: Row[], item: Datum, currentIndex: number) => {
-        if (itemIncludesFilterText(headers, item, filterText)) {
-            const noNullItem: Row = { checkBoxKey: currentIndex };
-            for (const key of Object.keys(headers)) {
-                noNullItem[key] = item[key] ?? "";
-            }
-            noNullItem.id = row;
-            filteredNoNullList.push(noNullItem);
-            row++;
+const datumToRowItems = (headers: Headers, data: Datum[]): Row[] => {
+    return data.map((item: Datum, currentIndex: number) => {
+        const rowItem: Row = { id: currentIndex };
+        for (const key of Object.keys(headers)) {
+            rowItem[key] = item[key] ?? "";
         }
-        return filteredNoNullList;
-    }, []);
+        return rowItem;
+    });
+};
+
+const filteredItems = (headers: Headers, datumToRowItems: Row[], filterText: FilterText): Row[] => {
+    return datumToRowItems.filter((item) => itemIncludesFilterText(headers, item, filterText));
+};
+const filterData = (headers: Headers, data: Datum[], filterText: FilterText): Row[] => {
+    const datumToRow = datumToRowItems(headers, data);
+    const filtered = filteredItems(headers, datumToRow, filterText);
+    return filtered;
 };
 
 const Table: React.FC<Props> = (props) => {
@@ -76,14 +79,11 @@ const Table: React.FC<Props> = (props) => {
     }, []);
 
     useEffect(() => {
-        let toggleFlag = true;
-        selectCheckBox.forEach((eachCheckBox) => {
-            if (!eachCheckBox) {
-                toggleFlag = false;
-            }
-        });
-        setSelectAllCheckBox(toggleFlag);
-    }, [selectCheckBox]);
+        const allChecked = selectCheckBox.every((item) => item);
+        if (allChecked !== selectAllCheckBox) {
+            setSelectAllCheckBox(allChecked);
+        }
+    }, [selectCheckBox, selectAllCheckBox]);
 
     const columns: TableColumn<Row>[] = Object.entries(props.headers).map(([key, value]) => {
         return {
@@ -105,9 +105,9 @@ const Table: React.FC<Props> = (props) => {
         cell: (row: Row) => (
             <input
                 type="checkbox"
-                aria-label={`Select row ${row.checkBoxKey}`}
-                checked={selectCheckBox[Number(row.checkBoxKey)]}
-                onClick={() => toggleOwnCheckBox(Number(row.checkBoxKey))}
+                aria-label={`Select row ${row.id}`}
+                checked={selectCheckBox[row.id]}
+                onClick={() => toggleOwnCheckBox(row.id)}
             />
         ),
         width: "47px",
@@ -130,8 +130,8 @@ const Table: React.FC<Props> = (props) => {
     return (
         <DataTable
             columns={columns}
-            data={filteredNoNullItems(props.headers, props.data, filterText)}
-            keyField="id"
+            data={filterData(props.headers, props.data, filterText)}
+            keyField="checkBoxKey"
             subHeader
             subHeaderComponent={
                 <TableFilterBar
