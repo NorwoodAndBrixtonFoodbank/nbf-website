@@ -77,8 +77,8 @@ describe("Data Input Components", () => {
     describe("Change Handlers", () => {
         it("Change handler for checkbox works", () => {
             const onChangeSpy = cy.spy().as("onChangeSpy");
-            const unwrapEvent = (e: React.ChangeEvent<HTMLInputElement>): void => {
-                onChangeSpy(e.target.checked);
+            const unwrapEvent = (event: React.ChangeEvent<HTMLInputElement>): void => {
+                onChangeSpy(event.target.checked);
             };
 
             cy.mount(<CheckboxInput label="A" onChange={unwrapEvent} />);
@@ -92,8 +92,8 @@ describe("Data Input Components", () => {
 
         it("Change handler for dropdown works", () => {
             const onChangeSpy = cy.spy().as("onChangeSpy");
-            const unwrapEvent = (e: SelectChangeEvent): void => {
-                onChangeSpy(e.target.value);
+            const unwrapEvent = (event: SelectChangeEvent): void => {
+                onChangeSpy(event.target.value);
             };
 
             cy.mount(
@@ -123,8 +123,8 @@ describe("Data Input Components", () => {
 
         it("Change handler for freeform text works", () => {
             const onChangeSpy = cy.spy().as("onChangeSpy");
-            const unwrapEvent = (e: React.ChangeEvent<HTMLInputElement>): void => {
-                onChangeSpy(e.target.value);
+            const unwrapEvent = (event: React.ChangeEvent<HTMLInputElement>): void => {
+                onChangeSpy(event.target.value);
             };
 
             cy.mount(<FreeFormTextInput label="FreeForm" onChange={unwrapEvent} />);
@@ -135,8 +135,8 @@ describe("Data Input Components", () => {
 
         it("Change handler for radio group works", () => {
             const onChangeSpy = cy.spy().as("onChangeSpy");
-            const unwrapEvent = (e: React.ChangeEvent<HTMLInputElement>): void => {
-                onChangeSpy(e.target.value);
+            const unwrapEvent = (event: React.ChangeEvent<HTMLInputElement>): void => {
+                onChangeSpy(event.target.value);
             };
 
             cy.mount(
