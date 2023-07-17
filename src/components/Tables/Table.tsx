@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import TableFilterBar, { FilterText } from "./TableFilterBar";
+import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
 
 interface Row {
     checkBoxKey: number;

@@ -1,5 +1,5 @@
 import React from "react";
-import Table from "./Table";
+import Table from "@/components/Tables/Table";
 
 describe("<Table />", () => {
     const data = [
