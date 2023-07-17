@@ -1,6 +1,7 @@
 "use client";
 
 import GlobalStyle from "@/app/global_styles";
+import isPropValid from "@emotion/is-prop-valid";
 import { useServerInsertedHTML } from "next/navigation";
 import React, { useState } from "react";
 import { ServerStyleSheet, StyleSheetManager, ThemeProvider } from "styled-components";
@@ -52,7 +53,7 @@ const StyleManager: React.FC<Props> = ({ children }) => {
     }
 
     return (
-        <StyleSheetManager sheet={serverStyleSheet.instance}>
+        <StyleSheetManager sheet={serverStyleSheet.instance} shouldForwardProp={isPropValid}>
             <ThemeProvider theme={darkTheme}>
                 <>
                     <GlobalStyle />
