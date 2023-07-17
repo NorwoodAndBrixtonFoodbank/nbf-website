@@ -1,6 +1,6 @@
 import supabase, { Schema } from "@/supabase";
 import { Metadata } from "next";
-import Table, { Datum } from "@/components/Tables/Table";
+import { Datum } from "@/components/Tables/Table";
 import React from "react";
 
 const dataFetch: () => Promise<Schema["clients"][] | null> = async () => {

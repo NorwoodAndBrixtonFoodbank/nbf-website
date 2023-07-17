@@ -77,7 +77,7 @@ describe("<Table />", () => {
         {
             full_name: "Harper Garrett",
             phone_number: 2171786554,
-        }
+        },
     ];
 
     const headers = {
@@ -146,7 +146,7 @@ describe("<Table />", () => {
         cy.get("input[aria-label='Select row 0']").should("be.checked");
         cy.get("input[aria-label='Select row 0']").click();
         cy.get("input[aria-label='Select row 0']").should("not.be.checked");
-    })
+    });
 
     it("checkbox toggles only the selected one", () => {
         cy.mount(<Table data={data} headers={headers} />);
@@ -162,7 +162,7 @@ describe("<Table />", () => {
         cy.get("input[aria-label='Select row 0']").should("not.be.checked");
         cy.get("input[aria-label='Select row 1']").should("not.be.checked");
         cy.get("input[aria-label='Select row 2']").should("be.checked");
-    })
+    });
 
     it("filtering does not affect checkbox", () => {
         cy.mount(<Table data={data} headers={headers} />);
@@ -171,7 +171,7 @@ describe("<Table />", () => {
         cy.get("input[placeholder='Filter by Name']").type("Sam");
         cy.get("input[placeholder='Filter by Name']").clear();
         cy.get("input[aria-label='Select row 0']").should("be.checked");
-    })
+    });
 
     it("changing page does not affect checkbox", () => {
         cy.mount(<Table data={data} headers={headers} />);
@@ -180,7 +180,7 @@ describe("<Table />", () => {
         cy.get("button[id='pagination-next-page']").click();
         cy.get("button[id='pagination-previous-page']").click();
         cy.get("input[aria-label='Select row 0']").should("be.checked");
-    })
+    });
 
     it("pagination limit does not affect checkbox", () => {
         cy.mount(<Table data={data} headers={headers} />);
@@ -199,7 +199,7 @@ describe("<Table />", () => {
 
         cy.get("input[aria-label='Select row 0']").should("be.checked");
         cy.get("input[aria-label='Select row 14']").should("be.checked");
-    })
+    });
 
     it("sorting does not affect checkbox", () => {
         cy.mount(<Table data={data} headers={headers} />);
@@ -213,10 +213,10 @@ describe("<Table />", () => {
         cy.get("div").contains("Name").parent().click();
         cy.get("input[aria-label='Select row 2']").should("be.checked");
         cy.get("div").contains("Name").parent().click();
-        
+
         cy.get("input[aria-label='Select row 0']").should("be.checked");
         cy.get("input[aria-label='Select row 2']").should("be.checked");
-    })
+    });
 
     it("checkall box toggles all data", () => {
         cy.mount(<Table data={smallerData} headers={headers} />);
@@ -224,7 +224,7 @@ describe("<Table />", () => {
         cy.get("input[aria-label='Select row 0']").should("be.checked");
         cy.get("input[aria-label='Select row 1']").should("be.checked");
         cy.get("input[aria-label='Select row 2']").should("be.checked");
-    })
+    });
 
     it("uncheck one checkbox uncheck the checkall box", () => {
         cy.mount(<Table data={smallerData} headers={headers} />);
@@ -235,14 +235,14 @@ describe("<Table />", () => {
         cy.get("input[aria-label='Select row 1']").should("be.checked");
         cy.get("input[aria-label='Select row 2']").should("be.checked");
         cy.get("input[aria-label='Select all rows']").should("not.be.checked");
-    })
+    });
 
     it("check all checkboxes check the checkall box", () => {
         cy.mount(<Table data={smallerData} headers={headers} />);
         cy.get("input[aria-label='Select row 0']").click();
         cy.get("input[aria-label='Select row 1']").click();
         cy.get("input[aria-label='Select row 2']").click();
-        
+
         cy.get("input[aria-label='Select all rows']").should("be.checked");
-    })
+    });
 });
