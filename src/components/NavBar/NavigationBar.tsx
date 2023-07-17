@@ -107,7 +107,12 @@ const NavigationBar: React.FC<{}> = () => {
         <StyledAppBar>
             <MobileDiv>
                 <Box>
-                    <IconButton size="large" onClick={handleOpenMobileNavMenu} color="inherit">
+                    <IconButton
+                        size="large"
+                        aria-label="Mobile Menu Button"
+                        onClick={handleOpenMobileNavMenu}
+                        color="inherit"
+                    >
                         <FontAwesomeIcon icon={faBars} />
                     </IconButton>
                     <MobileNavigationMenu
