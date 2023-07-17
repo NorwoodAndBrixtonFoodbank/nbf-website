@@ -35,15 +35,15 @@ const itemIncludesFilterText = (headers: Headers, item: Datum, filterText: Filte
 };
 
 const filteredNoNullItems = (headers: Headers, data: Datum[], filterText: FilterText): Row[] => {
-    return data.reduce((filteredNoNullItems: Row[], item: Datum) => {
+    return data.reduce((filteredNoNullList: Row[], item: Datum) => {
         if (itemIncludesFilterText(headers, item, filterText)) {
             const noNullItem: Row = {};
             for (const key of Object.keys(headers)) {
                 noNullItem[key] = item[key] ?? "";
             }
-            filteredNoNullItems.push(noNullItem);
+            filteredNoNullList.push(noNullItem);
         }
-        return filteredNoNullItems;
+        return filteredNoNullList;
     }, []);
 };
 
@@ -65,35 +65,35 @@ const Table: React.FC<Props> = (props) => {
         };
     });
 
-    const onFilter = (e: React.ChangeEvent<HTMLInputElement>, filterField: string): void => {
-        setFilterText({ ...filterText, [filterField]: e.target.value });
+    const onFilter = (event: React.ChangeEvent<HTMLInputElement>, filterField: string): void => {
+        setFilterText({ ...filterText, [filterField]: event.target.value });
     };
 
-    const handleClear: () => void = () => {
+    const handleClear = (): void => {
         if (filterText) {
             setFilterText({});
         }
     };
 
+    if (!domLoaded) {
+        return <></>;
+    }
+
     return (
-        <>
-            {domLoaded && (
-                <DataTable
-                    columns={columns}
-                    data={filteredNoNullItems(props.headers, props.data, filterText)}
-                    subHeader
-                    subHeaderComponent={TableFilterBar({
-                        filterText,
-                        onFilter,
-                        handleClear,
-                        headers: props.headers,
-                    })}
-                    pagination
-                    selectableRows
-                    persistTableHead
-                />
-            )}
-        </>
+        <DataTable
+            columns={columns}
+            data={filteredNoNullItems(props.headers, props.data, filterText)}
+            subHeader
+            subHeaderComponent={TableFilterBar({
+                filterText,
+                onFilter,
+                handleClear,
+                headers: props.headers,
+            })}
+            pagination
+            selectableRows
+            persistTableHead
+        />
     );
 };
 

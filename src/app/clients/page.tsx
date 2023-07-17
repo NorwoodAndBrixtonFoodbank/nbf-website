@@ -9,13 +9,9 @@ const dataFetch: () => Promise<Schema["clients"][] | null> = async () => {
 };
 
 const Clients: () => Promise<React.ReactElement> = async () => {
-    let data: Datum[] | null = await dataFetch();
+    const data: Datum[] | null = (await dataFetch()) ?? [];
 
-    if (data === null) {
-        data = [];
-    }
-
-    const headers: { [key: string]: string } = {
+    const headers = {
         full_name: "Name",
         phone_number: "Phone Number",
         address_1: "Address",

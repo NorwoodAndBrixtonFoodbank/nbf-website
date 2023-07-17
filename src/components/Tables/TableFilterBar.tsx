@@ -8,7 +8,7 @@ export interface FilterText {
 
 interface Props {
     filterText: FilterText;
-    onFilter: (e: React.ChangeEvent<HTMLInputElement>, filterField: string) => void;
+    onFilter: (event: React.ChangeEvent<HTMLInputElement>, filterField: string) => void;
     handleClear: () => void;
     headers: FilterText;
 }
@@ -23,7 +23,7 @@ const TableFilterBar: React.FC<Props> = (props) => {
                         type="text"
                         value={props.filterText[key] ?? ""}
                         placeholder={`Filter by ${value}`}
-                        onChange={(e) => props.onFilter(e, key)}
+                        onChange={(event) => props.onFilter(event, key)}
                     />
                 );
             })}
