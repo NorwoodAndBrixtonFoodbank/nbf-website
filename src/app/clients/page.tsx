@@ -1,4 +1,3 @@
-import SampleDataViewerWithButton from "@/components/DataViewer/SampleDataViewerWithButton";
 import supabase, { Schema } from "@/supabase";
 import { Metadata } from "next";
 
@@ -18,7 +17,6 @@ const Clients: () => Promise<React.ReactElement> = async () => {
 
             {/* This should be a separate component which is passed data via props */}
             <pre>{JSON.stringify(data, null, 4)}</pre>
-            <SampleDataViewerWithButton data={data![0]} />
         </main>
     );
 };

@@ -83,7 +83,7 @@ interface DataViewerProps {
 }
 
 const DataViewer: React.FC<DataViewerProps> = (props) => {
-    const closeModal: () => void = () => {
+    const closeModal = (): void => {
         props.onRequestClose();
     };
     if (!props.isOpen) {

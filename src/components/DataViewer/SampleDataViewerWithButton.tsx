@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import DataViewer, { Data } from "@/components/DataViewer/DataViewer";
 import styled from "styled-components";
-import PhoneIcon from "../Icons/PhoneIcon";
+import PhoneIcon from "@/components/Icons/PhoneIcon";
 
 interface ViewerProps {
     data: Data;
@@ -20,11 +20,11 @@ const Title = styled.span`
 const SampleDataViewerWithButton: React.FC<ViewerProps> = ({ data }) => {
     const [viewerIsOpen, setViewerIsOpen] = useState(false);
 
-    const openModal: () => void = () => {
+    const openModal = (): void => {
         setViewerIsOpen(true);
     };
 
-    const closeModal: () => void = () => {
+    const closeModal = (): void => {
         setViewerIsOpen(false);
     };
 
