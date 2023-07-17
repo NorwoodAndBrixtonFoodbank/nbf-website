@@ -35,7 +35,8 @@ Cypress.Commands.add("login", () => {
 
 Cypress.Commands.add("checkAccessibility", () => {
     const terminalLog = (violations: Result[]): void => {
-        cy.task("table",
+        cy.task(
+            "table",
             violations.map(({ id, impact, description, nodes }) => ({
                 id,
                 impact,
