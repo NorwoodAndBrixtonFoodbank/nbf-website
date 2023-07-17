@@ -3,7 +3,7 @@
 import GlobalStyle from "@/app/global_styles";
 import isPropValid from "@emotion/is-prop-valid";
 import { useServerInsertedHTML } from "next/navigation";
-import React, { useState } from "react";
+import React, { createContext, useState } from "react";
 import { ServerStyleSheet, StyleSheetManager, ThemeProvider } from "styled-components";
 
 export type CustomTheme = {
@@ -50,13 +50,18 @@ export const darkTheme: CustomTheme = {
 
 interface Props {
     children: React.ReactElement;
+    theme?: CustomTheme;
 }
+
+export const ThemeUpdateContext = createContext((theme: CustomTheme) =>
+    console.error(`attempted to set theme outside of a ThemeUpdateContext.Provider: ${theme}`)
+);
 
 /*
  * Makes a styled-components global registry to get server-side inserted CSS
  * Adapted from https://nextjs.org/docs/app/building-your-application/styling/css-in-js#styled-components
  */
-const StyleManager: React.FC<Props> = ({ children }) => {
+const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
     const [serverStyleSheet] = useState(() => new ServerStyleSheet());
 
     useServerInsertedHTML(() => {
@@ -65,21 +70,31 @@ const StyleManager: React.FC<Props> = ({ children }) => {
         return <>{styles}</>;
     });
 
-    const chosenTheme = darkTheme;
+    const [chosenTheme, setChosenTheme] = useState(theme);
 
     if (typeof window !== "undefined") {
-        return <ThemeProvider theme={chosenTheme}>{children}</ThemeProvider>;
+        return (
+            <ThemeProvider theme={chosenTheme}>
+                <GlobalStyle />
+                <ThemeUpdateContext.Provider value={setChosenTheme}>
+                    {children}
+                </ThemeUpdateContext.Provider>
+            </ThemeProvider>
+        );
     }
 
     return (
-        <StyleSheetManager sheet={serverStyleSheet.instance} shouldForwardProp={isPropValid}>
+        <ThemeUpdateContext.Provider value={setChosenTheme}>
             <ThemeProvider theme={chosenTheme}>
-                <>
-                    <GlobalStyle />
+                <GlobalStyle />
+                <StyleSheetManager
+                    sheet={serverStyleSheet.instance}
+                    shouldForwardProp={isPropValid}
+                >
                     {children}
-                </>
+                </StyleSheetManager>
             </ThemeProvider>
-        </StyleSheetManager>
+        </ThemeUpdateContext.Provider>
     );
 };
 

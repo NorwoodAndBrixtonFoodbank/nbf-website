@@ -1,9 +1,10 @@
 "use client";
 
+import { ThemeUpdateContext, darkTheme, lightTheme } from "@/app/themes";
 import Button from "@/components/Buttons/Button";
 import ButtonPost from "@/components/Buttons/ButtonPost";
-import React from "react";
-import styled from "styled-components";
+import React, { useContext } from "react";
+import styled, { ThemeContext } from "styled-components";
 
 const Container = styled.div`
     display: flex;
@@ -31,6 +32,13 @@ const Gap = styled.div`
 `;
 
 const NavBar: React.FC<{}> = () => {
+    const setTheme = useContext(ThemeUpdateContext);
+    const theme = useContext(ThemeContext);
+
+    if (!theme) {
+        console.error("no theme context");
+    }
+
     return (
         <header>
             <Container>
@@ -44,6 +52,24 @@ const NavBar: React.FC<{}> = () => {
                 <Gap />
 
                 <ButtonPost text="Sign out" url="/auth/signout" />
+                <button
+                    type="button"
+                    className="light-button"
+                    onClick={() => {
+                        setTheme(lightTheme);
+                    }}
+                >
+                    Light
+                </button>
+                <button
+                    type="button"
+                    className="dark-button"
+                    onClick={() => {
+                        setTheme(darkTheme);
+                    }}
+                >
+                    Dark
+                </button>
             </Container>
             <Divider />
         </header>
