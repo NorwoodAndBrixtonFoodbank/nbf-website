@@ -5,7 +5,7 @@ import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
 
 interface Row {
-    id: number;
+    rowId: number;
     [key: string]: string | number;
 }
 interface Headers {
@@ -37,7 +37,7 @@ const itemIncludesFilterText = (headers: Headers, item: Datum, filterText: Filte
 
 const datumToRowItems = (headers: Headers, data: Datum[]): Row[] => {
     return data.map((item: Datum, currentIndex: number) => {
-        const rowItem: Row = { id: currentIndex };
+        const rowItem: Row = { rowId: currentIndex };
         for (const key of Object.keys(headers)) {
             rowItem[key] = item[key] ?? "";
         }
@@ -66,9 +66,9 @@ const Table: React.FC<Props> = (props) => {
         setSelectCheckBox(new Array<boolean>(props.data.length).fill(!selectAllCheckBox));
         setSelectAllCheckBox(!selectAllCheckBox);
     };
-    const toggleOwnCheckBox = (checkBoxKey: number): void => {
+    const toggleOwnCheckBox = (rowId: number): void => {
         const selectCheckBoxCopy = [...selectCheckBox];
-        selectCheckBoxCopy[checkBoxKey] = !selectCheckBoxCopy[checkBoxKey];
+        selectCheckBoxCopy[rowId] = !selectCheckBoxCopy[rowId];
         setSelectCheckBox(selectCheckBoxCopy);
     };
 
@@ -105,9 +105,9 @@ const Table: React.FC<Props> = (props) => {
         cell: (row: Row) => (
             <input
                 type="checkbox"
-                aria-label={`Select row ${row.id}`}
-                checked={selectCheckBox[row.id]}
-                onClick={() => toggleOwnCheckBox(row.id)}
+                aria-label={`Select row ${row.rowId}`}
+                checked={selectCheckBox[row.rowId]}
+                onClick={() => toggleOwnCheckBox(row.rowId)}
             />
         ),
         width: "47px",
@@ -131,7 +131,7 @@ const Table: React.FC<Props> = (props) => {
         <DataTable
             columns={columns}
             data={filterData(props.headers, props.data, filterText)}
-            keyField="checkBoxKey"
+            keyField="rowId"
             subHeader
             subHeaderComponent={
                 <TableFilterBar

@@ -11,14 +11,6 @@ const dataFetch: () => Promise<Schema["clients"][] | null> = async () => {
 const Clients: () => Promise<React.ReactElement> = async () => {
     const data: Datum[] = (await dataFetch()) ?? [];
 
-    const headers = {
-        full_name: "Name",
-        phone_number: "Phone Number",
-        address_1: "Address",
-        address_2: "Address 2",
-        address_3: "Address 3",
-    };
-
     return (
         <main>
             <h1> Clients Page </h1>
