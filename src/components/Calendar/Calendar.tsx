@@ -29,12 +29,12 @@ export interface CalendarEvent {
 }
 
 const CalendarStyling = styled.div`
-    --fc-button-active-bg-color: ${(props) => props.theme.accentColor};
-    --fc-button-active-border-color: ${(props) => props.theme.accentColor};
+    --fc-button-active-bg-color: ${(props) => props.theme.accentBackgroundColor};
+    --fc-button-active-border-color: ${(props) => props.theme.accentBackgroundColor};
     --fc-neutral-text-color: ${(props) => props.theme.surfaceForegroundColor};
 
     .fc {
-        background-color: ${(props) => props.theme.surfaceColor};
+        background-color: ${(props) => props.theme.surfaceBackgroundColor};
         color: ${(props) => props.theme.surfaceForegroundColor};
         border-radius: 2rem;
         padding: 1.5rem;
@@ -56,8 +56,8 @@ const CalendarStyling = styled.div`
         text-align: center;
         vertical-align: middle;
         padding: 0 10px;
-        background-color: ${(props) => props.theme.primaryColor};
-        border-color: ${(props) => props.theme.primaryColor};
+        background-color: ${(props) => props.theme.primaryBackgroundColor};
+        border-color: ${(props) => props.theme.primaryBackgroundColor};
         color: ${(props) => props.theme.primaryForegroundColor};
     }
 

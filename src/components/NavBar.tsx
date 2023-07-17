@@ -7,7 +7,7 @@ import styled from "styled-components";
 
 const Container = styled.div`
     display: flex;
-    background-color: ${(props) => props.theme.primaryColor};
+    background-color: ${(props) => props.theme.primaryBackgroundColor};
     color: ${(props) => props.theme.primaryForegroundColor};
     height: 10%;
     align-items: flex-end;
@@ -18,7 +18,7 @@ const Container = styled.div`
 const Divider = styled.div`
     width: 100%;
     height: 5px;
-    background-color: ${(props) => props.theme.secondaryColor};
+    background-color: ${(props) => props.theme.secondaryBackgroundColor};
     color: ${(props) => props.theme.secondaryForegroundColor};
 `;
 

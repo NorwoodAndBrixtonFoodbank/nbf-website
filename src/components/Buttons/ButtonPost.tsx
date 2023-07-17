@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 const Submit = styled.input.attrs({ type: "submit" })`
-    background-color: ${(props) => props.theme.secondaryColor};
+    background-color: ${(props) => props.theme.secondaryBackgroundColor};
     padding: 10px;
     border-radius: 5px;
     text-decoration: none;

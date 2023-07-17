@@ -10,13 +10,13 @@ export const lightTheme = {
     foregroundColor: "#000000",
     backgroundColor: "#eeeeee",
     primaryForegroundColor: "#000000",
-    primaryColor: "#63a036",
+    primaryBackgroundColor: "#63a036",
     secondaryForegroundColor: "#ffffff",
-    secondaryColor: "#066940",
-    accentColor: "#609fd3",
+    secondaryBackgroundColor: "#066940",
+    accentBackgroundColor: "#609fd3",
     accentForegroundColor: "#ffffff",
     surfaceForegroundColor: "#000000",
-    surfaceColor: "#ffffff",
+    surfaceBackgroundColor: "#ffffff",
     errorColor: "#ff624e",
 };
 
@@ -24,14 +24,14 @@ export const darkTheme = {
     ...lightTheme,
     foregroundColor: "#ffffff",
     backgroundColor: "#1a1a1a",
-    secondaryForegroundColor: "#000000",
-    secondaryColor: "#63a036",
     primaryForegroundColor: "#ffffff",
-    primaryColor: "#066940",
-    surfaceForegroundColor: "#ffffff",
-    surfaceColor: "#161414",
-    accentColor: "#1b629c",
+    primaryBackgroundColor: "#066940",
+    secondaryForegroundColor: "#000000",
+    secondaryBackgroundColor: "#63a036",
+    accentBackgroundColor: "#1b629c",
     accentForegroundColor: "#ffffff",
+    surfaceForegroundColor: "#ffffff",
+    surfaceBackgroundColor: "#161414",
 };
 
 interface Props {
