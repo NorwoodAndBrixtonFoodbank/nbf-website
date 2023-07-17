@@ -226,7 +226,7 @@ describe("<Table />", () => {
         cy.get("input[aria-label='Select row 2']").should("be.checked");
     });
 
-    it("uncheck one checkbox uncheck the checkall box", () => {
+    it("uncheck one row unticks the checkall box", () => {
         cy.mount(<Table data={smallerData} headers={headers} />);
         cy.get("input[aria-label='Select all rows']").click();
         cy.get("input[aria-label='Select row 0']").click();
@@ -237,7 +237,7 @@ describe("<Table />", () => {
         cy.get("input[aria-label='Select all rows']").should("not.be.checked");
     });
 
-    it("check all checkboxes check the checkall box", () => {
+    it("check all rows ticks the checkall box", () => {
         cy.mount(<Table data={smallerData} headers={headers} />);
         cy.get("input[aria-label='Select row 0']").click();
         cy.get("input[aria-label='Select row 1']").click();
