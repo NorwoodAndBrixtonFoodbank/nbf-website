@@ -10,6 +10,8 @@
 // ***********************************************
 //
 
+import { Result } from "axe-core";
+
 Cypress.Commands.add("login", () => {
     const email = Cypress.env("TEST_USER");
     const password = Cypress.env("TEST_PASS");
@@ -32,6 +34,18 @@ Cypress.Commands.add("login", () => {
 });
 
 Cypress.Commands.add("checkAccessibility", () => {
+    const terminalLog = (violations: Result[]): void => {
+        cy.task(
+            "table",
+            violations.map(({ id, impact, description, nodes }) => ({
+                id,
+                impact,
+                description,
+                length: nodes.length,
+            }))
+        );
+    };
+
     cy.injectAxe();
-    cy.checkA11y();
+    cy.checkA11y(undefined, undefined, terminalLog);
 });
