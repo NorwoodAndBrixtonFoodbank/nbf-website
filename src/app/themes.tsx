@@ -74,12 +74,12 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
 
     if (typeof window !== "undefined") {
         return (
-            <ThemeProvider theme={chosenTheme}>
-                <GlobalStyle />
-                <ThemeUpdateContext.Provider value={setChosenTheme}>
+            <ThemeUpdateContext.Provider value={setChosenTheme}>
+                <ThemeProvider theme={chosenTheme}>
+                    <GlobalStyle />
                     {children}
-                </ThemeUpdateContext.Provider>
-            </ThemeProvider>
+                </ThemeProvider>
+            </ThemeUpdateContext.Provider>
         );
     }
 

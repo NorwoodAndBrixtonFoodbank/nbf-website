@@ -4,7 +4,7 @@ import { ThemeUpdateContext, darkTheme, lightTheme } from "@/app/themes";
 import Button from "@/components/Buttons/Button";
 import ButtonPost from "@/components/Buttons/ButtonPost";
 import React, { useContext } from "react";
-import styled, { ThemeContext } from "styled-components";
+import styled from "styled-components";
 
 const Container = styled.div`
     display: flex;
@@ -33,11 +33,6 @@ const Gap = styled.div`
 
 const NavBar: React.FC<{}> = () => {
     const setTheme = useContext(ThemeUpdateContext);
-    const theme = useContext(ThemeContext);
-
-    if (!theme) {
-        console.error("no theme context");
-    }
 
     return (
         <header>
