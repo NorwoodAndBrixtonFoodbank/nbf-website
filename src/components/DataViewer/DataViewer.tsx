@@ -82,7 +82,6 @@ interface DataViewerProps {
     onRequestClose: () => void;
 }
 
-
 const DataViewer: React.FC<DataViewerProps> = (props) => {
     const closeModal: () => void = () => {
         props.onRequestClose();
@@ -91,7 +90,7 @@ const DataViewer: React.FC<DataViewerProps> = (props) => {
         return <></>;
     }
 
-    Modal.setAppElement('#modal-parent');
+    Modal.setAppElement("#modal-parent");
 
     return (
         <StyledModal
