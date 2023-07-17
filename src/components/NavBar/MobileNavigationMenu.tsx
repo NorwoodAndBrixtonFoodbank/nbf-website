@@ -1,13 +1,13 @@
+import React from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
-import * as React from "react";
 import NoStyleLink from "@/components/NavBar/NoStyleLink";
 
 interface Props {
     pages: [pageName: string, url: string][];
-    mobileNavPosition: any;
-    setMobileNavPosition: any;
+    mobileNavPosition: HTMLElement | null;
+    setMobileNavPosition: (position: HTMLElement | null) => void;
 }
 
 const MobileNavigationMenu: React.FC<Props> = (props) => {

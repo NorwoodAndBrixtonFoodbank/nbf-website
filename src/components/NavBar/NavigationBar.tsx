@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -32,6 +32,8 @@ const LogoDiv = styled.div`
 `;
 
 const DesktopDiv = styled.div`
+    display: none;
+
     @media (min-width: 800px) {
         display: flex;
         flex-direction: row;
@@ -39,17 +41,11 @@ const DesktopDiv = styled.div`
         justify-content: space-between;
         align-content: center;
         align-items: center;
-    }
-
-    @media (max-width: 799px) {
-        display: none;
     }
 `;
 
 const MobileDiv = styled.div`
-    @media (min-width: 800px) {
-        display: none;
-    }
+    display: none;
 
     @media (max-width: 799px) {
         display: flex;
@@ -58,6 +54,7 @@ const MobileDiv = styled.div`
         justify-content: space-between;
         align-content: center;
         align-items: center;
+    }
 `;
 
 const StyledAppBar = styled(AppBar)`
@@ -93,7 +90,7 @@ const NavigationBar: React.FC<{}> = () => {
         ["Calendar", "/calendar"],
     ];
 
-    const [mobileNavPosition, setMobileNavPosition] = React.useState<null | HTMLElement>(null);
+    const [mobileNavPosition, setMobileNavPosition] = useState<HTMLElement | null>(null);
 
     const handleOpenMobileNavMenu = (event: React.MouseEvent<HTMLElement>): void => {
         setMobileNavPosition(event.currentTarget);

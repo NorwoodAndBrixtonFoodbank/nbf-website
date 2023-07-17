@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -18,7 +18,7 @@ const ProfileSettingsMenu = styled(Menu)`
 const ProfilePicture: React.FC<{}> = () => {
     const router = useRouter();
 
-    const [profileMenuPosition, setProfileMenuPosition] = React.useState<null | HTMLElement>(null);
+    const [profileMenuPosition, setProfileMenuPosition] = useState<HTMLElement | null>(null);
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>): void => {
         setProfileMenuPosition(event.currentTarget);
     };
