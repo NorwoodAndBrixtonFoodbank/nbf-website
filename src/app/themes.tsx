@@ -6,7 +6,21 @@ import { useServerInsertedHTML } from "next/navigation";
 import React, { useState } from "react";
 import { ServerStyleSheet, StyleSheetManager, ThemeProvider } from "styled-components";
 
-export const lightTheme = {
+export type CustomTheme = {
+    foregroundColor: string;
+    backgroundColor: string;
+    primaryForegroundColor: string;
+    primaryBackgroundColor: string;
+    secondaryForegroundColor: string;
+    secondaryBackgroundColor: string;
+    accentBackgroundColor: string;
+    accentForegroundColor: string;
+    surfaceForegroundColor: string;
+    surfaceBackgroundColor: string;
+    errorColor: string;
+};
+
+export const lightTheme: CustomTheme = {
     foregroundColor: "#000000",
     backgroundColor: "#eeeeee",
     primaryForegroundColor: "#000000",
@@ -20,8 +34,7 @@ export const lightTheme = {
     errorColor: "#ff624e",
 };
 
-export const darkTheme = {
-    ...lightTheme,
+export const darkTheme: CustomTheme = {
     foregroundColor: "#ffffff",
     backgroundColor: "#1a1a1a",
     primaryForegroundColor: "#ffffff",
@@ -32,6 +45,7 @@ export const darkTheme = {
     accentForegroundColor: "#ffffff",
     surfaceForegroundColor: "#ffffff",
     surfaceBackgroundColor: "#161414",
+    errorColor: "#ff624e",
 };
 
 interface Props {
