@@ -7,29 +7,27 @@ import React, { useState } from "react";
 import { ServerStyleSheet, StyleSheetManager, ThemeProvider } from "styled-components";
 
 export const lightTheme = {
-    foregroundColor: "#000",
-    backgroundColor: "#fff",
-    primaryForegroundColor: "#fff",
-    primaryBackgroundColor: "#007947",
-    secondaryForegroundColor: "#000",
-    secondaryBackgroundColor: "#63a036",
+    foregroundColor: "#000000",
+    backgroundColor: "#eeeeee",
+    primaryForegroundColor: "#000000",
+    primaryColor: "#63a036",
+    secondaryForegroundColor: "#ffffff",
+    secondaryColor: "#007947",
     accentColor: "#3889cd",
-    surfaceForegroundColor: "#000",
-    surfaceBackgroundColor: "#b3dbd1",
+    surfaceForegroundColor: "#000000",
+    surfaceColor: "#b3dbd1",
     errorColor: "#ff624e"
 };
 
-
-// tertiaryColor
-// disabledColor
-// pressedColor
-
-
 export const darkTheme = {
-    ...lightTheme, 
-    backgroundColor: "#1f1a24",
-    foregroundColor: "#fff",
-}
+    ...lightTheme,
+    foregroundColor: "#ffffff",
+    backgroundColor: "#2e2e2e",
+    secondaryForegroundColor: "#000000",
+    secondaryColor: "#63a036",
+    primaryForegroundColor: "#ffffff",
+    primaryColor: "#007947",
+};
 
 interface Props {
     children: React.ReactElement;
@@ -49,12 +47,12 @@ const StyleManager: React.FC<Props> = ({ children }) => {
     });
 
     if (typeof window !== "undefined") {
-        return <>{children}</>;
+        return <ThemeProvider theme={lightTheme}>{children}</ThemeProvider>;
     }
 
     return (
         <StyleSheetManager sheet={serverStyleSheet.instance} shouldForwardProp={isPropValid}>
-            <ThemeProvider theme={darkTheme}>
+            <ThemeProvider theme={lightTheme}>
                 <>
                     <GlobalStyle />
                     {children}

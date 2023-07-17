@@ -1,5 +1,6 @@
 import StyleManager from "@/app/themes";
 import NavBar from "@/components/NavBar";
+import Backdrop from "@/components/backdrop";
 import { Metadata } from "next";
 
 import React from "react";
@@ -15,7 +16,9 @@ const App: React.FC<Props> = ({ children }) => (
                 <StyleManager>
                     <>
                         <NavBar />
-                        {children}
+                        <Backdrop>
+                            <>{children}</>
+                        </Backdrop>
                     </>
                 </StyleManager>
             </React.StrictMode>

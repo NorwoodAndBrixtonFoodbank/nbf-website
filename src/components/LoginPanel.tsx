@@ -1,16 +1,15 @@
 "use client";
 
-import { lightTheme } from "@/app/themes";
 import { DatabaseAutoType } from "@/supabase";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import React from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 
 const MiddleDiv = styled.div`
     max-width: 400px;
-    border: solid 1px black;
+    border: solid 1px ${props => props.theme.foregroundColor};
     border-radius: 10px;
     padding: 50px;
     margin: auto;
@@ -18,6 +17,7 @@ const MiddleDiv = styled.div`
 
 const LoginPanel: React.FC<{}> = () => {
     const supabase = createClientComponentClient<DatabaseAutoType>();
+    const theme = useTheme();
 
     return (
         <MiddleDiv>
@@ -29,11 +29,12 @@ const LoginPanel: React.FC<{}> = () => {
                     variables: {
                         default: {
                             colors: {
-                                inputLabelText: lightTheme.foregroundColor,
-                                anchorTextColor: lightTheme.foregroundColor,
-                                brand: lightTheme.surfaceBackgroundColor,
-                                brandAccent: lightTheme.surfaceBackgroundColor,
-                                brandButtonText: lightTheme.foregroundColor,
+                                inputLabelText: theme.foregroundColor,
+                                anchorTextColor: theme.foregroundColor,
+                                defaultButtonBackground: theme.primaryColor,
+                                brand: theme.primaryColor,
+                                brandAccent: theme.secondaryColor,
+                                brandButtonText: theme.primaryForegroundColor,                              
                             },
                         },
                     },

@@ -2,11 +2,11 @@ import Link from "next/link";
 import styled from "styled-components";
 
 const Button = styled(Link)`
-    background-color: ${(props) => props.theme.surfaceColor};
+    background-color: ${(props) => props.theme.secondaryColor};
     padding: 10px;
     border-radius: 5px;
     text-decoration: none;
-    color: ${(props) => props.theme.foregroundColor};
+    color: ${(props) => props.theme.secondaryForegroundColor};
 
     &:hover {
         font-weight: bold;
