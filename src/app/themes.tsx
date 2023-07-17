@@ -12,21 +12,26 @@ export const lightTheme = {
     primaryForegroundColor: "#000000",
     primaryColor: "#63a036",
     secondaryForegroundColor: "#ffffff",
-    secondaryColor: "#007947",
-    accentColor: "#3889cd",
+    secondaryColor: "#066940",
+    accentColor: "#609fd3",
+    accentForegroundColor: "#ffffff",
     surfaceForegroundColor: "#000000",
-    surfaceColor: "#b3dbd1",
+    surfaceColor: "#ffffff",
     errorColor: "#ff624e",
 };
 
 export const darkTheme = {
     ...lightTheme,
     foregroundColor: "#ffffff",
-    backgroundColor: "#2e2e2e",
+    backgroundColor: "#1a1a1a",
     secondaryForegroundColor: "#000000",
     secondaryColor: "#63a036",
     primaryForegroundColor: "#ffffff",
-    primaryColor: "#007947",
+    primaryColor: "#066940",
+    surfaceForegroundColor: "#ffffff",
+    surfaceColor: "#161414",
+    accentColor: "#1b629c",
+    accentForegroundColor: "#ffffff",
 };
 
 interface Props {
@@ -46,7 +51,7 @@ const StyleManager: React.FC<Props> = ({ children }) => {
         return <>{styles}</>;
     });
 
-    const chosenTheme = lightTheme;
+    const chosenTheme = darkTheme;
 
     if (typeof window !== "undefined") {
         return <ThemeProvider theme={chosenTheme}>{children}</ThemeProvider>;

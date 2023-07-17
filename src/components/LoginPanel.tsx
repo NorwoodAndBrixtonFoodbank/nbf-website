@@ -13,6 +13,10 @@ const MiddleDiv = styled.div`
     border-radius: 10px;
     padding: 50px;
     margin: auto;
+
+    & button:hover {
+        color: ${(props) => props.theme.secondaryForegroundColor};
+    }
 `;
 
 const LoginPanel: React.FC<{}> = () => {
@@ -35,6 +39,7 @@ const LoginPanel: React.FC<{}> = () => {
                                 brand: theme.primaryColor,
                                 brandAccent: theme.secondaryColor,
                                 brandButtonText: theme.primaryForegroundColor,
+                                inputText: theme.foregroundColor,
                             },
                         },
                     },
