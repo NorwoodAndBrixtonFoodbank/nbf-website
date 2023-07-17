@@ -18,7 +18,8 @@
     "coverage:generate": "nyc instrument --delete src .nyc_output --compact=false --all",
     "coverage:run_tests": "start-server-and-test coverage:server http://localhost:3000 test:runner",
     "coverage:server": "nyc npm run dev",
-    "coverage:report": "nyc report --reporter html && nyc report --reporter text-summary"
+    "coverage:report": "nyc report --reporter html && nyc report --reporter text-summary",
+    "open:cypress": "start-server-and-test dev http://localhost:3000 'npx cypress open'"
   },
   "nyc": {
     "all": true,
