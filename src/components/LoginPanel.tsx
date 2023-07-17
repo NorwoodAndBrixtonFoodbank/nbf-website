@@ -9,7 +9,7 @@ import styled, { useTheme } from "styled-components";
 
 const MiddleDiv = styled.div`
     max-width: 400px;
-    border: solid 1px ${props => props.theme.foregroundColor};
+    border: solid 1px ${(props) => props.theme.foregroundColor};
     border-radius: 10px;
     padding: 50px;
     margin: auto;
@@ -34,7 +34,7 @@ const LoginPanel: React.FC<{}> = () => {
                                 defaultButtonBackground: theme.primaryColor,
                                 brand: theme.primaryColor,
                                 brandAccent: theme.secondaryColor,
-                                brandButtonText: theme.primaryForegroundColor,                              
+                                brandButtonText: theme.primaryForegroundColor,
                             },
                         },
                     },

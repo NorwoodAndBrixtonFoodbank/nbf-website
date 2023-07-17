@@ -16,7 +16,7 @@ export const lightTheme = {
     accentColor: "#3889cd",
     surfaceForegroundColor: "#000000",
     surfaceColor: "#b3dbd1",
-    errorColor: "#ff624e"
+    errorColor: "#ff624e",
 };
 
 export const darkTheme = {
@@ -46,13 +46,15 @@ const StyleManager: React.FC<Props> = ({ children }) => {
         return <>{styles}</>;
     });
 
+    const chosenTheme = lightTheme;
+
     if (typeof window !== "undefined") {
-        return <ThemeProvider theme={lightTheme}>{children}</ThemeProvider>;
+        return <ThemeProvider theme={chosenTheme}>{children}</ThemeProvider>;
     }
 
     return (
         <StyleSheetManager sheet={serverStyleSheet.instance} shouldForwardProp={isPropValid}>
-            <ThemeProvider theme={lightTheme}>
+            <ThemeProvider theme={chosenTheme}>
                 <>
                     <GlobalStyle />
                     {children}
