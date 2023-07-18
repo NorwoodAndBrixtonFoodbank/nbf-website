@@ -115,14 +115,14 @@ describe("<Calendar />", () => {
         );
         cy.get(".MuiDialog-container").should(
             "not.include.text",
-            today.toLocaleDateString("en-GB", {
+            today.toLocaleTimeString("en-GB", {
                 hour: "numeric",
                 minute: "numeric",
             })
         );
         cy.get(".MuiDialog-container").should(
             "not.include.text",
-            tomorrow.toLocaleDateString("en-GB", {
+            tomorrow.toLocaleTimeString("en-GB", {
                 hour: "numeric",
                 minute: "numeric",
             })
