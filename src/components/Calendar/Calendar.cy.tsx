@@ -14,6 +14,14 @@ describe("<Calendar />", () => {
             end: tomorrow,
             allDay: true,
         },
+        {
+            id: "b",
+            title: "event2",
+            start: today,
+            end: today,
+            allDay: false,
+            description: "a description",
+        },
     ];
 
     it("calendar renders", () => {
@@ -72,9 +80,68 @@ describe("<Calendar />", () => {
         );
     });
 
-    it("shows description when event is clicked", () => {
+    it("shows description when event with description is clicked", () => {
         cy.mount(<Calendar initialEvents={sampleEvents} />);
-        cy.get(".fc-event-title").first().click();
-        cy.get(".MuiDialog-container").should("be.visible");
+        cy.get(".fc-event-title").contains("event2").click();
+        cy.get(".MuiDialog-container").should("include.text", "description");
+    });
+
+    it("does not show description when event without description is clicked", () => {
+        cy.mount(<Calendar initialEvents={sampleEvents} />);
+        cy.get(".fc-event-title").contains("event1").click();
+        cy.get(".MuiDialog-container").should("not.include.text", "description");
+    });
+
+    it("shows correct date for full day event", () => {
+        cy.mount(<Calendar initialEvents={sampleEvents} />);
+        cy.get(".fc-event-title").contains("event1").click();
+        cy.get(".MuiDialog-container").should(
+            "include.text",
+            today.toLocaleDateString("en-GB", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+            })
+        );
+        cy.get(".MuiDialog-container").should(
+            "include.text",
+            tomorrow.toLocaleDateString("en-GB", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+            })
+        );
+        cy.get(".MuiDialog-container").should(
+            "not.include.text",
+            today.toLocaleDateString("en-GB", {
+                hour: "numeric",
+                minute: "numeric",
+            })
+        );
+        cy.get(".MuiDialog-container").should(
+            "not.include.text",
+            tomorrow.toLocaleDateString("en-GB", {
+                hour: "numeric",
+                minute: "numeric",
+            })
+        );
+    });
+
+    it("shows correct date for non-full day event", () => {
+        cy.mount(<Calendar initialEvents={sampleEvents} />);
+        cy.get(".fc-event-title").contains("event2").click();
+        cy.get(".MuiDialog-container").should(
+            "include.text",
+            today.toLocaleDateString("en-GB", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+            })
+        );
     });
 });
