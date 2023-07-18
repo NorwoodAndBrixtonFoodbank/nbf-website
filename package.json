@@ -8,7 +8,7 @@
     "start": "npm run build && next start",
     "lint": "next lint --dir src --dir cypress",
     "lint_fix": "next lint --fix --dir src --dir cypress",
-    "open:cypress": "start-server-and-test 'next dev -p 3100' http://localhost:3100 'npx cypress open'",
+    "open:cypress": "start-server-and-test 'next dev -p 3100' http://localhost:3100 'MANUAL_TEST=1 npx cypress open'",
     "test": "start-server-and-test test:runner_server http://localhost:3200 test:runner",
     "test:component": "start-server-and-test test:runner_server http://localhost:3200 test:runner_component",
     "test:e2e": "start-server-and-test test:runner_server http://localhost:3200 test:runner_e2e",
