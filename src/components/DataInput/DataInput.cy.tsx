@@ -13,7 +13,6 @@ import {
 import { SelectChangeEvent } from "@mui/material";
 import CheckboxGroupInput from "@/components/DataInput/CheckboxGroupInput";
 
-
 describe("Data Input Components", () => {
     it("renders", () => {
         cy.mount(
@@ -114,7 +113,6 @@ describe("Data Input Components", () => {
         });
 
         it("Change handler for checkbox group works", () => {
-
             const onChangeSpy = cy.spy().as("onChangeSpy");
             const unwrapEvent = (event: React.ChangeEvent<HTMLInputElement>): void => {
                 onChangeSpy(event.target.name, event.target.checked);
@@ -144,7 +142,7 @@ describe("Data Input Components", () => {
             cy.get("input[name='a']").click();
             cy.get("@onChangeSpy").should("have.been.calledWith", "a", false);
         });
-        
+
         it("Change handler for dropdown works", () => {
             const onChangeSpy = cy.spy().as("onChangeSpy");
             const unwrapEvent = (event: SelectChangeEvent): void => {
