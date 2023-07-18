@@ -24,13 +24,20 @@ const ModalInner = styled.div`
     row-gap: 1rem;
 `;
 
-const dateFormatOptions: Intl.DateTimeFormatOptions = {
+const dateTimeFormatOptions: Intl.DateTimeFormatOptions = {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
     hour: "numeric",
     minute: "numeric",
+};
+
+const dateFormatOptions: Intl.DateTimeFormatOptions = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
 };
 
 const Modal: React.FC<{
@@ -40,6 +47,7 @@ const Modal: React.FC<{
     if (!eventClick) {
         return <></>;
     }
+
     return (
         <StyledDialog open={true} onClose={() => setEventClick(null)}>
             <StyledCloseButton type="button" onClick={() => setEventClick(null)}>
@@ -49,14 +57,22 @@ const Modal: React.FC<{
                 <h2>View Event</h2>
                 <p>Event Title: {eventClick.title}</p>
                 <p>
-                    Start:
-                    {new Date(eventClick.start).toLocaleString("en-GB", dateFormatOptions)}
+                    Start:{" "}
+                    {eventClick.allDay
+                        ? new Date(eventClick.start).toLocaleString("en-GB", dateFormatOptions)
+                        : new Date(eventClick.start).toLocaleString("en-GB", dateTimeFormatOptions)}
                 </p>
                 <p>
-                    End:
-                    {new Date(eventClick.end).toLocaleString("en-GB", dateFormatOptions)}
+                    End:{" "}
+                    {eventClick.allDay
+                        ? new Date(eventClick.end).toLocaleString("en-GB", dateFormatOptions)
+                        : new Date(eventClick.end).toLocaleString("en-GB", dateTimeFormatOptions)}
                 </p>
-                <p>Description: {eventClick.description}</p>
+                {eventClick.description === undefined ? (
+                    <></>
+                ) : (
+                    <p>Description: {eventClick.description}</p>
+                )}
             </ModalInner>
         </StyledDialog>
     );
