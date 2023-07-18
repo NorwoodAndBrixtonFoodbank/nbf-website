@@ -5,7 +5,10 @@ import isPropValid from "@emotion/is-prop-valid";
 import { useServerInsertedHTML } from "next/navigation";
 import React, { createContext, useState } from "react";
 import { ServerStyleSheet, StyleSheetManager, ThemeProvider } from "styled-components";
-import { ThemeProvider as MaterialThemeProvider, createTheme as createMaterialTheme } from "@mui/material";
+import {
+    ThemeProvider as MaterialThemeProvider,
+    createTheme as createMaterialTheme,
+} from "@mui/material";
 
 type CustomTheme = {
     foregroundColor: string;
@@ -93,9 +96,11 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
             mode: chosenTheme === lightTheme ? "light" : "dark",
             primary: {
                 main: chosenTheme.primaryBackgroundColor,
+                contrastText: chosenTheme.primaryForegroundColor,
             },
             secondary: {
                 main: chosenTheme.secondaryBackgroundColor,
+                contrastText: chosenTheme.secondaryForegroundColor,
             },
             error: {
                 main: chosenTheme.errorColor,
@@ -106,7 +111,6 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
             },
             text: {
                 primary: chosenTheme.foregroundColor,
-                secondary: chosenTheme.secondaryForegroundColor,
             },
         },
         typography: {
