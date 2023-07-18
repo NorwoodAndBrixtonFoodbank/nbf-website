@@ -65,20 +65,7 @@ describe("<Table />", () => {
         },
     ];
 
-    const smallerData = [
-        {
-            full_name: "Tom",
-            phone_number: 123456,
-        },
-        {
-            full_name: "Sam",
-            phone_number: 999,
-        },
-        {
-            full_name: "Harper Garrett",
-            phone_number: 2171786554,
-        },
-    ];
+    const smallerData = data.slice(0, 3);
 
     const headers = {
         full_name: "Name",
