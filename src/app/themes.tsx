@@ -3,7 +3,7 @@
 import GlobalStyle from "@/app/global_styles";
 import isPropValid from "@emotion/is-prop-valid";
 import { useServerInsertedHTML } from "next/navigation";
-import React, { Context, createContext, useState } from "react";
+import React, { createContext, useState } from "react";
 import { ServerStyleSheet, StyleSheetManager, ThemeProvider } from "styled-components";
 
 type CustomTheme = {
@@ -74,17 +74,19 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
 
     const [chosenTheme, setChosenTheme] = useState(theme);
 
-    const handleThemeChange = (dark: boolean) => {
+    const handleThemeChange = (dark: boolean): void => {
         setChosenTheme(dark ? darkTheme : lightTheme);
     };
 
-    const themedChildren = typeof window !== "undefined" ? children : <StyleSheetManager
-        sheet={serverStyleSheet.instance}
-        shouldForwardProp={isPropValid}
-    >
-        {children}
-    </StyleSheetManager>;
- 
+    const themedChildren =
+        typeof window !== "undefined" ? (
+            children
+        ) : (
+            <StyleSheetManager sheet={serverStyleSheet.instance} shouldForwardProp={isPropValid}>
+                {children}
+            </StyleSheetManager>
+        );
+
     return (
         <ThemeUpdateContext.Provider value={handleThemeChange}>
             <ThemeProvider theme={chosenTheme}>
@@ -93,6 +95,6 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
             </ThemeProvider>
         </ThemeUpdateContext.Provider>
     );
-}
+};
 
 export default StyleManager;
