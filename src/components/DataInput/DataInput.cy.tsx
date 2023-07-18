@@ -8,8 +8,10 @@ import {
     getCheckboxHandler,
     getDropdownListHandler,
     getRadioGroupHandler,
+    getCheckboxGroupHandler,
 } from "@/components/DataInput/inputHandlerFactories";
 import { SelectChangeEvent } from "@mui/material";
+import CheckboxGroupInput from "@/components/DataInput/CheckboxGroupInput";
 
 describe("Data Input Components", () => {
     it("renders", () => {
@@ -49,6 +51,17 @@ describe("Data Input Components", () => {
                 onChange={getRadioGroupHandler(() => console.log("Radio Changed"))}
             />
         );
+        cy.mount(
+            <CheckboxGroupInput
+                labelsAndKeys={[
+                    ["Label A", "a"],
+                    ["Label B", "b"],
+                    ["Label C", "c"],
+                ]}
+                groupLabel="Checkbox Group"
+                onChange={getCheckboxGroupHandler({}, () => console.log("Checkbox Group Changed"))}
+            />
+        );
     });
 
     it("renders without optional props", () => {
@@ -72,6 +85,15 @@ describe("Data Input Components", () => {
                 ]}
             />
         );
+        cy.mount(
+            <CheckboxGroupInput
+                labelsAndKeys={[
+                    ["Label A", "a"],
+                    ["Label B", "b"],
+                    ["Label C", "c"],
+                ]}
+            />
+        );
     });
 
     describe("Change Handlers", () => {
@@ -88,6 +110,38 @@ describe("Data Input Components", () => {
 
             cy.get("input").click();
             cy.get("@onChangeSpy").should("have.been.calledWith", false);
+        });
+
+        it("Change handler for checkbox group works", () => {
+
+            const onChangeSpy = cy.spy().as("onChangeSpy");
+            const unwrapEvent = (event: React.ChangeEvent<HTMLInputElement>): void => {
+                onChangeSpy(event.target.name, event.target.checked);
+            };
+
+            cy.mount(
+                <CheckboxGroupInput
+                    labelsAndKeys={[
+                        ["Label A", "a"],
+                        ["Label B", "b"],
+                        ["Label C", "c"],
+                    ]}
+                    groupLabel="Checkbox Group"
+                    onChange={unwrapEvent}
+                />
+            );
+
+            cy.get("input[name='a']").click();
+            cy.get("@onChangeSpy").should("have.been.calledWith", "a", true);
+
+            cy.get("input[name='b']").click();
+            cy.get("@onChangeSpy").should("have.been.calledWith", "b", true);
+
+            cy.get("input[name='c']").click();
+            cy.get("@onChangeSpy").should("have.been.calledWith", "c", true);
+
+            cy.get("input[name='a']").click();
+            cy.get("@onChangeSpy").should("have.been.calledWith", "a", false);
         });
 
         it("Change handler for dropdown works", () => {
@@ -160,5 +214,7 @@ describe("Data Input Components", () => {
             cy.get("input[value='c']").click();
             cy.get("@onChangeSpy").should("have.been.calledWith", "c");
         });
+
+
     });
 });
