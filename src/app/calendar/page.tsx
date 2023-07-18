@@ -6,7 +6,6 @@ const CalendarPage: React.FC<{}> = () => {
     return (
         <main>
             <h1>Calendar Page </h1>
-            <SampleCalendar />
         </main>
     );
 };
