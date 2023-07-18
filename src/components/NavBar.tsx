@@ -1,13 +1,15 @@
 "use client";
 
+import { ThemeUpdateContext } from "@/app/themes";
 import Button from "@/components/Buttons/Button";
 import ButtonPost from "@/components/Buttons/ButtonPost";
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
     display: flex;
-    background-color: ${(props) => props.theme.backgroundColor};
+    background-color: ${(props) => props.theme.primaryBackgroundColor};
+    color: ${(props) => props.theme.primaryForegroundColor};
     height: 10%;
     align-items: flex-end;
     padding: 0;
@@ -17,7 +19,8 @@ const Container = styled.div`
 const Divider = styled.div`
     width: 100%;
     height: 5px;
-    background-color: ${(props) => props.theme.fillColor};
+    background-color: ${(props) => props.theme.secondaryBackgroundColor};
+    color: ${(props) => props.theme.secondaryForegroundColor};
 `;
 
 const Logo = styled.img`
@@ -29,6 +32,8 @@ const Gap = styled.div`
 `;
 
 const NavBar: React.FC<{}> = () => {
+    const setTheme = useContext(ThemeUpdateContext);
+
     return (
         <header>
             <Container>
@@ -42,6 +47,24 @@ const NavBar: React.FC<{}> = () => {
                 <Gap />
 
                 <ButtonPost text="Sign out" url="/auth/signout" />
+                <button
+                    type="button"
+                    className="light-button"
+                    onClick={() => {
+                        setTheme(false); // enable light theme
+                    }}
+                >
+                    Light
+                </button>
+                <button
+                    type="button"
+                    className="dark-button"
+                    onClick={() => {
+                        setTheme(true); // enable dark theme
+                    }}
+                >
+                    Dark
+                </button>
             </Container>
             <Divider />
         </header>

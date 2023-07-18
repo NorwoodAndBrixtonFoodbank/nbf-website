@@ -8,6 +8,12 @@ const GlobalStyle = createGlobalStyle`
     html, body {
         height: 100%;
         width: 100%;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+        color: ${(props) => props.theme.foregroundColor};
+        background-color: ${(props) => props.theme.backgroundColor};
     }
 `;
 
