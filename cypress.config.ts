@@ -27,7 +27,7 @@ export default defineConfig({
 
             return config;
         },
-        baseUrl: `http://localhost:3${process.env.MANUAL_TEST ? 1 : 2}00`,
+        baseUrl: "http://localhost:3200",
     },
 
     component: {
