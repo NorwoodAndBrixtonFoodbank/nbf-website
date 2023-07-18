@@ -48,12 +48,13 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
     * `npm run test:component` for just component (unit) tests
     * `npm rum test:e2e` for just end-to-end tests
     * `npm run test:coverage` for a full coverage report at the end
+  * Can open the Cypress UI to see individual results with `npm run open:cypress`
 
 ### Admin development (Supabase setup)
 
 If you change the database, you can regenerate the types with:
 ```shell
-npx supabase gen types typescript --project-id cxgsvesjwyiguxaqlwkp --schema public > src/database/generated_types.ts
+npx supabase gen types typescript --project-id cxgsvesjwyiguxaqlwkp --schema public > src/database_types_file.ts
 ```
 
 ## NextJS design choices

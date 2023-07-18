@@ -29,8 +29,13 @@ export interface CalendarEvent {
 }
 
 const CalendarStyling = styled.div`
+    --fc-button-active-bg-color: ${(props) => props.theme.accentBackgroundColor};
+    --fc-button-active-border-color: ${(props) => props.theme.accentBackgroundColor};
+    --fc-neutral-text-color: ${(props) => props.theme.surfaceForegroundColor};
+
     .fc {
-        background-color: white;
+        background-color: ${(props) => props.theme.surfaceBackgroundColor};
+        color: ${(props) => props.theme.surfaceForegroundColor};
         border-radius: 2rem;
         padding: 1.5rem;
         text-align: center;
@@ -51,14 +56,18 @@ const CalendarStyling = styled.div`
         text-align: center;
         vertical-align: middle;
         padding: 0 10px;
-        background-color: ${(props) => props.theme.fillColor};
-        border-color: ${(props) => props.theme.fillColor};
-        color: black;
+        background-color: ${(props) => props.theme.primaryBackgroundColor};
+        border-color: ${(props) => props.theme.primaryBackgroundColor};
+        color: ${(props) => props.theme.primaryForegroundColor};
     }
 
     // prev and next arrow icons
     .fc .fc-icon {
         font-size: max(1.5vmin, 15px);
+    }
+
+    .fc .fc-day-other .fc-daygrid-day-top {
+        opacity: 0.6;
     }
 `;
 

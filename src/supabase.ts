@@ -19,6 +19,7 @@ export type Schema = {
     clients: Tables["clients"]["Row"];
     families: Tables["families"]["Row"];
     parcels: Tables["parcels"]["Row"];
+    lists: Tables["lists"]["Row"];
 };
 
 export default supabase;

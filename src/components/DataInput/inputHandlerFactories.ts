@@ -1,27 +1,27 @@
 import React from "react";
 import { SelectChangeEvent } from "@mui/material";
 
-export type valueSetter = {
+type valueSetter = {
     (value: string): void;
 };
 
-export type booleanSetter = {
+type booleanSetter = {
     (checked: boolean): void;
 };
 
-export type booleanGroup = {
+type booleanGroup = {
     [key: string]: boolean;
 };
 
-export type booleanGroupSetter = {
+type booleanGroupSetter = {
     (group: booleanGroup): void;
 };
 
-export type changeEventHandler = {
+type changeEventHandler = {
     (event: React.ChangeEvent<HTMLInputElement>): void;
 };
 
-export type selectChangeEventHandler = {
+type selectChangeEventHandler = {
     (event: SelectChangeEvent): void;
 };
 

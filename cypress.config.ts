@@ -11,6 +11,15 @@ export default defineConfig({
             // implement node event listeners here
             registerCodeCoverageTasks(on, config);
 
+            on("task", {
+                table(message: any[]): null {
+                    if (message.length > 0) {
+                        console.table(message);
+                    }
+                    return null;
+                }
+            });
+
             config.env = {
                 TEST_USER: process.env.NEXT_PUBLIC_CYPRESS_TEST_USER!,
                 TEST_PASS: process.env.NEXT_PUBLIC_CYPRESS_TEST_PASS!,
@@ -18,7 +27,7 @@ export default defineConfig({
 
             return config;
         },
-        baseUrl: "http://localhost:3000",
+        baseUrl: `http://localhost:3${process.env.MANUAL_TEST ? 1 : 2}00`,
     },
 
     component: {
