@@ -168,32 +168,32 @@ export interface Database {
       }
       parcels: {
         Row: {
+          client_id: string
           collection_centre: string | null
           collection_datetime: string | null
-          family_id: string
           packing_datetime: string | null
           primary_key: string
         }
         Insert: {
+          client_id: string
           collection_centre?: string | null
           collection_datetime?: string | null
-          family_id: string
           packing_datetime?: string | null
           primary_key?: string
         }
         Update: {
+          client_id?: string
           collection_centre?: string | null
           collection_datetime?: string | null
-          family_id?: string
           packing_datetime?: string | null
           primary_key?: string
         }
         Relationships: [
           {
-            foreignKeyName: "parcels_family_id_fkey"
-            columns: ["family_id"]
+            foreignKeyName: "parcels_client_id_fkey"
+            columns: ["client_id"]
             referencedRelation: "clients"
-            referencedColumns: ["family_id"]
+            referencedColumns: ["primary_key"]
           }
         ]
       }
