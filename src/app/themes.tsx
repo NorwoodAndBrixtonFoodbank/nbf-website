@@ -5,6 +5,7 @@ import isPropValid from "@emotion/is-prop-valid";
 import { useServerInsertedHTML } from "next/navigation";
 import React, { createContext, useState } from "react";
 import { ServerStyleSheet, StyleSheetManager, ThemeProvider } from "styled-components";
+import { ThemeProvider as MaterialThemeProvider, createTheme as createMaterialTheme } from "@mui/material";
 
 type CustomTheme = {
     foregroundColor: string;
@@ -87,11 +88,39 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
             </StyleSheetManager>
         );
 
+    const materialTheme = createMaterialTheme({
+        palette: {
+            mode: chosenTheme === lightTheme ? "light" : "dark",
+            primary: {
+                main: chosenTheme.primaryBackgroundColor,
+            },
+            secondary: {
+                main: chosenTheme.secondaryBackgroundColor,
+            },
+            error: {
+                main: chosenTheme.errorColor,
+            },
+            background: {
+                default: chosenTheme.backgroundColor,
+                paper: chosenTheme.surfaceBackgroundColor,
+            },
+            text: {
+                primary: chosenTheme.foregroundColor,
+                secondary: chosenTheme.secondaryForegroundColor,
+            },
+        },
+        typography: {
+            fontFamily: "Arial, Helvetica, sans-serif",
+        },
+    });
+
     return (
         <ThemeUpdateContext.Provider value={handleThemeChange}>
             <ThemeProvider theme={chosenTheme}>
-                <GlobalStyle />
-                {themedChildren}
+                <MaterialThemeProvider theme={materialTheme}>
+                    <GlobalStyle />
+                    {themedChildren}
+                </MaterialThemeProvider>
             </ThemeProvider>
         </ThemeUpdateContext.Provider>
     );
