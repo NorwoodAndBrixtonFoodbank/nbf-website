@@ -1,6 +1,6 @@
 "use client";
 
-import { ThemeUpdateContext, darkTheme, lightTheme } from "@/app/themes";
+import { ThemeUpdateContext } from "@/app/themes";
 import Button from "@/components/Buttons/Button";
 import ButtonPost from "@/components/Buttons/ButtonPost";
 import React, { useContext } from "react";
@@ -51,7 +51,7 @@ const NavBar: React.FC<{}> = () => {
                     type="button"
                     className="light-button"
                     onClick={() => {
-                        setTheme(lightTheme);
+                        setTheme(false); // enable light theme
                     }}
                 >
                     Light
@@ -60,7 +60,7 @@ const NavBar: React.FC<{}> = () => {
                     type="button"
                     className="dark-button"
                     onClick={() => {
-                        setTheme(darkTheme);
+                        setTheme(true); // enable dark theme
                     }}
                 >
                     Dark

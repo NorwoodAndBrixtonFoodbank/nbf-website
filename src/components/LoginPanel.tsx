@@ -40,6 +40,7 @@ const LoginPanel: React.FC<{}> = () => {
                                 brandAccent: theme.secondaryBackgroundColor,
                                 brandButtonText: theme.primaryForegroundColor,
                                 inputText: theme.foregroundColor,
+                                defaultButtonBackgroundHover: theme.secondaryBackgroundColor,
                             },
                         },
                     },

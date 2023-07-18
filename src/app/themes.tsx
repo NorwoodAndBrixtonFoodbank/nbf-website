@@ -3,10 +3,10 @@
 import GlobalStyle from "@/app/global_styles";
 import isPropValid from "@emotion/is-prop-valid";
 import { useServerInsertedHTML } from "next/navigation";
-import React, { createContext, useState } from "react";
+import React, { Context, createContext, useState } from "react";
 import { ServerStyleSheet, StyleSheetManager, ThemeProvider } from "styled-components";
 
-export type CustomTheme = {
+type CustomTheme = {
     foregroundColor: string;
     backgroundColor: string;
     primaryForegroundColor: string;
@@ -20,7 +20,7 @@ export type CustomTheme = {
     errorColor: string;
 };
 
-export const lightTheme: CustomTheme = {
+const lightTheme: CustomTheme = {
     foregroundColor: "#000000",
     backgroundColor: "#eeeeee",
     primaryForegroundColor: "#000000",
@@ -28,13 +28,13 @@ export const lightTheme: CustomTheme = {
     secondaryForegroundColor: "#ffffff",
     secondaryBackgroundColor: "#066940",
     accentBackgroundColor: "#609fd3",
-    accentForegroundColor: "#ffffff",
+    accentForegroundColor: "#000000",
     surfaceForegroundColor: "#000000",
     surfaceBackgroundColor: "#ffffff",
     errorColor: "#ff624e",
 };
 
-export const darkTheme: CustomTheme = {
+const darkTheme: CustomTheme = {
     foregroundColor: "#ffffff",
     backgroundColor: "#1a1a1a",
     primaryForegroundColor: "#ffffff",
@@ -53,9 +53,11 @@ interface Props {
     theme?: CustomTheme;
 }
 
-export const ThemeUpdateContext = createContext((theme: CustomTheme) =>
-    console.error(`attempted to set theme outside of a ThemeUpdateContext.Provider: ${theme}`)
-);
+export const ThemeUpdateContext = createContext((dark: boolean): void => {
+    throw new Error(
+        `attempted to set theme outside of a ThemeUpdateContext.Provider: Dark: ${dark}`
+    );
+});
 
 /*
  * Makes a styled-components global registry to get server-side inserted CSS
@@ -72,30 +74,25 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
 
     const [chosenTheme, setChosenTheme] = useState(theme);
 
-    if (typeof window !== "undefined") {
-        return (
-            <ThemeUpdateContext.Provider value={setChosenTheme}>
-                <ThemeProvider theme={chosenTheme}>
-                    <GlobalStyle />
-                    {children}
-                </ThemeProvider>
-            </ThemeUpdateContext.Provider>
-        );
-    }
+    const handleThemeChange = (dark: boolean) => {
+        setChosenTheme(dark ? darkTheme : lightTheme);
+    };
 
+    const themedChildren = typeof window !== "undefined" ? children : <StyleSheetManager
+        sheet={serverStyleSheet.instance}
+        shouldForwardProp={isPropValid}
+    >
+        {children}
+    </StyleSheetManager>;
+ 
     return (
-        <ThemeUpdateContext.Provider value={setChosenTheme}>
+        <ThemeUpdateContext.Provider value={handleThemeChange}>
             <ThemeProvider theme={chosenTheme}>
                 <GlobalStyle />
-                <StyleSheetManager
-                    sheet={serverStyleSheet.instance}
-                    shouldForwardProp={isPropValid}
-                >
-                    {children}
-                </StyleSheetManager>
+                {themedChildren}
             </ThemeProvider>
         </ThemeUpdateContext.Provider>
     );
-};
+}
 
 export default StyleManager;
