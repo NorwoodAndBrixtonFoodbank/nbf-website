@@ -3,13 +3,13 @@ import { Metadata } from "next";
 import { Datum } from "@/components/Tables/Table";
 import React from "react";
 
-const dataFetch: () => Promise<Schema["clients"][] | null> = async () => {
+const dataFetch: () => Promise<Schema["clients"][]> = async () => {
     const response = await supabase.from("clients").select();
-    return response.data;
+    return response.data ?? [];
 };
 
 const Clients: () => Promise<React.ReactElement> = async () => {
-    const data: Datum[] = (await dataFetch()) ?? [];
+    const data: Datum[] = await dataFetch();
 
     return (
         <main>
