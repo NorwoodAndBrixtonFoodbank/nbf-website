@@ -54,8 +54,7 @@ const Modal: React.FC<{
                 close
             </StyledCloseButton>
             <ModalInner>
-                <h2>View Event</h2>
-                <p>Event Title: {eventClick.title}</p>
+                <h2>{eventClick.title}</h2>
                 <p>
                     Start:{" "}
                     {eventClick.allDay
