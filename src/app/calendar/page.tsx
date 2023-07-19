@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import React from "react";
-import ParcelCalendar from "./ParcelCalender";
+import ParcelCalendar from "./ParcelCalendar";
 
-const CalendarPage: () => Promise<React.ReactElement> = async () => {
+const CalendarPage: React.FC<{}> = () => {
     return (
         <main>
             <h1> Calendar Page </h1>
