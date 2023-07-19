@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
-import { styled } from "styled-components";
+import { styled, useTheme } from "styled-components";
 import { NoSsr } from "@mui/material";
 import SpeechBubbleIcon from "../Icons/SpeechBubbleIcon";
 
@@ -78,6 +78,8 @@ const filterRows = (rows: Row[], filterText: FilterText, headers: Headers): Row[
 };
 
 const Table: React.FC<Props> = (props) => {
+    const theme = useTheme();
+
     const [filterText, setFilterText] = useState<FilterText>({});
 
     const [selectCheckBoxes, setSelectCheckBoxes] = useState(
@@ -115,7 +117,7 @@ const Table: React.FC<Props> = (props) => {
                     const tooltipElement = tooltip ? (
                         <>
                             <Spacer />
-                            <SpeechBubbleIcon onHoverText={tooltip} />
+                            <SpeechBubbleIcon onHoverText={tooltip}  />
                         </>
                     ) : null;
                     return (

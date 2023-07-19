@@ -15,7 +15,7 @@ const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
     width: 1em;
     height: 1em;
     margin: 0.125em;
-    color: ${(props) => props.color};
+    color: ${(props) => props.color ?? props.theme.accentBackgroundColor};
 `;
 
 const Popper = styled.div`
@@ -54,8 +54,8 @@ const Icon: React.FC<Props> = (props) => {
             )}
             <StyledFontAwesomeIcon
                 icon={props.icon}
-                title={props.onHoverText}
                 color={props.color}
+                aria-label={props.onHoverText}
                 onMouseEnter={show}
                 onMouseLeave={hide}
                 onMouseDown={show}

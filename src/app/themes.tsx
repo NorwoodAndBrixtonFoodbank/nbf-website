@@ -32,7 +32,8 @@ const lightTheme: CustomTheme = {
     primaryBackgroundColor: "#63a036",
     secondaryForegroundColor: "#ffffff",
     secondaryBackgroundColor: "#066940",
-    accentBackgroundColor: "#609fd3",
+    accentBackgroundColor: "#1b629c",
+
     accentForegroundColor: "#000000",
     surfaceForegroundColor: "#000000",
     surfaceBackgroundColor: "#ffffff",
@@ -47,7 +48,7 @@ const darkTheme: CustomTheme = {
     primaryBackgroundColor: "#066940",
     secondaryForegroundColor: "#000000",
     secondaryBackgroundColor: "#63a036",
-    accentBackgroundColor: "#1b629c",
+    accentBackgroundColor: "#609fd3",
     accentForegroundColor: "#ffffff",
     surfaceForegroundColor: "#ffffff",
     surfaceBackgroundColor: "#161414",
