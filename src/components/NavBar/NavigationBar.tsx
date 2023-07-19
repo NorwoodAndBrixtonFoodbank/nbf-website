@@ -11,6 +11,7 @@ import { faBars } from "@fortawesome/free-solid-svg-icons";
 import ProfilePicture from "@/components/NavBar/ProfilePicture";
 import MobileNavigationMenu from "@/components/NavBar/MobileNavigationMenu";
 import NoStyleLink from "@/components/NavBar/NoStyleLink";
+import SignOutButton from "@/components/NavBar/SignOutButton";
 
 const Logo = styled.img`
     max-width: 100%;
@@ -63,13 +64,15 @@ const StyledAppBar = styled(AppBar)`
     padding: 5px;
 `;
 
-const ProfilePictureDiv = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-`;
+// For use with <ProfilePicture /> upon implementation
+//
+// const ProfilePictureDiv = styled.div`
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: center;
+// `;
 
-const PageButton = styled(Button)`
+export const PageButton = styled(Button)`
     color: white;
     font-size: 1.25rem;
     margin: 10px;
@@ -103,7 +106,7 @@ const NavigationBar: React.FC<{}> = () => {
     return (
         <StyledAppBar>
             <MobileDiv>
-                <Box>
+                <Box color="white">
                     <IconButton
                         size="large"
                         aria-label="Mobile Menu Button"
@@ -123,9 +126,7 @@ const NavigationBar: React.FC<{}> = () => {
                     <Logo alt="Vauxhall Foodbank Logo" src="/logo.png" />
                 </LogoDiv>
 
-                <ProfilePictureDiv>
-                    <ProfilePicture />
-                </ProfilePictureDiv>
+                <SignOutButton />
             </MobileDiv>
 
             <DesktopDiv>
@@ -141,11 +142,10 @@ const NavigationBar: React.FC<{}> = () => {
                     ))}
                 </PageButtonsDiv>
 
-                <ProfilePictureDiv>
-                    <ProfilePicture />
-                </ProfilePictureDiv>
+                <SignOutButton />
             </DesktopDiv>
         </StyledAppBar>
     );
 };
+
 export default NavigationBar;
