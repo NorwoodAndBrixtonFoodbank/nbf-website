@@ -9,6 +9,14 @@ type booleanSetter = {
     (checked: boolean): void;
 };
 
+type booleanGroup = {
+    [key: string]: boolean;
+};
+
+type booleanGroupSetter = {
+    (group: booleanGroup): void;
+};
+
 type changeEventHandler = {
     (event: React.ChangeEvent<HTMLInputElement>): void;
 };
@@ -40,5 +48,17 @@ export const getDropdownListHandler = (setValue: valueSetter): selectChangeEvent
 export const getCheckboxHandler = (setBoolean: booleanSetter): changeEventHandler => {
     return (event: React.ChangeEvent<HTMLInputElement>) => {
         setBoolean(event.target.checked);
+    };
+};
+
+export const getCheckboxGroupHandler = (
+    booleanGroup: booleanGroup,
+    setBooleanGroup: booleanGroupSetter
+): changeEventHandler => {
+    return (event: React.ChangeEvent<HTMLInputElement>) => {
+        setBooleanGroup({
+            ...booleanGroup,
+            [event.target.name]: event.target.checked,
+        });
     };
 };
