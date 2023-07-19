@@ -3,9 +3,11 @@
 import React, { useState, useEffect } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
-import { styled, useTheme } from "styled-components";
+import { styled } from "styled-components";
 import { NoSsr } from "@mui/material";
 import SpeechBubbleIcon from "../Icons/SpeechBubbleIcon";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAnglesUp, faAnglesDown } from "@fortawesome/free-solid-svg-icons";
 
 export interface Datum {
     data: { [headerKey: string]: string[] | string | number | boolean | null | undefined };
@@ -25,6 +27,10 @@ interface Props {
     data: Datum[];
     headers: Headers;
     checkboxes?: boolean;
+    reorderable?: boolean;
+    /// an array of header keys to filter by
+    filters?: string[];
+    pagination?: boolean;
 }
 
 const RowDiv = styled.div`
@@ -78,12 +84,12 @@ const filterRows = (rows: Row[], filterText: FilterText, headers: Headers): Row[
 };
 
 const Table: React.FC<Props> = (props) => {
-    const theme = useTheme();
+    const [data, setData] = useState(props.data);
 
     const [filterText, setFilterText] = useState<FilterText>({});
 
     const [selectCheckBoxes, setSelectCheckBoxes] = useState(
-        new Array<boolean>(props.data.length).fill(false)
+        new Array<boolean>(data.length).fill(false)
     );
 
     const [selectAllCheckBox, setSelectAllCheckBox] = useState(false);
@@ -95,7 +101,7 @@ const Table: React.FC<Props> = (props) => {
     };
 
     const toggleAllCheckBox = (): void => {
-        setSelectCheckBoxes(new Array<boolean>(props.data.length).fill(!selectAllCheckBox));
+        setSelectCheckBoxes(new Array<boolean>(data.length).fill(!selectAllCheckBox));
         setSelectAllCheckBox(!selectAllCheckBox);
     };
 
@@ -113,11 +119,11 @@ const Table: React.FC<Props> = (props) => {
                 selector: (row: Row) => row[headerKey],
                 sortable: true,
                 cell(row, rowIndex, column, id) {
-                    const tooltip = props.data[rowIndex].tooltips?.[headerKey];
+                    const tooltip = data[rowIndex].tooltips?.[headerKey];
                     const tooltipElement = tooltip ? (
                         <>
                             <Spacer />
-                            <SpeechBubbleIcon onHoverText={tooltip}  />
+                            <SpeechBubbleIcon onHoverText={tooltip} />
                         </>
                     ) : null;
                     return (
@@ -153,6 +159,37 @@ const Table: React.FC<Props> = (props) => {
         });
     }
 
+    if (props.reorderable) {
+        columns.unshift({
+            name: <></>,
+            cell: (row: Row, rowIndex, column, id) => (
+                <ReorderArrowDiv>
+                    <StyledIcon onClick={() => {
+                        if (row.rowId === 0) return;
+                        setData(data => {
+                            const newData = [...data];
+                            const temp = newData[row.rowId];
+                            newData[row.rowId] = newData[row.rowId - 1];
+                            newData[row.rowId - 1] = temp;
+                            return newData;
+                        });
+                    }} icon={faAnglesUp} />
+                    <StyledIcon onClick={() => {
+                        if (row.rowId === data.length - 1) return;
+                        setData(data => {
+                            const newData = [...data];
+                            const temp = newData[row.rowId];
+                            newData[row.rowId] = newData[row.rowId + 1];
+                            newData[row.rowId + 1] = temp;
+                            return newData;
+                        });
+                    }} icon={faAnglesDown} />
+                </ReorderArrowDiv>
+            ),
+            width: "40px",
+        });
+    }
+
     const onFilter = (event: React.ChangeEvent<HTMLInputElement>, filterField: string): void => {
         setFilterText({ ...filterText, [filterField]: event.target.value });
     };
@@ -163,12 +200,14 @@ const Table: React.FC<Props> = (props) => {
         }
     };
 
+    const filters = (props.filters) ? Object.fromEntries(props.filters.map(filter => [filter, props.headers[filter]])) : props.headers;
+
     return (
         <Styling>
             <NoSsr>
                 <StyledDataTable
                     columns={columns as any}
-                    data={dataToFilteredRows(props.data, filterText, props.headers)}
+                    data={dataToFilteredRows(data, filterText, props.headers)}
                     keyField="rowId"
                     subHeader
                     subHeaderComponent={
@@ -176,10 +215,10 @@ const Table: React.FC<Props> = (props) => {
                             filterText={filterText}
                             onFilter={onFilter}
                             handleClear={handleClear}
-                            headers={props.headers}
+                            headers={filters}
                         />
                     }
-                    pagination
+                    pagination={props.pagination ?? true}
                     persistTableHead
                 />
             </NoSsr>
@@ -187,23 +226,29 @@ const Table: React.FC<Props> = (props) => {
     );
 };
 
+const ReorderArrowDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+`;
+
+const StyledIcon = styled(FontAwesomeIcon)`
+    cursor: pointer;
+`;
+
 const Styling = styled.div`
     // the component with the filter bars
     & > header {
         background-color: transparent;
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
-        column-gap: 5px;
-        row-gap: 2px;
+        display: flex;
         align-items: center;
-        justify-content: start;
+        justify-content: space-between;
         padding: 10px;
 
         // the clear button
         & > button {
-            position: absolute;
-            right: 5px;
-            bottom: 0px;
             border-radius: 0.4rem;
         }
     }

@@ -22,7 +22,10 @@ const StyledTable = styled(Table)`
 type ListRow = { [headerKey: string]: string };
 
 const ListsDataView = async (): Promise<React.ReactElement> => {
-    const rawData = (await supabase.from("lists").select("*")).data;
+    // const rawData = (await supabase.from("lists").select("*")).data;
+    const rawData = [];
+    for (let i = 0; i < 100; i++) rawData.push({ item_name: `Item ${i}` });
+
     console.log("fetched data");
 
     const dataAndTooltips = rawData?.map((row) => {
@@ -64,7 +67,14 @@ const ListsDataView = async (): Promise<React.ReactElement> => {
 
     return (
         <TableDiv>
-            <StyledTable checkboxes={false} headers={headers} data={dataAndTooltips} />
+            <StyledTable
+                checkboxes={false}
+                headers={headers}
+                data={dataAndTooltips}
+                reorderable
+                filters={["item_name"]}
+                pagination={false}
+            />
         </TableDiv>
     );
 };
