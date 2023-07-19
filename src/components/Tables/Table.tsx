@@ -13,6 +13,8 @@ import React, { useState, useEffect } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
 import { styled } from "styled-components";
+import { NoSsr } from "@mui/material";
+import SpeechBubbleIcon from "../Icons/SpeechBubbleIcon";
 
 export interface Datum {
     data: { [headerKey: string]: string[] | string | number | boolean | null | undefined };
@@ -34,19 +36,14 @@ const RowDiv = styled.div`
     display: flex;
     width: 100%;
     align-items: center;
-    padding-left: 1rem;
 `;
 
 const Spacer = styled.div`
     width: 2rem;
 `;
 
-const doesRowIncludeFilterText = (
-    row: Row,
-    filterText: FilterText,
-    headers: [string, string][]
-): boolean => {
-    for (const [headerKey, _headerLabel] of headers) {
+const doesRowIncludeFilterText = (row: Row, filterText: FilterText, headers: Headers): boolean => {
+    for (const headerKey of Object.keys(headers)) {
         if (
             !(row[headerKey] ?? "")
                 .toString()
@@ -123,34 +120,28 @@ const Table: React.FC<Props> = (props) => {
         }
     }, [selectCheckBoxes, selectAllCheckBox]);
 
-    const columns: TableColumn<Row>[] = (
-        props.toggleableHeaders ? shownHeaders : props.headers
-    ).map(([headerKey, headerName]) => {
-        return {
-            name: headerName,
-            selector: (row) => row[headerKey],
-            sortable: true,
-            cell(row, rowIndex, column, id) {
-                const tooltip = data[row.rowId].tooltips?.[headerKey];
-                const tooltipElement = tooltip ? (
-                    <>
-                        <Spacer />
-                        <SpeechBubbleIcon onHoverText={tooltip} popper />
-                    </>
-                ) : null;
-                return (
-                    <RowDiv key={id}>
-                        {data[row.rowId].data[headerKey]}
-                        {tooltipElement}
-                    </RowDiv>
-                );
-            },
-        };
-    });
-
-    const swapRows = (rowId1: number, rowId2: number): void => {
-        if (rowId1 < 0 || rowId2 < 0 || rowId1 >= data.length || rowId2 >= data.length) {
-            return;
+    const columns: TableColumn<Row>[] = Object.entries(props.headers).map(
+        ([headerKey, headerName]) => {
+            return {
+                name: headerName,
+                selector: (row: Row) => row[headerKey],
+                sortable: true,
+                cell(row, rowIndex, column, id) {
+                    const tooltip = props.data[rowIndex].tooltips?.[headerKey];
+                    const tooltipElement = tooltip ? (
+                        <>
+                            <Spacer />
+                            <SpeechBubbleIcon onHoverText={tooltip} />
+                        </>
+                    ) : null;
+                    return (
+                        <RowDiv key={id}>
+                            {row[headerKey]}
+                            {tooltipElement}
+                        </RowDiv>
+                    );
+                },
+            };
         }
 
         const newData = [...data];
@@ -193,28 +184,26 @@ const Table: React.FC<Props> = (props) => {
         }
     };
 
-    if (!domLoaded) {
-        return <></>;
-    }
-
     return (
         <Styling>
-            <StyledDataTable
-                columns={columns as any}
-                data={dataToFilteredRows(props.data, filterText, props.headers)}
-                keyField="rowId"
-                subHeader
-                subHeaderComponent={
-                    <TableFilterBar
-                        filterText={filterText}
-                        onFilter={onFilter}
-                        handleClear={handleClear}
-                        headers={props.headers}
-                    />
-                }
-                pagination
-                persistTableHead
-            />
+            <NoSsr>
+                <StyledDataTable
+                    columns={columns as any}
+                    data={dataToFilteredRows(props.data, filterText, props.headers)}
+                    keyField="rowId"
+                    subHeader
+                    subHeaderComponent={
+                        <TableFilterBar
+                            filterText={filterText}
+                            onFilter={onFilter}
+                            handleClear={handleClear}
+                            headers={props.headers}
+                        />
+                    }
+                    pagination
+                    persistTableHead
+                />
+            </NoSsr>
         </Styling>
     );
 };
@@ -256,20 +245,29 @@ const Styling = styled.div`
     // the table itself
     & .rdt_TableCell,
     & .rdt_TableCol_Sortable,
-    & .rdt_TableRow {
+    & .rdt_TableRow,
+    & .rdt_TableHeadRow,
+    & .rdt_Table {
         font-size: 0.9rem;
         padding-top: 0.5rem;
         padding-bottom: 0.5rem;
+        background-color: transparent;
+        color: ${(props) => props.theme.surfaceForegroundColor};
+    }
 
+    & .rdt_TableCell {
         // the div containing the text
         & > div {
             white-space: normal;
         }
     }
 
-    // overriding the border on the table row
     & .rdt_TableRow {
-        border-bottom-color: ${(props) => props.theme.disabledColor};
+        border-bottom-color: ${(props) => props.theme.disabledColor}!important;
+    }
+
+    & .rdt_TableHeadRow {
+        border-color: ${(props) => props.theme.foregroundColor};
     }
 
     // the icons in the pagination bar
@@ -278,7 +276,7 @@ const Styling = styled.div`
     }
 
     // formatting all children to adhere to the theme
-    & div {
+    & > div {
         background-color: ${(props) => props.theme.surfaceBackgroundColor};
         color: ${(props) => props.theme.surfaceForegroundColor};
         border-color: ${(props) => props.theme.disabledColor};

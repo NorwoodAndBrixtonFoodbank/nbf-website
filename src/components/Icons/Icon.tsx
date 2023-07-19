@@ -31,7 +31,31 @@ const Popper = styled.div`
     transform: translateY(2em);
 `;
 
+const Popper = styled.div`
+    position: absolute;
+    background-color: ${(props) => props.theme.surfaceBackgroundColor};
+    color: ${(props) => props.theme.surfaceForegroundColor};
+    padding: 0.5em;
+    border-radius: 0.5em;
+    z-index: 10;
+    font-size: 0.7em;
+
+    transform: translateY(2em);
+
+    box-shadow: 0.05rem 0.05rem 0.2rem ${(props) => props.theme.disabledColor};
+`;
+
 const Icon: React.FC<Props> = (props) => {
+    const [hovered, setHovered] = React.useState(false);
+
+    const show = (): void => {
+        setHovered(true);
+    };
+
+    const hide = (): void => {
+        setHovered(false);
+    };
+
     const [hovered, setHovered] = React.useState(false);
 
     const show = (): void => {
@@ -69,6 +93,24 @@ const Icon: React.FC<Props> = (props) => {
                 onTouchStart={show}
                 onTouchEnd={hide}
                 title={props.popper ? undefined : props.onHoverText}
+            />
+        </>
+        <>
+            {props.onHoverText && hovered ? (
+                <Popper onMouseEnter={show} onMouseLeave={hide} onMouseDown={show} onMouseUp={hide}>
+                    {props.onHoverText}
+                </Popper>
+            ) : (
+                <></>
+            )}
+            <StyledFontAwesomeIcon
+                icon={props.icon}
+                title={props.onHoverText}
+                color={props.color}
+                onMouseEnter={show}
+                onMouseLeave={hide}
+                onMouseDown={show}
+                onMouseUp={hide}
             />
         </>
     );
