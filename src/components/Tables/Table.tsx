@@ -1,11 +1,13 @@
 "use client";
 
-import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
+import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
+import { styled } from "styled-components";
 
 export interface Datum {
-    [headerKey: string]: string[] | string | number | boolean | null;
+    data: { [headerKey: string]: string[] | string | number | boolean | null | undefined };
+    tooltips?: { [headerKey: string]: string };
 }
 
 interface Row {
@@ -20,6 +22,7 @@ interface Headers {
 interface Props {
     data: Datum[];
     headers: Headers;
+    checkboxes?: boolean;
 }
 
 const doesRowIncludeFilterText = (row: Row, filterText: FilterText, headers: Headers): boolean => {
@@ -48,7 +51,7 @@ const dataToRows = (data: Datum[], headers: Headers): Row[] => {
         const row: Row = { rowId: currentIndex };
 
         for (const headerKey of Object.keys(headers)) {
-            const databaseValue = datum[headerKey] ?? "";
+            const databaseValue = datum.data[headerKey] ?? "";
             row[headerKey] = Array.isArray(databaseValue)
                 ? databaseValue.join(", ")
                 : databaseValue;
@@ -105,58 +108,162 @@ const Table: React.FC<Props> = (props) => {
         }
     );
 
-    columns.unshift({
-        name: (
-            <input
-                type="checkbox"
-                aria-label="Select all rows"
-                checked={selectAllCheckBox}
-                onClick={toggleAllCheckBox}
-            />
-        ),
-        cell: (row: Row) => (
-            <input
-                type="checkbox"
-                aria-label={`Select row ${row.rowId}`}
-                checked={selectCheckBoxes[row.rowId]}
-                onClick={() => toggleOwnCheckBox(row.rowId)}
-            />
-        ),
-        width: "47px",
-    });
-
-    const onFilter = (event: React.ChangeEvent<HTMLInputElement>, filterField: string): void => {
-        setFilterText({ ...filterText, [filterField]: event.target.value });
-    };
-
-    const handleClear = (): void => {
-        if (filterText) {
-            setFilterText({});
+    if (props.checkboxes) {
+        {
+            columns.unshift({
+                name: (
+                    <input
+                        type="checkbox"
+                        aria-label="Select all rows"
+                        checked={selectAllCheckBox}
+                        onClick={toggleAllCheckBox}
+                    />
+                ),
+                cell: (row: Row) => (
+                    <input
+                        type="checkbox"
+                        aria-label={`Select row ${row.rowId}`}
+                        checked={selectCheckBoxes[row.rowId]}
+                        onClick={() => toggleOwnCheckBox(row.rowId)}
+                    />
+                ),
+                width: "47px",
+            });
         }
-    };
 
-    if (!domLoaded) {
-        return <></>;
+        const onFilter = (
+            event: React.ChangeEvent<HTMLInputElement>,
+            filterField: string
+        ): void => {
+            setFilterText({ ...filterText, [filterField]: event.target.value });
+        };
+
+        const handleClear = (): void => {
+            if (filterText) {
+                setFilterText({});
+            }
+        };
+
+        if (!domLoaded) {
+            return <></>;
+        }
+
+        return (
+            <Styling>
+                <StyledDataTable
+                    columns={columns as any}
+                    data={dataToFilteredRows(props.data, filterText, props.headers)}
+                    keyField="rowId"
+                    subHeader
+                    subHeaderComponent={
+                        <TableFilterBar
+                            filterText={filterText}
+                            onFilter={onFilter}
+                            handleClear={handleClear}
+                            headers={props.headers}
+                        />
+                    }
+                    pagination
+                    persistTableHead
+                />
+            </Styling>
+        );
+    }
+};
+
+const Styling = styled.div`
+    // the component with the filter bars
+    & > header {
+        background-color: transparent;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+        column-gap: 5px;
+        row-gap: 2px;
+        align-items: center;
+        justify-content: start;
+        padding: 10px;
+
+        // the clear button
+        & > button {
+            position: absolute;
+            right: 5px;
+            bottom: 0px;
+            border-radius: 0.4rem;
+        }
     }
 
-    return (
-        <DataTable
-            columns={columns}
-            data={dataToFilteredRows(props.data, filterText, props.headers)}
-            keyField="rowId"
-            subHeader
-            subHeaderComponent={
-                <TableFilterBar
-                    filterText={filterText}
-                    onFilter={onFilter}
-                    handleClear={handleClear}
-                    headers={props.headers}
-                />
-            }
-            pagination
-            persistTableHead
-        />
-    );
-};
+    // the entire table component including the header and the pagination bar
+    & > div {
+        border-radius: 0;
+        background-color: transparent;
+
+        // the pagination bar
+        > nav {
+            background-color: transparent;
+            color: ${(props) => props.theme.surfaceForegroundColor};
+            border-top: solid 1px ${(props) => props.theme.foregroundColor};
+        }
+    }
+
+    // the table itself
+    & .rdt_TableCell,
+    & .rdt_TableCol_Sortable,
+    & .rdt_TableRow {
+        font-size: 0.9rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+
+        // the div containing the text
+        & > div {
+            white-space: normal;
+        }
+    }
+
+    // overriding the border on the table row
+    & .rdt_TableRow {
+        border-bottom-color: ${(props) => props.theme.disabledColor};
+    }
+
+    // the icons in the pagination bar
+    & svg {
+        fill: ${(props) => props.theme.disabledColor};
+    }
+
+    // formatting all children to adhere to the theme
+    & div {
+        background-color: ${(props) => props.theme.surfaceBackgroundColor};
+        color: ${(props) => props.theme.surfaceForegroundColor};
+        border-color: ${(props) => props.theme.disabledColor};
+    }
+
+    // the filter bars
+    & input[type="text"] {
+        color: ${(props) => props.theme.surfaceForegroundColor};
+
+        &::placeholder {
+            color: ${(props) => props.theme.disabledColor};
+        }
+
+        background-color: ${(props) => props.theme.surfaceBackgroundColor};
+        margin: 1px 2px 1px 2px;
+
+        padding: 4px 1px 4px 8px;
+
+        border-radius: 10px;
+        width: 10rem;
+        border: solid 1px ${(props) => props.theme.disabledColor};
+    }
+`;
+
+const StyledDataTable = styled(DataTable)`
+    & .rdt_TableCell,
+    & .rdt_TableCol_Sortable {
+        font-size: 0.9rem;
+        width: 7rem;
+    }
+
+    border-radius: 0;
+    background-color: transparent;
+`;
 
 export default Table;
