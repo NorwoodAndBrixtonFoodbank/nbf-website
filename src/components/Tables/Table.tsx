@@ -162,66 +162,61 @@ const Table: React.FC<Props> = (props) => {
     };
 
     if (props.checkboxes) {
-        {
-            columns.unshift({
-                name: (
-                    <input
-                        type="checkbox"
-                        aria-label="Select all rows"
-                        checked={selectAllCheckBox}
-                        onClick={toggleAllCheckBox}
-                    />
-                ),
-                cell: (row: Row) => (
-                    <input
-                        type="checkbox"
-                        aria-label={`Select row ${row.rowId}`}
-                        checked={selectCheckBoxes[row.rowId]}
-                        onClick={() => toggleOwnCheckBox(row.rowId)}
-                    />
-                ),
-                width: "47px",
-            });
-        }
-
-        const onFilter = (
-            event: React.ChangeEvent<HTMLInputElement>,
-            filterField: string
-        ): void => {
-            setFilterText({ ...filterText, [filterField]: event.target.value });
-        };
-
-        const handleClear = (): void => {
-            if (filterText) {
-                setFilterText({});
-            }
-        };
-
-        if (!domLoaded) {
-            return <></>;
-        }
-
-        return (
-            <Styling>
-                <StyledDataTable
-                    columns={columns as any}
-                    data={dataToFilteredRows(props.data, filterText, props.headers)}
-                    keyField="rowId"
-                    subHeader
-                    subHeaderComponent={
-                        <TableFilterBar
-                            filterText={filterText}
-                            onFilter={onFilter}
-                            handleClear={handleClear}
-                            headers={props.headers}
-                        />
-                    }
-                    pagination
-                    persistTableHead
+        columns.unshift({
+            name: (
+                <input
+                    type="checkbox"
+                    aria-label="Select all rows"
+                    checked={selectAllCheckBox}
+                    onClick={toggleAllCheckBox}
                 />
-            </Styling>
-        );
+            ),
+            cell: (row: Row) => (
+                <input
+                    type="checkbox"
+                    aria-label={`Select row ${row.rowId}`}
+                    checked={selectCheckBoxes[row.rowId]}
+                    onClick={() => toggleOwnCheckBox(row.rowId)}
+                />
+            ),
+            width: "47px",
+        });
     }
+
+    const onFilter = (event: React.ChangeEvent<HTMLInputElement>, filterField: string): void => {
+        setFilterText({ ...filterText, [filterField]: event.target.value });
+    };
+
+    const handleClear = (): void => {
+        if (filterText) {
+            setFilterText({});
+        }
+    };
+
+    if (!domLoaded) {
+        return <></>;
+    }
+
+    return (
+        <Styling>
+            <StyledDataTable
+                columns={columns as any}
+                data={dataToFilteredRows(props.data, filterText, props.headers)}
+                keyField="rowId"
+                subHeader
+                subHeaderComponent={
+                    <TableFilterBar
+                        filterText={filterText}
+                        onFilter={onFilter}
+                        handleClear={handleClear}
+                        headers={props.headers}
+                    />
+                }
+                pagination
+                persistTableHead
+            />
+        </Styling>
+    );
 };
 
 const Styling = styled.div`

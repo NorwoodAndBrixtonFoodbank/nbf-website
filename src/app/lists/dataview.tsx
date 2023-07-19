@@ -35,6 +35,7 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
     }
 
     const dataAndTooltips = rawData?.map((row) => {
+    const dataAndTooltips = rawData?.map((row) => {
         const data: ListRow = {
             item_name: row.item_name,
         };
