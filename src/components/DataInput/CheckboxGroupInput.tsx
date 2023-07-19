@@ -6,7 +6,7 @@ import { Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel } from "@
 interface Props {
     labelsAndKeys: [string, string][];
     groupLabel?: string;
-    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void; // eslint-disable-line no-unused-vars
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const CheckboxInput: React.FC<Props> = (props) => {
