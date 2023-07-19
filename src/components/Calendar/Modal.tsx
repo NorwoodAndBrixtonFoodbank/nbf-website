@@ -48,6 +48,16 @@ const Modal: React.FC<{
         return <></>;
     }
 
+    const startDate = new Date(eventClick.start).toLocaleString(
+        "en-GB",
+        eventClick.allDay ? dateFormatOptions : dateTimeFormatOptions
+    );
+
+    const endDate = new Date(eventClick.end).toLocaleString(
+        "en-GB",
+        eventClick.allDay ? dateFormatOptions : dateTimeFormatOptions
+    );
+
     return (
         <StyledDialog open={true} onClose={() => setEventClick(null)}>
             <StyledCloseButton type="button" onClick={() => setEventClick(null)}>
@@ -55,23 +65,9 @@ const Modal: React.FC<{
             </StyledCloseButton>
             <ModalInner>
                 <h2>{eventClick.title}</h2>
-                <p>
-                    Start:{" "}
-                    {eventClick.allDay
-                        ? new Date(eventClick.start).toLocaleString("en-GB", dateFormatOptions)
-                        : new Date(eventClick.start).toLocaleString("en-GB", dateTimeFormatOptions)}
-                </p>
-                <p>
-                    End:{" "}
-                    {eventClick.allDay
-                        ? new Date(eventClick.end).toLocaleString("en-GB", dateFormatOptions)
-                        : new Date(eventClick.end).toLocaleString("en-GB", dateTimeFormatOptions)}
-                </p>
-                {eventClick.description === undefined ? (
-                    <></>
-                ) : (
-                    <p>Description: {eventClick.description}</p>
-                )}
+                <p>Start: {startDate}</p>
+                <p>End: {endDate}</p>
+                {eventClick.description ? <p>Description: {eventClick.description}</p> : <></>}
             </ModalInner>
         </StyledDialog>
     );

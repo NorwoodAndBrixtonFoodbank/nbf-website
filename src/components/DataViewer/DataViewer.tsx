@@ -65,14 +65,16 @@ const ClearButton: React.FC<ClearButtonProps> = (props) => {
     );
 };
 const JSONContent: React.FC<Data> = (data) => {
-    return Object.entries(data).map(([key, value]) => {
-        return (
-            <EachItem key={key}>
-                <Key>{key.toUpperCase().replace("_", " ")}</Key>
-                <Value>{value ?? ""}</Value>
-            </EachItem>
-        );
-    });
+    return (
+        <>
+            {Object.entries(data).map(([key, value]) => (
+                <EachItem key={key}>
+                    <Key>{key.toUpperCase().replace("_", " ")}</Key>
+                    <Value>{value ?? ""}</Value>
+                </EachItem>
+            ))}
+        </>
+    );
 };
 
 interface DataViewerProps {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -95,8 +95,6 @@ const Calendar: React.FC<CalendarProps> = ({
         setEventClick(initialEvents.find((event) => event.id === id) ?? null);
     };
 
-    const displayEvents = useRef(endDateInclusiveEvents(initialEvents));
-
     return (
         <>
             <Modal eventClick={eventClick} setEventClick={setEventClick} />
@@ -109,7 +107,7 @@ const Calendar: React.FC<CalendarProps> = ({
                         center: "title",
                         right: "dayGridMonth,timeGridWeek,timeGridDay",
                     }}
-                    events={displayEvents.current}
+                    events={endDateInclusiveEvents(initialEvents)}
                     initialView={view}
                     editable={editable}
                     selectable={editable}
