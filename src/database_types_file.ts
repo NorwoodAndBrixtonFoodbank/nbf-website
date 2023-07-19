@@ -27,6 +27,7 @@ export interface Database {
           pet_food: string[]
           phone_number: string
           primary_key: string
+          voucher_number: string | null
         }
         Insert: {
           address_1?: string
@@ -45,6 +46,7 @@ export interface Database {
           pet_food?: string[]
           phone_number?: string
           primary_key?: string
+          voucher_number?: string | null
         }
         Update: {
           address_1?: string
@@ -63,6 +65,7 @@ export interface Database {
           pet_food?: string[]
           phone_number?: string
           primary_key?: string
+          voucher_number?: string | null
         }
         Relationships: []
       }
