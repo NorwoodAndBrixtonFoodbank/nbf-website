@@ -23,8 +23,9 @@ type ListRow = { [headerKey: string]: string };
 
 const ListsDataView = async (): Promise<React.ReactElement> => {
     const rawData = (await supabase.from("lists").select("*")).data;
+    console.log("fetched data");
 
-    const data = rawData?.map((row) => {
+    const dataAndTooltips = rawData?.map((row) => {
         const data: ListRow = {
             item_name: row.item_name,
         };
@@ -34,6 +35,7 @@ const ListsDataView = async (): Promise<React.ReactElement> => {
             const header = `${i}_quantity`;
             // type cast required as the type system can't infer that the header is a key of row
             data[header] = (row as ListRow)[header];
+            tooltips[header] = (row as ListRow)[`${i}_notes`];
         }
 
         return {
@@ -42,7 +44,9 @@ const ListsDataView = async (): Promise<React.ReactElement> => {
         };
     });
 
-    if (data === null || data === undefined || data.length === 0) {
+
+
+    if (dataAndTooltips === null || dataAndTooltips === undefined || dataAndTooltips.length === 0) {
         throw new Error("No data found");
     }
 
@@ -62,7 +66,7 @@ const ListsDataView = async (): Promise<React.ReactElement> => {
 
     return (
         <TableDiv>
-            <StyledTable checkboxes={false} headers={headers} data={data}></StyledTable>
+            <StyledTable checkboxes={false} headers={headers} data={dataAndTooltips} />
         </TableDiv>
     );
 };
