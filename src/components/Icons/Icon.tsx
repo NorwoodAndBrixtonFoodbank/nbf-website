@@ -46,7 +46,14 @@ const Icon: React.FC<Props> = (props) => {
     return (
         <>
             {props.onHoverText && hovered ? (
-                <Popper onMouseEnter={show} onMouseLeave={hide} onMouseDown={show} onMouseUp={hide}>
+                <Popper
+                    onMouseEnter={show}
+                    onMouseLeave={hide}
+                    onMouseDown={show}
+                    onMouseUp={hide}
+                    onTouchStart={show}
+                    onTouchEnd={hide}
+                >
                     {props.onHoverText}
                 </Popper>
             ) : (
@@ -60,6 +67,8 @@ const Icon: React.FC<Props> = (props) => {
                 onMouseLeave={hide}
                 onMouseDown={show}
                 onMouseUp={hide}
+                onTouchStart={show}
+                onTouchEnd={hide}
             />
         </>
     );
