@@ -2,17 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import TableFilterBar, { FilterText } from "./TableFilterBar";
-import { styled } from "styled-components";
-import { NoSsr } from "@mui/material";
-import SpeechBubbleIcon from "../Icons/SpeechBubbleIcon";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAnglesUp, faAnglesDown, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-import { ListRow } from "../../app/lists/dataview";
-import React, { useState, useEffect } from "react";
-import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
-import { styled } from "styled-components";
+import { styled, useTheme } from "styled-components";
 import { NoSsr } from "@mui/material";
 import SpeechBubbleIcon from "../Icons/SpeechBubbleIcon";
 
@@ -21,10 +12,14 @@ export interface Datum {
     tooltips?: { [headerKey: string]: string };
 }
 
-type Row = {
+interface Row {
     rowId: number;
     [headerKey: string]: string | number | boolean;
-};
+}
+
+interface Headers {
+    [headerKey: string]: string;
+}
 
 interface Props {
     data: Datum[];
@@ -56,17 +51,14 @@ const doesRowIncludeFilterText = (row: Row, filterText: FilterText, headers: Hea
     return true;
 };
 
-const dataToFilteredRows = (
-    data: Datum[],
-    filterText: FilterText,
-    headers: [string, string][]
-): Row[] => {
+const dataToFilteredRows = (data: Datum[], filterText: FilterText, headers: Headers): Row[] => {
     const rows = dataToRows(data, headers);
     const filteredRows = filterRows(rows, filterText, headers);
+
     return filteredRows;
 };
 
-const dataToRows = (data: Datum[], headers: [string, string][]): Row[] => {
+const dataToRows = (data: Datum[], headers: Headers): Row[] => {
     return data.map((datum: Datum, currentIndex: number) => {
         const row: Row = { rowId: currentIndex };
 
@@ -81,23 +73,17 @@ const dataToRows = (data: Datum[], headers: [string, string][]): Row[] => {
     });
 };
 
-const filterRows = (rows: Row[], filterText: FilterText, headers: [string, string][]): Row[] => {
+const filterRows = (rows: Row[], filterText: FilterText, headers: Headers): Row[] => {
     return rows.filter((row) => doesRowIncludeFilterText(row, filterText, headers));
 };
 
 const Table: React.FC<Props> = (props) => {
-    const [shownHeaderKeys, setShownHeaderKeys] = useState(
-        props.defaultShownHeaders ?? props.headers.map(([key]) => key)
-    );
-
-    const shownHeaders = props.headers.filter(([key]) => shownHeaderKeys.includes(key));
-
-    const [data, setData] = useState(props.data);
+    const theme = useTheme();
 
     const [filterText, setFilterText] = useState<FilterText>({});
 
     const [selectCheckBoxes, setSelectCheckBoxes] = useState(
-        new Array<boolean>(data.length).fill(false)
+        new Array<boolean>(props.data.length).fill(false)
     );
 
     const [selectAllCheckBox, setSelectAllCheckBox] = useState(false);
@@ -109,7 +95,7 @@ const Table: React.FC<Props> = (props) => {
     };
 
     const toggleAllCheckBox = (): void => {
-        setSelectCheckBoxes(new Array<boolean>(data.length).fill(!selectAllCheckBox));
+        setSelectCheckBoxes(new Array<boolean>(props.data.length).fill(!selectAllCheckBox));
         setSelectAllCheckBox(!selectAllCheckBox);
     };
 
@@ -131,7 +117,7 @@ const Table: React.FC<Props> = (props) => {
                     const tooltipElement = tooltip ? (
                         <>
                             <Spacer />
-                            <SpeechBubbleIcon onHoverText={tooltip} />
+                            <SpeechBubbleIcon onHoverText={tooltip}  />
                         </>
                     ) : null;
                     return (
@@ -143,14 +129,7 @@ const Table: React.FC<Props> = (props) => {
                 },
             };
         }
-
-        const newData = [...data];
-        const temp = newData[rowId1];
-        newData[rowId1] = newData[rowId2];
-        newData[rowId2] = temp;
-
-        setData(newData);
-    };
+    );
 
     if (props.checkboxes) {
         columns.unshift({
