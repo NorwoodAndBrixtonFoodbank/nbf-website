@@ -66,19 +66,19 @@ export interface Database {
       families: {
         Row: {
           family_id: string
-          person_type: string
+          person_type: Database["public"]["Enums"]["gender"]
           primary_key: string
           quantity: number
         }
         Insert: {
           family_id: string
-          person_type: string
+          person_type: Database["public"]["Enums"]["gender"]
           primary_key?: string
           quantity: number
         }
         Update: {
           family_id?: string
-          person_type?: string
+          person_type?: Database["public"]["Enums"]["gender"]
           primary_key?: string
           quantity?: number
         }
@@ -168,32 +168,35 @@ export interface Database {
       }
       parcels: {
         Row: {
+          client_id: string
           collection_centre: string | null
           collection_datetime: string | null
-          family_id: string
           packing_datetime: string | null
           primary_key: string
+          voucher_number: string | null
         }
         Insert: {
+          client_id: string
           collection_centre?: string | null
           collection_datetime?: string | null
-          family_id: string
           packing_datetime?: string | null
           primary_key?: string
+          voucher_number?: string | null
         }
         Update: {
+          client_id?: string
           collection_centre?: string | null
           collection_datetime?: string | null
-          family_id?: string
           packing_datetime?: string | null
           primary_key?: string
+          voucher_number?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "parcels_family_id_fkey"
-            columns: ["family_id"]
+            foreignKeyName: "parcels_client_id_fkey"
+            columns: ["client_id"]
             referencedRelation: "clients"
-            referencedColumns: ["family_id"]
+            referencedColumns: ["primary_key"]
           }
         ]
       }
@@ -205,7 +208,7 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      gender: "male" | "female" | "adult" | "boy" | "girl" | "child"
     }
     CompositeTypes: {
       [_ in never]: never
