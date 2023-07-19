@@ -9,11 +9,15 @@ import SpeechBubbleIcon from "../Icons/SpeechBubbleIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAnglesUp, faAnglesDown, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { ListRow } from "../../app/lists/dataview";
+import React, { useState, useEffect } from "react";
+import DataTable, { TableColumn } from "react-data-table-component";
+import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
+import { styled } from "styled-components";
 
-export type Datum = {
-    data: ListRow;
-    tooltips?: ListRow;
-};
+export interface Datum {
+    data: { [headerKey: string]: string[] | string | number | boolean | null | undefined };
+    tooltips?: { [headerKey: string]: string };
+}
 
 type Row = {
     rowId: number;
@@ -22,15 +26,8 @@ type Row = {
 
 interface Props {
     data: Datum[];
-    // headers is an object of header keys and header labels
-    headers: [string, string][];
+    headers: Headers;
     checkboxes?: boolean;
-    reorderable?: boolean;
-    /// filters is an array of the header keys to filter by
-    filters?: string[];
-    pagination?: boolean;
-    defaultShownHeaders?: string[];
-    toggleableHeaders?: string[];
 }
 
 const RowDiv = styled.div`
@@ -76,7 +73,7 @@ const dataToRows = (data: Datum[], headers: [string, string][]): Row[] => {
     return data.map((datum: Datum, currentIndex: number) => {
         const row: Row = { rowId: currentIndex };
 
-        for (const [headerKey, _headerLabel] of headers) {
+        for (const headerKey of Object.keys(headers)) {
             const databaseValue = datum.data[headerKey] ?? "";
             row[headerKey] = Array.isArray(databaseValue)
                 ? databaseValue.join(", ")
@@ -165,120 +162,85 @@ const Table: React.FC<Props> = (props) => {
     };
 
     if (props.checkboxes) {
-        columns.unshift({
-            name: (
-                <input
-                    type="checkbox"
-                    aria-label="Select all rows"
-                    checked={selectAllCheckBox}
-                    onClick={toggleAllCheckBox}
-                />
-            ),
-            cell: (row: Row) => (
-                <input
-                    type="checkbox"
-                    aria-label={`Select row ${row.rowId}`}
-                    checked={selectCheckBoxes[row.rowId]}
-                    onClick={() => toggleOwnCheckBox(row.rowId)}
-                />
-            ),
-            width: "47px",
-        });
-    }
-
-    if (props.reorderable) {
-        columns.unshift({
-            name: <p>Sort</p>,
-            cell: (row: Row) => (
-                <EditandReorderArrowDiv>
-                    <StyledIcon
-                        onClick={() => swapRows(row.rowId, row.rowId - 1)}
-                        icon={faAnglesUp}
+        {
+            columns.unshift({
+                name: (
+                    <input
+                        type="checkbox"
+                        aria-label="Select all rows"
+                        checked={selectAllCheckBox}
+                        onClick={toggleAllCheckBox}
                     />
-                    <StyledIcon icon={faPenToSquare} />
-                    <StyledIcon
-                        onClick={() => swapRows(row.rowId, row.rowId + 1)}
-                        icon={faAnglesDown}
+                ),
+                cell: (row: Row) => (
+                    <input
+                        type="checkbox"
+                        aria-label={`Select row ${row.rowId}`}
+                        checked={selectCheckBoxes[row.rowId]}
+                        onClick={() => toggleOwnCheckBox(row.rowId)}
                     />
-                </EditandReorderArrowDiv>
-            ),
-            width: "5rem",
-        });
-    }
-
-    const onFilter = (event: React.ChangeEvent<HTMLInputElement>, filterField: string): void => {
-        setFilterText({ ...filterText, [filterField]: event.target.value });
-    };
-
-    const handleClear = (): void => {
-        if (filterText) {
-            setFilterText({});
+                ),
+                width: "47px",
+            });
         }
-    };
 
-    const filterKeys = props.filters ?? props.headers.map(([headerKey]) => headerKey);
+        const onFilter = (
+            event: React.ChangeEvent<HTMLInputElement>,
+            filterField: string
+        ): void => {
+            setFilterText({ ...filterText, [filterField]: event.target.value });
+        };
 
-    return (
-        <Styling>
-            <NoSsr>
-                <DataTable
-                    // types are fine without the cast when not using styled components, not sure what's happening here
-                    columns={columns}
-                    data={dataToFilteredRows(data, filterText, props.headers)}
+        const handleClear = (): void => {
+            if (filterText) {
+                setFilterText({});
+            }
+        };
+
+        if (!domLoaded) {
+            return <></>;
+        }
+
+        return (
+            <Styling>
+                <StyledDataTable
+                    columns={columns as any}
+                    data={dataToFilteredRows(props.data, filterText, props.headers)}
                     keyField="rowId"
-                    fixedHeader
                     subHeader
                     subHeaderComponent={
                         <TableFilterBar
                             filterText={filterText}
-                            filterKeys={filterKeys}
-                            toggleableHeaders={props.toggleableHeaders}
                             onFilter={onFilter}
                             handleClear={handleClear}
                             headers={props.headers}
-                            setShownHeaderKeys={setShownHeaderKeys}
-                            shownHeaderKeys={shownHeaderKeys}
                         />
                     }
-                    pagination={props.pagination ?? true}
+                    pagination
                     persistTableHead
                 />
-            </NoSsr>
-        </Styling>
-    );
+            </Styling>
+        );
+    }
 };
-
-const EditandReorderArrowDiv = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    width: 100%;
-    padding-right: 1.2rem;
-`;
-
-const StyledIcon = styled(FontAwesomeIcon)`
-    cursor: pointer;
-`;
 
 const Styling = styled.div`
     // the component with the filter bars
     & > header {
         background-color: transparent;
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+        column-gap: 5px;
+        row-gap: 2px;
         align-items: center;
-        flex-wrap: wrap;
-        justify-content: space-between;
+        justify-content: start;
         padding: 10px;
-        gap: min(1rem, 5vw);
-        overflow: visible;
-        @media (min-width: 500px) {
-            flex-wrap: nowrap;
-        }
 
         // the clear button
         & > button {
+            position: absolute;
+            right: 5px;
+            bottom: 0px;
             border-radius: 0.4rem;
         }
     }
@@ -296,13 +258,32 @@ const Styling = styled.div`
         }
     }
 
+    // the table itself
+    & .rdt_TableCell,
+    & .rdt_TableCol_Sortable,
+    & .rdt_TableRow {
+        font-size: 0.9rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+
+        // the div containing the text
+        & > div {
+            white-space: normal;
+        }
+    }
+
+    // overriding the border on the table row
+    & .rdt_TableRow {
+        border-bottom-color: ${(props) => props.theme.disabledColor};
+    }
+
     // the icons in the pagination bar
     & svg {
         fill: ${(props) => props.theme.disabledColor};
     }
 
-    // formatting all direct children to adhere to the theme
-    & > div {
+    // formatting all children to adhere to the theme
+    & div {
         background-color: ${(props) => props.theme.surfaceBackgroundColor};
         color: ${(props) => props.theme.surfaceForegroundColor};
         border-color: ${(props) => props.theme.disabledColor};
@@ -318,54 +299,24 @@ const Styling = styled.div`
 
         background-color: ${(props) => props.theme.surfaceBackgroundColor};
         margin: 1px 2px 1px 2px;
+
         padding: 4px 1px 4px 8px;
-        border-radius: 0.5rem;
+
+        border-radius: 10px;
         width: 10rem;
         border: solid 1px ${(props) => props.theme.disabledColor};
     }
+`;
 
+const StyledDataTable = styled(DataTable)`
     & .rdt_TableCell,
     & .rdt_TableCol_Sortable {
+        font-size: 0.9rem;
         width: 7rem;
     }
 
     border-radius: 0;
     background-color: transparent;
-
-    // the table itself
-    & .rdt_TableCell,
-    & .rdt_TableCol_Sortable,
-    & .rdt_TableRow,
-    & .rdt_Table {
-        font-size: 0.9rem;
-        padding: 0.5rem 0.5rem;
-        background-color: transparent;
-        color: ${(props) => props.theme.surfaceForegroundColor};
-    }
-
-    & .rdt_TableHeadRow {
-        background-color: ${(props) => props.theme.surfaceBackgroundColor};
-    }
-
-    & .rdt_TableCell {
-        // the div containing the text
-        & > div {
-            white-space: normal;
-        }
-    }
-
-    & .rdt_TableRow {
-        border-bottom-color: ${(props) => props.theme.disabledColor}!important;
-    }
-
-    & .rdt_TableHeadRow {
-        border-color: ${(props) => props.theme.foregroundColor};
-    }
-
-    & .rdt_Table > div {
-        background-color: transparent;
-        color: ${(props) => props.theme.surfaceForegroundColor};
-    }
 `;
 
 export default Table;
