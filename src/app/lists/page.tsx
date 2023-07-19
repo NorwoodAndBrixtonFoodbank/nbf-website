@@ -5,6 +5,7 @@ import ListsDataView from "./dataview";
 const Lists: React.FC<{}> = () => {
     return (
         <main>
+            <h1>Lists Page</h1>
             <ListsDataView />
         </main>
     );

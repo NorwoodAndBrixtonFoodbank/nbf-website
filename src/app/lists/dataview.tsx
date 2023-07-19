@@ -44,8 +44,6 @@ const ListsDataView = async (): Promise<React.ReactElement> => {
         };
     });
 
-
-
     if (dataAndTooltips === null || dataAndTooltips === undefined || dataAndTooltips.length === 0) {
         throw new Error("No data found");
     }
