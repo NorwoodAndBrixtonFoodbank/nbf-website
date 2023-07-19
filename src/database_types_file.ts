@@ -173,6 +173,7 @@ export interface Database {
           collection_datetime: string | null
           packing_datetime: string | null
           primary_key: string
+          voucher_number: string | null
         }
         Insert: {
           client_id: string
@@ -180,6 +181,7 @@ export interface Database {
           collection_datetime?: string | null
           packing_datetime?: string | null
           primary_key?: string
+          voucher_number?: string | null
         }
         Update: {
           client_id?: string
@@ -187,6 +189,7 @@ export interface Database {
           collection_datetime?: string | null
           packing_datetime?: string | null
           primary_key?: string
+          voucher_number?: string | null
         }
         Relationships: [
           {
