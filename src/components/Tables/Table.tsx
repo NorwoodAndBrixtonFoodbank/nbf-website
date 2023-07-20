@@ -19,18 +19,17 @@ interface Row {
     [headerKey: string]: string | number | boolean;
 }
 
-interface Headers {
-    [headerKey: string]: string;
-}
-
 interface Props {
     data: Datum[];
-    headers: Headers;
+    /** an object of header keys and header labels */
+    headers: [string, string][];
     checkboxes?: boolean;
     reorderable?: boolean;
     /// an array of header keys to filter by
     filters?: string[];
     pagination?: boolean;
+    defaultShownHeaders?: string[];
+    toggleableHeaders?: string[];
 }
 
 const RowDiv = styled.div`
@@ -43,8 +42,12 @@ const Spacer = styled.div`
     width: 2rem;
 `;
 
-const doesRowIncludeFilterText = (row: Row, filterText: FilterText, headers: Headers): boolean => {
-    for (const headerKey of Object.keys(headers)) {
+const doesRowIncludeFilterText = (
+    row: Row,
+    filterText: FilterText,
+    headers: [string, string][]
+): boolean => {
+    for (const [headerKey, _headerLabel] of headers) {
         if (
             !(row[headerKey] ?? "")
                 .toString()
@@ -57,14 +60,18 @@ const doesRowIncludeFilterText = (row: Row, filterText: FilterText, headers: Hea
     return true;
 };
 
-const dataToFilteredRows = (data: Datum[], filterText: FilterText, headers: Headers): Row[] => {
+const dataToFilteredRows = (
+    data: Datum[],
+    filterText: FilterText,
+    headers: [string, string][]
+): Row[] => {
     const rows = dataToRows(data, headers);
     const filteredRows = filterRows(rows, filterText, headers);
 
     return filteredRows;
 };
 
-const dataToRows = (data: Datum[], headers: Headers): Row[] => {
+const dataToRows = (data: Datum[], headers: [string, string][]): Row[] => {
     return data.map((datum: Datum, currentIndex: number) => {
         const row: Row = { rowId: currentIndex };
 
@@ -79,11 +86,17 @@ const dataToRows = (data: Datum[], headers: Headers): Row[] => {
     });
 };
 
-const filterRows = (rows: Row[], filterText: FilterText, headers: Headers): Row[] => {
+const filterRows = (rows: Row[], filterText: FilterText, headers: [string, string][]): Row[] => {
     return rows.filter((row) => doesRowIncludeFilterText(row, filterText, headers));
 };
 
 const Table: React.FC<Props> = (props) => {
+    const [shownHeaderKeys, setShownHeaderKeys] = useState(
+        props.defaultShownHeaders ?? props.headers.map(([key, _value]) => key)
+    );
+
+    const shownHeaders = props.headers.filter(([key, _value]) => shownHeaderKeys.includes(key));
+
     const [data, setData] = useState(props.data);
 
     const [filterText, setFilterText] = useState<FilterText>({});
@@ -112,14 +125,14 @@ const Table: React.FC<Props> = (props) => {
         }
     }, [selectCheckBoxes, selectAllCheckBox]);
 
-    const columns: TableColumn<Row>[] = Object.entries(props.headers).map(
+    const columns: TableColumn<Row>[] = (props.toggleableHeaders ? shownHeaders : props.headers).map(
         ([headerKey, headerName]) => {
             return {
                 name: headerName,
-                selector: (row: Row) => row[headerKey],
+                selector: (row) => row[headerKey],
                 sortable: true,
                 cell(row, rowIndex, column, id) {
-                    const tooltip = data[rowIndex].tooltips?.[headerKey];
+                    const tooltip = data[row.rowId].tooltips?.[headerKey];
                     const tooltipElement = tooltip ? (
                         <>
                             <Spacer />
@@ -128,7 +141,7 @@ const Table: React.FC<Props> = (props) => {
                     ) : null;
                     return (
                         <RowDiv key={id}>
-                            {row[headerKey]}
+                            {data[row.rowId].data[headerKey]}
                             {tooltipElement}
                         </RowDiv>
                     );
@@ -164,26 +177,32 @@ const Table: React.FC<Props> = (props) => {
             name: <></>,
             cell: (row: Row, rowIndex, column, id) => (
                 <ReorderArrowDiv>
-                    <StyledIcon onClick={() => {
-                        if (row.rowId === 0) return;
-                        setData(data => {
-                            const newData = [...data];
-                            const temp = newData[row.rowId];
-                            newData[row.rowId] = newData[row.rowId - 1];
-                            newData[row.rowId - 1] = temp;
-                            return newData;
-                        });
-                    }} icon={faAnglesUp} />
-                    <StyledIcon onClick={() => {
-                        if (row.rowId === data.length - 1) return;
-                        setData(data => {
-                            const newData = [...data];
-                            const temp = newData[row.rowId];
-                            newData[row.rowId] = newData[row.rowId + 1];
-                            newData[row.rowId + 1] = temp;
-                            return newData;
-                        });
-                    }} icon={faAnglesDown} />
+                    <StyledIcon
+                        onClick={() => {
+                            if (row.rowId === 0) return;
+                            setData((data) => {
+                                const newData = [...data];
+                                const temp = newData[row.rowId];
+                                newData[row.rowId] = newData[row.rowId - 1];
+                                newData[row.rowId - 1] = temp;
+                                return newData;
+                            });
+                        }}
+                        icon={faAnglesUp}
+                    />
+                    <StyledIcon
+                        onClick={() => {
+                            if (row.rowId === data.length - 1) return;
+                            setData((data) => {
+                                const newData = [...data];
+                                const temp = newData[row.rowId];
+                                newData[row.rowId] = newData[row.rowId + 1];
+                                newData[row.rowId + 1] = temp;
+                                return newData;
+                            });
+                        }}
+                        icon={faAnglesDown}
+                    />
                 </ReorderArrowDiv>
             ),
             width: "40px",
@@ -200,22 +219,31 @@ const Table: React.FC<Props> = (props) => {
         }
     };
 
-    const filters = (props.filters) ? Object.fromEntries(props.filters.map(filter => [filter, props.headers[filter]])) : props.headers;
+
+    const filterKeys = props.filters ?? props.headers.map(([headerKey, _headerLabel]) => headerKey);
 
     return (
         <Styling>
             <NoSsr>
                 <StyledDataTable
+                    // types are fine without the cast when not using styled components, not sure what's happening here
                     columns={columns as any}
                     data={dataToFilteredRows(data, filterText, props.headers)}
                     keyField="rowId"
+                    fixedHeader
                     subHeader
                     subHeaderComponent={
                         <TableFilterBar
                             filterText={filterText}
+                            filterKeys={filterKeys}
+                            toggleableHeaders={props.toggleableHeaders}
                             onFilter={onFilter}
                             handleClear={handleClear}
-                            headers={filters}
+                            headers={props.headers}
+                            setShownHeaderKeys={
+                                setShownHeaderKeys
+                            }
+                            shownHeaderKeys={shownHeaderKeys}
                         />
                     }
                     pagination={props.pagination ?? true}
@@ -244,8 +272,15 @@ const Styling = styled.div`
         background-color: transparent;
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
         justify-content: space-between;
         padding: 10px;
+        gap: min(1rem, 5vw);
+        overflow: visible;
+        @media (min-width: 500px) {
+            flex-wrap: nowrap;
+        }
+
 
         // the clear button
         & > button {
@@ -270,13 +305,16 @@ const Styling = styled.div`
     & .rdt_TableCell,
     & .rdt_TableCol_Sortable,
     & .rdt_TableRow,
-    & .rdt_TableHeadRow,
     & .rdt_Table {
         font-size: 0.9rem;
         padding-top: 0.5rem;
         padding-bottom: 0.5rem;
         background-color: transparent;
         color: ${(props) => props.theme.surfaceForegroundColor};
+    }
+
+    & .rdt_TableHeadRow {
+        background-color: ${(props) => props.theme.surfaceBackgroundColor};
     }
 
     & .rdt_TableCell {

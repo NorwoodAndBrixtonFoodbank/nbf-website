@@ -14,14 +14,8 @@ const Styling = styled.div`
     height: 3rem;
     overflow: visible;
     z-index: 2;
-    margin-bottom: 0.5rem;
-    margin-top: 0.5rem;
     & .MuiPaper-root {
         background-color: ${(props) => props.theme.surfaceBackgroundColor};
-        border: 1px solid ${(props) => props.theme.secondaryBackgroundColor};
-        box-shadow: 0 0 1px ${(props) => props.theme.secondaryBackgroundColor};
-        color: ${(props) => props.theme.disabledColor};
-        border-radius: 0.5rem !important;
         & .MuiAccordionDetails-root {
             display: flex;
             flex-wrap: wrap;
@@ -35,9 +29,6 @@ const ContainerDiv = styled.div`
     display: flex;
     justify-content: start;
     align-items: center;
-    & svg {
-        fill: ${(props) => props.theme.primaryBackgroundColor};
-    }
 `;
 const FilterAccordion: React.FC<FilterAccordionProps> = ({
     toggleableHeaders,
@@ -54,7 +45,7 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
                 <AccordionDetails>
                     {(toggleableHeaders ?? []).map((key) => {
                         return (
-                            <ContainerDiv key={key}>
+                            <ContainerDiv>
                                 <Checkbox
                                     key={key}
                                     checked={shownHeaderKeys.includes(key)}
@@ -71,7 +62,9 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
                                     }}
                                 />
                                 <p>
-                                    {headers.find(([headerKey]) => headerKey === key)?.[1] ?? key}
+                                    {headers.find(
+                                        ([headerKey, _value]) => headerKey === key
+                                    )?.[1] ?? key}
                                 </p>
                             </ContainerDiv>
                         );

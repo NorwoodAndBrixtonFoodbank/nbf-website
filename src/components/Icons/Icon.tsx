@@ -20,8 +20,8 @@ const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
 
 const Popper = styled.div`
     position: absolute;
-    background-color: ${(props) => props.theme.surfaceBackgroundColor};
-    color: ${(props) => props.theme.surfaceForegroundColor};
+    background-color: ${(props) => props.theme.primaryBackgroundColor};
+    color: ${(props) => props.theme.primaryForegroundColor};
     padding: 0.5em;
     border-radius: 0.5em;
     z-index: 10;
@@ -29,7 +29,7 @@ const Popper = styled.div`
 
     transform: translateY(2em);
 
-    box-shadow: 0.05rem 0.05rem 0.2rem ${(props) => props.theme.disabledColor};
+    box-shadow: 0 0 0.2rem ${(props) => props.theme.disabledColor};
 `;
 
 const Icon: React.FC<Props> = (props) => {
