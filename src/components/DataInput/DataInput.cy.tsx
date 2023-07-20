@@ -10,7 +10,7 @@ import {
     getRadioGroupHandler,
     getCheckboxGroupHandler,
 } from "@/components/DataInput/inputHandlerFactories";
-import { SelectChangeEvent } from "@mui/material";
+import { hexToRgb, SelectChangeEvent } from "@mui/material";
 import CheckboxGroupInput from "@/components/DataInput/CheckboxGroupInput";
 
 describe("Data Input Components", () => {
@@ -212,6 +212,12 @@ describe("Data Input Components", () => {
 
             cy.get("input[value='c']").click();
             cy.get("@onChangeSpy").should("have.been.calledWith", "c");
+        });
+
+        it("Add error message to form", () => {
+            cy.mount(<FreeFormTextInput label="FreeForm" error={true} helperText="Error" />);
+            cy.get(".Mui-error").contains("Error");
+            cy.get(".Mui-error").should("have.css", "color", hexToRgb("#d32f2f"));
         });
     });
 });
