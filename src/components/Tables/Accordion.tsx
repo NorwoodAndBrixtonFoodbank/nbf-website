@@ -29,6 +29,10 @@ const ContainerDiv = styled.div`
     display: flex;
     justify-content: start;
     align-items: center;
+
+    & svg {
+        fill: ${(props) => props.theme.primaryBackgroundColor};
+    }
 `;
 const FilterAccordion: React.FC<FilterAccordionProps> = ({
     toggleableHeaders,
@@ -46,7 +50,7 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
                     {(toggleableHeaders ?? []).map((key) => {
                         return (
                             <ContainerDiv>
-                                <Checkbox
+                                <Checkbox 
                                     key={key}
                                     checked={shownHeaderKeys.includes(key)}
                                     onChange={(event) => {

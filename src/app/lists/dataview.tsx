@@ -10,7 +10,6 @@ const TableDiv = styled.div`
     margin: 20px;
     padding: 20px;
     background-color: ${(props) => props.theme.surfaceBackgroundColor};
-
     border: solid 1px ${(props) => props.theme.surfaceForegroundColor};
     border-radius: 1rem;
 `;
@@ -44,7 +43,7 @@ const ListsDataView = async (): Promise<React.ReactElement> => {
         };
     });
 
-    if (dataAndTooltips === null || dataAndTooltips === undefined || dataAndTooltips.length === 0) {
+    if (dataAndTooltips === null || dataAndTooltips === undefined) {
         throw new Error("No data found");
     }
 
