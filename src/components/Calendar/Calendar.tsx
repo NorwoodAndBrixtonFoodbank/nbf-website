@@ -71,6 +71,18 @@ const CalendarStyling = styled.div`
     }
 `;
 
+const makeAllDayEventsInclusive = (endDateExclusiveEvents: CalendarEvent[]): CalendarEvent[] => {
+    return endDateExclusiveEvents.map((exclusiveEvent: CalendarEvent): CalendarEvent => {
+        const copiedEndDate = new Date(exclusiveEvent.end);
+
+        if (exclusiveEvent.allDay) {
+            copiedEndDate.setDate(copiedEndDate.getDate() + 1);
+        }
+
+        return { ...exclusiveEvent, end: copiedEndDate };
+    });
+};
+
 const Calendar: React.FC<CalendarProps> = ({
     initialEvents,
     view = "dayGridMonth",
@@ -96,7 +108,7 @@ const Calendar: React.FC<CalendarProps> = ({
                         center: "title",
                         right: "dayGridMonth,timeGridWeek,timeGridDay",
                     }}
-                    events={initialEvents}
+                    events={makeAllDayEventsInclusive(initialEvents)}
                     initialView={view}
                     editable={editable}
                     selectable={editable}

@@ -24,13 +24,20 @@ const ModalInner = styled.div`
     row-gap: 1rem;
 `;
 
-const dateFormatOptions: Intl.DateTimeFormatOptions = {
+const dateTimeFormatOptions: Intl.DateTimeFormatOptions = {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
     hour: "numeric",
     minute: "numeric",
+};
+
+const dateFormatOptions: Intl.DateTimeFormatOptions = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
 };
 
 const Modal: React.FC<{
@@ -40,23 +47,27 @@ const Modal: React.FC<{
     if (!eventClick) {
         return <></>;
     }
+
+    const startDate = new Date(eventClick.start).toLocaleString(
+        "en-GB",
+        eventClick.allDay ? dateFormatOptions : dateTimeFormatOptions
+    );
+
+    const endDate = new Date(eventClick.end).toLocaleString(
+        "en-GB",
+        eventClick.allDay ? dateFormatOptions : dateTimeFormatOptions
+    );
+
     return (
         <StyledDialog open={true} onClose={() => setEventClick(null)}>
             <StyledCloseButton type="button" onClick={() => setEventClick(null)}>
                 close
             </StyledCloseButton>
             <ModalInner>
-                <h2>View Event</h2>
-                <p>Event Title: {eventClick.title}</p>
-                <p>
-                    Start:
-                    {new Date(eventClick.start).toLocaleString("en-GB", dateFormatOptions)}
-                </p>
-                <p>
-                    End:
-                    {new Date(eventClick.end).toLocaleString("en-GB", dateFormatOptions)}
-                </p>
-                <p>Description: {eventClick.description}</p>
+                <h2>{eventClick.title}</h2>
+                <p>Start: {startDate}</p>
+                <p>End: {endDate}</p>
+                {eventClick.description ? <p>Description: {eventClick.description}</p> : <></>}
             </ModalInner>
         </StyledDialog>
     );
