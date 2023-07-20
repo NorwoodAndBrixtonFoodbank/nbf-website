@@ -11,57 +11,57 @@ export interface Database {
     Tables: {
       clients: {
         Row: {
-          address_1: string | null
-          address_2: string | null
-          address_county: string | null
-          address_postcode: string | null
-          address_town: string | null
+          address_1: string
+          address_2: string
+          address_county: string
+          address_postcode: string
+          address_town: string
           baby_food: boolean | null
-          delivery_instructions: string | null
+          delivery_instructions: string
           dietary_requirements: string[]
-          extra_information: string | null
+          extra_information: string
           family_id: string
           feminine_products: string[]
           full_name: string
-          other_items: string | null
+          other_items: string[]
           pet_food: string[]
-          phone_number: string | null
+          phone_number: string
           primary_key: string
         }
         Insert: {
-          address_1?: string | null
-          address_2?: string | null
-          address_county?: string | null
-          address_postcode?: string | null
-          address_town?: string | null
+          address_1?: string
+          address_2?: string
+          address_county?: string
+          address_postcode?: string
+          address_town?: string
           baby_food?: boolean | null
-          delivery_instructions?: string | null
+          delivery_instructions?: string
           dietary_requirements?: string[]
-          extra_information?: string | null
-          family_id?: string
-          feminine_products?: string[]
-          full_name: string
-          other_items?: string | null
-          pet_food?: string[]
-          phone_number?: string | null
-          primary_key?: string
-        }
-        Update: {
-          address_1?: string | null
-          address_2?: string | null
-          address_county?: string | null
-          address_postcode?: string | null
-          address_town?: string | null
-          baby_food?: boolean | null
-          delivery_instructions?: string | null
-          dietary_requirements?: string[]
-          extra_information?: string | null
+          extra_information?: string
           family_id?: string
           feminine_products?: string[]
           full_name?: string
-          other_items?: string | null
+          other_items?: string[]
           pet_food?: string[]
-          phone_number?: string | null
+          phone_number?: string
+          primary_key?: string
+        }
+        Update: {
+          address_1?: string
+          address_2?: string
+          address_county?: string
+          address_postcode?: string
+          address_town?: string
+          baby_food?: boolean | null
+          delivery_instructions?: string
+          dietary_requirements?: string[]
+          extra_information?: string
+          family_id?: string
+          feminine_products?: string[]
+          full_name?: string
+          other_items?: string[]
+          pet_food?: string[]
+          phone_number?: string
           primary_key?: string
         }
         Relationships: []
@@ -124,26 +124,26 @@ export interface Database {
         }
         Insert: {
           "1_notes"?: string | null
-          "1_quantity": string
+          "1_quantity"?: string
           "10_notes"?: string | null
-          "10_quantity": string
+          "10_quantity"?: string
           "2_notes"?: string | null
-          "2_quantity": string
+          "2_quantity"?: string
           "3_notes"?: string | null
-          "3_quantity": string
+          "3_quantity"?: string
           "4_notes"?: string | null
-          "4_quantity": string
+          "4_quantity"?: string
           "5_notes"?: string | null
-          "5_quantity": string
+          "5_quantity"?: string
           "6_notes"?: string | null
-          "6_quantity": string
+          "6_quantity"?: string
           "7_notes"?: string | null
-          "7_quantity": string
+          "7_quantity"?: string
           "8_notes"?: string | null
-          "8_quantity": string
+          "8_quantity"?: string
           "9_notes"?: string | null
-          "9_quantity": string
-          item_name: string
+          "9_quantity"?: string
+          item_name?: string
           primary_key?: string
         }
         Update: {
