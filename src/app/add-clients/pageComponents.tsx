@@ -5,15 +5,23 @@ import styled from "styled-components";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import RadioGroupInput from "@/components/DataInput/RadioGroupInput";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
-import { SelectChangeEvent, Paper, Card } from "@mui/material";
+import CheckboxGroupInput from "@/components/DataInput/CheckboxGroupInput";
+import {
+    booleanGroup,
+    getCheckboxGroupHandler,
+} from "@/components/DataInput/inputHandlerFactories";
+import { SelectChangeEvent, Card } from "@mui/material";
 import supabase, { InsertSchema } from "@/supabase";
+import { Database } from "@/database_types_file";
 
-type DatabaseRecord = InsertSchema["clients"];
+type ClientDatabaseRecord = InsertSchema["clients"];
+type FamilyDatabaseRecord = InsertSchema["families"];
+type PersonType = Database["public"]["Enums"]["gender"];
 
 interface ChildProps {
     key: number;
-    gender?: string;
-    age?: number;
+    gender: PersonType;
+    age: number | null;
 }
 
 const CenterComponent = styled.div`
@@ -23,16 +31,9 @@ const CenterComponent = styled.div`
     padding-block: 2rem;
 `;
 
-// TODO: rounded corners, disappearing scroll bar
-const StyledForm = styled(Paper)`
-    display: flex;
-    flex-direction: column;
-    width: min(50%, 600px);
-    height: min(50%, 800px);
-    padding: 2em 2em;
-    max-height: 1000px; // TODO: Make responsive.
-    overflow: auto; // TODO: Instead of scrollable, have a Next button.
-    color: ${(props) => props.theme.primaryBackgroundColor}; // TODO: Doesn't change anything
+const StyledForm = styled.div`
+    margin: 2em;
+    color: ${(props) => props.theme.foregroundColor};
 `;
 
 const StyledCard = styled(Card)`
@@ -68,13 +69,28 @@ const StyledRadioGroup = styled(RadioGroupInput)``;
 
 const StyledDropDown = styled(DropdownListInput)``;
 
+const StyledCheckBox = styled(CheckboxGroupInput)``;
+
 const StyledButton = styled.button`
     text-align: center;
     width: 20%;
+    aspect-ratio: 5;
+    border-radius: 10px;
+    border: solid 1px ${(props) => props.theme.foregroundColor};
+    background-color: ${(props) => props.theme.primaryBackgroundColor};
+    color: ${(props) => props.theme.primaryForegroundColor};
+
+    &:hover {
+        background-color: ${(props) => props.theme.secondaryBackgroundColor};
+        color: ${(props) => props.theme.secondaryForegroundColor};
+    }
 `;
 
+type GenderToAge = {
+    [gender in PersonType]?: number;
+};
+
 const RequestForm: React.FC<{}> = () => {
-    // TODO: Check if the initialState of these consts make sense
     const [fullName, setFullName] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [addressLine1, setAddressLine1] = useState("");
@@ -82,17 +98,17 @@ const RequestForm: React.FC<{}> = () => {
     const [addressTown, setAddressTown] = useState("");
     const [addressCounty, setAddressCounty] = useState("");
     const [addressPostcode, setAddressPostcode] = useState("");
-    const [gender, setGender] = useState("");
-    const [householdSize, setHouseholdSize] = useState("");
-    const [numberAdults, setNumberAdults] = useState(0);
+    const [numberAdults, setNumberAdults] = useState<GenderToAge>({ female: 0, male: 0, adult: 0 });
     const [numberChildren, setNumberChildren] = useState(0);
     const [ageGenderChildren, setAgeGenderChildren] = useState<ChildProps[]>([]);
-    const [babyProducts, setBabyProducts] = useState("");
+    const [babyProducts, setBabyProducts] = useState<boolean | null>(null);
+    const [nappySize, setNappySize] = useState("");
     const [deliveryInstructions, setDeliveryInstruction] = useState("");
-    const [feminineProducts, setFeminineProducts] = useState("");
-    const [petFood, setPetFood] = useState("");
-    const [otherRequirements, setOtherRequirements] = useState("");
-    const [dietaryRequirements, setDietaryRequirements] = useState("");
+    const [feminineProducts, setFeminineProducts] = useState({});
+    const [petFood, setPetFood] = useState({});
+    const [otherItems, setOtherItems] = useState({});
+    const [dietaryRequirements, setDietaryRequirements] = useState({});
+    const [extraInformation, setExtraInformation] = useState("");
 
     const [nameErrorMessage, setNameErrorMessage] = useState("");
     const [phoneErrorMessage, setPhoneErrorMessage] = useState("");
@@ -100,17 +116,20 @@ const RequestForm: React.FC<{}> = () => {
     const [postcodeErrorMessage, setPostcodeErrorMessage] = useState("");
     const [numberAdultsErrorMessage, setNumberAdultsErrorMessage] = useState("");
     const [numberChildrenErrorMessage, setNumberChildrenErrorMessage] = useState("");
+    const [nappyErrorMessage, setNappyErrorMessage] = useState("");
 
     useEffect(() => {
-        // TODO: Error message for "required"
-        const array = Array.from({ length: numberChildren }, (value, index): ChildProps => {
-            return {
-                key: index,
-                gender: "P",
-                age: 0,
-            };
-        });
-        setAgeGenderChildren(array);
+        const defaultAgeGenderChildren = Array.from(
+            { length: numberChildren },
+            (value, index): ChildProps => {
+                return {
+                    key: index,
+                    gender: "child",
+                    age: null,
+                };
+            }
+        );
+        setAgeGenderChildren(defaultAgeGenderChildren);
     }, [numberChildren]);
 
     const getFullName = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -168,31 +187,21 @@ const RequestForm: React.FC<{}> = () => {
         } else if (input.match(postcodePattern)) {
             setPostcodeErrorMessage("");
             const formattedPostcode = input.replace(/(\s)/g, "").toUpperCase();
-            // TODO: if regex valid checkthrough https://postcodes.io/
             setAddressPostcode(formattedPostcode);
         } else {
             setPostcodeErrorMessage("Please enter a valid postcode");
         }
     };
 
-    const getGender = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        // TODO: Other (If chosen, have a textInput box pop up)
-        // const gender = event.target.value;
-        // if (gender === "O") {
-        //     return <StyledTextInput label={"Other"} onChange={getGender}></StyledTextInput>
-        // }
-        setGender(event.target.value);
-    };
-
-    const getHouseholdSize = (event: SelectChangeEvent): void => {
-        setHouseholdSize(event.target.value);
-    };
-
-    const getNumberAdults = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const getNumberAdults = (
+        event: React.ChangeEvent<HTMLInputElement>,
+        gender: PersonType
+    ): void => {
         const input = event.target.value;
         if (input.match(/^\d+$/)) {
             setNumberAdultsErrorMessage("");
-            setNumberAdults(parseInt(input));
+            numberAdults[gender] = parseInt(input);
+            setNumberAdults(numberAdults);
         } else if (input === "") {
             setNumberAdultsErrorMessage("This is a required field.");
         } else {
@@ -214,29 +223,60 @@ const RequestForm: React.FC<{}> = () => {
     };
 
     const getGenderChildren = (event: SelectChangeEvent, count: number): void => {
-        const input = event.target.value;
+        const input = event.target.value as PersonType; // TODO: Casting is dodgy
         const particularChild = ageGenderChildren.findIndex((object) => object.key === count);
         ageGenderChildren[particularChild].gender = input;
         setAgeGenderChildren([...ageGenderChildren]);
     };
 
     const getAgeChildren = (event: SelectChangeEvent, count: number): void => {
-        const input = parseInt(event.target.value);
+        const input = event.target.value;
         const particularChild = ageGenderChildren.findIndex((object) => object.key === count);
-        ageGenderChildren[particularChild].age = input;
+        ageGenderChildren[particularChild].age = input !== "Don't Know" ? parseInt(input) : null;
         setAgeGenderChildren([...ageGenderChildren]);
     };
 
     const getBabyProducts = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setBabyProducts(event.target.value);
+        const input = event.target.value;
+        if (input === "Yes") {
+            setBabyProducts(true);
+        } else if (input === "No") {
+            setBabyProducts(false);
+        } else {
+            setBabyProducts(null);
+        }
+    };
+
+    const getNappySize = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        const input = event.target.value;
+        if (input === "") {
+            setNappyErrorMessage("This is a required field");
+        } else {
+            setNappyErrorMessage("");
+            setNappySize(input);
+        }
     };
 
     const getPetFood = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setPetFood(event.target.value);
     };
 
+    const getDeliveryInstructions = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        setDeliveryInstruction(event.target.value);
+    };
+
+    const getExtraInformation = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        setExtraInformation(event.target.value);
+    };
+
+    const checkboxGroupToArray = (checkedBoxes: booleanGroup): string[] => {
+        return Object.keys(checkedBoxes);
+    };
+
     const createRecord = async (): Promise<void> => {
-        const record: DatabaseRecord = {
+        setExtraInformation(`Nappy Size: ${nappySize}, Extra Information: ${extraInformation}`);
+
+        const clientRecord: ClientDatabaseRecord = {
             address_1: addressLine1,
             address_2: addressLine2,
             address_county: addressCounty,
@@ -244,24 +284,51 @@ const RequestForm: React.FC<{}> = () => {
             address_town: addressTown,
             baby_food: babyProducts,
             delivery_instructions: deliveryInstructions,
-            dietary_requirements: dietaryRequirements,
-            feminine_products: feminineProducts,
+            dietary_requirements: checkboxGroupToArray(dietaryRequirements),
+            feminine_products: checkboxGroupToArray(feminineProducts),
             full_name: fullName,
-            other_requirements: otherRequirements,
-            pet_food: petFood,
+            other_items: checkboxGroupToArray(otherItems),
+            pet_food: checkboxGroupToArray(petFood),
             phone_number: phoneNumber,
+            extra_information: extraInformation,
         };
-        const { data, error } = await supabase.from("clients").insert(record).select();
-        // TODO: This .select() is to fetch the data for testing purposes. Can be removed.
+        const { data: familyID, error: error } = await supabase
+            .from("clients")
+            .insert(clientRecord)
+            .select("family_id");
         if (error) {
-            console.log(error); // TODO: change this to either throw an error, or console.error
-        } else {
-            console.log(JSON.stringify(data)); // TODO: remove this bit
+            console.error(error);
+        }
+
+        for (const [gender, quantity] of Object.entries(numberAdults)) {
+            const familyAdultRecord: FamilyDatabaseRecord = {
+                family_id: familyID![0].family_id,
+                person_type: gender as PersonType, // TODO: Casting is dodgy
+                quantity: quantity,
+                age: null,
+            };
+            const { error: error } = await supabase.from("families").insert(familyAdultRecord);
+            if (error) {
+                console.error(error);
+            }
+        }
+
+        for (const child of ageGenderChildren) {
+            const familyChildRecord: FamilyDatabaseRecord = {
+                family_id: familyID![0].family_id,
+                person_type: child.gender as PersonType,
+                quantity: 1,
+                age: child.age,
+            };
+            const { error: error } = await supabase.from("families").insert(familyChildRecord);
+            if (error) {
+                console.error(error);
+            }
         }
     };
 
     const submitForm = (): void => {
-        createRecord();
+        void createRecord();
     };
 
     const childrenLoopArray: number[] = Array.from(
@@ -269,15 +336,14 @@ const RequestForm: React.FC<{}> = () => {
         (value, index) => index
     );
 
-    console.log(ageGenderChildren);
-
-    // TODO: Change description text (accordingly to how validation is implemented
-    // TODO: Implement the check boxes once it is merged into main
     return (
         <CenterComponent>
-            <StyledForm elevation={4}>
-                <Heading>Request Client Form</Heading>
-                <Text>Some descriptive and informative text about the form.</Text>
+            <StyledForm>
+                <Heading>Client Form</Heading>
+                <Text>
+                    Please provide or update the client&apos;s personal details, household
+                    composition, dietary restrictions and other needs.
+                </Text>
                 <CenterComponent>
                     <StyledCard variant="outlined">
                         <Subheading>
@@ -285,7 +351,7 @@ const RequestForm: React.FC<{}> = () => {
                         </Subheading>
                         <Text>First and last name</Text>
                         <StyledTextInput
-                            error={nameErrorMessage !== ""}
+                            error={!!nameErrorMessage}
                             helperText={nameErrorMessage}
                             label="Name"
                             onChange={getFullName}
@@ -296,13 +362,13 @@ const RequestForm: React.FC<{}> = () => {
                     <StyledCard variant="outlined">
                         <Subheading>Phone Number</Subheading>
                         <Text>
-                            UK mobile numbers should start with a 0. International mobile numbers
-                            should be entered with the dialing code.
+                            UK mobile numbers should start with a 0 or a +44. International mobile
+                            numbers should be entered with the country code.
                         </Text>
                         <StyledTextInput
-                            error={phoneErrorMessage !== ""}
+                            error={!!phoneErrorMessage}
                             helperText={phoneErrorMessage}
-                            label="E.g. 07### or 33###"
+                            label="E.g. 07### or +33###"
                             onChange={getPhoneNumber}
                         />
                     </StyledCard>
@@ -314,7 +380,7 @@ const RequestForm: React.FC<{}> = () => {
                         </Subheading>
                         <Text>Please enter the flat/house number if applicable.</Text>
                         <StyledTextInput
-                            error={addressErrorMessage !== ""}
+                            error={!!addressErrorMessage}
                             helperText={addressErrorMessage}
                             label="Address Line 1"
                             onChange={getAddressLine1}
@@ -344,9 +410,8 @@ const RequestForm: React.FC<{}> = () => {
                         <Subheading>
                             Postcode <Asterisk>*</Asterisk>
                         </Subheading>
-                        <Text>Check the address using the Royal Mail Address Checker</Text>
                         <StyledTextInput
-                            error={postcodeErrorMessage !== ""}
+                            error={!!postcodeErrorMessage}
                             helperText={postcodeErrorMessage}
                             label="E.g. SE11 5QY"
                             onChange={getAddressPostcode}
@@ -356,67 +421,41 @@ const RequestForm: React.FC<{}> = () => {
                 <CenterComponent>
                     <StyledCard variant="outlined">
                         <Subheading>
-                            Gender <Asterisk>*</Asterisk>
-                        </Subheading>
-                        <StyledRadioGroup
-                            labelsAndValues={[
-                                ["Male", "M"],
-                                ["Female", "F"],
-                                ["Prefer Not To Say", "P"],
-                                ["Don't Know", "D"],
-                                ["Other", "O"],
-                            ]}
-                            onChange={getGender}
-                        />
-                    </StyledCard>
-                </CenterComponent>
-                <CenterComponent>
-                    <StyledCard variant="outlined">
-                        <Subheading>
-                            Household Size <Asterisk>*</Asterisk>
-                        </Subheading>
-                        <StyledDropDown
-                            labelsAndValues={[
-                                ["1", "1"],
-                                ["2", "2"],
-                                ["3", "3"],
-                                ["4", "4"],
-                                ["5", "5"],
-                                ["6", "6"],
-                                ["7", "7"],
-                                ["8", "8"],
-                                ["9", "9"],
-                                ["10+", "10+"],
-                            ]}
-                            listTitle="Choose"
-                            defaultValue="1"
-                            onChange={getHouseholdSize}
-                        />
-                    </StyledCard>
-                </CenterComponent>
-                <CenterComponent>
-                    <StyledCard variant="outlined">
-                        <Subheading>
                             Number of Adults <Asterisk>*</Asterisk>
                         </Subheading>
-                        <Text>How many adults over 16 are there in the household?</Text>
+                        <Text>Note that adults are aged 16 or above</Text>
                         <StyledTextInput
-                            error={numberAdultsErrorMessage !== ""}
+                            error={!!numberAdultsErrorMessage}
                             helperText={numberAdultsErrorMessage}
-                            label="Number of Adults"
-                            onChange={getNumberAdults}
+                            label="Female"
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                getNumberAdults(event, "female")
+                            }
+                        />
+                        <StyledTextInput
+                            error={!!numberAdultsErrorMessage}
+                            helperText={numberAdultsErrorMessage}
+                            label="Male"
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                getNumberAdults(event, "male")
+                            }
+                        />
+                        <StyledTextInput
+                            error={!!numberAdultsErrorMessage}
+                            helperText={numberAdultsErrorMessage}
+                            label="Prefer Not To Say"
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                getNumberAdults(event, "adult")
+                            }
                         />
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
                     <StyledCard variant="outlined">
                         <Subheading>Number of Children</Subheading>
-                        <Text>
-                            How many children under the age of 16 are there in the household? Leave
-                            blank if not applicable.
-                        </Text>
+                        <Text>Note that children are under 16 years old</Text>
                         <StyledTextInput
-                            error={numberChildrenErrorMessage !== ""}
+                            error={!!numberChildrenErrorMessage}
                             helperText={numberChildrenErrorMessage}
                             label="Number of Children"
                             onChange={getNumberChildren}
@@ -431,12 +470,13 @@ const RequestForm: React.FC<{}> = () => {
                                 <CenterComponent>
                                     <StyledDropDown
                                         labelsAndValues={[
-                                            ["Boy", "B"],
-                                            ["Girl", "G"],
-                                            ["Prefer Not To Say", "P"],
+                                            ["Boy", "boy"],
+                                            ["Girl", "girl"],
+                                            ["Prefer Not To Say", "child"],
+                                            ["Don't Know", "child"],
                                         ]}
                                         listTitle="Gender"
-                                        defaultValue="P"
+                                        defaultValue="child"
                                         onChange={(event: SelectChangeEvent) =>
                                             getGenderChildren(event, count)
                                         }
@@ -462,9 +502,10 @@ const RequestForm: React.FC<{}> = () => {
                                             ["14", "14"],
                                             ["15", "15"],
                                             ["16", "16"],
+                                            ["Don't Know", "Don't Know"],
                                         ]}
                                         listTitle="Age"
-                                        defaultValue="0"
+                                        defaultValue="Don't Know"
                                         onChange={(event: SelectChangeEvent) =>
                                             getAgeChildren(event, count)
                                         }
@@ -474,33 +515,48 @@ const RequestForm: React.FC<{}> = () => {
                         </CenterComponent>
                     );
                 })}
-                {/*<CenterComponent>*/}
-                {/*    <StyledCard variant="outlined">*/}
-                {/*        <Subheading>Age and Gender of Children</Subheading>*/}
-                {/*        <Text>Leave blank if not applicable.</Text>*/}
-                {/*        <StyledTextInput*/}
-                {/*            error={ageGenderErrorMessage !== ""}*/}
-                {/*            helperText={ageGenderErrorMessage}*/}
-                {/*            label="E.g. G-7, B-10, C-13"*/}
-                {/*            onChange={getAgeGenderChildren}*/}
-                {/*        />*/}
-                {/*    </StyledCard>*/}
-                {/*</CenterComponent>*/}
                 <CenterComponent>
                     <StyledCard variant="outlined">
-                        <Subheading>
-                            Dietary Requirements <Asterisk>*</Asterisk>
-                        </Subheading>
+                        <Subheading>Dietary Requirements</Subheading>
                         <Text>Tick all that apply.</Text>
-                        {/* Wait for Check Box Merge */}
+                        <StyledCheckBox
+                            labelsAndKeys={[
+                                ["Gluten Free", "Gluten Free"],
+                                ["Dairy Free", "Dairy Free"],
+                                ["Vegetarian", "Vegetarian"],
+                                ["Vegan", "Vegan"],
+                                ["Pescatarian", "Pescatarian"],
+                                ["Halal", "Halal"],
+                                ["Diabetic", "Diabetic"],
+                                ["Nut Allergy", "Nut Allergy"],
+                                ["Seafood Allergy", "Seafood Allergy"],
+                                ["No Bread", "No Bread"],
+                                ["No Pasta", "No Pasta"],
+                                ["No Rice", "No Rice"],
+                                ["No Pork", "No Pork"],
+                                ["No Beef", "No Beef"],
+                            ]}
+                            onChange={getCheckboxGroupHandler(
+                                dietaryRequirements,
+                                setDietaryRequirements
+                            )}
+                        />
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
                     <StyledCard variant="outlined">
-                        <Subheading>
-                            Feminine Products <Asterisk>*</Asterisk>
-                        </Subheading>
-                        {/* Wait for Check Box Merge */}
+                        <Subheading>Feminine Products</Subheading>
+                        <StyledCheckBox
+                            labelsAndKeys={[
+                                ["Tampons", "Tampons"],
+                                ["Pads", "Pads"],
+                                ["Incontinence Pads", "Incontinence Pads"],
+                            ]}
+                            onChange={getCheckboxGroupHandler(
+                                feminineProducts,
+                                setFeminineProducts
+                            )}
+                        />
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
@@ -508,32 +564,41 @@ const RequestForm: React.FC<{}> = () => {
                         <Subheading>
                             Baby Products <Asterisk>*</Asterisk>
                         </Subheading>
-                        <Text>
-                            Includes Baby Food, Wet Wipes, Nappies etc. Write the baby nappy size in
-                            the comments.
-                        </Text>
+                        <Text>Includes Baby Food, Wet Wipes, Nappies etc.</Text>
                         <StyledRadioGroup
                             labelsAndValues={[
-                                ["Yes", "Y"],
-                                ["No", "N"],
-                                ["Don't Know", "D"],
+                                ["Yes", "Yes"],
+                                ["No", "No"],
+                                ["Don't Know", "don't know"],
                             ]}
                             onChange={getBabyProducts}
                         />
+                        {babyProducts ? (
+                            <>
+                                <br />
+                                <StyledTextInput
+                                    error={!!nappyErrorMessage}
+                                    helperText={nappyErrorMessage}
+                                    label="Nappy Size"
+                                    onChange={getNappySize}
+                                />
+                            </>
+                        ) : (
+                            <></>
+                        )}
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
                     <StyledCard variant="outlined">
-                        <Subheading>
-                            Pet Food Required? <Asterisk>*</Asterisk>
-                        </Subheading>
-                        <StyledRadioGroup
-                            labelsAndValues={[
-                                ["Yes - Cat", "YC"],
-                                ["Yes - Dog", "YD"],
-                                ["Yes - Cat & Dog", "YCD"],
-                                ["No", "N"],
-                                ["Don't Know", "D"],
+                        <Subheading>Pet Food</Subheading>
+                        <Text>
+                            Tick all that apply. Specify any other requests in the &quot;Extra
+                            Information&quot; section.
+                        </Text>
+                        <StyledCheckBox
+                            labelsAndKeys={[
+                                ["Cat", "Cat"],
+                                ["Dog", "Dog"],
                             ]}
                             onChange={getPetFood}
                         />
@@ -541,8 +606,43 @@ const RequestForm: React.FC<{}> = () => {
                 </CenterComponent>
                 <CenterComponent>
                     <StyledCard variant="outlined">
-                        <Subheading>Other Requirements</Subheading>
-                        {/* Wait for Check Box Merge */}
+                        <Subheading>Other Items</Subheading>
+                        <StyledCheckBox
+                            labelsAndKeys={[
+                                ["Garlic", "Garlic"],
+                                ["Ginger", "Ginger"],
+                                ["Chilies", "Chilies"],
+                                ["Spices", "Spices"],
+                                ["Hot Water Bottles", "Hot Water Bottles"],
+                                ["Blankets", "Blankets"],
+                            ]}
+                            onChange={getCheckboxGroupHandler(otherItems, setOtherItems)}
+                        />
+                    </StyledCard>
+                </CenterComponent>
+                <CenterComponent>
+                    <StyledCard variant="outlined">
+                        <Subheading>Delivery Instructions</Subheading>
+                        <Text>
+                            Is there anything we need to know when delivering a parcel to this
+                            client? Does the doorbell work? Do we need to phone them? Is there a
+                            door code? Do they live upstairs in a flat and cannot come downstairs?
+                        </Text>
+                        <StyledTextInput
+                            label="Delivery Instructions"
+                            onChange={getDeliveryInstructions}
+                        />
+                    </StyledCard>
+                </CenterComponent>
+                <CenterComponent>
+                    <StyledCard variant="outlined">
+                        <Subheading>Extra Information</Subheading>
+                        <Text>
+                            Is there anything else you need to tell us about the client? Comments
+                            relating to food or anything else. Please add any delivery instructions
+                            to the &quot;Delivery Instructions&quot; section above.
+                        </Text>
+                        <StyledTextInput label="E.g. tea allergy" onChange={getExtraInformation} />
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
@@ -566,11 +666,14 @@ TODO: All of this.
 4. Add styles to the full form.
     - Use Themes (especially for error messages) once it has been merged.
 6. Add secondary functionalities to the form.
-    - Autofill.
+    - Autofill (editing vs creating) -> URL with primary ID 
 7. Add extra functionalities to the form.
     - Submit using keypress instead of buttons.
+    - Submit checks required boxes.
     - Send a copy of the form to their email / show on their dashboard.
     - Save progress.
+    - Word limits.
+    - MUI textarea instead of input
 8. Refactor code (components instead of copy and paste)
 
 ***********************************
@@ -585,9 +688,11 @@ DONE
     - Data can be stored (e.g. console log)
 3. Create the full form by repeating (2) and replacing placeholder texts.
 5. Connect the form to the database (INSERT).
-
-Validation of inputs.
-Required.
+    - Families
+    - Client
+6. Add secondary functionalities to the form.
+    - Validation of inputs.
+    - Required.
 
 
 */

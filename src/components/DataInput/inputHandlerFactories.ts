@@ -9,7 +9,7 @@ type booleanSetter = {
     (checked: boolean): void;
 };
 
-type booleanGroup = {
+export type booleanGroup = {
     [key: string]: boolean;
 };
 
