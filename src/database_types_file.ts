@@ -18,11 +18,12 @@ export interface Database {
           address_town: string | null
           baby_food: string | null
           delivery_instructions: string | null
-          dietary_requirements: string | null
+          dietary_requirements: string[] | null
+          extra_information: string | null
           family_id: string
           feminine_products: string | null
           full_name: string
-          other_requirements: string | null
+          other_items: string | null
           pet_food: string | null
           phone_number: string | null
           primary_key: string
@@ -35,11 +36,12 @@ export interface Database {
           address_town?: string | null
           baby_food?: string | null
           delivery_instructions?: string | null
-          dietary_requirements?: string | null
+          dietary_requirements?: string[] | null
+          extra_information?: string | null
           family_id?: string
           feminine_products?: string | null
           full_name: string
-          other_requirements?: string | null
+          other_items?: string | null
           pet_food?: string | null
           phone_number?: string | null
           primary_key?: string
@@ -52,11 +54,12 @@ export interface Database {
           address_town?: string | null
           baby_food?: string | null
           delivery_instructions?: string | null
-          dietary_requirements?: string | null
+          dietary_requirements?: string[] | null
+          extra_information?: string | null
           family_id?: string
           feminine_products?: string | null
           full_name?: string
-          other_requirements?: string | null
+          other_items?: string | null
           pet_food?: string | null
           phone_number?: string | null
           primary_key?: string
