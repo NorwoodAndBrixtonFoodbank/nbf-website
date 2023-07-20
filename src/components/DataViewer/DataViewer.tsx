@@ -14,12 +14,12 @@ const Key = styled.div`
     display: inline-block;
     font-size: medium;
     border-radius: 0.7em;
-    padding: 0.2em 0.5em 0.2em 0.5em;
+    padding: 0.2em 0.5em;
 `;
 
 const Value = styled.div`
     font-size: medium;
-    padding: 0.2em 0.5em 0.2em 0.5em;
+    padding: 0.2em 0.5em;
 `;
 
 const EachItem = styled.div`
