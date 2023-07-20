@@ -72,12 +72,12 @@ const CalendarStyling = styled.div`
 `;
 
 const endDateInclusiveEvents = (endDateExclusiveEvents: CalendarEvent[]): CalendarEvent[] => {
-    return endDateExclusiveEvents.map((exclusiveEvent: CalendarEvent) => {
+    return endDateExclusiveEvents.map((exclusiveEvent: CalendarEvent): CalendarEvent => {
         const cloneEndDate = new Date(exclusiveEvent.end);
         if (exclusiveEvent.allDay) {
             cloneEndDate.setDate(cloneEndDate.getDate() + 1);
         }
-        const inclusiveEvent: CalendarEvent = { ...exclusiveEvent, end: cloneEndDate };
+        const inclusiveEvent = { ...exclusiveEvent, end: cloneEndDate };
         return inclusiveEvent;
     });
 };
