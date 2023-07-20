@@ -1,3 +1,5 @@
+"use client";
+
 import React, { ReactElement } from "react";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
@@ -7,15 +9,23 @@ export interface Data {
 }
 
 const Key = styled.div`
-    color: grey;
-    font-size: small;
+    color: ${(props) => props.theme.foregroundColor};
+    background-color: ${(props) => props.theme.secondaryBackgroundColor}40;
+    display: inline-block;
+    font-size: medium;
+    border-radius: 0.7em;
+    padding: 0.2em 0.5em 0.2em 0.5em;
 `;
+
 const Value = styled.div`
     font-size: medium;
+    padding: 0.2em 0.5em 0.2em 0.5em;
 `;
+
 const EachItem = styled.div`
     padding-bottom: 1rem;
 `;
+
 const JSONContent: React.FC<Data> = (data) => {
     return (
         <>
@@ -40,12 +50,9 @@ const DataViewer: React.FC<DataViewerProps> = (props) => {
     const closeModal = (): void => {
         props.onRequestClose();
     };
-    if (!props.isOpen) {
-        return <></>;
-    }
 
     return (
-        <Modal isOpen={true} onClose={closeModal} header={props.header}>
+        <Modal isOpen={props.isOpen} onClose={closeModal} header={props.header}>
             {JSONContent(props.data)}
         </Modal>
     );
