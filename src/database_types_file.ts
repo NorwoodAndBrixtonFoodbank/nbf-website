@@ -21,7 +21,7 @@ export interface Database {
           dietary_requirements: string[]
           extra_information: string | null
           family_id: string
-          feminine_products: string | null
+          feminine_products: string[]
           full_name: string
           other_items: string | null
           pet_food: string[]
@@ -39,7 +39,7 @@ export interface Database {
           dietary_requirements?: string[]
           extra_information?: string | null
           family_id?: string
-          feminine_products?: string | null
+          feminine_products?: string[]
           full_name: string
           other_items?: string | null
           pet_food?: string[]
@@ -57,7 +57,7 @@ export interface Database {
           dietary_requirements?: string[]
           extra_information?: string | null
           family_id?: string
-          feminine_products?: string | null
+          feminine_products?: string[]
           full_name?: string
           other_items?: string | null
           pet_food?: string[]
