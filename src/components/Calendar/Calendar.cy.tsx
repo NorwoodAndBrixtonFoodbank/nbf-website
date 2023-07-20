@@ -82,7 +82,7 @@ describe("<Calendar />", () => {
 
     it("shows description when event with description is clicked", () => {
         cy.mount(<Calendar initialEvents={sampleEvents} />);
-        cy.get(".fc-event-title").contains("event2").click();
+        cy.get(".fc-event-title").contains("event2").parent().click();
         cy.get(".MuiDialog-container").should("include.text", "description");
     });
 
@@ -131,7 +131,7 @@ describe("<Calendar />", () => {
 
     it("shows correct date for non-full day event", () => {
         cy.mount(<Calendar initialEvents={sampleEvents} />);
-        cy.get(".fc-event-title").contains("event2").click();
+        cy.get(".fc-event-title").contains("event2").parent().click();
         cy.get(".MuiDialog-container").should(
             "include.text",
             today.toLocaleDateString("en-GB", {
