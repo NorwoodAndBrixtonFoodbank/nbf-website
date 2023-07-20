@@ -17,7 +17,7 @@ const Centerer = styled.div`
 
 const SizedAspectRatio = styled.div`
     width: 100vmin;
-    height: 100vmin;
+    margin: 2em;
 `;
 
 const fetchClient: () => Promise<Schema["clients"][]> = async () => {
