@@ -20,7 +20,7 @@ describe("<Calendar />", () => {
             start: today,
             end: today,
             allDay: false,
-            description: "a description",
+            description: "a piece of description text",
         },
     ];
 
@@ -83,7 +83,7 @@ describe("<Calendar />", () => {
     it("shows description when event with description is clicked", () => {
         cy.mount(<Calendar initialEvents={sampleEvents} />);
         cy.get(".fc-event-title").contains("event2").parent().click();
-        cy.get(".MuiDialog-container").should("include.text", "description");
+        cy.get(".MuiDialog-container").should("include.text", "a piece of description text");
     });
 
     it("does not show description when event without description is clicked", () => {
