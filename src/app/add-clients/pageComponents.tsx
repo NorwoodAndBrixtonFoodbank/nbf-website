@@ -10,7 +10,7 @@ import {
     booleanGroup,
     getCheckboxGroupHandler,
 } from "@/components/DataInput/inputHandlerFactories";
-import { SelectChangeEvent, Card } from "@mui/material";
+import { SelectChangeEvent } from "@mui/material";
 import supabase, { InsertSchema } from "@/supabase";
 import { Database } from "@/database_types_file";
 
@@ -28,19 +28,29 @@ const CenterComponent = styled.div`
     display: flex;
     justify-content: center;
     align-content: center;
-    padding-block: 2rem;
+    padding-block: 1rem;
+    background-color: ${(props) => props.theme.backgroundColor};
 `;
 
 const StyledForm = styled.div`
     margin: 2em;
     color: ${(props) => props.theme.foregroundColor};
+    width: 90%;
 `;
 
-const StyledCard = styled(Card)`
+const StyledCard = styled.div`
     padding: 2em 2em;
     width: 100%;
     height: 80%;
-    border-radius: 1px;
+    border-radius: 10px;
+    background-color: ${(props) => props.theme.surfaceBackgroundColor};
+    color: ${(props) => props.theme.surfaceForegroundColor};
+    div {
+        background-color: inherit;
+        color: inherit;
+        width: 100%;
+        margin-top: 1px;
+    }
 `;
 
 const Text = styled.p`
@@ -63,18 +73,10 @@ const Asterisk = styled.span`
     color: red;
 `;
 
-const StyledTextInput = styled(FreeFormTextInput)``;
-
-const StyledRadioGroup = styled(RadioGroupInput)``;
-
-const StyledDropDown = styled(DropdownListInput)``;
-
-const StyledCheckBox = styled(CheckboxGroupInput)``;
-
 const StyledButton = styled.button`
     text-align: center;
-    width: 20%;
-    aspect-ratio: 5;
+    width: 100px;
+    height: 30px;
     border-radius: 10px;
     border: solid 1px ${(props) => props.theme.foregroundColor};
     background-color: ${(props) => props.theme.primaryBackgroundColor};
@@ -223,9 +225,9 @@ const RequestForm: React.FC<{}> = () => {
     };
 
     const getGenderChildren = (event: SelectChangeEvent, count: number): void => {
-        const input = event.target.value as PersonType; // TODO: Casting is dodgy
+        const input = event.target.value !== "don't know" ? event.target.value : "child";
         const particularChild = ageGenderChildren.findIndex((object) => object.key === count);
-        ageGenderChildren[particularChild].gender = input;
+        ageGenderChildren[particularChild].gender = input as PersonType; // TODO: Casting is dodgy
         setAgeGenderChildren([...ageGenderChildren]);
     };
 
@@ -345,12 +347,12 @@ const RequestForm: React.FC<{}> = () => {
                     composition, dietary restrictions and other needs.
                 </Text>
                 <CenterComponent>
-                    <StyledCard variant="outlined">
+                    <StyledCard>
                         <Subheading>
                             Client Full Name <Asterisk>*</Asterisk>
                         </Subheading>
                         <Text>First and last name</Text>
-                        <StyledTextInput
+                        <FreeFormTextInput
                             error={!!nameErrorMessage}
                             helperText={nameErrorMessage}
                             label="Name"
@@ -359,27 +361,27 @@ const RequestForm: React.FC<{}> = () => {
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
-                    <StyledCard variant="outlined">
+                    <StyledCard>
                         <Subheading>Phone Number</Subheading>
                         <Text>
                             UK mobile numbers should start with a 0 or a +44. International mobile
                             numbers should be entered with the country code.
                         </Text>
-                        <StyledTextInput
+                        <FreeFormTextInput
                             error={!!phoneErrorMessage}
                             helperText={phoneErrorMessage}
-                            label="E.g. 07### or +33###"
+                            label="E.g. 0xxx-xx-xxxx or +44 xxxx xxx xxxx"
                             onChange={getPhoneNumber}
                         />
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
-                    <StyledCard variant="outlined">
+                    <StyledCard>
                         <Subheading>
                             Address Line 1 <Asterisk>*</Asterisk>{" "}
                         </Subheading>
                         <Text>Please enter the flat/house number if applicable.</Text>
-                        <StyledTextInput
+                        <FreeFormTextInput
                             error={!!addressErrorMessage}
                             helperText={addressErrorMessage}
                             label="Address Line 1"
@@ -388,29 +390,29 @@ const RequestForm: React.FC<{}> = () => {
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
-                    <StyledCard variant="outlined">
+                    <StyledCard>
                         <Subheading>Address Line 2</Subheading>
-                        <StyledTextInput label="Address Line 2" onChange={getAddressLine2} />
+                        <FreeFormTextInput label="Address Line 2" onChange={getAddressLine2} />
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
-                    <StyledCard variant="outlined">
+                    <StyledCard>
                         <Subheading>Town</Subheading>
-                        <StyledTextInput label="Town" onChange={getAddressTown} />
+                        <FreeFormTextInput label="Town" onChange={getAddressTown} />
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
-                    <StyledCard variant="outlined">
+                    <StyledCard>
                         <Subheading>County</Subheading>
-                        <StyledTextInput label="County" onChange={getAddressCounty} />
+                        <FreeFormTextInput label="County" onChange={getAddressCounty} />
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
-                    <StyledCard variant="outlined">
+                    <StyledCard>
                         <Subheading>
                             Postcode <Asterisk>*</Asterisk>
                         </Subheading>
-                        <StyledTextInput
+                        <FreeFormTextInput
                             error={!!postcodeErrorMessage}
                             helperText={postcodeErrorMessage}
                             label="E.g. SE11 5QY"
@@ -419,12 +421,12 @@ const RequestForm: React.FC<{}> = () => {
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
-                    <StyledCard variant="outlined">
+                    <StyledCard>
                         <Subheading>
                             Number of Adults <Asterisk>*</Asterisk>
                         </Subheading>
                         <Text>Note that adults are aged 16 or above</Text>
-                        <StyledTextInput
+                        <FreeFormTextInput
                             error={!!numberAdultsErrorMessage}
                             helperText={numberAdultsErrorMessage}
                             label="Female"
@@ -432,7 +434,7 @@ const RequestForm: React.FC<{}> = () => {
                                 getNumberAdults(event, "female")
                             }
                         />
-                        <StyledTextInput
+                        <FreeFormTextInput
                             error={!!numberAdultsErrorMessage}
                             helperText={numberAdultsErrorMessage}
                             label="Male"
@@ -440,7 +442,7 @@ const RequestForm: React.FC<{}> = () => {
                                 getNumberAdults(event, "male")
                             }
                         />
-                        <StyledTextInput
+                        <FreeFormTextInput
                             error={!!numberAdultsErrorMessage}
                             helperText={numberAdultsErrorMessage}
                             label="Prefer Not To Say"
@@ -451,10 +453,10 @@ const RequestForm: React.FC<{}> = () => {
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
-                    <StyledCard variant="outlined">
+                    <StyledCard>
                         <Subheading>Number of Children</Subheading>
                         <Text>Note that children are under 16 years old</Text>
-                        <StyledTextInput
+                        <FreeFormTextInput
                             error={!!numberChildrenErrorMessage}
                             helperText={numberChildrenErrorMessage}
                             label="Number of Children"
@@ -468,22 +470,22 @@ const RequestForm: React.FC<{}> = () => {
                             <StyledCard>
                                 <Subheading>Child {count + 1}</Subheading>
                                 <CenterComponent>
-                                    <StyledDropDown
+                                    <DropdownListInput
                                         labelsAndValues={[
                                             ["Boy", "boy"],
                                             ["Girl", "girl"],
                                             ["Prefer Not To Say", "child"],
-                                            ["Don't Know", "child"],
+                                            ["Don't Know", "don't know"],
                                         ]}
                                         listTitle="Gender"
-                                        defaultValue="child"
+                                        defaultValue="don't know"
                                         onChange={(event: SelectChangeEvent) =>
                                             getGenderChildren(event, count)
                                         }
                                     />
                                 </CenterComponent>
                                 <CenterComponent>
-                                    <StyledDropDown
+                                    <DropdownListInput
                                         labelsAndValues={[
                                             ["<1", "0"],
                                             ["1", "1"],
@@ -516,10 +518,10 @@ const RequestForm: React.FC<{}> = () => {
                     );
                 })}
                 <CenterComponent>
-                    <StyledCard variant="outlined">
+                    <StyledCard>
                         <Subheading>Dietary Requirements</Subheading>
                         <Text>Tick all that apply.</Text>
-                        <StyledCheckBox
+                        <CheckboxGroupInput
                             labelsAndKeys={[
                                 ["Gluten Free", "Gluten Free"],
                                 ["Dairy Free", "Dairy Free"],
@@ -544,9 +546,9 @@ const RequestForm: React.FC<{}> = () => {
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
-                    <StyledCard variant="outlined">
+                    <StyledCard>
                         <Subheading>Feminine Products</Subheading>
-                        <StyledCheckBox
+                        <CheckboxGroupInput
                             labelsAndKeys={[
                                 ["Tampons", "Tampons"],
                                 ["Pads", "Pads"],
@@ -560,12 +562,12 @@ const RequestForm: React.FC<{}> = () => {
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
-                    <StyledCard variant="outlined">
+                    <StyledCard>
                         <Subheading>
                             Baby Products <Asterisk>*</Asterisk>
                         </Subheading>
                         <Text>Includes Baby Food, Wet Wipes, Nappies etc.</Text>
-                        <StyledRadioGroup
+                        <RadioGroupInput
                             labelsAndValues={[
                                 ["Yes", "Yes"],
                                 ["No", "No"],
@@ -576,7 +578,7 @@ const RequestForm: React.FC<{}> = () => {
                         {babyProducts ? (
                             <>
                                 <br />
-                                <StyledTextInput
+                                <FreeFormTextInput
                                     error={!!nappyErrorMessage}
                                     helperText={nappyErrorMessage}
                                     label="Nappy Size"
@@ -589,13 +591,13 @@ const RequestForm: React.FC<{}> = () => {
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
-                    <StyledCard variant="outlined">
+                    <StyledCard>
                         <Subheading>Pet Food</Subheading>
                         <Text>
                             Tick all that apply. Specify any other requests in the &quot;Extra
                             Information&quot; section.
                         </Text>
-                        <StyledCheckBox
+                        <CheckboxGroupInput
                             labelsAndKeys={[
                                 ["Cat", "Cat"],
                                 ["Dog", "Dog"],
@@ -605,9 +607,9 @@ const RequestForm: React.FC<{}> = () => {
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
-                    <StyledCard variant="outlined">
+                    <StyledCard>
                         <Subheading>Other Items</Subheading>
-                        <StyledCheckBox
+                        <CheckboxGroupInput
                             labelsAndKeys={[
                                 ["Garlic", "Garlic"],
                                 ["Ginger", "Ginger"],
@@ -621,28 +623,31 @@ const RequestForm: React.FC<{}> = () => {
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
-                    <StyledCard variant="outlined">
+                    <StyledCard>
                         <Subheading>Delivery Instructions</Subheading>
                         <Text>
                             Is there anything we need to know when delivering a parcel to this
                             client? Does the doorbell work? Do we need to phone them? Is there a
                             door code? Do they live upstairs in a flat and cannot come downstairs?
                         </Text>
-                        <StyledTextInput
+                        <FreeFormTextInput
                             label="Delivery Instructions"
                             onChange={getDeliveryInstructions}
                         />
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
-                    <StyledCard variant="outlined">
+                    <StyledCard>
                         <Subheading>Extra Information</Subheading>
                         <Text>
                             Is there anything else you need to tell us about the client? Comments
                             relating to food or anything else. Please add any delivery instructions
                             to the &quot;Delivery Instructions&quot; section above.
                         </Text>
-                        <StyledTextInput label="E.g. tea allergy" onChange={getExtraInformation} />
+                        <FreeFormTextInput
+                            label="E.g. tea allergy"
+                            onChange={getExtraInformation}
+                        />
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
@@ -663,17 +668,12 @@ export default RequestForm;
 TODO: All of this.
 
 
-4. Add styles to the full form.
-    - Use Themes (especially for error messages) once it has been merged.
 6. Add secondary functionalities to the form.
     - Autofill (editing vs creating) -> URL with primary ID 
 7. Add extra functionalities to the form.
-    - Submit using keypress instead of buttons.
-    - Submit checks required boxes.
     - Send a copy of the form to their email / show on their dashboard.
     - Save progress.
     - Word limits.
-    - MUI textarea instead of input
 8. Refactor code (components instead of copy and paste)
 
 ***********************************
@@ -687,6 +687,8 @@ DONE
     - Data can be submitted.
     - Data can be stored (e.g. console log)
 3. Create the full form by repeating (2) and replacing placeholder texts.
+4. Add styles to the full form.
+    - Use Themes (especially for error messages) once it has been merged.
 5. Connect the form to the database (INSERT).
     - Families
     - Client
