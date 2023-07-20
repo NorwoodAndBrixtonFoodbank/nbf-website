@@ -5,12 +5,12 @@ import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
 
 export interface Datum {
-    [headerKey: string]: string | number | null;
+    [headerKey: string]: string[] | string | number | boolean | null;
 }
 
 interface Row {
     rowId: number;
-    [headerKey: string]: string | number;
+    [headerKey: string]: string[] | string | number | boolean;
 }
 
 interface Headers {
