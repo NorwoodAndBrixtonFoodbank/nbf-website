@@ -2,18 +2,6 @@ import { DatabaseAutoType } from "@/supabase";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextMiddleware, NextRequest, NextResponse } from "next/server";
 
-import { styled } from "styled-components";
-
-const Centerer = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`;
-const SizedAspectRatio = styled.div`
-    width: 100vmin;
-    height: 100vmin;
-`;
-
 const middleware: NextMiddleware = async (req: NextRequest) => {
     const res = NextResponse.next();
     const supabase = createMiddlewareClient<DatabaseAutoType>({ req, res });

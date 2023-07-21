@@ -2,12 +2,17 @@
 
 import supabase, { Schema } from "@/supabase";
 import Calendar, { CalendarEvent } from "@/components/Calendar/Calendar";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { styled } from "styled-components";
 
 interface ClientMap {
     [primary_key: string]: Schema["clients"];
 }
+
+const Title = styled.h1`
+    text-align: center;
+    margin-top: 1em;
+`;
 
 const Centerer = styled.div`
     display: flex;
@@ -15,7 +20,7 @@ const Centerer = styled.div`
     align-items: center;
 `;
 
-const SizedAspectRatio = styled.div`
+const CalendarWrapper = styled.div`
     width: 100vmin;
     margin: 2em;
 `;
@@ -48,6 +53,10 @@ const parcelsToCollectionEvents = (
     parcels: Schema["parcels"][],
     clientMap: ClientMap
 ): CalendarEvent[] => {
+    if (Object.keys(clientMap).length === 0) {
+        return [];
+    }
+
     return parcels.map((parcel) => {
         const fullName = clientMap[parcel.client_id].full_name;
         const location = parcel.collection_centre !== null ? `[${parcel.collection_centre}]` : "";
@@ -75,31 +84,22 @@ const colorMap: { [location: string]: string } = {
     default: "light blue",
 };
 
-const ParcelCalendar: React.FC<{}> = () => {
-    const [events, setEvents] = useState<CalendarEvent[]>([]);
+const ParcelCalendar: () => Promise<React.ReactElement> = async () => {
+    const clients: Schema["clients"][] = await fetchClient();
+    const parcels: Schema["parcels"][] = await fetchParcel();
 
-    useEffect(() => {
-        const getEvents = async (): Promise<CalendarEvent[]> => {
-            const clients: Schema["clients"][] = await fetchClient();
-            const parcels: Schema["parcels"][] = await fetchParcel();
+    const clientMap: ClientMap = clientsToClientMap(clients);
+    const parcelsWithCollectionDate = getParcelsWithCollectionDate(parcels);
 
-            const clientMap: ClientMap = clientsToClientMap(clients);
-            const parcelsWithCollectionDate = getParcelsWithCollectionDate(parcels);
-
-            return parcelsToCollectionEvents(parcelsWithCollectionDate, clientMap);
-        };
-
-        getEvents().then((events) => {
-            setEvents(events);
-        });
-    }, []);
+    const events = parcelsToCollectionEvents(parcelsWithCollectionDate, clientMap);
 
     return (
         <>
+            <Title>Collection Time for Parcels</Title>
             <Centerer>
-                <SizedAspectRatio>
+                <CalendarWrapper>
                     <Calendar initialEvents={events} editable={false} />
-                </SizedAspectRatio>
+                </CalendarWrapper>
             </Centerer>
         </>
     );
