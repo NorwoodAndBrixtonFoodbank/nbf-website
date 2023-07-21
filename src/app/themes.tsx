@@ -61,6 +61,8 @@ interface Props {
     theme?: CustomTheme;
 }
 
+let forceRerender = 0;
+
 export const ThemeUpdateContext = createContext((dark: boolean): void => {
     throw new Error(
         `attempted to set theme outside of a ThemeUpdateContext.Provider: Dark: ${dark}`
@@ -130,22 +132,21 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
             },
             MuiCheckbox: {
                 styleOverrides: {
-                    root: { 
+                    root: {
                         color: chosenTheme.primaryBackgroundColor,
                         accentColor: chosenTheme.primaryBackgroundColor,
                     },
                     colorPrimary: {
                         color: chosenTheme.primaryBackgroundColor,
-                    }
-
-                }
+                    },
+                },
             },
         },
     });
 
     return (
         <ThemeUpdateContext.Provider value={handleThemeChange}>
-            <ThemeProvider theme={chosenTheme}>
+            <ThemeProvider theme={chosenTheme} key={forceRerender++}>
                 <MaterialThemeProvider theme={materialTheme}>
                     <GlobalStyle />
                     {themedChildren}

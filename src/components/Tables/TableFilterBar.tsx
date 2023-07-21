@@ -9,6 +9,26 @@ export interface FilterText {
 }
 const StyledFilterAccordion = styled(FilterAccordion)`
     width: 100%;
+    overflow: visible;
+`;
+
+const ClearButton = styled.button`
+    background-color: ${(props) => props.theme.secondaryBackgroundColor};
+    box-shadow: 0 0 1px ${(props) => props.theme.secondaryBackgroundColor};
+    height: 3rem;
+    width: 6rem;
+    font-size: 1rem;
+`;
+
+const StyledFilterBar = styled.input`
+    height: 3rem;
+    font-size: 1rem;
+    width: 15rem;
+    overflow: visible;
+    border: 1px solid ${(props) => props.theme.secondaryBackgroundColor}!important;
+    box-shadow: 0 0 1px ${(props) => props.theme.secondaryBackgroundColor};
+    padding: 4px 4px 4px 8px !important;
+    border-radius: 0.8rem;
 `;
 
 interface Props {
@@ -25,12 +45,12 @@ interface Props {
 const TableFilterBar: React.FC<Props> = (props) => {
     return (
         <>
-            <button onClick={props.handleClear}>Clear</button>
+            <ClearButton onClick={props.handleClear}>Clear</ClearButton>
             {props.headers
                 .filter(([key, _value]) => props.filterKeys?.includes(key) ?? true)
                 .map(([key, value]) => {
                     return (
-                        <input
+                        <StyledFilterBar
                             key={key}
                             type="text"
                             value={props.filterText[key] ?? ""}
