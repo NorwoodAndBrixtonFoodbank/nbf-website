@@ -17,7 +17,7 @@ Cypress.Commands.add("login", () => {
     const password = Cypress.env("TEST_PASS");
 
     cy.session(email, () => {
-        cy.intercept("http://localhost:3000/auth/callback").as("auth");
+        cy.intercept("/auth/callback").as("auth");
 
         cy.visit("/");
         cy.url().should("include", "/login");
@@ -26,11 +26,12 @@ Cypress.Commands.add("login", () => {
         cy.get("input#password").type(password);
         cy.get("button[type=submit]").as("login_button").click();
         cy.get("@login_button").should("be.enabled");
+
+        cy.visit("/clients");
+        cy.url().should("include", "/clients");
     });
-
-    cy.visit("/clients"); // if session cache is used, then it doesn't redirect - so redirect manually!
-
-    cy.url().should("include", "/clients");
+    // If session cache is used, it only restores cookies/storage and NOT page!
+    // Remember to cy.visit(url) as the first action after a login :)
 });
 
 Cypress.Commands.add("checkAccessibility", () => {

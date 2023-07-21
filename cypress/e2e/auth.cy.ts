@@ -8,6 +8,7 @@ describe("Authentication tests", () => {
 
     it("Get to clients page", () => {
         cy.login();
+        cy.visit("/clients");
 
         cy.url().should("include", "/clients");
     });
@@ -15,6 +16,7 @@ describe("Authentication tests", () => {
     it("Sign out", () => {
         cy.login();
 
+        cy.visit("/clients");
         cy.get("input[type=submit]").contains("Sign out").click();
 
         cy.url().should("include", "/login");
