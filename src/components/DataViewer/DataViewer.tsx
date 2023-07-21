@@ -5,7 +5,7 @@ import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
 
 export interface Data {
-    [key: string]: string | number | null;
+    [key: string]: string[] | string | number | boolean | null;
 }
 
 const Key = styled.div`
@@ -23,8 +23,23 @@ const Value = styled.div`
 `;
 
 const EachItem = styled.div`
-    padding-bottom: 1rem;
+    padding-bottom: 1em;
 `;
+
+const valueIsEmpty = (value: string[] | string | number | boolean | null): boolean => {
+    return (Array.isArray(value) && value.length === 0) || value === "" || value === null;
+};
+
+const formatDisplayValue = (value: any): string => {
+    if (valueIsEmpty(value)) {
+        return "-";
+    } else if (typeof value === "boolean") {
+        const booleanString = value.toString();
+        return booleanString[0].toUpperCase() + booleanString.slice(1);
+    } else {
+        return value.toString();
+    }
+};
 
 const JSONContent: React.FC<Data> = (data) => {
     return (
@@ -32,7 +47,7 @@ const JSONContent: React.FC<Data> = (data) => {
             {Object.entries(data).map(([key, value]) => (
                 <EachItem key={key}>
                     <Key>{key.toUpperCase().replace("_", " ")}</Key>
-                    <Value>{value ?? ""}</Value>
+                    <Value>{formatDisplayValue(value)}</Value>
                 </EachItem>
             ))}
         </>
@@ -53,7 +68,7 @@ const DataViewer: React.FC<DataViewerProps> = (props) => {
 
     return (
         <Modal isOpen={props.isOpen} onClose={closeModal} header={props.header}>
-            {JSONContent(props.data)}
+            <div style={{ width: "5000px", maxWidth: "100%" }}>{JSONContent(props.data)}</div>
         </Modal>
     );
 };

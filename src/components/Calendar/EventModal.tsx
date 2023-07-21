@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { Dialog } from "@mui/material";
 import React from "react";
 import { CalendarEvent } from "@/components/Calendar/Calendar";
+import Modal from "@/components/Modal/Modal";
 
 const StyledDialog = styled(Dialog)`
     & .MuiPaper-root {
@@ -40,7 +41,7 @@ const dateFormatOptions: Intl.DateTimeFormatOptions = {
     day: "numeric",
 };
 
-const Modal: React.FC<{
+const EventModal: React.FC<{
     eventClick: CalendarEvent | null;
     setEventClick: (data: CalendarEvent | null) => void;
 }> = ({ eventClick, setEventClick }) => {
@@ -59,18 +60,12 @@ const Modal: React.FC<{
     );
 
     return (
-        <StyledDialog open={true} onClose={() => setEventClick(null)}>
-            <StyledCloseButton type="button" onClick={() => setEventClick(null)}>
-                close
-            </StyledCloseButton>
-            <ModalInner>
-                <h2>{eventClick.title}</h2>
-                <p>Start: {startDate}</p>
-                <p>End: {endDate}</p>
-                {eventClick.description ? <p>Description: {eventClick.description}</p> : <></>}
-            </ModalInner>
-        </StyledDialog>
+        <Modal header={eventClick.title} isOpen={true} onClose={() => setEventClick(null)}>
+            <p>Start: {startDate}</p>
+            <p>End: {endDate}</p>
+            {eventClick.description ? <p>Description: {eventClick.description}</p> : <></>}
+        </Modal>
     );
 };
 
-export default Modal;
+export default EventModal;

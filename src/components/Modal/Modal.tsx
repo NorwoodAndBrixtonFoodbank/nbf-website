@@ -10,8 +10,9 @@ const StyledDialog = styled(Dialog)`
         border: 0;
         border-radius: 2em;
         padding: 0;
-        margin: 0;
+        margin: 5%;
         overflow: hidden;
+        max-width: 90%;
     }
 `;
 
@@ -25,12 +26,13 @@ const Header = styled.div`
     font-size: 1.5em;
     font-weight: bolder;
     padding: 0.75em 1em;
+    width: 100%;
 `;
 
 const Content = styled.div`
     overflow: auto;
-    background-color: ${(props) => props.theme.surfaceBackgroundColor};
-    margin: 1rem 1.5rem 1.5rem;
+    padding: 1em 1.5em 1.5em;
+    width: 100%;
 `;
 
 const CloseButton = styled.button.attrs({
