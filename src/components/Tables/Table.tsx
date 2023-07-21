@@ -49,7 +49,9 @@ const dataToRows = (data: Datum[], headers: Headers): Row[] => {
 
         for (const headerKey of Object.keys(headers)) {
             const databaseValue = datum[headerKey] ?? "";
-            row[headerKey] = Array.isArray(databaseValue) ? databaseValue.join() : databaseValue;
+            row[headerKey] = Array.isArray(databaseValue)
+                ? databaseValue.join(", ")
+                : databaseValue;
         }
 
         return row;
