@@ -8,10 +8,11 @@ import { NoSsr } from "@mui/material";
 import SpeechBubbleIcon from "../Icons/SpeechBubbleIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAnglesUp, faAnglesDown, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { ListRow } from "@/app/lists/dataview";
 
 export interface Datum {
-    data: { [headerKey: string]: string[] | string | number | boolean | null | undefined };
-    tooltips?: { [headerKey: string]: string };
+    data: ListRow;
+    tooltips: ListRow;
 }
 
 interface Row {
@@ -174,7 +175,7 @@ const Table: React.FC<Props> = (props) => {
     if (props.reorderable) {
         columns.unshift({
             name: <></>,
-            cell: (row: Row, rowIndex, column, id) => (
+            cell: (row: Row) => (
                 <EditandReorderArrowDiv>
                     <StyledIcon
                         onClick={() => {

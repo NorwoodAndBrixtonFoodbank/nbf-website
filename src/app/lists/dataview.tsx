@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { styled } from "styled-components";
 import DataViewer from "@/components/DataViewer/DataViewer";
 
-type ListRow = { [headerKey: string]: string };
+export type ListRow = { [headerKey: string]: string | null };
 
 const TableDiv = styled.div`
     margin: 20px;
@@ -28,30 +28,29 @@ const StyledAddButton = styled.button`
 `;
 
 const ListsDataView = async (): Promise<React.ReactElement> => {
-    const rawData = (await supabase.from("lists").select("*")).data;
+    const dataFetching = await supabase.from("lists").select("*");
+    const rawData: ListRow[] | null = dataFetching.data;
+
+    if (rawData === null) {
+        throw new Error("No data found");
+    }
 
     const dataAndTooltips = rawData?.map((row) => {
         const data: ListRow = {
             item_name: row.item_name,
         };
         const tooltips: ListRow = {};
-
-        for (let i = 1; i <= 10; i++) {
-            const header = `${i}_quantity`;
-            // type cast required as the type system can't infer that the header is a key of row
-            data[header] = (row as ListRow)[header];
-            tooltips[header] = (row as ListRow)[`${i}_notes`];
+        for (let index = 1; index <= 10; index++) {
+            const header = `${index}_quantity`;
+            data[header] = row[header];
+            tooltips[header] = row[`${index}_notes`];
         }
-
         return {
             data,
             tooltips,
         };
     });
 
-    if (dataAndTooltips === null || dataAndTooltips === undefined) {
-        throw new Error("No data found");
-    }
 
     const headers: [string, string][] = [
         ["item_name", "Description"],
@@ -68,7 +67,7 @@ const ListsDataView = async (): Promise<React.ReactElement> => {
     ];
 
     const toggleableHeaders = headers.map(([key, _value]) => key);
-    // we don't want the user to be able to toggle the item_name header
+    // removing description header from Toggleable Headers using shift
     toggleableHeaders.shift();
 
     return (
