@@ -9,13 +9,14 @@ interface Props {
     labelsAndValues: [string, string][];
     groupTitle?: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    defaultValue?: string;
 }
 
 const RadioGroupInput: React.FC<Props> = (props) => {
     return (
         <FormControl>
             <FormLabel>{props.groupTitle}</FormLabel>
-            <RadioGroup onChange={props.onChange}>
+            <RadioGroup onChange={props.onChange} defaultValue={props.defaultValue}>
                 {props.labelsAndValues.map(([label, value], index) => {
                     return (
                         <FormControlLabel

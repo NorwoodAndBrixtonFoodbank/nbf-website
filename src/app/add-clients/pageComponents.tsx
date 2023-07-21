@@ -17,11 +17,24 @@ import { Database } from "@/database_types_file";
 type ClientDatabaseRecord = InsertSchema["clients"];
 type FamilyDatabaseRecord = InsertSchema["families"];
 type PersonType = Database["public"]["Enums"]["gender"];
+type GenderToAge = {
+    [gender in PersonType]?: number;
+};
 
 interface ChildProps {
     key: number;
     gender: PersonType;
     age: number | null;
+}
+
+interface ErrorMessages {
+    nameErrorMessage: string;
+    phoneErrorMessage: string;
+    addressErrorMessage: string;
+    postcodeErrorMessage: string;
+    numberAdultsErrorMessage: string;
+    numberChildrenErrorMessage: string;
+    nappyErrorMessage: string;
 }
 
 const CenterComponent = styled.div`
@@ -45,11 +58,13 @@ const StyledCard = styled.div`
     border-radius: 10px;
     background-color: ${(props) => props.theme.surfaceBackgroundColor};
     color: ${(props) => props.theme.surfaceForegroundColor};
+
     div {
         background-color: inherit;
         color: inherit;
         width: 100%;
-        margin-top: 1px;
+        margin-top: 0.15em;
+        margin-bottom: 0.15em;
     }
 `;
 
@@ -88,8 +103,14 @@ const StyledButton = styled.button`
     }
 `;
 
-type GenderToAge = {
-    [gender in PersonType]?: number;
+const initialErrorMessages = {
+    nameErrorMessage: "N/A",
+    phoneErrorMessage: "",
+    addressErrorMessage: "N/A",
+    postcodeErrorMessage: "N/A",
+    numberAdultsErrorMessage: "N/A",
+    numberChildrenErrorMessage: "N/A",
+    nappyErrorMessage: "",
 };
 
 const RequestForm: React.FC<{}> = () => {
@@ -112,13 +133,7 @@ const RequestForm: React.FC<{}> = () => {
     const [dietaryRequirements, setDietaryRequirements] = useState({});
     const [extraInformation, setExtraInformation] = useState("");
 
-    const [nameErrorMessage, setNameErrorMessage] = useState("");
-    const [phoneErrorMessage, setPhoneErrorMessage] = useState("");
-    const [addressErrorMessage, setAddressErrorMessage] = useState("");
-    const [postcodeErrorMessage, setPostcodeErrorMessage] = useState("");
-    const [numberAdultsErrorMessage, setNumberAdultsErrorMessage] = useState("");
-    const [numberChildrenErrorMessage, setNumberChildrenErrorMessage] = useState("");
-    const [nappyErrorMessage, setNappyErrorMessage] = useState("");
+    const [errorMessages, setErrorMessages] = useState<ErrorMessages>(initialErrorMessages);
 
     useEffect(() => {
         const defaultAgeGenderChildren = Array.from(
@@ -137,9 +152,9 @@ const RequestForm: React.FC<{}> = () => {
     const getFullName = (event: React.ChangeEvent<HTMLInputElement>): void => {
         const input = event.target.value;
         if (input === "") {
-            setNameErrorMessage("This is a required field");
+            setErrorMessages({ ...errorMessages, nameErrorMessage: "This is a required field" });
         } else {
-            setNameErrorMessage("");
+            setErrorMessages({ ...errorMessages, nameErrorMessage: "" });
             setFullName(event.target.value);
         }
     };
@@ -148,9 +163,12 @@ const RequestForm: React.FC<{}> = () => {
         const phoneNumberPattern = /^(\+|0)(\s?)(\s|\d+|-){5,}$/;
         const input = event.target.value;
         if (input === "" || input.match(phoneNumberPattern)) {
-            setPhoneErrorMessage("");
+            setErrorMessages({ ...errorMessages, phoneErrorMessage: "" });
         } else {
-            setPhoneErrorMessage("Please enter a valid phone number");
+            setErrorMessages({
+                ...errorMessages,
+                phoneErrorMessage: "Please enter a valid phone number",
+            });
         }
         const numericInput = input.replace(/(\D)/g, "");
         const formattedNumber =
@@ -161,9 +179,9 @@ const RequestForm: React.FC<{}> = () => {
     const getAddressLine1 = (event: React.ChangeEvent<HTMLInputElement>): void => {
         const input = event.target.value;
         if (input === "") {
-            setAddressErrorMessage("This is a required field");
+            setErrorMessages({ ...errorMessages, addressErrorMessage: "This is a required field" });
         } else {
-            setAddressErrorMessage("");
+            setErrorMessages({ ...errorMessages, addressErrorMessage: "" });
             setAddressLine1(event.target.value);
         }
     };
@@ -185,13 +203,19 @@ const RequestForm: React.FC<{}> = () => {
         const postcodePattern =
             /^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})$/;
         if (input === "") {
-            setPostcodeErrorMessage("This is a required field.");
+            setErrorMessages({
+                ...errorMessages,
+                postcodeErrorMessage: "This is a required field",
+            });
         } else if (input.match(postcodePattern)) {
-            setPostcodeErrorMessage("");
+            setErrorMessages({ ...errorMessages, postcodeErrorMessage: "" });
             const formattedPostcode = input.replace(/(\s)/g, "").toUpperCase();
             setAddressPostcode(formattedPostcode);
         } else {
-            setPostcodeErrorMessage("Please enter a valid postcode");
+            setErrorMessages({
+                ...errorMessages,
+                postcodeErrorMessage: "Please enter a valid postcode.",
+            });
         }
     };
 
@@ -200,14 +224,32 @@ const RequestForm: React.FC<{}> = () => {
         gender: PersonType
     ): void => {
         const input = event.target.value;
-        if (input.match(/^\d+$/)) {
-            setNumberAdultsErrorMessage("");
+        const numberPattern = /^\d+$/;
+        if (input === "") {
+            numberAdults[gender] = 0;
+        } else if (input.match(numberPattern)) {
             numberAdults[gender] = parseInt(input);
-            setNumberAdults(numberAdults);
-        } else if (input === "") {
-            setNumberAdultsErrorMessage("This is a required field.");
         } else {
-            setNumberAdultsErrorMessage("Invalid number");
+            numberAdults[gender] = -1;
+        }
+        setNumberAdults(numberAdults);
+        const nonZeroAdultEntry = Object.values(numberAdults).filter((value) => value > 0);
+        const invalidAdultEntry = Object.values(numberAdults).filter((value) => value === -1);
+        if (invalidAdultEntry.length > 0) {
+            setErrorMessages({
+                ...errorMessages,
+                numberAdultsErrorMessage: "Please enter a valid number.",
+            });
+        } else if (nonZeroAdultEntry.length === 0) {
+            setErrorMessages({
+                ...errorMessages,
+                numberAdultsErrorMessage: "This is a required field.",
+            });
+        } else {
+            setErrorMessages({
+                ...errorMessages,
+                numberAdultsErrorMessage: "",
+            });
         }
     };
 
@@ -215,12 +257,15 @@ const RequestForm: React.FC<{}> = () => {
         const input = event.target.value;
 
         if (input === "") {
-            setNumberChildrenErrorMessage("");
+            setErrorMessages({ ...errorMessages, numberChildrenErrorMessage: "" });
         } else if (input.match(/^\d+$/)) {
-            setNumberChildrenErrorMessage("");
+            setErrorMessages({ ...errorMessages, numberChildrenErrorMessage: "" });
             setNumberChildren(parseInt(input));
         } else {
-            setNumberChildrenErrorMessage("Invalid number");
+            setErrorMessages({
+                ...errorMessages,
+                numberChildrenErrorMessage: "Please enter a valid number",
+            });
         }
     };
 
@@ -241,10 +286,13 @@ const RequestForm: React.FC<{}> = () => {
     const getBabyProducts = (event: React.ChangeEvent<HTMLInputElement>): void => {
         const input = event.target.value;
         if (input === "Yes") {
+            setErrorMessages({ ...errorMessages, nappyErrorMessage: "N/A" });
             setBabyProducts(true);
         } else if (input === "No") {
+            setErrorMessages({ ...errorMessages, nappyErrorMessage: "" });
             setBabyProducts(false);
         } else {
+            setErrorMessages({ ...errorMessages, nappyErrorMessage: "" });
             setBabyProducts(null);
         }
     };
@@ -252,11 +300,18 @@ const RequestForm: React.FC<{}> = () => {
     const getNappySize = (event: React.ChangeEvent<HTMLInputElement>): void => {
         const input = event.target.value;
         if (input === "") {
-            setNappyErrorMessage("This is a required field");
+            setErrorMessages({ ...errorMessages, nappyErrorMessage: "This is a required field" });
         } else {
-            setNappyErrorMessage("");
+            setErrorMessages({ ...errorMessages, nappyErrorMessage: "" });
             setNappySize(input);
         }
+    };
+
+    // TODO: Change this disgusting code
+    const getFieldWithoutChecks = (
+        fieldSetter: any
+    ): ((event: React.ChangeEvent<HTMLInputElement>) => void) => {
+        return (event) => fieldSetter(event.target.value);
     };
 
     const getPetFood = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -276,7 +331,9 @@ const RequestForm: React.FC<{}> = () => {
     };
 
     const createRecord = async (): Promise<void> => {
-        setExtraInformation(`Nappy Size: ${nappySize}, Extra Information: ${extraInformation}`);
+        if (nappySize) {
+            setExtraInformation(`Nappy Size: ${nappySize}, Extra Information: ${extraInformation}`);
+        }
 
         const clientRecord: ClientDatabaseRecord = {
             address_1: addressLine1,
@@ -330,13 +387,39 @@ const RequestForm: React.FC<{}> = () => {
     };
 
     const submitForm = (): void => {
-        void createRecord();
+        let errorExists = false;
+        let amendedErrorMessages = { ...errorMessages };
+        for (const [errorKey, errorMessage] of Object.entries(errorMessages)) {
+            if (errorMessage !== "") {
+                errorExists = true;
+            }
+            if (errorMessage === "N/A") {
+                amendedErrorMessages = {
+                    ...amendedErrorMessages,
+                    [errorKey]: "This is a required field.",
+                };
+            }
+        }
+        setErrorMessages({ ...amendedErrorMessages });
+        if (errorExists) {
+            alert("Please ensure all fields have been entered correctly.");
+        } else {
+            void createRecord();
+        }
     };
 
     const childrenLoopArray: number[] = Array.from(
         { length: numberChildren },
         (value, index) => index
     );
+
+    const errorColor = (errorMessage: string): boolean => {
+        return errorMessage !== "" && errorMessage !== "N/A";
+    };
+
+    const errorText = (errorMessage: string): string => {
+        return errorMessage == "N/A" ? "" : errorMessage;
+    };
 
     return (
         <CenterComponent>
@@ -353,8 +436,8 @@ const RequestForm: React.FC<{}> = () => {
                         </Subheading>
                         <Text>First and last name</Text>
                         <FreeFormTextInput
-                            error={!!nameErrorMessage}
-                            helperText={nameErrorMessage}
+                            error={errorColor(errorMessages.nameErrorMessage)}
+                            helperText={errorText(errorMessages.nameErrorMessage)}
                             label="Name"
                             onChange={getFullName}
                         />
@@ -368,8 +451,8 @@ const RequestForm: React.FC<{}> = () => {
                             numbers should be entered with the country code.
                         </Text>
                         <FreeFormTextInput
-                            error={!!phoneErrorMessage}
-                            helperText={phoneErrorMessage}
+                            error={!!errorMessages.phoneErrorMessage}
+                            helperText={errorMessages.phoneErrorMessage}
                             label="E.g. 0xxx-xx-xxxx or +44 xxxx xxx xxxx"
                             onChange={getPhoneNumber}
                         />
@@ -382,8 +465,8 @@ const RequestForm: React.FC<{}> = () => {
                         </Subheading>
                         <Text>Please enter the flat/house number if applicable.</Text>
                         <FreeFormTextInput
-                            error={!!addressErrorMessage}
-                            helperText={addressErrorMessage}
+                            error={errorColor(errorMessages.addressErrorMessage)}
+                            helperText={errorText(errorMessages.addressErrorMessage)}
                             label="Address Line 1"
                             onChange={getAddressLine1}
                         />
@@ -404,7 +487,7 @@ const RequestForm: React.FC<{}> = () => {
                 <CenterComponent>
                     <StyledCard>
                         <Subheading>County</Subheading>
-                        <FreeFormTextInput label="County" onChange={getAddressCounty} />
+                        <FreeFormTextInput label="County" onChange={getAddressCounty()} />
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
@@ -413,8 +496,8 @@ const RequestForm: React.FC<{}> = () => {
                             Postcode <Asterisk>*</Asterisk>
                         </Subheading>
                         <FreeFormTextInput
-                            error={!!postcodeErrorMessage}
-                            helperText={postcodeErrorMessage}
+                            error={errorColor(errorMessages.postcodeErrorMessage)}
+                            helperText={errorText(errorMessages.postcodeErrorMessage)}
                             label="E.g. SE11 5QY"
                             onChange={getAddressPostcode}
                         />
@@ -427,24 +510,22 @@ const RequestForm: React.FC<{}> = () => {
                         </Subheading>
                         <Text>Note that adults are aged 16 or above</Text>
                         <FreeFormTextInput
-                            error={!!numberAdultsErrorMessage}
-                            helperText={numberAdultsErrorMessage}
+                            error={errorColor(errorMessages.numberAdultsErrorMessage)}
                             label="Female"
                             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                                 getNumberAdults(event, "female")
                             }
                         />
                         <FreeFormTextInput
-                            error={!!numberAdultsErrorMessage}
-                            helperText={numberAdultsErrorMessage}
+                            error={errorColor(errorMessages.numberAdultsErrorMessage)}
                             label="Male"
                             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                                 getNumberAdults(event, "male")
                             }
                         />
                         <FreeFormTextInput
-                            error={!!numberAdultsErrorMessage}
-                            helperText={numberAdultsErrorMessage}
+                            error={errorColor(errorMessages.numberAdultsErrorMessage)}
+                            helperText={errorText(errorMessages.numberAdultsErrorMessage)}
                             label="Prefer Not To Say"
                             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                                 getNumberAdults(event, "adult")
@@ -454,11 +535,13 @@ const RequestForm: React.FC<{}> = () => {
                 </CenterComponent>
                 <CenterComponent>
                     <StyledCard>
-                        <Subheading>Number of Children</Subheading>
+                        <Subheading>
+                            Number of Children <Asterisk>*</Asterisk>
+                        </Subheading>
                         <Text>Note that children are under 16 years old</Text>
                         <FreeFormTextInput
-                            error={!!numberChildrenErrorMessage}
-                            helperText={numberChildrenErrorMessage}
+                            error={errorColor(errorMessages.numberChildrenErrorMessage)}
+                            helperText={errorText(errorMessages.numberChildrenErrorMessage)}
                             label="Number of Children"
                             onChange={getNumberChildren}
                         />
@@ -573,14 +656,18 @@ const RequestForm: React.FC<{}> = () => {
                                 ["No", "No"],
                                 ["Don't Know", "don't know"],
                             ]}
+                            defaultValue="don't know"
                             onChange={getBabyProducts}
                         />
                         {babyProducts ? (
                             <>
                                 <br />
                                 <FreeFormTextInput
-                                    error={!!nappyErrorMessage}
-                                    helperText={nappyErrorMessage}
+                                    error={
+                                        !!errorMessages.nappyErrorMessage &&
+                                        errorMessages.nappyErrorMessage !== "N/A"
+                                    }
+                                    helperText={errorMessages.nappyErrorMessage}
                                     label="Nappy Size"
                                     onChange={getNappySize}
                                 />
@@ -662,19 +749,16 @@ const RequestForm: React.FC<{}> = () => {
 
 export default RequestForm;
 
-// TODO: Final check for all data when submit button is clicked.
-
 /*
 TODO: All of this.
 
 
-6. Add secondary functionalities to the form.
-    - Autofill (editing vs creating) -> URL with primary ID 
 7. Add extra functionalities to the form.
+    - Autofill (editing vs creating) -> URL with primary ID 
     - Send a copy of the form to their email / show on their dashboard.
-    - Save progress.
     - Word limits.
 8. Refactor code (components instead of copy and paste)
+9. Write tests
 
 ***********************************
 DONE
