@@ -266,7 +266,7 @@ const RequestForm: React.FC = () => {
     const getGenderChildren = (event: SelectChangeEvent, count: number): void => {
         const input = event.target.value !== "don't know" ? event.target.value : "child";
         const particularChild = ageGenderChildren.findIndex((object) => object.key === count);
-        ageGenderChildren[particularChild].gender = input as PersonType; // TODO: Casting is dodgy
+        ageGenderChildren[particularChild].gender = input as PersonType;
         setAgeGenderChildren([...ageGenderChildren]);
     };
 
@@ -346,7 +346,7 @@ const RequestForm: React.FC = () => {
         for (const [gender, quantity] of Object.entries(numberAdults)) {
             const familyAdultRecord: FamilyDatabaseRecord = {
                 family_id: familyID![0].family_id,
-                person_type: gender as PersonType, // TODO: Casting is dodgy
+                person_type: gender as PersonType,
                 quantity: quantity,
                 age: null,
             };
@@ -747,37 +747,3 @@ const RequestForm: React.FC = () => {
 };
 
 export default RequestForm;
-
-/*
-TODO: All of this.
-
-
-7. Add extra functionalities to the form.
-    - Autofill (editing vs creating) -> URL with primary ID 
-    - Send a copy of the form to their email / show on their dashboard.
-    - Word limits.
-9. Write tests
-
-***********************************
-DONE
-
-1. Try out all individual components and learn how they can be used.
-    - Technical Review
-2. Make 1 test-case for each component and make sure all the basic functionalities work.
-    - Shows on page.
-    - Data can be inputted.
-    - Data can be submitted.
-    - Data can be stored (e.g. console log)
-3. Create the full form by repeating (2) and replacing placeholder texts.
-4. Add styles to the full form.
-    - Use Themes (especially for error messages) once it has been merged.
-5. Connect the form to the database (INSERT).
-    - Families
-    - Client
-6. Add secondary functionalities to the form.
-    - Validation of inputs.
-    - Required.
-8. Refactor code (components instead of copy and paste)
-
-
-*/

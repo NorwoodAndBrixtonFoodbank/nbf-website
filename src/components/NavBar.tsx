@@ -31,8 +31,6 @@ const Gap = styled.div`
     flex-grow: 1;
 `;
 
-// TODO: remove the add-clients button (it's only for testing)
-
 const NavBar: React.FC<{}> = () => {
     const setTheme = useContext(ThemeUpdateContext);
 
@@ -46,8 +44,6 @@ const NavBar: React.FC<{}> = () => {
                 <Button href="/lists"> Lists </Button>
 
                 <Button href="/calendar">Calendar</Button>
-
-                <Button href="/add-clients">Add Clients</Button>
 
                 <Gap />
 
