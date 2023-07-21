@@ -1,34 +1,12 @@
 "use client";
+
 import React, { useState } from "react";
-import DataViewer, { Data } from "@/components/DataViewer/DataViewer";
-import PhoneIcon from "@/components/Icons/PhoneIcon";
 import Modal from "@/components/Modal/Modal";
-import styled from "styled-components";
 
-const Key = styled.div`
-    color: grey;
-    font-size: small;
-`;
-const Value = styled.div`
-    font-size: medium;
-`;
-const EachItem = styled.div`
-    padding-bottom: 1rem;
-`;
-const JSONContent: React.FC<Data> = (data) => {
-    return (
-        <>
-            {Object.entries(data).map(([key, value]) => (
-                <EachItem key={key}>
-                    <Key>{key.toUpperCase().replace("_", " ")}</Key>
-                    <Value>{value ?? ""}</Value>
-                </EachItem>
-            ))}
-        </>
-    );
-};
+export const longString = "abcdefghijklmnopqrstuvwxyz".repeat(20);
 
-const SampleModalWithButton: React.FC<{}> = ({ data }) => {
+export const longName = `John With A ${"Very ".repeat(20)}Long Name`;
+const SampleModalWithButton: React.FC<{}> = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
     const openModal = (): void => {
@@ -40,12 +18,15 @@ const SampleModalWithButton: React.FC<{}> = ({ data }) => {
     };
 
     return (
-        <>
+        <div id="modal-parent">
             <button onClick={openModal}>Open</button>
-            <Modal header={<div>Header</div>} isOpen={modalIsOpen} onClose={closeModal}>
-                {JSONContent(data)}
+            <Modal header="TITLE" isOpen={modalIsOpen} onClose={closeModal}>
+                <div style={{ width: "1000px" }}>
+                    <div>{longString}</div>
+                    <div>{longName}</div>
+                </div>
             </Modal>
-        </>
+        </div>
     );
 };
 

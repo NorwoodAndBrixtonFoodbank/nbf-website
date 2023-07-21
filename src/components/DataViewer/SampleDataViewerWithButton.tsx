@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import DataViewer, { Data } from "@/components/DataViewer/DataViewer";
 import styled from "styled-components";
-import PhoneIcon from "@/components/Icons/PhoneIcon";
 
 interface ViewerProps {
     data: Data;
@@ -17,7 +16,7 @@ const Title = styled.span`
     margin-left: 0.5rem;
 `;
 
-const SampleDataViewerWithButton: React.FC<ViewerProps> = ({ data }) => {
+const SampleDataViewerWithButton: React.FC<ViewerProps> = ({ data }: { data: any }) => {
     const [viewerIsOpen, setViewerIsOpen] = useState(false);
 
     const openModal = (): void => {
@@ -35,7 +34,6 @@ const SampleDataViewerWithButton: React.FC<ViewerProps> = ({ data }) => {
                 data={data}
                 header={
                     <Header>
-                        <PhoneIcon />
                         <Title>Client Details</Title>
                     </Header>
                 }

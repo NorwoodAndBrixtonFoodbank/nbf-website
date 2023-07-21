@@ -1,5 +1,5 @@
 import React from "react";
-import DataViewerWithButton from "@/components/DataViewer/SampleDataViewerWithButton";
+import SampleDataViewerWithButton from "@/components/DataViewer/SampleDataViewerWithButton";
 
 const longString = "abcdefghijklmnopqrstuvwxyz".repeat(20);
 
@@ -12,38 +12,22 @@ const data = {
     dietary_requirements: null,
 };
 
-describe("<DataViewerWithButton />", () => {
+describe("<SampleDataViewerWithButton />", () => {
     it("renders", () => {
-        cy.mount(<DataViewerWithButton data={data} />);
+        cy.mount(<SampleDataViewerWithButton data={data} />);
     });
 
-    it("modal can be opened", () => {
-        cy.mount(<DataViewerWithButton data={data} />);
+    it("data viewer shows expected values", () => {
+        cy.mount(<SampleDataViewerWithButton data={data} />);
 
         cy.get("button").click();
 
-        cy.contains("FULL NAME");
-    });
-
-    it("modal can be closed", () => {
-        cy.mount(<DataViewerWithButton data={data} />);
-
-        cy.get("button").click();
-
-        cy.get("button").children("svg").click();
-
-        cy.get("body").should("not.have.value", "FULL NAME");
-    });
-
-    it("modal shows expected values", () => {
-        cy.mount(<DataViewerWithButton data={data} />);
-
-        cy.get("button").click();
-
+        cy.contains("ID");
         cy.contains(longString);
+        cy.contains("FULL NAME");
         cy.contains(longName);
+        cy.contains("PHONE NUMBER");
         cy.contains("1234567");
-
         cy.contains("DIETARY REQUIREMENTS");
     });
 });
