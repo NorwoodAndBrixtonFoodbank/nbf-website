@@ -20,6 +20,7 @@ type PersonType = Database["public"]["Enums"]["gender"];
 type GenderToAge = {
     [gender in PersonType]?: number;
 };
+type OnChangeType = (event: React.ChangeEvent<HTMLInputElement>) => void;
 
 interface ChildProps {
     key: number;
@@ -149,13 +150,37 @@ const RequestForm: React.FC<{}> = () => {
         setAgeGenderChildren(defaultAgeGenderChildren);
     }, [numberChildren]);
 
-    const getFullName = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const getRequiredFieldWithoutChecks = (
+        errorName: string,
+        fieldSetter: React.Dispatch<React.SetStateAction<string>>
+    ): OnChangeType => {
+        return (event) => {
+            const input = event.target.value;
+            if (input === "") {
+                setErrorMessages({
+                    ...errorMessages,
+                    [errorName]: "This is a required field",
+                });
+            } else {
+                setErrorMessages({ ...errorMessages, [errorName]: "" });
+                fieldSetter(event.target.value);
+            }
+        };
+    };
+
+    const getNumberChildren = (event: React.ChangeEvent<HTMLInputElement>): void => {
         const input = event.target.value;
+
         if (input === "") {
-            setErrorMessages({ ...errorMessages, nameErrorMessage: "This is a required field" });
+            setErrorMessages({ ...errorMessages, numberChildrenErrorMessage: "" });
+        } else if (input.match(/^\d+$/)) {
+            setErrorMessages({ ...errorMessages, numberChildrenErrorMessage: "" });
+            setNumberChildren(parseInt(input));
         } else {
-            setErrorMessages({ ...errorMessages, nameErrorMessage: "" });
-            setFullName(event.target.value);
+            setErrorMessages({
+                ...errorMessages,
+                numberChildrenErrorMessage: "Please enter a valid number",
+            });
         }
     };
 
@@ -175,29 +200,6 @@ const RequestForm: React.FC<{}> = () => {
             numericInput[0] === "0" ? "+44" + numericInput.slice(1) : "+" + numericInput;
         setPhoneNumber(formattedNumber);
     };
-
-    const getAddressLine1 = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        const input = event.target.value;
-        if (input === "") {
-            setErrorMessages({ ...errorMessages, addressErrorMessage: "This is a required field" });
-        } else {
-            setErrorMessages({ ...errorMessages, addressErrorMessage: "" });
-            setAddressLine1(event.target.value);
-        }
-    };
-
-    const getAddressLine2 = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setAddressLine2(event.target.value);
-    };
-
-    const getAddressTown = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setAddressTown(event.target.value);
-    };
-
-    const getAddressCounty = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setAddressCounty(event.target.value);
-    };
-
     const getAddressPostcode = (event: React.ChangeEvent<HTMLInputElement>): void => {
         const input = event.target.value;
         const postcodePattern =
@@ -253,22 +255,6 @@ const RequestForm: React.FC<{}> = () => {
         }
     };
 
-    const getNumberChildren = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        const input = event.target.value;
-
-        if (input === "") {
-            setErrorMessages({ ...errorMessages, numberChildrenErrorMessage: "" });
-        } else if (input.match(/^\d+$/)) {
-            setErrorMessages({ ...errorMessages, numberChildrenErrorMessage: "" });
-            setNumberChildren(parseInt(input));
-        } else {
-            setErrorMessages({
-                ...errorMessages,
-                numberChildrenErrorMessage: "Please enter a valid number",
-            });
-        }
-    };
-
     const getGenderChildren = (event: SelectChangeEvent, count: number): void => {
         const input = event.target.value !== "don't know" ? event.target.value : "child";
         const particularChild = ageGenderChildren.findIndex((object) => object.key === count);
@@ -307,23 +293,10 @@ const RequestForm: React.FC<{}> = () => {
         }
     };
 
-    // TODO: Change this disgusting code
     const getFieldWithoutChecks = (
-        fieldSetter: any
-    ): ((event: React.ChangeEvent<HTMLInputElement>) => void) => {
+        fieldSetter: React.Dispatch<React.SetStateAction<string>>
+    ): OnChangeType => {
         return (event) => fieldSetter(event.target.value);
-    };
-
-    const getPetFood = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setPetFood(event.target.value);
-    };
-
-    const getDeliveryInstructions = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setDeliveryInstruction(event.target.value);
-    };
-
-    const getExtraInformation = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setExtraInformation(event.target.value);
     };
 
     const checkboxGroupToArray = (checkedBoxes: booleanGroup): string[] => {
@@ -351,6 +324,9 @@ const RequestForm: React.FC<{}> = () => {
             phone_number: phoneNumber,
             extra_information: extraInformation,
         };
+
+        console.log(clientRecord);
+
         const { data: familyID, error: error } = await supabase
             .from("clients")
             .insert(clientRecord)
@@ -439,7 +415,10 @@ const RequestForm: React.FC<{}> = () => {
                             error={errorColor(errorMessages.nameErrorMessage)}
                             helperText={errorText(errorMessages.nameErrorMessage)}
                             label="Name"
-                            onChange={getFullName}
+                            onChange={getRequiredFieldWithoutChecks(
+                                "nameErrorMessage",
+                                setFullName
+                            )}
                         />
                     </StyledCard>
                 </CenterComponent>
@@ -468,26 +447,38 @@ const RequestForm: React.FC<{}> = () => {
                             error={errorColor(errorMessages.addressErrorMessage)}
                             helperText={errorText(errorMessages.addressErrorMessage)}
                             label="Address Line 1"
-                            onChange={getAddressLine1}
+                            onChange={getRequiredFieldWithoutChecks(
+                                "addressErrorMessage",
+                                setAddressLine1
+                            )}
                         />
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
                     <StyledCard>
                         <Subheading>Address Line 2</Subheading>
-                        <FreeFormTextInput label="Address Line 2" onChange={getAddressLine2} />
+                        <FreeFormTextInput
+                            label="Address Line 2"
+                            onChange={getFieldWithoutChecks(setAddressLine2)}
+                        />
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
                     <StyledCard>
                         <Subheading>Town</Subheading>
-                        <FreeFormTextInput label="Town" onChange={getAddressTown} />
+                        <FreeFormTextInput
+                            label="Town"
+                            onChange={getFieldWithoutChecks(setAddressTown)}
+                        />
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
                     <StyledCard>
                         <Subheading>County</Subheading>
-                        <FreeFormTextInput label="County" onChange={getAddressCounty()} />
+                        <FreeFormTextInput
+                            label="County"
+                            onChange={getFieldWithoutChecks(setAddressCounty)}
+                        />
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
@@ -689,7 +680,7 @@ const RequestForm: React.FC<{}> = () => {
                                 ["Cat", "Cat"],
                                 ["Dog", "Dog"],
                             ]}
-                            onChange={getPetFood}
+                            onChange={getFieldWithoutChecks(setPetFood)}
                         />
                     </StyledCard>
                 </CenterComponent>
@@ -719,7 +710,7 @@ const RequestForm: React.FC<{}> = () => {
                         </Text>
                         <FreeFormTextInput
                             label="Delivery Instructions"
-                            onChange={getDeliveryInstructions}
+                            onChange={getFieldWithoutChecks(setDeliveryInstruction)}
                         />
                     </StyledCard>
                 </CenterComponent>
@@ -733,7 +724,7 @@ const RequestForm: React.FC<{}> = () => {
                         </Text>
                         <FreeFormTextInput
                             label="E.g. tea allergy"
-                            onChange={getExtraInformation}
+                            onChange={getFieldWithoutChecks(setExtraInformation)}
                         />
                     </StyledCard>
                 </CenterComponent>
