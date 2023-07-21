@@ -5,7 +5,7 @@ import { Metadata } from "next";
 import React from "react";
 
 interface Props {
-    children: React.FC;
+    children: React.ReactElement;
 }
 
 const App: React.FC<Props> = ({ children }) => (

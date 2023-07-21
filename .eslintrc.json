@@ -28,7 +28,8 @@
     "react/jsx-curly-brace-presence": "error",
     // to deal with false positives in type annotations, turn on typescript-specific rules
     "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": "error"
+    "@typescript-eslint/no-unused-vars": ["error", {"varsIgnorePattern": "^_"}],
+    "id-length": "error"
   },
   "ignorePatterns": ["database_types_file.ts"]
 }
