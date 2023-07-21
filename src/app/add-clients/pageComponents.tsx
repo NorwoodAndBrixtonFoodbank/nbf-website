@@ -2,6 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import supabase, { InsertSchema } from "@/supabase";
+import { Database } from "@/database_types_file";
+
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import RadioGroupInput from "@/components/DataInput/RadioGroupInput";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
@@ -11,22 +14,14 @@ import {
     getCheckboxGroupHandler,
 } from "@/components/DataInput/inputHandlerFactories";
 import { SelectChangeEvent } from "@mui/material";
-import supabase, { InsertSchema } from "@/supabase";
-import { Database } from "@/database_types_file";
 
 type ClientDatabaseRecord = InsertSchema["clients"];
 type FamilyDatabaseRecord = InsertSchema["families"];
 type PersonType = Database["public"]["Enums"]["gender"];
+type OnChangeType = (event: React.ChangeEvent<HTMLInputElement>) => void;
 type GenderToAge = {
     [gender in PersonType]?: number;
 };
-type OnChangeType = (event: React.ChangeEvent<HTMLInputElement>) => void;
-
-interface ChildProps {
-    key: number;
-    gender: PersonType;
-    age: number | null;
-}
 
 interface ErrorMessages {
     nameErrorMessage: string;
@@ -36,6 +31,12 @@ interface ErrorMessages {
     numberAdultsErrorMessage: string;
     numberChildrenErrorMessage: string;
     nappyErrorMessage: string;
+}
+
+interface AgeGenderChild {
+    key: number;
+    gender: PersonType;
+    age: number | null;
 }
 
 const CenterComponent = styled.div`
@@ -75,9 +76,8 @@ const Text = styled.p`
     font-weight: lighter;
 `;
 
-const Heading = styled(Text)`
-    font-size: xx-large;
-    font-weight: bold;
+const Heading = styled.h1`
+    padding-bottom: 1em;
 `;
 
 const Subheading = styled(Text)`
@@ -86,7 +86,7 @@ const Subheading = styled(Text)`
 `;
 
 const Asterisk = styled.span`
-    color: red;
+    color: ${(props) => props.theme.errorColor};
 `;
 
 const StyledButton = styled.button`
@@ -114,7 +114,7 @@ const initialErrorMessages = {
     nappyErrorMessage: "",
 };
 
-const RequestForm: React.FC<{}> = () => {
+const RequestForm: React.FC = () => {
     const [fullName, setFullName] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [addressLine1, setAddressLine1] = useState("");
@@ -124,14 +124,14 @@ const RequestForm: React.FC<{}> = () => {
     const [addressPostcode, setAddressPostcode] = useState("");
     const [numberAdults, setNumberAdults] = useState<GenderToAge>({ female: 0, male: 0, adult: 0 });
     const [numberChildren, setNumberChildren] = useState(0);
-    const [ageGenderChildren, setAgeGenderChildren] = useState<ChildProps[]>([]);
+    const [ageGenderChildren, setAgeGenderChildren] = useState<AgeGenderChild[]>([]);
+    const [dietaryRequirements, setDietaryRequirements] = useState({});
+    const [feminineProducts, setFeminineProducts] = useState({});
     const [babyProducts, setBabyProducts] = useState<boolean | null>(null);
     const [nappySize, setNappySize] = useState("");
-    const [deliveryInstructions, setDeliveryInstruction] = useState("");
-    const [feminineProducts, setFeminineProducts] = useState({});
     const [petFood, setPetFood] = useState({});
     const [otherItems, setOtherItems] = useState({});
-    const [dietaryRequirements, setDietaryRequirements] = useState({});
+    const [deliveryInstructions, setDeliveryInstruction] = useState("");
     const [extraInformation, setExtraInformation] = useState("");
 
     const [errorMessages, setErrorMessages] = useState<ErrorMessages>(initialErrorMessages);
@@ -139,7 +139,7 @@ const RequestForm: React.FC<{}> = () => {
     useEffect(() => {
         const defaultAgeGenderChildren = Array.from(
             { length: numberChildren },
-            (value, index): ChildProps => {
+            (value, index): AgeGenderChild => {
                 return {
                     key: index,
                     gender: "child",
@@ -159,7 +159,7 @@ const RequestForm: React.FC<{}> = () => {
             if (input === "") {
                 setErrorMessages({
                     ...errorMessages,
-                    [errorName]: "This is a required field",
+                    [errorName]: "This is a required field.",
                 });
             } else {
                 setErrorMessages({ ...errorMessages, [errorName]: "" });
@@ -186,7 +186,13 @@ const RequestForm: React.FC<{}> = () => {
 
     const getPhoneNumber = (event: React.ChangeEvent<HTMLInputElement>): void => {
         const phoneNumberPattern = /^(\+|0)(\s?)(\s|\d+|-){5,}$/;
+        const formatting = (val: string): string => {
+            const numericInput = val.replace(/(\D)/g, "");
+            return numericInput[0] === "0" ? "+44" + numericInput.slice(1) : "+" + numericInput;
+        };
+
         const input = event.target.value;
+
         if (input === "" || input.match(phoneNumberPattern)) {
             setErrorMessages({ ...errorMessages, phoneErrorMessage: "" });
         } else {
@@ -195,15 +201,18 @@ const RequestForm: React.FC<{}> = () => {
                 phoneErrorMessage: "Please enter a valid phone number",
             });
         }
-        const numericInput = input.replace(/(\D)/g, "");
-        const formattedNumber =
-            numericInput[0] === "0" ? "+44" + numericInput.slice(1) : "+" + numericInput;
-        setPhoneNumber(formattedNumber);
+        setPhoneNumber(formatting(input));
     };
+
     const getAddressPostcode = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        const input = event.target.value;
         const postcodePattern =
             /^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})$/;
+        const formatting = (val: string): string => {
+            return val.replace(/(\s)/g, "").toUpperCase();
+        };
+
+        const input = event.target.value;
+
         if (input === "") {
             setErrorMessages({
                 ...errorMessages,
@@ -211,8 +220,7 @@ const RequestForm: React.FC<{}> = () => {
             });
         } else if (input.match(postcodePattern)) {
             setErrorMessages({ ...errorMessages, postcodeErrorMessage: "" });
-            const formattedPostcode = input.replace(/(\s)/g, "").toUpperCase();
-            setAddressPostcode(formattedPostcode);
+            setAddressPostcode(formatting(input));
         } else {
             setErrorMessages({
                 ...errorMessages,
@@ -748,7 +756,6 @@ TODO: All of this.
     - Autofill (editing vs creating) -> URL with primary ID 
     - Send a copy of the form to their email / show on their dashboard.
     - Word limits.
-8. Refactor code (components instead of copy and paste)
 9. Write tests
 
 ***********************************
@@ -770,6 +777,7 @@ DONE
 6. Add secondary functionalities to the form.
     - Validation of inputs.
     - Required.
+8. Refactor code (components instead of copy and paste)
 
 
 */

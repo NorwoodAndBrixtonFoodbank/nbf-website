@@ -27,5 +27,4 @@ export const metadata: Metadata = {
     title: "Clients",
 };
 
-// TODO: Don't get the error here
 export default Clients;
