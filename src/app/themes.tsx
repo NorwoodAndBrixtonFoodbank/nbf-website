@@ -61,7 +61,7 @@ interface Props {
     theme?: CustomTheme;
 }
 
-let forceRerenderBecauseImTotallySane = 0;
+let forceRerender = 0;
 
 export const ThemeUpdateContext = createContext((dark: boolean): void => {
     throw new Error(
@@ -146,7 +146,7 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
 
     return (
         <ThemeUpdateContext.Provider value={handleThemeChange}>
-            <ThemeProvider theme={chosenTheme} key={forceRerenderBecauseImTotallySane++}>
+            <ThemeProvider theme={chosenTheme} key={forceRerender++}>
                 <MaterialThemeProvider theme={materialTheme}>
                     <GlobalStyle />
                     {themedChildren}

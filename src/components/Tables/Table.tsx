@@ -7,7 +7,7 @@ import { styled } from "styled-components";
 import { NoSsr } from "@mui/material";
 import SpeechBubbleIcon from "../Icons/SpeechBubbleIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAnglesUp, faAnglesDown } from "@fortawesome/free-solid-svg-icons";
+import { faAnglesUp, faAnglesDown, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
 export interface Datum {
     data: { [headerKey: string]: string[] | string | number | boolean | null | undefined };
@@ -21,11 +21,11 @@ interface Row {
 
 interface Props {
     data: Datum[];
-    /** an object of header keys and header labels */
+    // headers is an object of header keys and header labels
     headers: [string, string][];
     checkboxes?: boolean;
     reorderable?: boolean;
-    /// an array of header keys to filter by
+    /// filters is an array of the header keys to filter by
     filters?: string[];
     pagination?: boolean;
     defaultShownHeaders?: string[];
@@ -67,7 +67,6 @@ const dataToFilteredRows = (
 ): Row[] => {
     const rows = dataToRows(data, headers);
     const filteredRows = filterRows(rows, filterText, headers);
-
     return filteredRows;
 };
 
@@ -125,30 +124,30 @@ const Table: React.FC<Props> = (props) => {
         }
     }, [selectCheckBoxes, selectAllCheckBox]);
 
-    const columns: TableColumn<Row>[] = (props.toggleableHeaders ? shownHeaders : props.headers).map(
-        ([headerKey, headerName]) => {
-            return {
-                name: headerName,
-                selector: (row) => row[headerKey],
-                sortable: true,
-                cell(row, rowIndex, column, id) {
-                    const tooltip = data[row.rowId].tooltips?.[headerKey];
-                    const tooltipElement = tooltip ? (
-                        <>
-                            <Spacer />
-                            <SpeechBubbleIcon onHoverText={tooltip} />
-                        </>
-                    ) : null;
-                    return (
-                        <RowDiv key={id}>
-                            {data[row.rowId].data[headerKey]}
-                            {tooltipElement}
-                        </RowDiv>
-                    );
-                },
-            };
-        }
-    );
+    const columns: TableColumn<Row>[] = (
+        props.toggleableHeaders ? shownHeaders : props.headers
+    ).map(([headerKey, headerName]) => {
+        return {
+            name: headerName,
+            selector: (row) => row[headerKey],
+            sortable: true,
+            cell(row, rowIndex, column, id) {
+                const tooltip = data[row.rowId].tooltips?.[headerKey];
+                const tooltipElement = tooltip ? (
+                    <>
+                        <Spacer />
+                        <SpeechBubbleIcon onHoverText={tooltip} />
+                    </>
+                ) : null;
+                return (
+                    <RowDiv key={id}>
+                        {data[row.rowId].data[headerKey]}
+                        {tooltipElement}
+                    </RowDiv>
+                );
+            },
+        };
+    });
 
     if (props.checkboxes) {
         columns.unshift({
@@ -176,10 +175,12 @@ const Table: React.FC<Props> = (props) => {
         columns.unshift({
             name: <></>,
             cell: (row: Row, rowIndex, column, id) => (
-                <ReorderArrowDiv>
+                <EditandReorderArrowDiv>
                     <StyledIcon
                         onClick={() => {
-                            if (row.rowId === 0) return;
+                            if (row.rowId === 0) {
+                                return;
+                            }
                             setData((data) => {
                                 const newData = [...data];
                                 const temp = newData[row.rowId];
@@ -190,9 +191,12 @@ const Table: React.FC<Props> = (props) => {
                         }}
                         icon={faAnglesUp}
                     />
+                    <StyledIcon icon={faPenToSquare} />
                     <StyledIcon
                         onClick={() => {
-                            if (row.rowId === data.length - 1) return;
+                            if (row.rowId === data.length - 1) {
+                                return;
+                            }
                             setData((data) => {
                                 const newData = [...data];
                                 const temp = newData[row.rowId];
@@ -203,7 +207,7 @@ const Table: React.FC<Props> = (props) => {
                         }}
                         icon={faAnglesDown}
                     />
-                </ReorderArrowDiv>
+                </EditandReorderArrowDiv>
             ),
             width: "40px",
         });
@@ -218,7 +222,6 @@ const Table: React.FC<Props> = (props) => {
             setFilterText({});
         }
     };
-
 
     const filterKeys = props.filters ?? props.headers.map(([headerKey, _headerLabel]) => headerKey);
 
@@ -240,9 +243,7 @@ const Table: React.FC<Props> = (props) => {
                             onFilter={onFilter}
                             handleClear={handleClear}
                             headers={props.headers}
-                            setShownHeaderKeys={
-                                setShownHeaderKeys
-                            }
+                            setShownHeaderKeys={setShownHeaderKeys}
                             shownHeaderKeys={shownHeaderKeys}
                         />
                     }
@@ -254,7 +255,7 @@ const Table: React.FC<Props> = (props) => {
     );
 };
 
-const ReorderArrowDiv = styled.div`
+const EditandReorderArrowDiv = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -280,7 +281,6 @@ const Styling = styled.div`
         @media (min-width: 500px) {
             flex-wrap: nowrap;
         }
-
 
         // the clear button
         & > button {

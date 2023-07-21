@@ -2,9 +2,11 @@
 
 import Table from "@/components/Tables/Table";
 import supabase from "@/supabase";
-import React from "react";
+import React, { useState } from "react";
 import { styled } from "styled-components";
-import { useState } from "react";
+import DataViewer from "@/components/DataViewer/DataViewer";
+
+type ListRow = { [headerKey: string]: string };
 
 const TableDiv = styled.div`
     margin: 20px;
@@ -19,7 +21,11 @@ const StyledTable = styled(Table)`
     background-color: transparent;
 `;
 
-type ListRow = { [headerKey: string]: string };
+const StyledAddButton = styled.button`
+    margin: 10px 5px 5px 0;
+    height: 2rem;
+    width: 5rem;
+`;
 
 const ListsDataView = async (): Promise<React.ReactElement> => {
     const rawData = (await supabase.from("lists").select("*")).data;
@@ -48,7 +54,7 @@ const ListsDataView = async (): Promise<React.ReactElement> => {
     }
 
     const headers: [string, string][] = [
-        ["item_name","Description"],
+        ["item_name", "Description"],
         ["1_quantity", "Single"],
         ["2_quantity", "Family of 2"],
         ["3_quantity", "Family of 3"],
@@ -66,18 +72,21 @@ const ListsDataView = async (): Promise<React.ReactElement> => {
     toggleableHeaders.shift();
 
     return (
-        <TableDiv>
-            <StyledTable
-                checkboxes={false}
-                headers={headers}
-                toggleableHeaders={toggleableHeaders}
-                defaultShownHeaders={["item_name", ...toggleableHeaders]}
-                data={dataAndTooltips}
-                reorderable
-                filters={["item_name"]}
-                pagination={false}
-            />
-        </TableDiv>
+        <>
+            <TableDiv>
+                <StyledTable
+                    checkboxes={false}
+                    headers={headers}
+                    toggleableHeaders={toggleableHeaders}
+                    defaultShownHeaders={["item_name", ...toggleableHeaders]}
+                    data={dataAndTooltips}
+                    reorderable
+                    filters={["item_name"]}
+                    pagination={false}
+                />
+                <StyledAddButton>+ Add</StyledAddButton>
+            </TableDiv>
+        </>
     );
 };
 
