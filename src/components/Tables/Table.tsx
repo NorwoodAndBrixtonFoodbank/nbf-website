@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
+import React, { useEffect, useState } from "react";
+import DataTable, { TableColumn } from "react-data-table-component";
 
 export interface Datum {
-    [headerKey: string]: string | number | null;
+    [headerKey: string]: string[] | string | number | boolean | null;
 }
 
 interface Row {
     rowId: number;
-    [headerKey: string]: string | number;
+    [headerKey: string]: string | number | boolean;
 }
 
 interface Headers {
@@ -48,7 +48,10 @@ const dataToRows = (data: Datum[], headers: Headers): Row[] => {
         const row: Row = { rowId: currentIndex };
 
         for (const headerKey of Object.keys(headers)) {
-            row[headerKey] = datum[headerKey] ?? "";
+            const databaseValue = datum[headerKey] ?? "";
+            row[headerKey] = Array.isArray(databaseValue)
+                ? databaseValue.join(", ")
+                : databaseValue;
         }
 
         return row;

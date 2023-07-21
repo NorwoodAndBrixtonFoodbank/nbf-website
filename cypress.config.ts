@@ -28,6 +28,9 @@ export default defineConfig({
             return config;
         },
         baseUrl: "http://localhost:3200",
+        video: false,
+        videoUploadOnPasses: false,
+        screenshotOnRunFailure: false,
     },
 
     component: {

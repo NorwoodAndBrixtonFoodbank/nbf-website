@@ -1,7 +1,7 @@
-import React, { ReactElement } from "react";
-import styled from "styled-components";
-import Modal from "react-modal";
 import CloseIcon from "@mui/icons-material/Close";
+import React, { ReactElement } from "react";
+import Modal from "react-modal";
+import styled from "styled-components";
 
 export interface Data {
     [key: string]: string | number | null;
@@ -54,9 +54,11 @@ const CloseButton = styled.button`
     display: flex;
     justify-content: center;
 `;
+
 interface ClearButtonProps {
     closeModal: () => void;
 }
+
 const ClearButton: React.FC<ClearButtonProps> = (props) => {
     return (
         <CloseButton onClick={props.closeModal}>
