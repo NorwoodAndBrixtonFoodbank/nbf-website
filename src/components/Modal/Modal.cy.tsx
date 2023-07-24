@@ -3,10 +3,10 @@ import Modal from "@/components/Modal/Modal";
 
 describe("General Modal Component", () => {
     it("renders", () => {
-        cy.mount(<Modal header="Modal Header" ariaLabel="Modal Label" isOpen={true} onClose={() => {}}>
-            <h1>Modal Content</h1>
-        </Modal>
-
+        cy.mount(
+            <Modal header="Modal Header" ariaLabel="Modal Label" isOpen={true} onClose={() => {}}>
+                <h1>Modal Content</h1>
+            </Modal>
         );
     });
 
