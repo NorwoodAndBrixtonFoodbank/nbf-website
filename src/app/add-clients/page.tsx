@@ -1,12 +1,12 @@
 import { Metadata } from "next";
 
 import React from "react";
-import RequestForm from "@/app/add-clients/pageComponents";
+import AddClientForm from "@/app/add-clients/pageComponents";
 
 const AddClients: () => React.ReactElement = () => {
     return (
         <main>
-            <RequestForm />
+            <AddClientForm />
         </main>
     );
 };

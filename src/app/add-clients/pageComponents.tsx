@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import styled from "styled-components";
 import supabase, { InsertSchema } from "@/supabase";
 import { Database } from "@/database_types_file";
@@ -43,16 +44,20 @@ const CenterComponent = styled.div`
     display: flex;
     justify-content: center;
     align-content: center;
-    padding-block: 1rem;
+    margin: 2em;
 `;
 
-const StyledForm = styled.div`
-    margin: 2em;
+const StyledForm = styled.form`
     width: 90%;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
 `;
 
 const StyledCard = styled.div`
     padding: 2em;
+    margin: 2em;
     width: 100%;
     height: 80%;
     border-radius: 10px;
@@ -84,6 +89,10 @@ const Asterisk = styled.span`
     }
 `;
 
+const ErrorText = styled(Text)`
+    color: ${(props) => props.theme.errorColor};
+`;
+
 const StyledButton = styled.button`
     text-align: center;
     width: 100px;
@@ -109,7 +118,7 @@ const initialErrorMessages = {
     nappyErrorMessage: "",
 };
 
-const RequestForm: React.FC = () => {
+const AddClientForm: React.FC = () => {
     const [fullName, setFullName] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [addressLine1, setAddressLine1] = useState("");
@@ -134,6 +143,7 @@ const RequestForm: React.FC = () => {
     const [extraInformation, setExtraInformation] = useState("");
 
     const [errorMessages, setErrorMessages] = useState<ErrorMessages>(initialErrorMessages);
+    const [submitErrorMessage, setSubmitErrorMessage] = useState("");
 
     useEffect(() => {
         const defaultAgeGenderChildren = Array.from(
@@ -148,6 +158,8 @@ const RequestForm: React.FC = () => {
         );
         setAgeGenderChildren(defaultAgeGenderChildren);
     }, [numberChildren]);
+
+    const router = useRouter();
 
     const getFieldWithoutChecks = (
         fieldSetter: React.Dispatch<React.SetStateAction<string>>
@@ -174,7 +186,8 @@ const RequestForm: React.FC = () => {
     };
 
     const getPhoneNumber: OnChangeType = (event) => {
-        const phoneNumberPattern = /^(\+|0)(\s?)(\s|\d+|-){5,}$/;
+        // Phone Number regex taken from https://ihateregex.io/expr/phone/
+        const phoneNumberPattern = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/;
         const formattingFunction = (value: string): string => {
             const numericInput = value.replace(/(\D)/g, "");
             return numericInput[0] === "0" ? "+44" + numericInput.slice(1) : "+" + numericInput;
@@ -194,6 +207,7 @@ const RequestForm: React.FC = () => {
     };
 
     const getAddressPostcode: OnChangeType = (event) => {
+        // Postcode regex taken from https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/488478/Bulk_Data_Transfer_-_additional_validation_valid_from_12_November_2015.pdf
         const postcodePattern =
             /^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})$/;
         const formattingFunction = (value: string): string => {
@@ -305,21 +319,12 @@ const RequestForm: React.FC = () => {
         }
     };
 
-    const getNappySize: OnChangeType = (event) => {
-        const input = event.target.value;
-        if (input === "") {
-            setErrorMessages({ ...errorMessages, nappyErrorMessage: "This is a required field." });
-        } else {
-            setErrorMessages({ ...errorMessages, nappyErrorMessage: "" });
-            setNappySize(input);
-        }
-    };
-
     const checkboxGroupToArray = (checkedBoxes: booleanGroup): string[] => {
         return Object.keys(checkedBoxes);
     };
 
     const createRecord = async (): Promise<void> => {
+        let errorMessage = "";
         if (nappySize) {
             setExtraInformation(`Nappy Size: ${nappySize}, Extra Information: ${extraInformation}`);
         }
@@ -346,34 +351,46 @@ const RequestForm: React.FC = () => {
             .insert(clientRecord)
             .select("family_id");
         if (error) {
-            console.error(error);
+            errorMessage = "An error has occurred. Please try again later.";
         }
 
-        for (const [gender, quantity] of Object.entries(numberAdults)) {
-            const familyAdultRecord: FamilyDatabaseRecord = {
-                family_id: familyID![0].family_id,
-                person_type: gender as PersonType,
-                quantity: quantity,
-                age: null,
-            };
-            const { error: error } = await supabase.from("families").insert(familyAdultRecord);
-            if (error) {
-                console.error(error);
+        if (errorMessage === "") {
+            for (const [gender, quantity] of Object.entries(numberAdults)) {
+                const familyAdultRecord: FamilyDatabaseRecord = {
+                    family_id: familyID![0].family_id,
+                    person_type: gender as PersonType,
+                    quantity: quantity,
+                    age: null,
+                };
+                const { error: error } = await supabase.from("families").insert(familyAdultRecord);
+                if (error) {
+                    errorMessage = "An error has occurred. Please try again later.";
+                }
             }
         }
 
-        for (const child of ageGenderChildren) {
-            const familyChildRecord: FamilyDatabaseRecord = {
-                family_id: familyID![0].family_id,
-                person_type: child.gender as PersonType,
-                quantity: 1,
-                age: child.age,
-            };
-            const { error: error } = await supabase.from("families").insert(familyChildRecord);
-            if (error) {
-                console.error(error);
+        if (errorMessage === "") {
+            for (const child of ageGenderChildren) {
+                const familyChildRecord: FamilyDatabaseRecord = {
+                    family_id: familyID![0].family_id,
+                    person_type: child.gender as PersonType,
+                    quantity: 1,
+                    age: child.age,
+                };
+                const { error: error } = await supabase.from("families").insert(familyChildRecord);
+                if (error) {
+                    errorMessage = "An error has occurred. Please try again later.";
+                }
             }
         }
+
+        if (errorMessage === "") {
+            if (typeof window !== "undefined") {
+                await router.push("/clients");
+            }
+        }
+
+        setSubmitErrorMessage(errorMessage);
     };
 
     const submitForm = (): void => {
@@ -392,7 +409,7 @@ const RequestForm: React.FC = () => {
         }
         if (errorExists) {
             setErrorMessages({ ...amendedErrorMessages });
-            alert(
+            setSubmitErrorMessage(
                 "Please ensure all fields have been entered correctly. Required fields are labelled with an asterisk."
             );
         } else {
@@ -416,133 +433,112 @@ const RequestForm: React.FC = () => {
                     Please provide or update the client&apos;s personal details, household
                     composition, dietary restrictions and other needs.
                 </Text>
-                <CenterComponent>
-                    <StyledCard>
-                        <Subheading>
-                            Client Full Name <Asterisk />
-                        </Subheading>
-                        <Text>First and last name</Text>
-                        <FreeFormTextInput
-                            error={errorExists(errorMessages.nameErrorMessage)}
-                            helperText={errorText(errorMessages.nameErrorMessage)}
-                            label="Name"
-                            onChange={getRequiredFieldWithoutChecks(
-                                "nameErrorMessage",
-                                setFullName
-                            )}
-                        />
-                    </StyledCard>
-                </CenterComponent>
-                <CenterComponent>
-                    <StyledCard>
-                        <Subheading>Phone Number</Subheading>
-                        <Text>
-                            UK mobile numbers should start with a 0 or a +44. International mobile
-                            numbers should be entered with the country code.
-                        </Text>
-                        <FreeFormTextInput
-                            error={!!errorMessages.phoneErrorMessage}
-                            helperText={errorMessages.phoneErrorMessage}
-                            label="E.g. 0xxx-xx-xxxx or +44 xxxx xxx xxxx"
-                            onChange={getPhoneNumber}
-                        />
-                    </StyledCard>
-                </CenterComponent>
-                <CenterComponent>
-                    <StyledCard>
-                        <Subheading>
-                            Address Line 1 <Asterisk />
-                        </Subheading>
-                        <Text>Please enter the flat/house number if applicable.</Text>
-                        <FreeFormTextInput
-                            error={errorExists(errorMessages.addressErrorMessage)}
-                            helperText={errorText(errorMessages.addressErrorMessage)}
-                            label="Address Line 1"
-                            onChange={getRequiredFieldWithoutChecks(
-                                "addressErrorMessage",
-                                setAddressLine1
-                            )}
-                        />
-                    </StyledCard>
-                </CenterComponent>
-                <CenterComponent>
-                    <StyledCard>
-                        <Subheading>Address Line 2</Subheading>
-                        <FreeFormTextInput
-                            label="Address Line 2"
-                            onChange={getFieldWithoutChecks(setAddressLine2)}
-                        />
-                    </StyledCard>
-                </CenterComponent>
-                <CenterComponent>
-                    <StyledCard>
-                        <Subheading>Town</Subheading>
-                        <FreeFormTextInput
-                            label="Town"
-                            onChange={getFieldWithoutChecks(setAddressTown)}
-                        />
-                    </StyledCard>
-                </CenterComponent>
-                <CenterComponent>
-                    <StyledCard>
-                        <Subheading>County</Subheading>
-                        <FreeFormTextInput
-                            label="County"
-                            onChange={getFieldWithoutChecks(setAddressCounty)}
-                        />
-                    </StyledCard>
-                </CenterComponent>
-                <CenterComponent>
-                    <StyledCard>
-                        <Subheading>
-                            Postcode <Asterisk />
-                        </Subheading>
-                        <FreeFormTextInput
-                            error={errorExists(errorMessages.postcodeErrorMessage)}
-                            helperText={errorText(errorMessages.postcodeErrorMessage)}
-                            label="E.g. SE11 5QY"
-                            onChange={getAddressPostcode}
-                        />
-                    </StyledCard>
-                </CenterComponent>
-                <CenterComponent>
-                    <StyledCard>
-                        <Subheading>
-                            Number of Adults <Asterisk />
-                        </Subheading>
-                        <Text>Note that adults are aged 16 or above</Text>
-                        <FreeFormTextInput
-                            error={errorExists(errorMessages.numberAdultsErrorMessage)}
-                            label="Female"
-                            onChange={getNumberAdults("female")}
-                        />
-                        <FreeFormTextInput
-                            error={errorExists(errorMessages.numberAdultsErrorMessage)}
-                            label="Male"
-                            onChange={getNumberAdults("male")}
-                        />
-                        <FreeFormTextInput
-                            error={errorExists(errorMessages.numberAdultsErrorMessage)}
-                            helperText={errorText(errorMessages.numberAdultsErrorMessage)}
-                            label="Prefer Not To Say"
-                            onChange={getNumberAdults("adult")}
-                        />
-                    </StyledCard>
-                </CenterComponent>
-                <CenterComponent>
-                    <StyledCard>
-                        <Subheading>
-                            Number of Children <Asterisk />
-                        </Subheading>
-                        <Text>Note that children are under 16 years old</Text>
-                        <FreeFormTextInput
-                            error={errorExists(errorMessages.numberChildrenErrorMessage)}
-                            helperText={errorText(errorMessages.numberChildrenErrorMessage)}
-                            label="Number of Children"
-                            onChange={getNumberChildren}
-                        />
-                    </StyledCard>
-                </CenterComponent>
+                <StyledCard>
+                    <Subheading>
+                        Client Full Name <Asterisk />
+                    </Subheading>
+                    <Text>First and last name</Text>
+                    <FreeFormTextInput
+                        error={errorExists(errorMessages.nameErrorMessage)}
+                        helperText={errorText(errorMessages.nameErrorMessage)}
+                        label="Name"
+                        onChange={getRequiredFieldWithoutChecks("nameErrorMessage", setFullName)}
+                    />
+                </StyledCard>
+                <StyledCard>
+                    <Subheading>Phone Number</Subheading>
+                    <Text>
+                        UK mobile numbers should start with a 0 or a +44. International mobile
+                        numbers should be entered with the country code.
+                    </Text>
+                    <FreeFormTextInput
+                        error={!!errorMessages.phoneErrorMessage}
+                        helperText={errorMessages.phoneErrorMessage}
+                        label="E.g. 0xxxxxxxxxx or +44xxxxxxxxxx"
+                        onChange={getPhoneNumber}
+                    />
+                </StyledCard>
+                <StyledCard>
+                    <Subheading>
+                        Address Line 1 <Asterisk />
+                    </Subheading>
+                    <Text>Please enter the flat/house number if applicable.</Text>
+                    <FreeFormTextInput
+                        error={errorExists(errorMessages.addressErrorMessage)}
+                        helperText={errorText(errorMessages.addressErrorMessage)}
+                        label="Address Line 1"
+                        onChange={getRequiredFieldWithoutChecks(
+                            "addressErrorMessage",
+                            setAddressLine1
+                        )}
+                    />
+                </StyledCard>
+                <StyledCard>
+                    <Subheading>Address Line 2</Subheading>
+                    <FreeFormTextInput
+                        label="Address Line 2"
+                        onChange={getFieldWithoutChecks(setAddressLine2)}
+                    />
+                </StyledCard>
+                <StyledCard>
+                    <Subheading>Town</Subheading>
+                    <FreeFormTextInput
+                        label="Town"
+                        onChange={getFieldWithoutChecks(setAddressTown)}
+                    />
+                </StyledCard>
+                <StyledCard>
+                    <Subheading>County</Subheading>
+                    <FreeFormTextInput
+                        label="County"
+                        onChange={getFieldWithoutChecks(setAddressCounty)}
+                    />
+                </StyledCard>
+                <StyledCard>
+                    <Subheading>
+                        Postcode <Asterisk />
+                    </Subheading>
+                    <FreeFormTextInput
+                        error={errorExists(errorMessages.postcodeErrorMessage)}
+                        helperText={errorText(errorMessages.postcodeErrorMessage)}
+                        label="E.g. SE11 5QY"
+                        onChange={getAddressPostcode}
+                    />
+                </StyledCard>
+                <StyledCard>
+                    <Subheading>
+                        Number of Adults <Asterisk />
+                    </Subheading>
+                    <Text>Note that adults are aged 16 or above</Text>
+                    <FreeFormTextInput
+                        error={errorExists(errorMessages.numberAdultsErrorMessage)}
+                        label="Female"
+                        onChange={getNumberAdults("female")}
+                    />
+                    <FreeFormTextInput
+                        error={errorExists(errorMessages.numberAdultsErrorMessage)}
+                        label="Male"
+                        onChange={getNumberAdults("male")}
+                    />
+                    <FreeFormTextInput
+                        error={errorExists(errorMessages.numberAdultsErrorMessage)}
+                        helperText={errorText(errorMessages.numberAdultsErrorMessage)}
+                        label="Prefer Not To Say"
+                        onChange={getNumberAdults("adult")}
+                    />
+                </StyledCard>
+                <StyledCard>
+                    <Subheading>
+                        Number of Children <Asterisk />
+                    </Subheading>
+                    <Text>Note that children are under 16 years old</Text>
+                    <FreeFormTextInput
+                        error={errorExists(errorMessages.numberChildrenErrorMessage)}
+                        helperText={errorText(errorMessages.numberChildrenErrorMessage)}
+                        label="Number of Children"
+                        onChange={getNumberChildren}
+                    />
+                </StyledCard>
                 {ageGenderChildren.map((child) => {
                     return (
                         <CenterComponent key={child.key}>
@@ -591,150 +587,136 @@ const RequestForm: React.FC = () => {
                         </CenterComponent>
                     );
                 })}
-                <CenterComponent>
-                    <StyledCard>
-                        <Subheading>Dietary Requirements</Subheading>
-                        <Text>Tick all that apply.</Text>
-                        <CheckboxGroupInput
-                            labelsAndKeys={[
-                                ["Gluten Free", "Gluten Free"],
-                                ["Dairy Free", "Dairy Free"],
-                                ["Vegetarian", "Vegetarian"],
-                                ["Vegan", "Vegan"],
-                                ["Pescatarian", "Pescatarian"],
-                                ["Halal", "Halal"],
-                                ["Diabetic", "Diabetic"],
-                                ["Nut Allergy", "Nut Allergy"],
-                                ["Seafood Allergy", "Seafood Allergy"],
-                                ["No Bread", "No Bread"],
-                                ["No Pasta", "No Pasta"],
-                                ["No Rice", "No Rice"],
-                                ["No Pork", "No Pork"],
-                                ["No Beef", "No Beef"],
-                            ]}
-                            onChange={getCheckboxGroupHandler(
-                                dietaryRequirements,
-                                setDietaryRequirements
-                            )}
-                        />
-                    </StyledCard>
-                </CenterComponent>
-                <CenterComponent>
-                    <StyledCard>
-                        <Subheading>Feminine Products</Subheading>
-                        <CheckboxGroupInput
-                            labelsAndKeys={[
-                                ["Tampons", "Tampons"],
-                                ["Pads", "Pads"],
-                                ["Incontinence Pads", "Incontinence Pads"],
-                            ]}
-                            onChange={getCheckboxGroupHandler(
-                                feminineProducts,
-                                setFeminineProducts
-                            )}
-                        />
-                    </StyledCard>
-                </CenterComponent>
-                <CenterComponent>
-                    <StyledCard>
-                        <Subheading>
-                            Baby Products <Asterisk />
-                        </Subheading>
-                        <Text>Includes Baby Food, Wet Wipes, Nappies etc.</Text>
-                        <RadioGroupInput
-                            labelsAndValues={[
-                                ["Yes", "Yes"],
-                                ["No", "No"],
-                                ["Don't Know", "don't know"],
-                            ]}
-                            defaultValue="don't know"
-                            onChange={getBabyProducts}
-                        />
-                        {babyProducts ? (
-                            <>
-                                <br />
-                                <FreeFormTextInput
-                                    error={
-                                        !!errorMessages.nappyErrorMessage &&
-                                        errorMessages.nappyErrorMessage !== "N/A"
-                                    }
-                                    helperText={errorMessages.nappyErrorMessage}
-                                    label="Nappy Size"
-                                    onChange={getNappySize}
-                                />
-                            </>
-                        ) : (
-                            <></>
+                <StyledCard>
+                    <Subheading>Dietary Requirements</Subheading>
+                    <Text>Tick all that apply.</Text>
+                    <CheckboxGroupInput
+                        labelsAndKeys={[
+                            ["Gluten Free", "Gluten Free"],
+                            ["Dairy Free", "Dairy Free"],
+                            ["Vegetarian", "Vegetarian"],
+                            ["Vegan", "Vegan"],
+                            ["Pescatarian", "Pescatarian"],
+                            ["Halal", "Halal"],
+                            ["Diabetic", "Diabetic"],
+                            ["Nut Allergy", "Nut Allergy"],
+                            ["Seafood Allergy", "Seafood Allergy"],
+                            ["No Bread", "No Bread"],
+                            ["No Pasta", "No Pasta"],
+                            ["No Rice", "No Rice"],
+                            ["No Pork", "No Pork"],
+                            ["No Beef", "No Beef"],
+                        ]}
+                        onChange={getCheckboxGroupHandler(
+                            dietaryRequirements,
+                            setDietaryRequirements
                         )}
-                    </StyledCard>
-                </CenterComponent>
+                    />
+                </StyledCard>
+                <StyledCard>
+                    <Subheading>Feminine Products</Subheading>
+                    <CheckboxGroupInput
+                        labelsAndKeys={[
+                            ["Tampons", "Tampons"],
+                            ["Pads", "Pads"],
+                            ["Incontinence Pads", "Incontinence Pads"],
+                        ]}
+                        onChange={getCheckboxGroupHandler(feminineProducts, setFeminineProducts)}
+                    />
+                </StyledCard>
+                <StyledCard>
+                    <Subheading>
+                        Baby Products <Asterisk />
+                    </Subheading>
+                    <Text>Includes Baby Food, Wet Wipes, Nappies etc.</Text>
+                    <RadioGroupInput
+                        labelsAndValues={[
+                            ["Yes", "Yes"],
+                            ["No", "No"],
+                            ["Don't Know", "don't know"],
+                        ]}
+                        defaultValue="don't know"
+                        onChange={getBabyProducts}
+                    />
+                    {babyProducts ? (
+                        <>
+                            <br />
+                            <FreeFormTextInput
+                                error={
+                                    !!errorMessages.nappyErrorMessage &&
+                                    errorMessages.nappyErrorMessage !== "N/A"
+                                }
+                                helperText={errorMessages.nappyErrorMessage}
+                                label="Nappy Size"
+                                onChange={getRequiredFieldWithoutChecks(
+                                    "nappyErrorMessage",
+                                    setNappySize
+                                )}
+                            />
+                        </>
+                    ) : (
+                        <></>
+                    )}
+                </StyledCard>
+                <StyledCard>
+                    <Subheading>Pet Food</Subheading>
+                    <Text>
+                        Tick all that apply. Specify any other requests in the &quot;Extra
+                        Information&quot; section.
+                    </Text>
+                    <CheckboxGroupInput
+                        labelsAndKeys={[
+                            ["Cat", "Cat"],
+                            ["Dog", "Dog"],
+                        ]}
+                        onChange={getCheckboxGroupHandler(petFood, setPetFood)}
+                    />
+                </StyledCard>
+                <StyledCard>
+                    <Subheading>Other Items</Subheading>
+                    <CheckboxGroupInput
+                        labelsAndKeys={[
+                            ["Garlic", "Garlic"],
+                            ["Ginger", "Ginger"],
+                            ["Chilies", "Chilies"],
+                            ["Spices", "Spices"],
+                            ["Hot Water Bottles", "Hot Water Bottles"],
+                            ["Blankets", "Blankets"],
+                        ]}
+                        onChange={getCheckboxGroupHandler(otherItems, setOtherItems)}
+                    />
+                </StyledCard>
+                <StyledCard>
+                    <Subheading>Delivery Instructions</Subheading>
+                    <Text>
+                        Is there anything we need to know when delivering a parcel to this client?
+                    </Text>
+                    <FreeFormTextInput
+                        label="E.g. The doorbell does not work. Use the door code: xxxx."
+                        onChange={getFieldWithoutChecks(setDeliveryInstruction)}
+                    />
+                </StyledCard>
+                <StyledCard>
+                    <Subheading>Extra Information</Subheading>
+                    <Text>
+                        Is there anything else you need to tell us about the client? Comments
+                        relating to food or anything else. Please add any delivery instructions to
+                        the &quot;Delivery Instructions&quot; section above.
+                    </Text>
+                    <FreeFormTextInput
+                        label="E.g. tea allergy"
+                        onChange={getFieldWithoutChecks(setExtraInformation)}
+                    />
+                </StyledCard>
                 <CenterComponent>
-                    <StyledCard>
-                        <Subheading>Pet Food</Subheading>
-                        <Text>
-                            Tick all that apply. Specify any other requests in the &quot;Extra
-                            Information&quot; section.
-                        </Text>
-                        <CheckboxGroupInput
-                            labelsAndKeys={[
-                                ["Cat", "Cat"],
-                                ["Dog", "Dog"],
-                            ]}
-                            onChange={getCheckboxGroupHandler(petFood, setPetFood)}
-                        />
-                    </StyledCard>
-                </CenterComponent>
-                <CenterComponent>
-                    <StyledCard>
-                        <Subheading>Other Items</Subheading>
-                        <CheckboxGroupInput
-                            labelsAndKeys={[
-                                ["Garlic", "Garlic"],
-                                ["Ginger", "Ginger"],
-                                ["Chilies", "Chilies"],
-                                ["Spices", "Spices"],
-                                ["Hot Water Bottles", "Hot Water Bottles"],
-                                ["Blankets", "Blankets"],
-                            ]}
-                            onChange={getCheckboxGroupHandler(otherItems, setOtherItems)}
-                        />
-                    </StyledCard>
-                </CenterComponent>
-                <CenterComponent>
-                    <StyledCard>
-                        <Subheading>Delivery Instructions</Subheading>
-                        <Text>
-                            Is there anything we need to know when delivering a parcel to this
-                            client?
-                        </Text>
-                        <FreeFormTextInput
-                            label="E.g. The doorbell does not work. Use the door code: xxxx."
-                            onChange={getFieldWithoutChecks(setDeliveryInstruction)}
-                        />
-                    </StyledCard>
-                </CenterComponent>
-                <CenterComponent>
-                    <StyledCard>
-                        <Subheading>Extra Information</Subheading>
-                        <Text>
-                            Is there anything else you need to tell us about the client? Comments
-                            relating to food or anything else. Please add any delivery instructions
-                            to the &quot;Delivery Instructions&quot; section above.
-                        </Text>
-                        <FreeFormTextInput
-                            label="E.g. tea allergy"
-                            onChange={getFieldWithoutChecks(setExtraInformation)}
-                        />
-                    </StyledCard>
-                </CenterComponent>
-                <CenterComponent>
-                    <StyledButton type="submit" onClick={submitForm}>
+                    <StyledButton type="button" onClick={submitForm}>
                         Submit
                     </StyledButton>
+                    <ErrorText>{submitErrorMessage}</ErrorText>
                 </CenterComponent>
             </StyledForm>
         </CenterComponent>
     );
 };
 
-export default RequestForm;
+export default AddClientForm;
