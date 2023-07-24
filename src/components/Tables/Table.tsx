@@ -37,6 +37,7 @@ const RowDiv = styled.div`
     display: flex;
     width: 100%;
     align-items: center;
+    padding-left: 1rem;
 `;
 
 const Spacer = styled.div`
@@ -137,7 +138,7 @@ const Table: React.FC<Props> = (props) => {
                 const tooltipElement = tooltip ? (
                     <>
                         <Spacer />
-                        <SpeechBubbleIcon onHoverText={tooltip} />
+                        <SpeechBubbleIcon onHoverText={tooltip} popper />
                     </>
                 ) : null;
                 return (
@@ -187,7 +188,7 @@ const Table: React.FC<Props> = (props) => {
 
     if (props.reorderable) {
         columns.unshift({
-            name: <></>,
+            name: <p>Sort</p>,
             cell: (row: Row) => (
                 <EditandReorderArrowDiv>
                     <StyledIcon
@@ -201,7 +202,7 @@ const Table: React.FC<Props> = (props) => {
                     />
                 </EditandReorderArrowDiv>
             ),
-            width: "40px",
+            width: "5rem",
         });
     }
 
@@ -253,6 +254,8 @@ const EditandReorderArrowDiv = styled.div`
     justify-content: center;
     align-items: center;
     gap: 1rem;
+    width: 100%;
+    padding-right: 1.2rem;
 `;
 
 const StyledIcon = styled(FontAwesomeIcon)`

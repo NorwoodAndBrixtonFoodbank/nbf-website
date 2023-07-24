@@ -224,4 +224,27 @@ describe("<Table />", () => {
         cy.get("input[aria-label='Select row 5']").should("not.exist");
         cy.get("input[aria-label='Select row 10']").should("not.exist");
     });
+
+    it("accordion works", () => {
+        cy.mount(
+            <Table
+                data={smallerData}
+                headers={headers}
+                checkboxes={false}
+                toggleableHeaders={["full_name", "phone_number"]}
+            />
+        );
+
+        cy.get("div.MuiAccordionSummary-root").click();
+        cy.get("div.MuiAccordionDetails-root").contains("Name");
+        cy.get("div.MuiAccordionDetails-root").contains("Phone Number");
+    });
+
+    it("filter input renders", () => {
+        cy.mount(<Table data={smallerData} headers={headers} checkboxes={false} />);
+
+        cy.get("input[placeholder*='Filter by Name']").should("exist");
+        cy.get("input[placeholder*='Filter by Phone Number']").should("exist");
+        cy.get("div.MuiAccordionSummary-root").contains("Select Columns");
+    });
 });
