@@ -9,6 +9,7 @@ interface Props {
     icon: IconDefinition;
     color?: string;
     onHoverText?: string;
+    popper?: boolean;
 }
 
 const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
@@ -43,7 +44,7 @@ const Icon: React.FC<Props> = (props) => {
 
     return (
         <>
-            {props.onHoverText && hovered ? (
+            {props.onHoverText && hovered && props.popper ? (
                 <Popper
                     onMouseEnter={show}
                     onMouseLeave={hide}
@@ -67,6 +68,7 @@ const Icon: React.FC<Props> = (props) => {
                 onMouseUp={hide}
                 onTouchStart={show}
                 onTouchEnd={hide}
+                title={props.popper ? undefined : props.onHoverText}
             />
         </>
     );

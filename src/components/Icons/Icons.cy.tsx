@@ -51,4 +51,16 @@ describe("Icons", () => {
         cy.mount(<FlagIcon />);
         cy.get("svg").invoke("attr", "color").should("eq", "orange");
     });
+
+    it("Feet icon with popper shows text on hover", () => {
+        cy.mount(<FeetIcon collectionPoint="The roof" />);
+        cy.get("svg").trigger("mouseover");
+        cy.get("div").contains("Collection at The roof");
+    });
+
+    it("Speech Bubble icon with popper shows text on hover", () => {
+        cy.mount(<SpeechBubbleIcon onHoverText="Text On Hover" popper />);
+        cy.get("svg").trigger("mouseover");
+        cy.get("div").contains("Text On Hover");
+    });
 });

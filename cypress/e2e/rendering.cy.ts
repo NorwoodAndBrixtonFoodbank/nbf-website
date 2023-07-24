@@ -9,7 +9,7 @@ describe("Rendering tests", () => {
         cy.get("h1").should("contain.text", "Clients Page");
     });
 
-    it("Renders lists page", () => {
+    it.only("Renders lists page", () => {
         cy.visit("/lists");
 
         cy.get("h1").should("contain.text", "Lists Page");

@@ -13,6 +13,7 @@ const Lists = async (): Promise<ReactElement> => {
 
     return (
         <main>
+            <h1>Lists Page</h1>
             <ListsDataView data={data} />
         </main>
     );
