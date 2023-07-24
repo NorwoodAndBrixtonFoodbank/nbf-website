@@ -1,8 +1,7 @@
 import React from "react";
-import SampleDataViewerWithButton from "@/components/DataViewer/SampleDataViewerWithButton";
+import DataViewer from "@/components/DataViewer/DataViewer";
 
 const longString = "abcdefghijklmnopqrstuvwxyz".repeat(20);
-
 const longName = `John With A ${"Very ".repeat(20)}Long Name`;
 
 const data = {
@@ -12,15 +11,17 @@ const data = {
     dietary_requirements: null,
 };
 
-describe("<SampleDataViewerWithButton />", () => {
+describe("Data Viewer Component", () => {
     it("renders", () => {
-        cy.mount(<SampleDataViewerWithButton data={data} />);
+        cy.mount(
+            <DataViewer data={data} header="Header" isOpen={true} onRequestClose={() => {}} />
+        );
     });
 
     it("data viewer shows expected values", () => {
-        cy.mount(<SampleDataViewerWithButton data={data} />);
-
-        cy.get("button").click();
+        cy.mount(
+            <DataViewer data={data} header="Header" isOpen={true} onRequestClose={() => {}} />
+        );
 
         cy.contains("ID");
         cy.contains(longString);

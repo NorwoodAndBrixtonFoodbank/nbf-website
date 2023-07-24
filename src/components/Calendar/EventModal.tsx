@@ -1,29 +1,6 @@
-import styled from "styled-components";
-import { Dialog } from "@mui/material";
 import React from "react";
 import { CalendarEvent } from "@/components/Calendar/Calendar";
 import Modal from "@/components/Modal/Modal";
-
-const StyledDialog = styled(Dialog)`
-    & .MuiPaper-root {
-        width: min(50%, 600px);
-        border-radius: 2rem;
-        padding: 1.5rem;
-        text-align: center;
-    }
-`;
-
-const StyledCloseButton = styled.button`
-    position: absolute;
-    right: 20px;
-    top: 20px;
-`;
-
-const ModalInner = styled.div`
-    display: flex;
-    flex-direction: column;
-    row-gap: 1rem;
-`;
 
 const dateTimeFormatOptions: Intl.DateTimeFormatOptions = {
     weekday: "long",

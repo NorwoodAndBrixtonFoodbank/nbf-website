@@ -1,40 +1,47 @@
 import React from "react";
-import SampleModalWithButton, {
-    longString,
-    longName,
-} from "@/components/Modal/SampleModalWithButton";
+import Modal from "@/components/Modal/Modal";
 
-describe("<SampleDataViewerWithButton />", () => {
+describe("General Modal Component", () => {
     it("renders", () => {
-        cy.mount(<SampleModalWithButton />);
+        cy.mount(
+            <Modal header="Modal Header" ariaLabel="Modal Label" isOpen={true} onClose={() => {}}>
+                <h1>Modal Content</h1>
+            </Modal>
+        );
     });
 
     it("modal can be opened", () => {
-        cy.mount(<SampleModalWithButton />);
+        cy.mount(
+            <Modal header="Modal Header" isOpen={true} onClose={() => {}}>
+                <h1>Modal Content</h1>
+            </Modal>
+        );
 
-        cy.get("button").click();
-
-        cy.contains("John");
+        cy.contains("Modal Header");
+        cy.contains("Modal Content");
     });
 
     it("modal can be closed", () => {
-        cy.mount(<SampleModalWithButton />);
+        cy.mount(
+            <Modal header="Modal Header" isOpen={false} onClose={() => {}}>
+                <h1>Modal Content</h1>
+            </Modal>
+        );
 
-        cy.get("button").click();
-
-        cy.get("button").children("svg").click();
-
-        cy.get("body").should("not.have.value", "John");
+        cy.contains("Modal Header").should("not.exist");
+        cy.contains("Modal Content").should("not.exist");
     });
 
-    it("modal shows expected values", () => {
-        cy.mount(<SampleModalWithButton />);
+    it("modal close button works", () => {
+        const onCloseSpy = cy.spy().as("onCloseSpy");
 
-        cy.wait(2000);
+        cy.mount(
+            <Modal header="Modal Header" isOpen={true} onClose={onCloseSpy}>
+                <h1>Modal Content</h1>
+            </Modal>
+        );
 
-        cy.get("button").click();
-
-        cy.contains(longString);
-        cy.contains(longName);
+        cy.get("svg").parent("button").click();
+        cy.get("@onCloseSpy").should("have.been.called");
     });
 });

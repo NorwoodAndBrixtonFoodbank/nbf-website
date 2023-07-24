@@ -26,6 +26,11 @@ const EachItem = styled.div`
     padding-bottom: 1em;
 `;
 
+const ContentDiv = styled.div`
+    width: 1000px;
+    max-width: 100%;
+`;
+
 const valueIsEmpty = (value: string[] | string | number | boolean | null): boolean => {
     return (Array.isArray(value) && value.length === 0) || value === "" || value === null;
 };
@@ -68,7 +73,7 @@ const DataViewer: React.FC<DataViewerProps> = (props) => {
 
     return (
         <Modal isOpen={props.isOpen} onClose={closeModal} header={props.header}>
-            <div style={{ width: "5000px", maxWidth: "100%" }}>{JSONContent(props.data)}</div>
+            <ContentDiv>{JSONContent(props.data)}</ContentDiv>
         </Modal>
     );
 };
