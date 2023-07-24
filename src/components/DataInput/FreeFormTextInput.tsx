@@ -8,6 +8,7 @@ interface Props {
     error?: boolean;
     helperText?: string;
 }
+
 const FreeFormTextInput: React.FC<Props> = (props) => {
     return (
         <TextField

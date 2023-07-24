@@ -15,11 +15,11 @@ import {
 } from "@/components/DataInput/inputHandlerFactories";
 import { SelectChangeEvent } from "@mui/material";
 
+type OnChangeType = (event: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent) => void;
 type ClientDatabaseRecord = InsertSchema["clients"];
 type FamilyDatabaseRecord = InsertSchema["families"];
 type PersonType = Database["public"]["Enums"]["gender"];
-type OnChangeType = (event: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent) => void;
-type GenderToAge = {
+type GenderToQuantity = {
     [gender in PersonType]?: number;
 };
 
@@ -117,10 +117,14 @@ const RequestForm: React.FC = () => {
     const [addressTown, setAddressTown] = useState("");
     const [addressCounty, setAddressCounty] = useState("");
     const [addressPostcode, setAddressPostcode] = useState("");
-    const [numberAdults, setNumberAdults] = useState<GenderToAge>({ female: 0, male: 0, adult: 0 });
+    const [numberAdults, setNumberAdults] = useState<GenderToQuantity>({
+        female: 0,
+        male: 0,
+        adult: 0,
+    });
     const [numberChildren, setNumberChildren] = useState(0);
     const [ageGenderChildren, setAgeGenderChildren] = useState<AgeGenderChild[]>([]);
-    const [dietaryRequirements, setDietaryRequirements] = useState({});
+    const [dietaryRequirements, setDietaryRequirements] = useState<booleanGroup>({});
     const [feminineProducts, setFeminineProducts] = useState({});
     const [babyProducts, setBabyProducts] = useState<boolean | null>(null);
     const [nappySize, setNappySize] = useState("");
@@ -676,7 +680,7 @@ const RequestForm: React.FC = () => {
                                 ["Cat", "Cat"],
                                 ["Dog", "Dog"],
                             ]}
-                            onChange={getFieldWithoutChecks(setPetFood)}
+                            onChange={getCheckboxGroupHandler(petFood, setPetFood)}
                         />
                     </StyledCard>
                 </CenterComponent>

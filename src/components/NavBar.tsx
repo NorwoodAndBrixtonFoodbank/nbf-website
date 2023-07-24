@@ -44,7 +44,6 @@ const NavBar: React.FC<{}> = () => {
                 <Button href="/lists"> Lists </Button>
 
                 <Button href="/calendar">Calendar</Button>
-
                 <Gap />
 
                 <ButtonPost text="Sign out" url="/auth/signout" />
