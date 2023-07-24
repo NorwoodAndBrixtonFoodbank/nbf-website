@@ -1,10 +1,8 @@
 "use client";
 
 import Table from "@/components/Tables/Table";
-import supabase from "@/supabase";
-import React, { useState } from "react";
+import React from "react";
 import { styled } from "styled-components";
-import DataViewer from "@/components/DataViewer/DataViewer";
 
 export type ListRow = { [headerKey: string]: string | null };
 
@@ -27,10 +25,11 @@ const StyledAddButton = styled.button`
     width: 5rem;
 `;
 
-const ListsDataView = async (): Promise<React.ReactElement> => {
-    const dataFetching = await supabase.from("lists").select("*");
-    const rawData: ListRow[] | null = dataFetching.data;
+type Props = {
+    data: ListRow[] | null;
+};
 
+const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
     if (rawData === null) {
         throw new Error("No data found");
     }
@@ -51,7 +50,6 @@ const ListsDataView = async (): Promise<React.ReactElement> => {
         };
     });
 
-
     const headers: [string, string][] = [
         ["item_name", "Description"],
         ["1_quantity", "Single"],
@@ -66,7 +64,8 @@ const ListsDataView = async (): Promise<React.ReactElement> => {
         ["10_quantity", "Family of 10+"],
     ];
 
-    const toggleableHeaders = headers.map(([key, _value]) => key);
+    // extract header keys
+    const toggleableHeaders = headers.map(([key]) => key);
     // removing description header from Toggleable Headers using shift
     toggleableHeaders.shift();
 

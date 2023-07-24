@@ -20,7 +20,7 @@ const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
 
 const Popper = styled.div`
     position: absolute;
-    background-color: ${(props) => props.theme.SurfaceColor};
+    background-color: ${(props) => props.theme.surfaceBackgroundColor};
     color: ${(props) => props.theme.primaryForegroundColor};
     padding: 0.5em;
     border-radius: 0.25em;
