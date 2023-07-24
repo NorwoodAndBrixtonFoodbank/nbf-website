@@ -9,16 +9,16 @@ export interface Data {
 }
 
 const Key = styled.div`
+    // TODO VFB-16 Change to using theme with palettes of colours (dark font matching with this background)
     color: ${(props) => props.theme.foregroundColor};
+    // TODO VFB-16 Change to using theme with palettes of colours
     background-color: ${(props) => props.theme.secondaryBackgroundColor}40;
     display: inline-block;
-    font-size: medium;
     border-radius: 0.7em;
     padding: 0.2em 0.5em;
 `;
 
 const Value = styled.div`
-    font-size: medium;
     padding: 0.2em 0.5em;
 `;
 

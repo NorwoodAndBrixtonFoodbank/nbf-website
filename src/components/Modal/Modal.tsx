@@ -22,6 +22,7 @@ const Header = styled.div`
     justify-content: space-between;
     align-items: center;
     color: ${(props) => props.theme.secondaryForegroundColor};
+    // TODO VFB-16 Change to using theme with palettes of colours
     background-color: ${(props) => props.theme.secondaryBackgroundColor}A0;
     font-size: 1.5em;
     font-weight: bolder;
@@ -40,7 +41,10 @@ const CloseButton = styled.button.attrs({
 })`
     border: 0;
     border-radius: 50%;
+
+    // TODO VFB-16 Change to using theme with palettes of colours
     color: grey;
+
     display: flex;
     justify-content: center;
     aspect-ratio: 1;
@@ -49,6 +53,7 @@ const CloseButton = styled.button.attrs({
     margin-left: 1em;
 
     &:hover {
+        // TODO VFB-16 Change to using theme with palettes of colours
         color: white;
         background-color: darkgray;
     }
