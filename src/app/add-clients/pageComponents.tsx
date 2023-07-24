@@ -285,7 +285,7 @@ const RequestForm: React.FC = () => {
             const input = event.target.value;
             const particularChild = ageGenderChildren.findIndex((object) => object.key === count);
             ageGenderChildren[particularChild].age =
-                input !== "Don't Know" ? parseInt(input) : null;
+                input !== "don't know" ? parseInt(input) : null;
             setAgeGenderChildren([...ageGenderChildren]);
         };
     };
@@ -580,10 +580,10 @@ const RequestForm: React.FC = () => {
                                             ["13", "13"],
                                             ["14", "14"],
                                             ["15", "15"],
-                                            ["Don't Know", "Don't Know"],
+                                            ["Don't Know", "don't know"],
                                         ]}
                                         listTitle="Age"
-                                        defaultValue="Don't Know"
+                                        defaultValue="don't know"
                                         onChange={getAgeChildren(child.key)}
                                     />
                                 </CenterComponent>
