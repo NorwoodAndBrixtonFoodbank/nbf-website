@@ -18,7 +18,7 @@ import { SelectChangeEvent } from "@mui/material";
 type ClientDatabaseRecord = InsertSchema["clients"];
 type FamilyDatabaseRecord = InsertSchema["families"];
 type PersonType = Database["public"]["Enums"]["gender"];
-type OnChangeType = (event: React.ChangeEvent<HTMLInputElement>) => void;
+type OnChangeType = (event: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent) => void;
 type GenderToAge = {
     [gender in PersonType]?: number;
 };
@@ -44,17 +44,15 @@ const CenterComponent = styled.div`
     justify-content: center;
     align-content: center;
     padding-block: 1rem;
-    background-color: ${(props) => props.theme.backgroundColor};
 `;
 
 const StyledForm = styled.div`
     margin: 2em;
-    color: ${(props) => props.theme.foregroundColor};
     width: 90%;
 `;
 
 const StyledCard = styled.div`
-    padding: 2em 2em;
+    padding: 2em;
     width: 100%;
     height: 80%;
     border-radius: 10px;
@@ -62,31 +60,28 @@ const StyledCard = styled.div`
     color: ${(props) => props.theme.surfaceForegroundColor};
 
     div {
-        background-color: inherit;
-        color: inherit;
         width: 100%;
-        margin-top: 0.15em;
-        margin-bottom: 0.15em;
+        margin: 0.15em 0;
     }
 `;
 
 const Text = styled.p`
-    text-align: left;
     padding-bottom: 1em;
-    font-weight: lighter;
+`;
+
+const Subheading = styled.h2`
+    padding-bottom: 1em;
 `;
 
 const Heading = styled.h1`
     padding-bottom: 1em;
 `;
 
-const Subheading = styled(Text)`
-    font-size: large;
-    font-weight: bolder;
-`;
-
 const Asterisk = styled.span`
     color: ${(props) => props.theme.errorColor};
+    &:before {
+        content: "*";
+    }
 `;
 
 const StyledButton = styled.button`
@@ -150,6 +145,12 @@ const RequestForm: React.FC = () => {
         setAgeGenderChildren(defaultAgeGenderChildren);
     }, [numberChildren]);
 
+    const getFieldWithoutChecks = (
+        fieldSetter: React.Dispatch<React.SetStateAction<string>>
+    ): OnChangeType => {
+        return (event) => fieldSetter(event.target.value);
+    };
+
     const getRequiredFieldWithoutChecks = (
         errorName: string,
         fieldSetter: React.Dispatch<React.SetStateAction<string>>
@@ -163,31 +164,15 @@ const RequestForm: React.FC = () => {
                 });
             } else {
                 setErrorMessages({ ...errorMessages, [errorName]: "" });
-                fieldSetter(event.target.value);
+                fieldSetter(input);
             }
         };
     };
 
-    const getNumberChildren = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        const input = event.target.value;
-
-        if (input === "") {
-            setErrorMessages({ ...errorMessages, numberChildrenErrorMessage: "" });
-        } else if (input.match(/^\d+$/)) {
-            setErrorMessages({ ...errorMessages, numberChildrenErrorMessage: "" });
-            setNumberChildren(parseInt(input));
-        } else {
-            setErrorMessages({
-                ...errorMessages,
-                numberChildrenErrorMessage: "Please enter a valid number",
-            });
-        }
-    };
-
-    const getPhoneNumber = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const getPhoneNumber: OnChangeType = (event) => {
         const phoneNumberPattern = /^(\+|0)(\s?)(\s|\d+|-){5,}$/;
-        const formatting = (val: string): string => {
-            const numericInput = val.replace(/(\D)/g, "");
+        const formattingFunction = (value: string): string => {
+            const numericInput = value.replace(/(\D)/g, "");
             return numericInput[0] === "0" ? "+44" + numericInput.slice(1) : "+" + numericInput;
         };
 
@@ -195,20 +180,20 @@ const RequestForm: React.FC = () => {
 
         if (input === "" || input.match(phoneNumberPattern)) {
             setErrorMessages({ ...errorMessages, phoneErrorMessage: "" });
+            setPhoneNumber(formattingFunction(input));
         } else {
             setErrorMessages({
                 ...errorMessages,
-                phoneErrorMessage: "Please enter a valid phone number",
+                phoneErrorMessage: "Please enter a valid phone number.",
             });
         }
-        setPhoneNumber(formatting(input));
     };
 
-    const getAddressPostcode = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const getAddressPostcode: OnChangeType = (event) => {
         const postcodePattern =
             /^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})$/;
-        const formatting = (val: string): string => {
-            return val.replace(/(\s)/g, "").toUpperCase();
+        const formattingFunction = (value: string): string => {
+            return value.replace(/(\s)/g, "").toUpperCase();
         };
 
         const input = event.target.value;
@@ -216,11 +201,11 @@ const RequestForm: React.FC = () => {
         if (input === "") {
             setErrorMessages({
                 ...errorMessages,
-                postcodeErrorMessage: "This is a required field",
+                postcodeErrorMessage: "This is a required field.",
             });
         } else if (input.match(postcodePattern)) {
             setErrorMessages({ ...errorMessages, postcodeErrorMessage: "" });
-            setAddressPostcode(formatting(input));
+            setAddressPostcode(formattingFunction(input));
         } else {
             setErrorMessages({
                 ...errorMessages,
@@ -229,82 +214,101 @@ const RequestForm: React.FC = () => {
         }
     };
 
-    const getNumberAdults = (
-        event: React.ChangeEvent<HTMLInputElement>,
-        gender: PersonType
-    ): void => {
+    const getNumberAdults = (gender: PersonType): OnChangeType => {
+        return (event) => {
+            const input = event.target.value;
+            const numberPattern = /^\d+$/;
+            if (input === "") {
+                numberAdults[gender] = 0;
+            } else if (input.match(numberPattern)) {
+                numberAdults[gender] = parseInt(input);
+            } else {
+                numberAdults[gender] = -1;
+            }
+            setNumberAdults(numberAdults);
+            const invalidAdultEntry = Object.values(numberAdults).filter((value) => value === -1);
+            const nonZeroAdultEntry = Object.values(numberAdults).filter((value) => value > 0);
+            if (invalidAdultEntry.length > 0) {
+                setErrorMessages({
+                    ...errorMessages,
+                    numberAdultsErrorMessage: "Please enter a valid number.",
+                });
+            } else if (nonZeroAdultEntry.length === 0) {
+                setErrorMessages({
+                    ...errorMessages,
+                    numberAdultsErrorMessage: "This is a required field.",
+                });
+            } else {
+                setErrorMessages({
+                    ...errorMessages,
+                    numberAdultsErrorMessage: "",
+                });
+            }
+        };
+    };
+
+    const getNumberChildren: OnChangeType = (event) => {
         const input = event.target.value;
         const numberPattern = /^\d+$/;
+
         if (input === "") {
-            numberAdults[gender] = 0;
+            setErrorMessages({
+                ...errorMessages,
+                numberChildrenErrorMessage: "This is a required field.",
+            });
         } else if (input.match(numberPattern)) {
-            numberAdults[gender] = parseInt(input);
-        } else {
-            numberAdults[gender] = -1;
-        }
-        setNumberAdults(numberAdults);
-        const nonZeroAdultEntry = Object.values(numberAdults).filter((value) => value > 0);
-        const invalidAdultEntry = Object.values(numberAdults).filter((value) => value === -1);
-        if (invalidAdultEntry.length > 0) {
-            setErrorMessages({
-                ...errorMessages,
-                numberAdultsErrorMessage: "Please enter a valid number.",
-            });
-        } else if (nonZeroAdultEntry.length === 0) {
-            setErrorMessages({
-                ...errorMessages,
-                numberAdultsErrorMessage: "This is a required field.",
-            });
+            setErrorMessages({ ...errorMessages, numberChildrenErrorMessage: "" });
+            setNumberChildren(parseInt(input));
         } else {
             setErrorMessages({
                 ...errorMessages,
-                numberAdultsErrorMessage: "",
+                numberChildrenErrorMessage: "Please enter a valid number.",
             });
         }
     };
 
-    const getGenderChildren = (event: SelectChangeEvent, count: number): void => {
-        const input = event.target.value !== "don't know" ? event.target.value : "child";
-        const particularChild = ageGenderChildren.findIndex((object) => object.key === count);
-        ageGenderChildren[particularChild].gender = input as PersonType;
-        setAgeGenderChildren([...ageGenderChildren]);
+    const getGenderChildren = (count: number): OnChangeType => {
+        return (event) => {
+            const input = event.target.value !== "don't know" ? event.target.value : "child";
+            const particularChild = ageGenderChildren.findIndex((object) => object.key === count);
+            ageGenderChildren[particularChild].gender = input as PersonType;
+            setAgeGenderChildren([...ageGenderChildren]);
+        };
     };
 
-    const getAgeChildren = (event: SelectChangeEvent, count: number): void => {
-        const input = event.target.value;
-        const particularChild = ageGenderChildren.findIndex((object) => object.key === count);
-        ageGenderChildren[particularChild].age = input !== "Don't Know" ? parseInt(input) : null;
-        setAgeGenderChildren([...ageGenderChildren]);
+    const getAgeChildren = (count: number): OnChangeType => {
+        return (event) => {
+            const input = event.target.value;
+            const particularChild = ageGenderChildren.findIndex((object) => object.key === count);
+            ageGenderChildren[particularChild].age =
+                input !== "Don't Know" ? parseInt(input) : null;
+            setAgeGenderChildren([...ageGenderChildren]);
+        };
     };
 
-    const getBabyProducts = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const getBabyProducts: OnChangeType = (event) => {
         const input = event.target.value;
         if (input === "Yes") {
             setErrorMessages({ ...errorMessages, nappyErrorMessage: "N/A" });
             setBabyProducts(true);
-        } else if (input === "No") {
-            setErrorMessages({ ...errorMessages, nappyErrorMessage: "" });
-            setBabyProducts(false);
         } else {
             setErrorMessages({ ...errorMessages, nappyErrorMessage: "" });
-            setBabyProducts(null);
+            if (input === "No") {
+                setBabyProducts(false);
+            } else {
+                setBabyProducts(null);
+            }
         }
     };
 
-    const getNappySize = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const getNappySize: OnChangeType = (event) => {
         const input = event.target.value;
         if (input === "") {
-            setErrorMessages({ ...errorMessages, nappyErrorMessage: "This is a required field" });
+            setErrorMessages({ ...errorMessages, nappyErrorMessage: "This is a required field." });
         } else {
             setErrorMessages({ ...errorMessages, nappyErrorMessage: "" });
             setNappySize(input);
         }
-    };
-
-    const getFieldWithoutChecks = (
-        fieldSetter: React.Dispatch<React.SetStateAction<string>>
-    ): OnChangeType => {
-        return (event) => fieldSetter(event.target.value);
     };
 
     const checkboxGroupToArray = (checkedBoxes: booleanGroup): string[] => {
@@ -317,23 +321,21 @@ const RequestForm: React.FC = () => {
         }
 
         const clientRecord: ClientDatabaseRecord = {
+            full_name: fullName,
+            phone_number: phoneNumber,
             address_1: addressLine1,
             address_2: addressLine2,
+            address_town: addressTown,
             address_county: addressCounty,
             address_postcode: addressPostcode,
-            address_town: addressTown,
-            baby_food: babyProducts,
-            delivery_instructions: deliveryInstructions,
             dietary_requirements: checkboxGroupToArray(dietaryRequirements),
             feminine_products: checkboxGroupToArray(feminineProducts),
-            full_name: fullName,
-            other_items: checkboxGroupToArray(otherItems),
+            baby_food: babyProducts,
             pet_food: checkboxGroupToArray(petFood),
-            phone_number: phoneNumber,
+            other_items: checkboxGroupToArray(otherItems),
+            delivery_instructions: deliveryInstructions,
             extra_information: extraInformation,
         };
-
-        console.log(clientRecord);
 
         const { data: familyID, error: error } = await supabase
             .from("clients")
@@ -384,20 +386,17 @@ const RequestForm: React.FC = () => {
                 };
             }
         }
-        setErrorMessages({ ...amendedErrorMessages });
         if (errorExists) {
-            alert("Please ensure all fields have been entered correctly.");
+            setErrorMessages({ ...amendedErrorMessages });
+            alert(
+                "Please ensure all fields have been entered correctly. Required fields are labelled with an asterisk."
+            );
         } else {
             void createRecord();
         }
     };
 
-    const childrenLoopArray: number[] = Array.from(
-        { length: numberChildren },
-        (value, index) => index
-    );
-
-    const errorColor = (errorMessage: string): boolean => {
+    const errorExists = (errorMessage: string): boolean => {
         return errorMessage !== "" && errorMessage !== "N/A";
     };
 
@@ -416,11 +415,11 @@ const RequestForm: React.FC = () => {
                 <CenterComponent>
                     <StyledCard>
                         <Subheading>
-                            Client Full Name <Asterisk>*</Asterisk>
+                            Client Full Name <Asterisk />
                         </Subheading>
                         <Text>First and last name</Text>
                         <FreeFormTextInput
-                            error={errorColor(errorMessages.nameErrorMessage)}
+                            error={errorExists(errorMessages.nameErrorMessage)}
                             helperText={errorText(errorMessages.nameErrorMessage)}
                             label="Name"
                             onChange={getRequiredFieldWithoutChecks(
@@ -448,11 +447,11 @@ const RequestForm: React.FC = () => {
                 <CenterComponent>
                     <StyledCard>
                         <Subheading>
-                            Address Line 1 <Asterisk>*</Asterisk>{" "}
+                            Address Line 1 <Asterisk />
                         </Subheading>
                         <Text>Please enter the flat/house number if applicable.</Text>
                         <FreeFormTextInput
-                            error={errorColor(errorMessages.addressErrorMessage)}
+                            error={errorExists(errorMessages.addressErrorMessage)}
                             helperText={errorText(errorMessages.addressErrorMessage)}
                             label="Address Line 1"
                             onChange={getRequiredFieldWithoutChecks(
@@ -492,10 +491,10 @@ const RequestForm: React.FC = () => {
                 <CenterComponent>
                     <StyledCard>
                         <Subheading>
-                            Postcode <Asterisk>*</Asterisk>
+                            Postcode <Asterisk />
                         </Subheading>
                         <FreeFormTextInput
-                            error={errorColor(errorMessages.postcodeErrorMessage)}
+                            error={errorExists(errorMessages.postcodeErrorMessage)}
                             helperText={errorText(errorMessages.postcodeErrorMessage)}
                             label="E.g. SE11 5QY"
                             onChange={getAddressPostcode}
@@ -505,52 +504,46 @@ const RequestForm: React.FC = () => {
                 <CenterComponent>
                     <StyledCard>
                         <Subheading>
-                            Number of Adults <Asterisk>*</Asterisk>
+                            Number of Adults <Asterisk />
                         </Subheading>
                         <Text>Note that adults are aged 16 or above</Text>
                         <FreeFormTextInput
-                            error={errorColor(errorMessages.numberAdultsErrorMessage)}
+                            error={errorExists(errorMessages.numberAdultsErrorMessage)}
                             label="Female"
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                getNumberAdults(event, "female")
-                            }
+                            onChange={getNumberAdults("female")}
                         />
                         <FreeFormTextInput
-                            error={errorColor(errorMessages.numberAdultsErrorMessage)}
+                            error={errorExists(errorMessages.numberAdultsErrorMessage)}
                             label="Male"
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                getNumberAdults(event, "male")
-                            }
+                            onChange={getNumberAdults("male")}
                         />
                         <FreeFormTextInput
-                            error={errorColor(errorMessages.numberAdultsErrorMessage)}
+                            error={errorExists(errorMessages.numberAdultsErrorMessage)}
                             helperText={errorText(errorMessages.numberAdultsErrorMessage)}
                             label="Prefer Not To Say"
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                getNumberAdults(event, "adult")
-                            }
+                            onChange={getNumberAdults("adult")}
                         />
                     </StyledCard>
                 </CenterComponent>
                 <CenterComponent>
                     <StyledCard>
                         <Subheading>
-                            Number of Children <Asterisk>*</Asterisk>
+                            Number of Children <Asterisk />
                         </Subheading>
                         <Text>Note that children are under 16 years old</Text>
                         <FreeFormTextInput
-                            error={errorColor(errorMessages.numberChildrenErrorMessage)}
+                            error={errorExists(errorMessages.numberChildrenErrorMessage)}
                             helperText={errorText(errorMessages.numberChildrenErrorMessage)}
                             label="Number of Children"
                             onChange={getNumberChildren}
                         />
                     </StyledCard>
                 </CenterComponent>
-                {childrenLoopArray.map((count) => {
+                {ageGenderChildren.map((child) => {
                     return (
-                        <CenterComponent key={count}>
+                        <CenterComponent key={child.key}>
                             <StyledCard>
-                                <Subheading>Child {count + 1}</Subheading>
+                                <Subheading>Child {child.key + 1}</Subheading>
                                 <CenterComponent>
                                     <DropdownListInput
                                         labelsAndValues={[
@@ -561,9 +554,7 @@ const RequestForm: React.FC = () => {
                                         ]}
                                         listTitle="Gender"
                                         defaultValue="don't know"
-                                        onChange={(event: SelectChangeEvent) =>
-                                            getGenderChildren(event, count)
-                                        }
+                                        onChange={getGenderChildren(child.key)}
                                     />
                                 </CenterComponent>
                                 <CenterComponent>
@@ -585,14 +576,11 @@ const RequestForm: React.FC = () => {
                                             ["13", "13"],
                                             ["14", "14"],
                                             ["15", "15"],
-                                            ["16", "16"],
                                             ["Don't Know", "Don't Know"],
                                         ]}
                                         listTitle="Age"
                                         defaultValue="Don't Know"
-                                        onChange={(event: SelectChangeEvent) =>
-                                            getAgeChildren(event, count)
-                                        }
+                                        onChange={getAgeChildren(child.key)}
                                     />
                                 </CenterComponent>
                             </StyledCard>
@@ -646,7 +634,7 @@ const RequestForm: React.FC = () => {
                 <CenterComponent>
                     <StyledCard>
                         <Subheading>
-                            Baby Products <Asterisk>*</Asterisk>
+                            Baby Products <Asterisk />
                         </Subheading>
                         <Text>Includes Baby Food, Wet Wipes, Nappies etc.</Text>
                         <RadioGroupInput
@@ -713,11 +701,10 @@ const RequestForm: React.FC = () => {
                         <Subheading>Delivery Instructions</Subheading>
                         <Text>
                             Is there anything we need to know when delivering a parcel to this
-                            client? Does the doorbell work? Do we need to phone them? Is there a
-                            door code? Do they live upstairs in a flat and cannot come downstairs?
+                            client?
                         </Text>
                         <FreeFormTextInput
-                            label="Delivery Instructions"
+                            label="E.g. The doorbell does not work. Use the door code: xxxx."
                             onChange={getFieldWithoutChecks(setDeliveryInstruction)}
                         />
                     </StyledCard>
