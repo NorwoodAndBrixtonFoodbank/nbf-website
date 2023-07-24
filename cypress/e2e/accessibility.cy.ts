@@ -23,7 +23,7 @@ describe("Accessibility tests in light mode", () => {
 
         // Wait for calendar to finish loading
         // Otherwise, Cypress tests the Loading Page
-        cy.get("table", { timeout: 5000 }).should("be.visible");
+        cy.get("table").should("be.visible");
         cy.checkAccessibility();
     });
 
@@ -62,7 +62,7 @@ describe("Accessibility tests in dark mode", () => {
 
         // Wait for calendar to finish loading
         // Otherwise, Cypress tests the Loading Page
-        cy.get("table", { timeout: 5000 }).should("be.visible");
+        cy.get("table").should("be.visible");
         cy.checkAccessibility();
     });
 
@@ -72,7 +72,6 @@ describe("Accessibility tests in dark mode", () => {
         cy.get("input[type=submit]").contains("Sign out").click();
         cy.url().should("include", "/login");
 
-        cy.get(".dark-button").click();
         cy.checkAccessibility();
     });
 });

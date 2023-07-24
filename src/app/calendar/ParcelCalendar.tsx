@@ -2,18 +2,13 @@
 
 import supabase, { Schema } from "@/supabase";
 import Calendar, { CalendarEvent } from "@/components/Calendar/Calendar";
+import Title from "@/components/Title/Title";
 import React from "react";
 import { styled } from "styled-components";
 
 interface ClientMap {
     [primary_key: string]: Schema["clients"];
 }
-
-const Title = styled.h1`
-    text-align: center;
-    margin-top: 1em;
-`;
-
 const Centerer = styled.div`
     display: flex;
     justify-content: center;
