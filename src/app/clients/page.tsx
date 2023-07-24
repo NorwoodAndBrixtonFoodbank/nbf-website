@@ -1,6 +1,5 @@
 import supabase, { Schema } from "@/supabase";
 import { Metadata } from "next";
-import { Datum } from "@/components/Tables/Table";
 import React from "react";
 
 const dataFetch: () => Promise<Schema["clients"][]> = async () => {
@@ -9,7 +8,7 @@ const dataFetch: () => Promise<Schema["clients"][]> = async () => {
 };
 
 const Clients: () => Promise<React.ReactElement> = async () => {
-    const data: Datum[] = await dataFetch();
+    const data = await dataFetch();
 
     return (
         <main>

@@ -1,11 +1,19 @@
 import { Metadata } from "next";
-import React from "react";
+import React, { ReactElement } from "react";
 import ListsDataView from "./dataview";
+import supabase from "@/supabase";
+import { Database } from "@/database_types_file";
 
-const Lists: React.FC<{}> = () => {
+const fetchData = async (): Promise<Database["public"]["Tables"]["lists"]["Row"][] | null> => {
+    return (await supabase.from("lists").select("*")).data;
+};
+
+const Lists = async (): Promise<ReactElement> => {
+    const data = await fetchData();
+
     return (
         <main>
-            <ListsDataView />
+            <ListsDataView data={data} />
         </main>
     );
 };

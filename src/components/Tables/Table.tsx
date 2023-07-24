@@ -10,15 +10,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAnglesUp, faAnglesDown, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { ListRow } from "@/app/lists/dataview";
 
-export interface Datum {
+export type Datum = {
     data: ListRow;
-    tooltips: ListRow;
-}
+    tooltips?: ListRow;
+};
 
-interface Row {
+type Row = {
     rowId: number;
     [headerKey: string]: string | number | boolean;
-}
+};
 
 interface Props {
     data: Datum[];
@@ -75,7 +75,7 @@ const dataToRows = (data: Datum[], headers: [string, string][]): Row[] => {
     return data.map((datum: Datum, currentIndex: number) => {
         const row: Row = { rowId: currentIndex };
 
-        for (const headerKey of Object.keys(headers)) {
+        for (const [headerKey, _headerLabel] of headers) {
             const databaseValue = datum.data[headerKey] ?? "";
             row[headerKey] = Array.isArray(databaseValue)
                 ? databaseValue.join(", ")
@@ -92,10 +92,10 @@ const filterRows = (rows: Row[], filterText: FilterText, headers: [string, strin
 
 const Table: React.FC<Props> = (props) => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
-        props.defaultShownHeaders ?? props.headers.map(([key, _value]) => key)
+        props.defaultShownHeaders ?? props.headers.map(([key]) => key)
     );
 
-    const shownHeaders = props.headers.filter(([key, _value]) => shownHeaderKeys.includes(key));
+    const shownHeaders = props.headers.filter(([key]) => shownHeaderKeys.includes(key));
 
     const [data, setData] = useState(props.data);
 
@@ -150,21 +150,19 @@ const Table: React.FC<Props> = (props) => {
         };
     });
 
-    const SetData = (data: Datum[], moveDirection: "up" | "down", rowId: number): Datum[] => {
+    const swapRows = (rowId1: number, rowId2: number): void => {
+        if (rowId1 < 0 || rowId2 < 0 || rowId1 >= data.length || rowId2 >= data.length) {
+            return;
+        }
+
         const newData = [...data];
-        const temp = newData[rowId];
-        if (moveDirection === "down") {
-            newData[rowId] = newData[rowId + 1];
-            newData[rowId + 1] = temp;
-        }
-        if (moveDirection === "up") {
-            console.log(`start data :${data[rowId - 1]}`);
-            newData[rowId] = newData[rowId - 1];
-            newData[rowId - 1] = temp;
-            console.log(`end data :${newData[rowId - 1]}`);
-        }
-        return newData;
+        const temp = newData[rowId1];
+        newData[rowId1] = newData[rowId2];
+        newData[rowId2] = temp;
+
+        setData(newData);
     };
+
     if (props.checkboxes) {
         columns.unshift({
             name: (
@@ -193,22 +191,12 @@ const Table: React.FC<Props> = (props) => {
             cell: (row: Row) => (
                 <EditandReorderArrowDiv>
                     <StyledIcon
-                        onClick={() => {
-                            if (row.rowId === 0) {
-                                return;
-                            }
-                            return SetData(data, "up", row.rowId);
-                        }}
+                        onClick={() => swapRows(row.rowId, row.rowId - 1)}
                         icon={faAnglesUp}
                     />
                     <StyledIcon icon={faPenToSquare} />
                     <StyledIcon
-                        onClick={() => {
-                            if (row.rowId === data.length - 1) {
-                                return;
-                            }
-                            return SetData(data, "down", row.rowId);
-                        }}
+                        onClick={() => swapRows(row.rowId, row.rowId + 1)}
                         icon={faAnglesDown}
                     />
                 </EditandReorderArrowDiv>
@@ -227,14 +215,14 @@ const Table: React.FC<Props> = (props) => {
         }
     };
 
-    const filterKeys = props.filters ?? props.headers.map(([headerKey, _headerLabel]) => headerKey);
+    const filterKeys = props.filters ?? props.headers.map(([headerKey]) => headerKey);
 
     return (
         <Styling>
             <NoSsr>
-                <StyledDataTable
+                <DataTable
                     // types are fine without the cast when not using styled components, not sure what's happening here
-                    columns={columns as any}
+                    columns={columns}
                     data={dataToFilteredRows(data, filterText, props.headers)}
                     keyField="rowId"
                     fixedHeader
@@ -305,14 +293,49 @@ const Styling = styled.div`
         }
     }
 
+    // the icons in the pagination bar
+    & svg {
+        fill: ${(props) => props.theme.disabledColor};
+    }
+
+    // formatting all direct children to adhere to the theme
+    & > div {
+        background-color: ${(props) => props.theme.surfaceBackgroundColor};
+        color: ${(props) => props.theme.surfaceForegroundColor};
+        border-color: ${(props) => props.theme.disabledColor};
+    }
+
+    // the filter bars
+    & input[type="text"] {
+        color: ${(props) => props.theme.surfaceForegroundColor};
+
+        &::placeholder {
+            color: ${(props) => props.theme.disabledColor};
+        }
+
+        background-color: ${(props) => props.theme.surfaceBackgroundColor};
+        margin: 1px 2px 1px 2px;
+        padding: 4px 1px 4px 8px;
+        border-radius: 0.5rem;
+        width: 10rem;
+        border: solid 1px ${(props) => props.theme.disabledColor};
+    }
+
+    & .rdt_TableCell,
+    & .rdt_TableCol_Sortable {
+        width: 7rem;
+    }
+
+    border-radius: 0;
+    background-color: transparent;
+
     // the table itself
     & .rdt_TableCell,
     & .rdt_TableCol_Sortable,
     & .rdt_TableRow,
     & .rdt_Table {
         font-size: 0.9rem;
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
+        padding: 0.5rem 0.5rem;
         background-color: transparent;
         color: ${(props) => props.theme.surfaceForegroundColor};
     }
@@ -336,46 +359,10 @@ const Styling = styled.div`
         border-color: ${(props) => props.theme.foregroundColor};
     }
 
-    // the icons in the pagination bar
-    & svg {
-        fill: ${(props) => props.theme.disabledColor};
-    }
-
-    // formatting all children to adhere to the theme
-    & > div {
-        background-color: ${(props) => props.theme.surfaceBackgroundColor};
+    & .rdt_Table > div {
+        background-color: transparent;
         color: ${(props) => props.theme.surfaceForegroundColor};
-        border-color: ${(props) => props.theme.disabledColor};
     }
-
-    // the filter bars
-    & input[type="text"] {
-        color: ${(props) => props.theme.surfaceForegroundColor};
-
-        &::placeholder {
-            color: ${(props) => props.theme.disabledColor};
-        }
-
-        background-color: ${(props) => props.theme.surfaceBackgroundColor};
-        margin: 1px 2px 1px 2px;
-
-        padding: 4px 1px 4px 8px;
-
-        border-radius: 10px;
-        width: 10rem;
-        border: solid 1px ${(props) => props.theme.disabledColor};
-    }
-`;
-
-const StyledDataTable = styled(DataTable)`
-    & .rdt_TableCell,
-    & .rdt_TableCol_Sortable {
-        font-size: 0.9rem;
-        width: 7rem;
-    }
-
-    border-radius: 0;
-    background-color: transparent;
 `;
 
 export default Table;

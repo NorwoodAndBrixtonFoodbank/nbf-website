@@ -4,9 +4,10 @@ import React from "react";
 import { styled } from "styled-components";
 import FilterAccordion from "./Accordion";
 
-export interface FilterText {
+export type FilterText = {
     [key: string]: string;
-}
+};
+
 const StyledFilterAccordion = styled(FilterAccordion)`
     width: 100%;
     overflow: visible;
@@ -47,7 +48,7 @@ const TableFilterBar: React.FC<Props> = (props) => {
         <>
             <ClearButton onClick={props.handleClear}>Clear</ClearButton>
             {props.headers
-                .filter(([key, _value]) => props.filterKeys?.includes(key) ?? true)
+                .filter(([key]) => props.filterKeys?.includes(key) ?? true)
                 .map(([key, value]) => {
                     return (
                         <StyledFilterBar
@@ -55,7 +56,9 @@ const TableFilterBar: React.FC<Props> = (props) => {
                             type="text"
                             value={props.filterText[key] ?? ""}
                             placeholder={`Filter by ${value}`}
-                            onChange={(event) => props.onFilter(event, key)}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                props.onFilter(event, key)
+                            }
                         />
                     );
                 })}
