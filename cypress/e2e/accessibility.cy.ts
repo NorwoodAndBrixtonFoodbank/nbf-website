@@ -7,7 +7,6 @@ describe("Accessibility tests in light mode", () => {
         cy.visit("/clients");
         cy.get(".light-button").click();
 
-        cy.get(".light-button").click();
         cy.checkAccessibility();
     });
 
@@ -15,7 +14,6 @@ describe("Accessibility tests in light mode", () => {
         cy.visit("/lists");
         cy.get(".light-button").click();
 
-        cy.get(".light-button").click();
         cy.checkAccessibility();
     });
 
@@ -23,7 +21,8 @@ describe("Accessibility tests in light mode", () => {
         cy.visit("/calendar");
         cy.get(".light-button").click();
 
-        cy.get(".light-button").click();
+        // Wait for calendar to finish loading
+        // Otherwise, Cypress tests the Loading Page
         cy.get("table", { timeout: 5000 }).should("be.visible");
         cy.checkAccessibility();
     });
@@ -34,7 +33,6 @@ describe("Accessibility tests in light mode", () => {
         cy.get("input[type=submit]").contains("Sign out").click();
         cy.url().should("include", "/login");
 
-        cy.get(".light-button").click();
         cy.checkAccessibility();
     });
 });
@@ -48,7 +46,6 @@ describe("Accessibility tests in dark mode", () => {
         cy.visit("/clients");
         cy.get(".dark-button").click();
 
-        cy.get(".dark-button").click();
         cy.checkAccessibility();
     });
 
@@ -56,7 +53,6 @@ describe("Accessibility tests in dark mode", () => {
         cy.visit("/lists");
         cy.get(".dark-button").click();
 
-        cy.get(".dark-button").click();
         cy.checkAccessibility();
     });
 
@@ -64,7 +60,8 @@ describe("Accessibility tests in dark mode", () => {
         cy.visit("/calendar");
         cy.get(".dark-button").click();
 
-        cy.get(".dark-button").click();
+        // Wait for calendar to finish loading
+        // Otherwise, Cypress tests the Loading Page
         cy.get("table", { timeout: 5000 }).should("be.visible");
         cy.checkAccessibility();
     });

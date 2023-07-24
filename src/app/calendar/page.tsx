@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import React from "react";
-import ParcelCalendar from "./ParcelCalendar";
+import ParcelCalendar from "@/app/calendar/ParcelCalendar";
 
 const CalendarPage: React.FC<{}> = () => {
     return (
