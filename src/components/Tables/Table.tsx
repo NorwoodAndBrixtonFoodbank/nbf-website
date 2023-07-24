@@ -150,6 +150,21 @@ const Table: React.FC<Props> = (props) => {
         };
     });
 
+    const SetData = (data: Datum[], moveDirection: "up" | "down", rowId: number): Datum[] => {
+        const newData = [...data];
+        const temp = newData[rowId];
+        if (moveDirection === "down") {
+            newData[rowId] = newData[rowId + 1];
+            newData[rowId + 1] = temp;
+        }
+        if (moveDirection === "up") {
+            console.log(`start data :${data[rowId - 1]}`);
+            newData[rowId] = newData[rowId - 1];
+            newData[rowId - 1] = temp;
+            console.log(`end data :${newData[rowId - 1]}`);
+        }
+        return newData;
+    };
     if (props.checkboxes) {
         columns.unshift({
             name: (
@@ -182,13 +197,7 @@ const Table: React.FC<Props> = (props) => {
                             if (row.rowId === 0) {
                                 return;
                             }
-                            setData((data) => {
-                                const newData = [...data];
-                                const temp = newData[row.rowId];
-                                newData[row.rowId] = newData[row.rowId - 1];
-                                newData[row.rowId - 1] = temp;
-                                return newData;
-                            });
+                            return SetData(data, "up", row.rowId);
                         }}
                         icon={faAnglesUp}
                     />
@@ -198,13 +207,7 @@ const Table: React.FC<Props> = (props) => {
                             if (row.rowId === data.length - 1) {
                                 return;
                             }
-                            setData((data) => {
-                                const newData = [...data];
-                                const temp = newData[row.rowId];
-                                newData[row.rowId] = newData[row.rowId + 1];
-                                newData[row.rowId + 1] = temp;
-                                return newData;
-                            });
+                            return SetData(data, "down", row.rowId);
                         }}
                         icon={faAnglesDown}
                     />
