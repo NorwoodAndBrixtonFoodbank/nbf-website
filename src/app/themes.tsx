@@ -29,6 +29,7 @@ const lightTheme: CustomTheme = {
     backgroundColor: "#eeeeee",
     primaryForegroundColor: "#000000",
     primaryBackgroundColor: "#63a036",
+    // primaryBackgroundColor: "#ffffff",
     secondaryForegroundColor: "#ffffff",
     secondaryBackgroundColor: "#066940",
     accentBackgroundColor: "#609fd3",
