@@ -39,7 +39,7 @@ const EventModal: React.FC<{
     return (
         <Modal
             header={eventClick.title}
-            ariaLabelledBy="calendarEvent"
+            headerId="calendarEvent"
             isOpen={true}
             onClose={() => setEventClick(null)}
         >

@@ -19,7 +19,7 @@ describe("Data Viewer Component", () => {
                 header="Header"
                 isOpen={true}
                 onRequestClose={() => {}}
-                ariaLabelledBy="dataViewer"
+                headerId="dataViewer"
             />
         );
     });
@@ -31,7 +31,7 @@ describe("Data Viewer Component", () => {
                 header="Header"
                 isOpen={true}
                 onRequestClose={() => {}}
-                ariaLabelledBy="dataViewer"
+                headerId="dataViewer"
             />
         );
 

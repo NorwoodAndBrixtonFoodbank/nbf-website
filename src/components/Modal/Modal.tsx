@@ -73,17 +73,13 @@ interface ModalProps {
     children: ReactNode;
     isOpen: boolean;
     onClose: () => void;
-    ariaLabelledBy: string;
+    headerId: string;
 }
 
 const Modal: React.FC<ModalProps> = (props) => {
     return (
-        <StyledDialog
-            open={props.isOpen}
-            onClose={props.onClose}
-            aria-labelledby={props.ariaLabelledBy}
-        >
-            <Header id={props.ariaLabelledBy}>
+        <StyledDialog open={props.isOpen} onClose={props.onClose} aria-labelledby={props.headerId}>
+            <Header id={props.headerId}>
                 {props.header}
                 <CloseButton onClick={props.onClose}>
                     <CloseIcon />
