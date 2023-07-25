@@ -1,8 +1,7 @@
 import React from "react";
-import DataViewerWithButton from "@/components/DataViewer/SampleDataViewerWithButton";
+import DataViewer from "@/components/DataViewer/DataViewer";
 
 const longString = "abcdefghijklmnopqrstuvwxyz".repeat(20);
-
 const longName = `John With A ${"Very ".repeat(20)}Long Name`;
 
 const data = {
@@ -12,38 +11,36 @@ const data = {
     dietary_requirements: null,
 };
 
-describe("<DataViewerWithButton />", () => {
+describe("Data Viewer Component", () => {
     it("renders", () => {
-        cy.mount(<DataViewerWithButton data={data} />);
+        cy.mount(
+            <DataViewer
+                data={data}
+                header="Header"
+                isOpen={true}
+                onRequestClose={() => {}}
+                headerId="dataViewer"
+            />
+        );
     });
 
-    it("modal can be opened", () => {
-        cy.mount(<DataViewerWithButton data={data} />);
+    it("data viewer shows expected values", () => {
+        cy.mount(
+            <DataViewer
+                data={data}
+                header="Header"
+                isOpen={true}
+                onRequestClose={() => {}}
+                headerId="dataViewer"
+            />
+        );
 
-        cy.get("button").click();
-
-        cy.contains("FULL NAME");
-    });
-
-    it("modal can be closed", () => {
-        cy.mount(<DataViewerWithButton data={data} />);
-
-        cy.get("button").click();
-
-        cy.get("button").children("svg").click();
-
-        cy.get("body").should("not.have.value", "FULL NAME");
-    });
-
-    it("modal shows expected values", () => {
-        cy.mount(<DataViewerWithButton data={data} />);
-
-        cy.get("button").click();
-
+        cy.contains("ID");
         cy.contains(longString);
+        cy.contains("FULL NAME");
         cy.contains(longName);
+        cy.contains("PHONE NUMBER");
         cy.contains("1234567");
-
         cy.contains("DIETARY REQUIREMENTS");
     });
 });

@@ -7,7 +7,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import { EventClickArg } from "@fullcalendar/core";
 import styled from "styled-components";
-import Modal from "@/components/Calendar/Modal";
+import EventModal from "@/components/Calendar/EventModal";
 
 interface CalendarProps {
     initialEvents: CalendarEvent[];
@@ -98,7 +98,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
     return (
         <>
-            <Modal eventClick={eventClick} setEventClick={setEventClick} />
+            <EventModal eventClick={eventClick} setEventClick={setEventClick} />
             <CalendarStyling>
                 <FullCalendar
                     viewClassNames="calendar-view"
