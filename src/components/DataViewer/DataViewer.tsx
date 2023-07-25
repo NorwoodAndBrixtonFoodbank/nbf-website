@@ -45,8 +45,7 @@ const formatDisplayValue = (value: valueType): string => {
     }
 
     if (typeof value === "boolean") {
-        const booleanString = value.toString();
-        return booleanString[0].toUpperCase() + booleanString.slice(1);
+        return value ? "Yes" : "No";
     }
 
     return value!.toString();

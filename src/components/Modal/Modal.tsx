@@ -50,7 +50,7 @@ const CloseButton = styled.button.attrs({
     background-color: ${(props) => props.theme.secondaryBackgroundColor};
 
     // TODO VFB-16 Ensure that this colour matches the header font colour
-    color: ${(props) => props.theme.secondaryForegroundColor}; // white
+    color: ${(props) => props.theme.secondaryForegroundColor};
 
     display: flex;
     justify-content: center;
@@ -61,10 +61,10 @@ const CloseButton = styled.button.attrs({
 
     &:hover {
         // TODO VFB-16 Either change to 'white' or the corresponding 'secondaryBackgroundColor'
-        color: ${(props) => props.theme.secondaryBackgroundColor}; // white
+        color: ${(props) => props.theme.secondaryBackgroundColor};
 
         // TODO VFB-16 Either change to 'darkgray' or the corresponding 'secondaryForegroundColor'
-        background-color: ${(props) => props.theme.secondaryForegroundColor}; // darkgray
+        background-color: ${(props) => props.theme.secondaryForegroundColor};
     }
 `;
 
