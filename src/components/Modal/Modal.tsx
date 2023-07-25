@@ -22,8 +22,10 @@ const Header = styled.div`
     justify-content: space-between;
     align-items: center;
     color: ${(props) => props.theme.secondaryForegroundColor};
-    // TODO VFB-16 Change to using theme with palettes of colours
+
+    // TODO VFB-16 Add the equivalent of this colour to a palette without the transparency
     background-color: ${(props) => props.theme.secondaryBackgroundColor}A0;
+
     font-size: 1.5em;
     font-weight: bolder;
     padding: 0.75em 1em;
@@ -42,8 +44,13 @@ const CloseButton = styled.button.attrs({
     border: 0;
     border-radius: 50%;
 
-    // TODO VFB-16 Change to using theme with palettes of colours
-    color: grey;
+    // TODO VFB-16 There are two options for the CloseButton styling. Either using a series of grey tones, or colours that match the theme of the modal
+
+    // TODO VFB-16 Either change to 'grey' or same colour as Header background
+    background-color: ${(props) => props.theme.secondaryBackgroundColor};
+
+    // TODO VFB-16 Ensure that this colour matches the header font colour
+    color: ${(props) => props.theme.secondaryForegroundColor}; // white
 
     display: flex;
     justify-content: center;
@@ -53,9 +60,11 @@ const CloseButton = styled.button.attrs({
     margin-left: 1em;
 
     &:hover {
-        // TODO VFB-16 Change to using theme with palettes of colours
-        color: white;
-        background-color: darkgray;
+        // TODO VFB-16 Either change to 'white' or the corresponding 'secondaryBackgroundColor'
+        color: ${(props) => props.theme.secondaryBackgroundColor}; // white
+
+        // TODO VFB-16 Either change to 'darkgray' or the corresponding 'secondaryForegroundColor'
+        background-color: ${(props) => props.theme.secondaryForegroundColor}; // darkgray
     }
 `;
 
@@ -64,13 +73,17 @@ interface ModalProps {
     children: ReactNode;
     isOpen: boolean;
     onClose: () => void;
-    ariaLabel?: string;
+    ariaLabelledBy: string;
 }
 
 const Modal: React.FC<ModalProps> = (props) => {
     return (
-        <StyledDialog open={props.isOpen} onClose={props.onClose} aria-label={props.ariaLabel}>
-            <Header>
+        <StyledDialog
+            open={props.isOpen}
+            onClose={props.onClose}
+            aria-labelledby={props.ariaLabelledBy}
+        >
+            <Header id={props.ariaLabelledBy}>
                 {props.header}
                 <CloseButton onClick={props.onClose}>
                     <CloseIcon />

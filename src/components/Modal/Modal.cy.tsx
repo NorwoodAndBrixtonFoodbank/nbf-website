@@ -42,6 +42,6 @@ describe("General Modal Component", () => {
         );
 
         cy.get("svg").parent("button").click();
-        cy.get("@onCloseSpy").should("have.been.called");
+        cy.get("@onCloseSpy").should("have.been.calledOnce");
     });
 });
