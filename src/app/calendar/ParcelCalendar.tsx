@@ -4,7 +4,7 @@ import supabase, { Schema } from "@/supabase";
 import Calendar, { CalendarEvent } from "@/components/Calendar/Calendar";
 import Title from "@/components/Title/Title";
 import React from "react";
-import { styled } from "styled-components";
+import styled from "styled-components";
 
 interface ClientMap {
     [primary_key: string]: Schema["clients"];
@@ -33,7 +33,7 @@ const fetchParcel: () => Promise<Schema["parcels"][]> = async () => {
 const clientsToClientMap = (clients: Schema["clients"][]): ClientMap => {
     const clientMap: ClientMap = {};
 
-    clients.forEach((client: Schema["clients"]) => {
+    clients.forEach((client) => {
         clientMap[client.primary_key] = client;
     });
 
@@ -57,7 +57,7 @@ const parcelsToCollectionEvents = (
         const location = parcel.collection_centre !== null ? `[${parcel.collection_centre}]` : "";
 
         const collectionStart = new Date(parcel.collection_datetime!);
-        const collectionEnd = new Date(collectionStart.getTime() + COLLECTION_DURATION);
+        const collectionEnd = new Date(collectionStart.getTime() + COLLECTION_DURATION_MS);
 
         const event: CalendarEvent = {
             id: parcel.primary_key,
@@ -70,13 +70,19 @@ const parcelsToCollectionEvents = (
     });
 };
 
-const MINUTES = 60 * 1000;
-const COLLECTION_DURATION = 30 * MINUTES;
+const COLLECTION_DURATION_MS = 30 * 60 * 1000;
 
 const colorMap: { [location: string]: string } = {
-    "Cambridge Office": "red",
-    "London Office": "green",
-    default: "light blue",
+    "Brixton Hill - Methodist Church": "#d50300",
+    "Clapham - St Stephens Church": "#f4511e",
+    "N&B - Emmanuel Church": "#f6bf25",
+    "Streatham - Immanuel & St Andrew": "#33b679",
+    "Vauxhall Hope Church": "#0a8043",
+    "Waterloo - Oasis": "#039be5",
+    "Waterloo - St George the Martyr": "#3f51b5",
+    "Waterloo - St Johns": "#7986cb",
+    Delivery: "#8e24aa",
+    default: "#626161",
 };
 
 const ParcelCalendar: () => Promise<React.ReactElement> = async () => {
