@@ -70,7 +70,7 @@ interface DataViewerProps {
     header: ReactElement | string;
     isOpen: boolean;
     onRequestClose: () => void;
-    ariaLabel?: string;
+    ariaLabelledBy: string;
 }
 
 const DataViewer: React.FC<DataViewerProps> = (props) => {
@@ -83,7 +83,7 @@ const DataViewer: React.FC<DataViewerProps> = (props) => {
             isOpen={props.isOpen}
             onClose={closeModal}
             header={props.header}
-            ariaLabel={props.ariaLabel}
+            ariaLabelledBy={props.ariaLabelledBy}
         >
             <ContentDiv>{JSONContent(props.data)}</ContentDiv>
         </Modal>

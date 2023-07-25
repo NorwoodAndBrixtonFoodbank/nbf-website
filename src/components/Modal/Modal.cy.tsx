@@ -4,7 +4,12 @@ import Modal from "@/components/Modal/Modal";
 describe("General Modal Component", () => {
     it("renders", () => {
         cy.mount(
-            <Modal header="Modal Header" ariaLabel="Modal Label" isOpen={true} onClose={() => {}}>
+            <Modal
+                header="Modal Header"
+                ariaLabelledBy="testModal"
+                isOpen={true}
+                onClose={() => {}}
+            >
                 <h1>Modal Content</h1>
             </Modal>
         );
@@ -12,7 +17,12 @@ describe("General Modal Component", () => {
 
     it("modal can be opened", () => {
         cy.mount(
-            <Modal header="Modal Header" isOpen={true} onClose={() => {}}>
+            <Modal
+                header="Modal Header"
+                ariaLabelledBy="testModal"
+                isOpen={true}
+                onClose={() => {}}
+            >
                 <h1>Modal Content</h1>
             </Modal>
         );
@@ -23,7 +33,12 @@ describe("General Modal Component", () => {
 
     it("modal can be closed", () => {
         cy.mount(
-            <Modal header="Modal Header" isOpen={false} onClose={() => {}}>
+            <Modal
+                header="Modal Header"
+                ariaLabelledBy="testModal"
+                isOpen={false}
+                onClose={() => {}}
+            >
                 <h1>Modal Content</h1>
             </Modal>
         );
@@ -36,7 +51,12 @@ describe("General Modal Component", () => {
         const onCloseSpy = cy.spy().as("onCloseSpy");
 
         cy.mount(
-            <Modal header="Modal Header" isOpen={true} onClose={onCloseSpy}>
+            <Modal
+                header="Modal Header"
+                ariaLabelledBy="testModal"
+                isOpen={true}
+                onClose={onCloseSpy}
+            >
                 <h1>Modal Content</h1>
             </Modal>
         );
