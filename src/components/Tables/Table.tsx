@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
+import TableFilterBar, { FilterText } from "./TableFilterBar";
 import { styled } from "styled-components";
 import { NoSsr } from "@mui/material";
 import SpeechBubbleIcon from "../Icons/SpeechBubbleIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAnglesUp, faAnglesDown, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-import { ListRow } from "@/app/lists/dataview";
+import { ListRow } from "../../app/lists/dataview";
 
 export type Datum = {
     data: ListRow;

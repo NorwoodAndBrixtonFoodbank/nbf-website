@@ -49,6 +49,7 @@
     "@supabase/auth-ui-shared": "^0.1.6",
     "@supabase/gotrue-js": "^2.31.0",
     "@supabase/supabase-js": "^2.26.0",
+    "@types/cypress": "^1.1.3",
     "@types/cypress__code-coverage": "^3.10.0",
     "@types/cypress-dotenv": "^2.0.0",
     "@types/node": "20.3.1",
