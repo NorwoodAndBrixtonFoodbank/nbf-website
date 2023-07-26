@@ -3,7 +3,7 @@
 import React from "react";
 import { Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel } from "@mui/material";
 
-interface Props {
+export interface Props {
     labelsAndKeys: [string, string][];
     groupLabel?: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;

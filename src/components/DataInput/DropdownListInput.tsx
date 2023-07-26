@@ -3,7 +3,7 @@
 import React from "react";
 import { MenuItem, InputLabel, Select, FormControl, SelectChangeEvent } from "@mui/material";
 
-interface Props {
+export interface Props {
     labelsAndValues: [string, string][];
     listTitle?: string;
     defaultValue?: string;
