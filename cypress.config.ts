@@ -1,6 +1,7 @@
 import registerCodeCoverageTasks from "@cypress/code-coverage/task";
 import { defineConfig } from "cypress";
 import readPdf from "./cypress/support/readPdf";
+import getCompareSnapshotsPlugin from "cypress-visual-regression/dist/plugin";
 
 import * as dotenv from "dotenv";
 
@@ -11,6 +12,7 @@ export default defineConfig({
         setupNodeEvents(on, config) {
             // implement node event listeners here
             registerCodeCoverageTasks(on, config);
+            getCompareSnapshotsPlugin(on, config);
 
             on("task", {
                 table(message: any[]): null {
@@ -30,8 +32,6 @@ export default defineConfig({
         },
         baseUrl: "http://localhost:3200",
         video: true,
-        videoUploadOnPasses: false,
-        screenshotOnRunFailure: true,
         videoCompression: 1,
     },
     component: {
@@ -47,4 +47,11 @@ export default defineConfig({
         },
         specPattern: "src/**/*.cy.{ts,tsx}",
     },
+    env: {
+        failSilently: false,
+    },
+
+    video: false,
+    videoUploadOnPasses: false,
+    screenshotOnRunFailure: true,
 });

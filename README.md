@@ -47,6 +47,8 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
   * Can single out test suites with:
     * `npm run test:component` for just component (unit) tests
     * `npm rum test:e2e` for just end-to-end tests
+      * This includes the snapshot tests, which can be run separately via `npm run test:snapshots`
+      * To regenerate the snapshots, run `npm run test:regenerate_snapshots`
     * `npm run test:coverage` for a full coverage report at the end
   * Can open the Cypress UI to see individual results with `npm run open:cypress`
 

@@ -1,17 +1,25 @@
+import PAGES from "../e2e_utils/PAGES";
+
 describe("Authentication tests", () => {
     const email: string = Cypress.env("TEST_USER");
     const password: string = Cypress.env("TEST_PASS");
 
     const extendedTimeout = { timeout: 10000 };
 
-    const buttonReachablePaths = ["/", "/clients", "/lists", "/calendar"];
-    const allPaths = [...buttonReachablePaths, "/clients/add"];
-
-    it("Redirected to login page", () => {
-        for (const url of allPaths) {
-            cy.visit(url);
-            cy.url().should("include", "/login");
+    PAGES.map((page) => {
+        if (page.friendly_name !== "Login") {
+            it(`Redirected from ${page.friendly_name} to Login page`, () => {
+                cy.visit(page.url);
+                cy.url().should("include", "/login");
+            });
         }
+    });
+
+    it("Get to Clients page", () => {
+        cy.login();
+        cy.visit("/clients");
+
+        cy.url().should("include", "/clients");
     });
 
     it("Redirected to clients after login", () => {
@@ -28,13 +36,6 @@ describe("Authentication tests", () => {
         cy.get("button[type='submit']").click();
 
         cy.url(extendedTimeout).should("include", "/clients");
-    });
-
-    it("Get to clients page", () => {
-        cy.login();
-        cy.visit("/clients");
-
-        cy.url().should("include", "/clients");
     });
 
     it("Sign out", () => {

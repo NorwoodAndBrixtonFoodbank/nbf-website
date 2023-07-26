@@ -14,6 +14,10 @@ import { Result } from "axe-core";
 import "@cypress/code-coverage/support";
 import "cypress-axe";
 
+import compareSnapshotCommand from "cypress-visual-regression/dist/command";
+
+compareSnapshotCommand();
+
 const loginWithRetry = (iteration: number = 0): void => {
     if (iteration >= 4) {
         // This only ever seems to happen on GH Actions on the first test, so we can just log and move on
