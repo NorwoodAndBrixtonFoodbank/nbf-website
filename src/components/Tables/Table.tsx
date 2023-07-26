@@ -7,12 +7,17 @@ import { styled } from "styled-components";
 import { NoSsr } from "@mui/material";
 import SpeechBubbleIcon from "../Icons/SpeechBubbleIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAnglesUp, faAnglesDown, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-import { ListRow } from "../../app/lists/dataview";
+import {
+    faAnglesUp,
+    faAnglesDown,
+    faPenToSquare,
+    faTrashAlt,
+} from "@fortawesome/free-solid-svg-icons";
+import IconButton from "@mui/material/IconButton/IconButton";
 
 export type Datum = {
-    data: ListRow;
-    tooltips?: ListRow;
+    data: { [headerKey: string]: string | null };
+    tooltips?: { [headerKey: string]: string | null };
 };
 
 type Row = {
@@ -31,6 +36,9 @@ interface Props {
     pagination?: boolean;
     defaultShownHeaders?: string[];
     toggleableHeaders?: string[];
+    sortable?: boolean;
+    onEdit?: (data: number) => void;
+    onDelete?: (data: number) => void;
 }
 
 const RowDiv = styled.div`
@@ -132,7 +140,7 @@ const Table: React.FC<Props> = (props) => {
         return {
             name: headerName,
             selector: (row) => row[headerKey],
-            sortable: true,
+            sortable: props.sortable ?? true,
             cell(row, rowIndex, column, id) {
                 const tooltip = data[row.rowId].tooltips?.[headerKey];
                 const tooltipElement = tooltip ? (
@@ -186,22 +194,47 @@ const Table: React.FC<Props> = (props) => {
         });
     }
 
-    if (props.reorderable) {
+    if (props.reorderable || props.onEdit) {
         columns.unshift({
             name: <p>Sort</p>,
-            cell: (row: Row) => (
-                <EditandReorderArrowDiv>
-                    <StyledIcon
-                        onClick={() => swapRows(row.rowId, row.rowId - 1)}
-                        icon={faAnglesUp}
-                    />
-                    <StyledIcon icon={faPenToSquare} />
-                    <StyledIcon
-                        onClick={() => swapRows(row.rowId, row.rowId + 1)}
-                        icon={faAnglesDown}
-                    />
-                </EditandReorderArrowDiv>
-            ),
+            cell: (row: Row) => {
+                const onEditClick = (): void => {
+                    props.onEdit!(row.rowId);
+                };
+
+                return (
+                    <EditandReorderArrowDiv>
+                        {props.reorderable ? (
+                            <IconButton onClick={() => swapRows(row.rowId, row.rowId - 1)}>
+                                <StyledIcon icon={faAnglesUp} />
+                            </IconButton>
+                        ) : (
+                            <></>
+                        )}
+                        {props.onEdit ? (
+                            <IconButton onClick={onEditClick}>
+                                <StyledIcon icon={faPenToSquare} />
+                            </IconButton>
+                        ) : (
+                            <></>
+                        )}
+                        {props.reorderable ? (
+                            <IconButton onClick={() => swapRows(row.rowId, row.rowId + 1)}>
+                                <StyledIcon icon={faAnglesDown} />
+                            </IconButton>
+                        ) : (
+                            <></>
+                        )}
+                        {props.onDelete ? (
+                            <IconButton onClick={() => props.onDelete!(row.rowId)}>
+                                <StyledIcon icon={faTrashAlt} />
+                            </IconButton>
+                        ) : (
+                            <></>
+                        )}
+                    </EditandReorderArrowDiv>
+                );
+            },
             width: "5rem",
         });
     }
@@ -249,13 +282,10 @@ const Table: React.FC<Props> = (props) => {
 };
 
 const EditandReorderArrowDiv = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     width: 100%;
-    padding-right: 1.2rem;
+    transform: translateX(-0.8rem);
 `;
 
 const StyledIcon = styled(FontAwesomeIcon)`
@@ -327,6 +357,18 @@ const Styling = styled.div`
     & .rdt_TableCell,
     & .rdt_TableCol_Sortable {
         width: 7rem;
+        // important needed to override the inline style
+        padding: 0 !important;
+    }
+
+    & .rdt_TableCol,
+    & .rdt_TableCol_Sortable {
+        // same here
+        padding-right: 0 !important;
+
+        & > div {
+            overflow: visible;
+        }
     }
 
     border-radius: 0;
@@ -337,7 +379,7 @@ const Styling = styled.div`
     & .rdt_TableCol_Sortable,
     & .rdt_TableRow,
     & .rdt_Table {
-        font-size: 0.9rem;
+        font-size: 1.2rem;
         padding: 0.5rem 0.5rem;
         background-color: transparent;
         color: ${(props) => props.theme.surfaceForegroundColor};

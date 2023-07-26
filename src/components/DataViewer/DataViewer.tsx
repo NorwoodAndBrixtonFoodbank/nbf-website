@@ -10,35 +10,6 @@ export interface Data {
     [key: string]: valueType;
 }
 
-const StyledModal = styled(Modal)`
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border: 0;
-    border-radius: 5px;
-    outline: none;
-    padding: 0;
-    width: 80%;
-    max-height: 80%;
-    background: rgb(255, 255, 255);
-    box-shadow: rgb(200, 200, 200) 0 2px 10px;
-    overflow: hidden;
-`;
-const Header = styled.h3`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #eeeeee;
-    padding: 0.5rem;
-    margin-top: 0;
-`;
-const Content = styled.div`
-    overflow: scroll;
-    margin: 1.5rem;
-`;
 const Key = styled.div`
     // TODO VFB-16 Add a dark font colour (black perhaps) that is accessible with the colour below
     color: ${(props) => props.theme.secondaryForegroundColor};

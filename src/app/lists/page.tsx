@@ -5,6 +5,7 @@ import supabase from "@/supabase";
 import { Database } from "@/database_types_file";
 
 const fetchData = async (): Promise<Database["public"]["Tables"]["lists"]["Row"][] | null> => {
+    supabase.channel("lists").subscribe();
     return (await supabase.from("lists").select("*")).data;
 };
 
