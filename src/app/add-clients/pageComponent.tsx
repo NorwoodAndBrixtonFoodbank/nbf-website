@@ -90,10 +90,10 @@ const ErrorText = styled(Text)`
 
 const StyledButton = styled.button`
     text-align: center;
-    width: 100px;
-    height: 30px;
+    width: 150px;
+    height: 40px;
     border-radius: 10px;
-    border: solid 1px ${(props) => props.theme.foregroundColor};
+    border: solid 0px ${(props) => props.theme.foregroundColor};
     background-color: ${(props) => props.theme.primaryBackgroundColor};
     color: ${(props) => props.theme.primaryForegroundColor};
 
@@ -312,7 +312,8 @@ const AddClientForm: React.FC = () => {
                 label="Prefer Not To Say"
                 onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "adult")}
             />
-        </>
+        </>,
+        "Please enter the number of adults (aged 16 or above) in the appropriate category."
     );
 
     const numberChildrenCard = genericFormCard(
@@ -374,7 +375,8 @@ const AddClientForm: React.FC = () => {
                     </StyledCard>
                 );
             })}
-        </>
+        </>,
+        "Please note that children are under 16 years old."
     );
 
     const dietaryRequirementCard = genericFormCard(
