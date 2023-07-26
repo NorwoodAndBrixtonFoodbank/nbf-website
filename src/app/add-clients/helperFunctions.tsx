@@ -9,6 +9,7 @@ type PersonType = Database["public"]["Enums"]["gender"];
 type FieldType = string | (boolean | null) | booleanGroup | Address | People[];
 type EventType = React.ChangeEvent<HTMLInputElement> | SelectChangeEvent;
 type OnChangeType = (event: EventType) => void;
+type onChangeCheckboxType = (event: React.ChangeEvent<HTMLInputElement>) => void;
 type SetErrorType = (errorKey: string, errorMessage: string) => void;
 type SetFieldType = (fieldKey: string, newFieldValue: FieldType) => void;
 export type ClientDatabaseRecord = InsertSchema["clients"];
@@ -35,7 +36,7 @@ export interface ErrorMessages {
     addressPostcode: string;
     adults: string;
     numberChildren: string;
-    nappyErrorMessage: string;
+    nappySize: string;
 }
 
 export interface Fields {
@@ -101,9 +102,10 @@ export const onChangeFunction = (
 ): OnChangeType => {
     return (event) => {
         const errorType = getErrorType(event, required, regex);
+        const input = event.target.value;
         errorSetter(key, errorType);
         if (errorType === "") {
-            const newValue = formattingFunction && formattingFunction(event.target.value);
+            const newValue = formattingFunction ? formattingFunction(input) : input;
             fieldSetter(key, newValue);
         }
     };
@@ -113,7 +115,7 @@ export const onChangeCheckbox = (
     fieldSetter: SetFieldType,
     currentObject: booleanGroup,
     key: string
-): OnChangeType => {
+): onChangeCheckboxType => {
     return (event) => {
         const newObject = { ...currentObject, [event.target.name]: event.target.checked };
         fieldSetter(key, newObject);
@@ -128,11 +130,14 @@ export const errorText = (errorMessage: string): string => {
     return errorMessage == "N/A" ? "" : errorMessage;
 };
 
+// Regex source: https://ihateregex.io/expr/phone/
 export const phoneNumberRegex = /^([+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6})?$/;
 export const formatPhoneNumber = (value: string): string => {
     const numericInput = value.replace(/(\D)/g, "");
     return numericInput[0] === "0" ? "+44" + numericInput.slice(1) : "+" + numericInput;
 };
+
+// Regex source: https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/488478/Bulk_Data_Transfer_-_additional_validation_valid_from_12_November_2015.pdf
 export const postcodeRegex =
     /^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})$/;
 export const formatPostcode = (value: string): string => {
@@ -195,10 +200,10 @@ export const getBaby = (fieldSetter: SetFieldType, errorSetter: SetErrorType): O
     return (event) => {
         const input = event.target.value;
         if (input === "Yes") {
-            errorSetter("babyProducts", "N/A");
+            errorSetter("nappySize", "N/A");
             fieldSetter("babyProducts", true);
         } else {
-            errorSetter("babyProducts", "");
+            errorSetter("nappySize", "");
             if (input === "No") {
                 fieldSetter("babyProducts", false);
             } else {
@@ -232,15 +237,17 @@ export const checkErrorOnSubmit = (
 };
 
 export const insertFamily = async (peopleArray: People[], familyID: string): Promise<boolean> => {
-    const familyRecords = peopleArray.map((person): FamilyDatabaseRecord => {
-        return {
-            family_id: familyID,
-            person_type: person.personType,
-            quantity: person.quantity ?? 1,
-            age: person.age ?? null,
-        };
-    });
-
+    const familyRecords: FamilyDatabaseRecord[] = [];
+    for (const person of peopleArray) {
+        if (person.quantity === undefined || person.quantity > 0) {
+            familyRecords.push({
+                family_id: familyID,
+                person_type: person.personType,
+                quantity: person.quantity ?? 1,
+                age: person.age ?? null,
+            });
+        }
+    }
     const { error: error } = await supabase.from("families").insert(familyRecords);
     return error === null;
 };

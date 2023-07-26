@@ -154,7 +154,7 @@ const initialErrorMessages: ErrorMessages = {
     addressPostcode: "N/A",
     adults: "N/A",
     numberChildren: "N/A",
-    nappyErrorMessage: "",
+    nappySize: "",
 };
 
 const AddClientForm: React.FC = () => {
@@ -177,11 +177,9 @@ const AddClientForm: React.FC = () => {
     }, [fields.numberChildren]);
 
     const submitForm = async (): Promise<void> => {
-        if (fields.nappySize) {
-            fieldSetter(
-                "extraInformation",
-                `Nappy Size: ${fields.nappySize}, Extra Information: ${fields.extraInformation}`
-            );
+        let extraInformationWithNappy = fields.extraInformation;
+        if (fields.nappySize !== "") {
+            extraInformationWithNappy = `Nappy Size: ${fields.nappySize}, Extra Information: ${fields.extraInformation}`;
         }
         const clientRecord: ClientDatabaseRecord = {
             full_name: fields.fullName,
@@ -197,9 +195,9 @@ const AddClientForm: React.FC = () => {
             pet_food: checkboxGroupToArray(fields.petFood),
             other_items: checkboxGroupToArray(fields.otherItems),
             delivery_instructions: fields.deliveryInstructions,
-            extra_information: fields.extraInformation,
+            extra_information: extraInformationWithNappy,
         };
-
+        console.log(clientRecord);
         const inputError = checkErrorOnSubmit(errorMessages, setErrorMessages);
         if (!inputError) {
             setSubmitError("");
@@ -437,11 +435,8 @@ const AddClientForm: React.FC = () => {
             {fields.babyProducts ? (
                 <>
                     <FreeFormTextInput
-                        error={
-                            !!errorMessages.nappyErrorMessage &&
-                            errorMessages.nappyErrorMessage !== "N/A"
-                        }
-                        helperText={errorMessages.nappyErrorMessage}
+                        error={errorExists(errorMessages.nappySize)}
+                        helperText={errorText(errorMessages.nappySize)}
                         label="Nappy Size"
                         onChange={onChangeFunction(fieldSetter, errorSetter, "nappySize", true)}
                     />
