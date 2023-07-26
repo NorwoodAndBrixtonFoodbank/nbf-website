@@ -1,5 +1,5 @@
 import React from "react";
-import Table, { Datum } from "@/components/Tables/Table";
+import Table, { Datum } from "./Table";
 
 describe("<Table />", () => {
     const data: Datum[] = [
