@@ -21,7 +21,7 @@ describe("Rendering tests", () => {
         cy.get("h1").should("contain.text", "Calendar Page");
     });
 
-    it("Renders add client page", () => {
+    it("Renders clients/add page", () => {
         cy.visit("/clients/add");
 
         cy.get("h1").should("contain.text", "Client Form");

@@ -1,19 +1,8 @@
 import React from "react";
-import { Database } from "@/database_types_file";
-import { booleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { SelectChangeEvent } from "@mui/material";
-import { InsertSchema } from "@/supabase";
-import supabase from "@/supabase";
-
-type PersonType = Database["public"]["Enums"]["gender"];
-export enum Error {
-    initial = "required",
-    none = "",
-    required = "This is a required field.",
-    invalid = "Please enter a valid entry.",
-    submit = "Please ensure all fields have been entered correctly. Required fields are labelled with an asterisk.",
-    database = "An error has occurred. Please try again later.",
-}
+import { booleanGroup } from "@/components/DataInput/inputHandlerFactories";
+import supabase, { InsertSchema } from "@/supabase";
+import { Database } from "@/database_types_file";
 
 type Event = React.ChangeEvent<HTMLInputElement> | SelectChangeEvent;
 type OnChange = (event: Event) => void;
@@ -23,8 +12,26 @@ type FieldSetter = (
     fieldKey: string,
     newFieldValue: string | (boolean | null) | booleanGroup | Address | Person[]
 ) => void;
+type PersonType = Database["public"]["Enums"]["gender"];
 type FamilyDatabaseRecord = InsertSchema["families"];
 export type ClientDatabaseRecord = InsertSchema["clients"];
+export enum Error {
+    initial = "required",
+    none = "",
+    required = "This is a required field.",
+    invalid = "Please enter a valid entry.",
+    submit = "Please ensure all fields have been entered correctly. Required fields are labelled with an asterisk.",
+    database = "An error has occurred. Please try again later.",
+}
+
+export const phoneNumberRegex = /^([+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6})?$/;
+// Regex source: https://ihateregex.io/expr/phone/
+
+export const postcodeRegex =
+    /^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})$/;
+// Regex source: https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/488478/Bulk_Data_Transfer_-_additional_validation_valid_from_12_November_2015.pdf
+
+export const numberRegex = /^\d+$/;
 
 interface Address {
     line1: string;
@@ -71,15 +78,6 @@ export interface Fields {
     extraInformation: string;
 }
 
-export const setField = (
-    fieldSetter: React.Dispatch<React.SetStateAction<Fields>>,
-    fieldValues: Fields
-): FieldSetter => {
-    return (fieldKey, newFieldValue) => {
-        fieldSetter({ ...fieldValues, [fieldKey]: newFieldValue });
-    };
-};
-
 export const setError = (
     errorSetter: React.Dispatch<React.SetStateAction<ErrorType>>,
     errorValues: ErrorType
@@ -89,13 +87,21 @@ export const setError = (
     };
 };
 
+export const setField = (
+    fieldSetter: React.Dispatch<React.SetStateAction<Fields>>,
+    fieldValues: Fields
+): FieldSetter => {
+    return (fieldKey, newFieldValue) => {
+        fieldSetter({ ...fieldValues, [fieldKey]: newFieldValue });
+    };
+};
+
 const getErrorType = (
-    event: Event,
+    input: string,
     required?: boolean,
     regex?: RegExp,
     additionalCondition?: (value: any) => boolean // TODO change type
 ): Error => {
-    const input = event.target.value;
     if (required && input === "") {
         return Error.required;
     } else if (
@@ -108,10 +114,6 @@ const getErrorType = (
     }
 };
 
-export const checkboxGroupToArray = (checkedBoxes: booleanGroup): string[] => {
-    return Object.keys(checkedBoxes).filter((key) => checkedBoxes[key]);
-};
-
 export const onChange = (
     fieldSetter: FieldSetter,
     errorSetter: ErrorSetter,
@@ -122,16 +124,12 @@ export const onChange = (
     additionalCondition?: (value: any) => boolean // TODO change the order of this please
 ): OnChange => {
     return (event) => {
-        const errorType = getErrorType(event, required, regex, additionalCondition);
         const input = event.target.value;
+        const errorType = getErrorType(input, required, regex, additionalCondition);
         errorSetter(key, errorType);
-        // if (errorType === "none") {
         if (errorType === Error.none) {
             const newValue = formattingFunction ? formattingFunction(input) : input;
             fieldSetter(key, newValue);
-        } else {
-            // Added this to make number children field max at 50
-            fieldSetter(key, input);
         }
     };
 };
@@ -145,30 +143,6 @@ export const onChangeCheckbox = (
         const newObject = { ...currentObject, [event.target.name]: event.target.checked };
         fieldSetter(key, newObject);
     };
-};
-
-export const errorExists = (errorType: Error): boolean => {
-    // return errorType !== "none" && errorType !== "initial";
-    return errorType !== Error.initial && errorType !== Error.none;
-};
-
-// Regex source: https://ihateregex.io/expr/phone/
-export const phoneNumberRegex = /^([+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6})?$/;
-export const formatPhoneNumber = (value: string): string => {
-    const numericInput = value.replace(/(\D)/g, "");
-    return numericInput[0] === "0" ? "+44" + numericInput.slice(1) : "+" + numericInput;
-};
-
-// Regex source: https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/488478/Bulk_Data_Transfer_-_additional_validation_valid_from_12_November_2015.pdf
-export const postcodeRegex =
-    /^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})$/;
-export const formatPostcode = (value: string): string => {
-    return value.replace(/(\s)/g, "").toUpperCase();
-};
-export const numberRegex = /^\d+$/;
-
-export const maxNumberChildren = (value: number): boolean => {
-    return value <= 20;
 };
 
 export const getNumberAdults = (
@@ -237,6 +211,27 @@ export const getBaby = (fieldSetter: FieldSetter, errorSetter: ErrorSetter): OnC
             }
         }
     };
+};
+
+export const errorExists = (errorType: Error): boolean => {
+    return errorType !== Error.initial && errorType !== Error.none;
+};
+
+export const checkboxGroupToArray = (checkedBoxes: booleanGroup): string[] => {
+    return Object.keys(checkedBoxes).filter((key) => checkedBoxes[key]);
+};
+
+export const formatPhoneNumber = (value: string): string => {
+    const numericInput = value.replace(/(\D)/g, "");
+    return numericInput[0] === "0" ? "+44" + numericInput.slice(1) : "+" + numericInput;
+};
+
+export const formatPostcode = (value: string): string => {
+    return value.replace(/(\s)/g, "").toUpperCase();
+};
+
+export const maxNumberChildren = (value: number): boolean => {
+    return value <= 20;
 };
 
 export const checkErrorOnSubmit = (
