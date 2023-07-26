@@ -161,8 +161,6 @@ const AddClientForm: React.FC = () => {
     const [fields, setFields] = useState<Fields>(initialFields);
     const [errorMessages, setErrorMessages] = useState<ErrorMessages>(initialErrorMessages);
     const [submitError, setSubmitError] = useState("");
-    const fieldSetter = setFieldFunction(setFields, fields);
-    const errorSetter = setErrorFunction(setErrorMessages, errorMessages);
 
     useEffect(() => {
         const childrenCopy: People[] = [];
@@ -174,7 +172,10 @@ const AddClientForm: React.FC = () => {
             }
         }
         fieldSetter("children", childrenCopy);
-    }, [fields.numberChildren]);
+    }, [fields.numberChildren]); // eslint-disable-line
+
+    const fieldSetter = setFieldFunction(setFields, fields);
+    const errorSetter = setErrorFunction(setErrorMessages, errorMessages);
 
     const submitForm = async (): Promise<void> => {
         let extraInformationWithNappy = fields.extraInformation;
