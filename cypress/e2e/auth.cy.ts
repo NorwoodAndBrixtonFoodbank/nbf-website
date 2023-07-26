@@ -1,9 +1,11 @@
+import PAGES from "./PAGES";
+
 describe("Authentication tests", () => {
-    it("Redirected to login page", () => {
-        for (const url of ["/", "/clients", "/lists", "/calendar", "/login"]) {
-            cy.visit(url);
+    PAGES.map((page) => {
+        it(`Redirected from ${page.friendly_name} to login page`, () => {
+            cy.visit(page.url);
             cy.url().should("include", "/login");
-        }
+        });
     });
 
     it("Get to clients page", () => {

@@ -1,5 +1,6 @@
 import registerCodeCoverageTasks from "@cypress/code-coverage/task";
 import { defineConfig } from "cypress";
+import getCompareSnapshotsPlugin from "cypress-visual-regression/dist/plugin";
 
 import * as dotenv from "dotenv";
 
@@ -10,6 +11,7 @@ export default defineConfig({
         setupNodeEvents(on, config) {
             // implement node event listeners here
             registerCodeCoverageTasks(on, config);
+            getCompareSnapshotsPlugin(on, config);
 
             on("task", {
                 table(message: any[]): null {
@@ -17,7 +19,7 @@ export default defineConfig({
                         console.table(message);
                     }
                     return null;
-                }
+                },
             });
 
             config.env = {
@@ -28,9 +30,6 @@ export default defineConfig({
             return config;
         },
         baseUrl: "http://localhost:3200",
-        video: false,
-        videoUploadOnPasses: false,
-        screenshotOnRunFailure: false,
     },
 
     component: {
@@ -40,4 +39,8 @@ export default defineConfig({
         },
         specPattern: "src/**/*.cy.{ts,tsx}",
     },
+
+    video: false,
+    videoUploadOnPasses: false,
+    screenshotOnRunFailure: false,
 });

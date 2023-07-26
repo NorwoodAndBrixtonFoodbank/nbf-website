@@ -11,6 +11,9 @@
 //
 
 import { Result } from "axe-core";
+import compareSnapshotCommand from "cypress-visual-regression/dist/command";
+
+compareSnapshotCommand();
 
 Cypress.Commands.add("login", () => {
     const email = Cypress.env("TEST_USER");

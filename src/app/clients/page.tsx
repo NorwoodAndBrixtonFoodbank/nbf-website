@@ -4,7 +4,7 @@ import { Datum } from "@/components/Tables/Table";
 import React from "react";
 
 const dataFetch: () => Promise<Schema["clients"][]> = async () => {
-    const response = await supabase.from("clients").select();
+    const response = await supabase.from("clients").select().limit(1);
     return response.data ?? [];
 };
 
