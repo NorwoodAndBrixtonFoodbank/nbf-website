@@ -32,6 +32,7 @@ const CalendarStyling = styled.div`
     --fc-button-active-bg-color: ${(props) => props.theme.secondaryBackgroundColor};
     --fc-button-active-border-color: ${(props) => props.theme.secondaryBackgroundColor};
     --fc-button-text-color: ${(props) => props.theme.secondaryForegroundColor};
+    --fc-page-bg-color: transparent;
 
     .fc {
         background-color: ${(props) => props.theme.surfaceBackgroundColor};

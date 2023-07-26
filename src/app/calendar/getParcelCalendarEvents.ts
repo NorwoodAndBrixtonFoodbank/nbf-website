@@ -3,34 +3,28 @@ import { CalendarEvent } from "@/components/Calendar/Calendar";
 
 const COLLECTION_DURATION_MS = 30 * 60 * 1000;
 
+// TODO VFB-16 Consider adding a rainbow palette for a selection of accessible colours (something like these but they don't need to be matched exactly)
 const colorMap: { [location: string]: string } = {
-    "Brixton Hill - Methodist Church": "#d50300",
-    "Clapham - St Stephens Church": "#f4511e",
-    "N&B - Emmanuel Church": "#f6bf25",
-    "Streatham - Immanuel & St Andrew": "#33b679",
-    "Vauxhall Hope Church": "#0a8043",
-    "Waterloo - Oasis": "#039be5",
-    "Waterloo - St George the Martyr": "#3f51b5",
-    "Waterloo - St Johns": "#7986cb",
-    Delivery: "#8e24aa",
-    default: "#626161",
+    "Brixton Hill - Methodist Church": "#FA9189",
+    "Clapham - St Stephens Church": "#FCAE7C",
+    "N&B - Emmanuel Church": "#ffd868",
+    "Streatham - Immanuel & St Andrew": "#B3F5BC",
+    "Vauxhall Hope Church": "#66B79B",
+    "Waterloo - Oasis": "#A0C7DB",
+    "Waterloo - St George the Martyr": "#96B9FF",
+    "Waterloo - St Johns": "#ceaae9",
+    Delivery: "#A7A1FF",
+    default: "#D2C9BC",
 };
+
+const eventTextColor = "#000000";
 
 interface ClientMap {
     [primary_key: string]: Schema["clients"];
 }
 
-const fetchClient: () => Promise<Schema["clients"][]> = async () => {
-    const response = await supabase.from("clients").select();
-    return response.data ?? [];
-};
-
-const fetchParcel: () => Promise<Schema["parcels"][]> = async () => {
-    const response = await supabase.from("parcels").select();
-    return response.data ?? [];
-};
-
-const clientsToClientMap = (clients: Schema["clients"][]): ClientMap => {
+const getClientMap = async (): Promise<ClientMap> => {
+    const clients = (await supabase.from("clients").select()).data ?? [];
     const clientMap: ClientMap = {};
 
     clients.forEach((client) => {
@@ -40,8 +34,9 @@ const clientsToClientMap = (clients: Schema["clients"][]): ClientMap => {
     return clientMap;
 };
 
-const getParcelsWithCollectionDate = (parcels: Schema["parcels"][]): Schema["parcels"][] => {
-    return parcels.filter((parcel) => parcel.collection_datetime !== null);
+const getParcelsWithCollectionDate = async (): Promise<Schema["parcels"][]> => {
+    const response = await supabase.from("parcels").select().not("collection_datetime", "is", null);
+    return response.data ?? [];
 };
 
 const parcelsToCollectionEvents = (
@@ -65,17 +60,16 @@ const parcelsToCollectionEvents = (
             start: collectionStart,
             end: collectionEnd,
             backgroundColor: colorMap[parcel.collection_centre ?? ""] ?? colorMap.default,
+            borderColor: colorMap[parcel.collection_centre ?? ""] ?? colorMap.default,
+            textColor: eventTextColor,
         };
         return event;
     });
 };
 
 const getParcelCalendarEvents = async (): Promise<CalendarEvent[]> => {
-    const clients: Schema["clients"][] = await fetchClient();
-    const parcels: Schema["parcels"][] = await fetchParcel();
-
-    const clientMap: ClientMap = clientsToClientMap(clients);
-    const parcelsWithCollectionDate = getParcelsWithCollectionDate(parcels);
+    const clientMap: ClientMap = await getClientMap();
+    const parcelsWithCollectionDate = await getParcelsWithCollectionDate();
 
     return parcelsToCollectionEvents(parcelsWithCollectionDate, clientMap);
 };
