@@ -21,7 +21,6 @@ describe("<NavigationBar />", () => {
 
     it("Renders on desktop", () => {
         cy.viewport(1367, 1500);
-
         cy.mount(RouterWrappedNavBar);
     });
 
