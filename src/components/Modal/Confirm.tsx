@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import Modal from "./Modal";
+import Modal from "@/components/Modal/Modal";
 import { styled } from "styled-components";
+import Button from "@mui/material/Button/Button";
 
 type Props = {
     isOpen: boolean;
@@ -29,9 +30,9 @@ const ConfirmDialog: React.FC<Props> = ({ isOpen, message, onCancel, onConfirm }
         <Modal isOpen={isOpen} onClose={onCancel} header="Confirm" headerId="confirmDialog">
             <ModalInner>
                 <Text>{message}</Text>
-                <button type="button" onClick={onConfirm}>
+                <Button type="button" onClick={onConfirm} variant="contained" color="primary">
                     <Text>Confirm</Text>
-                </button>
+                </Button>
             </ModalInner>
         </Modal>
     );

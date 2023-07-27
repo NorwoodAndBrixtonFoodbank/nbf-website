@@ -21,7 +21,6 @@ type CustomTheme = {
     accentForegroundColor: string;
     surfaceForegroundColor: string;
     surfaceBackgroundColor: string;
-    disabledColor: string;
     errorColor: string;
 };
 
@@ -32,12 +31,10 @@ const lightTheme: CustomTheme = {
     primaryBackgroundColor: "#63a036",
     secondaryForegroundColor: "#ffffff",
     secondaryBackgroundColor: "#066940",
-    accentBackgroundColor: "#1b629c",
-
+    accentBackgroundColor: "#609fd3",
     accentForegroundColor: "#000000",
     surfaceForegroundColor: "#000000",
     surfaceBackgroundColor: "#ffffff",
-    disabledColor: "#696969",
     errorColor: "#ff624e",
 };
 
@@ -48,11 +45,10 @@ const darkTheme: CustomTheme = {
     primaryBackgroundColor: "#066940",
     secondaryForegroundColor: "#000000",
     secondaryBackgroundColor: "#63a036",
-    accentBackgroundColor: "#609fd3",
+    accentBackgroundColor: "#1b629c",
     accentForegroundColor: "#ffffff",
     surfaceForegroundColor: "#ffffff",
     surfaceBackgroundColor: "#161414",
-    disabledColor: "#a0a0a0",
     errorColor: "#ff624e",
 };
 
@@ -60,8 +56,6 @@ interface Props {
     children: React.ReactElement;
     theme?: CustomTheme;
 }
-
-let forceRerender = 0;
 
 export const ThemeUpdateContext = createContext((dark: boolean): void => {
     throw new Error(
@@ -146,7 +140,7 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
 
     return (
         <ThemeUpdateContext.Provider value={handleThemeChange}>
-            <ThemeProvider theme={chosenTheme} key={forceRerender++}>
+            <ThemeProvider theme={chosenTheme}>
                 <MaterialThemeProvider theme={materialTheme}>
                     <GlobalStyle />
                     {themedChildren}

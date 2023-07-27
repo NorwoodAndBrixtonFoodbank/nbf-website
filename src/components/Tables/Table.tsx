@@ -5,7 +5,7 @@ import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar, { FilterText } from "./TableFilterBar";
 import { styled } from "styled-components";
 import { NoSsr } from "@mui/material";
-import SpeechBubbleIcon from "../Icons/SpeechBubbleIcon";
+import SpeechBubbleIcon from "@/components/Icons/SpeechBubbleIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faAnglesUp,
@@ -205,28 +205,37 @@ const Table: React.FC<Props> = (props) => {
                 return (
                     <EditandReorderArrowDiv>
                         {props.reorderable ? (
-                            <IconButton onClick={() => swapRows(row.rowId, row.rowId - 1)}>
+                            <IconButton
+                                onClick={() => swapRows(row.rowId, row.rowId - 1)}
+                                aria-label="reorder row upwards"
+                            >
                                 <StyledIcon icon={faAnglesUp} />
                             </IconButton>
                         ) : (
                             <></>
                         )}
                         {props.onEdit ? (
-                            <IconButton onClick={onEditClick}>
+                            <IconButton onClick={onEditClick} aria-label="edit">
                                 <StyledIcon icon={faPenToSquare} />
                             </IconButton>
                         ) : (
                             <></>
                         )}
                         {props.reorderable ? (
-                            <IconButton onClick={() => swapRows(row.rowId, row.rowId + 1)}>
+                            <IconButton
+                                onClick={() => swapRows(row.rowId, row.rowId + 1)}
+                                aria-label="reorder row downwards"
+                            >
                                 <StyledIcon icon={faAnglesDown} />
                             </IconButton>
                         ) : (
                             <></>
                         )}
                         {props.onDelete ? (
-                            <IconButton onClick={() => props.onDelete!(row.rowId)}>
+                            <IconButton
+                                onClick={() => props.onDelete!(row.rowId)}
+                                aria-label="delete"
+                            >
                                 <StyledIcon icon={faTrashAlt} />
                             </IconButton>
                         ) : (
@@ -285,6 +294,7 @@ const EditandReorderArrowDiv = styled.div`
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     width: 100%;
+    // this transform is necessary to make the buttons visually consistent with the rest of the table without redesigning the layout
     transform: translateX(-0.8rem);
 `;
 
@@ -328,14 +338,16 @@ const Styling = styled.div`
 
     // the icons in the pagination bar
     & svg {
-        fill: ${(props) => props.theme.disabledColor};
+        // TODO: VFB-16 different greys for different theme modes
+        fill: grey;
     }
 
     // formatting all direct children to adhere to the theme
     & > div {
         background-color: ${(props) => props.theme.surfaceBackgroundColor};
         color: ${(props) => props.theme.surfaceForegroundColor};
-        border-color: ${(props) => props.theme.disabledColor};
+        // TODO: VFB-16 different greys for different theme modes
+        border-color: grey;
     }
 
     // the filter bars
@@ -343,7 +355,8 @@ const Styling = styled.div`
         color: ${(props) => props.theme.surfaceForegroundColor};
 
         &::placeholder {
-            color: ${(props) => props.theme.disabledColor};
+            // TODO: VFB-16 different greys for different theme modes
+            color: grey;
         }
 
         background-color: ${(props) => props.theme.surfaceBackgroundColor};
@@ -351,42 +364,43 @@ const Styling = styled.div`
         padding: 4px 1px 4px 8px;
         border-radius: 0.5rem;
         width: 10rem;
-        border: solid 1px ${(props) => props.theme.disabledColor};
+        // TODO: VFB-16 different greys for different theme modes
+        border: solid 1px grey;
     }
 
     & .rdt_TableCell,
-    & .rdt_TableCol_Sortable {
+    & .rdt_TableCol_Sortable,
+    & .rdt_TableCol {
         width: 7rem;
         // important needed to override the inline style
-        padding: 0 !important;
-    }
+        padding: 0 0 0 1rem !important;
 
-    & .rdt_TableCol,
-    & .rdt_TableCol_Sortable {
-        // same here
-        padding-right: 0 !important;
-
-        & > div {
+        // allowing text overflow so the titles don't get unnecessarily clipped due to react-data-table's layout
+        & > * {
             overflow: visible;
         }
     }
-
-    border-radius: 0;
-    background-color: transparent;
 
     // the table itself
     & .rdt_TableCell,
     & .rdt_TableCol_Sortable,
     & .rdt_TableRow,
+    & .rdt_TableCol,
     & .rdt_Table {
         font-size: 1.2rem;
-        padding: 0.5rem 0.5rem;
         background-color: transparent;
         color: ${(props) => props.theme.surfaceForegroundColor};
     }
 
+    & .rdt_TableRow {
+        padding: 0.5rem 0.5rem;
+        // TODO: VFB-16 different greys for different theme modes
+        border-bottom-color: grey !important;
+    }
+
     & .rdt_TableHeadRow {
         background-color: ${(props) => props.theme.surfaceBackgroundColor};
+        border-color: ${(props) => props.theme.foregroundColor};
     }
 
     & .rdt_TableCell {
@@ -394,14 +408,6 @@ const Styling = styled.div`
         & > div {
             white-space: normal;
         }
-    }
-
-    & .rdt_TableRow {
-        border-bottom-color: ${(props) => props.theme.disabledColor}!important;
-    }
-
-    & .rdt_TableHeadRow {
-        border-color: ${(props) => props.theme.foregroundColor};
     }
 
     & .rdt_Table > div {

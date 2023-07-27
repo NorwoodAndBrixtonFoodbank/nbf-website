@@ -42,6 +42,13 @@ const Icon: React.FC<Props> = (props) => {
         setHovered(false);
     };
 
+    const onTap = (): void => {
+        setHovered(true);
+        setTimeout(() => {
+            setHovered(false);
+        }, 2000);
+    };
+
     return (
         <>
             {props.onHoverText && hovered && props.popper ? (
@@ -50,8 +57,7 @@ const Icon: React.FC<Props> = (props) => {
                     onMouseLeave={hide}
                     onMouseDown={show}
                     onMouseUp={hide}
-                    onTouchStart={show}
-                    onTouchEnd={hide}
+                    onTouchStart={onTap}
                 >
                     {props.onHoverText}
                 </Popper>

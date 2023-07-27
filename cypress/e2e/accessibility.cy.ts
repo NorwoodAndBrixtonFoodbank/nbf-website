@@ -42,7 +42,6 @@ describe("Accessibility tests in light mode", () => {
 describe("Accessibility tests in dark mode", () => {
     beforeEach(() => {
         cy.login();
-        cy.visit("/clients");
     });
 
     it("Checks clients page", () => {

@@ -3,16 +3,17 @@
 import Modal from "@/components/Modal/Modal";
 import React, { useState } from "react";
 import { styled } from "styled-components";
-import { headers, tooltips } from "./dataview";
+import { headers, tooltips } from "@/app/lists/dataview";
 import TextInput from "@/components/DataInput/FreeFormTextInput";
 import { Datum } from "@/components/Tables/Table";
 import supabase from "@/supabase";
 import Snackbar from "@mui/material/Snackbar/Snackbar";
 import Alert from "@mui/material/Alert/Alert";
+import Button from "@mui/material/Button/Button";
 
 type Props = {
     onClose: () => void;
-    /** null => add, undefined => modal closed */
+    /** null => add, undefined => modal closed, Datum => edit */
     data: Datum | null | undefined;
 };
 
@@ -94,13 +95,11 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                         </DisplayContents>
                     );
                 })}
-                <button
-                    type="button"
+                <Button
+                    variant="contained"
+                    color="primary"
                     onClick={async () => {
-                        console.log(toSubmit);
                         let operation;
-
-                        console.log(toSubmit);
 
                         if (data === null) {
                             operation = supabase.from("lists").insert(toSubmit);
@@ -120,12 +119,11 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                             );
                         } else {
                             onClose();
-                            console.log(response);
                         }
                     }}
                 >
                     Submit
-                </button>
+                </Button>
                 <Snackbar
                     message={errorMsg}
                     autoHideDuration={3000}

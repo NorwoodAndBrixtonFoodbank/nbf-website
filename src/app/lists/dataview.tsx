@@ -4,7 +4,7 @@ import Table, { Datum } from "@/components/Tables/Table";
 import { Database } from "@/database_types_file";
 import React, { useState } from "react";
 import { styled } from "styled-components";
-import EditModal from "./edit_modal";
+import EditModal from "@/app/lists/edit_modal";
 import supabase from "@/supabase";
 import ConfirmDialog from "@/components/Modal/Confirm";
 import Snackbar from "@mui/material/Snackbar/Snackbar";

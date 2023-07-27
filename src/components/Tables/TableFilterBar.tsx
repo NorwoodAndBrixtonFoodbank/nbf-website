@@ -2,7 +2,7 @@
 
 import React from "react";
 import { styled } from "styled-components";
-import FilterAccordion from "./Accordion";
+import FilterAccordion from "@/components/Tables/Accordion";
 
 export type FilterText = {
     [key: string]: string;
@@ -15,6 +15,7 @@ const StyledFilterAccordion = styled(FilterAccordion)`
 
 const ClearButton = styled.button`
     background-color: ${(props) => props.theme.secondaryBackgroundColor};
+    color: ${(props) => props.theme.secondaryForegroundColor};
     box-shadow: 0 0 1px ${(props) => props.theme.secondaryBackgroundColor};
     height: 3rem;
     width: 6rem;

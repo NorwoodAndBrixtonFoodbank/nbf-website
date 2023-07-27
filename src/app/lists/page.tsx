@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import React, { ReactElement } from "react";
-import ListsDataView from "./dataview";
+import ListsDataView from "@/app/lists/dataview";
 import supabase from "@/supabase";
 import { Database } from "@/database_types_file";
 
