@@ -178,6 +178,20 @@ const AddClientForm: React.FC = () => {
         fieldSetter("children", childrenCopy);
     }, [fields.numberChildren]); // eslint-disable-line
 
+    // TODO figure it out (thanks paopao)
+    // useEffect(() => { // TODO Call postcode API to check. A little weird right now
+    //     (async () => {
+    //         if (errorMessages.addressPostcode === "") {
+    //             // TODO check against regex first
+    //             const url = `https://api.postcodes.io/postcodes/${fields.addressPostcode}`;
+    //             const json = await fetch(url).then((response) => response.json());
+    //             if (json.status !== 200) {
+    //                 errorSetter("addressPostcode", "Please enter a valid entry.");
+    //             }
+    //         }
+    //     })();
+    // }, [errorMessages.addressPostcode]); // eslint-disable-line
+
     const fieldSetter = setField(setFields, fields);
     const errorSetter = setError(setErrorType, errorType);
 

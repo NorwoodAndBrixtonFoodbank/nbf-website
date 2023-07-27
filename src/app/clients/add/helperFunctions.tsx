@@ -93,7 +93,7 @@ const getErrorType = (
     event: Event,
     required?: boolean,
     regex?: RegExp,
-    additionalCondition?: (value: any) => boolean // TODO: change type
+    additionalCondition?: (value: any) => boolean // TODO change type
 ): Error => {
     const input = event.target.value;
     if (required && input === "") {
@@ -118,8 +118,8 @@ export const onChange = (
     key: string,
     required?: boolean,
     regex?: RegExp,
-    formattingFunction?: (value: any) => any, // TODO: change this any
-    additionalCondition?: (value: any) => boolean // TODO: change the order of this please
+    formattingFunction?: (value: any) => any, // TODO change this any
+    additionalCondition?: (value: any) => boolean // TODO change the order of this please
 ): OnChange => {
     return (event) => {
         const errorType = getErrorType(event, required, regex, additionalCondition);
@@ -129,6 +129,9 @@ export const onChange = (
         if (errorType === Error.none) {
             const newValue = formattingFunction ? formattingFunction(input) : input;
             fieldSetter(key, newValue);
+        } else {
+            // Added this to make number children field max at 50
+            fieldSetter(key, input);
         }
     };
 };
