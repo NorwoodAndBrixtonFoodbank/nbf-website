@@ -87,7 +87,7 @@ const DrawerInner = styled.div`
 const LogoNavElement: React.FC<{}> = () => (
     <UnstyledLink href="/">
         <LogoDiv>
-            <Logo alt="Vauxhall Foodbank Logo" src="/finalUpscaledLogo.webp" />
+            <Logo alt="Vauxhall Foodbank Logo" src="/usedLogo.webp" />
         </LogoDiv>
     </UnstyledLink>
 );

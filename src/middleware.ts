@@ -29,7 +29,7 @@ export const config = {
          * - favicon.ico (favicon file)
          * - logo.png (so navbar can load on login page)
          */
-        "/((?!_next/static|_next/image|favicon.ico|logo.png|finalUpscaledLogo.webp).*)",
+        "/((?!_next/static|_next/image|favicon.ico|logo.png|usedLogo.webp).*)",
     ],
 };
 
