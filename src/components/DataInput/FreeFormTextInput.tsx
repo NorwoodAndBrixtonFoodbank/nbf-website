@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { TextField } from "@mui/material";
-export interface Props {
+interface Props {
     label?: string;
     defaultValue?: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;

@@ -1,17 +1,19 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
-    setErrorFunction,
-    setFieldFunction,
+    setError,
+    setField,
     Fields,
-    ErrorMessages,
+    ErrorType,
     onChangeFunction,
     getNumberAdults,
     numberRegex,
     phoneNumberRegex,
     postcodeRegex,
-    People,
+    Error,
+    Person,
     getChild,
     onChangeCheckbox,
     getBaby,
@@ -22,9 +24,9 @@ import {
     formatPhoneNumber,
     formatPostcode,
     checkboxGroupToArray,
-} from "@/app/add-clients/helperFunctions";
+} from "@/app/clients/add/helperFunctions";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { errorExists, errorText } from "@/app/add-clients/helperFunctions";
+import { errorExists } from "@/app/clients/add/helperFunctions";
 import styled from "styled-components";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import CheckboxGroupInput from "@/components/DataInput/CheckboxGroupInput";
@@ -93,7 +95,7 @@ const StyledButton = styled.button`
     width: 150px;
     height: 40px;
     border-radius: 10px;
-    border: solid 0px ${(props) => props.theme.foregroundColor};
+    border: solid 0 ${(props) => props.theme.foregroundColor};
     background-color: ${(props) => props.theme.primaryBackgroundColor};
     color: ${(props) => props.theme.primaryForegroundColor};
 
@@ -147,23 +149,24 @@ const initialFields: Fields = {
     extraInformation: "",
 };
 
-const initialErrorMessages: ErrorMessages = {
-    fullName: "N/A",
-    phoneNumber: "",
-    addressLine1: "N/A",
-    addressPostcode: "N/A",
-    adults: "N/A",
-    numberChildren: "N/A",
-    nappySize: "",
+const initialErrorTypes: ErrorType = {
+    fullName: Error.initial,
+    phoneNumber: Error.none,
+    addressLine1: Error.initial,
+    addressPostcode: Error.initial,
+    adults: Error.initial,
+    numberChildren: Error.initial,
+    nappySize: Error.none,
 };
 
 const AddClientForm: React.FC = () => {
+    const router = useRouter();
     const [fields, setFields] = useState<Fields>(initialFields);
-    const [errorMessages, setErrorMessages] = useState<ErrorMessages>(initialErrorMessages);
-    const [submitError, setSubmitError] = useState("");
+    const [errorType, setErrorType] = useState<ErrorType>(initialErrorTypes);
+    const [submitError, setSubmitError] = useState<Error>(Error.none);
 
     useEffect(() => {
-        const childrenCopy: People[] = [];
+        const childrenCopy: Person[] = [];
         for (let index = 0; index < fields.numberChildren; index++) {
             if (index < fields.children.length) {
                 childrenCopy.push(fields.children[index]);
@@ -174,8 +177,8 @@ const AddClientForm: React.FC = () => {
         fieldSetter("children", childrenCopy);
     }, [fields.numberChildren]); // eslint-disable-line
 
-    const fieldSetter = setFieldFunction(setFields, fields);
-    const errorSetter = setErrorFunction(setErrorMessages, errorMessages);
+    const fieldSetter = setField(setFields, fields);
+    const errorSetter = setError(setErrorType, errorType);
 
     const submitForm = async (): Promise<void> => {
         let extraInformationWithNappy = fields.extraInformation;
@@ -198,27 +201,23 @@ const AddClientForm: React.FC = () => {
             delivery_instructions: fields.deliveryInstructions,
             extra_information: extraInformationWithNappy,
         };
-        console.log(clientRecord);
-        const inputError = checkErrorOnSubmit(errorMessages, setErrorMessages);
+        const inputError = checkErrorOnSubmit(errorType, setErrorType);
+        let submitErrorValue = Error.none;
         if (!inputError) {
-            setSubmitError("");
             const familyID = await insertClient(clientRecord);
-            if (familyID !== null) {
-                const familySuccess = await insertFamily(
-                    [...fields.adults, ...fields.children],
-                    familyID
-                );
-                if (!familySuccess) {
-                    setSubmitError("An error has occurred. Please try again later.");
-                }
+            const insertSuccess = await insertFamily(
+                [...fields.adults, ...fields.children],
+                familyID
+            );
+            if (insertSuccess) {
+                router.push("/clients");
             } else {
-                setSubmitError("An error has occurred. Please try again later.");
+                submitErrorValue = Error.database;
             }
         } else {
-            setSubmitError(
-                "Please ensure all fields have been entered correctly. Required fields are labelled with an asterisk."
-            );
+            submitErrorValue = Error.submit;
         }
+        setSubmitError(submitErrorValue);
     };
 
     const fullNameCard: React.ReactNode = genericFormCard(
@@ -226,8 +225,8 @@ const AddClientForm: React.FC = () => {
         true,
         <FreeFormTextInput
             label="Name"
-            error={errorExists(errorMessages.fullName)}
-            helperText={errorText(errorMessages.fullName)}
+            error={errorExists(errorType.fullName)}
+            helperText={errorType.fullName}
             onChange={onChangeFunction(fieldSetter, errorSetter, "fullName", true)}
         />,
         "First and last name"
@@ -238,8 +237,8 @@ const AddClientForm: React.FC = () => {
         false,
         <FreeFormTextInput
             label="Phone Number"
-            error={errorExists(errorMessages.phoneNumber)}
-            helperText={errorText(errorMessages.phoneNumber)}
+            error={errorExists(errorType.phoneNumber)}
+            helperText={errorType.phoneNumber}
             onChange={onChangeFunction(
                 fieldSetter,
                 errorSetter,
@@ -257,9 +256,9 @@ const AddClientForm: React.FC = () => {
         true,
         <>
             <FreeFormTextInput
-                label="Address Line 1*"
-                error={errorExists(errorMessages.addressLine1)}
-                helperText={errorText(errorMessages.addressLine1)}
+                label="Address Line 1"
+                error={errorExists(errorType.addressLine1)}
+                helperText={errorType.addressLine1}
                 onChange={onChangeFunction(fieldSetter, errorSetter, "addressLine1", true)}
             />
             <FreeFormTextInput
@@ -275,9 +274,9 @@ const AddClientForm: React.FC = () => {
                 onChange={onChangeFunction(fieldSetter, errorSetter, "addressCounty", false)}
             />
             <FreeFormTextInput
-                label="Postcode* (e.g. SE11 5QY)"
-                error={errorExists(errorMessages.addressPostcode)}
-                helperText={errorText(errorMessages.addressPostcode)}
+                label="Postcode (e.g. SE11 5QY)"
+                error={errorExists(errorType.addressPostcode)}
+                helperText={errorType.addressPostcode}
                 onChange={onChangeFunction(
                     fieldSetter,
                     errorSetter,
@@ -296,18 +295,18 @@ const AddClientForm: React.FC = () => {
         true,
         <>
             <FreeFormTextInput
-                error={errorExists(errorMessages.adults)}
+                error={errorExists(errorType.adults)}
                 label="Female"
                 onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "female")}
             />
             <FreeFormTextInput
-                error={errorExists(errorMessages.adults)}
+                error={errorExists(errorType.adults)}
                 label="Male"
                 onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "male")}
             />
             <FreeFormTextInput
-                error={errorExists(errorMessages.adults)}
-                helperText={errorText(errorMessages.adults)}
+                error={errorExists(errorType.adults)}
+                helperText={errorType.adults}
                 label="Prefer Not To Say"
                 onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "adult")}
             />
@@ -321,8 +320,8 @@ const AddClientForm: React.FC = () => {
         <>
             <FreeFormTextInput
                 label="Number of Children"
-                error={errorExists(errorMessages.numberChildren)}
-                helperText={errorText(errorMessages.numberChildren)}
+                error={errorExists(errorType.numberChildren)}
+                helperText={errorType.numberChildren}
                 onChange={onChangeFunction(
                     fieldSetter,
                     errorSetter,
@@ -436,8 +435,8 @@ const AddClientForm: React.FC = () => {
             {fields.babyProducts ? (
                 <>
                     <FreeFormTextInput
-                        error={errorExists(errorMessages.nappySize)}
-                        helperText={errorText(errorMessages.nappySize)}
+                        error={errorExists(errorType.nappySize)}
+                        helperText={errorType.nappySize}
                         label="Nappy Size"
                         onChange={onChangeFunction(fieldSetter, errorSetter, "nappySize", true)}
                     />
@@ -458,7 +457,8 @@ const AddClientForm: React.FC = () => {
                 ["Dog", "Dog"],
             ]}
             onChange={onChangeCheckbox(fieldSetter, fields.petFood, "petFood")}
-        />
+        />,
+        "Tick all that apply. Specify any other requests in the 'Extra Information' section."
     );
 
     const otherItemsCard = genericFormCard(

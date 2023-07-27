@@ -6,14 +6,25 @@ import { InsertSchema } from "@/supabase";
 import supabase from "@/supabase";
 
 type PersonType = Database["public"]["Enums"]["gender"];
-type FieldType = string | (boolean | null) | booleanGroup | Address | People[];
-type EventType = React.ChangeEvent<HTMLInputElement> | SelectChangeEvent;
-type OnChangeType = (event: EventType) => void;
-type onChangeCheckboxType = (event: React.ChangeEvent<HTMLInputElement>) => void;
-type SetErrorType = (errorKey: string, errorMessage: string) => void;
-type SetFieldType = (fieldKey: string, newFieldValue: FieldType) => void;
-export type ClientDatabaseRecord = InsertSchema["clients"];
+export enum Error {
+    initial = "required",
+    none = "",
+    required = "This is a required field.",
+    invalid = "Please enter a valid entry.",
+    submit = "Please ensure all fields have been entered correctly. Required fields are labelled with an asterisk.",
+    database = "An error has occurred. Please try again later.",
+}
+
+type Event = React.ChangeEvent<HTMLInputElement> | SelectChangeEvent;
+type OnChange = (event: Event) => void;
+type OnChangeCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => void;
+type ErrorSetter = (errorKey: string, errorType: Error) => void;
+type FieldSetter = (
+    fieldKey: string,
+    newFieldValue: string | (boolean | null) | booleanGroup | Address | Person[]
+) => void;
 type FamilyDatabaseRecord = InsertSchema["families"];
+export type ClientDatabaseRecord = InsertSchema["clients"];
 
 interface Address {
     line1: string;
@@ -23,20 +34,20 @@ interface Address {
     postcode: string;
 }
 
-export interface People {
+export interface Person {
     personType: PersonType;
     age?: number | null;
     quantity?: number;
 }
 
-export interface ErrorMessages {
-    fullName: string;
-    phoneNumber: string;
-    addressLine1: string;
-    addressPostcode: string;
-    adults: string;
-    numberChildren: string;
-    nappySize: string;
+export interface ErrorType {
+    fullName: Error;
+    phoneNumber: Error;
+    addressLine1: Error;
+    addressPostcode: Error;
+    adults: Error;
+    numberChildren: Error;
+    nappySize: Error;
 }
 
 export interface Fields {
@@ -47,9 +58,9 @@ export interface Fields {
     addressTown: string;
     addressCounty: string;
     addressPostcode: string;
-    adults: People[];
+    adults: Person[];
     numberChildren: number;
-    children: People[];
+    children: Person[];
     dietaryRequirements: booleanGroup;
     feminineProducts: booleanGroup;
     babyProducts: boolean | null;
@@ -60,31 +71,32 @@ export interface Fields {
     extraInformation: string;
 }
 
-export const setErrorFunction = (
-    errorSetter: React.Dispatch<React.SetStateAction<ErrorMessages>>,
-    errorValues: ErrorMessages
-): SetErrorType => {
-    return (errorKey, errorMessage): void => {
-        errorSetter({ ...errorValues, [errorKey]: errorMessage });
-    };
-};
-
-export const setFieldFunction = (
+export const setField = (
     fieldSetter: React.Dispatch<React.SetStateAction<Fields>>,
     fieldValues: Fields
-): SetFieldType => {
+): FieldSetter => {
     return (fieldKey, newFieldValue) => {
         fieldSetter({ ...fieldValues, [fieldKey]: newFieldValue });
     };
 };
-const getErrorType = (event: EventType, required?: boolean, regex?: RegExp): string => {
+
+export const setError = (
+    errorSetter: React.Dispatch<React.SetStateAction<ErrorType>>,
+    errorValues: ErrorType
+): ErrorSetter => {
+    return (errorKey, errorType) => {
+        errorSetter({ ...errorValues, [errorKey]: errorType });
+    };
+};
+
+const getErrorType = (event: Event, required?: boolean, regex?: RegExp): Error => {
     const input = event.target.value;
     if (required && input === "") {
-        return "This is a required fields.";
+        return Error.required;
     } else if (!!regex && !input.match(regex)) {
-        return "Please enter a valid entry.";
+        return Error.invalid;
     } else {
-        return "";
+        return Error.none;
     }
 };
 
@@ -93,18 +105,19 @@ export const checkboxGroupToArray = (checkedBoxes: booleanGroup): string[] => {
 };
 
 export const onChangeFunction = (
-    fieldSetter: SetFieldType,
-    errorSetter: SetErrorType,
+    fieldSetter: FieldSetter,
+    errorSetter: ErrorSetter,
     key: string,
     required?: boolean,
     regex?: RegExp,
     formattingFunction?: (value: any) => any
-): OnChangeType => {
+): OnChange => {
     return (event) => {
         const errorType = getErrorType(event, required, regex);
         const input = event.target.value;
         errorSetter(key, errorType);
-        if (errorType === "") {
+        // if (errorType === "none") {
+        if (errorType === Error.none) {
             const newValue = formattingFunction ? formattingFunction(input) : input;
             fieldSetter(key, newValue);
         }
@@ -112,22 +125,19 @@ export const onChangeFunction = (
 };
 
 export const onChangeCheckbox = (
-    fieldSetter: SetFieldType,
+    fieldSetter: FieldSetter,
     currentObject: booleanGroup,
     key: string
-): onChangeCheckboxType => {
+): OnChangeCheckbox => {
     return (event) => {
         const newObject = { ...currentObject, [event.target.name]: event.target.checked };
         fieldSetter(key, newObject);
     };
 };
 
-export const errorExists = (errorMessage: string): boolean => {
-    return errorMessage !== "" && errorMessage !== "N/A";
-};
-
-export const errorText = (errorMessage: string): string => {
-    return errorMessage == "N/A" ? "" : errorMessage;
+export const errorExists = (errorType: Error): boolean => {
+    // return errorType !== "none" && errorType !== "initial";
+    return errorType !== Error.initial && errorType !== Error.none;
 };
 
 // Regex source: https://ihateregex.io/expr/phone/
@@ -146,11 +156,11 @@ export const formatPostcode = (value: string): string => {
 export const numberRegex = /^\d+$/;
 
 export const getNumberAdults = (
-    fieldSetter: SetFieldType,
-    errorSetter: SetErrorType,
-    adults: People[],
+    fieldSetter: FieldSetter,
+    errorSetter: ErrorSetter,
+    adults: Person[],
     personType: PersonType
-): OnChangeType => {
+): OnChange => {
     return (event) => {
         const input = event.target.value;
         const numberPattern = /^\d+$/;
@@ -167,22 +177,22 @@ export const getNumberAdults = (
 
         const invalidAdultEntry = newValue.filter((value) => value.quantity === -1);
         const nonZeroAdultEntry = newValue.filter((value) => value.quantity! > 0);
-        let newMessage = "";
+        let errorType: Error = Error.none;
         if (invalidAdultEntry.length > 0) {
-            newMessage = "Please enter a valid entry.";
+            errorType = Error.invalid;
         } else if (nonZeroAdultEntry.length === 0) {
-            newMessage = "This is a required field.";
+            errorType = Error.required;
         }
-        errorSetter("adults", newMessage);
+        errorSetter("adults", errorType);
     };
 };
 
 export const getChild = (
-    fieldSetter: SetFieldType,
-    children: People[],
+    fieldSetter: FieldSetter,
+    children: Person[],
     index: number,
     subFieldName: "personType" | "age"
-): OnChangeType => {
+): OnChange => {
     return (event) => {
         const input = event.target.value;
         if (subFieldName === "personType") {
@@ -196,14 +206,14 @@ export const getChild = (
     };
 };
 
-export const getBaby = (fieldSetter: SetFieldType, errorSetter: SetErrorType): OnChangeType => {
+export const getBaby = (fieldSetter: FieldSetter, errorSetter: ErrorSetter): OnChange => {
     return (event) => {
         const input = event.target.value;
         if (input === "Yes") {
-            errorSetter("nappySize", "N/A");
+            errorSetter("nappySize", Error.initial);
             fieldSetter("babyProducts", true);
         } else {
-            errorSetter("nappySize", "");
+            errorSetter("nappySize", Error.none);
             if (input === "No") {
                 fieldSetter("babyProducts", false);
             } else {
@@ -214,29 +224,35 @@ export const getBaby = (fieldSetter: SetFieldType, errorSetter: SetErrorType): O
 };
 
 export const checkErrorOnSubmit = (
-    errorMessages: ErrorMessages,
-    errorSetter: React.Dispatch<React.SetStateAction<ErrorMessages>>
+    errorType: ErrorType,
+    errorSetter: React.Dispatch<React.SetStateAction<ErrorType>>
 ): boolean => {
     let errorExists = false;
-    let amendedErrorMessages = { ...errorMessages };
-    for (const [errorKey, errorMessage] of Object.entries(errorMessages)) {
-        if (errorMessage !== "") {
+    let amendedErrorTypes = { ...errorType };
+    for (const [errorKey, error] of Object.entries(errorType)) {
+        if (error !== "none") {
             errorExists = true;
         }
-        if (errorMessage === "N/A") {
-            amendedErrorMessages = {
-                ...amendedErrorMessages,
-                [errorKey]: "This is a required field.",
+        if (error === "initial") {
+            amendedErrorTypes = {
+                ...amendedErrorTypes,
+                [errorKey]: "required",
             };
         }
     }
     if (errorExists) {
-        errorSetter({ ...amendedErrorMessages });
+        errorSetter({ ...amendedErrorTypes });
     }
     return errorExists;
 };
 
-export const insertFamily = async (peopleArray: People[], familyID: string): Promise<boolean> => {
+export const insertFamily = async (
+    peopleArray: Person[],
+    familyID: string | null
+): Promise<boolean> => {
+    if (familyID === null) {
+        return false;
+    }
     const familyRecords: FamilyDatabaseRecord[] = [];
     for (const person of peopleArray) {
         if (person.quantity === undefined || person.quantity > 0) {

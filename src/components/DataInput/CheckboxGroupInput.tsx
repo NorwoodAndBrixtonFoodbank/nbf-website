@@ -3,13 +3,13 @@
 import React from "react";
 import { Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel } from "@mui/material";
 
-export interface Props {
+interface Props {
     labelsAndKeys: [string, string][];
     groupLabel?: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const CheckboxInput: React.FC<Props> = (props) => {
+const CheckboxGroupInput: React.FC<Props> = (props) => {
     return (
         <FormControl>
             <FormLabel>{props.groupLabel}</FormLabel>
@@ -28,4 +28,4 @@ const CheckboxInput: React.FC<Props> = (props) => {
     );
 };
 
-export default CheckboxInput;
+export default CheckboxGroupInput;

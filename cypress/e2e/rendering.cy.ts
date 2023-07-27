@@ -22,7 +22,7 @@ describe("Rendering tests", () => {
     });
 
     it("Renders add client page", () => {
-        cy.visit("/add-clients");
+        cy.visit("/add");
 
         cy.get("h1").should("contain.text", "Client Form");
     });

@@ -5,7 +5,7 @@ import React from "react";
 import RadioGroup from "@mui/material/RadioGroup";
 import { FormControl, FormControlLabel, FormLabel, Radio } from "@mui/material";
 
-export interface Props {
+interface Props {
     labelsAndValues: [string, string][];
     groupTitle?: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;

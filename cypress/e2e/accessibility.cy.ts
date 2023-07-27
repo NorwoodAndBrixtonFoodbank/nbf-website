@@ -24,8 +24,8 @@ describe("Accessibility tests in light mode", () => {
         cy.checkAccessibility();
     });
 
-    it("Checks add-clients page", () => {
-        cy.visit("/add-clients");
+    it("Checks add page", () => {
+        cy.visit("/clients/add");
 
         cy.get(".light-button").click();
         cy.checkAccessibility();
@@ -67,8 +67,8 @@ describe("Accessibility tests in dark mode", () => {
         cy.checkAccessibility();
     });
 
-    it("Checks add-clients page", () => {
-        cy.visit("/add-clients");
+    it("Checks add page", () => {
+        cy.visit("/clients/add");
 
         cy.get(".dark-button").click();
         cy.checkAccessibility();
