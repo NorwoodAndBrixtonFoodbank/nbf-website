@@ -116,6 +116,15 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
         typography: {
             fontFamily: "Arial, Helvetica, sans-serif",
         },
+        components: {
+            MuiAppBar: {
+                styleOverrides: {
+                    root: {
+                        backgroundColor: chosenTheme.surfaceBackgroundColor,
+                    },
+                },
+            },
+        },
     });
 
     return (

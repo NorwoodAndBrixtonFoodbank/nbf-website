@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useContext } from "react";
 import AppBar from "@mui/material/AppBar";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -10,6 +10,8 @@ import Link from "next/link";
 import { styled } from "styled-components";
 import Button from "@mui/material/Button";
 import { useRouter } from "next/navigation";
+import LightDarkSlider from "./LightDarkSlider";
+import { ThemeUpdateContext } from "@/app/themes";
 
 export const PageButton = styled(Button)`
     color: white;
@@ -25,10 +27,6 @@ const UnstyledLink = styled(Link)`
     display: contents;
 `;
 
-const LogoLink = styled(UnstyledLink)`
-    display: contents;
-`;
-
 const Logo = styled.img`
     max-width: 100%;
     max-height: 100%;
@@ -36,15 +34,9 @@ const Logo = styled.img`
 `;
 
 const LogoDiv = styled.div`
-    background-color: white;
+    background-color: transparent;
     border-radius: 10px;
-    overflow: hidden;
-    padding: 2px;
-    box-shadow: 2px 2px 5px ${(props) => props.theme.primaryBackgroundColor};
-    display: flex;
-    justify-content: center;
-    flex-basis: auto;
-    margin: 10px 0;
+    margin: 10px 20px;
     height: 80%;
     object-fit: cover;
 `;
@@ -57,7 +49,7 @@ const AppBarInner = styled.div`
     padding: 0 0.5rem;
 `;
 
-const SmSideElement = styled.div`
+const SmallNavBarElement = styled.div`
     display: flex;
     align-items: center;
     width: 8rem;
@@ -72,6 +64,7 @@ const LgNavElement = styled.div`
     flex-grow: 1;
     justify-content: end;
     gap: 1rem;
+    align-items: center;
 
     @media (min-width: 800px) {
         display: flex;
@@ -92,11 +85,11 @@ const DrawerInner = styled.div`
 `;
 
 const LogoNavElement: React.FC<{}> = () => (
-    <LogoLink href="/">
+    <UnstyledLink href="/">
         <LogoDiv>
-            <Logo alt="Vauxhall Foodbank Logo" src="/logo.png" />
+            <Logo alt="Vauxhall Foodbank Logo" src="/finalUpscaledLogo.webp" />
         </LogoDiv>
-    </LogoLink>
+    </UnstyledLink>
 );
 
 const SignOutButton: React.FC<{}> = () => {
@@ -128,7 +121,7 @@ const Gap = styled.div`
 
 const DrawerButtonWrapper = styled.div`
     padding: 1rem;
-    border-bottom: 1px solid ${(props) => props.theme.primaryBackgroundColor};
+    border-bottom: 1px solid ${(props) => props.theme.secondaryBackgroundColor};
 
     &:last-child {
         border-bottom: none;
@@ -137,6 +130,7 @@ const DrawerButtonWrapper = styled.div`
 
 const DrawerButton = styled(Button)`
     width: 100%;
+    color: ${(props) => props.theme.secondaryBackgroundColor};
 `;
 
 const ResponsiveAppBar: React.FC<{}> = () => {
@@ -156,6 +150,12 @@ const ResponsiveAppBar: React.FC<{}> = () => {
         ["Calendar", "/calendar"],
     ];
 
+    const setThemeMode = useContext(ThemeUpdateContext);
+
+    const switchThemeMode = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        setThemeMode(event.target.checked);
+    };
+
     return (
         <>
             <SwipeableDrawer open={drawer} onClose={closeDrawer} onOpen={openDrawer}>
@@ -171,7 +171,7 @@ const ResponsiveAppBar: React.FC<{}> = () => {
             </SwipeableDrawer>
             <AppBar position="static">
                 <AppBarInner>
-                    <SmSideElement>
+                    <SmallNavBarElement>
                         <IconButton
                             size="medium"
                             aria-label="Mobile Menu Button"
@@ -180,7 +180,7 @@ const ResponsiveAppBar: React.FC<{}> = () => {
                             <MenuIcon />
                         </IconButton>
                         <Spacer />
-                    </SmSideElement>
+                    </SmallNavBarElement>
                     <LogoNavElement />
                     {/* TODO: VFB-16 need to fix nav colours */}
                     <LgNavElement>
@@ -191,13 +191,15 @@ const ResponsiveAppBar: React.FC<{}> = () => {
                                 </Button>
                             </UnstyledLink>
                         ))}
+                        <LightDarkSlider onChange={switchThemeMode} />
                         <Gap />
                         <SignOutButton />
                     </LgNavElement>
-                    <SmSideElement>
+                    <SmallNavBarElement>
                         <Spacer />
+                        <LightDarkSlider onChange={switchThemeMode} key="theme-toggle" />
                         <SignOutButton />
-                    </SmSideElement>
+                    </SmallNavBarElement>
                 </AppBarInner>
             </AppBar>
         </>
