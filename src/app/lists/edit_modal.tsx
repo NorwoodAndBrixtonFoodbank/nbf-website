@@ -77,7 +77,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                             <DataWithTooltipDiv>
                                 <TextInput
                                     defaultValue={toSubmit[key] ?? ""}
-                                    helperText={`${key}`}
+                                    helperText="Quantity"
                                     onChange={(event) => {
                                         const text = event.target.value as string;
                                         setToSubmit({ ...toSubmit, [key]: text });
@@ -85,7 +85,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                                 />
                                 <TextInput
                                     defaultValue={toSubmit[tooltipKey] ?? ""}
-                                    helperText={`${tooltipKey}`}
+                                    helperText="Notes"
                                     onChange={(event) => {
                                         const text = event.target.value as string;
                                         setToSubmit({ ...toSubmit, [tooltipKey]: text });
