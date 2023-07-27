@@ -89,11 +89,19 @@ export const setError = (
     };
 };
 
-const getErrorType = (event: Event, required?: boolean, regex?: RegExp): Error => {
+const getErrorType = (
+    event: Event,
+    required?: boolean,
+    regex?: RegExp,
+    additionalCondition?: (value: any) => boolean // TODO: change type
+): Error => {
     const input = event.target.value;
     if (required && input === "") {
         return Error.required;
-    } else if (!!regex && !input.match(regex)) {
+    } else if (
+        (!!regex && !input.match(regex)) ||
+        (!!additionalCondition && !!additionalCondition(input))
+    ) {
         return Error.invalid;
     } else {
         return Error.none;
@@ -104,16 +112,17 @@ export const checkboxGroupToArray = (checkedBoxes: booleanGroup): string[] => {
     return Object.keys(checkedBoxes).filter((key) => checkedBoxes[key]);
 };
 
-export const onChangeFunction = (
+export const onChange = (
     fieldSetter: FieldSetter,
     errorSetter: ErrorSetter,
     key: string,
     required?: boolean,
     regex?: RegExp,
-    formattingFunction?: (value: any) => any
+    formattingFunction?: (value: any) => any, // TODO: change this any
+    additionalCondition?: (value: any) => boolean // TODO: change the order of this please
 ): OnChange => {
     return (event) => {
-        const errorType = getErrorType(event, required, regex);
+        const errorType = getErrorType(event, required, regex, additionalCondition);
         const input = event.target.value;
         errorSetter(key, errorType);
         // if (errorType === "none") {
@@ -154,6 +163,10 @@ export const formatPostcode = (value: string): string => {
     return value.replace(/(\s)/g, "").toUpperCase();
 };
 export const numberRegex = /^\d+$/;
+
+export const maxNumberChildren = (value: number): boolean => {
+    return value <= 20;
+};
 
 export const getNumberAdults = (
     fieldSetter: FieldSetter,

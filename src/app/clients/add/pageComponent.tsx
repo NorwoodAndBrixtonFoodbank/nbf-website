@@ -7,7 +7,7 @@ import {
     setField,
     Fields,
     ErrorType,
-    onChangeFunction,
+    onChange,
     getNumberAdults,
     numberRegex,
     phoneNumberRegex,
@@ -24,6 +24,7 @@ import {
     formatPhoneNumber,
     formatPostcode,
     checkboxGroupToArray,
+    maxNumberChildren,
 } from "@/app/clients/add/helperFunctions";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import { errorExists } from "@/app/clients/add/helperFunctions";
@@ -227,7 +228,7 @@ const AddClientForm: React.FC = () => {
             label="Name"
             error={errorExists(errorType.fullName)}
             helperText={errorType.fullName}
-            onChange={onChangeFunction(fieldSetter, errorSetter, "fullName", true)}
+            onChange={onChange(fieldSetter, errorSetter, "fullName", true)}
         />,
         "First and last name"
     );
@@ -239,7 +240,7 @@ const AddClientForm: React.FC = () => {
             label="Phone Number"
             error={errorExists(errorType.phoneNumber)}
             helperText={errorType.phoneNumber}
-            onChange={onChangeFunction(
+            onChange={onChange(
                 fieldSetter,
                 errorSetter,
                 "phoneNumber",
@@ -259,25 +260,25 @@ const AddClientForm: React.FC = () => {
                 label="Address Line 1"
                 error={errorExists(errorType.addressLine1)}
                 helperText={errorType.addressLine1}
-                onChange={onChangeFunction(fieldSetter, errorSetter, "addressLine1", true)}
+                onChange={onChange(fieldSetter, errorSetter, "addressLine1", true)}
             />
             <FreeFormTextInput
                 label="Address Line 2"
-                onChange={onChangeFunction(fieldSetter, errorSetter, "addressLine2", false)}
+                onChange={onChange(fieldSetter, errorSetter, "addressLine2", false)}
             />
             <FreeFormTextInput
                 label="Town"
-                onChange={onChangeFunction(fieldSetter, errorSetter, "addressTown", false)}
+                onChange={onChange(fieldSetter, errorSetter, "addressTown", false)}
             />
             <FreeFormTextInput
                 label="County"
-                onChange={onChangeFunction(fieldSetter, errorSetter, "addressCounty", false)}
+                onChange={onChange(fieldSetter, errorSetter, "addressCounty", false)}
             />
             <FreeFormTextInput
                 label="Postcode (e.g. SE11 5QY)"
                 error={errorExists(errorType.addressPostcode)}
                 helperText={errorType.addressPostcode}
-                onChange={onChangeFunction(
+                onChange={onChange(
                     fieldSetter,
                     errorSetter,
                     "addressPostcode",
@@ -322,13 +323,14 @@ const AddClientForm: React.FC = () => {
                 label="Number of Children"
                 error={errorExists(errorType.numberChildren)}
                 helperText={errorType.numberChildren}
-                onChange={onChangeFunction(
+                onChange={onChange(
                     fieldSetter,
                     errorSetter,
                     "numberChildren",
                     true,
                     numberRegex,
-                    parseInt
+                    parseInt,
+                    maxNumberChildren
                 )}
             />
             {fields.children.map((child, index) => {
@@ -438,7 +440,7 @@ const AddClientForm: React.FC = () => {
                         error={errorExists(errorType.nappySize)}
                         helperText={errorType.nappySize}
                         label="Nappy Size"
-                        onChange={onChangeFunction(fieldSetter, errorSetter, "nappySize", true)}
+                        onChange={onChange(fieldSetter, errorSetter, "nappySize", true)}
                     />
                 </>
             ) : (
@@ -482,7 +484,7 @@ const AddClientForm: React.FC = () => {
         false,
         <FreeFormTextInput
             label="E.g. The doorbell does not work. Use the door code: xxxx."
-            onChange={onChangeFunction(fieldSetter, errorSetter, "deliveryInstructions")}
+            onChange={onChange(fieldSetter, errorSetter, "deliveryInstructions")}
         />
     );
 
@@ -491,7 +493,7 @@ const AddClientForm: React.FC = () => {
         false,
         <FreeFormTextInput
             label="E.g. Tea allergy"
-            onChange={onChangeFunction(fieldSetter, errorSetter, "extraInformation")}
+            onChange={onChange(fieldSetter, errorSetter, "extraInformation")}
         />,
         "Is there anything else you need to tell us about the client? Comments relating to food or anything else. Please add any delivery instructions to the 'Delivery Instructions' section above."
     );
