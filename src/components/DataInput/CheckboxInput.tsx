@@ -18,6 +18,5 @@ const CheckboxInput: React.FC<Props> = (props) => {
         </FormControl>
     );
 };
-// TODO Not needed code possibly
 
 export default CheckboxInput;

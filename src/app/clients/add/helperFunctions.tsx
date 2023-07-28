@@ -8,10 +8,8 @@ type Event = React.ChangeEvent<HTMLInputElement> | SelectChangeEvent;
 type OnChange = (event: Event) => void;
 type OnChangeCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => void;
 type ErrorSetter = (errorKey: string, errorType: Error) => void;
-type FieldSetter = (
-    fieldKey: string,
-    newFieldValue: string | (boolean | null) | booleanGroup | Address | Person[]
-) => void;
+type FieldSetter = (fieldKey: string, newFieldValue: Field) => void;
+type Field = string | number | (boolean | null) | booleanGroup | Address | Person[];
 type PersonType = Database["public"]["Enums"]["gender"];
 type FamilyDatabaseRecord = InsertSchema["families"];
 export type ClientDatabaseRecord = InsertSchema["clients"];
@@ -100,13 +98,13 @@ const getErrorType = (
     input: string,
     required?: boolean,
     regex?: RegExp,
-    additionalCondition?: (value: any) => boolean // TODO change type
+    additionalCondition?: (value: string) => boolean
 ): Error => {
     if (required && input === "") {
         return Error.required;
     } else if (
         (!!regex && !input.match(regex)) ||
-        (!!additionalCondition && !!additionalCondition(input))
+        (!!additionalCondition && !additionalCondition(input))
     ) {
         return Error.invalid;
     } else {
@@ -114,14 +112,14 @@ const getErrorType = (
     }
 };
 
-export const onChange = (
+export const getOnChange = (
     fieldSetter: FieldSetter,
     errorSetter: ErrorSetter,
     key: string,
     required?: boolean,
     regex?: RegExp,
-    formattingFunction?: (value: any) => any, // TODO change this any
-    additionalCondition?: (value: any) => boolean // TODO change the order of this please
+    formattingFunction?: (value: string) => Field,
+    additionalCondition?: (value: string) => boolean
 ): OnChange => {
     return (event) => {
         const input = event.target.value;
@@ -230,8 +228,8 @@ export const formatPostcode = (value: string): string => {
     return value.replace(/(\s)/g, "").toUpperCase();
 };
 
-export const maxNumberChildren = (value: number): boolean => {
-    return value <= 20;
+export const maxNumberChildren = (value: string): boolean => {
+    return parseInt(value) <= 20;
 };
 
 export const checkErrorOnSubmit = (
