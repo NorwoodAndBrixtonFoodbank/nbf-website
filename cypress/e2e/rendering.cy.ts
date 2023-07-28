@@ -18,6 +18,6 @@ describe("Rendering tests", () => {
     it("Renders calendar page", () => {
         cy.visit("/calendar");
 
-        cy.get("h1").should("contain.text", "Calendar Page");
+        cy.get("h1").should("contain.text", "Collection Time for Parcels");
     });
 });

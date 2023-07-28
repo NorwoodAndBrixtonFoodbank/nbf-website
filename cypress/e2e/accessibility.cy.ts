@@ -21,6 +21,7 @@ describe("Accessibility tests in light mode", () => {
         cy.visit("/calendar");
         cy.get(".light-button").click();
 
+        cy.get("table").should("be.visible");
         cy.checkAccessibility();
     });
 
@@ -57,6 +58,7 @@ describe("Accessibility tests in dark mode", () => {
         cy.visit("/calendar");
         cy.get(".dark-button").click();
 
+        cy.get("table").should("be.visible");
         cy.checkAccessibility();
     });
 
