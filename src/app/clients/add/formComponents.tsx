@@ -25,9 +25,10 @@ import {
     formatPostcode,
     checkboxGroupToArray,
     maxNumberChildren,
-} from "@/app/clients/add/helperFunctions";
+    errorText,
+} from "@/app/clients/add/formFunctions";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { errorExists } from "@/app/clients/add/helperFunctions";
+import { errorExists } from "@/app/clients/add/formFunctions";
 import styled from "styled-components";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import CheckboxGroupInput from "@/components/DataInput/CheckboxGroupInput";
@@ -118,7 +119,7 @@ const genericFormCard = (
                 <Subheading>
                     {title} {required && <RequiredAsterisk />}
                 </Subheading>
-                <Text>{text}</Text>
+                {text && <Text>{text}</Text>}
                 {childComponent}
             </StyledCard>
         </>
@@ -227,7 +228,7 @@ const AddClientForm: React.FC = () => {
         <FreeFormTextInput
             label="Name"
             error={errorExists(formErrors.fullName)}
-            helperText={formErrors.fullName}
+            helperText={errorText(formErrors.fullName)}
             onChange={getOnChange(fieldSetter, errorSetter, "fullName", true)}
         />,
         "First and last name"
@@ -239,7 +240,7 @@ const AddClientForm: React.FC = () => {
         <FreeFormTextInput
             label="Phone Number"
             error={errorExists(formErrors.phoneNumber)}
-            helperText={formErrors.phoneNumber}
+            helperText={errorText(formErrors.phoneNumber)}
             onChange={getOnChange(
                 fieldSetter,
                 errorSetter,
@@ -259,7 +260,7 @@ const AddClientForm: React.FC = () => {
             <FreeFormTextInput
                 label="Address Line 1"
                 error={errorExists(formErrors.addressLine1)}
-                helperText={formErrors.addressLine1}
+                helperText={errorText(formErrors.addressLine1)}
                 onChange={getOnChange(fieldSetter, errorSetter, "addressLine1", true)}
             />
             <FreeFormTextInput
@@ -277,7 +278,7 @@ const AddClientForm: React.FC = () => {
             <FreeFormTextInput
                 label="Postcode (e.g. SE11 5QY)"
                 error={errorExists(formErrors.addressPostcode)}
-                helperText={formErrors.addressPostcode}
+                helperText={errorText(formErrors.addressPostcode)}
                 onChange={getOnChange(
                     fieldSetter,
                     errorSetter,
@@ -307,7 +308,7 @@ const AddClientForm: React.FC = () => {
             />
             <FreeFormTextInput
                 error={errorExists(formErrors.adults)}
-                helperText={formErrors.adults}
+                helperText={errorText(formErrors.adults)}
                 label="Prefer Not To Say"
                 onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "adult")}
             />
@@ -322,7 +323,7 @@ const AddClientForm: React.FC = () => {
             <FreeFormTextInput
                 label="Number of Children"
                 error={errorExists(formErrors.numberChildren)}
-                helperText={formErrors.numberChildren}
+                helperText={errorText(formErrors.numberChildren)}
                 onChange={getOnChange(
                     fieldSetter,
                     errorSetter,
@@ -376,7 +377,7 @@ const AddClientForm: React.FC = () => {
                 );
             })}
         </>,
-        "Please note that children are under 16 years old."
+        "Please enter a number between 0 and 20. (Note that children are under 16 years old)"
     );
 
     const dietaryRequirementCard = genericFormCard(
@@ -438,7 +439,7 @@ const AddClientForm: React.FC = () => {
                 <>
                     <FreeFormTextInput
                         error={errorExists(formErrors.nappySize)}
-                        helperText={formErrors.nappySize}
+                        helperText={errorText(formErrors.nappySize)}
                         label="Nappy Size"
                         onChange={getOnChange(fieldSetter, errorSetter, "nappySize", true)}
                     />

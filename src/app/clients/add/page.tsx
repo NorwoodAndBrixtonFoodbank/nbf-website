@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 import React from "react";
-import AddClientForm from "@/app/clients/add/pageComponent";
+import AddClientForm from "@/app/clients/add/formComponents";
 
 const AddClients: () => React.ReactElement = () => {
     return (

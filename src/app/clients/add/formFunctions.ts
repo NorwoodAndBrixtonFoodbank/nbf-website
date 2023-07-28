@@ -4,12 +4,11 @@ import { booleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import supabase, { InsertSchema } from "@/supabase";
 import { Database } from "@/database_types_file";
 
-type Event = React.ChangeEvent<HTMLInputElement> | SelectChangeEvent;
-type OnChange = (event: Event) => void;
+type Field = string | number | (boolean | null) | booleanGroup | Address | Person[];
+type OnChange = (event: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent) => void;
 type OnChangeCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => void;
 type ErrorSetter = (errorKey: string, errorType: Error) => void;
 type FieldSetter = (fieldKey: string, newFieldValue: Field) => void;
-type Field = string | number | (boolean | null) | booleanGroup | Address | Person[];
 type PersonType = Database["public"]["Enums"]["gender"];
 type FamilyDatabaseRecord = InsertSchema["families"];
 export type ClientDatabaseRecord = InsertSchema["clients"];
@@ -213,6 +212,10 @@ export const getBaby = (fieldSetter: FieldSetter, errorSetter: ErrorSetter): OnC
 
 export const errorExists = (errorType: Error): boolean => {
     return errorType !== Error.initial && errorType !== Error.none;
+};
+
+export const errorText = (errorType: Error): string => {
+    return errorType === Error.initial ? Error.none : errorType;
 };
 
 export const checkboxGroupToArray = (checkedBoxes: booleanGroup): string[] => {
