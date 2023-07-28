@@ -1,26 +1,23 @@
-import PAGES from "./PAGES";
+import PAGES from "../e2e_utils/PAGES";
+import SCREEN_SIZES from "../e2e_utils/SCREEN_SIZES";
 
 describe("Accessibility tests", () => {
     ["light", "dark"].map((mode) => {
         describe(`${mode} mode`, () => {
-            PAGES.map((page) => {
-                it(`Checks ${page.friendly_name} page`, () => {
-                    cy.login();
-                    cy.visit(page.url);
+            SCREEN_SIZES.map((screen) => {
+                PAGES.map((page) => {
+                    it(`Checks ${page.friendly_name} ${screen.resolution} page`, () => {
+                        cy.viewport(...screen.resolution);
+                        if (page.requiresLogin) {
+                            cy.login();
+                        }
 
-                    cy.get(`.${mode}-button`).click();
+                        cy.visit(page.url);
+                        cy.get(`.${mode}-button`).click();
 
-                    cy.checkAccessibility();
-                })
-            });
-
-            it("Checks login page", () => {
-                cy.visit("/login");
-                cy.url().should("include", "/login"); // verify not logged in
-
-                cy.get(`.${mode}-button`).click();
-
-                cy.checkAccessibility();
+                        cy.checkAccessibility();
+                    });
+                });
             });
         });
     });

@@ -1,14 +1,16 @@
-import PAGES from "./PAGES";
+import PAGES from "../e2e_utils/PAGES";
 
 describe("Authentication tests", () => {
     PAGES.map((page) => {
-        it(`Redirected from ${page.friendly_name} to login page`, () => {
-            cy.visit(page.url);
-            cy.url().should("include", "/login");
-        });
+        if (page.friendly_name !== "Login") {
+            it(`Redirected from ${page.friendly_name} to Login page`, () => {
+                cy.visit(page.url);
+                cy.url().should("include", "/login");
+            });
+        }
     });
 
-    it("Get to clients page", () => {
+    it("Get to Clients page", () => {
         cy.login();
         cy.visit("/clients");
 
