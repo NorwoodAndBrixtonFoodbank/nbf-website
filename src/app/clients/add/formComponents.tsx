@@ -203,6 +203,7 @@ const AddClientForm: React.FC = () => {
             delivery_instructions: fields.deliveryInstructions,
             extra_information: extraInformationWithNappy,
         };
+        console.log(clientRecord);
         const inputError = checkErrorOnSubmit(formErrors, setFormErrors);
         let submitErrorValue = Error.none;
         if (!inputError) {

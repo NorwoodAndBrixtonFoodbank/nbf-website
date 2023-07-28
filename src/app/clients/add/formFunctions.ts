@@ -4,7 +4,7 @@ import { booleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import supabase, { InsertSchema } from "@/supabase";
 import { Database } from "@/database_types_file";
 
-type Field = string | number | boolean | null | booleanGroup | Address | Person[];
+type Field = Fields[keyof Fields];
 type OnChange = (event: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent) => void;
 type OnChangeCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => void;
 type ErrorSetter = (errorKey: string, errorType: Error) => void;
@@ -29,14 +29,6 @@ export const postcodeRegex =
 // Regex source: https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/488478/Bulk_Data_Transfer_-_additional_validation_valid_from_12_November_2015.pdf
 
 export const numberRegex = /^\d+$/;
-
-interface Address {
-    line1: string;
-    line2: string;
-    town: string;
-    county: string;
-    postcode: string;
-}
 
 export interface Person {
     personType: PersonType;
