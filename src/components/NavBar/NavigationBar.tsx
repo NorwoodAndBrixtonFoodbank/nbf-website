@@ -109,6 +109,10 @@ const DrawerButton = styled(Button)`
     color: ${(props) => props.theme.secondaryBackgroundColor};
 `;
 
+const StickyAppBar = styled(AppBar)`
+    position: sticky;
+    `;
+
 const ResponsiveAppBar: React.FC<{}> = () => {
     const [drawer, setDrawer] = React.useState(false);
 
@@ -145,7 +149,7 @@ const ResponsiveAppBar: React.FC<{}> = () => {
                     ))}
                 </DrawerInner>
             </SwipeableDrawer>
-            <AppBar position="static">
+            <StickyAppBar position="static">
                 <AppBarInner>
                     <SmallNavBarElement>
                         <IconButton
@@ -177,7 +181,7 @@ const ResponsiveAppBar: React.FC<{}> = () => {
                         <SignOutButton />
                     </SmallNavBarElement>
                 </AppBarInner>
-            </AppBar>
+            </StickyAppBar>
         </>
     );
 };
