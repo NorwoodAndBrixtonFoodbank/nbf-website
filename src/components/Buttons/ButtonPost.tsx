@@ -2,11 +2,11 @@ import React from "react";
 import styled from "styled-components";
 
 const Submit = styled.input.attrs({ type: "submit" })`
-    background-color: ${(props) => props.theme.secondaryBackgroundColor};
+    background-color: ${(props) => props.theme.primary.background[2]};
     padding: 10px;
     border-radius: 5px;
     text-decoration: none;
-    color: ${(props) => props.theme.secondaryForegroundColor};
+    color: ${(props) => props.theme.primary.foreground[2]};
     border: 0 solid black;
 
     &:hover {

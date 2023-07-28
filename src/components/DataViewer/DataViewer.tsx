@@ -11,11 +11,8 @@ export interface Data {
 }
 
 const Key = styled.div`
-    // TODO VFB-16 Add a dark font colour (black perhaps) that is accessible with the colour below
-    color: ${(props) => props.theme.secondaryForegroundColor};
-
-    // TODO VFB-16 Add the equivalent of this colour (secondaryBackgroundColor}40) to a palette without the transparency
-    background-color: ${(props) => props.theme.secondaryBackgroundColor};
+    color: ${(props) => props.theme.primary.foreground[1]};
+    background-color: ${(props) => props.theme.primary.background[1]};
 
     display: inline-block;
     border-radius: 0.7em;

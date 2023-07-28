@@ -30,14 +30,13 @@ export interface CalendarEvent {
 }
 
 const CalendarStyling = styled.div`
-    --fc-button-active-bg-color: ${(props) => props.theme.secondaryBackgroundColor};
-    --fc-button-active-border-color: ${(props) => props.theme.secondaryBackgroundColor};
-    --fc-button-text-color: ${(props) => props.theme.secondaryForegroundColor};
+    --fc-button-active-bg-color: ${(props) => props.theme.primary.background[3]};
+    --fc-button-active-border-color: ${(props) => props.theme.primary.background[3]};
+    --fc-neutral-text-color: ${(props) => props.theme.surface.foreground[2]};
     --fc-page-bg-color: transparent;
-
     .fc {
         background-color: ${(props) => props.theme.surfaceBackgroundColor};
-        color: ${(props) => props.theme.surfaceForegroundColor};
+        color: ${(props) => props.theme.surface.foreground[2]};
         border-radius: 2rem;
         padding: 1.5rem;
         text-align: center;
@@ -58,9 +57,9 @@ const CalendarStyling = styled.div`
         text-align: center;
         vertical-align: middle;
         padding: 0 10px;
-        background-color: ${(props) => props.theme.primaryBackgroundColor};
-        border-color: ${(props) => props.theme.primaryBackgroundColor};
-        color: ${(props) => props.theme.primaryForegroundColor};
+        background-color: ${(props) => props.theme.primary.background[1]};
+        border-color: ${(props) => props.theme.primary.background[1]};
+        color: ${(props) => props.theme.primary.foreground[1]};
     }
 
     // prev and next arrow icons

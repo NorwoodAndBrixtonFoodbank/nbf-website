@@ -17,15 +17,13 @@ const StyledDialog = styled(Dialog)`
     }
 `;
 
-const Header = styled.div`
+const Header = styled.h1`
     display: flex;
     position: sticky;
     justify-content: space-between;
     align-items: center;
-    color: ${(props) => props.theme.secondaryForegroundColor};
-
-    // TODO VFB-16 Add the equivalent of this colour to a palette without the transparency
-    background-color: ${(props) => props.theme.secondaryBackgroundColor}A0;
+    color: ${(props) => props.theme.primary.largeForeground[2]};
+    background-color: ${(props) => props.theme.primary.background[2]};
 
     font-size: 1.5em;
     font-weight: bolder;
@@ -37,6 +35,8 @@ const Content = styled.div`
     overflow: auto;
     padding: 1em 1.5em 1.5em;
     width: 100%;
+    color: ${(props) => props.theme.main.foreground[1]};
+    background-color: ${(props) => props.theme.main.background[1]};
 `;
 
 const CloseButton = styled.button.attrs({
@@ -44,14 +44,8 @@ const CloseButton = styled.button.attrs({
 })`
     border: 0;
     border-radius: 50%;
-
-    // TODO VFB-16 There are two options for the CloseButton styling. Either using a series of grey tones, or colours that match the theme of the modal
-
-    // TODO VFB-16 Either change to 'grey' or same colour as Header background
-    background-color: ${(props) => props.theme.secondaryBackgroundColor};
-
-    // TODO VFB-16 Ensure that this colour matches the header font colour
-    color: ${(props) => props.theme.secondaryForegroundColor};
+    background-color: ${(props) => props.theme.rainbow.color.grey[0]};
+    color: ${(props) => props.theme.rainbow.color.grey[2]};
 
     display: flex;
     justify-content: center;
@@ -61,11 +55,8 @@ const CloseButton = styled.button.attrs({
     margin-left: 1em;
 
     &:hover {
-        // TODO VFB-16 Either change to 'white' or the corresponding 'secondaryBackgroundColor'
-        color: ${(props) => props.theme.secondaryBackgroundColor};
-
-        // TODO VFB-16 Either change to 'darkgray' or the corresponding 'secondaryForegroundColor'
-        background-color: ${(props) => props.theme.secondaryForegroundColor};
+        color: ${(props) => props.theme.rainbow.color.grey[0]};
+        background-color: ${(props) => props.theme.rainbow.color.grey[2]};
     }
 `;
 
