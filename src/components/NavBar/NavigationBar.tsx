@@ -4,14 +4,13 @@ import React, { useContext } from "react";
 import AppBar from "@mui/material/AppBar";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import LogoutIcon from "@mui/icons-material/Logout";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Link from "next/link";
 import { styled } from "styled-components";
 import Button from "@mui/material/Button";
-import { useRouter } from "next/navigation";
 import LightDarkSlider from "./LightDarkSlider";
 import { ThemeUpdateContext } from "@/app/themes";
+import SignOutButton from "./SignOutButton";
 
 export const PageButton = styled(Button)`
     color: white;
@@ -87,33 +86,10 @@ const DrawerInner = styled.div`
 const LogoNavElement: React.FC<{}> = () => (
     <UnstyledLink href="/">
         <LogoDiv>
-            <Logo alt="Vauxhall Foodbank Logo" src="/usedLogo.webp" />
+            <Logo alt="Vauxhall Foodbank Logo" src="/logo.webp" />
         </LogoDiv>
     </UnstyledLink>
 );
-
-const SignOutButton: React.FC<{}> = () => {
-    const router = useRouter();
-
-    const handleSignOutClick = (): void => {
-        fetch("/auth/signout", {
-            method: "POST",
-        }).then(() => {
-            router.push("/login");
-        });
-    };
-
-    return (
-        <IconButton
-            size="medium"
-            aria-label="Sign Out Button"
-            id="nav-sign-out"
-            onClick={handleSignOutClick}
-        >
-            <LogoutIcon />
-        </IconButton>
-    );
-};
 
 const Gap = styled.div`
     width: 1rem;
@@ -191,13 +167,13 @@ const ResponsiveAppBar: React.FC<{}> = () => {
                                 </Button>
                             </UnstyledLink>
                         ))}
-                        <LightDarkSlider onChange={switchThemeMode} />
+                        <LightDarkSlider onChange={switchThemeMode} key="light/dark mode switch" />
                         <Gap />
                         <SignOutButton />
                     </LgNavElement>
                     <SmallNavBarElement>
                         <Spacer />
-                        <LightDarkSlider onChange={switchThemeMode} key="theme-toggle" />
+                        <LightDarkSlider onChange={switchThemeMode} key="light/dark mode switch" />
                         <SignOutButton />
                     </SmallNavBarElement>
                 </AppBarInner>

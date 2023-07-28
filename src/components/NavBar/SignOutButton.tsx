@@ -1,6 +1,7 @@
 import React from "react";
+import IconButton from "@mui/material/IconButton";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useRouter } from "next/navigation";
-import { PageButton } from "@/components/NavBar/NavigationBar";
 
 const SignOutButton: React.FC<{}> = () => {
     const router = useRouter();
@@ -13,7 +14,16 @@ const SignOutButton: React.FC<{}> = () => {
         });
     };
 
-    return <PageButton onClick={handleSignOutClick}>Sign Out</PageButton>;
+    return (
+        <IconButton
+            size="medium"
+            aria-label="Sign Out Button"
+            id="nav-sign-out"
+            onClick={handleSignOutClick}
+        >
+            <LogoutIcon />
+        </IconButton>
+    );
 };
 
 export default SignOutButton;
