@@ -4,7 +4,7 @@ import { booleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import supabase, { InsertSchema } from "@/supabase";
 import { Database } from "@/database_types_file";
 
-type Field = string | number | (boolean | null) | booleanGroup | Address | Person[];
+type Field = string | number | boolean | null | booleanGroup | Address | Person[];
 type OnChange = (event: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent) => void;
 type OnChangeCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => void;
 type ErrorSetter = (errorKey: string, errorType: Error) => void;
