@@ -6,7 +6,7 @@ import {
     setError,
     setField,
     Fields,
-    ErrorType,
+    FormErrors,
     getOnChange,
     getNumberAdults,
     numberRegex,
@@ -150,7 +150,7 @@ const initialFields: Fields = {
     extraInformation: "",
 };
 
-const initialErrorTypes: ErrorType = {
+const initialFormErrors: FormErrors = {
     fullName: Error.initial,
     phoneNumber: Error.none,
     addressLine1: Error.initial,
@@ -163,7 +163,7 @@ const initialErrorTypes: ErrorType = {
 const AddClientForm: React.FC = () => {
     const router = useRouter();
     const [fields, setFields] = useState<Fields>(initialFields);
-    const [errorType, setErrorType] = useState<ErrorType>(initialErrorTypes);
+    const [formErrors, setFormErrors] = useState<FormErrors>(initialFormErrors);
     const [submitError, setSubmitError] = useState<Error>(Error.none);
 
     useEffect(() => {
@@ -179,7 +179,7 @@ const AddClientForm: React.FC = () => {
     }, [fields.numberChildren]); // eslint-disable-line
 
     const fieldSetter = setField(setFields, fields);
-    const errorSetter = setError(setErrorType, errorType);
+    const errorSetter = setError(setFormErrors, formErrors);
 
     const submitForm = async (): Promise<void> => {
         let extraInformationWithNappy = fields.extraInformation;
@@ -202,7 +202,7 @@ const AddClientForm: React.FC = () => {
             delivery_instructions: fields.deliveryInstructions,
             extra_information: extraInformationWithNappy,
         };
-        const inputError = checkErrorOnSubmit(errorType, setErrorType);
+        const inputError = checkErrorOnSubmit(formErrors, setFormErrors);
         let submitErrorValue = Error.none;
         if (!inputError) {
             const familyID = await insertClient(clientRecord);
@@ -226,8 +226,8 @@ const AddClientForm: React.FC = () => {
         true,
         <FreeFormTextInput
             label="Name"
-            error={errorExists(errorType.fullName)}
-            helperText={errorType.fullName}
+            error={errorExists(formErrors.fullName)}
+            helperText={formErrors.fullName}
             onChange={getOnChange(fieldSetter, errorSetter, "fullName", true)}
         />,
         "First and last name"
@@ -238,8 +238,8 @@ const AddClientForm: React.FC = () => {
         false,
         <FreeFormTextInput
             label="Phone Number"
-            error={errorExists(errorType.phoneNumber)}
-            helperText={errorType.phoneNumber}
+            error={errorExists(formErrors.phoneNumber)}
+            helperText={formErrors.phoneNumber}
             onChange={getOnChange(
                 fieldSetter,
                 errorSetter,
@@ -258,8 +258,8 @@ const AddClientForm: React.FC = () => {
         <>
             <FreeFormTextInput
                 label="Address Line 1"
-                error={errorExists(errorType.addressLine1)}
-                helperText={errorType.addressLine1}
+                error={errorExists(formErrors.addressLine1)}
+                helperText={formErrors.addressLine1}
                 onChange={getOnChange(fieldSetter, errorSetter, "addressLine1", true)}
             />
             <FreeFormTextInput
@@ -276,8 +276,8 @@ const AddClientForm: React.FC = () => {
             />
             <FreeFormTextInput
                 label="Postcode (e.g. SE11 5QY)"
-                error={errorExists(errorType.addressPostcode)}
-                helperText={errorType.addressPostcode}
+                error={errorExists(formErrors.addressPostcode)}
+                helperText={formErrors.addressPostcode}
                 onChange={getOnChange(
                     fieldSetter,
                     errorSetter,
@@ -296,18 +296,18 @@ const AddClientForm: React.FC = () => {
         true,
         <>
             <FreeFormTextInput
-                error={errorExists(errorType.adults)}
+                error={errorExists(formErrors.adults)}
                 label="Female"
                 onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "female")}
             />
             <FreeFormTextInput
-                error={errorExists(errorType.adults)}
+                error={errorExists(formErrors.adults)}
                 label="Male"
                 onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "male")}
             />
             <FreeFormTextInput
-                error={errorExists(errorType.adults)}
-                helperText={errorType.adults}
+                error={errorExists(formErrors.adults)}
+                helperText={formErrors.adults}
                 label="Prefer Not To Say"
                 onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "adult")}
             />
@@ -321,8 +321,8 @@ const AddClientForm: React.FC = () => {
         <>
             <FreeFormTextInput
                 label="Number of Children"
-                error={errorExists(errorType.numberChildren)}
-                helperText={errorType.numberChildren}
+                error={errorExists(formErrors.numberChildren)}
+                helperText={formErrors.numberChildren}
                 onChange={getOnChange(
                     fieldSetter,
                     errorSetter,
@@ -437,8 +437,8 @@ const AddClientForm: React.FC = () => {
             {fields.babyProducts ? (
                 <>
                     <FreeFormTextInput
-                        error={errorExists(errorType.nappySize)}
-                        helperText={errorType.nappySize}
+                        error={errorExists(formErrors.nappySize)}
+                        helperText={formErrors.nappySize}
                         label="Nappy Size"
                         onChange={getOnChange(fieldSetter, errorSetter, "nappySize", true)}
                     />

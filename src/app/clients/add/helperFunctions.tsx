@@ -45,7 +45,7 @@ export interface Person {
     quantity?: number;
 }
 
-export interface ErrorType {
+export interface FormErrors {
     fullName: Error;
     phoneNumber: Error;
     addressLine1: Error;
@@ -77,8 +77,8 @@ export interface Fields {
 }
 
 export const setError = (
-    errorSetter: React.Dispatch<React.SetStateAction<ErrorType>>,
-    errorValues: ErrorType
+    errorSetter: React.Dispatch<React.SetStateAction<FormErrors>>,
+    errorValues: FormErrors
 ): ErrorSetter => {
     return (errorKey, errorType) => {
         errorSetter({ ...errorValues, [errorKey]: errorType });
@@ -233,8 +233,8 @@ export const maxNumberChildren = (value: string): boolean => {
 };
 
 export const checkErrorOnSubmit = (
-    errorType: ErrorType,
-    errorSetter: React.Dispatch<React.SetStateAction<ErrorType>>
+    errorType: FormErrors,
+    errorSetter: React.Dispatch<React.SetStateAction<FormErrors>>
 ): boolean => {
     let errorExists = false;
     let amendedErrorTypes = { ...errorType };
