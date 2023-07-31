@@ -387,6 +387,7 @@ const Styling = styled.div`
     & .rdt_TableRow,
     & .rdt_TableCol,
     & .rdt_Table {
+        text-align: start;
         font-size: 1.2rem;
         background-color: transparent;
         color: ${(props) => props.theme.surfaceForegroundColor};
@@ -401,6 +402,7 @@ const Styling = styled.div`
     & .rdt_TableHeadRow {
         background-color: ${(props) => props.theme.surfaceBackgroundColor};
         border-color: ${(props) => props.theme.foregroundColor};
+        font-weight: bold;
     }
 
     & .rdt_TableCell {

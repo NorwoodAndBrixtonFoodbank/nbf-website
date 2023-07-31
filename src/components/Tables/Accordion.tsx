@@ -40,6 +40,18 @@ const ContainerDiv = styled.div`
         fill: ${(props) => props.theme.primaryBackgroundColor};
     }
 `;
+
+const Row = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+`;
+
+const Spacer = styled.div`
+    flex-grow: 1;
+`;
+
 const FilterAccordion: React.FC<FilterAccordionProps> = ({
     toggleableHeaders,
     shownHeaderKeys,
@@ -50,7 +62,22 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
         <Styling>
             <Accordion>
                 <AccordionSummary>
-                    <p>Select Columns</p>
+                    <Row>
+                        <p>Select Columns</p>
+                        <Spacer />
+                        <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M7.41 8.58997L12 13.17L16.59 8.58997L18 9.99997L12 15L6 9.99997L7.41 8.58997Z"
+                                fill="black"
+                            />
+                        </svg>
+                    </Row>
                 </AccordionSummary>
                 <AccordionDetails>
                     {(toggleableHeaders ?? []).map((key) => {
