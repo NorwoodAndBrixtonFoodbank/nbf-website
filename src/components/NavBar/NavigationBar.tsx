@@ -43,35 +43,7 @@ const LogoDiv = styled.div`
 const AppBarInner = styled.div`
     display: flex;
     height: 4rem;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 0.5rem;
-`;
-
-const SmallNavBarElement = styled.div`
-    display: flex;
-    align-items: center;
-    width: 8rem;
-
-    @media (min-width: 800px) {
-        display: none;
-    }
-`;
-
-const LgNavElement = styled.div`
-    display: none;
-    flex-grow: 1;
-    justify-content: end;
-    gap: 1rem;
-    align-items: center;
-
-    @media (min-width: 800px) {
-        display: flex;
-    }
-`;
-
-const Spacer = styled.div`
-    flex-grow: 1;
+    padding: 0.5rem;
 `;
 
 const DrawerInner = styled.div`
@@ -82,14 +54,6 @@ const DrawerInner = styled.div`
     padding: 1rem;
     width: 15rem;
 `;
-
-const LogoNavElement: React.FC<{}> = () => (
-    <UnstyledLink href="/" prefetch={false}>
-        <LogoDiv>
-            <Logo alt="Vauxhall Foodbank Logo" src="/logo.webp" />
-        </LogoDiv>
-    </UnstyledLink>
-);
 
 const Gap = styled.div`
     width: 1rem;
@@ -105,12 +69,46 @@ const DrawerButtonWrapper = styled.div`
 `;
 
 const DrawerButton = styled(Button)`
-    width: 100%;
     color: ${(props) => props.theme.secondaryBackgroundColor};
 `;
 
 const StickyAppBar = styled(AppBar)`
     position: sticky;
+`;
+
+const NavElementContainer = styled.div`
+    display: flex;
+    flex-basis: 0;
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+`;
+
+const MobileNavMenuContainer = styled(NavElementContainer)`
+    justify-content: start;
+    @media (min-width: 800px) {
+        display: none;
+    }
+`;
+
+const LogoElementContainer = styled(NavElementContainer)`
+    justify-content: start;
+    height: 100%;
+    object-fit: cover;
+    @media (min-width: 800px) {
+        justify-content: left;
+    }
+`;
+
+const ButtonContainer = styled(NavElementContainer)`
+    display: none;
+    @media (min-width: 800px) {
+        display: flex;
+    }
+`;
+
+const SignOutButtonContainer = styled(NavElementContainer)`
+    justify-content: end;
 `;
 
 const ResponsiveAppBar: React.FC<{}> = () => {
@@ -131,7 +129,7 @@ const ResponsiveAppBar: React.FC<{}> = () => {
     ];
 
     return (
-        <nav>
+        <>
             <SwipeableDrawer open={drawer} onClose={closeDrawer} onOpen={openDrawer}>
                 <DrawerInner>
                     {pages.map(([page, link]) => (
@@ -145,7 +143,7 @@ const ResponsiveAppBar: React.FC<{}> = () => {
             </SwipeableDrawer>
             <StickyAppBar position="static">
                 <AppBarInner>
-                    <SmallNavBarElement>
+                    <MobileNavMenuContainer>
                         <IconButton
                             size="medium"
                             aria-label="Mobile Menu Button"
@@ -153,34 +151,37 @@ const ResponsiveAppBar: React.FC<{}> = () => {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Spacer />
-                    </SmallNavBarElement>
-                    <LogoNavElement />
-                    <LgNavElement>
+                    </MobileNavMenuContainer>
+                    <LogoElementContainer>
+                        <UnstyledLink href="/" prefetch={false}>
+                            <Logo alt="Vauxhall Foodbank Logo" src="/logo.webp" />
+                        </UnstyledLink>
+                    </LogoElementContainer>
+                    <ButtonContainer>
                         {pages.map(([page, link]) => (
-                            <UnstyledLink
-                                key={page}
-                                href={link}
-                                onClick={closeDrawer}
-                                prefetch={false}
-                            >
-                                <Button variant="outlined" color="secondary">
-                                    {page}
-                                </Button>
-                            </UnstyledLink>
+                            <>
+                                <UnstyledLink
+                                    key={page}
+                                    href={link}
+                                    onClick={closeDrawer}
+                                    prefetch={false}
+                                >
+                                    <Button variant="outlined" color="secondary">
+                                        {page}
+                                    </Button>
+                                </UnstyledLink>
+                                <Gap />
+                            </>
                         ))}
+                    </ButtonContainer>
+                    <SignOutButtonContainer>
                         <LightDarkSlider />
                         <Gap />
                         <SignOutButton />
-                    </LgNavElement>
-                    <SmallNavBarElement>
-                        <Spacer />
-                        <LightDarkSlider />
-                        <SignOutButton />
-                    </SmallNavBarElement>
+                    </SignOutButtonContainer>
                 </AppBarInner>
             </StickyAppBar>
-        </nav>
+        </>
     );
 };
 export default ResponsiveAppBar;
