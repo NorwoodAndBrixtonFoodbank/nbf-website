@@ -15,9 +15,8 @@ describe("Authentication tests", () => {
 
     it("Sign out", () => {
         cy.login();
-
-        cy.get("button[aria-label='Profile Settings']").eq(1).click();
-        cy.get("li").contains("Sign Out").click({ force: true });
+        cy.visit("/clients");
+        cy.get("button[aria-label='Sign Out Button']").filter(":visible").click();
 
         cy.url().should("include", "/login");
     });
