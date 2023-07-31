@@ -7,13 +7,13 @@ describe("Light and dark mode switch works", () => {
     });
 
     it("Switching to Dark Mode Works", () => {
-        cy.get("label[aria-label='Theme Switch']").filter(":visible").click();
+        cy.get("label[aria-label='Theme Switch']").click();
         cy.get("body").should("have.css", "background-color", hexToRgb("#1a1a1a"));
     });
 
     it("Switching back to Light Mode Works", () => {
-        cy.get("label[aria-label='Theme Switch']").filter(":visible").click();
-        cy.get("label[aria-label='Theme Switch']").filter(":visible").click();
+        cy.get("label[aria-label='Theme Switch']").click();
+        cy.get("label[aria-label='Theme Switch']").click();
         cy.get("body").should("have.css", "background-color", hexToRgb("#eeeeee"));
     });
 });
