@@ -14,6 +14,7 @@ interface CalendarProps {
     view?: string;
     editable?: boolean;
     handleDateClick?: (info: DateClickArg) => void;
+    initialDate?: Date;
 }
 
 export interface CalendarEvent {
@@ -89,6 +90,7 @@ const Calendar: React.FC<CalendarProps> = ({
     view = "dayGridMonth",
     editable = false,
     handleDateClick,
+    initialDate,
 }) => {
     const [eventClick, setEventClick] = useState<CalendarEvent | null>(null);
 
@@ -115,6 +117,7 @@ const Calendar: React.FC<CalendarProps> = ({
                     selectable={editable}
                     dateClick={handleDateClick}
                     eventClick={handleEventClick}
+                    initialDate={initialDate}
                 />
             </CalendarStyling>
         </>
