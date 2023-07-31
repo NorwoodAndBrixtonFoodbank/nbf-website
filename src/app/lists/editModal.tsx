@@ -118,7 +118,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                                 `${response.status}: ${response.statusText} -- data: ${response.data}`
                             );
                         } else {
-                            onClose();
+                            window.location.reload();
                         }
                     }}
                 >

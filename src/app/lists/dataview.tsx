@@ -125,6 +125,7 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
                             );
                         } else {
                             setToDeleteModalOpen(false);
+                            window.location.reload();
                         }
                     }
                 }}
@@ -143,7 +144,9 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
                 </SnackBarDiv>
             </Snackbar>
             <EditModal
-                onClose={() => setModal(undefined)}
+                onClose={() => {
+                    setModal(undefined);
+                }}
                 data={modal}
                 key={modal?.data?.primary_key}
             />
