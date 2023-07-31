@@ -22,13 +22,13 @@ export interface Database {
           extra_information: string
           family_id: string
           feminine_products: string[]
-          flag_attention: boolean
+          flagged_for_attention: boolean
           full_name: string
           other_items: string[]
           pet_food: string[]
           phone_number: string
           primary_key: string
-          signposting_call: boolean
+          signposting_call_required: boolean
         }
         Insert: {
           address_1?: string
@@ -42,13 +42,13 @@ export interface Database {
           extra_information?: string
           family_id?: string
           feminine_products?: string[]
-          flag_attention?: boolean
+          flagged_for_attention?: boolean
           full_name?: string
           other_items?: string[]
           pet_food?: string[]
           phone_number?: string
           primary_key?: string
-          signposting_call?: boolean
+          signposting_call_required?: boolean
         }
         Update: {
           address_1?: string
@@ -62,13 +62,13 @@ export interface Database {
           extra_information?: string
           family_id?: string
           feminine_products?: string[]
-          flag_attention?: boolean
+          flagged_for_attention?: boolean
           full_name?: string
           other_items?: string[]
           pet_food?: string[]
           phone_number?: string
           primary_key?: string
-          signposting_call?: boolean
+          signposting_call_required?: boolean
         }
         Relationships: []
       }
