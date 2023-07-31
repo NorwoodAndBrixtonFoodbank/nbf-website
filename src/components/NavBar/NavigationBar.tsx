@@ -32,14 +32,6 @@ const Logo = styled.img`
     align-content: center;
 `;
 
-const LogoDiv = styled.div`
-    background-color: transparent;
-    border-radius: 10px;
-    margin: 10px 20px;
-    height: 80%;
-    object-fit: cover;
-`;
-
 const AppBarInner = styled.div`
     display: flex;
     height: 4rem;
