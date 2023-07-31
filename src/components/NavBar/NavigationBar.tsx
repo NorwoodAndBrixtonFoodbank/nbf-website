@@ -84,11 +84,11 @@ const MobileNavMenuContainer = styled(NavElementContainer)`
 `;
 
 const LogoElementContainer = styled(NavElementContainer)`
-    justify-content: start;
+    justify-content: center;
     height: 100%;
     object-fit: cover;
     @media (min-width: 800px) {
-        justify-content: left;
+        justify-content: start;
     }
 `;
 
