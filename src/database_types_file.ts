@@ -22,11 +22,13 @@ export interface Database {
           extra_information: string
           family_id: string
           feminine_products: string[]
+          flag_attention: boolean
           full_name: string
           other_items: string[]
           pet_food: string[]
           phone_number: string
           primary_key: string
+          signposting_call: boolean
         }
         Insert: {
           address_1?: string
@@ -40,11 +42,13 @@ export interface Database {
           extra_information?: string
           family_id?: string
           feminine_products?: string[]
+          flag_attention?: boolean
           full_name?: string
           other_items?: string[]
           pet_food?: string[]
           phone_number?: string
           primary_key?: string
+          signposting_call?: boolean
         }
         Update: {
           address_1?: string
@@ -58,13 +62,43 @@ export interface Database {
           extra_information?: string
           family_id?: string
           feminine_products?: string[]
+          flag_attention?: boolean
           full_name?: string
           other_items?: string[]
           pet_food?: string[]
           phone_number?: string
           primary_key?: string
+          signposting_call?: boolean
         }
         Relationships: []
+      }
+      events: {
+        Row: {
+          event_name: string
+          parcel_id: string
+          primary_key: string
+          timestamp: string
+        }
+        Insert: {
+          event_name: string
+          parcel_id: string
+          primary_key?: string
+          timestamp?: string
+        }
+        Update: {
+          event_name?: string
+          parcel_id?: string
+          primary_key?: string
+          timestamp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_parcel_id_fkey"
+            columns: ["parcel_id"]
+            referencedRelation: "parcels"
+            referencedColumns: ["primary_key"]
+          }
+        ]
       }
       families: {
         Row: {
