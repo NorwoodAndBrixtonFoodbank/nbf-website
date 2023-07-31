@@ -9,7 +9,7 @@ interface TitleProps {
 
 const TitleHeader = styled.h1`
     text-align: center;
-    margin-top: 1em;
+    margin: 1em;
 `;
 
 const Title: React.FC<TitleProps> = (props) => {

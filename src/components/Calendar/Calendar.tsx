@@ -32,11 +32,17 @@ export interface CalendarEvent {
 const CalendarStyling = styled.div`
     --fc-button-active-bg-color: ${(props) => props.theme.primary.background[3]};
     --fc-button-active-border-color: ${(props) => props.theme.primary.background[3]};
-    --fc-neutral-text-color: ${(props) => props.theme.surface.foreground[2]};
+    --fc-button-text-color: ${(props) => props.theme.primary.foreground[3]};
+
+    --fc-border-color: ${(props) => props.theme.main.border};
+
     --fc-page-bg-color: transparent;
+    --fc-today-bg-color: ${(props) => props.theme.primary.background[1]}30;
+
     .fc {
-        background-color: ${(props) => props.theme.surfaceBackgroundColor};
-        color: ${(props) => props.theme.surface.foreground[2]};
+        background-color: ${(props) => props.theme.main.background[0]};
+        color: ${(props) => props.theme.main.foreground[0]};
+        box-shadow: 0 0 15px ${(props) => props.theme.shadow};
         border-radius: 2rem;
         padding: 1.5rem;
         text-align: center;

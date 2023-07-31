@@ -31,8 +31,7 @@ const GlobalStyle = createGlobalStyle`
         background-color: ${(props) => props.theme.main.background[1]};
     }
     
-    h1 {
-
+    h1, h2 {
       font-family: 'Inter-Bold', sans-serif;
     }
 `;
