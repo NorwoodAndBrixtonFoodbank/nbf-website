@@ -259,7 +259,7 @@ const AddClientForm: React.FC = () => {
         true,
         <>
             <FreeFormTextInput
-                label="Address Line 1"
+                label="Address Line 1*"
                 error={errorExists(formErrors.addressLine1)}
                 helperText={errorText(formErrors.addressLine1)}
                 onChange={getOnChange(fieldSetter, errorSetter, "addressLine1", true)}
@@ -277,7 +277,7 @@ const AddClientForm: React.FC = () => {
                 onChange={getOnChange(fieldSetter, errorSetter, "addressCounty", false)}
             />
             <FreeFormTextInput
-                label="Postcode (e.g. SE11 5QY)"
+                label="Postcode* (e.g. SE11 5QY)"
                 error={errorExists(formErrors.addressPostcode)}
                 helperText={errorText(formErrors.addressPostcode)}
                 onChange={getOnChange(
