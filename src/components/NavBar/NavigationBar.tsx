@@ -53,11 +53,6 @@ const SmallNavBarElement = styled.div`
     align-items: center;
     width: 8rem;
 
-const SmSideElement = styled.div`
-    display: flex;
-    align-items: center;
-    width: 8rem;
-
     @media (min-width: 800px) {
         display: none;
     }
