@@ -1,7 +1,6 @@
 import React from "react";
 import NavigationBar from "@/components/NavBar/NavigationBar";
 import { AppRouterContext, AppRouterInstance } from "next/dist/shared/lib/app-router-context";
-// import { useRouter } from "next/navigation";
 
 describe("<NavigationBar />", () => {
     const router: AppRouterInstance = {

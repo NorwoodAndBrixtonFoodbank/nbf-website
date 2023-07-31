@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext } from "react";
+import React from "react";
 import AppBar from "@mui/material/AppBar";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -9,7 +9,7 @@ import Link from "next/link";
 import { styled } from "styled-components";
 import Button from "@mui/material/Button";
 import LightDarkSlider from "./LightDarkSlider";
-import { ThemeUpdateContext } from "@/app/themes";
+
 import SignOutButton from "./SignOutButton";
 
 export const PageButton = styled(Button)`
@@ -89,7 +89,7 @@ const DrawerInner = styled.div`
 `;
 
 const LogoNavElement: React.FC<{}> = () => (
-    <UnstyledLink href="/">
+    <UnstyledLink href="/" prefetch={false}>
         <LogoDiv>
             <Logo alt="Vauxhall Foodbank Logo" src="/logo.webp" />
         </LogoDiv>
@@ -116,7 +116,7 @@ const DrawerButton = styled(Button)`
 
 const StickyAppBar = styled(AppBar)`
     position: sticky;
-    `;
+`;
 
 const ResponsiveAppBar: React.FC<{}> = () => {
     const [drawer, setDrawer] = React.useState(false);
@@ -135,19 +135,13 @@ const ResponsiveAppBar: React.FC<{}> = () => {
         ["Calendar", "/calendar"],
     ];
 
-    const setThemeMode = useContext(ThemeUpdateContext);
-
-    const switchThemeMode = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setThemeMode(event.target.checked);
-    };
-
     return (
-        <>
+        <nav>
             <SwipeableDrawer open={drawer} onClose={closeDrawer} onOpen={openDrawer}>
                 <DrawerInner>
                     {pages.map(([page, link]) => (
                         <DrawerButtonWrapper key={page}>
-                            <UnstyledLink href={link} onClick={closeDrawer}>
+                            <UnstyledLink href={link} onClick={closeDrawer} prefetch={false}>
                                 <DrawerButton variant="text">{page}</DrawerButton>
                             </UnstyledLink>
                         </DrawerButtonWrapper>
@@ -167,27 +161,31 @@ const ResponsiveAppBar: React.FC<{}> = () => {
                         <Spacer />
                     </SmallNavBarElement>
                     <LogoNavElement />
-                    {/* TODO: VFB-16 need to fix nav colours */}
                     <LgNavElement>
                         {pages.map(([page, link]) => (
-                            <UnstyledLink key={page} href={link} onClick={closeDrawer}>
+                            <UnstyledLink
+                                key={page}
+                                href={link}
+                                onClick={closeDrawer}
+                                prefetch={false}
+                            >
                                 <Button variant="outlined" color="secondary">
                                     {page}
                                 </Button>
                             </UnstyledLink>
                         ))}
-                        <LightDarkSlider onChange={switchThemeMode} key="light/dark mode switch" />
+                        <LightDarkSlider />
                         <Gap />
                         <SignOutButton />
                     </LgNavElement>
                     <SmallNavBarElement>
                         <Spacer />
-                        <LightDarkSlider onChange={switchThemeMode} key="light/dark mode switch" />
+                        <LightDarkSlider />
                         <SignOutButton />
                     </SmallNavBarElement>
                 </AppBarInner>
             </StickyAppBar>
-        </>
+        </nav>
     );
 };
 export default ResponsiveAppBar;
