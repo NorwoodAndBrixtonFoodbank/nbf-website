@@ -3,7 +3,7 @@
 import Modal from "@/components/Modal/Modal";
 import React, { useState } from "react";
 import { styled } from "styled-components";
-import { headers, tooltips } from "@/app/lists/dataview";
+import { SnackBarDiv, headers, tooltips } from "@/app/lists/dataview";
 import TextInput from "@/components/DataInput/FreeFormTextInput";
 import { Datum } from "@/components/Tables/Table";
 import supabase from "@/supabase";
@@ -138,18 +138,5 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
         </Modal>
     );
 };
-
-const SnackBarDiv = styled.div`
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-
-    & .MuiAlert-standard {
-        border-radius: 0.2rem;
-        padding: 0 1rem;
-    }
-`;
 
 export default EditModal;

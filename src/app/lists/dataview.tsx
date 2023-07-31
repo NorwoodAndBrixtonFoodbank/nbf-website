@@ -4,32 +4,13 @@ import Table, { Datum } from "@/components/Tables/Table";
 import { Database } from "@/database_types_file";
 import React, { useState } from "react";
 import { styled } from "styled-components";
-import EditModal from "@/app/lists/edit_modal";
+import EditModal from "@/app/lists/editModal";
 import supabase from "@/supabase";
 import ConfirmDialog from "@/components/Modal/Confirm";
 import Snackbar from "@mui/material/Snackbar/Snackbar";
 import Alert from "@mui/material/Alert/Alert";
 
 export type ListRow = Database["public"]["Tables"]["lists"]["Row"];
-
-const TableDiv = styled.div`
-    margin: 20px;
-    padding: 20px;
-    background-color: ${(props) => props.theme.surfaceBackgroundColor};
-    border: solid 1px ${(props) => props.theme.surfaceForegroundColor};
-    border-radius: 1rem;
-`;
-
-const StyledTable = styled(Table)`
-    width: 100%;
-    background-color: transparent;
-`;
-
-const StyledAddButton = styled.button`
-    margin: 10px 5px 5px 0;
-    height: 2rem;
-    width: 5rem;
-`;
 
 type Props = {
     data: ListRow[] | null;
@@ -76,18 +57,18 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
 
     const remapTooltips = (
         row: ListRow
-    ): Datum & { unmappedTooltips: { [key: string]: string | null } } => {
-        const data: { [key: string]: string | null } = {
+    ): Datum & { unmappedTooltips: { [key: string]: string } } => {
+        const data: { [key: string]: string } = {
             item_name: row.item_name,
             primary_key: row.primary_key,
         };
-        const tooltips: { [key: string]: string | null } = {};
-        const unmappedTooltips: { [key: string]: string | null } = {};
+        const tooltips: { [key: string]: string } = {};
+        const unmappedTooltips: { [key: string]: string } = {};
 
         for (const [key, value] of Object.entries(row)) {
-            if (key.endsWith("quantity")) {
+            if (key.endsWith("quantity") && value) {
                 data[key] = value;
-            } else if (key.endsWith("notes")) {
+            } else if (key.endsWith("notes") && value) {
                 tooltips[key.replace("notes", "quantity")] = value;
                 unmappedTooltips[key] = value;
             }
@@ -186,7 +167,7 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
     );
 };
 
-const SnackBarDiv = styled.div`
+export const SnackBarDiv = styled.div`
     width: 100%;
     display: flex;
     justify-content: center;
@@ -197,6 +178,25 @@ const SnackBarDiv = styled.div`
         border-radius: 0.2rem;
         padding: 0 1rem;
     }
+`;
+
+const TableDiv = styled.div`
+    margin: 20px;
+    padding: 20px;
+    background-color: ${(props) => props.theme.surfaceBackgroundColor};
+    border: solid 1px ${(props) => props.theme.surfaceForegroundColor};
+    border-radius: 1rem;
+`;
+
+const StyledTable = styled(Table)`
+    width: 100%;
+    background-color: transparent;
+`;
+
+const StyledAddButton = styled.button`
+    margin: 10px 5px 5px 0;
+    height: 2rem;
+    width: 5rem;
 `;
 
 export default ListsDataView;

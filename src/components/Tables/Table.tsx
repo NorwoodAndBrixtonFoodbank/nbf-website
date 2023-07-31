@@ -16,13 +16,15 @@ import {
 import IconButton from "@mui/material/IconButton/IconButton";
 
 export type Datum = {
-    data: { [headerKey: string]: string | null };
-    tooltips?: { [headerKey: string]: string | null };
+    data: RowData;
+    tooltips?: RowData;
 };
+
+export type RowData = { [headerKey: string]: string };
 
 type Row = {
     rowId: number;
-    [headerKey: string]: string | number | boolean;
+    data: RowData;
 };
 
 interface Props {
@@ -41,17 +43,6 @@ interface Props {
     onDelete?: (data: number) => void;
 }
 
-const RowDiv = styled.div`
-    display: flex;
-    width: 100%;
-    align-items: center;
-    padding-left: 1rem;
-`;
-
-const Spacer = styled.div`
-    width: 2rem;
-`;
-
 const doesRowIncludeFilterText = (
     row: Row,
     filterText: FilterText,
@@ -59,7 +50,7 @@ const doesRowIncludeFilterText = (
 ): boolean => {
     for (const [headerKey, _headerLabel] of headers) {
         if (
-            !(row[headerKey] ?? "")
+            !(row.data[headerKey] ?? "")
                 .toString()
                 .toLowerCase()
                 .includes((filterText[headerKey] ?? "").toLowerCase())
@@ -82,11 +73,11 @@ const dataToFilteredRows = (
 
 const dataToRows = (data: Datum[], headers: [string, string][]): Row[] => {
     return data.map((datum: Datum, currentIndex: number) => {
-        const row: Row = { rowId: currentIndex };
+        const row: Row = { rowId: currentIndex, data: {} };
 
         for (const [headerKey, _headerLabel] of headers) {
             const databaseValue = datum.data[headerKey] ?? "";
-            row[headerKey] = Array.isArray(databaseValue)
+            row.data[headerKey] = Array.isArray(databaseValue)
                 ? databaseValue.join(", ")
                 : databaseValue;
         }
@@ -139,7 +130,7 @@ const Table: React.FC<Props> = (props) => {
     ).map(([headerKey, headerName]) => {
         return {
             name: headerName,
-            selector: (row) => row[headerKey],
+            selector: (row) => row.data[headerKey],
             sortable: props.sortable ?? true,
             cell(row, rowIndex, column, id) {
                 const tooltip = data[row.rowId].tooltips?.[headerKey];
@@ -289,6 +280,17 @@ const Table: React.FC<Props> = (props) => {
         </Styling>
     );
 };
+
+const RowDiv = styled.div`
+    display: flex;
+    width: 100%;
+    align-items: center;
+    padding-left: 1rem;
+`;
+
+const Spacer = styled.div`
+    width: 2rem;
+`;
 
 const EditandReorderArrowDiv = styled.div`
     display: grid;
