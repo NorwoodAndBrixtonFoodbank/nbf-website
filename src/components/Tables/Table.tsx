@@ -6,7 +6,6 @@ import TableFilterBar, { FilterText } from "./TableFilterBar";
 import { styled } from "styled-components";
 import { NoSsr } from "@mui/material";
 import SpeechBubbleIcon from "@/components/Icons/SpeechBubbleIcon";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faAnglesUp,
     faAnglesDown,
@@ -14,6 +13,7 @@ import {
     faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import IconButton from "@mui/material/IconButton/IconButton";
+import Icon from "../Icons/Icon";
 
 export type Datum = {
     data: RowData;
@@ -286,11 +286,13 @@ const EditandReorderArrowDiv = styled.div`
     grid-template-columns: repeat(2, 1fr);
     width: 100%;
     // this transform is necessary to make the buttons visually consistent with the rest of the table without redesigning the layout
-    transform: translateX(-0.8rem);
+    transform: translateX(-1.1rem);
 `;
 
-const StyledIcon = styled(FontAwesomeIcon)`
+const StyledIcon = styled(Icon)`
     cursor: pointer;
+    padding: 0;
+    margin: 0;
 `;
 
 const Styling = styled.div`

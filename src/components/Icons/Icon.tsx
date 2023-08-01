@@ -16,7 +16,7 @@ const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
     width: 1em;
     height: 1em;
     margin: 0.125em;
-    color: ${(props) => props.color ?? props.theme.accentBackgroundColor};
+    color: ${(props) => props.color ?? props.theme.primaryForegroundColor};
 `;
 
 const Popper = styled.div`

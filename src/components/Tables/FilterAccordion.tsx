@@ -1,7 +1,8 @@
 import React from "react";
 import { Accordion, Checkbox, AccordionSummary, AccordionDetails } from "@mui/material";
 import { styled } from "styled-components";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import Icon from "../Icons/Icon";
 
 type FilterAccordionProps = {
     toggleableHeaders?: string[];
@@ -76,7 +77,7 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
                     <Row>
                         <p>Select Columns</p>
                         <Spacer />
-                        <ExpandMoreIcon />
+                        <Icon icon={faChevronDown} />
                     </Row>
                 </AccordionSummary>
                 <AccordionDetails>
