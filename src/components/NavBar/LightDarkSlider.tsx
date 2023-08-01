@@ -7,6 +7,7 @@ import Moon from "@/components/NavBar/Moon.svg";
 import { ThemeUpdateContext } from "@/app/themes";
 
 const StyledSwitch = styled(Switch)`
+    // sets the size of the switch
     width: 62px;
     height: 34px;
     padding: 7px;
@@ -16,15 +17,18 @@ const StyledSwitch = styled(Switch)`
         transform: translateX(6px);
         &.Mui-checked {
             transform: translateX(22px);
+            // the circle section specifically when the switch is checked
             & .MuiSwitch-thumb:before {
                 background-image: url(${Moon.src});
             }
+            // the track specifically when the switch is checked
             & + .MuiSwitch-track {
                 background-color: ${(props) => props.theme.accentBackgroundColor};
             }
         }
     }
     & .MuiSwitch-thumb {
+        // sets the circle section for when the switch is not checked
         background-color: ${(props) => props.theme.accentBackgroundColor};
         width: 32px;
         height: 32px;
@@ -38,6 +42,7 @@ const StyledSwitch = styled(Switch)`
             background-image: url(${Sun.src});
         }
     }
+    // sets the track for when the switch is not checked
     & .MuiSwitch-track {
         background-color: ${(props) => props.theme.accentBackgroundColor};
         border-radius: 20px;
