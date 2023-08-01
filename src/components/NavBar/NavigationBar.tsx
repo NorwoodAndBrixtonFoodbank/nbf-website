@@ -8,7 +8,7 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Link from "next/link";
 import { styled } from "styled-components";
 import Button from "@mui/material/Button";
-import LightDarkSlider from "./LightDarkSlider";
+import LightDarkSlider from "@/components/NavBar/LightDarkSlider";
 
 import SignOutButton from "./SignOutButton";
 
@@ -103,7 +103,7 @@ const SignOutButtonContainer = styled(NavElementContainer)`
     justify-content: end;
 `;
 
-const ResponsiveAppBar: React.FC<{}> = () => {
+const ResponsiveAppBar: React.FC = () => {
     const [drawer, setDrawer] = React.useState(false);
 
     const openDrawer = (): void => {
@@ -133,14 +133,10 @@ const ResponsiveAppBar: React.FC<{}> = () => {
                     ))}
                 </DrawerInner>
             </SwipeableDrawer>
-            <StickyAppBar position="static">
+            <StickyAppBar>
                 <AppBarInner>
                     <MobileNavMenuContainer>
-                        <IconButton
-                            size="medium"
-                            aria-label="Mobile Menu Button"
-                            onClick={openDrawer}
-                        >
+                        <IconButton aria-label="Mobile Menu Button" onClick={openDrawer}>
                             <MenuIcon />
                         </IconButton>
                     </MobileNavMenuContainer>

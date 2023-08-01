@@ -15,7 +15,7 @@ const SignOutButton: React.FC<{}> = () => {
     };
 
     return (
-        <IconButton size="medium" aria-label="Sign Out Button" onClick={handleSignOutClick}>
+        <IconButton aria-label="Sign Out Button" onClick={handleSignOutClick}>
             <LogoutIcon />
         </IconButton>
     );
