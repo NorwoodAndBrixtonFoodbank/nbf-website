@@ -1,32 +1,32 @@
 import React from "react";
 
-import CongestionChargeAppliedIcon from "@/components/Icons/CongestionChargeAppliesIcon";
-import FeetIcon, { FeetIconProps } from "@/components/Icons/FeetIcon";
+import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
+import CollectionIcon, { CollectionIconProps } from "@/components/Icons/CollectionIcon";
+import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
 import SpeechBubbleIcon, { SpeechBubbleProps } from "@/components/Icons/SpeechBubbleIcon";
-import TruckIcon from "@/components/Icons/TruckIcon";
+import DeliveryIcon from "@/components/Icons/DeliveryIcon";
 import StyleManager from "@/app/themes";
-import FlagIcon from "@/components/Icons/FlagIcon";
 
-const StyledCongestionChargeAppliedIcon: React.FC<{}> = () => {
+const StyledCongestionChargeAppliesIcon: React.FC<{}> = () => {
     return (
         <StyleManager>
-            <CongestionChargeAppliedIcon />
+            <CongestionChargeAppliesIcon />
         </StyleManager>
     );
 };
-const StyledFeetIcon: React.FC<FeetIconProps> = (props) => {
+const StyledCollectionIcon: React.FC<CollectionIconProps> = (props) => {
     return (
         <StyleManager>
-            <FeetIcon {...props} />
+            <CollectionIcon {...props} />
         </StyleManager>
     );
 };
 
-const StyledFlagIcon: React.FC<{}> = () => {
+const StyledFlaggedForAttentionIcon: React.FC<{}> = () => {
     return (
         <StyleManager>
-            <FlagIcon />
+            <FlaggedForAttentionIcon />
         </StyleManager>
     );
 };
@@ -46,26 +46,26 @@ const StyledSpeechBubbleIcon: React.FC<SpeechBubbleProps> = (props) => {
     );
 };
 
-const StyledTruckIcon: React.FC<{}> = () => {
+const StyledDeliveryIcon: React.FC<{}> = () => {
     return (
         <StyleManager>
-            <TruckIcon />
+            <DeliveryIcon />
         </StyleManager>
     );
 };
 
 describe("Icons", () => {
     it("All Render", () => {
-        cy.mount(<StyledCongestionChargeAppliedIcon />);
-        cy.mount(<StyledFeetIcon collectionPoint="Next Door" />);
-        cy.mount(<StyledFlagIcon />);
+        cy.mount(<StyledCongestionChargeAppliesIcon />);
+        cy.mount(<StyledCollectionIcon collectionPoint="Next Door" />);
+        cy.mount(<StyledFlaggedForAttentionIcon />);
         cy.mount(<StyledPhoneIcon />);
         cy.mount(<StyledSpeechBubbleIcon onHoverText="Some Bubble Text" />);
-        cy.mount(<StyledTruckIcon />);
+        cy.mount(<StyledDeliveryIcon />);
     });
 
-    it("Feet icon text is correct", () => {
-        cy.mount(<StyledFeetIcon collectionPoint="Next Door" />);
+    it("Collection icon text is correct", () => {
+        cy.mount(<StyledCollectionIcon collectionPoint="Next Door" />);
         cy.get("svg").find("title").should("have.text", "Collection at Next Door");
     });
 
@@ -75,17 +75,17 @@ describe("Icons", () => {
     });
 
     it("Congestion Charge Applies icon text is correct", () => {
-        cy.mount(<StyledCongestionChargeAppliedIcon />);
+        cy.mount(<StyledCongestionChargeAppliesIcon />);
         cy.get("svg").find("title").should("have.text", "Congestion charge applies");
     });
 
-    it("Flag icon text is correct", () => {
-        cy.mount(<StyledFlagIcon />);
+    it("Flagged for Attention icon text is correct", () => {
+        cy.mount(<StyledFlaggedForAttentionIcon />);
         cy.get("svg").find("title").should("have.text", "Flagged for attention");
     });
 
-    it("Truck icon text is correct", () => {
-        cy.mount(<StyledTruckIcon />);
+    it("Delivery icon text is correct", () => {
+        cy.mount(<StyledDeliveryIcon />);
         cy.get("svg").find("title").should("have.text", "Delivery");
     });
 
@@ -94,13 +94,13 @@ describe("Icons", () => {
         cy.get("svg").find("title").should("have.text", "Text On Hover");
     });
 
-    it("Flag icon default colour is set", () => {
-        cy.mount(<StyledFlagIcon />);
+    it("Flagged for Attention icon default colour is set", () => {
+        cy.mount(<StyledFlaggedForAttentionIcon />);
         cy.get("svg").invoke("attr", "color").should("eq", "orange");
     });
 
-    it("Feet icon with popper shows text on hover", () => {
-        cy.mount(<StyledFeetIcon collectionPoint="The roof" />);
+    it("Collection icon with popper shows text on hover", () => {
+        cy.mount(<StyledCollectionIcon collectionPoint="The roof" />);
         cy.get("svg").trigger("mouseover");
         cy.get("div").contains("Collection at The roof");
     });

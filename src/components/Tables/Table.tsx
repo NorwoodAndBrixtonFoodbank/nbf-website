@@ -43,6 +43,9 @@ interface Props {
     sortable?: boolean;
     onEdit?: (data: number) => void;
     onDelete?: (data: number) => void;
+    // TODO Change Types and Set Defaults
+    columnDisplayFunctions: any; //{ [headerKey: string]: ColumnDisplayFunction }; // TODO Default = {}
+    onRowClick?: any;
 }
 
 const doesRowIncludeFilterText = (row: Row, filterText: FilterText, headers: Headers): boolean => {
@@ -59,18 +62,20 @@ const doesRowIncludeFilterText = (row: Row, filterText: FilterText, headers: Hea
     return true;
 };
 
+// TODO Allow Filtering to apply to more than just displayed headers - can include hidden columns
+
 const dataToFilteredRows = (data: Datum[], filterText: FilterText, headers: Headers): Row[] => {
     const rows = dataToRows(data, headers);
-    const filteredRows = filterRows(rows, filterText, headers);
-    return filteredRows;
+    return filterRows(rows, filterText, headers);
 };
 
 const dataToRows = (data: Datum[], headers: Headers): Row[] => {
     return data.map((datum: Datum, currentIndex: number) => {
-        const row: Row = { rowId: currentIndex, data: {} };
+        const row: Row = { rowId: currentIndex, ...datum };
 
         for (const [headerKey, _headerLabel] of headers) {
             const databaseValue = datum.data[headerKey] ?? "";
+            // TODO Change special display values to use custom display functions instead
             row.data[headerKey] = Array.isArray(databaseValue)
                 ? databaseValue.join(", ")
                 : databaseValue;
@@ -113,6 +118,8 @@ const CustomCell: React.FC<CellProps> = ({ data, rowId, headerKey }) => {
         </RowDiv>
     );
 };
+
+// TODO Set default params instead of casting later
 
 const Table: React.FC<Props> = ({
     data: inputData,
