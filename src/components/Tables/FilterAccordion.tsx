@@ -23,7 +23,7 @@ const Styling = styled.div`
         box-shadow: 0 0 1px ${(props) => props.theme.secondaryBackgroundColor};
         // TODO: VFB16 change to a theme specific grey
         color: ${(props) => props.theme.surfaceForegroundColor};
-        border-radius: 0.5rem !important;
+        border-radius: 0.5rem;
         & .MuiAccordionDetails-root {
             display: flex;
             flex-wrap: wrap;

@@ -21,6 +21,7 @@ export type Datum = {
 };
 
 export type RowData = { [headerKey: string]: string };
+export type Headers = [string, string][];
 
 type Row = {
     rowId: number;
@@ -29,12 +30,10 @@ type Row = {
 
 interface Props {
     data: Datum[];
-    // headers is an object of header keys and header labels
-    headers: [string, string][];
+    headerKeysAndLabels: Headers;
     checkboxes?: boolean;
     reorderable?: boolean;
-    /// filters is an array of the header keys to filter by
-    filters?: string[];
+    headerFilters?: string[];
     pagination?: boolean;
     defaultShownHeaders?: string[];
     toggleableHeaders?: string[];
@@ -43,11 +42,7 @@ interface Props {
     onDelete?: (data: number) => void;
 }
 
-const doesRowIncludeFilterText = (
-    row: Row,
-    filterText: FilterText,
-    headers: [string, string][]
-): boolean => {
+const doesRowIncludeFilterText = (row: Row, filterText: FilterText, headers: Headers): boolean => {
     for (const [headerKey, _headerLabel] of headers) {
         if (
             !(row.data[headerKey] ?? "")
@@ -61,17 +56,13 @@ const doesRowIncludeFilterText = (
     return true;
 };
 
-const dataToFilteredRows = (
-    data: Datum[],
-    filterText: FilterText,
-    headers: [string, string][]
-): Row[] => {
+const dataToFilteredRows = (data: Datum[], filterText: FilterText, headers: Headers): Row[] => {
     const rows = dataToRows(data, headers);
     const filteredRows = filterRows(rows, filterText, headers);
     return filteredRows;
 };
 
-const dataToRows = (data: Datum[], headers: [string, string][]): Row[] => {
+const dataToRows = (data: Datum[], headers: Headers): Row[] => {
     return data.map((datum: Datum, currentIndex: number) => {
         const row: Row = { rowId: currentIndex, data: {} };
 
@@ -86,16 +77,16 @@ const dataToRows = (data: Datum[], headers: [string, string][]): Row[] => {
     });
 };
 
-const filterRows = (rows: Row[], filterText: FilterText, headers: [string, string][]): Row[] => {
+const filterRows = (rows: Row[], filterText: FilterText, headers: Headers): Row[] => {
     return rows.filter((row) => doesRowIncludeFilterText(row, filterText, headers));
 };
 
 const Table: React.FC<Props> = (props) => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
-        props.defaultShownHeaders ?? props.headers.map(([key]) => key)
+        props.defaultShownHeaders ?? props.headerKeysAndLabels.map(([key]) => key)
     );
 
-    const shownHeaders = props.headers.filter(([key]) => shownHeaderKeys.includes(key));
+    const shownHeaders = props.headerKeysAndLabels.filter(([key]) => shownHeaderKeys.includes(key));
 
     const [data, setData] = useState(props.data);
 
@@ -126,24 +117,22 @@ const Table: React.FC<Props> = (props) => {
     }, [selectCheckBoxes, selectAllCheckBox]);
 
     const columns: TableColumn<Row>[] = (
-        props.toggleableHeaders ? shownHeaders : props.headers
+        props.toggleableHeaders ? shownHeaders : props.headerKeysAndLabels
     ).map(([headerKey, headerName]) => {
         return {
             name: headerName,
             selector: (row) => row.data[headerKey],
             sortable: props.sortable ?? true,
             cell(row, rowIndex, column, id) {
-                const tooltip = data[row.rowId].tooltips?.[headerKey];
-                const tooltipElement = tooltip ? (
-                    <>
-                        <Spacer />
-                        <SpeechBubbleIcon onHoverText={tooltip} popper />
-                    </>
-                ) : null;
+                const tooltips = data[row.rowId].tooltips ?? {};
                 return (
                     <RowDiv key={id}>
                         {data[row.rowId].data[headerKey]}
-                        {tooltipElement}
+                        {headerKey in tooltips ? (
+                            <SpeechBubbleIcon onHoverText={tooltips[headerKey]!} popper />
+                        ) : (
+                            <></>
+                        )}
                     </RowDiv>
                 );
             },
@@ -249,7 +238,8 @@ const Table: React.FC<Props> = (props) => {
         }
     };
 
-    const filterKeys = props.filters ?? props.headers.map(([headerKey]) => headerKey);
+    const filterKeys =
+        props.headerFilters ?? props.headerKeysAndLabels.map(([headerKey]) => headerKey);
 
     return (
         <Styling>
@@ -257,7 +247,7 @@ const Table: React.FC<Props> = (props) => {
                 <DataTable
                     // types are fine without the cast when not using styled components, not sure what's happening here
                     columns={columns}
-                    data={dataToFilteredRows(data, filterText, props.headers)}
+                    data={dataToFilteredRows(data, filterText, props.headerKeysAndLabels)}
                     keyField="rowId"
                     fixedHeader
                     subHeader
@@ -268,7 +258,7 @@ const Table: React.FC<Props> = (props) => {
                             toggleableHeaders={props.toggleableHeaders}
                             onFilter={onFilter}
                             handleClear={handleClear}
-                            headers={props.headers}
+                            headers={props.headerKeysAndLabels}
                             setShownHeaderKeys={setShownHeaderKeys}
                             shownHeaderKeys={shownHeaderKeys}
                         />
@@ -286,10 +276,7 @@ const RowDiv = styled.div`
     width: 100%;
     align-items: center;
     padding-left: 1rem;
-`;
-
-const Spacer = styled.div`
-    width: 2rem;
+    gap: 2rem;
 `;
 
 const EditandReorderArrowDiv = styled.div`
@@ -398,6 +385,7 @@ const Styling = styled.div`
     & .rdt_TableRow {
         padding: 0.5rem 0.5rem;
         // TODO: VFB-16 different greys for different theme modes
+        // important needed to override the inline style
         border-bottom-color: grey !important;
     }
 

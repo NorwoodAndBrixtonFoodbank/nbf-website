@@ -152,12 +152,12 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
             <TableDiv>
                 <StyledTable
                     checkboxes={false}
-                    headers={headers}
+                    headerKeysAndLabels={headers}
                     toggleableHeaders={toggleableHeaders}
                     defaultShownHeaders={["item_name", ...toggleableHeaders]}
                     data={dataAndTooltips}
                     reorderable
-                    filters={["item_name"]}
+                    headerFilters={["item_name"]}
                     pagination={false}
                     onEdit={onEdit}
                     onDelete={onDelete}
