@@ -3,6 +3,9 @@
 import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
 import React, { useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
+import { ClientTableRow } from "@/app/clients/getClientsTableData";
+import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
+import PhoneIcon from "@/components/Icons/PhoneIcon";
 
 export interface Datum {
     [headerKey: string]: string[] | string | number | boolean | null;
@@ -17,9 +20,14 @@ interface Headers {
     [headerKey: string]: string;
 }
 
+// type ColumnDisplayFunction = (row: any) => ;
+
 interface Props {
     data: Datum[];
     headers: Headers;
+    // TODO Change Types and Set Defaults
+    columnDisplayFunctions: any; //{ [headerKey: string]: ColumnDisplayFunction }; // TODO Default = {}
+    onRowClick?: any;
 }
 
 const doesRowIncludeFilterText = (row: Row, filterText: FilterText, headers: Headers): boolean => {
@@ -36,6 +44,8 @@ const doesRowIncludeFilterText = (row: Row, filterText: FilterText, headers: Hea
     return true;
 };
 
+// TODO Allow Filtering to apply to more than just displayed headers - can include hidden columns
+
 const dataToFilteredRows = (data: Datum[], filterText: FilterText, headers: Headers): Row[] => {
     const rows = dataToRows(data, headers);
     const filteredRows = filterRows(rows, filterText, headers);
@@ -45,10 +55,11 @@ const dataToFilteredRows = (data: Datum[], filterText: FilterText, headers: Head
 
 const dataToRows = (data: Datum[], headers: Headers): Row[] => {
     return data.map((datum: Datum, currentIndex: number) => {
-        const row: Row = { rowId: currentIndex };
+        const row: Row = { rowId: currentIndex, ...datum };
 
         for (const headerKey of Object.keys(headers)) {
             const databaseValue = datum[headerKey] ?? "";
+            // TODO Change special display values to use custom display functions instead
             row[headerKey] = Array.isArray(databaseValue)
                 ? databaseValue.join(", ")
                 : databaseValue;
@@ -101,6 +112,7 @@ const Table: React.FC<Props> = (props) => {
                 name: headerName,
                 selector: (row: Row) => row[headerKey],
                 sortable: true,
+                cell: props.columnDisplayFunctions[headerKey],
             };
         }
     );
@@ -155,6 +167,7 @@ const Table: React.FC<Props> = (props) => {
             }
             pagination
             persistTableHead
+            onRowClicked={props.onRowClick}
         />
     );
 };

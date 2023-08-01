@@ -1,24 +1,19 @@
-import supabase, { Schema } from "@/supabase";
 import { Metadata } from "next";
 import { Datum } from "@/components/Tables/Table";
 import React from "react";
-
-const dataFetch: () => Promise<Schema["clients"][]> = async () => {
-    const response = await supabase.from("clients").select();
-    return response.data ?? [];
-};
+import ClientsTable from "@/app/clients/ClientsTable";
+import { getClientsTableData, getProcessingData } from "@/app/clients/getClientsTableData";
 
 const Clients: () => Promise<React.ReactElement> = async () => {
-    const data: Datum[] = await dataFetch();
+    const debugProcessingData: any = await getProcessingData(); // TODO REMOVE
+    const data: Datum[] = await getClientsTableData();
 
     return (
         <main>
             <h1> Clients Page </h1>
 
-            <p> Testing Supabase fetching </p>
-
-            {/* This should be a separate component which is passed data via props */}
-            <pre>{JSON.stringify(data, null, 4)}</pre>
+            <ClientsTable clientsTableData={data} />
+            <pre>{JSON.stringify(debugProcessingData, null, 4)}</pre>
         </main>
     );
 };

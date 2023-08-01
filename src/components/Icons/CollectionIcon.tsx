@@ -6,7 +6,7 @@ import { faShoePrints } from "@fortawesome/free-solid-svg-icons";
 interface Props {
     collectionPoint: string;
 }
-const FeetIcon: React.FC<Props> = (props) => {
+const CollectionIcon: React.FC<Props> = (props) => {
     return (
         <Icon
             icon={faShoePrints}
@@ -16,4 +16,4 @@ const FeetIcon: React.FC<Props> = (props) => {
     );
 };
 
-export default FeetIcon;
+export default CollectionIcon;
