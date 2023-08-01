@@ -122,6 +122,8 @@ const Table: React.FC<Props> = (props) => {
         return {
             name: headerName,
             selector: (row) => row.data[headerKey],
+            minWidth: "12rem",
+            maxWidth: "20rem",
             sortable: props.sortable ?? true,
             cell(row, rowIndex, column, id) {
                 const tooltips = data[row.rowId].tooltips ?? {};

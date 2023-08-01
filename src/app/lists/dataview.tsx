@@ -150,7 +150,7 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
                 key={modal?.data?.primary_key}
             />
             <TableDiv>
-                <StyledTable
+                <Table
                     checkboxes={false}
                     headerKeysAndLabels={headers}
                     toggleableHeaders={toggleableHeaders}
@@ -188,11 +188,6 @@ const TableDiv = styled.div`
     background-color: ${(props) => props.theme.surfaceBackgroundColor};
     border: solid 1px ${(props) => props.theme.surfaceForegroundColor};
     border-radius: 1rem;
-`;
-
-const StyledTable = styled(Table)`
-    width: 100%;
-    background-color: transparent;
 `;
 
 const StyledAddButton = styled.button`
