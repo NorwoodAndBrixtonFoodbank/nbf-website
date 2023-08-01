@@ -9,8 +9,7 @@ import Link from "next/link";
 import { styled } from "styled-components";
 import Button from "@mui/material/Button";
 import LightDarkSlider from "@/components/NavBar/LightDarkSlider";
-
-import SignOutButton from "./SignOutButton";
+import SignOutButton from "@/components/NavBar/SignOutButton";
 
 export const PageButton = styled(Button)`
     color: white;

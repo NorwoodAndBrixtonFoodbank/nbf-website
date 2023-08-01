@@ -3,7 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useRouter } from "next/navigation";
 
-const SignOutButton: React.FC<{}> = () => {
+const SignOutButton: React.FC = () => {
     const router = useRouter();
 
     const handleSignOutClick = (): void => {
