@@ -1,6 +1,7 @@
 import React from "react";
 import { Accordion, Checkbox, AccordionSummary, AccordionDetails } from "@mui/material";
 import { styled } from "styled-components";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 type FilterAccordionProps = {
     toggleableHeaders?: string[];
@@ -58,6 +59,16 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
     setShownHeaderKeys,
     headers,
 }) => {
+    const getOnChanged = (key: string): ((event: React.ChangeEvent<HTMLInputElement>) => void) => {
+        return (event) => {
+            if (event.target.checked) {
+                setShownHeaderKeys([...shownHeaderKeys, key]);
+            } else {
+                setShownHeaderKeys(shownHeaderKeys.filter((shownKey) => shownKey !== key));
+            }
+        };
+    };
+
     return (
         <Styling>
             <Accordion>
@@ -65,18 +76,7 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
                     <Row>
                         <p>Select Columns</p>
                         <Spacer />
-                        <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M7.41 8.58997L12 13.17L16.59 8.58997L18 9.99997L12 15L6 9.99997L7.41 8.58997Z"
-                                fill="black"
-                            />
-                        </svg>
+                        <ExpandMoreIcon />
                     </Row>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -86,17 +86,7 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
                                 <Checkbox
                                     key={key}
                                     checked={shownHeaderKeys.includes(key)}
-                                    onChange={(event) => {
-                                        if (event.target.checked) {
-                                            setShownHeaderKeys([...shownHeaderKeys, key]);
-                                        } else {
-                                            setShownHeaderKeys(
-                                                shownHeaderKeys.filter(
-                                                    (shownKey) => shownKey !== key
-                                                )
-                                            );
-                                        }
-                                    }}
+                                    onChange={getOnChanged(key)}
                                 />
                                 <p>
                                     {headers.find(([headerKey]) => headerKey === key)?.[1] ?? key}

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { styled } from "styled-components";
-import FilterAccordion from "@/components/Tables/Accordion";
+import FilterAccordion from "@/components/Tables/FilterAccordion";
 
 export type FilterText = {
     [key: string]: string;
@@ -27,9 +27,9 @@ const StyledFilterBar = styled.input`
     font-size: 1rem;
     width: 15rem;
     overflow: visible;
-    border: 1px solid ${(props) => props.theme.secondaryBackgroundColor}!important;
+    border: 1px solid ${(props) => props.theme.secondaryBackgroundColor};
     box-shadow: 0 0 1px ${(props) => props.theme.secondaryBackgroundColor};
-    padding: 4px 4px 4px 8px !important;
+    padding: 4px 4px 4px 8px;
     border-radius: 0.8rem;
 `;
 

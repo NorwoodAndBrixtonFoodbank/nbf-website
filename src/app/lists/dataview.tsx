@@ -1,16 +1,15 @@
 "use client";
 
 import Table, { Datum } from "@/components/Tables/Table";
-import { Database } from "@/database_types_file";
 import React, { useState } from "react";
 import { styled } from "styled-components";
 import EditModal from "@/app/lists/editModal";
-import supabase from "@/supabase";
+import supabase, { Schema } from "@/supabase";
 import ConfirmDialog from "@/components/Modal/Confirm";
 import Snackbar from "@mui/material/Snackbar/Snackbar";
 import Alert from "@mui/material/Alert/Alert";
 
-export type ListRow = Database["public"]["Tables"]["lists"]["Row"];
+export type ListRow = Schema["lists"];
 
 type Props = {
     data: ListRow[] | null;
