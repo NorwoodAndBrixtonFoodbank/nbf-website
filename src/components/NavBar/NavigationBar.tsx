@@ -41,7 +41,7 @@ const AppBarInner = styled.div`
 const DrawerInner = styled.div`
     display: flex;
     flex-direction: column;
-    justify-content: start
+    justify-content: start;
     align-items: stretch;
     padding: 1rem;
     width: 15rem;
