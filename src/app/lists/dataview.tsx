@@ -1,6 +1,6 @@
 "use client";
 
-import Table, { Datum } from "@/components/Tables/Table";
+import Table, { Datum, RowData } from "@/components/Tables/Table";
 import React, { useState } from "react";
 import { styled } from "styled-components";
 import EditModal from "@/app/lists/editModal";
@@ -11,9 +11,9 @@ import Alert from "@mui/material/Alert/Alert";
 
 export type ListRow = Schema["lists"];
 
-type Props = {
+interface Props {
     data: ListRow[] | null;
-};
+}
 
 export const headers: [string, string][] = [
     ["item_name", "Description"],
@@ -54,15 +54,13 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
         throw new Error("No data found");
     }
 
-    const remapTooltips = (
-        row: ListRow
-    ): Datum & { unmappedTooltips: { [key: string]: string } } => {
-        const data: { [key: string]: string } = {
+    const remapTooltips = (row: ListRow): Datum & { unmappedTooltips: RowData } => {
+        const data: RowData = {
             item_name: row.item_name,
             primary_key: row.primary_key,
         };
-        const tooltips: { [key: string]: string } = {};
-        const unmappedTooltips: { [key: string]: string } = {};
+        const tooltips: RowData = {};
+        const unmappedTooltips: RowData = {};
 
         for (const [key, value] of Object.entries(row)) {
             if (key.endsWith("quantity") && value) {
@@ -84,7 +82,7 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
 
     // extract header keys
     const toggleableHeaders = headers.map(([key]) => key);
-    // removing description header from Toggleable Headers using shift
+    // removw description header
     toggleableHeaders.shift();
 
     const onEdit = (index: number): void => {
@@ -103,6 +101,23 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
         setToDeleteModalOpen(true);
     };
 
+    const onConfirmDeletion = async (): Promise<void> => {
+        if (toDelete !== null) {
+            const data = rawData[toDelete];
+            const response = await supabase
+                .from("lists")
+                .delete()
+                .match({ primary_key: data.primary_key });
+
+            // this is not a normal js response object, so checking response.error (and using response.error.message) is fine
+            if (response.error) {
+                setErrorMsg(response.error.message);
+            } else {
+                window.location.reload();
+            }
+        }
+    };
+
     return (
         <>
             <ConfirmDialog
@@ -110,24 +125,7 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
                     toDelete ? rawData[toDelete].item_name : ""
                 }?`}
                 isOpen={toDeleteModalOpen}
-                onConfirm={async () => {
-                    if (toDelete !== null) {
-                        const data = rawData[toDelete];
-                        const response = await supabase
-                            .from("lists")
-                            .delete()
-                            .match({ primary_key: data.primary_key });
-
-                        if (Math.floor(response.status / 100) !== 2) {
-                            setErrorMsg(
-                                `${response.status}: ${response.statusText} -- data: ${response.data}`
-                            );
-                        } else {
-                            setToDeleteModalOpen(false);
-                            window.location.reload();
-                        }
-                    }
-                }}
+                onConfirm={onConfirmDeletion}
                 onCancel={() => {
                     setToDeleteModalOpen(false);
                 }}
@@ -143,9 +141,7 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
                 </SnackBarDiv>
             </Snackbar>
             <EditModal
-                onClose={() => {
-                    setModal(undefined);
-                }}
+                onClose={() => setModal(undefined)}
                 data={modal}
                 key={modal?.data?.primary_key}
             />

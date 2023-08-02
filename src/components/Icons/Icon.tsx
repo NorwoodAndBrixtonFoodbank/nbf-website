@@ -46,7 +46,7 @@ const Icon: React.FC<Props> = (props) => {
         setHovered(true);
         setTimeout(() => {
             setHovered(false);
-        }, 2000);
+        }, 4000);
     };
 
     return (

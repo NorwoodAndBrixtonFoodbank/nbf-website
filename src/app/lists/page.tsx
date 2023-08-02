@@ -1,14 +1,13 @@
 import { Metadata } from "next";
 import React, { ReactElement } from "react";
 import ListsDataView from "@/app/lists/dataview";
-import supabase from "@/supabase";
-import { Database } from "@/database_types_file";
+import supabase, { Schema } from "@/supabase";
 
 export const revalidate = 0;
 
-const fetchData = async (): Promise<Database["public"]["Tables"]["lists"]["Row"][] | null> => {
-    supabase.channel("lists").subscribe();
-    return (await supabase.from("lists").select("*")).data;
+const fetchData = async (): Promise<Schema["lists"][] | null> => {
+    const response = await supabase.from("lists").select("*");
+    return response.data ?? [];
 };
 
 const Lists = async (): Promise<ReactElement> => {

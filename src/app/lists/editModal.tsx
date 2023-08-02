@@ -11,11 +11,13 @@ import Snackbar from "@mui/material/Snackbar/Snackbar";
 import Alert from "@mui/material/Alert/Alert";
 import Button from "@mui/material/Button/Button";
 
-type Props = {
+interface Props {
     onClose: () => void;
     /** null => add, undefined => modal closed, Datum => edit */
     data: Datum | null | undefined;
-};
+}
+
+type HeadersAndTooltips = [[string, string], [string, string]][];
 
 const ModalInner = styled.div`
     display: flex;
@@ -51,12 +53,40 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
 
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-    const headersAndTooltips: [[string, string], [string, string]][] = [];
+    // const headersAndTooltips: HeadersAndTooltips = [];
     const headersThatHaveTooltips = headers.filter(([key]) => key !== "item_name");
 
-    for (let index = 0; index < headersThatHaveTooltips.length; index++) {
-        headersAndTooltips.push([headersThatHaveTooltips[index], tooltips[index]]);
-    }
+    const headersAndTooltips: HeadersAndTooltips = headersThatHaveTooltips.map((header, index) => {
+        return [header, tooltips[index]];
+    });
+
+    const setKey = (event: React.ChangeEvent<HTMLInputElement>, key: string): void => {
+        const text = event.target.value as string;
+        setToSubmit({ ...toSubmit, [key]: text });
+    };
+
+    const onSubmit = async (): Promise<void> => {
+        let operation;
+
+        if (data === null) {
+            operation = supabase.from("lists").insert(toSubmit);
+        } else {
+            operation = supabase
+                .from("lists")
+                .update(toSubmit)
+                .eq("primary_key", toSubmit.primary_key)
+                .select();
+        }
+
+        const response = await operation;
+
+        // this is not a normal js response object, so checking response.error (and using response.error.message) is fine
+        if (response.error) {
+            setErrorMsg(response.error.message);
+        } else {
+            window.location.reload();
+        }
+    };
 
     return (
         <Modal header="Edit List" headerId="editList" isOpen={data !== undefined} onClose={onClose}>
@@ -64,10 +94,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                 <h3>Description</h3>
                 <TextInput
                     defaultValue={toSubmit.item_name ?? ""}
-                    onChange={(event) => {
-                        const text = event.target.value as string;
-                        setToSubmit({ ...toSubmit, item_name: text });
-                    }}
+                    onChange={(event) => setKey(event, "item_name")}
                     helperText="Description"
                 />
                 {headersAndTooltips.map(([[key, label], [tooltipKey]]) => {
@@ -78,50 +105,18 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                                 <TextInput
                                     defaultValue={toSubmit[key] ?? ""}
                                     helperText="Quantity"
-                                    onChange={(event) => {
-                                        const text = event.target.value as string;
-                                        setToSubmit({ ...toSubmit, [key]: text });
-                                    }}
+                                    onChange={(event) => setKey(event, key)}
                                 />
                                 <TextInput
                                     defaultValue={toSubmit[tooltipKey] ?? ""}
                                     helperText="Notes"
-                                    onChange={(event) => {
-                                        const text = event.target.value as string;
-                                        setToSubmit({ ...toSubmit, [tooltipKey]: text });
-                                    }}
+                                    onChange={(event) => setKey(event, tooltipKey)}
                                 />
                             </DataWithTooltipDiv>
                         </DisplayContents>
                     );
                 })}
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={async () => {
-                        let operation;
-
-                        if (data === null) {
-                            operation = supabase.from("lists").insert(toSubmit);
-                        } else {
-                            operation = supabase
-                                .from("lists")
-                                .update(toSubmit)
-                                .eq("primary_key", toSubmit.primary_key)
-                                .select();
-                        }
-
-                        const response = await operation;
-
-                        if (Math.floor(response.status / 100) !== 2) {
-                            setErrorMsg(
-                                `${response.status}: ${response.statusText} -- data: ${response.data}`
-                            );
-                        } else {
-                            window.location.reload();
-                        }
-                    }}
-                >
+                <Button variant="contained" color="primary" onClick={onSubmit}>
                     Submit
                 </Button>
                 <Snackbar

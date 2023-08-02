@@ -5,12 +5,12 @@ import Modal from "@/components/Modal/Modal";
 import { styled } from "styled-components";
 import Button from "@mui/material/Button/Button";
 
-type Props = {
+interface Props {
     isOpen: boolean;
     message: string;
     onConfirm: () => void;
     onCancel: () => void;
-};
+}
 
 const ModalInner = styled.div`
     display: flex;

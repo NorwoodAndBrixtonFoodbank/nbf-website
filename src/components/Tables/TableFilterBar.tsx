@@ -4,9 +4,9 @@ import React from "react";
 import { styled } from "styled-components";
 import FilterAccordion from "@/components/Tables/FilterAccordion";
 
-export type FilterText = {
+export interface FilterText {
     [key: string]: string;
-};
+}
 
 const StyledFilterAccordion = styled(FilterAccordion)`
     width: 100%;

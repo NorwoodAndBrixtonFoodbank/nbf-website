@@ -15,18 +15,21 @@ import {
 import IconButton from "@mui/material/IconButton/IconButton";
 import Icon from "../Icons/Icon";
 
-export type Datum = {
+export interface Datum {
     data: RowData;
     tooltips?: RowData;
-};
+}
 
-export type RowData = { [headerKey: string]: string };
+export interface RowData {
+    [headerKey: string]: string;
+}
+
 export type Headers = [string, string][];
 
-type Row = {
+interface Row {
     rowId: number;
     data: RowData;
-};
+}
 
 interface Props {
     data: Datum[];

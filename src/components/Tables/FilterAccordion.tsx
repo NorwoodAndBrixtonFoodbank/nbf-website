@@ -4,12 +4,12 @@ import { styled } from "styled-components";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import Icon from "../Icons/Icon";
 
-type FilterAccordionProps = {
+interface FilterAccordionProps {
     toggleableHeaders?: string[];
     shownHeaderKeys: string[];
     setShownHeaderKeys: (headers: string[]) => void;
     headers: [string, string][];
-};
+}
 
 const Styling = styled.div`
     flex-grow: 1;
@@ -82,6 +82,8 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
                 </AccordionSummary>
                 <AccordionDetails>
                     {(toggleableHeaders ?? []).map((key) => {
+                        const headerKeyAndLabel = headers.find(([headerKey]) => headerKey === key);
+                        const headerLabel = headerKeyAndLabel ? headerKeyAndLabel[1] : key;
                         return (
                             <ContainerDiv key={key}>
                                 <Checkbox
@@ -89,9 +91,7 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
                                     checked={shownHeaderKeys.includes(key)}
                                     onChange={getOnChanged(key)}
                                 />
-                                <p>
-                                    {headers.find(([headerKey]) => headerKey === key)?.[1] ?? key}
-                                </p>
+                                <p>{headerLabel}</p>
                             </ContainerDiv>
                         );
                     })}
