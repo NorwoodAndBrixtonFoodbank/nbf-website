@@ -31,7 +31,7 @@ describe("Export Pdf Button", () => {
 
     it("file is saved", () => {
         cy.mount(<PdfBodyAndButton />);
-        console.log(downloadsFolder);
+
         cy.get("button").click();
         cy.readFile(`${downloadsFolder}/${fileName}.pdf`);
     });
