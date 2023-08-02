@@ -8,10 +8,18 @@ const UnstyledLink = styled(Link)`
     display: contents;
 `;
 
-const LinkButton: React.FC<{ href: string }> = (props) => {
+type LinkButtonProps = {
+    link: string;
+    page: string;
+    onClick?: () => void;
+};
+
+const LinkButton: React.FC<LinkButtonProps> = (props) => {
     return (
-        <UnstyledLink href={props.href}>
-            <Button></Button>
+        <UnstyledLink key={props.page} href={props.link} prefetch={false}>
+            <Button variant="outlined" color="secondary">
+                {props.page}
+            </Button>
         </UnstyledLink>
     );
 };

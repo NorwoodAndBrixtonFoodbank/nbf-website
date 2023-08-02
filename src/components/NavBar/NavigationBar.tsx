@@ -6,10 +6,11 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Link from "next/link";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import Button from "@mui/material/Button";
 import LightDarkSlider from "@/components/NavBar/LightDarkSlider";
 import SignOutButton from "@/components/NavBar/SignOutButton";
+import LinkButton from "@/components/Buttons/LinkButton";
 
 export const PageButton = styled(Button)`
     color: white;
@@ -40,7 +41,7 @@ const AppBarInner = styled.div`
 const DrawerInner = styled.div`
     display: flex;
     flex-direction: column;
-    justify-content: start;
+    justify-content: start
     align-items: stretch;
     padding: 1rem;
     width: 15rem;
@@ -61,6 +62,7 @@ const DrawerButtonWrapper = styled.div`
 
 const DrawerButton = styled(Button)`
     color: ${(props) => props.theme.secondaryBackgroundColor};
+    width: 100%;
 `;
 
 const StickyAppBar = styled(AppBar)`
@@ -91,7 +93,7 @@ const LogoElementContainer = styled(NavElementContainer)`
     }
 `;
 
-const ButtonContainer = styled(NavElementContainer)`
+const DesktopButtonContainer = styled(NavElementContainer)`
     display: none;
     @media (min-width: 800px) {
         display: flex;
@@ -144,23 +146,14 @@ const ResponsiveAppBar: React.FC = () => {
                             <Logo alt="Vauxhall Foodbank Logo" src="/logo.webp" />
                         </UnstyledLink>
                     </LogoElementContainer>
-                    <ButtonContainer>
+                    <DesktopButtonContainer>
                         {pages.map(([page, link]) => (
                             <>
-                                <UnstyledLink
-                                    key={page}
-                                    href={link}
-                                    onClick={closeDrawer}
-                                    prefetch={false}
-                                >
-                                    <Button variant="outlined" color="secondary">
-                                        {page}
-                                    </Button>
-                                </UnstyledLink>
+                                <LinkButton link={link} page={page} />
                                 <Gap />
                             </>
                         ))}
-                    </ButtonContainer>
+                    </DesktopButtonContainer>
                     <SignOutButtonContainer>
                         <LightDarkSlider />
                         <Gap />
