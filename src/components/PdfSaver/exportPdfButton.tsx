@@ -20,40 +20,42 @@ const StyledButton = styled.button`
 `;
 
 export type PdfProps = {
-    pdfRef: React.MutableRefObject<HTMLInputElement | null>
-}
+    pdfRef: React.MutableRefObject<HTMLInputElement | null>;
+    fileName?: string;
+    buttonText?: string;
+};
 
-const getPaperSize = (pdfRef: React.MutableRefObject<HTMLInputElement | null>) => {
+const getPaperSize = (
+    pdfRef: React.MutableRefObject<HTMLInputElement | null>
+): [number, number] => {
     const width = pdfRef.current!.offsetWidth;
     // aspect ratio of A4 is 1:√2
     const height = width * Math.SQRT2;
-    return [width, height]
-}
+    return [width, height];
+};
 
 const ExportPdfButton: React.FC<PdfProps> = (props) => {
-    
-    const savePdf = () => {        
-        const doc = new jsPDF(
-            {
-                orientation: 'p',
-                unit: 'mm',
-                format: getPaperSize(props.pdfRef),
-                compress: true,
-            }
-        );
+    const savePdf = (): void => {
+        const doc = new jsPDF({
+            orientation: "p",
+            unit: "mm",
+            format: getPaperSize(props.pdfRef),
+            compress: true,
+        });
 
         doc.html(props.pdfRef.current!, {
             async callback(doc) {
-                await doc.save("document");
+                await doc.save(props.fileName !== undefined ? props.fileName : "document.pdf");
             },
         });
     };
     return (
         <>
-            <StyledButton onClick={savePdf}>Save as PDF</StyledButton>
+            <StyledButton onClick={savePdf}>
+                {props.buttonText !== undefined ? props.buttonText : "Save as PDF"}
+            </StyledButton>
         </>
     );
 };
 
 export default ExportPdfButton;
-
