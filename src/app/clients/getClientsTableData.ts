@@ -1,4 +1,4 @@
-import supabase from "@/supabase";
+import supabase, { Schema } from "@/supabase";
 import { Datum } from "@/components/Tables/Table";
 
 // TODO Implement database select statement
@@ -8,39 +8,69 @@ import { Datum } from "@/components/Tables/Table";
 // TODO Remove any 'any' types
 
 // TODO Prune unnecessary fields
-interface ProcessingData {
-    parcel_id: string;
-    client_id: string;
-    collection_centre: string | null;
-    collection_datetime: string | null;
-    packing_datetime: string | null;
 
-    client: {
-        client_id: string;
-        family_id: string;
-        full_name: string;
-        address_postcode: string;
-        flagged_for_attention: boolean;
-        signposting_call_required: boolean;
+// interface ProcessingData {
+//     parcel_id: string;
+//     client_id: string;
+//     collection_centre: string | null;
+//     collection_datetime: string | null;
+//     packing_datetime: string | null;
+//
+//     client: {
+//         client_id: string;
+//         family_id: string;
+//         full_name: string;
+//         address_postcode: string;
+//         flagged_for_attention: boolean;
+//         signposting_call_required: boolean;
+//
+//         family: {
+//             family_id: string;
+//             person_type: string;
+//             quantity: number;
+//         }[];
+//     };
+//
+//     events: {
+//         event_id: string;
+//         parcel_id: string;
+//         event_name: string;
+//         timestamp: string;
+//     }[];
+// }
 
-        family: {
-            family_id: string;
-            person_type: string;
-            quantity: number;
-        }[];
-    };
+// type clientPart = Pick<Schema["clients"], "primary_key" | "family_id" | "full_name" | "address_postcode" | "flagged_for_attention" | "signposting_call_required">;
+//
+// type Test = Pick<Schema["parcels"],
+//     "primary_key"| "client_id" | "collection_centre" | "collection_datetime" | "packing_datetime"> &
+//     {client: clientPart}
+//
+// };
 
-    events: {
-        event_id: string;
-        parcel_id: string;
-        event_name: string;
-        timestamp: string;
-    }[];
+// TODO Info needed for table
+export interface ClientTableRow extends Datum {
+    parcelId: Schema["parcels"]["primary_key"];
+
+    flaggedForAttention: boolean;
+    requiresFollowUpPhoneCall: boolean;
+
+    fullName: Schema["clients"]["full_name"];
+    familyCategory: string;
+    addressPostcode: Schema["clients"]["address_postcode"];
+
+    collectionCentre: Schema["parcels"]["collection_centre"];
+    congestionChargeApplies: boolean;
+
+    packingTimeLabel: string;
+    lastStatus: string;
 }
 
+type ProcessingData = Awaited<ReturnType<typeof getProcessingData>>;
+
 // TODO remove export statement
-export const getProcessingData = async (): Promise<ProcessingData[]> => {
-    const { data, error } = await supabase
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export const getProcessingData = async () => {
+    const response = await supabase
         .from("parcels")
         .select(
             `
@@ -77,38 +107,23 @@ export const getProcessingData = async (): Promise<ProcessingData[]> => {
         .order("timestamp", { ascending: false, foreignTable: "events" })
         .limit(1, { foreignTable: "events" });
 
-    return data ?? []; // TODO Handle this error
+    return response.data ?? []; // TODO Handle this error
 };
 
-// TODO Info needed for table
-export interface ClientTableRow extends Datum {
-    flaggedForAttention: boolean;
-    requiresFollowUpPhoneCall: boolean;
-
-    fullName: string;
-    familyCategory: string;
-    addressPostcode: string;
-
-    collectionCentre: string;
-    congestionChargeApplies: boolean;
-
-    packingTimeLabel: string;
-    lastStatus: string;
-}
-
 // TODO Change to actual headers of table - currently used in debugging
-const processingDataToClientTableData = (processingData: ProcessingData[]): ClientTableRow[] => {
+const processingDataToClientTableData = (processingData: ProcessingData): ClientTableRow[] => {
     const clientTableRows = [];
 
     for (const parcel of processingData) {
         clientTableRows.push({
-            flaggedForAttention: parcel.client.flagged_for_attention,
-            requiresFollowUpPhoneCall: parcel.client.signposting_call_required,
-            fullName: parcel.client.full_name,
-            familyCategory: familyDetailsToFamilyCategory(parcel.client.family),
-            addressPostcode: parcel.client.address_postcode,
+            parcelId: parcel.parcel_id,
+            flaggedForAttention: parcel.client!.flagged_for_attention,
+            requiresFollowUpPhoneCall: parcel.client!.signposting_call_required,
+            fullName: parcel.client!.full_name,
+            familyCategory: familyDetailsToFamilyCategory(parcel.client!.family),
+            addressPostcode: parcel.client!.address_postcode,
             collectionCentre: parcel.collection_centre,
-            congestionChargeApplies: congestionChargeAppliesTo(parcel.client.address_postcode),
+            congestionChargeApplies: congestionChargeAppliesTo(parcel.client!.address_postcode),
             packingDate: formatDatetimeAsDate(parcel.packing_datetime),
             packingTimeLabel: datetimeToPackingTimeLabel(parcel.packing_datetime),
             lastStatus: eventToStatusMessage(parcel.events[0] ?? null), // TODO Change this
@@ -117,19 +132,6 @@ const processingDataToClientTableData = (processingData: ProcessingData[]): Clie
 
     return clientTableRows;
 };
-
-// TODO Refactor <Table> Component to allow for react elements as display labels
-// const clientDetailsToIconsColumn = (clientDetails: {
-//     flagged_for_attention: boolean;
-//     signposting_call_required: boolean;
-// }): ReactElement => {
-//     return (
-//         <>
-//             {clientDetails.flagged_for_attention ? <FlaggedForAttentionIcon /> : <></>}
-//             {clientDetails.signposting_call_required ? <PhoneIcon /> : <></>}
-//         </>
-//     );
-// };
 
 const familyDetailsToFamilyCategory = (familyDetails: { quantity: number }[]): string => {
     let count = 0;
@@ -149,7 +151,7 @@ const familyDetailsToFamilyCategory = (familyDetails: { quantity: number }[]): s
     return "Family of 10+";
 };
 
-const formatDatetimeAsDate = (datetime: string | null): string => {
+export const formatDatetimeAsDate = (datetime: string | null): string => {
     if (datetime === null || isNaN(Date.parse(datetime))) {
         return "-"; // TODO Change to setting as display only?
     }
@@ -167,14 +169,16 @@ const formatDatetimeAsDate = (datetime: string | null): string => {
 };
 
 const datetimeToPackingTimeLabel = (datetime: string | null): string => {
-    if (datetime === null) {
+    if (datetime === null || isNaN(Date.parse(datetime))) {
         return "-";
     }
 
     return new Date(datetime).getHours() <= 11 ? "AM" : "PM";
 };
 
-const eventToStatusMessage = (event: { event_name: string; timestamp: string } | null): string => {
+const eventToStatusMessage = (
+    event: Pick<Schema["events"], "event_name" | "timestamp"> | null
+): string => {
     if (event === null) {
         return "-";
     }

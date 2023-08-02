@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import { Datum } from "@/components/Tables/Table";
 import React from "react";
-import ClientsTable from "@/app/clients/ClientsTable";
 import { getClientsTableData, getProcessingData } from "@/app/clients/getClientsTableData";
+import ClientsPage from "@/app/clients/ClientsPage";
 
 const Clients: () => Promise<React.ReactElement> = async () => {
     const debugProcessingData: any = await getProcessingData(); // TODO REMOVE
@@ -12,7 +12,7 @@ const Clients: () => Promise<React.ReactElement> = async () => {
         <main>
             <h1> Clients Page </h1>
 
-            <ClientsTable clientsTableData={data} />
+            <ClientsPage clientsTableData={data} />
             <pre>{JSON.stringify(debugProcessingData, null, 4)}</pre>
         </main>
     );
