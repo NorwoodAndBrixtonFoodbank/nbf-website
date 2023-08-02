@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense, useState } from "react";
 import Table, { Datum } from "@/components/Tables/Table";
 
 import styled from "styled-components";
@@ -10,6 +10,8 @@ import PhoneIcon from "@/components/Icons/PhoneIcon";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
 import DeliveryIcon from "@/components/Icons/DeliveryIcon";
 import CollectionIcon from "@/components/Icons/CollectionIcon";
+import ExpandedClientDetailsModal from "@/app/clients/ExpandedClientDetailsModal";
+import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
 
 const ClientsTableDiv = styled.div``;
 
@@ -64,10 +66,6 @@ const collectionCentreToAbbreviation = (collectionCentre: string): string => {
     }
 };
 
-const onClientTableRowClick = (row: ClientTableRow, event): void => {
-    console.log(`CLICKED ROW WITH NAME: ${row.fullName}!`);
-};
-
 export const clientTableHeaders = {
     iconsColumn: "",
     fullName: "Name",
@@ -88,17 +86,42 @@ interface Props {
     clientsTableData: Datum[];
 }
 
-const ClientsTable: React.FC<Props> = (props) => {
+const ClientsPage: React.FC<Props> = (props) => {
+    const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
+
+    const onClientTableRowClick = (row: ClientTableRow): void => {
+        setSelectedParcelId(row.parcelId);
+    };
+
+    const onExpandedClientDetailsClose = (): void => {
+        setSelectedParcelId(null);
+    };
+
     return (
-        <ClientsTableDiv>
-            <Table
-                data={props.clientsTableData}
-                headers={clientTableHeaders}
-                columnDisplayFunctions={clientTableColumnDisplayFunctions}
-                onRowClick={onClientTableRowClick}
-            />
-        </ClientsTableDiv>
+        <>
+            <ClientsTableDiv>
+                <Table
+                    data={props.clientsTableData}
+                    headers={clientTableHeaders}
+                    columnDisplayFunctions={clientTableColumnDisplayFunctions}
+                    onRowClick={onClientTableRowClick}
+                />
+            </ClientsTableDiv>
+            <Suspense
+                fallback={
+                    <ExpandedClientDetailsFallback
+                        parcelId={selectedParcelId}
+                        onClose={onExpandedClientDetailsClose}
+                    />
+                }
+            >
+                <ExpandedClientDetailsModal
+                    parcelId={selectedParcelId}
+                    onClose={onExpandedClientDetailsClose}
+                />
+            </Suspense>
+        </>
     );
 };
 
-export default ClientsTable;
+export default ClientsPage;
