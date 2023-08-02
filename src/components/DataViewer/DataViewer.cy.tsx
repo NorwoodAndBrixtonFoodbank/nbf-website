@@ -13,27 +13,11 @@ const data = {
 
 describe("Data Viewer Component", () => {
     it("renders", () => {
-        cy.mount(
-            <DataViewer
-                data={data}
-                header="Header"
-                isOpen={true}
-                onRequestClose={() => {}}
-                headerId="dataViewer"
-            />
-        );
+        cy.mount(<DataViewer data={data} />);
     });
 
     it("data viewer shows expected values", () => {
-        cy.mount(
-            <DataViewer
-                data={data}
-                header="Header"
-                isOpen={true}
-                onRequestClose={() => {}}
-                headerId="dataViewer"
-            />
-        );
+        cy.mount(<DataViewer data={data} />);
 
         cy.contains("ID");
         cy.contains(longString);
