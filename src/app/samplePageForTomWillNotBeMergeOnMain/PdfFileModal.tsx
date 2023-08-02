@@ -2,13 +2,153 @@
 
 import Modal from "@/components/Modal/Modal";
 import ExportPdfButton, { PdfProps } from "@/components/PdfSaver/exportPdfButton";
+import Table from "@/components/Tables/Table";
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
 
 const PdfMain = styled.div`
     width: 210mm;
-    padding: 3rem;
-`
+    padding: 1rem 3rem;
+`;
+
+const PdfFooter = styled.div`
+    padding: 1rem 3rem;
+    float: right;
+`;
+
+const data = [
+    {
+        full_name: "Tom",
+        phone_number: 123456,
+    },
+    {
+        full_name: "Sam",
+        phone_number: 999,
+    },
+    {
+        full_name: "Harper Garrett",
+        phone_number: 2171786554,
+    },
+    {
+        full_name: "Adrian Key",
+        phone_number: 3650099130,
+    },
+    {
+        full_name: "Harrell Wallace",
+        phone_number: 4650047935,
+    },
+    {
+        full_name: "Oneill Curtis",
+        phone_number: 7058491995,
+    },
+    {
+        full_name: "Herring Rutledge",
+        phone_number: 1440882899,
+    },
+    {
+        full_name: "Eloise Rowland",
+        phone_number: 2580325390,
+    },
+    {
+        full_name: "Cathryn Burks",
+        phone_number: 7136166489,
+    },
+    {
+        full_name: "Paopao",
+        phone_number: 7136166469,
+    },
+    {
+        full_name: "Forbes Doyle",
+        phone_number: 1377097191,
+    },
+    {
+        full_name: "Agnes Rosales",
+        phone_number: 3334796379,
+    },
+    {
+        full_name: "Jan Orr",
+        phone_number: 1526538148,
+    },
+    {
+        full_name: "Colleen Lowery",
+        phone_number: 3980156139,
+    },
+    {
+        full_name: "Chloe",
+        phone_number: 4567894522,
+    },
+    {
+        full_name: "Tom",
+        phone_number: 123456,
+    },
+    {
+        full_name: "Sam",
+        phone_number: 999,
+    },
+    {
+        full_name: "Harper Garrett",
+        phone_number: 2171786554,
+    },
+    {
+        full_name: "Adrian Key",
+        phone_number: 3650099130,
+    },
+    {
+        full_name: "Harrell Wallace",
+        phone_number: 4650047935,
+    },
+    {
+        full_name: "Oneill Curtis",
+        phone_number: 7058491995,
+    },
+    {
+        full_name: "Herring Rutledge",
+        phone_number: 1440882899,
+    },
+    {
+        full_name: "Eloise Rowland",
+        phone_number: 2580325390,
+    },
+    {
+        full_name: "Cathryn Burks",
+        phone_number: 7136166489,
+    },
+    {
+        full_name: "Paopao",
+        phone_number: 7136166469,
+    },
+    {
+        full_name: "Forbes Doyle",
+        phone_number: 1377097191,
+    },
+    {
+        full_name: "Agnes Rosales",
+        phone_number: 3334796379,
+    },
+    {
+        full_name: "Jan Orr",
+        phone_number: 1526538148,
+    },
+    {
+        full_name: "Colleen Lowery",
+        phone_number: 3980156139,
+    },
+    {
+        full_name: "Chloe",
+        phone_number: 4567894522,
+    },
+];
+
+const headers = {
+    full_name: "Name",
+    phone_number: "Phone Number",
+    // other1: "other1",
+    // other2: "other2",
+    // other3: "other3",
+    // other4: "other4",
+    // other5: "other5",
+    // other6: "other6",
+};
 
 const ModalChild: React.FC<PdfProps> = (props) => {
     return (
@@ -23,8 +163,11 @@ const ModalChild: React.FC<PdfProps> = (props) => {
                     fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
                     culpa qui officia deserunt mollit anim id est laborum.
                 </p>
+                <Table data={data} headers={headers} />
             </PdfMain>
-            <ExportPdfButton pdfRef={props.pdfRef} />
+            <PdfFooter>
+                <ExportPdfButton pdfRef={props.pdfRef} />
+            </PdfFooter>
         </>
     );
 };

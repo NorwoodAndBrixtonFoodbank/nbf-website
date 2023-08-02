@@ -2,13 +2,30 @@
 
 import React from "react";
 import { jsPDF } from "jspdf";
+import { styled } from "styled-components";
+
+const StyledButton = styled.button`
+    text-align: center;
+    width: 150px;
+    height: 40px;
+    border-radius: 10px;
+    border: solid 0 ${(props) => props.theme.foregroundColor};
+    background-color: ${(props) => props.theme.primaryBackgroundColor};
+    color: ${(props) => props.theme.primaryForegroundColor};
+
+    &:hover {
+        background-color: ${(props) => props.theme.secondaryBackgroundColor};
+        color: ${(props) => props.theme.secondaryForegroundColor};
+    }
+`;
 
 export type PdfProps = {
     pdfRef: React.MutableRefObject<HTMLInputElement | null>
 }
 
-const getPaperSize = (pdfRef: React.MutableRefObject<HTMLInputElement | null>) => { // aspect ratio of A4 is 1:√2
+const getPaperSize = (pdfRef: React.MutableRefObject<HTMLInputElement | null>) => {
     const width = pdfRef.current!.offsetWidth;
+    // aspect ratio of A4 is 1:√2
     const height = width * Math.SQRT2;
     return [width, height]
 }
@@ -33,7 +50,7 @@ const ExportPdfButton: React.FC<PdfProps> = (props) => {
     };
     return (
         <>
-            <button onClick={savePdf}>Save as PDF</button>
+            <StyledButton onClick={savePdf}>Save as PDF</StyledButton>
         </>
     );
 };
