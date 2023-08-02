@@ -11,7 +11,7 @@ const fetchData = async (): Promise<Schema["lists"][]> => {
 };
 
 const Lists = async (): Promise<ReactElement> => {
-    const data = await fetchData();
+    const data: Schema["lists"][] = await fetchData();
 
     return (
         <main>
