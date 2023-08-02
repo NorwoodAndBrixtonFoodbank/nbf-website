@@ -51,7 +51,7 @@ const Icon: React.FC<Props> = (props) => {
 
     return (
         <>
-            {props.onHoverText && hovered && props.popper ? (
+            {props.onHoverText && hovered && props.popper && (
                 <Popper
                     onMouseEnter={show}
                     onMouseLeave={hide}
@@ -61,8 +61,6 @@ const Icon: React.FC<Props> = (props) => {
                 >
                     {props.onHoverText}
                 </Popper>
-            ) : (
-                <></>
             )}
             <StyledFontAwesomeIcon
                 icon={props.icon}

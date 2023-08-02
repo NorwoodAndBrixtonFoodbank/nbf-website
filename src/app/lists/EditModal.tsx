@@ -2,7 +2,7 @@
 
 import Modal from "@/components/Modal/Modal";
 import React, { useState } from "react";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import { SnackBarDiv, headers, tooltips } from "@/app/lists/Dataview";
 import TextInput from "@/components/DataInput/FreeFormTextInput";
 import { Datum } from "@/components/Tables/Table";
@@ -43,20 +43,12 @@ const DisplayContents = styled.div`
 `;
 
 const EditModal: React.FC<Props> = ({ data, onClose }) => {
-    const generateDefaultData = (): { [key: string]: string | null } => {
-        if (data !== null && data !== undefined) {
-            return { ...data.data, ...data.tooltips };
-        }
-        return {};
-    };
-
     const [toSubmit, setToSubmit] = useState<{ [key: string]: string | null }>(
-        generateDefaultData()
+        data !== null && data !== undefined ? { ...data.data, ...data.tooltips } : {}
     );
 
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-    // const headersAndTooltips: HeadersAndTooltips = [];
     const headersThatHaveTooltips = headers.filter(([key]) => key !== "item_name");
 
     const headersAndTooltips: HeadersAndTooltips = headersThatHaveTooltips.map((header, index) => {
@@ -64,28 +56,21 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
     });
 
     const setKey = (event: React.ChangeEvent<HTMLInputElement>, key: string): void => {
-        const text = event.target.value as string;
+        const text = event.target.value;
         setToSubmit({ ...toSubmit, [key]: text });
     };
 
     const onSubmit = async (): Promise<void> => {
-        let operation;
+        const table = supabase.from("lists");
+        const operation =
+            data === null
+                ? table.insert(toSubmit)
+                : table.update(toSubmit).eq("primary_key", toSubmit.primary_key).select();
 
-        if (data === null) {
-            operation = supabase.from("lists").insert(toSubmit);
-        } else {
-            operation = supabase
-                .from("lists")
-                .update(toSubmit)
-                .eq("primary_key", toSubmit.primary_key)
-                .select();
-        }
+        const { error } = await operation;
 
-        const response = await operation;
-
-        // this is not a normal js response object, so checking response.error (and using response.error.message) is fine
-        if (response.error) {
-            setErrorMsg(response.error.message);
+        if (error) {
+            setErrorMsg(error.message);
         } else {
             window.location.reload();
         }

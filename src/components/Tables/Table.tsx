@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import TableFilterBar, { FilterText } from "./TableFilterBar";
+import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
 import { styled, useTheme } from "styled-components";
 import { NoSsr } from "@mui/material";
 import SpeechBubbleIcon from "@/components/Icons/SpeechBubbleIcon";
@@ -13,7 +13,7 @@ import {
     faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import IconButton from "@mui/material/IconButton/IconButton";
-import Icon from "../Icons/Icon";
+import Icon from "@/components/Icons/Icon";
 
 export interface Datum {
     data: RowData;

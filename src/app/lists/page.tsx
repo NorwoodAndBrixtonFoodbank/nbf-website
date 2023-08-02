@@ -6,8 +6,8 @@ import supabase, { Schema } from "@/supabase";
 export const revalidate = 0;
 
 const fetchData = async (): Promise<Schema["lists"][]> => {
-    const response = await supabase.from("lists").select("*");
-    return response.data ?? [];
+    const { data } = await supabase.from("lists").select();
+    return data ?? [];
 };
 
 const Lists = async (): Promise<ReactElement> => {

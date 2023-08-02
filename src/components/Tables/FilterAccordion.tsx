@@ -1,8 +1,8 @@
 import React from "react";
 import { Accordion, Checkbox, AccordionSummary, AccordionDetails } from "@mui/material";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import Icon from "../Icons/Icon";
+import Icon from "@/components/Icons/Icon";
 
 interface FilterAccordionProps {
     toggleableHeaders?: string[];

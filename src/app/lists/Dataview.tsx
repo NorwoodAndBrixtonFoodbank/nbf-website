@@ -2,7 +2,7 @@
 
 import Table, { Datum, RowData } from "@/components/Tables/Table";
 import React, { useState } from "react";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import EditModal, { EditModalState } from "@/app/lists/EditModal";
 import supabase, { Schema } from "@/supabase";
 import ConfirmDialog from "@/components/Modal/Confirm";
@@ -62,9 +62,14 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
         const unmappedTooltips: RowData = {};
 
         for (const [key, value] of Object.entries(row)) {
-            if (value && key.endsWith("quantity")) {
+            if (!value) {
+                continue;
+            }
+
+            if (key.endsWith("quantity")) {
                 data[key] = value;
-            } else if (value && key.endsWith("notes")) {
+            }
+            if (key.endsWith("notes")) {
                 tooltips[key.replace("notes", "quantity")] = value;
                 unmappedTooltips[key] = value;
             }
@@ -103,13 +108,13 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
     const onConfirmDeletion = async (): Promise<void> => {
         if (toDelete !== null) {
             const data = rawData[toDelete];
-            const response = await supabase
+            const { error } = await supabase
                 .from("lists")
                 .delete()
                 .eq("primary_key", data.primary_key);
 
-            if (response.error) {
-                setErrorMsg(response.error.message);
+            if (error) {
+                setErrorMsg(error.message);
             } else {
                 window.location.reload();
             }

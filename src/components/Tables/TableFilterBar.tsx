@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import FilterAccordion from "@/components/Tables/FilterAccordion";
 
 export interface FilterText {

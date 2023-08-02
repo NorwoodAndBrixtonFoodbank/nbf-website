@@ -2,7 +2,7 @@
 
 import React from "react";
 import Modal from "@/components/Modal/Modal";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import Button from "@mui/material/Button/Button";
 
 interface Props {

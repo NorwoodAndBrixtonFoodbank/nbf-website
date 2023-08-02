@@ -2,7 +2,7 @@
 
 import { CircularProgress } from "@mui/material";
 import React from "react";
-import { styled } from "styled-components";
+import styled from "styled-components";
 
 const Centerer = styled.div`
     display: flex;

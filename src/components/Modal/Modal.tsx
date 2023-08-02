@@ -4,7 +4,7 @@ import React, { ReactNode } from "react";
 import styled from "styled-components";
 import { Dialog } from "@mui/material";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
-import Icon from "../Icons/Icon";
+import Icon from "@/components/Icons/Icon";
 
 const StyledDialog = styled(Dialog)`
     & .MuiPaper-root {
