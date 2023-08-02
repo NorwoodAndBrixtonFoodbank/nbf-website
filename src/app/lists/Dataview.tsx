@@ -3,7 +3,7 @@
 import Table, { Datum, RowData } from "@/components/Tables/Table";
 import React, { useState } from "react";
 import { styled } from "styled-components";
-import EditModal from "@/app/lists/EditModal";
+import EditModal, { EditModalState } from "@/app/lists/EditModal";
 import supabase, { Schema } from "@/supabase";
 import ConfirmDialog from "@/components/Modal/Confirm";
 import Snackbar from "@mui/material/Snackbar/Snackbar";
@@ -12,7 +12,7 @@ import Alert from "@mui/material/Alert/Alert";
 type ListRow = Schema["lists"];
 
 interface Props {
-    data: ListRow[] | null;
+    data: ListRow[];
 }
 
 export const headers: [string, string][] = [
@@ -43,8 +43,7 @@ export const tooltips: [string, string][] = [
 ];
 
 const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
-    // null => add, undefined => modal closed
-    const [modal, setModal] = useState<Datum | null | undefined>(undefined);
+    const [modal, setModal] = useState<EditModalState>();
     const [toDelete, setToDelete] = useState<number | null>(null);
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
@@ -63,9 +62,9 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
         const unmappedTooltips: RowData = {};
 
         for (const [key, value] of Object.entries(row)) {
-            if (key.endsWith("quantity") && value) {
+            if (value && key.endsWith("quantity")) {
                 data[key] = value;
-            } else if (key.endsWith("notes") && value) {
+            } else if (value && key.endsWith("notes")) {
                 tooltips[key.replace("notes", "quantity")] = value;
                 unmappedTooltips[key] = value;
             }
@@ -78,17 +77,17 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
         };
     };
 
-    const dataAndTooltips = rawData?.map(remapTooltips);
+    const dataAndTooltips = rawData.map(remapTooltips);
 
-    // extract header keys
     const toggleableHeaders = headers.map(([key]) => key);
-    // removw description header
+
+    // remove description header
     toggleableHeaders.shift();
 
     const onEdit = (index: number): void => {
         const row = rawData[index];
 
-        const editData = remapTooltips(row!);
+        const editData = remapTooltips(row);
 
         setModal({
             data: editData.data,
@@ -107,9 +106,8 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
             const response = await supabase
                 .from("lists")
                 .delete()
-                .match({ primary_key: data.primary_key });
+                .eq("primary_key", data.primary_key);
 
-            // this is not a normal js response object, so checking response.error (and using response.error.message) is fine
             if (response.error) {
                 setErrorMsg(response.error.message);
             } else {

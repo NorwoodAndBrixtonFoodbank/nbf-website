@@ -14,8 +14,11 @@ import Button from "@mui/material/Button/Button";
 interface Props {
     onClose: () => void;
     /** null => add, undefined => modal closed, Datum => edit */
-    data: Datum | null | undefined;
+    data: EditModalState;
 }
+
+// null => add, undefined => modal closed
+export type EditModalState = Datum | null | undefined;
 
 type HeadersAndTooltips = [[string, string], [string, string]][];
 
