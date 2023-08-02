@@ -62,16 +62,13 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
         const unmappedTooltips: RowData = {};
 
         for (const [key, value] of Object.entries(row)) {
-            if (!value) {
-                continue;
-            }
-
-            if (key.endsWith("quantity")) {
-                data[key] = value;
-            }
-            if (key.endsWith("notes")) {
-                tooltips[key.replace("notes", "quantity")] = value;
-                unmappedTooltips[key] = value;
+            if (value !== null) {
+                if (key.endsWith("quantity")) {
+                    data[key] = value;
+                } else if (key.endsWith("notes")) {
+                    tooltips[key.replace("notes", "quantity")] = value;
+                    unmappedTooltips[key] = value;
+                }
             }
         }
 

@@ -3,7 +3,7 @@
 import Modal from "@/components/Modal/Modal";
 import React, { useState } from "react";
 import styled from "styled-components";
-import { SnackBarDiv, headers, tooltips } from "@/app/lists/Dataview";
+import { SnackBarDiv, headers, tooltips } from "@/app/lists/ListDataview";
 import TextInput from "@/components/DataInput/FreeFormTextInput";
 import { Datum } from "@/components/Tables/Table";
 import supabase from "@/supabase";
@@ -44,7 +44,7 @@ const DisplayContents = styled.div`
 
 const EditModal: React.FC<Props> = ({ data, onClose }) => {
     const [toSubmit, setToSubmit] = useState<{ [key: string]: string | null }>(
-        data !== null && data !== undefined ? { ...data.data, ...data.tooltips } : {}
+        data ? { ...data.data, ...data.tooltips } : {}
     );
 
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
