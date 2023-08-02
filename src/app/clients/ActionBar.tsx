@@ -1,6 +1,6 @@
 "use client";
 
-import { Schema } from "@/supabase";
+import supabase, { Schema } from "@/supabase";
 import React, { useState } from "react";
 import { styled } from "styled-components";
 import Button from "@mui/material/Button/Button";
@@ -17,12 +17,12 @@ import Icon from "@/components/Icons/Icon";
 
 type Props = {
     selected: number[];
-    data: Schema["clients"][];
+    data: Schema["parcels"][];
 };
 
 export const statuses = [
     "Request Denied",
-    // probably shouldn't be a status
+    // probably shouldn't be a status (?)
     "No Status",
     "Pending More Info",
     "Called and Confirmed",
@@ -79,7 +79,7 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                 statuses={statusesToApply}
             />
             <Menu open={anchorEl !== null} onClose={() => setAnchorEl(null)} anchorEl={anchorEl}>
-                <MenuList>
+                <MenuList id="status-menu">
                     {statuses.map((status, index) => {
                         return (
                             <MenuItem
@@ -110,7 +110,12 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                 </Button>
                 <Button variant="contained">Actions</Button>
                 <Spacer />
-                <Button type="button" variant="contained" onClick={() => setModal(true)}>
+                <Button
+                    type="button"
+                    variant="contained"
+                    onClick={() => setModal(statusesToApply.length > 0)}
+                    id="status-modal-button"
+                >
                     Apply {statusesToApply.length} status{statusesToApply.length === 1 ? "" : "es"}{" "}
                     to {selectedData.length} item{selectedData.length === 1 ? "" : "s"}
                 </Button>
@@ -122,7 +127,7 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
 type StatusModalProps = {
     isOpen: boolean;
     onClose: () => void;
-    data: Schema["clients"][];
+    data: Schema["parcels"][];
     statuses: string[];
 };
 
@@ -151,10 +156,32 @@ const StatusText = styled.p`
 `;
 
 const StatusModal: React.FC<StatusModalProps> = (props) => {
-    const [date, setDate] = useState(dayjs(Date()).set("second", 0));
+    const [date, setDate] = useState(dayjs(Date()));
+    const [error, setError] = useState<string | null>(null);
 
-    const onClick = (): void => {
-        console.log(date);
+    const onClick = async (): Promise<void> => {
+        const toInsert = props.data
+            .map((parcel) => {
+                return props.statuses.map((status) => {
+                    const event_name = status;
+                    const parcel_id = parcel.primary_key;
+                    const timestamp = date.set("second", 0).toISOString();
+                    return {
+                        event_name,
+                        parcel_id,
+                        timestamp,
+                    };
+                });
+            })
+            .flat();
+
+        const response = await supabase.from("events").insert(toInsert);
+
+        if (response.error) {
+            setError(response.error.message);
+        } else {
+            props.onClose();
+        }
     };
 
     return (
@@ -177,7 +204,7 @@ const StatusModal: React.FC<StatusModalProps> = (props) => {
                     />
                 </Row>
                 <Row>
-                    <p>Date: </p>
+                    <p>Time: </p>
                     <TimePicker
                         value={date}
                         onChange={(newDate) =>
@@ -203,14 +230,21 @@ const StatusModal: React.FC<StatusModalProps> = (props) => {
                 </div>
                 <p>To</p>
                 <div>
-                    {props.data.map((client, index) => {
+                    {props.data.map((parcel, index) => {
                         return (
                             <StatusText key={index}>
-                                {client.full_name}: ({client.phone_number})
+                                {parcel.collection_centre}: (
+                                {parcel.collection_datetime ? (
+                                    new Date(parcel.collection_datetime).toLocaleString()
+                                ) : (
+                                    <></>
+                                )}
+                                )
                             </StatusText>
                         );
                     })}
                 </div>
+                {error ? <small>{error}</small> : <></>}
                 <Button type="button" variant="contained" onClick={onClick}>
                     Submit
                 </Button>
