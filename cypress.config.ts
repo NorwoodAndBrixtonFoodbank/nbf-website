@@ -17,7 +17,7 @@ export default defineConfig({
                         console.table(message);
                     }
                     return null;
-                }
+                },
             });
 
             config.env = {

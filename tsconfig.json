@@ -34,7 +34,8 @@
     "cypress/**/*",
     "public/**/*",
     "*.*",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "supabase/**/*"
   ],
   "exclude": [
     "**/node_modules/*"
