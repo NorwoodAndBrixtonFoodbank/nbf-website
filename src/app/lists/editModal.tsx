@@ -3,7 +3,7 @@
 import Modal from "@/components/Modal/Modal";
 import React, { useState } from "react";
 import { styled } from "styled-components";
-import { SnackBarDiv, headers, tooltips } from "@/app/lists/dataview";
+import { SnackBarDiv, headers, tooltips } from "@/app/lists/Dataview";
 import TextInput from "@/components/DataInput/FreeFormTextInput";
 import { Datum } from "@/components/Tables/Table";
 import supabase from "@/supabase";

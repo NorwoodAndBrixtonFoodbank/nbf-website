@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import React, { ReactElement } from "react";
-import ListsDataView from "@/app/lists/dataview";
+import ListsDataView from "@/app/lists/Dataview";
 import supabase, { Schema } from "@/supabase";
 
 export const revalidate = 0;

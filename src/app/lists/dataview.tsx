@@ -3,13 +3,13 @@
 import Table, { Datum, RowData } from "@/components/Tables/Table";
 import React, { useState } from "react";
 import { styled } from "styled-components";
-import EditModal from "@/app/lists/editModal";
+import EditModal from "@/app/lists/EditModal";
 import supabase, { Schema } from "@/supabase";
 import ConfirmDialog from "@/components/Modal/Confirm";
 import Snackbar from "@mui/material/Snackbar/Snackbar";
 import Alert from "@mui/material/Alert/Alert";
 
-export type ListRow = Schema["lists"];
+type ListRow = Schema["lists"];
 
 interface Props {
     data: ListRow[] | null;
@@ -96,7 +96,7 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
         });
     };
 
-    const onDelete = async (index: number): Promise<void> => {
+    const onDeleteButtonClick = (index: number): void => {
         setToDelete(index);
         setToDeleteModalOpen(true);
     };
@@ -156,7 +156,7 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
                     headerFilters={["item_name"]}
                     pagination={false}
                     onEdit={onEdit}
-                    onDelete={onDelete}
+                    onDelete={onDeleteButtonClick}
                     sortable={false}
                 />
                 <StyledAddButton onClick={() => setModal(null)}>+ Add</StyledAddButton>
