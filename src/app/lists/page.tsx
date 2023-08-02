@@ -5,7 +5,7 @@ import supabase, { Schema } from "@/supabase";
 
 export const revalidate = 0;
 
-const fetchData = async (): Promise<Schema["lists"][] | null> => {
+const fetchData = async (): Promise<Schema["lists"][]> => {
     const response = await supabase.from("lists").select("*");
     return response.data ?? [];
 };
