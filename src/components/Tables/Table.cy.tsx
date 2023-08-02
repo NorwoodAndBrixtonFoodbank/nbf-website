@@ -1,5 +1,6 @@
 import React from "react";
 import Table, { Datum } from "@/components/Tables/Table";
+import { ThemeProvider } from "styled-components";
 
 describe("<Table />", () => {
     const data: Datum[] = [
@@ -57,12 +58,24 @@ describe("<Table />", () => {
         ["phone_number", "Phone Number"],
     ];
 
+    const mockTheme = {
+        accentBackroundColor: "red",
+    };
+
     it("renders", () => {
-        cy.mount(<Table data={data} headerKeysAndLabels={headers} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={data} headerKeysAndLabels={headers} />
+            </ThemeProvider>
+        );
     });
 
     it("can display data", () => {
-        cy.mount(<Table data={data} headerKeysAndLabels={headers} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={data} headerKeysAndLabels={headers} />
+            </ThemeProvider>
+        );
         cy.contains("Tom");
         cy.contains("Sam");
         cy.contains("123456");
@@ -70,14 +83,22 @@ describe("<Table />", () => {
     });
 
     it("filter is correct", () => {
-        cy.mount(<Table data={data} headerKeysAndLabels={headers} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={data} headerKeysAndLabels={headers} />
+            </ThemeProvider>
+        );
         cy.get("input[placeholder='Filter by Name']").type("Tom");
         cy.contains("Tom");
         cy.should("not.have.value", "Sam");
     });
 
     it("sorting is correct", () => {
-        cy.mount(<Table data={data} headerKeysAndLabels={headers} checkboxes={true} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={data} headerKeysAndLabels={headers} checkboxes={true} />
+            </ThemeProvider>
+        );
         cy.get("div").contains("Name").parent().click();
         cy.get("div[data-column-id='2'][role='cell']").as("table");
         cy.get("@table").eq(0).contains("Adrian Key");
@@ -88,7 +109,11 @@ describe("<Table />", () => {
     });
 
     it("clear button is working", () => {
-        cy.mount(<Table data={data} headerKeysAndLabels={headers} checkboxes={true} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={data} headerKeysAndLabels={headers} checkboxes={true} />
+            </ThemeProvider>
+        );
         cy.get("input[placeholder='Filter by Name']").type("Tom");
         cy.get("button").contains("Clear").click();
         cy.contains("Sam");
@@ -96,7 +121,11 @@ describe("<Table />", () => {
     });
 
     it("pagination page change is working", () => {
-        cy.mount(<Table data={data} headerKeysAndLabels={headers} checkboxes={true} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={data} headerKeysAndLabels={headers} checkboxes={true} />
+            </ThemeProvider>
+        );
         cy.get("div[data-column-id='2'][role='cell']").as("table");
         cy.get("@table").eq(0).contains("Tom");
         cy.get("button[id='pagination-next-page']").click();
@@ -104,7 +133,11 @@ describe("<Table />", () => {
     });
 
     it("pagination number of items is working", () => {
-        cy.mount(<Table data={data} headerKeysAndLabels={headers} checkboxes={true} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={data} headerKeysAndLabels={headers} checkboxes={true} />
+            </ThemeProvider>
+        );
         cy.get("select[aria-label='Rows per page:']").select("15");
         cy.get("div[data-column-id='2'][role='cell']").as("table");
         cy.get("@table").eq(14).contains("Chloe");
@@ -112,7 +145,11 @@ describe("<Table />", () => {
     });
 
     it("checkbox select toggles", () => {
-        cy.mount(<Table data={data} headerKeysAndLabels={headers} checkboxes={true} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={data} headerKeysAndLabels={headers} checkboxes={true} />
+            </ThemeProvider>
+        );
         cy.get("input[aria-label='Select row 2']").should("not.be.checked");
         cy.get("input[aria-label='Select row 2']").click();
         cy.get("input[aria-label='Select row 2']").should("be.checked");
@@ -121,7 +158,11 @@ describe("<Table />", () => {
     });
 
     it("checkbox toggles only the selected one", () => {
-        cy.mount(<Table data={data} headerKeysAndLabels={headers} checkboxes={true} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={data} headerKeysAndLabels={headers} checkboxes={true} />
+            </ThemeProvider>
+        );
         cy.get("input[aria-label='Select row 1']").should("not.be.checked");
         cy.get("input[aria-label='Select row 3']").click();
         cy.get("input[aria-label='Select row 1']").click();
@@ -137,7 +178,11 @@ describe("<Table />", () => {
     });
 
     it("filtering does not affect checkbox", () => {
-        cy.mount(<Table data={data} headerKeysAndLabels={headers} checkboxes={true} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={data} headerKeysAndLabels={headers} checkboxes={true} />
+            </ThemeProvider>
+        );
         cy.get("input[aria-label='Select row 2']").should("not.be.checked");
         cy.get("input[aria-label='Select row 2']").click();
         cy.get("input[placeholder='Filter by Name']").type("Sam");
@@ -146,7 +191,11 @@ describe("<Table />", () => {
     });
 
     it("changing page does not affect checkbox", () => {
-        cy.mount(<Table data={data} headerKeysAndLabels={headers} checkboxes={true} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={data} headerKeysAndLabels={headers} checkboxes={true} />
+            </ThemeProvider>
+        );
         cy.get("input[aria-label='Select row 2']").should("not.be.checked");
         cy.get("input[aria-label='Select row 2']").click();
         cy.get("button[id='pagination-next-page']").click();
@@ -155,7 +204,11 @@ describe("<Table />", () => {
     });
 
     it("pagination limit does not affect checkbox", () => {
-        cy.mount(<Table data={data} headerKeysAndLabels={headers} checkboxes={true} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={data} headerKeysAndLabels={headers} checkboxes={true} />
+            </ThemeProvider>
+        );
         cy.get("select[aria-label='Rows per page:']").select("15");
         cy.get("input[aria-label='Select row 14']").should("not.be.checked");
 
@@ -174,7 +227,11 @@ describe("<Table />", () => {
     });
 
     it("sorting does not affect checkbox", () => {
-        cy.mount(<Table data={data} headerKeysAndLabels={headers} checkboxes={true} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={data} headerKeysAndLabels={headers} checkboxes={true} />
+            </ThemeProvider>
+        );
 
         cy.get("input[aria-label='Select row 1']").click();
         cy.get("input[aria-label='Select row 1']").should("be.checked");
@@ -191,7 +248,11 @@ describe("<Table />", () => {
     });
 
     it("checkall box toggles all data", () => {
-        cy.mount(<Table data={smallerData} headerKeysAndLabels={headers} checkboxes={true} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={smallerData} headerKeysAndLabels={headers} checkboxes={true} />
+            </ThemeProvider>
+        );
         cy.get("input[aria-label='Select all rows']").click();
         cy.get("input[aria-label='Select row 0']").should("be.checked");
         cy.get("input[aria-label='Select row 1']").should("be.checked");
@@ -199,7 +260,11 @@ describe("<Table />", () => {
     });
 
     it("uncheck one row unticks the checkall box", () => {
-        cy.mount(<Table data={smallerData} headerKeysAndLabels={headers} checkboxes={true} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={smallerData} headerKeysAndLabels={headers} checkboxes={true} />
+            </ThemeProvider>
+        );
         cy.get("input[aria-label='Select all rows']").click();
         cy.get("input[aria-label='Select row 0']").click();
 
@@ -210,7 +275,11 @@ describe("<Table />", () => {
     });
 
     it("check all rows ticks the checkall box", () => {
-        cy.mount(<Table data={smallerData} headerKeysAndLabels={headers} checkboxes={true} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={smallerData} headerKeysAndLabels={headers} checkboxes={true} />
+            </ThemeProvider>
+        );
         cy.get("input[aria-label='Select row 0']").click();
         cy.get("input[aria-label='Select row 1']").click();
         cy.get("input[aria-label='Select row 2']").click();
@@ -219,7 +288,11 @@ describe("<Table />", () => {
     });
 
     it("checkbox disabling works", () => {
-        cy.mount(<Table data={smallerData} headerKeysAndLabels={headers} checkboxes={false} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={smallerData} headerKeysAndLabels={headers} checkboxes={false} />
+            </ThemeProvider>
+        );
         cy.get("input[aria-label='Select row 0']").should("not.exist");
         cy.get("input[aria-label='Select row 5']").should("not.exist");
         cy.get("input[aria-label='Select row 10']").should("not.exist");
@@ -227,12 +300,14 @@ describe("<Table />", () => {
 
     it("accordion works", () => {
         cy.mount(
-            <Table
-                data={smallerData}
-                headerKeysAndLabels={headers}
-                checkboxes={false}
-                toggleableHeaders={["full_name", "phone_number"]}
-            />
+            <ThemeProvider theme={mockTheme}>
+                <Table
+                    data={smallerData}
+                    headerKeysAndLabels={headers}
+                    checkboxes={false}
+                    toggleableHeaders={["full_name", "phone_number"]}
+                />
+            </ThemeProvider>
         );
 
         cy.get("div.MuiAccordionSummary-root").click();
@@ -241,7 +316,11 @@ describe("<Table />", () => {
     });
 
     it("filter input renders", () => {
-        cy.mount(<Table data={smallerData} headerKeysAndLabels={headers} checkboxes={false} />);
+        cy.mount(
+            <ThemeProvider theme={mockTheme}>
+                <Table data={smallerData} headerKeysAndLabels={headers} checkboxes={false} />
+            </ThemeProvider>
+        );
 
         cy.get("input[placeholder*='Filter by Name']").should("exist");
         cy.get("input[placeholder*='Filter by Phone Number']").should("exist");
