@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar, { FilterText } from "./TableFilterBar";
-import { styled } from "styled-components";
+import { styled, useTheme } from "styled-components";
 import { NoSsr } from "@mui/material";
 import SpeechBubbleIcon from "@/components/Icons/SpeechBubbleIcon";
 import {
@@ -85,6 +85,8 @@ const filterRows = (rows: Row[], filterText: FilterText, headers: Headers): Row[
 };
 
 const Table: React.FC<Props> = (props) => {
+    const theme = useTheme();
+
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         props.defaultShownHeaders ?? props.headerKeysAndLabels.map(([key]) => key)
     );
@@ -134,7 +136,11 @@ const Table: React.FC<Props> = (props) => {
                     <RowDiv key={id}>
                         {data[row.rowId].data[headerKey]}
                         {headerKey in tooltips ? (
-                            <SpeechBubbleIcon onHoverText={tooltips[headerKey]!} popper />
+                            <SpeechBubbleIcon
+                                onHoverText={tooltips[headerKey]!}
+                                popper
+                                color={theme.accentBackgroundColor}
+                            />
                         ) : (
                             <></>
                         )}
@@ -364,12 +370,12 @@ const Styling = styled.div`
         border: solid 1px grey;
     }
 
-    & .rdt_TableCell,
-    & .rdt_TableCol_Sortable,
-    & .rdt_TableCol {
+    & div.rdt_TableCell,
+    & div.rdt_TableCol_Sortable,
+    & div.rdt_TableCol {
         width: 7rem;
         // important needed to override the inline style
-        padding: 0 0 0 1rem !important;
+        padding: 0 0 0 1rem;
 
         // allowing text overflow so the titles don't get unnecessarily clipped due to react-data-table's layout
         & > * {
@@ -389,11 +395,11 @@ const Styling = styled.div`
         color: ${(props) => props.theme.surfaceForegroundColor};
     }
 
-    & .rdt_TableRow {
+    & div.rdt_TableRow {
         padding: 0.5rem 0.5rem;
         // TODO: VFB-16 different greys for different theme modes
         // important needed to override the inline style
-        border-bottom-color: grey !important;
+        border-bottom-color: grey;
     }
 
     & .rdt_TableHeadRow {
