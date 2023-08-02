@@ -4,8 +4,9 @@ import ExportPdfButton from "@/components/PdfSaver/ExportPdfButton";
 const fileName = "ThisIsATestFile";
 const downloadsFolder = Cypress.config("downloadsFolder");
 
-const PdfBodyAndButton: React.FC<{}> = () => {
-    const pdfRef = useRef(null);
+const PdfBodyAndButton: React.FC = () => {
+    const pdfRef = useRef<HTMLDivElement | null>(null);
+
     return (
         <>
             <div ref={pdfRef}>

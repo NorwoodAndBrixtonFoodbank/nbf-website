@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { jsPDF } from "jspdf";
-import { styled } from "styled-components";
+import jsPDF from "jspdf";
+import styled from "styled-components";
 
 const StyledButton = styled.button`
     text-align: center;
@@ -20,14 +20,12 @@ const StyledButton = styled.button`
 `;
 
 export type PdfProps = {
-    pdfRef: React.MutableRefObject<HTMLInputElement | null>;
+    pdfRef: React.RefObject<HTMLDivElement>;
     fileName?: string;
     buttonText?: string;
 };
 
-const getPaperSize = (
-    pdfRef: React.MutableRefObject<HTMLInputElement | null>
-): [number, number] => {
+const getPaperSize = (pdfRef: React.RefObject<HTMLDivElement>): [number, number] => {
     const width = pdfRef.current!.offsetWidth;
     // aspect ratio of A4 is 1:√2
     const height = width * Math.SQRT2;
