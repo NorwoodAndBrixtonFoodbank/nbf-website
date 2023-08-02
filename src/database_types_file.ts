@@ -104,23 +104,20 @@ export interface Database {
         Row: {
           age: number | null
           family_id: string
-          person_type: Database["public"]["Enums"]["gender"]
+          gender: Database["public"]["Enums"]["gender"]
           primary_key: string
-          quantity: number
         }
         Insert: {
           age?: number | null
           family_id: string
-          person_type: Database["public"]["Enums"]["gender"]
+          gender?: Database["public"]["Enums"]["gender"]
           primary_key?: string
-          quantity: number
         }
         Update: {
           age?: number | null
           family_id?: string
-          person_type?: Database["public"]["Enums"]["gender"]
+          gender?: Database["public"]["Enums"]["gender"]
           primary_key?: string
-          quantity?: number
         }
         Relationships: [
           {
@@ -248,7 +245,7 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
-      gender: "male" | "female" | "adult" | "boy" | "girl" | "child"
+      gender: "male" | "female" | "other"
     }
     CompositeTypes: {
       [_ in never]: never
