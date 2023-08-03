@@ -15,10 +15,10 @@ import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import Icon from "@/components/Icons/Icon";
 
-type Props = {
+interface Props {
     selected: number[];
     data: Schema["parcels"][];
-};
+}
 
 export const statuses = [
     "Request Denied",
@@ -124,12 +124,12 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
     );
 };
 
-type StatusModalProps = {
+interface StatusModalProps {
     isOpen: boolean;
     onClose: () => void;
     data: Schema["parcels"][];
     statuses: string[];
-};
+}
 
 const Row = styled.div`
     display: flex;

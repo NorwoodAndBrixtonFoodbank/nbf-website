@@ -1,6 +1,6 @@
+import supabase, { Schema } from "@/supabase";
 import { Metadata } from "next";
 import React from "react";
-import ActionBar from "./ActionBar";
 import { getClientsTableData } from "@/app/clients/getClientsTableData";
 import ClientsPage from "@/app/clients/ClientsPage";
 import Title from "@/components/Title/Title";
