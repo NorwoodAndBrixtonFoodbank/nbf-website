@@ -39,6 +39,7 @@ export default defineConfig({
             on("task", {
                 readPdf,
             });
+            return config;
         },
         devServer: {
             framework: "next",
