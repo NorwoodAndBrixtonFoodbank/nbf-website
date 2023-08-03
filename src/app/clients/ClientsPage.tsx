@@ -10,8 +10,12 @@ import PhoneIcon from "@/components/Icons/PhoneIcon";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
 import DeliveryIcon from "@/components/Icons/DeliveryIcon";
 import CollectionIcon from "@/components/Icons/CollectionIcon";
-import ExpandedClientDetailsModal from "@/app/clients/ExpandedClientDetailsModal";
+import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
+import Icon from "@/components/Icons/Icon";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import Modal from "@/components/Modal/Modal";
+import { Schema } from "@/supabase";
 
 const ClientsTableDiv = styled.div``;
 
@@ -43,7 +47,9 @@ const rowToDeliveryCollectionColumn = (row: ClientTableRow): React.ReactElement 
     );
 };
 
-const collectionCentreToAbbreviation = (collectionCentre: string): string => {
+const collectionCentreToAbbreviation = (
+    collectionCentre: Schema["parcels"]["collection_centre"]
+): string => {
     switch (collectionCentre) {
         case "Brixton Hill - Methodist Church":
             return "BH-MC";
@@ -107,19 +113,20 @@ const ClientsPage: React.FC<Props> = (props) => {
                     onRowClick={onClientTableRowClick}
                 />
             </ClientsTableDiv>
-            <Suspense
-                fallback={
-                    <ExpandedClientDetailsFallback
-                        parcelId={selectedParcelId}
-                        onClose={onExpandedClientDetailsClose}
-                    />
+            <Modal
+                header={
+                    <>
+                        <Icon icon={faUser} /> Client Details
+                    </>
                 }
+                isOpen={selectedParcelId !== null}
+                onClose={onExpandedClientDetailsClose}
+                headerId="expandedClientDetailsModal"
             >
-                <ExpandedClientDetailsModal
-                    parcelId={selectedParcelId}
-                    onClose={onExpandedClientDetailsClose}
-                />
-            </Suspense>
+                <Suspense fallback={<ExpandedClientDetailsFallback />}>
+                    <ExpandedClientDetails parcelId={selectedParcelId} />
+                </Suspense>
+            </Modal>
         </>
     );
 };

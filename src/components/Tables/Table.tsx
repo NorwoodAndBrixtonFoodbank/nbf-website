@@ -3,9 +3,6 @@
 import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
 import React, { useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import { ClientTableRow } from "@/app/clients/getClientsTableData";
-import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
-import PhoneIcon from "@/components/Icons/PhoneIcon";
 
 export interface Datum {
     [headerKey: string]: string[] | string | number | boolean | null;
@@ -55,7 +52,7 @@ const dataToFilteredRows = (data: Datum[], filterText: FilterText, headers: Head
 
 const dataToRows = (data: Datum[], headers: Headers): Row[] => {
     return data.map((datum: Datum, currentIndex: number) => {
-        const row: Row = { rowId: currentIndex, ...datum };
+        const row: Row = { rowId: currentIndex, ...datum }; // TODO Change this
 
         for (const headerKey of Object.keys(headers)) {
             const databaseValue = datum[headerKey] ?? "";

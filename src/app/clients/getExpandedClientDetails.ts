@@ -1,5 +1,8 @@
 import supabase, { Schema } from "@/supabase";
-import { formatDatetimeAsDate } from "@/app/clients/getClientsTableData";
+import {
+    familyCountToFamilyCategory,
+    formatDatetimeAsDate,
+} from "@/app/clients/getClientsTableData";
 import { Data } from "@/components/DataViewer/DataViewer";
 
 // TODO Handle errors returned by supabase
@@ -28,7 +31,8 @@ const getRawClientDetails = async (parcelId: string) => {
             address_postcode,
 
             family:families(
-                primary_key
+                age,
+                gender
             ),
 
             dietary_requirements,
@@ -80,8 +84,8 @@ const rawDataToExpandedClientDetails = (
         packing_date: formatDatetimeAsDate(rawClientDetails.packing_datetime),
         delivery_instructions: client.delivery_instructions,
         address: formatAddressFromClientDetails(client),
-        household: "",
-        "Age & Gender of Children": "",
+        household: formatHouseholdFromFamilyDetails(client.family),
+        "Age & Gender of Children": formatChildrenBreakdownFromFamilyDetails(client.family),
         dietary_requirements: client.dietary_requirements.join(", "),
         feminine_products: client.feminine_products.join(", "),
         baby_products: client.baby_food,
@@ -108,25 +112,54 @@ const formatAddressFromClientDetails = (
         .join(", ");
 };
 
-const formatHouseholdFromFamilyDetails = (familyDetails: Pick<Schema["families"]>[]): string => {
-    let count = 0;
+const formatHouseholdFromFamilyDetails = (
+    family: Pick<Schema["families"], "age" | "gender">[]
+): string => {
+    let noAdults = 0;
+    let noChildren = 0;
 
-    for (const familyGroup of familyDetails) {
-        count += familyGroup.quantity;
+    for (const familyMember of family) {
+        if (familyMember.age === null || familyMember.age >= 18) {
+            noAdults++;
+        } else {
+            noChildren++;
+        }
     }
 
-    if (count <= 1) {
-        return "Single";
+    const adultChildBreakdown = [];
+
+    if (noAdults > 0) {
+        adultChildBreakdown.push(`${noAdults} ${noAdults > 1 ? "adults" : "adult"}`);
     }
 
-    if (count <= 9) {
-        return `Family of ${count}`;
+    if (noChildren > 0) {
+        adultChildBreakdown.push(`${noChildren} ${noChildren > 1 ? "children" : "child"}`);
     }
 
-    return "Family of 10+";
+    const familyCategory = familyCountToFamilyCategory(family.length);
+    const occupantDisplay = `Occupant${noAdults + noChildren > 1 ? "s" : ""}`;
+
+    return `${familyCategory} ${occupantDisplay} (${adultChildBreakdown.join(", ")})`;
 };
 
-export const getExpandedClientDetails = async (parcelId: string) => {
+const formatChildrenBreakdownFromFamilyDetails = (
+    family: Pick<Schema["families"], "age" | "gender">[]
+): string => {
+    const childDetails = [];
+
+    for (const familyMember of family) {
+        if (familyMember.age !== null && familyMember.age < 18) {
+            const age = familyMember.age === -1 ? "0-17" : familyMember.age;
+            childDetails.push(`${age} Year Old ${familyMember.gender}`);
+        }
+    }
+
+    return childDetails.join(", "); // TODO Format this better
+};
+
+export const getExpandedClientDetails = async (
+    parcelId: string
+): Promise<ExpandedClientDetails> => {
     const rawDetails = await getRawClientDetails(parcelId);
     return rawDataToExpandedClientDetails(rawDetails);
 };

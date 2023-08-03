@@ -1,7 +1,6 @@
 import supabase, { Schema } from "@/supabase";
 import { Datum } from "@/components/Tables/Table";
 
-// TODO Implement database select statement
 // TODO Add filters from table to request
 // TODO Paginate data over requests and refactor <Table /> component to handle this
 // TODO Trim table column headers on mobile / display differently
@@ -90,8 +89,8 @@ export const getProcessingData = async () => {
             
             family:families (
                 family_id,
-                person_type,
-                quantity
+                age,
+                gender
             )
         ),
         
@@ -111,19 +110,24 @@ export const getProcessingData = async () => {
 };
 
 // TODO Change to actual headers of table - currently used in debugging
-const processingDataToClientTableData = (processingData: ProcessingData): ClientTableRow[] => {
+const processingDataToClientTableData = async (
+    processingData: ProcessingData
+): Promise<ClientTableRow[]> => {
     const clientTableRows = [];
 
     for (const parcel of processingData) {
+        const client = parcel.client!;
+        const congestionChargeApplies = await congestionChargeAppliesTo(client.address_postcode); // TODO Perform Computation in bulk to improve performance
+
         clientTableRows.push({
             parcelId: parcel.parcel_id,
-            flaggedForAttention: parcel.client!.flagged_for_attention,
-            requiresFollowUpPhoneCall: parcel.client!.signposting_call_required,
-            fullName: parcel.client!.full_name,
-            familyCategory: familyDetailsToFamilyCategory(parcel.client!.family),
-            addressPostcode: parcel.client!.address_postcode,
+            flaggedForAttention: client.flagged_for_attention,
+            requiresFollowUpPhoneCall: client.signposting_call_required,
+            fullName: client.full_name,
+            familyCategory: familyCountToFamilyCategory(client.family.length),
+            addressPostcode: client.address_postcode,
             collectionCentre: parcel.collection_centre,
-            congestionChargeApplies: congestionChargeAppliesTo(parcel.client!.address_postcode),
+            congestionChargeApplies: congestionChargeApplies,
             packingDate: formatDatetimeAsDate(parcel.packing_datetime),
             packingTimeLabel: datetimeToPackingTimeLabel(parcel.packing_datetime),
             lastStatus: eventToStatusMessage(parcel.events[0] ?? null), // TODO Change this
@@ -133,13 +137,7 @@ const processingDataToClientTableData = (processingData: ProcessingData): Client
     return clientTableRows;
 };
 
-const familyDetailsToFamilyCategory = (familyDetails: { quantity: number }[]): string => {
-    let count = 0;
-
-    for (const familyGroup of familyDetails) {
-        count += familyGroup.quantity;
-    }
-
+export const familyCountToFamilyCategory = (count: number): string => {
     if (count <= 1) {
         return "Single";
     }
@@ -186,9 +184,15 @@ const eventToStatusMessage = (
     return `${event.event_name} @ ${formatDatetimeAsDate(event.timestamp)}`;
 };
 
-const congestionChargeAppliesTo = (postcode: string): boolean => {
-    // TODO Implement once API is made available
-    return true;
+const congestionChargeAppliesTo = async (
+    postcode: Schema["clients"]["address_postcode"]
+): Promise<boolean> => {
+    // TODO Handle on error?
+    const response = await supabase.functions.invoke("check-congestion-charge", {
+        body: { postcodes: [postcode] },
+    });
+
+    return JSON.parse(response.data)[0].congestionCharge;
 };
 
 export const getClientsTableData = async (): Promise<ClientTableRow[]> => {
