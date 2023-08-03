@@ -71,7 +71,7 @@ const dataToFilteredRows = (data: Datum[], filterText: FilterText, headers: Head
 
 const dataToRows = (data: Datum[], headers: Headers): Row[] => {
     return data.map((datum: Datum, currentIndex: number) => {
-        const row: Row = { rowId: currentIndex, ...datum };
+        const row: Row = { rowId: currentIndex, ...datum }; // TODO Change this
 
         for (const [headerKey, _headerLabel] of headers) {
             const databaseValue = datum.data[headerKey] ?? "";
