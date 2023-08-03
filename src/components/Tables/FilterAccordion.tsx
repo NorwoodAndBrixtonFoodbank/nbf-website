@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Accordion, Checkbox, AccordionSummary, AccordionDetails } from "@mui/material";
 import styled from "styled-components";
