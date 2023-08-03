@@ -19,17 +19,17 @@ describe("<NavigationBar />", () => {
     );
 
     it("Renders on desktop", () => {
-        cy.viewport("macbook-13");
+        cy.viewport(1280, 800);
         cy.mount(RouterWrappedNavBar);
     });
 
     it("Renders on mobile", () => {
-        cy.viewport("iphone-se2");
+        cy.viewport(375, 667);
         cy.mount(RouterWrappedNavBar);
     });
 
     it("Links exist on desktop", () => {
-        cy.viewport("macbook-13");
+        cy.viewport(1280, 800);
         cy.mount(RouterWrappedNavBar);
 
         cy.get("a[href='/clients']").contains("Clients").should("exist");
@@ -38,7 +38,7 @@ describe("<NavigationBar />", () => {
     });
 
     it("Links exist on mobile", () => {
-        cy.viewport("iphone-se2");
+        cy.viewport(375, 667);
         cy.mount(RouterWrappedNavBar);
 
         cy.get("button[aria-label='Mobile Menu Button']").click();
@@ -48,7 +48,7 @@ describe("<NavigationBar />", () => {
     });
 
     it("Mobile Menu Button doesn't show up on Desktop and Drawer is not open", () => {
-        cy.viewport("macbook-13");
+        cy.viewport(1280, 800);
         cy.mount(RouterWrappedNavBar);
 
         cy.get("button[aria-label='Mobile Menu Button']").should("not.be.visible");
@@ -58,11 +58,11 @@ describe("<NavigationBar />", () => {
     });
 
     it("Desktop Buttons don't show up on Mobile", () => {
-        cy.viewport("iphone-se2");
+        cy.viewport(375, 667);
         cy.mount(RouterWrappedNavBar);
 
-        cy.get("button").contains("Clients").filter(":visible").should("not.exist");
-        cy.get("button").contains("Lists").filter(":visible").should("not.exist");
-        cy.get("button").contains("Calendar").filter(":visible").should("not.exist");
+        cy.get("button").contains("Clients").should("not.be.visible");
+        cy.get("button").contains("Lists").should("not.be.visible");
+        cy.get("button").contains("Calendar").should("not.be.visible");
     });
 });

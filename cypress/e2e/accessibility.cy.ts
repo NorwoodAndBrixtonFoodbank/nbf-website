@@ -27,7 +27,7 @@ describe("Accessibility tests in light mode", () => {
         cy.get("button[aria-label='Sign Out Button']").click();
         cy.url().should("include", "/login");
         // Forces Page to Render Fully
-        cy.contains("Sign in", { timeout: 3000 }).should("be.visible");
+        cy.contains("Sign in").should("be.visible");
 
         cy.checkAccessibility();
     });
@@ -66,7 +66,7 @@ describe("Accessibility tests in dark mode", () => {
         cy.get("button[aria-label='Sign Out Button']").click();
         cy.url().should("include", "/login");
         // Forces Page to Render Fully
-        cy.contains("Sign in", { timeout: 3000 }).should("be.visible");
+        cy.contains("Sign in").should("be.visible");
 
         cy.checkAccessibility();
     });
