@@ -9,7 +9,7 @@ import { EventClickArg } from "@fullcalendar/core";
 import styled from "styled-components";
 import EventModal from "@/components/Calendar/EventModal";
 
-interface CalendarProps {
+export interface CalendarProps {
     initialEvents: CalendarEvent[];
     view?: string;
     editable?: boolean;

@@ -2,18 +2,15 @@
 
 import Calendar from "@/components/Calendar/Calendar";
 import Title from "@/components/Title/Title";
-import React, { useContext } from "react";
-import styled from "styled-components";
+import React from "react";
+import styled, { useTheme } from "styled-components";
 import {
     ClientMap,
     LocationColorMap,
     parcelsToCollectionEvents,
 } from "@/app/calendar/parcelCalendarFunctions";
 import { Schema } from "@/supabase";
-import { ChosenThemeContext } from "@/app/themes";
-
 interface ParcelCalendarProps {
-    // events: CalendarEvent[];
     clientMap: ClientMap;
     parcelsWithCollectionDate: Schema["parcels"][];
 }
@@ -30,48 +27,48 @@ const CalendarWrapper = styled.div`
 `;
 
 const ParcelCalendar: React.FC<ParcelCalendarProps> = (props) => {
-    const chosenTheme = useContext(ChosenThemeContext);
+    const chosenTheme = useTheme();
 
     const colorMap: LocationColorMap = {
         "Brixton Hill - Methodist Church": {
-            color: `${chosenTheme.rainbow.color.red[0]}`,
-            text: `${chosenTheme.rainbow.foreground.red[0]}`,
+            color: `${chosenTheme.rainbow.lightRed.background}`,
+            text: `${chosenTheme.rainbow.lightRed.foreground}`,
         },
         "Clapham - St Stephens Church": {
-            color: `${chosenTheme.rainbow.color.orange[0]}`,
-            text: `${chosenTheme.rainbow.foreground.orange[0]}`,
+            color: `${chosenTheme.rainbow.lightOrange.background}`,
+            text: `${chosenTheme.rainbow.lightOrange.foreground}`,
         },
         "N&B - Emmanuel Church": {
-            color: `${chosenTheme.rainbow.color.yellow[0]}`,
-            text: `${chosenTheme.rainbow.foreground.yellow[0]}`,
+            color: `${chosenTheme.rainbow.lightYellow.background}`,
+            text: `${chosenTheme.rainbow.lightYellow.foreground}`,
         },
         "Streatham - Immanuel & St Andrew": {
-            color: `${chosenTheme.rainbow.color.lightGreen[0]}`,
-            text: `${chosenTheme.rainbow.foreground.lightGreen[0]}`,
+            color: `${chosenTheme.rainbow.lightGreen.background}`,
+            text: `${chosenTheme.rainbow.lightGreen.foreground}`,
         },
         "Vauxhall Hope Church": {
-            color: `${chosenTheme.rainbow.color.darkGreen[0]}`,
-            text: `${chosenTheme.rainbow.foreground.darkGreen[0]}`,
+            color: `${chosenTheme.rainbow.darkGreen.background}`,
+            text: `${chosenTheme.rainbow.darkGreen.foreground}`,
         },
         "Waterloo - Oasis": {
-            color: `${chosenTheme.rainbow.color.blue[0]}`,
-            text: `${chosenTheme.rainbow.foreground.blue[0]}`,
+            color: `${chosenTheme.rainbow.lightBlue.background}`,
+            text: `${chosenTheme.rainbow.lightBlue.foreground}`,
         },
         "Waterloo - St George the Martyr": {
-            color: `${chosenTheme.rainbow.color.blue[1]}`,
-            text: `${chosenTheme.rainbow.foreground.blue[1]}`,
+            color: `${chosenTheme.rainbow.darkBlue.background}`,
+            text: `${chosenTheme.rainbow.darkBlue.foreground}`,
         },
         "Waterloo - St Johns": {
-            color: `${chosenTheme.rainbow.color.purple[0]}`,
-            text: `${chosenTheme.rainbow.foreground.purple[0]}`,
+            color: `${chosenTheme.rainbow.lightPurple.background}`,
+            text: `${chosenTheme.rainbow.lightPurple.foreground}`,
         },
         Delivery: {
-            color: `${chosenTheme.rainbow.color.purple[1]}`,
-            text: `${chosenTheme.rainbow.foreground.purple[1]}`,
+            color: `${chosenTheme.rainbow.darkPurple.background}`,
+            text: `${chosenTheme.rainbow.darkPurple.foreground}`,
         },
         default: {
-            color: `${chosenTheme.rainbow.color.brown[0]}`,
-            text: `${chosenTheme.rainbow.foreground.brown[0]}`,
+            color: `${chosenTheme.rainbow.lightBrown.background}`,
+            text: `${chosenTheme.rainbow.lightBrown.foreground}`,
         },
     };
     return (

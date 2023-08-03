@@ -11,6 +11,8 @@
 //
 
 import { Result } from "axe-core";
+import "@cypress/code-coverage/support";
+import "cypress-axe";
 
 Cypress.Commands.add("login", () => {
     const email = Cypress.env("TEST_USER");

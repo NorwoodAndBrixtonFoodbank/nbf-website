@@ -9,27 +9,30 @@ import styled, { useTheme } from "styled-components";
 
 const MiddleDiv = styled.div`
     max-width: 400px;
-    box-shadow: 0px 0px 15px ${(props) => props.theme.shadow};
+    box-shadow: 0 0 15px ${(props) => props.theme.shadow};
     border-radius: 10px;
     padding: 50px;
     margin: auto;
     background-color: ${(props) => props.theme.main.background[0]};
 
-    --fonts-buttonFontFamily: "Inter-Regular", san-serif;
-    --fonts-bodyFontFamily: "Inter-Regular", san-serif;
-    --fonts-inputFontFamily: "Inter-Regular", san-serif;
-    --fonts-labelFontFamily: "Inter-Bold", san-serif;
+    --fonts-buttonFontFamily: Helvetica, Arial, sans-serif;
+    --fonts-bodyFontFamily: Helvetica, Arial, sans-serif;
+    --fonts-inputFontFamily: Helvetica, Arial, sans-serif;
+    --fonts-labelFontFamily: Helvetica, Arial, sans-serif;
 
     & input {
         border-color: ${(props) => props.theme.main.background[0]};
         background-color: ${(props) => props.theme.main.background[1]};
     }
 
+    // Google Chrome password autofill will automatically make the background blue and the word black, which is inconsistent with our current theme
+    // The below forces the background on Google Chrome to be our desired background
+    // Since Google Chrome used !important in their -webkit-autofill, we cannot override their background-color setting
     & input:-webkit-autofill,
     & input:-webkit-autofill:hover,
     & input:-webkit-autofill:focus,
     & input:-webkit-autofill:active {
-        transition: background-color 99999s ease-in-out 0s;
+        -webkit-box-shadow: 0 0 0 9999px ${(props) => props.theme.main.background[1]} inset !important;
         -webkit-text-fill-color: ${(props) => props.theme.main.foreground[1]} !important;
     }
 
@@ -53,7 +56,7 @@ const LoginPanel: React.FC<{}> = () => {
                         default: {
                             colors: {
                                 inputLabelText: theme.main.foreground[1],
-                                anchorTextColor: theme.main.foreground[3],
+                                anchorTextColor: theme.main.lighterForeground,
                                 defaultButtonBackground: theme.primary.background[1],
                                 brand: theme.primary.background[2],
                                 brandButtonText: theme.primary.foreground[2],

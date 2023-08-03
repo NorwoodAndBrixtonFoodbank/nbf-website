@@ -4,105 +4,137 @@ import GlobalStyle from "@/app/global_styles";
 import isPropValid from "@emotion/is-prop-valid";
 import { useServerInsertedHTML } from "next/navigation";
 import React, { createContext, useState } from "react";
-import { ServerStyleSheet, StyleSheetManager, ThemeProvider } from "styled-components";
+import {
+    ServerStyleSheet,
+    StyleSheetManager,
+    ThemeProvider,
+    DefaultTheme,
+} from "styled-components";
 import {
     ThemeProvider as MaterialThemeProvider,
     createTheme as createMaterialTheme,
 } from "@mui/material";
 
-type rainbowPalette = {
-    red: string[];
-    orange: string[];
-    yellow: string[];
-    lightGreen: string[];
-    darkGreen: string[];
-    blue: string[];
-    purple: string[];
-    grey: string[];
-    brown: string[];
-};
+// The array represents a gradient of color
+// In light mode: 0 represents the lightest and larger index represents darker color
+// In dark mode: reversed
 
-type customTheme = {
-    light: boolean;
-    main: {
-        background: string[];
-        foreground: string[];
-        largeForeground: string[];
-        border: string;
-    };
-    primary: {
-        background: string[];
-        foreground: string[];
-        largeForeground: string[];
-    };
-    error: string;
-    shadow: string;
-    rainbow: {
-        color: rainbowPalette;
-        foreground: rainbowPalette;
-        largeForeground: rainbowPalette;
-    };
-};
+const BLACK = "#000000";
+const WHITE = "#f2f2f2";
 
-export const lightTheme: customTheme = {
+export const lightTheme: DefaultTheme = {
     light: true,
     main: {
-        background: ["#fdfdfd", "#eeeeee", "#eeeeee", "#eeeeee"],
-        foreground: ["#000000", "#2d2d2d", "#383838", "#6e6e6e"],
-        largeForeground: ["#000000", "#2d2d2d", "#383838", "#6e6e6e"],
+        background: ["#fdfdfd", "#eeeeee"],
+        foreground: [BLACK, "#2d2d2d"],
+        largeForeground: [BLACK, "#2d2d2d"],
+        lighterForeground: "#666666",
         border: "#d5d5d5",
     },
     primary: {
-        background: ["#a3e0b0", "#8cd99d", "#02985a", "#05663f", "#154d30"],
-        foreground: ["#000000", "#000000", "#000000", "#f2f2f2", "#f2f2f2"],
-        largeForeground: ["#000000", "#f2f2f2", "#f2f2f2", "#f2f2f2", "#f2f2f2"],
+        background: ["#a3e0b0", "#7fd495", "#02985a", "#05663f", "#154d30"],
+        foreground: [BLACK, BLACK, BLACK, WHITE, WHITE],
+        largeForeground: [BLACK, BLACK, WHITE, WHITE, WHITE],
+    },
+    accent: {
+        background: "#1b385f",
+        foreground: WHITE,
+        largeForeground: WHITE,
     },
     error: "#ff624e",
     shadow: "#e2e2e2",
     rainbow: {
-        color: {
-            red: ["#fa9189", "#fb685a", "#fc2a2a"],
-            orange: ["#fcae7c", "#ff9753", "#fa6400"],
-            yellow: ["#ffd868", "#ffcb1e", "#ffbb00"],
-            lightGreen: ["#b4f5b3", "#7ceb98", "#1ae669"],
-            darkGreen: ["#8ecbb4", "#66b79b", "#36d5a7"],
-            blue: ["#acd5df", "#7bbafc", "#5b74f1"],
-            purple: ["#ceaae9", "#b18ff9", "#af25ff"],
-            grey: ["#d7d7d7", "#959595", "#808080"],
-            brown: ["#bfaba2", "#a49589", "#87735b"],
+        lightRed: {
+            background: "#fa9189",
+            foreground: BLACK,
+            largeForeground: BLACK,
         },
-        foreground: {
-            red: ["#000000", "#000000", "#000000"],
-            orange: ["#000000", "#000000", "#000000"],
-            yellow: ["#000000", "#000000", "#000000"],
-            lightGreen: ["#000000", "#000000", "#000000"],
-            darkGreen: ["#000000", "#000000", "#000000"],
-            blue: ["#000000", "#000000", "#000000"],
-            purple: ["#000000", "#000000", "#000000"],
-            grey: ["#000000", "#000000", "#000000"],
-            brown: ["#000000", "#000000", "#000000"],
+        darkRed: {
+            background: "#fc4942",
+            foreground: BLACK,
+            largeForeground: WHITE,
         },
-        largeForeground: {
-            red: ["#000000", "#000000", "#f2f2f2"],
-            orange: ["#000000", "#000000", "#f2f2f2"],
-            yellow: ["#000000", "#000000", "#000000"],
-            lightGreen: ["#000000", "#000000", "#000000"],
-            darkGreen: ["#000000", "#000000", "#000000"],
-            blue: ["#000000", "#000000", "#f2f2f2"],
-            purple: ["#000000", "#000000", "#f2f2f2"],
-            grey: ["#000000", "#000000", "#f2f2f2"],
-            brown: ["#000000", "#000000", "#f2f2f2"],
+        lightOrange: {
+            background: "#fcae7c",
+            foreground: BLACK,
+            largeForeground: BLACK,
+        },
+        darkOrange: {
+            background: "#fd7e2a",
+            foreground: BLACK,
+            largeForeground: BLACK,
+        },
+        lightYellow: {
+            background: "#ffd868",
+            foreground: BLACK,
+            largeForeground: BLACK,
+        },
+        darkYellow: {
+            background: "#ffbb00",
+            foreground: BLACK,
+            largeForeground: BLACK,
+        },
+        lightGreen: {
+            background: "#b4f5b3",
+            foreground: BLACK,
+            largeForeground: BLACK,
+        },
+        darkGreen: {
+            background: "#5fa881",
+            foreground: BLACK,
+            largeForeground: BLACK,
+        },
+        lightBlue: {
+            background: "#acd5df",
+            foreground: BLACK,
+            largeForeground: BLACK,
+        },
+        darkBlue: {
+            background: "#7bbafc",
+            foreground: BLACK,
+            largeForeground: BLACK,
+        },
+        lightPurple: {
+            background: "#ceaae9",
+            foreground: BLACK,
+            largeForeground: BLACK,
+        },
+        darkPurple: {
+            background: "#b18ff9",
+            foreground: BLACK,
+            largeForeground: BLACK,
+        },
+        lightGrey: {
+            background: "#d7d7d7",
+            foreground: BLACK,
+            largeForeground: BLACK,
+        },
+        darkGrey: {
+            background: "#808080",
+            foreground: BLACK,
+            largeForeground: WHITE,
+        },
+        lightBrown: {
+            background: "#bfaba2",
+            foreground: BLACK,
+            largeForeground: BLACK,
+        },
+        darkBrown: {
+            background: "#a68f68",
+            foreground: BLACK,
+            largeForeground: BLACK,
         },
     },
 };
 
-export const darkTheme: customTheme = {
+export const darkTheme: DefaultTheme = {
     ...lightTheme,
     light: false,
     main: {
-        background: ["#232323", "#2d2d2d", "#2d2d2d", "#2d2d2d"],
-        foreground: ["#d9d9d9", "#d9d9d9", "#B5B5B5", "#969696"],
-        largeForeground: ["#f2f2f2", "#ededed", "#B5B5B5", "#969696"],
+        background: ["#232323", "#2d2d2d"],
+        foreground: [WHITE, "#d9d9d9"],
+        largeForeground: [WHITE, "#d9d9d9"],
+        lighterForeground: "#969696",
         border: "#5c5c5c",
     },
     primary: {
@@ -110,15 +142,13 @@ export const darkTheme: customTheme = {
         foreground: lightTheme.primary.foreground.slice().reverse(),
         largeForeground: lightTheme.primary.largeForeground.slice().reverse(),
     },
+    accent: {
+        background: "#b8cbe9",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
     shadow: "#282828",
 };
-
-interface Props {
-    children: React.ReactElement;
-    theme?: customTheme;
-}
-
-let forceRerender = 0;
 
 export const ThemeUpdateContext = createContext((dark: boolean): void => {
     throw new Error(
@@ -131,6 +161,11 @@ export const ThemeUpdateContext = createContext((dark: boolean): void => {
  * Adapted from https://nextjs.org/docs/app/building-your-application/styling/css-in-js#styled-components
  */
 export const ChosenThemeContext = createContext(lightTheme);
+
+interface Props {
+    children: React.ReactElement;
+    theme?: DefaultTheme;
+}
 
 const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
     const [serverStyleSheet] = useState(() => new ServerStyleSheet());
@@ -179,7 +214,7 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
             },
         },
         typography: {
-            fontFamily: "Inter",
+            fontFamily: "Helvetica, Arial, sans-serif",
         },
         components: {
             MuiCheckbox: {
@@ -206,7 +241,7 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
 
     return (
         <ThemeUpdateContext.Provider value={handleThemeChange}>
-            <ThemeProvider theme={chosenTheme} key={forceRerender++}>
+            <ThemeProvider theme={chosenTheme}>
                 <MaterialThemeProvider theme={materialTheme}>
                     <ChosenThemeContext.Provider value={chosenTheme}>
                         <GlobalStyle />

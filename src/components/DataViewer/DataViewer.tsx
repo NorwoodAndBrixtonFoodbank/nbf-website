@@ -3,7 +3,6 @@
 import React, { ReactElement } from "react";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
-
 type valueType = string[] | string | number | boolean | null;
 
 export interface Data {
@@ -61,7 +60,7 @@ const JSONContent: React.FC<Data> = (data) => {
     );
 };
 
-interface DataViewerProps {
+export interface DataViewerProps {
     data: Data;
     header: ReactElement | string;
     isOpen: boolean;

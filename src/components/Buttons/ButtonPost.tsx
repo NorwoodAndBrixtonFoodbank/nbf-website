@@ -7,19 +7,19 @@ const Submit = styled.input.attrs({ type: "submit" })`
     border-radius: 5px;
     text-decoration: none;
     color: ${(props) => props.theme.primary.foreground[2]};
-    border: 0 solid black;
+    border: 0;
 
     &:hover {
         font-weight: bold;
     }
 `;
 
-interface Props {
+export interface ButtonPostProps {
     text?: string;
     url: string;
 }
 
-const ButtonPost: React.FC<Props> = (props) => {
+const ButtonPost: React.FC<ButtonPostProps> = (props) => {
     return (
         <form action={props.url} method="post">
             <Submit value={props.text ?? "Submit"} />

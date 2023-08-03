@@ -32,20 +32,19 @@ const Header = styled.h1`
 `;
 
 const Content = styled.div`
-    overflow: auto;
+    overflow-y: auto;
+    overflow-wrap: break-word;
     padding: 1em 1.5em 1.5em;
     width: 100%;
     color: ${(props) => props.theme.main.foreground[1]};
     background-color: ${(props) => props.theme.main.background[1]};
 `;
 
-const CloseButton = styled.button.attrs({
-    "aria-label": "Close Button",
-})`
+const CloseButton = styled.button`
     border: 0;
     border-radius: 50%;
-    background-color: ${(props) => props.theme.rainbow.color.grey[0]};
-    color: ${(props) => props.theme.rainbow.color.grey[2]};
+    background-color: ${(props) => props.theme.rainbow.lightGrey.background};
+    color: ${(props) => props.theme.rainbow.darkGrey.background};
 
     display: flex;
     justify-content: center;
@@ -53,14 +52,15 @@ const CloseButton = styled.button.attrs({
     align-items: center;
     transition: 0.2s;
     margin-left: 1em;
+    cursor: pointer;
 
     &:hover {
-        color: ${(props) => props.theme.rainbow.color.grey[0]};
-        background-color: ${(props) => props.theme.rainbow.color.grey[2]};
+        color: ${(props) => props.theme.rainbow.lightGrey.background};
+        background-color: ${(props) => props.theme.rainbow.darkGrey.background};
     }
 `;
 
-interface ModalProps {
+export interface ModalProps {
     header: ReactNode;
     children: ReactNode;
     isOpen: boolean;
@@ -73,8 +73,7 @@ const Modal: React.FC<ModalProps> = (props) => {
         <StyledDialog open={props.isOpen} onClose={props.onClose} aria-labelledby={props.headerId}>
             <Header id={props.headerId}>
                 {props.header}
-                <CloseButton onClick={props.onClose}>
-                    <Icon icon={faClose} />
+                <CloseButton onClick={props.onClose} aria-label="Close Button">
                 </CloseButton>
             </Header>
             <Content>{props.children}</Content>

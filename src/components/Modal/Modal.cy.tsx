@@ -1,20 +1,39 @@
 import React from "react";
-import Modal from "@/components/Modal/Modal";
+import Modal, { ModalProps } from "@/components/Modal/Modal";
+import StyleManager from "@/app/themes";
+
+const StyledModal: React.FC<ModalProps> = (props) => {
+    return (
+        <StyleManager>
+            <Modal {...props} />
+        </StyleManager>
+    );
+};
 
 describe("General Modal Component", () => {
     it("renders", () => {
         cy.mount(
-            <Modal header="Modal Header" headerId="testModal" isOpen={true} onClose={() => {}}>
+            <StyledModal
+                header="Modal Header"
+                headerId="testModal"
+                isOpen={true}
+                onClose={() => {}}
+            >
                 <h1>Modal Content</h1>
-            </Modal>
+            </StyledModal>
         );
     });
 
     it("modal can be opened", () => {
         cy.mount(
-            <Modal header="Modal Header" headerId="testModal" isOpen={true} onClose={() => {}}>
+            <StyledModal
+                header="Modal Header"
+                headerId="testModal"
+                isOpen={true}
+                onClose={() => {}}
+            >
                 <h1>Modal Content</h1>
-            </Modal>
+            </StyledModal>
         );
 
         cy.contains("Modal Header");
@@ -23,9 +42,14 @@ describe("General Modal Component", () => {
 
     it("modal can be closed", () => {
         cy.mount(
-            <Modal header="Modal Header" headerId="testModal" isOpen={false} onClose={() => {}}>
+            <StyledModal
+                header="Modal Header"
+                headerId="testModal"
+                isOpen={false}
+                onClose={() => {}}
+            >
                 <h1>Modal Content</h1>
-            </Modal>
+            </StyledModal>
         );
 
         cy.contains("Modal Header").should("not.exist");
@@ -36,9 +60,14 @@ describe("General Modal Component", () => {
         const onCloseSpy = cy.spy().as("onCloseSpy");
 
         cy.mount(
-            <Modal header="Modal Header" headerId="testModal" isOpen={true} onClose={onCloseSpy}>
+            <StyledModal
+                header="Modal Header"
+                headerId="testModal"
+                isOpen={true}
+                onClose={onCloseSpy}
+            >
                 <h1>Modal Content</h1>
-            </Modal>
+            </StyledModal>
         );
 
         cy.get("svg").parent("button").click();

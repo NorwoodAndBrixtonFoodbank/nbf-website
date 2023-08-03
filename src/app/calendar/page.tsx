@@ -9,8 +9,8 @@ import {
 import { Schema } from "@/supabase";
 
 const CalendarPage = async (): Promise<React.ReactElement> => {
-    const clientMap: ClientMap = await getClientMap();
-    const parcelsWithCollectionDate: Schema["parcels"][] = await getParcelsWithCollectionDate();
+    const [clientMap, parcelsWithCollectionDate]: [ClientMap, Schema["parcels"][]] =
+        await Promise.all([getClientMap(), getParcelsWithCollectionDate()]);
 
     return (
         <main>
