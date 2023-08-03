@@ -9,7 +9,7 @@ interface Props {
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const CheckboxInput: React.FC<Props> = (props) => {
+const CheckboxGroupInput: React.FC<Props> = (props) => {
     return (
         <FormControl>
             <FormLabel>{props.groupLabel}</FormLabel>
@@ -28,4 +28,4 @@ const CheckboxInput: React.FC<Props> = (props) => {
     );
 };
 
-export default CheckboxInput;
+export default CheckboxGroupInput;

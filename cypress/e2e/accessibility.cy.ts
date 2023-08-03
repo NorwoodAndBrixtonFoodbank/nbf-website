@@ -22,6 +22,13 @@ describe("Accessibility tests in light mode", () => {
         cy.checkAccessibility();
     });
 
+    it("Checks clients/add page", () => {
+        cy.visit("/clients/add");
+
+        cy.get(".light-button").click();
+        cy.checkAccessibility();
+    });
+
     it("Checks login page", () => {
         cy.visit("/clients");
         cy.get("button[aria-label='Sign Out Button']").click();
@@ -57,6 +64,13 @@ describe("Accessibility tests in dark mode", () => {
         cy.get("table").should("be.visible");
         cy.get("label[aria-label='Theme Switch']").click();
 
+        cy.checkAccessibility();
+    });
+
+    it("Checks clients/add page", () => {
+        cy.visit("/clients/add");
+
+        cy.get(".dark-button").click();
         cy.checkAccessibility();
     });
 
