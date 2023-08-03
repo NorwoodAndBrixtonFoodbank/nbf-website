@@ -1,6 +1,6 @@
 import registerCodeCoverageTasks from "@cypress/code-coverage/task";
 import { defineConfig } from "cypress";
-import readPdf from "./cypress/scripts/readPdf";
+import readPdf from "./cypress/support/readPdf";
 
 import * as dotenv from "dotenv";
 
@@ -29,6 +29,7 @@ export default defineConfig({
             return config;
         },
         baseUrl: "http://localhost:3200",
+        downloadsFolder: "cypress/downloads",
         video: false,
         videoUploadOnPasses: false,
         screenshotOnRunFailure: false,
@@ -41,6 +42,7 @@ export default defineConfig({
             });
             return config;
         },
+        downloadsFolder: "cypress/downloads",
         devServer: {
             framework: "next",
             bundler: "webpack",
