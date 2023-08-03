@@ -1,8 +1,8 @@
 import StyleManager from "@/app/themes";
-import NavBar from "@/components/NavBar";
 import { Metadata } from "next";
 
 import React from "react";
+import NavigationBar from "@/components/NavBar/NavigationBar";
 
 interface Props {
     children: React.ReactElement;
@@ -14,7 +14,7 @@ const App: React.FC<Props> = ({ children }) => (
             <React.StrictMode>
                 <StyleManager>
                     <>
-                        <NavBar />
+                        <NavigationBar />
                         {children}
                     </>
                 </StyleManager>
