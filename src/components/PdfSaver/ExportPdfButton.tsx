@@ -4,7 +4,7 @@ import React from "react";
 import jsPDF from "jspdf";
 import Button from "@mui/material/Button";
 
-type AllHTMLElements = HTMLElementTagNameMap[keyof HTMLElementTagNameMap];
+type AllHTMLElements = HTMLElementTagNameMap[keyof HTMLElementTagNameMap]; // eslint-disable-line no-undef
 
 export type PdfProps = {
     pdfRef: React.RefObject<AllHTMLElements>;

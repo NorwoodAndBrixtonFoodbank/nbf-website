@@ -3,6 +3,8 @@ import ExportPdfButton from "@/components/PdfSaver/ExportPdfButton";
 
 const fileName = "ThisIsATestFile";
 const downloadsFolder = Cypress.config("downloadsFolder");
+const title = "Lorem ipsum dolor sit amet";
+const body = "consectetur adipiscing elit, sed do eiusmod tempor";
 
 const PdfBodyAndButton: React.FC = () => {
     const pdfRef = useRef<HTMLDivElement | null>(null);
@@ -10,15 +12,8 @@ const PdfBodyAndButton: React.FC = () => {
     return (
         <>
             <div ref={pdfRef}>
-                <h1>Lorem ipsum dolor sit amet</h1>
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                    nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                    culpa qui officia deserunt mollit anim id est laborum.
-                </p>
+                <h1>{title}</h1>
+                <p>{body}</p>
             </div>
             <ExportPdfButton pdfRef={pdfRef} fileName={fileName} />
         </>
@@ -30,10 +25,18 @@ describe("Export Pdf Button", () => {
         cy.mount(<PdfBodyAndButton />);
     });
 
-    it("file is saved", () => {
+    it("File is saved", () => {
         cy.mount(<PdfBodyAndButton />);
 
         cy.get("button").click();
         cy.readFile(`${downloadsFolder}/${fileName}.pdf`);
+    });
+
+    it("Content in the file is correct", () => {
+        cy.mount(<PdfBodyAndButton />);
+
+        cy.get("button").click();
+        cy.task("readPdf", `${downloadsFolder}/${fileName}.pdf`).should("contain", title);
+        cy.task("readPdf", `${downloadsFolder}/${fileName}.pdf`).should("contain", body);
     });
 });
