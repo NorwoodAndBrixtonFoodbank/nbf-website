@@ -120,6 +120,25 @@ export const onChangeRadioGroup = (
     };
 };
 
+export const valueOnChangeRadioGroup = (
+    fieldSetter: FieldSetter,
+    key: string
+): selectChangeEventHandler => {
+    return (event) => {
+        const input = event.target.value;
+        fieldSetter(key, input);
+    };
+};
+
+export const onChangeDate = (fieldSetter: FieldSetter, key: string): selectChangeEventHandler => {
+    return (event) => {
+        console.log("reached onChangeDate");
+        const input = String(event.target.value);
+        console.log(input);
+        fieldSetter(key, input);
+    };
+};
+
 export const errorExists = (errorType: Errors): boolean => {
     return errorType !== Errors.initial && errorType !== Errors.none;
 };
