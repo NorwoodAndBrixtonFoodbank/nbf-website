@@ -20,4 +20,10 @@ describe("Rendering tests", () => {
 
         cy.get("h1").should("contain.text", "Collection Time for Parcels");
     });
+
+    it("Renders clients/add page", () => {
+        cy.visit("/clients/add");
+
+        cy.get("h1").should("contain.text", "Client Form");
+    });
 });

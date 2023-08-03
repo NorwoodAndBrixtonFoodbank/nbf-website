@@ -9,7 +9,7 @@ type booleanSetter = {
     (checked: boolean): void;
 };
 
-type booleanGroup = {
+export type booleanGroup = {
     [key: string]: boolean;
 };
 
@@ -17,11 +17,11 @@ type booleanGroupSetter = {
     (group: booleanGroup): void;
 };
 
-type changeEventHandler = {
+export type changeEventHandler = {
     (event: React.ChangeEvent<HTMLInputElement>): void;
 };
 
-type selectChangeEventHandler = {
+export type selectChangeEventHandler = {
     (event: SelectChangeEvent): void;
 };
 

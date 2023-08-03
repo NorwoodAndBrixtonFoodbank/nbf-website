@@ -22,4 +22,11 @@ export type Schema = {
     lists: Tables["lists"]["Row"];
 };
 
+export type InsertSchema = {
+    clients: Tables["clients"]["Insert"];
+    families: Tables["families"]["Insert"];
+    parcels: Tables["parcels"]["Insert"];
+    lists: Tables["lists"]["Insert"];
+};
+
 export default supabase;
