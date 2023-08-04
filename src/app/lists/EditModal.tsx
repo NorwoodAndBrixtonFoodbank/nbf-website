@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { SnackBarDiv, headers, tooltips } from "@/app/lists/ListDataview";
 import TextInput from "@/components/DataInput/FreeFormTextInput";
-import { Datum } from "@/components/Tables/Table";
+import { Datum, RowData } from "@/components/Tables/Table";
 import supabase from "@/supabase";
 import Snackbar from "@mui/material/Snackbar/Snackbar";
 import Alert from "@mui/material/Alert/Alert";
@@ -43,7 +43,7 @@ const DisplayContents = styled.div`
 `;
 
 const EditModal: React.FC<Props> = ({ data, onClose }) => {
-    const [toSubmit, setToSubmit] = useState<{ [key: string]: string | null }>(
+    const [toSubmit, setToSubmit] = useState<RowData>(
         data ? { ...data.data, ...data.tooltips } : {}
     );
 
