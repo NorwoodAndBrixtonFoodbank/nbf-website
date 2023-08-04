@@ -11,6 +11,7 @@ const ShippingMethodCard: React.FC<CardProps> = ({ fieldSetter }) => {
                     ["Delivery", "Delivery"],
                     ["Collection", "Collection"],
                 ]}
+                onChange={valueOnChangeRadioGroup(fieldSetter, "shippingMethod")}
             ></RadioGroupInput>
         </GenericFormCard>
     );

@@ -18,7 +18,6 @@ import {
     StyledForm,
     FormErrorText,
     FormHeading,
-    FormSubheading,
     FormText,
     StyledFormSubmitButton,
 } from "@/components/Form/formStyling";
@@ -27,7 +26,7 @@ import { useRouter } from "next/navigation";
 
 import VoucherNumberCard from "@/app/parcels/add/formSections/VoucherNumberCard";
 import PackingDateCard from "@/app/parcels/add/formSections/PackingDateCard";
-import TimeOfDayCard from "@/app/parcels/add/formSections/TimeOfDayCard";
+import TimeOfDayCard from "@/app/parcels/add/formSections/TimeofDayCard";
 import ShippingMethodCard from "@/app/parcels/add/formSections/ShippingMethodCard";
 import CollectionDateCard from "@/app/parcels/add/formSections/CollectionDateCard";
 import CollectionTimeCard from "@/app/parcels/add/formSections/CollectionTimeCard";
@@ -109,10 +108,6 @@ const AddParcelForm: React.FC = () => {
                     There is a section at the end of the form to add any extra information that
                     isn&apos;t covered by these questions.
                 </FormText>
-                <FormText>
-                    Check the delivery address using the Royal Mail Address Checker below:
-                </FormText>
-                <a href="https://www.royalmail.com/find-a-postcode">Royal Mail Find A Postcode</a>
                 {formSections.map((Card, index) => {
                     return (
                         <Card
@@ -127,7 +122,7 @@ const AddParcelForm: React.FC = () => {
                 <CenterComponent>
                     <StyledFormSubmitButton
                         type="button"
-                        // onClick={submitForm}
+                        onClick={() => console.log(fields)}
                         disabled={submitDisabled}
                     >
                         Submit

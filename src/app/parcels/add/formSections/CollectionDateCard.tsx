@@ -1,17 +1,21 @@
 import React from "react";
-import { CardProps } from "@/components/Form/formFunctions";
+import { CardProps, onChangeDate } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
-import DatePickerInput from "@/components/DataInput/DatePicker";
+import StyledDatePicker from "@/components/DataInput/DatePicker";
 
-const CollectionDateCard: React.FC<CardProps> = ({ errorSetter, fieldSetter }) => {
+const CollectionDateCard: React.FC<CardProps> = ({ fieldSetter }) => {
     return (
         <GenericFormCard
             title="Collection Date Card"
             required={false}
             text="What date is the client collecting their parcel?"
         >
-            {/* <DatePickerInput /> */}
-            <div>Placeholder</div>
+            <StyledDatePicker
+                onChange={(newValue: any) => {
+                    onChangeDate(fieldSetter, "collectionDate", newValue);
+                }}
+                label="Enter Date Here"
+            />
         </GenericFormCard>
     );
 };

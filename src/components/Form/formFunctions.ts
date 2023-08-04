@@ -130,13 +130,15 @@ export const valueOnChangeRadioGroup = (
     };
 };
 
-export const onChangeDate = (fieldSetter: FieldSetter, key: string): selectChangeEventHandler => {
-    return (event) => {
-        console.log("reached onChangeDate");
-        const input = String(event.target.value);
-        console.log(input);
-        fieldSetter(key, input);
-    };
+export const onChangeDate = (fieldSetter: FieldSetter, key: string, value: Date | null): void => {
+    const input = value;
+
+    fieldSetter(key, input);
+};
+
+export const onChangeTime = (fieldSetter: FieldSetter, key: string, value: Date | null): void => {
+    const input = value;
+    fieldSetter(key, input);
 };
 
 export const errorExists = (errorType: Errors): boolean => {
