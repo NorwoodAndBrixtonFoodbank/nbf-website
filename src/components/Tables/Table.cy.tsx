@@ -197,22 +197,22 @@ describe("<Table />", () => {
         cy.get("input[aria-label='Select row 14']").click();
         cy.get("input[aria-label='Select row 14']").should("be.checked");
 
-        cy.get("input[aria-label='Select row 9']").click();
-        cy.get("input[aria-label='Select row 9']").should("be.checked");
+        cy.get("input[aria-label='Select row 0']").click();
+        cy.get("input[aria-label='Select row 0']").should("be.checked");
 
         cy.get("select[aria-label='Rows per page:']").select("10");
-        cy.get("input[aria-label='Select row 9']").should("be.checked");
+        cy.get("input[aria-label='Select row 0']").should("be.checked");
         cy.get("select[aria-label='Rows per page:']").select("15");
 
-        cy.get("input[aria-label='Select row 9']").should("be.checked");
+        cy.get("input[aria-label='Select row 0']").should("be.checked");
         cy.get("input[aria-label='Select row 14']").should("be.checked");
     });
 
     it("sorting does not affect checkbox", () => {
         cy.mount(<Component />);
 
-        cy.get("input[aria-label='Select row 1']").click();
-        cy.get("input[aria-label='Select row 1']").should("be.checked");
+        cy.get("input[aria-label='Select row 0']").click();
+        cy.get("input[aria-label='Select row 0']").should("be.checked");
 
         cy.get("input[aria-label='Select row 2']").click();
         cy.get("input[aria-label='Select row 2']").should("be.checked");
@@ -221,7 +221,7 @@ describe("<Table />", () => {
         cy.get("input[aria-label='Select row 2']").should("be.checked");
         cy.get("div").contains("Name").parent().click();
 
-        cy.get("input[aria-label='Select row 1']").should("be.checked");
+        cy.get("input[aria-label='Select row 0']").should("be.checked");
         cy.get("input[aria-label='Select row 2']").should("be.checked");
     });
 

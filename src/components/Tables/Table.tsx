@@ -114,14 +114,26 @@ const CustomCell: React.FC<CellProps> = ({ data, rowId, headerKey }) => {
     );
 };
 
-const Table: React.FC<Props> = (props) => {
+const Table: React.FC<Props> = ({
+    data: inputData,
+    headerKeysAndLabels,
+    checkboxes,
+    defaultShownHeaders,
+    headerFilters,
+    onDelete,
+    onEdit,
+    pagination,
+    reorderable = false,
+    sortable = true,
+    toggleableHeaders,
+}) => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
-        props.defaultShownHeaders ?? props.headerKeysAndLabels.map(([key]) => key)
+        defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
     );
 
-    const shownHeaders = props.headerKeysAndLabels.filter(([key]) => shownHeaderKeys.includes(key));
+    const shownHeaders = headerKeysAndLabels.filter(([key]) => shownHeaderKeys.includes(key));
 
-    const [data, setData] = useState(props.data);
+    const [data, setData] = useState(inputData);
 
     const [filterText, setFilterText] = useState<FilterText>({});
 
@@ -150,14 +162,14 @@ const Table: React.FC<Props> = (props) => {
     }, [selectCheckBoxes, selectAllCheckBox]);
 
     const columns: TableColumn<Row>[] = (
-        props.toggleableHeaders ? shownHeaders : props.headerKeysAndLabels
+        toggleableHeaders ? shownHeaders : headerKeysAndLabels
     ).map(([headerKey, headerName]) => {
         return {
             name: headerName,
             selector: (row) => row.data[headerKey],
             minWidth: "12rem",
             maxWidth: "20rem",
-            sortable: props.sortable ?? true,
+            sortable: sortable,
             cell(row) {
                 return <CustomCell data={data} rowId={row.rowId} headerKey={headerKey} />;
             },
@@ -177,7 +189,7 @@ const Table: React.FC<Props> = (props) => {
         setData(newData);
     };
 
-    if (props.checkboxes) {
+    if (checkboxes) {
         columns.unshift({
             name: (
                 <input
@@ -199,17 +211,17 @@ const Table: React.FC<Props> = (props) => {
         });
     }
 
-    if (props.reorderable || props.onEdit) {
+    if (reorderable || onEdit) {
         columns.unshift({
             name: <p>Sort</p>,
             cell: (row: Row) => {
                 const onEditClick = (): void => {
-                    props.onEdit!(row.rowId);
+                    onEdit!(row.rowId);
                 };
 
                 return (
                     <EditandReorderArrowDiv>
-                        {props.reorderable ? (
+                        {reorderable ? (
                             <IconButton
                                 onClick={() => swapRows(row.rowId, row.rowId - 1)}
                                 aria-label="reorder row upwards"
@@ -219,14 +231,14 @@ const Table: React.FC<Props> = (props) => {
                         ) : (
                             <></>
                         )}
-                        {props.onEdit ? (
+                        {onEdit ? (
                             <IconButton onClick={onEditClick} aria-label="edit">
                                 <StyledIcon icon={faPenToSquare} />
                             </IconButton>
                         ) : (
                             <></>
                         )}
-                        {props.reorderable ? (
+                        {reorderable ? (
                             <IconButton
                                 onClick={() => swapRows(row.rowId, row.rowId + 1)}
                                 aria-label="reorder row downwards"
@@ -236,11 +248,8 @@ const Table: React.FC<Props> = (props) => {
                         ) : (
                             <></>
                         )}
-                        {props.onDelete ? (
-                            <IconButton
-                                onClick={() => props.onDelete!(row.rowId)}
-                                aria-label="delete"
-                            >
+                        {onDelete ? (
+                            <IconButton onClick={() => onDelete!(row.rowId)} aria-label="delete">
                                 <StyledIcon icon={faTrashAlt} />
                             </IconButton>
                         ) : (
@@ -263,8 +272,7 @@ const Table: React.FC<Props> = (props) => {
         }
     };
 
-    const filterKeys =
-        props.headerFilters ?? props.headerKeysAndLabels.map(([headerKey]) => headerKey);
+    const filterKeys = headerFilters ?? headerKeysAndLabels.map(([headerKey]) => headerKey);
 
     return (
         <Styling>
@@ -272,7 +280,7 @@ const Table: React.FC<Props> = (props) => {
                 <DataTable
                     // types are fine without the cast when not using styled components, not sure what's happening here
                     columns={columns}
-                    data={dataToFilteredRows(data, filterText, props.headerKeysAndLabels)}
+                    data={dataToFilteredRows(data, filterText, headerKeysAndLabels)}
                     keyField="rowId"
                     fixedHeader
                     subHeader
@@ -280,15 +288,15 @@ const Table: React.FC<Props> = (props) => {
                         <TableFilterBar
                             filterText={filterText}
                             filterKeys={filterKeys}
-                            toggleableHeaders={props.toggleableHeaders}
+                            toggleableHeaders={toggleableHeaders}
                             onFilter={onFilter}
                             handleClear={handleClear}
-                            headers={props.headerKeysAndLabels}
+                            headers={headerKeysAndLabels}
                             setShownHeaderKeys={setShownHeaderKeys}
                             shownHeaderKeys={shownHeaderKeys}
                         />
                     }
-                    pagination={props.pagination ?? true}
+                    pagination={pagination ?? true}
                     persistTableHead
                 />
             </NoSsr>

@@ -42,6 +42,10 @@ export const tooltips: [string, string][] = [
     ["10_notes", "Family of 10+"],
 ];
 
+interface RemappedData extends Datum {
+    unmappedTooltips: RowData;
+}
+
 const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
     const [modal, setModal] = useState<EditModalState>();
     const [toDelete, setToDelete] = useState<number | null>(null);
@@ -53,12 +57,12 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
         throw new Error("No data found");
     }
 
-    const remapTooltips = (row: ListRow): Datum & { unmappedTooltips: RowData } => {
+    const remapTooltips = (row: ListRow): RemappedData => {
         const data: RowData = {
             item_name: row.item_name,
             primary_key: row.primary_key,
         };
-        const tooltips: RowData = {};
+        const mappedTooltips: RowData = {};
         const unmappedTooltips: RowData = {};
 
         for (const [key, value] of Object.entries(row)) {
@@ -66,7 +70,7 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
                 if (key.endsWith("quantity")) {
                     data[key] = value;
                 } else if (key.endsWith("notes")) {
-                    tooltips[key.replace("notes", "quantity")] = value;
+                    mappedTooltips[key.replace("notes", "quantity")] = value;
                     unmappedTooltips[key] = value;
                 }
             }
@@ -74,7 +78,7 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
 
         return {
             data,
-            tooltips,
+            tooltips: mappedTooltips,
             unmappedTooltips,
         };
     };
