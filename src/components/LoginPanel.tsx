@@ -32,8 +32,8 @@ const MiddleDiv = styled.div`
     & input:-webkit-autofill:hover,
     & input:-webkit-autofill:focus,
     & input:-webkit-autofill:active {
-        -webkit-box-shadow: 0 0 0 9999px ${(props) => props.theme.main.background[1]} inset !important;
-        -webkit-text-fill-color: ${(props) => props.theme.main.foreground[1]} !important;
+        -webkit-box-shadow: 0 0 0 9999px ${(props) => props.theme.main.background[2]} inset !important;
+        -webkit-text-fill-color: ${(props) => props.theme.main.foreground[2]} !important;
     }
 
     & button {
@@ -41,7 +41,7 @@ const MiddleDiv = styled.div`
     }
 `;
 
-const LoginPanel: React.FC<{}> = () => {
+const LoginPanel: React.FC = () => {
     const supabase = createClientComponentClient<DatabaseAutoType>();
     const theme = useTheme();
 
@@ -55,12 +55,12 @@ const LoginPanel: React.FC<{}> = () => {
                     variables: {
                         default: {
                             colors: {
-                                inputLabelText: theme.main.foreground[1],
+                                inputLabelText: theme.main.foreground[2],
                                 anchorTextColor: theme.main.lighterForeground,
                                 defaultButtonBackground: theme.primary.background[1],
                                 brand: theme.primary.background[2],
                                 brandButtonText: theme.primary.foreground[2],
-                                inputText: theme.main.foreground[1],
+                                inputText: theme.main.foreground[2],
                                 defaultButtonBackgroundHover: theme.primary.background[2],
                             },
                         },

@@ -17,8 +17,8 @@ const GlobalStyle = createGlobalStyle`
     }
 
     body {
-        color: ${(props) => props.theme.main.foreground[1]};
-        background-color: ${(props) => props.theme.main.background[1]};
+        color: ${(props) => props.theme.main.foreground[2]};
+        background-color: ${(props) => props.theme.main.background[2]};
     }
 `;
 

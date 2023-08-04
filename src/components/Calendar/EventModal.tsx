@@ -52,10 +52,8 @@ const EventModal: React.FC<{
         >
             <StyledParagraph>Start: {startDate}</StyledParagraph>
             <StyledParagraph>End: {endDate}</StyledParagraph>
-            {eventClick.description ? (
+            {eventClick.description && (
                 <StyledParagraph>Description: {eventClick.description}</StyledParagraph>
-            ) : (
-                <></>
             )}
         </Modal>
     );

@@ -8,8 +8,8 @@ import styled from "styled-components";
 
 const Container = styled.div`
     display: flex;
-    background-color: ${(props) => props.theme.primary.background[0]};
-    color: ${(props) => props.theme.primary.foreground[0]};
+    background-color: ${(props) => props.theme.primary.background[1]};
+    color: ${(props) => props.theme.primary.foreground[1]};
     height: 10%;
     align-items: flex-end;
     padding: 0;

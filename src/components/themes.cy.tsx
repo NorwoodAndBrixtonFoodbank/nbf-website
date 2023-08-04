@@ -1,5 +1,12 @@
+"use client";
+
 import React from "react";
-import styled, { DefaultTheme, rainbowPalette, standardPaletteList } from "styled-components";
+import styled, {
+    DefaultTheme,
+    rainbowPalette,
+    standardPaletteList,
+    standardPalette,
+} from "styled-components";
 import StyleManager, { lightTheme, darkTheme } from "@/app/themes";
 import { Result } from "axe-core";
 
@@ -19,11 +26,7 @@ const checkColorContrast = (): void => {
     cy.injectAxe();
     cy.checkA11y(undefined, { runOnly: { type: "tag", values: ["wcag2aa"] } }, terminalLog);
 };
-const ForegroundWithBackground: React.FC<{
-    background: string;
-    foreground: string;
-    largeForeground: string;
-}> = (props) => {
+const ForegroundWithBackground: React.FC<standardPalette> = (props) => {
     const StyledH1 = styled.h1`
         color: ${props.largeForeground};
         background-color: ${props.background};

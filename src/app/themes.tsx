@@ -25,14 +25,14 @@ const WHITE = "#f2f2f2";
 export const lightTheme: DefaultTheme = {
     light: true,
     main: {
-        background: ["#fdfdfd", "#eeeeee"],
-        foreground: [BLACK, "#2d2d2d"],
-        largeForeground: [BLACK, "#2d2d2d"],
+        background: ["#fdfdfd", "#f6f6f6", "#eeeeee"],
+        foreground: [BLACK, "#2d2d2d", "#2d2d2d"],
+        largeForeground: [BLACK, "#2d2d2d", "#2d2d2d"],
         lighterForeground: "#666666",
         border: "#d5d5d5",
     },
     primary: {
-        background: ["#a3e0b0", "#7fd495", "#02985a", "#05663f", "#154d30"],
+        background: ["#e7f5e9", "#7fd495", "#02985a", "#05663f", "#222f28"],
         foreground: [BLACK, BLACK, BLACK, WHITE, WHITE],
         largeForeground: [BLACK, BLACK, WHITE, WHITE, WHITE],
     },
@@ -131,9 +131,9 @@ export const darkTheme: DefaultTheme = {
     ...lightTheme,
     light: false,
     main: {
-        background: ["#232323", "#2d2d2d"],
-        foreground: [WHITE, "#d9d9d9"],
-        largeForeground: [WHITE, "#d9d9d9"],
+        background: ["#232323", "#282828", "#2d2d2d"],
+        foreground: [WHITE, "#d9d9d9", "#d9d9d9"],
+        largeForeground: [WHITE, "#d9d9d9", "#d9d9d9"],
         lighterForeground: "#969696",
         border: "#5c5c5c",
     },
@@ -160,7 +160,6 @@ export const ThemeUpdateContext = createContext((dark: boolean): void => {
  * Makes a styled-components global registry to get server-side inserted CSS
  * Adapted from https://nextjs.org/docs/app/building-your-application/styling/css-in-js#styled-components
  */
-export const ChosenThemeContext = createContext(lightTheme);
 
 interface Props {
     children: React.ReactElement;
@@ -243,10 +242,8 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
         <ThemeUpdateContext.Provider value={handleThemeChange}>
             <ThemeProvider theme={chosenTheme}>
                 <MaterialThemeProvider theme={materialTheme}>
-                    <ChosenThemeContext.Provider value={chosenTheme}>
-                        <GlobalStyle />
-                        {themedChildren}
-                    </ChosenThemeContext.Provider>
+                    <GlobalStyle />
+                    {themedChildren}
                 </MaterialThemeProvider>
             </ThemeProvider>
         </ThemeUpdateContext.Provider>

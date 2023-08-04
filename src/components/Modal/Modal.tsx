@@ -36,8 +36,8 @@ const Content = styled.div`
     overflow-wrap: break-word;
     padding: 1em 1.5em 1.5em;
     width: 100%;
-    color: ${(props) => props.theme.main.foreground[1]};
-    background-color: ${(props) => props.theme.main.background[1]};
+    color: ${(props) => props.theme.main.foreground[2]};
+    background-color: ${(props) => props.theme.main.background[2]};
 `;
 
 const CloseButton = styled.button`

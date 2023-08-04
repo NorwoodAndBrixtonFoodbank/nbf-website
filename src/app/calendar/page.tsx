@@ -1,16 +1,13 @@
 import { Metadata } from "next";
 import React from "react";
 import ParcelCalendar from "@/app/calendar/ParcelCalendar";
-import {
-    ClientMap,
-    getClientMap,
-    getParcelsWithCollectionDate,
-} from "@/app/calendar/parcelCalendarFunctions";
-import { Schema } from "@/supabase";
+import { getClientMap, getParcelsWithCollectionDate } from "@/app/calendar/parcelCalendarFunctions";
 
 const CalendarPage = async (): Promise<React.ReactElement> => {
-    const [clientMap, parcelsWithCollectionDate]: [ClientMap, Schema["parcels"][]] =
-        await Promise.all([getClientMap(), getParcelsWithCollectionDate()]);
+    const [clientMap, parcelsWithCollectionDate] = await Promise.all([
+        getClientMap(),
+        getParcelsWithCollectionDate(),
+    ]);
 
     return (
         <main>
