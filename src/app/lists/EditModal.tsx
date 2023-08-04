@@ -51,13 +51,14 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
 
     const headersThatHaveTooltips = headers.filter(([key]) => key !== "item_name");
 
-    const headersAndTooltips: HeadersAndTooltips = headersThatHaveTooltips.map((header, index) => {
-        return [header, tooltips[index]];
-    });
+    const headersAndTooltips: HeadersAndTooltips = headersThatHaveTooltips.map((header, index) => [
+        header,
+        tooltips[index],
+    ]);
 
     const setKey = (event: React.ChangeEvent<HTMLInputElement>, key: string): void => {
-        const text = event.target.value;
-        setToSubmit({ ...toSubmit, [key]: text });
+        const newValue = event.target.value;
+        setToSubmit({ ...toSubmit, [key]: newValue });
     };
 
     const onSubmit = async (): Promise<void> => {
@@ -65,7 +66,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
         const operation =
             data === null
                 ? table.insert(toSubmit)
-                : table.update(toSubmit).eq("primary_key", toSubmit.primary_key).select();
+                : table.update(toSubmit).eq("primary_key", toSubmit.primary_key);
 
         const { error } = await operation;
 

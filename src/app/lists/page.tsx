@@ -3,6 +3,7 @@ import React, { ReactElement } from "react";
 import ListsDataView from "@/app/lists/ListDataview";
 import supabase, { Schema } from "@/supabase";
 
+// disables caching
 export const revalidate = 0;
 
 const fetchData = async (): Promise<Schema["lists"][]> => {

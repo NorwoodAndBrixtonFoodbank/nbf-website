@@ -59,7 +59,7 @@ describe("<Table />", () => {
     ];
 
     const mockTheme = {
-        accentBackroundColor: "red",
+        accentBackgroundColor: "red",
     };
 
     it("renders", () => {

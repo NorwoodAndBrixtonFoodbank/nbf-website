@@ -5,7 +5,8 @@ import { faComment } from "@fortawesome/free-solid-svg-icons";
 interface Props {
     onHoverText?: string;
     color?: string;
-    popper?: boolean;
+    showTooltip?: boolean;
+    onTooltipClose?: () => void;
 }
 
 const SpeechBubbleIcon: React.FC<Props> = (props) => {
@@ -14,7 +15,8 @@ const SpeechBubbleIcon: React.FC<Props> = (props) => {
             color={props.color}
             icon={faComment}
             onHoverText={props.onHoverText}
-            popper={props.popper}
+            showTooltip={props.showTooltip}
+            onTooltipClose={props.onTooltipClose}
         />
     );
 };

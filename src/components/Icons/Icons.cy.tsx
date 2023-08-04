@@ -59,7 +59,7 @@ describe("Icons", () => {
     });
 
     it("Speech Bubble icon with popper shows text on hover", () => {
-        cy.mount(<SpeechBubbleIcon onHoverText="Text On Hover" popper />);
+        cy.mount(<SpeechBubbleIcon onHoverText="Text On Hover" showTooltip />);
         cy.get("svg").trigger("mouseover");
         cy.get("div").contains("Text On Hover");
     });

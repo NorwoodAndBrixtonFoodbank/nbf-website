@@ -84,9 +84,37 @@ const filterRows = (rows: Row[], filterText: FilterText, headers: Headers): Row[
     return rows.filter((row) => doesRowIncludeFilterText(row, filterText, headers));
 };
 
-const Table: React.FC<Props> = (props) => {
-    const theme = useTheme();
+interface CellProps {
+    data: Datum[];
+    rowId: number;
+    headerKey: string;
+}
 
+const CustomCell: React.FC<CellProps> = ({ data, rowId, headerKey }) => {
+    const [tooltip, setTooltip] = useState(false);
+
+    const tooltips = data[rowId].tooltips ?? {};
+    const theme = useTheme();
+    return (
+        <RowDiv
+            key={rowId}
+            onMouseEnter={() => setTooltip(true)}
+            onMouseLeave={() => setTooltip(false)}
+            onClick={() => setTooltip(true)}
+        >
+            {data[rowId].data[headerKey]}
+            {tooltips[headerKey] && (
+                <SpeechBubbleIcon
+                    onHoverText={tooltips[headerKey]!}
+                    showTooltip={tooltip}
+                    color={theme.accentBackgroundColor}
+                />
+            )}
+        </RowDiv>
+    );
+};
+
+const Table: React.FC<Props> = (props) => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         props.defaultShownHeaders ?? props.headerKeysAndLabels.map(([key]) => key)
     );
@@ -130,22 +158,8 @@ const Table: React.FC<Props> = (props) => {
             minWidth: "12rem",
             maxWidth: "20rem",
             sortable: props.sortable ?? true,
-            cell(row, rowIndex, column, id) {
-                const tooltips = data[row.rowId].tooltips ?? {};
-                return (
-                    <RowDiv key={id}>
-                        {data[row.rowId].data[headerKey]}
-                        {headerKey in tooltips ? (
-                            <SpeechBubbleIcon
-                                onHoverText={tooltips[headerKey]!}
-                                popper
-                                color={theme.accentBackgroundColor}
-                            />
-                        ) : (
-                            <></>
-                        )}
-                    </RowDiv>
-                );
+            cell(row) {
+                return <CustomCell data={data} rowId={row.rowId} headerKey={headerKey} />;
             },
         };
     });
@@ -285,9 +299,15 @@ const Table: React.FC<Props> = (props) => {
 const RowDiv = styled.div`
     display: flex;
     width: 100%;
+    height: 100%;
     align-items: center;
     padding-left: 1rem;
     gap: 2rem;
+    /* background-color: red;
+
+    &:hover {
+        background-color: transparent;
+    } */
 `;
 
 const EditandReorderArrowDiv = styled.div`
