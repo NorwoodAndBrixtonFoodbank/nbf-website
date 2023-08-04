@@ -2,14 +2,12 @@ import fs from "fs";
 import path from "path";
 import pdf from "pdf-parse";
 
-const readPdf = (pathToPdf: string): Promise<string> => {
-    return new Promise((resolve) => {
-        const pdfPath = path.resolve(pathToPdf);
-        const dataBuffer = fs.readFileSync(pdfPath);
-        pdf(dataBuffer).then(function ({ text }: { text: string }) {
-            resolve(text);
-        });
-    });
+const readPdf = async (pathToPdf: string): Promise<string> => {
+    const pdfPath = path.resolve(pathToPdf);
+    const dataBuffer = fs.readFileSync(pdfPath);
+
+    const { text } = await pdf(dataBuffer);
+    return text;
 };
 
 export default readPdf;
