@@ -2,9 +2,6 @@ import { Schema } from "@/supabase";
 import ActionBar from "@/app/clients/ActionBar";
 import React from "react";
 import StyleManager from "@/app/themes";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import "dayjs/locale/en-gb";
 
 describe("Clients - Action Bar", () => {
     const mockData: Schema["parcels"][] = [
@@ -20,18 +17,16 @@ describe("Clients - Action Bar", () => {
 
     const selectedIndices = [0];
 
-    const Component: React.FC<{}> = () => {
+    const MockActionBar: React.FC<{}> = () => {
         return (
-            <LocalizationProvider adapterLocale="en-gb" dateAdapter={AdapterDayjs}>
-                <StyleManager>
-                    <ActionBar data={mockData} selected={selectedIndices} />
-                </StyleManager>
-            </LocalizationProvider>
+            <StyleManager>
+                <ActionBar data={mockData} selected={selectedIndices} />
+            </StyleManager>
         );
     };
 
     beforeEach(() => {
-        cy.mount(<Component />);
+        cy.mount(<MockActionBar />);
     });
 
     it("should render", () => {});
