@@ -62,12 +62,10 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
 
     const onSubmit = async (): Promise<void> => {
         const table = supabase.from("lists");
-        const operation =
+        const { error } =
             data === null
-                ? table.insert(toSubmit)
-                : table.update(toSubmit).eq("primary_key", toSubmit.primary_key);
-
-        const { error } = await operation;
+                ? await table.insert(toSubmit)
+                : await table.update(toSubmit).eq("primary_key", toSubmit.primary_key);
 
         if (error) {
             setErrorMsg(error.message);

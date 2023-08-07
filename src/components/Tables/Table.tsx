@@ -368,7 +368,7 @@ const Styling = styled.div`
 
     // the icons in the pagination bar
     & svg {
-        // TODO: VFB-16 different greys for different theme modes
+        // TODO VFB-16 Different greys for different theme modes
         fill: grey;
     }
 
@@ -376,7 +376,7 @@ const Styling = styled.div`
     & > div {
         background-color: ${(props) => props.theme.surfaceBackgroundColor};
         color: ${(props) => props.theme.surfaceForegroundColor};
-        // TODO: VFB-16 different greys for different theme modes
+        // TODO VFB-16 Different greys for different theme modes
         border-color: grey;
     }
 
@@ -385,7 +385,7 @@ const Styling = styled.div`
         color: ${(props) => props.theme.surfaceForegroundColor};
 
         &::placeholder {
-            // TODO: VFB-16 different greys for different theme modes
+            // TODO VFB-16 Different greys for different theme modes
             color: grey;
         }
 
@@ -394,7 +394,7 @@ const Styling = styled.div`
         padding: 4px 1px 4px 8px;
         border-radius: 0.5rem;
         width: 10rem;
-        // TODO: VFB-16 different greys for different theme modes
+        // TODO VFB-16 Different greys for different theme modes
         border: solid 1px grey;
     }
 
@@ -425,7 +425,7 @@ const Styling = styled.div`
 
     & div.rdt_TableRow {
         padding: 0.5rem 0.5rem;
-        // TODO: VFB-16 different greys for different theme modes
+        // TODO VFB-16 Different greys for different theme modes
         // important needed to override the inline style
         border-bottom-color: grey;
     }

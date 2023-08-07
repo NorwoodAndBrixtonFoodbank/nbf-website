@@ -124,17 +124,6 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
                     },
                 },
             },
-            MuiCheckbox: {
-                styleOverrides: {
-                    root: {
-                        color: chosenTheme.primaryBackgroundColor,
-                        accentColor: chosenTheme.primaryBackgroundColor,
-                    },
-                    colorPrimary: {
-                        color: chosenTheme.primaryBackgroundColor,
-                    },
-                },
-            },
             MuiTooltip: {
                 styleOverrides: {
                     tooltip: {
