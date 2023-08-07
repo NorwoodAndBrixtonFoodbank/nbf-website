@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "npm run build && next start",
+    "start": "next start",
     "lint": "next lint --dir . && npm run check_types",
     "lint_fix": "next lint --fix --dir . && npm run check_types",
     "check_types": "tsc && echo 'No typescript errors!'",
