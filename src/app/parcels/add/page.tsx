@@ -1,12 +1,12 @@
 import { Metadata } from "next";
 
 import React from "react";
-import AddParcelForm from "@/app/parcels/add/AddParcelForm";
 
 const AddParcels: () => React.ReactElement = () => {
     return (
         <main>
-            <AddParcelForm />
+            <a href="/parcels/add/764edcec-8d4b-492d-a36a-86c921b4f8de">CLICK HERE</a>
+            <p>this is a temporary page in order to allow access to parcels!</p>
         </main>
     );
 };

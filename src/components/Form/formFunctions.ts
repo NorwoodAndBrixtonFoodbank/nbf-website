@@ -26,6 +26,7 @@ export interface CardProps {
     formErrors: FormErrors;
     errorSetter: ErrorSetter;
     fieldSetter: FieldSetter;
+    formErrorSetter?: any;
     fields: Fields;
 }
 
@@ -122,11 +123,13 @@ export const onChangeRadioGroup = (
 
 export const valueOnChangeRadioGroup = (
     fieldSetter: FieldSetter,
+    errorSetter: ErrorSetter,
     key: string
 ): selectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
         fieldSetter(key, input);
+        errorSetter(key, Errors.none);
     };
 };
 
@@ -184,19 +187,22 @@ export const checkboxGroupToArray = (checkedBoxes: booleanGroup): string[] => {
 
 export const checkErrorOnSubmit = (
     errorType: FormErrors,
-    errorSetter: React.Dispatch<React.SetStateAction<FormErrors>>
+    errorSetter: React.Dispatch<React.SetStateAction<FormErrors>>,
+    keystoCheck?: string[]
 ): boolean => {
     let errorExists = false;
     let amendedErrorTypes = { ...errorType };
     for (const [errorKey, error] of Object.entries(errorType)) {
-        if (error !== Errors.none) {
-            errorExists = true;
-        }
-        if (error === Errors.initial) {
-            amendedErrorTypes = {
-                ...amendedErrorTypes,
-                [errorKey]: Errors.required,
-            };
+        if (!keystoCheck || keystoCheck.includes(errorKey)) {
+            if (error !== Errors.none) {
+                errorExists = true;
+            }
+            if (error === Errors.initial) {
+                amendedErrorTypes = {
+                    ...amendedErrorTypes,
+                    [errorKey]: Errors.required,
+                };
+            }
         }
     }
     if (errorExists) {

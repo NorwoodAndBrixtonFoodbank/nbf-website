@@ -3,7 +3,9 @@ import { Person } from "@/components/Form/formFunctions";
 
 type FamilyDatabaseInsertRecord = InsertSchema["families"];
 export type ClientDatabaseInsertRecord = InsertSchema["clients"];
+export type ParcelDatabaseInsertRecord = InsertSchema["parcels"];
 type ClientDatabaseFetchRecord = Pick<Schema["clients"], "primary_key" | "family_id">;
+type ParcelsDatabaseFetchRecord = Pick<Schema["parcels"], "primary_key" | "client_id">;
 
 export const insertFamily = async (peopleArray: Person[], familyID: string): Promise<void> => {
     const familyRecords: FamilyDatabaseInsertRecord[] = [];
@@ -47,4 +49,21 @@ export const insertClient = async (
 
 export const deleteFailedInsert = async (primary_key: string): Promise<void> => {
     await supabase.from("clients").delete().eq("primary_key", primary_key);
+};
+
+export const insertParcel = async (
+    parcelRecord: ParcelDatabaseInsertRecord
+): Promise<ParcelsDatabaseFetchRecord> => {
+    const {
+        data: ids,
+        status,
+        error,
+    } = await supabase.from("parcels").insert(parcelRecord).select("primary_key, client_id");
+
+    if (error === null && Math.floor(status / 100) === 2) {
+        return ids![0];
+    }
+    throw Error(
+        `Error occurred whilst inserting into Parcels table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
+    );
 };
