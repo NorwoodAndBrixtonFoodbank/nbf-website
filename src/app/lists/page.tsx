@@ -1,10 +1,23 @@
 import { Metadata } from "next";
-import React from "react";
+import React, { ReactElement } from "react";
+import ListsDataView from "@/app/lists/ListDataview";
+import supabase, { Schema } from "@/supabase";
 
-const Lists: React.FC<{}> = () => {
+// disables caching
+export const revalidate = 0;
+
+const fetchData = async (): Promise<Schema["lists"][]> => {
+    const { data } = await supabase.from("lists").select();
+    return data ?? [];
+};
+
+const Lists = async (): Promise<ReactElement> => {
+    const data: Schema["lists"][] = await fetchData();
+
     return (
         <main>
-            <h1> Lists Page </h1>
+            <h1>Lists Page</h1>
+            <ListsDataView data={data} />
         </main>
     );
 };

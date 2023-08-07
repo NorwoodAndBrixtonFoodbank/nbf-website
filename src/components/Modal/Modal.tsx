@@ -3,7 +3,8 @@
 import React, { ReactNode } from "react";
 import styled from "styled-components";
 import { Dialog } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { faClose } from "@fortawesome/free-solid-svg-icons";
+import Icon from "@/components/Icons/Icon";
 
 const StyledDialog = styled(Dialog)`
     & .MuiPaper-root {
@@ -82,7 +83,7 @@ const Modal: React.FC<ModalProps> = (props) => {
             <Header id={props.headerId}>
                 {props.header}
                 <CloseButton onClick={props.onClose}>
-                    <CloseIcon />
+                    <Icon icon={faClose} />
                 </CloseButton>
             </Header>
             <Content>{props.children}</Content>

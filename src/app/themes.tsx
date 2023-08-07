@@ -124,6 +124,14 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
                     },
                 },
             },
+            MuiTooltip: {
+                styleOverrides: {
+                    tooltip: {
+                        fontSize: "1rem",
+                        padding: "0.5rem",
+                    },
+                },
+            },
         },
     });
 
