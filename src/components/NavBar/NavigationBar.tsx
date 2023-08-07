@@ -122,10 +122,10 @@ const ContentDiv = styled.div`
 `;
 
 interface Props {
-    children?: React.ReactElement;
+    children?: React.ReactNode;
 }
 
-const ResponsiveAppBar: React.FC<Props> = ({ children = <></> }) => {
+const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
     const [drawer, setDrawer] = React.useState(false);
 
     const openDrawer = (): void => {

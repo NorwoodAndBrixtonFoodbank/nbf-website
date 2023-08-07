@@ -4,7 +4,7 @@ import { DatabaseAutoType } from "@/supabase";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import React from "react";
+import React, { useEffect } from "react";
 import styled, { useTheme } from "styled-components";
 
 const MiddleDiv = styled.div`
@@ -37,8 +37,14 @@ const LoginPanel: React.FC<{}> = () => {
     const supabase = createClientComponentClient<DatabaseAutoType>();
     const theme = useTheme();
 
+    const [loaded, setLoaded] = React.useState(false);
+
+    useEffect(() => {
+        setLoaded(true);
+    }, []);
+
     return (
-        <MiddleDiv>
+        <MiddleDiv data-loaded={loaded} id="login-panel">
             <Auth
                 supabaseClient={supabase}
                 providers={[]}
