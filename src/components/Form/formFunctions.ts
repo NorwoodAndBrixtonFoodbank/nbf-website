@@ -130,17 +130,46 @@ export const valueOnChangeRadioGroup = (
     };
 };
 
-export const onChangeDate = (fieldSetter: FieldSetter, key: string, value: Date | null): void => {
-    const input = value;
-
-    fieldSetter(key, input);
+export const onChangeDate = (
+    fieldSetter: FieldSetter,
+    errorSetter: ErrorSetter,
+    key: string,
+    value: Date | null
+): void => {
+    if (value === null) {
+        return;
+    }
+    const input = new Date(value);
+    const date = {
+        year: input?.getFullYear(),
+        month: input?.getMonth(),
+        day: input?.getDate(),
+    };
+    fieldSetter(key, date);
+    !(date.year && date.month && date.day)
+        ? errorSetter(key, Errors.invalid)
+        : errorSetter(key, Errors.none);
 };
 
-export const onChangeTime = (fieldSetter: FieldSetter, key: string, value: Date | null): void => {
-    const input = value;
-    fieldSetter(key, input);
+export const onChangeTime = (
+    fieldSetter: FieldSetter,
+    errorSetter: ErrorSetter,
+    key: string,
+    value: Date | null
+): void => {
+    if (value === null) {
+        return;
+    }
+    const input = new Date(value);
+    const time = {
+        hours: input?.getHours(),
+        minutes: input?.getMinutes(),
+    };
+    fieldSetter(key, time);
+    !(time.hours && time.minutes) && time.hours !== 0 && time.minutes !== 0
+        ? errorSetter(key, Errors.invalid)
+        : errorSetter(key, Errors.none);
 };
-
 export const errorExists = (errorType: Errors): boolean => {
     return errorType !== Errors.initial && errorType !== Errors.none;
 };

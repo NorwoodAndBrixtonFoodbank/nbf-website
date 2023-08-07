@@ -1,24 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-    Fields,
-    Errors,
-    FormErrors,
-    setError,
-    setField,
-    getErrorType,
-    onChangeText,
-    onChangeCheckbox,
-    onChangeRadioGroup,
-} from "@/components/Form/formFunctions";
+import { Fields, Errors, FormErrors, setError, setField } from "@/components/Form/formFunctions";
 
 import {
     CenterComponent,
     StyledForm,
     FormErrorText,
     FormHeading,
-    FormText,
     StyledFormSubmitButton,
 } from "@/components/Form/formStyling";
 
@@ -26,22 +15,34 @@ import { useRouter } from "next/navigation";
 
 import VoucherNumberCard from "@/app/parcels/add/formSections/VoucherNumberCard";
 import PackingDateCard from "@/app/parcels/add/formSections/PackingDateCard";
-import TimeOfDayCard from "@/app/parcels/add/formSections/TimeofDayCard";
+import TimeOfDayCard from "@/app/parcels/add/formSections/TimeOfDayCard";
 import ShippingMethodCard from "@/app/parcels/add/formSections/ShippingMethodCard";
 import CollectionDateCard from "@/app/parcels/add/formSections/CollectionDateCard";
 import CollectionTimeCard from "@/app/parcels/add/formSections/CollectionTimeCard";
 import CollectionCentreCard from "@/app/parcels/add/formSections/CollectionCentreCard";
-import ExtraParcelInformationCard from "@/app/parcels/add/formSections/ExtraParcelInformationCard";
 
 interface AddParcelFields extends Fields {
     voucherNumber: string;
-    packingDate: string;
-    timeofDay: string;
+    packingDate: {
+        day: number;
+        month: number;
+        year: number;
+    } | null;
+    timeOfDay: {
+        hours: number;
+        minutes: number;
+    } | null;
     shippingMethod: string | null;
-    collectionDate: string;
-    collectionTime: string;
-    collectionCentre: string;
-    extraParcelInformation: string;
+    collectionDate: {
+        day: number;
+        month: number;
+        year: number;
+    } | null;
+    collectionTime: {
+        hours: number;
+        minutes: number;
+    } | null;
+    collectionCentre: string | null;
 }
 
 const withCollectionFormSections = [
@@ -52,7 +53,6 @@ const withCollectionFormSections = [
     CollectionDateCard,
     CollectionTimeCard,
     CollectionCentreCard,
-    ExtraParcelInformationCard,
 ];
 
 const noCollectionFormSections = [
@@ -60,29 +60,26 @@ const noCollectionFormSections = [
     PackingDateCard,
     TimeOfDayCard,
     ShippingMethodCard,
-    ExtraParcelInformationCard,
 ];
 
 const initialFields: AddParcelFields = {
     voucherNumber: "",
-    packingDate: "",
-    timeofDay: "",
-    shippingMethod: null,
-    collectionDate: "",
-    collectionTime: "",
-    collectionCentre: "",
-    extraParcelInformation: "",
+    packingDate: null,
+    timeOfDay: null,
+    shippingMethod: "",
+    collectionDate: null,
+    collectionTime: null,
+    collectionCentre: null,
 };
 
 const initialFormErrors: FormErrors = {
-    voucherNumber: Errors.initial,
-    packingDate: Errors.initial,
-    timeofDay: Errors.initial,
-    shippingMethod: Errors.initial,
-    collectionDate: Errors.initial,
-    collectionTime: Errors.initial,
-    collectionCentre: Errors.initial,
-    extraParcelInformation: Errors.initial,
+    voucherNumber: Errors.none,
+    packingDate: Errors.none,
+    timeOfDay: Errors.none,
+    shippingMethod: Errors.none,
+    collectionDate: Errors.none,
+    collectionTime: Errors.none,
+    collectionCentre: Errors.none,
 };
 
 const AddParcelForm: React.FC = () => {
@@ -100,14 +97,64 @@ const AddParcelForm: React.FC = () => {
 
     const fieldSetter = setField(setFields, fields);
     const errorSetter = setError(setFormErrors, formErrors);
+
+    const submitForm = (): void => {
+        if (fields.packingDate === null) {
+            console.log("Packing Date is null");
+            return;
+        }
+        if (fields.timeOfDay === null) {
+            console.log("Time of Day is null");
+            return;
+        }
+        const packingDateTime = new Date(
+            fields.packingDate.year,
+            fields.packingDate.month,
+            fields.packingDate.day,
+            fields.timeOfDay.hours,
+            fields.timeOfDay.minutes
+        );
+
+        let collectionDateTime = null;
+        if (fields.shippingMethod === "Collection") {
+            if (fields.collectionDate === null) {
+                console.log("Collection Date is null");
+                return;
+            }
+            if (fields.collectionTime === null) {
+                console.log("Collection Time is null");
+                return;
+            }
+            collectionDateTime = new Date(
+                fields.collectionDate.year,
+                fields.collectionDate.month,
+                fields.collectionDate.day,
+                fields.collectionTime.hours,
+                fields.collectionTime.minutes
+            );
+        }
+        const submitFields =
+            fields.shippingMethod === "Delivery"
+                ? {
+                    client_id: "",
+                    packing_datetime: packingDateTime,
+                    primary_key: "",
+                    voucher_number: fields.voucherNumber,
+                }
+                : {
+                    client_id: "",
+                    packing_datetime: packingDateTime,
+                    collection_centre: fields.collectionCentre,
+                    collection_datetime: collectionDateTime,
+                    primary_key: "",
+                    voucher_number: fields.voucherNumber,
+                };
+        console.log(submitFields);
+    };
     return (
         <CenterComponent>
             <StyledForm>
                 <FormHeading>Request Details</FormHeading>
-                <FormText>
-                    There is a section at the end of the form to add any extra information that
-                    isn&apos;t covered by these questions.
-                </FormText>
                 {formSections.map((Card, index) => {
                     return (
                         <Card
@@ -122,7 +169,7 @@ const AddParcelForm: React.FC = () => {
                 <CenterComponent>
                     <StyledFormSubmitButton
                         type="button"
-                        onClick={() => console.log(fields)}
+                        onClick={submitForm}
                         disabled={submitDisabled}
                     >
                         Submit

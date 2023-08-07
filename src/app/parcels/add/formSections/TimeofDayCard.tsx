@@ -1,17 +1,21 @@
 import React from "react";
-import { CardProps, onChangeTime } from "@/components/Form/formFunctions";
+import { CardProps, onChangeTime, errorText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import StyledTimePicker from "@/components/DataInput/TimePicker";
+import { ErrorText } from "@/components/Form/formStyling";
 
-const TimeOfDayCard: React.FC<CardProps> = ({ errorSetter, fieldSetter }) => {
+const TimeOfDayCard: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSetter }) => {
     return (
-        <GenericFormCard title="Time of Day" required={false}>
-            <StyledTimePicker
-                onChange={(newValue: any) => {
-                    onChangeTime(fieldSetter, "timeOfDay", newValue);
-                }}
-                label="Enter Time Here"
-            />
+        <GenericFormCard title="Packing Time" required={true}>
+            <>
+                <StyledTimePicker
+                    onChange={(newValue: any) => {
+                        onChangeTime(fieldSetter, errorSetter, "timeOfDay", newValue);
+                    }}
+                    label="Enter Time Here"
+                />
+                <ErrorText>{errorText(formErrors.timeOfDay)}</ErrorText>
+            </>
         </GenericFormCard>
     );
 };
