@@ -7,12 +7,10 @@ import { Data } from "@/components/DataViewer/DataViewer";
 
 // TODO Handle errors returned by supabase
 
-type RawClientDetails = Awaited<ReturnType<typeof getRawClientDetails>>;
-
-// TODO Reduce number of explicit fields in clients request (use *?)
+export type RawClientDetails = Awaited<ReturnType<typeof getRawClientDetails>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const getRawClientDetails = async (parcelId: string) => {
+export const getRawClientDetails = async (parcelId: string) => {
     const response = await supabase
         .from("parcels")
         .select(
@@ -68,11 +66,26 @@ export interface ExpandedClientDetails extends Data {
     extra_information: Schema["clients"]["extra_information"];
 }
 
-const rawDataToExpandedClientDetails = (
+export const rawDataToExpandedClientDetails = (
     rawClientDetails: RawClientDetails
 ): ExpandedClientDetails => {
     if (rawClientDetails === null) {
-        return {}; // TODO Handle THis Case
+        return {
+            "voucher_#": "",
+            full_name: "",
+            phone_number: "",
+            packing_date: "",
+            delivery_instructions: "",
+            address: "",
+            household: "",
+            "Age & Gender of Children": "",
+            dietary_requirements: "",
+            feminine_products: "",
+            baby_products: null,
+            pet_food: "",
+            other_requirements: "",
+            extra_information: "",
+        };
     }
 
     const client = rawClientDetails.client!;
@@ -85,7 +98,7 @@ const rawDataToExpandedClientDetails = (
         delivery_instructions: client.delivery_instructions,
         address: formatAddressFromClientDetails(client),
         household: formatHouseholdFromFamilyDetails(client.family),
-        "Age & Gender of Children": formatChildrenBreakdownFromFamilyDetails(client.family),
+        "Age & Gender of Children": formatBreakdownOfChildrenFromFamilyDetails(client.family),
         dietary_requirements: client.dietary_requirements.join(", "),
         feminine_products: client.feminine_products.join(", "),
         baby_products: client.baby_food,
@@ -95,7 +108,7 @@ const rawDataToExpandedClientDetails = (
     };
 };
 
-const formatAddressFromClientDetails = (
+export const formatAddressFromClientDetails = (
     client: Pick<
         Schema["clients"],
         "address_1" | "address_2" | "address_town" | "address_county" | "address_postcode"
@@ -112,7 +125,7 @@ const formatAddressFromClientDetails = (
         .join(", ");
 };
 
-const formatHouseholdFromFamilyDetails = (
+export const formatHouseholdFromFamilyDetails = (
     family: Pick<Schema["families"], "age" | "gender">[]
 ): string => {
     let noAdults = 0;
@@ -142,7 +155,7 @@ const formatHouseholdFromFamilyDetails = (
     return `${familyCategory} ${occupantDisplay} (${adultChildBreakdown.join(", ")})`;
 };
 
-const formatChildrenBreakdownFromFamilyDetails = (
+export const formatBreakdownOfChildrenFromFamilyDetails = (
     family: Pick<Schema["families"], "age" | "gender">[]
 ): string => {
     const childDetails = [];
@@ -150,11 +163,15 @@ const formatChildrenBreakdownFromFamilyDetails = (
     for (const familyMember of family) {
         if (familyMember.age !== null && familyMember.age < 18) {
             const age = familyMember.age === -1 ? "0-17" : familyMember.age;
-            childDetails.push(`${age} Year Old ${familyMember.gender}`);
+            childDetails.push(`${age}-year-old ${familyMember.gender}`);
         }
     }
 
-    return childDetails.join(", "); // TODO Format this better
+    if (childDetails.length === 0) {
+        return "No Children";
+    }
+
+    return childDetails.join(", ");
 };
 
 export const getExpandedClientDetails = async (

@@ -47,7 +47,7 @@ import { Datum } from "@/components/Tables/Table";
 // };
 
 // TODO Info needed for table
-export interface ClientTableRow extends Datum {
+export interface ClientsTableRow extends Datum {
     parcelId: Schema["parcels"]["primary_key"];
 
     flaggedForAttention: boolean;
@@ -74,29 +74,23 @@ export const getProcessingData = async () => {
         .select(
             `
         parcel_id:primary_key,
-        client_id,
         collection_centre,
         collection_datetime,
         packing_datetime,
         
         client:clients (
-            client_id:primary_key,
-            family_id,
             full_name,
             address_postcode,
             flagged_for_attention,
             signposting_call_required,
             
             family:families (
-                family_id,
                 age,
                 gender
             )
         ),
         
         events (
-            event_id:primary_key,
-            parcel_id,
             event_name,
             timestamp
         )
@@ -109,15 +103,15 @@ export const getProcessingData = async () => {
     return response.data ?? []; // TODO Handle this error
 };
 
-// TODO Change to actual headers of table - currently used in debugging
-const processingDataToClientTableData = async (
+export const processingDataToClientsTableData = async (
     processingData: ProcessingData
-): Promise<ClientTableRow[]> => {
+): Promise<ClientsTableRow[]> => {
     const clientTableRows = [];
+    const congestionChargeDetails = await getCongestionChargeDetails(processingData);
 
-    for (const parcel of processingData) {
+    for (let index = 0; index < processingData.length; index++) {
+        const parcel = processingData[index];
         const client = parcel.client!;
-        const congestionChargeApplies = await congestionChargeAppliesTo(client.address_postcode); // TODO Perform Computation in bulk to improve performance
 
         clientTableRows.push({
             parcelId: parcel.parcel_id,
@@ -127,7 +121,7 @@ const processingDataToClientTableData = async (
             familyCategory: familyCountToFamilyCategory(client.family.length),
             addressPostcode: client.address_postcode,
             collectionCentre: parcel.collection_centre,
-            congestionChargeApplies: congestionChargeApplies,
+            congestionChargeApplies: congestionChargeDetails[index].congestionCharge,
             packingDate: formatDatetimeAsDate(parcel.packing_datetime),
             packingTimeLabel: datetimeToPackingTimeLabel(parcel.packing_datetime),
             lastStatus: eventToStatusMessage(parcel.events[0] ?? null), // TODO Change this
@@ -135,6 +129,21 @@ const processingDataToClientTableData = async (
     }
 
     return clientTableRows;
+};
+
+export const getCongestionChargeDetails = async (
+    processingData: ProcessingData
+): Promise<{ postcode: string; congestionCharge: boolean }[]> => {
+    const postcodes = [];
+    for (const parcel of processingData) {
+        postcodes.push(parcel.client!.address_postcode);
+    }
+
+    const response = await supabase.functions.invoke("check-congestion-charge", {
+        body: { postcodes: postcodes },
+    });
+
+    return JSON.parse(response.data);
 };
 
 export const familyCountToFamilyCategory = (count: number): string => {
@@ -157,7 +166,7 @@ export const formatDatetimeAsDate = (datetime: string | null): string => {
     const date = new Date(datetime);
 
     const day = date.getDate();
-    const month = date.getMonth();
+    const month = date.getMonth() + 1;
 
     const DD = day < 10 ? "0" + day : day;
     const MM = month < 10 ? "0" + month : month;
@@ -166,7 +175,7 @@ export const formatDatetimeAsDate = (datetime: string | null): string => {
     return `${DD}/${MM}/${YYYY}`;
 };
 
-const datetimeToPackingTimeLabel = (datetime: string | null): string => {
+export const datetimeToPackingTimeLabel = (datetime: string | null): string => {
     if (datetime === null || isNaN(Date.parse(datetime))) {
         return "-";
     }
@@ -174,7 +183,7 @@ const datetimeToPackingTimeLabel = (datetime: string | null): string => {
     return new Date(datetime).getHours() <= 11 ? "AM" : "PM";
 };
 
-const eventToStatusMessage = (
+export const eventToStatusMessage = (
     event: Pick<Schema["events"], "event_name" | "timestamp"> | null
 ): string => {
     if (event === null) {
@@ -184,18 +193,7 @@ const eventToStatusMessage = (
     return `${event.event_name} @ ${formatDatetimeAsDate(event.timestamp)}`;
 };
 
-const congestionChargeAppliesTo = async (
-    postcode: Schema["clients"]["address_postcode"]
-): Promise<boolean> => {
-    // TODO Handle on error?
-    const response = await supabase.functions.invoke("check-congestion-charge", {
-        body: { postcodes: [postcode] },
-    });
-
-    return JSON.parse(response.data)[0].congestionCharge;
-};
-
-export const getClientsTableData = async (): Promise<ClientTableRow[]> => {
+export const getClientsTableData = async (): Promise<ClientsTableRow[]> => {
     const processingData = await getProcessingData();
-    return processingDataToClientTableData(processingData);
+    return processingDataToClientsTableData(processingData);
 };

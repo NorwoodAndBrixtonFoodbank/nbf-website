@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+// TODO Fix types in TABLE
+
+import React, { ReactNode, useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
-import { styled, useTheme } from "styled-components";
+import { styled } from "styled-components";
 import { NoSsr } from "@mui/material";
-import SpeechBubbleIcon from "@/components/Icons/SpeechBubbleIcon";
 import {
     faAnglesUp,
     faAnglesDown,
@@ -16,24 +17,26 @@ import IconButton from "@mui/material/IconButton/IconButton";
 import Icon from "@/components/Icons/Icon";
 
 export interface Datum {
-    data: RowData;
-    tooltips?: RowData;
-}
-
-export interface RowData {
     [headerKey: string]: string;
 }
 
-export type Headers = [string, string][];
-
-interface Row {
-    rowId: number;
-    data: RowData;
+export interface Tooltips {
+    [headerKey: string]: string;
 }
+
+export type TableHeaders = [string, string][];
+
+export interface Row {
+    rowId: number;
+    data: Datum;
+}
+
+type ColumnDisplayFunction = (row: Row) => ReactNode;
+type OnRowClickFunction = (row: Row, e: React.MouseEvent<Element, MouseEvent>) => void;
 
 interface Props {
     data: Datum[];
-    headerKeysAndLabels: Headers;
+    headerKeysAndLabels: TableHeaders;
     checkboxes?: boolean;
     reorderable?: boolean;
     headerFilters?: string[];
@@ -44,11 +47,15 @@ interface Props {
     onEdit?: (data: number) => void;
     onDelete?: (data: number) => void;
     // TODO Change Types and Set Defaults
-    columnDisplayFunctions: any; //{ [headerKey: string]: ColumnDisplayFunction }; // TODO Default = {}
-    onRowClick?: any;
+    columnDisplayFunctions?: { [headerKey: string]: ColumnDisplayFunction };
+    onRowClick?: OnRowClickFunction;
 }
 
-const doesRowIncludeFilterText = (row: Row, filterText: FilterText, headers: Headers): boolean => {
+const doesRowIncludeFilterText = (
+    row: Row,
+    filterText: FilterText,
+    headers: TableHeaders
+): boolean => {
     for (const [headerKey, _headerLabel] of headers) {
         if (
             !(row.data[headerKey] ?? "")
@@ -62,19 +69,21 @@ const doesRowIncludeFilterText = (row: Row, filterText: FilterText, headers: Hea
     return true;
 };
 
-// TODO Allow Filtering to apply to more than just displayed headers - can include hidden columns
-
-const dataToFilteredRows = (data: Datum[], filterText: FilterText, headers: Headers): Row[] => {
+const dataToFilteredRows = (
+    data: Datum[],
+    filterText: FilterText,
+    headers: TableHeaders
+): Row[] => {
     const rows = dataToRows(data, headers);
     return filterRows(rows, filterText, headers);
 };
 
-const dataToRows = (data: Datum[], headers: Headers): Row[] => {
+const dataToRows = (data: Datum[], headers: TableHeaders): Row[] => {
     return data.map((datum: Datum, currentIndex: number) => {
-        const row: Row = { rowId: currentIndex, ...datum }; // TODO Change this
+        const row: Row = { rowId: currentIndex, data: { ...datum } };
 
         for (const [headerKey, _headerLabel] of headers) {
-            const databaseValue = datum.data[headerKey] ?? "";
+            const databaseValue = datum[headerKey] ?? "";
             // TODO Change special display values to use custom display functions instead
             row.data[headerKey] = Array.isArray(databaseValue)
                 ? databaseValue.join(", ")
@@ -85,36 +94,22 @@ const dataToRows = (data: Datum[], headers: Headers): Row[] => {
     });
 };
 
-const filterRows = (rows: Row[], filterText: FilterText, headers: Headers): Row[] => {
+const filterRows = (rows: Row[], filterText: FilterText, headers: TableHeaders): Row[] => {
     return rows.filter((row) => doesRowIncludeFilterText(row, filterText, headers));
 };
 
 interface CellProps {
-    data: Datum[];
-    rowId: number;
+    row: Row;
+    columnDisplayFunctions: { [headerKey: string]: ColumnDisplayFunction };
     headerKey: string;
 }
 
-const CustomCell: React.FC<CellProps> = ({ data, rowId, headerKey }) => {
-    const [tooltip, setTooltip] = useState(false);
-
-    const tooltips = data[rowId].tooltips ?? {};
-    const theme = useTheme();
+const CustomCell: React.FC<CellProps> = ({ row, columnDisplayFunctions, headerKey }) => {
     return (
-        <RowDiv
-            key={rowId}
-            onMouseEnter={() => setTooltip(true)}
-            onMouseLeave={() => setTooltip(false)}
-            onClick={() => setTooltip(true)}
-        >
-            {data[rowId].data[headerKey]}
-            {tooltips[headerKey] && (
-                <SpeechBubbleIcon
-                    onHoverText={tooltips[headerKey]!}
-                    showTooltip={tooltip}
-                    color={theme.accent.background}
-                />
-            )}
+        <RowDiv key={row.rowId}>
+            {columnDisplayFunctions[headerKey]
+                ? columnDisplayFunctions[headerKey](row)
+                : row.data[headerKey]}
         </RowDiv>
     );
 };
@@ -133,6 +128,8 @@ const Table: React.FC<Props> = ({
     reorderable = false,
     sortable = true,
     toggleableHeaders,
+    onRowClick,
+    columnDisplayFunctions = {},
 }) => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
@@ -178,7 +175,13 @@ const Table: React.FC<Props> = ({
             maxWidth: "20rem",
             sortable: sortable,
             cell(row) {
-                return <CustomCell data={data} rowId={row.rowId} headerKey={headerKey} />;
+                return (
+                    <CustomCell
+                        row={row}
+                        columnDisplayFunctions={columnDisplayFunctions}
+                        headerKey={headerKey}
+                    />
+                );
             },
         };
     });
@@ -227,7 +230,7 @@ const Table: React.FC<Props> = ({
                 };
 
                 return (
-                    <EditandReorderArrowDiv>
+                    <EditAndReorderArrowDiv>
                         {reorderable ? (
                             <IconButton
                                 onClick={() => swapRows(row.rowId, row.rowId - 1)}
@@ -262,7 +265,7 @@ const Table: React.FC<Props> = ({
                         ) : (
                             <></>
                         )}
-                    </EditandReorderArrowDiv>
+                    </EditAndReorderArrowDiv>
                 );
             },
             width: "5rem",
@@ -305,13 +308,14 @@ const Table: React.FC<Props> = ({
                     }
                     pagination={pagination ?? true}
                     persistTableHead
+                    onRowClicked={onRowClick} // TODO Fix (not working for click on custom cell)
                 />
             </NoSsr>
         </Styling>
     );
 };
 
-const RowDiv = styled.div`
+export const RowDiv = styled.div`
     display: flex;
     width: 100%;
     height: 100%;
@@ -320,7 +324,7 @@ const RowDiv = styled.div`
     gap: 2rem;
 `;
 
-const EditandReorderArrowDiv = styled.div`
+const EditAndReorderArrowDiv = styled.div`
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     width: 100%;

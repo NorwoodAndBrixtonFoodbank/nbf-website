@@ -1,8 +1,7 @@
 "use client";
 
-import React, { ReactElement } from "react";
+import React from "react";
 import styled from "styled-components";
-import Modal from "@/components/Modal/Modal";
 
 type valueType = string[] | string | number | boolean | null;
 

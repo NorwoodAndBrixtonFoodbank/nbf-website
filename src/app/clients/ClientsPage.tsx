@@ -1,10 +1,10 @@
 "use client";
 
 import React, { Suspense, useState } from "react";
-import Table, { Datum } from "@/components/Tables/Table";
+import Table, { Row, TableHeaders } from "@/components/Tables/Table";
 
 import styled from "styled-components";
-import { ClientTableRow } from "@/app/clients/getClientsTableData";
+import { ClientsTableDatum, ClientsTableRow } from "@/app/clients/getClientsTableData";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
@@ -19,30 +19,32 @@ import { Schema } from "@/supabase";
 
 const ClientsTableDiv = styled.div``;
 
-const rowToIconsColumn = (row: ClientTableRow): React.ReactElement => {
+const rowToIconsColumn = (row: Row): React.ReactElement => {
+    const data = row.data as ClientsTableRow;
+
     return (
         <>
-            {row.flaggedForAttention ? <FlaggedForAttentionIcon /> : <></>}
+            {data.flaggedForAttention ? <FlaggedForAttentionIcon /> : <></>}
             {/*// TODO Change PhoneIcon support for Dark Mode*/}
-            {row.requiresFollowUpPhoneCall ? <PhoneIcon /> : <></>}
+            {data.requiresFollowUpPhoneCall ? <PhoneIcon /> : <></>}
         </>
     );
 };
 
-const rowToDeliveryCollectionColumn = (row: ClientTableRow): React.ReactElement => {
-    if (row.collectionCentre === "Delivery") {
+const rowToDeliveryCollectionColumn = (row: Row): React.ReactElement => {
+    if (row.data.collectionCentre === "Delivery") {
         return (
             <>
                 <DeliveryIcon />
-                {row.congestionChargeApplies ? <CongestionChargeAppliesIcon /> : <> </>}
+                {row.data.congestionChargeApplies ? <CongestionChargeAppliesIcon /> : <> </>}
             </>
         );
     }
 
     return (
         <>
-            <CollectionIcon collectionPoint={row.collectionCentre} />
-            {collectionCentreToAbbreviation(row.collectionCentre)}
+            <CollectionIcon collectionPoint={row.data.collectionCentre} />
+            {collectionCentreToAbbreviation(row.data.collectionCentre)}
         </>
     );
 };
@@ -72,16 +74,16 @@ const collectionCentreToAbbreviation = (
     }
 };
 
-export const clientTableHeaders = {
-    iconsColumn: "",
-    fullName: "Name",
-    familyCategory: "Family",
-    addressPostcode: "Postcode",
-    deliveryCollection: "",
-    packingDate: "Packing Date",
-    packingTimeLabel: "Time",
-    lastStatus: "Last Status",
-};
+export const clientTableHeaderKeysAndLabels: TableHeaders = [
+    ["iconsColumn", ""],
+    ["fullName", "Name"],
+    ["familyCategory", "Family"],
+    ["addressPostcode", "Postcode"],
+    ["deliveryCollection", ""],
+    ["packingDate", "Packing Date"],
+    ["packingTimeLabel", "Time"],
+    ["lastStatus", "Last Status"],
+];
 
 export const clientTableColumnDisplayFunctions = {
     iconsColumn: rowToIconsColumn,
@@ -89,14 +91,15 @@ export const clientTableColumnDisplayFunctions = {
 };
 
 interface Props {
-    clientsTableData: Datum[];
+    clientsTableData: ClientsTableDatum[];
 }
 
 const ClientsPage: React.FC<Props> = (props) => {
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
 
-    const onClientTableRowClick = (row: ClientTableRow): void => {
-        setSelectedParcelId(row.parcelId);
+    const onClientTableRowClick = (row: Row): void => {
+        const data = row.data as ClientsTableRow;
+        setSelectedParcelId(data.parcelId);
     };
 
     const onExpandedClientDetailsClose = (): void => {
@@ -108,7 +111,7 @@ const ClientsPage: React.FC<Props> = (props) => {
             <ClientsTableDiv>
                 <Table
                     data={props.clientsTableData}
-                    headers={clientTableHeaders}
+                    headerKeysAndLabels={clientTableHeaderKeysAndLabels}
                     columnDisplayFunctions={clientTableColumnDisplayFunctions}
                     onRowClick={onClientTableRowClick}
                 />
