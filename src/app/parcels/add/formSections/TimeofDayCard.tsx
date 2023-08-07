@@ -9,7 +9,8 @@ const TimeOfDayCard: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSett
         <GenericFormCard title="Packing Time" required={true}>
             <>
                 <StyledTimePicker
-                    onChange={(newValue: any) => {
+                    onChange={(value: any) => {
+                        const newValue = value as Date | null;
                         onChangeTime(fieldSetter, errorSetter, "timeOfDay", newValue);
                     }}
                     label="Enter Time Here"

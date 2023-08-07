@@ -26,7 +26,7 @@ export interface CardProps {
     formErrors: FormErrors;
     errorSetter: ErrorSetter;
     fieldSetter: FieldSetter;
-    formErrorSetter?: any;
+    formErrorSetter?: React.Dispatch<React.SetStateAction<FormErrors>>;
     fields: Fields;
 }
 

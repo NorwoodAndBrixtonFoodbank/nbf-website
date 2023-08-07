@@ -13,7 +13,8 @@ const CollectionTimeCard: React.FC<CardProps> = ({ errorSetter, fieldSetter, for
         >
             <>
                 <StyledTimePicker
-                    onChange={(newValue: any) => {
+                    onChange={(value: any) => {
+                        const newValue = value as Date | null;
                         onChangeTime(fieldSetter, errorSetter, "collectionTime", newValue);
                     }}
                     label="Enter Time Here"

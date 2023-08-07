@@ -13,7 +13,8 @@ const PackingDateCard: React.FC<CardProps> = ({ errorSetter, fieldSetter, formEr
         >
             <>
                 <StyledDatePicker
-                    onChange={(newValue: any): void => {
+                    onChange={(value: any): void => {
+                        const newValue = value as Date | null;
                         onChangeDate(fieldSetter, errorSetter, "packingDate", newValue);
                     }}
                     label="Enter Date Here"

@@ -1,9 +1,9 @@
 import React from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { CardProps, errorExists, errorText, onChangeText } from "@/components/Form/formFunctions";
+import { CardProps, onChangeText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 
-const FullNameCard: React.FC<CardProps> = ({ formErrors, errorSetter, fieldSetter }) => {
+const FullNameCard: React.FC<CardProps> = ({ errorSetter, fieldSetter }) => {
     return (
         <GenericFormCard
             title="Voucher Number"

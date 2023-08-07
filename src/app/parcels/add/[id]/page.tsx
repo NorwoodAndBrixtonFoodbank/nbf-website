@@ -7,7 +7,6 @@ const AddParcels: ({ params }: { params: { id: string } }) => React.ReactElement
 }: {
     params: { id: string };
 }) => {
-    console.log(params.id);
     return (
         <main>
             <AddParcelForm id={params.id} />

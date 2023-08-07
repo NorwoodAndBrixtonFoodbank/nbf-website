@@ -109,15 +109,17 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
     const submitForm = async (): Promise<void> => {
         setSubmitDisabled(true);
 
-        const inputError =
-            fields.shippingMethod === "Collection"
-                ? checkErrorOnSubmit(formErrors, setFormErrors)
-                : checkErrorOnSubmit(formErrors, setFormErrors, [
-                    "voucherNumber",
-                    "packingDate",
-                    "timeOfDay",
-                    "shippingMethod",
-                ]);
+        let inputError;
+        if (fields.shippingMethod === "Collection") {
+            inputError = checkErrorOnSubmit(formErrors, setFormErrors);
+        } else {
+            inputError = checkErrorOnSubmit(formErrors, setFormErrors, [
+                "voucherNumber",
+                "packingDate",
+                "timeOfDay",
+                "shippingMethod",
+            ]);
+        }
 
         if (inputError) {
             setSubmitError(Errors.submit);
@@ -151,25 +153,26 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
             );
         }
 
-        const formToAdd =
-            fields.shippingMethod === "Delivery"
-                ? {
-                    client_id: props.id,
-                    packing_datetime: packingDateTime.toISOString(),
-                    voucher_number: fields.voucherNumber,
-                    collection_centre: "Delivery",
-                }
-                : {
-                    client_id: props.id,
-                    packing_datetime: packingDateTime.toISOString(),
-                    collection_centre: fields.collectionCentre,
-                    collection_datetime: collectionDateTime.toISOString(),
-                    voucher_number: fields.voucherNumber,
-                };
+        let formToAdd;
+        if (fields.shippingMethod === "Delivery") {
+            formToAdd = {
+                client_id: props.id,
+                packing_datetime: packingDateTime.toISOString(),
+                voucher_number: fields.voucherNumber,
+                collection_centre: "Delivery",
+            };
+        } else {
+            formToAdd = {
+                client_id: props.id,
+                packing_datetime: packingDateTime.toISOString(),
+                collection_centre: fields.collectionCentre,
+                collection_datetime: collectionDateTime.toISOString(),
+                voucher_number: fields.voucherNumber,
+            };
+        }
 
-        console.log(formToAdd);
         try {
-            const ids = await insertParcel(formToAdd);
+            await insertParcel(formToAdd);
             router.push("/clients/");
         } catch (error: unknown) {
             if (error instanceof Error) {

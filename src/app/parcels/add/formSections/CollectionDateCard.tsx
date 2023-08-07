@@ -13,7 +13,8 @@ const CollectionDateCard: React.FC<CardProps> = ({ fieldSetter, errorSetter, for
         >
             <>
                 <StyledDatePicker
-                    onChange={(newValue: any) => {
+                    onChange={(value: any): void => {
+                        const newValue = value as Date | null;
                         onChangeDate(fieldSetter, errorSetter, "collectionDate", newValue);
                     }}
                     label="Enter Date Here"
