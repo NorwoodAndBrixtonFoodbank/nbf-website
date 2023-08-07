@@ -1,7 +1,6 @@
 {
   "plugins": [
     "react",
-    "react-hooks",
     "prettier",
     "@typescript-eslint",
     "cypress"
