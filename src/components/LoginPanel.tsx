@@ -6,12 +6,19 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import React, { useEffect } from "react";
 import styled, { useTheme } from "styled-components";
+import Title from "@/components/Title/Title";
+import NoSsr from "@mui/material/NoSsr";
+
+export const LoginMain = styled.main`
+    height: 85vh;
+    display: flex;
+`;
 
 const MiddleDiv = styled.div`
     max-width: 400px;
     box-shadow: 0 0 15px ${(props) => props.theme.shadow};
     border-radius: 10px;
-    padding: 50px;
+    padding: 10px 25px;
     margin: auto;
     background-color: ${(props) => props.theme.main.background[0]};
 
@@ -30,6 +37,10 @@ const MiddleDiv = styled.div`
     & input:-webkit-autofill:active {
         -webkit-box-shadow: 0 0 0 9999px ${(props) => props.theme.main.background[2]} inset !important;
         -webkit-text-fill-color: ${(props) => props.theme.main.foreground[2]} !important;
+    }
+
+    @media (min-width: 400px) {
+        padding: 30px 80px;
     }
 `;
 
@@ -64,10 +75,10 @@ const LoginPanel: React.FC<{}> = () => {
                                 messageTextDanger: theme.error,
                             },
                         },
-                    },
-                }}
-                redirectTo="http://localhost:3000/auth/callback"
-            />
+                    }}
+                    redirectTo="http://localhost:3000/auth/callback"
+                />
+            </NoSsr>
         </MiddleDiv>
     );
 };

@@ -1,4 +1,4 @@
-import LoginPanel from "@/components/LoginPanel";
+import LoginPanel, { LoginMain } from "@/components/LoginPanel";
 import React from "react";
 import Title from "@/components/Title/Title";
 
@@ -7,7 +7,7 @@ const Login: React.FC<{}> = () => {
         <main>
             <Title>Login</Title>
             <LoginPanel />
-        </main>
+        </LoginMain>
     );
 };
 

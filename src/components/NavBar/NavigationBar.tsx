@@ -10,6 +10,7 @@ import Button from "@mui/material/Button";
 import LightDarkSlider from "@/components/NavBar/LightDarkSlider";
 import SignOutButton from "@/components/NavBar/SignOutButton";
 import LinkButton from "@/components/Buttons/LinkButton";
+import { usePathname } from "next/navigation";
 
 const NavBarHeight = "4rem";
 
@@ -107,12 +108,35 @@ const SignOutButtonContainer = styled(NavElementContainer)`
     justify-content: end;
 `;
 
+interface LoginDependentProps {
+    children: React.ReactElement;
+}
+
+const LoginDependent: React.FC<LoginDependentProps> = (props) => {
+    const pathname = usePathname();
+
+    if (pathname === "/login") {
+        return <></>;
+    }
+
+    return <>{props.children}</>;
+};
+
+const ContentDiv = styled.div`
+    height: calc(100% - ${NavBarHeight});
+    width: 100%;
+    position: absolute;
+    top: ${NavBarHeight};
+    overflow: auto;
+`;
+
 interface Props {
     children?: React.ReactNode;
 }
 
 const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
     const [drawer, setDrawer] = React.useState(false);
+    const pathname = usePathname();
 
     const openDrawer = (): void => {
         setDrawer(true);
@@ -130,19 +154,19 @@ const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
 
     return (
         <>
-            <StyledSwipeableDrawer open={drawer} onClose={closeDrawer} onOpen={openDrawer}>
-                <DrawerInner>
-                    {pages.map(([page, link]) => (
-                        <DrawerButtonWrapper key={page}>
-                            <UnstyledLink href={link} onClick={closeDrawer} prefetch={false}>
-                                <DrawerButton color="secondary" variant="text">
-                                    {page}
-                                </DrawerButton>
-                            </UnstyledLink>
-                        </DrawerButtonWrapper>
-                    ))}
-                </DrawerInner>
-            </StyledSwipeableDrawer>
+            <LoginDependent>
+                <SwipeableDrawer open={drawer} onClose={closeDrawer} onOpen={openDrawer}>
+                    <DrawerInner>
+                        {pages.map(([page, link]) => (
+                            <DrawerButtonWrapper key={page}>
+                                <UnstyledLink href={link} onClick={closeDrawer} prefetch={false}>
+                                    <DrawerButton variant="text">{page}</DrawerButton>
+                                </UnstyledLink>
+                            </DrawerButtonWrapper>
+                        ))}
+                    </DrawerInner>
+                </SwipeableDrawer>
+            </LoginDependent>
             <AppBar>
                 <AppBarInner>
                     <MobileNavMenuContainer>
@@ -153,24 +177,34 @@ const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
                         >
                             <MenuIcon />
                         </Button>
+                        <LoginDependent>
+                            <IconButton aria-label="Mobile Menu Button" onClick={openDrawer}>
+                                <MenuIcon />
+                            </IconButton>
+                        </LoginDependent>
                     </MobileNavMenuContainer>
+
                     <LogoElementContainer>
                         <UnstyledLink href="/" prefetch={false}>
                             <Logo alt="Vauxhall Foodbank Logo" src="/logo.webp" />
                         </UnstyledLink>
                     </LogoElementContainer>
-                    <DesktopButtonContainer>
-                        {pages.map(([page, link]) => (
-                            <React.Fragment key={page}>
-                                <LinkButton link={link} page={page} />
-                                <Gap />
-                            </React.Fragment>
-                        ))}
-                    </DesktopButtonContainer>
+                    <LoginDependent>
+                        <DesktopButtonContainer>
+                            {pages.map(([page, link]) => (
+                                <>
+                                    <LinkButton key={page} link={link} page={page} />
+                                    <Gap />
+                                </>
+                            ))}
+                        </DesktopButtonContainer>
+                    </LoginDependent>
                     <SignOutButtonContainer>
                         <LightDarkSlider />
                         <Gap />
-                        <SignOutButton />
+                        <LoginDependent>
+                            <SignOutButton />
+                        </LoginDependent>
                     </SignOutButtonContainer>
                 </AppBarInner>
             </AppBar>
