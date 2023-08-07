@@ -49,15 +49,11 @@ const GenerateForegroundWithBackground: React.FC<{ theme: DefaultTheme }> = (pro
     const generalThemeCategories: ("main" | "primary")[] = ["main", "primary"];
     const rainbowThemeCategories = Object.keys(props.theme.rainbow) as (keyof rainbowPalette)[];
 
-    const mainLighterForegroundArray = Array(props.theme.main.background.length).fill(
-        props.theme.main.lighterForeground
-    );
-
     const lighterMainTheme: standardPaletteList[] = [
         {
             ...props.theme.main,
-            foreground: mainLighterForegroundArray,
-            largeForeground: mainLighterForegroundArray,
+            foreground: props.theme.main.lighterForeground,
+            largeForeground: props.theme.main.lighterForeground,
         },
     ];
     const generalThemes: standardPaletteList[] = generalThemeCategories.map(

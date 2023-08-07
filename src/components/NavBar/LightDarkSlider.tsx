@@ -23,13 +23,13 @@ const StyledSwitch = styled(Switch)`
             }
             // the track specifically when the switch is checked
             & + .MuiSwitch-track {
-                background-color: ${(props) => props.theme.accentBackgroundColor};
+                background-color: ${(props) => props.theme.accent.background};
             }
         }
     }
     & .MuiSwitch-thumb {
         // sets the circle section for when the switch is not checked
-        background-color: ${(props) => props.theme.accentBackgroundColor};
+        background-color: ${(props) => props.theme.accent.background};
         width: 32px;
         height: 32px;
         &:before {
@@ -44,7 +44,7 @@ const StyledSwitch = styled(Switch)`
     }
     // sets the track for when the switch is not checked
     & .MuiSwitch-track {
-        background-color: ${(props) => props.theme.accentBackgroundColor};
+        background-color: ${(props) => props.theme.accent.background};
         border-radius: 20px;
     }
 `;

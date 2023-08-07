@@ -10,7 +10,7 @@ interface Props {
 }
 
 const RequiredAsterisk = styled.span`
-    color: ${(props) => props.theme.errorColor};
+    color: ${(props) => props.theme.error};
 
     &:before {
         content: "*";

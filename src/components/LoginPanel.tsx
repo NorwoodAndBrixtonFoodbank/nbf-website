@@ -21,8 +21,8 @@ const MiddleDiv = styled.div`
     --fonts-labelFontFamily: Helvetica, Arial, sans-serif;
 
     & input {
-        border-color: ${(props) => props.theme.main.background[0]};
-        background-color: ${(props) => props.theme.main.background[1]};
+        border-color: ${(props) => props.theme.main.background[2]};
+        background-color: ${(props) => props.theme.main.background[2]};
     }
 
     // Google Chrome password autofill will automatically make the background blue and the word black, which is inconsistent with our current theme
@@ -56,7 +56,7 @@ const LoginPanel: React.FC = () => {
                         default: {
                             colors: {
                                 inputLabelText: theme.main.foreground[2],
-                                anchorTextColor: theme.main.lighterForeground,
+                                anchorTextColor: theme.main.lighterForeground[0],
                                 defaultButtonBackground: theme.primary.background[1],
                                 brand: theme.primary.background[2],
                                 brandButtonText: theme.primary.foreground[2],

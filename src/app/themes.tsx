@@ -25,10 +25,10 @@ const WHITE = "#f2f2f2";
 export const lightTheme: DefaultTheme = {
     light: true,
     main: {
-        background: ["#fdfdfd", "#f6f6f6", "#eeeeee"],
-        foreground: [BLACK, "#2d2d2d", "#2d2d2d"],
-        largeForeground: [BLACK, "#2d2d2d", "#2d2d2d"],
-        lighterForeground: "#666666",
+        background: ["#fdfdfd", "#f6f6f6", "#eeeeee", "#d0d0d0"],
+        foreground: ["#2d2d2d", "#2d2d2d", "#2d2d2d", BLACK],
+        largeForeground: ["#2d2d2d", "#2d2d2d", "#2d2d2d", BLACK],
+        lighterForeground: ["#666666", "#666666", "#666666", "#3b3b3b"],
         border: "#d5d5d5",
     },
     primary: {
@@ -131,10 +131,10 @@ export const darkTheme: DefaultTheme = {
     ...lightTheme,
     light: false,
     main: {
-        background: ["#232323", "#282828", "#2d2d2d"],
-        foreground: [WHITE, "#d9d9d9", "#d9d9d9"],
-        largeForeground: [WHITE, "#d9d9d9", "#d9d9d9"],
-        lighterForeground: "#969696",
+        background: ["#262626", "#282828", "#2d2d2d", "#404040"],
+        foreground: ["#d9d9d9", "#d9d9d9", "#d9d9d9", WHITE],
+        largeForeground: ["#d9d9d9", "#d9d9d9", "#d9d9d9", WHITE],
+        lighterForeground: ["#969696", "#969696", "#969696", "#bbbbbb"],
         border: "#5c5c5c",
     },
     primary: {
@@ -144,8 +144,8 @@ export const darkTheme: DefaultTheme = {
     },
     accent: {
         background: "#b8cbe9",
-        foreground: BLACK,
-        largeForeground: BLACK,
+        foreground: "#2d2d2d",
+        largeForeground: "#2d2d2d",
     },
     shadow: "#282828",
 };
@@ -195,18 +195,18 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
             mode: chosenTheme === lightTheme ? "light" : "dark",
             primary: {
                 main: chosenTheme.primary.background[2],
-                contrastText: chosenTheme.primary.foreground[2],
+                contrastText: chosenTheme.primary.background[2],
             },
             secondary: {
-                main: chosenTheme.primary.background[2],
-                contrastText: chosenTheme.primary.foreground[2],
+                main: chosenTheme.main.foreground[2],
+                contrastText: chosenTheme.main.foreground[2],
             },
             error: {
                 main: chosenTheme.error,
             },
             background: {
-                default: chosenTheme.main.background[1],
-                paper: chosenTheme.main.background[0],
+                default: chosenTheme.main.foreground[2],
+                paper: chosenTheme.main.foreground[3],
             },
             text: {
                 primary: chosenTheme.main.foreground[1],
@@ -216,14 +216,32 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
             fontFamily: "Helvetica, Arial, sans-serif",
         },
         components: {
-            MuiCheckbox: {
+            MuiAppBar: {
                 styleOverrides: {
                     root: {
-                        color: chosenTheme.primary.foreground[2],
-                        accentColor: chosenTheme.primary.background[2],
+                        backgroundColor: chosenTheme.main.background[3],
+                        color: chosenTheme.main.foreground[3],
+                        backgroundImage: "none",
                     },
-                    colorPrimary: {
-                        color: chosenTheme.primary.background[2],
+                },
+            },
+            MuiButton: {
+                styleOverrides: {
+                    root: {
+                        transition: "none",
+                    },
+                },
+            },
+            MuiInputLabel: {
+                styleOverrides: {
+                    root: { transition: "none" },
+                },
+            },
+            MuiTooltip: {
+                styleOverrides: {
+                    tooltip: {
+                        fontSize: "1rem",
+                        padding: "0.5rem",
                     },
                 },
             },

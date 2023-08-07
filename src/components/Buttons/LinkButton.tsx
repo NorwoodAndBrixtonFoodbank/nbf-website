@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import styled from "styled-components";
@@ -13,13 +15,10 @@ type LinkButtonProps = {
     page: string;
     onClick?: () => void;
 };
-
 const LinkButton: React.FC<LinkButtonProps> = (props) => {
     return (
         <UnstyledLink key={props.page} href={props.link} prefetch={false}>
-            <Button variant="outlined" color="secondary">
-                {props.page}
-            </Button>
+            <Button color="secondary">{props.page}</Button>
         </UnstyledLink>
     );
 };

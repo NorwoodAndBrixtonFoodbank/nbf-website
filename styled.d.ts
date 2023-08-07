@@ -34,7 +34,7 @@ declare module "styled-components" {
 
     export interface DefaultTheme {
         light: boolean;
-        main: standardPaletteList & { lighterForeground: string; border: string };
+        main: standardPaletteList & { lighterForeground: string[]; border: string };
         primary: standardPaletteList;
         accent: standardPalette;
         error: string;

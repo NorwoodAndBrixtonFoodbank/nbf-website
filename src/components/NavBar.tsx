@@ -8,8 +8,8 @@ import styled from "styled-components";
 
 const Container = styled.div`
     display: flex;
-    background-color: ${(props) => props.theme.primary.background[1]};
-    color: ${(props) => props.theme.primary.foreground[1]};
+    background-color: ${(props) => props.theme.main.background[1]};
+    color: ${(props) => props.theme.main.foreground[1]};
     height: 10%;
     align-items: flex-end;
     padding: 0;
@@ -19,8 +19,8 @@ const Container = styled.div`
 const Divider = styled.div`
     width: 100%;
     height: 5px;
-    background-color: ${(props) => props.theme.primary.background[2]};
-    color: ${(props) => props.theme.primary.foreground[2]};
+    background-color: ${(props) => props.theme.main.background[2]};
+    color: ${(props) => props.theme.main.foreground[2]};
 `;
 
 const Logo = styled.img`
