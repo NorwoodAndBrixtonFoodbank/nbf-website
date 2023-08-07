@@ -1,15 +1,15 @@
 import supabase, { Schema } from "@/supabase";
 import { CalendarEvent } from "@/components/Calendar/Calendar";
 
-export type parcelWithClientName = Schema["parcels"] & { clients: { full_name: string } | null };
-
-const COLLECTION_DURATION_MS = 30 * 60 * 1000;
+type ParcelWithClientName = Schema["parcels"] & { clients: { full_name: string } | null };
 
 export interface LocationColorMap {
     [location: string]: { color: string; text: string };
 }
 
-export const getParcelsWithCollectionDate = async (): Promise<parcelWithClientName[]> => {
+const COLLECTION_DURATION_MS = 30 * 60 * 1000;
+
+export const getParcelsWithCollectionDate = async (): Promise<ParcelWithClientName[]> => {
     const response = await supabase
         .from("parcels")
         .select("*, clients ( full_name )")
@@ -18,7 +18,7 @@ export const getParcelsWithCollectionDate = async (): Promise<parcelWithClientNa
 };
 
 export const parcelsToCollectionEvents = (
-    parcels: parcelWithClientName[],
+    parcels: ParcelWithClientName[],
     colorMap: LocationColorMap
 ): CalendarEvent[] => {
     return parcels.map((parcel) => {

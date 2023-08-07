@@ -50,7 +50,23 @@ const CalendarStyling = styled.div`
     }
 
     .fc .fc-toolbar-title {
-        font-size: 1.5rem;
+        font-size: min(5vw, 1.5rem);
+    }
+
+    .fc .fc-col-header-cell-cushion,
+    .fc .fc-daygrid-day-number,
+    .fc .fc-timegrid-axis-cushion,
+    .fc .fc-timegrid-slot-label-cushion,
+    .fc .fc-event-title,
+    .fc .fc-daygrid-more-link,
+    .fc .fc-event-time {
+        font-size: min(4vw, 1rem);
+    }
+
+    .fc .fc-button {
+        font-size: 12px;
+        height: 25px;
+        padding: 0 6px;
     }
 
     // group of buttons in the toolbar
@@ -59,21 +75,14 @@ const CalendarStyling = styled.div`
     }
 
     .fc .fc-button {
-        height: max(3vmin, 30px);
-        font-size: max(1.5vmin, 15px);
+        height: min(8.2vw, 2.25rem);
+        font-size: min(4vw, 1.1rem);
+        padding: 0 min(2.5vw, 0.75rem);
         text-align: center;
         vertical-align: middle;
-        padding: 0 10px;
         background-color: ${(props) => props.theme.primary.background[1]};
         border-color: ${(props) => props.theme.primary.background[1]};
         color: ${(props) => props.theme.primary.foreground[1]};
-    }
-
-    // prev and next arrow icons
-    .fc .fc-button {
-        font-size: 15px;
-        height: 32px;
-        padding: 0 10px;
     }
 
     // days in the previous month
@@ -104,45 +113,6 @@ const CalendarStyling = styled.div`
     // adjust background color of headers
     .fc thead {
         background-color: ${(props) => props.theme.main.background[2]};
-    }
-
-    // dynamic sizing of calendar
-    @media only screen and (max-width: 450px) {
-        .fc .fc-toolbar-title {
-            font-size: 20px;
-        }
-
-        .fc .fc-col-header-cell-cushion,
-        .fc .fc-daygrid-day-number,
-        .fc .fc-timegrid-axis-cushion,
-        .fc .fc-timegrid-slot-label-cushion {
-            font-size: 12px;
-        }
-
-        .fc .fc-event-title,
-        .fc .fc-daygrid-more-link,
-        .fc .fc-event-time {
-            font-size: 10px;
-        }
-
-        .fc .fc-button {
-            font-size: 12px;
-            height: 25px;
-            padding: 0 6px;
-        }
-    }
-
-    @media only screen and (max-width: 400px) {
-        .fc .fc-toolbar-title {
-            font-size: 16px;
-        }
-
-        .fc .fc-col-header-cell-cushion,
-        .fc .fc-daygrid-day-number,
-        .fc .fc-timegrid-axis-cushion,
-        .fc .fc-timegrid-slot-label-cushion {
-            font-size: 10px;
-        }
     }
 `;
 const makeAllDayEventsInclusive = (endDateExclusiveEvents: CalendarEvent[]): CalendarEvent[] => {

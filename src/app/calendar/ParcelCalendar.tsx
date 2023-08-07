@@ -8,11 +8,11 @@ import styled, { RainbowPalette, useTheme } from "styled-components";
 import {
     LocationColorMap,
     parcelsToCollectionEvents,
-    parcelWithClientName,
+    ParcelWithClientName,
 } from "@/app/calendar/parcelCalendarFunctions";
 
 interface ParcelCalendarProps {
-    parcelsWithCollectionDate: parcelWithClientName[];
+    parcelsWithCollectionDate: ParcelWithClientName[];
 }
 
 interface ColorTextProps {
@@ -27,8 +27,8 @@ const Centerer = styled.div`
 `;
 
 const CalendarWrapper = styled.div`
-    width: 100vmin;
-    max-width: 1100px;
+    width: min(100vmin, 1100px);
+    //max-width: 1100px;
     margin: 0 2em 2em;
 `;
 

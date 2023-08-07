@@ -156,22 +156,20 @@ describe("<Calendar />", () => {
         );
     });
     it("navigates to day when grid is clicked", () => {
+        const todayShortDMY = testDate
+            .toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+            .split(" ");
+
+        const todayLongDMY = testDate
+            .toLocaleString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+            .split(" ");
+
         cy.mount(<StyledCalendar initialEvents={sampleEvents} initialDate={testDate} />);
-        cy.get(".fc-event-title")
-            .contains("event2")
-            .parent()
-            .parent()
-            .parent()
-            .siblings(".fc-daygrid-day-top")
-            .click();
+        cy.get(`[aria-label="${todayLongDMY[1]} ${todayLongDMY[0]}, ${todayLongDMY[2]}"]`).click();
         cy.get(".fc-timeGridDay-view").should("be.visible");
         cy.get(".fc-toolbar-title").should(
             "have.text",
-            testDate.toLocaleDateString("en-US", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-            })
+            `${todayShortDMY[1]} ${todayShortDMY[0]}, ${todayShortDMY[2]}`
         );
     });
 });
