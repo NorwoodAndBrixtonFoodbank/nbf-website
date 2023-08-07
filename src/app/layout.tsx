@@ -13,10 +13,7 @@ const App: React.FC<Props> = ({ children }) => (
         <body>
             <React.StrictMode>
                 <StyleManager>
-                    <>
-                        <NavigationBar />
-                        {children}
-                    </>
+                    <NavigationBar>{children}</NavigationBar>
                 </StyleManager>
             </React.StrictMode>
         </body>
