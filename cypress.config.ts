@@ -29,7 +29,6 @@ export default defineConfig({
             return config;
         },
         baseUrl: "http://localhost:3200",
-        downloadsFolder: "cypress/downloads",
         video: false,
         videoUploadOnPasses: false,
         screenshotOnRunFailure: false,
@@ -42,7 +41,6 @@ export default defineConfig({
             });
             return config;
         },
-        downloadsFolder: "cypress/downloads",
         devServer: {
             framework: "next",
             bundler: "webpack",

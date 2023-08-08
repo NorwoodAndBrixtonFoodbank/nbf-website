@@ -6,7 +6,7 @@ const downloadsFolder = Cypress.config("downloadsFolder");
 const title = "Lorem ipsum dolor sit amet";
 const body = "consectetur adipiscing elit, sed do eiusmod tempor";
 
-const PdfBodyAndButton: React.FC = () => {
+const PdfBodyAndButton: React.FC<{}> = () => {
     const pdfRef = useRef<HTMLDivElement | null>(null);
 
     return (
