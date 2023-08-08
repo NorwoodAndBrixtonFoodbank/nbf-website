@@ -12,7 +12,7 @@ const Clients: () => Promise<React.ReactElement> = async () => {
 
     return (
         <main>
-            <h1> Clients Page </h1>
+            <h1 tabIndex={0}> Clients Page </h1>
 
             <p> Testing Supabase fetching </p>
 
