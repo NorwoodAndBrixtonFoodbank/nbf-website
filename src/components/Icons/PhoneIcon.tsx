@@ -1,18 +1,13 @@
 import React from "react";
 import Icon from "@/components/Icons/Icon";
 import { faPhone } from "@fortawesome/free-solid-svg-icons";
-import { useTheme } from "styled-components";
 
-const PhoneIcon: React.FC<{}> = () => {
-    const theme = useTheme();
+interface Props {
+    color?: string;
+}
 
-    return (
-        <Icon
-            icon={faPhone}
-            onHoverText="Requires follow-up phone call"
-            color={theme.foregroundColor}
-        />
-    );
+const PhoneIcon: React.FC<Props> = ({ color = "black" }) => {
+    return <Icon icon={faPhone} onHoverText="Requires follow-up phone call" color={color} />;
 };
 
 export default PhoneIcon;

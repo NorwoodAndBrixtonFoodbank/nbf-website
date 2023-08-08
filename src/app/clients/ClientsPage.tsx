@@ -3,7 +3,7 @@
 import React, { Suspense, useState } from "react";
 import Table, { Row, TableHeaders } from "@/components/Tables/Table";
 
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
@@ -24,37 +24,6 @@ const ClientsTablePaper = styled(Paper)`
     border-radius: 1rem;
     background-color: ${(props) => props.theme.surfaceBackgroundColor};
 `;
-
-const rowToIconsColumn = (row: Row): React.ReactElement => {
-    const data = row.data as ClientsTableRow;
-
-    return (
-        <>
-            {data.flaggedForAttention ? <FlaggedForAttentionIcon /> : <></>}
-            {data.requiresFollowUpPhoneCall ? <PhoneIcon /> : <></>}
-        </>
-    );
-};
-
-const rowToDeliveryCollectionColumn = (row: Row): React.ReactElement => {
-    const data = row.data as ClientsTableRow;
-
-    if (data.collectionCentre === "Delivery") {
-        return (
-            <>
-                <DeliveryIcon />
-                {data.congestionChargeApplies ? <CongestionChargeAppliesIcon /> : <></>}
-            </>
-        );
-    }
-
-    return (
-        <>
-            <CollectionIcon collectionPoint={data.collectionCentre} />
-            {collectionCentreToAbbreviation(data.collectionCentre)}
-        </>
-    );
-};
 
 const collectionCentreToAbbreviation = (
     collectionCentre: Schema["parcels"]["collection_centre"]
@@ -101,11 +70,6 @@ const toggleableHeaders = [
     "lastStatus",
 ];
 
-const clientTableColumnDisplayFunctions = {
-    iconsColumn: rowToIconsColumn,
-    deliveryCollection: rowToDeliveryCollectionColumn,
-};
-
 const clientTableColumnStyleOptions = {
     iconsColumn: {
         grow: 0,
@@ -139,6 +103,51 @@ interface Props {
 
 const ClientsPage: React.FC<Props> = (props) => {
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
+
+    const theme = useTheme();
+
+    const rowToIconsColumn = (row: Row): React.ReactElement => {
+        const data = row.data as ClientsTableRow;
+
+        return (
+            <>
+                {data.flaggedForAttention ? <FlaggedForAttentionIcon /> : <></>}
+                {data.requiresFollowUpPhoneCall ? (
+                    <PhoneIcon color={theme.foregroundColor} />
+                ) : (
+                    <></>
+                )}
+            </>
+        );
+    };
+
+    const rowToDeliveryCollectionColumn = (row: Row): React.ReactElement => {
+        const data = row.data as ClientsTableRow;
+
+        if (data.collectionCentre === "Delivery") {
+            return (
+                <>
+                    <DeliveryIcon color={theme.foregroundColor} />
+                    {data.congestionChargeApplies ? <CongestionChargeAppliesIcon /> : <></>}
+                </>
+            );
+        }
+
+        return (
+            <>
+                <CollectionIcon
+                    color={theme.foregroundColor}
+                    collectionPoint={data.collectionCentre}
+                />
+                {collectionCentreToAbbreviation(data.collectionCentre)}
+            </>
+        );
+    };
+
+    const clientTableColumnDisplayFunctions = {
+        iconsColumn: rowToIconsColumn,
+        deliveryCollection: rowToDeliveryCollectionColumn,
+    };
 
     const onClientTableRowClick = (row: Row): void => {
         const data = row.data as ClientsTableRow;
