@@ -12,6 +12,8 @@ import LightDarkSlider from "@/components/NavBar/LightDarkSlider";
 import SignOutButton from "@/components/NavBar/SignOutButton";
 import LinkButton from "@/components/Buttons/LinkButton";
 
+const NavBarHeight = "4rem";
+
 export const PageButton = styled(Button)`
     color: white;
     font-size: 1.25rem;
@@ -33,7 +35,7 @@ const Logo = styled.img`
 
 const AppBarInner = styled.div`
     display: flex;
-    height: 4rem;
+    height: ${NavBarHeight};
     padding: 0.5rem;
 `;
 
@@ -103,7 +105,19 @@ const SignOutButtonContainer = styled(NavElementContainer)`
     justify-content: end;
 `;
 
-const ResponsiveAppBar: React.FC = () => {
+const ContentDiv = styled.div`
+    height: calc(100% - ${NavBarHeight});
+    width: 100%;
+    position: absolute;
+    top: ${NavBarHeight};
+    overflow: auto;
+`;
+
+interface Props {
+    children?: React.ReactElement;
+}
+
+const ResponsiveAppBar: React.FC<Props> = ({ children = <></> }) => {
     const [drawer, setDrawer] = React.useState(false);
 
     const openDrawer = (): void => {
@@ -160,6 +174,7 @@ const ResponsiveAppBar: React.FC = () => {
                     </SignOutButtonContainer>
                 </AppBarInner>
             </StickyAppBar>
+            <ContentDiv>{children}</ContentDiv>
         </>
     );
 };
