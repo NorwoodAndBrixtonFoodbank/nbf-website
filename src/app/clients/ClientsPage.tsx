@@ -4,7 +4,7 @@ import React, { Suspense, useState } from "react";
 import Table, { Row, TableHeaders } from "@/components/Tables/Table";
 
 import styled from "styled-components";
-import { ClientsTableDatum, ClientsTableRow } from "@/app/clients/getClientsTableData";
+import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
@@ -16,8 +16,14 @@ import Icon from "@/components/Icons/Icon";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal/Modal";
 import { Schema } from "@/supabase";
+import { Paper } from "@mui/material";
 
-const ClientsTableDiv = styled.div``;
+const ClientsTablePaper = styled(Paper)`
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    background-color: ${(props) => props.theme.surfaceBackgroundColor};
+`;
 
 const rowToIconsColumn = (row: Row): React.ReactElement => {
     const data = row.data as ClientsTableRow;
@@ -25,26 +31,27 @@ const rowToIconsColumn = (row: Row): React.ReactElement => {
     return (
         <>
             {data.flaggedForAttention ? <FlaggedForAttentionIcon /> : <></>}
-            {/*// TODO Change PhoneIcon support for Dark Mode*/}
             {data.requiresFollowUpPhoneCall ? <PhoneIcon /> : <></>}
         </>
     );
 };
 
 const rowToDeliveryCollectionColumn = (row: Row): React.ReactElement => {
-    if (row.data.collectionCentre === "Delivery") {
+    const data = row.data as ClientsTableRow;
+
+    if (data.collectionCentre === "Delivery") {
         return (
             <>
                 <DeliveryIcon />
-                {row.data.congestionChargeApplies ? <CongestionChargeAppliesIcon /> : <> </>}
+                {data.congestionChargeApplies ? <CongestionChargeAppliesIcon /> : <></>}
             </>
         );
     }
 
     return (
         <>
-            <CollectionIcon collectionPoint={row.data.collectionCentre} />
-            {collectionCentreToAbbreviation(row.data.collectionCentre)}
+            <CollectionIcon collectionPoint={data.collectionCentre} />
+            {collectionCentreToAbbreviation(data.collectionCentre)}
         </>
     );
 };
@@ -85,13 +92,49 @@ export const clientTableHeaderKeysAndLabels: TableHeaders = [
     ["lastStatus", "Last Status"],
 ];
 
-export const clientTableColumnDisplayFunctions = {
+const toggleableHeaders = [
+    "fullName",
+    "familyCategory",
+    "addressPostcode",
+    "packingDate",
+    "packingTimeLabel",
+    "lastStatus",
+];
+
+const clientTableColumnDisplayFunctions = {
     iconsColumn: rowToIconsColumn,
     deliveryCollection: rowToDeliveryCollectionColumn,
 };
 
+const clientTableColumnStyleOptions = {
+    iconsColumn: {
+        grow: 0,
+    },
+    fullName: {},
+    familyCategory: {
+        hide: 550,
+    },
+    addressPostcode: {
+        hide: 800,
+        maxWidth: "12rem",
+    },
+    deliveryCollection: {
+        grow: 0,
+        minWidth: "6rem",
+    },
+    packingDate: {},
+    packingTimeLabel: {
+        grow: 0,
+        hide: 800,
+        minWidth: "6rem",
+    },
+    lastStatus: {
+        hide: 800,
+    },
+};
+
 interface Props {
-    clientsTableData: ClientsTableDatum[];
+    clientsTableData: ClientsTableRow[];
 }
 
 const ClientsPage: React.FC<Props> = (props) => {
@@ -108,14 +151,20 @@ const ClientsPage: React.FC<Props> = (props) => {
 
     return (
         <>
-            <ClientsTableDiv>
+            <ClientsTablePaper elevation={2}>
                 <Table
                     data={props.clientsTableData}
                     headerKeysAndLabels={clientTableHeaderKeysAndLabels}
                     columnDisplayFunctions={clientTableColumnDisplayFunctions}
+                    columnStyleOptions={clientTableColumnStyleOptions}
                     onRowClick={onClientTableRowClick}
+                    checkboxes={true}
+                    pagination={true}
+                    sortable={true}
+                    headerFilters={["addressPostcode"]}
+                    toggleableHeaders={toggleableHeaders}
                 />
-            </ClientsTableDiv>
+            </ClientsTablePaper>
             <Modal
                 header={
                     <>

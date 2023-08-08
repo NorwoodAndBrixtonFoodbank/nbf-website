@@ -69,7 +69,7 @@ describe("Icons", () => {
         cy.get("svg").find("title").should("have.text", "Collection at Next Door");
     });
 
-    it("Phone icon text is correct", () => {
+    it("Follow-up Phone Call icon text is correct", () => {
         cy.mount(<StyledPhoneIcon />);
         cy.get("svg").find("title").should("have.text", "Requires follow-up phone call");
     });

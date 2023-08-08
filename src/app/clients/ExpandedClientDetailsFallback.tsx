@@ -21,24 +21,25 @@ const SkeletonDiv = styled.div`
     max-width: 100%;
 `;
 
-const ExpandedClientDetailsFallback: React.FC<{}> = () => {
-    const clientDetailFields = [
-        "VOUCHER #",
-        "FULL NAME",
-        "PHONE NUMBER",
-        "PACKING DATE",
-        "DELIVERY_INSTRUCTIONS",
-        "ADDRESS",
-        "HOUSEHOLD",
-        "AGE & GENDER OF CHILDREN",
-        "DIETARY REQUIREMENTS",
-        "FEMININE PRODUCTS",
-        "BABY PRODUCTS",
-        "PET FOOD",
-        "OTHER REQUIREMENTS",
-        "EXTRA INFORMATION",
-    ];
+const clientDetailFields = [
+    "VOUCHER #",
+    "FULL NAME",
+    "PHONE NUMBER",
+    "PACKING DATE",
+    "PACKING TIME",
+    "DELIVERY_INSTRUCTIONS",
+    "ADDRESS",
+    "HOUSEHOLD",
+    "AGE & GENDER OF CHILDREN",
+    "DIETARY REQUIREMENTS",
+    "FEMININE PRODUCTS",
+    "BABY PRODUCTS",
+    "PET FOOD",
+    "OTHER REQUIREMENTS",
+    "EXTRA INFORMATION",
+];
 
+const ExpandedClientDetailsFallback: React.FC<{}> = () => {
     return (
         <SkeletonDiv>
             {clientDetailFields.map((field, index) => {

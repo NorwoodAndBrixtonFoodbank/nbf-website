@@ -48,15 +48,17 @@ const TableFilterBar: React.FC<Props> = (props) => {
                 .filter(([key]) => props.filterKeys?.includes(key) ?? true)
                 .map(([key, value]) => {
                     return (
-                        <StyledFilterBar
-                            key={key}
-                            type="text"
-                            value={props.filterText[key] ?? ""}
-                            placeholder={`Filter by ${value}`}
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                props.onFilter(event, key)
-                            }
-                        />
+                        <>
+                            <StyledFilterBar
+                                key={key}
+                                type="text"
+                                value={props.filterText[key] ?? ""}
+                                placeholder={`Filter by ${value}`}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                    props.onFilter(event, key)
+                                }
+                            />
+                        </>
                     );
                 })}
             <StyledFilterAccordion

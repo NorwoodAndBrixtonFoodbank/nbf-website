@@ -3,10 +3,9 @@
 import Modal from "@/components/Modal/Modal";
 import React, { useState } from "react";
 import styled from "styled-components";
-import { SnackBarDiv, } from "@/app/lists/ListDataview";
+import { SnackBarDiv } from "@/app/lists/ListDataview";
 import TextInput from "@/components/DataInput/FreeFormTextInput";
-import { Datum } from "@/components/Tables/Table";
-import supabase from "@/supabase";
+import supabase, { Schema } from "@/supabase";
 import Snackbar from "@mui/material/Snackbar/Snackbar";
 import Alert from "@mui/material/Alert/Alert";
 import Button from "@mui/material/Button/Button";
@@ -17,9 +16,7 @@ interface Props {
 }
 
 // null => add, undefined => modal closed
-export type EditModalState = Datum | null | undefined;
-
-type HeadersAndTooltips = [[string, string], [string, string]][];
+export type EditModalState = Schema["lists"] | null | undefined;
 
 const ModalInner = styled.div`
     display: flex;
@@ -41,7 +38,7 @@ const DisplayContents = styled.div`
     display: contents;
 `;
 
-const listQuantityNoteAndLabels: [string, string, string][] = [
+export const listQuantityNoteAndLabels: [keyof Schema["lists"], keyof Schema["lists"], string][] = [
     ["1_quantity", "1_notes", "Single"],
     ["2_quantity", "2_notes", "Family of 2"],
     ["3_quantity", "3_notes", "Family of 3"],
@@ -55,7 +52,7 @@ const listQuantityNoteAndLabels: [string, string, string][] = [
 ];
 
 const EditModal: React.FC<Props> = ({ data, onClose }) => {
-    const [toSubmit, setToSubmit] = useState<Datum>(data ? data : {});
+    const [toSubmit, setToSubmit] = useState<Partial<Schema["lists"]>>(data ? data : {});
 
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -85,7 +82,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                 <TextInput
                     defaultValue={toSubmit.item_name ?? ""}
                     onChange={(event) => setKey(event, "item_name")}
-                    helperText="Description"
+                    label="Item Description"
                 />
                 {listQuantityNoteAndLabels.map(([quantityKey, noteKey, label]) => {
                     return (
@@ -94,12 +91,12 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                             <DataWithTooltipDiv>
                                 <TextInput
                                     defaultValue={toSubmit[quantityKey] ?? ""}
-                                    helperText="Quantity"
+                                    label="Quantity"
                                     onChange={(event) => setKey(event, quantityKey)}
                                 />
                                 <TextInput
                                     defaultValue={toSubmit[noteKey] ?? ""}
-                                    helperText="Notes"
+                                    label="Notes"
                                     onChange={(event) => setKey(event, noteKey)}
                                 />
                             </DataWithTooltipDiv>

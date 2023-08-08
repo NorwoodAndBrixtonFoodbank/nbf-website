@@ -1,7 +1,10 @@
 import SpeechBubbleIcon from "@/components/Icons/SpeechBubbleIcon";
 import React, { useState } from "react";
-import { useTheme } from "styled-components";
-import { RowDiv } from "@/components/Tables/Table";
+import { styled, useTheme } from "styled-components";
+
+const CellDiv = styled.div`
+    pointer-events: inherit;
+`;
 
 interface Props {
     cellValue: string;
@@ -18,7 +21,7 @@ const TooltipCell: React.FC<Props> = (props) => {
     }
 
     return (
-        <RowDiv
+        <CellDiv
             onMouseEnter={() => setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
             onClick={() => setShowTooltip(true)}
@@ -29,7 +32,7 @@ const TooltipCell: React.FC<Props> = (props) => {
                 showTooltip={showTooltip}
                 color={theme.accentBackgroundColor}
             />
-        </RowDiv>
+        </CellDiv>
     );
 };
 

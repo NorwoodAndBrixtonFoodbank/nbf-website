@@ -1,4 +1,3 @@
-import React from "react";
 import {
     datetimeToPackingTimeLabel,
     eventToStatusMessage,
@@ -10,11 +9,11 @@ import {
 import {
     formatAddressFromClientDetails,
     formatBreakdownOfChildrenFromFamilyDetails,
+    formatDatetimeAsTime,
     formatHouseholdFromFamilyDetails,
     RawClientDetails,
     rawDataToExpandedClientDetails,
 } from "@/app/clients/getExpandedClientDetails";
-import ClientsPage from "@/app/clients/ClientsPage";
 
 const sampleProcessingData: ProcessingData = [
     {
@@ -160,6 +159,13 @@ describe("Clients Page", () => {
                 other_requirements: "Garlic, Chilies, Hot Water Bottles",
                 extra_information: "EXTRA CLIENT INFORMATION",
             });
+        });
+
+        it("formatDatetimeAsTime()", () => {
+            expect(formatDatetimeAsTime("2023-08-04T13:30:00+00:00")).to.eq("13:30");
+            expect(formatDatetimeAsTime("2024-11-23T01:03:50+00:00")).to.eq("01:03");
+            expect(formatDatetimeAsTime("Invalid_Time_Format")).to.eq("-");
+            expect(formatDatetimeAsTime(null)).to.eq("-");
         });
 
         it("formatAddressFromClientDetails()", () => {

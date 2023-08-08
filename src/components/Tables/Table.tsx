@@ -1,7 +1,5 @@
 "use client";
 
-// TODO Fix types in TABLE
-
 import React, { ReactNode, useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
@@ -17,11 +15,7 @@ import IconButton from "@mui/material/IconButton/IconButton";
 import Icon from "@/components/Icons/Icon";
 
 export interface Datum {
-    [headerKey: string]: string;
-}
-
-export interface Tooltips {
-    [headerKey: string]: string;
+    [headerKey: string]: string | boolean | null;
 }
 
 export type TableHeaders = [string, string][];
@@ -31,8 +25,20 @@ export interface Row {
     data: Datum;
 }
 
-type ColumnDisplayFunction = (row: Row) => ReactNode;
-type OnRowClickFunction = (row: Row, e: React.MouseEvent<Element, MouseEvent>) => void;
+export type ColumnDisplayFunction = (row: Row) => ReactNode;
+export type OnRowClickFunction = (row: Row, e: React.MouseEvent<Element, MouseEvent>) => void;
+
+export interface ColumnStyleOptions {
+    grow?: number;
+    width?: string;
+    minWidth?: string;
+    maxWidth?: string;
+    right?: boolean;
+    center?: boolean;
+    wrap?: boolean;
+    allowOverflow?: boolean;
+    hide?: number;
+}
 
 interface Props {
     data: Datum[];
@@ -46,8 +52,8 @@ interface Props {
     sortable?: boolean;
     onEdit?: (data: number) => void;
     onDelete?: (data: number) => void;
-    // TODO Change Types and Set Defaults
     columnDisplayFunctions?: { [headerKey: string]: ColumnDisplayFunction };
+    columnStyleOptions?: { [headerKey: string]: ColumnStyleOptions };
     onRowClick?: OnRowClickFunction;
 }
 
@@ -84,7 +90,6 @@ const dataToRows = (data: Datum[], headers: TableHeaders): Row[] => {
 
         for (const [headerKey, _headerLabel] of headers) {
             const databaseValue = datum[headerKey] ?? "";
-            // TODO Change special display values to use custom display functions instead
             row.data[headerKey] = Array.isArray(databaseValue)
                 ? databaseValue.join(", ")
                 : databaseValue;
@@ -106,15 +111,19 @@ interface CellProps {
 
 const CustomCell: React.FC<CellProps> = ({ row, columnDisplayFunctions, headerKey }) => {
     return (
-        <RowDiv key={row.rowId}>
+        <>
             {columnDisplayFunctions[headerKey]
                 ? columnDisplayFunctions[headerKey](row)
                 : row.data[headerKey]}
-        </RowDiv>
+        </>
     );
 };
 
-// TODO Set default params instead of casting later
+const defaultColumnStyleOptions: ColumnStyleOptions = {
+    grow: 1,
+    minWidth: "2rem",
+    maxWidth: "20rem",
+};
 
 const Table: React.FC<Props> = ({
     data: inputData,
@@ -130,6 +139,7 @@ const Table: React.FC<Props> = ({
     toggleableHeaders,
     onRowClick,
     columnDisplayFunctions = {},
+    columnStyleOptions = {},
 }) => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
@@ -168,11 +178,14 @@ const Table: React.FC<Props> = ({
     const columns: TableColumn<Row>[] = (
         toggleableHeaders ? shownHeaders : headerKeysAndLabels
     ).map(([headerKey, headerName]) => {
+        const columnStyles = Object.assign(
+            { ...defaultColumnStyleOptions },
+            columnStyleOptions[headerKey] ?? {}
+        );
+
         return {
             name: headerName,
-            selector: (row) => row.data[headerKey],
-            minWidth: "12rem",
-            maxWidth: "20rem",
+            selector: (row) => row.data[headerKey] ?? "",
             sortable: sortable,
             cell(row) {
                 return (
@@ -183,6 +196,8 @@ const Table: React.FC<Props> = ({
                     />
                 );
             },
+
+            ...columnStyles,
         };
     });
 
@@ -308,21 +323,12 @@ const Table: React.FC<Props> = ({
                     }
                     pagination={pagination ?? true}
                     persistTableHead
-                    onRowClicked={onRowClick} // TODO Fix (not working for click on custom cell)
+                    onRowClicked={onRowClick}
                 />
             </NoSsr>
         </Styling>
     );
 };
-
-export const RowDiv = styled.div`
-    display: flex;
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    padding-left: 1rem;
-    gap: 2rem;
-`;
 
 const EditAndReorderArrowDiv = styled.div`
     display: grid;
@@ -361,7 +367,7 @@ const Styling = styled.div`
 
     // the entire table component including the header and the pagination bar
     & > div {
-        border-radius: 0;
+        border-radius: 1rem;
         background-color: transparent;
 
         // the pagination bar
@@ -406,9 +412,7 @@ const Styling = styled.div`
     }
 
     & div.rdt_TableCell,
-    & div.rdt_TableCol_Sortable,
     & div.rdt_TableCol {
-        width: 7rem;
         // important needed to override the inline style
         padding: 0 0 0 1rem;
 

@@ -5,8 +5,6 @@ import {
 } from "@/app/clients/getClientsTableData";
 import { Data } from "@/components/DataViewer/DataViewer";
 
-// TODO Handle errors returned by supabase
-
 export type RawClientDetails = Awaited<ReturnType<typeof getRawClientDetails>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -54,6 +52,7 @@ export interface ExpandedClientDetails extends Data {
     full_name: Schema["clients"]["full_name"];
     phone_number: Schema["clients"]["phone_number"];
     packing_date: string;
+    packing_time: string;
     delivery_instructions: Schema["clients"]["delivery_instructions"];
     address: string;
     household: string;
@@ -75,6 +74,7 @@ export const rawDataToExpandedClientDetails = (
             full_name: "",
             phone_number: "",
             packing_date: "",
+            packing_time: "",
             delivery_instructions: "",
             address: "",
             household: "",
@@ -95,6 +95,7 @@ export const rawDataToExpandedClientDetails = (
         full_name: client.full_name,
         phone_number: client.phone_number,
         packing_date: formatDatetimeAsDate(rawClientDetails.packing_datetime),
+        packing_time: formatDatetimeAsTime(rawClientDetails.packing_datetime),
         delivery_instructions: client.delivery_instructions,
         address: formatAddressFromClientDetails(client),
         household: formatHouseholdFromFamilyDetails(client.family),
@@ -106,6 +107,22 @@ export const rawDataToExpandedClientDetails = (
         other_requirements: client.other_items.join(", "),
         extra_information: client.extra_information,
     };
+};
+
+export const formatDatetimeAsTime = (datetime: string | null): string => {
+    if (datetime === null || isNaN(Date.parse(datetime))) {
+        return "-";
+    }
+
+    const time = new Date(datetime);
+
+    const hours = time.getHours();
+    const minutes = time.getMinutes();
+
+    const HH = hours < 10 ? "0" + hours : hours;
+    const MM = minutes < 10 ? "0" + minutes : minutes;
+
+    return `${HH}:${MM}`;
 };
 
 export const formatAddressFromClientDetails = (

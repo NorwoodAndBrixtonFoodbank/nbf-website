@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import React, { ReactElement } from "react";
-import ListsDataView from "@/app/lists/ListDataview";
+import ListsDataView, { ListRow } from "@/app/lists/ListDataview";
 import supabase, { Schema } from "@/supabase";
 import Title from "@/components/Title/Title";
 
@@ -13,7 +13,7 @@ const fetchData = async (): Promise<Schema["lists"][]> => {
 };
 
 const Lists = async (): Promise<ReactElement> => {
-    const data: Schema["lists"][] = await fetchData();
+    const data: ListRow[] = await fetchData();
 
     return (
         <main>

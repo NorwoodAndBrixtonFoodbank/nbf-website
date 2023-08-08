@@ -1,17 +1,23 @@
 "use client";
 
-import Table, { Datum, Row } from "@/components/Tables/Table";
+import Table, {
+    ColumnDisplayFunction,
+    ColumnStyleOptions,
+    Datum,
+    Row,
+} from "@/components/Tables/Table";
 import React, { useState } from "react";
 import styled from "styled-components";
-import EditModal, { EditModalState } from "@/app/lists/EditModal";
+import EditModal, { EditModalState, listQuantityNoteAndLabels } from "@/app/lists/EditModal";
 import supabase, { Schema } from "@/supabase";
 import ConfirmDialog from "@/components/Modal/Confirm";
 import Snackbar from "@mui/material/Snackbar/Snackbar";
 import Alert from "@mui/material/Alert/Alert";
 import Button from "@mui/material/Button";
 import TooltipCell from "@/app/lists/TooltipCell";
+import { Paper } from "@mui/material";
 
-type ListRow = Schema["lists"] & Datum; // TODO Is this correct?
+export type ListRow = Schema["lists"] & Datum;
 
 interface Props {
     data: ListRow[];
@@ -31,15 +37,23 @@ export const headerKeysAndLabels: [string, string][] = [
     ["10_quantity", "Family of 10+"],
 ];
 
-// TODO Remove ANY type
-export const listDataviewColumnDisplayFunctions: any = {};
+const listDataviewColumnDisplayFunctions: { [headerKey: string]: ColumnDisplayFunction } = {};
+const listsColumnStyleOptions: { [headerKey: string]: ColumnStyleOptions } = {};
 
-headerKeysAndLabels.forEach(([headerKey, _headerLabel]) => {
+listQuantityNoteAndLabels.forEach(([headerKey, noteKey]) => {
     if (headerKey.endsWith("quantity")) {
-        const noteKey = `${headerKey[0]}_notes`;
-
+        // Column Display Function
         listDataviewColumnDisplayFunctions[headerKey] = (row: Row) => {
-            return <TooltipCell cellValue={row.data[headerKey]} tooltipValue={row.data[noteKey]} />;
+            const data = row.data as ListRow;
+            return (
+                <TooltipCell cellValue={data[headerKey] ?? ""} tooltipValue={data[noteKey] ?? ""} />
+            );
+        };
+
+        // Column Style Function
+        listsColumnStyleOptions[headerKey] = {
+            minWidth: "9rem",
+            center: true,
         };
     }
 });
@@ -111,7 +125,7 @@ const ListsDataView: React.FC<Props> = (props) => {
 
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
 
-            <TableDiv>
+            <TablePaper elevation={2}>
                 <Table
                     checkboxes={false}
                     headerKeysAndLabels={headerKeysAndLabels}
@@ -125,13 +139,14 @@ const ListsDataView: React.FC<Props> = (props) => {
                     onDelete={onDeleteButtonClick}
                     sortable={false}
                     columnDisplayFunctions={listDataviewColumnDisplayFunctions}
+                    columnStyleOptions={listsColumnStyleOptions}
                 />
                 <ButtonMargin>
                     <Button variant="contained" onClick={() => setModal(null)}>
                         + Add
                     </Button>
                 </ButtonMargin>
-            </TableDiv>
+            </TablePaper>
         </>
     );
 };
@@ -149,11 +164,10 @@ export const SnackBarDiv = styled.div`
     }
 `;
 
-const TableDiv = styled.div`
+const TablePaper = styled(Paper)`
     margin: 40px;
     padding: 20px;
     background-color: ${(props) => props.theme.main.background[0]};
-    box-shadow: 0 0 15px ${(props) => props.theme.shadow};
     border-radius: 1rem;
 `;
 
