@@ -28,6 +28,15 @@ describe("Accessibility tests in light mode", () => {
         cy.checkAccessibility();
     });
 
+    it("Checks parcels/add/[id] page", () => {
+        cy.visit("/parcels/add");
+        // TODO Change to a more specific selector once temporary add parcels page removed.
+        cy.get("a").contains("CLICK HERE").click();
+        cy.contains("Add Parcel");
+
+        cy.checkAccessibility();
+    });
+
     it("Checks login page", () => {
         cy.visit("/login");
 
@@ -67,6 +76,16 @@ describe("Accessibility tests in dark mode", () => {
     it("Checks clients/add page", () => {
         cy.login();
         cy.visit("/clients/add");
+        cy.get("label[aria-label='Theme Switch']").click();
+
+        cy.checkAccessibility();
+    });
+
+    it("Checks parcels/add/[id] page", () => {
+        cy.visit("/parcels/add");
+        // TODO Change to a more specific selector once temporary add parcels page removed.
+        cy.get("a").contains("CLICK HERE").click();
+        cy.contains("Add Parcel");
         cy.get("label[aria-label='Theme Switch']").click();
 
         cy.checkAccessibility();

@@ -22,7 +22,7 @@ import { useRouter } from "next/navigation";
 
 import VoucherNumberCard from "@/app/parcels/add/formSections/VoucherNumberCard";
 import PackingDateCard from "@/app/parcels/add/formSections/PackingDateCard";
-import TimeOfDayCard from "@/app/parcels/add/formSections/TimeOfDayCard";
+import TimeOfDayCard from "@/app/parcels/add/formSections/TimeofDayCard";
 import ShippingMethodCard from "@/app/parcels/add/formSections/ShippingMethodCard";
 import CollectionDateCard from "@/app/parcels/add/formSections/CollectionDateCard";
 import CollectionTimeCard from "@/app/parcels/add/formSections/CollectionTimeCard";
@@ -187,7 +187,7 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
     return (
         <CenterComponent>
             <StyledForm>
-                <FormHeading>Request Details</FormHeading>
+                <FormHeading>Add Parcel</FormHeading>
                 {formSections.map((Card, index) => {
                     return (
                         <Card
