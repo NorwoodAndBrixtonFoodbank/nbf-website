@@ -177,7 +177,7 @@ const ClientsPage: React.FC<Props> = (props) => {
             <Modal
                 header={
                     <>
-                        <Icon icon={faUser} /> Client Details
+                        <Icon icon={faUser} color={theme.secondaryForegroundColor} /> Client Details
                     </>
                 }
                 isOpen={selectedParcelId !== null}
