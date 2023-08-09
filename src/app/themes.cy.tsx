@@ -1,12 +1,7 @@
 "use client";
 
 import React from "react";
-import styled, {
-    DefaultTheme,
-    RainbowPalette,
-    StandardPaletteList,
-    StandardPalette,
-} from "styled-components";
+import styled, { DefaultTheme, StandardPaletteList, StandardPalette } from "styled-components";
 import StyleManager, { lightTheme, darkTheme } from "@/app/themes";
 
 const ForegroundWithBackground: React.FC<StandardPalette> = (props) => {
@@ -29,46 +24,42 @@ const ForegroundWithBackground: React.FC<StandardPalette> = (props) => {
 };
 
 const GenerateForegroundWithBackground: React.FC<{ theme: DefaultTheme }> = (props) => {
-    const rainbowThemeCategories = Object.keys(props.theme.rainbow) as (keyof RainbowPalette)[];
-    const mainLength = props.theme.main.background.length;
-
-    const accentTheme: StandardPaletteList = {
-        background: [props.theme.accent.background],
-        foreground: [props.theme.accent.foreground],
-        largeForeground: [props.theme.accent.largeForeground],
-    };
-    const lighterMainTheme: StandardPaletteList = {
-        ...props.theme.main,
+    const mainLighterTest = {
+        background: props.theme.main.background,
         foreground: props.theme.main.lighterForeground,
         largeForeground: props.theme.main.lighterForeground,
     };
-    const errorMainTheme: StandardPaletteList = {
-        ...props.theme.main,
-        foreground: new Array(mainLength).fill(props.theme.error),
-        largeForeground: new Array(mainLength).fill(props.theme.error),
-    };
-    const rainbowThemes: StandardPaletteList[] = rainbowThemeCategories.map((colorType) => {
-        return {
-            background: [props.theme.rainbow[colorType].background],
-            foreground: [props.theme.rainbow[colorType].foreground],
-            largeForeground: [props.theme.rainbow[colorType].largeForeground],
-        };
-    });
-    const allThemes: StandardPaletteList[] = [
-        accentTheme,
-        lighterMainTheme,
-        errorMainTheme,
+    const errorTests = props.theme.main.background.map((background) => ({
+        background,
+        foreground: props.theme.error,
+        largeForeground: props.theme.error,
+    }));
+
+    const gradientThemes: StandardPaletteList[] = [
         props.theme.main,
         props.theme.primary,
-        ...rainbowThemes,
+        mainLighterTest,
+    ];
+    const singleColourThemes: StandardPalette[] = [
+        props.theme.accent,
+        ...Object.values(props.theme.rainbow),
+        ...errorTests,
     ];
 
     return (
         <StyleManager>
-            {allThemes.map((theme: StandardPaletteList) =>
-                theme.background.map((background: string, index: number) => (
+            {singleColourThemes.map((theme, index) => (
+                <ForegroundWithBackground
+                    key={index}
+                    background={theme.background}
+                    foreground={theme.foreground}
+                    largeForeground={theme.largeForeground}
+                />
+            ))}
+            {gradientThemes.map((theme) =>
+                theme.background.map((background, index) => (
                     <ForegroundWithBackground
-                        key={index}
+                        key={index + singleColourThemes.length}
                         background={background}
                         foreground={theme.foreground[index]}
                         largeForeground={theme.largeForeground[index]}

@@ -14,13 +14,14 @@ interface Props {
     onTooltipClose?: () => void;
 }
 
+const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
+    width: 1em;
+    height: 1em;
+    margin: 0.125em;
+    color: ${(props) => props.color ?? props.theme.main.foreground[0]};
+`;
+
 const Icon: React.FC<Props> = ({ icon, color, onHoverText, showTooltip, onTooltipClose }) => {
-    const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
-        width: 1em;
-        height: 1em;
-        margin: 0.125em;
-        color: ${(props) => props.color ?? props.theme.main.foreground[0]};
-    `;
     if (showTooltip === undefined) {
         return (
             <StyledFontAwesomeIcon

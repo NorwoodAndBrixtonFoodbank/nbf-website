@@ -14,6 +14,89 @@ import MaterialAndGlobalStyle from "@/app/global_styles";
 const BLACK = "#000000";
 const WHITE = "#f2f2f2";
 
+const rainbowColours = {
+    lightRed: {
+        background: "#fa9189",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    darkRed: {
+        background: "#fc4942",
+        foreground: BLACK,
+        largeForeground: WHITE,
+    },
+    lightOrange: {
+        background: "#fcae7c",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    darkOrange: {
+        background: "#fd7e2a",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    lightYellow: {
+        background: "#ffd868",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    darkYellow: {
+        background: "#ffbb00",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    lightGreen: {
+        background: "#b4f5b3",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    darkGreen: {
+        background: "#5fa881",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    lightBlue: {
+        background: "#acd5df",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    darkBlue: {
+        background: "#7bbafc",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    lightPurple: {
+        background: "#ceaae9",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    darkPurple: {
+        background: "#b18ff9",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    lightGrey: {
+        background: "#d7d7d7",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    darkGrey: {
+        background: "#808080",
+        foreground: BLACK,
+        largeForeground: WHITE,
+    },
+    lightBrown: {
+        background: "#bfaba2",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    darkBrown: {
+        background: "#a68f68",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+};
+
 export const lightTheme: DefaultTheme = {
     light: true,
     main: {
@@ -35,92 +118,10 @@ export const lightTheme: DefaultTheme = {
     },
     error: "#c01622",
     shadow: "#e2e2e2",
-    rainbow: {
-        lightRed: {
-            background: "#fa9189",
-            foreground: BLACK,
-            largeForeground: BLACK,
-        },
-        darkRed: {
-            background: "#fc4942",
-            foreground: BLACK,
-            largeForeground: WHITE,
-        },
-        lightOrange: {
-            background: "#fcae7c",
-            foreground: BLACK,
-            largeForeground: BLACK,
-        },
-        darkOrange: {
-            background: "#fd7e2a",
-            foreground: BLACK,
-            largeForeground: BLACK,
-        },
-        lightYellow: {
-            background: "#ffd868",
-            foreground: BLACK,
-            largeForeground: BLACK,
-        },
-        darkYellow: {
-            background: "#ffbb00",
-            foreground: BLACK,
-            largeForeground: BLACK,
-        },
-        lightGreen: {
-            background: "#b4f5b3",
-            foreground: BLACK,
-            largeForeground: BLACK,
-        },
-        darkGreen: {
-            background: "#5fa881",
-            foreground: BLACK,
-            largeForeground: BLACK,
-        },
-        lightBlue: {
-            background: "#acd5df",
-            foreground: BLACK,
-            largeForeground: BLACK,
-        },
-        darkBlue: {
-            background: "#7bbafc",
-            foreground: BLACK,
-            largeForeground: BLACK,
-        },
-        lightPurple: {
-            background: "#ceaae9",
-            foreground: BLACK,
-            largeForeground: BLACK,
-        },
-        darkPurple: {
-            background: "#b18ff9",
-            foreground: BLACK,
-            largeForeground: BLACK,
-        },
-        lightGrey: {
-            background: "#d7d7d7",
-            foreground: BLACK,
-            largeForeground: BLACK,
-        },
-        darkGrey: {
-            background: "#808080",
-            foreground: BLACK,
-            largeForeground: WHITE,
-        },
-        lightBrown: {
-            background: "#bfaba2",
-            foreground: BLACK,
-            largeForeground: BLACK,
-        },
-        darkBrown: {
-            background: "#a68f68",
-            foreground: BLACK,
-            largeForeground: BLACK,
-        },
-    },
+    rainbow: rainbowColours,
 };
 
 export const darkTheme: DefaultTheme = {
-    ...lightTheme,
     light: false,
     main: {
         background: ["#262626", "#282828", "#2d2d2d", "#363636"],
@@ -141,6 +142,7 @@ export const darkTheme: DefaultTheme = {
     },
     shadow: "#282828",
     error: "#ff7361",
+    rainbow: rainbowColours,
 };
 
 interface Props {
@@ -173,7 +175,7 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
         setChosenTheme(dark ? darkTheme : lightTheme);
     };
 
-    const themedChildren: React.ReactNode =
+    const themedChildren =
         typeof window !== "undefined" ? (
             children
         ) : (
