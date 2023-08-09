@@ -3,17 +3,13 @@ import { Datum } from "@/components/Tables/Table";
 
 export interface ClientsTableRow extends Datum {
     parcelId: Schema["parcels"]["primary_key"];
-
     flaggedForAttention: boolean;
     requiresFollowUpPhoneCall: boolean;
-
     fullName: Schema["clients"]["full_name"];
     familyCategory: string;
     addressPostcode: Schema["clients"]["address_postcode"];
-
     collectionCentre: string;
     congestionChargeApplies: boolean;
-
     packingTimeLabel: string;
     lastStatus: string;
 }
@@ -121,8 +117,8 @@ export const formatDatetimeAsDate = (datetime: string | null): string => {
     const day = date.getDate();
     const month = date.getMonth() + 1;
 
-    const DD = day < 10 ? "0" + day : day;
-    const MM = month < 10 ? "0" + month : month;
+    const DD = day.toString().padStart(2, "0");
+    const MM = month.toString().padStart(2, "0");
     const YYYY = date.getFullYear();
 
     return `${DD}/${MM}/${YYYY}`;

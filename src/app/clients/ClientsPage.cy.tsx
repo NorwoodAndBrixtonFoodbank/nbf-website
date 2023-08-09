@@ -68,7 +68,7 @@ const sampleRawExpandedClientDetails: RawClientDetails = {
         feminine_products: ["Tampons", "Incontinence Pads"],
         baby_food: true,
         pet_food: ["Cat", "Dog"],
-        other_items: ["Garlic", "Chilies", "Hot Water Bottles"],
+        other_items: ["Garlic", "Chillies", "Hot Water Bottles"],
         extra_information: "EXTRA CLIENT INFORMATION",
     },
 };
@@ -154,12 +154,12 @@ describe("Clients Page", () => {
                 delivery_instructions: "INSTRUCTIONS FOR DELIVERY",
                 address: "Address Line 1, Address Line 2, TOWN, SW1A 2AA",
                 household: "Family of 3 Occupants (2 adults, 1 child)",
-                "Age & Gender of Children": "5-year-old male",
+                "age_&_gender_of_children": "5-year-old male",
                 dietary_requirements: "Gluten Free, Halal, No Pasta",
                 feminine_products: "Tampons, Incontinence Pads",
                 baby_products: true,
                 pet_food: "Cat, Dog",
-                other_requirements: "Garlic, Chilies, Hot Water Bottles",
+                other_requirements: "Garlic, Chillies, Hot Water Bottles",
                 extra_information: "EXTRA CLIENT INFORMATION",
             });
         });
@@ -215,15 +215,15 @@ describe("Clients Page", () => {
                     { age: 36, gender: "female" },
                     { age: 5, gender: "male" },
                     { age: 4, gender: "female" },
-                    { age: 17, gender: "other" },
+                    { age: 15, gender: "other" },
                 ])
             ).to.eq("Family of 4 Occupants (1 adult, 3 children)");
 
-            expect(formatHouseholdFromFamilyDetails([{ age: 36, gender: "female" }])).to.eq(
+            expect(formatHouseholdFromFamilyDetails([{ age: 16, gender: "female" }])).to.eq(
                 "Single Occupant (1 adult)"
             );
 
-            expect(formatHouseholdFromFamilyDetails([{ age: 17, gender: "male" }])).to.eq(
+            expect(formatHouseholdFromFamilyDetails([{ age: 15, gender: "male" }])).to.eq(
                 "Single Occupant (1 child)"
             );
         });
@@ -234,16 +234,16 @@ describe("Clients Page", () => {
                     { age: 36, gender: "female" },
                     { age: 5, gender: "male" },
                     { age: 4, gender: "female" },
-                    { age: 17, gender: "other" },
+                    { age: 15, gender: "other" },
                 ])
-            ).to.eq("5-year-old male, 4-year-old female, 17-year-old other");
+            ).to.eq("5-year-old male, 4-year-old female, 15-year-old other");
 
             expect(
                 formatBreakdownOfChildrenFromFamilyDetails([
                     { age: 36, gender: "female" },
-                    { age: 16, gender: "female" },
+                    { age: 15, gender: "female" },
                 ])
-            ).to.eq("16-year-old female");
+            ).to.eq("15-year-old female");
 
             expect(
                 formatBreakdownOfChildrenFromFamilyDetails([

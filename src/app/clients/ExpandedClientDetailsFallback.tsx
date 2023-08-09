@@ -1,25 +1,5 @@
 import React from "react";
-import { Skeleton } from "@mui/material";
-import styled from "styled-components";
-
-const SkeletonKey = styled(Skeleton)`
-    display: inline-block;
-    border-radius: 0.7em;
-    padding: 0.2em 0.5em;
-`;
-
-const SkeletonValue = styled(Skeleton)`
-    padding: 0.2em 0.5em;
-`;
-
-const SkeletonItem = styled.div`
-    padding-bottom: 1em;
-`;
-
-const SkeletonDiv = styled.div`
-    width: 1000px;
-    max-width: 100%;
-`;
+import DataViewerFallback from "@/components/DataViewer/DataViewerFallback";
 
 const clientDetailFields = [
     "VOUCHER #",
@@ -40,22 +20,7 @@ const clientDetailFields = [
 ];
 
 const ExpandedClientDetailsFallback: React.FC<{}> = () => {
-    return (
-        <SkeletonDiv>
-            {clientDetailFields.map((field, index) => {
-                return (
-                    <SkeletonItem key={index}>
-                        <SkeletonKey
-                            variant="text"
-                            width={field.length * 10}
-                            sx={{ fontSize: "1rem" }}
-                        />
-                        <SkeletonValue variant="text" width={200} sx={{ fontSize: "1rem" }} />
-                    </SkeletonItem>
-                );
-            })}
-        </SkeletonDiv>
-    );
+    return <DataViewerFallback fieldPlaceholders={clientDetailFields} />;
 };
 
 export default ExpandedClientDetailsFallback;

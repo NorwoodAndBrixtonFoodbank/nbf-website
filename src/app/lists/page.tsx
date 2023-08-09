@@ -7,13 +7,13 @@ import Title from "@/components/Title/Title";
 // disables caching
 export const revalidate = 0;
 
-const fetchData = async (): Promise<Schema["lists"][]> => {
+const fetchData = async (): Promise<ListRow[]> => {
     const { data } = await supabase.from("lists").select();
     return data ?? [];
 };
 
 const Lists = async (): Promise<ReactElement> => {
-    const data: ListRow[] = await fetchData();
+    const data = await fetchData();
 
     return (
         <main>

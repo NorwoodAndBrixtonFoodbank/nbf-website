@@ -3,7 +3,7 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import { NoSsr } from "@mui/material";
 import {
     faAnglesUp,

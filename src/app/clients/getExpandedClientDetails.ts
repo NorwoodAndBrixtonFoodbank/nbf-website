@@ -56,7 +56,7 @@ export interface ExpandedClientDetails extends Data {
     delivery_instructions: Schema["clients"]["delivery_instructions"];
     address: string;
     household: string;
-    "Age & Gender of Children": string;
+    "age_&_gender_of_children": string;
     dietary_requirements: string;
     feminine_products: string;
     baby_products: Schema["clients"]["baby_food"];
@@ -78,7 +78,7 @@ export const rawDataToExpandedClientDetails = (
             delivery_instructions: "",
             address: "",
             household: "",
-            "Age & Gender of Children": "",
+            "age_&_gender_of_children": "",
             dietary_requirements: "",
             feminine_products: "",
             baby_products: null,
@@ -99,7 +99,7 @@ export const rawDataToExpandedClientDetails = (
         delivery_instructions: client.delivery_instructions,
         address: formatAddressFromClientDetails(client),
         household: formatHouseholdFromFamilyDetails(client.family),
-        "Age & Gender of Children": formatBreakdownOfChildrenFromFamilyDetails(client.family),
+        "age_&_gender_of_children": formatBreakdownOfChildrenFromFamilyDetails(client.family),
         dietary_requirements: client.dietary_requirements.join(", "),
         feminine_products: client.feminine_products.join(", "),
         baby_products: client.baby_food,
@@ -137,29 +137,29 @@ export const formatAddressFromClientDetails = (
 export const formatHouseholdFromFamilyDetails = (
     family: Pick<Schema["families"], "age" | "gender">[]
 ): string => {
-    let noAdults = 0;
-    let noChildren = 0;
+    let adultCount = 0;
+    let childCount = 0;
 
     for (const familyMember of family) {
-        if (familyMember.age === null || familyMember.age >= 18) {
-            noAdults++;
+        if (familyMember.age === null || familyMember.age >= 16) {
+            adultCount++;
         } else {
-            noChildren++;
+            childCount++;
         }
     }
 
     const adultChildBreakdown = [];
 
-    if (noAdults > 0) {
-        adultChildBreakdown.push(`${noAdults} ${noAdults > 1 ? "adults" : "adult"}`);
+    if (adultCount > 0) {
+        adultChildBreakdown.push(`${adultCount} adult${adultCount > 1 ? "s" : ""}`);
     }
 
-    if (noChildren > 0) {
-        adultChildBreakdown.push(`${noChildren} ${noChildren > 1 ? "children" : "child"}`);
+    if (childCount > 0) {
+        adultChildBreakdown.push(`${childCount} child${childCount > 1 ? "ren" : ""}`);
     }
 
     const familyCategory = familyCountToFamilyCategory(family.length);
-    const occupantDisplay = `Occupant${noAdults + noChildren > 1 ? "s" : ""}`;
+    const occupantDisplay = `Occupant${adultCount + childCount > 1 ? "s" : ""}`;
 
     return `${familyCategory} ${occupantDisplay} (${adultChildBreakdown.join(", ")})`;
 };
@@ -170,8 +170,8 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
     const childDetails = [];
 
     for (const familyMember of family) {
-        if (familyMember.age !== null && familyMember.age < 18) {
-            const age = familyMember.age === -1 ? "0-17" : familyMember.age;
+        if (familyMember.age !== null && familyMember.age < 16) {
+            const age = familyMember.age === -1 ? "0-17" : familyMember.age.toString();
             childDetails.push(`${age}-year-old ${familyMember.gender}`);
         }
     }

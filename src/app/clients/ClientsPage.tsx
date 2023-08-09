@@ -113,7 +113,8 @@ const ClientsPage: React.FC<Props> = (props) => {
             <>
                 {data.flaggedForAttention ? <FlaggedForAttentionIcon /> : <></>}
                 {data.requiresFollowUpPhoneCall ? (
-                    <PhoneIcon color={theme.foregroundColor} />
+                    // TODO VFB-16 Update this colour to the corresponding colour in the new themes
+                    <PhoneIcon color={theme.surfaceForegroundColor} />
                 ) : (
                     <></>
                 )}
@@ -127,6 +128,7 @@ const ClientsPage: React.FC<Props> = (props) => {
         if (data.collectionCentre === "Delivery") {
             return (
                 <>
+                    {/*TODO VFB-16 Update this colour to the corresponding colour in the new themes*/}
                     <DeliveryIcon color={theme.foregroundColor} />
                     {data.congestionChargeApplies ? <CongestionChargeAppliesIcon /> : <></>}
                 </>
@@ -185,6 +187,7 @@ const ClientsPage: React.FC<Props> = (props) => {
                 headerId="expandedClientDetailsModal"
             >
                 <Suspense fallback={<ExpandedClientDetailsFallback />}>
+                    {/* @ts-expect-error Async Component Used */}
                     <ExpandedClientDetails parcelId={selectedParcelId} />
                 </Suspense>
             </Modal>

@@ -56,7 +56,7 @@ const DataViewer: React.FC<DataViewerProps> = (props) => {
         <ContentDiv>
             {Object.entries(props.data).map(([key, value]) => (
                 <EachItem key={key}>
-                    <Key>{key.toUpperCase().replace("_", " ")}</Key>
+                    <Key>{key.toUpperCase().replaceAll("_", " ")}</Key>
                     <Value>{formatDisplayValue(value)}</Value>
                 </EachItem>
             ))}
