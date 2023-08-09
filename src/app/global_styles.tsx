@@ -17,7 +17,7 @@ const GlobalStyle = createGlobalStyle`
         height: 100%;
         width: 100%;
         font-family: Helvetica, Arial, sans-serif;
-        overflow: auto;
+        overflow: hidden;
     }
 
     body {
@@ -107,5 +107,4 @@ const MaterialAndGlobalStyle: React.FC<Props> = ({ children }) => {
     );
 };
 
-// export default GlobalStyle;
 export default MaterialAndGlobalStyle;
