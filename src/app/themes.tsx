@@ -11,9 +11,7 @@ import {
 } from "styled-components";
 import MaterialAndGlobalStyle from "@/app/global_styles";
 
-// The array represents a gradient of color
-// In light mode: 0 represents the lightest and larger index represents darker color
-// In dark mode: reversed
+
 
 const BLACK = "#000000";
 const WHITE = "#f2f2f2";
