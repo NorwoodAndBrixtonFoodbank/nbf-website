@@ -30,25 +30,11 @@ import { insertParcel } from "@/app/parcels/add/databaseFunctions";
 
 interface AddParcelFields {
     voucherNumber: string;
-    packingDate: {
-        day: number;
-        month: number;
-        year: number;
-    } | null;
-    timeOfDay: {
-        hours: number;
-        minutes: number;
-    } | null;
+    packingDate: Date | null;
+    timeOfDay: Date | null;
     shippingMethod: string | null;
-    collectionDate: {
-        day: number;
-        month: number;
-        year: number;
-    } | null;
-    collectionTime: {
-        hours: number;
-        minutes: number;
-    } | null;
+    collectionDate: Date | null;
+    collectionTime: Date | null;
     collectionCentre: string | null;
 }
 
@@ -91,7 +77,7 @@ const initialFormErrors: FormErrors = {
 
 const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
     const router = useRouter();
-    const [fields, setFields] = useState(initialFields);
+    const [fields, setFields] = useState<AddParcelFields>(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
     const [submitError, setSubmitError] = useState(Errors.none);
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
@@ -108,13 +94,9 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
     const submitForm = async (): Promise<void> => {
         setSubmitDisabled(false);
         let inputError;
-        console.log("submitting");
         if (fields.shippingMethod === "Collection") {
-            console.log("collection inputerror");
             inputError = checkErrorOnSubmit(formErrors, setFormErrors);
-            console.log(formErrors);
         } else {
-            console.log("no collection inputerror");
             inputError = checkErrorOnSubmit(formErrors, setFormErrors, [
                 "voucherNumber",
                 "packingDate",
@@ -127,17 +109,20 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
             setSubmitDisabled(false);
             return;
         }
-        console.log("noInputError");
         if (fields.packingDate === null || fields.timeOfDay === null) {
             return;
         }
 
+        // these are needed to access the getFullYear() etc methods- will try look at fixing.
+        const newPackingDate = new Date(fields.packingDate);
+        const newTimeofDay = new Date(fields.timeOfDay);
+
         const packingDateTime = new Date(
-            fields.packingDate.year,
-            fields.packingDate.month,
-            fields.packingDate.day,
-            fields.timeOfDay.hours,
-            fields.timeOfDay.minutes
+            newPackingDate.getFullYear(),
+            newPackingDate.getMonth(),
+            newPackingDate.getDate(),
+            newTimeofDay.getHours(),
+            newTimeofDay.getMinutes()
         );
 
         let collectionDateTime = new Date();
@@ -145,12 +130,16 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
             if (fields.collectionDate === null || fields.collectionTime === null) {
                 return;
             }
+            // same as above
+            const newCollectionDate = new Date(fields.collectionDate);
+            const newCollectionTime = new Date(fields.collectionTime);
+
             collectionDateTime = new Date(
-                fields.collectionDate.year,
-                fields.collectionDate.month,
-                fields.collectionDate.day,
-                fields.collectionTime.hours,
-                fields.collectionTime.minutes
+                newCollectionDate.getFullYear(),
+                newCollectionDate.getMonth(),
+                newCollectionDate.getDate(),
+                newCollectionTime.getHours(),
+                newCollectionTime.getMinutes()
             );
         }
 
@@ -163,18 +152,16 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
             collection_centre: deliveryBool ? "Delivery" : fields.collectionCentre,
             collection_datetime: deliveryBool ? null : collectionDateTime.toISOString(),
         };
-        console.log("success");
-        console.log("formToAdd", formToAdd);
-        // try {
-        //     await insertParcel(formToAdd);
-        //     router.push("/clients/");
-        // } catch (error: unknown) {
-        //     if (error instanceof Error) {
-        //         setSubmitError(Errors.external);
-        //         setSubmitErrorMessage(error.message);
-        //         setSubmitDisabled(false);
-        //     }
-        // }
+        try {
+            await insertParcel(formToAdd);
+            router.push("/clients/");
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setSubmitError(Errors.external);
+                setSubmitErrorMessage(error.message);
+                setSubmitDisabled(false);
+            }
+        }
 
         setSubmitDisabled(false);
     };

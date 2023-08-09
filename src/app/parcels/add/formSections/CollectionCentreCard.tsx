@@ -10,7 +10,6 @@ const CollectionCentreCard: React.FC<CardProps> = ({
     formErrors,
     fields,
 }) => {
-    console.log("fields.collectionCentre", fields.collectionCentre);
     return (
         <GenericFormCard
             title="Collection Centre"
