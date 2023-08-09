@@ -26,7 +26,6 @@ export interface CardProps {
     formErrors: FormErrors;
     errorSetter: ErrorSetter;
     fieldSetter: FieldSetter;
-    formErrorSetter?: React.Dispatch<React.SetStateAction<FormErrors>>;
     fields: Fields;
 }
 
@@ -148,7 +147,7 @@ export const onChangeDate = (
         month: input?.getMonth(),
         day: input?.getDate(),
     };
-    fieldSetter(key, date);
+    fieldSetter(key, value);
     !(date.year && date.month && date.day)
         ? errorSetter(key, Errors.invalid)
         : errorSetter(key, Errors.none);
@@ -161,6 +160,7 @@ export const onChangeTime = (
     value: Date | null
 ): void => {
     if (value === null) {
+        fieldSetter(key, null);
         return;
     }
     const input = new Date(value);
@@ -168,7 +168,7 @@ export const onChangeTime = (
         hours: input?.getHours(),
         minutes: input?.getMinutes(),
     };
-    fieldSetter(key, time);
+    fieldSetter(key, value);
     !(time.hours && time.minutes) && time.hours !== 0 && time.minutes !== 0
         ? errorSetter(key, Errors.invalid)
         : errorSetter(key, Errors.none);

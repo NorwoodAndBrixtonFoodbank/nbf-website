@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import {
-    Fields,
     Errors,
     FormErrors,
     setError,
@@ -27,9 +26,9 @@ import ShippingMethodCard from "@/app/parcels/add/formSections/ShippingMethodCar
 import CollectionDateCard from "@/app/parcels/add/formSections/CollectionDateCard";
 import CollectionTimeCard from "@/app/parcels/add/formSections/CollectionTimeCard";
 import CollectionCentreCard from "@/app/parcels/add/formSections/CollectionCentreCard";
-import { insertParcel } from "@/app/clients/add/databaseFunctions";
+import { insertParcel } from "@/app/parcels/add/databaseFunctions";
 
-interface AddParcelFields extends Fields {
+interface AddParcelFields {
     voucherNumber: string;
     packingDate: {
         day: number;
@@ -85,9 +84,9 @@ const initialFormErrors: FormErrors = {
     packingDate: Errors.initial,
     timeOfDay: Errors.initial,
     shippingMethod: Errors.initial,
-    collectionDate: Errors.none,
-    collectionTime: Errors.none,
-    collectionCentre: Errors.none,
+    collectionDate: Errors.initial,
+    collectionTime: Errors.initial,
+    collectionCentre: Errors.initial,
 };
 
 const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
@@ -107,12 +106,15 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
     const errorSetter = setError(setFormErrors, formErrors);
 
     const submitForm = async (): Promise<void> => {
-        setSubmitDisabled(true);
-
+        setSubmitDisabled(false);
         let inputError;
+        console.log("submitting");
         if (fields.shippingMethod === "Collection") {
+            console.log("collection inputerror");
             inputError = checkErrorOnSubmit(formErrors, setFormErrors);
+            console.log(formErrors);
         } else {
+            console.log("no collection inputerror");
             inputError = checkErrorOnSubmit(formErrors, setFormErrors, [
                 "voucherNumber",
                 "packingDate",
@@ -120,13 +122,12 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
                 "shippingMethod",
             ]);
         }
-
         if (inputError) {
             setSubmitError(Errors.submit);
             setSubmitDisabled(false);
             return;
         }
-
+        console.log("noInputError");
         if (fields.packingDate === null || fields.timeOfDay === null) {
             return;
         }
@@ -153,34 +154,27 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
             );
         }
 
-        let formToAdd;
-        if (fields.shippingMethod === "Delivery") {
-            formToAdd = {
-                client_id: props.id,
-                packing_datetime: packingDateTime.toISOString(),
-                voucher_number: fields.voucherNumber,
-                collection_centre: "Delivery",
-            };
-        } else {
-            formToAdd = {
-                client_id: props.id,
-                packing_datetime: packingDateTime.toISOString(),
-                collection_centre: fields.collectionCentre,
-                collection_datetime: collectionDateTime.toISOString(),
-                voucher_number: fields.voucherNumber,
-            };
-        }
+        const deliveryBool: boolean = fields.shippingMethod === "Delivery";
 
-        try {
-            await insertParcel(formToAdd);
-            router.push("/clients/");
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                setSubmitError(Errors.external);
-                setSubmitErrorMessage(error.message);
-                setSubmitDisabled(false);
-            }
-        }
+        const formToAdd = {
+            client_id: props.id,
+            packing_datetime: packingDateTime.toISOString(),
+            voucher_number: fields.voucherNumber,
+            collection_centre: deliveryBool ? "Delivery" : fields.collectionCentre,
+            collection_datetime: deliveryBool ? null : collectionDateTime.toISOString(),
+        };
+        console.log("success");
+        console.log("formToAdd", formToAdd);
+        // try {
+        //     await insertParcel(formToAdd);
+        //     router.push("/clients/");
+        // } catch (error: unknown) {
+        //     if (error instanceof Error) {
+        //         setSubmitError(Errors.external);
+        //         setSubmitErrorMessage(error.message);
+        //         setSubmitDisabled(false);
+        //     }
+        // }
 
         setSubmitDisabled(false);
     };
@@ -193,7 +187,6 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
                         <Card
                             key={index}
                             formErrors={formErrors}
-                            formErrorSetter={setFormErrors}
                             errorSetter={errorSetter}
                             fieldSetter={fieldSetter}
                             fields={fields}

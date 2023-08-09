@@ -36,7 +36,7 @@ export const StyledCard = styled.div`
 `;
 
 export const ErrorText = styled.p`
-    color: #ff624e;
+    color: ${(props) => props.theme.errorColor};
     font-size: 0.75rem;
     margin: 3px 14px 0 14px;
 `;

@@ -4,7 +4,13 @@ import GenericFormCard from "@/components/Form/GenericFormCard";
 import RadioGroupInput from "@/components/DataInput/RadioGroupInput";
 import { ErrorText } from "@/components/Form/formStyling";
 
-const CollectionCentreCard: React.FC<CardProps> = ({ fieldSetter, errorSetter, formErrors }) => {
+const CollectionCentreCard: React.FC<CardProps> = ({
+    fieldSetter,
+    errorSetter,
+    formErrors,
+    fields,
+}) => {
+    console.log("fields.collectionCentre", fields.collectionCentre);
     return (
         <GenericFormCard
             title="Collection Centre"
@@ -15,14 +21,15 @@ const CollectionCentreCard: React.FC<CardProps> = ({ fieldSetter, errorSetter, f
                 <RadioGroupInput
                     labelsAndValues={[
                         ["Vauxhall Hope Church", "Vauxhall Hope Church"],
-                        ["Waterloo- St George the Martyr", "Waterloo- St George the Martyr"],
-                        ["Waterloo- Oasis", "Waterloo- Oasis"],
-                        ["Waterloo- St John's", "Waterloo- St John's"],
-                        ["Brixton Hill- Methodist Church", "Brixton Hill- Methodist Church"],
-                        ["N&B- Emmanuel Church", "N&B- Emmanuel Church"],
-                        ["Streatham- Immanuel & St Andrew", "Streatham- Immanuel & St Andrew"],
+                        ["Waterloo - St George the Martyr", "Waterloo - St George the Martyr"],
+                        ["Waterloo - Oasis", "Waterloo - Oasis"],
+                        ["Waterloo - St Johns", "Waterloo - St Johns"],
+                        ["Brixton Hill - Methodist Church", "Brixton Hill - Methodist Church"],
+                        ["N&B - Emmanuel Church", "N&B - Emmanuel Church"],
+                        ["Streatham - Immanuel & St Andrew", "Streatham - Immanuel & St Andrew"],
                     ]}
                     onChange={valueOnChangeRadioGroup(fieldSetter, errorSetter, "collectionCentre")}
+                    value={fields.collectionCentre || null}
                 ></RadioGroupInput>
                 <ErrorText>{errorText(formErrors.collectionCentre)}</ErrorText>
             </>

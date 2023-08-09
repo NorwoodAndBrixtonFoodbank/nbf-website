@@ -5,15 +5,18 @@ import StyledTimePicker from "@/components/DataInput/TimePicker";
 import { ErrorText } from "@/components/Form/formStyling";
 
 const TimeOfDayCard: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSetter }) => {
+    const [timePickerValue, setTimePickerValue] = React.useState<Date | null>(null);
     return (
         <GenericFormCard title="Packing Time" required={true}>
             <>
                 <StyledTimePicker
                     onChange={(value: any) => {
                         const newValue = value as Date | null;
+                        setTimePickerValue(newValue);
                         onChangeTime(fieldSetter, errorSetter, "timeOfDay", newValue);
                     }}
                     label="Enter Time Here"
+                    value={timePickerValue}
                 />
                 <ErrorText>{errorText(formErrors.timeOfDay)}</ErrorText>
             </>
