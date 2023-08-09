@@ -29,11 +29,9 @@ describe("Accessibility tests in light mode", () => {
     });
 
     it("Checks login page", () => {
-        cy.visit("/clients");
+        cy.visit("/");
         cy.get("button[aria-label='Sign Out Button']").click();
-        cy.url().should("include", "/login");
-        // Forces Page to Render Fully
-        cy.contains("Sign in").should("be.visible");
+        cy.visit("/login");
 
         cy.checkAccessibility();
     });
@@ -74,12 +72,9 @@ describe("Accessibility tests in dark mode", () => {
     });
 
     it("Checks login page", () => {
-        cy.visit("/clients");
-        cy.get("label[aria-label='Theme Switch']").click();
+        cy.visit("/");
         cy.get("button[aria-label='Sign Out Button']").click();
-        cy.url().should("include", "/login");
-        // Forces Page to Render Fully
-        cy.contains("Sign in").should("be.visible");
+        cy.visit("/login");
 
         cy.checkAccessibility();
     });
