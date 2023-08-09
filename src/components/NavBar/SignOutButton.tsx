@@ -8,18 +8,6 @@ import IconButton from "@mui/material/IconButton/IconButton";
 
 const SignOutButton: React.FC = () => {
     const supabase = createClientComponentClient<DatabaseAutoType>();
-    // const router = useRouter();
-
-    // useEffect(() => {
-    //     const {
-    //         data: { subscription },
-    //     } = supabase.auth.onAuthStateChange((event, session) => {
-    //         if (!session) {
-    //             router.push("/login");
-    //         }
-    //     });
-    //     return subscription.unsubscribe;
-    // });
 
     return (
         <IconButton
