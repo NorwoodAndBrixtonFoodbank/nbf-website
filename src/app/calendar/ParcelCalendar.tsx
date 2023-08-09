@@ -3,10 +3,7 @@
 import Calendar from "@/components/Calendar/Calendar";
 import Title from "@/components/Title/Title";
 import React from "react";
-import styled, { useTheme } from "styled-components";
-import { lightTheme } from "@/app/themes";
-
-type RainbowPalette = typeof lightTheme.rainbow;
+import styled, { RainbowPalette, useTheme } from "styled-components";
 
 import {
     ClientMap,

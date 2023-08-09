@@ -5,7 +5,6 @@ import {
     createTheme as createMaterialTheme,
     Theme,
 } from "@mui/material";
-import { lightTheme } from "@/app/themes";
 
 const GlobalStyle = createGlobalStyle`    
     * {
@@ -17,7 +16,7 @@ const GlobalStyle = createGlobalStyle`
         height: 100%;
         width: 100%;
         font-family: Helvetica, Arial, sans-serif;
-        overflow: hidden;
+        overflow: auto;
     }
 
     body {
@@ -33,7 +32,7 @@ const GlobalStyle = createGlobalStyle`
 const materialTheme = (chosenTheme: DefaultTheme): Theme =>
     createMaterialTheme({
         palette: {
-            mode: chosenTheme === lightTheme ? "light" : "dark",
+            mode: chosenTheme.light ? "light" : "dark",
             primary: {
                 main: chosenTheme.primary.background[2],
                 contrastText: chosenTheme.primary.foreground[2],

@@ -68,6 +68,8 @@ const DrawerButtonWrapper = styled.div`
 `;
 
 const DrawerButton = styled(Button)`
+    text-transform: uppercase;
+
     width: 100%;
 `;
 
@@ -135,9 +137,9 @@ const ResponsiveAppBar: React.FC<Props> = ({ children = <></> }) => {
     };
 
     const pages = [
-        ["CLIENTS", "/clients"],
-        ["LISTS", "/lists"],
-        ["CALENDAR", "/calendar"],
+        ["Clients", "/clients"],
+        ["Lists", "/lists"],
+        ["Calendar", "/calendar"],
     ];
 
     return (

@@ -11,8 +11,6 @@ import {
 } from "styled-components";
 import MaterialAndGlobalStyle from "@/app/global_styles";
 
-
-
 const BLACK = "#000000";
 const WHITE = "#f2f2f2";
 
@@ -160,7 +158,6 @@ export const ThemeUpdateContext = createContext((dark: boolean): void => {
  * Makes a styled-components global registry to get server-side inserted CSS
  * Adapted from https://nextjs.org/docs/app/building-your-application/styling/css-in-js#styled-components
  */
-
 const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
     const [serverStyleSheet] = useState(() => new ServerStyleSheet());
 

@@ -46,7 +46,6 @@ const ForegroundWithBackground: React.FC<StandardPalette> = (props) => {
 };
 
 const GenerateForegroundWithBackground: React.FC<{ theme: DefaultTheme }> = (props) => {
-    const generalThemeCategories: ("main" | "primary")[] = ["main", "primary"];
     const rainbowThemeCategories = Object.keys(props.theme.rainbow) as (keyof RainbowPalette)[];
     const mainLength = props.theme.main.background.length;
 
@@ -65,9 +64,6 @@ const GenerateForegroundWithBackground: React.FC<{ theme: DefaultTheme }> = (pro
         foreground: new Array(mainLength).fill(props.theme.error),
         largeForeground: new Array(mainLength).fill(props.theme.error),
     };
-    const generalThemes: StandardPaletteList[] = generalThemeCategories.map(
-        (themeType) => props.theme[themeType]
-    );
     const rainbowThemes: StandardPaletteList[] = rainbowThemeCategories.map((colorType) => {
         return {
             background: [props.theme.rainbow[colorType].background],
@@ -79,7 +75,8 @@ const GenerateForegroundWithBackground: React.FC<{ theme: DefaultTheme }> = (pro
         accentTheme,
         lighterMainTheme,
         errorMainTheme,
-        ...generalThemes,
+        props.theme.main,
+        props.theme.primary,
         ...rainbowThemes,
     ];
 

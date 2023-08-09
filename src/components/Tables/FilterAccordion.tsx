@@ -18,21 +18,6 @@ const Styling = styled.div`
     height: 39px;
     overflow: visible;
     z-index: 2;
-    & .MuiPaper-root {
-        background-color: ${(props) => props.theme.main.background[1]};
-        border: 1px solid ${(props) => props.theme.main.lighterForeground[1]};
-        box-shadow: none;
-        background-image: none;
-
-        color: ${(props) => props.theme.main.lighterForeground[1]};
-        border-radius: 0.5rem;
-        & .MuiAccordionDetails-root {
-            display: flex;
-            flex-wrap: wrap;
-            flex-basis: auto;
-            gap: 1rem;
-        }
-    }
 `;
 
 const ContainerDiv = styled.div`
@@ -40,7 +25,7 @@ const ContainerDiv = styled.div`
     justify-content: start;
     align-items: center;
     & svg {
-        fill: ${(props) => props.color ?? props.theme.main.foreground[0]};
+        fill: ${(props) => props.color ?? props.theme.main.lighterForeground[1]};
     }
 `;
 
@@ -56,16 +41,31 @@ const Spacer = styled.div`
 `;
 
 const StyledAccordion = styled(Accordion)`
-    & .MuiButtonBase-root {
-        min-height: 39px;
-    }
-    & .MuiAccordionSummary-content {
-        > div {
-            height: 10px;
+    &.MuiPaper-root {
+        background-color: ${(props) => props.theme.main.background[1]};
+        border: 1px solid ${(props) => props.theme.main.lighterForeground[1]};
+        box-shadow: none;
+        background-image: none;
+
+        color: ${(props) => props.theme.main.lighterForeground[1]};
+        border-radius: 0.5rem;
+        & .MuiAccordionDetails-root {
+            display: flex;
+            flex-wrap: wrap;
+            flex-basis: auto;
+            gap: 1rem;
         }
-    }
-    p {
-        font-size: 14px;
+        & .MuiButtonBase-root {
+            min-height: 39px;
+        }
+        & .MuiAccordionSummary-content {
+            > div {
+                height: 10px;
+            }
+        }
+        p {
+            font-size: 14px;
+        }
     }
 `;
 
@@ -102,7 +102,7 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
                         return (
                             <ContainerDiv key={key}>
                                 <Checkbox
-                                    color="primary"
+                                    color="secondary"
                                     key={key}
                                     checked={shownHeaderKeys.includes(key)}
                                     onChange={getOnChanged(key)}

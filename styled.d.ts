@@ -46,7 +46,8 @@ declare module "styled-components" {
      * _primary_
      * * primary[2] for basically most green
      * * primary[1] and primary[3] for some buttons with more contrasting colors
-     * * primary[0] and primary[4] for highlights (replace low opacity) */
+     * * primary[0] and primary[4] for highlights (replace low opacity)
+     * */
     export interface DefaultTheme {
         light: boolean;
         main: StandardPaletteList & { lighterForeground: string[]; border: string };

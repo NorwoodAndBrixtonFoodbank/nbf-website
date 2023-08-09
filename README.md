@@ -66,7 +66,6 @@ npx supabase gen types typescript --project-id <PROJECT_ID> --schema public > sr
   * Note that the `loading.tsx` at root will be displayed if async until unblocked
   * `const metadata` should be exported with a `title:` attribute
   * Colours should be loaded from the `props.theme` in styled_components - the theme can be set in `src/app/themes.tsx`
-    and an example use can be found in `src/components/Buttons/Button.tsx`
 
 * Testing with Cypress - for UI, opens a 'browser' and clicks buttons.
   * For both unit tests (mount a component and verify properties) as well as end-to-end tests (open the website and

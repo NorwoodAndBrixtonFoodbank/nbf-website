@@ -1,11 +1,11 @@
 import supabase, { Schema } from "@/supabase";
 import { CalendarEvent } from "@/components/Calendar/Calendar";
 
+const COLLECTION_DURATION_MS = 30 * 60 * 1000;
+
 export interface LocationColorMap {
     [location: string]: { color: string; text: string };
 }
-
-const COLLECTION_DURATION_MS = 30 * 60 * 1000;
 
 export interface ClientMap {
     [primary_key: string]: Schema["clients"];

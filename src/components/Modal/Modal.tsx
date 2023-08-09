@@ -17,7 +17,7 @@ const StyledDialog = styled(Dialog)`
     }
 `;
 
-const Header = styled.h1`
+const Header = styled.div`
     display: flex;
     position: sticky;
     justify-content: space-between;

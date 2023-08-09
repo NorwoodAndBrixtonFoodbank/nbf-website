@@ -52,4 +52,3 @@ export const FormErrorText = styled(FormText)`
     margin-bottom: 3em;
     text-align: center;
 `;
-
