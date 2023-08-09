@@ -1,9 +1,24 @@
 import { Metadata } from "next";
 import React from "react";
-import ShippingParcels from "@/app/shippings/shippingParcels";
-import { ParcelClients } from "@/app/shippings/parcelCard";
 import supabase, { Schema } from "@/supabase";
 import Title from "@/components/Title/Title";
+import ShippingParcels from "@/app/shippings/shippingParcelPage";
+
+export interface ParcelClients {
+    primary_key: string;
+    packing_datetime: string;
+    collection_centre: string;
+    collection_datetime: string;
+    voucher_number: string;
+    full_name?: string;
+    phone_number?: string;
+    address_1?: string;
+    address_2?: string;
+    address_town?: string;
+    address_county?: string;
+    address_postcode?: string;
+    delivery_instructions?: string;
+}
 
 const formatDatetime = (datetimeString: string | null, isDatetime: boolean): string => {
     if (datetimeString === null) {
@@ -70,7 +85,7 @@ const Shippings = async (): Promise<React.ReactElement> => {
     return (
         <main>
             <Title> Shipping Parcels Information </Title>
-            <ShippingParcels data={requiredData} />
+            <ShippingParcels data={requiredData}/>
         </main>
     );
 };
