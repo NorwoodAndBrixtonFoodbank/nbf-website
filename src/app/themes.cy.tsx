@@ -8,24 +8,7 @@ import styled, {
     StandardPalette,
 } from "styled-components";
 import StyleManager, { lightTheme, darkTheme } from "@/app/themes";
-import { Result } from "axe-core";
 
-const checkColorContrast = (): void => {
-    const terminalLog = (violations: Result[]): void => {
-        cy.task(
-            "table",
-            violations.map(({ id, impact, description, nodes }) => ({
-                id,
-                impact,
-                description,
-                length: nodes.length,
-            }))
-        );
-    };
-
-    cy.injectAxe();
-    cy.checkA11y(undefined, { runOnly: { type: "tag", values: ["wcag2aa"] } }, terminalLog);
-};
 const ForegroundWithBackground: React.FC<StandardPalette> = (props) => {
     const StyledH1 = styled.h1`
         color: ${props.largeForeground};
@@ -99,11 +82,11 @@ const GenerateForegroundWithBackground: React.FC<{ theme: DefaultTheme }> = (pro
 describe("Light and dark mode buttons work", () => {
     it("Light mode theme colors are all accessible", () => {
         cy.mount(<GenerateForegroundWithBackground theme={lightTheme} />);
-        checkColorContrast();
+        cy.checkColorContrast();
     });
 
     it("Dark mode theme colors are all accessible", () => {
         cy.mount(<GenerateForegroundWithBackground theme={darkTheme} />);
-        checkColorContrast();
+        cy.checkColorContrast();
     });
 });
