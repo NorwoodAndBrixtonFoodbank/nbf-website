@@ -7,7 +7,7 @@ const Submit = styled.input.attrs({ type: "submit" })`
     border-radius: 5px;
     text-decoration: none;
     color: ${(props) => props.theme.primary.foreground[2]};
-    border: 0;
+    border: none;
 
     &:hover {
         font-weight: bold;

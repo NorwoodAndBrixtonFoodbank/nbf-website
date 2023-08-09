@@ -3,6 +3,7 @@
 import React from "react";
 import styled from "styled-components";
 import FilterAccordion from "@/components/Tables/FilterAccordion";
+import Button from "@mui/material/Button";
 
 export interface FilterText {
     [key: string]: string;
@@ -13,24 +14,17 @@ const StyledFilterAccordion = styled(FilterAccordion)`
     overflow: visible;
 `;
 
-const ClearButton = styled.button`
-    background-color: ${(props) => props.theme.secondaryBackgroundColor};
-    color: ${(props) => props.theme.secondaryForegroundColor};
-    box-shadow: 0 0 1px ${(props) => props.theme.secondaryBackgroundColor};
-    height: 3rem;
-    width: 6rem;
-    font-size: 1rem;
-`;
-
 const StyledFilterBar = styled.input`
-    height: 3rem;
-    font-size: 1rem;
+    height: 39px;
+    font-size: 14px;
     width: 15rem;
     overflow: visible;
-    border: 1px solid ${(props) => props.theme.secondaryBackgroundColor};
-    box-shadow: 0 0 1px ${(props) => props.theme.secondaryBackgroundColor};
-    padding: 4px 4px 4px 8px;
-    border-radius: 0.8rem;
+    box-shadow: none;
+    padding: 4px 12px 4px 12px;
+
+    &:focus {
+        outline: none;
+    }
 `;
 
 interface Props {
@@ -47,7 +41,9 @@ interface Props {
 const TableFilterBar: React.FC<Props> = (props) => {
     return (
         <>
-            <ClearButton onClick={props.handleClear}>Clear</ClearButton>
+            <Button variant="contained" onClick={props.handleClear}>
+                Clear
+            </Button>
             {props.headers
                 .filter(([key]) => props.filterKeys?.includes(key) ?? true)
                 .map(([key, value]) => {

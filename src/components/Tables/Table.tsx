@@ -107,7 +107,7 @@ const CustomCell: React.FC<CellProps> = ({ data, rowId, headerKey }) => {
                 <SpeechBubbleIcon
                     onHoverText={tooltips[headerKey]!}
                     showTooltip={tooltip}
-                    color={theme.accentBackgroundColor}
+                    color={theme.accent.background}
                 />
             )}
         </RowDiv>
@@ -311,11 +311,6 @@ const RowDiv = styled.div`
     align-items: center;
     padding-left: 1rem;
     gap: 2rem;
-    /* background-color: red;
-
-    &:hover {
-        background-color: transparent;
-    } */
 `;
 
 const EditandReorderArrowDiv = styled.div`
@@ -361,41 +356,42 @@ const Styling = styled.div`
         // the pagination bar
         > nav {
             background-color: transparent;
-            color: ${(props) => props.theme.surfaceForegroundColor};
-            border-top: solid 1px ${(props) => props.theme.foregroundColor};
+            color: ${(props) => props.theme.main.foreground[0]};
+            border-top: solid 1px ${(props) => props.theme.main.border};
+            font-size: 1rem;
+
+            & option {
+                color: ${(props) => props.theme.main.foreground[0]};
+                background-color: ${(props) => props.theme.main.background[0]};
+            }
         }
     }
 
     // the icons in the pagination bar
     & svg {
-        // TODO VFB-16 Different greys for different theme modes
-        fill: grey;
+        fill: ${(props) => props.theme.main.lighterForeground[0]};
     }
 
     // formatting all direct children to adhere to the theme
     & > div {
-        background-color: ${(props) => props.theme.surfaceBackgroundColor};
-        color: ${(props) => props.theme.surfaceForegroundColor};
-        // TODO VFB-16 Different greys for different theme modes
-        border-color: grey;
+        background-color: ${(props) => props.theme.main.background[0]};
+        color: ${(props) => props.theme.main.foreground[0]};
+        border-color: ${(props) => props.theme.main.border};
     }
 
     // the filter bars
     & input[type="text"] {
-        color: ${(props) => props.theme.surfaceForegroundColor};
+        color: ${(props) => props.theme.main.lighterForeground[1]};
+        background-color: ${(props) => props.theme.main.background[1]};
+        border-radius: 0.5rem;
+        border: solid 1px ${(props) => props.theme.main.lighterForeground[1]};
 
         &::placeholder {
-            // TODO VFB-16 Different greys for different theme modes
-            color: grey;
+            color: ${(props) => props.theme.main.lighterForeground[1]};
         }
 
-        background-color: ${(props) => props.theme.surfaceBackgroundColor};
         margin: 1px 2px 1px 2px;
-        padding: 4px 1px 4px 8px;
-        border-radius: 0.5rem;
         width: 10rem;
-        // TODO VFB-16 Different greys for different theme modes
-        border: solid 1px grey;
     }
 
     & div.rdt_TableCell,
@@ -414,25 +410,30 @@ const Styling = styled.div`
     // the table itself
     & .rdt_TableCell,
     & .rdt_TableCol_Sortable,
+    & .rdt_TableHeadRow,
     & .rdt_TableRow,
     & .rdt_TableCol,
     & .rdt_Table {
         text-align: start;
-        font-size: 1.2rem;
+        font-size: 1rem;
         background-color: transparent;
-        color: ${(props) => props.theme.surfaceForegroundColor};
+        color: ${(props) => props.theme.main.foreground[2]};
+    }
+
+    & .rdt_Table {
+        border-color: ${(props) => props.theme.main.border};
     }
 
     & div.rdt_TableRow {
         padding: 0.5rem 0.5rem;
-        // TODO VFB-16 Different greys for different theme modes
         // important needed to override the inline style
-        border-bottom-color: grey;
+        border-bottom-color: ${(props) => props.theme.main.border};
     }
 
     & .rdt_TableHeadRow {
-        background-color: ${(props) => props.theme.surfaceBackgroundColor};
-        border-color: ${(props) => props.theme.foregroundColor};
+        background-color: ${(props) => props.theme.main.background[2]};
+        border-color: ${(props) => props.theme.main.border};
+
         font-weight: bold;
     }
 
@@ -445,7 +446,7 @@ const Styling = styled.div`
 
     & .rdt_Table > div {
         background-color: transparent;
-        color: ${(props) => props.theme.surfaceForegroundColor};
+        color: ${(props) => props.theme.main.foreground[2]};
     }
 `;
 

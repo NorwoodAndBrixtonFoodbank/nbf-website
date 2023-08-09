@@ -15,17 +15,16 @@ interface FilterAccordionProps {
 
 const Styling = styled.div`
     flex-grow: 1;
-    height: 3rem;
+    height: 39px;
     overflow: visible;
     z-index: 2;
-    margin-bottom: 0.5rem;
-    margin-top: 0.5rem;
     & .MuiPaper-root {
-        background-color: ${(props) => props.theme.surfaceBackgroundColor};
-        border: 1px solid ${(props) => props.theme.secondaryBackgroundColor};
-        box-shadow: 0 0 1px ${(props) => props.theme.secondaryBackgroundColor};
-        // TODO VFB16 Change to a theme specific grey
-        color: ${(props) => props.theme.surfaceForegroundColor};
+        background-color: ${(props) => props.theme.main.background[1]};
+        border: 1px solid ${(props) => props.theme.main.lighterForeground[1]};
+        box-shadow: none;
+        background-image: none;
+
+        color: ${(props) => props.theme.main.lighterForeground[1]};
         border-radius: 0.5rem;
         & .MuiAccordionDetails-root {
             display: flex;
@@ -41,7 +40,7 @@ const ContainerDiv = styled.div`
     justify-content: start;
     align-items: center;
     & svg {
-        fill: ${(props) => props.theme.primaryBackgroundColor};
+        fill: ${(props) => props.color ?? props.theme.main.foreground[0]};
     }
 `;
 
@@ -54,6 +53,20 @@ const Row = styled.div`
 
 const Spacer = styled.div`
     flex-grow: 1;
+`;
+
+const StyledAccordion = styled(Accordion)`
+    & .MuiButtonBase-root {
+        min-height: 39px;
+    }
+    & .MuiAccordionSummary-content {
+        > div {
+            height: 10px;
+        }
+    }
+    p {
+        font-size: 14px;
+    }
 `;
 
 const FilterAccordion: React.FC<FilterAccordionProps> = ({
@@ -74,7 +87,7 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
 
     return (
         <Styling>
-            <Accordion>
+            <StyledAccordion>
                 <AccordionSummary>
                     <Row>
                         <p>Select Columns</p>
@@ -89,6 +102,7 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
                         return (
                             <ContainerDiv key={key}>
                                 <Checkbox
+                                    color="primary"
                                     key={key}
                                     checked={shownHeaderKeys.includes(key)}
                                     onChange={getOnChanged(key)}
@@ -98,7 +112,7 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
                         );
                     })}
                 </AccordionDetails>
-            </Accordion>
+            </StyledAccordion>
         </Styling>
     );
 };

@@ -19,11 +19,7 @@ const MiddleDiv = styled.div`
     --fonts-bodyFontFamily: Helvetica, Arial, sans-serif;
     --fonts-inputFontFamily: Helvetica, Arial, sans-serif;
     --fonts-labelFontFamily: Helvetica, Arial, sans-serif;
-
-    & input {
-        border-color: ${(props) => props.theme.main.background[2]};
-        background-color: ${(props) => props.theme.main.background[2]};
-    }
+    //
 
     // Google Chrome password autofill will automatically make the background blue and the word black, which is inconsistent with our current theme
     // The below forces the background on Google Chrome to be our desired background
@@ -35,13 +31,9 @@ const MiddleDiv = styled.div`
         -webkit-box-shadow: 0 0 0 9999px ${(props) => props.theme.main.background[2]} inset !important;
         -webkit-text-fill-color: ${(props) => props.theme.main.foreground[2]} !important;
     }
-
-    & button {
-        border: transparent;
-    }
 `;
 
-const LoginPanel: React.FC = () => {
+const LoginPanel: React.FC<{}> = () => {
     const supabase = createClientComponentClient<DatabaseAutoType>();
     const theme = useTheme();
 
@@ -55,13 +47,15 @@ const LoginPanel: React.FC = () => {
                     variables: {
                         default: {
                             colors: {
-                                inputLabelText: theme.main.foreground[2],
-                                anchorTextColor: theme.main.lighterForeground[0],
-                                defaultButtonBackground: theme.primary.background[1],
-                                brand: theme.primary.background[2],
-                                brandButtonText: theme.primary.foreground[2],
                                 inputText: theme.main.foreground[2],
-                                defaultButtonBackgroundHover: theme.primary.background[2],
+                                inputBackground: theme.main.background[2],
+                                inputBorder: theme.main.background[2],
+                                inputLabelText: theme.main.foreground[0],
+                                anchorTextColor: theme.main.lighterForeground[0],
+                                brand: theme.primary.background[2],
+                                brandAccent: theme.primary.background[2],
+                                brandButtonText: theme.primary.foreground[2],
+                                messageTextDanger: theme.error,
                             },
                         },
                     },

@@ -3,9 +3,9 @@
 import React from "react";
 import styled, {
     DefaultTheme,
-    rainbowPalette,
-    standardPaletteList,
-    standardPalette,
+    RainbowPalette,
+    StandardPaletteList,
+    StandardPalette,
 } from "styled-components";
 import StyleManager, { lightTheme, darkTheme } from "@/app/themes";
 import { Result } from "axe-core";
@@ -26,7 +26,7 @@ const checkColorContrast = (): void => {
     cy.injectAxe();
     cy.checkA11y(undefined, { runOnly: { type: "tag", values: ["wcag2aa"] } }, terminalLog);
 };
-const ForegroundWithBackground: React.FC<standardPalette> = (props) => {
+const ForegroundWithBackground: React.FC<StandardPalette> = (props) => {
     const StyledH1 = styled.h1`
         color: ${props.largeForeground};
         background-color: ${props.background};
@@ -47,51 +47,54 @@ const ForegroundWithBackground: React.FC<standardPalette> = (props) => {
 
 const GenerateForegroundWithBackground: React.FC<{ theme: DefaultTheme }> = (props) => {
     const generalThemeCategories: ("main" | "primary")[] = ["main", "primary"];
-    const rainbowThemeCategories = Object.keys(props.theme.rainbow) as (keyof rainbowPalette)[];
+    const rainbowThemeCategories = Object.keys(props.theme.rainbow) as (keyof RainbowPalette)[];
+    const mainLength = props.theme.main.background.length;
 
-    const lighterMainTheme: standardPaletteList[] = [
-        {
-            ...props.theme.main,
-            foreground: props.theme.main.lighterForeground,
-            largeForeground: props.theme.main.lighterForeground,
-        },
-    ];
-    const generalThemes: standardPaletteList[] = generalThemeCategories.map(
-        (themeType) => props.theme[themeType]
-    );
-    const accentTheme: standardPaletteList = {
+    const accentTheme: StandardPaletteList = {
         background: [props.theme.accent.background],
         foreground: [props.theme.accent.foreground],
         largeForeground: [props.theme.accent.largeForeground],
     };
-    const rainbowThemes: standardPaletteList[] = rainbowThemeCategories.map((colorType) => {
+    const lighterMainTheme: StandardPaletteList = {
+        ...props.theme.main,
+        foreground: props.theme.main.lighterForeground,
+        largeForeground: props.theme.main.lighterForeground,
+    };
+    const errorMainTheme: StandardPaletteList = {
+        ...props.theme.main,
+        foreground: new Array(mainLength).fill(props.theme.error),
+        largeForeground: new Array(mainLength).fill(props.theme.error),
+    };
+    const generalThemes: StandardPaletteList[] = generalThemeCategories.map(
+        (themeType) => props.theme[themeType]
+    );
+    const rainbowThemes: StandardPaletteList[] = rainbowThemeCategories.map((colorType) => {
         return {
             background: [props.theme.rainbow[colorType].background],
             foreground: [props.theme.rainbow[colorType].foreground],
             largeForeground: [props.theme.rainbow[colorType].largeForeground],
         };
     });
-
-    const allThemes: standardPaletteList[] = [accentTheme].concat(
+    const allThemes: StandardPaletteList[] = [
+        accentTheme,
         lighterMainTheme,
-        generalThemes,
-        rainbowThemes
-    );
+        errorMainTheme,
+        ...generalThemes,
+        ...rainbowThemes,
+    ];
 
     return (
         <StyleManager>
-            <>
-                {allThemes.map((theme: standardPaletteList) =>
-                    theme.background.map((background: string, index: number) => (
-                        <ForegroundWithBackground
-                            key={index}
-                            background={background}
-                            foreground={theme.foreground[index]}
-                            largeForeground={theme.largeForeground[index]}
-                        />
-                    ))
-                )}
-            </>
+            {allThemes.map((theme: StandardPaletteList) =>
+                theme.background.map((background: string, index: number) => (
+                    <ForegroundWithBackground
+                        key={index}
+                        background={background}
+                        foreground={theme.foreground[index]}
+                        largeForeground={theme.largeForeground[index]}
+                    />
+                ))
+            )}
         </StyleManager>
     );
 };

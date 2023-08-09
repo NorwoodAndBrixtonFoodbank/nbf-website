@@ -53,17 +53,3 @@ export const FormErrorText = styled(FormText)`
     text-align: center;
 `;
 
-export const StyledFormSubmitButton = styled.button`
-    text-align: center;
-    width: 150px;
-    height: 40px;
-    border-radius: 5px;
-    border: 0;
-    background-color: ${(props) => props.theme.primary.background[2]};
-    color: ${(props) => props.theme.primary.foreground[2]};
-    font-size: 16px;
-
-    &:hover {
-        opacity: 0.8;
-    }
-`;

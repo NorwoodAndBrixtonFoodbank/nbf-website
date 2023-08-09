@@ -1,44 +1,44 @@
 import "styled-components";
 
 declare module "styled-components" {
-    export type standardPaletteList = {
+    export type StandardPaletteList = {
         background: string[];
         foreground: string[];
         largeForeground: string[];
     };
 
-    export type standardPalette = {
+    export type StandardPalette = {
         background: string;
         foreground: string;
         largeForeground: string;
     };
 
-    export type rainbowPalette = {
-        lightRed: standardPalette;
-        darkRed: standardPalette;
-        lightOrange: standardPalette;
-        darkOrange: standardPalette;
-        lightYellow: standardPalette;
-        darkYellow: standardPalette;
-        lightGreen: standardPalette;
-        darkGreen: standardPalette;
-        lightBlue: standardPalette;
-        darkBlue: standardPalette;
-        lightPurple: standardPalette;
-        darkPurple: standardPalette;
-        lightGrey: standardPalette;
-        darkGrey: standardPalette;
-        lightBrown: standardPalette;
-        darkBrown: standardPalette;
+    export type RainbowPalette = {
+        lightRed: StandardPalette;
+        darkRed: StandardPalette;
+        lightOrange: StandardPalette;
+        darkOrange: StandardPalette;
+        lightYellow: StandardPalette;
+        darkYellow: StandardPalette;
+        lightGreen: StandardPalette;
+        darkGreen: StandardPalette;
+        lightBlue: StandardPalette;
+        darkBlue: StandardPalette;
+        lightPurple: StandardPalette;
+        darkPurple: StandardPalette;
+        lightGrey: StandardPalette;
+        darkGrey: StandardPalette;
+        lightBrown: StandardPalette;
+        darkBrown: StandardPalette;
     };
 
     export interface DefaultTheme {
         light: boolean;
-        main: standardPaletteList & { lighterForeground: string[]; border: string };
-        primary: standardPaletteList;
-        accent: standardPalette;
+        main: StandardPaletteList & { lighterForeground: string[]; border: string };
+        primary: StandardPaletteList;
+        accent: StandardPalette;
         error: string;
         shadow: string;
-        rainbow: rainbowPalette;
+        rainbow: RainbowPalette;
     }
 }

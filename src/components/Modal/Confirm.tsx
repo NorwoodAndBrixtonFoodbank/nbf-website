@@ -22,7 +22,7 @@ const ModalInner = styled.div`
 `;
 
 const Text = styled.p`
-    font-size: 1.5rem;
+    font-size: 1.2rem;
 `;
 
 const ConfirmDialog: React.FC<Props> = ({ isOpen, message, onCancel, onConfirm }) => {
@@ -31,7 +31,7 @@ const ConfirmDialog: React.FC<Props> = ({ isOpen, message, onCancel, onConfirm }
             <ModalInner>
                 <Text>{message}</Text>
                 <Button onClick={onConfirm} variant="contained" color="primary">
-                    <Text>Confirm</Text>
+                    <p>Confirm</p>
                 </Button>
             </ModalInner>
         </Modal>

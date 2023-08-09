@@ -41,9 +41,9 @@ describe("<NavigationBar />", () => {
         cy.viewport(1366, 768);
         cy.mount(RouterWrappedNavBar);
 
-        cy.get("a[href='/clients']").contains("Clients").should("exist");
-        cy.get("a[href='/lists']").contains("Lists").should("exist");
-        cy.get("a[href='/calendar']").contains("Calendar").should("exist");
+        cy.get("a[href='/clients']").contains("CLIENTS").should("exist");
+        cy.get("a[href='/lists']").contains("LISTS").should("exist");
+        cy.get("a[href='/calendar']").contains("CALENDAR").should("exist");
     });
 
     it("Links exist on mobile", () => {
@@ -51,9 +51,9 @@ describe("<NavigationBar />", () => {
         cy.mount(RouterWrappedNavBar);
 
         cy.get("button[aria-label='Mobile Menu Button']").click();
-        cy.get("a[href='/clients']").contains("Clients").should("exist");
-        cy.get("a[href='/lists']").contains("Lists").should("exist");
-        cy.get("a[href='/calendar']").contains("Calendar").should("exist");
+        cy.get("a[href='/clients']").contains("CLIENTS").should("exist");
+        cy.get("a[href='/lists']").contains("LISTS").should("exist");
+        cy.get("a[href='/calendar']").contains("CALENDAR").should("exist");
     });
 
     it("Mobile Menu Button doesn't show up on Desktop and Drawer is not open", () => {
@@ -61,17 +61,17 @@ describe("<NavigationBar />", () => {
         cy.mount(RouterWrappedNavBar);
 
         cy.get("button[aria-label='Mobile Menu Button']").should("not.be.visible");
-        cy.get("button").contains("Clients").filter(":visible").should("have.length", 1);
-        cy.get("button").contains("Lists").filter(":visible").should("have.length", 1);
-        cy.get("button").contains("Calendar").filter(":visible").should("have.length", 1);
+        cy.get("button").contains("CLIENTS").filter(":visible").should("have.length", 1);
+        cy.get("button").contains("LISTS").filter(":visible").should("have.length", 1);
+        cy.get("button").contains("CALENDAR").filter(":visible").should("have.length", 1);
     });
 
     it("Desktop Buttons don't show up on Mobile", () => {
         cy.viewport(360, 760);
         cy.mount(RouterWrappedNavBar);
 
-        cy.get("button").contains("Clients").should("not.be.visible");
-        cy.get("button").contains("Lists").should("not.be.visible");
-        cy.get("button").contains("Calendar").should("not.be.visible");
+        cy.get("button").contains("CLIENTS").should("not.be.visible");
+        cy.get("button").contains("LISTS").should("not.be.visible");
+        cy.get("button").contains("CALENDAR").should("not.be.visible");
     });
 });

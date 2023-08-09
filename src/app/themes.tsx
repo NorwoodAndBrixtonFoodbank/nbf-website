@@ -1,6 +1,5 @@
 "use client";
 
-import GlobalStyle from "@/app/global_styles";
 import isPropValid from "@emotion/is-prop-valid";
 import { useServerInsertedHTML } from "next/navigation";
 import React, { createContext, useState } from "react";
@@ -10,10 +9,7 @@ import {
     ThemeProvider,
     DefaultTheme,
 } from "styled-components";
-import {
-    ThemeProvider as MaterialThemeProvider,
-    createTheme as createMaterialTheme,
-} from "@mui/material";
+import MaterialAndGlobalStyle from "@/app/global_styles";
 
 // The array represents a gradient of color
 // In light mode: 0 represents the lightest and larger index represents darker color
@@ -25,9 +21,9 @@ const WHITE = "#f2f2f2";
 export const lightTheme: DefaultTheme = {
     light: true,
     main: {
-        background: ["#fdfdfd", "#f6f6f6", "#eeeeee", "#d0d0d0"],
-        foreground: ["#2d2d2d", "#2d2d2d", "#2d2d2d", BLACK],
-        largeForeground: ["#2d2d2d", "#2d2d2d", "#2d2d2d", BLACK],
+        background: ["#fdfdfd", "#f6f6f6", "#eeeeee", "#dddddd"],
+        foreground: ["#2d2d2d", "#2d2d2d", "#2d2d2d", "#2d2d2d"],
+        largeForeground: ["#2d2d2d", "#2d2d2d", "#2d2d2d", "#2d2d2d"],
         lighterForeground: ["#666666", "#666666", "#666666", "#3b3b3b"],
         border: "#d5d5d5",
     },
@@ -41,7 +37,7 @@ export const lightTheme: DefaultTheme = {
         foreground: WHITE,
         largeForeground: WHITE,
     },
-    error: "#ff624e",
+    error: "#c01622",
     shadow: "#e2e2e2",
     rainbow: {
         lightRed: {
@@ -131,16 +127,16 @@ export const darkTheme: DefaultTheme = {
     ...lightTheme,
     light: false,
     main: {
-        background: ["#262626", "#282828", "#2d2d2d", "#404040"],
-        foreground: ["#d9d9d9", "#d9d9d9", "#d9d9d9", WHITE],
-        largeForeground: ["#d9d9d9", "#d9d9d9", "#d9d9d9", WHITE],
+        background: ["#262626", "#282828", "#2d2d2d", "#363636"],
+        foreground: ["#d9d9d9", "#d9d9d9", "#d9d9d9", "#d9d9d9"],
+        largeForeground: ["#d9d9d9", "#d9d9d9", "#d9d9d9", "#d9d9d9"],
         lighterForeground: ["#969696", "#969696", "#969696", "#bbbbbb"],
         border: "#5c5c5c",
     },
     primary: {
-        background: lightTheme.primary.background.slice().reverse(),
-        foreground: lightTheme.primary.foreground.slice().reverse(),
-        largeForeground: lightTheme.primary.largeForeground.slice().reverse(),
+        background: [...lightTheme.primary.background].reverse(),
+        foreground: [...lightTheme.primary.foreground].reverse(),
+        largeForeground: [...lightTheme.primary.largeForeground].reverse(),
     },
     accent: {
         background: "#b8cbe9",
@@ -148,7 +144,13 @@ export const darkTheme: DefaultTheme = {
         largeForeground: "#2d2d2d",
     },
     shadow: "#282828",
+    error: "#ff7361",
 };
+
+interface Props {
+    children: React.ReactNode;
+    theme?: DefaultTheme;
+}
 
 export const ThemeUpdateContext = createContext((dark: boolean): void => {
     throw new Error(
@@ -160,11 +162,6 @@ export const ThemeUpdateContext = createContext((dark: boolean): void => {
  * Makes a styled-components global registry to get server-side inserted CSS
  * Adapted from https://nextjs.org/docs/app/building-your-application/styling/css-in-js#styled-components
  */
-
-interface Props {
-    children: React.ReactElement;
-    theme?: DefaultTheme;
-}
 
 const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
     const [serverStyleSheet] = useState(() => new ServerStyleSheet());
@@ -181,7 +178,7 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
         setChosenTheme(dark ? darkTheme : lightTheme);
     };
 
-    const themedChildren =
+    const themedChildren: React.ReactNode =
         typeof window !== "undefined" ? (
             children
         ) : (
@@ -190,79 +187,10 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
             </StyleSheetManager>
         );
 
-    const materialTheme = createMaterialTheme({
-        palette: {
-            mode: chosenTheme === lightTheme ? "light" : "dark",
-            primary: {
-                main: chosenTheme.primary.background[2],
-                contrastText: chosenTheme.primary.background[2],
-            },
-            secondary: {
-                main: chosenTheme.main.foreground[2],
-                contrastText: chosenTheme.main.foreground[2],
-            },
-            error: {
-                main: chosenTheme.error,
-            },
-            background: {
-                default: chosenTheme.main.foreground[2],
-                paper: chosenTheme.main.foreground[3],
-            },
-            text: {
-                primary: chosenTheme.main.foreground[1],
-            },
-        },
-        typography: {
-            fontFamily: "Helvetica, Arial, sans-serif",
-        },
-        components: {
-            MuiAppBar: {
-                styleOverrides: {
-                    root: {
-                        backgroundColor: chosenTheme.main.background[3],
-                        color: chosenTheme.main.foreground[3],
-                        backgroundImage: "none",
-                    },
-                },
-            },
-            MuiButton: {
-                styleOverrides: {
-                    root: {
-                        transition: "none",
-                    },
-                },
-            },
-            MuiInputLabel: {
-                styleOverrides: {
-                    root: { transition: "none" },
-                },
-            },
-            MuiTooltip: {
-                styleOverrides: {
-                    tooltip: {
-                        fontSize: "1rem",
-                        padding: "0.5rem",
-                    },
-                },
-            },
-            MuiTooltip: {
-                styleOverrides: {
-                    tooltip: {
-                        fontSize: "1rem",
-                        padding: "0.5rem",
-                    },
-                },
-            },
-        },
-    });
-
     return (
         <ThemeUpdateContext.Provider value={handleThemeChange}>
             <ThemeProvider theme={chosenTheme}>
-                <MaterialThemeProvider theme={materialTheme}>
-                    <GlobalStyle />
-                    {themedChildren}
-                </MaterialThemeProvider>
+                <MaterialAndGlobalStyle>{themedChildren}</MaterialAndGlobalStyle>
             </ThemeProvider>
         </ThemeUpdateContext.Provider>
     );

@@ -12,7 +12,7 @@ describe("Rendering tests", () => {
     it("Renders lists page", () => {
         cy.visit("/lists");
 
-        cy.get("h1").should("contain.text", "Lists Page");
+        cy.get("h1").should("contain.text", "Lists");
     });
 
     it("Renders calendar page", () => {

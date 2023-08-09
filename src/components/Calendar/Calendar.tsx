@@ -37,7 +37,7 @@ const CalendarStyling = styled.div`
     --fc-border-color: ${(props) => props.theme.main.border};
 
     --fc-page-bg-color: transparent;
-    --fc-today-bg-color: ${(props) => props.theme.primary.background[1]}30;
+    --fc-today-bg-color: ${(props) => props.theme.primary.background[0]};
 
     .fc {
         background-color: ${(props) => props.theme.main.background[0]};

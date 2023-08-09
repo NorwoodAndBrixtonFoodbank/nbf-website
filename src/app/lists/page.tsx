@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import React, { ReactElement } from "react";
 import ListsDataView from "@/app/lists/ListDataview";
 import supabase, { Schema } from "@/supabase";
+import Title from "@/components/Title/Title";
 
 // disables caching
 export const revalidate = 0;
@@ -16,7 +17,7 @@ const Lists = async (): Promise<ReactElement> => {
 
     return (
         <main>
-            <h1>Lists Page</h1>
+            <Title>Lists</Title>
             <ListsDataView data={data} />
         </main>
     );

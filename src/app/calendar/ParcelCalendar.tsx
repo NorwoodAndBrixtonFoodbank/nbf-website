@@ -3,13 +3,18 @@
 import Calendar from "@/components/Calendar/Calendar";
 import Title from "@/components/Title/Title";
 import React from "react";
-import styled, { rainbowPalette, useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
+import { lightTheme } from "@/app/themes";
+
+type RainbowPalette = typeof lightTheme.rainbow;
+
 import {
     ClientMap,
     LocationColorMap,
     parcelsToCollectionEvents,
 } from "@/app/calendar/parcelCalendarFunctions";
 import { Schema } from "@/supabase";
+
 interface ParcelCalendarProps {
     clientMap: ClientMap;
     parcelsWithCollectionDate: Schema["parcels"][];
@@ -34,7 +39,7 @@ const CalendarWrapper = styled.div`
 const ParcelCalendar: React.FC<ParcelCalendarProps> = (props) => {
     const chosenTheme = useTheme();
 
-    const getColorText = (color: keyof rainbowPalette): ColorTextProps => {
+    const getColorText = (color: keyof RainbowPalette): ColorTextProps => {
         return {
             color: `${chosenTheme.rainbow[color].background}`,
             text: `${chosenTheme.rainbow[color].foreground}`,

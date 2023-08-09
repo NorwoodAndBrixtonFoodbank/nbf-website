@@ -68,7 +68,6 @@ const DrawerButtonWrapper = styled.div`
 `;
 
 const DrawerButton = styled(Button)`
-    color: ${(props) => props.theme.main.foreground[3]};
     width: 100%;
 `;
 
@@ -136,9 +135,9 @@ const ResponsiveAppBar: React.FC<Props> = ({ children = <></> }) => {
     };
 
     const pages = [
-        ["Clients", "/clients"],
-        ["Lists", "/lists"],
-        ["Calendar", "/calendar"],
+        ["CLIENTS", "/clients"],
+        ["LISTS", "/lists"],
+        ["CALENDAR", "/calendar"],
     ];
 
     return (
@@ -148,7 +147,9 @@ const ResponsiveAppBar: React.FC<Props> = ({ children = <></> }) => {
                     {pages.map(([page, link]) => (
                         <DrawerButtonWrapper key={page}>
                             <UnstyledLink href={link} onClick={closeDrawer} prefetch={false}>
-                                <DrawerButton variant="text">{page}</DrawerButton>
+                                <DrawerButton color="secondary" variant="text">
+                                    {page}
+                                </DrawerButton>
                             </UnstyledLink>
                         </DrawerButtonWrapper>
                     ))}

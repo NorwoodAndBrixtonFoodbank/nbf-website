@@ -8,6 +8,7 @@ import supabase, { Schema } from "@/supabase";
 import ConfirmDialog from "@/components/Modal/Confirm";
 import Snackbar from "@mui/material/Snackbar/Snackbar";
 import Alert from "@mui/material/Alert/Alert";
+import Button from "@mui/material/Button";
 
 type ListRow = Schema["lists"];
 
@@ -163,7 +164,11 @@ const ListsDataView: React.FC<Props> = ({ data: rawData }) => {
                     onDelete={onDeleteButtonClick}
                     sortable={false}
                 />
-                <StyledAddButton onClick={() => setModal(null)}>+ Add</StyledAddButton>
+                <ButtonMargin>
+                    <Button variant="contained" onClick={() => setModal(null)}>
+                        + Add
+                    </Button>
+                </ButtonMargin>
             </TableDiv>
         </>
     );
@@ -183,17 +188,15 @@ export const SnackBarDiv = styled.div`
 `;
 
 const TableDiv = styled.div`
-    margin: 20px;
+    margin: 40px;
     padding: 20px;
-    background-color: ${(props) => props.theme.surfaceBackgroundColor};
-    border: solid 1px ${(props) => props.theme.surfaceForegroundColor};
+    background-color: ${(props) => props.theme.main.background[0]};
+    box-shadow: 0 0 15px ${(props) => props.theme.shadow};
     border-radius: 1rem;
 `;
 
-const StyledAddButton = styled.button`
-    margin: 10px 5px 5px 0;
-    height: 2rem;
-    width: 5rem;
+const ButtonMargin = styled.div`
+    margin: 15px 5px 5px 0;
 `;
 
 export default ListsDataView;

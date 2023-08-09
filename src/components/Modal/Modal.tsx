@@ -44,7 +44,10 @@ const CloseButton = styled.button`
     border: 0;
     border-radius: 50%;
     background-color: ${(props) => props.theme.rainbow.lightGrey.background};
-    color: ${(props) => props.theme.rainbow.darkGrey.background};
+
+    path {
+        fill: ${(props) => props.theme.rainbow.darkGrey.background};
+    }
 
     display: flex;
     justify-content: center;
@@ -55,8 +58,11 @@ const CloseButton = styled.button`
     cursor: pointer;
 
     &:hover {
-        color: ${(props) => props.theme.rainbow.lightGrey.background};
         background-color: ${(props) => props.theme.rainbow.darkGrey.background};
+
+        path {
+            fill: ${(props) => props.theme.rainbow.lightGrey.background};
+        }
     }
 `;
 
@@ -74,6 +80,7 @@ const Modal: React.FC<ModalProps> = (props) => {
             <Header id={props.headerId}>
                 {props.header}
                 <CloseButton onClick={props.onClose} aria-label="Close Button">
+                    <Icon icon={faClose} />
                 </CloseButton>
             </Header>
             <Content>{props.children}</Content>
