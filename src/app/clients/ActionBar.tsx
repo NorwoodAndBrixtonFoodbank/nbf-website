@@ -87,7 +87,9 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
         }
     };
 
-    const submitAction = async (): Promise<void> => {};
+    const submitAction = async (): Promise<void> => {
+        // TODO: implement whatever actions are meant to do
+    };
 
     return (
         <>
