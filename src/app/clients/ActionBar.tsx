@@ -53,8 +53,8 @@ const OuterDiv = styled.div`
 const ActionBar: React.FC<Props> = ({ selected, data }) => {
     const selectedData = Array.from(selected.map((index) => data[index]));
 
-    const [statusAnchorEl, setStatusAnchorEl] = useState<null | HTMLElement>(null);
-    const [actionAnchorEl, setActionAnchorEl] = useState<null | HTMLElement>(null);
+    const [statusAnchorElement, setStatusAnchorElement] = useState<null | HTMLElement>(null);
+    const [actionAnchorElement, setActionAnchorElement] = useState<null | HTMLElement>(null);
     const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
     const [selectedAction, setSelectedAction] = useState<string | null>(null);
 
@@ -120,9 +120,9 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                 errorText={modalError}
             />
             <Menu
-                open={statusAnchorEl !== null}
-                onClose={() => setStatusAnchorEl(null)}
-                anchorEl={statusAnchorEl}
+                open={statusAnchorElement !== null}
+                onClose={() => setStatusAnchorElement(null)}
+                anchorEl={statusAnchorElement}
             >
                 <MenuList id="status-menu">
                     {statuses.map((status, index) => {
@@ -132,7 +132,7 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                                 onClick={() => {
                                     setSelectedStatus(status);
                                     setStatusModal(true);
-                                    setStatusAnchorEl(null);
+                                    setStatusAnchorElement(null);
                                 }}
                             >
                                 {status}
@@ -142,9 +142,9 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                 </MenuList>
             </Menu>
             <Menu
-                open={actionAnchorEl !== null}
-                onClose={() => setActionAnchorEl(null)}
-                anchorEl={actionAnchorEl}
+                open={actionAnchorElement !== null}
+                onClose={() => setActionAnchorElement(null)}
+                anchorEl={actionAnchorElement}
             >
                 <MenuList id="action-menu">
                     {actions.map((action, index) => {
@@ -154,7 +154,7 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                                 onClick={() => {
                                     setSelectedAction(action);
                                     setActionModal(true);
-                                    setActionAnchorEl(null);
+                                    setActionAnchorElement(null);
                                 }}
                             >
                                 {action}
@@ -166,7 +166,7 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
             <OuterDiv>
                 <Button
                     variant="contained"
-                    onClick={(event) => setStatusAnchorEl(event.currentTarget)}
+                    onClick={(event) => setStatusAnchorElement(event.currentTarget)}
                     type="button"
                     id="status-button"
                 >
@@ -174,7 +174,7 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                 </Button>
                 <Button
                     variant="contained"
-                    onClick={(event) => setActionAnchorEl(event.currentTarget)}
+                    onClick={(event) => setActionAnchorElement(event.currentTarget)}
                     type="button"
                     id="action-button"
                 >

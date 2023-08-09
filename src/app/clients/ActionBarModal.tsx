@@ -30,6 +30,7 @@ const ModalInner = styled.div`
     align-items: stretch;
 `;
 
+// TODO VFB-16 Make these border colours change on dark and light themes
 const StatusText = styled.p`
     margin-left: 1rem;
     border-top: 1px solid darkgrey;
