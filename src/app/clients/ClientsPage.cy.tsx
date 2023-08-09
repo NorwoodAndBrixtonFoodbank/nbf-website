@@ -148,6 +148,9 @@ describe("Clients Page", () => {
                 full_name: "CLIENT NAME",
                 phone_number: "PHONE NUMBER",
                 packing_date: "04/08/2023",
+                packing_time: new Date("2023-08-04T08:30:00+00:00").getTimezoneOffset()
+                    ? "14:30:00"
+                    : "13:30:00",
                 delivery_instructions: "INSTRUCTIONS FOR DELIVERY",
                 address: "Address Line 1, Address Line 2, TOWN, SW1A 2AA",
                 household: "Family of 3 Occupants (2 adults, 1 child)",
@@ -162,8 +165,16 @@ describe("Clients Page", () => {
         });
 
         it("formatDatetimeAsTime()", () => {
-            expect(formatDatetimeAsTime("2023-08-04T13:30:00+00:00")).to.eq("13:30");
-            expect(formatDatetimeAsTime("2024-11-23T01:03:50+00:00")).to.eq("01:03");
+            expect(formatDatetimeAsTime("2023-08-04T13:30:02+00:00")).to.eq(
+                new Date("2023-08-04T13:30:02+00:00").getTimezoneOffset() === -60
+                    ? "14:30:02"
+                    : "13:30:02"
+            );
+            expect(formatDatetimeAsTime("2024-11-23T01:03:50+00:00")).to.eq(
+                new Date("2024-11-23T01:03:50+00:00").getTimezoneOffset() === -60
+                    ? "02:03:50"
+                    : "01:03:50"
+            );
             expect(formatDatetimeAsTime("Invalid_Time_Format")).to.eq("-");
             expect(formatDatetimeAsTime(null)).to.eq("-");
         });
