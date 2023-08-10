@@ -3,22 +3,7 @@ import React from "react";
 import supabase, { Schema } from "@/supabase";
 import Title from "@/components/Title/Title";
 import ShippingParcels from "@/app/shippings/shippingParcelPage";
-
-export interface ParcelClients {
-    primary_key: string;
-    packing_datetime: string;
-    collection_centre: string;
-    collection_datetime: string;
-    voucher_number: string;
-    full_name?: string;
-    phone_number?: string;
-    address_1?: string;
-    address_2?: string;
-    address_town?: string;
-    address_county?: string;
-    address_postcode?: string;
-    delivery_instructions?: string;
-}
+import { ParcelClients } from "@/app/shippings/shippingLabelsPdf";
 
 const formatDatetime = (datetimeString: string | null, isDatetime: boolean): string => {
     if (datetimeString === null) {
@@ -57,8 +42,10 @@ const getClientById = async (clientId: string): Promise<Schema["clients"] | null
 
 const getRequiredData = async (): Promise<ParcelClients[]> => {
     const parcels = await getParcelsForDelivery();
+    const total = parcels.length;
+
     return await Promise.all(
-        parcels.map(async (parcel) => {
+        parcels.map(async (parcel, index) => {
             const client = await getClientById(parcel.client_id);
             return {
                 primary_key: parcel.primary_key,
@@ -74,18 +61,30 @@ const getRequiredData = async (): Promise<ParcelClients[]> => {
                 address_county: client?.address_county,
                 address_postcode: client?.address_postcode,
                 delivery_instructions: client?.delivery_instructions,
+                index: index + 1,
+                total: total,
             };
         })
     );
 };
 
+function formatTo2DArray(inputArray: ParcelClients[], elementsPerSubarray: number) {
+    const result = [];
+
+    for (let i = 0; i < inputArray.length; i += elementsPerSubarray) {
+        result.push(inputArray.slice(i, i + elementsPerSubarray));
+    }
+
+    return result;
+}
+
 const Shippings = async (): Promise<React.ReactElement> => {
     const requiredData = await getRequiredData();
-
+    const concatenatedArray = requiredData.concat(requiredData, requiredData); // Temporary to mimic having a lot of data
     return (
         <main>
             <Title> Shipping Parcels Information </Title>
-            <ShippingParcels data={requiredData}/>
+            <ShippingParcels data={formatTo2DArray(concatenatedArray, 5)} />
         </main>
     );
 };

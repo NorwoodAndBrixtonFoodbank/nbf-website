@@ -2,20 +2,29 @@
 
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 
+export interface ParcelClients {
+    primary_key: string;
+    packing_datetime: string;
+    collection_centre: string;
+    collection_datetime: string;
+    voucher_number: string;
+    full_name?: string;
+    phone_number?: string;
+    address_1?: string;
+    address_2?: string;
+    address_town?: string;
+    address_county?: string;
+    address_postcode?: string;
+    delivery_instructions?: string;
+    index: number;
+    total: number;
+}
+
 const styles = StyleSheet.create({
     page: {
         display: "flex",
         flexDirection: "column",
         fontSize: "11px",
-    },
-    divider: {
-        display: "flex",
-        flexDirection: "row",
-    },
-    flexElemRight: {
-        flexGrow: 1,
-        border: "1pt solid black",
-        textAlign: "right",
     },
     right: {
         textAlign: "right",
@@ -26,84 +35,59 @@ const styles = StyleSheet.create({
     col: { flex: 1, margin: "5px" },
 });
 
-export const Col: React.FC<{ children: React.ReactNode; style?: { [key: string]: string } }> = (
-    props
-) => {
-    return <View style={[styles.col, props.style!]}>{props.children}</View>;
-};
-
-export const Row: React.FC<{ children: React.ReactNode; style?: { [key: string]: string } }> = (
-    props
-) => {
-    return <View style={[styles.row, props.style!]}>{props.children}</View>;
-};
-
-const ParcelCard = () => {
+const ParcelCard: React.FC<{ datum: ParcelClients }> = ({ datum }) => {
     return (
         <View style={styles.cardWrapper}>
-            <Row>
-                <Col>
-                    <Text>
-                        <Text style={styles.bold}>NAME:</Text> Harry Potter
-                    </Text>
-                </Col>
-                <Col>
-                    <Text style={styles.bold}>CONTACT: 07894561230</Text>
-                </Col>
-                <Col style={{ textAlign: "right" }}>
-                    <Text>10/10/2024</Text>
-                </Col>
-            </Row>
-            <Row style={{ minHeight: "100px" }}>
-                <Col>
-                    <Text>Hogwarts Castle</Text>
-                    <Text>Highlands</Text>
-                    <Text>Scottland</Text>
-                    <Text>Great Britain</Text>
-                    <Text>HC1 1DD</Text>
-                </Col>
-                <Col>
+            <View style={styles.row}>
+                <Text style={styles.col}>
+                    <Text style={styles.bold}>NAME:</Text> {datum.full_name}
+                </Text>
+                <Text style={styles.col}>
+                    <Text style={styles.bold}>CONTACT:</Text> {datum.phone_number}
+                </Text>
+                <Text style={[styles.col, { textAlign: "right" }]}>{datum.packing_datetime}</Text>
+            </View>
+            <View style={[styles.row, { minHeight: "100px" }]}>
+                <View style={styles.col}>
+                    <Text>{datum.address_1}</Text>
+                    <Text>{datum.address_2}</Text>
+                    <Text>{datum.address_town}</Text>
+                    <Text>{datum.address_county}</Text>
+                    <Text>{datum.address_postcode}</Text>
+                </View>
+                <View style={styles.col}>
                     <Text style={styles.bold}>DELIVERY INSTRUCTIONS:</Text>
-                    <Text>Send by owls only. Floo powders are forbidden in the castle.</Text>
-                </Col>
-                <Col>
-                    <></>
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    <Text>
-                        <Text style={styles.bold}>SOMEVOUCHERCODE</Text>
-                    </Text>
-                </Col>
-                <Col>
-                    <Text>AM | Delivery</Text>
-                </Col>
-                <Col style={{ textAlign: "right" }}>
-                    <Text>1/1</Text>
-                </Col>
-            </Row>
+                    <Text>{datum.delivery_instructions}</Text>
+                </View>
+                <View style={styles.col}></View>
+            </View>
+            <View style={styles.row}>
+                <Text style={styles.col}>
+                    <Text style={styles.bold}>{datum.voucher_number}</Text>
+                </Text>
+                <Text style={styles.col}>
+                    {datum.collection_datetime} | {datum.collection_centre}
+                </Text>
+                <Text style={[styles.col, { textAlign: "right" }]}>
+                    {datum.index}/{datum.total}
+                </Text>
+            </View>
         </View>
     );
 };
 
-const example = () => {
+const example: React.FC<{ data: ParcelClients[][] }> = ({ data }) => {
     return (
         <Document>
-            <Page size="A4" style={styles.page}>
-                <ParcelCard />
-                <ParcelCard />
-                <ParcelCard />
-                <ParcelCard />
-                <ParcelCard />
-            </Page>
-            <Page size="A4" style={styles.page}>
-                <ParcelCard />
-                <ParcelCard />
-                <ParcelCard />
-                <ParcelCard />
-                <ParcelCard />
-            </Page>
+            {data.map((subarray) => {
+                return (
+                    <Page size="A4" style={styles.page}>
+                        {subarray.map((datum) => {
+                            return <ParcelCard datum={datum} />;
+                        })}
+                    </Page>
+                );
+            })}
         </Document>
     );
 };
