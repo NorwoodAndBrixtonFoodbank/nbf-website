@@ -52,21 +52,54 @@ const CalendarStyling = styled.div`
     .fc .fc-toolbar-title {
         font-size: min(5vw, 1.5rem);
     }
+    .fc .fc-icon {
+        font-size: min(4vw, 1.2rem);
+    }
 
     .fc .fc-col-header-cell-cushion,
     .fc .fc-daygrid-day-number,
     .fc .fc-timegrid-axis-cushion,
     .fc .fc-timegrid-slot-label-cushion,
-    .fc .fc-event-title,
     .fc .fc-daygrid-more-link,
+    .fc .fc-event-title,
     .fc .fc-event-time {
         font-size: min(4vw, 1rem);
     }
 
-    .fc .fc-button {
-        font-size: 12px;
-        height: 25px;
-        padding: 0 6px;
+    // month view grid display
+    .fc .fc-daygrid-day-frame {
+        cursor: pointer;
+        min-height: min(20vw, 7rem);
+    }
+
+    // month view events
+    .fc-dayGridMonth-view .fc-daygrid-day-number {
+        font-size: min(3vw, 1rem);
+    }
+    .fc-dayGridMonth-view .fc-event-title,
+    .fc-dayGridMonth-view .fc-event-time,
+    .fc-dayGridMonth-view .fc-daygrid-more-link {
+        font-size: min(2.7vw, 0.9rem);
+    }
+
+    // week view events
+    .fc-timeGridWeek-view .fc-event-title-container {
+        width: 100%;
+        height: 100%;
+    }
+
+    .fc-timeGridWeek-view .fc-event-title,
+    .fc-timeGridWeek-view .fc-event-time {
+        font-size: min(2.5vw, 1rem);
+    }
+
+    // general event display
+    .fc .fc-event-time {
+        overflow: hidden;
+    }
+
+    .fc .fc-event-title-container {
+        flex-shrink: 80;
     }
 
     // group of buttons in the toolbar
@@ -92,25 +125,10 @@ const CalendarStyling = styled.div`
 
     .fc .fc-day-other {
         background-color: ${(props) => props.theme.main.background[1]};
-        color: ${(props) => props.theme.main.lighterForeground};
+        color: ${(props) => props.theme.main.lighterForeground[1]};
     }
 
-    // adjust month view grid display
-    .fc .fc-daygrid-day-frame {
-        cursor: pointer;
-        min-height: 6em;
-    }
-
-    // adjust event display
-    .fc .fc-event-time {
-        overflow: hidden;
-    }
-
-    .fc .fc-event-title {
-        flex-shrink: 99;
-    }
-
-    // adjust background color of headers
+    // background color of headers
     .fc thead {
         background-color: ${(props) => props.theme.main.background[2]};
     }
@@ -174,7 +192,7 @@ const Calendar: React.FC<CalendarProps> = ({
                                 meridiem: "short",
                             },
                             titleFormat: { year: "numeric", month: "short" },
-                            dayMaxEventRows: 4,
+                            dayMaxEventRows: 3,
                             moreLinkClick: "day",
                         },
                         timeGridWeek: {
@@ -192,6 +210,7 @@ const Calendar: React.FC<CalendarProps> = ({
                     }}
                     eventInteractive={true}
                     height="auto"
+                    eventDisplay="block"
                 />
             </CalendarStyling>
         </>

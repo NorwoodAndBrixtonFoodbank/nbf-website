@@ -60,8 +60,8 @@ describe("Accessibility tests in dark mode", () => {
 
     it("Checks calendar page", () => {
         cy.visit("/calendar");
-        cy.get("table").should("be.visible");
         cy.get("label[aria-label='Theme Switch']").click();
+        cy.get("table").should("be.visible");
 
         cy.checkAccessibility();
     });

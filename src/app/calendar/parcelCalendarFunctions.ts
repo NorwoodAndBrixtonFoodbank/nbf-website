@@ -1,7 +1,7 @@
 import supabase, { Schema } from "@/supabase";
 import { CalendarEvent } from "@/components/Calendar/Calendar";
 
-type ParcelWithClientName = Schema["parcels"] & { clients: { full_name: string } | null };
+export type ParcelWithClientName = Schema["parcels"] & { clients: { full_name: string } | null };
 
 export interface LocationColorMap {
     [location: string]: { color: string; text: string };

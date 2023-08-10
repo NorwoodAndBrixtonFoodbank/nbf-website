@@ -27,8 +27,7 @@ const Centerer = styled.div`
 `;
 
 const CalendarWrapper = styled.div`
-    width: min(100vmin, 1100px);
-    //max-width: 1100px;
+    width: min(100vw, 1200px);
     margin: 0 2em 2em;
 `;
 
