@@ -110,7 +110,9 @@ const DisplayItemsList: React.FC<{ itemsList: Item[] }> = ({ itemsList }) => {
 };
 
 const formatKey = (objectKey: string): string => {
-    return objectKey.replace("_", " ");
+    const withSpace = objectKey.replace(/([a-z])([A-Z])/g, "$1 $2").split(" ");
+    const formatted = withSpace.map((word) => word.charAt(0).toUpperCase() + word.slice(1));
+    return formatted.join(" ");
 };
 
 const DisplayAsBlock: React.FC<ParcelInfo | HouseholdSummary | RequirementSummary> = (data) => {
@@ -154,33 +156,31 @@ const ShoppingList: React.FC<ShoppingListProps> = ({
     endNotes,
 }) => {
     return (
-        <>
-            <CenterComponent>
-                <Paper>
-                    <Cell>
-                        <Title>Shopping List</Title>
-                        <Subtitle>POSTCODE: {postcode}</Subtitle>
-                    </Cell>
-                    <DisplayAsBlock {...parcelInfo} />
-                    <InfoBlock>
-                        <DisplayClientSummary {...clientSummary} />
-                        <DisplayAsBlock {...householdSummary} />
-                        <DisplayAsBlock {...requirementSummary} />
-                    </InfoBlock>
-                    <Table>
-                        <TableHeadings />
-                        <DisplayItemsList itemsList={itemsList} />
-                    </Table>
-                    <Cell>
-                        <KeyText>Warehouse Manager Notes</KeyText>
-                        <NormalText>{endNotes}</NormalText>
-                        <OneLine header="Date Packed" value="" />
-                        <OneLine header="Packer Name" value="" />
-                        <OneLine header="Packer Signature" value="" />
-                    </Cell>
-                </Paper>
-            </CenterComponent>
-        </>
+        <CenterComponent tabIndex={0}>
+            <Paper>
+                <Cell>
+                    <Title>Shopping List</Title>
+                    <Subtitle>POSTCODE: {postcode}</Subtitle>
+                </Cell>
+                <DisplayAsBlock {...parcelInfo} />
+                <InfoBlock>
+                    <DisplayClientSummary {...clientSummary} />
+                    <DisplayAsBlock {...householdSummary} />
+                    <DisplayAsBlock {...requirementSummary} />
+                </InfoBlock>
+                <Table>
+                    <TableHeadings />
+                    <DisplayItemsList itemsList={itemsList} />
+                </Table>
+                <Cell>
+                    <KeyText>Warehouse Manager Notes</KeyText>
+                    <NormalText>{endNotes}</NormalText>
+                    <OneLine header="Date Packed" value="" />
+                    <OneLine header="Packer Name" value="" />
+                    <OneLine header="Packer Signature" value="" />
+                </Cell>
+            </Paper>
+        </CenterComponent>
     );
 };
 
