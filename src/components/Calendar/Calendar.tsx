@@ -82,6 +82,11 @@ const CalendarStyling = styled.div`
         font-size: min(2.7vw, 0.9rem);
     }
 
+    .fc-dayGridMonth-view .fc-event-title {
+        width: 100%;
+        text-align: left;
+    }
+
     // week view events
     .fc-timeGridWeek-view .fc-event-title-container {
         width: 100%;
