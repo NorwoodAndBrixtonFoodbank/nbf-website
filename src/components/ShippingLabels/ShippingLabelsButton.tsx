@@ -5,7 +5,10 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import React from "react";
 import ShippingLabelsPdf, { ParcelClients } from "@/components/ShippingLabels/ShippingLabelsPdf";
 
-const ShippingLabelsButton: React.FC<{ data: ParcelClients[][], text: string }> = ({ data, text }) => {
+const ShippingLabelsButton: React.FC<{ data: ParcelClients[][]; text: string }> = ({
+    data,
+    text,
+}) => {
     return (
         <NoSsr>
             <PDFDownloadLink

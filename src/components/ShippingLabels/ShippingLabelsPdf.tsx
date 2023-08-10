@@ -4,7 +4,6 @@ import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 
 export interface ParcelClients {
-    primary_key: string;
     packing_datetime: string;
     collection_centre: string;
     collection_datetime: string;

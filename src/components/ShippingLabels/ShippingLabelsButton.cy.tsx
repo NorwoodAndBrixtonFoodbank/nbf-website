@@ -7,7 +7,6 @@ const fileName = "ShippingLabels.pdf";
 const data: ParcelClients[][] = [
     [
         {
-            primary_key: "key1",
             packing_datetime: "19/06/2023",
             collection_centre: "Delivery",
             collection_datetime: "31/07/2023, 14:00",
@@ -24,7 +23,6 @@ const data: ParcelClients[][] = [
             total: 2,
         },
         {
-            primary_key: "key2",
             packing_datetime: "20/06/2023",
             collection_centre: "Delivery",
             collection_datetime: "31/08/2023, 14:00",
@@ -45,8 +43,7 @@ const data: ParcelClients[][] = [
 
 const allFields = data[0]
     .map((obj) => {
-        const { primary_key, ...fields } = obj;
-        return Object.values(fields);
+        return Object.values(obj);
     })
     .flat();
 
@@ -66,8 +63,9 @@ describe("Export Pdf Button", () => {
         cy.mount(<ShippingsLabelButton text="Click" data={data} />);
 
         cy.get("a").click();
-
-        for (let field of allFields) {
+        cy.readFile(`${downloadsFolder}/${fileName}`);
+        
+        for (const field of allFields) {
             cy.task("readPdf", `${downloadsFolder}/${fileName}`).should("contain", field);
         }
     });

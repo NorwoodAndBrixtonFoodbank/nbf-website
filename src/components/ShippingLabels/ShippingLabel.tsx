@@ -8,24 +8,29 @@ const formatDatetime = (datetimeString: string | null, isDatetime: boolean): str
         return "No recorded date";
     }
 
+    const dateOptions: Intl.DateTimeFormatOptions = {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    };
+
     const formattedDate = isDatetime
-        ? new Date(datetimeString).toLocaleString([], {
-              year: "numeric",
-              month: "numeric",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-          })
+        ? new Date(datetimeString).toLocaleString([], dateOptions)
         : new Date(datetimeString).toLocaleDateString();
 
     return formattedDate;
 };
 
-const format1DTo2DArray = (inputArray: ParcelClients[], elementsPerSubarray: number) => {
+const format1DTo2DArray = (
+    inputArray: ParcelClients[],
+    elementsPerSubarray: number
+): ParcelClients[][] => {
     const result = [];
 
-    for (let i = 0; i < inputArray.length; i += elementsPerSubarray) {
-        result.push(inputArray.slice(i, i + elementsPerSubarray));
+    for (let index = 0; index < inputArray.length; index += elementsPerSubarray) {
+        result.push(inputArray.slice(index, index + elementsPerSubarray));
     }
 
     return result;
@@ -57,7 +62,6 @@ const getRequiredData = async (): Promise<ParcelClients[]> => {
         parcels.map(async (parcel, index) => {
             const client = await getClientById(parcel.client_id);
             return {
-                primary_key: parcel.primary_key,
                 packing_datetime: formatDatetime(parcel.packing_datetime, false),
                 collection_centre: parcel.collection_centre ?? "",
                 collection_datetime: formatDatetime(parcel.collection_datetime, true),
