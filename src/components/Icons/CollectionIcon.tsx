@@ -6,12 +6,12 @@ export interface CollectionIconProps {
     color?: string;
     collectionPoint: string | null;
 }
-const CollectionIcon: React.FC<CollectionIconProps> = ({ collectionPoint, color = "black" }) => {
+const CollectionIcon: React.FC<CollectionIconProps> = (props) => {
     return (
         <Icon
             icon={faShoePrints}
-            onHoverText={`Collection at ${collectionPoint ?? "-"}`}
-            color={color}
+            onHoverText={`Collection at ${props.collectionPoint ?? "-"}`}
+            color={props.color}
         />
     );
 };

@@ -30,7 +30,7 @@ const TooltipCell: React.FC<Props> = (props) => {
             <SpeechBubbleIcon
                 onHoverText={props.tooltipValue}
                 showTooltip={showTooltip}
-                color={theme.accentBackgroundColor}
+                color={theme.accent.background}
             />
         </CellDiv>
     );

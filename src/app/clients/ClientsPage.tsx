@@ -3,7 +3,7 @@
 import React, { Suspense, useState } from "react";
 import Table, { Row, TableHeaders } from "@/components/Tables/Table";
 
-import styled, { useTheme } from "styled-components";
+import { useTheme } from "styled-components";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
@@ -16,14 +16,7 @@ import Icon from "@/components/Icons/Icon";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal/Modal";
 import { Schema } from "@/supabase";
-import { Paper } from "@mui/material";
-
-const ClientsTablePaper = styled(Paper)`
-    margin: 1rem;
-    padding: 1rem;
-    border-radius: 1rem;
-    background-color: ${(props) => props.theme.surfaceBackgroundColor};
-`;
+import TableSurface from "@/components/Tables/TableSurface";
 
 const collectionCentreToAbbreviation = (
     collectionCentre: Schema["parcels"]["collection_centre"]
@@ -155,7 +148,7 @@ const ClientsPage: React.FC<Props> = (props) => {
 
     return (
         <>
-            <ClientsTablePaper elevation={2}>
+            <TableSurface>
                 <Table
                     data={props.clientsTableData}
                     headerKeysAndLabels={clientTableHeaderKeysAndLabels}
@@ -168,7 +161,7 @@ const ClientsPage: React.FC<Props> = (props) => {
                     headerFilters={["addressPostcode"]}
                     toggleableHeaders={toggleableHeaders}
                 />
-            </ClientsTablePaper>
+            </TableSurface>
             <Modal
                 header={
                     <>

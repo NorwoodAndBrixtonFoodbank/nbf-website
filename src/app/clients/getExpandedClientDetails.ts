@@ -114,7 +114,15 @@ export const formatDatetimeAsTime = (datetime: string | null): string => {
         return "-";
     }
 
-    return new Date(datetime).toLocaleTimeString("en-GB");
+    const time = new Date(datetime);
+
+    const hours = time.getHours();
+    const minutes = time.getMinutes();
+
+    const HH = hours.toString().padStart(2, "0");
+    const MM = minutes.toString().padStart(2, "0");
+
+    return `${HH}:${MM}`;
 };
 
 export const formatAddressFromClientDetails = (

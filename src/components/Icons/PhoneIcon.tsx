@@ -6,8 +6,8 @@ interface Props {
     color?: string;
 }
 
-const PhoneIcon: React.FC<Props> = ({ color = "black" }) => {
-    return <Icon icon={faPhone} onHoverText="Requires follow-up phone call" color={color} />;
+const PhoneIcon: React.FC<Props> = (props) => {
+    return <Icon icon={faPhone} onHoverText="Requires follow-up phone call" color={props.color} />;
 };
 
 export default PhoneIcon;

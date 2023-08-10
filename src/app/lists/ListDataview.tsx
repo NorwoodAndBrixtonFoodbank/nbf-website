@@ -15,7 +15,7 @@ import Snackbar from "@mui/material/Snackbar/Snackbar";
 import Alert from "@mui/material/Alert/Alert";
 import Button from "@mui/material/Button";
 import TooltipCell from "@/app/lists/TooltipCell";
-import { Paper } from "@mui/material";
+import TableSurface from "@/components/Tables/TableSurface";
 
 export type ListRow = Schema["lists"] & Datum;
 
@@ -125,7 +125,7 @@ const ListsDataView: React.FC<Props> = (props) => {
 
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
 
-            <TablePaper elevation={2}>
+            <TableSurface>
                 <Table
                     checkboxes={false}
                     headerKeysAndLabels={headerKeysAndLabels}
@@ -146,7 +146,7 @@ const ListsDataView: React.FC<Props> = (props) => {
                         + Add
                     </Button>
                 </ButtonMargin>
-            </TablePaper>
+            </TableSurface>
         </>
     );
 };
@@ -162,13 +162,6 @@ export const SnackBarDiv = styled.div`
         border-radius: 0.2rem;
         padding: 0 1rem;
     }
-`;
-
-const TablePaper = styled(Paper)`
-    margin: 40px;
-    padding: 20px;
-    background-color: ${(props) => props.theme.main.background[0]};
-    border-radius: 1rem;
 `;
 
 const ButtonMargin = styled.div`

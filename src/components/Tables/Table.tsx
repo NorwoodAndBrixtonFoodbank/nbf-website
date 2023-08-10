@@ -443,7 +443,7 @@ const Styling = styled.div`
     & div.rdt_TableRow {
         padding: 0.5rem 0.5rem;
         // important needed to override the inline style
-        border-top-color: ${(props) => props.theme.main.border};
+        border-bottom-color: ${(props) => props.theme.main.border};
     }
 
     & .rdt_TableHeadRow {

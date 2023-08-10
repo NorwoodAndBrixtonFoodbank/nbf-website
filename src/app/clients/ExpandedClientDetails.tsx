@@ -16,7 +16,6 @@ const ExpandedClientDetails = async (props: Props): Promise<React.ReactElement> 
     return (
         <>
             <DataViewer data={expandedClientDetails} />
-            {/* PLACEHOLDER FOR STATUS LIST */}
         </>
     );
 };

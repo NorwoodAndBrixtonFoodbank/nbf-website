@@ -6,8 +6,8 @@ interface Props {
     color?: string;
 }
 
-const DeliveryIcon: React.FC<Props> = ({ color = "black" }) => {
-    return <Icon icon={faTruck} onHoverText="Delivery" color={color} />;
+const DeliveryIcon: React.FC<Props> = (props) => {
+    return <Icon icon={faTruck} onHoverText="Delivery" color={props.color} />;
 };
 
 export default DeliveryIcon;
