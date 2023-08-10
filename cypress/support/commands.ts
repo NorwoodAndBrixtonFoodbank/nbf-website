@@ -75,7 +75,10 @@ Cypress.Commands.add("checkAccessibility", () => {
 });
 
 Cypress.on("uncaught:exception", (err) => {
-    if (err.toString().includes("NEXT_REDIRECT")) {
+    const str = err.toString();
+    // NEXT_REDIRECT triggers when the client side router interrupts a cypress command
+    // 419 is the same error but when minified in the production build
+    if (str.includes("NEXT_REDIRECT") || str.includes("419")) {
         return false;
     }
 

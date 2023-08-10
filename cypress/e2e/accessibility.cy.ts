@@ -33,6 +33,8 @@ describe("Accessibility tests in light mode", () => {
         cy.get("button[aria-label='Sign Out Button']").click();
         cy.visit("/login");
 
+        cy.get("#login-panel[data-loaded='true']", { timeout: 10000 }).should("exist");
+
         cy.checkAccessibility();
     });
 });
@@ -75,6 +77,8 @@ describe("Accessibility tests in dark mode", () => {
         cy.visit("/");
         cy.get("button[aria-label='Sign Out Button']").click();
         cy.visit("/login");
+
+        cy.get("#login-panel[data-loaded='true']", { timeout: 10000 }).should("exist");
 
         cy.checkAccessibility();
     });
