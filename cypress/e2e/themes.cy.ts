@@ -3,7 +3,6 @@ import { hexToRgb } from "@mui/material";
 describe("Light and dark mode switch works", () => {
     beforeEach(() => {
         cy.login();
-        cy.visit("/clients");
     });
 
     it("Switching to Dark Mode Works", () => {
