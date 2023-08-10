@@ -4,7 +4,6 @@ export const CenterComponent = styled.div`
     display: flex;
     justify-content: center;
     align-content: center;
-    margin: 2em;
 `;
 
 export const StyledForm = styled.form`
@@ -27,9 +26,9 @@ export const StyledCard = styled.div`
     border-radius: 10px;
     box-shadow: 0 0 15px ${(props) => props.theme.shadow};
     background-color: ${(props) => props.theme.main.background[0]};
-    color: ${(props) => props.theme.main.foreground[0]}};
+    color: ${(props) => props.theme.main.foreground[0]};
 
-    div {
+    & > div {
         width: 100%;
         margin: 0.15em 0;
     }
