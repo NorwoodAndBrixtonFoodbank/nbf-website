@@ -14,11 +14,15 @@ import { CenterComponent } from "@/components/Form/formStyling";
 
 const Paper = styled.div`
     width: min(80%, 1000px);
+    max-height: max-content;
+    background-color: ${(props) => props.theme.main.background[0]};
+    color: ${(props) => props.theme.main.foreground[0]};
+    outline: 1px solid ${(props) => props.theme.main.foreground[0]};
 `;
 
 const Cell = styled.div`
     display: grid;
-    outline: 1px solid ${(props) => props.theme.primaryForegroundColor};
+    outline: 1px solid ${(props) => props.theme.main.foreground[0]};
 `;
 
 const InfoBlock = styled(Cell)`

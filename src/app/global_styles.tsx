@@ -6,27 +6,27 @@ import {
     Theme,
 } from "@mui/material";
 
-const GlobalStyle = createGlobalStyle`    
-    * {
-        box-sizing: border-box;
-        margin: 0;
-    }
-      
-    html, body {
-        height: 100%;
-        width: 100%;
-        font-family: Helvetica, Arial, sans-serif;
-        overflow: auto;
-    }
+const GlobalStyle = createGlobalStyle`
+  * {
+    box-sizing: border-box;
+    margin: 0;
+  }
 
-    body {
-        color: ${(props) => props.theme.main.foreground[2]};
-        background-color: ${(props) => props.theme.main.background[2]};
-    }
+  html, body {
+    height: 100%;
+    width: 100%;
+    font-family: Helvetica, Arial, sans-serif;
+    overflow: auto;
+  }
 
-    :root {
-      color-scheme: ${(props) => (props.theme.light ? "light" : "dark")}
-    }
+  body {
+    color: ${(props) => props.theme.main.foreground[2]};
+    background-color: ${(props) => props.theme.main.background[2]};
+  }
+
+  :root {
+    color-scheme: ${(props) => (props.theme.light ? "light" : "dark")}
+  }
 `;
 
 const materialTheme = (chosenTheme: DefaultTheme): Theme =>
@@ -92,9 +92,11 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
             },
         },
     });
+
 interface Props {
     children: React.ReactNode;
 }
+
 const MaterialAndGlobalStyle: React.FC<Props> = ({ children }) => {
     const chosenTheme = useTheme();
 

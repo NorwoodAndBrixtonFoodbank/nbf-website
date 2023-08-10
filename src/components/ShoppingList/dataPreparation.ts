@@ -135,7 +135,7 @@ const prepareHouseholdSummary = (familyData: Schema["families"][]): HouseholdSum
     return {
         Household_Size: `${householdSize} (${householdSize - children.length} Adults ${
             children.length
-        } Children`,
+        } Children)`,
         Gender_Breakdown: `${numberFemales} Female ${numberMales} Male ${
             householdSize - numberFemales - numberMales
         } Other`,

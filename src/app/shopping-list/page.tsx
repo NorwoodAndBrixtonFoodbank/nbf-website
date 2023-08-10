@@ -1,4 +1,5 @@
-// TODO: delete this page
+// TODO VFB-12 delete this page
+// This is a sample page that will be removed once the PDF function is implemented in VFB-12-PDF
 
 import { Metadata } from "next";
 import React from "react";
@@ -8,10 +9,10 @@ import prepareData from "@/components/ShoppingList/dataPreparation";
 const Shopping: () => Promise<React.ReactElement> = async () => {
     const TEST_PARCEL_ID = "cc6ea0e2-a284-410b-956b-99a55b853005";
 
-    const fullData = await prepareData(TEST_PARCEL_ID);
+    const data = await prepareData(TEST_PARCEL_ID);
     return (
         <main>
-            <ShoppingList {...fullData} />
+            <ShoppingList {...data} />
         </main>
     );
 };
