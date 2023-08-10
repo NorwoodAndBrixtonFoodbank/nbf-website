@@ -13,19 +13,37 @@ export const AuthRouting: React.FC<{ children: React.ReactNode }> = ({ children 
 
     // This fixes issues with navigation when the user has signed in but then signed out and caching still allows them to
     // access pages. It also fixes authentication flow issues on sign in and sign out
-    const onRouteChange = (): void => {
+    const toRedirectTo = (): string | null => {
         if (loggedIn === undefined) {
-            return;
+            return null;
         }
 
         if (loggedIn) {
-            if (pathname.startsWith("/login")) {
-                router.push("/clients");
+            if (window.location.pathname.startsWith("/login")) {
+                return "/clients";
             }
         } else {
-            if (pathname !== "/login") {
-                router.push("/login");
+            if (window.location.pathname !== "/login") {
+                return "/login";
             }
+        }
+
+        return null;
+    };
+
+    const onRouteChange = (): void => {
+        const redirect = toRedirectTo();
+        if (redirect) {
+            router.push(redirect);
+
+            // if Client Side Routing is not working, fallback to changing the window location
+            // This seemingly only happens on GH Actions
+            setTimeout(() => {
+                const redirect = toRedirectTo();
+                if (redirect) {
+                    window.location.pathname = redirect;
+                }
+            }, 500);
         }
     };
 
