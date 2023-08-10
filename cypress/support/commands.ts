@@ -22,11 +22,11 @@ const loginWithRetry = (iteration: number = 0): void => {
         return;
     }
 
-    cy.get("h1").then(($h1) => {
-        if ($h1.text().includes("Login")) {
-            cy.get("button[type='submit']").then(($el) => {
-                if ($el.not(":disabled")) {
-                    $el.trigger("click");
+    cy.get("h1").then((heading) => {
+        if (heading.text().includes("Login")) {
+            cy.get("button[type='submit']").then((submitButton) => {
+                if (submitButton.not(":disabled")) {
+                    submitButton.trigger("click");
                 }
             });
             cy.wait(Math.pow(2, iteration) * 500);
