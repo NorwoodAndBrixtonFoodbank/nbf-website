@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 
 export interface ParcelClients {
@@ -25,9 +26,6 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         fontSize: "11px",
-    },
-    right: {
-        textAlign: "right",
     },
     cardWrapper: { border: "1pt solid black", margin: "5px" },
     bold: { fontFamily: "Helvetica-Bold" },
@@ -76,14 +74,14 @@ const ParcelCard: React.FC<{ datum: ParcelClients }> = ({ datum }) => {
     );
 };
 
-const example: React.FC<{ data: ParcelClients[][] }> = ({ data }) => {
+const ShippingLabelsPdf: React.FC<{ data: ParcelClients[][] }> = ({ data }) => {
     return (
         <Document>
-            {data.map((subarray) => {
+            {data.map((subarray, index) => {
                 return (
-                    <Page size="A4" style={styles.page}>
-                        {subarray.map((datum) => {
-                            return <ParcelCard datum={datum} />;
+                    <Page key={index} size="A4" style={styles.page}>
+                        {subarray.map((datum, datumIndex) => {
+                            return <ParcelCard key={datumIndex} datum={datum} />;
                         })}
                     </Page>
                 );
@@ -92,4 +90,4 @@ const example: React.FC<{ data: ParcelClients[][] }> = ({ data }) => {
     );
 };
 
-export default example;
+export default ShippingLabelsPdf;
