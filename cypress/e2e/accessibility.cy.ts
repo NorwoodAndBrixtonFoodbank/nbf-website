@@ -1,21 +1,20 @@
 describe("Accessibility tests in light mode", () => {
-    beforeEach(() => {
-        cy.login();
-    });
-
     it("Checks clients page", () => {
+        cy.login();
         cy.visit("/clients");
 
         cy.checkAccessibility();
     });
 
     it("Checks lists page", () => {
+        cy.login();
         cy.visit("/lists");
 
         cy.checkAccessibility();
     });
 
     it("Checks calendar page", () => {
+        cy.login();
         cy.visit("/calendar");
         cy.get("table").should("be.visible");
 
@@ -23,16 +22,16 @@ describe("Accessibility tests in light mode", () => {
     });
 
     it("Checks clients/add page", () => {
+        cy.login();
         cy.visit("/clients/add");
 
         cy.checkAccessibility();
     });
 
     it("Checks login page", () => {
-        cy.visit("/");
-        cy.get("button[aria-label='Sign Out Button']").click();
         cy.visit("/login");
 
+        // wait for hydration
         cy.get("#login-panel[data-loaded='true']", { timeout: 10000 }).should("exist");
 
         cy.checkAccessibility();
@@ -40,11 +39,8 @@ describe("Accessibility tests in light mode", () => {
 });
 
 describe("Accessibility tests in dark mode", () => {
-    beforeEach(() => {
-        cy.login();
-    });
-
     it("Checks clients page", () => {
+        cy.login();
         cy.visit("/clients");
         cy.get("label[aria-label='Theme Switch']").click();
 
@@ -52,6 +48,7 @@ describe("Accessibility tests in dark mode", () => {
     });
 
     it("Checks lists page", () => {
+        cy.login();
         cy.visit("/lists");
         cy.get("label[aria-label='Theme Switch']").click();
 
@@ -59,6 +56,7 @@ describe("Accessibility tests in dark mode", () => {
     });
 
     it("Checks calendar page", () => {
+        cy.login();
         cy.visit("/calendar");
         cy.get("table").should("be.visible");
         cy.get("label[aria-label='Theme Switch']").click();
@@ -67,6 +65,7 @@ describe("Accessibility tests in dark mode", () => {
     });
 
     it("Checks clients/add page", () => {
+        cy.login();
         cy.visit("/clients/add");
         cy.get("label[aria-label='Theme Switch']").click();
 
@@ -74,10 +73,9 @@ describe("Accessibility tests in dark mode", () => {
     });
 
     it("Checks login page", () => {
-        cy.visit("/");
-        cy.get("button[aria-label='Sign Out Button']").click();
         cy.visit("/login");
 
+        // wait for hydration
         cy.get("#login-panel[data-loaded='true']", { timeout: 10000 }).should("exist");
 
         cy.checkAccessibility();
