@@ -22,10 +22,8 @@ const Header = styled.div`
     position: sticky;
     justify-content: space-between;
     align-items: center;
-    color: ${(props) => props.theme.secondaryForegroundColor};
-
-    // TODO VFB-16 Add the equivalent of this colour to a palette without the transparency
-    background-color: ${(props) => props.theme.secondaryBackgroundColor}A0;
+    color: ${(props) => props.theme.primary.largeForeground[2]};
+    background-color: ${(props) => props.theme.primary.background[2]};
 
     font-size: 1.5em;
     font-weight: bolder;
@@ -34,24 +32,22 @@ const Header = styled.div`
 `;
 
 const Content = styled.div`
-    overflow: auto;
+    overflow-y: auto;
+    overflow-wrap: break-word;
     padding: 1em 1.5em 1.5em;
     width: 100%;
+    color: ${(props) => props.theme.main.foreground[2]};
+    background-color: ${(props) => props.theme.main.background[2]};
 `;
 
-const CloseButton = styled.button.attrs({
-    "aria-label": "Close Button",
-})`
+const CloseButton = styled.button`
     border: 0;
     border-radius: 50%;
+    background-color: ${(props) => props.theme.rainbow.lightGrey.background};
 
-    // TODO VFB-16 There are two options for the CloseButton styling. Either using a series of grey tones, or colours that match the theme of the modal
-
-    // TODO VFB-16 Either change to 'grey' or same colour as Header background
-    background-color: ${(props) => props.theme.secondaryBackgroundColor};
-
-    // TODO VFB-16 Ensure that this colour matches the header font colour
-    color: ${(props) => props.theme.secondaryForegroundColor};
+    path {
+        fill: ${(props) => props.theme.rainbow.darkGrey.background};
+    }
 
     display: flex;
     justify-content: center;
@@ -59,17 +55,18 @@ const CloseButton = styled.button.attrs({
     align-items: center;
     transition: 0.2s;
     margin-left: 1em;
+    cursor: pointer;
 
     &:hover {
-        // TODO VFB-16 Either change to 'white' or the corresponding 'secondaryBackgroundColor'
-        color: ${(props) => props.theme.secondaryBackgroundColor};
+        background-color: ${(props) => props.theme.rainbow.darkGrey.background};
 
-        // TODO VFB-16 Either change to 'darkgray' or the corresponding 'secondaryForegroundColor'
-        background-color: ${(props) => props.theme.secondaryForegroundColor};
+        path {
+            fill: ${(props) => props.theme.rainbow.lightGrey.background};
+        }
     }
 `;
 
-interface ModalProps {
+export interface ModalProps {
     header: ReactNode;
     children: ReactNode;
     isOpen: boolean;
@@ -82,7 +79,7 @@ const Modal: React.FC<ModalProps> = (props) => {
         <StyledDialog open={props.isOpen} onClose={props.onClose} aria-labelledby={props.headerId}>
             <Header id={props.headerId}>
                 {props.header}
-                <CloseButton onClick={props.onClose}>
+                <CloseButton onClick={props.onClose} aria-label="Close Button">
                     <Icon icon={faClose} />
                 </CloseButton>
             </Header>

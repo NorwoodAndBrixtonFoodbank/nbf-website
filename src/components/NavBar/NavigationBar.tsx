@@ -2,7 +2,6 @@
 
 import React from "react";
 import AppBar from "@mui/material/AppBar";
-import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Link from "next/link";
@@ -20,7 +19,14 @@ export const PageButton = styled(Button)`
     margin: 10px;
     &:hover {
         background-color: ${(props) => props.theme.primaryBackgroundColor};
-    }
+    },
+`;
+
+const StyledSwipeableDrawer = styled(SwipeableDrawer)`
+    & .MuiPaper-root {
+        background-image: none;
+    },
+
 `;
 
 const UnstyledLink = styled(Link)`
@@ -53,8 +59,8 @@ const Gap = styled.div`
 `;
 
 const DrawerButtonWrapper = styled.div`
-    padding: 1rem;
-    border-bottom: 1px solid ${(props) => props.theme.secondaryBackgroundColor};
+    padding: 0.7rem;
+    border-bottom: 1px solid ${(props) => props.theme.main.foreground[3]};
 
     &:last-child {
         border-bottom: none;
@@ -62,7 +68,8 @@ const DrawerButtonWrapper = styled.div`
 `;
 
 const DrawerButton = styled(Button)`
-    color: ${(props) => props.theme.secondaryBackgroundColor};
+    text-transform: uppercase;
+
     width: 100%;
 `;
 
@@ -76,6 +83,7 @@ const NavElementContainer = styled.div`
     flex-grow: 1;
     justify-content: center;
     align-items: center;
+    margin: 0 1em;
 `;
 
 const MobileNavMenuContainer = styled(NavElementContainer)`
@@ -136,23 +144,29 @@ const ResponsiveAppBar: React.FC<Props> = ({ children = <></> }) => {
 
     return (
         <>
-            <SwipeableDrawer open={drawer} onClose={closeDrawer} onOpen={openDrawer}>
+            <StyledSwipeableDrawer open={drawer} onClose={closeDrawer} onOpen={openDrawer}>
                 <DrawerInner>
                     {pages.map(([page, link]) => (
                         <DrawerButtonWrapper key={page}>
                             <UnstyledLink href={link} onClick={closeDrawer} prefetch={false}>
-                                <DrawerButton variant="text">{page}</DrawerButton>
+                                <DrawerButton color="secondary" variant="text">
+                                    {page}
+                                </DrawerButton>
                             </UnstyledLink>
                         </DrawerButtonWrapper>
                     ))}
                 </DrawerInner>
-            </SwipeableDrawer>
+            </StyledSwipeableDrawer>
             <StickyAppBar>
                 <AppBarInner>
                     <MobileNavMenuContainer>
-                        <IconButton aria-label="Mobile Menu Button" onClick={openDrawer}>
+                        <Button
+                            color="secondary"
+                            aria-label="Mobile Menu Button"
+                            onClick={openDrawer}
+                        >
                             <MenuIcon />
-                        </IconButton>
+                        </Button>
                     </MobileNavMenuContainer>
                     <LogoElementContainer>
                         <UnstyledLink href="/" prefetch={false}>

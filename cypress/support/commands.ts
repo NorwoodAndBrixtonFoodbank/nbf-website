@@ -11,6 +11,8 @@
 //
 
 import { Result } from "axe-core";
+import "@cypress/code-coverage/support";
+import "cypress-axe";
 
 Cypress.Commands.add("login", () => {
     const email = Cypress.env("TEST_USER");
@@ -49,4 +51,21 @@ Cypress.Commands.add("checkAccessibility", () => {
 
     cy.injectAxe();
     cy.checkA11y(undefined, undefined, terminalLog);
+});
+
+Cypress.Commands.add("checkColorContrast", () => {
+    const terminalLog = (violations: Result[]): void => {
+        cy.task(
+            "table",
+            violations.map(({ id, impact, description, nodes }) => ({
+                id,
+                impact,
+                description,
+                length: nodes.length,
+            }))
+        );
+    };
+
+    cy.injectAxe();
+    cy.checkA11y(undefined, { runOnly: { type: "tag", values: ["wcag2aa"] } }, terminalLog);
 });

@@ -1,9 +1,26 @@
 "use client";
 
-import Calendar, { CalendarEvent } from "@/components/Calendar/Calendar";
+import Calendar from "@/components/Calendar/Calendar";
 import Title from "@/components/Title/Title";
 import React from "react";
-import styled from "styled-components";
+import styled, { RainbowPalette, useTheme } from "styled-components";
+
+import {
+    ClientMap,
+    LocationColorMap,
+    parcelsToCollectionEvents,
+} from "@/app/calendar/parcelCalendarFunctions";
+import { Schema } from "@/supabase";
+
+interface ParcelCalendarProps {
+    clientMap: ClientMap;
+    parcelsWithCollectionDate: Schema["parcels"][];
+}
+
+interface ColorTextProps {
+    color: string;
+    text: string;
+}
 
 const Centerer = styled.div`
     display: flex;
@@ -13,20 +30,44 @@ const Centerer = styled.div`
 
 const CalendarWrapper = styled.div`
     width: 100vmin;
-    margin: 2em;
+    margin: 0 2em 2em;
 `;
 
-interface ParcelCalendarProps {
-    events: CalendarEvent[];
-}
-
 const ParcelCalendar: React.FC<ParcelCalendarProps> = (props) => {
+    const chosenTheme = useTheme();
+
+    const getColorText = (color: keyof RainbowPalette): ColorTextProps => {
+        return {
+            color: `${chosenTheme.rainbow[color].background}`,
+            text: `${chosenTheme.rainbow[color].foreground}`,
+        };
+    };
+
+    const colorMap: LocationColorMap = {
+        "Brixton Hill - Methodist Church": getColorText("lightRed"),
+        "Clapham - St Stephens Church": getColorText("lightOrange"),
+        "N&B - Emmanuel Church": getColorText("lightYellow"),
+        "Streatham - Immanuel & St Andrew": getColorText("lightGreen"),
+        "Vauxhall Hope Church": getColorText("darkGreen"),
+        "Waterloo - Oasis": getColorText("lightBlue"),
+        "Waterloo - St George the Martyr": getColorText("darkBlue"),
+        "Waterloo - St Johns": getColorText("lightPurple"),
+        Delivery: getColorText("darkPurple"),
+        default: getColorText("lightBrown"),
+    };
     return (
         <>
             <Title>Collection Time for Parcels</Title>
             <Centerer>
                 <CalendarWrapper>
-                    <Calendar initialEvents={props.events} editable={false} />
+                    <Calendar
+                        initialEvents={parcelsToCollectionEvents(
+                            props.parcelsWithCollectionDate,
+                            props.clientMap,
+                            colorMap
+                        )}
+                        editable={false}
+                    />
                 </CalendarWrapper>
             </Centerer>
         </>

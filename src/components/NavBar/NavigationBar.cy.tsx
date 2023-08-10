@@ -1,7 +1,16 @@
+"use client";
+
 import React from "react";
 import NavigationBar from "@/components/NavBar/NavigationBar";
 import { AppRouterContext, AppRouterInstance } from "next/dist/shared/lib/app-router-context";
-
+import StyleManager from "@/app/themes";
+const StyledNavigationBar: React.FC<{}> = () => {
+    return (
+        <StyleManager>
+            <NavigationBar />
+        </StyleManager>
+    );
+};
 describe("<NavigationBar />", () => {
     const router: AppRouterInstance = {
         push: () => {},
@@ -14,7 +23,7 @@ describe("<NavigationBar />", () => {
 
     const RouterWrappedNavBar = (
         <AppRouterContext.Provider value={router}>
-            <NavigationBar />
+            <StyledNavigationBar />
         </AppRouterContext.Provider>
     );
 

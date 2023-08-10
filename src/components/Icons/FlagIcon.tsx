@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import Icon from "@/components/Icons/Icon";
 import { faFlag } from "@fortawesome/free-solid-svg-icons";

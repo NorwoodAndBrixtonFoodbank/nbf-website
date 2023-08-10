@@ -1,14 +1,20 @@
 import { Metadata } from "next";
 import React from "react";
 import ParcelCalendar from "@/app/calendar/ParcelCalendar";
-import getParcelCalendarEvents from "@/app/calendar/getParcelCalendarEvents";
+import { getClientMap, getParcelsWithCollectionDate } from "@/app/calendar/parcelCalendarFunctions";
 
 const CalendarPage = async (): Promise<React.ReactElement> => {
-    const events = await getParcelCalendarEvents();
+    const [clientMap, parcelsWithCollectionDate] = await Promise.all([
+        getClientMap(),
+        getParcelsWithCollectionDate(),
+    ]);
 
     return (
         <main>
-            <ParcelCalendar events={events} />
+            <ParcelCalendar
+                clientMap={clientMap}
+                parcelsWithCollectionDate={parcelsWithCollectionDate}
+            />
         </main>
     );
 };

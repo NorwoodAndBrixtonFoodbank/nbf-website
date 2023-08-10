@@ -1,5 +1,8 @@
+"use client";
+
 import React from "react";
 import { CalendarEvent } from "@/components/Calendar/Calendar";
+import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
 
 const dateTimeFormatOptions: Intl.DateTimeFormatOptions = {
@@ -17,6 +20,10 @@ const dateFormatOptions: Intl.DateTimeFormatOptions = {
     month: "long",
     day: "numeric",
 };
+
+const StyledParagraph = styled.p`
+    margin: 1em 0.5em;
+`;
 
 const EventModal: React.FC<{
     eventClick: CalendarEvent | null;
@@ -43,9 +50,11 @@ const EventModal: React.FC<{
             isOpen={true}
             onClose={() => setEventClick(null)}
         >
-            <p>Start: {startDate}</p>
-            <p>End: {endDate}</p>
-            {eventClick.description ? <p>Description: {eventClick.description}</p> : <></>}
+            <StyledParagraph>Start: {startDate}</StyledParagraph>
+            <StyledParagraph>End: {endDate}</StyledParagraph>
+            {eventClick.description && (
+                <StyledParagraph>Description: {eventClick.description}</StyledParagraph>
+            )}
         </Modal>
     );
 };

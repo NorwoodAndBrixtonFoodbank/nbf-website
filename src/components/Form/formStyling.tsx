@@ -25,8 +25,9 @@ export const StyledCard = styled.div`
     width: 100%;
     height: 80%;
     border-radius: 10px;
-    background-color: ${(props) => props.theme.surfaceBackgroundColor};
-    color: ${(props) => props.theme.surfaceForegroundColor};
+    box-shadow: 0 0 15px ${(props) => props.theme.shadow};
+    background-color: ${(props) => props.theme.main.background[0]};
+    color: ${(props) => props.theme.main.foreground[0]}};
 
     div {
         width: 100%;
@@ -47,22 +48,7 @@ export const FormHeading = styled.h1`
 `;
 
 export const FormErrorText = styled(FormText)`
-    color: ${(props) => props.theme.errorColor};
+    color: ${(props) => props.theme.error};
     margin-bottom: 3em;
     text-align: center;
-`;
-
-export const StyledFormSubmitButton = styled.button`
-    text-align: center;
-    width: 150px;
-    height: 40px;
-    border-radius: 10px;
-    border: 0;
-    background-color: ${(props) => props.theme.primaryBackgroundColor};
-    color: ${(props) => props.theme.primaryForegroundColor};
-
-    &:hover {
-        background-color: ${(props) => props.theme.secondaryBackgroundColor};
-        color: ${(props) => props.theme.secondaryForegroundColor};
-    }
 `;

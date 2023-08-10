@@ -29,6 +29,7 @@ declare global {
             mount: typeof mount;
             login: () => void;
             checkAccessibility: () => void;
+            checkColorContrast: () => void;
         }
     }
     /* eslint-enable no-unused-vars */

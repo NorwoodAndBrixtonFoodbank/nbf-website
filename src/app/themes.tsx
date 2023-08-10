@@ -1,60 +1,153 @@
 "use client";
 
-import GlobalStyle from "@/app/global_styles";
 import isPropValid from "@emotion/is-prop-valid";
 import { useServerInsertedHTML } from "next/navigation";
 import React, { createContext, useState } from "react";
-import { ServerStyleSheet, StyleSheetManager, ThemeProvider } from "styled-components";
 import {
-    ThemeProvider as MaterialThemeProvider,
-    createTheme as createMaterialTheme,
-} from "@mui/material";
+    ServerStyleSheet,
+    StyleSheetManager,
+    ThemeProvider,
+    DefaultTheme,
+} from "styled-components";
+import MaterialAndGlobalStyle from "@/app/global_styles";
 
-type CustomTheme = {
-    foregroundColor: string;
-    backgroundColor: string;
-    primaryForegroundColor: string;
-    primaryBackgroundColor: string;
-    secondaryForegroundColor: string;
-    secondaryBackgroundColor: string;
-    accentBackgroundColor: string;
-    accentForegroundColor: string;
-    surfaceForegroundColor: string;
-    surfaceBackgroundColor: string;
-    errorColor: string;
+const BLACK = "#000000";
+const WHITE = "#f2f2f2";
+
+const rainbowColours = {
+    lightRed: {
+        background: "#fa9189",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    darkRed: {
+        background: "#fc4942",
+        foreground: BLACK,
+        largeForeground: WHITE,
+    },
+    lightOrange: {
+        background: "#fcae7c",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    darkOrange: {
+        background: "#fd7e2a",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    lightYellow: {
+        background: "#ffd868",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    darkYellow: {
+        background: "#ffbb00",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    lightGreen: {
+        background: "#b4f5b3",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    darkGreen: {
+        background: "#5fa881",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    lightBlue: {
+        background: "#acd5df",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    darkBlue: {
+        background: "#7bbafc",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    lightPurple: {
+        background: "#ceaae9",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    darkPurple: {
+        background: "#b18ff9",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    lightGrey: {
+        background: "#d7d7d7",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    darkGrey: {
+        background: "#808080",
+        foreground: BLACK,
+        largeForeground: WHITE,
+    },
+    lightBrown: {
+        background: "#bfaba2",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
+    darkBrown: {
+        background: "#a68f68",
+        foreground: BLACK,
+        largeForeground: BLACK,
+    },
 };
 
-const lightTheme: CustomTheme = {
-    foregroundColor: "#000000",
-    backgroundColor: "#eeeeee",
-    primaryForegroundColor: "#000000",
-    primaryBackgroundColor: "#63a036",
-    secondaryForegroundColor: "#ffffff",
-    secondaryBackgroundColor: "#066940",
-    accentBackgroundColor: "#609fd3",
-    accentForegroundColor: "#000000",
-    surfaceForegroundColor: "#000000",
-    surfaceBackgroundColor: "#ffffff",
-    errorColor: "#ff624e",
+export const lightTheme: DefaultTheme = {
+    light: true,
+    main: {
+        background: ["#fdfdfd", "#f6f6f6", "#eeeeee", "#dddddd"],
+        foreground: ["#2d2d2d", "#2d2d2d", "#2d2d2d", "#2d2d2d"],
+        largeForeground: ["#2d2d2d", "#2d2d2d", "#2d2d2d", "#2d2d2d"],
+        lighterForeground: ["#666666", "#666666", "#666666", "#3b3b3b"],
+        border: "#d5d5d5",
+    },
+    primary: {
+        background: ["#e7f5e9", "#7fd495", "#02985a", "#05663f", "#222f28"],
+        foreground: [BLACK, BLACK, BLACK, WHITE, WHITE],
+        largeForeground: [BLACK, BLACK, WHITE, WHITE, WHITE],
+    },
+    accent: {
+        background: "#1b385f",
+        foreground: WHITE,
+        largeForeground: WHITE,
+    },
+    error: "#c01622",
+    shadow: "#e2e2e2",
+    rainbow: rainbowColours,
 };
 
-const darkTheme: CustomTheme = {
-    foregroundColor: "#ffffff",
-    backgroundColor: "#1a1a1a",
-    primaryForegroundColor: "#ffffff",
-    primaryBackgroundColor: "#066940",
-    secondaryForegroundColor: "#000000",
-    secondaryBackgroundColor: "#63a036",
-    accentBackgroundColor: "#1b629c",
-    accentForegroundColor: "#ffffff",
-    surfaceForegroundColor: "#ffffff",
-    surfaceBackgroundColor: "#161414",
-    errorColor: "#ff624e",
+export const darkTheme: DefaultTheme = {
+    light: false,
+    main: {
+        background: ["#262626", "#282828", "#2d2d2d", "#363636"],
+        foreground: ["#d9d9d9", "#d9d9d9", "#d9d9d9", "#d9d9d9"],
+        largeForeground: ["#d9d9d9", "#d9d9d9", "#d9d9d9", "#d9d9d9"],
+        lighterForeground: ["#969696", "#969696", "#969696", "#bbbbbb"],
+        border: "#5c5c5c",
+    },
+    primary: {
+        background: [...lightTheme.primary.background].reverse(),
+        foreground: [...lightTheme.primary.foreground].reverse(),
+        largeForeground: [...lightTheme.primary.largeForeground].reverse(),
+    },
+    accent: {
+        background: "#b8cbe9",
+        foreground: "#2d2d2d",
+        largeForeground: "#2d2d2d",
+    },
+    shadow: "#282828",
+    error: "#ff7361",
+    rainbow: rainbowColours,
 };
 
 interface Props {
-    children: React.ReactElement;
-    theme?: CustomTheme;
+    children: React.ReactNode;
+    theme?: DefaultTheme;
 }
 
 export const ThemeUpdateContext = createContext((dark: boolean): void => {
@@ -91,57 +184,10 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
             </StyleSheetManager>
         );
 
-    const materialTheme = createMaterialTheme({
-        palette: {
-            mode: chosenTheme === lightTheme ? "light" : "dark",
-            primary: {
-                main: chosenTheme.primaryBackgroundColor,
-                contrastText: chosenTheme.primaryForegroundColor,
-            },
-            secondary: {
-                main: chosenTheme.secondaryBackgroundColor,
-                contrastText: chosenTheme.secondaryForegroundColor,
-            },
-            error: {
-                main: chosenTheme.errorColor,
-            },
-            background: {
-                default: chosenTheme.backgroundColor,
-                paper: chosenTheme.surfaceBackgroundColor,
-            },
-            text: {
-                primary: chosenTheme.foregroundColor,
-            },
-        },
-        typography: {
-            fontFamily: "Arial, Helvetica, sans-serif",
-        },
-        components: {
-            MuiAppBar: {
-                styleOverrides: {
-                    root: {
-                        backgroundColor: chosenTheme.surfaceBackgroundColor,
-                    },
-                },
-            },
-            MuiTooltip: {
-                styleOverrides: {
-                    tooltip: {
-                        fontSize: "1rem",
-                        padding: "0.5rem",
-                    },
-                },
-            },
-        },
-    });
-
     return (
         <ThemeUpdateContext.Provider value={handleThemeChange}>
             <ThemeProvider theme={chosenTheme}>
-                <MaterialThemeProvider theme={materialTheme}>
-                    <GlobalStyle />
-                    {themedChildren}
-                </MaterialThemeProvider>
+                <MaterialAndGlobalStyle>{themedChildren}</MaterialAndGlobalStyle>
             </ThemeProvider>
         </ThemeUpdateContext.Provider>
     );
