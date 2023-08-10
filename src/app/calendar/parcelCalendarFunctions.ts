@@ -10,11 +10,16 @@ export interface LocationColorMap {
 const COLLECTION_DURATION_MS = 30 * 60 * 1000;
 
 export const getParcelsWithCollectionDate = async (): Promise<ParcelWithClientName[]> => {
-    const response = await supabase
+    const { data } = await supabase
         .from("parcels")
         .select("*, clients ( full_name )")
         .not("collection_datetime", "is", null);
-    return response.data ?? [];
+
+    if (data == null) {
+        throw new Error("Database returns null for parcels");
+    }
+
+    return data;
 };
 
 export const parcelsToCollectionEvents = (
