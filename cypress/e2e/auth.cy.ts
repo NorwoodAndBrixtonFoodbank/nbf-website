@@ -4,10 +4,11 @@ describe("Authentication tests", () => {
 
     const extendedTimeout = { timeout: 10000 };
 
-    const paths = ["/", "/clients", "/clients/add", "/lists", "/calendar"];
+    const buttonReachablePaths = ["/", "/clients", "/lists", "/calendar"];
+    const allPaths = [...buttonReachablePaths, "/clients/add"];
 
     it("Redirected to login page", () => {
-        for (const url of paths) {
+        for (const url of allPaths) {
             cy.visit(url);
             cy.url().should("include", "/login");
         }
@@ -50,7 +51,7 @@ describe("Authentication tests", () => {
         // wait for hydration
         cy.get("#login-panel[data-loaded='true']", extendedTimeout).should("exist");
 
-        for (const url of paths) {
+        for (const url of buttonReachablePaths) {
             cy.get("a[href='" + url + "']")
                 .first()
                 .click({ force: true });
