@@ -374,7 +374,8 @@ const Styling = styled.div`
         > nav {
             background-color: transparent;
             color: ${(props) => props.theme.main.foreground[0]};
-            border-top: solid 1px ${(props) => props.theme.main.border};
+            border: none;
+            margin-top: 0.5em;
             font-size: 1rem;
 
             & option {
@@ -442,10 +443,11 @@ const Styling = styled.div`
     & div.rdt_TableRow {
         padding: 0.5rem 0.5rem;
         // important needed to override the inline style
-        border-bottom-color: ${(props) => props.theme.main.border};
+        border-top-color: ${(props) => props.theme.main.border};
     }
 
     & .rdt_TableHeadRow {
+        padding: 0.5rem 0.5rem;
         background-color: ${(props) => props.theme.main.background[2]};
         border-color: ${(props) => props.theme.main.border};
 

@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import React, { ReactElement } from "react";
 import ListsDataView, { ListRow } from "@/app/lists/ListDataview";
-import supabase, { Schema } from "@/supabase";
+import supabase from "@/supabase";
 import Title from "@/components/Title/Title";
 
 // disables caching

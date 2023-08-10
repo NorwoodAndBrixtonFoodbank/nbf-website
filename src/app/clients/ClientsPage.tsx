@@ -72,7 +72,7 @@ const toggleableHeaders = [
 
 const clientTableColumnStyleOptions = {
     iconsColumn: {
-        grow: 0,
+        width: "3em",
     },
     fullName: {},
     familyCategory: {
@@ -80,21 +80,16 @@ const clientTableColumnStyleOptions = {
     },
     addressPostcode: {
         hide: 800,
-        maxWidth: "12rem",
     },
-    deliveryCollection: {
-        grow: 0,
-        minWidth: "6rem",
+    deliveryCollection: {},
+    packingDate: {
+        hide: 800,
     },
-    packingDate: {},
     packingTimeLabel: {
-        grow: 0,
         hide: 800,
         minWidth: "6rem",
     },
-    lastStatus: {
-        hide: 800,
-    },
+    lastStatus: {},
 };
 
 interface Props {
@@ -113,8 +108,7 @@ const ClientsPage: React.FC<Props> = (props) => {
             <>
                 {data.flaggedForAttention ? <FlaggedForAttentionIcon /> : <></>}
                 {data.requiresFollowUpPhoneCall ? (
-                    // TODO VFB-16 Update this colour to the corresponding colour in the new themes
-                    <PhoneIcon color={theme.surfaceForegroundColor} />
+                    <PhoneIcon color={theme.main.largeForeground[0]} />
                 ) : (
                     <></>
                 )}
@@ -128,8 +122,7 @@ const ClientsPage: React.FC<Props> = (props) => {
         if (data.collectionCentre === "Delivery") {
             return (
                 <>
-                    {/*TODO VFB-16 Update this colour to the corresponding colour in the new themes*/}
-                    <DeliveryIcon color={theme.foregroundColor} />
+                    <DeliveryIcon color={theme.main.largeForeground[0]} />
                     {data.congestionChargeApplies ? <CongestionChargeAppliesIcon /> : <></>}
                 </>
             );
@@ -138,7 +131,7 @@ const ClientsPage: React.FC<Props> = (props) => {
         return (
             <>
                 <CollectionIcon
-                    color={theme.foregroundColor}
+                    color={theme.main.largeForeground[0]}
                     collectionPoint={data.collectionCentre}
                 />
                 {collectionCentreToAbbreviation(data.collectionCentre)}
@@ -179,7 +172,8 @@ const ClientsPage: React.FC<Props> = (props) => {
             <Modal
                 header={
                     <>
-                        <Icon icon={faUser} color={theme.secondaryForegroundColor} /> Client Details
+                        <Icon icon={faUser} color={theme.primary.largeForeground[2]} /> Client
+                        Details
                     </>
                 }
                 isOpen={selectedParcelId !== null}
