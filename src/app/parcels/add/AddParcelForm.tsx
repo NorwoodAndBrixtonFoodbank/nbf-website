@@ -8,7 +8,6 @@ import {
     setField,
     checkErrorOnSubmit,
 } from "@/components/Form/formFunctions";
-
 import {
     CenterComponent,
     StyledForm,
@@ -92,7 +91,7 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
     const errorSetter = setError(setFormErrors, formErrors);
 
     const submitForm = async (): Promise<void> => {
-        setSubmitDisabled(false);
+        setSubmitDisabled(true);
         let inputError;
         if (fields.shippingMethod === "Collection") {
             inputError = checkErrorOnSubmit(formErrors, setFormErrors);
@@ -110,10 +109,10 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
             return;
         }
         if (fields.packingDate === null || fields.timeOfDay === null) {
+            setSubmitDisabled(false);
             return;
         }
 
-        // these are needed to access the getFullYear() etc methods- will try look at fixing.
         const newPackingDate = new Date(fields.packingDate);
         const newTimeofDay = new Date(fields.timeOfDay);
 
@@ -128,9 +127,9 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
         let collectionDateTime = new Date();
         if (fields.shippingMethod === "Collection") {
             if (fields.collectionDate === null || fields.collectionTime === null) {
+                setSubmitDisabled(false);
                 return;
             }
-            // same as above
             const newCollectionDate = new Date(fields.collectionDate);
             const newCollectionTime = new Date(fields.collectionTime);
 
@@ -143,14 +142,14 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
             );
         }
 
-        const deliveryBool: boolean = fields.shippingMethod === "Delivery";
+        const isDelivery: boolean = fields.shippingMethod === "Delivery";
 
         const formToAdd = {
             client_id: props.id,
             packing_datetime: packingDateTime.toISOString(),
             voucher_number: fields.voucherNumber,
-            collection_centre: deliveryBool ? "Delivery" : fields.collectionCentre,
-            collection_datetime: deliveryBool ? null : collectionDateTime.toISOString(),
+            collection_centre: isDelivery ? "Delivery" : fields.collectionCentre,
+            collection_datetime: isDelivery ? null : collectionDateTime.toISOString(),
         };
         try {
             await insertParcel(formToAdd);
@@ -162,7 +161,6 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
                 setSubmitDisabled(false);
             }
         }
-
         setSubmitDisabled(false);
     };
     return (
@@ -182,11 +180,11 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
                 })}
                 <CenterComponent>
                     <StyledFormSubmitButton
-                        type="button"
+                        variant="contained"
                         onClick={submitForm}
                         disabled={submitDisabled}
                     >
-                        Submit
+                        Add Parcel
                     </StyledFormSubmitButton>
                 </CenterComponent>
                 <FormErrorText>{submitErrorMessage + submitError}</FormErrorText>

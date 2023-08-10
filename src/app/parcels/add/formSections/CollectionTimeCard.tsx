@@ -21,7 +21,7 @@ const CollectionTimeCard: React.FC<CardProps> = ({
                     onChange={(value: any) => {
                         onChangeTime(fieldSetter, errorSetter, "collectionTime", value);
                     }}
-                    label="Enter Time Here"
+                    label="Time"
                     value={fields.collectionTime || null}
                 />
                 <ErrorText>{errorText(formErrors.collectionTime)}</ErrorText>

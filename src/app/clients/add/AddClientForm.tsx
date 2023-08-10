@@ -19,6 +19,7 @@ import {
     FormHeading,
     FormText,
     StyledForm,
+    StyledFormSubmitButton,
 } from "@/components/Form/formStyling";
 import FullNameCard from "@/app/clients/add/formSections/FullNameCard";
 import PhoneNumberCard from "@/app/clients/add/formSections/PhoneNumberCard";
@@ -40,7 +41,6 @@ import {
     insertClient,
     insertFamily,
 } from "@/app/clients/add/databaseFunctions";
-import Button from "@mui/material/Button";
 
 interface AddClientFields extends Fields {
     fullName: string;
@@ -220,9 +220,13 @@ const AddClientForm: React.FC = () => {
                     );
                 })}
                 <CenterComponent>
-                    <Button variant="contained" onClick={submitForm} disabled={submitDisabled}>
-                        Submit
-                    </Button>
+                    <StyledFormSubmitButton
+                        variant="contained"
+                        onClick={submitForm}
+                        disabled={submitDisabled}
+                    >
+                        Add Client
+                    </StyledFormSubmitButton>
                 </CenterComponent>
                 <FormErrorText>{submitErrorMessage + submitError}</FormErrorText>
             </StyledForm>

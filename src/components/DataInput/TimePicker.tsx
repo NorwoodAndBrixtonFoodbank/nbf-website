@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { DesktopTimePicker } from "@mui/x-date-pickers";
 
-const StyledTimePicker = styled(TimePicker)`
+const StyledTimePicker = styled(DesktopTimePicker)`
     & .MuiInputBase-root {
         & .MuiInputBase-input {
             // pushes clock icon to the right

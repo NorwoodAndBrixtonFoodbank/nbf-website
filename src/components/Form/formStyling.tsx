@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Button, Paper } from "@mui/material";
 
 export const CenterComponent = styled.div`
     display: flex;
@@ -7,9 +8,8 @@ export const CenterComponent = styled.div`
     margin-bottom: 1rem;
 `;
 
-export const StyledForm = styled.form`
+export const StyledForm = styled.div`
     padding: 2em;
-    width: 90%;
     max-width: 1500px;
     display: flex;
     justify-content: center;
@@ -17,15 +17,14 @@ export const StyledForm = styled.form`
     flex-direction: column;
 `;
 
-export const StyledCard = styled.div`
+export const StyledCard = styled(Paper)`
     display: flex;
     flex-direction: column;
     padding: 2em;
-    margin: 2em;
+    margin: 0.5em;
     width: 100%;
     height: 80%;
     border-radius: 10px;
-    box-shadow: 0 0 15px ${(props) => props.theme.shadow};
     background-color: ${(props) => props.theme.main.background[0]};
     color: ${(props) => props.theme.main.foreground[0]};
 
@@ -36,7 +35,7 @@ export const StyledCard = styled.div`
 `;
 
 export const ErrorText = styled.p`
-    color: ${(props) => props.theme.errorColor};
+    color: ${(props) => props.theme.error};
     font-size: 0.75rem;
     margin: 3px 14px 0 14px;
 `;
@@ -57,4 +56,12 @@ export const FormErrorText = styled(FormText)`
     color: ${(props) => props.theme.error};
     margin-bottom: 3em;
     text-align: center;
+`;
+
+export const StyledFormSubmitButton = styled(Button)`
+    margin: 1em;
+`;
+
+export const FormGap = styled.div`
+    height: 0.5em;
 `;

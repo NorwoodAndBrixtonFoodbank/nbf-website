@@ -138,19 +138,13 @@ export const onChangeDate = (
     key: string,
     value: Date | null
 ): void => {
-    if (value === null) {
-        return;
+    if (value === null || isNaN(Date.parse(value.toString()))) {
+        fieldSetter(key, null);
+        errorSetter(key, Errors.invalid);
+    } else {
+        errorSetter(key, Errors.none);
+        fieldSetter(key, value);
     }
-    const input = new Date(value);
-    const date = {
-        year: input?.getFullYear(),
-        month: input?.getMonth(),
-        day: input?.getDate(),
-    };
-    fieldSetter(key, value);
-    !(date.year && date.month && date.day)
-        ? errorSetter(key, Errors.invalid)
-        : errorSetter(key, Errors.none);
 };
 
 export const onChangeTime = (
@@ -159,20 +153,15 @@ export const onChangeTime = (
     key: string,
     value: Date | null
 ): void => {
-    if (value === null) {
+    if (value === null || isNaN(Date.parse(value.toString()))) {
         fieldSetter(key, null);
-        return;
+        errorSetter(key, Errors.invalid);
+    } else {
+        errorSetter(key, Errors.none);
+        fieldSetter(key, value);
     }
-    const input = new Date(value);
-    const time = {
-        hours: input?.getHours(),
-        minutes: input?.getMinutes(),
-    };
-    fieldSetter(key, value);
-    !(time.hours && time.minutes) && time.hours !== 0 && time.minutes !== 0
-        ? errorSetter(key, Errors.invalid)
-        : errorSetter(key, Errors.none);
 };
+
 export const errorExists = (errorType: Errors): boolean => {
     return errorType !== Errors.initial && errorType !== Errors.none;
 };
@@ -188,12 +177,12 @@ export const checkboxGroupToArray = (checkedBoxes: booleanGroup): string[] => {
 export const checkErrorOnSubmit = (
     errorType: FormErrors,
     errorSetter: React.Dispatch<React.SetStateAction<FormErrors>>,
-    keystoCheck?: string[]
+    keysToCheck?: string[]
 ): boolean => {
     let errorExists = false;
     let amendedErrorTypes = { ...errorType };
     for (const [errorKey, error] of Object.entries(errorType)) {
-        if (!keystoCheck || keystoCheck.includes(errorKey)) {
+        if (!keysToCheck || keysToCheck.includes(errorKey)) {
             if (error !== Errors.none) {
                 errorExists = true;
             }

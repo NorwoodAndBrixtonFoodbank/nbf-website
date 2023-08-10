@@ -13,6 +13,7 @@ import {
 } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { selectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
+import { FormGap } from "@/components/Form/formStyling";
 
 const getQuantity = (input: string): number => {
     if (input === "") {
@@ -70,11 +71,13 @@ const NumberAdultsCard: React.FC<CardProps> = ({
                     label="Female"
                     onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "female")}
                 />
+                <FormGap />
                 <FreeFormTextInput
                     error={errorExists(formErrors.adults)}
                     label="Male"
                     onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "male")}
                 />
+                <FormGap />
                 <FreeFormTextInput
                     error={errorExists(formErrors.adults)}
                     helperText={errorText(formErrors.adults)}

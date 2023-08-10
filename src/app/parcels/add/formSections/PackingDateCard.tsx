@@ -17,7 +17,7 @@ const PackingDateCard: React.FC<CardProps> = ({ errorSetter, fieldSetter, formEr
                         const newValue = value as Date | null;
                         onChangeDate(fieldSetter, errorSetter, "packingDate", newValue);
                     }}
-                    label="Enter Date Here"
+                    label="Date"
                 />
                 <ErrorText>{errorText(formErrors.packingDate)}</ErrorText>
             </>
