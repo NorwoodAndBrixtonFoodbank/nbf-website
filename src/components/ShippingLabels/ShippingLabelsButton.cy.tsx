@@ -64,7 +64,7 @@ describe("Export Pdf Button", () => {
 
         cy.get("a").click();
         cy.readFile(`${downloadsFolder}/${fileName}`);
-        
+
         for (const field of allFields) {
             cy.task("readPdf", `${downloadsFolder}/${fileName}`).should("contain", field);
         }
