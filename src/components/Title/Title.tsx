@@ -10,13 +10,7 @@ interface TitleProps {
 const TitleHeader = styled.h1`
     text-align: center;
     margin: 1em;
-
-    @media only screen and (max-width: 480px) {
-        font-size: 25px;
-    }
-    @media only screen and (max-width: 380px) {
-        font-size: 20px;
-    }
+    font-size: min(6.5vw, 2rem);
 `;
 
 const Title: React.FC<TitleProps> = (props) => {
