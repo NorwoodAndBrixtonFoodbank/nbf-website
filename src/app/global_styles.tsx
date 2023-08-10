@@ -79,7 +79,10 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
             },
             MuiInputLabel: {
                 styleOverrides: {
-                    root: { transition: "none" },
+                    root: {
+                        transition:
+                            "color 0ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms",
+                    },
                 },
             },
             MuiTooltip: {
