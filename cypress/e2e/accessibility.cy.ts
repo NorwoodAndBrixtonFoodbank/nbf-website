@@ -77,6 +77,7 @@ describe("Accessibility tests in dark mode", () => {
 
         // wait for hydration
         cy.get("#login-panel[data-loaded='true']", { timeout: 10000 }).should("exist");
+        cy.get("label[aria-label='Theme Switch']").click();
 
         cy.checkAccessibility();
     });

@@ -4,7 +4,7 @@ describe("Authentication tests", () => {
 
     const extendedTimeout = { timeout: 10000 };
 
-    const paths = ["/", "/clients", "/lists", "/calendar"];
+    const paths = ["/", "/clients", "/clients/add", "/lists", "/calendar"];
 
     it("Redirected to login page", () => {
         for (const url of paths) {

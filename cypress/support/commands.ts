@@ -15,7 +15,7 @@ import "@cypress/code-coverage/support";
 import "cypress-axe";
 
 const loginWithRetry = (iteration: number = 0): void => {
-    if (iteration >= 5) {
+    if (iteration >= 4) {
         // This only ever seems to happen on GH Actions on the first test, so we can just log and move on
         // Redirects are tested by the auth spec
         cy.log("Login redirect failed");
