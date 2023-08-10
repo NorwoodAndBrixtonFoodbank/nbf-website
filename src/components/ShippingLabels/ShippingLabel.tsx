@@ -27,12 +27,10 @@ const format1DTo2DArray = (
     inputArray: ParcelClients[],
     elementsPerSubarray: number
 ): ParcelClients[][] => {
-    const result = [];
-
+    const result: ParcelClients[][] = [];
     for (let index = 0; index < inputArray.length; index += elementsPerSubarray) {
         result.push(inputArray.slice(index, index + elementsPerSubarray));
     }
-
     return result;
 };
 

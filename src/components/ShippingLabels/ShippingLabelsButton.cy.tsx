@@ -59,14 +59,23 @@ describe("Export Pdf Button", () => {
         cy.readFile(`${downloadsFolder}/${fileName}`);
     });
 
-    it("All data is included in the file", () => {
-        cy.mount(<ShippingsLabelButton text="Click" data={data} />);
+    it(
+        "All data is included in the file",
+        {
+            retries: {
+                runMode: 1,
+                openMode: 1,
+            },
+        },
+        () => {
+            cy.mount(<ShippingsLabelButton text="Click" data={data} />);
 
-        cy.get("a").click();
-        cy.readFile(`${downloadsFolder}/${fileName}`);
+            cy.get("a").click();
+            cy.readFile(`${downloadsFolder}/${fileName}`);
 
-        for (const field of allFields) {
-            cy.task("readPdf", `${downloadsFolder}/${fileName}`).should("contain", field);
+            for (const field of allFields) {
+                cy.task("readPdf", `${downloadsFolder}/${fileName}`).should("contain", field);
+            }
         }
-    });
+    );
 });

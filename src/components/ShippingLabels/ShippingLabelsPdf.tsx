@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         fontSize: "11px",
     },
-    cardWrapper: { border: "1pt solid black", margin: "5px" },
+    cardWrapper: { border: "1pt solid black", margin: "10px" },
     bold: { fontFamily: "Helvetica-Bold" },
     row: { display: "flex", flexDirection: "row" },
     col: { flex: 1, margin: "5px" },
@@ -42,7 +42,9 @@ const ParcelCard: React.FC<{ datum: ParcelClients }> = ({ datum }) => {
                 <Text style={styles.col}>
                     <Text style={styles.bold}>CONTACT:</Text> {datum.phone_number}
                 </Text>
-                <Text style={[styles.col, { textAlign: "right" }]}>{datum.packing_datetime}</Text>
+                <Text style={[styles.col, { textAlign: "right" }]}>
+                    <Text style={styles.bold}>PACKED:</Text> {datum.packing_datetime}
+                </Text>
             </View>
             <View style={[styles.row, { minHeight: "100px" }]}>
                 <View style={styles.col}>
