@@ -1,8 +1,8 @@
 "use client";
 
-import React, { ReactElement } from "react";
+import React from "react";
 import styled from "styled-components";
-import Modal from "@/components/Modal/Modal";
+
 type valueType = string[] | string | number | boolean | null;
 
 export interface Data {
@@ -47,41 +47,20 @@ const formatDisplayValue = (value: valueType): string => {
     return value!.toString();
 };
 
-const JSONContent: React.FC<Data> = (data) => {
-    return (
-        <>
-            {Object.entries(data).map(([key, value]) => (
-                <EachItem key={key}>
-                    <Key>{key.toUpperCase().replace("_", " ")}</Key>
-                    <Value>{formatDisplayValue(value)}</Value>
-                </EachItem>
-            ))}
-        </>
-    );
-};
-
 export interface DataViewerProps {
     data: Data;
-    header: ReactElement | string;
-    isOpen: boolean;
-    onRequestClose: () => void;
-    headerId: string;
 }
 
 const DataViewer: React.FC<DataViewerProps> = (props) => {
-    const closeModal = (): void => {
-        props.onRequestClose();
-    };
-
     return (
-        <Modal
-            isOpen={props.isOpen}
-            onClose={closeModal}
-            header={props.header}
-            headerId={props.headerId}
-        >
-            <ContentDiv>{JSONContent(props.data)}</ContentDiv>
-        </Modal>
+        <ContentDiv>
+            {Object.entries(props.data).map(([key, value]) => (
+                <EachItem key={key}>
+                    <Key>{key.toUpperCase().replaceAll("_", " ")}</Key>
+                    <Value>{formatDisplayValue(value)}</Value>
+                </EachItem>
+            ))}
+        </ContentDiv>
     );
 };
 export default DataViewer;

@@ -24,6 +24,8 @@ const ContainerDiv = styled.div`
     display: flex;
     justify-content: start;
     align-items: center;
+    text-align: left;
+
     & svg {
         fill: ${(props) => props.color ?? props.theme.main.lighterForeground[1]};
     }

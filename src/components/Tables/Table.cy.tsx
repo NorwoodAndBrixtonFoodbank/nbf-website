@@ -4,49 +4,64 @@ import StyleManager from "@/app/themes";
 
 const data: Datum[] = [
     {
-        data: { full_name: "Tom", phone_number: "123456" },
+        full_name: "Tom",
+        phone_number: "123456",
     },
     {
-        data: { full_name: "Sam", phone_number: "999" },
+        full_name: "Sam",
+        phone_number: "999",
     },
     {
-        data: { full_name: "Harper Garrett", phone_number: "2171786554" },
+        full_name: "Harper Garrett",
+        phone_number: "2171786554",
     },
     {
-        data: { full_name: "Adrian Key", phone_number: "3650099130" },
+        full_name: "Adrian Key",
+        phone_number: "3650099130",
     },
     {
-        data: { full_name: "Harrell Wallace", phone_number: "4650047935" },
+        full_name: "Harrell Wallace",
+        phone_number: "4650047935",
     },
     {
-        data: { full_name: "Oneill Curtis", phone_number: "7058491995" },
+        full_name: "Oneill Curtis",
+        phone_number: "7058491995",
     },
     {
-        data: { full_name: "Herring Rutledge", phone_number: "1440882899" },
+        full_name: "Herring Rutledge",
+        phone_number: "1440882899",
     },
     {
-        data: { full_name: "Eloise Rowland", phone_number: "2580325390" },
+        full_name: "Eloise Rowland",
+        phone_number: "2580325390",
     },
     {
-        data: { full_name: "Cathryn Burks", phone_number: "7136166489" },
+        full_name: "Cathryn Burks",
+        phone_number: "7136166489",
     },
     {
-        data: { full_name: "Paopao", phone_number: "7136166469" },
+        full_name: "Paopao",
+        phone_number: "7136166469",
     },
     {
-        data: { full_name: "Forbes Doyle", phone_number: "1377097191" },
+        full_name: "Forbes Doyle",
+        phone_number: "1377097191",
     },
     {
-        data: { full_name: "Agnes Rosales", phone_number: "3334796379" },
+        full_name: "Agnes Rosales",
+        phone_number: "3334796379",
     },
     {
-        data: { full_name: "Jan Orr", phone_number: "1526538148" },
+        full_name: "Jan Orr",
+        phone_number: "1526538148",
     },
     {
-        data: { full_name: "Colleen Lowery", phone_number: "3980156139" },
+        full_name: "Colleen Lowery",
+        phone_number: "3980156139",
     },
     {
-        data: { full_name: "Chloe", phone_number: "4567894522" },
+        full_name: "Chloe",
+        phone_number: "4567894522",
     },
 ];
 

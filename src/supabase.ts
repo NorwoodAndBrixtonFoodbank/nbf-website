@@ -20,6 +20,7 @@ export type Schema = {
     families: Tables["families"]["Row"];
     parcels: Tables["parcels"]["Row"];
     lists: Tables["lists"]["Row"];
+    events: Tables["events"]["Row"];
 };
 
 export type InsertSchema = {

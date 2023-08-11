@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
-import { styled, useTheme } from "styled-components";
+import styled from "styled-components";
 import { NoSsr } from "@mui/material";
-import SpeechBubbleIcon from "@/components/Icons/SpeechBubbleIcon";
 import {
     faAnglesUp,
     faAnglesDown,
@@ -16,24 +15,34 @@ import IconButton from "@mui/material/IconButton/IconButton";
 import Icon from "@/components/Icons/Icon";
 
 export interface Datum {
-    data: RowData;
-    tooltips?: RowData;
+    [headerKey: string]: string | boolean | null;
 }
 
-export interface RowData {
-    [headerKey: string]: string;
-}
+export type TableHeaders = [string, string][];
 
-export type Headers = [string, string][];
-
-interface Row {
+export interface Row {
     rowId: number;
-    data: RowData;
+    data: Datum;
+}
+
+export type ColumnDisplayFunction = (row: Row) => ReactNode;
+export type OnRowClickFunction = (row: Row, e: React.MouseEvent<Element, MouseEvent>) => void;
+
+export interface ColumnStyleOptions {
+    grow?: number;
+    width?: string;
+    minWidth?: string;
+    maxWidth?: string;
+    right?: boolean;
+    center?: boolean;
+    wrap?: boolean;
+    allowOverflow?: boolean;
+    hide?: number;
 }
 
 interface Props {
     data: Datum[];
-    headerKeysAndLabels: Headers;
+    headerKeysAndLabels: TableHeaders;
     checkboxes?: boolean;
     reorderable?: boolean;
     headerFilters?: string[];
@@ -43,9 +52,16 @@ interface Props {
     sortable?: boolean;
     onEdit?: (data: number) => void;
     onDelete?: (data: number) => void;
+    columnDisplayFunctions?: { [headerKey: string]: ColumnDisplayFunction };
+    columnStyleOptions?: { [headerKey: string]: ColumnStyleOptions };
+    onRowClick?: OnRowClickFunction;
 }
 
-const doesRowIncludeFilterText = (row: Row, filterText: FilterText, headers: Headers): boolean => {
+const doesRowIncludeFilterText = (
+    row: Row,
+    filterText: FilterText,
+    headers: TableHeaders
+): boolean => {
     for (const [headerKey, _headerLabel] of headers) {
         if (
             !(row.data[headerKey] ?? "")
@@ -59,18 +75,21 @@ const doesRowIncludeFilterText = (row: Row, filterText: FilterText, headers: Hea
     return true;
 };
 
-const dataToFilteredRows = (data: Datum[], filterText: FilterText, headers: Headers): Row[] => {
+const dataToFilteredRows = (
+    data: Datum[],
+    filterText: FilterText,
+    headers: TableHeaders
+): Row[] => {
     const rows = dataToRows(data, headers);
-    const filteredRows = filterRows(rows, filterText, headers);
-    return filteredRows;
+    return filterRows(rows, filterText, headers);
 };
 
-const dataToRows = (data: Datum[], headers: Headers): Row[] => {
+const dataToRows = (data: Datum[], headers: TableHeaders): Row[] => {
     return data.map((datum: Datum, currentIndex: number) => {
-        const row: Row = { rowId: currentIndex, data: {} };
+        const row: Row = { rowId: currentIndex, data: { ...datum } };
 
         for (const [headerKey, _headerLabel] of headers) {
-            const databaseValue = datum.data[headerKey] ?? "";
+            const databaseValue = datum[headerKey] ?? "";
             row.data[headerKey] = Array.isArray(databaseValue)
                 ? databaseValue.join(", ")
                 : databaseValue;
@@ -80,38 +99,30 @@ const dataToRows = (data: Datum[], headers: Headers): Row[] => {
     });
 };
 
-const filterRows = (rows: Row[], filterText: FilterText, headers: Headers): Row[] => {
+const filterRows = (rows: Row[], filterText: FilterText, headers: TableHeaders): Row[] => {
     return rows.filter((row) => doesRowIncludeFilterText(row, filterText, headers));
 };
 
 interface CellProps {
-    data: Datum[];
-    rowId: number;
+    row: Row;
+    columnDisplayFunctions: { [headerKey: string]: ColumnDisplayFunction };
     headerKey: string;
 }
 
-const CustomCell: React.FC<CellProps> = ({ data, rowId, headerKey }) => {
-    const [tooltip, setTooltip] = useState(false);
-
-    const tooltips = data[rowId].tooltips ?? {};
-    const theme = useTheme();
+const CustomCell: React.FC<CellProps> = ({ row, columnDisplayFunctions, headerKey }) => {
     return (
-        <RowDiv
-            key={rowId}
-            onMouseEnter={() => setTooltip(true)}
-            onMouseLeave={() => setTooltip(false)}
-            onClick={() => setTooltip(true)}
-        >
-            {data[rowId].data[headerKey]}
-            {tooltips[headerKey] && (
-                <SpeechBubbleIcon
-                    onHoverText={tooltips[headerKey]!}
-                    showTooltip={tooltip}
-                    color={theme.accent.background}
-                />
-            )}
-        </RowDiv>
+        <>
+            {columnDisplayFunctions[headerKey]
+                ? columnDisplayFunctions[headerKey](row)
+                : row.data[headerKey]}
+        </>
     );
+};
+
+const defaultColumnStyleOptions: ColumnStyleOptions = {
+    grow: 1,
+    minWidth: "2rem",
+    maxWidth: "20rem",
 };
 
 const Table: React.FC<Props> = ({
@@ -126,6 +137,9 @@ const Table: React.FC<Props> = ({
     reorderable = false,
     sortable = true,
     toggleableHeaders,
+    onRowClick,
+    columnDisplayFunctions = {},
+    columnStyleOptions = {},
 }) => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
@@ -164,15 +178,26 @@ const Table: React.FC<Props> = ({
     const columns: TableColumn<Row>[] = (
         toggleableHeaders ? shownHeaders : headerKeysAndLabels
     ).map(([headerKey, headerName]) => {
+        const columnStyles = Object.assign(
+            { ...defaultColumnStyleOptions },
+            columnStyleOptions[headerKey] ?? {}
+        );
+
         return {
             name: headerName,
-            selector: (row) => row.data[headerKey],
-            minWidth: "12rem",
-            maxWidth: "20rem",
+            selector: (row) => row.data[headerKey] ?? "",
             sortable: sortable,
             cell(row) {
-                return <CustomCell data={data} rowId={row.rowId} headerKey={headerKey} />;
+                return (
+                    <CustomCell
+                        row={row}
+                        columnDisplayFunctions={columnDisplayFunctions}
+                        headerKey={headerKey}
+                    />
+                );
             },
+
+            ...columnStyles,
         };
     });
 
@@ -220,7 +245,7 @@ const Table: React.FC<Props> = ({
                 };
 
                 return (
-                    <EditandReorderArrowDiv>
+                    <EditAndReorderArrowDiv>
                         {reorderable ? (
                             <IconButton
                                 onClick={() => swapRows(row.rowId, row.rowId - 1)}
@@ -255,7 +280,7 @@ const Table: React.FC<Props> = ({
                         ) : (
                             <></>
                         )}
-                    </EditandReorderArrowDiv>
+                    </EditAndReorderArrowDiv>
                 );
             },
             width: "5rem",
@@ -298,22 +323,14 @@ const Table: React.FC<Props> = ({
                     }
                     pagination={pagination ?? true}
                     persistTableHead
+                    onRowClicked={onRowClick}
                 />
             </NoSsr>
         </Styling>
     );
 };
 
-const RowDiv = styled.div`
-    display: flex;
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    padding-left: 1rem;
-    gap: 2rem;
-`;
-
-const EditandReorderArrowDiv = styled.div`
+const EditAndReorderArrowDiv = styled.div`
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     width: 100%;
@@ -350,14 +367,15 @@ const Styling = styled.div`
 
     // the entire table component including the header and the pagination bar
     & > div {
-        border-radius: 0;
+        border-radius: 1rem;
         background-color: transparent;
 
         // the pagination bar
         > nav {
             background-color: transparent;
             color: ${(props) => props.theme.main.foreground[0]};
-            border-top: solid 1px ${(props) => props.theme.main.border};
+            border: none;
+            margin-top: 0.5em;
             font-size: 1rem;
 
             & option {
@@ -395,9 +413,7 @@ const Styling = styled.div`
     }
 
     & div.rdt_TableCell,
-    & div.rdt_TableCol_Sortable,
     & div.rdt_TableCol {
-        width: 7rem;
         // important needed to override the inline style
         padding: 0 0 0 1rem;
 
@@ -431,6 +447,7 @@ const Styling = styled.div`
     }
 
     & .rdt_TableHeadRow {
+        padding: 0.5rem 0.5rem;
         background-color: ${(props) => props.theme.main.background[2]};
         border-color: ${(props) => props.theme.main.border};
 

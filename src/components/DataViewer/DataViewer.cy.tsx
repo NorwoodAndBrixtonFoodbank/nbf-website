@@ -22,27 +22,11 @@ const StyledDataViewer: React.FC<DataViewerProps> = (props) => {
 
 describe("Data Viewer Component", () => {
     it("renders", () => {
-        cy.mount(
-            <StyledDataViewer
-                data={data}
-                header="Header"
-                isOpen={true}
-                onRequestClose={() => {}}
-                headerId="dataViewer"
-            />
-        );
+        cy.mount(<StyledDataViewer data={data} />);
     });
 
     it("data viewer shows expected values", () => {
-        cy.mount(
-            <StyledDataViewer
-                data={data}
-                header="Header"
-                isOpen={true}
-                onRequestClose={() => {}}
-                headerId="dataViewer"
-            />
-        );
+        cy.mount(<StyledDataViewer data={data} />);
 
         cy.contains("ID");
         cy.contains(longString);
