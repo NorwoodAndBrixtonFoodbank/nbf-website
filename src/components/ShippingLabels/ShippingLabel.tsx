@@ -85,7 +85,11 @@ const getRequiredData = async (): Promise<ParcelClients[]> => {
     );
 };
 
-const ShippingsLabel = async ({ text }: { text: string }): Promise<React.ReactElement> => {
+interface Props {
+    text: string;
+}
+
+const ShippingsLabel = async ({ text }: Props): Promise<React.ReactElement> => {
     const requiredData = await getRequiredData();
     return <ShippingLabelsButton data={format1DTo2DArray(requiredData, 5)} text={text} />;
 };
