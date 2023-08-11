@@ -36,20 +36,26 @@ const format1DTo2DArray = (
 
 // TODO: make the function query only required data from selected rows in client page
 const getParcelsForDelivery = async (): Promise<Schema["parcels"][]> => {
-    const response = await supabase
+    const { data, error } = await supabase
         .from("parcels")
         .select()
         .filter("collection_centre", "eq", "Delivery");
-    return response.data ?? [];
+    if (error !== null) {
+        throw Error(`${error.code}: ${error.message}`);
+    }
+    return data ?? [];
 };
 
 const getClientById = async (clientId: string): Promise<Schema["clients"] | null> => {
-    const response = await supabase
+    const { data, error } = await supabase
         .from("clients")
         .select("*")
         .eq("primary_key", clientId)
         .single();
-    return response.data ?? null;
+    if (error !== null) {
+        throw Error(`${error.code}: ${error.message}`);
+    }
+    return data ?? null;
 };
 
 const getRequiredData = async (): Promise<ParcelClients[]> => {
