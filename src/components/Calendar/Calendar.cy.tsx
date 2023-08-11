@@ -15,6 +15,10 @@ describe("<Calendar />", () => {
     const dayAfterTestDate = new Date("2021-04-06");
     dayAfterTestDate.setDate(testDate.getDate() + 1);
 
+    beforeEach(() => {
+        // cy.viewport(1366, 768);
+    });
+
     const sampleEvents: CalendarEvent[] = [
         {
             id: "a",
