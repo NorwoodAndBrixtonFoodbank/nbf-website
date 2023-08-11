@@ -15,6 +15,10 @@ describe("<Calendar />", () => {
     const dayAfterTestDate = new Date("2021-04-06");
     dayAfterTestDate.setDate(testDate.getDate() + 1);
 
+    beforeEach(() => {
+        cy.viewport(750, 1400);
+    });
+
     const sampleEvents: CalendarEvent[] = [
         {
             id: "a",
@@ -32,14 +36,13 @@ describe("<Calendar />", () => {
             description: "a piece of description text",
         },
     ];
-
     it("calendar renders", () => {
         cy.mount(<StyledCalendar initialEvents={[]} />);
     });
 
     it("calendar is set to the current month when rendered in dayGridMonth", () => {
         const currentMonthYear = testDate.toLocaleDateString("en-GB", {
-            month: "long",
+            month: "short",
             year: "numeric",
         });
 
@@ -67,7 +70,10 @@ describe("<Calendar />", () => {
     it("can change view between months in dayGridMonth", () => {
         const prevMonth = new Date(testDate);
         prevMonth.setMonth((testDate.getMonth() + 11) % 12);
-        const prevMonthYear = prevMonth.toLocaleString("en-GB", { month: "long", year: "numeric" });
+        const prevMonthYear = prevMonth.toLocaleString("en-GB", {
+            month: "short",
+            year: "numeric",
+        });
 
         cy.mount(<StyledCalendar initialEvents={[]} initialDate={testDate} />);
         cy.get("button.fc-prev-button").click();
@@ -77,7 +83,7 @@ describe("<Calendar />", () => {
 
     it("can change view between days in timeGridDay", () => {
         const tomorrowDMY = dayAfterTestDate
-            .toLocaleString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+            .toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric" })
             .split(" ");
 
         cy.mount(<StyledCalendar initialEvents={[]} view="timeGridDay" initialDate={testDate} />);
@@ -151,6 +157,23 @@ describe("<Calendar />", () => {
                 hour: "numeric",
                 minute: "numeric",
             })
+        );
+    });
+    it("navigates to day when grid is clicked", () => {
+        const todayShortDMY = testDate
+            .toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+            .split(" ");
+
+        const todayLongDMY = testDate
+            .toLocaleString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+            .split(" ");
+
+        cy.mount(<StyledCalendar initialEvents={sampleEvents} initialDate={testDate} />);
+        cy.get(`[aria-label="${todayLongDMY[1]} ${todayLongDMY[0]}, ${todayLongDMY[2]}"]`).click();
+        cy.get(".fc-timeGridDay-view").should("be.visible");
+        cy.get(".fc-toolbar-title").should(
+            "have.text",
+            `${todayShortDMY[1]} ${todayShortDMY[0]}, ${todayShortDMY[2]}`
         );
     });
 });

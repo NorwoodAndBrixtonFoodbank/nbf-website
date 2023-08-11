@@ -10,6 +10,7 @@ interface TitleProps {
 const TitleHeader = styled.h1`
     text-align: center;
     margin: 1em;
+    font-size: min(6.5vw, 2rem);
 `;
 
 const Title: React.FC<TitleProps> = (props) => {

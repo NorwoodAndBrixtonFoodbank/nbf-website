@@ -6,15 +6,13 @@ import React from "react";
 import styled, { RainbowPalette, useTheme } from "styled-components";
 
 import {
-    ClientMap,
     LocationColorMap,
     parcelsToCollectionEvents,
+    ParcelWithClientName,
 } from "@/app/calendar/parcelCalendarFunctions";
-import { Schema } from "@/supabase";
 
 interface ParcelCalendarProps {
-    clientMap: ClientMap;
-    parcelsWithCollectionDate: Schema["parcels"][];
+    parcelsWithCollectionDate: ParcelWithClientName[];
 }
 
 interface ColorTextProps {
@@ -29,7 +27,7 @@ const Centerer = styled.div`
 `;
 
 const CalendarWrapper = styled.div`
-    width: 100vmin;
+    width: min(100vw, 1200px);
     margin: 0 2em 2em;
 `;
 
@@ -63,7 +61,6 @@ const ParcelCalendar: React.FC<ParcelCalendarProps> = (props) => {
                     <Calendar
                         initialEvents={parcelsToCollectionEvents(
                             props.parcelsWithCollectionDate,
-                            props.clientMap,
                             colorMap
                         )}
                         editable={false}

@@ -23,6 +23,7 @@ const dateFormatOptions: Intl.DateTimeFormatOptions = {
 
 const StyledParagraph = styled.p`
     margin: 1em 0.5em;
+    font-size: 1.1rem;
 `;
 
 const EventModal: React.FC<{
