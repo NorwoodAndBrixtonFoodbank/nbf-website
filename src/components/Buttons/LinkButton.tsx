@@ -10,10 +10,6 @@ const UnstyledLink = styled(Link)`
     display: contents;
 `;
 
-const UpperCaseButton = styled(Button)`
-    text-transform: uppercase;
-`;
-
 type LinkButtonProps = {
     link: string;
     page: string;
@@ -22,7 +18,9 @@ type LinkButtonProps = {
 const LinkButton: React.FC<LinkButtonProps> = (props) => {
     return (
         <UnstyledLink key={props.page} href={props.link} prefetch={false}>
-            <UpperCaseButton color="secondary">{props.page}</UpperCaseButton>
+            <Button color="primary" variant="outlined">
+                {props.page}
+            </Button>
         </UnstyledLink>
     );
 };

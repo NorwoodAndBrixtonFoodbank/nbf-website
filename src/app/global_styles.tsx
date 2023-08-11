@@ -34,8 +34,8 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
         palette: {
             mode: chosenTheme.light ? "light" : "dark",
             primary: {
-                main: chosenTheme.primary.background[2],
-                contrastText: chosenTheme.primary.foreground[2],
+                main: chosenTheme.primary.background[3],
+                contrastText: chosenTheme.primary.foreground[3],
             },
             secondary: {
                 main: chosenTheme.main.foreground[2],
@@ -59,7 +59,7 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
             MuiAppBar: {
                 styleOverrides: {
                     root: {
-                        backgroundColor: chosenTheme.main.background[3],
+                        backgroundColor: chosenTheme.main.background[0],
                         color: chosenTheme.main.foreground[3],
                         backgroundImage: "none",
                     },
