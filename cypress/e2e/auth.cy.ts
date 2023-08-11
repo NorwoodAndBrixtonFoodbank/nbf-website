@@ -17,13 +17,13 @@ describe("Authentication tests", () => {
     it("Redirected to clients after login", () => {
         cy.visit("/login");
 
-        cy.get("#login-panel[data-loaded='true']", extendedTimeout).should("exist");
+        cy.get("[data-loaded='true']", extendedTimeout).should("exist");
 
-        cy.get("input#email").type(email);
-        cy.get("input#password").type(password);
+        cy.get("input[type='email']").type(email);
+        cy.get("input[type='password']").type(password);
 
-        cy.get("#email").should("have.value", email);
-        cy.get("#password").should("have.value", password);
+        cy.get("input[type='email']").should("have.value", email);
+        cy.get("input[type='password']").should("have.value", password);
 
         cy.get("button[type='submit']").click();
 
@@ -50,7 +50,7 @@ describe("Authentication tests", () => {
         cy.visit("/login");
 
         // wait for hydration
-        cy.get("#login-panel[data-loaded='true']", extendedTimeout).should("exist");
+        cy.get("[data-loaded='true']", extendedTimeout).should("exist");
 
         for (const url of buttonReachablePaths) {
             cy.get("a[href='" + url + "']")

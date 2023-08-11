@@ -19,13 +19,11 @@ export const AuthRouting: React.FC<{ children: React.ReactNode }> = ({ children 
         }
 
         if (loggedIn) {
-            if (window.location.pathname.startsWith("/login")) {
-                return "/clients";
-            }
-        } else {
-            if (window.location.pathname !== "/login") {
-                return "/login";
-            }
+            return window.location.pathname.startsWith("/login") ? "/clients" : null;
+        }
+
+        if (window.location.pathname !== "/login") {
+            return "/login";
         }
 
         return null;

@@ -5,7 +5,7 @@ describe("Light and dark mode switch works", () => {
         cy.visit("/login");
 
         // wait for hydration
-        cy.get("#login-panel[data-loaded='true']", { timeout: 10000 }).should("exist");
+        cy.get("[data-loaded='true']", { timeout: 10000 }).should("exist");
     });
 
     it("Switching to Dark Mode Works", () => {

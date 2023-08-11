@@ -43,13 +43,13 @@ Cypress.Commands.add("login", () => {
         cy.visit("/");
 
         // wait for hydration
-        cy.get("#login-panel[data-loaded='true']", { timeout: 10000 }).should("exist");
+        cy.get("[data-loaded='true']", { timeout: 10000 }).should("exist");
 
-        cy.get("input#email").type(email);
-        cy.get("input#password").type(password);
+        cy.get("input[type='email']").type(email);
+        cy.get("input[type='password']").type(password);
 
-        cy.get("#email").should("have.value", email);
-        cy.get("#password").should("have.value", password);
+        cy.get("input[type='email']").should("have.value", email);
+        cy.get("input[type='password']").should("have.value", password);
 
         loginWithRetry();
     });
