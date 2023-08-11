@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
         fontSize: "11px",
     },
     cardWrapper: { border: "1pt solid black", margin: "10px" },
-    bold: { fontFamily: "Helvetica-Bold" },
+    bold: { fontFamily: "Helvetica-Bold", "textTransform": "uppercase" },
     row: { display: "flex", flexDirection: "row" },
     col: { flex: 1, margin: "5px" },
 });
@@ -37,13 +37,13 @@ const ParcelCard: React.FC<{ datum: ParcelClients }> = ({ datum }) => {
         <View style={styles.cardWrapper}>
             <View style={styles.row}>
                 <Text style={styles.col}>
-                    <Text style={styles.bold}>NAME:</Text> {datum.full_name}
+                    <Text style={styles.bold}>name:</Text> {datum.full_name}
                 </Text>
                 <Text style={styles.col}>
-                    <Text style={styles.bold}>CONTACT:</Text> {datum.phone_number}
+                    <Text style={styles.bold}>contact:</Text> {datum.phone_number}
                 </Text>
                 <Text style={[styles.col, { textAlign: "right" }]}>
-                    <Text style={styles.bold}>PACKED:</Text> {datum.packing_datetime}
+                    <Text style={styles.bold}>packed:</Text> {datum.packing_datetime}
                 </Text>
             </View>
             <View style={[styles.row, { minHeight: "100px" }]}>
@@ -55,7 +55,7 @@ const ParcelCard: React.FC<{ datum: ParcelClients }> = ({ datum }) => {
                     <Text>{datum.address_postcode}</Text>
                 </View>
                 <View style={styles.col}>
-                    <Text style={styles.bold}>DELIVERY INSTRUCTIONS:</Text>
+                    <Text style={styles.bold}>delivery instructions:</Text>
                     <Text>{datum.delivery_instructions}</Text>
                 </View>
                 <View style={styles.col}></View>

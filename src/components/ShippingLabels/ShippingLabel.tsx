@@ -34,7 +34,7 @@ const format1DTo2DArray = (
     return result;
 };
 
-// TODO: make the function query only required data from selected rows in client page
+// TODO make the function query only required data from selected rows in client page
 const getParcelsForDelivery = async (): Promise<Schema["parcels"][]> => {
     const { data, error } = await supabase
         .from("parcels")

@@ -5,10 +5,12 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import React from "react";
 import ShippingLabelsPdf, { ParcelClients } from "@/components/ShippingLabels/ShippingLabelsPdf";
 
-const ShippingLabelsButton: React.FC<{ data: ParcelClients[][]; text: string }> = ({
-    data,
-    text,
-}) => {
+interface Props {
+    data: ParcelClients[][];
+    text: string;
+}
+
+const ShippingLabelsButton: React.FC<Props> = ({ data, text }) => {
     return (
         <NoSsr>
             <PDFDownloadLink
