@@ -3,20 +3,20 @@ import { CalendarEvent } from "@/components/Calendar/Calendar";
 
 export type ParcelWithClientName = Schema["parcels"] & { clients: { full_name: string } | null };
 
+const COLLECTION_DURATION_MS = 30 * 60 * 1000;
+
 export interface LocationColorMap {
     [location: string]: { color: string; text: string };
 }
 
-const COLLECTION_DURATION_MS = 30 * 60 * 1000;
-
 export const getParcelsWithCollectionDate = async (): Promise<ParcelWithClientName[]> => {
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from("parcels")
         .select("*, clients ( full_name )")
         .not("collection_datetime", "is", null);
 
-    if (data == null) {
-        throw new Error("Database returns null for parcels");
+    if (error) {
+        throw new Error("Database error");
     }
 
     return data;
