@@ -19,14 +19,13 @@ export const PageButton = styled(Button)`
     margin: 10px;
     &:hover {
         background-color: ${(props) => props.theme.primaryBackgroundColor};
-    },
+    }
 `;
 
 const StyledSwipeableDrawer = styled(SwipeableDrawer)`
     & .MuiPaper-root {
         background-image: none;
-    },
-
+    }
 `;
 
 const UnstyledLink = styled(Link)`
@@ -122,10 +121,10 @@ const ContentDiv = styled.div`
 `;
 
 interface Props {
-    children?: React.ReactElement;
+    children?: React.ReactNode;
 }
 
-const ResponsiveAppBar: React.FC<Props> = ({ children = <></> }) => {
+const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
     const [drawer, setDrawer] = React.useState(false);
 
     const openDrawer = (): void => {

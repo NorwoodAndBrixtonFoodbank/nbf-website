@@ -167,8 +167,12 @@ describe("Data Input Components", () => {
             cy.get("li[data-value='a']").click();
             cy.get("@onChangeSpy").should("have.been.calledWith", "a");
 
+            cy.get("div[class^='MuiSelect']").click();
+
             cy.get("li[data-value='b']").click();
             cy.get("@onChangeSpy").should("have.been.calledWith", "b");
+
+            cy.get("div[class^='MuiSelect']").click();
 
             cy.get("li[data-value='c']").click();
             cy.get("@onChangeSpy").should("have.been.calledWith", "c");

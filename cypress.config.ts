@@ -28,11 +28,11 @@ export default defineConfig({
             return config;
         },
         baseUrl: "http://localhost:3200",
-        video: false,
+        video: true,
         videoUploadOnPasses: false,
-        screenshotOnRunFailure: false,
+        screenshotOnRunFailure: true,
+        videoCompression: 1,
     },
-
     component: {
         devServer: {
             framework: "next",

@@ -3,18 +3,21 @@ import { Metadata } from "next";
 
 import React from "react";
 import NavigationBar from "@/components/NavBar/NavigationBar";
+import { AuthRouting } from "@/app/auth";
 
 interface Props {
-    children: React.ReactElement;
+    children: React.ReactNode;
 }
 
 const App: React.FC<Props> = ({ children }) => (
     <html lang="en">
         <body>
             <React.StrictMode>
-                <StyleManager>
-                    <NavigationBar>{children}</NavigationBar>
-                </StyleManager>
+                <AuthRouting>
+                    <StyleManager>
+                        <NavigationBar>{children}</NavigationBar>
+                    </StyleManager>
+                </AuthRouting>
             </React.StrictMode>
         </body>
     </html>

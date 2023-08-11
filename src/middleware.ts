@@ -10,6 +10,10 @@ const middleware: NextMiddleware = async (req: NextRequest) => {
         data: { user },
     } = await supabase.auth.getUser();
 
+    if (req.nextUrl.pathname.startsWith("/auth")) {
+        return res;
+    }
+
     if (!user && req.nextUrl.pathname !== "/login") {
         return NextResponse.redirect(new URL("/login", req.url));
     }
