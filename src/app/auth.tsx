@@ -14,18 +14,18 @@ export const AuthRouting: React.FC<{ children: React.ReactNode }> = ({ children 
     // This fixes issues with navigation when the user has signed in but then signed out and caching still allows them to
     // access pages. It also fixes authentication flow issues on sign in and sign out
     const toRedirectTo = (): string | null => {
+        const pathname = window.location.pathname;
+
         if (loggedIn === undefined) {
             return null;
         }
 
-        if (loggedIn) {
-            return window.location.pathname.startsWith("/login") ? "/clients" : null;
+        if (loggedIn && pathname.startsWith("/login")) {
+            return "/clients";
         }
-
-        if (window.location.pathname !== "/login") {
+        if (!loggedIn && !pathname.startsWith("/login")) {
             return "/login";
         }
-
         return null;
     };
 
