@@ -74,6 +74,23 @@ Cypress.Commands.add("checkAccessibility", () => {
     cy.checkA11y(undefined, undefined, terminalLog);
 });
 
+Cypress.Commands.add("checkColorContrast", () => {
+    const terminalLog = (violations: Result[]): void => {
+        cy.task(
+            "table",
+            violations.map(({ id, impact, description, nodes }) => ({
+                id,
+                impact,
+                description,
+                length: nodes.length,
+            }))
+        );
+    };
+
+    cy.injectAxe();
+    cy.checkA11y(undefined, { runOnly: { type: "tag", values: ["wcag2aa"] } }, terminalLog);
+});
+
 Cypress.on("uncaught:exception", (err) => {
     const str = err.toString();
     // NEXT_REDIRECT triggers when the client side router interrupts a cypress command
