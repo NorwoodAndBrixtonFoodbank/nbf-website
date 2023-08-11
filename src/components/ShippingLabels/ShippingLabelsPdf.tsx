@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
         fontSize: "11px",
     },
     cardWrapper: { border: "1pt solid black", margin: "10px" },
-    bold: { fontFamily: "Helvetica-Bold", "textTransform": "uppercase" },
+    bold: { fontFamily: "Helvetica-Bold", textTransform: "uppercase" },
     row: { display: "flex", flexDirection: "row" },
     col: { flex: 1, margin: "5px" },
 });
@@ -76,7 +76,7 @@ const ParcelCard: React.FC<{ datum: ParcelClients }> = ({ datum }) => {
 };
 
 interface ShippingLabelsPdfProps {
-    data: ParcelClients[][]
+    data: ParcelClients[][];
 }
 
 const ShippingLabelsPdf: React.FC<ShippingLabelsPdfProps> = ({ data }) => {
