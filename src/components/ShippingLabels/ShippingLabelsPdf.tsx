@@ -75,7 +75,11 @@ const ParcelCard: React.FC<{ datum: ParcelClients }> = ({ datum }) => {
     );
 };
 
-const ShippingLabelsPdf: React.FC<{ data: ParcelClients[][] }> = ({ data }) => {
+interface ShippingLabelsPdfProps {
+    data: ParcelClients[][]
+}
+
+const ShippingLabelsPdf: React.FC<ShippingLabelsPdfProps> = ({ data }) => {
     return (
         <Document>
             {data.map((subarray, index) => {
