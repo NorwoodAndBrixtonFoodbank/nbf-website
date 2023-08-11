@@ -157,7 +157,7 @@ const Calendar: React.FC<CalendarProps> = ({
     initialDate,
 }) => {
     const [eventClick, setEventClick] = useState<CalendarEvent | null>(null);
-    const calendarRef = useRef<FullCalendar>(null) as React.MutableRefObject<FullCalendar>;
+    const calendarRef = useRef<FullCalendar>(null);
 
     const handleEventClick = (info: EventClickArg): void => {
         const id = info.event.id;
@@ -165,7 +165,7 @@ const Calendar: React.FC<CalendarProps> = ({
     };
 
     const handleDateClick = (info: DateClickArg): void => {
-        const calendarApi = calendarRef.current.getApi();
+        const calendarApi = calendarRef.current!.getApi();
         calendarApi.changeView("timeGridDay", info.dateStr);
     };
 
