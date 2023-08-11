@@ -123,6 +123,13 @@ const CalendarStyling = styled.div`
         color: ${(props) => props.theme.primary.foreground[1]};
     }
 
+    .fc .fc-button-primary:focus,
+    .fc .fc-button:focus,
+    .fc .fc-button-primary:not(:disabled).fc-button-active:focus,
+    .fc .fc-button-primary:not(:disabled):active:focus {
+        box-shadow: none;
+    }
+
     // days in the previous month
     .fc .fc-day-other .fc-daygrid-day-top {
         opacity: 1;
