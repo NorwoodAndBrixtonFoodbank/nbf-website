@@ -17,6 +17,10 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal/Modal";
 import { Schema } from "@/supabase";
 import TableSurface from "@/components/Tables/TableSurface";
+import { CenterComponent } from "@/components/Form/formStyling";
+import Button from "@mui/material/Button";
+
+// TODO Change Button to LinkButton
 
 const collectionCentreToAbbreviation = (
     collectionCentre: Schema["parcels"]["collection_centre"]
@@ -178,6 +182,11 @@ const ClientsPage: React.FC<Props> = (props) => {
                     <ExpandedClientDetails parcelId={selectedParcelId} />
                 </Suspense>
             </Modal>
+            <CenterComponent>
+                <Button variant="contained" href="/clients/add">
+                    Add Clients
+                </Button>
+            </CenterComponent>
         </>
     );
 };
