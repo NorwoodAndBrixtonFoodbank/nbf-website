@@ -114,15 +114,7 @@ export const formatDatetimeAsTime = (datetime: string | null): string => {
         return "-";
     }
 
-    const time = new Date(datetime);
-
-    const hours = time.getHours();
-    const minutes = time.getMinutes();
-
-    const HH = hours.toString().padStart(2, "0");
-    const MM = minutes.toString().padStart(2, "0");
-
-    return `${HH}:${MM}`;
+    return new Date(datetime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 };
 
 export const formatAddressFromClientDetails = (
@@ -178,8 +170,8 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
     const childDetails = [];
 
     for (const familyMember of family) {
-        if (familyMember.age !== null && familyMember.age < 16) {
-            const age = familyMember.age === -1 ? "0-17" : familyMember.age.toString();
+        if (familyMember.age !== null && familyMember.age <= 15) {
+            const age = familyMember.age === -1 ? "0-15" : familyMember.age.toString();
             childDetails.push(`${age}-year-old ${familyMember.gender}`);
         }
     }

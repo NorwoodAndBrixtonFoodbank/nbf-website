@@ -112,16 +112,7 @@ export const formatDatetimeAsDate = (datetime: string | null): string => {
         return "-";
     }
 
-    const date = new Date(datetime);
-
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-
-    const DD = day.toString().padStart(2, "0");
-    const MM = month.toString().padStart(2, "0");
-    const YYYY = date.getFullYear();
-
-    return `${DD}/${MM}/${YYYY}`;
+    return new Date(datetime).toLocaleDateString("en-GB");
 };
 
 export const datetimeToPackingTimeLabel = (datetime: string | null): string => {

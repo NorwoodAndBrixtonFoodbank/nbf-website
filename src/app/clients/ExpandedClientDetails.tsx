@@ -13,11 +13,7 @@ const ExpandedClientDetails = async (props: Props): Promise<React.ReactElement> 
 
     const expandedClientDetails = await getExpandedClientDetails(props.parcelId);
 
-    return (
-        <>
-            <DataViewer data={expandedClientDetails} />
-        </>
-    );
+    return <DataViewer data={expandedClientDetails} />;
 };
 
 export default ExpandedClientDetails;
