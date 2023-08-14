@@ -3,10 +3,10 @@
 import { Button, NoSsr } from "@mui/material";
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import React from "react";
-import ShoppingListPDF from "@/components/ShoppingList/shoppingListPDF";
-import { ShoppingListProps } from "@/components/ShoppingList/dataPreparation";
+import ShoppingListPDF from "@/pdf/ShoppingList/ShoppingListPDF";
+import { ShoppingListPDFProps } from "@/pdf/ShoppingList/dataPreparation";
 
-const ShoppingListPage: React.FC<{ data: ShoppingListProps }> = ({ data }) => {
+const ShoppingListPage: React.FC<{ data: ShoppingListPDFProps }> = ({ data }) => {
     return (
         <>
             <NoSsr>

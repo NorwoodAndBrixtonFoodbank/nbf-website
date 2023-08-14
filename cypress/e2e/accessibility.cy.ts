@@ -35,6 +35,12 @@ describe("Accessibility tests in light mode", () => {
         cy.checkAccessibility();
     });
 
+    it("Checks shopping-list page", () => {
+        cy.visit("/shopping-list");
+
+        cy.checkAccessibility();
+    });
+
     it("Checks login page", () => {
         cy.visit("/login");
 
@@ -74,6 +80,13 @@ describe("Accessibility tests in dark mode", () => {
     it("Checks clients/add page", () => {
         cy.login();
         cy.visit("/clients/add");
+        cy.get("label[aria-label='Theme Switch']").click();
+
+        cy.checkAccessibility();
+    });
+
+    it("Checks shopping-list page", () => {
+        cy.visit("/shopping-list");
         cy.get("label[aria-label='Theme Switch']").click();
 
         cy.checkAccessibility();

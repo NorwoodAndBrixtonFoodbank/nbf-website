@@ -1,6 +1,6 @@
 import React from "react";
-import ShippingsLabelButton from "@/components/ShippingLabels/ShippingLabelsButton";
-import { ParcelClients } from "@/components/ShippingLabels/ShippingLabelsPdf";
+import ShippingsLabelButton from "@/pdf/ShippingLabels/ShippingLabelsButton";
+import { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
 
 const downloadsFolder = Cypress.config("downloadsFolder");
 const fileName = "ShippingLabels.pdf";

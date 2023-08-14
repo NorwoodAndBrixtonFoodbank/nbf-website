@@ -3,11 +3,26 @@ import {
     fetchFamilies,
     fetchLists,
     fetchParcels,
-} from "@/components/ShoppingList/databaseFetch";
+} from "@/pdf/ShoppingList/databaseFetch";
 import { Schema } from "@/supabase";
 import { Person } from "@/components/Form/formFunctions";
 
-export interface ShoppingListProps {
+interface ParcelInfoAndClientID {
+    parcelInfo: ParcelInfo;
+    clientID: string;
+}
+
+interface ClientDataAndFamilyData {
+    clientData: Schema["clients"];
+    familyData: Schema["families"][];
+}
+
+interface NappySizeAndExtraInformation {
+    nappySize: string;
+    extraInformation: string;
+}
+
+export interface ShoppingListPDFProps {
     postcode: string;
     parcelInfo: ParcelInfo;
     clientSummary: ClientSummary;
@@ -18,32 +33,32 @@ export interface ShoppingListProps {
 }
 
 export interface ParcelInfo {
-    Voucher_Number: string;
-    Packing_Date: string;
-    Collection_Date: string;
-    Collection_Site: string;
+    voucherNumber: string;
+    packingDate: string;
+    collectionDate: string;
+    collectionSite: string;
 }
 
 export interface ClientSummary {
-    Name: string;
-    Contact: string;
-    Address: string;
-    Extra_Information: string;
+    name: string;
+    contact: string;
+    address: string;
+    extraInformation: string;
 }
 
 export interface HouseholdSummary {
-    Household_Size: string;
-    Gender_Breakdown: string;
-    Number_Of_Babies: string;
-    Age_and_Gender_of_Children: string;
+    householdSize: string;
+    genderBreakdown: string;
+    numberOfBabies: string;
+    ageAndGenderOfChildren: string;
 }
 
 export interface RequirementSummary {
-    Feminine_Products_Required: string;
-    Baby_Products_Required: string;
-    Pet_Food_Required: string;
-    Dietary_Requirements: string;
-    Other_Items: string;
+    feminineProductsRequired: string;
+    babyProductsRequired: string;
+    petFoodRequired: string;
+    dietaryRequirements: string;
+    otherItems: string;
 }
 
 export interface Item {
@@ -65,36 +80,30 @@ const formatDate = (dateString: string | null): string => {
     });
 };
 
-const prepareParcelInfo = async (
-    parcelID: string
-): Promise<{ parcelInfo: ParcelInfo; clientID: string }> => {
+const prepareParcelInfo = async (parcelID: string): Promise<ParcelInfoAndClientID> => {
     const fetchedData = await fetchParcels(parcelID);
     const parcelInfo: ParcelInfo = {
-        Voucher_Number: fetchedData.voucher_number ?? "",
-        Packing_Date: formatDate(fetchedData.packing_datetime),
-        Collection_Date: formatDate(fetchedData.collection_datetime),
-        Collection_Site: fetchedData.collection_centre ?? "",
+        voucherNumber: fetchedData.voucher_number ?? "",
+        packingDate: formatDate(fetchedData.packing_datetime),
+        collectionDate: formatDate(fetchedData.collection_datetime),
+        collectionSite: fetchedData.collection_centre ?? "",
     };
 
-    if (parcelInfo.Collection_Site === "Delivery") {
-        parcelInfo.Collection_Site = "N/A - Delivery";
+    if (parcelInfo.collectionSite === "Delivery") {
+        parcelInfo.collectionSite = "N/A - Delivery";
     }
 
     return { parcelInfo: parcelInfo, clientID: fetchedData.client_id };
 };
 
-const getClientAndFamilyData = async (
-    clientID: string
-): Promise<{ clientData: Schema["clients"]; familyData: Schema["families"][] }> => {
+const getClientAndFamilyData = async (clientID: string): Promise<ClientDataAndFamilyData> => {
     const clientData = await fetchClients(clientID);
     const familyData = await fetchFamilies(clientData.family_id);
 
     return { clientData: clientData, familyData: familyData };
 };
 
-const processExtraInformation = (
-    original: string
-): { nappySize: string; extraInformation: string } => {
+const processExtraInformation = (original: string): NappySizeAndExtraInformation => {
     if (original.startsWith("Nappy Size: ")) {
         const [nappySize, extraInformation] = original.split(", Extra Information: ");
         return { nappySize: `(${nappySize})`, extraInformation: extraInformation };
@@ -104,15 +113,18 @@ const processExtraInformation = (
 
 const prepareClientSummary = (clientData: Schema["clients"]): ClientSummary => {
     const { address_1, address_2, address_county, address_postcode, address_town } = clientData;
-    const address = [address_1, address_2, address_county, address_postcode, address_town].join(
-        "\n"
-    );
+    const address: string[] = [];
+    [address_1, address_2, address_county, address_postcode, address_town].forEach((value) => {
+        if (value !== "") {
+            address.push(value);
+        }
+    });
 
     return {
-        Name: clientData.full_name,
-        Contact: clientData.phone_number,
-        Address: address,
-        Extra_Information: "",
+        name: clientData.full_name,
+        contact: clientData.phone_number,
+        address: address.join("\n"),
+        extraInformation: "",
     };
 };
 
@@ -133,14 +145,14 @@ const prepareHouseholdSummary = (familyData: Schema["families"][]): HouseholdSum
     const numberMales = familyData.filter((member) => member.gender === "male").length;
 
     return {
-        Household_Size: `${householdSize} (${householdSize - children.length} Adults ${
+        householdSize: `${householdSize} (${householdSize - children.length} Adults ${
             children.length
         } Children)`,
-        Gender_Breakdown: `${numberFemales} Female ${numberMales} Male ${
+        genderBreakdown: `${numberFemales} Female ${numberMales} Male ${
             householdSize - numberFemales - numberMales
         } Other`,
-        Number_Of_Babies: numberBabies.toString(),
-        Age_and_Gender_of_Children: displayList(children.map(getChild)),
+        numberOfBabies: numberBabies.toString(),
+        ageAndGenderOfChildren: displayList(children.map(getChild)),
     };
 };
 
@@ -153,11 +165,11 @@ const prepareRequirementSummary = (clientData: Schema["clients"]): RequirementSu
     }
 
     return {
-        Feminine_Products_Required: displayList(clientData.feminine_products),
-        Baby_Products_Required: babyProduct,
-        Pet_Food_Required: displayList(clientData.pet_food),
-        Dietary_Requirements: displayList(clientData.dietary_requirements),
-        Other_Items: displayList(clientData.other_items),
+        feminineProductsRequired: displayList(clientData.feminine_products),
+        babyProductsRequired: babyProduct,
+        petFoodRequired: displayList(clientData.pet_food),
+        dietaryRequirements: displayList(clientData.dietary_requirements),
+        otherItems: displayList(clientData.other_items),
     };
 };
 
@@ -192,7 +204,7 @@ const getEndNotes = (_parcelID: string): string => {
     // This is hard coded for now. _parcelID is also not used for now.
 };
 
-const prepareData = async (parcelID: string): Promise<ShoppingListProps> => {
+const prepareData = async (parcelID: string): Promise<ShoppingListPDFProps> => {
     const { parcelInfo, clientID } = await prepareParcelInfo(parcelID);
     const { clientData, familyData } = await getClientAndFamilyData(clientID);
     const itemsList = await prepareItemsList(familyData.length);
@@ -202,12 +214,12 @@ const prepareData = async (parcelID: string): Promise<ShoppingListProps> => {
     const requirementSummary = prepareRequirementSummary(clientData);
 
     const { nappySize, extraInformation } = processExtraInformation(clientData.extra_information);
-    clientSummary.Extra_Information = extraInformation;
-    requirementSummary.Baby_Products_Required += `${nappySize}`;
+    clientSummary.extraInformation = extraInformation;
+    requirementSummary.babyProductsRequired += ` ${nappySize}`;
 
     const endNotes = getEndNotes(parcelID);
 
-    const data: ShoppingListProps = {
+    const data: ShoppingListPDFProps = {
         postcode: clientData.address_postcode,
         parcelInfo: parcelInfo,
         clientSummary: clientSummary,
