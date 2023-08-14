@@ -6,9 +6,7 @@ interface Props {
     parcelId: string | null;
 }
 
-const ExpandedClientDetails: React.FC<Props> = async (
-    props: Props
-): Promise<React.ReactElement> => {
+const ExpandedClientDetails = async (props: Props): Promise<React.ReactElement> => {
     if (props.parcelId === null) {
         return <></>;
     }

@@ -85,6 +85,6 @@
     "start-server-and-test": "^2.0.0",
     "styled-components": "^6.0.0-rc.3",
     "supabase": "^1.68.6",
-    "typescript": "5.0.4"
+    "typescript": "^5.1.6"
   }
 }
