@@ -101,6 +101,7 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
     };
 
     const submitForm = async (): Promise<void> => {
+        setSubmitErrorMessage("");
         setSubmitDisabled(true);
         let inputError;
         if (fields.shippingMethod === "Collection") {
@@ -178,15 +179,13 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
                     );
                 })}
                 <CenterComponent>
-                    <StyledFormSubmitButton
-                        variant="contained"
-                        onClick={submitForm}
-                        disabled={submitDisabled}
-                    >
+                    <StyledFormSubmitButton onClick={submitForm} disabled={submitDisabled}>
                         Add Parcel
                     </StyledFormSubmitButton>
                 </CenterComponent>
-                <FormErrorText>{submitErrorMessage + submitError}</FormErrorText>
+                <FormErrorText>
+                    {submitErrorMessage === "" ? submitError : submitErrorMessage}
+                </FormErrorText>
             </StyledForm>
         </CenterComponent>
     );

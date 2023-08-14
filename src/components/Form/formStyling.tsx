@@ -60,6 +60,11 @@ export const FormErrorText = styled(FormText)`
 
 export const StyledFormSubmitButton = styled(Button)`
     margin: 1em;
+    background-color: ${(props) => props.theme.primary.background[3]};
+    color: ${(props) => props.theme.primary.foreground[3]};
+    &:hover {
+        background-color: ${(props) => props.theme.primary.background[2]};
+    }
 `;
 
 export const FormGap = styled.div`

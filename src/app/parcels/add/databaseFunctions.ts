@@ -1,6 +1,6 @@
 import supabase, { InsertSchema, Schema } from "@/supabase";
 
-export type ParcelDatabaseInsertRecord = InsertSchema["parcels"];
+type ParcelDatabaseInsertRecord = InsertSchema["parcels"];
 type ParcelsDatabaseFetchRecord = Pick<Schema["parcels"], "primary_key" | "client_id">;
 
 export const insertParcel = async (

@@ -1,7 +1,7 @@
 import React from "react";
 import { CardProps, onChangeDateOrTime, errorText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
-import StyledTimePicker from "@/components/DataInput/TimePicker";
+import { DesktopTimePicker } from "@mui/x-date-pickers";
 import { ErrorText } from "@/components/Form/formStyling";
 
 const CollectionTimeCard: React.FC<CardProps> = ({
@@ -17,7 +17,7 @@ const CollectionTimeCard: React.FC<CardProps> = ({
             text="What time is the client collecting their parcel?"
         >
             <>
-                <StyledTimePicker
+                <DesktopTimePicker
                     onChange={(value: any) => {
                         onChangeDateOrTime(fieldSetter, errorSetter, "collectionTime", value);
                     }}
