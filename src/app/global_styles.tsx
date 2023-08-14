@@ -92,6 +92,15 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
                     },
                 },
             },
+            MuiPaper: {
+                styleOverrides: {
+                    root: {
+                        backgroundColor: chosenTheme.main.background[1],
+                        color: chosenTheme.main.foreground[1],
+                        backgroundImage: "none",
+                    },
+                },
+            },
         },
     });
 interface Props {
