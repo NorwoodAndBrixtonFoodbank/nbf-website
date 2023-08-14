@@ -13,10 +13,9 @@ const GlobalStyle = createGlobalStyle`
     }
       
     html, body {
-        height: 100%;
+        height: auto;
         width: 100%;
         font-family: Helvetica, Arial, sans-serif;
-        overflow: hidden;
     }
 
     body {
@@ -60,8 +59,11 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
                 styleOverrides: {
                     root: {
                         backgroundColor: chosenTheme.main.background[0],
-                        color: chosenTheme.main.foreground[3],
+                        color: chosenTheme.main.foreground[0],
                         backgroundImage: "none",
+                        "& .MuiButton-root": {
+                            textTransform: "uppercase",
+                        },
                     },
                 },
             },
