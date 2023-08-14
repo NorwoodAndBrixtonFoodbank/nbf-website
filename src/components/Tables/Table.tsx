@@ -44,6 +44,7 @@ interface Props {
     data: Datum[];
     headerKeysAndLabels: TableHeaders;
     checkboxes?: boolean;
+    onRowSelection?: (rowIds: number[]) => void;
     reorderable?: boolean;
     headerFilters?: string[];
     pagination?: boolean;
@@ -134,6 +135,7 @@ const Table: React.FC<Props> = ({
     data: inputData,
     headerKeysAndLabels,
     checkboxes,
+    onRowSelection,
     defaultShownHeaders,
     headerFilters,
     onDelete,
@@ -156,9 +158,18 @@ const Table: React.FC<Props> = ({
 
     const [filterText, setFilterText] = useState<FilterText>({});
 
-    const [selectCheckBoxes, setSelectCheckBoxes] = useState(
+    const [selectCheckBoxes, _setSelectCheckBoxes] = useState(
         new Array<boolean>(data.length).fill(false)
     );
+
+    const setSelectCheckBoxes = (newSelection: boolean[]): void => {
+        _setSelectCheckBoxes(newSelection);
+        onRowSelection?.(
+            newSelection
+                .map((selected, index) => (selected ? index : -1))
+                .filter((index) => index !== -1)
+        );
+    };
 
     const [selectAllCheckBox, setSelectAllCheckBox] = useState(false);
 
@@ -169,7 +180,8 @@ const Table: React.FC<Props> = ({
     };
 
     const toggleAllCheckBox = (): void => {
-        setSelectCheckBoxes(new Array<boolean>(data.length).fill(!selectAllCheckBox));
+        const newSelection = new Array<boolean>(data.length).fill(!selectAllCheckBox);
+        setSelectCheckBoxes(newSelection);
         setSelectAllCheckBox(!selectAllCheckBox);
     };
 

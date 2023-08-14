@@ -1,17 +1,24 @@
-import { Schema } from "@/supabase";
 import ActionBar from "@/app/clients/ActionBar";
 import React from "react";
 import StyleManager from "@/app/themes";
+import { ClientsTableRow } from "./getClientsTableData";
 
 describe("Clients - Action Bar", () => {
-    const mockData: Schema["parcels"][] = [
+    const mockData: ClientsTableRow[] = [
         {
-            primary_key: "1",
-            client_id: "1",
-            collection_centre: "Clapham",
-            collection_datetime: null,
-            voucher_number: null,
-            packing_datetime: null,
+            addressPostcode: "AB1 2CD",
+            collectionCentre: "Centre 1",
+            collectionDatetime: new Date().toISOString(),
+            congestionChargeApplies: false,
+            familyCategory: "Family 1",
+            flaggedForAttention: false,
+            fullName: "John Smith",
+            lastStatusUpdate: new Date().toISOString(),
+            lastStatus: "Delivered",
+            packingDatetime: new Date().toISOString(),
+            packingTimeLabel: "10:00",
+            parcelId: "123456789",
+            requiresFollowUpPhoneCall: false,
         },
     ];
 

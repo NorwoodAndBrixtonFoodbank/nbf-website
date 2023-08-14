@@ -96,6 +96,7 @@ describe("Clients Page", () => {
                             familyCategory: "Family of 3",
                             addressPostcode: "SW1A 2AA",
                             collectionCentre: "COLLECTION_CENTRE",
+                            collectionDatetime: "2023-08-04T13:30:00+00:00",
                             congestionChargeApplies: true,
                             packingDate: "04/08/2023",
                             packingTimeLabel: "PM",

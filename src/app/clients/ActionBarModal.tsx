@@ -1,15 +1,15 @@
-import { Schema } from "@/supabase";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Button from "@mui/material/Button/Button";
 import Modal from "@/components/Modal/Modal";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
+import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 
 interface SharedModalProps {
     isOpen: boolean;
     onClose: () => void;
-    data: Schema["parcels"][];
+    data: ClientsTableRow[];
     status: string | null;
     onSubmit: (date: Dayjs) => void;
     header: string;
@@ -87,10 +87,12 @@ const ActionBarModal: React.FC<SharedModalProps> = (props) => {
                     {props.data.map((parcel, index) => {
                         return (
                             <StatusText key={index}>
-                                {parcel.collection_centre}: (
-                                {parcel.collection_datetime &&
-                                    new Date(parcel.collection_datetime).toLocaleString()}
-                                )
+                                {parcel.collectionCentre}
+                                {parcel.fullName && ` - ${parcel.fullName}`}
+                                {parcel.collectionDatetime &&
+                                    `\n @ ${dayjs(parcel.collectionDatetime!).format(
+                                        "DD/MM/YYYY HH:mm"
+                                    )}`}
                             </StatusText>
                         );
                     })}

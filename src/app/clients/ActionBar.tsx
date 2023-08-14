@@ -1,6 +1,6 @@
 "use client";
 
-import supabase, { Schema } from "@/supabase";
+import supabase from "@/supabase";
 import React, { useState } from "react";
 import ActionBarModal from "@/app/clients/ActionBarModal";
 import styled from "styled-components";
@@ -9,10 +9,12 @@ import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import { Dayjs } from "dayjs";
+import { ClientsTableRow } from "@/app/clients/getClientsTableData";
+import Paper from "@mui/material/Paper/Paper";
 
 interface Props {
     selected: number[];
-    data: Schema["parcels"][];
+    data: ClientsTableRow[];
 }
 
 const statuses = [
@@ -50,6 +52,10 @@ const OuterDiv = styled.div`
     margin: 1rem;
 `;
 
+const StyledPaper = styled(Paper)`
+    margin: 1rem;
+`;
+
 const ActionBar: React.FC<Props> = ({ selected, data }) => {
     const selectedData = Array.from(selected.map((index) => data[index]));
 
@@ -65,13 +71,12 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
         const toInsert = selectedData
-            .map((parcel) => {
+            .map((parcel: ClientsTableRow) => {
                 const event_name = selectedStatus!;
-                const parcel_id = parcel.primary_key;
                 const timestamp = date.set("second", 0).toISOString();
                 return {
                     event_name,
-                    parcel_id,
+                    parcel_id: parcel.parcelId,
                     timestamp,
                 };
             })
@@ -92,7 +97,7 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
     };
 
     return (
-        <>
+        <StyledPaper>
             <ActionBarModal
                 isOpen={statusModal}
                 onClose={() => {
@@ -181,7 +186,7 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                     Actions
                 </Button>
             </OuterDiv>
-        </>
+        </StyledPaper>
     );
 };
 
