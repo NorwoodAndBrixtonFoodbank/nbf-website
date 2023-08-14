@@ -73,10 +73,6 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
                     root: {
                         transition: "none",
                         textTransform: "none",
-                        "&.MuiButton-containedPrimary:hover": {
-                            backgroundColor: chosenTheme.primary.background[2],
-                            opacity: "80%",
-                        },
                     },
                 },
             },
