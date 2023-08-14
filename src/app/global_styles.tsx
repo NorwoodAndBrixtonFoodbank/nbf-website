@@ -64,6 +64,7 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
                         "& .MuiButton-root": {
                             textTransform: "uppercase",
                         },
+                        position: "sticky",
                     },
                 },
             },

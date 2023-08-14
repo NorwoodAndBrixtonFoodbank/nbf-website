@@ -71,10 +71,6 @@ const DrawerButton = styled(Button)`
     width: 100%;
 `;
 
-const StickyAppBar = styled(AppBar)`
-    position: sticky;
-`;
-
 const NavElementContainer = styled.div`
     display: flex;
     flex-basis: 0;
@@ -147,7 +143,7 @@ const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
                     ))}
                 </DrawerInner>
             </StyledSwipeableDrawer>
-            <StickyAppBar>
+            <AppBar>
                 <AppBarInner>
                     <MobileNavMenuContainer>
                         <Button
@@ -177,7 +173,7 @@ const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
                         <SignOutButton />
                     </SignOutButtonContainer>
                 </AppBarInner>
-            </StickyAppBar>
+            </AppBar>
             {children}
         </>
     );
