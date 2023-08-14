@@ -1,5 +1,5 @@
 import React from "react";
-import { CardProps, onChangeTime, errorText } from "@/components/Form/formFunctions";
+import { CardProps, onChangeDateOrTime, errorText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import StyledTimePicker from "@/components/DataInput/TimePicker";
 import { ErrorText } from "@/components/Form/formStyling";
@@ -19,7 +19,7 @@ const CollectionTimeCard: React.FC<CardProps> = ({
             <>
                 <StyledTimePicker
                     onChange={(value: any) => {
-                        onChangeTime(fieldSetter, errorSetter, "collectionTime", value);
+                        onChangeDateOrTime(fieldSetter, errorSetter, "collectionTime", value);
                     }}
                     label="Time"
                     value={fields.collectionTime || null}

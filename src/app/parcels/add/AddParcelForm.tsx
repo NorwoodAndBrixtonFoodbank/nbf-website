@@ -76,7 +76,7 @@ const initialFormErrors: FormErrors = {
 
 const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
     const router = useRouter();
-    const [fields, setFields] = useState<AddParcelFields>(initialFields);
+    const [fields, setFields] = useState(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
     const [submitError, setSubmitError] = useState(Errors.none);
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
@@ -89,6 +89,16 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
 
     const fieldSetter = setField(setFields, fields);
     const errorSetter = setError(setFormErrors, formErrors);
+
+    const mergeDateAndTime = (date: Date, time: Date): Date => {
+        return new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            time.getHours(),
+            time.getMinutes()
+        );
+    };
 
     const submitForm = async (): Promise<void> => {
         setSubmitDisabled(true);
@@ -113,15 +123,9 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
             return;
         }
 
-        const newPackingDate = new Date(fields.packingDate);
-        const newTimeofDay = new Date(fields.timeOfDay);
-
-        const packingDateTime = new Date(
-            newPackingDate.getFullYear(),
-            newPackingDate.getMonth(),
-            newPackingDate.getDate(),
-            newTimeofDay.getHours(),
-            newTimeofDay.getMinutes()
+        const packingDateTime = mergeDateAndTime(
+            new Date(fields.packingDate),
+            new Date(fields.timeOfDay)
         );
 
         let collectionDateTime = new Date();
@@ -130,19 +134,14 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
                 setSubmitDisabled(false);
                 return;
             }
-            const newCollectionDate = new Date(fields.collectionDate);
-            const newCollectionTime = new Date(fields.collectionTime);
 
-            collectionDateTime = new Date(
-                newCollectionDate.getFullYear(),
-                newCollectionDate.getMonth(),
-                newCollectionDate.getDate(),
-                newCollectionTime.getHours(),
-                newCollectionTime.getMinutes()
+            collectionDateTime = mergeDateAndTime(
+                new Date(fields.collectionDate),
+                new Date(fields.collectionTime)
             );
         }
 
-        const isDelivery: boolean = fields.shippingMethod === "Delivery";
+        const isDelivery = fields.shippingMethod === "Delivery";
 
         const formToAdd = {
             client_id: props.id,

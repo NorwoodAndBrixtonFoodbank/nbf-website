@@ -132,22 +132,7 @@ export const valueOnChangeRadioGroup = (
     };
 };
 
-export const onChangeDate = (
-    fieldSetter: FieldSetter,
-    errorSetter: ErrorSetter,
-    key: string,
-    value: Date | null
-): void => {
-    if (value === null || isNaN(Date.parse(value.toString()))) {
-        fieldSetter(key, null);
-        errorSetter(key, Errors.invalid);
-    } else {
-        errorSetter(key, Errors.none);
-        fieldSetter(key, value);
-    }
-};
-
-export const onChangeTime = (
+export const onChangeDateOrTime = (
     fieldSetter: FieldSetter,
     errorSetter: ErrorSetter,
     key: string,

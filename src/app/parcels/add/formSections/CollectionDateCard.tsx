@@ -1,5 +1,5 @@
 import React from "react";
-import { CardProps, onChangeDate, errorText } from "@/components/Form/formFunctions";
+import { CardProps, onChangeDateOrTime, errorText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import StyledDatePicker from "@/components/DataInput/DatePicker";
 import { ErrorText } from "@/components/Form/formStyling";
@@ -19,7 +19,7 @@ const CollectionDateCard: React.FC<CardProps> = ({
             <>
                 <StyledDatePicker
                     onChange={(value: any): void => {
-                        onChangeDate(fieldSetter, errorSetter, "collectionDate", value);
+                        onChangeDateOrTime(fieldSetter, errorSetter, "collectionDate", value);
                     }}
                     label="Date"
                     value={fields.collectionDate || null}

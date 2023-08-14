@@ -6,9 +6,7 @@ type AddParcelParameters = {
     params: { id: string };
 };
 
-const AddParcels: ({ params }: AddParcelParameters) => React.ReactElement = ({
-    params,
-}: AddParcelParameters) => {
+const AddParcels: ({ params }: AddParcelParameters) => React.ReactElement = ({ params }) => {
     return (
         <main>
             <AddParcelForm id={params.id} />

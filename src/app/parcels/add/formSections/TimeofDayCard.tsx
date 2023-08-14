@@ -1,5 +1,5 @@
 import React from "react";
-import { CardProps, onChangeTime, errorText } from "@/components/Form/formFunctions";
+import { CardProps, onChangeDateOrTime, errorText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import StyledTimePicker from "@/components/DataInput/TimePicker";
 import { ErrorText } from "@/components/Form/formStyling";
@@ -17,7 +17,7 @@ const TimeOfDayCard: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSett
                     onChange={(value: any) => {
                         const newValue = value as Date | null;
                         setTimePickerValue(newValue);
-                        onChangeTime(fieldSetter, errorSetter, "timeOfDay", newValue);
+                        onChangeDateOrTime(fieldSetter, errorSetter, "timeOfDay", newValue);
                     }}
                     label="Time"
                     value={timePickerValue}
