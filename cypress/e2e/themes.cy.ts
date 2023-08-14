@@ -10,7 +10,7 @@ describe("Light and dark mode switch works", () => {
 
     it("Switching to Dark Mode Works", () => {
         cy.get("label[aria-label='Theme Switch']").click();
-        cy.get("body").should("have.css", "background-color", hexToRgb("#2d2d2d"));
+        cy.get("body").should("have.css", "background-color", hexToRgb("#212121"));
     });
 
     it("Switching back to Light Mode Works", () => {

@@ -37,6 +37,9 @@ next-env.d.ts
 # webstorm
 .idea
 
+# vscode
+.vscode
+
 # code coverage files
 coverage
 .nyc_output

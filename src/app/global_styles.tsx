@@ -13,10 +13,9 @@ const GlobalStyle = createGlobalStyle`
     }
       
     html, body {
-        height: 100%;
+        height: auto;
         width: 100%;
         font-family: Helvetica, Arial, sans-serif;
-        overflow: hidden;
     }
 
     body {
@@ -34,8 +33,8 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
         palette: {
             mode: chosenTheme.light ? "light" : "dark",
             primary: {
-                main: chosenTheme.primary.background[2],
-                contrastText: chosenTheme.primary.foreground[2],
+                main: chosenTheme.primary.background[3],
+                contrastText: chosenTheme.primary.foreground[3],
             },
             secondary: {
                 main: chosenTheme.main.foreground[2],
@@ -45,8 +44,8 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
                 main: chosenTheme.error,
             },
             background: {
-                default: chosenTheme.main.background[2],
-                paper: chosenTheme.main.background[3],
+                default: chosenTheme.main.background[1],
+                paper: chosenTheme.main.background[0],
             },
             text: {
                 primary: chosenTheme.main.foreground[1],
@@ -59,9 +58,13 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
             MuiAppBar: {
                 styleOverrides: {
                     root: {
-                        backgroundColor: chosenTheme.main.background[3],
-                        color: chosenTheme.main.foreground[3],
+                        backgroundColor: chosenTheme.main.background[0],
+                        color: chosenTheme.main.foreground[0],
                         backgroundImage: "none",
+                        "& .MuiButton-root": {
+                            textTransform: "uppercase",
+                        },
+                        position: "sticky",
                     },
                 },
             },
@@ -70,10 +73,6 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
                     root: {
                         transition: "none",
                         textTransform: "none",
-                        "&.MuiButton-containedPrimary:hover": {
-                            backgroundColor: chosenTheme.primary.background[2],
-                            opacity: "80%",
-                        },
                     },
                 },
             },
@@ -90,6 +89,15 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
                     tooltip: {
                         fontSize: "1rem",
                         padding: "0.5rem",
+                    },
+                },
+            },
+            MuiPaper: {
+                styleOverrides: {
+                    root: {
+                        backgroundColor: chosenTheme.main.background[1],
+                        color: chosenTheme.main.foreground[1],
+                        backgroundImage: "none",
                     },
                 },
             },

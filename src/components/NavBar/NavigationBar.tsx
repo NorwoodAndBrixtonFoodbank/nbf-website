@@ -68,12 +68,7 @@ const DrawerButtonWrapper = styled.div`
 
 const DrawerButton = styled(Button)`
     text-transform: uppercase;
-
     width: 100%;
-`;
-
-const StickyAppBar = styled(AppBar)`
-    position: sticky;
 `;
 
 const NavElementContainer = styled.div`
@@ -112,14 +107,6 @@ const SignOutButtonContainer = styled(NavElementContainer)`
     justify-content: end;
 `;
 
-const ContentDiv = styled.div`
-    height: calc(100% - ${NavBarHeight});
-    width: 100%;
-    position: absolute;
-    top: ${NavBarHeight};
-    overflow: auto;
-`;
-
 interface Props {
     children?: React.ReactNode;
 }
@@ -156,7 +143,7 @@ const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
                     ))}
                 </DrawerInner>
             </StyledSwipeableDrawer>
-            <StickyAppBar>
+            <AppBar>
                 <AppBarInner>
                     <MobileNavMenuContainer>
                         <Button
@@ -186,8 +173,8 @@ const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
                         <SignOutButton />
                     </SignOutButtonContainer>
                 </AppBarInner>
-            </StickyAppBar>
-            <ContentDiv>{children}</ContentDiv>
+            </AppBar>
+            {children}
         </>
     );
 };
