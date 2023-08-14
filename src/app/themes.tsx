@@ -2,7 +2,7 @@
 
 import isPropValid from "@emotion/is-prop-valid";
 import { useServerInsertedHTML } from "next/navigation";
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import {
     ServerStyleSheet,
     StyleSheetManager,
@@ -183,6 +183,17 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
                 {children}
             </StyleSheetManager>
         );
+
+    useEffect(() => {
+        // use dark theme if user's OS is set to dark mode
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            handleThemeChange(true);
+        }
+        // register event listener to change theme when OS theme changes
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
+            handleThemeChange(event.matches);
+        });
+    }, []);
 
     return (
         <ThemeUpdateContext.Provider value={handleThemeChange}>
