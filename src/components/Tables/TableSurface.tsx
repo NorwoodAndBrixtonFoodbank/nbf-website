@@ -6,7 +6,6 @@ const StyledPaper = styled(Paper)`
     margin: 1rem;
     padding: 1rem;
     border-radius: 1rem;
-    background-color: ${(props) => props.theme.main.background[1]};
 `;
 
 interface Props {

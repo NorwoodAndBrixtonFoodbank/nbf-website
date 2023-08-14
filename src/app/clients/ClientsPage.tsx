@@ -69,16 +69,20 @@ const toggleableHeaders = [
 
 const clientTableColumnStyleOptions = {
     iconsColumn: {
-        width: "3em",
+        width: "3rem",
     },
-    fullName: {},
+    fullName: {
+        minWidth: "8rem",
+    },
     familyCategory: {
         hide: 550,
     },
     addressPostcode: {
         hide: 800,
     },
-    deliveryCollection: {},
+    deliveryCollection: {
+        minWidth: "6rem",
+    },
     packingDate: {
         hide: 800,
     },
@@ -86,7 +90,9 @@ const clientTableColumnStyleOptions = {
         hide: 800,
         minWidth: "6rem",
     },
-    lastStatus: {},
+    lastStatus: {
+        minWidth: "8rem",
+    },
 };
 
 interface Props {
@@ -178,7 +184,6 @@ const ClientsPage: React.FC<Props> = (props) => {
                 headerId="expandedClientDetailsModal"
             >
                 <Suspense fallback={<ExpandedClientDetailsFallback />}>
-                    {/* @ts-expect-error Async Component Used */}
                     <ExpandedClientDetails parcelId={selectedParcelId} />
                 </Suspense>
             </Modal>

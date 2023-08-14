@@ -44,8 +44,8 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
                 main: chosenTheme.error,
             },
             background: {
-                default: chosenTheme.main.background[2],
-                paper: chosenTheme.main.background[3],
+                default: chosenTheme.main.background[1],
+                paper: chosenTheme.main.background[0],
             },
             text: {
                 primary: chosenTheme.main.foreground[1],

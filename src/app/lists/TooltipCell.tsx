@@ -3,7 +3,9 @@ import React, { useState } from "react";
 import { styled, useTheme } from "styled-components";
 
 const CellDiv = styled.div`
-    pointer-events: inherit;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
 `;
 
 interface Props {

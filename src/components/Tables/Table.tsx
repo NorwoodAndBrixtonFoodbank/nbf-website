@@ -119,6 +119,11 @@ const CustomCell: React.FC<CellProps> = ({ row, columnDisplayFunctions, headerKe
     );
 };
 
+const StyledIconButton = styled(IconButton)`
+    padding: 0.1rem;
+    margin: 0.1rem;
+`;
+
 const defaultColumnStyleOptions: ColumnStyleOptions = {
     grow: 1,
     minWidth: "2rem",
@@ -247,36 +252,39 @@ const Table: React.FC<Props> = ({
                 return (
                     <EditAndReorderArrowDiv>
                         {reorderable ? (
-                            <IconButton
+                            <StyledIconButton
                                 onClick={() => swapRows(row.rowId, row.rowId - 1)}
                                 aria-label="reorder row upwards"
                             >
                                 <StyledIcon icon={faAnglesUp} />
-                            </IconButton>
+                            </StyledIconButton>
                         ) : (
                             <></>
                         )}
                         {onEdit ? (
-                            <IconButton onClick={onEditClick} aria-label="edit">
+                            <StyledIconButton onClick={onEditClick} aria-label="edit">
                                 <StyledIcon icon={faPenToSquare} />
-                            </IconButton>
+                            </StyledIconButton>
                         ) : (
                             <></>
                         )}
                         {reorderable ? (
-                            <IconButton
+                            <StyledIconButton
                                 onClick={() => swapRows(row.rowId, row.rowId + 1)}
                                 aria-label="reorder row downwards"
                             >
                                 <StyledIcon icon={faAnglesDown} />
-                            </IconButton>
+                            </StyledIconButton>
                         ) : (
                             <></>
                         )}
                         {onDelete ? (
-                            <IconButton onClick={() => onDelete!(row.rowId)} aria-label="delete">
+                            <StyledIconButton
+                                onClick={() => onDelete!(row.rowId)}
+                                aria-label="delete"
+                            >
                                 <StyledIcon icon={faTrashAlt} />
-                            </IconButton>
+                            </StyledIconButton>
                         ) : (
                             <></>
                         )}
@@ -335,7 +343,7 @@ const EditAndReorderArrowDiv = styled.div`
     grid-template-columns: repeat(2, 1fr);
     width: 100%;
     // this transform is necessary to make the buttons visually consistent with the rest of the table without redesigning the layout
-    transform: translateX(-1.1rem);
+    transform: translateX(-1.2rem);
 `;
 
 const StyledIcon = styled(Icon)`
