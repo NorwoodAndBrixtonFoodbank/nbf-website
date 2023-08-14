@@ -6,8 +6,8 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import React, { useEffect } from "react";
 import styled, { useTheme } from "styled-components";
-import Title from "@/components/Title/Title";
 import NoSsr from "@mui/material/NoSsr";
+import Title from "./Title/Title";
 
 export const LoginMain = styled.main`
     height: 85vh;
@@ -39,7 +39,7 @@ const MiddleDiv = styled.div`
         -webkit-text-fill-color: ${(props) => props.theme.main.foreground[2]} !important;
     }
 
-    @media (min-width: 400px) {
+    @media (min-width: 500px) {
         padding: 30px 80px;
     }
 `;
@@ -56,23 +56,26 @@ const LoginPanel: React.FC<{}> = () => {
 
     return (
         <MiddleDiv data-loaded={loaded} id="login-panel">
-            <Auth
-                supabaseClient={supabase}
-                providers={[]}
-                appearance={{
-                    theme: ThemeSupa,
-                    variables: {
-                        default: {
-                            colors: {
-                                inputText: theme.main.foreground[2],
-                                inputBackground: theme.main.background[2],
-                                inputBorder: theme.main.background[2],
-                                inputLabelText: theme.main.foreground[0],
-                                anchorTextColor: theme.main.lighterForeground[0],
-                                brand: theme.primary.background[2],
-                                brandAccent: theme.primary.background[2],
-                                brandButtonText: theme.primary.foreground[2],
-                                messageTextDanger: theme.error,
+            <Title>Login</Title>
+            <NoSsr>
+                <Auth
+                    supabaseClient={supabase}
+                    providers={[]}
+                    appearance={{
+                        theme: ThemeSupa,
+                        variables: {
+                            default: {
+                                colors: {
+                                    inputText: theme.main.foreground[2],
+                                    inputBackground: theme.main.background[2],
+                                    inputBorder: theme.main.background[2],
+                                    inputLabelText: theme.main.foreground[0],
+                                    anchorTextColor: theme.main.lighterForeground[0],
+                                    brand: theme.primary.background[2],
+                                    brandAccent: theme.primary.background[2],
+                                    brandButtonText: theme.primary.foreground[2],
+                                    messageTextDanger: theme.error,
+                                },
                             },
                         },
                     }}

@@ -108,11 +108,7 @@ const SignOutButtonContainer = styled(NavElementContainer)`
     justify-content: end;
 `;
 
-interface LoginDependentProps {
-    children: React.ReactElement;
-}
-
-const LoginDependent: React.FC<LoginDependentProps> = (props) => {
+const LoginDependent: React.FC<Props> = (props) => {
     const pathname = usePathname();
 
     if (pathname === "/login") {
@@ -136,7 +132,6 @@ interface Props {
 
 const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
     const [drawer, setDrawer] = React.useState(false);
-    const pathname = usePathname();
 
     const openDrawer = (): void => {
         setDrawer(true);
@@ -155,7 +150,7 @@ const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
     return (
         <>
             <LoginDependent>
-                <SwipeableDrawer open={drawer} onClose={closeDrawer} onOpen={openDrawer}>
+                <StyledSwipeableDrawer open={drawer} onClose={closeDrawer} onOpen={openDrawer}>
                     <DrawerInner>
                         {pages.map(([page, link]) => (
                             <DrawerButtonWrapper key={page}>
@@ -165,22 +160,19 @@ const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
                             </DrawerButtonWrapper>
                         ))}
                     </DrawerInner>
-                </SwipeableDrawer>
+                </StyledSwipeableDrawer>
             </LoginDependent>
             <AppBar>
                 <AppBarInner>
                     <MobileNavMenuContainer>
-                        <Button
-                            color="secondary"
-                            aria-label="Mobile Menu Button"
-                            onClick={openDrawer}
-                        >
-                            <MenuIcon />
-                        </Button>
                         <LoginDependent>
-                            <IconButton aria-label="Mobile Menu Button" onClick={openDrawer}>
+                            <Button
+                                color="secondary"
+                                aria-label="Mobile Menu Button"
+                                onClick={openDrawer}
+                            >
                                 <MenuIcon />
-                            </IconButton>
+                            </Button>
                         </LoginDependent>
                     </MobileNavMenuContainer>
 
