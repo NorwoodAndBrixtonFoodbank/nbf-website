@@ -19,7 +19,7 @@ type LinkButtonProps = {
 
 const LinkButton: React.FC<LinkButtonProps> = (props) => {
     const pathname = usePathname();
-    const active = pathname.startsWith(props.link);
+    const active = pathname?.startsWith(props.link) ?? false;
     return (
         <UnstyledLink key={props.page} href={props.link} prefetch={false}>
             <Button color="primary" variant={active ? "contained" : "outlined"}>
