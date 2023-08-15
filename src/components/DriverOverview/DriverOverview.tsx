@@ -93,8 +93,6 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     tableHeader: {
-        flexDirection: "row",
-        display: "flex",
         border: "1 solid black",
         borderBottom: "none",
         fontSize: 12,
@@ -120,14 +118,14 @@ const styles = StyleSheet.create({
 });
 
 const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ driverName, date, data }) => {
-    const dateConverter: (date: Date) => string = (date) => {
+    const dateConverter = (date: Date): string => {
         const day = date.getDate();
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
         return `${day}/${month}/${year}`;
     };
     const header = (
-        <View style={styles.tableHeader}>
+        <View style={[styles.tableHeader, styles.flexRow]}>
             <View style={[styles.tableColumn, styles.nameColumnWidth]}>
                 <Text>Name</Text>
             </View>
@@ -187,12 +185,8 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ driverName, dat
                         <Text style={styles.h2text}>Driver Name: {driverName}</Text>
                         <Text style={styles.h2text}>Date: {dateConverter(date)} </Text>
                     </View>
-                    {/* es lint disable needed to remove the need for alt text on the logo */}
-                    {/* eslint-disable-next-line */}
-                    <Image
-                        src="/logo.png"
-                        style={styles.logoStyling}
-                    ></Image>
+                    {/* eslint-disable-next-line -- needed to remove the need for alt text on the logo */}
+                    <Image src="/logo.png" style={styles.logoStyling}></Image>
                 </View>
                 <View style={styles.warningSection}>
                     <Text style={styles.h3text}>
