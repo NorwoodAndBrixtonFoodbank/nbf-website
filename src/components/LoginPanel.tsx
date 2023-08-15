@@ -6,13 +6,21 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import React, { useEffect } from "react";
 import styled, { useTheme } from "styled-components";
+import Title from "@/components/Title/Title";
+import { NavBarHeight } from "@/components/NavBar/NavigationBar";
+
+export const LoginMain = styled.main`
+    height: calc(100vh - ${NavBarHeight});
+    display: flex;
+    align-content: center;
+`;
 
 const MiddleDiv = styled.div`
     max-width: 400px;
     box-shadow: 0 0 15px ${(props) => props.theme.shadow};
     border-radius: 10px;
-    padding: 50px;
-    margin: auto;
+    padding: 10px 10px;
+    margin: auto 10%;
     background-color: ${(props) => props.theme.main.background[0]};
 
     --fonts-buttonFontFamily: Helvetica, Arial, sans-serif;
@@ -31,6 +39,16 @@ const MiddleDiv = styled.div`
         -webkit-box-shadow: 0 0 0 9999px ${(props) => props.theme.main.background[2]} inset !important;
         -webkit-text-fill-color: ${(props) => props.theme.main.foreground[2]} !important;
     }
+
+    @media (min-width: 375px) {
+        padding: 25px 25px;
+        margin: auto;
+    }
+
+    @media (min-width: 525px) {
+        padding: 30px 80px;
+        margin: auto;
+    }
 `;
 
 const LoginPanel: React.FC<{}> = () => {
@@ -45,6 +63,7 @@ const LoginPanel: React.FC<{}> = () => {
 
     return (
         <MiddleDiv data-loaded={loaded} id="login-panel">
+            <Title>Login</Title>
             <Auth
                 supabaseClient={supabase}
                 providers={[]}

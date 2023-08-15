@@ -45,19 +45,4 @@ describe("Authentication tests", () => {
 
         cy.url().should("include", "/login");
     });
-
-    it("CSR Redirected to login page", () => {
-        cy.visit("/login");
-
-        // wait for hydration
-        cy.get("[data-loaded='true']", extendedTimeout).should("exist");
-
-        for (const url of buttonReachablePaths) {
-            cy.get("a[href='" + url + "']")
-                .first()
-                .click({ force: true });
-
-            cy.url().should("include", "/login");
-        }
-    });
 });

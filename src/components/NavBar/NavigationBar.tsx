@@ -10,8 +10,9 @@ import Button from "@mui/material/Button";
 import LightDarkSlider from "@/components/NavBar/LightDarkSlider";
 import SignOutButton from "@/components/NavBar/SignOutButton";
 import LinkButton from "@/components/Buttons/LinkButton";
+import { usePathname } from "next/navigation";
 
-const NavBarHeight = "4rem";
+export const NavBarHeight = "4rem";
 
 export const PageButton = styled(Button)`
     color: white;
@@ -107,6 +108,16 @@ const SignOutButtonContainer = styled(NavElementContainer)`
     justify-content: end;
 `;
 
+const LoginDependent: React.FC<Props> = (props) => {
+    const pathname = usePathname();
+
+    if (pathname === "/login") {
+        return <></>;
+    }
+
+    return <>{props.children}</>;
+};
+
 interface Props {
     children?: React.ReactNode;
 }
@@ -130,47 +141,54 @@ const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
 
     return (
         <>
-            <StyledSwipeableDrawer open={drawer} onClose={closeDrawer} onOpen={openDrawer}>
-                <DrawerInner>
-                    {pages.map(([page, link]) => (
-                        <DrawerButtonWrapper key={page}>
-                            <UnstyledLink href={link} onClick={closeDrawer} prefetch={false}>
-                                <DrawerButton color="secondary" variant="text">
-                                    {page}
-                                </DrawerButton>
-                            </UnstyledLink>
-                        </DrawerButtonWrapper>
-                    ))}
-                </DrawerInner>
-            </StyledSwipeableDrawer>
+            <LoginDependent>
+                <StyledSwipeableDrawer open={drawer} onClose={closeDrawer} onOpen={openDrawer}>
+                    <DrawerInner>
+                        {pages.map(([page, link]) => (
+                            <DrawerButtonWrapper key={page}>
+                                <UnstyledLink href={link} onClick={closeDrawer} prefetch={false}>
+                                    <DrawerButton variant="text">{page}</DrawerButton>
+                                </UnstyledLink>
+                            </DrawerButtonWrapper>
+                        ))}
+                    </DrawerInner>
+                </StyledSwipeableDrawer>
+            </LoginDependent>
             <AppBar>
                 <AppBarInner>
                     <MobileNavMenuContainer>
-                        <Button
-                            color="secondary"
-                            aria-label="Mobile Menu Button"
-                            onClick={openDrawer}
-                        >
-                            <MenuIcon />
-                        </Button>
+                        <LoginDependent>
+                            <Button
+                                color="secondary"
+                                aria-label="Mobile Menu Button"
+                                onClick={openDrawer}
+                            >
+                                <MenuIcon />
+                            </Button>
+                        </LoginDependent>
                     </MobileNavMenuContainer>
+
                     <LogoElementContainer>
                         <UnstyledLink href="/" prefetch={false}>
                             <Logo alt="Vauxhall Foodbank Logo" src="/logo.webp" />
                         </UnstyledLink>
                     </LogoElementContainer>
-                    <DesktopButtonContainer>
-                        {pages.map(([page, link]) => (
-                            <React.Fragment key={page}>
-                                <LinkButton link={link} page={page} />
-                                <Gap />
-                            </React.Fragment>
-                        ))}
-                    </DesktopButtonContainer>
+                    <LoginDependent>
+                        <DesktopButtonContainer>
+                            {pages.map(([page, link]) => (
+                                <>
+                                    <LinkButton key={page} link={link} page={page} />
+                                    <Gap />
+                                </>
+                            ))}
+                        </DesktopButtonContainer>
+                    </LoginDependent>
                     <SignOutButtonContainer>
                         <LightDarkSlider />
                         <Gap />
-                        <SignOutButton />
+                        <LoginDependent>
+                            <SignOutButton />
+                        </LoginDependent>
                     </SignOutButtonContainer>
                 </AppBarInner>
             </AppBar>
