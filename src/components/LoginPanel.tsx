@@ -6,7 +6,6 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import React, { useEffect } from "react";
 import styled, { useTheme } from "styled-components";
-import NoSsr from "@mui/material/NoSsr";
 import Title from "@/components/Title/Title";
 
 export const LoginMain = styled.main`
