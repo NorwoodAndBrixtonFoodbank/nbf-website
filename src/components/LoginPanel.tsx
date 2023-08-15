@@ -7,10 +7,12 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import React, { useEffect } from "react";
 import styled, { useTheme } from "styled-components";
 import Title from "@/components/Title/Title";
+import { NavBarHeight } from "@/components/NavBar/NavigationBar";
 
 export const LoginMain = styled.main`
-    height: 100%;
+    height: calc(100vh - ${NavBarHeight});
     display: flex;
+    align-content: center;
 `;
 
 const MiddleDiv = styled.div`

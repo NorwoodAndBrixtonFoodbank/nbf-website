@@ -12,7 +12,7 @@ import SignOutButton from "@/components/NavBar/SignOutButton";
 import LinkButton from "@/components/Buttons/LinkButton";
 import { usePathname } from "next/navigation";
 
-const NavBarHeight = "4rem";
+export const NavBarHeight = "4rem";
 
 export const PageButton = styled(Button)`
     color: white;
