@@ -7,6 +7,10 @@ import {
 import { Schema } from "@/supabase";
 import { Person } from "@/components/Form/formFunctions";
 
+export interface BlockProps {
+    [key: string]: string;
+}
+
 interface ParcelInfoAndClientID {
     parcelInfo: ParcelInfo;
     clientID: string;
@@ -32,7 +36,7 @@ export interface ShoppingListPDFProps {
     endNotes: string;
 }
 
-export interface ParcelInfo {
+export interface ParcelInfo extends BlockProps {
     voucherNumber: string;
     packingDate: string;
     collectionDate: string;
@@ -46,14 +50,14 @@ export interface ClientSummary {
     extraInformation: string;
 }
 
-export interface HouseholdSummary {
+export interface HouseholdSummary extends BlockProps {
     householdSize: string;
     genderBreakdown: string;
     numberOfBabies: string;
     ageAndGenderOfChildren: string;
 }
 
-export interface RequirementSummary {
+export interface RequirementSummary extends BlockProps {
     feminineProductsRequired: string;
     babyProductsRequired: string;
     petFoodRequired: string;
@@ -68,7 +72,7 @@ export interface Item {
 }
 
 const formatDate = (dateString: string | null): string => {
-    if (dateString === null) {
+    if (!dateString) {
         return "";
     }
     return new Date(dateString).toLocaleString("en-GB", {
@@ -173,18 +177,17 @@ const prepareRequirementSummary = (clientData: Schema["clients"]): RequirementSu
     };
 };
 
-const getQuantity = (row: Schema["lists"], size: number): string => {
+const getQuantityAndNotes = (
+    row: Schema["lists"],
+    size: number
+): Pick<Item, "quantity" | "notes"> => {
     if (size >= 10) {
-        return row["10_quantity"] ?? "";
+        return { quantity: row["10_quantity"] ?? "", notes: row["10_notes"] ?? "" };
     }
-    return row[`${size}_quantity` as keyof Schema["lists"]] ?? "";
-};
-
-const getNotes = (row: Schema["lists"], size: number): string => {
-    if (size >= 10) {
-        return row["10_notes"] ?? "";
-    }
-    return row[`${size}_notes` as keyof Schema["lists"]] ?? "";
+    return {
+        quantity: row[`${size}_quantity` as keyof Schema["lists"]] ?? "",
+        notes: row[`${size}_notes` as keyof Schema["lists"]] ?? "",
+    };
 };
 
 const prepareItemsList = async (householdSize: number): Promise<Item[]> => {
@@ -192,8 +195,7 @@ const prepareItemsList = async (householdSize: number): Promise<Item[]> => {
     return listData.map((row): Item => {
         return {
             description: row.item_name,
-            quantity: getQuantity(row, householdSize),
-            notes: getNotes(row, householdSize),
+            ...getQuantityAndNotes(row, householdSize),
         };
     });
 };

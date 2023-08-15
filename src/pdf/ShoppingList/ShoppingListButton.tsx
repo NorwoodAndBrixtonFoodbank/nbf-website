@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ShoppingListPDFProps } from "@/pdf/ShoppingList/dataPreparation";
-import { NoSSR } from "next/dist/shared/lib/lazy-dynamic/dynamic-no-ssr";
+import { NoSsr } from "@mui/material";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import ShoppingListPDF from "@/pdf/ShoppingList/ShoppingListPDF";
 
@@ -13,11 +13,11 @@ interface Props {
 
 const ShoppingListButton: React.FC<Props> = ({ data, text }) => {
     return (
-        <NoSSR>
+        <NoSsr>
             <PDFDownloadLink document={<ShoppingListPDF {...data} />} fileName="ShoppingList.pdf">
                 {text}
             </PDFDownloadLink>
-        </NoSSR>
+        </NoSsr>
     );
 };
 

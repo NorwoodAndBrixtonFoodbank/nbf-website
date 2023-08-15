@@ -11,11 +11,9 @@ const PdfDownloader = async (): Promise<ReactElement> => {
         <main>
             <Title>PDF Downloader</Title>
             <Centerer>
-                {/* @ts-ignore */}
                 <ShippingsLabel text="Download Shipping Labels" />
             </Centerer>
             <Centerer>
-                {/* @ts-ignore */}
                 <ShoppingList text="Download Shopping Lists" parcelID={TEST_PARCEL_ID} />
             </Centerer>
         </main>
@@ -25,7 +23,7 @@ const PdfDownloader = async (): Promise<ReactElement> => {
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "pdf-downloader",
+    title: "PDF Downloader",
 };
 
 export default PdfDownloader;
