@@ -72,6 +72,21 @@ export interface Database {
         }
         Relationships: []
       }
+      collection_centres: {
+        Row: {
+          acronym: string
+          name: string
+        }
+        Insert: {
+          acronym?: string
+          name?: string
+        }
+        Update: {
+          acronym?: string
+          name?: string
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           event_name: string
@@ -237,6 +252,46 @@ export interface Database {
           }
         ]
       }
+      users: {
+        Row: {
+          primary_key: string
+          role: Database["public"]["Enums"]["role"]
+          user_id: string
+        }
+        Insert: {
+          primary_key?: string
+          role: Database["public"]["Enums"]["role"]
+          user_id: string
+        }
+        Update: {
+          primary_key?: string
+          role?: Database["public"]["Enums"]["role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "users_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      website_data: {
+        Row: {
+          name: string
+          value: string
+        }
+        Insert: {
+          name?: string
+          value?: string
+        }
+        Update: {
+          name?: string
+          value?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -246,6 +301,7 @@ export interface Database {
     }
     Enums: {
       gender: "male" | "female" | "other"
+      role: "caller" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
