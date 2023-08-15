@@ -10,11 +10,9 @@ const PdfDownloader = async (): Promise<ReactElement> => {
         <main>
             <Title>PDF Downloader</Title>
             <Centerer>
-                {/* @ts-ignore */}
                 <ShippingsLabel text="Download Shipping Labels" />
             </Centerer>
             <Centerer>
-                {/* @ts-ignore */}
                 <DayOverview text="Download Day Overview" />
             </Centerer>
         </main>
