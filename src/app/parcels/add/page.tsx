@@ -1,8 +1,7 @@
 import { Metadata } from "next";
-
 import React from "react";
 
-const AddParcels: () => React.ReactElement = () => {
+const AddParcels = (): React.ReactElement => {
     return (
         <main>
             <a href="/parcels/add/764edcec-8d4b-492d-a36a-86c921b4f8de">CLICK HERE</a>

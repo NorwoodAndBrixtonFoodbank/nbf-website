@@ -18,8 +18,9 @@ const CollectionTimeCard: React.FC<CardProps> = ({
         >
             <>
                 <DesktopTimePicker
-                    onChange={(value: any) => {
-                        onChangeDateOrTime(fieldSetter, errorSetter, "collectionTime", value);
+                    onChange={(value) => {
+                        const newValue = value as Date | null;
+                        onChangeDateOrTime(fieldSetter, errorSetter, "collectionTime", newValue);
                     }}
                     label="Time"
                     value={fields.collectionTime || null}

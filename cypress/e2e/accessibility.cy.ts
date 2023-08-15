@@ -29,6 +29,7 @@ describe("Accessibility tests in light mode", () => {
     });
 
     it("Checks parcels/add/[id] page", () => {
+        cy.login();
         cy.visit("/parcels/add");
         cy.get("a").contains("CLICK HERE").click();
         cy.contains("Add Parcel");
@@ -81,6 +82,7 @@ describe("Accessibility tests in dark mode", () => {
     });
 
     it("Checks parcels/add/[id] page", () => {
+        cy.login();
         cy.visit("/parcels/add");
         cy.get("a").contains("CLICK HERE").click();
         cy.contains("Add Parcel");

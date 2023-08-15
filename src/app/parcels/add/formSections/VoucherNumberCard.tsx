@@ -3,7 +3,7 @@ import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import { CardProps, onChangeText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 
-const FullNameCard: React.FC<CardProps> = ({ errorSetter, fieldSetter }) => {
+const VoucherNumberCard: React.FC<CardProps> = ({ errorSetter, fieldSetter }) => {
     return (
         <GenericFormCard
             title="Voucher Number"
@@ -17,4 +17,4 @@ const FullNameCard: React.FC<CardProps> = ({ errorSetter, fieldSetter }) => {
         </GenericFormCard>
     );
 };
-export default FullNameCard;
+export default VoucherNumberCard;

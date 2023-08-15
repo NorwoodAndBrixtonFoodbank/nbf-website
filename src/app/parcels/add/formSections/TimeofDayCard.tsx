@@ -4,8 +4,7 @@ import GenericFormCard from "@/components/Form/GenericFormCard";
 import { DesktopTimePicker } from "@mui/x-date-pickers";
 import { ErrorText } from "@/components/Form/formStyling";
 
-const TimeOfDayCard: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSetter }) => {
-    const [timePickerValue, setTimePickerValue] = React.useState<Date | null>(null);
+const TimeOfDayCard: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSetter, fields }) => {
     return (
         <GenericFormCard
             title="Packing Time"
@@ -14,13 +13,12 @@ const TimeOfDayCard: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSett
         >
             <>
                 <DesktopTimePicker
-                    onChange={(value: any) => {
+                    onChange={(value) => {
                         const newValue = value as Date | null;
-                        setTimePickerValue(newValue);
                         onChangeDateOrTime(fieldSetter, errorSetter, "timeOfDay", newValue);
                     }}
                     label="Time"
-                    value={timePickerValue}
+                    value={fields.timeOfDay || null}
                 />
                 <ErrorText>{errorText(formErrors.timeOfDay)}</ErrorText>
             </>

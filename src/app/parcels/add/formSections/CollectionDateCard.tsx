@@ -18,8 +18,9 @@ const CollectionDateCard: React.FC<CardProps> = ({
         >
             <>
                 <DesktopDatePicker
-                    onChange={(value: any): void => {
-                        onChangeDateOrTime(fieldSetter, errorSetter, "collectionDate", value);
+                    onChange={(value): void => {
+                        const newValue = value as Date | null;
+                        onChangeDateOrTime(fieldSetter, errorSetter, "collectionDate", newValue);
                     }}
                     label="Date"
                     value={fields.collectionDate || null}

@@ -12,10 +12,6 @@ import {
 } from "@/components/DataInput/inputHandlerFactories";
 import { hexToRgb, SelectChangeEvent } from "@mui/material";
 import CheckboxGroupInput from "@/components/DataInput/CheckboxGroupInput";
-import StyledDatePicker from "@/components/DataInput/DatePicker";
-import StyledTimePicker from "@/components/DataInput/TimePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 describe("Data Input Components", () => {
     it("renders", () => {
@@ -65,17 +61,6 @@ describe("Data Input Components", () => {
                 groupLabel="Checkbox Group"
                 onChange={getCheckboxGroupHandler({}, () => console.log("Checkbox Group Changed"))}
             />
-        );
-        cy.mount(
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
-                <StyledDatePicker label="Date Picker" />
-            </LocalizationProvider>
-        );
-
-        cy.mount(
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
-                <StyledTimePicker label="Time Picker" />
-            </LocalizationProvider>
         );
     });
 
