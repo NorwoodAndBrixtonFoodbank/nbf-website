@@ -2,9 +2,9 @@ import { Metadata } from "next";
 import React from "react";
 import AddParcelForm from "@/app/parcels/add/AddParcelForm";
 
-type AddParcelParameters = {
+interface AddParcelParameters {
     params: { id: string };
-};
+}
 
 const AddParcels: ({ params }: AddParcelParameters) => React.ReactElement = ({ params }) => {
     return (
