@@ -30,6 +30,7 @@ export default defineConfig({
         },
         baseUrl: "http://localhost:3200",
         video: false,
+        screenshotOnRunFailure: false,
     },
     component: {
         setupNodeEvents(on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) {
@@ -44,5 +45,6 @@ export default defineConfig({
         },
         specPattern: "src/**/*.cy.{ts,tsx}",
         video: false,
+        screenshotOnRunFailure: false,
     },
 });
