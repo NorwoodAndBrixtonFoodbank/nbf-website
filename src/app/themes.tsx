@@ -2,7 +2,7 @@
 
 import isPropValid from "@emotion/is-prop-valid";
 import { useServerInsertedHTML } from "next/navigation";
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import {
     ServerStyleSheet,
     StyleSheetManager,
@@ -157,18 +157,16 @@ export const ThemeUpdateContext = createContext((dark: boolean): void => {
 });
 
 type ThemePreference = "dark" | "light" | "system";
+type SystemTheme = "light" | "dark";
 
-const preferenceIsDark = (themePreference: ThemePreference): boolean => {
+const preferenceIsDark = (themePreference: ThemePreference, systemTheme: SystemTheme): boolean => {
     switch (themePreference) {
         case "dark":
             return true;
         case "light":
             return false;
         case "system":
-            if (typeof window === "undefined") {
-                return true;
-            }
-            return window.matchMedia("(prefers-color-scheme: dark)").matches;
+            return systemTheme === "dark";
     }
 };
 
@@ -190,6 +188,18 @@ const StyleManager: React.FC<Props> = ({ children }) => {
         "system"
     );
 
+    const [systemTheme, setSystemTheme] = useState<"dark" | "light">("light");
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+        const listener = (event: MediaQueryListEvent): void => {
+            setSystemTheme(event.matches ? "dark" : "light");
+        };
+        setSystemTheme(mediaQuery.matches ? "dark" : "light");
+        mediaQuery.addEventListener("change", listener);
+        return () => mediaQuery.removeEventListener("change", listener);
+    }, []);
+
     const themeToggle = (dark: boolean): void => {
         setThemePreference(dark ? "dark" : "light");
     };
@@ -203,11 +213,11 @@ const StyleManager: React.FC<Props> = ({ children }) => {
             </StyleSheetManager>
         );
 
-    console.log(themePreference);
-
     return (
         <ThemeUpdateContext.Provider value={themeToggle}>
-            <ThemeProvider theme={preferenceIsDark(themePreference) ? darkTheme : lightTheme}>
+            <ThemeProvider
+                theme={preferenceIsDark(themePreference, systemTheme) ? darkTheme : lightTheme}
+            >
                 <MaterialAndGlobalStyle>{themedChildren}</MaterialAndGlobalStyle>
             </ThemeProvider>
         </ThemeUpdateContext.Provider>
