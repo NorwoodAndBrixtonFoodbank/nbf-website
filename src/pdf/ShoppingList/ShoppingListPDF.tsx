@@ -12,7 +12,7 @@ import {
 const styles = StyleSheet.create({
     paper: {
         margin: "0.75in",
-        lineHeight: 1.5,
+        lineHeight: "1.5pt",
     },
     flexRow: {
         display: "flex",
@@ -31,21 +31,21 @@ const styles = StyleSheet.create({
     },
     infoBlock: {
         borderStyle: "solid",
-        border: 1,
+        border: "1pt",
     },
     infoCell: {
         width: "50%",
-        padding: 5,
+        padding: "5pt",
     },
     table: {
         borderStyle: "solid",
-        border: 1,
-        padding: 5,
+        border: "1pt",
+        padding: "5pt",
     },
     tableRow: {
         borderBottomStyle: "solid",
-        borderBottom: 1,
-        paddingVertical: 4,
+        borderBottom: "1pt",
+        paddingVertical: "4pt",
         textAlign: "center",
     },
     tableItemDescription: {
@@ -189,7 +189,7 @@ const ShoppingListPDF: React.FC<ShoppingListPDFProps> = ({
             <Page size="A4">
                 <View style={styles.paper}>
                     <View style={[styles.flexRow, styles.pdfHeader]}>
-                        <View style={[styles.flexColumn, { padding: "5" }]}>
+                        <View style={[styles.flexColumn, { padding: 5 }]}>
                             <Text style={styles.title}>Shopping List</Text>
                             <Text style={styles.subtitle}>POSTCODE: {postcode}</Text>
                         </View>
@@ -205,7 +205,7 @@ const ShoppingListPDF: React.FC<ShoppingListPDFProps> = ({
                         <TableHeadings />
                         <DisplayItemsList itemsList={itemsList} />
                     </View>
-                    <View style={[styles.flexColumn, { padding: "20 5 5" }]} wrap={false}>
+                    <View style={[styles.flexColumn, { padding: "20pt 5pt 5pt" }]} wrap={false}>
                         <Text style={styles.keyText}>Warehouse Manager Notes</Text>
                         <Text style={styles.normalText}>{endNotes}</Text>
                         <Text style={[styles.keyText, { paddingTop: 20 }]}>Date Packed:</Text>

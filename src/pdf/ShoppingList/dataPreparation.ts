@@ -116,18 +116,23 @@ const processExtraInformation = (original: string): NappySizeAndExtraInformation
 };
 
 const prepareClientSummary = (clientData: Schema["clients"]): ClientSummary => {
-    const { address_1, address_2, address_county, address_postcode, address_town } = clientData;
-    const address: string[] = [];
-    [address_1, address_2, address_county, address_postcode, address_town].forEach((value) => {
-        if (value !== "") {
-            address.push(value);
-        }
-    });
+    const {
+        address_1,
+        address_2,
+        address_county,
+        address_postcode,
+        address_town,
+        full_name,
+        phone_number,
+    } = clientData;
+    const address = [address_1, address_2, address_county, address_postcode, address_town]
+        .filter((value) => value !== "")
+        .join("\n");
 
     return {
-        name: clientData.full_name,
-        contact: clientData.phone_number,
-        address: address.join("\n"),
+        name: full_name,
+        contact: phone_number,
+        address: address,
         extraInformation: "",
     };
 };
