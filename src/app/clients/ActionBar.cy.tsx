@@ -20,9 +20,24 @@ describe("Clients - Action Bar", () => {
             parcelId: "123456789",
             requiresFollowUpPhoneCall: false,
         },
+        {
+            addressPostcode: "AB1 aaaa2CD",
+            collectionCentre: "Centraaaae 1",
+            collectionDatetime: new Date().toISOString(),
+            congestionChargeApplies: false,
+            familyCategory: "Familaaaay 1",
+            flaggedForAttention: false,
+            fullName: "John Smaaaaith",
+            lastStatusUpdate: new Date().toISOString(),
+            lastStatus: "Deliveaaaared",
+            packingDatetime: new Date().toISOString(),
+            packingTimeLabel: "10aaaa:00",
+            parcelId: "123456aaaa789",
+            requiresFollowUpPhoneCall: false,
+        },
     ];
 
-    const selectedIndices = [0];
+    const selectedIndices = [0, 1];
 
     const MockActionBar: React.FC<{}> = () => {
         return (
@@ -78,6 +93,26 @@ describe("Clients - Action Bar", () => {
                     minute: "2-digit",
                 });
                 cy.get("input[value='" + timeString + "']").should("exist");
+            });
+
+            it("should have a modal that contains the selected data", () => {
+                cy.get(`#${type}-button`).click();
+                cy.get(`#${type}-menu`).should("exist");
+                cy.get(`#${type}-menu`).contains(example).click();
+                cy.get(`#${type}-modal-header`).should("exist");
+                cy.get(".MuiPaper-root").contains("Date");
+                cy.get(".MuiPaper-root").contains("Time");
+                const dateString = new Date().toLocaleDateString("en-GB");
+                cy.get("input[value='" + dateString + "']").should("exist");
+                const timeString = new Date().toLocaleTimeString("en-GB", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                });
+                cy.get("input[value='" + timeString + "']").should("exist");
+                selectedIndices.forEach((index) => {
+                    cy.get(".MuiPaper-root").contains(mockData[index].collectionCentre);
+                    cy.get(".MuiPaper-root").contains(mockData[index].fullName);
+                });
             });
         });
     });
