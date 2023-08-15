@@ -3,7 +3,7 @@ import React, { ReactElement } from "react";
 import Title from "@/components/Title/Title";
 import Centerer from "@/app/pdfDownloader/pageUtils";
 import ShippingsLabel from "@/components/ShippingLabels/ShippingLabel";
-import DayOverviewer from "@/components/DayOverview/DayOverviewer";
+import DayOverview from "@/components/DayOverview/DayOverview";
 
 const PdfDownloader = async (): Promise<ReactElement> => {
     return (
@@ -13,8 +13,10 @@ const PdfDownloader = async (): Promise<ReactElement> => {
                 {/* @ts-ignore */}
                 <ShippingsLabel text="Download Shipping Labels" />
             </Centerer>
-            {/* @ts-ignore */}
-            <DayOverviewer />
+            <Centerer>
+                {/* @ts-ignore */}
+                <DayOverview text="Download Day Overview" />
+            </Centerer>
         </main>
     );
 };
