@@ -8,6 +8,7 @@ import React, { useEffect } from "react";
 import styled, { useTheme } from "styled-components";
 import Title from "@/components/Title/Title";
 import { NavBarHeight } from "@/components/NavBar/NavigationBar";
+import Paper from "@mui/material/Paper";
 
 export const LoginMain = styled.main`
     height: calc(100vh - ${NavBarHeight});
@@ -15,9 +16,8 @@ export const LoginMain = styled.main`
     align-content: center;
 `;
 
-const MiddleDiv = styled.div`
+const MiddleDiv = styled(Paper)`
     max-width: 400px;
-    box-shadow: 0 0 15px ${(props) => props.theme.shadow};
     border-radius: 10px;
     padding: 10px 10px;
     margin: auto 10%;
@@ -38,6 +38,10 @@ const MiddleDiv = styled.div`
     & input:-webkit-autofill:active {
         -webkit-box-shadow: 0 0 0 9999px ${(props) => props.theme.main.background[2]} inset !important;
         -webkit-text-fill-color: ${(props) => props.theme.main.foreground[2]} !important;
+    }
+
+    & button:hover {
+        color: ${(props) => props.theme.main.background[2]};
     }
 
     @media (min-width: 375px) {
@@ -72,14 +76,14 @@ const LoginPanel: React.FC<{}> = () => {
                     variables: {
                         default: {
                             colors: {
-                                inputText: theme.main.foreground[2],
-                                inputBackground: theme.main.background[2],
-                                inputBorder: theme.main.background[2],
+                                inputText: theme.main.foreground[3],
+                                inputBackground: theme.main.background[3],
+                                inputBorder: theme.main.background[3],
                                 inputLabelText: theme.main.foreground[0],
                                 anchorTextColor: theme.main.lighterForeground[0],
-                                brand: theme.primary.background[2],
+                                brand: theme.primary.background[3],
                                 brandAccent: theme.primary.background[2],
-                                brandButtonText: theme.primary.foreground[2],
+                                brandButtonText: theme.primary.foreground[3],
                                 messageTextDanger: theme.error,
                             },
                         },
