@@ -18,7 +18,7 @@ const MiddleDiv = styled.div`
     box-shadow: 0 0 15px ${(props) => props.theme.shadow};
     border-radius: 10px;
     padding: 10px 10px;
-    margin: auto 20px;
+    margin: auto 10%;
     background-color: ${(props) => props.theme.main.background[0]};
 
     --fonts-buttonFontFamily: Helvetica, Arial, sans-serif;
@@ -38,12 +38,12 @@ const MiddleDiv = styled.div`
         -webkit-text-fill-color: ${(props) => props.theme.main.foreground[2]} !important;
     }
 
-    @media (min-width: 300px) {
+    @media (min-width: 375px) {
         padding: 25px 25px;
-        margin: auto 40px;
+        margin: auto;
     }
 
-    @media (min-width: 450px) {
+    @media (min-width: 525px) {
         padding: 30px 80px;
         margin: auto;
     }
