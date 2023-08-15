@@ -19,7 +19,6 @@ interface Props {
 
 const statuses = [
     "Request Denied",
-    // probably shouldn't be a status (?)
     "No Status",
     "Pending More Info",
     "Called and Confirmed",
@@ -93,7 +92,7 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
     };
 
     const submitAction = async (): Promise<void> => {
-        // TODO: implement whatever actions are meant to do
+        // TODO VFB-10,11,12 implement whatever actions are meant to do
     };
 
     return (

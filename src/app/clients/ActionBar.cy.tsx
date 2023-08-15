@@ -1,7 +1,7 @@
 import ActionBar from "@/app/clients/ActionBar";
 import React from "react";
 import StyleManager from "@/app/themes";
-import { ClientsTableRow } from "./getClientsTableData";
+import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 
 describe("Clients - Action Bar", () => {
     const mockData: ClientsTableRow[] = [

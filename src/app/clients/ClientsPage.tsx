@@ -19,7 +19,7 @@ import { Schema } from "@/supabase";
 import TableSurface from "@/components/Tables/TableSurface";
 import { CenterComponent } from "@/components/Form/formStyling";
 import Button from "@mui/material/Button";
-import ActionBar from "./ActionBar";
+import ActionBar from "@/app/clients/ActionBar";
 
 // TODO Change Button to LinkButton
 

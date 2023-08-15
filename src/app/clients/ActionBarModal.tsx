@@ -30,7 +30,6 @@ const ModalInner = styled.div`
     align-items: stretch;
 `;
 
-// TODO VFB-16 Make these border colours change on dark and light themes
 const StatusText = styled.p`
     margin-left: 1rem;
     border-top: 1px solid darkgrey;
@@ -66,7 +65,7 @@ const ActionBarModal: React.FC<SharedModalProps> = (props) => {
         <Modal {...props} header={props.header} headerId={props.headerId}>
             <ModalInner>
                 <Row>
-                    <p>Date: </p>
+                    Date:
                     <DatePicker
                         value={date}
                         defaultValue={date}
@@ -75,14 +74,12 @@ const ActionBarModal: React.FC<SharedModalProps> = (props) => {
                     />
                 </Row>
                 <Row>
-                    <p>Time: </p>
+                    Time:
                     <TimePicker value={date} onChange={onTimeChange} disableFuture />
                 </Row>
-                <p>Applying:</p>
-                <div>
-                    <StatusText key={props.status}>{props.status}</StatusText>
-                </div>
-                <p>To</p>
+                Applying:
+                <StatusText key={props.status}>{props.status}</StatusText>
+                To
                 <div>
                     {props.data.map((parcel, index) => {
                         return (

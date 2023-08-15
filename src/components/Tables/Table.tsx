@@ -158,12 +158,12 @@ const Table: React.FC<Props> = ({
 
     const [filterText, setFilterText] = useState<FilterText>({});
 
-    const [selectCheckBoxes, _setSelectCheckBoxes] = useState(
+    const [selectedCheckboxes, setSelectedCheckboxes] = useState(
         new Array<boolean>(data.length).fill(false)
     );
 
-    const setSelectCheckBoxes = (newSelection: boolean[]): void => {
-        _setSelectCheckBoxes(newSelection);
+    const updateCheckboxes = (newSelection: boolean[]): void => {
+        setSelectedCheckboxes(newSelection);
         onRowSelection?.(
             newSelection
                 .map((selected, index) => (selected ? index : -1))
@@ -174,23 +174,23 @@ const Table: React.FC<Props> = ({
     const [selectAllCheckBox, setSelectAllCheckBox] = useState(false);
 
     const toggleOwnCheckBox = (rowId: number): void => {
-        const selectCheckBoxesCopy = [...selectCheckBoxes];
+        const selectCheckBoxesCopy = [...selectedCheckboxes];
         selectCheckBoxesCopy[rowId] = !selectCheckBoxesCopy[rowId];
-        setSelectCheckBoxes(selectCheckBoxesCopy);
+        updateCheckboxes(selectCheckBoxesCopy);
     };
 
     const toggleAllCheckBox = (): void => {
         const newSelection = new Array<boolean>(data.length).fill(!selectAllCheckBox);
-        setSelectCheckBoxes(newSelection);
+        updateCheckboxes(newSelection);
         setSelectAllCheckBox(!selectAllCheckBox);
     };
 
     useEffect(() => {
-        const allChecked = selectCheckBoxes.every((item) => item);
+        const allChecked = selectedCheckboxes.every((item) => item);
         if (allChecked !== selectAllCheckBox) {
             setSelectAllCheckBox(allChecked);
         }
-    }, [selectCheckBoxes, selectAllCheckBox]);
+    }, [selectedCheckboxes, selectAllCheckBox]);
 
     const columns: TableColumn<Row>[] = (
         toggleableHeaders ? shownHeaders : headerKeysAndLabels
@@ -245,7 +245,7 @@ const Table: React.FC<Props> = ({
                 <input
                     type="checkbox"
                     aria-label={`Select row ${row.rowId}`}
-                    checked={selectCheckBoxes[row.rowId]}
+                    checked={selectedCheckboxes[row.rowId]}
                     onClick={() => toggleOwnCheckBox(row.rowId)}
                 />
             ),
