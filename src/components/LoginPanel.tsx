@@ -10,7 +10,7 @@ import NoSsr from "@mui/material/NoSsr";
 import Title from "@/components/Title/Title";
 
 export const LoginMain = styled.main`
-    height: 85vh;
+    height: 100%;
     display: flex;
 `;
 
@@ -18,8 +18,8 @@ const MiddleDiv = styled.div`
     max-width: 400px;
     box-shadow: 0 0 15px ${(props) => props.theme.shadow};
     border-radius: 10px;
-    padding: 10px 25px;
-    margin: auto;
+    padding: 10px 10px;
+    margin: auto 20px;
     background-color: ${(props) => props.theme.main.background[0]};
 
     --fonts-buttonFontFamily: Helvetica, Arial, sans-serif;
@@ -39,8 +39,14 @@ const MiddleDiv = styled.div`
         -webkit-text-fill-color: ${(props) => props.theme.main.foreground[2]} !important;
     }
 
-    @media (min-width: 500px) {
+    @media (min-width: 300px) {
+        padding: 25px 25px;
+        margin: auto 40px;
+    }
+
+    @media (min-width: 450px) {
         padding: 30px 80px;
+        margin: auto;
     }
 `;
 
@@ -57,7 +63,6 @@ const LoginPanel: React.FC<{}> = () => {
     return (
         <MiddleDiv data-loaded={loaded} id="login-panel">
             <Title>Login</Title>
-            <NoSsr>
                 <Auth
                     supabaseClient={supabase}
                     providers={[]}
@@ -81,7 +86,6 @@ const LoginPanel: React.FC<{}> = () => {
                     }}
                     redirectTo="http://localhost:3000/auth/callback"
                 />
-            </NoSsr>
         </MiddleDiv>
     );
 };
