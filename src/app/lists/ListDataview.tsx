@@ -16,6 +16,7 @@ import Alert from "@mui/material/Alert/Alert";
 import Button from "@mui/material/Button";
 import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
+import CommentBox from "@/app/lists/CommentBox";
 
 export type ListRow = Schema["lists"] & Datum;
 
@@ -49,7 +50,6 @@ listQuantityNoteAndLabels.forEach(([headerKey, noteKey]) => {
                 <TooltipCell cellValue={data[headerKey] ?? ""} tooltipValue={data[noteKey] ?? ""} />
             );
         };
-
         // Column Style Function
         listsColumnStyleOptions[headerKey] = {
             minWidth: "9rem",
@@ -98,6 +98,12 @@ const ListsDataView: React.FC<Props> = (props) => {
             }
         }
     };
+    const Comment = `PLEASE DISTRIBUTE WEIGHT EVENLY ACROSS BOXES,
+Space is valuable! Please don't leave boxes half empty - pack efficiently! 
+BOXES MUST BE PACKED FLAT SO THAT THEY CAN BE STACKED. 
+Do not leave items sticking out of the top. 
+We do have a selection of 'free from' goods as well as vegan and halal products.
+If you're uncertain about anything, please speak to a member of the team.`;
 
     return (
         <>
@@ -126,6 +132,7 @@ const ListsDataView: React.FC<Props> = (props) => {
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
 
             <TableSurface>
+                <CommentBox originalComment={Comment} />
                 <Table
                     checkboxes={false}
                     headerKeysAndLabels={headerKeysAndLabels}

@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import { TextField } from "@mui/material";
 interface Props {
@@ -8,6 +9,9 @@ interface Props {
     error?: boolean;
     helperText?: string;
     value?: string;
+    multiline?: boolean;
+    maxRows?: number;
+    minRows?: number;
 }
 
 const FreeFormTextInput: React.FC<Props> = (props) => {
@@ -19,6 +23,9 @@ const FreeFormTextInput: React.FC<Props> = (props) => {
             defaultValue={props.defaultValue}
             onChange={props.onChange}
             value={props.value}
+            multiline={props.multiline}
+            maxRows={props.maxRows}
+            minRows={props.minRows}
         />
     );
 };
