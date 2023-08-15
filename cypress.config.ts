@@ -43,5 +43,6 @@ export default defineConfig({
             bundler: "webpack",
         },
         specPattern: "src/**/*.cy.{ts,tsx}",
+        video: false,
     },
 });
