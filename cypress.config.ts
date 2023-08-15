@@ -29,6 +29,7 @@ export default defineConfig({
             return config;
         },
         baseUrl: "http://localhost:3200",
+        video: false,
     },
     component: {
         setupNodeEvents(on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) {
