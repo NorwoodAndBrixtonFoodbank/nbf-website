@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Svg, Document, Page, Text, View, StyleSheet, Path } from "@react-pdf/renderer";
-import { Style } from "@react-pdf/types";
 import { faFlag, faSquare, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 
 import { ParcelOfSpecificDateLocation } from "@/components/DayOverview/DayOverview";
