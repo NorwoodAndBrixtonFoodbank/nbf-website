@@ -26,6 +26,9 @@ jobs:
 
       - name: Run linting
         run: npm run lint
+      
+      - name: Compile
+        run: npm run build
 
       - name: Run component tests
         run: npm run test:component
@@ -43,21 +46,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Compile
+        run: npm run build
+
       - name: Run e2e tests
         run: npm run test:e2e
-
-      - name: Upload Screenshots
-        uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: screenshots
-          path: cypress/screenshots
-          retention-days: 1
-
-      - name: Upload Videos
-        uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: videos
-          path: cypress/videos
-          retention-days: 1

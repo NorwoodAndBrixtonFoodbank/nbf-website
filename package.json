@@ -17,7 +17,7 @@
     "test:runner": "npm run test:runner_component && npm run test:runner_e2e",
     "test:runner_component": "npx cypress run --component",
     "test:runner_e2e": "npx cypress run",
-    "test:runner_server": "next dev -p 3200",
+    "test:runner_server": "next start -p 3200",
     "coverage:generate": "nyc instrument --delete src .nyc_output --compact=false --all",
     "coverage:run_tests": "start-server-and-test coverage:server http://localhost:3200 test:runner",
     "coverage:server": "nyc npm run test:runner_server",
@@ -85,6 +85,6 @@
     "start-server-and-test": "^2.0.0",
     "styled-components": "^6.0.0-rc.3",
     "supabase": "^1.68.6",
-    "typescript": "^5.1.6"
+    "typescript": "5.0.4"
   }
 }

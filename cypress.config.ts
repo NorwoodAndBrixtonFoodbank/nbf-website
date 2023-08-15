@@ -29,10 +29,6 @@ export default defineConfig({
             return config;
         },
         baseUrl: "http://localhost:3200",
-        video: true,
-        videoUploadOnPasses: false,
-        screenshotOnRunFailure: true,
-        videoCompression: 1,
     },
     component: {
         setupNodeEvents(on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) {
