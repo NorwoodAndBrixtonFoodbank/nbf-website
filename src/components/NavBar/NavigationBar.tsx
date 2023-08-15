@@ -118,14 +118,6 @@ const LoginDependent: React.FC<Props> = (props) => {
     return <>{props.children}</>;
 };
 
-const ContentDiv = styled.div`
-    height: calc(100% - ${NavBarHeight});
-    width: 100%;
-    position: absolute;
-    top: ${NavBarHeight};
-    overflow: auto;
-`;
-
 interface Props {
     children?: React.ReactNode;
 }
