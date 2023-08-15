@@ -8,6 +8,7 @@ import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import { EventClickArg } from "@fullcalendar/core";
 import styled from "styled-components";
 import EventModal from "@/components/Calendar/EventModal";
+import { Paper } from "@mui/material";
 
 export interface CalendarProps {
     initialEvents: CalendarEvent[];
@@ -28,7 +29,11 @@ export interface CalendarEvent {
     allDay?: boolean;
 }
 
-const CalendarStyling = styled.div`
+const CalendarStyling = styled(Paper)`
+    border-radius: 2rem;
+    padding: 1.5rem;
+    background-color: ${(props) => props.theme.main.background[0]};
+
     --fc-button-active-bg-color: ${(props) => props.theme.primary.background[3]};
     --fc-button-active-border-color: ${(props) => props.theme.primary.background[3]};
     --fc-button-text-color: ${(props) => props.theme.primary.foreground[3]};
@@ -41,11 +46,8 @@ const CalendarStyling = styled.div`
     --fc-today-bg-color: ${(props) => props.theme.primary.background[0]};
 
     .fc {
-        background-color: ${(props) => props.theme.main.background[0]};
         color: ${(props) => props.theme.main.foreground[0]};
-        box-shadow: 0 0 15px ${(props) => props.theme.shadow};
-        border-radius: 2rem;
-        padding: 1.5rem;
+        background: transparent;
         text-align: center;
     }
 
@@ -121,6 +123,10 @@ const CalendarStyling = styled.div`
         background-color: ${(props) => props.theme.primary.background[1]};
         border-color: ${(props) => props.theme.primary.background[1]};
         color: ${(props) => props.theme.primary.foreground[1]};
+
+        &:hover {
+            opacity: 80%;
+        }
     }
 
     .fc .fc-button-primary:focus,
