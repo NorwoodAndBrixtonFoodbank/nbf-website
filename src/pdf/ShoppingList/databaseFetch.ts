@@ -7,7 +7,7 @@ export const fetchParcels = async (parcelID: string): Promise<Schema["parcels"]>
     }
     if (data.length !== 1) {
         const errorMessage =
-            (data.length === 0 ? "No " : "Multiple") + "records match this parcel ID.";
+            (data.length === 0 ? "No " : "Multiple ") + "records match this parcel ID.";
         throw Error(errorMessage);
     }
     return data[0];
@@ -20,7 +20,7 @@ export const fetchClients = async (primaryKey: string): Promise<Schema["clients"
     }
     if (data.length !== 1) {
         const errorMessage =
-            (data.length === 0 ? "No " : "Multiple") + "records match this client ID.";
+            (data.length === 0 ? "No " : "Multiple ") + "records match this client ID.";
         throw Error(errorMessage);
     }
     return data[0];

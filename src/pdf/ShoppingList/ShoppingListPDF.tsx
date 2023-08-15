@@ -12,6 +12,7 @@ import {
 const styles = StyleSheet.create({
     paper: {
         margin: "0.75in",
+        marginTop: "0",
         lineHeight: "1.5pt",
     },
     flexRow: {
@@ -21,6 +22,7 @@ const styles = StyleSheet.create({
     flexColumn: {
         display: "flex",
         flexDirection: "column",
+        padding: "5pt",
     },
     pdfHeader: {
         justifyContent: "space-between",
@@ -32,6 +34,7 @@ const styles = StyleSheet.create({
     infoBlock: {
         borderStyle: "solid",
         border: "1pt",
+        borderBottom: "0",
     },
     infoCell: {
         width: "50%",
@@ -40,7 +43,6 @@ const styles = StyleSheet.create({
     table: {
         borderStyle: "solid",
         border: "1pt",
-        padding: "5pt",
     },
     tableRow: {
         borderBottomStyle: "solid",
@@ -141,7 +143,7 @@ const formatCamelCaseKey = (objectKey: string): string => {
 
 const DisplayAsBlock: React.FC<BlockProps> = (data: BlockProps) => {
     return (
-        <View style={[styles.flexColumn, styles.infoCell]}>
+        <View style={styles.infoCell}>
             {Object.keys(data).map((propKey, index) => (
                 <OneLine key={index} header={formatCamelCaseKey(propKey)} value={data[propKey]} />
             ))}
@@ -191,11 +193,13 @@ const ShoppingListPDF: React.FC<ShoppingListPDFProps> = ({
         <Document>
             <Page size="A4">
                 <View style={styles.paper}>
+                    <View style={{ marginTop: "0.75in" }} fixed />
                     <View style={[styles.flexRow, styles.pdfHeader]}>
-                        <View style={[styles.flexColumn, { padding: "5pt" }]}>
+                        <View style={styles.flexColumn}>
                             <Text style={styles.title}>Shopping List</Text>
                             <Text style={styles.subtitle}>POSTCODE: {postcode}</Text>
                         </View>
+                        {/* eslint-disable-next-line jsx-a11y/alt-text -- React-PDF doesn't Image have alt text property*/}
                         <Image src="/logo.png" style={[styles.flexRow, styles.logoStyling]} />
                     </View>
                     <DisplayAsBlock {...parcelInfo} />
@@ -208,7 +212,7 @@ const ShoppingListPDF: React.FC<ShoppingListPDFProps> = ({
                         <TableHeadings />
                         <DisplayItemsList itemsList={itemsList} />
                     </View>
-                    <View style={[styles.flexColumn, { padding: "20pt 5pt 5pt" }]} wrap={false}>
+                    <View style={styles.flexColumn} wrap={false}>
                         <Text style={styles.keyText}>Warehouse Manager Notes</Text>
                         <Text style={styles.normalText}>{endNotes}</Text>
                         <Text style={[styles.keyText, styles.inputText]}>Date Packed:</Text>
