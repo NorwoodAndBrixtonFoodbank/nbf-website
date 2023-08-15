@@ -76,6 +76,9 @@ const styles = StyleSheet.create({
         fontSize: "12pt",
         fontFamily: "Helvetica",
     },
+    inputText: {
+        paddingTop: "20pt",
+    },
 });
 
 const OneLine: React.FC<{ header: string; value: string }> = ({ header, value }) => {
@@ -136,7 +139,7 @@ const formatCamelCaseKey = (objectKey: string): string => {
     return objectKey.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
 };
 
-const DisplayAsBlock: React.FC<BlockProps> = <Prop extends BlockProps>(data: Prop) => {
+const DisplayAsBlock: React.FC<BlockProps> = (data: BlockProps) => {
     return (
         <View style={[styles.flexColumn, styles.infoCell]}>
             {Object.keys(data).map((propKey, index) => (
@@ -189,7 +192,7 @@ const ShoppingListPDF: React.FC<ShoppingListPDFProps> = ({
             <Page size="A4">
                 <View style={styles.paper}>
                     <View style={[styles.flexRow, styles.pdfHeader]}>
-                        <View style={[styles.flexColumn, { padding: 5 }]}>
+                        <View style={[styles.flexColumn, { padding: "5pt" }]}>
                             <Text style={styles.title}>Shopping List</Text>
                             <Text style={styles.subtitle}>POSTCODE: {postcode}</Text>
                         </View>
@@ -208,9 +211,9 @@ const ShoppingListPDF: React.FC<ShoppingListPDFProps> = ({
                     <View style={[styles.flexColumn, { padding: "20pt 5pt 5pt" }]} wrap={false}>
                         <Text style={styles.keyText}>Warehouse Manager Notes</Text>
                         <Text style={styles.normalText}>{endNotes}</Text>
-                        <Text style={[styles.keyText, { paddingTop: 20 }]}>Date Packed:</Text>
-                        <Text style={[styles.keyText, { paddingTop: 20 }]}>Packer Name:</Text>
-                        <Text style={[styles.keyText, { paddingTop: 20 }]}>Packer Signature:</Text>
+                        <Text style={[styles.keyText, styles.inputText]}>Date Packed:</Text>
+                        <Text style={[styles.keyText, styles.inputText]}>Packer Name:</Text>
+                        <Text style={[styles.keyText, styles.inputText]}>Packer Signature:</Text>
                     </View>
                 </View>
             </Page>
