@@ -99,6 +99,24 @@ const styles = StyleSheet.create({
         borderBottom: "none",
         fontSize: 12,
     },
+    nameColumnWidth: {
+        width: "15%",
+    },
+    addressColumnWidth: {
+        width: "20%",
+    },
+    contactColumnWidth: {
+        width: "15%",
+    },
+    packingDateColumnWidth: {
+        width: "15%",
+    },
+    parcelsColumnWidth: {
+        width: "10%",
+    },
+    instructionsColumnWidth: {
+        width: "25%",
+    },
 });
 
 const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ driverName, date, data }) => {
@@ -110,22 +128,22 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ driverName, dat
     };
     const header = (
         <View style={styles.tableHeader}>
-            <View style={[styles.tableColumn, { width: "15%" }]}>
+            <View style={[styles.tableColumn, styles.nameColumnWidth]}>
                 <Text>Name</Text>
             </View>
-            <View style={[styles.tableColumn, { width: "20%" }]}>
+            <View style={[styles.tableColumn, styles.addressColumnWidth]}>
                 <Text>Address</Text>
             </View>
-            <View style={[styles.tableColumn, { width: "15%" }]}>
+            <View style={[styles.tableColumn, styles.contactColumnWidth]}>
                 <Text>Contact</Text>
             </View>
-            <View style={[styles.tableColumn, { width: "15%" }]}>
+            <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
                 <Text>Packing Date</Text>
             </View>
-            <View style={[styles.tableColumn, { width: "10%" }]}>
+            <View style={[styles.tableColumn, styles.parcelsColumnWidth]}>
                 <Text>Parcels</Text>
             </View>
-            <View style={[styles.tableColumn, { width: "25%" }]}>
+            <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
                 <Text>Instructions</Text>
             </View>
         </View>
@@ -134,26 +152,26 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ driverName, dat
     const table = data.map((rowData, index) => {
         return (
             <View key={index} style={[styles.tableRow, styles.flexRow]} wrap={false}>
-                <View style={[styles.tableColumn, { width: "15%" }]}>
+                <View style={[styles.tableColumn, styles.nameColumnWidth]}>
                     <Text>{rowData.name}</Text>
                 </View>
-                <View style={[styles.tableColumn, { width: "20%" }]}>
+                <View style={[styles.tableColumn, styles.addressColumnWidth]}>
                     <Text>{rowData.address.line1}</Text>
                     <Text>{rowData.address.line2}</Text>
                     <Text>{rowData.address.town}</Text>
                     <Text>{rowData.address.county}</Text>
                     <Text>{rowData.address.postcode}</Text>
                 </View>
-                <View style={[styles.tableColumn, { width: "15%" }]}>
+                <View style={[styles.tableColumn, styles.contactColumnWidth]}>
                     <Text>{rowData.contact}</Text>
                 </View>
-                <View style={[styles.tableColumn, { width: "15%" }]}>
+                <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
                     <Text>{dateConverter(rowData.packingDate)}</Text>
                 </View>
-                <View style={[styles.tableColumn, { width: "10%" }]}>
+                <View style={[styles.tableColumn, styles.parcelsColumnWidth]}>
                     <Text>{rowData.parcels}</Text>
                 </View>
-                <View style={[styles.tableColumn, { width: "25%" }]}>
+                <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
                     <Text>{rowData.instructions}</Text>
                 </View>
             </View>
