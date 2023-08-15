@@ -62,29 +62,29 @@ const LoginPanel: React.FC<{}> = () => {
     return (
         <MiddleDiv data-loaded={loaded} id="login-panel">
             <Title>Login</Title>
-                <Auth
-                    supabaseClient={supabase}
-                    providers={[]}
-                    appearance={{
-                        theme: ThemeSupa,
-                        variables: {
-                            default: {
-                                colors: {
-                                    inputText: theme.main.foreground[2],
-                                    inputBackground: theme.main.background[2],
-                                    inputBorder: theme.main.background[2],
-                                    inputLabelText: theme.main.foreground[0],
-                                    anchorTextColor: theme.main.lighterForeground[0],
-                                    brand: theme.primary.background[2],
-                                    brandAccent: theme.primary.background[2],
-                                    brandButtonText: theme.primary.foreground[2],
-                                    messageTextDanger: theme.error,
-                                },
+            <Auth
+                supabaseClient={supabase}
+                providers={[]}
+                appearance={{
+                    theme: ThemeSupa,
+                    variables: {
+                        default: {
+                            colors: {
+                                inputText: theme.main.foreground[2],
+                                inputBackground: theme.main.background[2],
+                                inputBorder: theme.main.background[2],
+                                inputLabelText: theme.main.foreground[0],
+                                anchorTextColor: theme.main.lighterForeground[0],
+                                brand: theme.primary.background[2],
+                                brandAccent: theme.primary.background[2],
+                                brandButtonText: theme.primary.foreground[2],
+                                messageTextDanger: theme.error,
                             },
                         },
-                    }}
-                    redirectTo="http://localhost:3000/auth/callback"
-                />
+                    },
+                }}
+                redirectTo="http://localhost:3000/auth/callback"
+            />
         </MiddleDiv>
     );
 };
