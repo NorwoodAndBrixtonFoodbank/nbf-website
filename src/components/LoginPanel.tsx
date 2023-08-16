@@ -41,7 +41,7 @@ const MiddleDiv = styled(Paper)`
     }
 
     & button:hover {
-        color: ${(props) => props.theme.main.background[2]};
+        color: ${(props) => props.theme.main.foreground[2]};
     }
 
     @media (min-width: 375px) {
