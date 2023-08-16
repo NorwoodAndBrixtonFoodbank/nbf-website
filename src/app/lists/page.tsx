@@ -12,13 +12,22 @@ const fetchData = async (): Promise<ListRow[]> => {
     return data ?? [];
 };
 
+const fetchComment = async (): Promise<any> => {
+    const data = await supabase.from("website_data").select().eq("name", "lists_text");
+    if (data.data) {
+        return data.data![0].value;
+    }
+    return "";
+};
+
 const Lists = async (): Promise<ReactElement> => {
     const data = await fetchData();
+    const comment = await fetchComment();
 
     return (
         <main>
             <Title>Lists</Title>
-            <ListsDataView data={data} />
+            <ListsDataView data={data} comment={comment} />
         </main>
     );
 };

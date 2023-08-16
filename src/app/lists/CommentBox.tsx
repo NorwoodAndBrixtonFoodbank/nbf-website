@@ -1,6 +1,7 @@
 "use client";
 
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
+import supabase from "@/supabase";
 import { Button } from "@mui/material";
 import React, { useState } from "react";
 import styled from "styled-components";
@@ -15,25 +16,16 @@ const HeaderAndButtonContainer = styled.div`
     width: 100%;
     min-width: 8rem;
     flex-direction: column;
+    gap: 1rem;
     justify-content: space-between;
     @media (min-width: 800px) {
         width: 15%;
     }
 `;
 
-const ConfirmAndCancelButtons = styled(Button)`
-    width: 60%;
-    max-width: 10rem;
-    margin: 0.5rem;
-    @media (min-width: 800px) {
-        width: 75%;
-    }
-`;
-
 const Header = styled.p`
     font-size: 1.2rem;
     font-weight: 700;
-    margin: 0.5rem;
 `;
 
 const Wrapper = styled.div`
@@ -62,6 +54,8 @@ const CommentBoxContainer = styled.div`
 const ButtonContainer = styled.div`
     display: flex;
     width: 100%;
+    height: 90%;
+    gap: 1rem;
     max-width: 15rem;
     justify-content: space-around;
     @media (min-width: 800px) {
@@ -71,40 +65,49 @@ const ButtonContainer = styled.div`
     }
 `;
 
-const CommentBox = styled(FreeFormTextInput)``;
+const ErrorText = styled.p`
+    color: ${(props) => props.theme.error};
+    margin: 1rem 0 0 0;
+    font-size: 0.8rem;
+`;
 
 const CommentContainer: React.FC<CommentProps> = (props) => {
     const [value, setValue] = useState(props.originalComment);
+    const [errorMessage, setErrorMessage] = useState("");
     const onChangeSetValue = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setValue(event.target.value);
     };
-    const onSubmit = (): void => {
-        console.log(value);
+    const onSubmit = async (): Promise<void> => {
+        const table = supabase.from("website_data");
+        const { error } = await table.update({ value: value }).eq("name", "lists_text");
+        if (error) {
+            setErrorMessage("There was an error uploading your changes to the database.");
+        } else {
+            setErrorMessage("");
+        }
     };
     return (
         <Wrapper>
             <HeaderAndButtonContainer>
                 <Header>Comments</Header>
                 <ButtonContainer>
-                    <ConfirmAndCancelButtons
-                        variant="outlined"
-                        onClick={() => setValue(props.originalComment)}
-                    >
+                    <Button variant="outlined" onClick={() => setValue(props.originalComment)}>
                         Reset Changes
-                    </ConfirmAndCancelButtons>
-                    <ConfirmAndCancelButtons variant="contained" onClick={onSubmit}>
+                    </Button>
+                    <Button variant="contained" onClick={onSubmit}>
                         Submit Changes
-                    </ConfirmAndCancelButtons>
+                    </Button>
                 </ButtonContainer>
             </HeaderAndButtonContainer>
             <CommentBoxContainer>
-                <CommentBox
+                <FreeFormTextInput
                     value={value}
                     onChange={onChangeSetValue}
                     multiline
                     maxRows={6}
                     minRows={6}
                 />
+                <ErrorText>{errorMessage}</ErrorText>
             </CommentBoxContainer>
         </Wrapper>
     );
