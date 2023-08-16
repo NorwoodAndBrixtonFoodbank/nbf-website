@@ -118,12 +118,6 @@ const styles = StyleSheet.create({
 });
 
 const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ driverName, date, data }) => {
-    const dateConverter = (date: Date): string => {
-        const day = date.getDate();
-        const month = date.getMonth() + 1;
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    };
     const header = (
         <View style={[styles.tableHeader, styles.flexRow]}>
             <View style={[styles.tableColumn, styles.nameColumnWidth]}>
@@ -164,7 +158,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ driverName, dat
                     <Text>{rowData.contact}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
-                    <Text>{dateConverter(rowData.packingDate)}</Text>
+                    <Text>{rowData.packingDate.toLocaleDateString()}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.parcelsColumnWidth]}>
                     <Text>{rowData.parcels}</Text>
@@ -183,7 +177,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ driverName, dat
                     <View style={styles.informationContainer}>
                         <Text style={styles.h1text}>Driver Overview</Text>
                         <Text style={styles.h2text}>Driver Name: {driverName}</Text>
-                        <Text style={styles.h2text}>Date: {dateConverter(date)} </Text>
+                        <Text style={styles.h2text}>Date: {date.toLocaleDateString()} </Text>
                     </View>
                     {/* eslint-disable-next-line -- needed to remove the need for alt text on the logo */}
                     <Image src="/logo.png" style={styles.logoStyling}></Image>
