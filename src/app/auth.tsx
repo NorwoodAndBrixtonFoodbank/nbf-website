@@ -35,13 +35,12 @@ export const AuthRouting: React.FC<{ children: React.ReactNode }> = ({ children 
             router.push(redirect);
 
             // if Client Side Routing is not working, fallback to changing the window location
-            // This seemingly only happens on GH Actions
             setTimeout(() => {
                 const redirect = toRedirectTo();
                 if (redirect) {
                     window.location.pathname = redirect;
                 }
-            }, 500);
+            }, 2500);
         }
     };
 
