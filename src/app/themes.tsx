@@ -188,7 +188,7 @@ const StyleManager: React.FC<Props> = ({ children }) => {
         "system"
     );
 
-    const [systemTheme, setSystemTheme] = useState<"dark" | "light">("light");
+    const [systemTheme, setSystemTheme] = useState<SystemTheme>("light");
 
     useEffect(() => {
         const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
