@@ -43,7 +43,7 @@ const CalendarStyling = styled(Paper)`
     --fc-small-font-size: 0.8em;
 
     --fc-page-bg-color: transparent;
-    --fc-today-bg-color: ${(props) => props.theme.primary.background[0]};
+    --fc-today-bg-color: transparent;
 
     .fc {
         color: ${(props) => props.theme.main.foreground[0]};
@@ -144,8 +144,16 @@ const CalendarStyling = styled(Paper)`
     }
 
     .fc .fc-day-other {
-        background-color: ${(props) => props.theme.main.background[1]};
+        > div {
+            background-color: ${(props) => props.theme.main.background[1]};
+        }
         color: ${(props) => props.theme.main.lighterForeground[1]};
+    }
+
+    .fc .fc-day-today {
+        > div {
+            background-color: ${(props) => props.theme.primary.background[0]};
+        }
     }
 
     // background color of headers
