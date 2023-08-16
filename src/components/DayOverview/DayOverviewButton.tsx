@@ -4,13 +4,13 @@ import { NoSsr } from "@mui/material";
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import React from "react";
 import DayOverviewPdf from "@/components/DayOverview/DayOverviewPdf";
-import { ParcelOfSpecificDateLocation } from "@/components/DayOverview/DayOverview";
+import { ParcelOfSpecificDateAndLocation } from "@/components/DayOverview/DayOverview";
 import { Schema } from "@/supabase";
 
 interface DayOverviewerButtonProps {
     date: Date;
     location: string;
-    data: ParcelOfSpecificDateLocation[];
+    data: ParcelOfSpecificDateAndLocation[];
     text: string;
 }
 
@@ -41,8 +41,16 @@ const collectionCentreToAbbreviation = (
     }
 };
 
+const getCurrentDate = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+
+    return `${year}${month}${day}`;
+};
+
 const DayOverviewButton: React.FC<DayOverviewerButtonProps> = ({ date, location, data, text }) => {
-    const dateString = date.toLocaleDateString("sv-SE").split("-").join("");
+    const dateString = getCurrentDate(date);
     return (
         <NoSsr>
             <PDFDownloadLink
@@ -53,7 +61,7 @@ const DayOverviewButton: React.FC<DayOverviewerButtonProps> = ({ date, location,
             >
                 {text}
             </PDFDownloadLink>
-            <PDFViewer width="400" height="500">
+            <PDFViewer width="800" height="1000">
                 <DayOverviewPdf date={date} location={location} data={data} />
             </PDFViewer>
         </NoSsr>

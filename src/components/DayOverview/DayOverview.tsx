@@ -6,7 +6,7 @@ interface Props {
     text: string;
 }
 
-export type ParcelOfSpecificDateLocation = {
+export type ParcelOfSpecificDateAndLocation = {
     collection_datetime: Schema["parcels"]["collection_datetime"];
     clients: Pick<
         Schema["clients"],
@@ -17,7 +17,7 @@ export type ParcelOfSpecificDateLocation = {
 const getParcelsOfSpecificDateAndLocation = async (
     date: Date,
     collectionCentre: string
-): Promise<ParcelOfSpecificDateLocation[]> => {
+): Promise<ParcelOfSpecificDateAndLocation[]> => {
     const startDateString = date.toISOString();
     const endDate = new Date(date);
     endDate.setDate(date.getDate() + 1);
@@ -42,7 +42,7 @@ const getParcelsOfSpecificDateAndLocation = async (
 
 const DayOverview = async ({ text }: Props): Promise<React.ReactElement> => {
     const date = new Date("2023-07-17");
-    const location = "Delivery";
+    const location = "Vauxhall Hope Church";
     const parcelsOfSpecificDate = await getParcelsOfSpecificDateAndLocation(date, location);
 
     return (
