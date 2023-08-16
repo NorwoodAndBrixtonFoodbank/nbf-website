@@ -15,18 +15,6 @@ interface Props {
 }
 
 const FreeFormTextInput: React.FC<Props> = (props) => {
-    return (
-        <TextField
-            error={props.error}
-            helperText={props.helperText}
-            label={props.label}
-            defaultValue={props.defaultValue}
-            onChange={props.onChange}
-            value={props.value}
-            multiline={props.multiline}
-            maxRows={props.maxRows}
-            minRows={props.minRows}
-        />
-    );
+    return <TextField {...props} />;
 };
 export default FreeFormTextInput;

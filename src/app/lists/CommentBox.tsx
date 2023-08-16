@@ -3,6 +3,7 @@
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import supabase from "@/supabase";
 import { Button } from "@mui/material";
+import { set } from "cypress/types/lodash";
 import React, { useState } from "react";
 import styled from "styled-components";
 
@@ -38,9 +39,9 @@ const CommentBoxContainer = styled.div`
     width: 100%;
     margin: 1rem;
     min-width: 15rem;
-    & > * {
-        width: 100%;
-    }
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     @media (min-width: 800px) {
         width: 75%;
     }
@@ -73,6 +74,7 @@ const SuccessText = styled.p`
 `;
 
 const CommentContainer: React.FC<CommentProps> = (props) => {
+    const [originalComment, setOriginalComment] = useState(props.originalComment);
     const [value, setValue] = useState(props.originalComment);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
@@ -87,6 +89,7 @@ const CommentContainer: React.FC<CommentProps> = (props) => {
             setSuccessMessage("");
         } else {
             setErrorMessage("");
+            setOriginalComment(value);
             setSuccessMessage("Comment successfully updated.");
         }
     };
@@ -95,7 +98,7 @@ const CommentContainer: React.FC<CommentProps> = (props) => {
             <HeaderAndButtonContainer>
                 <h2>Comments</h2>
                 <ButtonContainer>
-                    <Button variant="outlined" onClick={() => setValue(props.originalComment)}>
+                    <Button variant="outlined" onClick={() => setValue(originalComment)}>
                         Reset
                     </Button>
                     <Button variant="contained" onClick={onSubmit}>
@@ -107,7 +110,11 @@ const CommentContainer: React.FC<CommentProps> = (props) => {
                 <FreeFormTextInput
                     label="Comments"
                     value={value}
-                    onChange={onChangeSetValue}
+                    onChange={(newValue) => {
+                        onChangeSetValue(newValue);
+                        setSuccessMessage("");
+                        setErrorMessage("");
+                    }}
                     multiline
                     maxRows={4}
                     minRows={4}
