@@ -70,12 +70,12 @@ const styles = StyleSheet.create({
     row: { display: "flex", flexDirection: "row" },
     bold: { fontFamily: "Helvetica-Bold" },
 
-    cell_logo: { flex: 1 },
-    cell_name: { flex: 4 },
-    cell_postcode: { flex: 4 },
-    cell_time: { flex: 2 },
-    cell_collection: { flex: 4 },
-    cell_instructions: { flex: 10 },
+    cellLogo: { flex: 1 },
+    cellName: { flex: 4 },
+    cellPostcode: { flex: 4 },
+    cellTime: { flex: 2 },
+    cellCollection: { flex: 4 },
+    cellInstructions: { flex: 10 },
 });
 
 const getCurrentDate = (date: Date): string => {
@@ -104,7 +104,7 @@ const CustomSVG: React.FC<CustomSVGProps> = ({ icon, color, fill }) => (
 );
 
 const DayOverviewMargin: React.FC<{}> = () => {
-    return <View style={styles.margin} fixed={true}></View>;
+    return <View style={styles.margin} fixed></View>;
 };
 
 const DayOverviewDate: React.FC<DayOverviewDateProps> = ({ date }) => {
@@ -127,17 +127,17 @@ const DayOverviewLocation: React.FC<DayOverviewLocationProps> = ({ location }) =
 const DayOverviewHeader: React.FC<{}> = () => {
     return (
         <View style={[styles.row, styles.bold, { borderTop: "1 solid black" }]} fixed={true}>
-            <View style={[styles.cell_logo, styles.cell]}></View>
-            <View style={[styles.cell_name, styles.cell]}>
+            <View style={[styles.cellLogo, styles.cell]}></View>
+            <View style={[styles.cellName, styles.cell]}>
                 <Text>Name</Text>
             </View>
-            <View style={[styles.cell_postcode, styles.cell]}>
+            <View style={[styles.cellPostcode, styles.cell]}>
                 <Text>Postcode</Text>
             </View>
-            <View style={[styles.cell_time, styles.cell]}>
+            <View style={[styles.cellTime, styles.cell]}>
                 <Text>Time</Text>
             </View>
-            <View style={[styles.cell_instructions, styles.cell]}>
+            <View style={[styles.cellInstructions, styles.cell]}>
                 <Text>Instructions</Text>
             </View>
         </View>
@@ -147,7 +147,7 @@ const DayOverviewHeader: React.FC<{}> = () => {
 const DayOverviewRow: React.FC<DayOverviewRowProps> = ({ row }) => {
     return (
         <View style={styles.row} wrap={false}>
-            <View style={[styles.cell_logo, styles.cell]}>
+            <View style={[styles.cellLogo, styles.cell]}>
                 <View style={styles.row}>
                     <CustomSVG icon={faSquare} color="black" fill={false} />
                     {row.clients!.flagged_for_attention && (
@@ -155,16 +155,16 @@ const DayOverviewRow: React.FC<DayOverviewRowProps> = ({ row }) => {
                     )}
                 </View>
             </View>
-            <View style={[styles.cell_name, styles.cell]}>
+            <View style={[styles.cellName, styles.cell]}>
                 <Text>{row.clients!.full_name}</Text>
             </View>
-            <View style={[styles.cell_postcode, styles.cell]}>
+            <View style={[styles.cellPostcode, styles.cell]}>
                 <Text>{row.clients!.address_postcode}</Text>
             </View>
-            <View style={[styles.cell_time, styles.cell]}>
+            <View style={[styles.cellTime, styles.cell]}>
                 <Text>{dateTimeToAMPM(row.collection_datetime!)}</Text>
             </View>
-            <View style={[styles.cell_instructions, styles.cell]}>
+            <View style={[styles.cellInstructions, styles.cell]}>
                 <Text>{row.clients!.delivery_instructions}</Text>
             </View>
         </View>
