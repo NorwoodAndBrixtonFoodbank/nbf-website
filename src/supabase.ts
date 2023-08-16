@@ -16,25 +16,15 @@ export type DatabaseAutoType = Database;
 type Tables = Database["public"]["Tables"];
 
 export type Schema = {
-    clients: Tables["clients"]["Row"];
-    families: Tables["families"]["Row"];
-    parcels: Tables["parcels"]["Row"];
-    lists: Tables["lists"]["Row"];
-    events: Tables["events"]["Row"];
+    [key in keyof Tables]: Tables[key]["Row"];
 };
 
 export type InsertSchema = {
-    clients: Tables["clients"]["Insert"];
-    families: Tables["families"]["Insert"];
-    parcels: Tables["parcels"]["Insert"];
-    lists: Tables["lists"]["Insert"];
+    [key in keyof Tables]: Tables[key]["Insert"];
 };
 
 export type UpdateSchema = {
-    clients: Tables["clients"]["Update"];
-    families: Tables["families"]["Update"];
-    parcels: Tables["parcels"]["Update"];
-    lists: Tables["lists"]["Update"];
+    [key in keyof Tables]: Tables[key]["Update"];
 };
 
 export default supabase;
