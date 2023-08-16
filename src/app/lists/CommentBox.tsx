@@ -101,6 +101,7 @@ const CommentContainer: React.FC<CommentProps> = (props) => {
             </HeaderAndButtonContainer>
             <CommentBoxContainer>
                 <FreeFormTextInput
+                    label="Comment"
                     value={value}
                     onChange={onChangeSetValue}
                     multiline
