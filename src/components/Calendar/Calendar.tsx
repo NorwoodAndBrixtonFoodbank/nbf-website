@@ -57,7 +57,9 @@ const CalendarStyling = styled(Paper)`
     .fc .fc-icon {
         font-size: min(4vw, 1.2rem);
     }
-
+    .fc .fc-scrollgrid-section-header.fc-scrollgrid-section-sticky > * {
+        top: 4rem;
+    }
     .fc .fc-col-header-cell-cushion,
     .fc .fc-daygrid-day-number,
     .fc .fc-timegrid-axis-cushion,
