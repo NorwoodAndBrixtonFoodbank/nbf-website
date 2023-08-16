@@ -32,6 +32,7 @@ export const getProcessingData = async () => {
         collection_centre,
         collection_datetime,
         packing_datetime,
+        voucher_number,
         
         client:clients (
             primary_key,

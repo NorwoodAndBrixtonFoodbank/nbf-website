@@ -57,6 +57,7 @@ export const clientTableHeaderKeysAndLabels: TableHeaders = [
     ["packingDate", "Packing Date"],
     ["packingTimeLabel", "Time"],
     ["lastStatus", "Last Status"],
+    ["voucherNumber", "Voucher"],
 ];
 
 const toggleableHeaders = [
@@ -66,6 +67,7 @@ const toggleableHeaders = [
     "packingDate",
     "packingTimeLabel",
     "lastStatus",
+    "voucherNumber",
 ];
 
 const clientTableColumnStyleOptions = {
@@ -93,6 +95,9 @@ const clientTableColumnStyleOptions = {
     },
     lastStatus: {
         minWidth: "8rem",
+    },
+    voucherNumber: {
+        hide: 800,
     },
 };
 
@@ -171,7 +176,7 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
                     onRowSelection={setSelected}
                     pagination={true}
                     sortable={true}
-                    headerFilters={["addressPostcode"]}
+                    headerFilters={["addressPostcode", "voucherNumber"]}
                     toggleableHeaders={toggleableHeaders}
                 />
             </TableSurface>

@@ -61,6 +61,8 @@ interface Props {
     onRowClick?: OnRowClickFunction;
 }
 
+// export enum Filter
+
 const doesRowIncludeFilterText = (
     row: Row,
     filterText: FilterText,

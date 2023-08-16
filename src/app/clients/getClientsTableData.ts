@@ -17,8 +17,9 @@ export interface ClientsTableRow extends Datum {
     collectionCentre: string;
     congestionChargeApplies: boolean;
     packingTimeLabel: string;
-    collectionDatetime: string;
     lastStatus: string;
+    collectionDatetime: Schema["parcels"]["collection_datetime"];
+    voucherNumber: Schema["parcels"]["voucher_number"];
 }
 
 export const processingDataToClientsTableData = (
@@ -51,6 +52,7 @@ export const processingDataToClientsTableData = (
             packingTimeLabel: datetimeToPackingTimeLabel(parcel.packing_datetime),
             collectionDatetime: parcel.collection_datetime ?? "-",
             lastStatus: eventToStatusMessage(parcel.events[0] ?? null),
+            voucherNumber: parcel.voucher_number,
         });
     }
 
