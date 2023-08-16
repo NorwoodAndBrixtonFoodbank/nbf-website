@@ -30,4 +30,11 @@ export type InsertSchema = {
     lists: Tables["lists"]["Insert"];
 };
 
+export type UpdateSchema = {
+    clients: Tables["clients"]["Update"];
+    families: Tables["families"]["Update"];
+    parcels: Tables["parcels"]["Update"];
+    lists: Tables["lists"]["Update"];
+};
+
 export default supabase;
