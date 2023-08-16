@@ -6,6 +6,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@latest";
 import { corsHeaders } from "../_shared/cors.ts";
 
 serve(async (req: Handler): Promise<Response> => {
+    if (req.method === "OPTIONS") {
+        return new Response("ok", { headers: corsHeaders });
+    }
+
     const generateHeaders = (status: number): any => ({
         ...corsHeaders,
         "Content-Type": "application/json",
@@ -13,7 +17,7 @@ serve(async (req: Handler): Promise<Response> => {
     });
 
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-    const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
+    const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
         global: {
             headers: {
@@ -24,39 +28,25 @@ serve(async (req: Handler): Promise<Response> => {
 
     // -- Prevent Non-Admin Access -- //
     const {
-        data: { session },
-        error: sessionError,
-    } = await supabase.auth.getSession();
+        data: { user },
+        error: userError,
+    } = await supabase.auth.getUser();
 
-    if (sessionError) {
-        return new Response(
-            JSON.stringify({ error: error.message }),
-            generateHeaders(error.status ?? 400)
-        );
+    if (userError) {
+        return new Response(JSON.stringify({ error: userError.message }), generateHeaders(418));
     }
 
-    if (session === null) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), generateHeaders(401));
+    if (user === null) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), generateHeaders(418));
     }
 
-    if (session.user.app_metadata.role !== "admin") {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), generateHeaders(403));
+    if (user.app_metadata.role !== "admin") {
+        return new Response(JSON.stringify({ error: "Forbidden" }), generateHeaders(403));
     }
 
     // -- Process Request -- //
-    if (req.method === "OPTIONS") {
-        return new Response("ok", { headers: corsHeaders });
-    }
-
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"); // TODO ADD KEY
-    const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-        // TODO What does this do?
-        global: {
-            headers: {
-                Authorization: req.headers.get("Authorization")!,
-            },
-        },
-    });
+    const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
     const { data, error } = await supabaseAdmin.auth.admin.listUsers();
 

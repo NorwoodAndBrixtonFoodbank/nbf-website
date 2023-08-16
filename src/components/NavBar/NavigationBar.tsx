@@ -135,6 +135,7 @@ const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
         ["Clients", "/clients"],
         ["Lists", "/lists"],
         ["Calendar", "/calendar"],
+        ["Admin", "/admin"], // TODO REMOVE - DEBUG ONLY
     ];
 
     return (
