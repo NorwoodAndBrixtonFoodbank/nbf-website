@@ -218,7 +218,9 @@ const ShoppingListPDF: React.FC<ShoppingListPDFProps> = ({
                         <DisplayItemsList itemsList={itemsList} />
                     </View>
                     <View style={styles.flexColumn} wrap={false}>
-                        <Text style={styles.keyText}>Warehouse Manager Notes</Text>
+                        <Text style={[styles.keyText, { paddingTop: "5pt" }]}>
+                            Warehouse Manager Notes
+                        </Text>
                         <Text style={styles.normalText}>{endNotes}</Text>
                         <Text style={[styles.keyText, styles.inputText]}>Date Packed:</Text>
                         <Text style={[styles.keyText, styles.inputText]}>Packer Name:</Text>
