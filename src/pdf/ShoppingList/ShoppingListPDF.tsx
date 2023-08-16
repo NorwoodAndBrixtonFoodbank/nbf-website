@@ -11,8 +11,8 @@ import {
 
 const styles = StyleSheet.create({
     paper: {
-        margin: "0.75in",
-        marginTop: "0",
+        marginLeft: "0.75in",
+        marginRight: "0.75in",
         lineHeight: "1.5pt",
     },
     flexRow: {
@@ -40,13 +40,9 @@ const styles = StyleSheet.create({
         width: "50%",
         padding: "5pt",
     },
-    table: {
+    tableRow: {
         borderStyle: "solid",
         border: "1pt",
-    },
-    tableRow: {
-        borderBottomStyle: "solid",
-        borderBottom: "1pt",
         paddingVertical: "4pt",
         textAlign: "center",
     },
@@ -81,6 +77,13 @@ const styles = StyleSheet.create({
     inputText: {
         paddingTop: "20pt",
     },
+    checkBox: {
+        alignSelf: "center",
+        width: "18pt",
+        height: "18pt",
+        borderStyle: "solid",
+        border: "1pt",
+    },
 });
 
 const OneLine: React.FC<{ header: string; value: string }> = ({ header, value }) => {
@@ -112,7 +115,7 @@ const TableHeadings: React.FC<{}> = () => {
 
 const ItemToRow: React.FC<Item> = (item) => {
     return (
-        <View style={[styles.flexRow, styles.tableRow]}>
+        <View style={[styles.flexRow, styles.tableRow]} wrap={false}>
             <View style={styles.tableItemDescription}>
                 <Text style={styles.normalText}>{item.description}</Text>
             </View>
@@ -122,7 +125,9 @@ const ItemToRow: React.FC<Item> = (item) => {
             <View style={styles.tableNotes}>
                 <Text style={styles.normalText}>{item.notes}</Text>
             </View>
-            <View style={styles.tableDone}></View>
+            <View style={styles.tableDone}>
+                <View style={styles.checkBox} />
+            </View>
         </View>
     );
 };
@@ -192,14 +197,14 @@ const ShoppingListPDF: React.FC<ShoppingListPDFProps> = ({
     return (
         <Document>
             <Page size="A4">
+                <View style={{ height: "0.75in" }} fixed />
                 <View style={styles.paper}>
-                    <View style={{ marginTop: "0.75in" }} fixed />
                     <View style={[styles.flexRow, styles.pdfHeader]}>
                         <View style={styles.flexColumn}>
                             <Text style={styles.title}>Shopping List</Text>
                             <Text style={styles.subtitle}>POSTCODE: {postcode}</Text>
                         </View>
-                        {/* eslint-disable-next-line jsx-a11y/alt-text -- React-PDF doesn't Image have alt text property*/}
+                        {/* eslint-disable-next-line jsx-a11y/alt-text -- React-PDF Image doesn't  have alt text property*/}
                         <Image src="/logo.png" style={[styles.flexRow, styles.logoStyling]} />
                     </View>
                     <DisplayAsBlock {...parcelInfo} />
@@ -208,7 +213,7 @@ const ShoppingListPDF: React.FC<ShoppingListPDFProps> = ({
                         <DisplayAsBlock {...householdSummary} />
                         <DisplayAsBlock {...requirementSummary} />
                     </View>
-                    <View style={[styles.flexColumn, styles.table]}>
+                    <View>
                         <TableHeadings />
                         <DisplayItemsList itemsList={itemsList} />
                     </View>
@@ -220,6 +225,7 @@ const ShoppingListPDF: React.FC<ShoppingListPDFProps> = ({
                         <Text style={[styles.keyText, styles.inputText]}>Packer Signature:</Text>
                     </View>
                 </View>
+                <View style={{ height: "0.75in" }} fixed />
             </Page>
         </Document>
     );
