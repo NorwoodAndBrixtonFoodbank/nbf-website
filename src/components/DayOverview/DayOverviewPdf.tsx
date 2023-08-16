@@ -24,7 +24,11 @@ interface DayOverviewPdfProps {
     data: ParcelOfSpecificDateAndLocation[];
 }
 
-interface DayOverviewCardProps extends DayOverviewPdfProps {}
+interface DayOverviewCardProps {
+    date: Date;
+    location: string;
+    data: ParcelOfSpecificDateAndLocation[];
+}
 
 interface CustomSVGProps {
     icon: IconDefinition;
@@ -41,10 +45,6 @@ const styles = StyleSheet.create({
     card: {
         margin: "0 30pt 15pt",
     },
-    table: {
-        borderStyle: "solid",
-        borderLeftWidth: 1,
-    },
     title: {
         fontFamily: "Helvetica-Bold",
         textTransform: "uppercase",
@@ -60,7 +60,6 @@ const styles = StyleSheet.create({
         margin: "0 0.75pt",
         padding: "0 0.75pt",
     },
-    headerWrapper: { borderStyle: "solid", borderTopWidth: 1 },
     cell: {
         borderStyle: "solid",
         borderRightWidth: 1,
@@ -127,7 +126,7 @@ const DayOverviewLocation: React.FC<DayOverviewLocationProps> = ({ location }) =
 
 const DayOverviewHeader: React.FC<{}> = () => {
     return (
-        <View style={[styles.row, styles.bold, styles.headerWrapper]} fixed={true}>
+        <View style={[styles.row, styles.bold, { borderTop: "1 solid black" }]} fixed={true}>
             <View style={[styles.cell_logo, styles.cell]}></View>
             <View style={[styles.cell_name, styles.cell]}>
                 <Text>Name</Text>
@@ -179,7 +178,7 @@ const DayOverviewCard: React.FC<DayOverviewCardProps> = ({ date, location, data 
                 <DayOverviewDate date={date} />
                 <DayOverviewLocation location={location} />
             </View>
-            <View style={styles.table}>
+            <View style={{ borderLeft: "1 solid black" }}>
                 <DayOverviewHeader />
                 {data.map((datum, index) => (
                     <DayOverviewRow key={index} row={datum} />

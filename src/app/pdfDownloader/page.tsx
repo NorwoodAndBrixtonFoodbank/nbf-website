@@ -6,6 +6,9 @@ import ShippingsLabel from "@/components/ShippingLabels/ShippingLabel";
 import DayOverview from "@/components/DayOverview/DayOverview";
 
 const PdfDownloader = async (): Promise<ReactElement> => {
+    const date = new Date("2023-07-17");
+    const location = "Vauxhall Hope Church";
+
     return (
         <main>
             <Title>PDF Downloader</Title>
@@ -13,7 +16,7 @@ const PdfDownloader = async (): Promise<ReactElement> => {
                 <ShippingsLabel text="Download Shipping Labels" />
             </Centerer>
             <Centerer>
-                <DayOverview text="Download Day Overview" />
+                <DayOverview text="Download Day Overview" date={date} location={location} />
             </Centerer>
         </main>
     );
@@ -24,5 +27,3 @@ export const metadata: Metadata = {
 };
 
 export default PdfDownloader;
-
-

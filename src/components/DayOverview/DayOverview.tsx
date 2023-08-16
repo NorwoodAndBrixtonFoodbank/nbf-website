@@ -4,6 +4,8 @@ import DayOverviewButton from "@/components/DayOverview/DayOverviewButton";
 
 interface Props {
     text: string;
+    date: Date;
+    location: string;
 }
 
 export type ParcelOfSpecificDateAndLocation = {
@@ -34,15 +36,13 @@ const getParcelsOfSpecificDateAndLocation = async (
         .order("collection_datetime");
 
     if (error) {
-        throw new Error(`Database error: ${JSON.stringify(error)}`);
+        throw new Error(`Database error - ${error.message}`);
     }
 
     return data;
 };
 
-const DayOverview = async ({ text }: Props): Promise<React.ReactElement> => {
-    const date = new Date("2023-07-17");
-    const location = "Vauxhall Hope Church";
+const DayOverview = async ({ text, date, location }: Props): Promise<React.ReactElement> => {
     const parcelsOfSpecificDate = await getParcelsOfSpecificDateAndLocation(date, location);
 
     return (
