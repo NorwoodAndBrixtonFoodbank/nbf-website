@@ -218,13 +218,13 @@ const StyleManager: React.FC<Props> = ({ children }) => {
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
-        <ThemeUpdateContext.Provider value={themeToggle}>
-            <ThemeProvider
-                theme={preferenceIsDark(themePreference, systemTheme) ? darkTheme : lightTheme}
-            >
-                <MaterialAndGlobalStyle>{themedChildren}</MaterialAndGlobalStyle>
-            </ThemeProvider>
-        </ThemeUpdateContext.Provider>
+            <ThemeUpdateContext.Provider value={themeToggle}>
+                <ThemeProvider
+                    theme={preferenceIsDark(themePreference, systemTheme) ? darkTheme : lightTheme}
+                >
+                    <MaterialAndGlobalStyle>{themedChildren}</MaterialAndGlobalStyle>
+                </ThemeProvider>
+            </ThemeUpdateContext.Provider>
         </LocalizationProvider>
     );
 };
