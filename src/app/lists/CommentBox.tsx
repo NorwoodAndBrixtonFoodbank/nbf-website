@@ -23,11 +23,6 @@ const HeaderAndButtonContainer = styled.div`
     }
 `;
 
-const Header = styled.p`
-    font-size: 1.2rem;
-    font-weight: 700;
-`;
-
 const Wrapper = styled.div`
     display: flex;
     align-items: center;
@@ -67,13 +62,20 @@ const ButtonContainer = styled.div`
 
 const ErrorText = styled.p`
     color: ${(props) => props.theme.error};
-    margin: 1rem 0 0 0;
+    margin: 1rem 0 0;
+    font-size: 0.8rem;
+`;
+
+const SuccessText = styled.p`
+    color: ${(props) => props.theme.primary.background[3]};
+    margin: 1rem 0 0;
     font-size: 0.8rem;
 `;
 
 const CommentContainer: React.FC<CommentProps> = (props) => {
     const [value, setValue] = useState(props.originalComment);
     const [errorMessage, setErrorMessage] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
     const onChangeSetValue = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setValue(event.target.value);
     };
@@ -82,33 +84,36 @@ const CommentContainer: React.FC<CommentProps> = (props) => {
         const { error } = await table.update({ value: value }).eq("name", "lists_text");
         if (error) {
             setErrorMessage("There was an error uploading your changes to the database.");
+            setSuccessMessage("");
         } else {
             setErrorMessage("");
+            setSuccessMessage("Comment successfully updated.");
         }
     };
     return (
         <Wrapper>
             <HeaderAndButtonContainer>
-                <Header>Comments</Header>
+                <h2>Comments</h2>
                 <ButtonContainer>
                     <Button variant="outlined" onClick={() => setValue(props.originalComment)}>
-                        Reset Changes
+                        Reset
                     </Button>
                     <Button variant="contained" onClick={onSubmit}>
-                        Submit Changes
+                        Submit
                     </Button>
                 </ButtonContainer>
             </HeaderAndButtonContainer>
             <CommentBoxContainer>
                 <FreeFormTextInput
-                    label="Comment"
+                    label="Comments"
                     value={value}
                     onChange={onChangeSetValue}
                     multiline
-                    maxRows={6}
-                    minRows={6}
+                    maxRows={4}
+                    minRows={4}
                 />
-                <ErrorText>{errorMessage}</ErrorText>
+                {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
+                {successMessage && <SuccessText>{successMessage}</SuccessText>}
             </CommentBoxContainer>
         </Wrapper>
     );

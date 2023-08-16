@@ -12,7 +12,7 @@ const fetchData = async (): Promise<ListRow[]> => {
     return data ?? [];
 };
 
-const fetchComment = async (): Promise<any> => {
+const fetchComment = async (): Promise<string> => {
     const data = await supabase.from("website_data").select().eq("name", "lists_text");
     if (data.data) {
         return data.data![0].value;
