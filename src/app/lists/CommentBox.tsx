@@ -25,6 +25,9 @@ const ConfirmAndCancelButtons = styled(Button)`
     width: 60%;
     max-width: 10rem;
     margin: 0.5rem;
+    @media (min-width: 800px) {
+        width: 75%;
+    }
 `;
 
 const Header = styled.p`
@@ -64,6 +67,7 @@ const ButtonContainer = styled.div`
     @media (min-width: 800px) {
         flex-direction: column;
         align-items: center;
+        max-width: 25rem;
     }
 `;
 
