@@ -1,5 +1,5 @@
 import { FormLabel, Switch } from "@mui/material";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import React, { useContext } from "react";
 
 import Sun from "@/components/NavBar/Sun.svg";
@@ -51,13 +51,15 @@ const StyledSwitch = styled(Switch)`
 
 const LightDarkSlider: React.FC = () => {
     const setThemeMode = useContext(ThemeUpdateContext);
+    const theme = useTheme();
 
     const switchThemeMode = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setThemeMode(event.target.checked);
     };
+
     return (
         <FormLabel aria-label="Theme Switch">
-            <StyledSwitch onChange={switchThemeMode} />
+            <StyledSwitch onChange={switchThemeMode} checked={!theme.light} />
         </FormLabel>
     );
 };

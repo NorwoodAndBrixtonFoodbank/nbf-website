@@ -2,7 +2,7 @@
 
 import isPropValid from "@emotion/is-prop-valid";
 import { useServerInsertedHTML } from "next/navigation";
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import {
     ServerStyleSheet,
     StyleSheetManager,
@@ -10,6 +10,7 @@ import {
     DefaultTheme,
 } from "styled-components";
 import MaterialAndGlobalStyle from "@/app/global_styles";
+import useLocalStorage from "@/components/Hooks/useLocalStorage";
 
 const BLACK = "#000000";
 const WHITE = "#f2f2f2";
@@ -147,7 +148,6 @@ export const darkTheme: DefaultTheme = {
 
 interface Props {
     children: React.ReactNode;
-    theme?: DefaultTheme;
 }
 
 export const ThemeUpdateContext = createContext((dark: boolean): void => {
@@ -156,11 +156,25 @@ export const ThemeUpdateContext = createContext((dark: boolean): void => {
     );
 });
 
+type ThemePreference = "dark" | "light" | "system";
+type SystemTheme = "light" | "dark";
+
+const preferenceIsDark = (themePreference: ThemePreference, systemTheme: SystemTheme): boolean => {
+    switch (themePreference) {
+        case "dark":
+            return true;
+        case "light":
+            return false;
+        case "system":
+            return systemTheme === "dark";
+    }
+};
+
 /*
  * Makes a styled-components global registry to get server-side inserted CSS
  * Adapted from https://nextjs.org/docs/app/building-your-application/styling/css-in-js#styled-components
  */
-const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
+const StyleManager: React.FC<Props> = ({ children }) => {
     const [serverStyleSheet] = useState(() => new ServerStyleSheet());
 
     useServerInsertedHTML(() => {
@@ -169,10 +183,25 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
         return <>{styles}</>;
     });
 
-    const [chosenTheme, setChosenTheme] = useState(theme);
+    const [themePreference, setThemePreference] = useLocalStorage<ThemePreference>(
+        "theme",
+        "system"
+    );
 
-    const handleThemeChange = (dark: boolean): void => {
-        setChosenTheme(dark ? darkTheme : lightTheme);
+    const [systemTheme, setSystemTheme] = useState<SystemTheme>("light");
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+        const listener = (event: MediaQueryListEvent): void => {
+            setSystemTheme(event.matches ? "dark" : "light");
+        };
+        setSystemTheme(mediaQuery.matches ? "dark" : "light");
+        mediaQuery.addEventListener("change", listener);
+        return () => mediaQuery.removeEventListener("change", listener);
+    }, []);
+
+    const themeToggle = (dark: boolean): void => {
+        setThemePreference(dark ? "dark" : "light");
     };
 
     const themedChildren =
@@ -185,8 +214,10 @@ const StyleManager: React.FC<Props> = ({ children, theme = lightTheme }) => {
         );
 
     return (
-        <ThemeUpdateContext.Provider value={handleThemeChange}>
-            <ThemeProvider theme={chosenTheme}>
+        <ThemeUpdateContext.Provider value={themeToggle}>
+            <ThemeProvider
+                theme={preferenceIsDark(themePreference, systemTheme) ? darkTheme : lightTheme}
+            >
                 <MaterialAndGlobalStyle>{themedChildren}</MaterialAndGlobalStyle>
             </ThemeProvider>
         </ThemeUpdateContext.Provider>
