@@ -12,6 +12,7 @@ export const StyledForm = styled.div`
     padding: 2em;
     max-width: 1500px;
     display: flex;
+    gap: 1em;
     justify-content: center;
     align-items: center;
     flex-direction: column;
@@ -21,7 +22,6 @@ export const StyledCard = styled(Paper)`
     display: flex;
     flex-direction: column;
     padding: 2em;
-    margin: 0.5em;
     width: 100%;
     height: 80%;
     border-radius: 10px;
@@ -58,15 +58,12 @@ export const FormErrorText = styled(FormText)`
     text-align: center;
 `;
 
-export const StyledFormSubmitButton = styled(Button)`
-    margin: 1em;
-    background-color: ${(props) => props.theme.primary.background[3]};
-    color: ${(props) => props.theme.primary.foreground[3]};
-    &:hover {
-        background-color: ${(props) => props.theme.primary.background[2]};
-    }
+export const SubmitButton = styled(Button)`
+    margin: 1em 0;
 `;
 
-export const FormGap = styled.div`
-    height: 0.5em;
+export const GappedDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
 `;

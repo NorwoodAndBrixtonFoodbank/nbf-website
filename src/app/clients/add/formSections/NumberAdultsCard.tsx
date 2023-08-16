@@ -13,8 +13,7 @@ import {
 } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { selectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
-import { FormGap } from "@/components/Form/formStyling";
-
+import { GappedDiv } from "@/components/Form/formStyling";
 const getQuantity = (input: string): number => {
     if (input === "") {
         return 0;
@@ -65,26 +64,24 @@ const NumberAdultsCard: React.FC<CardProps> = ({
             required={true}
             text="Please enter the number of adults (aged 16 or above) in the appropriate category."
         >
-            <>
+            <GappedDiv>
                 <FreeFormTextInput
                     error={errorExists(formErrors.adults)}
                     label="Female"
                     onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "female")}
                 />
-                <FormGap />
                 <FreeFormTextInput
                     error={errorExists(formErrors.adults)}
                     label="Male"
                     onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "male")}
                 />
-                <FormGap />
                 <FreeFormTextInput
                     error={errorExists(formErrors.adults)}
                     helperText={errorText(formErrors.adults)}
                     label="Prefer Not To Say"
                     onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "other")}
                 />
-            </>
+            </GappedDiv>
         </GenericFormCard>
     );
 };

@@ -13,7 +13,6 @@ import {
     StyledForm,
     FormErrorText,
     FormHeading,
-    StyledFormSubmitButton,
 } from "@/components/Form/formStyling";
 
 import { useRouter } from "next/navigation";
@@ -26,6 +25,7 @@ import CollectionDateCard from "@/app/parcels/add/formSections/CollectionDateCar
 import CollectionTimeCard from "@/app/parcels/add/formSections/CollectionTimeCard";
 import CollectionCentreCard from "@/app/parcels/add/formSections/CollectionCentreCard";
 import { insertParcel } from "@/app/parcels/add/databaseFunctions";
+import { Button } from "@mui/material";
 
 interface AddParcelFields {
     voucherNumber: string;
@@ -179,9 +179,9 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
                     );
                 })}
                 <CenterComponent>
-                    <StyledFormSubmitButton onClick={submitForm} disabled={submitDisabled}>
+                    <Button variant="contained" onClick={submitForm} disabled={submitDisabled}>
                         Add Parcel
-                    </StyledFormSubmitButton>
+                    </Button>
                 </CenterComponent>
                 <FormErrorText>
                     {submitErrorMessage === "" ? submitError : submitErrorMessage}

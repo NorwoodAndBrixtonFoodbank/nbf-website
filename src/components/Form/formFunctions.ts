@@ -1,4 +1,3 @@
-import React from "react";
 import { booleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { Database } from "@/database_types_file";
 import {
@@ -44,7 +43,7 @@ export interface FormErrors {
 }
 
 export const setError = (
-    errorSetter: React.Dispatch<React.SetStateAction<FormErrors>>,
+    errorSetter: (errors: FormErrors) => void,
     errorValues: FormErrors
 ): ErrorSetter => {
     return (errorKey, errorType) => {
@@ -53,7 +52,7 @@ export const setError = (
 };
 
 export const setField = <SpecificFields extends Fields>(
-    fieldSetter: React.Dispatch<React.SetStateAction<SpecificFields>>,
+    fieldSetter: (fieldValues: SpecificFields) => void,
     fieldValues: SpecificFields
 ): FieldSetter => {
     return (fieldKey, newFieldValue) => {
@@ -161,7 +160,7 @@ export const checkboxGroupToArray = (checkedBoxes: booleanGroup): string[] => {
 
 export const checkErrorOnSubmit = (
     errorType: FormErrors,
-    errorSetter: React.Dispatch<React.SetStateAction<FormErrors>>,
+    errorSetter: (errors: FormErrors) => void,
     keysToCheck?: string[]
 ): boolean => {
     let errorExists = false;

@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import React from "react";
 import AddClientForm from "@/app/clients/add/AddClientForm";
 
-const AddClients = (): React.ReactElement => {
+const AddClients: React.FC = () => {
     return (
         <main>
             <AddClientForm />

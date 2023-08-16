@@ -11,7 +11,7 @@ const VoucherNumberCard: React.FC<CardProps> = ({ errorSetter, fieldSetter }) =>
             text="This is usually found in the following format: H-00001-00001. If you don't know the voucher number, leave this section blank."
         >
             <FreeFormTextInput
-                label="Enter Number Here"
+                label="Voucher Number"
                 onChange={onChangeText(fieldSetter, errorSetter, "voucherNumber", true)}
             />
         </GenericFormCard>
