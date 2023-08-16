@@ -40,6 +40,10 @@ const MiddleDiv = styled(Paper)`
         -webkit-text-fill-color: ${(props) => props.theme.main.foreground[2]} !important;
     }
 
+    & * {
+        transition: none;
+    }
+
     & button:hover {
         color: ${(props) => props.theme.main.foreground[2]};
     }
