@@ -3,10 +3,12 @@ import React from "react";
 import AddParcelForm from "@/app/parcels/add/AddParcelForm";
 
 interface AddParcelParameters {
-    params: { id: string };
+    params: {
+        id: string;
+    };
 }
 
-const AddParcels: ({ params }: AddParcelParameters) => React.ReactElement = ({ params }) => {
+const AddParcels: React.FC<AddParcelParameters> = ({ params }) => {
     return (
         <main>
             <AddParcelForm id={params.id} />

@@ -40,7 +40,7 @@ import {
     insertClient,
     insertFamily,
 } from "@/app/clients/add/databaseFunctions";
-import { Button } from "@mui/material";
+import Button from "@mui/material/Button";
 
 interface AddClientFields extends Fields {
     fullName: string;
@@ -119,7 +119,7 @@ const initialFormErrors: FormErrors = {
     nappySize: Errors.none,
 };
 
-const AddClientForm: React.FC = () => {
+const AddClientForm: React.FC<{}> = () => {
     const router = useRouter();
     const [fields, setFields] = useState(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);

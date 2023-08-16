@@ -1,11 +1,9 @@
 import supabase, { InsertSchema, Schema } from "@/supabase";
 
-type ParcelDatabaseInsertRecord = InsertSchema["parcels"];
-type ParcelsDatabaseFetchRecord = Pick<Schema["parcels"], "primary_key" | "client_id">;
+type InsertedParcels = InsertSchema["parcels"];
+type FetchedParcels = Pick<Schema["parcels"], "primary_key" | "client_id">;
 
-export const insertParcel = async (
-    parcelRecord: ParcelDatabaseInsertRecord
-): Promise<ParcelsDatabaseFetchRecord> => {
+export const insertParcel = async (parcelRecord: InsertedParcels): Promise<FetchedParcels> => {
     const {
         data: ids,
         status,

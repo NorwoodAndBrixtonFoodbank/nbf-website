@@ -28,7 +28,7 @@ const CollectionCentreCard: React.FC<CardProps> = ({
                         ["Streatham - Immanuel & St Andrew", "Streatham - Immanuel & St Andrew"],
                     ]}
                     onChange={valueOnChangeRadioGroup(fieldSetter, errorSetter, "collectionCentre")}
-                    value={fields.collectionCentre || null}
+                    value={fields.collectionCentre}
                 ></RadioGroupInput>
                 <ErrorText>{errorText(formErrors.collectionCentre)}</ErrorText>
             </>

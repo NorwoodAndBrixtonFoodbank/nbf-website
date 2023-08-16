@@ -25,7 +25,7 @@ import CollectionDateCard from "@/app/parcels/add/formSections/CollectionDateCar
 import CollectionTimeCard from "@/app/parcels/add/formSections/CollectionTimeCard";
 import CollectionCentreCard from "@/app/parcels/add/formSections/CollectionCentreCard";
 import { insertParcel } from "@/app/parcels/add/databaseFunctions";
-import { Button } from "@mui/material";
+import Button from "@mui/material/Button";
 
 interface AddParcelFields {
     voucherNumber: string;
@@ -74,6 +74,16 @@ const initialFormErrors: FormErrors = {
     collectionCentre: Errors.initial,
 };
 
+const mergeDateAndTime = (date: Date, time: Date): Date => {
+    return new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        time.getHours(),
+        time.getMinutes()
+    );
+};
+
 const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
     const router = useRouter();
     const [fields, setFields] = useState(initialFields);
@@ -89,16 +99,6 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
 
     const fieldSetter = setField(setFields, fields);
     const errorSetter = setError(setFormErrors, formErrors);
-
-    const mergeDateAndTime = (date: Date, time: Date): Date => {
-        return new Date(
-            date.getFullYear(),
-            date.getMonth(),
-            date.getDate(),
-            time.getHours(),
-            time.getMinutes()
-        );
-    };
 
     const submitForm = async (): Promise<void> => {
         setSubmitErrorMessage("");
@@ -120,6 +120,7 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
             return;
         }
         if (fields.packingDate === null || fields.timeOfDay === null) {
+            setSubmitError(Errors.external);
             setSubmitDisabled(false);
             return;
         }
@@ -129,17 +130,17 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
             new Date(fields.timeOfDay)
         );
 
-        let collectionDateTime = new Date();
+        let collectionDateTime = null;
         if (fields.shippingMethod === "Collection") {
             if (fields.collectionDate === null || fields.collectionTime === null) {
                 setSubmitDisabled(false);
+                setSubmitError(Errors.external);
                 return;
             }
-
             collectionDateTime = mergeDateAndTime(
                 new Date(fields.collectionDate),
                 new Date(fields.collectionTime)
-            );
+            ).toISOString();
         }
 
         const isDelivery = fields.shippingMethod === "Delivery";
@@ -149,7 +150,7 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
             packing_datetime: packingDateTime.toISOString(),
             voucher_number: fields.voucherNumber,
             collection_centre: isDelivery ? "Delivery" : fields.collectionCentre,
-            collection_datetime: isDelivery ? null : collectionDateTime.toISOString(),
+            collection_datetime: collectionDateTime,
         };
         try {
             await insertParcel(formToAdd);
@@ -158,7 +159,6 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
             if (error instanceof Error) {
                 setSubmitError(Errors.external);
                 setSubmitErrorMessage(error.message);
-                setSubmitDisabled(false);
             }
         }
         setSubmitDisabled(false);

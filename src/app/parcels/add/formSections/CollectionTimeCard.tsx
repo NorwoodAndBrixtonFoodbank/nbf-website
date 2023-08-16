@@ -23,7 +23,7 @@ const CollectionTimeCard: React.FC<CardProps> = ({
                         onChangeDateOrTime(fieldSetter, errorSetter, "collectionTime", newValue);
                     }}
                     label="Time"
-                    value={fields.collectionTime || null}
+                    value={fields.collectionTime}
                 />
                 <ErrorText>{errorText(formErrors.collectionTime)}</ErrorText>
             </>

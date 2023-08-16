@@ -23,7 +23,7 @@ const CollectionDateCard: React.FC<CardProps> = ({
                         onChangeDateOrTime(fieldSetter, errorSetter, "collectionDate", newValue);
                     }}
                     label="Date"
-                    value={fields.collectionDate || null}
+                    value={fields.collectionDate}
                     disablePast
                 />
                 <ErrorText>{errorText(formErrors.collectionDate)}</ErrorText>

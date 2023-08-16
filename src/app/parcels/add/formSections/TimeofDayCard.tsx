@@ -18,7 +18,7 @@ const TimeOfDayCard: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSett
                         onChangeDateOrTime(fieldSetter, errorSetter, "timeOfDay", newValue);
                     }}
                     label="Time"
-                    value={fields.timeOfDay || null}
+                    value={fields.timeOfDay}
                 />
                 <ErrorText>{errorText(formErrors.timeOfDay)}</ErrorText>
             </>
