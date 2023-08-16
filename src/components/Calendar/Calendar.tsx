@@ -32,7 +32,6 @@ export interface CalendarEvent {
 const CalendarStyling = styled(Paper)`
     border-radius: 2rem;
     padding: 1.5rem;
-    background-color: ${(props) => props.theme.main.background[0]};
 
     --fc-button-active-bg-color: ${(props) => props.theme.primary.background[3]};
     --fc-button-active-border-color: ${(props) => props.theme.primary.background[3]};
@@ -145,7 +144,7 @@ const CalendarStyling = styled(Paper)`
 
     .fc .fc-day-other {
         > div {
-            background-color: ${(props) => props.theme.main.background[1]};
+            background-color: ${(props) => props.theme.main.background[2]};
         }
         color: ${(props) => props.theme.main.lighterForeground[1]};
     }
