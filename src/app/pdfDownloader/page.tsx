@@ -7,7 +7,7 @@ import DayOverview from "@/components/DayOverview/DayOverview";
 
 const PdfDownloader = async (): Promise<ReactElement> => {
     const date = new Date("2023-07-17");
-    const location = "Vauxhall Hope Church";
+    const location = "Delivery";
 
     return (
         <main>
