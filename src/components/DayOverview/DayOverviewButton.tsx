@@ -37,7 +37,7 @@ const collectionCentreToAbbreviation = (
         case "Delivery":
             return "Delivery";
         default:
-            return "-";
+            throw new Error("Invalid location");
     }
 };
 
