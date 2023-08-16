@@ -176,7 +176,10 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
                     onRowSelection={setSelected}
                     pagination={true}
                     sortable={true}
-                    headerFilters={["addressPostcode", "voucherNumber"]}
+                    headerFilters={[
+                        ["addressPostcode", FilterType.Text],
+                        ["voucherNumber", FilterType.Text],
+                    ]}
                     toggleableHeaders={toggleableHeaders}
                 />
             </TableSurface>

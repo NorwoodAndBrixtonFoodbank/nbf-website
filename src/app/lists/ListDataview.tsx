@@ -18,6 +18,7 @@ import Button from "@mui/material/Button";
 import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
+import { FilterType } from "@/components/Tables/TableFilterBar";
 
 export type ListRow = Schema["lists"] & Datum;
 
@@ -139,7 +140,7 @@ const ListsDataView: React.FC<Props> = (props) => {
                     defaultShownHeaders={["item_name", ...toggleableHeaders]}
                     data={props.data}
                     reorderable
-                    headerFilters={["item_name"]}
+                    headerFilters={[["item_name", FilterType.Toggle]]}
                     pagination={false}
                     onEdit={onEdit}
                     onDelete={onDeleteButtonClick}

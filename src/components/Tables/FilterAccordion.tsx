@@ -15,7 +15,6 @@ interface FilterAccordionProps {
 
 const Styling = styled.div`
     flex-grow: 1;
-    height: 39px;
     overflow: visible;
     z-index: 2;
 `;
@@ -56,9 +55,6 @@ const StyledAccordion = styled(Accordion)`
             flex-wrap: wrap;
             flex-basis: auto;
             gap: 1rem;
-        }
-        & .MuiButtonBase-root {
-            min-height: 39px;
         }
         & .MuiAccordionSummary-content {
             > div {

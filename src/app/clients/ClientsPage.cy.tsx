@@ -21,6 +21,7 @@ const sampleProcessingData: ProcessingData = [
         collection_centre: "COLLECTION_CENTRE",
         collection_datetime: "2023-08-04T13:30:00+00:00",
         packing_datetime: "2023-08-04T13:30:00+00:00",
+        voucher_number: "VOUCHER_1",
 
         client: {
             primary_key: "PRIMARY_KEY_1",
@@ -104,6 +105,7 @@ describe("Clients Page", () => {
                     packingDate: "04/08/2023",
                     packingTimeLabel: "PM",
                     lastStatus: "LAST_EVENT @ 04/08/2023",
+                    voucherNumber: "VOUCHER_1",
                 },
             ]);
         });

@@ -2,7 +2,7 @@
 
 import React, { ReactNode, useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
+import TableFilterBar, { FilterText, FilterType } from "@/components/Tables/TableFilterBar";
 import styled from "styled-components";
 import { NoSsr } from "@mui/material";
 import {
@@ -49,7 +49,7 @@ interface Props {
     checkboxes?: boolean;
     onRowSelection?: (rowIds: number[]) => void;
     reorderable?: boolean;
-    headerFilters?: string[];
+    headerFilters?: [string, FilterType][];
     pagination?: boolean;
     defaultShownHeaders?: string[];
     toggleableHeaders?: string[];
@@ -60,8 +60,6 @@ interface Props {
     columnStyleOptions?: TableColumnStyleOptions;
     onRowClick?: OnRowClickFunction;
 }
-
-// export enum Filter
 
 const doesRowIncludeFilterText = (
     row: Row,
@@ -323,7 +321,8 @@ const Table: React.FC<Props> = ({
         }
     };
 
-    const filterKeys = headerFilters ?? headerKeysAndLabels.map(([headerKey]) => headerKey);
+    const filterKeys =
+        headerFilters ?? headerKeysAndLabels.map(([headerKey]) => [headerKey, FilterType.Text]);
 
     return (
         <Styling>
@@ -375,10 +374,11 @@ const Styling = styled.div`
     & > header {
         background-color: transparent;
         display: flex;
-        align-items: center;
+        align-items: stretch;
         flex-wrap: wrap;
         justify-content: space-between;
-        padding: 10px;
+        padding: 0.5rem;
+        height: 4rem;
         gap: min(1rem, 5vw);
         overflow: visible;
         @media (min-width: 500px) {
