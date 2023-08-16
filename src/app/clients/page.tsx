@@ -1,4 +1,3 @@
-import supabase, { Schema } from "@/supabase";
 import { Metadata } from "next";
 import React from "react";
 import { getClientsTableData } from "@/app/clients/getClientsTableData";
