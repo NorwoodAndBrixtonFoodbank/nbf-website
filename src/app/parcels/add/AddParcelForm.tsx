@@ -37,6 +37,10 @@ interface AddParcelFields {
     collectionCentre: string | null;
 }
 
+interface AddParcelFormProps {
+    id: string;
+}
+
 const withCollectionFormSections = [
     VoucherNumberCard,
     PackingDateCard,
@@ -84,7 +88,7 @@ const mergeDateAndTime = (date: Date, time: Date): Date => {
     );
 };
 
-const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
+const AddParcelForm: React.FC<AddParcelFormProps> = ({ id }) => {
     const router = useRouter();
     const [fields, setFields] = useState(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
@@ -146,7 +150,7 @@ const AddParcelForm: React.FC<{ id: string }> = (props: { id: string }) => {
         const isDelivery = fields.shippingMethod === "Delivery";
 
         const formToAdd = {
-            client_id: props.id,
+            client_id: id,
             packing_datetime: packingDateTime.toISOString(),
             voucher_number: fields.voucherNumber,
             collection_centre: isDelivery ? "Delivery" : fields.collectionCentre,

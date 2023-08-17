@@ -11,9 +11,6 @@ import {
 } from "styled-components";
 import MaterialAndGlobalStyle from "@/app/global_styles";
 import useLocalStorage from "@/components/Hooks/useLocalStorage";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import "dayjs/locale/en-gb";
 
 const BLACK = "#000000";
 const WHITE = "#f2f2f2";
@@ -217,15 +214,13 @@ const StyleManager: React.FC<Props> = ({ children }) => {
         );
 
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
-            <ThemeUpdateContext.Provider value={themeToggle}>
-                <ThemeProvider
-                    theme={preferenceIsDark(themePreference, systemTheme) ? darkTheme : lightTheme}
-                >
-                    <MaterialAndGlobalStyle>{themedChildren}</MaterialAndGlobalStyle>
-                </ThemeProvider>
-            </ThemeUpdateContext.Provider>
-        </LocalizationProvider>
+        <ThemeUpdateContext.Provider value={themeToggle}>
+            <ThemeProvider
+                theme={preferenceIsDark(themePreference, systemTheme) ? darkTheme : lightTheme}
+            >
+                <MaterialAndGlobalStyle>{themedChildren}</MaterialAndGlobalStyle>
+            </ThemeProvider>
+        </ThemeUpdateContext.Provider>
     );
 };
 
