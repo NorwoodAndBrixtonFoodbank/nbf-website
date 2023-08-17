@@ -112,7 +112,7 @@ describe("Data Input Components", () => {
             cy.get("@onChangeSpy").should("have.been.calledWith", false);
         });
 
-        it("Change handler for checkbox group works", () => {
+        it("Change handler for checkbox group works without default checked keys", () => {
             const onChangeSpy = cy.spy().as("onChangeSpy");
             const unwrapEvent = (event: React.ChangeEvent<HTMLInputElement>): void => {
                 onChangeSpy(event.target.name, event.target.checked);
@@ -141,6 +141,38 @@ describe("Data Input Components", () => {
 
             cy.get("input[name='a']").click();
             cy.get("@onChangeSpy").should("have.been.calledWith", "a", false);
+        });
+
+        it("Change handler for checkbox group works with default checked keys", () => {
+            const onChangeSpy = cy.spy().as("onChangeSpy");
+            const unwrapEvent = (event: React.ChangeEvent<HTMLInputElement>): void => {
+                onChangeSpy(event.target.name, event.target.checked);
+            };
+
+            cy.mount(
+                <CheckboxGroupInput
+                    labelsAndKeys={[
+                        ["Label A", "a"],
+                        ["Label B", "b"],
+                        ["Label C", "c"],
+                    ]}
+                    groupLabel="Checkbox Group"
+                    onChange={unwrapEvent}
+                    defaultCheckedKeys={["a", "b"]}
+                />
+            );
+
+            cy.get("input[name='a']").click();
+            cy.get("@onChangeSpy").should("have.been.calledWith", "a", false);
+
+            cy.get("input[name='b']").click();
+            cy.get("@onChangeSpy").should("have.been.calledWith", "b", false);
+
+            cy.get("input[name='c']").click();
+            cy.get("@onChangeSpy").should("have.been.calledWith", "c", true);
+
+            cy.get("input[name='a']").click();
+            cy.get("@onChangeSpy").should("have.been.calledWith", "a", true);
         });
 
         it("Change handler for dropdown works", () => {
