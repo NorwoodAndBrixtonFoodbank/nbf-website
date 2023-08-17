@@ -4,7 +4,7 @@ import React from "react";
 const NotFound: React.FC<{}> = () => {
     return (
         <>
-            <p> No page found. </p>
+            <p> Page Not Found </p>
             <Link href="/clients"> Home </Link>
         </>
     );
