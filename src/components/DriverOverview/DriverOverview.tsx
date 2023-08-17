@@ -13,9 +13,9 @@ export interface DriverOverviewTableData {
     name: string;
     address: {
         line1: string;
-        line2: string;
-        town: string;
-        county: string;
+        line2: string | null;
+        town: string | null;
+        county: string | null;
         postcode: string;
     };
     contact?: string;
