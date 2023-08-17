@@ -19,6 +19,7 @@ import { Schema } from "@/supabase";
 import TableSurface from "@/components/Tables/TableSurface";
 import { CenterComponent } from "@/components/Form/formStyling";
 import Button from "@mui/material/Button";
+import ActionBar from "@/app/clients/ActionBar";
 
 // TODO Change Button to LinkButton
 
@@ -101,7 +102,7 @@ interface Props {
 
 const ClientsPage: React.FC<Props> = (props) => {
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
-
+    const [selected, setSelected] = useState<number[]>([]);
     const theme = useTheme();
 
     const rowToIconsColumn = (row: Row): React.ReactElement => {
@@ -158,6 +159,7 @@ const ClientsPage: React.FC<Props> = (props) => {
 
     return (
         <>
+            <ActionBar data={props.clientsTableData} selected={selected} />
             <TableSurface>
                 <Table
                     data={props.clientsTableData}
@@ -166,6 +168,7 @@ const ClientsPage: React.FC<Props> = (props) => {
                     columnStyleOptions={clientTableColumnStyleOptions}
                     onRowClick={onClientTableRowClick}
                     checkboxes={true}
+                    onRowSelection={setSelected}
                     pagination={true}
                     sortable={true}
                     headerFilters={["addressPostcode"]}

@@ -44,6 +44,7 @@ interface Props {
     data: Datum[];
     headerKeysAndLabels: TableHeaders;
     checkboxes?: boolean;
+    onRowSelection?: (rowIds: number[]) => void;
     reorderable?: boolean;
     headerFilters?: string[];
     pagination?: boolean;
@@ -134,6 +135,7 @@ const Table: React.FC<Props> = ({
     data: inputData,
     headerKeysAndLabels,
     checkboxes,
+    onRowSelection,
     defaultShownHeaders,
     headerFilters,
     onDelete,
@@ -156,29 +158,39 @@ const Table: React.FC<Props> = ({
 
     const [filterText, setFilterText] = useState<FilterText>({});
 
-    const [selectCheckBoxes, setSelectCheckBoxes] = useState(
+    const [selectedCheckboxes, setSelectedCheckboxes] = useState(
         new Array<boolean>(data.length).fill(false)
     );
+
+    const updateCheckboxes = (newSelection: boolean[]): void => {
+        setSelectedCheckboxes(newSelection);
+        onRowSelection?.(
+            newSelection
+                .map((selected, index) => (selected ? index : -1))
+                .filter((index) => index !== -1)
+        );
+    };
 
     const [selectAllCheckBox, setSelectAllCheckBox] = useState(false);
 
     const toggleOwnCheckBox = (rowId: number): void => {
-        const selectCheckBoxesCopy = [...selectCheckBoxes];
+        const selectCheckBoxesCopy = [...selectedCheckboxes];
         selectCheckBoxesCopy[rowId] = !selectCheckBoxesCopy[rowId];
-        setSelectCheckBoxes(selectCheckBoxesCopy);
+        updateCheckboxes(selectCheckBoxesCopy);
     };
 
     const toggleAllCheckBox = (): void => {
-        setSelectCheckBoxes(new Array<boolean>(data.length).fill(!selectAllCheckBox));
+        const newSelection = new Array<boolean>(data.length).fill(!selectAllCheckBox);
+        updateCheckboxes(newSelection);
         setSelectAllCheckBox(!selectAllCheckBox);
     };
 
     useEffect(() => {
-        const allChecked = selectCheckBoxes.every((item) => item);
+        const allChecked = selectedCheckboxes.every((item) => item);
         if (allChecked !== selectAllCheckBox) {
             setSelectAllCheckBox(allChecked);
         }
-    }, [selectCheckBoxes, selectAllCheckBox]);
+    }, [selectedCheckboxes, selectAllCheckBox]);
 
     const columns: TableColumn<Row>[] = (
         toggleableHeaders ? shownHeaders : headerKeysAndLabels
@@ -233,7 +245,7 @@ const Table: React.FC<Props> = ({
                 <input
                     type="checkbox"
                     aria-label={`Select row ${row.rowId}`}
-                    checked={selectCheckBoxes[row.rowId]}
+                    checked={selectedCheckboxes[row.rowId]}
                     onClick={() => toggleOwnCheckBox(row.rowId)}
                 />
             ),

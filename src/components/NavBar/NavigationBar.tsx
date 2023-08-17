@@ -54,10 +54,6 @@ const DrawerInner = styled.div`
     width: 15rem;
 `;
 
-const Gap = styled.div`
-    width: 1rem;
-`;
-
 const DrawerButtonWrapper = styled.div`
     padding: 0.7rem;
     border-bottom: 1px solid ${(props) => props.theme.main.foreground[3]};
@@ -101,11 +97,13 @@ const DesktopButtonContainer = styled(NavElementContainer)`
     display: none;
     @media (min-width: 800px) {
         display: flex;
+        gap: 1rem;
     }
 `;
 
 const SignOutButtonContainer = styled(NavElementContainer)`
     justify-content: end;
+    gap: 1rem;
 `;
 
 const LoginDependent: React.FC<Props> = (props) => {
@@ -176,16 +174,12 @@ const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
                     <LoginDependent>
                         <DesktopButtonContainer>
                             {pages.map(([page, link]) => (
-                                <>
-                                    <LinkButton key={page} link={link} page={page} />
-                                    <Gap />
-                                </>
+                                <LinkButton link={link} page={page} key={page} />
                             ))}
                         </DesktopButtonContainer>
                     </LoginDependent>
                     <SignOutButtonContainer>
                         <LightDarkSlider />
-                        <Gap />
                         <LoginDependent>
                             <SignOutButton />
                         </LoginDependent>

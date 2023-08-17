@@ -12,6 +12,7 @@ export interface ClientsTableRow extends Datum {
     congestionChargeApplies: boolean;
     packingTimeLabel: string;
     lastStatus: string;
+    collectionDatetime: Schema["parcels"]["collection_datetime"];
 }
 
 export type ProcessingData = Awaited<ReturnType<typeof getProcessingData>>;
@@ -70,6 +71,7 @@ export const processingDataToClientsTableData = async (
             familyCategory: familyCountToFamilyCategory(client.family.length),
             addressPostcode: client.address_postcode,
             collectionCentre: parcel.collection_centre ?? "-",
+            collectionDatetime: parcel.collection_datetime,
             congestionChargeApplies: congestionChargeDetails[index].congestionCharge,
             packingDate: formatDatetimeAsDate(parcel.packing_datetime),
             packingTimeLabel: datetimeToPackingTimeLabel(parcel.packing_datetime),
