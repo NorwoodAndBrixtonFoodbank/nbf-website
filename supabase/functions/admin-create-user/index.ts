@@ -5,6 +5,12 @@ import { type Handler, serve } from "https://deno.land/std@0.168.0/http/server.t
 import { createClient } from "https://esm.sh/@supabase/supabase-js@latest";
 import { corsHeaders } from "../_shared/cors.ts";
 
+interface CreateUserRequestBody {
+    email: string;
+    password: string;
+    role: "admin" | "caller"; // TODO Add more roles here
+}
+
 serve(async (req: Handler): Promise<Response> => {
     if (req.method === "OPTIONS") {
         return new Response("ok", { headers: corsHeaders });
@@ -15,6 +21,12 @@ serve(async (req: Handler): Promise<Response> => {
         "Content-Type": "application/json",
         status,
     });
+
+    // try {
+    //     return new Response(JSON.stringify({ aaa: 1 }, generateHeaders(201)));
+    // } catch (error) {
+    //     return new Response(JSON.stringify({ error: error.message }), generateHeaders(400));
+    // }
 
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -51,7 +63,16 @@ serve(async (req: Handler): Promise<Response> => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    const { data, error } = await supabaseAdmin.auth.admin.listUsers();
+    // TODO INSERT CREATE USER LOGIC HERE
+    const requestBody: CreateUserRequestBody = await req.json();
+
+    const { data, error } = await supabaseAdmin.auth.admin.createUser({
+        email: requestBody.email,
+        password: requestBody.password,
+        app_metadata: {
+            role: requestBody.role,
+        },
+    });
 
     if (error) {
         return new Response(
@@ -60,5 +81,5 @@ serve(async (req: Handler): Promise<Response> => {
         );
     }
 
-    return new Response(JSON.stringify(data.users), generateHeaders(200));
+    return new Response(JSON.stringify(data.user), generateHeaders(200));
 });

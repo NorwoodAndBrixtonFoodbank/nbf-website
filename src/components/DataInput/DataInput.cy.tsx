@@ -12,6 +12,7 @@ import {
 } from "@/components/DataInput/inputHandlerFactories";
 import { hexToRgb, SelectChangeEvent } from "@mui/material";
 import CheckboxGroupInput from "@/components/DataInput/CheckboxGroupInput";
+import PasswordInput from "@/components/DataInput/PasswordInput";
 
 describe("Data Input Components", () => {
     it("renders", () => {
@@ -41,6 +42,13 @@ describe("Data Input Components", () => {
             />
         );
         cy.mount(
+            <PasswordInput
+                label="Password"
+                defaultValue="password"
+                onChange={getFreeFormTextHandler(() => console.log("Password Chanegd"))}
+            />
+        );
+        cy.mount(
             <RadioGroupInput
                 labelsAndValues={[
                     ["A", "a"],
@@ -67,6 +75,7 @@ describe("Data Input Components", () => {
     it("renders without optional props", () => {
         cy.mount(<CheckboxInput />);
         cy.mount(<FreeFormTextInput />);
+        cy.mount(<PasswordInput />);
         cy.mount(
             <DropdownListInput
                 labelsAndValues={[
@@ -94,6 +103,26 @@ describe("Data Input Components", () => {
                 ]}
             />
         );
+    });
+
+    it("Add error message to form", () => {
+        cy.mount(<FreeFormTextInput label="FreeForm" error={true} helperText="Error" />);
+        cy.get(".Mui-error").contains("Error");
+        cy.get(".Mui-error").should("have.css", "color", hexToRgb("#d32f2f"));
+    });
+
+    it("Visibility on password input can be toggled", () => {
+        cy.mount(<PasswordInput label="Password" />);
+        cy.get("input[type='password']").should("exist");
+        cy.get("input[type='text']").should("not.exist");
+
+        cy.get("button[aria-label='toggle password visibility']").click();
+        cy.get("input[type='password']").should("not.exist");
+        cy.get("input[type='text']").should("exist");
+
+        cy.get("button[aria-label='toggle password visibility']").click();
+        cy.get("input[type='password']").should("exist");
+        cy.get("input[type='text']").should("not.exist");
     });
 
     describe("Change Handlers", () => {
@@ -222,6 +251,18 @@ describe("Data Input Components", () => {
             cy.get("@onChangeSpy").should("have.been.calledWith", "TEST_TEXT");
         });
 
+        it("Change handler for password input works", () => {
+            const onChangeSpy = cy.spy().as("onChangeSpy");
+            const unwrapEvent = (event: React.ChangeEvent<HTMLInputElement>): void => {
+                onChangeSpy(event.target.value);
+            };
+
+            cy.mount(<PasswordInput label="Password" onChange={unwrapEvent} />);
+
+            cy.get("input[class^='MuiInputBase']").type("TEST_TEXT");
+            cy.get("@onChangeSpy").should("have.been.calledWith", "TEST_TEXT");
+        });
+
         it("Change handler for radio group works", () => {
             const onChangeSpy = cy.spy().as("onChangeSpy");
             const unwrapEvent = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -248,12 +289,6 @@ describe("Data Input Components", () => {
 
             cy.get("input[value='c']").click();
             cy.get("@onChangeSpy").should("have.been.calledWith", "c");
-        });
-
-        it("Add error message to form", () => {
-            cy.mount(<FreeFormTextInput label="FreeForm" error={true} helperText="Error" />);
-            cy.get(".Mui-error").contains("Error");
-            cy.get(".Mui-error").should("have.css", "color", hexToRgb("#d32f2f"));
         });
     });
 });

@@ -1,11 +1,11 @@
 "use client";
 
 import React, { ReactElement } from "react";
-import UsersTable from "@/app/admin/UsersTable";
+import UsersTable from "@/app/admin/usersTable/UsersTable";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import { ExpandMore } from "@mui/icons-material";
 import TableSurface from "@/components/Tables/TableSurface";
-import CreateUserForm from "@/app/admin/CreateUserForm";
+import CreateUserForm from "@/app/admin/createUser/CreateUserForm";
 import { faUsers, faUserPlus, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

@@ -6,6 +6,7 @@ const nextConfig = {
     },
     experimental: {
         newNextLinkBehavior: true,
+        serverActions: true,
     },
 };
 

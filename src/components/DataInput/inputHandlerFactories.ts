@@ -35,6 +35,10 @@ export const getFreeFormTextHandler = (setValue: valueSetter): changeEventHandle
     return getValueChangeHandler(setValue);
 };
 
+export const getPasswordHandler = (setValue: valueSetter): changeEventHandler => {
+    return getValueChangeHandler(setValue);
+};
+
 export const getRadioGroupHandler = (setValue: valueSetter): changeEventHandler => {
     return getValueChangeHandler(setValue);
 };

@@ -1,0 +1,96 @@
+import React, { useState } from "react";
+import { CenterComponent, FormErrorText, StyledForm } from "@/components/Form/formStyling";
+import Button from "@mui/material/Button";
+import AccountDetails from "@/app/admin/createUser/createUserFormSections/AccountDetails";
+import UserRole from "@/app/admin/createUser/createUserFormSections/UserRole";
+import {
+    checkErrorOnSubmit,
+    Errors,
+    FormErrors,
+    setError,
+    setField,
+} from "@/components/Form/formFunctions";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createUser } from "@/app/admin/adminActions";
+
+interface CreateUserDetails {
+    email: string;
+    password: string;
+    role: "admin" | "caller";
+}
+
+const initialFields: CreateUserDetails = {
+    email: "",
+    password: "",
+    role: "caller",
+};
+
+const initialFormErrors: FormErrors = {
+    email: Errors.initial,
+    password: Errors.initial,
+    role: Errors.none,
+};
+
+const formSections = [AccountDetails, UserRole];
+
+const CreateUserForm: React.FC<{}> = () => {
+    const supabase = createClientComponentClient();
+
+    const [fields, setFields] = useState(initialFields);
+    const [formErrors, setFormErrors] = useState(initialFormErrors);
+
+    const fieldSetter = setField(setFields, fields);
+    const errorSetter = setError(setFormErrors, formErrors);
+
+    const [submitError, setSubmitError] = useState(Errors.none);
+    const [submitErrorMessage, setSubmitErrorMessage] = useState("");
+    const [submitDisabled, setSubmitDisabled] = useState(false);
+
+    const submitForm = async (): Promise<void> => {
+        // const response = await supabase.functions.invoke("check-congestion-charge", {
+        //     body: { postcodes: [] },
+        // });
+        // console.log(JSON.stringify(response));
+        setSubmitDisabled(true);
+
+        if (checkErrorOnSubmit(formErrors, setFormErrors)) {
+            setSubmitError(Errors.submit);
+            setSubmitDisabled(false);
+            return;
+        }
+
+        await createUser(fields);
+
+        // if (response.error) {
+        //     setSubmitError(Errors.external);
+        //     setSubmitErrorMessage(response.error.message);
+        //     setSubmitDisabled(false);
+        // }
+        // TODO HANDLE NORMAL CASE
+    };
+
+    return (
+        <CenterComponent>
+            {/* TODO FIX STYLING */}
+            <StyledForm>
+                {formSections.map((Card, index) => {
+                    return (
+                        <Card
+                            key={index}
+                            fields={fields}
+                            fieldSetter={fieldSetter}
+                            formErrors={formErrors}
+                            errorSetter={errorSetter}
+                        />
+                    );
+                })}
+                <Button variant="contained" onClick={submitForm} disabled={submitDisabled}>
+                    Create Client {/* TODO ADD PLUS (+) BUTTON */}
+                </Button>
+                <FormErrorText>{submitErrorMessage + submitError}</FormErrorText>
+            </StyledForm>
+        </CenterComponent>
+    );
+};
+
+export default CreateUserForm;
