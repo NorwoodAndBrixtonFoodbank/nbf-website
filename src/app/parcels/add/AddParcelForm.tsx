@@ -123,27 +123,17 @@ const AddParcelForm: React.FC<AddParcelFormProps> = ({ id }) => {
             setSubmitDisabled(false);
             return;
         }
-        if (fields.packingDate === null || fields.timeOfDay === null) {
-            setSubmitError(Errors.external);
-            setSubmitDisabled(false);
-            return;
-        }
 
         const packingDateTime = mergeDateAndTime(
-            new Date(fields.packingDate),
-            new Date(fields.timeOfDay)
+            new Date(fields.packingDate!),
+            new Date(fields.timeOfDay!)
         );
 
         let collectionDateTime = null;
         if (fields.shippingMethod === "Collection") {
-            if (fields.collectionDate === null || fields.collectionTime === null) {
-                setSubmitDisabled(false);
-                setSubmitError(Errors.external);
-                return;
-            }
             collectionDateTime = mergeDateAndTime(
-                new Date(fields.collectionDate),
-                new Date(fields.collectionTime)
+                new Date(fields.collectionDate!),
+                new Date(fields.collectionTime!)
             ).toISOString();
         }
 
