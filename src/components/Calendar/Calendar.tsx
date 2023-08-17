@@ -110,6 +110,12 @@ const CalendarStyling = styled(Paper)`
         flex-shrink: 80;
     }
 
+    @media (hover: hover) {
+        .fc .fc-event:hover {
+            box-shadow: 0 3px 2px ${(props) => props.theme.shadow};
+        }
+    }
+
     // group of buttons in the toolbar
     .fc .fc-toolbar-chunk {
         margin: 0 0.5rem;
