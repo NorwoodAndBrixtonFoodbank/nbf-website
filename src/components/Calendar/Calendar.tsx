@@ -125,11 +125,19 @@ const CalendarStyling = styled(Paper)`
         background-color: ${(props) => props.theme.primary.background[1]};
         border-color: ${(props) => props.theme.primary.background[1]};
 
-        &:hover {
-            color: ${(props) => props.theme.primary.foreground[2]};
-            background-color: ${(props) => props.theme.primary.background[2]};
-            border-color: ${(props) => props.theme.primary.background[2]};
+        @media (hover: hover) {
+            &:hover {
+                color: ${(props) => props.theme.primary.foreground[2]};
+                background-color: ${(props) => props.theme.primary.background[2]};
+                border-color: ${(props) => props.theme.primary.background[2]};
+            }
         }
+    }
+
+    .fc .fc-button-active {
+        color: ${(props) => props.theme.primary.foreground[3]};
+        background-color: ${(props) => props.theme.primary.background[3]};
+        border-color: ${(props) => props.theme.primary.background[3]};
     }
 
     .fc .fc-button-primary:focus,
