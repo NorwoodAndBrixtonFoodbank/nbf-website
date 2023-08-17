@@ -221,7 +221,16 @@ const Table: React.FC<Props> = ({
         };
     });
 
-    const swapRows = (rowId1: number, rowId2: number): void => {
+    const swapRows = (rowId1: number, filteredRowIndex1: number, upArrow: boolean): void => {
+        const filteredRowIndex2 = upArrow ? filteredRowIndex1 - 1 : filteredRowIndex1 + 1;
+        const row2 = dataToFilteredRows(data, filterText, headerKeysAndLabels)[filteredRowIndex2];
+
+        if (!row2) {
+            return;
+        }
+
+        const rowId2 = row2.rowId;
+
         if (rowId1 < 0 || rowId2 < 0 || rowId1 >= data.length || rowId2 >= data.length) {
             return;
         }
@@ -244,7 +253,7 @@ const Table: React.FC<Props> = ({
                     onClick={toggleAllCheckBox}
                 />
             ),
-            cell: (row: Row) => (
+            cell: (row) => (
                 <input
                     type="checkbox"
                     aria-label={`Select row ${row.rowId}`}
@@ -256,11 +265,10 @@ const Table: React.FC<Props> = ({
         });
     }
 
-    // TODO VFB-23 Implement conditional styling: center icon when only option selected, grid otherwise
-    if (reorderable || onEdit || onDelete) {
+    if (reorderable || onEdit) {
         columns.unshift({
-            name: "",
-            cell: (row: Row) => {
+            name: <p>Sort</p>,
+            cell: (row, filteredRowIndex) => {
                 const onEditClick = (): void => {
                     onEdit!(row.rowId);
                 };
@@ -269,7 +277,7 @@ const Table: React.FC<Props> = ({
                     <EditAndReorderArrowDiv>
                         {reorderable ? (
                             <StyledIconButton
-                                onClick={() => swapRows(row.rowId, row.rowId - 1)}
+                                onClick={() => swapRows(row.rowId, filteredRowIndex, true)}
                                 aria-label="reorder row upwards"
                             >
                                 <StyledIcon icon={faAnglesUp} />
@@ -286,7 +294,7 @@ const Table: React.FC<Props> = ({
                         )}
                         {reorderable ? (
                             <StyledIconButton
-                                onClick={() => swapRows(row.rowId, row.rowId + 1)}
+                                onClick={() => swapRows(row.rowId, filteredRowIndex, false)}
                                 aria-label="reorder row downwards"
                             >
                                 <StyledIcon icon={faAnglesDown} />
