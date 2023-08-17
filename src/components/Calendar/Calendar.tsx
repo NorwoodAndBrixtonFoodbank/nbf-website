@@ -121,12 +121,14 @@ const CalendarStyling = styled(Paper)`
         padding: 0 min(2.5vw, 0.75rem);
         text-align: center;
         vertical-align: middle;
+        color: ${(props) => props.theme.primary.foreground[1]};
         background-color: ${(props) => props.theme.primary.background[1]};
         border-color: ${(props) => props.theme.primary.background[1]};
-        color: ${(props) => props.theme.primary.foreground[1]};
 
         &:hover {
-            opacity: 80%;
+            color: ${(props) => props.theme.primary.foreground[2]};
+            background-color: ${(props) => props.theme.primary.background[2]};
+            border-color: ${(props) => props.theme.primary.background[2]};
         }
     }
 
@@ -144,19 +146,21 @@ const CalendarStyling = styled(Paper)`
 
     .fc .fc-day-other {
         > div {
+            color: ${(props) => props.theme.main.lighterForeground[2]};
             background-color: ${(props) => props.theme.main.background[2]};
         }
-        color: ${(props) => props.theme.main.lighterForeground[1]};
     }
 
     .fc .fc-day-today {
         > div {
+            color: ${(props) => props.theme.primary.foreground[0]};
             background-color: ${(props) => props.theme.primary.background[0]};
         }
     }
 
-    // background color of headers
+    // color of headers
     .fc thead {
+        color: ${(props) => props.theme.main.foreground[2]};
         background-color: ${(props) => props.theme.main.background[2]};
     }
 `;
