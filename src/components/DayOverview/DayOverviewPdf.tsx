@@ -10,26 +10,23 @@ import {
     ParcelOfSpecificDateAndLocation,
 } from "@/components/DayOverview/DayOverview";
 
-interface DayOverviewDateProps {
-    date: Date;
-}
-
-interface DayOverviewLocationProps {
-    location: string;
+interface DayOverviewSubtitleProps {
+    subtitleKey: string;
+    children: string;
 }
 
 interface DayOverviewRowProps {
     row: ParcelOfSpecificDateAndLocation;
 }
 
-interface DayOverviewPdfProps {
-    data: DayOverviewData;
-}
-
-interface DayOverviewCardProps {
+interface DayOverviewContentProps {
     date: Date;
     location: string;
     data: ParcelOfSpecificDateAndLocation[];
+}
+
+interface DayOverviewPdfProps {
+    data: DayOverviewData;
 }
 
 interface CustomSVGProps {
@@ -42,10 +39,8 @@ const styles = StyleSheet.create({
     page: {
         display: "flex",
         flexDirection: "column",
+        padding: "0 30pt 15pt",
         fontSize: "11pt",
-    },
-    card: {
-        margin: "0 30pt 15pt",
     },
     title: {
         fontFamily: "Helvetica-Bold",
@@ -54,7 +49,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         margin: "0 22.5pt 22.5pt",
     },
-    dateLocationWrap: {
+    subtitleWrap: {
         justifyContent: "space-between",
         marginBottom: "4pt",
     },
@@ -101,20 +96,10 @@ const DayOverviewMargin: React.FC<{}> = () => {
     return <View style={styles.margin} fixed></View>;
 };
 
-const DayOverviewDate: React.FC<DayOverviewDateProps> = ({ date }) => {
-    const dateString = getCurrentDate(date, true);
-    return (
-        <Text>
-            <Text style={styles.bold}>Date: </Text>
-            {dateString}
-        </Text>
-    );
-};
-
-const DayOverviewLocation: React.FC<DayOverviewLocationProps> = ({ location }) => (
+const DayOverviewSubtitle: React.FC<DayOverviewSubtitleProps> = ({ subtitleKey, children }) => (
     <Text>
-        <Text style={styles.bold}>Location: </Text>
-        {location}
+        <Text style={styles.bold}>{subtitleKey}: </Text>
+        {children}
     </Text>
 );
 
@@ -165,12 +150,14 @@ const DayOverviewRow: React.FC<DayOverviewRowProps> = ({ row }) => {
     );
 };
 
-const DayOverviewCard: React.FC<DayOverviewCardProps> = ({ date, location, data }) => {
+const DayOverviewContent: React.FC<DayOverviewContentProps> = ({ date, location, data }) => {
     return (
-        <View style={styles.card}>
-            <View style={[styles.dateLocationWrap, styles.row]}>
-                <DayOverviewDate date={date} />
-                <DayOverviewLocation location={location} />
+        <>
+            <View style={[styles.subtitleWrap, styles.row]}>
+                <DayOverviewSubtitle subtitleKey="Date">
+                    {getCurrentDate(date, true)}
+                </DayOverviewSubtitle>
+                <DayOverviewSubtitle subtitleKey="Location">{location}</DayOverviewSubtitle>
             </View>
             <View style={{ borderLeft: "1 solid black" }}>
                 <DayOverviewHeader />
@@ -178,7 +165,7 @@ const DayOverviewCard: React.FC<DayOverviewCardProps> = ({ date, location, data 
                     <DayOverviewRow key={index} row={datum} />
                 ))}
             </View>
-        </View>
+        </>
     );
 };
 
@@ -188,7 +175,7 @@ const DayOverviewPdf: React.FC<DayOverviewPdfProps> = ({ data }) => {
             <Page size="A4" style={styles.page}>
                 <DayOverviewMargin />
                 <Text style={styles.title}>Day Overview</Text>
-                <DayOverviewCard date={data.date} location={data.location} data={data.data} />
+                <DayOverviewContent date={data.date} location={data.location} data={data.data} />
                 <DayOverviewMargin />
             </Page>
         </Document>
