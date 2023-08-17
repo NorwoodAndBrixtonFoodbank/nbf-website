@@ -1,12 +1,11 @@
 import { CongestionChargeDetails, ProcessingData } from "@/app/clients/fetchDataFromServer";
 import { Schema } from "@/database_utils";
-import { Datum } from "@/components/Tables/Table";
 import {
     familyCountToFamilyCategory,
     formatDatetimeAsDate,
 } from "@/app/clients/getExpandedClientDetails";
 
-export interface ClientsTableRow extends Datum {
+export interface ClientsTableRow {
     primaryKey: string;
     parcelId: Schema["parcels"]["primary_key"];
     flaggedForAttention: boolean;

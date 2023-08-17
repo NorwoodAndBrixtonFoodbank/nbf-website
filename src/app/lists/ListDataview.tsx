@@ -1,11 +1,6 @@
 "use client";
 
-import Table, {
-    Datum,
-    Row,
-    TableColumnDisplayFunctions,
-    TableColumnStyleOptions,
-} from "@/components/Tables/Table";
+import Table, { ColumnDisplayFunction, ColumnStyleOptions, Row } from "@/components/Tables/Table";
 import React, { useState } from "react";
 import styled from "styled-components";
 import EditModal, { EditModalState, listQuantityNoteAndLabels } from "@/app/lists/EditModal";
@@ -20,14 +15,14 @@ import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
 import { FilterType } from "@/components/Tables/TableFilterBar";
 
-export type ListRow = Schema["lists"] & Datum;
+export type ListRow = Schema["lists"];
 
 interface Props {
     data: ListRow[];
     comment: string;
 }
 
-export const headerKeysAndLabels: [string, string][] = [
+export const headerKeysAndLabels = [
     ["item_name", "Description"],
     ["1_quantity", "Single"],
     ["2_quantity", "Family of 2"],
@@ -39,16 +34,17 @@ export const headerKeysAndLabels: [string, string][] = [
     ["8_quantity", "Family of 8"],
     ["9_quantity", "Family of 9"],
     ["10_quantity", "Family of 10+"],
-];
+] as const;
 
-const listDataviewColumnDisplayFunctions: TableColumnDisplayFunctions = {};
-const listsColumnStyleOptions: TableColumnStyleOptions = {};
+const listDataviewColumnDisplayFunctions: { [headerKey: string]: ColumnDisplayFunction<ListRow> } =
+    {};
+const listsColumnStyleOptions: { [headerKey: string]: ColumnStyleOptions } = {};
 
 listQuantityNoteAndLabels.forEach(([headerKey, noteKey]) => {
     if (headerKey.endsWith("quantity")) {
         // Column Display Function
-        listDataviewColumnDisplayFunctions[headerKey] = (row: Row) => {
-            const data = row.data as ListRow;
+        listDataviewColumnDisplayFunctions[headerKey] = (row: Row<ListRow>) => {
+            const data = row.data;
             return (
                 <TooltipCell
                     cellValue={data[headerKey]?.toString() ?? ""}

@@ -1,8 +1,13 @@
 import React from "react";
-import Table, { Datum } from "@/components/Tables/Table";
+import Table from "@/components/Tables/Table";
 import StyleManager from "@/app/themes";
 
-const data: Datum[] = [
+interface TestData {
+    full_name: string;
+    phone_number: string;
+}
+
+const data: TestData[] = [
     {
         full_name: "Tom",
         phone_number: "123456",
@@ -67,14 +72,14 @@ const data: Datum[] = [
 
 const smallerData = data.slice(0, 3);
 
-const headers: [string, string][] = [
+const headers = [
     ["full_name", "Name"],
     ["phone_number", "Phone Number"],
-];
+] as const;
 
 interface TestTableProps {
     checkboxes?: boolean;
-    toggleableHeaders?: string[];
+    toggleableHeaders?: (keyof TestData)[];
 }
 
 const Component: React.FC<TestTableProps> = ({ checkboxes = true, toggleableHeaders }) => {

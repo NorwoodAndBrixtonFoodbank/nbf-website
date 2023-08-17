@@ -5,10 +5,7 @@ import styled from "styled-components";
 import FilterAccordion from "@/components/Tables/FilterAccordion";
 import Button from "@mui/material/Button";
 import CheckboxInput from "../DataInput/CheckboxInput";
-
-export interface FilterText {
-    [key: string]: string;
-}
+import { TableHeaders } from "./Table";
 
 const StyledFilterAccordion = styled(FilterAccordion)`
     width: 100%;
@@ -41,15 +38,14 @@ const Row = styled.div`
     }
 `;
 
-interface Props {
-    filterText: FilterText;
-    onFilter: (event: React.ChangeEvent<HTMLInputElement>, filterField: string) => void;
+interface Props<Data> {
+    onFilter: (event: React.ChangeEvent<HTMLInputElement>, filterField: keyof Data) => void;
     handleClear: () => void;
-    headers: [string, string][];
-    filterKeys: [string, FilterType][];
-    toggleableHeaders?: string[];
-    setShownHeaderKeys: (headers: string[]) => void;
-    shownHeaderKeys: string[];
+    headers: TableHeaders<Data>;
+    filterKeys: [keyof Data, FilterType][];
+    toggleableHeaders?: (keyof Data)[];
+    setShownHeaderKeys: (headers: (keyof Data)[]) => void;
+    shownHeaderKeys: (keyof Data)[];
 }
 
 export enum FilterType {
@@ -57,6 +53,10 @@ export enum FilterType {
     Toggle,
     Date,
 }
+
+export type FilterState<Data> = {
+    [key in keyof Data]?: string;
+};
 
 interface FilterElementProps {
     filterType: FilterType;
@@ -98,7 +98,7 @@ const FilterElement: React.FC<FilterElementProps> = ({
     }
 };
 
-const TableFilterBar: React.FC<Props> = (props) => {
+const TableFilterBar = <Data extends unknown>(props: Props<Data>): React.ReactElement => {
     return (
         <>
             <Button variant="contained" onClick={props.handleClear}>
@@ -106,21 +106,21 @@ const TableFilterBar: React.FC<Props> = (props) => {
             </Button>
             {props.filterKeys.map(([key, filterType]) => {
                 const label = props.headers.find(([headerKey]) => headerKey === key)?.[1] ?? "";
-                const defaultValue = props.filterText[key] ?? "";
+                // const defaultValue = props.filterText[key] ?? "";
 
                 return (
                     <FilterElement
-                        {...{ defaultValue, label, filterType, onFilter: props.onFilter }}
-                        key={key}
+                        {...{ label, filterType, onFilter: props.onFilter }}
+                        key={label}
                     />
                 );
             })}
-            <StyledFilterAccordion
+            {/* <StyledFilterAccordion
                 toggleableHeaders={props.toggleableHeaders}
                 shownHeaderKeys={props.shownHeaderKeys}
                 setShownHeaderKeys={props.setShownHeaderKeys}
                 headers={props.headers}
-            />
+            /> */}
         </>
     );
 };

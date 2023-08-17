@@ -48,7 +48,7 @@ const collectionCentreToAbbreviation = (
     }
 };
 
-export const clientTableHeaderKeysAndLabels: TableHeaders = [
+export const clientTableHeaderKeysAndLabels: TableHeaders<ClientsTableRow> = [
     ["iconsColumn", ""],
     ["fullName", "Name"],
     ["familyCategory", "Family"],
@@ -68,7 +68,7 @@ const toggleableHeaders = [
     "packingTimeLabel",
     "lastStatus",
     "voucherNumber",
-];
+] as const;
 
 const clientTableColumnStyleOptions = {
     iconsColumn: {
@@ -110,7 +110,7 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
     const [selected, setSelected] = useState<number[]>([]);
     const theme = useTheme();
 
-    const rowToIconsColumn = (row: Row): React.ReactElement => {
+    const rowToIconsColumn = (row: Row<ClientsTableRow>): React.ReactElement => {
         const data = row.data as ClientsTableRow;
 
         return (
@@ -125,7 +125,7 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
         );
     };
 
-    const rowToDeliveryCollectionColumn = (row: Row): React.ReactElement => {
+    const rowToDeliveryCollectionColumn = (row: Row<ClientsTableRow>): React.ReactElement => {
         const data = row.data as ClientsTableRow;
 
         if (data.collectionCentre === "Delivery") {
@@ -153,7 +153,7 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
         deliveryCollection: rowToDeliveryCollectionColumn,
     };
 
-    const onClientTableRowClick = (row: Row): void => {
+    const onClientTableRowClick = (row: Row<ClientsTableRow>): void => {
         const data = row.data as ClientsTableRow;
         setSelectedParcelId(data.parcelId);
     };

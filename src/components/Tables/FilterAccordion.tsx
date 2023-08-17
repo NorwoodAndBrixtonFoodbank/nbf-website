@@ -5,12 +5,13 @@ import { Accordion, Checkbox, AccordionSummary, AccordionDetails } from "@mui/ma
 import styled from "styled-components";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import Icon from "@/components/Icons/Icon";
+import { TableHeaders } from "./Table";
 
-interface FilterAccordionProps {
-    toggleableHeaders?: string[];
-    shownHeaderKeys: string[];
-    setShownHeaderKeys: (headers: string[]) => void;
-    headers: [string, string][];
+interface FilterAccordionProps<Data> {
+    toggleableHeaders?: (keyof Data)[];
+    shownHeaderKeys: (keyof Data)[];
+    setShownHeaderKeys: (headers: (keyof Data)[]) => void;
+    headers: TableHeaders<Data>;
 }
 
 const Styling = styled.div`
@@ -67,13 +68,15 @@ const StyledAccordion = styled(Accordion)`
     }
 `;
 
-const FilterAccordion: React.FC<FilterAccordionProps> = ({
+const FilterAccordion = <Data extends unknown>({
     toggleableHeaders,
     shownHeaderKeys,
     setShownHeaderKeys,
     headers,
-}) => {
-    const getOnChanged = (key: string): ((event: React.ChangeEvent<HTMLInputElement>) => void) => {
+}: FilterAccordionProps<Data>): React.ReactElement => {
+    const getOnChanged = (
+        key: keyof Data
+    ): ((event: React.ChangeEvent<HTMLInputElement>) => void) => {
         return (event) => {
             if (event.target.checked) {
                 setShownHeaderKeys([...shownHeaderKeys, key]);
@@ -95,13 +98,12 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
                 </AccordionSummary>
                 <AccordionDetails>
                     {(toggleableHeaders ?? []).map((key) => {
-                        const headerKeyAndLabel = headers.find(([headerKey]) => headerKey === key);
-                        const headerLabel = headerKeyAndLabel ? headerKeyAndLabel[1] : key;
+                        const headerKeyAndLabel = headers.find(([headerKey]) => headerKey === key)!;
+                        const headerLabel = headerKeyAndLabel[1];
                         return (
-                            <ContainerDiv key={key}>
+                            <ContainerDiv key={headerLabel}>
                                 <Checkbox
                                     color="secondary"
-                                    key={key}
                                     checked={shownHeaderKeys.includes(key)}
                                     onChange={getOnChanged(key)}
                                 />
