@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
     container: {
         padding: 25,
         alignItems: "center",
+        fontFamily: "Helvetica",
     },
     infoAndLogoContainer: {
         height: "100",
@@ -44,15 +45,14 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 20,
         paddingBottom: 5,
-        fontFamily: "Helvetica",
     },
     h2text: {
         fontSize: 12,
         paddingLeft: 10,
-        fontFamily: "Helvetica",
     },
     logoStyling: {
         maxHeight: 60,
+        // below is because the width for the logo is ~1.7x the height
         maxWidth: 60 * 1.7,
         alignSelf: "center",
         marginRight: 15,
@@ -62,7 +62,6 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
     },
     h3text: {
-        fontFamily: "Helvetica",
         fontSize: 8,
         paddingLeft: 15,
         paddingTop: 5,
