@@ -8,26 +8,26 @@ import React, { useEffect } from "react";
 import styled, { useTheme } from "styled-components";
 import Title from "@/components/Title/Title";
 import { NavBarHeight } from "@/components/NavBar/NavigationBar";
+import Paper from "@mui/material/Paper";
 
 export const LoginMain = styled.main`
-    height: calc(100vh - ${NavBarHeight});
+    height: calc(100vh - ${NavBarHeight} * 2);
     display: flex;
     align-content: center;
+    justify-content: center;
 `;
 
-const MiddleDiv = styled.div`
-    max-width: 400px;
-    box-shadow: 0 0 15px ${(props) => props.theme.shadow};
+const MiddleDiv = styled(Paper)`
+    max-width: 450px;
     border-radius: 10px;
-    padding: 10px 10px;
-    margin: auto 10%;
+    padding: 2.5rem clamp(20px, 3vw, 50px);
+    margin: auto 20px;
     background-color: ${(props) => props.theme.main.background[0]};
 
     --fonts-buttonFontFamily: Helvetica, Arial, sans-serif;
     --fonts-bodyFontFamily: Helvetica, Arial, sans-serif;
     --fonts-inputFontFamily: Helvetica, Arial, sans-serif;
     --fonts-labelFontFamily: Helvetica, Arial, sans-serif;
-    //
 
     // Google Chrome password autofill will automatically make the background blue and the word black, which is inconsistent with our current theme
     // The below forces the background on Google Chrome to be our desired background
@@ -40,14 +40,12 @@ const MiddleDiv = styled.div`
         -webkit-text-fill-color: ${(props) => props.theme.main.foreground[2]} !important;
     }
 
-    @media (min-width: 375px) {
-        padding: 25px 25px;
-        margin: auto;
+    & * {
+        transition: none;
     }
 
-    @media (min-width: 525px) {
-        padding: 30px 80px;
-        margin: auto;
+    & button:hover {
+        color: ${(props) => props.theme.main.foreground[2]};
     }
 `;
 
@@ -62,7 +60,7 @@ const LoginPanel: React.FC<{}> = () => {
     }, []);
 
     return (
-        <MiddleDiv data-loaded={loaded} id="login-panel">
+        <MiddleDiv elevation={5} data-loaded={loaded} id="login-panel">
             <Title>Login</Title>
             <Auth
                 supabaseClient={supabase}
@@ -72,14 +70,14 @@ const LoginPanel: React.FC<{}> = () => {
                     variables: {
                         default: {
                             colors: {
-                                inputText: theme.main.foreground[2],
-                                inputBackground: theme.main.background[2],
-                                inputBorder: theme.main.background[2],
+                                inputText: theme.main.foreground[3],
+                                inputBackground: theme.main.background[3],
+                                inputBorder: theme.main.background[3],
                                 inputLabelText: theme.main.foreground[0],
                                 anchorTextColor: theme.main.lighterForeground[0],
-                                brand: theme.primary.background[2],
+                                brand: theme.primary.background[3],
                                 brandAccent: theme.primary.background[2],
-                                brandButtonText: theme.primary.foreground[2],
+                                brandButtonText: theme.primary.foreground[3],
                                 messageTextDanger: theme.error,
                             },
                         },
