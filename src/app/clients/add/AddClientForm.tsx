@@ -127,6 +127,8 @@ const AddClientForm: React.FC = () => {
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
     const [submitDisabled, setSubmitDisabled] = useState(false);
 
+    console.log(fields.dietaryRequirements);
+
     useEffect(() => {
         if (fields.numberChildren <= fields.children.length) {
             fieldSetter("children", fields.children.slice(0, fields.numberChildren));

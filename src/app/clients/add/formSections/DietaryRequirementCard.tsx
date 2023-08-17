@@ -28,6 +28,7 @@ const DietaryRequirementCard: React.FC<CardProps> = ({ fieldSetter, fields }) =>
                     fields.dietaryRequirements,
                     "dietaryRequirements"
                 )}
+                defaultCheckedKeys={["Gluten Free", "Pescatarian"]}
             />
         </GenericFormCard>
     );
