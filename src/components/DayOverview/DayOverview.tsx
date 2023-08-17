@@ -8,8 +8,7 @@ interface Props {
     location: string;
 }
 
-export type ParcelOfSpecificDateAndLocation = {
-    collection_datetime: Schema["parcels"]["collection_datetime"];
+export type ParcelOfSpecificDateAndLocation = Pick<Schema["parcels"], "collection_datetime"> & {
     clients: Pick<
         Schema["clients"],
         "flagged_for_attention" | "full_name" | "address_postcode" | "delivery_instructions"
