@@ -4,60 +4,22 @@ import { NoSsr } from "@mui/material";
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import React from "react";
 import DayOverviewPdf from "@/components/DayOverview/DayOverviewPdf";
-import {
-    getCurrentDate,
-    ParcelOfSpecificDateAndLocation,
-} from "@/components/DayOverview/DayOverview";
-import { Schema } from "@/supabase";
+import { DayOverviewData } from "@/components/DayOverview/DayOverview";
 
 interface DayOverviewerButtonProps {
-    date: Date;
-    location: string;
-    data: ParcelOfSpecificDateAndLocation[];
+    data: DayOverviewData;
     text: string;
+    fileName: string;
 }
 
-const collectionCentreToAbbreviation = (
-    collectionCentre: Schema["parcels"]["collection_centre"]
-): string => {
-    switch (collectionCentre) {
-        case "Brixton Hill - Methodist Church":
-            return "BH_MC";
-        case "Clapham - St Stephens Church":
-            return "CLP_SC";
-        case "N&B - Emmanuel Church":
-            return "NAB_EC";
-        case "Streatham - Immanuel & St Andrew":
-            return "STM_IS";
-        case "Vauxhall Hope Church":
-            return "VHC";
-        case "Waterloo - Oasis":
-            return "WAT_OA";
-        case "Waterloo - St George the Martyr":
-            return "WAT_SG";
-        case "Waterloo - St Johns":
-            return "WAT_SJ";
-        case "Delivery":
-            return "Delivery";
-        default:
-            throw new Error("Invalid location");
-    }
-};
-
-const DayOverviewButton: React.FC<DayOverviewerButtonProps> = ({ date, location, data, text }) => {
-    const dateString = getCurrentDate(date);
+const DayOverviewButton: React.FC<DayOverviewerButtonProps> = ({ data, text, fileName }) => {
     return (
         <NoSsr>
-            <PDFDownloadLink
-                document={<DayOverviewPdf date={date} location={location} data={data} />}
-                fileName={`DayOverview_${dateString}_${collectionCentreToAbbreviation(
-                    location
-                )}.pdf`}
-            >
+            <PDFDownloadLink document={<DayOverviewPdf data={data} />} fileName={fileName}>
                 {text}
             </PDFDownloadLink>
             <PDFViewer width="800" height="1000">
-                <DayOverviewPdf date={date} location={location} data={data} />
+                <DayOverviewPdf data={data} />
             </PDFViewer>
         </NoSsr>
     );

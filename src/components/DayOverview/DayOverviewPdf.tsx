@@ -5,6 +5,7 @@ import { Svg, Document, Page, Text, View, StyleSheet, Path } from "@react-pdf/re
 import { faFlag, faSquare, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 
 import {
+    DayOverviewData,
     getCurrentDate,
     ParcelOfSpecificDateAndLocation,
 } from "@/components/DayOverview/DayOverview";
@@ -22,9 +23,7 @@ interface DayOverviewRowProps {
 }
 
 interface DayOverviewPdfProps {
-    date: Date;
-    location: string;
-    data: ParcelOfSpecificDateAndLocation[];
+    data: DayOverviewData;
 }
 
 interface DayOverviewCardProps {
@@ -183,13 +182,13 @@ const DayOverviewCard: React.FC<DayOverviewCardProps> = ({ date, location, data 
     );
 };
 
-const DayOverviewPdf: React.FC<DayOverviewPdfProps> = ({ date, location, data }) => {
+const DayOverviewPdf: React.FC<DayOverviewPdfProps> = ({ data }) => {
     return (
         <Document>
             <Page size="A4" style={styles.page}>
                 <DayOverviewMargin />
                 <Text style={styles.title}>Day Overview</Text>
-                <DayOverviewCard date={date} location={location} data={data} />
+                <DayOverviewCard date={data.date} location={data.location} data={data.data} />
                 <DayOverviewMargin />
             </Page>
         </Document>
