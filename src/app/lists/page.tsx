@@ -7,23 +7,22 @@ import Title from "@/components/Title/Title";
 // disables caching
 export const revalidate = 0;
 
-const fetchData = async (): Promise<ListRow[]> => {
-    const { data } = await supabase.from("lists").select();
-    return data ?? [];
-};
+interface Props {
+    data: ListRow[];
+    comment: string;
+}
 
-const fetchComment = async (): Promise<string> => {
-    const data = await supabase.from("website_data").select().eq("name", "lists_text");
-    if (data.data) {
-        return data.data![0].value;
-    }
-    return "";
+const fetchData = (): Promise<Props> => {
+    return Promise.all([
+        supabase.from("lists").select(),
+        supabase.from("website_data").select().eq("name", "lists_text"),
+    ]).then((values) => {
+        return { data: values[0].data ?? [], comment: values[1].data![0].value ?? "" };
+    });
 };
 
 const Lists = async (): Promise<ReactElement> => {
-    const data = await fetchData();
-    const comment = await fetchComment();
-
+    const { data, comment } = await fetchData();
     return (
         <main>
             <Title>Lists</Title>
