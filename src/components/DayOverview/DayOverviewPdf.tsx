@@ -4,7 +4,10 @@ import React from "react";
 import { Svg, Document, Page, Text, View, StyleSheet, Path } from "@react-pdf/renderer";
 import { faFlag, faSquare, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 
-import { ParcelOfSpecificDateAndLocation } from "@/components/DayOverview/DayOverview";
+import {
+    getCurrentDate,
+    ParcelOfSpecificDateAndLocation,
+} from "@/components/DayOverview/DayOverview";
 
 interface DayOverviewDateProps {
     date: Date;
@@ -78,14 +81,6 @@ const styles = StyleSheet.create({
     cellInstructions: { flex: 10 },
 });
 
-const getCurrentDate = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-};
-
 const dateTimeToAMPM = (datetime: string): string => {
     return new Date(datetime).getHours() <= 11 ? "AM" : "PM";
 };
@@ -108,7 +103,7 @@ const DayOverviewMargin: React.FC<{}> = () => {
 };
 
 const DayOverviewDate: React.FC<DayOverviewDateProps> = ({ date }) => {
-    const dateString = getCurrentDate(date);
+    const dateString = getCurrentDate(date, true);
     return (
         <Text>
             <Text style={styles.bold}>Date: </Text>
@@ -126,7 +121,7 @@ const DayOverviewLocation: React.FC<DayOverviewLocationProps> = ({ location }) =
 
 const DayOverviewHeader: React.FC<{}> = () => {
     return (
-        <View style={[styles.row, styles.bold, { borderTop: "1 solid black" }]} fixed={true}>
+        <View style={[styles.row, styles.bold, { borderTop: "1 solid black" }]} fixed>
             <View style={[styles.cellLogo, styles.cell]}></View>
             <View style={[styles.cellName, styles.cell]}>
                 <Text>Name</Text>

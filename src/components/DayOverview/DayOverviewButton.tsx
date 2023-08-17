@@ -4,7 +4,10 @@ import { NoSsr } from "@mui/material";
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import React from "react";
 import DayOverviewPdf from "@/components/DayOverview/DayOverviewPdf";
-import { ParcelOfSpecificDateAndLocation } from "@/components/DayOverview/DayOverview";
+import {
+    getCurrentDate,
+    ParcelOfSpecificDateAndLocation,
+} from "@/components/DayOverview/DayOverview";
 import { Schema } from "@/supabase";
 
 interface DayOverviewerButtonProps {
@@ -39,14 +42,6 @@ const collectionCentreToAbbreviation = (
         default:
             throw new Error("Invalid location");
     }
-};
-
-const getCurrentDate = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-
-    return `${year}${month}${day}`;
 };
 
 const DayOverviewButton: React.FC<DayOverviewerButtonProps> = ({ date, location, data, text }) => {
