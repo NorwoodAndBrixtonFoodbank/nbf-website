@@ -1,9 +1,9 @@
 import StyleManager from "@/app/themes";
 import { Metadata } from "next";
-
 import React from "react";
 import NavigationBar from "@/components/NavBar/NavigationBar";
 import { AuthRouting } from "@/app/auth";
+import Localization from "./localizationProvider";
 
 interface Props {
     children: React.ReactNode;
@@ -15,14 +15,15 @@ const App: React.FC<Props> = ({ children }) => (
             <React.StrictMode>
                 <AuthRouting>
                     <StyleManager>
-                        <NavigationBar>{children}</NavigationBar>
+                        <NavigationBar>
+                            <Localization>{children}</Localization>
+                        </NavigationBar>
                     </StyleManager>
                 </AuthRouting>
             </React.StrictMode>
         </body>
     </html>
 );
-
 export const metadata: Metadata = {
     title: {
         template: "%s | Vauxhall Foodbank",

@@ -6,7 +6,7 @@ import { DatabaseAutoType } from "@/supabase";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import IconButton from "@mui/material/IconButton/IconButton";
 
-const SignOutButton: React.FC = () => {
+const SignOutButton: React.FC<{}> = () => {
     const supabase = createClientComponentClient<DatabaseAutoType>();
 
     return (

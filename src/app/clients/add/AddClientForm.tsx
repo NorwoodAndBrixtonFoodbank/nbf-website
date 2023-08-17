@@ -119,7 +119,7 @@ const initialFormErrors: FormErrors = {
     nappySize: Errors.none,
 };
 
-const AddClientForm: React.FC = () => {
+const AddClientForm: React.FC<{}> = () => {
     const router = useRouter();
     const [fields, setFields] = useState(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
@@ -221,7 +221,7 @@ const AddClientForm: React.FC = () => {
                 })}
                 <CenterComponent>
                     <Button variant="contained" onClick={submitForm} disabled={submitDisabled}>
-                        Submit
+                        Add Client
                     </Button>
                 </CenterComponent>
                 <FormErrorText>{submitErrorMessage + submitError}</FormErrorText>

@@ -7,6 +7,7 @@ interface Props {
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     error?: boolean;
     helperText?: string;
+    value?: string;
 }
 
 const FreeFormTextInput: React.FC<Props> = (props) => {
@@ -17,6 +18,7 @@ const FreeFormTextInput: React.FC<Props> = (props) => {
             label={props.label}
             defaultValue={props.defaultValue}
             onChange={props.onChange}
+            value={props.value}
         />
     );
 };

@@ -1,4 +1,3 @@
-import React from "react";
 import { booleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { Database } from "@/database_types_file";
 import {
@@ -44,7 +43,7 @@ export interface FormErrors {
 }
 
 export const setError = (
-    errorSetter: React.Dispatch<React.SetStateAction<FormErrors>>,
+    errorSetter: (errors: FormErrors) => void,
     errorValues: FormErrors
 ): ErrorSetter => {
     return (errorKey, errorType) => {
@@ -53,7 +52,7 @@ export const setError = (
 };
 
 export const setField = <SpecificFields extends Fields>(
-    fieldSetter: React.Dispatch<React.SetStateAction<SpecificFields>>,
+    fieldSetter: (fieldValues: SpecificFields) => void,
     fieldValues: SpecificFields
 ): FieldSetter => {
     return (fieldKey, newFieldValue) => {
@@ -120,6 +119,33 @@ export const onChangeRadioGroup = (
     };
 };
 
+export const valueOnChangeRadioGroup = (
+    fieldSetter: FieldSetter,
+    errorSetter: ErrorSetter,
+    key: string
+): selectChangeEventHandler => {
+    return (event) => {
+        const input = event.target.value;
+        fieldSetter(key, input);
+        errorSetter(key, Errors.none);
+    };
+};
+
+export const onChangeDateOrTime = (
+    fieldSetter: FieldSetter,
+    errorSetter: ErrorSetter,
+    key: string,
+    value: Date | null
+): void => {
+    if (value === null || isNaN(Date.parse(value.toString()))) {
+        fieldSetter(key, null);
+        errorSetter(key, Errors.invalid);
+        return;
+    }
+    errorSetter(key, Errors.none);
+    fieldSetter(key, value);
+};
+
 export const errorExists = (errorType: Errors): boolean => {
     return errorType !== Errors.initial && errorType !== Errors.none;
 };
@@ -134,19 +160,22 @@ export const checkboxGroupToArray = (checkedBoxes: booleanGroup): string[] => {
 
 export const checkErrorOnSubmit = (
     errorType: FormErrors,
-    errorSetter: React.Dispatch<React.SetStateAction<FormErrors>>
+    errorSetter: (errors: FormErrors) => void,
+    keysToCheck?: string[]
 ): boolean => {
     let errorExists = false;
     let amendedErrorTypes = { ...errorType };
     for (const [errorKey, error] of Object.entries(errorType)) {
-        if (error !== Errors.none) {
-            errorExists = true;
-        }
-        if (error === Errors.initial) {
-            amendedErrorTypes = {
-                ...amendedErrorTypes,
-                [errorKey]: Errors.required,
-            };
+        if (!keysToCheck || keysToCheck.includes(errorKey)) {
+            if (error !== Errors.none) {
+                errorExists = true;
+            }
+            if (error === Errors.initial) {
+                amendedErrorTypes = {
+                    ...amendedErrorTypes,
+                    [errorKey]: Errors.required,
+                };
+            }
         }
     }
     if (errorExists) {

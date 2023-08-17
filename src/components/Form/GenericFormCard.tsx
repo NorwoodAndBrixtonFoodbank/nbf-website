@@ -19,7 +19,7 @@ const RequiredAsterisk = styled.span`
 
 const GenericFormCard: React.FC<Props> = (props: Props) => {
     return (
-        <StyledCard>
+        <StyledCard elevation={3}>
             <FormSubheading>
                 {props.title} {props.required && <RequiredAsterisk />}
             </FormSubheading>
