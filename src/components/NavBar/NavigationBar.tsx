@@ -176,10 +176,10 @@ const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
                     <LoginDependent>
                         <DesktopButtonContainer>
                             {pages.map(([page, link]) => (
-                                <>
-                                    <LinkButton key={page} link={link} page={page} />
+                                <React.Fragment key={page}>
+                                    <LinkButton link={link} page={page} />
                                     <Gap />
-                                </>
+                                </React.Fragment>
                             ))}
                         </DesktopButtonContainer>
                     </LoginDependent>

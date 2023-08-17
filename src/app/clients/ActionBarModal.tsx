@@ -40,10 +40,10 @@ const StatusText = styled.p`
 `;
 
 const ActionBarModal: React.FC<SharedModalProps> = (props) => {
-    const [date, setDate] = useState(dayjs(Date()));
+    const [date, setDate] = useState(dayjs(new Date()));
 
     useEffect(() => {
-        setDate(dayjs(Date()));
+        setDate(dayjs(new Date()));
     }, [props.isOpen]);
 
     const onDateChange = (newDate: Dayjs | null): void =>

@@ -2,6 +2,7 @@ import ActionBar from "@/app/clients/ActionBar";
 import React from "react";
 import StyleManager from "@/app/themes";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
+import Localization from "../localizationProvider";
 
 describe("Clients - Action Bar", () => {
     const mockData: ClientsTableRow[] = [
@@ -41,9 +42,11 @@ describe("Clients - Action Bar", () => {
 
     const MockActionBar: React.FC<{}> = () => {
         return (
-            <StyleManager>
-                <ActionBar data={mockData} selected={selectedIndices} />
-            </StyleManager>
+            <Localization>
+                <StyleManager>
+                    <ActionBar data={mockData} selected={selectedIndices} />
+                </StyleManager>
+            </Localization>
         );
     };
 
@@ -87,12 +90,12 @@ describe("Clients - Action Bar", () => {
                 cy.get(".MuiPaper-root").contains("Date");
                 cy.get(".MuiPaper-root").contains("Time");
                 const dateString = new Date().toLocaleDateString("en-GB");
-                cy.get("input[value='" + dateString + "']").should("exist");
+                cy.get(`input[value="${dateString}"]`).should("exist");
                 const timeString = new Date().toLocaleTimeString("en-GB", {
                     hour: "2-digit",
                     minute: "2-digit",
                 });
-                cy.get("input[value='" + timeString + "']").should("exist");
+                cy.get(`input[value="${timeString}"]`).should("exist");
             });
 
             it("should have a modal that contains the selected data", () => {
@@ -103,12 +106,12 @@ describe("Clients - Action Bar", () => {
                 cy.get(".MuiPaper-root").contains("Date");
                 cy.get(".MuiPaper-root").contains("Time");
                 const dateString = new Date().toLocaleDateString("en-GB");
-                cy.get("input[value='" + dateString + "']").should("exist");
+                cy.get(`input[value="${dateString}"]`).should("exist");
                 const timeString = new Date().toLocaleTimeString("en-GB", {
                     hour: "2-digit",
                     minute: "2-digit",
                 });
-                cy.get("input[value='" + timeString + "']").should("exist");
+                cy.get(`input[value="${timeString}"]`).should("exist");
                 selectedIndices.forEach((index) => {
                     cy.get(".MuiPaper-root").contains(mockData[index].collectionCentre);
                     cy.get(".MuiPaper-root").contains(mockData[index].fullName);
