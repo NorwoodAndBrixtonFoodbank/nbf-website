@@ -12,13 +12,12 @@ interface Props {
     comment: string;
 }
 
-const fetchData = (): Promise<Props> => {
-    return Promise.all([
+const fetchData = async (): Promise<Props> => {
+    const values = await Promise.all([
         supabase.from("lists").select(),
         supabase.from("website_data").select().eq("name", "lists_text"),
-    ]).then((values) => {
-        return { data: values[0].data ?? [], comment: values[1].data![0].value ?? "" };
-    });
+    ]);
+    return { data: values[0].data ?? [], comment: values[1].data![0].value ?? "" };
 };
 
 const Lists = async (): Promise<ReactElement> => {
