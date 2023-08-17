@@ -2,8 +2,7 @@
 
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import supabase from "@/supabase";
-import { Button } from "@mui/material";
-import { set } from "cypress/types/lodash";
+import Button from "@mui/material/Button";
 import React, { useState } from "react";
 import styled from "styled-components";
 
