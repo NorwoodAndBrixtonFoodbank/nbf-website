@@ -16,11 +16,13 @@ import Alert from "@mui/material/Alert/Alert";
 import Button from "@mui/material/Button";
 import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
+import CommentBox from "@/app/lists/CommentBox";
 
 export type ListRow = Schema["lists"] & Datum;
 
 interface Props {
     data: ListRow[];
+    comment: string;
 }
 
 export const headerKeysAndLabels: [string, string][] = [
@@ -49,7 +51,6 @@ listQuantityNoteAndLabels.forEach(([headerKey, noteKey]) => {
                 <TooltipCell cellValue={data[headerKey] ?? ""} tooltipValue={data[noteKey] ?? ""} />
             );
         };
-
         // Column Style Function
         listsColumnStyleOptions[headerKey] = {
             minWidth: "9rem",
@@ -126,6 +127,7 @@ const ListsDataView: React.FC<Props> = (props) => {
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
 
             <TableSurface>
+                <CommentBox originalComment={props.comment} />
                 <Table
                     checkboxes={false}
                     headerKeysAndLabels={headerKeysAndLabels}
