@@ -138,7 +138,7 @@ const prepareClientSummary = (clientData: Schema["clients"]): ClientSummary => {
 };
 
 const getChild = (child: Person): string => {
-    const gender = (child.gender === "male") ? "M" : (child.gender === "female") ? "F" : "-";
+    const gender = child.gender === "male" ? "M" : child.gender === "female" ? "F" : "-";
     return `${child.age} ${gender}`;
 };
 
