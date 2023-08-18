@@ -71,32 +71,28 @@ const AddParcelsButton: React.FC<Props> = ({ data }) => {
 
     return (
         <PopUpButton displayText="Add Parcel">
-            <>
-                {!existingClientsView ? (
-                    <PopUp>
-                        <LinkButton link="/clients/add">New Client</LinkButton>
-                        <Button onClick={() => setExistingClientsView(true)}>
-                            Existing Client
-                        </Button>
-                    </PopUp>
-                ) : (
-                    <>
-                        <TableSurface>
-                            <Table
-                                data={clientData}
-                                headerKeysAndLabels={headers}
-                                onRowClick={(row) => router.push(`/clients/${row.data.primaryKey}`)}
-                                sortable={true}
-                                pagination={false}
-                                checkboxes={false}
-                                columnStyleOptions={styleOptions}
-                                headerFilters={["fullName"]}
-                            />
-                        </TableSurface>
-                        <Button onClick={() => setExistingClientsView(false)}>Back</Button>
-                    </>
-                )}
-            </>
+            {!existingClientsView ? (
+                <PopUp>
+                    <LinkButton link="/clients/add">New Client</LinkButton>
+                    <Button onClick={() => setExistingClientsView(true)}>Existing Client</Button>
+                </PopUp>
+            ) : (
+                <>
+                    <TableSurface>
+                        <Table
+                            data={clientData}
+                            headerKeysAndLabels={headers}
+                            onRowClick={(row) => router.push(`/clients/${row.data.primaryKey}`)}
+                            sortable
+                            pagination
+                            checkboxes={false}
+                            columnStyleOptions={styleOptions}
+                            headerFilters={["fullName"]}
+                        />
+                    </TableSurface>
+                    <Button onClick={() => setExistingClientsView(false)}>Back</Button>
+                </>
+            )}
         </PopUpButton>
     );
 };
