@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import React from "react";
 import getClientData from "@/app/clients/[id]/getClientData";
-import ViewClientPage from "@/app/clients/[id]/viewClientPage";
+import ViewClientPage from "@/app/clients/[id]/ViewClientPage";
 
 interface ViewClientParameters {
     params: { id: string };
