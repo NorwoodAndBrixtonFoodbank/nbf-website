@@ -235,21 +235,21 @@ const Table = <TableName extends keyof Schema>({
 
         // TODO get Varun's changes about Datum updating
 
-        // const key1 = row1.data[primaryKeyCol];
-        // const key2 = row2.data[primaryKeyCol];
-        // const order1 = row1.data[orderCol];
-        // const order2 = row2.data[orderCol];
-        //
-        // const { error } = await supabase.from(tableName).upsert([
-        //     { [primaryKeyCol]: key1, [orderCol]: order2 },
-        //     { [primaryKeyCol]: key2, [orderCol]: order1 },
-        // ]);
-        //
-        // if (error) {
-        //     throw new Error(`Database error - ${error.message}`);
-        // }
-        //
-        // return data;
+        const key1 = row1.data[primaryKeyCol];
+        const key2 = row2.data[primaryKeyCol];
+        const order1 = row1.data[orderCol];
+        const order2 = row2.data[orderCol];
+
+        const { error } = await supabase.from(tableName).upsert([
+            { [primaryKeyCol]: key1, [orderCol]: order2 },
+            { [primaryKeyCol]: key2, [orderCol]: order1 },
+        ]);
+
+        if (error) {
+            throw new Error(`Database error - ${error.message}`);
+        }
+
+        return data;
     };
 
     const swapRows = (rowId1: number, filteredRowIndex1: number, upArrow: boolean): void => {
@@ -417,16 +417,6 @@ const Styling = styled.div`
     // the component with the filter bars
     & > header {
         background-color: transparent;
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        padding: 10px;
-        gap: min(1rem, 5vw);
-        overflow: visible;
-        @media (min-width: 500px) {
-            flex-wrap: nowrap;
-        }
 
         // the clear button
         & > button {
