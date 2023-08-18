@@ -168,6 +168,8 @@ const Table = <TableName extends keyof Schema>({
 
     const [filterText, setFilterText] = useState<FilterText>({});
 
+    const [errorText, setErrorText] = useState<string | undefined>();
+
     const [selectedCheckboxes, setSelectedCheckboxes] = useState(
         new Array<boolean>(data.length).fill(false)
     );
@@ -272,10 +274,10 @@ const Table = <TableName extends keyof Schema>({
 
         swapDatabaseRowOrder(row1, row2)
             .then(() => {
-                // Do nothing when no error
+                setErrorText(undefined);
             })
-            .catch((error) => {
-                console.log(error);
+            .catch(() => {
+                setErrorText("Error: Unable to swap rows now");
                 setData(oldData);
             });
     };
@@ -388,6 +390,7 @@ const Table = <TableName extends keyof Schema>({
                             headers={headerKeysAndLabels}
                             setShownHeaderKeys={setShownHeaderKeys}
                             shownHeaderKeys={shownHeaderKeys}
+                            errorText={errorText}
                         />
                     }
                     pagination={pagination ?? true}
