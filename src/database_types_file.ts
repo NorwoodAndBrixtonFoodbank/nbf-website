@@ -167,6 +167,7 @@ export interface Database {
           "9_quantity": string
           item_name: string
           primary_key: string
+          row_order: number
         }
         Insert: {
           "1_notes"?: string | null
@@ -191,6 +192,7 @@ export interface Database {
           "9_quantity"?: string
           item_name?: string
           primary_key?: string
+          row_order?: number
         }
         Update: {
           "1_notes"?: string | null
@@ -215,6 +217,85 @@ export interface Database {
           "9_quantity"?: string
           item_name?: string
           primary_key?: string
+          row_order?: number
+        }
+        Relationships: []
+      }
+      lists_hotel: {
+        Row: {
+          "1_notes": string | null
+          "1_quantity": string
+          "10_notes": string | null
+          "10_quantity": string
+          "2_notes": string | null
+          "2_quantity": string
+          "3_notes": string | null
+          "3_quantity": string
+          "4_notes": string | null
+          "4_quantity": string
+          "5_notes": string | null
+          "5_quantity": string
+          "6_notes": string | null
+          "6_quantity": string
+          "7_notes": string | null
+          "7_quantity": string
+          "8_notes": string | null
+          "8_quantity": string
+          "9_notes": string | null
+          "9_quantity": string
+          item_name: string
+          primary_key: string
+          row_order: number
+        }
+        Insert: {
+          "1_notes"?: string | null
+          "1_quantity"?: string
+          "10_notes"?: string | null
+          "10_quantity"?: string
+          "2_notes"?: string | null
+          "2_quantity"?: string
+          "3_notes"?: string | null
+          "3_quantity"?: string
+          "4_notes"?: string | null
+          "4_quantity"?: string
+          "5_notes"?: string | null
+          "5_quantity"?: string
+          "6_notes"?: string | null
+          "6_quantity"?: string
+          "7_notes"?: string | null
+          "7_quantity"?: string
+          "8_notes"?: string | null
+          "8_quantity"?: string
+          "9_notes"?: string | null
+          "9_quantity"?: string
+          item_name?: string
+          primary_key?: string
+          row_order?: number
+        }
+        Update: {
+          "1_notes"?: string | null
+          "1_quantity"?: string
+          "10_notes"?: string | null
+          "10_quantity"?: string
+          "2_notes"?: string | null
+          "2_quantity"?: string
+          "3_notes"?: string | null
+          "3_quantity"?: string
+          "4_notes"?: string | null
+          "4_quantity"?: string
+          "5_notes"?: string | null
+          "5_quantity"?: string
+          "6_notes"?: string | null
+          "6_quantity"?: string
+          "7_notes"?: string | null
+          "7_quantity"?: string
+          "8_notes"?: string | null
+          "8_quantity"?: string
+          "9_notes"?: string | null
+          "9_quantity"?: string
+          item_name?: string
+          primary_key?: string
+          row_order?: number
         }
         Relationships: []
       }
@@ -249,31 +330,6 @@ export interface Database {
             columns: ["client_id"]
             referencedRelation: "clients"
             referencedColumns: ["primary_key"]
-          }
-        ]
-      }
-      users: {
-        Row: {
-          primary_key: string
-          role: Database["public"]["Enums"]["role"]
-          user_id: string
-        }
-        Insert: {
-          primary_key?: string
-          role: Database["public"]["Enums"]["role"]
-          user_id: string
-        }
-        Update: {
-          primary_key?: string
-          role?: Database["public"]["Enums"]["role"]
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "users_user_id_fkey"
-            columns: ["user_id"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
           }
         ]
       }

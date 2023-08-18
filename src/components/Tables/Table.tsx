@@ -15,7 +15,7 @@ import IconButton from "@mui/material/IconButton/IconButton";
 import Icon from "@/components/Icons/Icon";
 
 export interface Datum {
-    [headerKey: string]: string | boolean | null;
+    [headerKey: string]: string | number | boolean | null;
 }
 
 export type TableHeaders = [string, string][];
