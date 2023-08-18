@@ -13,7 +13,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import IconButton from "@mui/material/IconButton/IconButton";
 import Icon from "@/components/Icons/Icon";
-import supabase, { Schema } from "@/supabase";
+import supabase from "@/supabaseClient";
+import { Schema } from "@/database_utils";
 
 export interface Datum {
     [headerKey: string]: string | number | boolean | null;
@@ -202,6 +203,7 @@ const Table = <TableName extends keyof Schema>({
         if (allChecked !== selectAllCheckBox) {
             setSelectAllCheckBox(allChecked);
         }
+        console.log(data);
     }, [selectedCheckboxes, selectAllCheckBox]);
 
     const columns: TableColumn<Row>[] = (
@@ -248,6 +250,7 @@ const Table = <TableName extends keyof Schema>({
         ]);
 
         if (error) {
+            console.log(error.message);
             throw new Error(`Database error - ${error.message}`);
         }
 
@@ -255,24 +258,33 @@ const Table = <TableName extends keyof Schema>({
     };
 
     const swapRows = (rowId1: number, filteredRowIndex1: number, upArrow: boolean): void => {
+        const orderCol = reorderable!.orderCol;
+
         const filteredRowIndex2 = upArrow ? filteredRowIndex1 - 1 : filteredRowIndex1 + 1;
         const filteredRows = dataToFilteredRows(data, filterText, headerKeysAndLabels);
-        const row1 = filteredRows[filteredRowIndex1];
-        const row2 = filteredRows[filteredRowIndex2];
-        if (!row1 || !row2) {
+
+        const oldRow1 = filteredRows[filteredRowIndex1];
+        const oldRow2 = filteredRows[filteredRowIndex2];
+        if (!oldRow1 || !oldRow2) {
             return;
         }
-        const rowId2 = row2.rowId;
+        const rowId2 = oldRow2.rowId;
 
         const oldData = [...data];
         const newData = [...data];
-        const temp = newData[rowId1];
-        newData[rowId1] = newData[rowId2];
-        newData[rowId2] = temp;
+
+        // swap data except orderCol
+        newData[rowId1] = oldData[rowId2];
+        // newData[rowId1].row_order = oldData[rowId1][orderCol];
+
+        newData[rowId2] = oldData[rowId1];
+        // newData[rowId2].row_order = oldData[rowId2][orderCol];
+
+        console.log(newData);
 
         setData(newData);
 
-        swapDatabaseRowOrder(row1, row2)
+        swapDatabaseRowOrder(oldRow1, oldRow2)
             .then(() => {
                 setErrorText(undefined);
             })
@@ -376,7 +388,9 @@ const Table = <TableName extends keyof Schema>({
                 <DataTable
                     // types are fine without the cast when not using styled components, not sure what's happening here
                     columns={columns}
-                    data={dataToFilteredRows(data, filterText, headerKeysAndLabels)}
+                    data={dataToFilteredRows(data, filterText, headerKeysAndLabels).sort((a, b) =>
+                        a.rowId > b.rowId ? 1 : -1
+                    )}
                     keyField="rowId"
                     fixedHeader
                     subHeader

@@ -141,7 +141,7 @@ const ListsDataView: React.FC<Props> = (props) => {
                     reorderable={{
                         tableName: "lists",
                         primaryKeyCol: "primary_key",
-                        orderCol: "item_name",
+                        orderCol: "row_order",
                     }}
                     headerFilters={["item_name"]}
                     pagination={false}

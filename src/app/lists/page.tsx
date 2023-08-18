@@ -14,7 +14,7 @@ interface Props {
 
 const fetchData = async (): Promise<Props> => {
     const values = await Promise.all([
-        supabase.from("lists").select(),
+        supabase.from("lists").select().order("row_order", { ascending: true }),
         supabase.from("website_data").select().eq("name", "lists_text"),
     ]);
     return { data: values[0].data ?? [], comment: values[1].data![0].value ?? "" };
