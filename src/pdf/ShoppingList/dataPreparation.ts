@@ -138,9 +138,8 @@ const prepareClientSummary = (clientData: Schema["clients"]): ClientSummary => {
 };
 
 const getChild = (child: Person): string => {
-    // return `${child.age} ${child.gender[0].toUpperCase()}`;
-    const gender = child.gender[0].toUpperCase();
-    return `${child.age} ${gender === "O" ? "N/A" : gender}`;
+    const gender = (child.gender === "male") ? "M" : (child.gender === "female") ? "F" : "-";
+    return `${child.age} ${gender}`;
 };
 
 const displayList = (data: string[]): string => {
