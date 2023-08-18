@@ -1,6 +1,6 @@
 import React from "react";
 import CheckboxGroupInput from "@/components/DataInput/CheckboxGroupInput";
-import { CardProps, onChangeCheckbox } from "@/components/Form/formFunctions";
+import { CardProps, checkboxGroupToArray, onChangeCheckbox } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 
 const DietaryRequirementCard: React.FC<CardProps> = ({ fieldSetter, fields }) => {
@@ -28,6 +28,7 @@ const DietaryRequirementCard: React.FC<CardProps> = ({ fieldSetter, fields }) =>
                     fields.dietaryRequirements,
                     "dietaryRequirements"
                 )}
+                defaultCheckedKeys={checkboxGroupToArray(fields.dietaryRequirements)}
             />
         </GenericFormCard>
     );
