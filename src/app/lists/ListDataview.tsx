@@ -13,7 +13,6 @@ import Button from "@mui/material/Button";
 import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
-import { FilterType } from "@/components/Tables/TableFilterBar";
 
 export type ListRow = Schema["lists"];
 
@@ -133,10 +132,9 @@ const ListsDataView: React.FC<Props> = (props) => {
                     checkboxes={false}
                     headerKeysAndLabels={headerKeysAndLabels}
                     toggleableHeaders={toggleableHeaders}
-                    defaultShownHeaders={["item_name", ...toggleableHeaders]}
                     data={props.data}
                     reorderable
-                    headerFilters={[["item_name", FilterType.Toggle]]}
+                    filters={["item_name"]}
                     pagination={false}
                     onEdit={onEdit}
                     onDelete={onDeleteButtonClick}

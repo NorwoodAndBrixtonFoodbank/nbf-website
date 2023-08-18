@@ -2,7 +2,7 @@
 
 import React, { ReactElement, ReactNode, useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import TableFilterBar, { FilterType } from "@/components/Tables/TableFilterBar";
+import TableFilterBar from "@/components/Tables/TableFilterBar";
 import styled from "styled-components";
 import { NoSsr } from "@mui/material";
 import {
@@ -13,6 +13,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import IconButton from "@mui/material/IconButton/IconButton";
 import Icon from "@/components/Icons/Icon";
+import { Filter, TextFilter, headerLabelFromKey } from "./Filters";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -47,7 +48,7 @@ interface Props<Data> {
     checkboxes?: boolean;
     onRowSelection?: (rowIds: number[]) => void;
     reorderable?: boolean;
-    headerFilters?: [keyof Data, FilterType][];
+    filters?: (Filter<Data> | keyof Data)[];
     pagination?: boolean;
     defaultShownHeaders?: (keyof Data)[];
     toggleableHeaders?: (keyof Data)[];
@@ -97,7 +98,7 @@ const Table = <Data extends unknown>({
     checkboxes,
     onRowSelection,
     defaultShownHeaders,
-    headerFilters,
+    filters: filterKeysOrObjects,
     onDelete,
     onEdit,
     pagination,
@@ -267,6 +268,18 @@ const Table = <Data extends unknown>({
         });
     }
 
+    const filters =
+        filterKeysOrObjects?.map((filter) => {
+            if (filter instanceof Filter) {
+                return filter;
+            }
+            return new TextFilter<Data, keyof Data>(
+                filter,
+                headerLabelFromKey(headerKeysAndLabels, filter)
+            );
+        }) ??
+        headerKeysAndLabels.map(([key, label]) => new TextFilter<Data, keyof Data>(key, label));
+
     return (
         <Styling>
             <NoSsr>
@@ -287,10 +300,7 @@ const Table = <Data extends unknown>({
                             // handleClear={handleClear}
                             onFilter={() => {}}
                             handleClear={() => {}}
-                            filterKeys={
-                                headerFilters ??
-                                headerKeysAndLabels.map(([key]) => [key, FilterType.Text])
-                            }
+                            filters={filters}
                             headers={headerKeysAndLabels}
                             setShownHeaderKeys={setShownHeaderKeys}
                             shownHeaderKeys={shownHeaderKeys}
