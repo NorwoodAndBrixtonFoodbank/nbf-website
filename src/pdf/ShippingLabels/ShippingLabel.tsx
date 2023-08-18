@@ -1,8 +1,8 @@
 import React from "react";
-import supabase from "@/supabaseServer";
 import { Schema } from "@/database_utils";
-import ShippingLabelsButton from "@/components/ShippingLabels/ShippingLabelsButton";
-import { ParcelClients } from "@/components/ShippingLabels/ShippingLabelsPdf";
+import supabase from "@/supabaseServer";
+import ShippingLabelsButton from "@/pdf/ShippingLabels/ShippingLabelsButton";
+import { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
 
 const formatDatetime = (datetimeString: string | null, isDatetime: boolean): string => {
     if (datetimeString === null) {

@@ -3,7 +3,7 @@
 import { NoSsr } from "@mui/material";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import React from "react";
-import ShippingLabelsPdf, { ParcelClients } from "@/components/ShippingLabels/ShippingLabelsPdf";
+import ShippingLabelsPdf, { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
 
 interface Props {
     data: ParcelClients[][];
