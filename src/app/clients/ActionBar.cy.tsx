@@ -7,6 +7,7 @@ import Localization from "../localizationProvider";
 describe("Clients - Action Bar", () => {
     const mockData: ClientsTableRow[] = [
         {
+            primaryKey: "primaryKey1",
             addressPostcode: "AB1 2CD",
             collectionCentre: "Centre 1",
             collectionDatetime: new Date().toISOString(),
@@ -22,6 +23,7 @@ describe("Clients - Action Bar", () => {
             requiresFollowUpPhoneCall: false,
         },
         {
+            primaryKey: "primaryKey2",
             addressPostcode: "AB1 aaaa2CD",
             collectionCentre: "Centraaaae 1",
             collectionDatetime: new Date().toISOString(),

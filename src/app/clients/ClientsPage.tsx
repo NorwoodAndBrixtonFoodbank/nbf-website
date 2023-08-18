@@ -18,10 +18,8 @@ import Modal from "@/components/Modal/Modal";
 import { Schema } from "@/database_utils";
 import TableSurface from "@/components/Tables/TableSurface";
 import { CenterComponent } from "@/components/Form/formStyling";
-import Button from "@mui/material/Button";
 import ActionBar from "@/app/clients/ActionBar";
-
-// TODO Change Button to LinkButton
+import AddParcelsButton from "@/app/clients/AddParcelsButton";
 
 const collectionCentreToAbbreviation = (
     collectionCentre: Schema["parcels"]["collection_centre"]
@@ -191,9 +189,7 @@ const ClientsPage: React.FC<Props> = (props) => {
                 </Suspense>
             </Modal>
             <CenterComponent>
-                <Button variant="contained" href="/clients/add">
-                    Add Clients
-                </Button>
+                <AddParcelsButton data={props.clientsTableData} />
             </CenterComponent>
         </>
     );

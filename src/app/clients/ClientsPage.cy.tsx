@@ -23,6 +23,7 @@ const sampleProcessingData: ProcessingData = [
         packing_datetime: "2023-08-04T13:30:00+00:00",
 
         client: {
+            primary_key: "primary_key_1",
             full_name: "CLIENT_NAME",
             address_postcode: "SW1A 2AA",
             flagged_for_attention: false,
