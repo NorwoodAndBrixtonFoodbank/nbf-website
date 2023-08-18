@@ -1,10 +1,11 @@
 import {
     fetchClients,
+    fetchComment,
     fetchFamilies,
     fetchLists,
     fetchParcels,
 } from "@/pdf/ShoppingList/databaseFetch";
-import { Schema } from "@/supabase";
+import supabase, { Schema } from "@/supabase";
 import { Person } from "@/components/Form/formFunctions";
 
 export interface BlockProps {
@@ -214,12 +215,6 @@ const prepareItemsList = async (householdSize: number): Promise<Item[]> => {
     });
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getEndNotes = (_parcelID: string): string => {
-    return "PLEASE DISTRIBUTE WEIGHT EVENLY ACROSS BOXES. Space is valuable! Please don't leave boxes half empty - pack efficiently! BOXES MUST BE PACKED FLAT SO THAT THEY CAN BE STACKED. Do not leave items sticking out of the top. We do have a selection of 'free from' goods as well as vegan and halal products. If you're uncertain about anything, please speak to a member of the team.";
-    // This is hard coded for now. _parcelID is also not used for now.
-};
-
 const prepareData = async (parcelID: string): Promise<ShoppingListPDFProps> => {
     const { parcelInfo, clientID } = await prepareParcelInfo(parcelID);
     const { clientData, familyData } = await getClientAndFamilyData(clientID);
@@ -233,7 +228,7 @@ const prepareData = async (parcelID: string): Promise<ShoppingListPDFProps> => {
     clientSummary.extraInformation = extraInformation;
     requirementSummary.babyProductsRequired += ` ${nappySize}`;
 
-    const endNotes = getEndNotes(parcelID);
+    const endNotes = await fetchComment();
 
     const data: ShoppingListPDFProps = {
         postcode: clientData.address_postcode,

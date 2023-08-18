@@ -5,6 +5,9 @@ import Centerer from "@/app/pdf-downloader/pageUtils";
 import ShippingsLabel from "@/pdf/ShippingLabels/ShippingLabel";
 import ShoppingList from "@/pdf/ShoppingList/ShoppingList";
 
+// disables caching
+export const revalidate = 0;
+
 const PdfDownloader = async (): Promise<ReactElement> => {
     const TEST_PARCEL_ID = "85b7626f-a843-4d5e-9043-44a37a73c8aa";
     return (
