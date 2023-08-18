@@ -106,19 +106,11 @@ const DayOverviewSubtitle: React.FC<DayOverviewSubtitleProps> = ({ subtitleKey, 
 const DayOverviewHeader: React.FC<{}> = () => {
     return (
         <View style={[styles.row, styles.bold, { borderTop: "1 solid black" }]} fixed>
-            <View style={[styles.cellLogo, styles.cell]}></View>
-            <View style={[styles.cellName, styles.cell]}>
-                <Text>Name</Text>
-            </View>
-            <View style={[styles.cellPostcode, styles.cell]}>
-                <Text>Postcode</Text>
-            </View>
-            <View style={[styles.cellTime, styles.cell]}>
-                <Text>Time</Text>
-            </View>
-            <View style={[styles.cellInstructions, styles.cell]}>
-                <Text>Instructions</Text>
-            </View>
+            <Text style={[styles.cellLogo, styles.cell]}></Text>
+            <Text style={[styles.cellName, styles.cell]}>Name</Text>
+            <Text style={[styles.cellPostcode, styles.cell]}>Postcode</Text>
+            <Text style={[styles.cellTime, styles.cell]}>Time</Text>
+            <Text style={[styles.cellInstructions, styles.cell]}>Instructions</Text>
         </View>
     );
 };
@@ -126,26 +118,20 @@ const DayOverviewHeader: React.FC<{}> = () => {
 const DayOverviewRow: React.FC<DayOverviewRowProps> = ({ row }) => {
     return (
         <View style={styles.row} wrap={false}>
-            <View style={[styles.cellLogo, styles.cell]}>
-                <View style={styles.row}>
-                    <CustomSVG icon={faSquare} color="black" fill={false} />
-                    {row.clients!.flagged_for_attention && (
-                        <CustomSVG icon={faFlag} color="orange" fill={true} />
-                    )}
-                </View>
+            <View style={[styles.cellLogo, styles.cell, styles.row]}>
+                <CustomSVG icon={faSquare} color="black" fill={false} />
+                {row.clients!.flagged_for_attention && (
+                    <CustomSVG icon={faFlag} color="orange" fill={true} />
+                )}
             </View>
-            <View style={[styles.cellName, styles.cell]}>
-                <Text>{row.clients!.full_name}</Text>
-            </View>
-            <View style={[styles.cellPostcode, styles.cell]}>
-                <Text>{row.clients!.address_postcode}</Text>
-            </View>
-            <View style={[styles.cellTime, styles.cell]}>
-                <Text>{dateTimeToAMPM(row.collection_datetime!)}</Text>
-            </View>
-            <View style={[styles.cellInstructions, styles.cell]}>
-                <Text>{row.clients!.delivery_instructions}</Text>
-            </View>
+            <Text style={[styles.cellName, styles.cell]}>{row.clients!.full_name}</Text>
+            <Text style={[styles.cellPostcode, styles.cell]}>{row.clients!.address_postcode}</Text>
+            <Text style={[styles.cellTime, styles.cell]}>
+                {dateTimeToAMPM(row.collection_datetime!)}
+            </Text>
+            <Text style={[styles.cellInstructions, styles.cell]}>
+                {row.clients!.delivery_instructions}
+            </Text>
         </View>
     );
 };
