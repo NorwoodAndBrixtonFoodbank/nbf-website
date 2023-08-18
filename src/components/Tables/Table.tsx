@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactElement, ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
 import styled from "styled-components";
@@ -13,7 +13,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import IconButton from "@mui/material/IconButton/IconButton";
 import Icon from "@/components/Icons/Icon";
-import supabase, { Schema, Tables } from "@/supabase";
+import supabase, { Schema } from "@/supabase";
 
 export interface Datum {
     [headerKey: string]: string | number | boolean | null;
@@ -145,6 +145,7 @@ const Table = <TableName extends keyof Schema>({
     data: inputData,
     headerKeysAndLabels,
     checkboxes,
+    onRowSelection,
     defaultShownHeaders,
     headerFilters,
     onDelete,
@@ -234,21 +235,21 @@ const Table = <TableName extends keyof Schema>({
 
         // TODO get Varun's changes about Datum updating
 
-        const key1 = row1.data[primaryKeyCol];
-        const key2 = row2.data[primaryKeyCol];
-        const order1 = row1.data[orderCol];
-        const order2 = row2.data[orderCol];
-
-        const { error } = await supabase.from(tableName).upsert([
-            { [primaryKeyCol]: key1, [orderCol]: order2 },
-            { [primaryKeyCol]: key2, [orderCol]: order1 },
-        ]);
-
-        if (error) {
-            throw new Error(`Database error - ${error.message}`);
-        }
-
-        return data;
+        // const key1 = row1.data[primaryKeyCol];
+        // const key2 = row2.data[primaryKeyCol];
+        // const order1 = row1.data[orderCol];
+        // const order2 = row2.data[orderCol];
+        //
+        // const { error } = await supabase.from(tableName).upsert([
+        //     { [primaryKeyCol]: key1, [orderCol]: order2 },
+        //     { [primaryKeyCol]: key2, [orderCol]: order1 },
+        // ]);
+        //
+        // if (error) {
+        //     throw new Error(`Database error - ${error.message}`);
+        // }
+        //
+        // return data;
     };
 
     const swapRows = (rowId1: number, filteredRowIndex1: number, upArrow: boolean): void => {
