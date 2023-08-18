@@ -1,6 +1,7 @@
-import supabase, { InsertSchema, Schema, UpdateSchema } from "@/supabase";
 import { checkboxGroupToArray, Fields, Person } from "@/components/Form/formFunctions";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
+import { InsertSchema, Schema, UpdateSchema } from "@/database_utils";
+import supabase from "@/supabaseServer";
 
 type FamilyDatabaseInsertRecord = InsertSchema["families"];
 type FamilyDatabaseUpdateRecord = UpdateSchema["families"];
