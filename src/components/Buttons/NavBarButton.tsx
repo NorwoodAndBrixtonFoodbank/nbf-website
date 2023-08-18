@@ -13,7 +13,7 @@ const NavBarButton: React.FC<Props> = (props) => {
     const pathname = usePathname();
     const active = pathname?.startsWith(props.link) ?? false;
     return (
-        <UnstyledLink key={props.page} href={props.link} prefetch={false}>
+        <UnstyledLink key={props.page} href={props.link}>
             <Button color="primary" variant={active ? "contained" : "outlined"}>
                 {props.page}
             </Button>

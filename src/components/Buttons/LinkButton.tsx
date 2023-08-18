@@ -10,7 +10,7 @@ interface Props {
 const LinkButton: React.FC<Props> = ({ children, link }) => {
     return (
         <ButtonWrap>
-            <UnstyledLink href={link} prefetch={false}>
+            <UnstyledLink href={link}>
                 <Button color="primary" variant="contained">
                     {children}
                 </Button>
