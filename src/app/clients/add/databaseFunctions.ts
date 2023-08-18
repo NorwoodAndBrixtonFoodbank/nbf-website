@@ -1,4 +1,5 @@
-import supabase, { InsertSchema, Schema } from "@/supabase";
+import supabase from "@/supabaseClient";
+import { InsertSchema, Schema } from "@/database_utils";
 import { Person } from "@/components/Form/formFunctions";
 
 type FamilyDatabaseInsertRecord = InsertSchema["families"];

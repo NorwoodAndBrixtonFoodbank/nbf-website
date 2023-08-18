@@ -1,6 +1,6 @@
 "use client";
 
-import supabase from "@/supabase";
+import supabase from "@/supabaseClient";
 import React, { useState } from "react";
 import ActionBarModal from "@/app/clients/ActionBarModal";
 import styled from "styled-components";

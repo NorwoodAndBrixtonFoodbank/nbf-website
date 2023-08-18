@@ -2,7 +2,7 @@
 
 import React from "react";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { DatabaseAutoType } from "@/supabase";
+import { DatabaseAutoType } from "@/database_utils";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import IconButton from "@mui/material/IconButton/IconButton";
 

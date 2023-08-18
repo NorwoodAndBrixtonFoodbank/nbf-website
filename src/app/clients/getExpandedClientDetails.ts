@@ -1,4 +1,5 @@
-import supabase, { Schema } from "@/supabase";
+import supabase from "@/supabaseClient";
+import { Schema } from "@/database_utils";
 import {
     familyCountToFamilyCategory,
     formatDatetimeAsDate,

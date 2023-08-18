@@ -1,4 +1,5 @@
-import supabase, { InsertSchema, Schema } from "@/supabase";
+import supabase from "@/supabaseClient";
+import { InsertSchema, Schema } from "@/database_utils";
 
 type InsertedParcels = InsertSchema["parcels"];
 type FetchedParcels = Pick<Schema["parcels"], "primary_key" | "client_id">;
