@@ -9,7 +9,7 @@ import styled from "styled-components";
 import Button from "@mui/material/Button";
 import LightDarkSlider from "@/components/NavBar/LightDarkSlider";
 import SignOutButton from "@/components/NavBar/SignOutButton";
-import LinkButton from "@/components/Buttons/LinkButton";
+import NavBarButton from "@/components/Buttons/NavBarButton";
 import { usePathname } from "next/navigation";
 
 export const NavBarHeight = "4rem";
@@ -174,7 +174,7 @@ const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
                     <LoginDependent>
                         <DesktopButtonContainer>
                             {pages.map(([page, link]) => (
-                                <LinkButton link={link} page={page} key={page} />
+                                <NavBarButton link={link} page={page} key={page} />
                             ))}
                         </DesktopButtonContainer>
                     </LoginDependent>
