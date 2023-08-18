@@ -10,12 +10,11 @@ import {
 } from "./errorPageStyling";
 
 interface ErrorProps {
-    Error: Error;
     reset: () => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Error: React.FC<ErrorProps> = ({ Error, reset }) => {
+const Error: React.FC<ErrorProps> = ({ reset }) => {
     const [ErrorMessage, SetErrorMessage] = useState("");
 
     const retry = (): void => {
@@ -26,7 +25,7 @@ const Error: React.FC<ErrorProps> = ({ Error, reset }) => {
     };
     return (
         <ErrorCenterer>
-            <ErrorPanel>
+            <ErrorPanel elevation={5}>
                 <ErrorLargeText>OOPS!</ErrorLargeText>
                 <ErrorSecondaryText>
                     We could not connect to the database at this time.

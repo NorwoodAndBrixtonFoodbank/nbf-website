@@ -1,3 +1,4 @@
+import Paper from "@mui/material/Paper";
 import styled from "styled-components";
 
 export const ErrorCenterer = styled.div`
@@ -5,7 +6,7 @@ export const ErrorCenterer = styled.div`
     justify-content: center;
     margin-top: 10vh;
 `;
-export const ErrorPanel = styled.div`
+export const ErrorPanel = styled(Paper)`
     max-width: 450px;
     border-radius: 2rem;
     padding: 5rem;
