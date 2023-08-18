@@ -82,7 +82,6 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
             .flat();
 
         const { error } = await supabase.from("events").insert(toInsert);
-
         if (error) {
             setModalError(error.message);
         } else {
