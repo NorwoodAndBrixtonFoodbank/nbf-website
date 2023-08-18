@@ -8,6 +8,7 @@ import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import { EventClickArg } from "@fullcalendar/core";
 import styled from "styled-components";
 import EventModal from "@/components/Calendar/EventModal";
+import { Paper } from "@mui/material";
 
 export interface CalendarProps {
     initialEvents: CalendarEvent[];
@@ -28,7 +29,10 @@ export interface CalendarEvent {
     allDay?: boolean;
 }
 
-const CalendarStyling = styled.div`
+const CalendarStyling = styled(Paper)`
+    border-radius: 2rem;
+    padding: 1.5rem;
+
     --fc-button-active-bg-color: ${(props) => props.theme.primary.background[3]};
     --fc-button-active-border-color: ${(props) => props.theme.primary.background[3]};
     --fc-button-text-color: ${(props) => props.theme.primary.foreground[3]};
@@ -38,14 +42,11 @@ const CalendarStyling = styled.div`
     --fc-small-font-size: 0.8em;
 
     --fc-page-bg-color: transparent;
-    --fc-today-bg-color: ${(props) => props.theme.primary.background[0]};
+    --fc-today-bg-color: transparent;
 
     .fc {
-        background-color: ${(props) => props.theme.main.background[0]};
         color: ${(props) => props.theme.main.foreground[0]};
-        box-shadow: 0 0 15px ${(props) => props.theme.shadow};
-        border-radius: 2rem;
-        padding: 1.5rem;
+        background: transparent;
         text-align: center;
     }
 
@@ -55,7 +56,9 @@ const CalendarStyling = styled.div`
     .fc .fc-icon {
         font-size: min(4vw, 1.2rem);
     }
-
+    .fc .fc-scrollgrid-section-header.fc-scrollgrid-section-sticky > * {
+        top: 4rem;
+    }
     .fc .fc-col-header-cell-cushion,
     .fc .fc-daygrid-day-number,
     .fc .fc-timegrid-axis-cushion,
@@ -107,6 +110,12 @@ const CalendarStyling = styled.div`
         flex-shrink: 80;
     }
 
+    @media (hover: hover) {
+        .fc .fc-event:hover {
+            box-shadow: 0 3px 2px ${(props) => props.theme.shadow};
+        }
+    }
+
     // group of buttons in the toolbar
     .fc .fc-toolbar-chunk {
         margin: 0 0.5rem;
@@ -118,9 +127,23 @@ const CalendarStyling = styled.div`
         padding: 0 min(2.5vw, 0.75rem);
         text-align: center;
         vertical-align: middle;
+        color: ${(props) => props.theme.primary.foreground[1]};
         background-color: ${(props) => props.theme.primary.background[1]};
         border-color: ${(props) => props.theme.primary.background[1]};
-        color: ${(props) => props.theme.primary.foreground[1]};
+
+        @media (hover: hover) {
+            &:hover {
+                color: ${(props) => props.theme.primary.foreground[2]};
+                background-color: ${(props) => props.theme.primary.background[2]};
+                border-color: ${(props) => props.theme.primary.background[2]};
+            }
+        }
+    }
+
+    .fc .fc-button-active {
+        color: ${(props) => props.theme.primary.foreground[3]};
+        background-color: ${(props) => props.theme.primary.background[3]};
+        border-color: ${(props) => props.theme.primary.background[3]};
     }
 
     .fc .fc-button-primary:focus,
@@ -136,12 +159,22 @@ const CalendarStyling = styled.div`
     }
 
     .fc .fc-day-other {
-        background-color: ${(props) => props.theme.main.background[1]};
-        color: ${(props) => props.theme.main.lighterForeground[1]};
+        > div {
+            color: ${(props) => props.theme.main.lighterForeground[2]};
+            background-color: ${(props) => props.theme.main.background[2]};
+        }
     }
 
-    // background color of headers
+    .fc .fc-day-today {
+        > div {
+            color: ${(props) => props.theme.primary.foreground[0]};
+            background-color: ${(props) => props.theme.primary.background[0]};
+        }
+    }
+
+    // color of headers
     .fc thead {
+        color: ${(props) => props.theme.main.foreground[2]};
         background-color: ${(props) => props.theme.main.background[2]};
     }
 `;
