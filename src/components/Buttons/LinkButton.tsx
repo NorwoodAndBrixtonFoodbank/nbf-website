@@ -1,31 +1,21 @@
-"use client";
-
 import React from "react";
-import Link from "next/link";
-import styled from "styled-components";
 import Button from "@mui/material/Button";
-import { usePathname } from "next/navigation";
+import { ButtonWrap, UnstyledLink } from "@/components/Buttons/GeneralButtonParts";
 
-const UnstyledLink = styled(Link)`
-    text-decoration: none;
-    display: contents;
-`;
-
-type LinkButtonProps = {
+interface Props {
+    children?: React.ReactNode;
     link: string;
-    page: string;
-    onClick?: () => void;
-};
+}
 
-const LinkButton: React.FC<LinkButtonProps> = (props) => {
-    const pathname = usePathname();
-    const active = pathname?.startsWith(props.link) ?? false;
+const LinkButton: React.FC<Props> = ({ children, link }) => {
     return (
-        <UnstyledLink key={props.page} href={props.link} prefetch={false}>
-            <Button color="primary" variant={active ? "contained" : "outlined"}>
-                {props.page}
-            </Button>
-        </UnstyledLink>
+        <ButtonWrap>
+            <UnstyledLink href={link}>
+                <Button color="primary" variant="contained">
+                    {children}
+                </Button>
+            </UnstyledLink>
+        </ButtonWrap>
     );
 };
 

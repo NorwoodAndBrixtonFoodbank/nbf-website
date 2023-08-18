@@ -6,7 +6,7 @@ import { Dialog } from "@mui/material";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import Icon from "@/components/Icons/Icon";
 
-const StyledDialog = styled(Dialog)`
+export const StyledDialog = styled(Dialog)`
     & .MuiPaper-root {
         border: 0;
         border-radius: 2em;
