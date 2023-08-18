@@ -1,13 +1,27 @@
 "use client";
 import React from "react";
+import { ErrorCenterer, ErrorPanel, ErrorLargeText, ErrorSecondaryText } from "./errorPageStyling";
+import LinkButton from "@/components/Buttons/LinkButton";
 
-const GlobalError: React.FC = () => {
+interface ErrorProps {
+    Error: Error;
+    reset: () => void;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const Error: React.FC<ErrorProps> = ({ Error, reset }) => {
     return (
-        <div>
-            <h1>Global Error</h1>
-            CHANGE THIS
-        </div>
+        <ErrorCenterer>
+            <ErrorPanel>
+                <ErrorLargeText>OOPS!</ErrorLargeText>
+                <ErrorSecondaryText>
+                    There has been an error. Please try again or contact a developer if the problem
+                    persists.
+                </ErrorSecondaryText>
+                <LinkButton link="/clients" page="Return to Home" />
+            </ErrorPanel>
+        </ErrorCenterer>
     );
 };
 
-export default GlobalError;
+export default Error;
