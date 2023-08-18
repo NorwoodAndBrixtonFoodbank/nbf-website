@@ -13,6 +13,7 @@ import {
 } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { selectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
+import { GappedDiv } from "@/components/Form/formStyling";
 
 const getNumberAdultsDefault = (adults: Person[], gender: string): string | undefined => {
     const personIndex = adults.findIndex((person) => person.gender === gender);
@@ -71,7 +72,7 @@ const NumberAdultsCard: React.FC<CardProps> = ({
             required={true}
             text="Please enter the number of adults (aged 16 or above) in the appropriate category."
         >
-            <>
+            <GappedDiv>
                 <FreeFormTextInput
                     error={errorExists(formErrors.adults)}
                     label="Female"
@@ -91,7 +92,7 @@ const NumberAdultsCard: React.FC<CardProps> = ({
                     defaultValue={getNumberAdultsDefault(fields.adults, "other")}
                     onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "other")}
                 />
-            </>
+            </GappedDiv>
         </GenericFormCard>
     );
 };
