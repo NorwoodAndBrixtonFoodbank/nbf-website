@@ -56,6 +56,7 @@ interface Props {
     columnDisplayFunctions?: { [headerKey: string]: ColumnDisplayFunction };
     columnStyleOptions?: { [headerKey: string]: ColumnStyleOptions };
     onRowClick?: OnRowClickFunction;
+    key?: React.Key;
 }
 
 const doesRowIncludeFilterText = (
@@ -203,7 +204,7 @@ const Table: React.FC<Props> = ({
         return {
             name: headerName,
             selector: (row) => row.data[headerKey] ?? "",
-            sortable: sortable,
+            sortable: sortable, // This needs to change to fetch new data
             cell(row) {
                 return (
                     <CustomCell

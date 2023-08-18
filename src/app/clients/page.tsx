@@ -1,16 +1,16 @@
 import { Metadata } from "next";
 import React from "react";
-import { getClientsTableData } from "@/app/clients/getClientsTableData";
+import { getClientsTableData, getCountClientsTableData } from "@/app/clients/getClientsTableData";
 import ClientsPage from "@/app/clients/ClientsPage";
 import Title from "@/components/Title/Title";
 
 const Clients: () => Promise<React.ReactElement> = async () => {
-    const data = await getClientsTableData();
-
+    const data = await getClientsTableData(0, 9);
+    const count = await getCountClientsTableData();
     return (
         <main>
             <Title>Clients Page</Title>
-            <ClientsPage clientsTableData={data} />
+            <ClientsPage count={count} initClientsTableData={data} />
         </main>
     );
 };

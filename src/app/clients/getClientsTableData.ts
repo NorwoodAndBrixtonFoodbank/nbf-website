@@ -1,3 +1,5 @@
+"use server";
+
 import supabase from "@/supabaseClient";
 import { Schema } from "@/database_utils";
 import { Datum } from "@/components/Tables/Table";
@@ -19,7 +21,7 @@ export interface ClientsTableRow extends Datum {
 export type ProcessingData = Awaited<ReturnType<typeof getProcessingData>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const getProcessingData = async () => {
+const getProcessingData = async (lowerLimit: number, upperLimit: number) => {
     const response = await supabase
         .from("parcels")
         .select(
@@ -49,7 +51,8 @@ const getProcessingData = async () => {
         )
         .order("packing_datetime", { ascending: false })
         .order("timestamp", { ascending: false, foreignTable: "events" })
-        .limit(1, { foreignTable: "events" });
+        .limit(1, { foreignTable: "events" })
+        .range(lowerLimit, upperLimit);
 
     return response.data ?? [];
 };
@@ -136,7 +139,45 @@ export const eventToStatusMessage = (
     return `${event.event_name} @ ${formatDatetimeAsDate(event.timestamp)}`;
 };
 
-export const getClientsTableData = async (): Promise<ClientsTableRow[]> => {
-    const processingData = await getProcessingData();
+export const getClientsTableData = async (
+    lowerLimit: number,
+    upperLimit: number
+): Promise<ClientsTableRow[]> => {
+    const processingData = await getProcessingData(lowerLimit, upperLimit);
     return processingDataToClientsTableData(processingData);
+};
+
+export const getCountClientsTableData = async (): Promise<number> => { // Combine this with the above function somehow
+    const { count } = await supabase
+        .from("parcels")
+        .select(
+            `
+    parcel_id:primary_key,
+    collection_centre,
+    collection_datetime,
+    packing_datetime,
+    
+    client:clients (
+        full_name,
+        address_postcode,
+        flagged_for_attention,
+        signposting_call_required,
+        
+        family:families (
+            age,
+            gender
+        )
+    ),
+    
+    events (
+        event_name,
+        timestamp
+    )
+`,
+            { count: "exact", head: true }
+        )
+        .order("packing_datetime", { ascending: false })
+        .order("timestamp", { ascending: false, foreignTable: "events" })
+        .limit(1, { foreignTable: "events" });
+    return count ? count : 0;
 };

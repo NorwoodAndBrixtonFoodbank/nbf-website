@@ -11,7 +11,6 @@ import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppl
 import DeliveryIcon from "@/components/Icons/DeliveryIcon";
 import CollectionIcon from "@/components/Icons/CollectionIcon";
 import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
-import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
 import Icon from "@/components/Icons/Icon";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal/Modal";
@@ -19,6 +18,7 @@ import { Schema } from "@/database_utils";
 import TableSurface from "@/components/Tables/TableSurface";
 import { CenterComponent } from "@/components/Form/formStyling";
 import Button from "@mui/material/Button";
+import CustomPaginationBar from "@/app/clients/PaginationBar";
 import ActionBar from "@/app/clients/ActionBar";
 
 // TODO Change Button to LinkButton
@@ -60,7 +60,6 @@ export const clientTableHeaderKeysAndLabels: TableHeaders = [
 ];
 
 const toggleableHeaders = [
-    "fullName",
     "familyCategory",
     "addressPostcode",
     "packingDate",
@@ -97,11 +96,13 @@ const clientTableColumnStyleOptions = {
 };
 
 interface Props {
-    clientsTableData: ClientsTableRow[];
+    initClientsTableData: ClientsTableRow[];
+    count: number;
 }
 
 const ClientsPage: React.FC<Props> = (props) => {
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
+    const [clientsTableData, setClientsTableData] = useState(props.initClientsTableData)
     const [selected, setSelected] = useState<number[]>([]);
     const theme = useTheme();
 
@@ -159,20 +160,26 @@ const ClientsPage: React.FC<Props> = (props) => {
 
     return (
         <>
-            <ActionBar data={props.clientsTableData} selected={selected} />
+            <ActionBar data={clientsTableData} selected={selected} />
             <TableSurface>
                 <Table
-                    data={props.clientsTableData}
+                    key={JSON.stringify(clientsTableData)} // Need to find a new key, perhaps a useEffect and an increment?
+                    data={clientsTableData}
                     headerKeysAndLabels={clientTableHeaderKeysAndLabels}
                     columnDisplayFunctions={clientTableColumnDisplayFunctions}
                     columnStyleOptions={clientTableColumnStyleOptions}
                     onRowClick={onClientTableRowClick}
                     checkboxes={true}
+                    pagination={false}
                     onRowSelection={setSelected}
-                    pagination={true}
                     sortable={true}
                     headerFilters={["addressPostcode"]}
                     toggleableHeaders={toggleableHeaders}
+                />
+                <CustomPaginationBar
+                    dataState={clientsTableData}
+                    setDataState={setClientsTableData}
+                    total={props.count}
                 />
             </TableSurface>
             <Modal
@@ -186,9 +193,7 @@ const ClientsPage: React.FC<Props> = (props) => {
                 onClose={onExpandedClientDetailsClose}
                 headerId="expandedClientDetailsModal"
             >
-                <Suspense fallback={<ExpandedClientDetailsFallback />}>
-                    <ExpandedClientDetails parcelId={selectedParcelId} />
-                </Suspense>
+                <ExpandedClientDetails parcelId={selectedParcelId} />
             </Modal>
             <CenterComponent>
                 <Button variant="contained" href="/clients/add">

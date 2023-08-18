@@ -1,17 +1,57 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import DataViewer from "@/components/DataViewer/DataViewer";
-import { getExpandedClientDetails } from "@/app/clients/getExpandedClientDetails";
+import DataViewerFallback from "@/components/DataViewer/DataViewerFallback";
+import {
+    getExpandedClientDetails,
+    ExpandedClientDetails,
+} from "@/app/clients/getExpandedClientDetails";
+
+const clientDetailFields = [
+    "VOUCHER #",
+    "FULL NAME",
+    "PHONE NUMBER",
+    "PACKING DATE",
+    "PACKING TIME",
+    "DELIVERY_INSTRUCTIONS",
+    "ADDRESS",
+    "HOUSEHOLD",
+    "AGE & GENDER OF CHILDREN",
+    "DIETARY REQUIREMENTS",
+    "FEMININE PRODUCTS",
+    "BABY PRODUCTS",
+    "PET FOOD",
+    "OTHER REQUIREMENTS",
+    "EXTRA INFORMATION",
+];
 
 interface Props {
     parcelId: string | null;
 }
 
-const ExpandedClientDetails = async (props: Props): Promise<React.ReactElement> => {
-    if (props.parcelId === null) {
-        return <></>;
-    }
+const ExpandedClientDetails: React.FC<Props> = (props) => {
+    const [expandedClientDetails, setExpandedClientDetails] =
+        useState<ExpandedClientDetails | null>(null);
 
-    const expandedClientDetails = await getExpandedClientDetails(props.parcelId);
+    useEffect(() => {
+        async function getAndSetClientDetails() {
+            if (props.parcelId === null) {
+                return;
+            }
+
+            const clientDetailsResponse = await getExpandedClientDetails(props.parcelId);
+            setExpandedClientDetails(clientDetailsResponse);
+        }
+        getAndSetClientDetails();
+    }, []);
+
+    if (expandedClientDetails === null) {
+        if (props.parcelId === null) {
+            return <></>;
+        }
+        return <DataViewerFallback fieldPlaceholders={clientDetailFields} />;
+    }
 
     return <DataViewer data={expandedClientDetails} />;
 };
