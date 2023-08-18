@@ -1,5 +1,6 @@
 import React from "react";
-import supabase, { Schema } from "@/supabase";
+import { Schema } from "@/database_utils";
+import supabase from "@/supabaseServer";
 import ShippingLabelsButton from "@/pdf/ShippingLabels/ShippingLabelsButton";
 import { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
 

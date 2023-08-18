@@ -5,7 +5,7 @@ import {
     fetchLists,
     fetchParcels,
 } from "@/pdf/ShoppingList/databaseFetch";
-import supabase, { Schema } from "@/supabase";
+import { Schema } from "@/database_utils";
 import { Person } from "@/components/Form/formFunctions";
 
 export interface BlockProps {
@@ -200,8 +200,8 @@ const getQuantityAndNotes = (
     const size_quantity = `${size}_quantity` as keyof Schema["lists"];
     const size_notes = `${size}_notes` as keyof Schema["lists"];
     return {
-        quantity: row[size_quantity] ?? "",
-        notes: row[size_notes] ?? "",
+        quantity: row[size_quantity]?.toString() ?? "",
+        notes: row[size_notes]?.toString() ?? "",
     };
 };
 
