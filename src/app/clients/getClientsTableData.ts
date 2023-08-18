@@ -78,7 +78,7 @@ export const processingDataToClientsTableData = async (
             congestionChargeApplies: congestionChargeDetails[index].congestionCharge,
             packingDate: formatDatetimeAsDate(parcel.packing_datetime),
             packingTimeLabel: datetimeToPackingTimeLabel(parcel.packing_datetime),
-            collectionDatetime: formatDatetimeAsDate(parcel.collection_datetime),
+            collectionDatetime: parcel.collection_datetime ?? "-",
             lastStatus: eventToStatusMessage(parcel.events[0] ?? null),
         });
     }

@@ -23,7 +23,7 @@ const sampleProcessingData: ProcessingData = [
         packing_datetime: "2023-08-04T13:30:00+00:00",
 
         client: {
-            primary_key: "primary_key_1",
+            primary_key: "PRIMARY_KEY_1",
             full_name: "CLIENT_NAME",
             address_postcode: "SW1A 2AA",
             flagged_for_attention: false,
@@ -50,6 +50,7 @@ const sampleRawExpandedClientDetails: RawClientDetails = {
     packing_datetime: "2023-08-04T13:30:00+00:00",
 
     client: {
+        primary_key: "PRIMARY_KEY_1",
         full_name: "CLIENT NAME",
         phone_number: "PHONE NUMBER",
         delivery_instructions: "INSTRUCTIONS FOR DELIVERY",
@@ -90,6 +91,7 @@ describe("Clients Page", () => {
                 processingDataToClientsTableData(sampleProcessingData).then((clientTableData) => {
                     expect(clientTableData).to.deep.equal([
                         {
+                            primaryKey: "PRIMARY_KEY_1",
                             parcelId: "PRIMARY_KEY",
                             flaggedForAttention: false,
                             requiresFollowUpPhoneCall: true,

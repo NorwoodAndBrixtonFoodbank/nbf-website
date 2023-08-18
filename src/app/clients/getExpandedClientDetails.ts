@@ -18,6 +18,7 @@ export const getRawClientDetails = async (parcelId: string) => {
         packing_datetime,
 
         client:clients(
+            primary_key,
             full_name,
             phone_number,
             delivery_instructions,
