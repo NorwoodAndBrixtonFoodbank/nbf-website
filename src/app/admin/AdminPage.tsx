@@ -9,14 +9,14 @@ import CreateUserForm from "@/app/admin/createUser/CreateUserForm";
 import { faUsers, faUserPlus, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { User } from "@supabase/gotrue-js";
+import { UserRow } from "@/app/admin/adminActions";
 
 const PanelIcon = styled(FontAwesomeIcon)`
     margin-right: 0.5em;
 `;
 
 interface Props {
-    userData: User[];
+    userData: UserRow[];
 }
 
 // TODO VFB-23 Add accessibility tests for the admin page

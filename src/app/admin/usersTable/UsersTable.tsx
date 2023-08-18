@@ -4,11 +4,10 @@ import React, { useState } from "react";
 import Table, { ColumnDisplayFunction, Row, TableHeaders } from "@/components/Tables/Table";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
-import { deleteUser } from "@/app/admin/adminActions";
+import { deleteUser, UserRow } from "@/app/admin/adminActions";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshPageButton from "@/app/admin/RefreshPageButton";
-import { User } from "@supabase/gotrue-js";
 
 const DangerDialog = styled(Modal)`
     & #deleteUserDialog {
@@ -27,31 +26,35 @@ const usersTableHeaderKeysAndLabels: TableHeaders = [
     ["id", "USER ID"],
     ["email", "EMAIL"],
     ["userRole", "ROLE"],
-    ["created_at", "CREATED AT"],
-    ["updated_at", "UPDATED AT"],
+    ["createdAt", "CREATED AT"],
+    ["updatedAt", "UPDATED AT"],
 ];
 
-const formatDatetime = (datetime: string | null): string => {
-    if (datetime === null || isNaN(Date.parse(datetime))) {
+const formatTimestamp = (timestamp: number): string => {
+    if (isNaN(timestamp)) {
         return "-";
     }
 
-    return new Date(datetime).toLocaleString("en-gb");
+    return new Date(timestamp).toLocaleString("en-gb");
 };
 
 const userTableColumnDisplayFunctions: { [headerKey: string]: ColumnDisplayFunction } = {
-    // TODO Fix
-    userRole: (row: Row) => row.data.app_metadata.role,
-    created_at: (row: Row) => formatDatetime(row.data.created_at),
-    updated_at: (row: Row) => formatDatetime(row.data.updated_at),
+    createdAt: (row: Row) => {
+        const rowData = row.data as UserRow;
+        return formatTimestamp(rowData.createdAt);
+    },
+    updatedAt: (row: Row) => {
+        const rowData = row.data as UserRow;
+        return formatTimestamp(rowData.updatedAt);
+    },
 };
 
 interface Props {
-    userData: User[];
+    userData: UserRow[];
 }
 
 const UsersTable: React.FC<Props> = (props) => {
-    const [userToDelete, setUserToDelete] = useState();
+    const [userToDelete, setUserToDelete] = useState<UserRow>();
     const [refreshRequired, setRefreshRequired] = useState(false);
 
     const userOnDelete = (rowIndex: number): void => {
@@ -59,7 +62,7 @@ const UsersTable: React.FC<Props> = (props) => {
     };
 
     const onUserDeleteConfirmation = async (): Promise<void> => {
-        await deleteUser(userToDelete.id);
+        await deleteUser(userToDelete!.id);
 
         // TODO VFB-23 Handle error on request to deleteUser()
 
