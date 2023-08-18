@@ -1,11 +1,11 @@
 import { Metadata } from "next";
 
 import React from "react";
-import AddClientForm, { AddClientFields } from "@/app/clients/add/AddClientForm";
+import ClientForm, { ClientFields } from "@/app/clients/add/ClientForm";
 import { Errors, FormErrors } from "@/components/Form/formFunctions";
 
 const AddClients: () => React.ReactElement = () => {
-    const initialFields: AddClientFields = {
+    const initialFields: ClientFields = {
         fullName: "",
         phoneNumber: "",
         addressLine1: "",
@@ -44,7 +44,7 @@ const AddClients: () => React.ReactElement = () => {
 
     return (
         <main>
-            <AddClientForm
+            <ClientForm
                 initialFields={initialFields}
                 initialFormErrors={initialFormErrors}
                 editMode={false}

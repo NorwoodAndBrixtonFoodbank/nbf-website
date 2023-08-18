@@ -43,7 +43,7 @@ interface Props {
     clientID?: string;
 }
 
-export interface AddClientFields extends Fields {
+export interface ClientFields extends Fields {
     fullName: string;
     phoneNumber: string;
     addressLine1: string;
@@ -83,12 +83,7 @@ const formSections = [
     ExtraInformationCard,
 ];
 
-const AddClientForm: React.FC<Props> = ({
-    initialFields,
-    initialFormErrors,
-    editMode,
-    clientID,
-}) => {
+const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editMode, clientID }) => {
     const router = useRouter();
     const [fields, setFields] = useState(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
@@ -172,4 +167,4 @@ const AddClientForm: React.FC<Props> = ({
     );
 };
 
-export default AddClientForm;
+export default ClientForm;
