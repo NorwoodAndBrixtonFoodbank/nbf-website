@@ -1,9 +1,13 @@
 "use client";
 import React from "react";
-import { ErrorCenterer, ErrorPanel, ErrorLargeText, ErrorSecondaryText } from "./errorPageStyling";
+import {
+    ErrorCenterer,
+    ErrorPanel,
+    ErrorLargeText,
+    ErrorSecondaryText,
+} from "@/app/errorPageStyling";
 import LinkButton from "@/components/Buttons/LinkButton";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Error: React.FC<{}> = () => {
     return (
         <ErrorCenterer>
