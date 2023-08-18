@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
         fontFamily: "Helvetica",
     },
     infoAndLogoContainer: {
-        height: "100",
+        height: 100,
         width: "100%",
     },
     informationContainer: {
@@ -52,8 +52,7 @@ const styles = StyleSheet.create({
     },
     logoStyling: {
         maxHeight: 60,
-        // below is because the width for the logo is ~1.7x the height
-        maxWidth: 60 * 1.7,
+        maxWidth: 102, // maintains aspect ratio of logo
         alignSelf: "center",
         marginRight: 15,
     },
