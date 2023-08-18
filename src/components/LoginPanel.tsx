@@ -45,7 +45,7 @@ const MiddleDiv = styled(Paper)`
     }
 
     & button:hover {
-        color: ${(props) => props.theme.main.foreground[2]};
+        color: ${(props) => props.theme.primary.foreground[2]};
     }
 `;
 
