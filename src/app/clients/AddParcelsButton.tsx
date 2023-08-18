@@ -10,7 +10,7 @@ import Button from "@mui/material/Button";
 import TableSurface from "@/components/Tables/TableSurface";
 import Table, { Datum, TableHeaders } from "@/components/Tables/Table";
 import styled from "styled-components";
-import { Schema } from "@/supabase";
+import { Schema } from "@/database_utils";
 
 interface Props {
     data: ClientsTableRow[];
