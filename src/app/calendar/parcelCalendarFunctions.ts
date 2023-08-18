@@ -1,4 +1,5 @@
-import supabase, { Schema } from "@/supabase";
+import { Schema } from "@/database_utils";
+import supabase from "@/supabaseClient";
 import { CalendarEvent } from "@/components/Calendar/Calendar";
 
 export type ParcelWithClientName = Schema["parcels"] & { clients: { full_name: string } | null };

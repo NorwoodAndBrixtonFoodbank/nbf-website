@@ -1,4 +1,5 @@
-import supabase, { Schema } from "@/supabase";
+import supabase from "@/supabaseClient";
+import { Schema } from "@/database_utils";
 import { Datum } from "@/components/Tables/Table";
 
 export interface ClientsTableRow extends Datum {

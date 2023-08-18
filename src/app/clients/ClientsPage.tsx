@@ -15,7 +15,7 @@ import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFa
 import Icon from "@/components/Icons/Icon";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal/Modal";
-import { Schema } from "@/supabase";
+import { Schema } from "@/database_utils";
 import TableSurface from "@/components/Tables/TableSurface";
 import { CenterComponent } from "@/components/Form/formStyling";
 import Button from "@mui/material/Button";
