@@ -33,6 +33,22 @@ jobs:
       - name: Run component tests
         run: npm run test:component
 
+      - name: Upload Screenshots
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: screenshots
+          path: cypress/screenshots
+          retention-days: 1
+
+      - name: Upload Videos
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: videos
+          path: cypress/videos
+          retention-days: 1
+
   e2e_tests:
     name: Run end-to-end tests
     runs-on: ubuntu-latest
@@ -51,3 +67,19 @@ jobs:
 
       - name: Run e2e tests
         run: npm run test:e2e
+
+      - name: Upload Screenshots
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: screenshots
+          path: cypress/screenshots
+          retention-days: 1
+
+      - name: Upload Videos
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: videos
+          path: cypress/videos
+          retention-days: 1
