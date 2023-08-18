@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import { ButtonWrap, UnstyledLink } from "@/components/Buttons/GeneralButtonParts";
 
 interface Props {
-    children: string;
+    children?: React.ReactNode;
     link: string;
 }
 

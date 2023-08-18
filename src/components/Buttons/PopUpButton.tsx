@@ -4,7 +4,7 @@ import { ButtonWrap } from "@/components/Buttons/GeneralButtonParts";
 import { StyledDialog } from "@/components/Modal/Modal";
 
 interface Props {
-    children: React.ReactElement;
+    children?: React.ReactNode;
     displayText: string;
 }
 
