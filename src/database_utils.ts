@@ -2,7 +2,7 @@ import { Database } from "@/database_types_file";
 
 export type DatabaseAutoType = Database;
 
-type Tables = Database["public"]["Tables"];
+export type Tables = Database["public"]["Tables"];
 
 export type Schema = {
     [key in keyof Tables]: Tables[key]["Row"];

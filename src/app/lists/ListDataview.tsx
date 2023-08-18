@@ -138,7 +138,11 @@ const ListsDataView: React.FC<Props> = (props) => {
                     toggleableHeaders={toggleableHeaders}
                     defaultShownHeaders={["item_name", ...toggleableHeaders]}
                     data={props.data}
-                    reorderable
+                    reorderable={{
+                        tableName: "lists",
+                        primaryKeyCol: "primary_key",
+                        orderCol: "item_name",
+                    }}
                     headerFilters={["item_name"]}
                     pagination={false}
                     onEdit={onEdit}

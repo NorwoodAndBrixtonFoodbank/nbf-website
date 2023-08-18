@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactElement, ReactNode, useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
 import styled from "styled-components";
@@ -13,12 +13,19 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import IconButton from "@mui/material/IconButton/IconButton";
 import Icon from "@/components/Icons/Icon";
+import supabase, { Schema, Tables } from "@/supabase";
 
 export interface Datum {
     [headerKey: string]: string | number | boolean | null;
 }
 
 export type TableHeaders = [string, string][];
+
+type Reorderable<N extends keyof Schema> = {
+    tableName: N;
+    primaryKeyCol: keyof Schema[N];
+    orderCol: keyof Schema[N];
+};
 
 export interface Row {
     rowId: number;
@@ -43,12 +50,12 @@ export interface ColumnStyleOptions {
 }
 export type TableColumnStyleOptions = { [headerKey: string]: ColumnStyleOptions };
 
-interface Props {
+interface Props<TableName extends keyof Schema> {
     data: Datum[];
     headerKeysAndLabels: TableHeaders;
     checkboxes?: boolean;
     onRowSelection?: (rowIds: number[]) => void;
-    reorderable?: boolean;
+    reorderable?: Reorderable<TableName>;
     headerFilters?: string[];
     pagination?: boolean;
     defaultShownHeaders?: string[];
@@ -134,23 +141,22 @@ const defaultColumnStyleOptions: ColumnStyleOptions = {
     maxWidth: "20rem",
 };
 
-const Table: React.FC<Props> = ({
+const Table = <TableName extends keyof Schema>({
     data: inputData,
     headerKeysAndLabels,
     checkboxes,
-    onRowSelection,
     defaultShownHeaders,
     headerFilters,
     onDelete,
     onEdit,
     pagination,
-    reorderable = false,
+    reorderable,
     sortable = true,
     toggleableHeaders,
     onRowClick,
     columnDisplayFunctions = {},
     columnStyleOptions = {},
-}) => {
+}: Props<TableName>): React.ReactElement => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
     );
@@ -221,20 +227,56 @@ const Table: React.FC<Props> = ({
         };
     });
 
+    const swapDatabaseRowOrder = async (row1: Row, row2: Row): Promise<any> => {
+        const tableName = reorderable!.tableName;
+        const primaryKeyCol = reorderable!.primaryKeyCol;
+        const orderCol = reorderable!.orderCol;
+
+        // TODO get Varun's changes about Datum updating
+
+        const key1 = row1.data[primaryKeyCol];
+        const key2 = row2.data[primaryKeyCol];
+        const order1 = row1.data[orderCol];
+        const order2 = row2.data[orderCol];
+
+        const { error } = await supabase.from(tableName).upsert([
+            { [primaryKeyCol]: key1, [orderCol]: order2 },
+            { [primaryKeyCol]: key2, [orderCol]: order1 },
+        ]);
+
+        if (error) {
+            throw new Error(`Database error - ${error.message}`);
+        }
+
+        return data;
+    };
+
     const swapRows = (rowId1: number, filteredRowIndex1: number, upArrow: boolean): void => {
         const filteredRowIndex2 = upArrow ? filteredRowIndex1 - 1 : filteredRowIndex1 + 1;
-        const row2 = dataToFilteredRows(data, filterText, headerKeysAndLabels)[filteredRowIndex2];
-        if (rowId1 < 0 || rowId1 >= data.length || !row2) {
+        const filteredRows = dataToFilteredRows(data, filterText, headerKeysAndLabels);
+        const row1 = filteredRows[filteredRowIndex1];
+        const row2 = filteredRows[filteredRowIndex2];
+        if (!row1 || !row2) {
             return;
         }
         const rowId2 = row2.rowId;
 
+        const oldData = [...data];
         const newData = [...data];
         const temp = newData[rowId1];
         newData[rowId1] = newData[rowId2];
         newData[rowId2] = temp;
 
         setData(newData);
+
+        swapDatabaseRowOrder(row1, row2)
+            .then(() => {
+                // Do nothing when no error
+            })
+            .catch((error) => {
+                console.log(error);
+                setData(oldData);
+            });
     };
 
     if (checkboxes) {
