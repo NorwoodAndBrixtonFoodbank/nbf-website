@@ -11,3 +11,10 @@ export const createUser = async (fields: any) => {
         body: JSON.stringify(fields),
     });
 };
+
+export const deleteUser = async (userId: string) => {
+    // TODO ADD TYPES
+    return await supabase.functions.invoke("admin-delete-user", {
+        body: JSON.stringify({ userId }),
+    });
+};

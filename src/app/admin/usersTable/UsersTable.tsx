@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import Table, { TableHeaders } from "@/components/Tables/Table";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
+import { deleteUser } from "@/app/admin/adminActions";
+import Button from "@mui/material/Button";
 
 const DangerDialog = styled(Modal)`
     & #deleteUserDialog {
@@ -29,11 +31,18 @@ const UsersTable: React.FC<Props> = (props) => {
     const [userToDelete, setUserToDelete] = useState();
 
     const userOnEdit = () => {};
-    const userOnDelete = () => {
-        setUserToDelete((value) => 1);
+    const userOnDelete = (rowIndex: number) => {
+        setUserToDelete(props.userData[rowIndex]); // TODO ADD TYPE AND CHANGE onDelete to return row instead of index
+        console.log(userToDelete);
     };
 
-    const onUserDeleteConfirmation = () => {
+    const onUserDeleteConfirmation = async () => {
+        const response = await deleteUser(userToDelete.id);
+
+        console.log(response);
+
+        // TODO INSERT CONFIRMATION MODAL
+
         setUserToDelete(undefined);
     };
 
@@ -64,7 +73,9 @@ const UsersTable: React.FC<Props> = (props) => {
                 isOpen={userToDelete !== undefined}
                 onClose={onUserDeleteCancellation}
             >
-                CONFIRM BUTTON HERE
+                {`Are you sure you want to delete user ${userToDelete ? userToDelete.email : ""}?`}
+                {/*CONFIRM BUTTON HERE*/}
+                <Button onClick={onUserDeleteConfirmation}>CONFIRM</Button>
             </DangerDialog>
         </>
     );
