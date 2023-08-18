@@ -72,7 +72,7 @@ const NumberAdultsCard: React.FC<CardProps> = ({
             required={true}
             text="Please enter the number of adults (aged 16 or above) in the appropriate category."
         >
-            <>
+            <GappedDiv>
                 <FreeFormTextInput
                     error={errorExists(formErrors.adults)}
                     label="Female"
@@ -92,7 +92,7 @@ const NumberAdultsCard: React.FC<CardProps> = ({
                     defaultValue={getNumberAdultsDefault(fields.adults, "other")}
                     onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "other")}
                 />
-            </>
+            </GappedDiv>
         </GenericFormCard>
     );
 };
