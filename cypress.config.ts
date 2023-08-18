@@ -29,10 +29,8 @@ export default defineConfig({
             return config;
         },
         baseUrl: "http://localhost:3200",
-        video: true,
-        videoUploadOnPasses: false,
-        screenshotOnRunFailure: true,
-        videoCompression: 1,
+        video: false,
+        screenshotOnRunFailure: false,
     },
     component: {
         setupNodeEvents(on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) {
@@ -46,5 +44,7 @@ export default defineConfig({
             bundler: "webpack",
         },
         specPattern: "src/**/*.cy.{ts,tsx}",
+        video: false,
+        screenshotOnRunFailure: false,
     },
 });
