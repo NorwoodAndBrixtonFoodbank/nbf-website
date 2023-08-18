@@ -14,7 +14,5 @@ export const insertParcel = async (parcelRecord: InsertedParcels): Promise<Fetch
     if (error === null && Math.floor(status / 100) === 2) {
         return ids![0];
     }
-    throw new Error(
-        `Error occurred whilst inserting into Parcels table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
-    );
+    throw new Error("Could not connect to the database at this time. Please try again later.");
 };

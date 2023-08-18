@@ -12,7 +12,7 @@ export type RawClientDetails = Awaited<ReturnType<typeof getRawClientDetails>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const getRawClientDetails = async (parcelId: string) => {
-    const response = await supabase
+    const { data, error } = await supabase
         .from("parcels")
         .select(
             `
@@ -47,8 +47,10 @@ export const getRawClientDetails = async (parcelId: string) => {
         )
         .eq("primary_key", parcelId)
         .single();
-
-    return response.data;
+    if (error) {
+        throw new Error();
+    }
+    return data;
 };
 
 export const familyCountToFamilyCategory = (count: number): string => {

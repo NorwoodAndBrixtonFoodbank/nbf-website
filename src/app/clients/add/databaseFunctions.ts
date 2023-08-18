@@ -23,7 +23,7 @@ export const insertFamily = async (peopleArray: Person[], familyID: string): Pro
     const { status, error } = await supabase.from("families").insert(familyRecords);
 
     if (error !== null || Math.floor(status / 100) !== 2) {
-        throw Error("Could not connect to the database at this time. Please try again later.");
+        throw new Error("Could not connect to the database at this time. Please try again later.");
     }
 };
 
@@ -39,7 +39,7 @@ export const insertClient = async (
     if (error === null && Math.floor(status / 100) === 2) {
         return ids![0];
     }
-    throw Error("Could not connect to the database at this time. Please try again later.");
+    throw new Error("Could not connect to the database at this time. Please try again later.");
 };
 
 export const deleteFailedInsert = async (primary_key: string): Promise<void> => {
