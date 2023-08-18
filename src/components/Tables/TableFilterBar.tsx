@@ -29,6 +29,7 @@ const StyledFilterBar = styled.input`
 
 const StyledHeader = styled.div`
     background-color: transparent;
+    width: 100%;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
