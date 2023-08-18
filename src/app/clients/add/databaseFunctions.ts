@@ -1,7 +1,7 @@
 import { checkboxGroupToArray, Fields, Person } from "@/components/Form/formFunctions";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { InsertSchema, Schema, UpdateSchema } from "@/database_utils";
-import supabase from "@/supabaseServer";
+import supabase from "@/supabaseClient";
 
 type FamilyDatabaseInsertRecord = InsertSchema["families"];
 type FamilyDatabaseUpdateRecord = UpdateSchema["families"];
@@ -194,7 +194,7 @@ export const submitFormAddClients: SubmitFormHelper = async (fields, router) => 
     }
 };
 
-const fetchClients = async (primaryKey: string): Promise<Schema["clients"]> => {
+export const fetchClients = async (primaryKey: string): Promise<Schema["clients"]> => {
     const { data, error } = await supabase.from("clients").select().eq("primary_key", primaryKey);
     if (error !== null) {
         throw Error(`${error.code}: ${error.message}`);
@@ -205,6 +205,19 @@ const fetchClients = async (primaryKey: string): Promise<Schema["clients"]> => {
         throw Error(errorMessage);
     }
     return data[0];
+};
+
+export const fetchFamilies = async (familyID: string): Promise<Schema["families"][]> => {
+    const { data, error } = await supabase.from("families").select().eq("family_id", familyID);
+    if (error !== null) {
+        throw Error(`${error.code}: ${error.message}`);
+    }
+    return data;
+};
+
+export const formatCamelCaseKey = (objectKey: string): string => {
+    const withSpace = objectKey.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
+    return withSpace.charAt(0).toUpperCase() + withSpace.slice(1);
 };
 
 export const submitFormEditClients: SubmitFormHelper = async (fields, router, primaryKey) => {
