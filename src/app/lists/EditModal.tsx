@@ -90,12 +90,12 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                             <h3>{label}</h3>
                             <DataWithTooltipDiv>
                                 <TextInput
-                                    defaultValue={toSubmit[quantityKey] ?? ""}
+                                    defaultValue={toSubmit[quantityKey]?.toString() ?? ""}
                                     label="Quantity"
                                     onChange={(event) => setKey(event, quantityKey)}
                                 />
                                 <TextInput
-                                    defaultValue={toSubmit[noteKey] ?? ""}
+                                    defaultValue={toSubmit[noteKey]?.toString() ?? ""}
                                     label="Notes"
                                     onChange={(event) => setKey(event, noteKey)}
                                 />

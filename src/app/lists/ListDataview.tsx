@@ -46,7 +46,10 @@ listQuantityNoteAndLabels.forEach(([headerKey, noteKey]) => {
         listDataviewColumnDisplayFunctions[headerKey] = (row: Row) => {
             const data = row.data as ListRow;
             return (
-                <TooltipCell cellValue={data[headerKey] ?? ""} tooltipValue={data[noteKey] ?? ""} />
+                <TooltipCell
+                    cellValue={data[headerKey]?.toString() ?? ""}
+                    tooltipValue={data[noteKey]?.toString() ?? ""}
+                />
             );
         };
 
