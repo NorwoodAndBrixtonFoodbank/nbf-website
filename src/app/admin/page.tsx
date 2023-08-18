@@ -11,24 +11,14 @@ export const revalidate = 0;
 const Admin = async (): Promise<ReactElement> => {
     const serverSupabase = createServerComponentClient({ cookies });
 
-    // TODO Handle error
+    // TODO VFB-23 Handle error returned by admin-get-users
     const response = await serverSupabase.functions.invoke("admin-get-users");
-
-    // console.log("PRINTING ERROR HEEYAH");
-    // console.log(response.error);
-    //
-    // console.log("PRININT RESPONSE DATA HEEYAH");
-    // console.log(response.data);
-    //
     const userData = JSON.parse(response.data) ?? [];
-    // console.log("PRININT USER DATA HEEYAH");
-    // console.log(userData);
 
     return (
         <main>
             <Title>Admin Panel</Title>
-            <AdminPage userData={userData} /> {/* TODO REMOVE undefined*/}
-            <pre>{JSON.stringify(userData, null, 4)}</pre>
+            <AdminPage userData={userData} />
         </main>
     );
 };

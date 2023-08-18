@@ -55,10 +55,9 @@ serve(async (req: Handler): Promise<Response> => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // TODO INSERT DELETE USER LOGIC HERE
     const requestBody: DeleteUserRequestBody = await req.json();
 
-    const { data, error } = await supabaseAdmin.auth.admin.deleteUser(requestBody.userId); // TODO WHAT SHOULD SOFT USER DELETE OPTION BE SET TO?
+    const { data, error } = await supabaseAdmin.auth.admin.deleteUser(requestBody.userId);
 
     if (error) {
         return new Response(

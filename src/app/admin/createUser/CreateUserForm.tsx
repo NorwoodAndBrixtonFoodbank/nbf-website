@@ -10,8 +10,10 @@ import {
     setError,
     setField,
 } from "@/components/Form/formFunctions";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { createUser } from "@/app/admin/adminActions";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import RefreshPageButton from "@/app/admin/RefreshPageButton";
 
 interface CreateUserDetails {
     email: string;
@@ -34,8 +36,6 @@ const initialFormErrors: FormErrors = {
 const formSections = [AccountDetails, UserRole];
 
 const CreateUserForm: React.FC<{}> = () => {
-    const supabase = createClientComponentClient();
-
     const [fields, setFields] = useState(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
 
@@ -46,11 +46,9 @@ const CreateUserForm: React.FC<{}> = () => {
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
     const [submitDisabled, setSubmitDisabled] = useState(false);
 
+    const [refreshRequired, setRefreshRequired] = useState(false);
+
     const submitForm = async (): Promise<void> => {
-        // const response = await supabase.functions.invoke("check-congestion-charge", {
-        //     body: { postcodes: [] },
-        // });
-        // console.log(JSON.stringify(response));
         setSubmitDisabled(true);
 
         if (checkErrorOnSubmit(formErrors, setFormErrors)) {
@@ -59,19 +57,21 @@ const CreateUserForm: React.FC<{}> = () => {
             return;
         }
 
-        await createUser(fields);
+        const response = await createUser(fields);
 
-        // if (response.error) {
-        //     setSubmitError(Errors.external);
-        //     setSubmitErrorMessage(response.error.message);
-        //     setSubmitDisabled(false);
-        // }
-        // TODO HANDLE NORMAL CASE
+        if (response.error) {
+            setSubmitError(Errors.external);
+            setSubmitErrorMessage(response.error.message);
+            setSubmitDisabled(false);
+            return;
+        }
+
+        setSubmitDisabled(false);
+        setRefreshRequired(true);
     };
 
     return (
         <CenterComponent>
-            {/* TODO FIX STYLING */}
             <StyledForm>
                 {formSections.map((Card, index) => {
                     return (
@@ -84,9 +84,21 @@ const CreateUserForm: React.FC<{}> = () => {
                         />
                     );
                 })}
-                <Button variant="contained" onClick={submitForm} disabled={submitDisabled}>
-                    Create Client {/* TODO ADD PLUS (+) BUTTON */}
-                </Button>
+
+                {refreshRequired ? (
+                    <RefreshPageButton />
+                ) : (
+                    <Button
+                        startIcon={<FontAwesomeIcon icon={faUserPlus} />}
+                        variant="contained"
+                        onClick={submitForm}
+                        disabled={submitDisabled}
+                    >
+                        Create Client
+                    </Button>
+                )}
+
+                {/* TODO VFB-23 Improve error message formatting for request errors */}
                 <FormErrorText>{submitErrorMessage + submitError}</FormErrorText>
             </StyledForm>
         </CenterComponent>

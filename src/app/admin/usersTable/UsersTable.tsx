@@ -1,11 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import Table, { TableHeaders } from "@/components/Tables/Table";
+import Table, { ColumnDisplayFunction, Row, TableHeaders } from "@/components/Tables/Table";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
 import { deleteUser } from "@/app/admin/adminActions";
 import Button from "@mui/material/Button";
+import DeleteIcon from "@mui/icons-material/Delete";
+import RefreshPageButton from "@/app/admin/RefreshPageButton";
+import { User } from "@supabase/gotrue-js";
 
 const DangerDialog = styled(Modal)`
     & #deleteUserDialog {
@@ -13,40 +16,58 @@ const DangerDialog = styled(Modal)`
     }
 `;
 
+export const OptionButtonDiv = styled.div`
+    display: flex;
+    padding-top: 1rem;
+    gap: 1rem;
+    justify-content: center;
+`;
+
 const usersTableHeaderKeysAndLabels: TableHeaders = [
     ["id", "USER ID"],
     ["email", "EMAIL"],
-    ["role", "ROLE"],
+    ["userRole", "ROLE"],
     ["created_at", "CREATED AT"],
     ["updated_at", "UPDATED AT"],
 ];
 
+const formatDatetime = (datetime: string | null): string => {
+    if (datetime === null || isNaN(Date.parse(datetime))) {
+        return "-";
+    }
+
+    return new Date(datetime).toLocaleString("en-gb");
+};
+
+const userTableColumnDisplayFunctions: { [headerKey: string]: ColumnDisplayFunction } = {
+    // TODO Fix
+    userRole: (row: Row) => row.data.app_metadata.role,
+    created_at: (row: Row) => formatDatetime(row.data.created_at),
+    updated_at: (row: Row) => formatDatetime(row.data.updated_at),
+};
+
 interface Props {
-    userData: any; // TODO MAKE TYPE
+    userData: User[];
 }
 
 const UsersTable: React.FC<Props> = (props) => {
-    // TODO REMOVE DEFAULT
-    const [userToEdit, setUserToEdit] = useState();
     const [userToDelete, setUserToDelete] = useState();
+    const [refreshRequired, setRefreshRequired] = useState(false);
 
-    const userOnEdit = () => {};
-    const userOnDelete = (rowIndex: number) => {
-        setUserToDelete(props.userData[rowIndex]); // TODO ADD TYPE AND CHANGE onDelete to return row instead of index
-        console.log(userToDelete);
+    const userOnDelete = (rowIndex: number): void => {
+        setUserToDelete(props.userData[rowIndex]); // TODO VFB-23 Change onDelete in table to return row
     };
 
-    const onUserDeleteConfirmation = async () => {
-        const response = await deleteUser(userToDelete.id);
+    const onUserDeleteConfirmation = async (): Promise<void> => {
+        await deleteUser(userToDelete.id);
 
-        console.log(response);
-
-        // TODO INSERT CONFIRMATION MODAL
+        // TODO VFB-23 Handle error on request to deleteUser()
 
         setUserToDelete(undefined);
+        setRefreshRequired(true);
     };
 
-    const onUserDeleteCancellation = () => {
+    const onUserDeleteCancellation = (): void => {
         setUserToDelete(undefined);
     };
 
@@ -55,17 +76,18 @@ const UsersTable: React.FC<Props> = (props) => {
             <Table
                 data={props.userData}
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
-                onEdit={userOnEdit}
                 onDelete={userOnDelete}
                 headerFilters={["email"]}
+                columnDisplayFunctions={userTableColumnDisplayFunctions}
             />
 
-            {/*<ConfirmDialog*/}
-            {/*    isOpen={userToDelete !== undefined}*/}
-            {/*    message="Are you sure that you want to delete user: _EMAIL_? This action is IRREVERSIBLE."*/}
-            {/*    onConfirm={onUserDeleteConfirmation}*/}
-            {/*    onCancel={onUserDeleteCancellation}*/}
-            {/*/>*/}
+            {refreshRequired ? (
+                <OptionButtonDiv>
+                    <RefreshPageButton />
+                </OptionButtonDiv>
+            ) : (
+                <></>
+            )}
 
             <DangerDialog
                 header="DELETE USER"
@@ -73,9 +95,22 @@ const UsersTable: React.FC<Props> = (props) => {
                 isOpen={userToDelete !== undefined}
                 onClose={onUserDeleteCancellation}
             >
-                {`Are you sure you want to delete user ${userToDelete ? userToDelete.email : ""}?`}
-                {/*CONFIRM BUTTON HERE*/}
-                <Button onClick={onUserDeleteConfirmation}>CONFIRM</Button>
+                Are you sure you want to delete user <b>{userToDelete ? userToDelete.email : ""}</b>
+                ?
+                <br />
+                <OptionButtonDiv>
+                    <Button
+                        color="error"
+                        variant="outlined"
+                        startIcon={<DeleteIcon />}
+                        onClick={onUserDeleteConfirmation}
+                    >
+                        CONFIRM
+                    </Button>
+                    <Button color="secondary" onClick={onUserDeleteCancellation}>
+                        CANCEL
+                    </Button>
+                </OptionButtonDiv>
             </DangerDialog>
         </>
     );

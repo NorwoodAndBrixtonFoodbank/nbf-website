@@ -4,8 +4,6 @@ import PasswordInput from "@/components/DataInput/PasswordInput";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { CardProps, errorExists, errorText, onChangeText } from "@/components/Form/formFunctions";
 
-// TODO ADD REGEX FOR EMAIL
-
 const AccountDetails: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSetter }) => {
     return (
         <GenericFormCard
@@ -14,6 +12,7 @@ const AccountDetails: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSet
             text="Please enter the email and temporary password for the new user."
         >
             <>
+                {/* TODO VFB-23 ADD REGEX CHECK FOR EMAIL */}
                 <FreeFormTextInput
                     label="Email"
                     error={errorExists(formErrors.email)}

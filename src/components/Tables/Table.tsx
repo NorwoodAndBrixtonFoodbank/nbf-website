@@ -253,9 +253,10 @@ const Table: React.FC<Props> = ({
         });
     }
 
-    if (reorderable || onEdit) {
+    // TODO VFB-23 Implement conditional styling: center icon when only option selected, grid otherwise
+    if (reorderable || onEdit || onDelete) {
         columns.unshift({
-            name: <p>Sort</p>,
+            name: "",
             cell: (row: Row) => {
                 const onEditClick = (): void => {
                     onEdit!(row.rowId);

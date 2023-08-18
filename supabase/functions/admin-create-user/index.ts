@@ -8,7 +8,7 @@ import { corsHeaders } from "../_shared/cors.ts";
 interface CreateUserRequestBody {
     email: string;
     password: string;
-    role: "admin" | "caller"; // TODO Add more roles here
+    role: "admin" | "caller";
 }
 
 serve(async (req: Handler): Promise<Response> => {
@@ -21,12 +21,6 @@ serve(async (req: Handler): Promise<Response> => {
         "Content-Type": "application/json",
         status,
     });
-
-    // try {
-    //     return new Response(JSON.stringify({ aaa: 1 }, generateHeaders(201)));
-    // } catch (error) {
-    //     return new Response(JSON.stringify({ error: error.message }), generateHeaders(400));
-    // }
 
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -63,7 +57,6 @@ serve(async (req: Handler): Promise<Response> => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // TODO INSERT CREATE USER LOGIC HERE
     const requestBody: CreateUserRequestBody = await req.json();
 
     const { data, error } = await supabaseAdmin.auth.admin.createUser({
@@ -72,6 +65,7 @@ serve(async (req: Handler): Promise<Response> => {
         app_metadata: {
             role: requestBody.role,
         },
+        email_confirm: true,
     });
 
     if (error) {
