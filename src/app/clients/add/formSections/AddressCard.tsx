@@ -1,6 +1,12 @@
 import React from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { CardProps, errorExists, errorText, onChangeText } from "@/components/Form/formFunctions";
+import {
+    CardProps,
+    errorExists,
+    errorText,
+    getDefaultTextValue,
+    onChangeText,
+} from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { GappedDiv } from "@/components/Form/formStyling";
 
@@ -12,7 +18,7 @@ const formatPostcode = (value: string): string => {
     return value.replace(/\s/g, "").toUpperCase();
 };
 
-const AddressCard: React.FC<CardProps> = ({ formErrors, errorSetter, fieldSetter }) => {
+const AddressCard: React.FC<CardProps> = ({ formErrors, errorSetter, fieldSetter, fields }) => {
     return (
         <GenericFormCard
             title="Address"
@@ -22,24 +28,29 @@ const AddressCard: React.FC<CardProps> = ({ formErrors, errorSetter, fieldSetter
             <GappedDiv>
                 <FreeFormTextInput
                     label="Address Line 1*"
+                    defaultValue={getDefaultTextValue(fields, "addressLine1")}
                     error={errorExists(formErrors.addressLine1)}
                     helperText={errorText(formErrors.addressLine1)}
                     onChange={onChangeText(fieldSetter, errorSetter, "addressLine1", true)}
                 />
                 <FreeFormTextInput
                     label="Address Line 2"
+                    defaultValue={getDefaultTextValue(fields, "addressLine2")}
                     onChange={onChangeText(fieldSetter, errorSetter, "addressLine2", false)}
                 />
                 <FreeFormTextInput
                     label="Town"
+                    defaultValue={getDefaultTextValue(fields, "addressTown")}
                     onChange={onChangeText(fieldSetter, errorSetter, "addressTown", false)}
                 />
                 <FreeFormTextInput
                     label="County"
+                    defaultValue={getDefaultTextValue(fields, "addressCounty")}
                     onChange={onChangeText(fieldSetter, errorSetter, "addressCounty", false)}
                 />
                 <FreeFormTextInput
                     label="Postcode* (For example, SE11 5QY)"
+                    defaultValue={getDefaultTextValue(fields, "addressPostcode")}
                     error={errorExists(formErrors.addressPostcode)}
                     helperText={errorText(formErrors.addressPostcode)}
                     onChange={onChangeText(
