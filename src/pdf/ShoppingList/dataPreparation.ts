@@ -109,7 +109,7 @@ const getClientAndFamilyData = async (clientID: string): Promise<ClientDataAndFa
 
 const processExtraInformation = (original: string): NappySizeAndExtraInformation => {
     if (original.startsWith("Nappy Size: ")) {
-        const [nappySize, extraInformation] = original.split(", Extra Information: ");
+        const [nappySize, extraInformation] = original.split(", Extra Information: ", 1);
         return { nappySize: `(${nappySize})`, extraInformation: extraInformation };
     }
     return { nappySize: "", extraInformation: original };
@@ -138,7 +138,9 @@ const prepareClientSummary = (clientData: Schema["clients"]): ClientSummary => {
 };
 
 const getChild = (child: Person): string => {
-    return `${child.age} ${child.gender[0].toUpperCase()}`;
+    // return `${child.age} ${child.gender[0].toUpperCase()}`;
+    const gender = child.gender[0].toUpperCase();
+    return `${child.age} ${gender === "O" ? "N/A" : gender}`;
 };
 
 const displayList = (data: string[]): string => {
@@ -193,11 +195,13 @@ const getQuantityAndNotes = (
     size: number
 ): Pick<Item, "quantity" | "notes"> => {
     if (size >= 10) {
-        return { quantity: row["10_quantity"] ?? "", notes: row["10_notes"] ?? "" };
+        size = 10;
     }
+    const size_quantity = `${size}_quantity` as keyof Schema["lists"];
+    const size_notes = `${size}_notes` as keyof Schema["lists"];
     return {
-        quantity: row[`${size}_quantity` as keyof Schema["lists"]] ?? "",
-        notes: row[`${size}_notes` as keyof Schema["lists"]] ?? "",
+        quantity: row[size_quantity] ?? "",
+        notes: row[size_notes] ?? "",
     };
 };
 
@@ -223,7 +227,7 @@ const prepareData = async (parcelID: string): Promise<ShoppingListPDFProps> => {
     const itemsList = await prepareItemsList(familyData.length);
 
     const clientSummary = prepareClientSummary(clientData);
-    const householdSummary: HouseholdSummary = prepareHouseholdSummary(familyData);
+    const householdSummary = prepareHouseholdSummary(familyData);
     const requirementSummary = prepareRequirementSummary(clientData);
 
     const { nappySize, extraInformation } = processExtraInformation(clientData.extra_information);

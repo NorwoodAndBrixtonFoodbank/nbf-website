@@ -6,8 +6,9 @@ export const fetchParcels = async (parcelID: string): Promise<Schema["parcels"]>
         throw Error(`${error.code}: ${error.message}`);
     }
     if (data.length !== 1) {
-        const errorMessage =
-            (data.length === 0 ? "No " : "Multiple ") + "records match this parcel ID.";
+        const errorMessage = `${
+            data.length === 0 ? "No" : "Multiple"
+        } records match this parcel ID.`;
         throw Error(errorMessage);
     }
     return data[0];

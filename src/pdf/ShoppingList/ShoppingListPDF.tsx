@@ -86,7 +86,12 @@ const styles = StyleSheet.create({
     },
 });
 
-const OneLine: React.FC<{ header: string; value: string }> = ({ header, value }) => {
+interface OneLineProps {
+    header: string;
+    value: string;
+}
+
+const OneLine: React.FC<OneLineProps> = ({ header, value }) => {
     return (
         <Text style={[styles.keyText, { textTransform: "capitalize" }]}>
             {header}: <Text style={styles.normalText}>{value}</Text>
@@ -132,7 +137,11 @@ const ItemToRow: React.FC<Item> = (item) => {
     );
 };
 
-const DisplayItemsList: React.FC<{ itemsList: Item[] }> = ({ itemsList }) => {
+interface DisplayItemsListProps {
+    itemsList: Item[];
+}
+
+const DisplayItemsList: React.FC<DisplayItemsListProps> = ({ itemsList }) => {
     return (
         <View>
             {itemsList.map((item, index) => (
@@ -156,10 +165,12 @@ const DisplayAsBlock: React.FC<BlockProps> = (data: BlockProps) => {
     );
 };
 
-const FormatClientCell: React.FC<{ propKey: string; propValue: string }> = ({
-    propKey,
-    propValue,
-}) => {
+interface FormatClientCellProps {
+    propKey: string;
+    propValue: string;
+}
+
+const FormatClientCell: React.FC<FormatClientCellProps> = ({ propKey, propValue }) => {
     return (
         <View style={styles.infoCell}>
             <OneLine header={formatCamelCaseKey(propKey)} value={propValue} />
