@@ -110,8 +110,8 @@ const getClientAndFamilyData = async (clientID: string): Promise<ClientDataAndFa
 
 export const processExtraInformation = (original: string): NappySizeAndExtraInformation => {
     if (original.startsWith("Nappy Size: ")) {
-        const [nappySize, extraInformation] = original.split(", Extra Information: ", 1);
-        return { nappySize: `(${nappySize})`, extraInformation: extraInformation };
+        const [nappySize, extraInformation] = original.split(", Extra Information: ");
+        return { nappySize: nappySize, extraInformation: extraInformation };
     }
     return { nappySize: "", extraInformation: original };
 };
@@ -226,7 +226,7 @@ const prepareData = async (parcelID: string): Promise<ShoppingListPDFProps> => {
 
     const { nappySize, extraInformation } = processExtraInformation(clientData.extra_information);
     clientSummary.extraInformation = extraInformation;
-    requirementSummary.babyProductsRequired += ` ${nappySize}`;
+    requirementSummary.babyProductsRequired += ` (${nappySize})`;
 
     const endNotes = await fetchComment();
 
