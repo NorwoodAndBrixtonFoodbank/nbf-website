@@ -2,19 +2,7 @@ import { Schema } from "@/database_utils";
 import { ClientFields } from "@/app/clients/add/ClientForm";
 import { Person } from "@/components/Form/formFunctions";
 import { booleanGroup } from "@/components/DataInput/inputHandlerFactories";
-
-interface NappySizeAndExtraInformation {
-    nappySize: string;
-    extraInformation: string;
-}
-
-const processExtraInformation = (original: string): NappySizeAndExtraInformation => {
-    if (original.startsWith("Nappy Size: ")) {
-        const [nappySize, extraInformation] = original.split(", Extra Information: ");
-        return { nappySize: `(${nappySize})`, extraInformation: extraInformation };
-    }
-    return { nappySize: "", extraInformation: original };
-};
+import { processExtraInformation } from "@/pdf/ShoppingList/dataPreparation";
 
 const getNumberAdultsByGender = (family: Schema["families"][], gender: string): number => {
     return family.filter((member) => member.gender === gender).length;

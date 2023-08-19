@@ -10,9 +10,10 @@ type ClientDatabaseInsertRecord = InsertSchema["clients"];
 type ClientDatabaseUpdateRecord = UpdateSchema["clients"];
 type ClientAndFamilyIds = Pick<Schema["clients"], "primary_key" | "family_id">;
 
-export type SubmitFormHelper = (
+type SubmitFormHelper = (
     fields: Fields,
     router: AppRouterInstance,
+    initialFields?: Fields,
     primaryKey?: string
 ) => void;
 
@@ -223,40 +224,13 @@ const revertClientUpdate = async (initialRecords: ClientDatabaseUpdateRecord): P
         .eq("primary_key", initialRecords.primary_key);
 };
 
-export const fetchClients = async (primaryKey: string): Promise<Schema["clients"]> => {
-    const { data, status, error } = await supabase
-        .from("clients")
-        .select()
-        .eq("primary_key", primaryKey);
-    if (errorExists(error, status)) {
-        throw Error(`HTTP Code: ${status}. PostgreSQL Code: ${error!.code}`);
-    }
-    if (data!.length !== 1) {
-        const errorMessage =
-            (data!.length === 0 ? "No " : "Multiple ") + "records match this client ID.";
-        throw Error(errorMessage);
-    }
-    return data![0];
-};
-
-export const fetchFamilies = async (familyID: string): Promise<Schema["families"][]> => {
-    const { data, status, error } = await supabase
-        .from("families")
-        .select()
-        .eq("family_id", familyID);
-    if (errorExists(error, status)) {
-        throw Error(`HTTP Code: ${status}. PostgreSQL Code: ${error!.code}`);
-    }
-    return data!;
-};
-
-export const submitAddClientForm: SubmitFormHelper = async (fields, router) => {
+const formatClientInsertRecord = (fields: Fields): ClientDatabaseInsertRecord => {
     const extraInformationWithNappy =
         fields.nappySize === ""
             ? fields.extraInformation
             : `Nappy Size: ${fields.nappySize}, Extra Information: ${fields.extraInformation}`;
 
-    const clientRecord: ClientDatabaseInsertRecord = {
+    return {
         full_name: fields.fullName,
         phone_number: fields.phoneNumber,
         address_1: fields.addressLine1,
@@ -274,7 +248,37 @@ export const submitAddClientForm: SubmitFormHelper = async (fields, router) => {
         signposting_call_required: fields.signpostingCall,
         flagged_for_attention: fields.attentionFlag,
     };
+};
 
+const formatClientUpdateRecord = (fields: Fields): ClientDatabaseUpdateRecord => {
+    // TODO VFB-24: Not sure if I should just make this and formatClientInsertRecord 1 function because they arethe same, but are technically different type.
+    const extraInformationWithNappy =
+        fields.nappySize === ""
+            ? fields.extraInformation
+            : `Nappy Size: ${fields.nappySize}, Extra Information: ${fields.extraInformation}`;
+
+    return {
+        full_name: fields.fullName,
+        phone_number: fields.phoneNumber,
+        address_1: fields.addressLine1,
+        address_2: fields.addressLine2,
+        address_town: fields.addressTown,
+        address_county: fields.addressCounty,
+        address_postcode: fields.addressPostcode,
+        dietary_requirements: checkboxGroupToArray(fields.dietaryRequirements),
+        feminine_products: checkboxGroupToArray(fields.feminineProducts),
+        baby_food: fields.babyProducts,
+        pet_food: checkboxGroupToArray(fields.petFood),
+        other_items: checkboxGroupToArray(fields.otherItems),
+        delivery_instructions: fields.deliveryInstructions,
+        extra_information: extraInformationWithNappy,
+        signposting_call_required: fields.signpostingCall,
+        flagged_for_attention: fields.attentionFlag,
+    };
+};
+
+export const submitAddClientForm: SubmitFormHelper = async (fields, router) => {
+    const clientRecord = formatClientInsertRecord(fields);
     const ids = await insertClient(clientRecord);
     try {
         await insertFamily([...fields.adults, ...fields.children], ids.family_id);
@@ -285,32 +289,14 @@ export const submitAddClientForm: SubmitFormHelper = async (fields, router) => {
     }
 };
 
-export const submitEditClientForm: SubmitFormHelper = async (fields, router, primaryKey) => {
-    const extraInformationWithNappy =
-        fields.nappySize === ""
-            ? fields.extraInformation
-            : `Nappy Size: ${fields.nappySize}, Extra Information: ${fields.extraInformation}`;
-
-    const clientRecord: ClientDatabaseUpdateRecord = {
-        full_name: fields.fullName,
-        phone_number: fields.phoneNumber,
-        address_1: fields.addressLine1,
-        address_2: fields.addressLine2,
-        address_town: fields.addressTown,
-        address_county: fields.addressCounty,
-        address_postcode: fields.addressPostcode,
-        dietary_requirements: checkboxGroupToArray(fields.dietaryRequirements),
-        feminine_products: checkboxGroupToArray(fields.feminineProducts),
-        baby_food: fields.babyProducts,
-        pet_food: checkboxGroupToArray(fields.petFood),
-        other_items: checkboxGroupToArray(fields.otherItems),
-        delivery_instructions: fields.deliveryInstructions,
-        extra_information: extraInformationWithNappy,
-        signposting_call_required: fields.signpostingCall,
-        flagged_for_attention: fields.attentionFlag,
-    };
-
-    const clientBeforeUpdate = await fetchClients(primaryKey!);
+export const submitEditClientForm: SubmitFormHelper = async (
+    fields,
+    router,
+    initialFields,
+    primaryKey
+) => {
+    const clientRecord = formatClientUpdateRecord(fields);
+    const clientBeforeUpdate = formatClientUpdateRecord(initialFields!);
     const ids = await updateClient(clientRecord, primaryKey!);
     try {
         await updateFamily(fields.adults, fields.children, ids.family_id);

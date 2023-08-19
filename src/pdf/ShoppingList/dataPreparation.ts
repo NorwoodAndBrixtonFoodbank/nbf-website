@@ -108,7 +108,7 @@ const getClientAndFamilyData = async (clientID: string): Promise<ClientDataAndFa
     return { clientData: clientData, familyData: familyData };
 };
 
-const processExtraInformation = (original: string): NappySizeAndExtraInformation => {
+export const processExtraInformation = (original: string): NappySizeAndExtraInformation => {
     if (original.startsWith("Nappy Size: ")) {
         const [nappySize, extraInformation] = original.split(", Extra Information: ", 1);
         return { nappySize: `(${nappySize})`, extraInformation: extraInformation };
@@ -230,7 +230,7 @@ const prepareData = async (parcelID: string): Promise<ShoppingListPDFProps> => {
 
     const endNotes = await fetchComment();
 
-    const data: ShoppingListPDFProps = {
+    return {
         postcode: clientData.address_postcode,
         parcelInfo: parcelInfo,
         clientSummary: clientSummary,
@@ -239,7 +239,6 @@ const prepareData = async (parcelID: string): Promise<ShoppingListPDFProps> => {
         itemsList: itemsList,
         endNotes: endNotes,
     };
-    return data;
 };
 
 export default prepareData;

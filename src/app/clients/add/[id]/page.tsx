@@ -3,8 +3,8 @@ import { Metadata } from "next";
 import React from "react";
 import ClientForm from "@/app/clients/add/ClientForm";
 import { Errors, FormErrors } from "@/components/Form/formFunctions";
-import { fetchClients, fetchFamilies } from "@/app/clients/add/databaseFunctions";
 import autofill from "@/app/clients/add/[id]/autofill";
+import { fetchClients, fetchFamilies } from "@/pdf/ShoppingList/databaseFetch";
 
 interface EditClientsParameters {
     params: { id: string };
