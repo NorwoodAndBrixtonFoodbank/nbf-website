@@ -120,7 +120,7 @@ export const processExtraInformation = (original: string): NappySizeAndExtraInfo
     return { nappySize: "", extraInformation: original };
 };
 
-const prepareClientSummary = (clientData: Schema["clients"]): ClientSummary => {
+export const prepareClientSummary = (clientData: Schema["clients"]): ClientSummary => {
     const {
         address_1,
         address_2,
@@ -155,7 +155,7 @@ const convertPlural = (value: number, description: string): string => {
     return `${value} ${description}${value !== 1 ? "s" : ""}`;
 };
 
-const prepareHouseholdSummary = (familyData: Schema["families"][]): HouseholdSummary => {
+export const prepareHouseholdSummary = (familyData: Schema["families"][]): HouseholdSummary => {
     const children = familyData.filter((member) => member.age !== null);
 
     const householdSize = familyData.length;
@@ -177,7 +177,7 @@ const prepareHouseholdSummary = (familyData: Schema["families"][]): HouseholdSum
     };
 };
 
-const prepareRequirementSummary = (clientData: Schema["clients"]): RequirementSummary => {
+export const prepareRequirementSummary = (clientData: Schema["clients"]): RequirementSummary => {
     let babyProduct: string;
     if (clientData.baby_food) {
         babyProduct = "Yes";
