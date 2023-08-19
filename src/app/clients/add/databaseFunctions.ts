@@ -1,115 +1,66 @@
-import { checkboxGroupToArray, Fields, Person } from "@/components/Form/formFunctions";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { InsertSchema, Schema, UpdateSchema } from "@/database_utils";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
+import { checkboxGroupToArray, Fields, Person } from "@/components/Form/formFunctions";
 import supabase from "@/supabaseClient";
+import { PostgrestError } from "@supabase/supabase-js";
 
 type FamilyDatabaseInsertRecord = InsertSchema["families"];
 type FamilyDatabaseUpdateRecord = UpdateSchema["families"];
+type ClientDatabaseInsertRecord = InsertSchema["clients"];
+type ClientDatabaseUpdateRecord = UpdateSchema["clients"];
+type ClientAndFamilyIds = Pick<Schema["clients"], "primary_key" | "family_id">;
 
 export type SubmitFormHelper = (
     fields: Fields,
     router: AppRouterInstance,
     primaryKey?: string
 ) => void;
-export type ClientDatabaseInsertRecord = InsertSchema["clients"];
-export type ClientDatabaseUpdateRecord = UpdateSchema["clients"];
-type ClientDatabaseFetchRecord = Pick<Schema["clients"], "primary_key" | "family_id">;
 
-const insertFamily = async (peopleArray: Person[], familyID: string): Promise<void> => {
-    const familyRecords: FamilyDatabaseInsertRecord[] = [];
+interface PeopleGroupedByAction {
+    [key: string]: Person[];
+}
 
-    for (const person of peopleArray) {
-        if (person.quantity === undefined || person.quantity > 0) {
-            const newFamilyRecord: FamilyDatabaseInsertRecord[] = Array(person.quantity ?? 1).fill({
-                family_id: familyID,
-                gender: person.gender,
-                age: person.age ?? null,
-            });
-            familyRecords.push(...newFamilyRecord);
-        }
-    }
-
-    const { status, error } = await supabase.from("families").insert(familyRecords);
-
-    if (error !== null || Math.floor(status / 100) !== 2) {
-        throw Error(
-            `Error occurred whilst inserting into Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
-        );
-    }
+const errorExists = (error: PostgrestError | null, status: number): boolean => {
+    return error === null && Math.floor(status / 100) === 2;
 };
 
-const insertClient = async (
-    clientRecord: ClientDatabaseInsertRecord
-): Promise<ClientDatabaseFetchRecord> => {
-    const {
-        data: ids,
-        status,
-        error,
-    } = await supabase.from("clients").insert(clientRecord).select("primary_key, family_id");
-
-    if (error === null && Math.floor(status / 100) === 2) {
-        return ids![0];
-    }
-    throw Error(
-        `Error occurred whilst inserting into Clients table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
-    );
+const personToFamilyRecord = (person: Person, familyID: string): FamilyDatabaseInsertRecord[] => {
+    return Array(person.quantity ?? 1).fill({
+        family_id: familyID,
+        gender: person.gender,
+        age: person.age ?? null,
+    });
 };
 
-const deleteFailedInsert = async (primaryKey: string): Promise<void> => {
-    await supabase.from("clients").delete().eq("primary_key", primaryKey);
-};
-
-const updateClient = async (
-    clientRecord: ClientDatabaseUpdateRecord,
-    primaryKey: string
-): Promise<ClientDatabaseFetchRecord> => {
-    const {
-        data: ids,
-        status,
-        error,
-    } = await supabase
-        .from("clients")
-        .update(clientRecord)
-        .eq("primary_key", primaryKey)
-        .select("primary_key, family_id");
-
-    if (error === null && Math.floor(status / 100) === 2) {
-        return ids![0];
-    }
-    throw Error(
-        `Error occurred whilst updating into Clients table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
-    );
-};
-
-const updateChild = async (child: Person): Promise<void> => {
-    const childRecord: FamilyDatabaseUpdateRecord = {
-        gender: child.gender,
-        age: child.age,
-    };
-    const { status, error } = await supabase
+const getChildrenInDatabase = async (familyID: string): Promise<string[]> => {
+    const { data, status, error } = await supabase
         .from("families")
-        .update(childRecord)
-        .eq("primary_key", child.primaryKey);
+        .select("primary_key")
+        .eq("family_id", familyID)
+        .not("age", "is", null);
 
-    if (error !== null || Math.floor(status / 100) !== 2) {
+    if (errorExists(error, status)) {
         throw Error(
-            `Error occurred whilst updating the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
+            `Error occurred whilst fetching from the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}.`
         );
     }
+    return data!.map((datum) => datum.primary_key);
 };
 
-const countAdultMember = async (familyID: string, gender: string): Promise<number> => {
-    const { count, error } = await supabase
+const getNumberAdults = async (familyID: string, gender: string): Promise<number> => {
+    const { count, status, error } = await supabase
         .from("families")
         .select("*", { count: "exact", head: true })
         .eq("family_id", familyID)
         .eq("gender", gender)
         .is("age", null);
 
-    if (error !== null || count === null) {
-        throw error;
+    if (errorExists(error, status)) {
+        throw Error(
+            `Error occurred whilst fetching from the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}.`
+        );
     }
-    return count;
+    return count!;
 };
 
 const deleteAdultMembers = async (
@@ -125,11 +76,102 @@ const deleteAdultMembers = async (
         .is("age", null)
         .limit(count);
 
-    if (error !== null || Math.floor(status / 100) !== 2) {
+    if (errorExists(error, status)) {
         throw Error(
             `Error occurred whilst updating the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
         );
     }
+};
+
+const updateChildren = async (children: Person[]): Promise<void> => {
+    for (const child of children) {
+        const record: FamilyDatabaseUpdateRecord = {
+            gender: child.gender,
+            age: child.age,
+        };
+        const { status, error } = await supabase
+            .from("families")
+            .update(record)
+            .eq("primary_key", child.primaryKey);
+
+        if (errorExists(error, status)) {
+            throw Error(
+                `Error occurred whilst updating the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
+            );
+        }
+    }
+};
+
+const deleteChildren = async (children: Person[]): Promise<void> => {
+    for (const child of children) {
+        const { status, error } = await supabase
+            .from("families")
+            .delete()
+            .eq("primary_key", child.primaryKey);
+
+        if (errorExists(error, status)) {
+            throw Error(
+                `Error occurred whilst updating the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
+            );
+        }
+    }
+};
+
+const insertClient = async (
+    clientRecord: ClientDatabaseInsertRecord
+): Promise<ClientAndFamilyIds> => {
+    const {
+        data: ids,
+        status,
+        error,
+    } = await supabase.from("clients").insert(clientRecord).select("primary_key, family_id");
+
+    if (errorExists(error, status)) {
+        throw Error(
+            `Error occurred whilst inserting into Clients table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
+        );
+    }
+    return ids![0];
+};
+
+const insertFamily = async (peopleArray: Person[], familyID: string): Promise<void> => {
+    const familyRecords: FamilyDatabaseInsertRecord[] = [];
+
+    for (const person of peopleArray) {
+        if (person.quantity === undefined || person.quantity > 0) {
+            familyRecords.push(...personToFamilyRecord(person, familyID));
+        }
+    }
+
+    const { status, error } = await supabase.from("families").insert(familyRecords);
+
+    if (errorExists(error, status)) {
+        throw Error(
+            `Error occurred whilst inserting into Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
+        );
+    }
+};
+
+const updateClient = async (
+    clientRecord: ClientDatabaseUpdateRecord,
+    primaryKey: string
+): Promise<ClientAndFamilyIds> => {
+    const {
+        data: ids,
+        status,
+        error,
+    } = await supabase
+        .from("clients")
+        .update(clientRecord)
+        .eq("primary_key", primaryKey)
+        .select("primary_key, family_id");
+
+    if (errorExists(error, status)) {
+        throw Error(
+            `Error occurred whilst updating the Clients table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
+        );
+    }
+    return ids![0];
 };
 
 const updateFamily = async (
@@ -137,29 +179,78 @@ const updateFamily = async (
     children: Person[],
     familyID: string
 ): Promise<void> => {
-    for (const adultGroup of adults) {
-        const numberAdultsInDatabase = await countAdultMember(familyID, adultGroup.gender);
-        const difference = adultGroup.quantity! - numberAdultsInDatabase;
+    const childrenInDatabase = await getChildrenInDatabase(familyID);
+    const people: PeopleGroupedByAction = { toInsert: [], toUpdate: [], toDelete: [] };
+
+    for (const child of children) {
+        if (child.primaryKey === undefined) {
+            people.toInsert.push(child);
+            continue;
+        }
+        if (childrenInDatabase.includes(child.primaryKey)) {
+            people.toUpdate.push(child);
+            continue;
+        }
+        people.toDelete.push(child);
+    }
+
+    for (const adult of adults) {
+        const numberAdultsInDatabase = await getNumberAdults(familyID, adult.gender);
+        const difference = adult.quantity! - numberAdultsInDatabase;
         if (difference > 0) {
-            const arrayToInsert: Person[] = [{ ...adultGroup, quantity: difference }];
-            await insertFamily(arrayToInsert, familyID);
+            const record = { ...adult, quantity: difference };
+            people.toInsert.push(record);
         }
         if (difference < 0) {
-            await deleteAdultMembers(familyID, adultGroup.gender, difference);
+            await deleteAdultMembers(familyID, adult.gender, difference);
         }
     }
 
-    children.forEach(updateChild);
+    await insertFamily(people.toInsert, familyID);
+    await updateChildren(people.toUpdate);
+    await deleteChildren(people.toDelete);
 };
 
-const revertFailedUpdate = async (initialRecords: ClientDatabaseUpdateRecord): Promise<void> => {
+const revertClientInsert = async (primaryKey: string): Promise<void> => {
+    await supabase.from("clients").delete().eq("primary_key", primaryKey);
+};
+
+// TODO VFB-24: Do I need to catch error here as well? How do I deal with error within Family Updates?
+const revertClientUpdate = async (initialRecords: ClientDatabaseUpdateRecord): Promise<void> => {
     await supabase
         .from("clients")
         .update(initialRecords)
         .eq("primary_key", initialRecords.primary_key);
 };
 
-export const submitFormAddClients: SubmitFormHelper = async (fields, router) => {
+export const fetchClients = async (primaryKey: string): Promise<Schema["clients"]> => {
+    const { data, status, error } = await supabase
+        .from("clients")
+        .select()
+        .eq("primary_key", primaryKey);
+    if (errorExists(error, status)) {
+        throw Error(`HTTP Code: ${status}. PostgreSQL Code: ${error!.code}`);
+    }
+    if (data!.length !== 1) {
+        const errorMessage =
+            (data!.length === 0 ? "No " : "Multiple ") + "records match this client ID.";
+        throw Error(errorMessage);
+    }
+    return data![0];
+};
+
+export const fetchFamilies = async (familyID: string): Promise<Schema["families"][]> => {
+    const { data, status, error } = await supabase
+        .from("families")
+        .select()
+        .eq("family_id", familyID);
+    if (errorExists(error, status)) {
+        throw Error(`HTTP Code: ${status}. PostgreSQL Code: ${error!.code}`);
+    }
+    return data!;
+};
+
+export const submitAddClientForm: SubmitFormHelper = async (fields, router) => {
     const extraInformationWithNappy =
         fields.nappySize === ""
             ? fields.extraInformation
@@ -189,38 +280,12 @@ export const submitFormAddClients: SubmitFormHelper = async (fields, router) => 
         await insertFamily([...fields.adults, ...fields.children], ids.family_id);
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
-        await deleteFailedInsert(ids.primary_key);
+        await revertClientInsert(ids.primary_key);
         throw error;
     }
 };
 
-export const fetchClients = async (primaryKey: string): Promise<Schema["clients"]> => {
-    const { data, error } = await supabase.from("clients").select().eq("primary_key", primaryKey);
-    if (error !== null) {
-        throw Error(`${error.code}: ${error.message}`);
-    }
-    if (data.length !== 1) {
-        const errorMessage =
-            (data.length === 0 ? "No " : "Multiple ") + "records match this client ID.";
-        throw Error(errorMessage);
-    }
-    return data[0];
-};
-
-export const fetchFamilies = async (familyID: string): Promise<Schema["families"][]> => {
-    const { data, error } = await supabase.from("families").select().eq("family_id", familyID);
-    if (error !== null) {
-        throw Error(`${error.code}: ${error.message}`);
-    }
-    return data;
-};
-
-export const formatCamelCaseKey = (objectKey: string): string => {
-    const withSpace = objectKey.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
-    return withSpace.charAt(0).toUpperCase() + withSpace.slice(1);
-};
-
-export const submitFormEditClients: SubmitFormHelper = async (fields, router, primaryKey) => {
+export const submitEditClientForm: SubmitFormHelper = async (fields, router, primaryKey) => {
     const extraInformationWithNappy =
         fields.nappySize === ""
             ? fields.extraInformation
@@ -251,7 +316,7 @@ export const submitFormEditClients: SubmitFormHelper = async (fields, router, pr
         await updateFamily(fields.adults, fields.children, ids.family_id);
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
-        await revertFailedUpdate(clientBeforeUpdate);
+        await revertClientUpdate(clientBeforeUpdate);
         throw error;
     }
 };

@@ -34,7 +34,7 @@ import ExtraInformationCard from "@/app/clients/add/formSections/ExtraInformatio
 import AttentionFlagCard from "@/app/clients/add/formSections/AttentionFlagCard";
 import SignpostingCallCard from "@/app/clients/add/formSections/SignpostingCallCard";
 import Button from "@mui/material/Button";
-import { submitFormAddClients, submitFormEditClients } from "@/app/clients/add/databaseFunctions";
+import { submitAddClientForm, submitEditClientForm } from "@/app/clients/add/databaseFunctions";
 
 interface Props {
     initialFields: Fields;
@@ -124,9 +124,9 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editMod
 
         try {
             if (editMode) {
-                await submitFormEditClients(fields, router, clientID);
+                await submitEditClientForm(fields, router, clientID);
             } else {
-                await submitFormAddClients(fields, router);
+                await submitAddClientForm(fields, router);
             }
         } catch (error: unknown) {
             if (error instanceof Error) {
