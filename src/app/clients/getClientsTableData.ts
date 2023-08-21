@@ -3,6 +3,7 @@ import { Schema } from "@/database_utils";
 import { Datum } from "@/components/Tables/Table";
 
 export interface ClientsTableRow extends Datum {
+    primaryKey: string;
     parcelId: Schema["parcels"]["primary_key"];
     flaggedForAttention: boolean;
     requiresFollowUpPhoneCall: boolean;
@@ -12,8 +13,8 @@ export interface ClientsTableRow extends Datum {
     collectionCentre: string;
     congestionChargeApplies: boolean;
     packingTimeLabel: string;
+    collectionDatetime: string;
     lastStatus: string;
-    collectionDatetime: Schema["parcels"]["collection_datetime"];
 }
 
 export type ProcessingData = Awaited<ReturnType<typeof getProcessingData>>;
@@ -30,6 +31,7 @@ const getProcessingData = async () => {
         packing_datetime,
         
         client:clients (
+            primary_key,
             full_name,
             address_postcode,
             flagged_for_attention,
@@ -57,7 +59,7 @@ const getProcessingData = async () => {
 export const processingDataToClientsTableData = async (
     processingData: ProcessingData
 ): Promise<ClientsTableRow[]> => {
-    const clientTableRows = [];
+    const clientTableRows: ClientsTableRow[] = [];
     const congestionChargeDetails = await getCongestionChargeDetails(processingData);
 
     for (let index = 0; index < processingData.length; index++) {
@@ -65,6 +67,7 @@ export const processingDataToClientsTableData = async (
         const client = parcel.client!;
 
         clientTableRows.push({
+            primaryKey: client.primary_key,
             parcelId: parcel.parcel_id,
             flaggedForAttention: client.flagged_for_attention,
             requiresFollowUpPhoneCall: client.signposting_call_required,
@@ -72,10 +75,10 @@ export const processingDataToClientsTableData = async (
             familyCategory: familyCountToFamilyCategory(client.family.length),
             addressPostcode: client.address_postcode,
             collectionCentre: parcel.collection_centre ?? "-",
-            collectionDatetime: parcel.collection_datetime,
             congestionChargeApplies: congestionChargeDetails[index].congestionCharge,
             packingDate: formatDatetimeAsDate(parcel.packing_datetime),
             packingTimeLabel: datetimeToPackingTimeLabel(parcel.packing_datetime),
+            collectionDatetime: parcel.collection_datetime ?? "-",
             lastStatus: eventToStatusMessage(parcel.events[0] ?? null),
         });
     }
