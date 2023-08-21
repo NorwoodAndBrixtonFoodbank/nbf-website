@@ -2,15 +2,18 @@
 
 import supabase from "@/supabaseClient";
 import React, { useState } from "react";
-import ActionBarModal from "@/app/clients/ActionBarModal";
+import ShippingLabelsModal from "@/app/clients/actionBarModal/ShippingLabelsModal";
 import styled from "styled-components";
-import Button from "@mui/material/Button/Button";
+import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import { Dayjs } from "dayjs";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 import Paper from "@mui/material/Paper/Paper";
+import Alert from "@mui/material/Alert";
+import ShoppingListModal from "@/app/clients/actionBarModal/ShoppingListModal";
+import ActionBarModal from "@/app/clients/ActionBarModal";
 
 interface Props {
     selected: number[];
@@ -33,22 +36,18 @@ const statuses = [
     "Fulfilled with Trussell Trust",
 ];
 
-const actions = [
-    "Generate Map",
-    "Print Day Overview",
-    "Print Shopping List",
-    "Print Shipping Label",
-    "Print Driver Overview",
-    "Delete Request",
-];
-
 const OuterDiv = styled.div`
     display: flex;
     padding: 1rem;
-    gap: 1rem;
+    gap: 0.5rem;
     border-radius: 0.5rem;
     background-color: ${(props) => props.theme.surfaceBackgroundColor};
-    margin: 1rem;
+`;
+
+const AlertBox = styled.div`
+    padding: 0 1rem 1rem;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
 `;
 
 const StyledPaper = styled(Paper)`
@@ -58,13 +57,14 @@ const StyledPaper = styled(Paper)`
 const ActionBar: React.FC<Props> = ({ selected, data }) => {
     const selectedData = Array.from(selected.map((index) => data[index]));
 
-    const [statusAnchorElement, setStatusAnchorElement] = useState<null | HTMLElement>(null);
-    const [actionAnchorElement, setActionAnchorElement] = useState<null | HTMLElement>(null);
+    const [statusAnchorElement, setStatusAnchorElement] = useState<HTMLElement | null>(null);
+    const [actionAnchorElement, setActionAnchorElement] = useState<HTMLElement | null>(null);
     const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
     const [selectedAction, setSelectedAction] = useState<string | null>(null);
 
     const [statusModal, setStatusModal] = useState(false);
-    const [actionModal, setActionModal] = useState(false);
+    const [shippingLabelsModal, setShippingLabelsModal] = useState(false);
+    const [shoppingListModal, setShoppingListModal] = useState(false);
 
     const [modalError, setModalError] = useState<string | null>(null);
 
@@ -88,11 +88,8 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
         } else {
             setStatusModal(false);
             setModalError(null);
+            window.location.reload();
         }
-    };
-
-    const submitAction = async (): Promise<void> => {
-        // TODO VFB-10,11,12 implement whatever actions are meant to do
     };
 
     return (
@@ -109,18 +106,38 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                 onSubmit={submitStatus}
                 errorText={modalError}
             />
-            <ActionBarModal
-                isOpen={actionModal}
-                onClose={() => {
-                    setActionModal(false);
-                    setModalError(null);
-                }}
-                data={selectedData}
-                header={selectedAction ?? "Apply Action"}
-                headerId="action-modal-header"
-                onSubmit={submitAction}
-                errorText={modalError}
-            />
+            {shippingLabelsModal ? (
+                <ShippingLabelsModal
+                    isOpen={shippingLabelsModal}
+                    onClose={() => {
+                        setShippingLabelsModal(false);
+                        setModalError(null);
+                    }}
+                    data={selectedData}
+                    status={selectedAction}
+                    header="Print Shipping Labels"
+                    headerId="action-modal-header"
+                    errorText={modalError}
+                />
+            ) : (
+                <></>
+            )}
+            {shoppingListModal ? (
+                <ShoppingListModal
+                    isOpen={shoppingListModal}
+                    onClose={() => {
+                        setShoppingListModal(false);
+                        setModalError(null);
+                    }}
+                    data={selectedData[0]}
+                    status={selectedAction}
+                    header="Print Shopping List"
+                    headerId="action-modal-header"
+                    errorText={modalError}
+                />
+            ) : (
+                <></>
+            )}
             <Menu
                 open={statusAnchorElement !== null}
                 onClose={() => setStatusAnchorElement(null)}
@@ -143,28 +160,48 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                     })}
                 </MenuList>
             </Menu>
-            <Menu
-                open={actionAnchorElement !== null}
-                onClose={() => setActionAnchorElement(null)}
-                anchorEl={actionAnchorElement}
-            >
-                <MenuList id="action-menu">
-                    {actions.map((action, index) => {
-                        return (
-                            <MenuItem
-                                key={index}
-                                onClick={() => {
-                                    setSelectedAction(action);
-                                    setActionModal(true);
+            {actionAnchorElement ? (
+                <Menu
+                    open={actionAnchorElement !== null}
+                    onClose={() => setActionAnchorElement(null)}
+                    anchorEl={actionAnchorElement}
+                >
+                    <MenuList id="action-menu">
+                        <MenuItem
+                            onClick={() => {
+                                if (selectedData.length === 0) {
                                     setActionAnchorElement(null);
-                                }}
-                            >
-                                {action}
-                            </MenuItem>
-                        );
-                    })}
-                </MenuList>
-            </Menu>
+                                    setModalError("Please select rows for printing.");
+                                } else {
+                                    setSelectedAction("Print Shipping Labels");
+                                    setShippingLabelsModal(true);
+                                    setActionAnchorElement(null);
+                                    setModalError(null);
+                                }
+                            }}
+                        >
+                            Print Shipping Labels
+                        </MenuItem>
+                        <MenuItem
+                            onClick={() => {
+                                if (selectedData.length !== 1) {
+                                    setActionAnchorElement(null);
+                                    setModalError("Please select 1 row for printing.");
+                                } else {
+                                    setSelectedAction("Print Shopping list");
+                                    setShoppingListModal(true);
+                                    setActionAnchorElement(null);
+                                    setModalError(null);
+                                }
+                            }}
+                        >
+                            Print Shopping List
+                        </MenuItem>
+                    </MenuList>
+                </Menu>
+            ) : (
+                <></>
+            )}
             <OuterDiv>
                 <Button
                     variant="contained"
@@ -183,6 +220,13 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                     Actions
                 </Button>
             </OuterDiv>
+            {modalError === null ? (
+                <></>
+            ) : (
+                <AlertBox>
+                    <Alert severity="error">{modalError}</Alert>
+                </AlertBox>
+            )}
         </StyledPaper>
     );
 };

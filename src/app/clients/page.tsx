@@ -4,6 +4,9 @@ import { getClientsTableData } from "@/app/clients/getClientsTableData";
 import ClientsPage from "@/app/clients/ClientsPage";
 import Title from "@/components/Title/Title";
 
+// disables caching
+export const revalidate = 0;
+
 const Clients: () => Promise<React.ReactElement> = async () => {
     const data = await getClientsTableData();
 

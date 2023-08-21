@@ -1,8 +1,8 @@
 import React from "react";
+import supabase from "@/supabaseClient";
 import { Schema } from "@/database_utils";
-import supabase from "@/supabaseServer";
-import ShippingLabelsButton from "@/pdf/ShippingLabels/ShippingLabelsButton";
-import { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
+import PdfButton from "@/components/PdfButton/PdfButton";
+import ShippingLabelsPdf, { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
 
 const formatDatetime = (datetimeString: string | null, isDatetime: boolean): string => {
     if (datetimeString === null) {
@@ -24,23 +24,8 @@ const formatDatetime = (datetimeString: string | null, isDatetime: boolean): str
     return formattedDate;
 };
 
-const format1DTo2DArray = (
-    inputArray: ParcelClients[],
-    elementsPerSubarray: number
-): ParcelClients[][] => {
-    const result: ParcelClients[][] = [];
-    for (let index = 0; index < inputArray.length; index += elementsPerSubarray) {
-        result.push(inputArray.slice(index, index + elementsPerSubarray));
-    }
-    return result;
-};
-
-// TODO make the function query only required data from selected rows in client page
-const getParcelsForDelivery = async (): Promise<Schema["parcels"][]> => {
-    const { data, error } = await supabase
-        .from("parcels")
-        .select()
-        .filter("collection_centre", "eq", "Delivery");
+const getParcelsForDelivery = async (parcelIds: string[]): Promise<Schema["parcels"][]> => {
+    const { data, error } = await supabase.from("parcels").select("*").in("primary_key", parcelIds);
     if (error !== null) {
         throw Error(`${error.code}: ${error.message}`);
     }
@@ -59,12 +44,11 @@ const getClientById = async (clientId: string): Promise<Schema["clients"] | null
     return data ?? null;
 };
 
-const getRequiredData = async (): Promise<ParcelClients[]> => {
-    const parcels = await getParcelsForDelivery();
-    const total = parcels.length;
+const getRequiredData = async (parcelIds: string[]): Promise<ParcelClients[]> => {
+    const parcels = await getParcelsForDelivery(parcelIds);
 
     return await Promise.all(
-        parcels.map(async (parcel, index) => {
+        parcels.map(async (parcel) => {
             const client = await getClientById(parcel.client_id);
             return {
                 packing_datetime: formatDatetime(parcel.packing_datetime, false),
@@ -79,8 +63,6 @@ const getRequiredData = async (): Promise<ParcelClients[]> => {
                 address_county: client?.address_county,
                 address_postcode: client?.address_postcode,
                 delivery_instructions: client?.delivery_instructions,
-                index: index + 1,
-                total: total,
             };
         })
     );
@@ -88,11 +70,19 @@ const getRequiredData = async (): Promise<ParcelClients[]> => {
 
 interface Props {
     text: string;
+    parcelIds: string[];
 }
 
-const ShippingsLabel = async ({ text }: Props): Promise<React.ReactElement> => {
-    const requiredData = await getRequiredData();
-    return <ShippingLabelsButton data={format1DTo2DArray(requiredData, 5)} text={text} />;
+const ShippingLabels = async ({ text, parcelIds }: Props): Promise<React.ReactElement> => {
+    const requiredData = await getRequiredData(parcelIds);
+    return (
+        <PdfButton
+            text={text}
+            fileName="ShippingLabels.pdf"
+            data={requiredData}
+            pdfComponent={ShippingLabelsPdf}
+        />
+    );
 };
 
-export default ShippingsLabel;
+export default ShippingLabels;

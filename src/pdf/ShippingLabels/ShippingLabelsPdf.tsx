@@ -16,37 +16,41 @@ export interface ParcelClients {
     address_county?: string;
     address_postcode?: string;
     delivery_instructions?: string;
-    index: number;
-    total: number;
 }
 
 const styles = StyleSheet.create({
     page: {
         display: "flex",
         flexDirection: "column",
-        fontSize: "11px",
+        fontSize: "11pt",
     },
-    cardWrapper: { border: "1pt solid black", margin: "10px" },
-    bold: { fontFamily: "Helvetica-Bold", textTransform: "uppercase" },
+    cardWrapper: { border: "1pt solid black", margin: 10 },
+    heading: { fontFamily: "Helvetica-Bold", textTransform: "uppercase" },
     row: { display: "flex", flexDirection: "row" },
-    col: { flex: 1, margin: "5px" },
+    col: { flex: 1, margin: 5 },
 });
 
-const ParcelCard: React.FC<{ datum: ParcelClients }> = ({ datum }) => {
+interface ParcelCardProps {
+    datum: ParcelClients;
+    index: number;
+    total: number;
+}
+
+const ParcelCard: React.FC<ParcelCardProps> = ({ datum, index, total }) => {
     return (
-        <View style={styles.cardWrapper}>
+        <View style={styles.cardWrapper} wrap={false}>
             <View style={styles.row}>
                 <Text style={styles.col}>
-                    <Text style={styles.bold}>name:</Text> {datum.full_name}
+                    <Text style={styles.heading}>name:</Text> {datum.full_name}
                 </Text>
                 <Text style={styles.col}>
-                    <Text style={styles.bold}>contact:</Text> {datum.phone_number}
+                    <Text style={styles.heading}>contact:</Text> {datum.phone_number}
                 </Text>
                 <Text style={[styles.col, { textAlign: "right" }]}>
-                    <Text style={styles.bold}>packed:</Text> {datum.packing_datetime}
+                    <Text style={styles.heading}>packed:</Text> {datum.packing_datetime}
                 </Text>
             </View>
-            <View style={[styles.row, { minHeight: "100px" }]}>
+            <View style={[styles.row, { minHeight: 100 }]}>
                 <View style={styles.col}>
                     <Text>{datum.address_1}</Text>
                     <Text>{datum.address_2}</Text>
@@ -55,42 +59,45 @@ const ParcelCard: React.FC<{ datum: ParcelClients }> = ({ datum }) => {
                     <Text>{datum.address_postcode}</Text>
                 </View>
                 <View style={styles.col}>
-                    <Text style={styles.bold}>delivery instructions:</Text>
+                    <Text style={styles.heading}>delivery instructions:</Text>
                     <Text>{datum.delivery_instructions}</Text>
                 </View>
                 <View style={styles.col}></View>
             </View>
             <View style={styles.row}>
                 <Text style={styles.col}>
-                    <Text style={styles.bold}>{datum.voucher_number}</Text>
+                    <Text style={styles.heading}>{datum.voucher_number}</Text>
                 </Text>
                 <Text style={styles.col}>
                     {datum.collection_datetime} | {datum.collection_centre}
                 </Text>
                 <Text style={[styles.col, { textAlign: "right" }]}>
-                    {datum.index}/{datum.total}
+                    {index + 1}/{total}
                 </Text>
             </View>
         </View>
     );
 };
 
-interface ShippingLabelsPdfProps {
-    data: ParcelClients[][];
+export interface ShippingLabelsPdfProps {
+    data: ParcelClients[];
 }
 
 const ShippingLabelsPdf: React.FC<ShippingLabelsPdfProps> = ({ data }) => {
     return (
         <Document>
-            {data.map((subarray, index) => {
-                return (
-                    <Page key={index} size="A4" style={styles.page}>
-                        {subarray.map((datum, datumIndex) => {
-                            return <ParcelCard key={datumIndex} datum={datum} />;
-                        })}
-                    </Page>
-                );
-            })}
+            <Page size="A4" style={styles.page}>
+                {data.map((datum, datumIndex) => {
+                    return (
+                        <ParcelCard
+                            key={datumIndex}
+                            datum={datum}
+                            index={datumIndex}
+                            total={data.length}
+                        />
+                    );
+                })}
+            </Page>
         </Document>
     );
 };
