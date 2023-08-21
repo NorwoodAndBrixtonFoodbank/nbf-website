@@ -7,7 +7,7 @@ import {
     ClientSummary,
     formatCamelCaseKey,
     Item,
-    ShoppingListPDFProps,
+    ShoppingListPDFDataProps,
 } from "@/pdf/ShoppingList/dataPreparation";
 
 const styles = StyleSheet.create({
@@ -193,15 +193,11 @@ const DisplayClientSummary: React.FC<ClientSummary> = (clientSummary) => {
     );
 };
 
-const ShoppingListPDF: React.FC<ShoppingListPDFProps> = ({
-    postcode,
-    parcelInfo,
-    clientSummary,
-    householdSummary,
-    requirementSummary,
-    itemsList,
-    endNotes,
-}) => {
+interface ShoppingListPDFProps {
+    data: ShoppingListPDFDataProps;
+}
+
+const ShoppingListPDF: React.FC<ShoppingListPDFProps> = ({ data }) => {
     return (
         <Document>
             <Page size="A4">
@@ -210,26 +206,26 @@ const ShoppingListPDF: React.FC<ShoppingListPDFProps> = ({
                     <View style={[styles.flexRow, styles.pdfHeader]}>
                         <View style={styles.flexColumn}>
                             <Text style={styles.title}>Shopping List</Text>
-                            <Text style={styles.subtitle}>POSTCODE: {postcode}</Text>
+                            <Text style={styles.subtitle}>POSTCODE: {data.postcode}</Text>
                         </View>
                         {/* eslint-disable-next-line jsx-a11y/alt-text -- React-PDF Image doesn't  have alt text property*/}
                         <Image src="/logo.png" style={[styles.flexRow, styles.logoStyling]} />
                     </View>
-                    <DisplayAsBlock {...parcelInfo} />
-                    <DisplayClientSummary {...clientSummary} />
+                    <DisplayAsBlock {...data.parcelInfo} />
+                    <DisplayClientSummary {...data.clientSummary} />
                     <View style={[styles.flexRow, styles.infoBlock]}>
-                        <DisplayAsBlock {...householdSummary} />
-                        <DisplayAsBlock {...requirementSummary} />
+                        <DisplayAsBlock {...data.householdSummary} />
+                        <DisplayAsBlock {...data.requirementSummary} />
                     </View>
                     <View>
                         <TableHeadings />
-                        <DisplayItemsList itemsList={itemsList} />
+                        <DisplayItemsList itemsList={data.itemsList} />
                     </View>
                     <View style={styles.flexColumn} wrap={false}>
                         <Text style={[styles.keyText, { paddingTop: "5pt" }]}>
                             Warehouse Manager Notes
                         </Text>
-                        <Text style={styles.normalText}>{endNotes}</Text>
+                        <Text style={styles.normalText}>{data.endNotes}</Text>
                         <Text style={[styles.keyText, styles.inputText]}>Date Packed:</Text>
                         <Text style={[styles.keyText, styles.inputText]}>Packer Name:</Text>
                         <Text style={[styles.keyText, styles.inputText]}>Packer Signature:</Text>

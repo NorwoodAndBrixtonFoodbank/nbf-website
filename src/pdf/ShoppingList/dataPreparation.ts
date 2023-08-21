@@ -27,7 +27,7 @@ interface NappySizeAndExtraInformation {
     extraInformation: string;
 }
 
-export interface ShoppingListPDFProps {
+export interface ShoppingListPDFDataProps {
     postcode: string;
     parcelInfo: ParcelInfo;
     clientSummary: ClientSummary;
@@ -220,7 +220,7 @@ const prepareItemsList = async (householdSize: number): Promise<Item[]> => {
     });
 };
 
-const prepareData = async (parcelID: string): Promise<ShoppingListPDFProps> => {
+const prepareData = async (parcelID: string): Promise<ShoppingListPDFDataProps> => {
     const { parcelInfo, clientID } = await prepareParcelInfo(parcelID);
     const { clientData, familyData } = await getClientAndFamilyData(clientID);
     const itemsList = await prepareItemsList(familyData.length);
@@ -235,7 +235,7 @@ const prepareData = async (parcelID: string): Promise<ShoppingListPDFProps> => {
 
     const endNotes = await fetchComment();
 
-    return {
+    const data: ShoppingListPDFDataProps = {
         postcode: clientData.address_postcode,
         parcelInfo: parcelInfo,
         clientSummary: clientSummary,

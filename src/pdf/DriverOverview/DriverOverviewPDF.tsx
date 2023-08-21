@@ -3,10 +3,14 @@
 import React from "react";
 import { Text, Document, Page, View, StyleSheet, Image } from "@react-pdf/renderer";
 
-export interface DriverOverviewCardProps {
+export interface DriverOverviewCardDataProps {
     driverName: string;
     date: Date;
-    data: DriverOverviewTableData[];
+    tableData: DriverOverviewTableData[];
+}
+
+interface DriverOverviewCardProps {
+    data: DriverOverviewCardDataProps;
 }
 
 export interface DriverOverviewTableData {
@@ -115,7 +119,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ driverName, date, data }) => {
+const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
     const header = (
         <View style={[styles.tableHeader, styles.flexRow]}>
             <View style={[styles.tableColumn, styles.nameColumnWidth]}>
@@ -139,7 +143,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ driverName, dat
         </View>
     );
 
-    const table = data.map((rowData, index) => {
+    const table = data.tableData.map((rowData, index) => {
         return (
             <View key={index} style={[styles.tableRow, styles.flexRow]} wrap={false}>
                 <View style={[styles.tableColumn, styles.nameColumnWidth]}>
@@ -174,8 +178,8 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ driverName, dat
                 <View style={[styles.infoAndLogoContainer, styles.flexRow]}>
                     <View style={styles.informationContainer}>
                         <Text style={styles.h1text}>Driver Overview</Text>
-                        <Text style={styles.h2text}>Driver Name: {driverName}</Text>
-                        <Text style={styles.h2text}>Date: {date.toLocaleDateString()} </Text>
+                        <Text style={styles.h2text}>Driver Name: {data.driverName}</Text>
+                        <Text style={styles.h2text}>Date: {data.date.toLocaleDateString()} </Text>
                     </View>
                     {/* eslint-disable-next-line -- needed to remove the need for alt text on the logo */}
                     <Image src="/logo.png" style={styles.logoStyling}></Image>

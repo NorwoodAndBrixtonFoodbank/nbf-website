@@ -1,0 +1,72 @@
+import React from "react";
+import styled from "styled-components";
+import ShippingsLabel from "@/pdf/ShippingLabels/ShippingLabel";
+import Modal from "@/components/Modal/Modal";
+import dayjs, { Dayjs } from "dayjs";
+import { ClientsTableRow } from "@/app/clients/getClientsTableData";
+
+interface SharedModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    data: ClientsTableRow[];
+    status: string | null;
+    onSubmit: (date: Dayjs) => void;
+    header: string;
+    headerId: string;
+    errorText: string | null;
+}
+
+const Centerer = styled.div`
+    display: flex;
+    justify-content: center;
+`;
+
+const ModalInner = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+`;
+
+const StatusText = styled.p`
+    margin-left: 1rem;
+    border-top: 1px solid darkgrey;
+    padding: 1rem 0;
+    &:last-child {
+        border-bottom: 1px solid darkgrey;
+    }
+`;
+
+const ShoppingLabelsModal: React.FC<SharedModalProps> = (props) => {
+    const parcelIds = props.data.map((parcel) => {
+        return parcel.parcelId;
+    });
+
+    return (
+        <Modal {...props} header={props.header} headerId={props.headerId}>
+            <ModalInner>
+                Parcels selected for printing:
+                <div>
+                    {props.data.map((parcel, index) => {
+                        return (
+                            <StatusText key={index}>
+                                {parcel.collectionCentre}
+                                {parcel.fullName && ` - ${parcel.fullName}`}
+                                {parcel.collectionDatetime &&
+                                    `\n @ ${dayjs(parcel.collectionDatetime!).format(
+                                        "DD/MM/YYYY HH:mm"
+                                    )}`}
+                            </StatusText>
+                        );
+                    })}
+                </div>
+                {props.errorText && <small>{props.errorText}</small>}
+                <Centerer>
+                    <ShippingsLabel text="Print" parcelIds={parcelIds} />
+                </Centerer>
+            </ModalInner>
+        </Modal>
+    );
+};
+
+export default ShoppingLabelsModal;
