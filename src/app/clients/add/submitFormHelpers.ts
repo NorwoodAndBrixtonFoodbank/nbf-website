@@ -224,7 +224,7 @@ const revertClientInsert = async (primaryKey: string): Promise<void> => {
     await supabase.from("clients").delete().eq("primary_key", primaryKey);
 };
 
-// TODO VFB-24: Do I need to catch error here as well? How do I deal with error within Family Updates?
+// TODO VFB-22: Handle error from Family Updates
 const revertClientUpdate = async (initialRecords: ClientDatabaseUpdateRecord): Promise<void> => {
     await supabase
         .from("clients")
@@ -259,7 +259,7 @@ const formatClientInsertRecord = (fields: Fields): ClientDatabaseInsertRecord =>
 };
 
 const formatClientUpdateRecord = (fields: Fields): ClientDatabaseUpdateRecord => {
-    // TODO VFB-24: Not sure if I should just make this and formatClientInsertRecord 1 function because they arethe same, but are technically different type.
+    // TODO VFB-24: Not sure if I should just make this and formatClientInsertRecord 1 function because they are the same, but are technically different type.
     const extraInformationWithNappy =
         fields.nappySize === ""
             ? fields.extraInformation
