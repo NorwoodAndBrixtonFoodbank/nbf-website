@@ -135,11 +135,13 @@ export const prepareClientSummary = (clientData: Schema["clients"]): ClientSumma
         .filter((value) => value !== "")
         .join("\n");
 
+    const { extraInformation } = processExtraInformation(clientData.extra_information);
+
     return {
         name: full_name,
         contact: phone_number,
         address: address,
-        extraInformation: "",
+        extraInformation: extraInformation,
     };
 };
 
@@ -181,7 +183,8 @@ export const prepareHouseholdSummary = (familyData: Schema["families"][]): House
 export const prepareRequirementSummary = (clientData: Schema["clients"]): RequirementSummary => {
     let babyProduct: string;
     if (clientData.baby_food) {
-        babyProduct = "Yes";
+        const { nappySize } = processExtraInformation(clientData.extra_information);
+        babyProduct = `Yes (${nappySize})`;
     } else {
         babyProduct = clientData.baby_food === null ? "Don't Know" : "No";
     }
@@ -229,8 +232,7 @@ const prepareData = async (parcelID: string): Promise<ShoppingListPDFProps> => {
     const householdSummary = prepareHouseholdSummary(familyData);
     const requirementSummary = prepareRequirementSummary(clientData);
 
-    const { nappySize, extraInformation } = processExtraInformation(clientData.extra_information);
-    clientSummary.extraInformation = extraInformation;
+    const { nappySize } = processExtraInformation(clientData.extra_information);
     requirementSummary.babyProductsRequired += ` (${nappySize})`;
 
     const endNotes = await fetchComment();

@@ -81,8 +81,9 @@ const deleteAdultMembers = async (
 
     if (errorExists(error, status)) {
         // TODO VFB-22 Standardize Error Handling
+        console.error(error);
         throw Error(
-            `Error occurred whilst updating the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
+            `Error occurred whilst updating adults in the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
         );
     }
 };
@@ -101,7 +102,7 @@ const updateChildren = async (children: Person[]): Promise<void> => {
         if (errorExists(error, status)) {
             // TODO VFB-22 Standardize Error Handling
             throw Error(
-                `Error occurred whilst updating the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
+                `Error occurred whilst updating children in the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
             );
         }
     }
@@ -117,7 +118,7 @@ const deleteChildren = async (children: Person[]): Promise<void> => {
         if (errorExists(error, status)) {
             // TODO VFB-22 Standardize Error Handling
             throw Error(
-                `Error occurred whilst updating the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
+                `Error occurred whilst deleting children in the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
             );
         }
     }
@@ -211,7 +212,7 @@ const updateFamily = async (
             people.toInsert.push(record);
         }
         if (difference < 0) {
-            await deleteAdultMembers(familyID, adult.gender, difference);
+            await deleteAdultMembers(familyID, adult.gender, -difference);
         }
     }
 
