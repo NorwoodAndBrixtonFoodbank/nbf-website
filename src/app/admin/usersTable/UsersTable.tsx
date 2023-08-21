@@ -8,7 +8,7 @@ import { deleteUser } from "@/app/admin/adminActions";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshPageButton from "@/app/admin/RefreshPageButton";
-import { UserRow } from "../page";
+import { UserRow } from "@/app/admin/page";
 
 const DangerDialog = styled(Modal)`
     & #deleteUserDialog {
