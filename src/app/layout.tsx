@@ -32,6 +32,4 @@ export const metadata: Metadata = {
     description: "Providing foodbank services to clients in south London.",
 };
 
-export const dynamic = "force-dynamic";
-
 export default App;

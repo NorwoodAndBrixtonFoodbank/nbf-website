@@ -71,12 +71,7 @@ const AddParcelsButton: React.FC<Props> = ({ data }) => {
 
     return (
         <PopUpButton displayText="Add Parcel">
-            {!existingClientsView ? (
-                <PopUp>
-                    <LinkButton link="/clients/add">New Client</LinkButton>
-                    <Button onClick={() => setExistingClientsView(true)}>Existing Client</Button>
-                </PopUp>
-            ) : (
+            {existingClientsView ? (
                 <>
                     <TableSurface>
                         <Table
@@ -92,6 +87,11 @@ const AddParcelsButton: React.FC<Props> = ({ data }) => {
                     </TableSurface>
                     <Button onClick={() => setExistingClientsView(false)}>Back</Button>
                 </>
+            ) : (
+                <PopUp>
+                    <LinkButton link="/clients/add">New Client</LinkButton>
+                    <Button onClick={() => setExistingClientsView(true)}>Existing Client</Button>
+                </PopUp>
             )}
         </PopUpButton>
     );
