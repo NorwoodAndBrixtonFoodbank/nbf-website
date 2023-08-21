@@ -1,16 +1,16 @@
 "use client";
 
 import React from "react";
-import { ClientsTableRow } from "@/app/clients/getClientsTableData";
+import styled from "styled-components";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Schema } from "@/database_utils";
 import PopUpButton from "@/components/Buttons/PopUpButton";
 import LinkButton from "@/components/Buttons/LinkButton";
 import Button from "@mui/material/Button";
 import TableSurface from "@/components/Tables/TableSurface";
 import Table, { Datum, TableHeaders } from "@/components/Tables/Table";
-import styled from "styled-components";
-import { Schema } from "@/database_utils";
+import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 
 interface Props {
     data: ClientsTableRow[];
@@ -22,12 +22,6 @@ interface ClientsListRow extends Datum {
     familyCategory: string;
     addressPostcode: Schema["clients"]["address_postcode"];
 }
-
-const headers: TableHeaders = [
-    ["fullName", "Name"],
-    ["familyCategory", "Family"],
-    ["addressPostcode", "Postcode"],
-];
 
 const PopUp = styled.div`
     display: flex;
@@ -47,6 +41,12 @@ const styleOptions = {
         hide: 800,
     },
 };
+
+const headers: TableHeaders = [
+    ["fullName", "Name"],
+    ["familyCategory", "Family"],
+    ["addressPostcode", "Postcode"],
+];
 
 const showClients = (data: ClientsTableRow[]): ClientsListRow[] => {
     const primaryKeys: string[] = [];
