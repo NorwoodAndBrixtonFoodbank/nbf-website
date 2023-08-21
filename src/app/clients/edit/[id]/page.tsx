@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import React from "react";
 import ClientForm from "@/app/clients/add/ClientForm";
 import { Errors, FormErrors } from "@/components/Form/formFunctions";
-import autofill from "@/app/clients/add/[id]/autofill";
+import autofill from "@/app/clients/edit/[id]/autofill";
 import { fetchClients, fetchFamilies } from "@/pdf/ShoppingList/databaseFetch";
 
 interface EditClientsParameters {

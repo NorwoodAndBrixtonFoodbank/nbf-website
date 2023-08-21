@@ -24,7 +24,6 @@ const autofill = (
             return {
                 gender: child.gender,
                 age: child.age,
-                quantity: 1,
                 primaryKey: child.primary_key,
             };
         });

@@ -33,6 +33,8 @@ const personToFamilyRecord = (person: Person, familyID: string): FamilyDatabaseI
     });
 };
 
+// TODO VFB-22 Standardize Error Handling in this file.
+
 const getChildrenInDatabase = async (familyID: string): Promise<string[]> => {
     const { data, status, error } = await supabase
         .from("families")
