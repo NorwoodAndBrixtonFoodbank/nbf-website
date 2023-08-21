@@ -118,7 +118,7 @@ const deleteChildren = async (children: Person[]): Promise<void> => {
         if (errorExists(error, status)) {
             // TODO VFB-22 Standardize Error Handling
             throw Error(
-                `Error occurred whilst deleting Children in the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
+                `Error occurred whilst deleting children in the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
             );
         }
     }
