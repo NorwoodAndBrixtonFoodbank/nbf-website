@@ -3,7 +3,7 @@
 import React from "react";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 import ShoppingList from "@/pdf/ShoppingList/ShoppingList";
 
