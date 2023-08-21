@@ -274,13 +274,11 @@ const Table = <TableName extends keyof Schema>({
         const newData = [...data];
 
         // swap data except orderCol
-        newData[rowId1] = oldData[rowId2];
-        // newData[rowId1].row_order = oldData[rowId1][orderCol];
+        newData[rowId1] = { ...oldData[rowId2] };
+        newData[rowId1][orderCol] = oldData[rowId1][orderCol];
 
-        newData[rowId2] = oldData[rowId1];
-        // newData[rowId2].row_order = oldData[rowId2][orderCol];
-
-        console.log(newData);
+        newData[rowId2] = { ...oldData[rowId1] };
+        newData[rowId2][orderCol] = oldData[rowId2][orderCol];
 
         setData(newData);
 
