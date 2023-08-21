@@ -1,14 +1,15 @@
 import { Metadata } from "next";
 import React, { ReactElement } from "react";
-import ListsDataView, { ListRow } from "@/app/lists/ListDataview";
+import ListsDataView from "@/app/lists/ListDataview";
 import supabase from "@/supabaseServer";
 import Title from "@/components/Title/Title";
+import { Schema } from "@/database_utils";
 
 // disables caching
 export const revalidate = 0;
 
 interface Props {
-    data: ListRow[];
+    data: Schema["lists"][];
     comment: string;
 }
 

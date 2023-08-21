@@ -90,6 +90,8 @@ const Component: React.FC<TestTableProps> = ({ checkboxes = true, toggleableHead
                 headerKeysAndLabels={headers}
                 checkboxes={checkboxes}
                 toggleableHeaders={toggleableHeaders}
+                filters={["full_name", "phone_number"]}
+                sortable={["full_name", "phone_number"]}
             />
         </StyleManager>
     );
@@ -106,6 +108,8 @@ const ComponentWithSmallerData: React.FC<TestTableProps> = ({
                 headerKeysAndLabels={headers}
                 checkboxes={checkboxes}
                 toggleableHeaders={toggleableHeaders}
+                filters={["full_name", "phone_number"]}
+                sortable={["full_name", "phone_number"]}
             />
         </StyleManager>
     );
@@ -298,6 +302,5 @@ describe("<Table />", () => {
 
         cy.get("input[placeholder*='Filter by Name']").should("exist");
         cy.get("input[placeholder*='Filter by Phone Number']").should("exist");
-        cy.get("div.MuiAccordionSummary-root").contains("Select Columns");
     });
 });

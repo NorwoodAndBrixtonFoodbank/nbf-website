@@ -49,26 +49,25 @@ const collectionCentreToAbbreviation = (
 };
 
 export const clientTableHeaderKeysAndLabels: TableHeaders<ClientsTableRow> = [
-    ["iconsColumn", ""],
     ["fullName", "Name"],
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],
     ["deliveryCollection", ""],
-    ["packingDate", "Packing Date"],
+    ["packingDatetime", "Packing Date"],
     ["packingTimeLabel", "Time"],
     ["lastStatus", "Last Status"],
     ["voucherNumber", "Voucher"],
 ];
 
-const toggleableHeaders = [
+const toggleableHeaders: readonly (keyof ClientsTableRow)[] = [
     "fullName",
     "familyCategory",
     "addressPostcode",
-    "packingDate",
+    "packingDatetime",
     "packingTimeLabel",
     "lastStatus",
     "voucherNumber",
-] as const;
+];
 
 const clientTableColumnStyleOptions = {
     iconsColumn: {
@@ -83,10 +82,10 @@ const clientTableColumnStyleOptions = {
     addressPostcode: {
         hide: 800,
     },
-    deliveryCollection: {
+    collectionCentre: {
         minWidth: "6rem",
     },
-    packingDate: {
+    packingDatetime: {
         hide: 800,
     },
     packingTimeLabel: {
@@ -110,52 +109,49 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
     const [selected, setSelected] = useState<number[]>([]);
     const theme = useTheme();
 
-    const rowToIconsColumn = (row: Row<ClientsTableRow>): React.ReactElement => {
-        const data = row.data as ClientsTableRow;
-
-        return (
-            <>
-                {data.flaggedForAttention ? <FlaggedForAttentionIcon /> : <></>}
-                {data.requiresFollowUpPhoneCall ? (
-                    <PhoneIcon color={theme.main.largeForeground[0]} />
-                ) : (
-                    <></>
-                )}
-            </>
-        );
-    };
-
-    const rowToDeliveryCollectionColumn = (row: Row<ClientsTableRow>): React.ReactElement => {
-        const data = row.data as ClientsTableRow;
-
-        if (data.collectionCentre === "Delivery") {
+    const clientTableColumnDisplayFunctions = {
+        iconsColumn: ({
+            flaggedForAttention,
+            requiresFollowUpPhoneCall,
+        }: ClientsTableRow["iconsColumn"]): React.ReactElement => {
             return (
                 <>
-                    <DeliveryIcon color={theme.main.largeForeground[0]} />
-                    {data.congestionChargeApplies ? <CongestionChargeAppliesIcon /> : <></>}
+                    {flaggedForAttention ? <FlaggedForAttentionIcon /> : <></>}
+                    {requiresFollowUpPhoneCall ? (
+                        <PhoneIcon color={theme.main.largeForeground[0]} />
+                    ) : (
+                        <></>
+                    )}
                 </>
             );
-        }
+        },
+        deliveryCollection: (data: ClientsTableRow["deliveryCollection"]): React.ReactElement => {
+            if (data.collectionCentre === "Delivery") {
+                return (
+                    <>
+                        <DeliveryIcon color={theme.main.largeForeground[0]} />
+                        {data.congestionChargeApplies ? <CongestionChargeAppliesIcon /> : <></>}
+                    </>
+                );
+            }
 
-        return (
-            <>
-                <CollectionIcon
-                    color={theme.main.largeForeground[0]}
-                    collectionPoint={data.collectionCentre}
-                />
-                {collectionCentreToAbbreviation(data.collectionCentre)}
-            </>
-        );
-    };
-
-    const clientTableColumnDisplayFunctions = {
-        iconsColumn: rowToIconsColumn,
-        deliveryCollection: rowToDeliveryCollectionColumn,
+            return (
+                <>
+                    <CollectionIcon
+                        color={theme.main.largeForeground[0]}
+                        collectionPoint={data.collectionCentre}
+                    />
+                    {collectionCentreToAbbreviation(data.collectionCentre)}
+                </>
+            );
+        },
+        packingDatetime: (data: ClientsTableRow["packingDatetime"]): string => {
+            return data ? new Date(data).toLocaleDateString() : "";
+        },
     };
 
     const onClientTableRowClick = (row: Row<ClientsTableRow>): void => {
-        const data = row.data as ClientsTableRow;
-        setSelectedParcelId(data.parcelId);
+        setSelectedParcelId(row.data.parcelId);
     };
 
     const onExpandedClientDetailsClose = (): void => {
@@ -175,11 +171,8 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
                     checkboxes={true}
                     onRowSelection={setSelected}
                     pagination={true}
-                    sortable={true}
-                    headerFilters={[
-                        ["addressPostcode", FilterType.Text],
-                        ["voucherNumber", FilterType.Text],
-                    ]}
+                    sortable={["fullName", "familyCategory", "addressPostcode", "lastStatus"]}
+                    filters={["addressPostcode", "lastStatus"]}
                     toggleableHeaders={toggleableHeaders}
                 />
             </TableSurface>

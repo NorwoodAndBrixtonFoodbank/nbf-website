@@ -13,7 +13,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import IconButton from "@mui/material/IconButton/IconButton";
 import Icon from "@/components/Icons/Icon";
-import { Filter, TextFilter, headerLabelFromKey } from "./Filters";
+import { Filter, headerLabelFromKey, textFilter } from "@/components/Tables/Filters";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -22,7 +22,7 @@ export interface Row<Data> {
     data: Data;
 }
 
-export type ColumnDisplayFunction<Data> = (row: Row<Data>) => ReactNode;
+export type ColumnDisplayFunction<T> = (data: T) => ReactNode;
 
 export type OnRowClickFunction<Data> = (
     row: Row<Data>,
@@ -40,7 +40,11 @@ export interface ColumnStyleOptions {
     allowOverflow?: boolean;
     hide?: number;
 }
-export type TableColumnStyleOptions = { [headerKey: string]: ColumnStyleOptions };
+
+export interface SortOptions<Data, N extends keyof Data> {
+    key: N;
+    cmp: (a: Data[N], b: Data[N]) => number;
+}
 
 interface Props<Data> {
     data: Data[];
@@ -48,14 +52,14 @@ interface Props<Data> {
     checkboxes?: boolean;
     onRowSelection?: (rowIds: number[]) => void;
     reorderable?: boolean;
-    filters?: (Filter<Data> | keyof Data)[];
+    filters?: (Filter<Data, string> | keyof Data)[];
     pagination?: boolean;
-    defaultShownHeaders?: (keyof Data)[];
-    toggleableHeaders?: (keyof Data)[];
-    sortable?: boolean;
+    defaultShownHeaders?: readonly (keyof Data)[];
+    toggleableHeaders?: readonly (keyof Data)[];
+    sortable?: (keyof Data)[];
     onEdit?: (data: number) => void;
     onDelete?: (data: number) => void;
-    columnDisplayFunctions?: { [headerKey in keyof Data]?: ColumnDisplayFunction<Data> };
+    columnDisplayFunctions?: { [headerKey in keyof Data]?: ColumnDisplayFunction<Data[headerKey]> };
     columnStyleOptions?: { [headerKey in keyof Data]?: ColumnStyleOptions };
     onRowClick?: OnRowClickFunction<Data>;
     autoFilter?: boolean;
@@ -63,7 +67,7 @@ interface Props<Data> {
 
 interface CellProps<Data> {
     row: Row<Data>;
-    columnDisplayFunctions: { [headerKey in keyof Data]?: ColumnDisplayFunction<Data> };
+    columnDisplayFunctions: { [headerKey in keyof Data]?: ColumnDisplayFunction<Data[headerKey]> };
     headerKey: keyof Data;
 }
 
@@ -72,13 +76,23 @@ const CustomCell = <Data extends unknown>({
     columnDisplayFunctions,
     headerKey,
 }: CellProps<Data>): React.ReactElement => {
-    return (
+    const element = (
         <>
             {columnDisplayFunctions[headerKey]
-                ? columnDisplayFunctions[headerKey]!(row)
+                ? columnDisplayFunctions[headerKey]!(row.data[headerKey])
                 : row.data[headerKey]}
         </>
     );
+
+    if (!React.isValidElement(element)) {
+        throw new Error(
+            `${element} is not a valid JSX element, add a column display function for ${String(
+                headerKey
+            )}`
+        );
+    }
+
+    return element;
 };
 
 const StyledIconButton = styled(IconButton)`
@@ -98,23 +112,35 @@ const Table = <Data extends unknown>({
     checkboxes,
     onRowSelection,
     defaultShownHeaders,
-    filters: filterKeysOrObjects,
+    filters: filterKeysOrObjects = [],
     onDelete,
     onEdit,
     pagination,
     reorderable = false,
-    sortable = true,
-    toggleableHeaders,
+    sortable,
+    toggleableHeaders = [],
     onRowClick,
     columnDisplayFunctions = {},
     columnStyleOptions = {},
+    autoFilter = true,
 }: Props<Data>): ReactElement => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
     );
 
     const shownHeaders = headerKeysAndLabels.filter(([key]) => shownHeaderKeys.includes(key));
-    // const [filters, setFilters] = useState(new Map<keyof Data, string>());
+
+    const [filters, setFilters] = useState(
+        filterKeysOrObjects.map((filter) => {
+            if (filter instanceof Object) {
+                return filter;
+            }
+            return textFilter<Data, keyof Data>({
+                key: filter,
+                label: headerLabelFromKey(headerKeysAndLabels, filter),
+            });
+        })
+    );
 
     const [data, setData] = useState(inputData);
 
@@ -163,7 +189,7 @@ const Table = <Data extends unknown>({
         return {
             name: headerName,
             selector: (row) => row.data[headerKey] ?? "",
-            sortable: sortable,
+            sortable: sortable?.some((sortKey) => sortKey === headerKey),
             cell(row) {
                 return (
                     <CustomCell
@@ -173,7 +199,6 @@ const Table = <Data extends unknown>({
                     />
                 );
             },
-
             ...columnStyles,
         };
     });
@@ -213,8 +238,7 @@ const Table = <Data extends unknown>({
         });
     }
 
-    // TODO VFB-23 Implement conditional styling: center icon when only option selected, grid otherwise
-    if (reorderable || onEdit || onDelete) {
+    if (reorderable || onEdit) {
         columns.unshift({
             name: <p>Sort</p>,
             cell: (row: Row<Data>) => {
@@ -268,38 +292,36 @@ const Table = <Data extends unknown>({
         });
     }
 
-    const filters =
-        filterKeysOrObjects?.map((filter) => {
-            if (filter instanceof Filter) {
-                return filter;
-            }
-            return new TextFilter<Data, keyof Data>(
-                filter,
-                headerLabelFromKey(headerKeysAndLabels, filter)
-            );
-        }) ??
-        headerKeysAndLabels.map(([key, label]) => new TextFilter<Data, keyof Data>(key, label));
+    const rows = data.map((data, index) => ({ rowId: index, data }));
+
+    const shouldFilterRow = (row: Row<Data>): boolean => {
+        return filters.every((filter) => !filter.shouldFilter(row.data, filter.state));
+        // return true;
+    };
+
+    const toDisplay = autoFilter ? rows.filter(shouldFilterRow) : rows;
 
     return (
         <Styling>
             <NoSsr>
                 <DataTable
-                    // types are fine without the cast when not using styled components, not sure what's happening here
                     columns={columns}
-                    // data={dataToFilteredRows(data, filterText, headerKeysAndLabels)}
-                    data={data.map((data, index) => ({ rowId: index, data }))}
+                    data={toDisplay}
                     keyField="rowId"
                     fixedHeader
                     subHeader
                     subHeaderComponent={
                         <TableFilterBar<Data>
-                            // filterText={filterText}
-                            // filterKeys={filterKeys}
+                            handleClear={() =>
+                                setFilters((filters) =>
+                                    filters.map((filter) => ({
+                                        ...filter,
+                                        state: filter.initialState,
+                                    }))
+                                )
+                            }
+                            setFilters={setFilters}
                             toggleableHeaders={toggleableHeaders}
-                            // onFilter={onFilter}
-                            // handleClear={handleClear}
-                            onFilter={() => {}}
-                            handleClear={() => {}}
                             filters={filters}
                             headers={headerKeysAndLabels}
                             setShownHeaderKeys={setShownHeaderKeys}

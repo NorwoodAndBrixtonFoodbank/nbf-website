@@ -10,33 +10,38 @@ describe("Clients - Action Bar", () => {
         {
             primaryKey: "primaryKey1",
             addressPostcode: "AB1 2CD",
-            collectionCentre: "Centre 1",
+            deliveryCollection: {
+                collectionCentre: "Centre 1",
+                congestionChargeApplies: false,
+            },
             collectionDatetime: new Date().toISOString(),
-            congestionChargeApplies: false,
             familyCategory: "Family 1",
             fullName: "John Smith",
             lastStatus: "Delivered",
             packingDatetime: new Date().toISOString(),
             packingTimeLabel: "10:00",
             parcelId: "123456789",
-            requiresFollowUpPhoneCall: false,
-            flaggedForAttention: false,
+            iconsColumn: {
+                requiresFollowUpPhoneCall: false,
+                flaggedForAttention: false,
+            },
             voucherNumber: "123456789",
         },
         {
             primaryKey: "primaryKey2",
             addressPostcode: "AB1 aaaa2CD",
-            collectionCentre: "Centraaaae 1",
+            deliveryCollection: { collectionCentre: "Centraaaae 1", congestionChargeApplies: true },
             collectionDatetime: new Date().toISOString(),
-            congestionChargeApplies: true,
             familyCategory: "Familaaaay 1",
             fullName: "John Smaaaaith",
             lastStatus: "Deliveaaaared",
             packingDatetime: new Date().toISOString(),
             packingTimeLabel: "10aaaa:00",
             parcelId: "123456aaaa789",
-            requiresFollowUpPhoneCall: false,
-            flaggedForAttention: false,
+            iconsColumn: {
+                requiresFollowUpPhoneCall: false,
+                flaggedForAttention: false,
+            },
             voucherNumber: "123456aaaa789",
         },
     ];
@@ -167,7 +172,9 @@ describe("Clients - Action Bar", () => {
             });
             cy.get(`input[value="${timeString}"]`).should("exist");
             selectedIndices.forEach((index) => {
-                cy.get(".MuiPaper-root").contains(mockData[index].collectionCentre);
+                cy.get(".MuiPaper-root").contains(
+                    mockData[index].deliveryCollection.collectionCentre
+                );
                 cy.get(".MuiPaper-root").contains(mockData[index].fullName);
             });
         });
@@ -255,7 +262,7 @@ describe("Clients - Action Bar", () => {
                 "@interceptWebData",
             ]);
             cy.get("#action-modal-header").should("exist");
-            cy.get(".MuiPaper-root").contains(row.collectionCentre);
+            cy.get(".MuiPaper-root").contains(row.deliveryCollection.collectionCentre);
             cy.get(".MuiPaper-root").contains(row.fullName);
         });
     });

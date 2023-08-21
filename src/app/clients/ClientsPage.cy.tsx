@@ -1,5 +1,6 @@
 import { CongestionChargeDetails, ProcessingData } from "@/app/clients/fetchDataFromServer";
 import {
+    ClientsTableRow,
     datetimeToPackingTimeLabel,
     eventToStatusMessage,
     processingDataToClientsTableData,
@@ -17,14 +18,14 @@ import {
 
 const sampleProcessingData: ProcessingData = [
     {
-        parcel_id: "PRIMARY_KEY",
+        parcel_id: "PRIMARY_KEY1",
         collection_centre: "COLLECTION_CENTRE",
         collection_datetime: "2023-08-04T13:30:00+00:00",
         packing_datetime: "2023-08-04T13:30:00+00:00",
         voucher_number: "VOUCHER_1",
 
         client: {
-            primary_key: "PRIMARY_KEY_1",
+            primary_key: "PRIMARY_KEY2",
             full_name: "CLIENT_NAME",
             address_postcode: "SW1A 2AA",
             flagged_for_attention: false,
@@ -86,28 +87,43 @@ const sampleRawExpandedClientDetails: RawClientDetails = {
 describe("Clients Page", () => {
     describe("Backend Processing for Table Data", () => {
         it("Fields are set correctly", () => {
-            const clientTableData = processingDataToClientsTableData(
+            cy.intercept("POST", "**/check-congestion-charge", (req) => {
+                const response = req.body.postcodes.map((postcode: string) => ({
+                    postcode,
+                    congestionCharge: true,
+                }));
+
+                req.reply(JSON.stringify(response));
+            });
+
+            const result = processingDataToClientsTableData(
                 sampleProcessingData,
                 sampleCongestionChargeData
             );
-            expect(clientTableData).to.deep.equal([
+
+            const expected: ClientsTableRow[] = [
                 {
-                    primaryKey: "PRIMARY_KEY_1",
-                    parcelId: "PRIMARY_KEY",
-                    flaggedForAttention: false,
-                    requiresFollowUpPhoneCall: true,
+                    parcelId: "PRIMARY_KEY1",
+                    primaryKey: "PRIMARY_KEY2",
                     fullName: "CLIENT_NAME",
                     familyCategory: "Family of 3",
                     addressPostcode: "SW1A 2AA",
-                    collectionCentre: "COLLECTION_CENTRE",
                     collectionDatetime: "2023-08-04T13:30:00+00:00",
-                    congestionChargeApplies: true,
-                    packingDate: "04/08/2023",
+                    deliveryCollection: {
+                        collectionCentre: "COLLECTION_CENTRE",
+                        congestionChargeApplies: true,
+                    },
                     packingTimeLabel: "PM",
                     lastStatus: "LAST_EVENT @ 04/08/2023",
                     voucherNumber: "VOUCHER_1",
+                    packingDatetime: "2023-08-04T13:30:00+00:00",
+                    iconsColumn: {
+                        flaggedForAttention: false,
+                        requiresFollowUpPhoneCall: true,
+                    },
                 },
-            ]);
+            ];
+            expect(result).to.deep.equal(expected);
         });
 
         it("familyCountToFamilyCategory()", () => {

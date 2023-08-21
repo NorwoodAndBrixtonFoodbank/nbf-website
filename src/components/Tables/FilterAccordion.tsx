@@ -8,8 +8,8 @@ import Icon from "@/components/Icons/Icon";
 import { TableHeaders } from "./Table";
 
 interface FilterAccordionProps<Data> {
-    toggleableHeaders?: (keyof Data)[];
-    shownHeaderKeys: (keyof Data)[];
+    toggleableHeaders?: readonly (keyof Data)[];
+    shownHeaderKeys: readonly (keyof Data)[];
     setShownHeaderKeys: (headers: (keyof Data)[]) => void;
     headers: TableHeaders<Data>;
 }

@@ -9,14 +9,14 @@ import PopUpButton from "@/components/Buttons/PopUpButton";
 import LinkButton from "@/components/Buttons/LinkButton";
 import Button from "@mui/material/Button";
 import TableSurface from "@/components/Tables/TableSurface";
-import Table, { Datum, TableHeaders } from "@/components/Tables/Table";
+import Table, { TableHeaders } from "@/components/Tables/Table";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 
 interface Props {
     data: ClientsTableRow[];
 }
 
-interface ClientsListRow extends Datum {
+interface AddParcelsListRow {
     primaryKey: string;
     fullName: Schema["clients"]["full_name"];
     familyCategory: string;
@@ -42,15 +42,15 @@ const styleOptions = {
     },
 };
 
-const headers: TableHeaders = [
+const headers: TableHeaders<AddParcelsListRow> = [
     ["fullName", "Name"],
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],
 ];
 
-const showClients = (data: ClientsTableRow[]): ClientsListRow[] => {
+const showClients = (data: ClientsTableRow[]): AddParcelsListRow[] => {
     const primaryKeys: string[] = [];
-    const clientsData: ClientsListRow[] = [];
+    const clientsData: AddParcelsListRow[] = [];
 
     for (const datum of data) {
         if (!primaryKeys.includes(datum.primaryKey)) {
@@ -78,11 +78,11 @@ const AddParcelsButton: React.FC<Props> = ({ data }) => {
                             data={clientData}
                             headerKeysAndLabels={headers}
                             onRowClick={(row) => router.push(`/clients/${row.data.primaryKey}`)}
-                            sortable
+                            sortable={["addressPostcode", "familyCategory", "fullName"]}
                             pagination
                             checkboxes={false}
                             columnStyleOptions={styleOptions}
-                            headerFilters={["fullName"]}
+                            filters={["fullName"]}
                         />
                     </TableSurface>
                     <Button onClick={() => setExistingClientsView(false)}>Back</Button>

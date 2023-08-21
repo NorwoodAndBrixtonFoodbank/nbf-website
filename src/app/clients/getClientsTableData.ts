@@ -6,19 +6,24 @@ import {
 } from "@/app/clients/getExpandedClientDetails";
 
 export interface ClientsTableRow {
-    primaryKey: string;
     parcelId: Schema["parcels"]["primary_key"];
-    flaggedForAttention: boolean;
-    requiresFollowUpPhoneCall: boolean;
+    primaryKey: Schema["clients"]["primary_key"];
     fullName: Schema["clients"]["full_name"];
     familyCategory: string;
     addressPostcode: Schema["clients"]["address_postcode"];
-    collectionCentre: string;
-    congestionChargeApplies: boolean;
+    deliveryCollection: {
+        collectionCentre: string;
+        congestionChargeApplies: boolean;
+    };
     packingTimeLabel: string;
+    collectionDatetime: string;
     lastStatus: string;
-    collectionDatetime: Schema["parcels"]["collection_datetime"];
     voucherNumber: Schema["parcels"]["voucher_number"];
+    iconsColumn: {
+        flaggedForAttention: boolean;
+        requiresFollowUpPhoneCall: boolean;
+    };
+    packingDatetime: Schema["parcels"]["packing_datetime"];
 }
 
 export const processingDataToClientsTableData = (
@@ -38,20 +43,24 @@ export const processingDataToClientsTableData = (
         const client = parcel.client!;
 
         clientTableRows.push({
-            primaryKey: client.primary_key,
             parcelId: parcel.parcel_id,
-            flaggedForAttention: client.flagged_for_attention,
-            requiresFollowUpPhoneCall: client.signposting_call_required,
+            primaryKey: client.primary_key,
             fullName: client.full_name,
             familyCategory: familyCountToFamilyCategory(client.family.length),
             addressPostcode: client.address_postcode,
-            collectionCentre: parcel.collection_centre ?? "-",
-            congestionChargeApplies: congestionCharge[index].congestionCharge,
-            packingDate: formatDatetimeAsDate(parcel.packing_datetime),
-            packingTimeLabel: datetimeToPackingTimeLabel(parcel.packing_datetime),
+            deliveryCollection: {
+                collectionCentre: parcel.collection_centre ?? "-",
+                congestionChargeApplies: congestionCharge[index].congestionCharge,
+            },
             collectionDatetime: parcel.collection_datetime ?? "-",
+            packingTimeLabel: datetimeToPackingTimeLabel(parcel.packing_datetime),
             lastStatus: eventToStatusMessage(parcel.events[0] ?? null),
             voucherNumber: parcel.voucher_number,
+            packingDatetime: parcel.packing_datetime,
+            iconsColumn: {
+                flaggedForAttention: client.flagged_for_attention,
+                requiresFollowUpPhoneCall: client.signposting_call_required,
+            },
         });
     }
 

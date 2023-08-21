@@ -1,25 +1,31 @@
 import React from "react";
 import { styled } from "styled-components";
-import { TableHeaders } from "./Table";
+import { TableHeaders } from "@/components/Tables/Table";
 
-export abstract class Filter<Data> {
-    constructor() {}
-
-    abstract shouldFilter(data: Data): boolean;
-    abstract filterComponent(onUpdate: () => void): React.ReactElement;
+export interface Filter<Data, State> {
+    shouldFilter(data: Data, state: State): boolean;
+    filterComponent(state: State, setState: (state: State) => void): React.ReactElement;
+    state: State;
+    initialState: State;
+    clear(state: State, setState: (state: State) => void): void;
 }
 
-export abstract class KeyedFilter<Data, N extends keyof Data> extends Filter<Data> {
-    constructor(public key: N) {
-        super();
-    }
-
-    shouldFilter(data: Data): boolean {
-        return this.shouldFilterValue(data[this.key]);
-    }
-
-    abstract shouldFilterValue(key: Data[N]): boolean;
+export interface KeyedFilter<Data, N extends keyof Data, State> extends Filter<Data, State> {
+    key: N;
+    label: string;
 }
+
+const keyedFilter = <Data, N extends keyof Data, State>(
+    key: N,
+    label: string,
+    filter: Filter<Data, State>
+): KeyedFilter<Data, N, State> => {
+    return {
+        key,
+        label,
+        ...filter,
+    };
+};
 
 export const headerLabelFromKey = <Data, N extends keyof Data>(
     headers: TableHeaders<Data>,
@@ -40,38 +46,55 @@ const StyledFilterBar = styled.input`
     }
 `;
 
-export class TextFilter<Data, N extends keyof Data> extends KeyedFilter<Data, N> {
-    constructor(key: N, public label: string, initialValue?: string) {
-        super(key);
-        this.state = initialValue ?? "";
-    }
-
-    state: string;
-
-    shouldFilterValue(key: Data[N]): boolean {
-        return this.toString(key).includes(this.state);
-    }
-
-    toString(value: Data[N]): string {
-        if (typeof value === "string") {
-            return value;
-        }
-
-        return JSON.stringify(value);
-    }
-
-    filterComponent(onUpdate: () => void): React.ReactElement {
-        return (
-            <StyledFilterBar
-                key={this.label}
-                type="text"
-                value={this.state}
-                placeholder={`Filter by ${this.label}`}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    this.state = event.target.value;
-                    onUpdate();
-                }}
-            />
-        );
-    }
+interface TextFilterProps<Data, N extends keyof Data> {
+    key: N;
+    label: string;
+    caseSensitive?: boolean;
+    initialValue?: string;
 }
+
+const defaultToString = (value: any): string => {
+    if (typeof value === "string") {
+        return value;
+    }
+
+    return JSON.stringify(value);
+};
+
+export const textFilter = <Data, N extends keyof Data>({
+    key,
+    label,
+    caseSensitive = false,
+    initialValue = "",
+}: TextFilterProps<Data, N>): KeyedFilter<Data, N, string> => {
+    return keyedFilter(key, label, {
+        state: initialValue,
+        initialState: initialValue,
+        shouldFilter: (data, state) => {
+            let string = defaultToString(data[key]);
+
+            if (!caseSensitive) {
+                string = string.toLowerCase();
+                state = state.toLowerCase();
+            }
+
+            return !string.includes(state);
+        },
+        filterComponent: (state, setState) => {
+            return (
+                <StyledFilterBar
+                    key={label}
+                    type="text"
+                    value={state}
+                    placeholder={`Filter by ${label}`}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        setState(event.target.value);
+                    }}
+                />
+            );
+        },
+        clear: (_oldState, setState) => {
+            setState(initialValue);
+        },
+    });
+};
