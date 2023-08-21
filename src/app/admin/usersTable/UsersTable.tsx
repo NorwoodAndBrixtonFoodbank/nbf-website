@@ -4,10 +4,11 @@ import React, { useState } from "react";
 import Table, { Row, TableColumnDisplayFunctions, TableHeaders } from "@/components/Tables/Table";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
-import { deleteUser, UserRow } from "@/app/admin/adminActions";
+import { deleteUser } from "@/app/admin/adminActions";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshPageButton from "@/app/admin/RefreshPageButton";
+import { UserRow } from "../page";
 
 const DangerDialog = styled(Modal)`
     & #deleteUserDialog {
