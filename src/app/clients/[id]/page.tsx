@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import React from "react";
-import getClientData from "@/app/clients/[id]/getClientData";
 import ViewClientPage from "@/app/clients/[id]/ViewClientPage";
 
 interface ViewClientParameters {
@@ -10,10 +9,9 @@ interface ViewClientParameters {
 const ViewClient: ({ params }: ViewClientParameters) => Promise<React.ReactElement> = async ({
     params,
 }) => {
-    const clientData = await getClientData(params.id);
     return (
         <main>
-            <ViewClientPage clientID={params.id} clientData={clientData} />
+            <ViewClientPage clientID={params.id} />
         </main>
     );
 };
