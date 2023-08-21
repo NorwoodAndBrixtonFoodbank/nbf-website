@@ -73,7 +73,8 @@ export interface Item {
 }
 
 export const formatCamelCaseKey = (objectKey: string): string => {
-    return objectKey.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
+    const withSpace = objectKey.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
+    return withSpace.charAt(0).toUpperCase() + withSpace.slice(1);
 };
 
 const formatDate = (dateString: string | null): string => {
@@ -120,7 +121,7 @@ export const processExtraInformation = (original: string): NappySizeAndExtraInfo
     return { nappySize: "", extraInformation: original };
 };
 
-const prepareClientSummary = (clientData: Schema["clients"]): ClientSummary => {
+export const prepareClientSummary = (clientData: Schema["clients"]): ClientSummary => {
     const {
         address_1,
         address_2,
@@ -155,7 +156,7 @@ const convertPlural = (value: number, description: string): string => {
     return `${value} ${description}${value !== 1 ? "s" : ""}`;
 };
 
-const prepareHouseholdSummary = (familyData: Schema["families"][]): HouseholdSummary => {
+export const prepareHouseholdSummary = (familyData: Schema["families"][]): HouseholdSummary => {
     const children = familyData.filter((member) => member.age !== null);
 
     const householdSize = familyData.length;
@@ -177,7 +178,7 @@ const prepareHouseholdSummary = (familyData: Schema["families"][]): HouseholdSum
     };
 };
 
-const prepareRequirementSummary = (clientData: Schema["clients"]): RequirementSummary => {
+export const prepareRequirementSummary = (clientData: Schema["clients"]): RequirementSummary => {
     let babyProduct: string;
     if (clientData.baby_food) {
         babyProduct = "Yes";
