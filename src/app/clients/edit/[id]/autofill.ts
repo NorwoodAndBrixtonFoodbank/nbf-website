@@ -8,7 +8,7 @@ const getNumberAdultsByGender = (family: Schema["families"][], gender: string): 
     return family.filter((member) => member.gender === gender).length;
 };
 
-const revertBooleanGroup = (data: string[]): booleanGroup => {
+const arrayToBooleanGroup = (data: string[]): booleanGroup => {
     const reverted: booleanGroup = {};
     data.forEach((value) => (reverted[value] = true));
     return reverted;
@@ -45,12 +45,12 @@ const autofill = (
         ],
         numberChildren: children.length,
         children: children,
-        dietaryRequirements: revertBooleanGroup(clientData.dietary_requirements),
-        feminineProducts: revertBooleanGroup(clientData.feminine_products),
+        dietaryRequirements: arrayToBooleanGroup(clientData.dietary_requirements),
+        feminineProducts: arrayToBooleanGroup(clientData.feminine_products),
         babyProducts: clientData.baby_food,
         nappySize: nappySize.replace("Nappy Size: ", ""),
-        petFood: revertBooleanGroup(clientData.pet_food),
-        otherItems: revertBooleanGroup(clientData.other_items),
+        petFood: arrayToBooleanGroup(clientData.pet_food),
+        otherItems: arrayToBooleanGroup(clientData.other_items),
         deliveryInstructions: clientData.delivery_instructions,
         extraInformation: extraInformation,
         attentionFlag: clientData.flagged_for_attention,

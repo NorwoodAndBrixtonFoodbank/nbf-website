@@ -33,8 +33,6 @@ const personToFamilyRecord = (person: Person, familyID: string): FamilyDatabaseI
     });
 };
 
-// TODO VFB-22 Standardize Error Handling in this file.
-
 const getChildrenInDatabase = async (familyID: string): Promise<string[]> => {
     const { data, status, error } = await supabase
         .from("families")
@@ -43,6 +41,7 @@ const getChildrenInDatabase = async (familyID: string): Promise<string[]> => {
         .not("age", "is", null);
 
     if (errorExists(error, status)) {
+        // TODO VFB-22 Standardize Error Handling
         throw Error(
             `Error occurred whilst fetching from the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}.`
         );
@@ -59,6 +58,7 @@ const getNumberAdults = async (familyID: string, gender: string): Promise<number
         .is("age", null);
 
     if (errorExists(error, status)) {
+        // TODO VFB-22 Standardize Error Handling
         throw Error(
             `Error occurred whilst fetching from the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}.`
         );
@@ -80,6 +80,7 @@ const deleteAdultMembers = async (
         .limit(count);
 
     if (errorExists(error, status)) {
+        // TODO VFB-22 Standardize Error Handling
         throw Error(
             `Error occurred whilst updating the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
         );
@@ -98,6 +99,7 @@ const updateChildren = async (children: Person[]): Promise<void> => {
             .eq("primary_key", child.primaryKey);
 
         if (errorExists(error, status)) {
+            // TODO VFB-22 Standardize Error Handling
             throw Error(
                 `Error occurred whilst updating the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
             );
@@ -113,6 +115,7 @@ const deleteChildren = async (children: Person[]): Promise<void> => {
             .eq("primary_key", child.primaryKey);
 
         if (errorExists(error, status)) {
+            // TODO VFB-22 Standardize Error Handling
             throw Error(
                 `Error occurred whilst updating the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
             );
@@ -130,6 +133,7 @@ const insertClient = async (
     } = await supabase.from("clients").insert(clientRecord).select("primary_key, family_id");
 
     if (errorExists(error, status)) {
+        // TODO VFB-22 Standardize Error Handling
         throw Error(
             `Error occurred whilst inserting into Clients table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
         );
@@ -149,6 +153,7 @@ const insertFamily = async (peopleArray: Person[], familyID: string): Promise<vo
     const { status, error } = await supabase.from("families").insert(familyRecords);
 
     if (errorExists(error, status)) {
+        // TODO VFB-22 Standardize Error Handling
         throw Error(
             `Error occurred whilst inserting into Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
         );
@@ -170,6 +175,7 @@ const updateClient = async (
         .select("primary_key, family_id");
 
     if (errorExists(error, status)) {
+        // TODO VFB-22 Standardize Error Handling
         throw Error(
             `Error occurred whilst updating the Clients table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
         );
@@ -287,6 +293,7 @@ export const submitAddClientForm: SubmitFormHelper = async (fields, router) => {
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
         await revertClientInsert(ids.primary_key);
+        // TODO VFB-22 Standardize Error Handling
         throw error;
     }
 };
@@ -305,6 +312,7 @@ export const submitEditClientForm: SubmitFormHelper = async (
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
         await revertClientUpdate(clientBeforeUpdate);
+        // TODO VFB-22 Standardize Error Handling
         throw error;
     }
 };
