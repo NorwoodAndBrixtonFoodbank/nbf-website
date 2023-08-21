@@ -14,11 +14,12 @@ import { createUser } from "@/app/admin/adminActions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import RefreshPageButton from "@/app/admin/RefreshPageButton";
+import { Database } from "@/database_types_file";
 
 interface CreateUserDetails {
     email: string;
     password: string;
-    role: "admin" | "caller";
+    role: Database["public"]["Enums"]["role"];
 }
 
 const initialFields: CreateUserDetails = {
