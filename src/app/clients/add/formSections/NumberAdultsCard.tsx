@@ -14,6 +14,14 @@ import {
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { selectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 import { GappedDiv } from "@/components/Form/formStyling";
+
+const getNumberAdultsDefault = (adults: Person[], gender: string): string | undefined => {
+    const personIndex = adults.findIndex((person) => person.gender === gender);
+    return adults[personIndex].quantity === 0
+        ? undefined
+        : adults[personIndex].quantity!.toString();
+};
+
 const getQuantity = (input: string): number => {
     if (input === "") {
         return 0;
@@ -33,7 +41,7 @@ const getNumberAdults = (
     return (event) => {
         const input = event.target.value;
         const newValue = adults;
-        const personIndex = newValue.findIndex((object) => object.gender === gender);
+        const personIndex = newValue.findIndex((person) => person.gender === gender);
 
         newValue[personIndex].quantity = getQuantity(input);
         fieldSetter("adults", newValue);
@@ -68,17 +76,20 @@ const NumberAdultsCard: React.FC<CardProps> = ({
                 <FreeFormTextInput
                     error={errorExists(formErrors.adults)}
                     label="Female"
+                    defaultValue={getNumberAdultsDefault(fields.adults, "female")}
                     onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "female")}
                 />
                 <FreeFormTextInput
                     error={errorExists(formErrors.adults)}
                     label="Male"
+                    defaultValue={getNumberAdultsDefault(fields.adults, "male")}
                     onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "male")}
                 />
                 <FreeFormTextInput
                     error={errorExists(formErrors.adults)}
                     helperText={errorText(formErrors.adults)}
                     label="Prefer Not To Say"
+                    defaultValue={getNumberAdultsDefault(fields.adults, "other")}
                     onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "other")}
                 />
             </GappedDiv>

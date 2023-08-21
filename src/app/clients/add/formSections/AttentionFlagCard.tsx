@@ -3,7 +3,7 @@ import { CardProps, onChangeRadioGroup } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import RadioGroupInput from "@/components/DataInput/RadioGroupInput";
 
-const AttentionFlagCard: React.FC<CardProps> = ({ fieldSetter }) => {
+const AttentionFlagCard: React.FC<CardProps> = ({ fieldSetter, fields }) => {
     return (
         <GenericFormCard
             title="Flag For Attention"
@@ -15,7 +15,7 @@ const AttentionFlagCard: React.FC<CardProps> = ({ fieldSetter }) => {
                     ["Yes", "Yes"],
                     ["No", "No"],
                 ]}
-                defaultValue="No"
+                defaultValue={fields.attentionFlag ? "Yes" : "No"}
                 onChange={onChangeRadioGroup(fieldSetter, "attentionFlag")}
             ></RadioGroupInput>
         </GenericFormCard>

@@ -1,5 +1,5 @@
 import { Schema } from "@/database_utils";
-import supabase from "@/supabaseServer";
+import supabase from "@/supabaseClient";
 
 export const fetchParcels = async (parcelID: string): Promise<Schema["parcels"]> => {
     const { data, error } = await supabase.from("parcels").select().eq("primary_key", parcelID);

@@ -1,9 +1,9 @@
 import React from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { CardProps, onChangeText } from "@/components/Form/formFunctions";
+import { CardProps, getDefaultTextValue, onChangeText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 
-const ExtraInformationCard: React.FC<CardProps> = ({ errorSetter, fieldSetter }) => {
+const ExtraInformationCard: React.FC<CardProps> = ({ errorSetter, fieldSetter, fields }) => {
     return (
         <GenericFormCard
             title="Extra Information"
@@ -12,6 +12,7 @@ const ExtraInformationCard: React.FC<CardProps> = ({ errorSetter, fieldSetter })
         >
             <FreeFormTextInput
                 label="For example, Tea allergy"
+                defaultValue={getDefaultTextValue(fields, "extraInformation")}
                 onChange={onChangeText(fieldSetter, errorSetter, "extraInformation")}
             />
         </GenericFormCard>

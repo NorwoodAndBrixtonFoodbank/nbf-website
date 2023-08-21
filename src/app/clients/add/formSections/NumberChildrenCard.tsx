@@ -51,6 +51,7 @@ const NumberChildrenCard: React.FC<CardProps> = ({
             <>
                 <FreeFormTextInput
                     label="Number of Children"
+                    defaultValue={fields.numberChildren !== 0 ? fields.numberChildren : undefined}
                     error={errorExists(formErrors.numberChildren)}
                     helperText={errorText(formErrors.numberChildren)}
                     onChange={onChangeText(
@@ -72,10 +73,9 @@ const NumberChildrenCard: React.FC<CardProps> = ({
                                     ["Male", "male"],
                                     ["Female", "female"],
                                     ["Prefer Not To Say", "other"],
-                                    ["Don't Know", "Don't Know"],
                                 ]}
                                 listTitle="Gender"
-                                defaultValue="Don't Know"
+                                defaultValue={child.gender}
                                 onChange={getChild(fieldSetter, fields.children, index, "gender")}
                             />
                             <DropdownListInput
@@ -99,7 +99,7 @@ const NumberChildrenCard: React.FC<CardProps> = ({
                                     ["Don't Know", "-1"],
                                 ]}
                                 listTitle="Age"
-                                defaultValue="-1"
+                                defaultValue={child.age!.toString()}
                                 onChange={getChild(fieldSetter, fields.children, index, "age")}
                             />
                         </StyledCard>

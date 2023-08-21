@@ -32,6 +32,7 @@ export interface Person {
     gender: Gender;
     age?: number | null;
     quantity?: number;
+    primaryKey?: string;
 }
 
 export interface Fields {
@@ -182,4 +183,8 @@ export const checkErrorOnSubmit = (
         errorSetter(amendedErrorTypes);
     }
     return errorExists;
+};
+
+export const getDefaultTextValue = (fields: Fields, fieldKey: keyof Fields): string | undefined => {
+    return fields[fieldKey].length === 0 ? undefined : fields[fieldKey];
 };

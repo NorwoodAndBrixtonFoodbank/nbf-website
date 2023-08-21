@@ -8,6 +8,7 @@ import {
     errorText,
     FieldSetter,
     onChangeText,
+    getDefaultTextValue,
 } from "@/components/Form/formFunctions";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import GenericFormCard from "@/components/Form/GenericFormCard";
@@ -27,6 +28,13 @@ const getBaby = (fieldSetter: FieldSetter, errorSetter: ErrorSetter): selectChan
     };
 };
 
+const getBabyDefaultValue = (value: boolean | null): string => {
+    if (value) {
+        return "Yes";
+    }
+    return value === null ? "Don't Know" : "No";
+};
+
 const BabyProductCard: React.FC<CardProps> = ({ formErrors, errorSetter, fieldSetter, fields }) => {
     return (
         <GenericFormCard
@@ -41,7 +49,7 @@ const BabyProductCard: React.FC<CardProps> = ({ formErrors, errorSetter, fieldSe
                         ["No", "No"],
                         ["Don't Know", "Don't Know"],
                     ]}
-                    defaultValue="Don't Know"
+                    defaultValue={getBabyDefaultValue(fields.babyProducts)}
                     onChange={getBaby(fieldSetter, errorSetter)}
                 />
                 {fields.babyProducts ? (
@@ -50,6 +58,7 @@ const BabyProductCard: React.FC<CardProps> = ({ formErrors, errorSetter, fieldSe
                             error={errorExists(formErrors.nappySize)}
                             helperText={errorText(formErrors.nappySize)}
                             label="Nappy Size"
+                            defaultValue={getDefaultTextValue(fields, "nappySize")}
                             onChange={onChangeText(fieldSetter, errorSetter, "nappySize", true)}
                         />
                     </>

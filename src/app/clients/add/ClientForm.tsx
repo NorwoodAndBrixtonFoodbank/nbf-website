@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { booleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import {
-    checkboxGroupToArray,
     checkErrorOnSubmit,
     Errors,
     Fields,
@@ -34,15 +33,17 @@ import DeliveryInstructionsCard from "@/app/clients/add/formSections/DeliveryIns
 import ExtraInformationCard from "@/app/clients/add/formSections/ExtraInformationCard";
 import AttentionFlagCard from "@/app/clients/add/formSections/AttentionFlagCard";
 import SignpostingCallCard from "@/app/clients/add/formSections/SignpostingCallCard";
-import {
-    ClientDatabaseInsertRecord,
-    deleteFailedInsert,
-    insertClient,
-    insertFamily,
-} from "@/app/clients/add/databaseFunctions";
 import Button from "@mui/material/Button";
+import { submitAddClientForm, submitEditClientForm } from "@/app/clients/add/submitFormHelpers";
 
-interface AddClientFields extends Fields {
+interface Props {
+    initialFields: Fields;
+    initialFormErrors: FormErrors;
+    editMode: boolean;
+    clientID?: string;
+}
+
+export interface ClientFields extends Fields {
     fullName: string;
     phoneNumber: string;
     addressLine1: string;
@@ -82,44 +83,7 @@ const formSections = [
     ExtraInformationCard,
 ];
 
-const initialFields: AddClientFields = {
-    fullName: "",
-    phoneNumber: "",
-    addressLine1: "",
-    addressLine2: "",
-    addressTown: "",
-    addressCounty: "",
-    addressPostcode: "",
-    adults: [
-        { gender: "other", quantity: 0 },
-        { gender: "male", quantity: 0 },
-        { gender: "female", quantity: 0 },
-    ],
-    numberChildren: 0,
-    children: [],
-    dietaryRequirements: {},
-    feminineProducts: {},
-    babyProducts: null,
-    nappySize: "",
-    petFood: {},
-    otherItems: {},
-    deliveryInstructions: "",
-    extraInformation: "",
-    attentionFlag: false,
-    signpostingCall: false,
-};
-
-const initialFormErrors: FormErrors = {
-    fullName: Errors.initial,
-    phoneNumber: Errors.none,
-    addressLine1: Errors.initial,
-    addressPostcode: Errors.initial,
-    adults: Errors.initial,
-    numberChildren: Errors.initial,
-    nappySize: Errors.none,
-};
-
-const AddClientForm: React.FC<{}> = () => {
+const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editMode, clientID }) => {
     const router = useRouter();
     const [fields, setFields] = useState(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
@@ -151,30 +115,6 @@ const AddClientForm: React.FC<{}> = () => {
     const submitForm = async (): Promise<void> => {
         setSubmitDisabled(true);
 
-        const extraInformationWithNappy =
-            fields.nappySize === ""
-                ? fields.extraInformation
-                : `Nappy Size: ${fields.nappySize}, Extra Information: ${fields.extraInformation}`;
-
-        const clientRecord: ClientDatabaseInsertRecord = {
-            full_name: fields.fullName,
-            phone_number: fields.phoneNumber,
-            address_1: fields.addressLine1,
-            address_2: fields.addressLine2,
-            address_town: fields.addressTown,
-            address_county: fields.addressCounty,
-            address_postcode: fields.addressPostcode,
-            dietary_requirements: checkboxGroupToArray(fields.dietaryRequirements),
-            feminine_products: checkboxGroupToArray(fields.feminineProducts),
-            baby_food: fields.babyProducts,
-            pet_food: checkboxGroupToArray(fields.petFood),
-            other_items: checkboxGroupToArray(fields.otherItems),
-            delivery_instructions: fields.deliveryInstructions,
-            extra_information: extraInformationWithNappy,
-            signposting_call_required: fields.signpostingCall,
-            flagged_for_attention: fields.attentionFlag,
-        };
-
         const inputError = checkErrorOnSubmit(formErrors, setFormErrors);
         if (inputError) {
             setSubmitError(Errors.submit);
@@ -183,13 +123,10 @@ const AddClientForm: React.FC<{}> = () => {
         }
 
         try {
-            const ids = await insertClient(clientRecord);
-            try {
-                await insertFamily([...fields.adults, ...fields.children], ids.family_id);
-                router.push("/clients");
-            } catch (error) {
-                await deleteFailedInsert(ids.primary_key);
-                throw error;
+            if (editMode) {
+                await submitEditClientForm(fields, router, initialFields, clientID);
+            } else {
+                await submitAddClientForm(fields, router);
             }
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -221,7 +158,7 @@ const AddClientForm: React.FC<{}> = () => {
                 })}
                 <CenterComponent>
                     <Button variant="contained" onClick={submitForm} disabled={submitDisabled}>
-                        Add Client
+                        Submit
                     </Button>
                 </CenterComponent>
                 <FormErrorText>{submitErrorMessage + submitError}</FormErrorText>
@@ -230,4 +167,4 @@ const AddClientForm: React.FC<{}> = () => {
     );
 };
 
-export default AddClientForm;
+export default ClientForm;
