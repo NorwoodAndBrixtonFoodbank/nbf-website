@@ -2,13 +2,12 @@ import fs from "fs";
 import path from "path";
 import pdf from "pdf-parse";
 
-let timeDelay = 1000;
-
 const delay = (time: number): Promise<void> => {
     return new Promise((resolve) => setTimeout(resolve, time));
 };
 
 const readPdf = async (pathToPdf: string, maxRetries = 4): Promise<string> => {
+    let timeDelay = 1000;
     const pdfPath = path.resolve(pathToPdf);
 
     for (let retries = 0; retries < maxRetries; retries++) {

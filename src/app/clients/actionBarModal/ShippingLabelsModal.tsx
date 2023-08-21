@@ -1,6 +1,8 @@
+"use client";
+
 import React from "react";
 import styled from "styled-components";
-import ShippingLabels from "@/pdf/ShippingLabels/ShippingLabel";
+import ShippingLabels from "@/pdf/ShippingLabels/ShippingLabels";
 import Modal from "@/components/Modal/Modal";
 import dayjs, { Dayjs } from "dayjs";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
@@ -10,7 +12,6 @@ interface SharedModalProps {
     onClose: () => void;
     data: ClientsTableRow[];
     status: string | null;
-    onSubmit: (date: Dayjs) => void;
     header: string;
     headerId: string;
     errorText: string | null;
@@ -37,7 +38,7 @@ const StatusText = styled.p`
     }
 `;
 
-const ShoppingLabelsModal: React.FC<SharedModalProps> = (props) => {
+const ShippingLabelsModal: React.FC<SharedModalProps> = (props) => {
     const parcelIds = props.data.map((parcel) => {
         return parcel.parcelId;
     });
@@ -69,4 +70,4 @@ const ShoppingLabelsModal: React.FC<SharedModalProps> = (props) => {
     );
 };
 
-export default ShoppingLabelsModal;
+export default ShippingLabelsModal;

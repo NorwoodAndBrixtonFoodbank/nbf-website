@@ -4,14 +4,14 @@ import supabase from "@/supabaseClient";
 import React, { useState } from "react";
 import ShippingLabelsModal from "@/app/clients/actionBarModal/ShippingLabelsModal";
 import styled from "styled-components";
-import Button from "@mui/material/Button/Button";
+import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import { Dayjs } from "dayjs";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 import Paper from "@mui/material/Paper/Paper";
-import { Alert } from "@mui/material";
+import Alert from "@mui/material/Alert";
 import ShoppingListModal from "@/app/clients/actionBarModal/ShoppingListModal";
 import ActionBarModal from "@/app/clients/ActionBarModal";
 
@@ -36,15 +36,6 @@ const statuses = [
     "Fulfilled with Trussell Trust",
 ];
 
-// const actions = [
-//     "Generate Map",
-//     "Print Day Overview",
-//     "Print Shopping List",
-//     "Print Shipping Labels",
-//     "Print Driver Overview",
-//     "Delete Request",
-// ];
-
 const OuterDiv = styled.div`
     display: flex;
     padding: 1rem;
@@ -54,7 +45,7 @@ const OuterDiv = styled.div`
 `;
 
 const AlertBox = styled.div`
-    padding: 0 1rem 1rem 1rem;
+    padding: 0 1rem 1rem;
     gap: 0.5rem;
     border-radius: 0.5rem;
 `;
@@ -101,10 +92,6 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
         }
     };
 
-    const submitAction = async (): Promise<void> => {
-        // TODO VFB-10,11,12 implement whatever actions are meant to do
-    };
-
     return (
         <StyledPaper>
             <ActionBarModal
@@ -130,7 +117,6 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                     status={selectedAction}
                     header="Print Shipping Labels"
                     headerId="action-modal-header"
-                    onSubmit={submitAction}
                     errorText={modalError}
                 />
             ) : (
@@ -147,7 +133,6 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                     status={selectedAction}
                     header="Print Shopping List"
                     headerId="action-modal-header"
-                    onSubmit={submitAction}
                     errorText={modalError}
                 />
             ) : (

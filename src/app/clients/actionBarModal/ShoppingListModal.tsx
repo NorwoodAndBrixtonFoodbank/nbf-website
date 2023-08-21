@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
@@ -10,7 +12,6 @@ interface SharedModalProps {
     onClose: () => void;
     data: ClientsTableRow;
     status: string | null;
-    onSubmit: (date: Dayjs) => void;
     header: string;
     headerId: string;
     errorText: string | null;
@@ -37,7 +38,7 @@ const StatusText = styled.p`
     }
 `;
 
-const ShoppingLabelsModal: React.FC<SharedModalProps> = (props) => {
+const ShoppingListModal: React.FC<SharedModalProps> = (props) => {
     const parcelId = props.data.parcelId;
 
     return (
@@ -63,4 +64,4 @@ const ShoppingLabelsModal: React.FC<SharedModalProps> = (props) => {
     );
 };
 
-export default ShoppingLabelsModal;
+export default ShoppingListModal;

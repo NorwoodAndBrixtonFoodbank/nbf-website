@@ -21,22 +21,16 @@ const filenameTimestampNow = (): string => {
 
     const year = now.getFullYear().toString();
     const month = makePaddedString(now.getMonth() + 1);
-    const date = makePaddedString(now.getDate());
+    const day = makePaddedString(now.getDate());
     const hours = makePaddedString(now.getHours());
     const minutes = makePaddedString(now.getMinutes());
     const seconds = makePaddedString(now.getSeconds());
 
-    return `${year}_${month}_${date}_${hours}_${minutes}_${seconds}`;
+    return `${year}_${month}_${day}_${hours}_${minutes}_${seconds}`;
 };
 
 export const formatFileName = (fileName: string): string => {
-    let newFileName = "";
-    if (fileName.endsWith(".pdf")) {
-        newFileName = fileName.slice(0, -4);
-    } else {
-        newFileName = fileName;
-    }
-
+    const newFileName = fileName.endsWith(".pdf") ? fileName.slice(0, -4) : fileName;
     return `${newFileName}_${filenameTimestampNow()}.pdf`;
 };
 
