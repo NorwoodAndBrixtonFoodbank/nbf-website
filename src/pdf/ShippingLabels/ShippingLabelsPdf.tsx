@@ -72,7 +72,7 @@ const ParcelCard: React.FC<ParcelCardProps> = ({ datum, index, total }) => {
                     {datum.collection_datetime} | {datum.collection_centre}
                 </Text>
                 <Text style={[styles.col, { textAlign: "right" }]}>
-                    {index}/{total}
+                    {index + 1}/{total}
                 </Text>
             </View>
         </View>

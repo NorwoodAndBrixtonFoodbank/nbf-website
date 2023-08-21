@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import ShippingsLabel from "@/pdf/ShippingLabels/ShippingLabel";
+import ShippingLabels from "@/pdf/ShippingLabels/ShippingLabel";
 import Modal from "@/components/Modal/Modal";
 import dayjs, { Dayjs } from "dayjs";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
@@ -62,7 +62,7 @@ const ShoppingLabelsModal: React.FC<SharedModalProps> = (props) => {
                 </div>
                 {props.errorText && <small>{props.errorText}</small>}
                 <Centerer>
-                    <ShippingsLabel text="Print" parcelIds={parcelIds} />
+                    <ShippingLabels text="Print" parcelIds={parcelIds} />
                 </Centerer>
             </ModalInner>
         </Modal>

@@ -203,7 +203,7 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                                     setActionAnchorElement(null);
                                     setModalError("Please select 1 row for printing.");
                                 } else {
-                                    setSelectedAction("Print Shipping Labels");
+                                    setSelectedAction("Print Shopping list");
                                     setShoppingListModal(true);
                                     setActionAnchorElement(null);
                                     setModalError(null);
