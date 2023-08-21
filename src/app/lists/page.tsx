@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import React, { ReactElement } from "react";
 import ListsDataView, { ListRow } from "@/app/lists/ListDataview";
-import supabase from "@/supabaseServer";
 import Title from "@/components/Title/Title";
+import { fetchLists, fetchComment } from "@/pdf/ShoppingList/databaseFetch";
 
 // disables caching
 export const revalidate = 0;
@@ -13,11 +13,8 @@ interface Props {
 }
 
 const fetchData = async (): Promise<Props> => {
-    const values = await Promise.all([
-        supabase.from("lists").select(),
-        supabase.from("website_data").select().eq("name", "lists_text"),
-    ]);
-    return { data: values[0].data ?? [], comment: values[1].data![0].value ?? "" };
+    const values = await Promise.all([fetchLists(), fetchComment()]);
+    return { data: values[0], comment: values[1] };
 };
 
 const Lists = async (): Promise<ReactElement> => {

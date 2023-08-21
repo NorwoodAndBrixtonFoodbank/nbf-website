@@ -39,8 +39,10 @@ export const fetchFamilies = async (familyID: string): Promise<Schema["families"
 
 export const fetchLists = async (): Promise<Schema["lists"][]> => {
     const { data, error } = await supabase.from("lists").select();
-    if (error !== null) {
-        throw new Error("We could not fetch the lists data at this time. Please try again later.");
+    if (error) {
+        throw new Error(
+            "We could not fetch the list table data at this time. Please try again later."
+        );
     }
     return data;
 };

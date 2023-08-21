@@ -7,14 +7,13 @@ export const ErrorCenterer = styled.div`
     margin-top: 10vh;
 `;
 export const ErrorPanel = styled(Paper)`
-    max-width: 450px;
+    max-width: 90vw;
     border-radius: 2rem;
     padding: 5rem;
     gap: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: ${(props) => props.theme.main.background[0]};
 `;
 
 export const ErrorLargeText = styled.h1`
