@@ -77,9 +77,7 @@ const ActionBarModal: React.FC<SharedModalProps> = (props) => {
                     Time:
                     <TimePicker value={date} onChange={onTimeChange} disableFuture />
                 </Row>
-                Applying:
-                <StatusText key={props.status}>{props.status}</StatusText>
-                To
+                Applying To:
                 <div>
                     {props.data.map((parcel, index) => {
                         return (
