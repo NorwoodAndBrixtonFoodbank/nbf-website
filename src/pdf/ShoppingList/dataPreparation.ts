@@ -73,7 +73,8 @@ export interface Item {
 }
 
 export const formatCamelCaseKey = (objectKey: string): string => {
-    return objectKey.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
+    const withSpace = objectKey.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
+    return withSpace.charAt(0).toUpperCase() + withSpace.slice(1);
 };
 
 const formatDate = (dateString: string | null): string => {
