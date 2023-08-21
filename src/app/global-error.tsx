@@ -8,7 +8,7 @@ import {
 } from "@/app/errorPageStyling";
 import LinkButton from "@/components/Buttons/LinkButton";
 
-const Error: React.FC<{}> = () => {
+const GlobalError: React.FC<{}> = () => {
     return (
         <ErrorCenterer>
             <ErrorPanel elevation={5}>
@@ -23,4 +23,4 @@ const Error: React.FC<{}> = () => {
     );
 };
 
-export default Error;
+export default GlobalError;

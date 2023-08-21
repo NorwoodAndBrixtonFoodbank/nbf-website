@@ -14,7 +14,7 @@ interface ErrorProps {
     reset: () => void;
 }
 
-const Error: React.FC<ErrorProps> = ({ error, reset }) => {
+const ErrorPage: React.FC<ErrorProps> = ({ error, reset }) => {
     const [ErrorMessage, SetErrorMessage] = useState("");
 
     const retry = (): void => {
@@ -37,4 +37,4 @@ const Error: React.FC<ErrorProps> = ({ error, reset }) => {
     );
 };
 
-export default Error;
+export default ErrorPage;
