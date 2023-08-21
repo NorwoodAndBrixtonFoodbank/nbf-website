@@ -10,10 +10,17 @@ import { faUsers, faUserPlus, IconDefinition } from "@fortawesome/free-solid-svg
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { UserRow } from "@/app/admin/adminActions";
+import RefreshPageButton from "@/app/admin/RefreshPageButton";
 
 const PanelIcon = styled(FontAwesomeIcon)`
     margin-right: 0.5em;
 `;
+
+interface Panel {
+    panelTitle: string;
+    panelIcon: IconDefinition;
+    panelContent: ReactElement;
+}
 
 interface Props {
     userData: UserRow[];
@@ -22,14 +29,19 @@ interface Props {
 // TODO VFB-23 Add accessibility tests for the admin page
 
 const AdminPage: React.FC<Props> = (props) => {
-    const adminPanels: [string, IconDefinition, ReactElement][] = [
-        ["USERS TABLE", faUsers, <UsersTable key={1} userData={props.userData} />],
-        ["CREATE USER", faUserPlus, <CreateUserForm key={2} />],
+    const adminPanels: Panel[] = [
+        {
+            panelTitle: "USERS TABLE",
+            panelIcon: faUsers,
+            panelContent: <UsersTable userData={props.userData} />,
+        },
+        { panelTitle: "CREATE USER", panelIcon: faUserPlus, panelContent: <CreateUserForm /> },
     ];
 
     return (
         <>
-            {adminPanels.map(([panelTitle, panelIcon, PanelContent], index) => {
+            <RefreshPageButton />
+            {adminPanels.map(({ panelTitle, panelIcon, panelContent }, index) => {
                 return (
                     <TableSurface key={index}>
                         <Accordion elevation={0}>
@@ -37,7 +49,7 @@ const AdminPage: React.FC<Props> = (props) => {
                                 <PanelIcon size="2x" icon={panelIcon} />
                                 <h2>{panelTitle}</h2>
                             </AccordionSummary>
-                            <AccordionDetails>{PanelContent}</AccordionDetails>
+                            <AccordionDetails>{panelContent}</AccordionDetails>
                         </Accordion>
                     </TableSurface>
                 );

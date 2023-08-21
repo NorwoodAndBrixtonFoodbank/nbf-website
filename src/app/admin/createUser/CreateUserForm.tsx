@@ -66,6 +66,8 @@ const CreateUserForm: React.FC<{}> = () => {
             return;
         }
 
+        setSubmitError(Errors.none);
+        setSubmitErrorMessage("");
         setSubmitDisabled(false);
         setRefreshRequired(true);
     };
@@ -94,7 +96,7 @@ const CreateUserForm: React.FC<{}> = () => {
                         onClick={submitForm}
                         disabled={submitDisabled}
                     >
-                        Create Client
+                        Create User
                     </Button>
                 )}
 

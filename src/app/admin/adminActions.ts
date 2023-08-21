@@ -5,13 +5,14 @@ import { cookies } from "next/headers";
 import { FunctionsResponse } from "@supabase/functions-js/src/types";
 import { User } from "@supabase/gotrue-js";
 import { Datum } from "@/components/Tables/Table";
+import { Database } from "@/database_types_file";
 
 const supabase = createServerActionClient({ cookies });
 
 export interface UserRow extends Datum {
     id: string;
     email: string;
-    userRole: "admin" | "caller";
+    userRole: Database["public"]["Enums"]["role"];
     createdAt: number;
     updatedAt: number;
 }
@@ -19,8 +20,9 @@ export interface UserRow extends Datum {
 export const getUsers = async (): Promise<UserRow[]> => {
     const { data, error } = await supabase.functions.invoke("admin-get-users");
 
+    // TODO VFB-23 Move error handling of this request to client side
     if (error) {
-        return [];
+        throw new Error("Unable to fetch the user information.");
     }
 
     const users: User[] = JSON.parse(data);

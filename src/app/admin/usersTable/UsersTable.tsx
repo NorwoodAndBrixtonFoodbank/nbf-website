@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import Table, { ColumnDisplayFunction, Row, TableHeaders } from "@/components/Tables/Table";
+import Table, { Row, TableColumnDisplayFunctions, TableHeaders } from "@/components/Tables/Table";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
 import { deleteUser, UserRow } from "@/app/admin/adminActions";
@@ -23,11 +23,11 @@ export const OptionButtonDiv = styled.div`
 `;
 
 const usersTableHeaderKeysAndLabels: TableHeaders = [
-    ["id", "USER ID"],
-    ["email", "EMAIL"],
-    ["userRole", "ROLE"],
-    ["createdAt", "CREATED AT"],
-    ["updatedAt", "UPDATED AT"],
+    ["id", "User ID"],
+    ["email", "Email"],
+    ["userRole", "Role"],
+    ["createdAt", "Created At"],
+    ["updatedAt", "Updated At"],
 ];
 
 const formatTimestamp = (timestamp: number): string => {
@@ -38,7 +38,7 @@ const formatTimestamp = (timestamp: number): string => {
     return new Date(timestamp).toLocaleString("en-gb");
 };
 
-const userTableColumnDisplayFunctions: { [headerKey: string]: ColumnDisplayFunction } = {
+const userTableColumnDisplayFunctions: TableColumnDisplayFunctions = {
     createdAt: (row: Row) => {
         const rowData = row.data as UserRow;
         return formatTimestamp(rowData.createdAt);

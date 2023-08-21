@@ -8,11 +8,12 @@ const AccountDetails: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSet
     return (
         <GenericFormCard
             title="Account Details"
-            required={true}
             text="Please enter the email and temporary password for the new user."
+            required
         >
             <>
                 {/* TODO VFB-23 ADD REGEX CHECK FOR EMAIL */}
+                {/* TODO VFB-23 ADD REGEX CHECK FOR PASSWORD */}
                 <FreeFormTextInput
                     label="Email"
                     error={errorExists(formErrors.email)}

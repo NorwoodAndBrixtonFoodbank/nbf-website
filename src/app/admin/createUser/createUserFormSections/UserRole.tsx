@@ -5,7 +5,7 @@ import { CardProps } from "@/components/Form/formFunctions";
 
 const UserRole: React.FC<CardProps> = () => {
     return (
-        <GenericFormCard title="User Role" required={true}>
+        <GenericFormCard title="User Role" required>
             <DropdownListInput
                 listTitle="User Role"
                 defaultValue="caller"

@@ -26,6 +26,8 @@ export interface Row {
 }
 
 export type ColumnDisplayFunction = (row: Row) => ReactNode;
+export type TableColumnDisplayFunctions = { [headerKey: string]: ColumnDisplayFunction };
+
 export type OnRowClickFunction = (row: Row, e: React.MouseEvent<Element, MouseEvent>) => void;
 
 export interface ColumnStyleOptions {
@@ -39,6 +41,7 @@ export interface ColumnStyleOptions {
     allowOverflow?: boolean;
     hide?: number;
 }
+export type TableColumnStyleOptions = { [headerKey: string]: ColumnStyleOptions };
 
 interface Props {
     data: Datum[];
@@ -53,8 +56,8 @@ interface Props {
     sortable?: boolean;
     onEdit?: (data: number) => void;
     onDelete?: (data: number) => void;
-    columnDisplayFunctions?: { [headerKey: string]: ColumnDisplayFunction };
-    columnStyleOptions?: { [headerKey: string]: ColumnStyleOptions };
+    columnDisplayFunctions?: TableColumnDisplayFunctions;
+    columnStyleOptions?: TableColumnStyleOptions;
     onRowClick?: OnRowClickFunction;
 }
 
@@ -106,7 +109,7 @@ const filterRows = (rows: Row[], filterText: FilterText, headers: TableHeaders):
 
 interface CellProps {
     row: Row;
-    columnDisplayFunctions: { [headerKey: string]: ColumnDisplayFunction };
+    columnDisplayFunctions: TableColumnDisplayFunctions;
     headerKey: string;
 }
 

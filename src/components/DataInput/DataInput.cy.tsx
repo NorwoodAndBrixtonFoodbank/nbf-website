@@ -45,7 +45,7 @@ describe("Data Input Components", () => {
             <PasswordInput
                 label="Password"
                 defaultValue="password"
-                onChange={getFreeFormTextHandler(() => console.log("Password Chanegd"))}
+                onChange={getFreeFormTextHandler(() => console.log("Password Changed"))}
             />
         );
         cy.mount(
