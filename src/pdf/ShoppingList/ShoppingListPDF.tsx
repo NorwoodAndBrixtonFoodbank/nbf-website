@@ -5,6 +5,7 @@ import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/render
 import {
     BlockProps,
     ClientSummary,
+    formatCamelCaseKey,
     Item,
     ShoppingListPDFProps,
 } from "@/pdf/ShoppingList/dataPreparation";
@@ -149,10 +150,6 @@ const DisplayItemsList: React.FC<DisplayItemsListProps> = ({ itemsList }) => {
             ))}
         </View>
     );
-};
-
-const formatCamelCaseKey = (objectKey: string): string => {
-    return objectKey.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
 };
 
 const DisplayAsBlock: React.FC<BlockProps> = (data: BlockProps) => {

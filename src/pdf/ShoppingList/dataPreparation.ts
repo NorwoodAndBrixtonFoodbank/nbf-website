@@ -72,6 +72,10 @@ export interface Item {
     notes: string;
 }
 
+export const formatCamelCaseKey = (objectKey: string): string => {
+    return objectKey.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
+};
+
 const formatDate = (dateString: string | null): string => {
     if (!dateString) {
         return "";
