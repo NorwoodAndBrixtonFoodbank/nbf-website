@@ -27,7 +27,9 @@ const formatDatetime = (datetimeString: string | null, isDatetime: boolean): str
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<Schema["parcels"][]> => {
     const { data, error } = await supabase.from("parcels").select("*").in("primary_key", parcelIds);
     if (error !== null) {
-        throw Error(`${error.code}: ${error.message}`);
+        throw new Error(
+            "We ran into an error while fetching the parcels for delivery. Please try again later."
+        );
     }
     return data ?? [];
 };
@@ -39,7 +41,7 @@ const getClientById = async (clientId: string): Promise<Schema["clients"] | null
         .eq("primary_key", clientId)
         .single();
     if (error !== null) {
-        throw Error(`${error.code}: ${error.message}`);
+        throw Error("We ran into an error while finding the client. Please try again later.");
     }
     return data ?? null;
 };

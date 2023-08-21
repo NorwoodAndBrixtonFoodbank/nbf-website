@@ -48,7 +48,9 @@ export const getRawClientDetails = async (parcelId: string) => {
         .eq("primary_key", parcelId)
         .single();
     if (error) {
-        throw new Error("Error fetching client details");
+        throw new Error(
+            "We could not fetch the clients' details at this time. Please try again later."
+        );
     }
     return data;
 };

@@ -17,7 +17,7 @@ const Error: React.FC<{}> = () => {
                     There has been an error. Please try again or contact a developer if the problem
                     persists.
                 </ErrorSecondaryText>
-                <LinkButton link="/clients" page="Return to Home" />
+                <LinkButton link="/clients">Return to Home</LinkButton>
             </ErrorPanel>
         </ErrorCenterer>
     );

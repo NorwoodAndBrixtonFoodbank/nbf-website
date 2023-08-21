@@ -71,7 +71,7 @@ const ListsDataView: React.FC<Props> = (props) => {
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     if (props.data === null) {
-        throw new Error("No data found");
+        throw new Error("We could not find any data for the lists table.");
     }
 
     const toggleableHeaders = headerKeysAndLabels.map(([key]) => key);
