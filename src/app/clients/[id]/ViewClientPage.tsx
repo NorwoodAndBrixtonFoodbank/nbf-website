@@ -39,7 +39,7 @@ const ViewClientPage: React.FC<Props> = ({ clientID, clientData }) => {
                     {Object.entries(clientData).map(([objectKey, objectValue], index) => (
                         <TempDiv key={index}>
                             <KeyText>{formatCamelCaseKey(objectKey)}</KeyText>
-                            <NormalText>{objectValue as string}</NormalText>
+                            <NormalText>{objectValue}</NormalText>
                         </TempDiv>
                     ))}
                     <LinkButton link={`/clients/edit/${clientID}`}>Edit</LinkButton>
