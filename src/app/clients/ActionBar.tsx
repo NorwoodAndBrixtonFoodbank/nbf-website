@@ -104,7 +104,6 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                     setModalError(null);
                 }}
                 data={selectedData}
-                status={selectedStatus}
                 header={selectedStatus ?? "Apply Status"}
                 headerId="status-modal-header"
                 onSubmit={submitStatus}
@@ -117,7 +116,6 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                     setModalError(null);
                 }}
                 data={selectedData}
-                status={selectedAction}
                 header={selectedAction ?? "Apply Action"}
                 headerId="action-modal-header"
                 onSubmit={submitAction}

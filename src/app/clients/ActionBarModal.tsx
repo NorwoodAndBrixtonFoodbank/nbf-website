@@ -10,7 +10,6 @@ interface SharedModalProps {
     isOpen: boolean;
     onClose: () => void;
     data: ClientsTableRow[];
-    status: string | null;
     onSubmit: (date: Dayjs) => void;
     header: string;
     headerId: string;
