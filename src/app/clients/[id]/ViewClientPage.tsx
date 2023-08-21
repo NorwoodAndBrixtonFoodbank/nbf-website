@@ -42,7 +42,7 @@ const ViewClientPage: React.FC<Props> = ({ clientID, clientData }) => {
                             <NormalText>{objectValue as string}</NormalText>
                         </TempDiv>
                     ))}
-                    <LinkButton link={`/clients/add/${clientID}`}>Edit</LinkButton>
+                    <LinkButton link={`/clients/edit/${clientID}`}>Edit</LinkButton>
                     <LinkButton link={`/parcels/add/${clientID}`}>Continue</LinkButton>
                     <LinkButton link="/clients">Back</LinkButton>
                 </TempDiv>
