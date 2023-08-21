@@ -97,6 +97,7 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
         } else {
             setStatusModal(false);
             setModalError(null);
+            window.location.reload();
         }
     };
 
