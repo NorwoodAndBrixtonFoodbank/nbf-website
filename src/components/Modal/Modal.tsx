@@ -72,6 +72,7 @@ export interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
     headerId: string;
+    className?: string;
 }
 
 const StyledIcon = styled(Icon)`
@@ -81,7 +82,12 @@ const StyledIcon = styled(Icon)`
 
 const Modal: React.FC<ModalProps> = (props) => {
     return (
-        <StyledDialog open={props.isOpen} onClose={props.onClose} aria-labelledby={props.headerId}>
+        <StyledDialog
+            open={props.isOpen}
+            onClose={props.onClose}
+            aria-labelledby={props.headerId}
+            className={props.className}
+        >
             <Header id={props.headerId}>
                 {props.header}
                 <CloseButton onClick={props.onClose} aria-label="Close Button">

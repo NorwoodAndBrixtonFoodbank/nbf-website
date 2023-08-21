@@ -1,10 +1,10 @@
 "use client";
 
 import Table, {
-    ColumnDisplayFunction,
-    ColumnStyleOptions,
     Datum,
     Row,
+    TableColumnDisplayFunctions,
+    TableColumnStyleOptions,
 } from "@/components/Tables/Table";
 import React, { useState } from "react";
 import styled from "styled-components";
@@ -40,8 +40,8 @@ export const headerKeysAndLabels: [string, string][] = [
     ["10_quantity", "Family of 10+"],
 ];
 
-const listDataviewColumnDisplayFunctions: { [headerKey: string]: ColumnDisplayFunction } = {};
-const listsColumnStyleOptions: { [headerKey: string]: ColumnStyleOptions } = {};
+const listDataviewColumnDisplayFunctions: TableColumnDisplayFunctions = {};
+const listsColumnStyleOptions: TableColumnStyleOptions = {};
 
 listQuantityNoteAndLabels.forEach(([headerKey, noteKey]) => {
     if (headerKey.endsWith("quantity")) {
