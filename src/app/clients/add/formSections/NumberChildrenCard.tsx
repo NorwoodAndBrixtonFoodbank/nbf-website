@@ -9,7 +9,6 @@ import {
     Person,
     Gender,
     CardProps,
-    getDefaultTextValue,
 } from "@/components/Form/formFunctions";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { StyledCard, FormText } from "@/components/Form/formStyling";
@@ -52,7 +51,7 @@ const NumberChildrenCard: React.FC<CardProps> = ({
             <>
                 <FreeFormTextInput
                     label="Number of Children"
-                    defaultValue={getDefaultTextValue(fields, "numberChildren")}
+                    defaultValue={fields.numberChildren !== 0 ? fields.numberChildren : undefined}
                     error={errorExists(formErrors.numberChildren)}
                     helperText={errorText(formErrors.numberChildren)}
                     onChange={onChangeText(
