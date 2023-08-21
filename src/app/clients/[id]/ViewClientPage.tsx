@@ -4,10 +4,8 @@ import React from "react";
 import LinkButton from "@/components/Buttons/LinkButton";
 import styled from "styled-components";
 import { CenterComponent, StyledCard } from "@/components/Form/formStyling";
-import { formatCamelCaseKey } from "@/app/clients/add/databaseFunctions";
 import { ClientData } from "@/app/clients/[id]/getClientData";
-
-// TODO VFB-24: Formatting - overflow (  word-break: break-word; ) ?
+import { formatCamelCaseKey } from "@/pdf/ShoppingList/dataPreparation";
 
 interface Props {
     clientID: string;
