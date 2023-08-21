@@ -22,7 +22,7 @@ interface PeopleGroupedByAction {
 }
 
 const errorExists = (error: PostgrestError | null, status: number): boolean => {
-    return error === null && Math.floor(status / 100) === 2;
+    return error !== null || Math.floor(status / 100) !== 2;
 };
 
 const personToFamilyRecord = (person: Person, familyID: string): FamilyDatabaseInsertRecord[] => {
