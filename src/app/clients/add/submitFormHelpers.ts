@@ -41,9 +41,8 @@ const getChildrenInDatabase = async (familyID: string): Promise<string[]> => {
         .not("age", "is", null);
 
     if (errorExists(error, status)) {
-        // TODO VFB-22 Standardize Error Handling
-        throw Error(
-            `Error occurred whilst fetching from the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}.`
+        throw new Error(
+            "We could not fetch the children data at this time. Please try again later."
         );
     }
     return data!.map((datum) => datum.primary_key);
@@ -58,9 +57,8 @@ const getNumberAdults = async (familyID: string, gender: string): Promise<number
         .is("age", null);
 
     if (errorExists(error, status)) {
-        // TODO VFB-22 Standardize Error Handling
-        throw Error(
-            `Error occurred whilst fetching from the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}.`
+        throw new Error(
+            "We could not fetch the number of adults data at this time. Please try again later."
         );
     }
     return count!;
@@ -80,11 +78,7 @@ const deleteAdultMembers = async (
         .limit(count);
 
     if (errorExists(error, status)) {
-        // TODO VFB-22 Standardize Error Handling
-        console.error(error);
-        throw Error(
-            `Error occurred whilst updating adults in the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
-        );
+        throw new Error("We could not process the request at this time. Please try again later.");
     }
 };
 
@@ -100,9 +94,8 @@ const updateChildren = async (children: Person[]): Promise<void> => {
             .eq("primary_key", child.primaryKey);
 
         if (errorExists(error, status)) {
-            // TODO VFB-22 Standardize Error Handling
-            throw Error(
-                `Error occurred whilst updating children in the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
+            throw new Error(
+                "We could not process the request at this time. Please try again later."
             );
         }
     }
@@ -116,9 +109,8 @@ const deleteChildren = async (children: Person[]): Promise<void> => {
             .eq("primary_key", child.primaryKey);
 
         if (errorExists(error, status)) {
-            // TODO VFB-22 Standardize Error Handling
-            throw Error(
-                `Error occurred whilst deleting children in the Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
+            throw new Error(
+                "We could not process the request at this time. Please try again later."
             );
         }
     }
@@ -134,10 +126,7 @@ const insertClient = async (
     } = await supabase.from("clients").insert(clientRecord).select("primary_key, family_id");
 
     if (errorExists(error, status)) {
-        // TODO VFB-22 Standardize Error Handling
-        throw Error(
-            `Error occurred whilst inserting into Clients table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
-        );
+        throw new Error("We could not process the request at this time. Please try again later.");
     }
     return ids![0];
 };
@@ -154,10 +143,7 @@ const insertFamily = async (peopleArray: Person[], familyID: string): Promise<vo
     const { status, error } = await supabase.from("families").insert(familyRecords);
 
     if (errorExists(error, status)) {
-        // TODO VFB-22 Standardize Error Handling
-        throw Error(
-            `Error occurred whilst inserting into Families table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
-        );
+        throw new Error("We could not process the request at this time. Please try again later.");
     }
 };
 
@@ -176,10 +162,7 @@ const updateClient = async (
         .select("primary_key, family_id");
 
     if (errorExists(error, status)) {
-        // TODO VFB-22 Standardize Error Handling
-        throw Error(
-            `Error occurred whilst updating the Clients table. HTTP Code: ${status}, PostgreSQL Code: ${error?.code}. `
-        );
+        throw new Error("We could not process the request at this time. Please try again later.");
     }
     return ids![0];
 };
@@ -225,12 +208,16 @@ const revertClientInsert = async (primaryKey: string): Promise<void> => {
     await supabase.from("clients").delete().eq("primary_key", primaryKey);
 };
 
-// TODO VFB-22: Handle error from Family Updates
 const revertClientUpdate = async (initialRecords: ClientDatabaseUpdateRecord): Promise<void> => {
-    await supabase
+    const { error } = await supabase
         .from("clients")
         .update(initialRecords)
         .eq("primary_key", initialRecords.primary_key);
+    if (error) {
+        throw new Error(
+            "We could not revert the incomplete client update at this time. Please try again later."
+        );
+    }
 };
 
 const formatClientRecord = (
@@ -269,8 +256,7 @@ export const submitAddClientForm: SubmitFormHelper = async (fields, router) => {
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
         await revertClientInsert(ids.primary_key);
-        // TODO VFB-22 Standardize Error Handling
-        throw error;
+        throw new Error("We could not process the request at this time. Please try again later.");
     }
 };
 
@@ -288,7 +274,6 @@ export const submitEditClientForm: SubmitFormHelper = async (
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
         await revertClientUpdate(clientBeforeUpdate);
-        // TODO VFB-22 Standardize Error Handling
-        throw error;
+        throw new Error("We could not process the request at this time. Please try again later.");
     }
 };

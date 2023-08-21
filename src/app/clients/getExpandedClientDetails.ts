@@ -49,7 +49,7 @@ export const getRawClientDetails = async (parcelId: string) => {
         .single();
     if (error) {
         throw new Error(
-            "We could not fetch the clients' details at this time. Please try again later."
+            "We could not fetch the client's details at this time. Please try again later."
         );
     }
     return data;
