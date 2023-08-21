@@ -330,6 +330,12 @@ export interface Database {
             columns: ["client_id"]
             referencedRelation: "clients"
             referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "parcels_collection_centre_fkey"
+            columns: ["collection_centre"]
+            referencedRelation: "collection_centres"
+            referencedColumns: ["name"]
           }
         ]
       }
