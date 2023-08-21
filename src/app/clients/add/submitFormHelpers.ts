@@ -232,34 +232,9 @@ const revertClientUpdate = async (initialRecords: ClientDatabaseUpdateRecord): P
         .eq("primary_key", initialRecords.primary_key);
 };
 
-const formatClientInsertRecord = (fields: Fields): ClientDatabaseInsertRecord => {
-    const extraInformationWithNappy =
-        fields.nappySize === ""
-            ? fields.extraInformation
-            : `Nappy Size: ${fields.nappySize}, Extra Information: ${fields.extraInformation}`;
-
-    return {
-        full_name: fields.fullName,
-        phone_number: fields.phoneNumber,
-        address_1: fields.addressLine1,
-        address_2: fields.addressLine2,
-        address_town: fields.addressTown,
-        address_county: fields.addressCounty,
-        address_postcode: fields.addressPostcode,
-        dietary_requirements: checkboxGroupToArray(fields.dietaryRequirements),
-        feminine_products: checkboxGroupToArray(fields.feminineProducts),
-        baby_food: fields.babyProducts,
-        pet_food: checkboxGroupToArray(fields.petFood),
-        other_items: checkboxGroupToArray(fields.otherItems),
-        delivery_instructions: fields.deliveryInstructions,
-        extra_information: extraInformationWithNappy,
-        signposting_call_required: fields.signpostingCall,
-        flagged_for_attention: fields.attentionFlag,
-    };
-};
-
-const formatClientUpdateRecord = (fields: Fields): ClientDatabaseUpdateRecord => {
-    // TODO VFB-24: Not sure if I should just make this and formatClientInsertRecord 1 function because they are the same, but are technically different type.
+const formatClientRecord = (
+    fields: Fields
+): ClientDatabaseInsertRecord | ClientDatabaseUpdateRecord => {
     const extraInformationWithNappy =
         fields.nappySize === ""
             ? fields.extraInformation
@@ -286,7 +261,7 @@ const formatClientUpdateRecord = (fields: Fields): ClientDatabaseUpdateRecord =>
 };
 
 export const submitAddClientForm: SubmitFormHelper = async (fields, router) => {
-    const clientRecord = formatClientInsertRecord(fields);
+    const clientRecord = formatClientRecord(fields);
     const ids = await insertClient(clientRecord);
     try {
         await insertFamily([...fields.adults, ...fields.children], ids.family_id);
@@ -304,8 +279,8 @@ export const submitEditClientForm: SubmitFormHelper = async (
     initialFields,
     primaryKey
 ) => {
-    const clientRecord = formatClientUpdateRecord(fields);
-    const clientBeforeUpdate = formatClientUpdateRecord(initialFields!);
+    const clientRecord = formatClientRecord(fields);
+    const clientBeforeUpdate = formatClientRecord(initialFields!);
     const ids = await updateClient(clientRecord, primaryKey!);
     try {
         await updateFamily(fields.adults, fields.children, ids.family_id);
