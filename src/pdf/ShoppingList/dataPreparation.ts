@@ -235,7 +235,7 @@ const prepareData = async (parcelID: string): Promise<ShoppingListPDFDataProps> 
 
     const endNotes = await fetchComment();
 
-    const data: ShoppingListPDFDataProps = {
+    return {
         postcode: clientData.address_postcode,
         parcelInfo: parcelInfo,
         clientSummary: clientSummary,
