@@ -5,7 +5,7 @@ import { Accordion, Checkbox, AccordionSummary, AccordionDetails } from "@mui/ma
 import styled from "styled-components";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import Icon from "@/components/Icons/Icon";
-import { TableHeaders } from "./Table";
+import { TableHeaders } from "@/components/Tables/Table";
 
 interface FilterAccordionProps<Data> {
     toggleableHeaders?: readonly (keyof Data)[];

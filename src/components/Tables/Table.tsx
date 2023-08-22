@@ -26,7 +26,7 @@ export type ColumnDisplayFunction<T> = (data: T) => ReactNode;
 
 export type OnRowClickFunction<Data> = (
     row: Row<Data>,
-    e: React.MouseEvent<Element, MouseEvent>
+    event: React.MouseEvent<Element, MouseEvent>
 ) => void;
 
 export interface ColumnStyleOptions {
@@ -39,11 +39,6 @@ export interface ColumnStyleOptions {
     wrap?: boolean;
     allowOverflow?: boolean;
     hide?: number;
-}
-
-export interface SortOptions<Data, N extends keyof Data> {
-    key: N;
-    cmp: (a: Data[N], b: Data[N]) => number;
 }
 
 interface Props<Data> {
@@ -76,7 +71,7 @@ const CustomCell = <Data extends unknown>({
     columnDisplayFunctions,
     headerKey,
 }: CellProps<Data>): React.ReactElement => {
-    const element = (
+    const element: unknown = (
         <>
             {columnDisplayFunctions[headerKey]
                 ? columnDisplayFunctions[headerKey]!(row.data[headerKey])
@@ -248,42 +243,34 @@ const Table = <Data extends unknown>({
 
                 return (
                     <EditAndReorderArrowDiv>
-                        {reorderable ? (
+                        {reorderable && (
                             <StyledIconButton
                                 onClick={() => swapRows(row.rowId, row.rowId - 1)}
                                 aria-label="reorder row upwards"
                             >
                                 <StyledIcon icon={faAnglesUp} />
                             </StyledIconButton>
-                        ) : (
-                            <></>
                         )}
-                        {onEdit ? (
+                        {onEdit && (
                             <StyledIconButton onClick={onEditClick} aria-label="edit">
                                 <StyledIcon icon={faPenToSquare} />
                             </StyledIconButton>
-                        ) : (
-                            <></>
                         )}
-                        {reorderable ? (
+                        {reorderable && (
                             <StyledIconButton
                                 onClick={() => swapRows(row.rowId, row.rowId + 1)}
                                 aria-label="reorder row downwards"
                             >
                                 <StyledIcon icon={faAnglesDown} />
                             </StyledIconButton>
-                        ) : (
-                            <></>
                         )}
-                        {onDelete ? (
+                        {onDelete && (
                             <StyledIconButton
                                 onClick={() => onDelete!(row.rowId)}
                                 aria-label="delete"
                             >
                                 <StyledIcon icon={faTrashAlt} />
                             </StyledIconButton>
-                        ) : (
-                            <></>
                         )}
                     </EditAndReorderArrowDiv>
                 );
@@ -296,7 +283,6 @@ const Table = <Data extends unknown>({
 
     const shouldFilterRow = (row: Row<Data>): boolean => {
         return filters.every((filter) => !filter.shouldFilter(row.data, filter.state));
-        // return true;
     };
 
     const toDisplay = autoFilter ? rows.filter(shouldFilterRow) : rows;

@@ -3,8 +3,8 @@
 import React from "react";
 import FilterAccordion from "@/components/Tables/FilterAccordion";
 import Button from "@mui/material/Button";
-import { TableHeaders } from "./Table";
-import { Filter } from "./Filters";
+import { TableHeaders } from "@/components/Tables/Table";
+import { Filter } from "@/components/Tables/Filters";
 
 interface Props<Data> {
     setFilters: (filters: Filter<Data, string>[]) => void;

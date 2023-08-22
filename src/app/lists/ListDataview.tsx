@@ -118,9 +118,7 @@ const ListsDataView: React.FC<Props> = (props) => {
         return newRow;
     });
 
-    const toggleableHeaders = headerKeysAndLabels
-        .map(([key]) => key)
-        .filter((key) => key !== "itemName");
+    const toggleableHeaders = headerKeysAndLabels.map(([key]) => key);
 
     // remove description header
     toggleableHeaders.shift();
