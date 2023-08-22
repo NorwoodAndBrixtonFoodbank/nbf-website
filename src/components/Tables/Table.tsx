@@ -204,7 +204,6 @@ const Table = <TableName extends keyof Schema>({
             setSelectAllCheckBox(allChecked);
             setSelectAllCheckBox(allChecked);
         }
-        console.log(data);
     }, [selectedCheckboxes, selectAllCheckBox]);
 
     const columns: TableColumn<Row>[] = (
@@ -251,7 +250,6 @@ const Table = <TableName extends keyof Schema>({
         ]);
 
         if (error) {
-            console.log(error.message);
             throw new Error(`Database error - ${error.message}`);
         }
 
