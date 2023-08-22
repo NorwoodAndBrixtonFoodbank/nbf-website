@@ -9,20 +9,20 @@ import {
 export interface ParcelsTableRow {
     parcelId: Schema["parcels"]["primary_key"];
     primaryKey: Schema["clients"]["primary_key"];
-    fullName: Schema["clients"]["full_name"];
+    fullName: string;
     familyCategory: string;
-    addressPostcode: Schema["clients"]["address_postcode"];
+    addressPostcode: string;
     deliveryCollection: {
-        collectionCentre: Schema["parcels"]["collection_centre"];
+        collectionCentre: string | null;
         congestionChargeApplies: boolean;
     };
-    packingTimeLabel: string;
+    packingTimeLabel: PackingTimeLabel | null;
     collectionDatetime: Date | null;
     lastStatus: Status;
-    voucherNumber: Schema["parcels"]["voucher_number"];
+    voucherNumber: string | null;
     iconsColumn: {
-        flaggedForAttention: Schema["clients"]["flagged_for_attention"];
-        requiresFollowUpPhoneCall: Schema["clients"]["signposting_call_required"];
+        flaggedForAttention: boolean;
+        requiresFollowUpPhoneCall: boolean;
     };
     packingDatetime: Date | null;
 }
@@ -70,9 +70,11 @@ export const processingDataToClientsTableData = (
     return clientTableRows;
 };
 
-export const datetimeToPackingTimeLabel = (datetime: string | null): string => {
+export type PackingTimeLabel = "AM" | "PM";
+
+export const datetimeToPackingTimeLabel = (datetime: string | null): PackingTimeLabel | null => {
     if (datetime === null || isNaN(Date.parse(datetime))) {
-        return "-";
+        return null;
     }
 
     return new Date(datetime).getHours() <= 11 ? "AM" : "PM";
