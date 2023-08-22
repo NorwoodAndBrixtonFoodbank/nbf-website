@@ -1,6 +1,5 @@
 import { CongestionChargeDetails, ProcessingData } from "@/app/clients/fetchDataFromServer";
 import { Schema } from "@/database_utils";
-import { Status } from "@/app/clients/ActionBar";
 import {
     familyCountToFamilyCategory,
     formatDatetimeAsDate,
@@ -18,7 +17,7 @@ export interface ParcelsTableRow {
     };
     packingTimeLabel: PackingTimeLabel | null;
     collectionDatetime: Date | null;
-    lastStatus: Status;
+    lastStatus: string;
     voucherNumber: string | null;
     iconsColumn: {
         flaggedForAttention: boolean;
@@ -57,7 +56,7 @@ export const processingDataToClientsTableData = (
                 ? new Date(parcel.collection_datetime)
                 : null,
             packingTimeLabel: datetimeToPackingTimeLabel(parcel.packing_datetime),
-            lastStatus: eventToStatusMessage(parcel.events[0] ?? null) as Status,
+            lastStatus: eventToStatusMessage(parcel.events[0] ?? null),
             voucherNumber: parcel.voucher_number,
             packingDatetime: parcel.packing_datetime ? new Date(parcel.packing_datetime) : null,
             iconsColumn: {
