@@ -3,6 +3,7 @@ import React, { ReactElement } from "react";
 import Title from "@/components/Title/Title";
 import DayOverview from "@/components/DayOverview/DayOverview";
 
+// Temporary page for now
 const PdfDownloader = async (): Promise<ReactElement> => {
     const date = new Date("2023-07-17");
     const location = "Delivery";
