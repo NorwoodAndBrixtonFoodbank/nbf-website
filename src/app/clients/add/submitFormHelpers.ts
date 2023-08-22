@@ -215,7 +215,7 @@ const revertClientUpdate = async (initialRecords: ClientDatabaseUpdateRecord): P
         .eq("primary_key", initialRecords.primary_key);
     if (error) {
         throw new Error(
-            "We could not revert the incomplete client update at this time. Please try again later."
+            "We could not revert an incomplete client update at this time, and there may be faulty data stored. Please contact a developer for assistance."
         );
     }
 };
