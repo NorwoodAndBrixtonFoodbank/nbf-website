@@ -10,6 +10,7 @@ import { Schema } from "@/database_utils";
 import Snackbar from "@mui/material/Snackbar/Snackbar";
 import Alert from "@mui/material/Alert/Alert";
 import Button from "@mui/material/Button/Button";
+import { Datum } from "@/components/Tables/Table";
 
 interface Props {
     onClose: () => void;
@@ -17,7 +18,7 @@ interface Props {
 }
 
 // null => add, undefined => modal closed
-export type EditModalState = Schema["lists"] | null | undefined;
+export type EditModalState = Datum | null | undefined;
 
 const ModalInner = styled.div`
     display: flex;

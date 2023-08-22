@@ -62,8 +62,8 @@ interface Props<TableName extends keyof Schema> {
     defaultShownHeaders?: string[];
     toggleableHeaders?: string[];
     sortable?: boolean;
-    onEdit?: (data: number) => void;
-    onDelete?: (data: number) => void;
+    onEdit?: (data: Datum) => void;
+    onDelete?: (data: Datum) => void;
     columnDisplayFunctions?: TableColumnDisplayFunctions;
     columnStyleOptions?: TableColumnStyleOptions;
     onRowClick?: OnRowClickFunction;
@@ -202,6 +202,7 @@ const Table = <TableName extends keyof Schema>({
         const allChecked = selectedCheckboxes.every((item) => item);
         if (allChecked !== selectAllCheckBox) {
             setSelectAllCheckBox(allChecked);
+            setSelectAllCheckBox(allChecked);
         }
         console.log(data);
     }, [selectedCheckboxes, selectAllCheckBox]);
@@ -319,7 +320,7 @@ const Table = <TableName extends keyof Schema>({
             name: <p>Sort</p>,
             cell: (row, filteredRowIndex) => {
                 const onEditClick = (): void => {
-                    onEdit!(row.rowId);
+                    onEdit!(row.data);
                 };
 
                 return (
@@ -353,7 +354,7 @@ const Table = <TableName extends keyof Schema>({
                         )}
                         {onDelete ? (
                             <StyledIconButton
-                                onClick={() => onDelete!(row.rowId)}
+                                onClick={() => onDelete!(row.data)}
                                 aria-label="delete"
                             >
                                 <StyledIcon icon={faTrashAlt} />

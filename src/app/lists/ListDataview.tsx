@@ -65,7 +65,7 @@ listQuantityNoteAndLabels.forEach(([headerKey, noteKey]) => {
 
 const ListsDataView: React.FC<Props> = (props) => {
     const [modal, setModal] = useState<EditModalState>();
-    const [toDelete, setToDelete] = useState<number | null>(null);
+    const [toDelete, setToDelete] = useState<Datum | null>(null);
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -79,22 +79,21 @@ const ListsDataView: React.FC<Props> = (props) => {
     // remove description header
     toggleableHeaders.shift();
 
-    const onEdit = (index: number): void => {
-        setModal(props.data[index]);
+    const onEdit = (data: Datum): void => {
+        setModal(data);
     };
 
-    const onDeleteButtonClick = (index: number): void => {
-        setToDelete(index);
+    const onDeleteButtonClick = (data: Datum): void => {
+        setToDelete(data);
         setToDeleteModalOpen(true);
     };
 
     const onConfirmDeletion = async (): Promise<void> => {
         if (toDelete !== null) {
-            const data = props.data[toDelete];
             const { error } = await supabase
                 .from("lists")
                 .delete()
-                .eq("primary_key", data.primary_key);
+                .eq("primary_key", toDelete.primary_key);
 
             if (error) {
                 setErrorMsg(error.message);
@@ -107,9 +106,7 @@ const ListsDataView: React.FC<Props> = (props) => {
     return (
         <>
             <ConfirmDialog
-                message={`Are you sure you want to delete ${
-                    toDelete ? props.data[toDelete].item_name : ""
-                }?`}
+                message={`Are you sure you want to delete ${toDelete ? toDelete.item_name : ""}?`}
                 isOpen={toDeleteModalOpen}
                 onConfirm={onConfirmDeletion}
                 onCancel={() => {
