@@ -1,6 +1,7 @@
 import React from "react";
-import supabase, { Schema } from "@/supabase";
+import supabase from "@/supabaseClient";
 import DayOverviewButton from "@/components/DayOverview/DayOverviewButton";
+import { Schema } from "@/database_utils";
 
 interface Props {
     text: string;
