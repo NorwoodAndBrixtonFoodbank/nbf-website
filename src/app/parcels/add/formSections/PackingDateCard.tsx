@@ -1,5 +1,5 @@
 import React from "react";
-import { CardProps, onChangeDateOrTime, errorText } from "@/components/Form/formFunctions";
+import { CardProps, errorText, onChangeDate } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { DesktopDatePicker } from "@mui/x-date-pickers";
 import { ErrorText } from "@/components/Form/formStyling";
@@ -15,7 +15,7 @@ const PackingDateCard: React.FC<CardProps> = ({ errorSetter, fieldSetter, formEr
                 <DesktopDatePicker
                     onChange={(value: any): void => {
                         const newValue = value as Date | null;
-                        onChangeDateOrTime(fieldSetter, errorSetter, "packingDate", newValue);
+                        onChangeDate(fieldSetter, errorSetter, "packingDate", newValue);
                     }}
                     label="Date"
                     disablePast

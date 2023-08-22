@@ -1,5 +1,5 @@
 import React from "react";
-import { CardProps, onChangeDateOrTime, errorText } from "@/components/Form/formFunctions";
+import { CardProps, onChangeDate, errorText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { DesktopDatePicker } from "@mui/x-date-pickers";
 import { ErrorText } from "@/components/Form/formStyling";
@@ -20,7 +20,7 @@ const CollectionDateCard: React.FC<CardProps> = ({
                 <DesktopDatePicker
                     onChange={(value): void => {
                         const newValue = value as Date | null;
-                        onChangeDateOrTime(fieldSetter, errorSetter, "collectionDate", newValue);
+                        onChangeDate(fieldSetter, errorSetter, "collectionDate", newValue);
                     }}
                     label="Date"
                     value={fields.collectionDate}
