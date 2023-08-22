@@ -4,7 +4,7 @@ import React, { Suspense, useState } from "react";
 import Table, { Row, TableHeaders } from "@/components/Tables/Table";
 
 import { useTheme } from "styled-components";
-import { ClientsTableRow } from "@/app/clients/getClientsTableData";
+import { ParcelsTableRow } from "@/app/clients/getClientsTableData";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
@@ -48,7 +48,7 @@ const collectionCentreToAbbreviation = (
     }
 };
 
-export const clientTableHeaderKeysAndLabels: TableHeaders<ClientsTableRow> = [
+export const clientTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["fullName", "Name"],
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],
@@ -59,7 +59,7 @@ export const clientTableHeaderKeysAndLabels: TableHeaders<ClientsTableRow> = [
     ["voucherNumber", "Voucher"],
 ];
 
-const toggleableHeaders: readonly (keyof ClientsTableRow)[] = [
+const toggleableHeaders: readonly (keyof ParcelsTableRow)[] = [
     "fullName",
     "familyCategory",
     "addressPostcode",
@@ -101,7 +101,7 @@ const clientTableColumnStyleOptions = {
 };
 
 interface Props {
-    clientsTableData: ClientsTableRow[];
+    clientsTableData: ParcelsTableRow[];
 }
 
 const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
@@ -113,7 +113,7 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
         iconsColumn: ({
             flaggedForAttention,
             requiresFollowUpPhoneCall,
-        }: ClientsTableRow["iconsColumn"]): React.ReactElement => {
+        }: ParcelsTableRow["iconsColumn"]): React.ReactElement => {
             return (
                 <>
                     {flaggedForAttention && <FlaggedForAttentionIcon />}
@@ -123,7 +123,7 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
                 </>
             );
         },
-        deliveryCollection: (data: ClientsTableRow["deliveryCollection"]): React.ReactElement => {
+        deliveryCollection: (data: ParcelsTableRow["deliveryCollection"]): React.ReactElement => {
             if (data.collectionCentre === "Delivery") {
                 return (
                     <>
@@ -143,12 +143,12 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
                 </>
             );
         },
-        packingDatetime: (data: ClientsTableRow["packingDatetime"]): string => {
+        packingDatetime: (data: ParcelsTableRow["packingDatetime"]): string => {
             return data ? new Date(data).toLocaleDateString() : "";
         },
     };
 
-    const onClientTableRowClick = (row: Row<ClientsTableRow>): void => {
+    const onClientTableRowClick = (row: Row<ParcelsTableRow>): void => {
         setSelectedParcelId(row.data.parcelId);
     };
 

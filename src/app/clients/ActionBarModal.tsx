@@ -4,12 +4,12 @@ import Button from "@mui/material/Button/Button";
 import Modal from "@/components/Modal/Modal";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
-import { ClientsTableRow } from "@/app/clients/getClientsTableData";
+import { ParcelsTableRow } from "@/app/clients/getClientsTableData";
 
 interface SharedModalProps {
     isOpen: boolean;
     onClose: () => void;
-    data: ClientsTableRow[];
+    data: ParcelsTableRow[];
     onSubmit: (date: Dayjs) => void;
     header: string;
     headerId: string;

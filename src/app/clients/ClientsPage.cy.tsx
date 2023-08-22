@@ -1,6 +1,6 @@
 import { CongestionChargeDetails, ProcessingData } from "@/app/clients/fetchDataFromServer";
 import {
-    ClientsTableRow,
+    ParcelsTableRow,
     datetimeToPackingTimeLabel,
     eventToStatusMessage,
     processingDataToClientsTableData,
@@ -101,22 +101,22 @@ describe("Clients Page", () => {
                 sampleCongestionChargeData
             );
 
-            const expected: ClientsTableRow[] = [
+            const expected: ParcelsTableRow[] = [
                 {
                     parcelId: "PRIMARY_KEY1",
                     primaryKey: "PRIMARY_KEY2",
                     fullName: "CLIENT_NAME",
                     familyCategory: "Family of 3",
                     addressPostcode: "SW1A 2AA",
-                    collectionDatetime: "2023-08-04T13:30:00+00:00",
+                    collectionDatetime: new Date("2023-08-04T13:30:00+00:00"),
                     deliveryCollection: {
                         collectionCentre: "COLLECTION_CENTRE",
                         congestionChargeApplies: true,
                     },
                     packingTimeLabel: "PM",
-                    lastStatus: "LAST_EVENT @ 04/08/2023",
+                    lastStatus: "Called and Confirmed",
                     voucherNumber: "VOUCHER_1",
-                    packingDatetime: "2023-08-04T13:30:00+00:00",
+                    packingDatetime: new Date("2023-08-04T13:30:00+00:00"),
                     iconsColumn: {
                         flaggedForAttention: false,
                         requiresFollowUpPhoneCall: true,

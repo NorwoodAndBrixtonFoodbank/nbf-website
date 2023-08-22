@@ -15,7 +15,7 @@ import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
 
 interface ListRow {
-    itemName: string;
+    itemName: Schema["lists"]["item_name"];
     "1": QuantityAndNotes;
     "2": QuantityAndNotes;
     "3": QuantityAndNotes;

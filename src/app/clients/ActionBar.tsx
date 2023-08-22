@@ -9,7 +9,7 @@ import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import { Dayjs } from "dayjs";
-import { ClientsTableRow } from "@/app/clients/getClientsTableData";
+import { ParcelsTableRow } from "@/app/clients/getClientsTableData";
 import Paper from "@mui/material/Paper/Paper";
 import Alert from "@mui/material/Alert";
 import ShoppingListModal from "@/app/clients/actionBarModal/ShoppingListModal";
@@ -17,8 +17,10 @@ import ActionBarModal from "@/app/clients/ActionBarModal";
 
 interface Props {
     selected: number[];
-    data: ClientsTableRow[];
+    data: ParcelsTableRow[];
 }
+
+export type Status = (typeof statuses)[number];
 
 const statuses = [
     "Request Denied",
@@ -34,7 +36,7 @@ const statuses = [
     "Delivery Failed",
     "Delivery Cancelled",
     "Fulfilled with Trussell Trust",
-];
+] as const;
 
 const OuterDiv = styled.div`
     display: flex;
@@ -70,7 +72,7 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
         const toInsert = selectedData
-            .map((parcel: ClientsTableRow) => {
+            .map((parcel: ParcelsTableRow) => {
                 const event_name = selectedStatus!;
                 const timestamp = date.set("second", 0).toISOString();
                 return {

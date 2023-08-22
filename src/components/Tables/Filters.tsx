@@ -3,11 +3,11 @@ import styled from "styled-components";
 import { TableHeaders } from "@/components/Tables/Table";
 
 export interface Filter<Data, State> {
-    shouldFilter(data: Data, state: State): boolean;
-    filterComponent(state: State, setState: (state: State) => void): React.ReactElement;
+    shouldFilter: (data: Data, state: State) => boolean;
+    filterComponent: (state: State, setState: (state: State) => void) => React.ReactElement;
     state: State;
     initialState: State;
-    clear(state: State, setState: (state: State) => void): void;
+    clear: (state: State, setState: (state: State) => void) => void;
 }
 
 export interface KeyedFilter<Data, Key extends keyof Data, State> extends Filter<Data, State> {

@@ -1,12 +1,12 @@
 import ActionBar from "@/app/clients/ActionBar";
 import React from "react";
 import StyleManager from "@/app/themes";
-import { ClientsTableRow } from "@/app/clients/getClientsTableData";
-import Localization from "@/app/localizationProvider";
 import { Schema } from "@/database_utils";
+import { ParcelsTableRow } from "@/app/clients/getClientsTableData";
+import Localization from "@/app/localizationProvider";
 
 describe("Clients - Action Bar", () => {
-    const mockData: ClientsTableRow[] = [
+    const mockData: ParcelsTableRow[] = [
         {
             primaryKey: "primaryKey1",
             addressPostcode: "AB1 2CD",
@@ -14,11 +14,11 @@ describe("Clients - Action Bar", () => {
                 collectionCentre: "Centre 1",
                 congestionChargeApplies: false,
             },
-            collectionDatetime: new Date().toISOString(),
+            collectionDatetime: new Date(),
             familyCategory: "Family 1",
             fullName: "John Smith",
             lastStatus: "Delivered",
-            packingDatetime: new Date().toISOString(),
+            packingDatetime: new Date(),
             packingTimeLabel: "10:00",
             parcelId: "123456789",
             iconsColumn: {
@@ -31,11 +31,11 @@ describe("Clients - Action Bar", () => {
             primaryKey: "primaryKey2",
             addressPostcode: "AB1 aaaa2CD",
             deliveryCollection: { collectionCentre: "Centraaaae 1", congestionChargeApplies: true },
-            collectionDatetime: new Date().toISOString(),
+            collectionDatetime: new Date(),
             familyCategory: "Familaaaay 1",
             fullName: "John Smaaaaith",
-            lastStatus: "Deliveaaaared",
-            packingDatetime: new Date().toISOString(),
+            lastStatus: "Called and Confirmed",
+            packingDatetime: new Date(),
             packingTimeLabel: "10aaaa:00",
             parcelId: "123456aaaa789",
             iconsColumn: {
@@ -173,7 +173,7 @@ describe("Clients - Action Bar", () => {
             cy.get(`input[value="${timeString}"]`).should("exist");
             selectedIndices.forEach((index) => {
                 cy.get(".MuiPaper-root").contains(
-                    mockData[index].deliveryCollection.collectionCentre
+                    mockData[index].deliveryCollection.collectionCentre!
                 );
                 cy.get(".MuiPaper-root").contains(mockData[index].fullName);
             });
@@ -262,7 +262,7 @@ describe("Clients - Action Bar", () => {
                 "@interceptWebData",
             ]);
             cy.get("#action-modal-header").should("exist");
-            cy.get(".MuiPaper-root").contains(row.deliveryCollection.collectionCentre);
+            cy.get(".MuiPaper-root").contains(row.deliveryCollection.collectionCentre!);
             cy.get(".MuiPaper-root").contains(row.fullName);
         });
     });
