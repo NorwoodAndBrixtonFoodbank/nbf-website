@@ -25,7 +25,7 @@ interface ListRow {
     "7": QuantityAndNotes;
     "8": QuantityAndNotes;
     "9": QuantityAndNotes;
-    "10+": QuantityAndNotes;
+    "10": QuantityAndNotes;
 }
 
 interface QuantityAndNotes {
@@ -49,7 +49,7 @@ export const headerKeysAndLabels = [
     ["7", "Family of 7"],
     ["8", "Family of 8"],
     ["9", "Family of 9"],
-    ["10+", "Family of 10+"],
+    ["10", "Family of 10"],
 ] as const;
 
 const displayQuantityAndNotes = (data: QuantityAndNotes): React.ReactElement => {
@@ -113,7 +113,7 @@ const ListsDataView: React.FC<Props> = (props) => {
             "7": { quantity: row["7_quantity"], notes: row["7_notes"] },
             "8": { quantity: row["8_quantity"], notes: row["8_notes"] },
             "9": { quantity: row["9_quantity"], notes: row["9_notes"] },
-            "10+": { quantity: row["10_quantity"], notes: row["10_notes"] },
+            "10": { quantity: row["10_quantity"], notes: row["10_notes"] },
         };
         return newRow;
     });
