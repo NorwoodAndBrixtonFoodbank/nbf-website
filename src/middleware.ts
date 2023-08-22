@@ -9,6 +9,8 @@ const middleware: NextMiddleware = async (req: NextRequest) => {
     const {
         data: { user },
     } = await supabase.auth.getUser();
+    const userRole = user?.app_metadata.role;
+    const callerBlockedPages = ["/lists", "/admin"];
 
     if (req.nextUrl.pathname.startsWith("/auth")) {
         return res;
@@ -20,8 +22,11 @@ const middleware: NextMiddleware = async (req: NextRequest) => {
     if (user && req.nextUrl.pathname === "/login") {
         return NextResponse.redirect(new URL("/clients", req.url));
     }
-
-    return res;
+    if (userRole === "caller" && callerBlockedPages.includes(req.nextUrl.pathname)) {
+        const url = req.nextUrl;
+        url.pathname = "/404";
+        return NextResponse.rewrite(url);
+    }
 };
 
 export const config = {
