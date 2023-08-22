@@ -23,19 +23,14 @@ export interface DayOverviewData {
 }
 
 export const getCurrentDate = (date: Date, hyphen: boolean = false): string => {
-    const formattedDate = date
-        .toLocaleString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-        })
-        .split("/");
+    const formattedDate = date.toLocaleString("en-CA", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    });
 
-    const year = formattedDate[2];
-    const month = formattedDate[1];
-    const day = formattedDate[0];
-
-    return hyphen ? `${year}-${month}-${day}` : `${year}${month}${day}`;
+    const separator = hyphen ? "-" : "";
+    return formattedDate.replaceAll("-", separator);
 };
 
 const getParcelsOfSpecificDateAndLocation = async (
@@ -50,7 +45,13 @@ const getParcelsOfSpecificDateAndLocation = async (
     const { data, error } = await supabase
         .from("parcels")
         .select(
-            "collection_datetime, clients(flagged_for_attention, full_name, address_postcode, delivery_instructions)"
+            `collection_datetime, 
+            clients ( 
+                flagged_for_attention, 
+                full_name, 
+                address_postcode, 
+                delivery_instructions
+            )`
         )
         .gte("collection_datetime", startDateString)
         .lt("collection_datetime", endDateString)

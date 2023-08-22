@@ -79,16 +79,19 @@ const dateTimeToAMPM = (datetime: string): string => {
     return new Date(datetime).getHours() <= 11 ? "AM" : "PM";
 };
 
-const CustomSVG: React.FC<CustomSVGProps> = ({ icon, color, fill }) => (
-    <Svg width={11} height={11} viewBox="0 0 512 512" style={styles.svg}>
-        <Path
-            fill={fill ? color : undefined}
-            stroke={color}
-            strokeWidth={40}
-            d={typeof icon.icon[4] === "string" ? icon.icon[4] : icon.icon[4][0]}
-        />
-    </Svg>
-);
+const CustomSVG: React.FC<CustomSVGProps> = ({ icon, color, fill }) => {
+    const path = icon.icon[4];
+    return (
+        <Svg width={11} height={11} viewBox="0 0 512 512" style={styles.svg}>
+            <Path
+                fill={fill ? color : undefined}
+                stroke={color}
+                strokeWidth={40}
+                d={typeof path === "string" ? path : path[0]}
+            />
+        </Svg>
+    );
+};
 
 const DayOverviewMargin: React.FC<{}> = () => {
     return <View style={styles.margin} fixed></View>;
