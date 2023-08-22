@@ -79,15 +79,13 @@ const dateTimeToAMPM = (datetime: string): string => {
     return new Date(datetime).getHours() <= 11 ? "AM" : "PM";
 };
 
-// IconDefinition[4] is defined as string | string[] but in reality there is no use case
-// with string[] as svgPathData
 const CustomSVG: React.FC<CustomSVGProps> = ({ icon, color, fill }) => (
     <Svg width={11} height={11} viewBox="0 0 512 512" style={styles.svg}>
         <Path
             fill={fill ? color : undefined}
             stroke={color}
             strokeWidth={40}
-            d={icon.icon[4] as string}
+            d={typeof icon.icon[4] === "string" ? icon.icon[4] : icon.icon[4][0]}
         />
     </Svg>
 );

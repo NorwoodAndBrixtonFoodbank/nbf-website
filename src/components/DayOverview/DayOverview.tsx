@@ -16,16 +16,24 @@ export type ParcelOfSpecificDateAndLocation = Pick<Schema["parcels"], "collectio
     > | null;
 };
 
-export type DayOverviewData = {
+export interface DayOverviewData {
     date: Date;
     location: string;
     data: ParcelOfSpecificDateAndLocation[];
-};
+}
 
 export const getCurrentDate = (date: Date, hyphen: boolean = false): string => {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
+    const formattedDate = date
+        .toLocaleString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        })
+        .split("/");
+
+    const year = formattedDate[2];
+    const month = formattedDate[1];
+    const day = formattedDate[0];
 
     return hyphen ? `${year}-${month}-${day}` : `${year}${month}${day}`;
 };
@@ -49,8 +57,12 @@ const getParcelsOfSpecificDateAndLocation = async (
         .eq("collection_centre", collectionCentre)
         .order("collection_datetime");
 
+    // TODO VFB-22 Check if error message is consistent
+
     if (error) {
-        throw new Error(`Database error - ${error.message}`);
+        throw new Error(
+            "We were unable to fetch the parcels with the specified collection date and location."
+        );
     }
 
     return data;
@@ -87,7 +99,7 @@ const DayOverview = async ({ text, date, location }: Props): Promise<React.React
     const parcelsOfSpecificDate = await getParcelsOfSpecificDateAndLocation(date, location);
     const dateString = getCurrentDate(date);
     const fileName = `DayOverview_${dateString}_${collectionCentreToAbbreviation(location)}.pdf`;
-    const data = {
+    const data: DayOverviewData = {
         date: date,
         location: location,
         data: parcelsOfSpecificDate,
