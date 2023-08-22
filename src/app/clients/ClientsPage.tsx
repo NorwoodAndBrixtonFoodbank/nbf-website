@@ -143,8 +143,8 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
                 </>
             );
         },
-        packingDatetime: (data: ParcelsTableRow["packingDatetime"]): string => {
-            return data ? new Date(data).toLocaleDateString() : "";
+        packingDatetime: (datetime: ParcelsTableRow["packingDatetime"]): string => {
+            return datetime ? datetime.toLocaleDateString() : "";
         },
     };
 
@@ -169,7 +169,7 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
                     checkboxes={true}
                     onRowSelection={setSelected}
                     pagination={true}
-                    sortable={["fullName", "familyCategory", "addressPostcode", "lastStatus"]}
+                    sortable={["fullName", "familyCategory", "packingDatetime"]}
                     filters={["addressPostcode", "lastStatus"]}
                     toggleableHeaders={toggleableHeaders}
                 />

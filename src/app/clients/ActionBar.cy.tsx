@@ -36,7 +36,7 @@ describe("Clients - Action Bar", () => {
             fullName: "John Smaaaaith",
             lastStatus: "Called and Confirmed",
             packingDatetime: new Date(),
-            packingTimeLabel: "AM",
+            packingTimeLabel: "PM",
             parcelId: "123456aaaa789",
             iconsColumn: {
                 requiresFollowUpPhoneCall: false,
