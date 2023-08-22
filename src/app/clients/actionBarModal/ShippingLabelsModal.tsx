@@ -51,7 +51,7 @@ const ShippingLabelsModal: React.FC<SharedModalProps> = (props) => {
                     {props.data.map((parcel, index) => {
                         return (
                             <StatusText key={index}>
-                                {parcel.collectionCentre}
+                                {parcel.deliveryCollection.collectionCentre}
                                 {parcel.fullName && ` - ${parcel.fullName}`}
                                 {parcel.collectionDatetime &&
                                     `\n @ ${dayjs(parcel.collectionDatetime!).format(

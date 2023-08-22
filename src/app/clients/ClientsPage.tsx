@@ -116,11 +116,9 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
         }: ClientsTableRow["iconsColumn"]): React.ReactElement => {
             return (
                 <>
-                    {flaggedForAttention ? <FlaggedForAttentionIcon /> : <></>}
-                    {requiresFollowUpPhoneCall ? (
+                    {flaggedForAttention && <FlaggedForAttentionIcon />}
+                    {requiresFollowUpPhoneCall && (
                         <PhoneIcon color={theme.main.largeForeground[0]} />
-                    ) : (
-                        <></>
                     )}
                 </>
             );
@@ -130,7 +128,7 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
                 return (
                     <>
                         <DeliveryIcon color={theme.main.largeForeground[0]} />
-                        {data.congestionChargeApplies ? <CongestionChargeAppliesIcon /> : <></>}
+                        {data.congestionChargeApplies && <CongestionChargeAppliesIcon />}
                     </>
                 );
             }

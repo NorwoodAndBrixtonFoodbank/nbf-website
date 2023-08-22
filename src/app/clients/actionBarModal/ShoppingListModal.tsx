@@ -47,7 +47,7 @@ const ShoppingListModal: React.FC<SharedModalProps> = (props) => {
                 Parcels selected for printing:
                 <div>
                     <StatusText>
-                        {props.data.collectionCentre}
+                        {props.data.deliveryCollection.collectionCentre}
                         {props.data.fullName && ` - ${props.data.fullName}`}
                         {props.data.collectionDatetime &&
                             `\n @ ${dayjs(props.data.collectionDatetime!).format(

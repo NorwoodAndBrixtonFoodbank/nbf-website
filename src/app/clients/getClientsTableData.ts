@@ -16,7 +16,7 @@ export interface ClientsTableRow {
         congestionChargeApplies: boolean;
     };
     packingTimeLabel: string;
-    collectionDatetime: string;
+    collectionDatetime: Schema["parcels"]["collection_datetime"];
     lastStatus: string;
     voucherNumber: Schema["parcels"]["voucher_number"];
     iconsColumn: {
