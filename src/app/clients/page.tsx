@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import React from "react";
-import { getClientsTableData } from "@/app/clients/getClientsTableData";
+import { processingDataToClientsTableData } from "@/app/clients/getClientsTableData";
+import { getCongestionChargeDetails, getProcessingData } from "@/app/clients/fetchDataFromServer";
 import ClientsPage from "@/app/clients/ClientsPage";
 import Title from "@/components/Title/Title";
 
@@ -8,12 +9,14 @@ import Title from "@/components/Title/Title";
 export const revalidate = 0;
 
 const Clients: () => Promise<React.ReactElement> = async () => {
-    const data = await getClientsTableData();
+    const processingData = await getProcessingData();
+    const congestionCharge = await getCongestionChargeDetails(processingData);
+    const formattedData = processingDataToClientsTableData(processingData, congestionCharge);
 
     return (
         <main>
             <Title>Clients Page</Title>
-            <ClientsPage clientsTableData={data} />
+            <ClientsPage clientsTableData={formattedData} />
         </main>
     );
 };

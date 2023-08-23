@@ -1,10 +1,12 @@
-import supabase from "@/supabaseClient";
 import { Schema } from "@/database_utils";
-import {
-    familyCountToFamilyCategory,
-    formatDatetimeAsDate,
-} from "@/app/clients/getClientsTableData";
 import { Data } from "@/components/DataViewer/DataViewer";
+import supabase from "@/supabaseClient";
+
+const getExpandedClientDetails = async (parcelId: string): Promise<ExpandedClientDetails> => {
+    const rawClientDetails = await getRawClientDetails(parcelId);
+    return rawDataToExpandedClientDetails(rawClientDetails);
+};
+export default getExpandedClientDetails;
 
 export type RawClientDetails = Awaited<ReturnType<typeof getRawClientDetails>>;
 
@@ -47,6 +49,26 @@ export const getRawClientDetails = async (parcelId: string) => {
         .single();
 
     return response.data;
+};
+
+export const familyCountToFamilyCategory = (count: number): string => {
+    if (count <= 1) {
+        return "Single";
+    }
+
+    if (count <= 9) {
+        return `Family of ${count}`;
+    }
+
+    return "Family of 10+";
+};
+
+export const formatDatetimeAsDate = (datetime: string | null): string => {
+    if (datetime === null || isNaN(Date.parse(datetime))) {
+        return "-";
+    }
+
+    return new Date(datetime).toLocaleDateString("en-GB");
 };
 
 export interface ExpandedClientDetails extends Data {
@@ -183,11 +205,4 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
     }
 
     return childDetails.join(", ");
-};
-
-export const getExpandedClientDetails = async (
-    parcelId: string
-): Promise<ExpandedClientDetails> => {
-    const rawDetails = await getRawClientDetails(parcelId);
-    return rawDataToExpandedClientDetails(rawDetails);
 };
