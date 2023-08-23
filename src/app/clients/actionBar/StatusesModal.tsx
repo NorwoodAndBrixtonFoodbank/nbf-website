@@ -38,7 +38,7 @@ const StatusText = styled.p`
     }
 `;
 
-const ActionBarModal: React.FC<SharedModalProps> = (props) => {
+const StatusesBarModal: React.FC<SharedModalProps> = (props) => {
     const [date, setDate] = useState(dayjs(new Date()));
 
     useEffect(() => {
@@ -100,4 +100,4 @@ const ActionBarModal: React.FC<SharedModalProps> = (props) => {
     );
 };
 
-export default ActionBarModal;
+export default StatusesBarModal;

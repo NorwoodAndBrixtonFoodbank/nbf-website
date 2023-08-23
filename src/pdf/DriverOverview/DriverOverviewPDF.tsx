@@ -3,16 +3,6 @@
 import React from "react";
 import { Text, Document, Page, View, StyleSheet, Image } from "@react-pdf/renderer";
 
-export interface DriverOverviewCardDataProps {
-    driverName: string;
-    date: Date;
-    tableData: DriverOverviewTableData[];
-}
-
-interface DriverOverviewCardProps {
-    data: DriverOverviewCardDataProps;
-}
-
 export interface DriverOverviewTableData {
     name: string;
     address: {
@@ -23,9 +13,18 @@ export interface DriverOverviewTableData {
         postcode: string;
     };
     contact?: string;
-    packingDate: Date;
-    parcels: number | "None";
+    packingDate: Date | null;
     instructions?: string;
+}
+
+export interface DriverOverviewCardDataProps {
+    driverName: string;
+    date: Date;
+    tableData: DriverOverviewTableData[];
+}
+
+interface DriverOverviewCardProps {
+    data: DriverOverviewCardDataProps;
 }
 
 const styles = StyleSheet.create({
@@ -106,13 +105,10 @@ const styles = StyleSheet.create({
         width: "20%",
     },
     contactColumnWidth: {
-        width: "15%",
+        width: "20%",
     },
     packingDateColumnWidth: {
-        width: "15%",
-    },
-    parcelsColumnWidth: {
-        width: "10%",
+        width: "20%",
     },
     instructionsColumnWidth: {
         width: "25%",
@@ -133,9 +129,6 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
             </View>
             <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
                 <Text>Packing Date</Text>
-            </View>
-            <View style={[styles.tableColumn, styles.parcelsColumnWidth]}>
-                <Text>Parcels</Text>
             </View>
             <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
                 <Text>Instructions</Text>
@@ -160,10 +153,11 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                     <Text>{rowData.contact}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
-                    <Text>{rowData.packingDate.toLocaleDateString()}</Text>
-                </View>
-                <View style={[styles.tableColumn, styles.parcelsColumnWidth]}>
-                    <Text>{rowData.parcels}</Text>
+                    <Text>
+                        {rowData.packingDate
+                            ? rowData.packingDate.toLocaleDateString()
+                            : "No recorded date"}
+                    </Text>
                 </View>
                 <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
                     <Text>{rowData.instructions}</Text>

@@ -1,0 +1,88 @@
+"use client";
+
+import React, { useState } from "react";
+import styled from "styled-components";
+import Button from "@mui/material/Button";
+import { ClientsTableRow } from "@/app/clients/getClientsTableData";
+import Paper from "@mui/material/Paper/Paper";
+import Alert from "@mui/material/Alert";
+import Statuses from "./Statuses";
+import Actions from "./Actions";
+
+interface Props {
+    selected: number[];
+    data: ClientsTableRow[];
+}
+
+const OuterDiv = styled.div`
+    display: flex;
+    padding: 1rem;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+    background-color: ${(props) => props.theme.surfaceBackgroundColor};
+`;
+
+const AlertBox = styled.div`
+    padding: 0 1rem 1rem;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+`;
+
+const StyledPaper = styled(Paper)`
+    margin: 1rem;
+`;
+
+const ActionBar: React.FC<Props> = ({ selected, data }) => {
+    const [statusAnchorElement, setStatusAnchorElement] = useState<HTMLElement | null>(null);
+    const [actionAnchorElement, setActionAnchorElement] = useState<HTMLElement | null>(null);
+
+    const [modalError, setModalError] = useState<string | null>(null);
+
+    return (
+        <StyledPaper>
+            <Statuses
+                selected={selected}
+                data={data}
+                statusAnchorElement={statusAnchorElement}
+                setStatusAnchorElement={setStatusAnchorElement}
+                modalError={modalError}
+                setModalError={setModalError}
+            />
+            <Actions
+                selected={selected}
+                data={data}
+                actionAnchorElement={actionAnchorElement}
+                setActionAnchorElement={setActionAnchorElement}
+                modalError={modalError}
+                setModalError={setModalError}
+            />
+            <OuterDiv>
+                <Button
+                    variant="contained"
+                    onClick={(event) => setStatusAnchorElement(event.currentTarget)}
+                    type="button"
+                    id="status-button"
+                >
+                    Statuses
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={(event) => setActionAnchorElement(event.currentTarget)}
+                    type="button"
+                    id="action-button"
+                >
+                    Actions
+                </Button>
+            </OuterDiv>
+            {modalError === null ? (
+                <></>
+            ) : (
+                <AlertBox>
+                    <Alert severity="error">{modalError}</Alert>
+                </AlertBox>
+            )}
+        </StyledPaper>
+    );
+};
+
+export default ActionBar;
