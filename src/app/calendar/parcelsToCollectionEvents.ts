@@ -1,7 +1,7 @@
 import { CalendarEvent } from "@/components/Calendar/Calendar";
 import { ParcelWithClientName } from "@/app/calendar/getParcelsWithCollectionDate";
 
-interface LocationColorMap {
+export interface LocationColorMap {
     [location: string]: { color: string; text: string };
 }
 

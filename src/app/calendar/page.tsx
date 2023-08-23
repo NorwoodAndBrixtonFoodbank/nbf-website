@@ -3,6 +3,8 @@ import React from "react";
 import ParcelCalendar from "@/app/calendar/ParcelCalendar";
 import getParcelsWithCollectionDate from "@/app/calendar/getParcelsWithCollectionDate";
 
+export const dynamic = "force-dynamic";
+
 const CalendarPage = async (): Promise<React.ReactElement> => {
     const parcelsWithCollectionDate = await getParcelsWithCollectionDate();
 

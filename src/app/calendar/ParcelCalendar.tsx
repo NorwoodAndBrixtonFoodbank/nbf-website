@@ -4,11 +4,10 @@ import Calendar from "@/components/Calendar/Calendar";
 import Title from "@/components/Title/Title";
 import React from "react";
 import styled, { RainbowPalette, useTheme } from "styled-components";
-import {
+import { ParcelWithClientName } from "@/app/calendar/getParcelsWithCollectionDate";
+import parcelsToCollectionEvents, {
     LocationColorMap,
-    ParcelWithClientName,
-} from "@/app/calendar/getParcelsWithCollectionDate";
-import parcelsToCollectionEvents from "@/app/calendar/parcelsToCollectionEvents";
+} from "@/app/calendar/parcelsToCollectionEvents";
 
 interface ParcelCalendarProps {
     parcelsWithCollectionDate: ParcelWithClientName[];
