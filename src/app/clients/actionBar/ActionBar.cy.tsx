@@ -2,7 +2,7 @@ import ActionBar from "@/app/clients/actionBar/ActionBar";
 import React from "react";
 import StyleManager from "@/app/themes";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
-import Localization from "../../localizationProvider";
+import Localization from "@/app/localizationProvider";
 
 describe("Clients - Action Bar", () => {
     const mockData: ClientsTableRow[] = [
