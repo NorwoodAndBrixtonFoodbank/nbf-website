@@ -36,13 +36,14 @@ const Wrapper = styled.div`
 
 const CommentBoxContainer = styled.div`
     width: 100%;
-    margin: 1rem;
+    margin: 1rem 1rem 0 1rem;
     min-width: 15rem;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     @media (min-width: 800px) {
         width: 75%;
+        margin-bottom: 1rem;
     }
 `;
 
@@ -73,7 +74,6 @@ const SuccessText = styled.p`
 `;
 
 const CommentContainer: React.FC<CommentProps> = ({ originalComment }) => {
-    const [resetComment, setResetComment] = useState(originalComment);
     const [value, setValue] = useState(originalComment);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
@@ -88,8 +88,8 @@ const CommentContainer: React.FC<CommentProps> = ({ originalComment }) => {
             setSuccessMessage("");
         } else {
             setErrorMessage("");
-            setResetComment(value);
             setSuccessMessage("Comment successfully updated.");
+            window.location.reload();
         }
     };
     return (
@@ -97,7 +97,7 @@ const CommentContainer: React.FC<CommentProps> = ({ originalComment }) => {
             <HeaderAndButtonContainer>
                 <h2>Comments</h2>
                 <ButtonContainer>
-                    <Button variant="outlined" onClick={() => setValue(resetComment)}>
+                    <Button variant="outlined" onClick={() => setValue(originalComment)}>
                         Reset
                     </Button>
                     <Button variant="contained" onClick={onSubmit}>
