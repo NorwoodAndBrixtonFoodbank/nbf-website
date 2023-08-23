@@ -10,19 +10,25 @@ interface CalendarFilterAccordionProps {
 
 const ContainerDiv = styled.div`
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
     margin-bottom: 1rem;
     justify-content: center;
     background-color: ${(props) => props.theme.main.background[2]};
     padding: 1rem;
     border-radius: 1rem;
     border: 1px solid ${(props) => props.theme.main.border};
+    grid-template-columns: 1fr;
+    @media (min-width: 700px) {
+        grid-template-columns: repeat(2, 1fr);
+    @media (min-width: 1100px) {
+        grid-template-columns: repeat(3, 1fr);
+
 `;
 
 const CheckboxAndTitleDiv = styled.div`
     display: flex;
     gap: 0.5rem;
     align-items: center;
+    min-width: 300px;
 `;
 
 const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
@@ -36,7 +42,6 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
             {allLocations.map((location) => {
                 return (
                     <CheckboxAndTitleDiv key={location}>
-                        {location}
                         <Checkbox
                             checked={currentLocations.includes(location)}
                             onChange={(event) => {
@@ -51,6 +56,7 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
                                 );
                             }}
                         />
+                        {location}
                     </CheckboxAndTitleDiv>
                 );
             })}
