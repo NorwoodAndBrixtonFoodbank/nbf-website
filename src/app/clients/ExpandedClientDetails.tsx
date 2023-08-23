@@ -1,7 +1,6 @@
-import { getRawClientDetails } from "@/app/clients/fetchDataFromServer";
 import React from "react";
 import DataViewer from "@/components/DataViewer/DataViewer";
-import { rawDataToExpandedClientDetails } from "@/app/clients/getExpandedClientDetails";
+import getExpandedClientDetails from "@/app/clients/getExpandedClientDetails";
 
 interface Props {
     parcelId: string | null;
@@ -11,9 +10,7 @@ const ExpandedClientDetails = async ({ parcelId }: Props): Promise<React.ReactEl
     if (!parcelId) {
         return <></>;
     }
-
-    const rawDetails = await getRawClientDetails(parcelId);
-    const expandedClientDetails = rawDataToExpandedClientDetails(rawDetails);
+    const expandedClientDetails = await getExpandedClientDetails(parcelId);
 
     return <DataViewer data={expandedClientDetails} />;
 };

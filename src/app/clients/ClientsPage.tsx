@@ -100,7 +100,7 @@ interface Props {
     clientsTableData: ClientsTableRow[];
 }
 
-const ClientsPage: React.FC<Props> = (props) => {
+const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [selected, setSelected] = useState<number[]>([]);
     const theme = useTheme();
@@ -159,10 +159,10 @@ const ClientsPage: React.FC<Props> = (props) => {
 
     return (
         <>
-            <ActionBar data={props.clientsTableData} selected={selected} />
+            <ActionBar data={clientsTableData} selected={selected} />
             <TableSurface>
                 <Table
-                    data={props.clientsTableData}
+                    data={clientsTableData}
                     headerKeysAndLabels={clientTableHeaderKeysAndLabels}
                     columnDisplayFunctions={clientTableColumnDisplayFunctions}
                     columnStyleOptions={clientTableColumnStyleOptions}
@@ -191,7 +191,7 @@ const ClientsPage: React.FC<Props> = (props) => {
                 </Suspense>
             </Modal>
             <CenterComponent>
-                <AddParcelsButton data={props.clientsTableData} />
+                <AddParcelsButton data={clientsTableData} />
             </CenterComponent>
         </>
     );

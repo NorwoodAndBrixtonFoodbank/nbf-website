@@ -20,49 +20,6 @@ export const getCongestionChargeDetails = async (
     return JSON.parse(response.data);
 };
 
-export type RawClientDetails = Awaited<ReturnType<typeof getRawClientDetails>>;
-
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const getRawClientDetails = async (parcelId: string) => {
-    const response = await supabase
-        .from("parcels")
-        .select(
-            `
-        voucher_number,
-        packing_datetime,
-
-        client:clients(
-            primary_key,
-            full_name,
-            phone_number,
-            delivery_instructions,
-            address_1,
-            address_2,
-            address_town,
-            address_county,
-            address_postcode,
-
-            family:families(
-                age,
-                gender
-            ),
-
-            dietary_requirements,
-            feminine_products,
-            baby_food,
-            pet_food,
-            other_items,
-            extra_information
-        )
-
-    `
-        )
-        .eq("primary_key", parcelId)
-        .single();
-
-    return response.data;
-};
-
 export type ProcessingData = Awaited<ReturnType<typeof getProcessingData>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

@@ -1,8 +1,4 @@
-import {
-    CongestionChargeDetails,
-    ProcessingData,
-    RawClientDetails,
-} from "@/app/clients/fetchDataFromServer";
+import { CongestionChargeDetails, ProcessingData } from "@/app/clients/fetchDataFromServer";
 import {
     datetimeToPackingTimeLabel,
     eventToStatusMessage,
@@ -16,6 +12,7 @@ import {
     formatDatetimeAsTime,
     formatHouseholdFromFamilyDetails,
     rawDataToExpandedClientDetails,
+    RawClientDetails,
 } from "@/app/clients/getExpandedClientDetails";
 
 const sampleProcessingData: ProcessingData = [

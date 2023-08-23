@@ -1,6 +1,55 @@
-import { RawClientDetails } from "@/app/clients/fetchDataFromServer";
 import { Schema } from "@/database_utils";
 import { Data } from "@/components/DataViewer/DataViewer";
+import supabase from "@/supabaseClient";
+
+const getExpandedClientDetails = async (parcelId: string): Promise<ExpandedClientDetails> => {
+    const rawClientDetails = await getRawClientDetails(parcelId);
+    return rawDataToExpandedClientDetails(rawClientDetails);
+};
+export default getExpandedClientDetails;
+
+export type RawClientDetails = Awaited<ReturnType<typeof getRawClientDetails>>;
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export const getRawClientDetails = async (parcelId: string) => {
+    const response = await supabase
+        .from("parcels")
+        .select(
+            `
+        voucher_number,
+        packing_datetime,
+
+        client:clients(
+            primary_key,
+            full_name,
+            phone_number,
+            delivery_instructions,
+            address_1,
+            address_2,
+            address_town,
+            address_county,
+            address_postcode,
+
+            family:families(
+                age,
+                gender
+            ),
+
+            dietary_requirements,
+            feminine_products,
+            baby_food,
+            pet_food,
+            other_items,
+            extra_information
+        )
+
+    `
+        )
+        .eq("primary_key", parcelId)
+        .single();
+
+    return response.data;
+};
 
 export const familyCountToFamilyCategory = (count: number): string => {
     if (count <= 1) {
