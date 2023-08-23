@@ -205,7 +205,7 @@ describe("Clients - Action Bar", () => {
                     statusCode: 200,
                     body: [{ value: "Hello worlds" }],
                 }
-            ).as("interceptFamilies");
+            ).as("interceptWebData");
         });
 
         it("should open the action menu when the action button is clicked", () => {
@@ -217,6 +217,13 @@ describe("Clients - Action Bar", () => {
             cy.get("#action-button").click();
             cy.get("#action-menu").should("exist");
             cy.get("#action-menu").contains("Print Shopping List").click();
+            cy.wait([
+                "@interceptParcels",
+                "@interceptClients",
+                "@interceptFamilies",
+                "@interceptLists",
+                "@interceptWebData",
+            ]);
             cy.get("#action-modal-header").should("exist");
         });
 
@@ -224,6 +231,13 @@ describe("Clients - Action Bar", () => {
             cy.get("#action-button").click();
             cy.get("#action-menu").should("exist");
             cy.get("#action-menu").contains("Print Shopping List").click();
+            cy.wait([
+                "@interceptParcels",
+                "@interceptClients",
+                "@interceptFamilies",
+                "@interceptLists",
+                "@interceptWebData",
+            ]);
             cy.get("#action-modal-header").should("exist");
             cy.get("[aria-label='Close Button']").click();
             cy.get("#action-modal-header").should("not.exist");
@@ -233,6 +247,13 @@ describe("Clients - Action Bar", () => {
             cy.get("#action-button").click();
             cy.get("#action-menu").should("exist");
             cy.get("#action-menu").contains("Print Shopping List").click();
+            cy.wait([
+                "@interceptParcels",
+                "@interceptClients",
+                "@interceptFamilies",
+                "@interceptLists",
+                "@interceptWebData",
+            ]);
             cy.get("#action-modal-header").should("exist");
             cy.get(".MuiPaper-root").contains(row.collectionCentre);
             cy.get(".MuiPaper-root").contains(row.fullName);
