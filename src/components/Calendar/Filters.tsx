@@ -13,6 +13,7 @@ const ContainerDiv = styled.div`
     margin-bottom: 1rem;
     justify-content: center;
     background-color: ${(props) => props.theme.main.background[2]};
+    color: ${(props) => props.theme.main.foreground[2]};
     padding: 1rem;
     border-radius: 1rem;
     border: 1px solid ${(props) => props.theme.main.border};

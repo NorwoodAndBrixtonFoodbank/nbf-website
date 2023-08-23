@@ -192,6 +192,7 @@ const makeAllDayEventsInclusive = (endDateExclusiveEvents: CalendarEvent[]): Cal
     });
 };
 
+// TODO VFB-27: Get this from database
 const initialLocations = [
     "Vauxhall Hope Church",
     "Waterloo - St George the Martyr",
