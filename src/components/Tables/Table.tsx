@@ -52,7 +52,8 @@ interface Props<Data> {
     checkboxes?: boolean;
     onRowSelection?: (rowIds: number[]) => void;
     reorderable?: boolean;
-    filters?: (Filter<Data, string> | keyof Data)[];
+    filters?: (Filter<Data, any> | keyof Data)[];
+    additionalFilters?: (Filter<Data, any> | keyof Data)[];
     pagination?: boolean;
     defaultShownHeaders?: readonly (keyof Data)[];
     toggleableHeaders?: readonly (keyof Data)[];
@@ -120,6 +121,7 @@ const Table = <Data extends unknown>({
     onRowSelection,
     defaultShownHeaders,
     filters: filterKeysOrObjects = [],
+    additionalFilters: additionalFilterKeysOrObjects = [],
     onDelete,
     onEdit,
     pagination,
@@ -137,17 +139,23 @@ const Table = <Data extends unknown>({
 
     const shownHeaders = headerKeysAndLabels.filter(([key]) => shownHeaderKeys.includes(key));
 
-    const [filters, setFilters] = useState(
-        filterKeysOrObjects.map((filter) => {
-            if (filter instanceof Object) {
-                return filter;
-            }
-            return textFilter<Data, keyof Data>({
-                key: filter,
-                label: headerLabelFromKey(headerKeysAndLabels, filter),
-            });
-        })
+    const toFilter = (filter: Filter<Data, any> | keyof Data): Filter<Data, any> => {
+        if (filter instanceof Object) {
+            return filter;
+        }
+        return textFilter<Data, keyof Data>({
+            key: filter,
+            label: headerLabelFromKey(headerKeysAndLabels, filter),
+        });
+    };
+
+    const [primaryFilters, setPrimaryFilters] = useState(filterKeysOrObjects.map(toFilter));
+
+    const [additionalFilters, setAdditionalFilters] = useState(
+        additionalFilterKeysOrObjects.map(toFilter)
     );
+
+    const allFilters = [...primaryFilters, ...additionalFilters];
 
     const [data, setData] = useState(inputData);
 
@@ -315,7 +323,7 @@ const Table = <Data extends unknown>({
     const rows = data.map((data, index) => ({ rowId: index, data }));
 
     const shouldFilterRow = (row: Row<Data>): boolean => {
-        return filters.every((filter) => !filter.shouldFilter(row.data, filter.state));
+        return allFilters.every((filter) => !filter.shouldFilter(row.data, filter.state));
     };
 
     const toDisplay = autoFilter ? rows.filter(shouldFilterRow) : rows;
@@ -332,16 +340,18 @@ const Table = <Data extends unknown>({
                     subHeaderComponent={
                         <TableFilterBar<Data>
                             handleClear={() =>
-                                setFilters((filters) =>
+                                setPrimaryFilters((filters) =>
                                     filters.map((filter) => ({
                                         ...filter,
                                         state: filter.initialState,
                                     }))
                                 )
                             }
-                            setFilters={setFilters}
+                            setFilters={setPrimaryFilters}
                             toggleableHeaders={toggleableHeaders}
-                            filters={filters}
+                            filters={primaryFilters}
+                            additionalFilters={additionalFilters}
+                            setAdditionalFilters={setAdditionalFilters}
                             headers={headerKeysAndLabels}
                             setShownHeaderKeys={setShownHeaderKeys}
                             shownHeaderKeys={shownHeaderKeys}
@@ -374,22 +384,6 @@ const Styling = styled.div`
     // the component with the filter bars
     & > header {
         background-color: transparent;
-        display: flex;
-        align-items: stretch;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        padding: 0.5rem;
-        height: 4rem;
-        gap: min(1rem, 5vw);
-        overflow: visible;
-        @media (min-width: 500px) {
-            flex-wrap: nowrap;
-        }
-
-        // the clear button
-        & > button {
-            border-radius: 0.4rem;
-        }
     }
 
     // the entire table component including the header and the pagination bar

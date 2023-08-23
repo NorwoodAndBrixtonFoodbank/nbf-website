@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { TableHeaders } from "@/components/Tables/Table";
+import { DatePicker } from "@mui/x-date-pickers";
+import FreeFormTextInput from "../DataInput/FreeFormTextInput";
 
 export interface Filter<Data, State> {
     shouldFilter: (data: Data, state: State) => boolean;
@@ -14,6 +16,12 @@ export interface KeyedFilter<Data, Key extends keyof Data, State> extends Filter
     key: Key;
     label: string;
 }
+
+export const isKeyedFilter = <Data, Key extends keyof Data, State>(
+    filter: Filter<Data, State>
+): filter is KeyedFilter<Data, Key, State> => {
+    return "key" in filter;
+};
 
 const keyedFilter = <Data, Key extends keyof Data, State>(
     key: Key,
@@ -31,18 +39,12 @@ export const headerLabelFromKey = <Data, Key extends keyof Data>(
     headers: TableHeaders<Data>,
     key: Key
 ): string => {
-    return headers.find(([headerKey]) => headerKey === key)![1];
+    return headers.find(([headerKey]) => headerKey === key)?.[1] ?? key.toString();
 };
 
-const StyledFilterBar = styled.input`
-    font-size: 14px;
-    width: 15rem;
-    overflow: visible;
-    box-shadow: none;
-    padding: 4px 12px 4px 12px;
-
-    &:focus {
-        outline: none;
+const TextFilterStyling = styled.div`
+    & input[type="text"].MuiInputBase-input.MuiOutlinedInput-input {
+        border: none;
     }
 `;
 
@@ -82,15 +84,102 @@ export const textFilter = <Data, Key extends keyof Data>({
         },
         filterComponent: (state, setState) => {
             return (
-                <StyledFilterBar
-                    key={label}
-                    type="text"
-                    value={state}
-                    placeholder={`Filter by ${label}`}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                        setState(event.target.value);
-                    }}
-                />
+                <TextFilterStyling>
+                    <FreeFormTextInput
+                        key={label}
+                        value={state}
+                        label={label}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            setState(event.target.value);
+                        }}
+                    />
+                </TextFilterStyling>
+            );
+        },
+        clear: (_oldState, setState) => {
+            setState(initialValue);
+        },
+    });
+};
+
+const DateFilterContainer = styled.div`
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    & input[type="text"].MuiInputBase-input.MuiOutlinedInput-input {
+        border: none;
+    }
+
+    & .MuiFormControl-root,
+    & .MuiInputBase-root {
+        width: 12rem;
+    }
+`;
+
+interface DateFilterState {
+    from: Date | null;
+    to: Date | null;
+}
+
+interface DateFilterProps<Data, Key extends keyof Data> {
+    key: Key;
+    label: string;
+    initialValue?: DateFilterState;
+}
+
+export const dateFilter = <Data, Key extends keyof Data>({
+    key,
+    label,
+    initialValue = {
+        from: null,
+        to: null,
+    },
+}: DateFilterProps<Data, Key>): KeyedFilter<Data, Key, DateFilterState> => {
+    return keyedFilter(key, label, {
+        state: initialValue,
+        initialState: initialValue,
+        shouldFilter: (data, state) => {
+            const date = data[key] as Date;
+            const from = state.from;
+            const to = state.to;
+
+            if (from !== null && date < from) {
+                return true;
+            }
+
+            if (to !== null && date > to) {
+                return true;
+            }
+
+            return false;
+        },
+        filterComponent: (state, setState) => {
+            return (
+                <DateFilterContainer>
+                    <DatePicker
+                        onChange={(value) =>
+                            setState({
+                                ...state,
+                                from: value as Date,
+                            })
+                        }
+                        maxDate={state.to}
+                        value={state.from}
+                        label="From"
+                    />
+                    <DatePicker
+                        onAccept={(value) =>
+                            setState({
+                                ...state,
+                                to: value as Date,
+                            })
+                        }
+                        minDate={state.from}
+                        value={state.to}
+                        label="To"
+                    />
+                </DateFilterContainer>
             );
         },
         clear: (_oldState, setState) => {

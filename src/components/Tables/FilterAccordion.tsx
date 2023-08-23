@@ -6,18 +6,24 @@ import styled from "styled-components";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import Icon from "@/components/Icons/Icon";
 import { TableHeaders } from "@/components/Tables/Table";
+import { Filter } from "@/components/Tables/Filters";
 
 interface FilterAccordionProps<Data> {
     toggleableHeaders?: readonly (keyof Data)[];
     shownHeaderKeys: readonly (keyof Data)[];
     setShownHeaderKeys: (headers: (keyof Data)[]) => void;
     headers: TableHeaders<Data>;
+    filters: Filter<Data, any>[];
+    setFilters: (filters: Filter<Data, any>[]) => void;
 }
 
 const Styling = styled.div`
     flex-grow: 1;
-    overflow: visible;
+    place-self: center;
     z-index: 2;
+    margin: 1rem 0;
+    height: 3rem;
+    overflow: visible;
 `;
 
 const ContainerDiv = styled.div`
@@ -40,6 +46,13 @@ const Row = styled.div`
 
 const Spacer = styled.div`
     flex-grow: 1;
+`;
+
+const ColumnSelectRow = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
 `;
 
 const StyledAccordion = styled(Accordion)`
@@ -68,11 +81,17 @@ const StyledAccordion = styled(Accordion)`
     }
 `;
 
+const SectionLabel = styled.small`
+    font-weight: bold;
+`;
+
 const FilterAccordion = <Data extends unknown>({
     toggleableHeaders,
     shownHeaderKeys,
     setShownHeaderKeys,
     headers,
+    filters,
+    setFilters,
 }: FilterAccordionProps<Data>): React.ReactElement => {
     const getOnChanged = (
         key: keyof Data
@@ -91,26 +110,41 @@ const FilterAccordion = <Data extends unknown>({
             <StyledAccordion>
                 <AccordionSummary>
                     <Row>
-                        <p>Select Columns</p>
+                        <p>Additional Filters</p>
                         <Spacer />
                         <Icon icon={faChevronDown} />
                     </Row>
                 </AccordionSummary>
                 <AccordionDetails>
-                    {(toggleableHeaders ?? []).map((key) => {
-                        const headerKeyAndLabel = headers.find(([headerKey]) => headerKey === key)!;
-                        const headerLabel = headerKeyAndLabel[1];
-                        return (
-                            <ContainerDiv key={headerLabel}>
-                                <Checkbox
-                                    color="secondary"
-                                    checked={shownHeaderKeys.includes(key)}
-                                    onChange={getOnChanged(key)}
-                                />
-                                <p>{headerLabel}</p>
-                            </ContainerDiv>
-                        );
+                    {filters.map((filter, index) => {
+                        const onFilter = (state: any): void => {
+                            const newFilters = [...filters];
+                            newFilters[index] = {
+                                ...newFilters[index],
+                                state,
+                            };
+                            setFilters(newFilters);
+                        };
+                        return filter.filterComponent(filter.state, onFilter);
                     })}
+                    <ColumnSelectRow>
+                        <SectionLabel>Select Columns:</SectionLabel>
+                        {(toggleableHeaders ?? []).map((key) => {
+                            const headerKeyAndLabel =
+                                headers.find(([headerKey]) => headerKey === key) ?? key.toString();
+                            const headerLabel = headerKeyAndLabel[1];
+                            return (
+                                <ContainerDiv key={headerLabel}>
+                                    <Checkbox
+                                        color="secondary"
+                                        checked={shownHeaderKeys.includes(key)}
+                                        onChange={getOnChanged(key)}
+                                    />
+                                    <p>{headerLabel}</p>
+                                </ContainerDiv>
+                            );
+                        })}
+                    </ColumnSelectRow>
                 </AccordionDetails>
             </StyledAccordion>
         </Styling>

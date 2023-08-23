@@ -20,6 +20,7 @@ import TableSurface from "@/components/Tables/TableSurface";
 import { CenterComponent } from "@/components/Form/formStyling";
 import ActionBar, { statuses } from "@/app/clients/ActionBar";
 import AddParcelsButton from "@/app/clients/AddParcelsButton";
+import { dateFilter } from "@/components/Tables/Filters";
 
 // TODO Change Button to LinkButton
 
@@ -48,7 +49,7 @@ const collectionCentreToAbbreviation = (
     }
 };
 
-export const clientTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
+const parcelTableKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["fullName", "Name"],
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],
@@ -104,7 +105,7 @@ interface Props {
     clientsTableData: ParcelsTableRow[];
 }
 
-const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
+const ClientsPage: React.FC<Props> = ({ clientsTableData: parcelsTableData }) => {
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [selected, setSelected] = useState<number[]>([]);
     const theme = useTheme();
@@ -184,11 +185,11 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
 
     return (
         <>
-            <ActionBar data={clientsTableData} selected={selected} />
+            <ActionBar data={parcelsTableData} selected={selected} />
             <TableSurface>
                 <Table
-                    data={clientsTableData}
-                    headerKeysAndLabels={clientTableHeaderKeysAndLabels}
+                    data={parcelsTableData}
+                    headerKeysAndLabels={parcelTableKeysAndLabels}
                     columnDisplayFunctions={clientTableColumnDisplayFunctions}
                     columnStyleOptions={clientTableColumnStyleOptions}
                     onRowClick={onClientTableRowClick}
@@ -201,7 +202,15 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
                         "packingDatetime",
                         lastStatusSortOptions,
                     ]}
-                    filters={["addressPostcode", "lastStatus"]}
+                    filters={[
+                        dateFilter<ParcelsTableRow, "packingDatetime">({
+                            key: "packingDatetime",
+                            label: "Packing Date",
+                        }),
+                        "addressPostcode",
+                        "lastStatus",
+                    ]}
+                    additionalFilters={["fullName", "voucherNumber"]}
                     toggleableHeaders={toggleableHeaders}
                 />
             </TableSurface>
@@ -221,7 +230,7 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
                 </Suspense>
             </Modal>
             <CenterComponent>
-                <AddParcelsButton data={clientsTableData} />
+                <AddParcelsButton data={parcelsTableData} />
             </CenterComponent>
         </>
     );
