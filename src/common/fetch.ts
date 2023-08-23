@@ -1,7 +1,13 @@
 import { Schema } from "@/database_utils";
-import supabase from "@/supabaseClient";
+import supabaseClient from "@/supabaseClient";
+import supabaseServer from "@/supabaseServer";
 
-export const fetchParcels = async (parcelID: string): Promise<Schema["parcels"]> => {
+type Supabase = typeof supabaseClient | typeof supabaseServer;
+
+export const fetchParcels = async (
+    parcelID: string,
+    supabase: Supabase
+): Promise<Schema["parcels"]> => {
     const { data, error } = await supabase.from("parcels").select().eq("primary_key", parcelID);
     if (error !== null) {
         throw Error(`${error.code}`);
@@ -15,7 +21,10 @@ export const fetchParcels = async (parcelID: string): Promise<Schema["parcels"]>
     return data[0];
 };
 
-export const fetchClients = async (primaryKey: string): Promise<Schema["clients"]> => {
+export const fetchClients = async (
+    primaryKey: string,
+    supabase: Supabase
+): Promise<Schema["clients"]> => {
     const { data, error } = await supabase.from("clients").select().eq("primary_key", primaryKey);
     if (error !== null) {
         throw Error(`${error.code}`);
@@ -29,7 +38,10 @@ export const fetchClients = async (primaryKey: string): Promise<Schema["clients"
     return data[0];
 };
 
-export const fetchFamilies = async (familyID: string): Promise<Schema["families"][]> => {
+export const fetchFamilies = async (
+    familyID: string,
+    supabase: Supabase
+): Promise<Schema["families"][]> => {
     const { data, error } = await supabase.from("families").select().eq("family_id", familyID);
     if (error !== null) {
         throw Error(`${error.code}`);
@@ -37,7 +49,7 @@ export const fetchFamilies = async (familyID: string): Promise<Schema["families"
     return data;
 };
 
-export const fetchLists = async (): Promise<Schema["lists"][]> => {
+export const fetchLists = async (supabase: Supabase): Promise<Schema["lists"][]> => {
     const { data, error } = await supabase.from("lists").select();
     if (error !== null) {
         throw Error(`${error.code}`);
@@ -45,7 +57,7 @@ export const fetchLists = async (): Promise<Schema["lists"][]> => {
     return data;
 };
 
-export const fetchComment = async (): Promise<string> => {
+export const fetchComment = async (supabase: Supabase): Promise<string> => {
     const { data, error } = await supabase.from("website_data").select().eq("name", "lists_text");
     if (error !== null) {
         throw Error(`${error.code}`);

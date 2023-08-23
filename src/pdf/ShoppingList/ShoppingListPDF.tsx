@@ -2,13 +2,15 @@
 
 import React from "react";
 import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
+import { Item, ParcelInfo, ShoppingListPDFDataProps } from "@/pdf/ShoppingList/getShoppingListData";
 import {
-    BlockProps,
     ClientSummary,
     formatCamelCaseKey,
-    Item,
-    ShoppingListPDFDataProps,
-} from "@/pdf/ShoppingList/dataPreparation";
+    HouseholdSummary,
+    RequirementSummary,
+} from "@/common/format";
+
+export type BlockProps = ParcelInfo | HouseholdSummary | RequirementSummary;
 
 const styles = StyleSheet.create({
     paper: {
@@ -156,7 +158,11 @@ const DisplayAsBlock: React.FC<BlockProps> = (data: BlockProps) => {
     return (
         <View style={styles.infoCell}>
             {Object.keys(data).map((propKey, index) => (
-                <OneLine key={index} header={formatCamelCaseKey(propKey)} value={data[propKey]} />
+                <OneLine
+                    key={index}
+                    header={formatCamelCaseKey(propKey)}
+                    value={data[propKey as keyof typeof data]}
+                />
             ))}
         </View>
     );

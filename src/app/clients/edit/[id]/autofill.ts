@@ -2,7 +2,7 @@ import { Schema } from "@/database_utils";
 import { ClientFields } from "@/app/clients/add/ClientForm";
 import { Person } from "@/components/Form/formFunctions";
 import { booleanGroup } from "@/components/DataInput/inputHandlerFactories";
-import { processExtraInformation } from "@/pdf/ShoppingList/dataPreparation";
+import { processExtraInformation } from "@/common/format";
 
 const getNumberAdultsByGender = (family: Schema["families"][], gender: string): number => {
     return family.filter((member) => member.gender === gender).length;

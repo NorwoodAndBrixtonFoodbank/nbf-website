@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import prepareData, { ShoppingListPDFDataProps } from "@/pdf/ShoppingList/dataPreparation";
+import React from "react";
+import prepareData from "@/pdf/ShoppingList/getShoppingListData";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import ShoppingListPDF from "@/pdf/ShoppingList/ShoppingListPDF";
 

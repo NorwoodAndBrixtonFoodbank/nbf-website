@@ -1,3 +1,5 @@
+import supabase from "@/supabaseClient";
+import { fetchClients, fetchFamilies } from "@/common/fetch";
 import {
     ClientSummary,
     HouseholdSummary,
@@ -5,14 +7,13 @@ import {
     prepareHouseholdSummary,
     prepareRequirementSummary,
     RequirementSummary,
-} from "@/pdf/ShoppingList/dataPreparation";
-import { fetchClients, fetchFamilies } from "@/pdf/ShoppingList/databaseFetch";
+} from "@/common/format";
 
 export type ClientData = ClientSummary & HouseholdSummary & RequirementSummary;
 
 const getClientData = async (clientID: string): Promise<ClientData> => {
-    const clientData = await fetchClients(clientID);
-    const familyData = await fetchFamilies(clientData.family_id);
+    const clientData = await fetchClients(clientID, supabase);
+    const familyData = await fetchFamilies(clientData.family_id, supabase);
 
     return {
         ...prepareClientSummary(clientData),
