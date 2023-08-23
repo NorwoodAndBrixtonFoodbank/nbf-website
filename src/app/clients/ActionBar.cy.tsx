@@ -11,8 +11,8 @@ describe("Clients - Action Bar", () => {
             primaryKey: "primaryKey1",
             addressPostcode: "AB1 2CD",
             collectionCentre: "Centre 1",
-            congestionChargeApplies: false,
             collectionDatetime: new Date().toISOString(),
+            congestionChargeApplies: false,
             familyCategory: "Family 1",
             fullName: "John Smith",
             lastStatus: "Delivered",
@@ -27,8 +27,8 @@ describe("Clients - Action Bar", () => {
             primaryKey: "primaryKey2",
             addressPostcode: "AB1 aaaa2CD",
             collectionCentre: "Centraaaae 1",
-            congestionChargeApplies: true,
             collectionDatetime: new Date().toISOString(),
+            congestionChargeApplies: true,
             familyCategory: "Familaaaay 1",
             fullName: "John Smaaaaith",
             lastStatus: "Deliveaaaared",
@@ -206,10 +206,6 @@ describe("Clients - Action Bar", () => {
                     body: [{ value: "Hello worlds" }],
                 }
             ).as("interceptFamilies");
-
-            cy.on("uncaught:exception", () => {
-                return false;
-            });
         });
 
         it("should open the action menu when the action button is clicked", () => {
