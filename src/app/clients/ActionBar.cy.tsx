@@ -103,7 +103,7 @@ describe("Clients - Action Bar", () => {
         return (
             <Localization>
                 <StyleManager>
-                <ActionBar data={mockData} selected={selected} />
+                    <ActionBar data={mockData} selected={selected} />
                 </StyleManager>
             </Localization>
         );
