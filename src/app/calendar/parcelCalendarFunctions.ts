@@ -1,7 +1,11 @@
 import { Schema } from "@/database_utils";
-import supabase from "@/supabaseClient";
+import supabaseClient from "@/supabaseClient";
+import supabaseServer from "@/supabaseServer";
 import { CalendarEvent } from "@/components/Calendar/Calendar";
 
+
+// TODO: maybe put this line below somewheere???????/ exported??????? used a lot?????
+type Supabase = typeof supabaseClient | typeof supabaseServer;
 export type ParcelWithClientName = Schema["parcels"] & { clients: { full_name: string } | null };
 
 const COLLECTION_DURATION_MS = 30 * 60 * 1000;
@@ -10,7 +14,9 @@ export interface LocationColorMap {
     [location: string]: { color: string; text: string };
 }
 
-export const getParcelsWithCollectionDate = async (): Promise<ParcelWithClientName[]> => {
+export const getParcelsWithCollectionDate = async (
+    supabase: Supabase
+): Promise<ParcelWithClientName[]> => {
     const { data, error } = await supabase
         .from("parcels")
         .select("*, clients ( full_name )")
