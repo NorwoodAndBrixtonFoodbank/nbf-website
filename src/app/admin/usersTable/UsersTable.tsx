@@ -6,6 +6,7 @@ import { UserRow } from "@/app/admin/page";
 import ManageUserModal from "@/app/admin/manageUser/ManageUserModal";
 import DeleteUserDialog from "@/app/admin/deleteUser/DeleteUserDialog";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
+import SuccessFailureAlert, { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
 
 const usersTableHeaderKeysAndLabels: TableHeaders = [
     ["id", "User ID"],
@@ -40,8 +41,12 @@ interface Props {
 
 const UsersTable: React.FC<Props> = (props) => {
     const [userToDelete, setUserToDelete] = useState<UserRow | null>(null);
-
     const [userToEdit, setUserToEdit] = useState<UserRow | null>(null);
+
+    const [tableAlertOptions, setTableAlertOptions] = useState<AlertOptions>({
+        success: undefined,
+        message: <></>,
+    });
 
     const userOnDelete = (rowIndex: number): void => {
         setUserToDelete(props.userData[rowIndex]);
@@ -63,9 +68,22 @@ const UsersTable: React.FC<Props> = (props) => {
                 toggleableHeaders={["id", "email", "userRole", "createdAt", "updatedAt"]}
             />
 
+            <DeleteUserDialog
+                userToDelete={userToDelete}
+                setUserToDelete={setUserToDelete}
+                setAlertOptions={setTableAlertOptions}
+            />
+            <ManageUserModal
+                userToEdit={userToEdit}
+                setUserToEdit={setUserToEdit}
+                setAlertOptions={setTableAlertOptions}
+            />
+
             <OptionButtonsDiv>
-                <DeleteUserDialog userToDelete={userToDelete} setUserToDelete={setUserToDelete} />
-                <ManageUserModal userToEdit={userToEdit} setUserToEdit={setUserToEdit} />
+                <SuccessFailureAlert
+                    alertOptions={tableAlertOptions}
+                    onClose={() => setTableAlertOptions({ success: undefined, message: <></> })}
+                />
             </OptionButtonsDiv>
         </>
     );

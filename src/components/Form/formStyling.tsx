@@ -10,7 +10,7 @@ export const CenterComponent = styled.div`
     margin-bottom: 1rem;
 `;
 
-export const StyledForm = styled.div`
+export const StyledForm = styled.form`
     padding: 2em;
     max-width: 1500px;
     display: flex;

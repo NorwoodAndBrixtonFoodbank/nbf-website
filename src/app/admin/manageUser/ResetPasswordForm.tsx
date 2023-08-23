@@ -8,14 +8,14 @@ import { UserRow } from "@/app/admin/page";
 import { faKey } from "@fortawesome/free-solid-svg-icons/faKey";
 import { getPasswordHandler } from "@/components/DataInput/inputHandlerFactories";
 import { updateUser } from "@/app/admin/adminActions";
+import { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
 
 interface Props {
     userToEdit: UserRow;
     onCancel: () => void;
-    onConfirm: (success: boolean) => void;
+    onConfirm: (alertOptions: AlertOptions) => void;
 }
 
-// TODO ADD REGEX CHECK TO PASSWORD
 const ResetPasswordForm: React.FC<Props> = (props) => {
     const [password, setPassword] = useState<string>();
 
@@ -25,20 +25,26 @@ const ResetPasswordForm: React.FC<Props> = (props) => {
             attributes: { password },
         });
 
-        props.onConfirm(response.error === null);
+        if (response.error === null) {
+            props.onConfirm({
+                success: true,
+                message: (
+                    <>
+                        Password for <b>{props.userToEdit.email}</b> updated successfully.
+                    </>
+                ),
+            });
+        } else {
+            props.onConfirm({ success: false, message: <>Reset password operation failed</> });
+        }
     };
 
     return (
-        <>
+        <form>
             <EditOption>
+                {/* TODO VFB-23 ADD REGEX CHECK FOR PASSWORD*/}
                 <EditHeader>Password</EditHeader>
-                <PasswordInput
-                    label="New Password"
-                    // TODO Do this stuff
-                    // error={errorExists(formErrors.password)}
-                    // helperText={errorText(formErrors.password)}
-                    onChange={getPasswordHandler(setPassword)}
-                />
+                <PasswordInput label="New Password" onChange={getPasswordHandler(setPassword)} />
             </EditOption>
             <OptionButtonsDiv>
                 <Button
@@ -52,7 +58,7 @@ const ResetPasswordForm: React.FC<Props> = (props) => {
                     Cancel
                 </Button>
             </OptionButtonsDiv>
-        </>
+        </form>
     );
 };
 

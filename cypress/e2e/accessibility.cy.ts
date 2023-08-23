@@ -49,6 +49,12 @@ describe("Accessibility tests in light mode", () => {
 
         cy.checkAccessibility();
     });
+
+    it("Checks admin page", () => {
+        cy.visit("/admin");
+
+        cy.checkAccessibility();
+    });
 });
 
 describe("Accessibility tests in dark mode", () => {
@@ -105,6 +111,14 @@ describe("Accessibility tests in dark mode", () => {
 
         // wait for hydration
         cy.get("[data-loaded='true']", { timeout: 10000 }).should("exist");
+        cy.get("label[aria-label='Theme Switch']").click();
+
+        cy.checkAccessibility();
+    });
+
+    it("Checks admin page", () => {
+        cy.visit("/admin");
+        cy.visit("/parcels/add/1");
         cy.get("label[aria-label='Theme Switch']").click();
 
         cy.checkAccessibility();

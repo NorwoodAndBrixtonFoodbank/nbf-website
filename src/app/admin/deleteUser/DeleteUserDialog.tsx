@@ -1,13 +1,12 @@
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
-import React, { useState } from "react";
+import React from "react";
 import { UserRow } from "@/app/admin/page";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
 import { deleteUser } from "@/app/admin/adminActions";
-import RefreshPageButton from "@/app/admin/RefreshPageButton";
-import Alert from "@mui/material/Alert/Alert";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
+import { SetAlertOptions } from "@/app/admin/common/SuccessFailureAlert";
 
 const DangerDialog = styled(Modal)`
     & #deleteUserDialog {
@@ -18,17 +17,33 @@ const DangerDialog = styled(Modal)`
 interface Props {
     userToDelete: UserRow | null;
     setUserToDelete: (user: UserRow | null) => void;
+    setAlertOptions: SetAlertOptions;
 }
 
 const DeleteUserDialog: React.FC<Props> = (props) => {
-    const [deleteUserSuccess, setDeleteUserSuccess] = useState<boolean | undefined>();
-    const [deletedUser, setDeletedUser] = useState<UserRow | null>(null);
+    if (props.userToDelete === null) {
+        return <></>;
+    }
 
     const onDeleteConfirm = async (): Promise<void> => {
-        // const response = await deleteUser(props.userToDelete!.id);
+        const response = await deleteUser(props.userToDelete!.id);
 
-        setDeleteUserSuccess(false); // TODO response.error === null
-        setDeletedUser(props.userToDelete);
+        if (response.error === null) {
+            props.setAlertOptions({
+                success: true,
+                message: (
+                    <>
+                        User <b>{props.userToDelete!.email}</b> deleted successfully.
+                    </>
+                ),
+            });
+        } else {
+            props.setAlertOptions({
+                success: false,
+                message: <>Delete User Operation Failed</>,
+            });
+        }
+
         props.setUserToDelete(null);
     };
 
@@ -36,31 +51,14 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
         props.setUserToDelete(null);
     };
 
-    if (deleteUserSuccess !== undefined) {
-        return (
-            <>
-                {deleteUserSuccess ? (
-                    <Alert severity="success" action={<RefreshPageButton />}>
-                        User <b>{deletedUser!.email}</b> deleted successfully.
-                    </Alert>
-                ) : (
-                    <Alert severity="error" onClose={() => setDeleteUserSuccess(undefined)}>
-                        Delete User Operation Failed
-                    </Alert>
-                )}
-            </>
-        );
-    }
-
     return (
         <DangerDialog
             header="DELETE USER"
             headerId="deleteUserDialog"
-            isOpen={props.userToDelete !== null}
+            isOpen={true}
             onClose={onDeleteCancel}
         >
-            Are you sure you want to delete user{" "}
-            <b>{props.userToDelete ? props.userToDelete.email : ""}</b>
+            Are you sure you want to delete user <b>{props.userToDelete.email}</b>
             ?
             <br />
             <OptionButtonsDiv>

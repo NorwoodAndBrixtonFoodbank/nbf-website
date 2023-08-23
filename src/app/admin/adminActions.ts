@@ -7,6 +7,8 @@ import { AdminUserAttributes } from "@supabase/gotrue-js";
 
 const supabase = createServerActionClient({ cookies });
 
+// TODO VFB-23 Unpack Supabase Errors and Extract Only Relavent Fields to Return to Client
+
 export const createUser = async (fields: any): Promise<FunctionsResponse<any>> => {
     return await supabase.functions.invoke("admin-create-user", {
         body: JSON.stringify(fields),

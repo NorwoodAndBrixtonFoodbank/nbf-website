@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { CenterComponent, FormErrorText, StyledForm } from "@/components/Form/formStyling";
+import { CenterComponent, StyledForm } from "@/components/Form/formStyling";
 import Button from "@mui/material/Button";
 import AccountDetails from "@/app/admin/createUser/createUserFormSections/AccountDetails";
 import UserRole from "@/app/admin/createUser/createUserFormSections/UserRole";
@@ -15,7 +15,7 @@ import {
 import { createUser } from "@/app/admin/adminActions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
-import RefreshPageButton from "@/app/admin/RefreshPageButton";
+import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 import { Database } from "@/databaseTypesFile";
 import Alert from "@mui/material/Alert/Alert";
 import { User } from "@supabase/gotrue-js";

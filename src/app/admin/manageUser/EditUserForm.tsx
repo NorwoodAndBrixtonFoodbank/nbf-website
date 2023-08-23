@@ -7,13 +7,13 @@ import Button from "@mui/material/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import { faUserPen } from "@fortawesome/free-solid-svg-icons/faUserPen";
-import { Database } from "@/database_types_file";
 import { updateUser } from "@/app/admin/adminActions";
+import { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
 
 interface Props {
     userToEdit: UserRow;
     onCancel: () => void;
-    onConfirm: (success: boolean) => void;
+    onConfirm: (alertOptions: AlertOptions) => void;
 }
 
 const EditUserForm: React.FC<Props> = (props) => {
@@ -25,7 +25,18 @@ const EditUserForm: React.FC<Props> = (props) => {
             attributes: { app_metadata: { role } },
         });
 
-        props.onConfirm(response.error === null);
+        if (response.error === null) {
+            props.onConfirm({
+                success: true,
+                message: (
+                    <>
+                        User <b>{props.userToEdit.email}</b> updated successfully.
+                    </>
+                ),
+            });
+        } else {
+            props.onConfirm({ success: false, message: <>Edit User Operation Failed</> });
+        }
     };
 
     return (
