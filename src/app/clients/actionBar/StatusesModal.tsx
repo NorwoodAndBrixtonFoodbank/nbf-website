@@ -6,7 +6,7 @@ import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 
-interface SharedModalProps {
+interface StatusesBarModalProps {
     isOpen: boolean;
     onClose: () => void;
     data: ClientsTableRow[];
@@ -38,7 +38,7 @@ const StatusText = styled.p`
     }
 `;
 
-const StatusesBarModal: React.FC<SharedModalProps> = (props) => {
+const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
     const [date, setDate] = useState(dayjs(new Date()));
 
     useEffect(() => {

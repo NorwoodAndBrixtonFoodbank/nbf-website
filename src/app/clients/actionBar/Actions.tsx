@@ -22,20 +22,20 @@ const notEqualsOne = (value: number): boolean => {
 };
 
 const availableActions = {
-    "Print Shipping Labels": {
+    "Download Shipping Labels": {
         showSelectedParcels: true,
         errorCondition: notMoreThanOne,
-        errorMessage: "Please select rows for printing.",
+        errorMessage: "Please select rows for download.",
     },
-    "Print Shopping List": {
+    "Download Shopping List": {
         showSelectedParcels: true,
         errorCondition: notEqualsOne,
-        errorMessage: "Please select only 1 row for printing.",
+        errorMessage: "Please select only 1 row for download.",
     },
-    "Print Driver Overview": {
+    "Download Driver Overview": {
         showSelectedParcels: true,
         errorCondition: notMoreThanOne,
-        errorMessage: "Please select rows for printing.",
+        errorMessage: "Please select rows for download.",
     },
 };
 
@@ -47,7 +47,7 @@ interface ActionsInputComponent {
 
 const ActionsInputComponent: React.FC<ActionsInputComponent> = ({ pdfType, onDateChange, onDriverNameChange }) => {
     switch (pdfType) {
-        case "Print Driver Overview":
+        case "Download Driver Overview":
             return (
                 <DriverOverviewInput
                     onDateChange={onDateChange}
@@ -68,11 +68,11 @@ interface ActionsButtonProps {
 
 const ActionsButton: React.FC<ActionsButtonProps> = ({ pdfType, data, date, driverName }) => {
     switch (pdfType) {
-        case "Print Shipping Labels":
+        case "Download Shipping Labels":
             return <ShippingLabelsModalButton data={data} />;
-        case "Print Shopping List":
+        case "Download Shopping List":
             return <ShoppingListModalButton data={data} />;
-        case "Print Driver Overview":
+        case "Download Driver Overview":
             return <DriverOverviewModalButton data={data} date={date} driverName={driverName} />;
         default:
             <></>;

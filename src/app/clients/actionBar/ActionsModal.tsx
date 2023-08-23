@@ -12,7 +12,7 @@ import { Button } from "@mui/material";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import { DatePicker } from "@mui/x-date-pickers";
 
-interface SharedModalProps {
+interface ActionsModalProps {
     isOpen: boolean;
     onClose: () => void;
     data: ClientsTableRow[];
@@ -57,11 +57,11 @@ export const ShippingLabelsModalButton: React.FC<ModalButtonProps> = ({ data }) 
     const parcelIds = data.map((parcel) => {
         return parcel.parcelId;
     });
-    return <ShippingLabels text="Print" parcelIds={parcelIds} />;
+    return <ShippingLabels text="Download" parcelIds={parcelIds} />;
 };
 
 export const ShoppingListModalButton: React.FC<ModalButtonProps> = ({ data }) => {
-    return <ShoppingList text="Print" parcelId={data[0].parcelId} />;
+    return <ShoppingList text="Download" parcelId={data[0].parcelId} />;
 };
 
 interface DriverOverviewModalButton {
@@ -78,7 +78,7 @@ export const DriverOverviewModalButton: React.FC<DriverOverviewModalButton> = ({
         <DriverOverview
             driverName={driverName}
             date={date.toDate()}
-            text="Print"
+            text="Download"
             parcelIds={parcelIds}
         />
     );
@@ -102,7 +102,7 @@ export const DriverOverviewInput: React.FC<DriverOverviewInputProps> = ({
     );
 };
 
-const ActionsModal: React.FC<SharedModalProps> = (props) => {
+const ActionsModal: React.FC<ActionsModalProps> = (props) => {
     const [loadPdf, setLoadPdf] = useState(false);
     return (
         <Modal {...props} header={props.header} headerId="action-modal-header">
@@ -110,7 +110,7 @@ const ActionsModal: React.FC<SharedModalProps> = (props) => {
                 {props.inputComponent}
                 {props.showSelectedParcels ? (
                     <>
-                        <Heading>Parcels selected for printing:</Heading>
+                        <Heading>Parcels selected for download:</Heading>
 
                         <div>
                             {props.data.map((parcel, index) => {
