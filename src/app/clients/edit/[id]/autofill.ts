@@ -1,15 +1,15 @@
 import { Schema } from "@/database_utils";
 import { ClientFields } from "@/app/clients/add/ClientForm";
 import { Person } from "@/components/Form/formFunctions";
-import { booleanGroup } from "@/components/DataInput/inputHandlerFactories";
+import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { processExtraInformation } from "@/pdf/ShoppingList/dataPreparation";
 
 const getNumberAdultsByGender = (family: Schema["families"][], gender: string): number => {
     return family.filter((member) => member.gender === gender).length;
 };
 
-const arrayToBooleanGroup = (data: string[]): booleanGroup => {
-    const reverted: booleanGroup = {};
+const arrayToBooleanGroup = (data: string[]): BooleanGroup => {
+    const reverted: BooleanGroup = {};
     data.forEach((value) => (reverted[value] = true));
     return reverted;
 };

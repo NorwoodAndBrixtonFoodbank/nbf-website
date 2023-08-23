@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { booleanGroup } from "@/components/DataInput/inputHandlerFactories";
+import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import {
     checkErrorOnSubmit,
     Errors,
@@ -15,7 +15,6 @@ import {
 import {
     CenterComponent,
     FormErrorText,
-    FormHeading,
     FormText,
     StyledForm,
 } from "@/components/Form/formStyling";
@@ -35,6 +34,7 @@ import AttentionFlagCard from "@/app/clients/add/formSections/AttentionFlagCard"
 import SignpostingCallCard from "@/app/clients/add/formSections/SignpostingCallCard";
 import Button from "@mui/material/Button";
 import { submitAddClientForm, submitEditClientForm } from "@/app/clients/add/submitFormHelpers";
+import Title from "@/components/Title/Title";
 
 interface Props {
     initialFields: Fields;
@@ -54,12 +54,12 @@ export interface ClientFields extends Fields {
     adults: Person[];
     numberChildren: number;
     children: Person[];
-    dietaryRequirements: booleanGroup;
-    feminineProducts: booleanGroup;
+    dietaryRequirements: BooleanGroup;
+    feminineProducts: BooleanGroup;
     babyProducts: boolean | null;
     nappySize: string;
-    petFood: booleanGroup;
-    otherItems: booleanGroup;
+    petFood: BooleanGroup;
+    otherItems: BooleanGroup;
     deliveryInstructions: string;
     extraInformation: string;
     attentionFlag: boolean;
@@ -140,7 +140,7 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editMod
     return (
         <CenterComponent>
             <StyledForm>
-                <FormHeading>Client Form</FormHeading>
+                <Title>Client Form</Title>
                 <FormText>
                     Please provide or update the client&apos;s personal details, household
                     composition, dietary restrictions and other needs.

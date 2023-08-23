@@ -8,12 +8,7 @@ import {
     setField,
     checkErrorOnSubmit,
 } from "@/components/Form/formFunctions";
-import {
-    CenterComponent,
-    StyledForm,
-    FormErrorText,
-    FormHeading,
-} from "@/components/Form/formStyling";
+import { CenterComponent, StyledForm, FormErrorText } from "@/components/Form/formStyling";
 
 import { useRouter } from "next/navigation";
 
@@ -26,6 +21,7 @@ import CollectionTimeCard from "@/app/parcels/add/formSections/CollectionTimeCar
 import CollectionCentreCard from "@/app/parcels/add/formSections/CollectionCentreCard";
 import { insertParcel } from "@/app/parcels/add/databaseFunctions";
 import Button from "@mui/material/Button";
+import Title from "@/components/Title/Title";
 
 interface AddParcelFields {
     voucherNumber: string;
@@ -160,7 +156,7 @@ const AddParcelForm: React.FC<AddParcelFormProps> = ({ id }) => {
     return (
         <CenterComponent>
             <StyledForm>
-                <FormHeading>Add Parcel</FormHeading>
+                <Title>Add Parcel</Title>
                 {formSections.map((Card, index) => {
                     return (
                         <Card

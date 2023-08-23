@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import React from "react";
 import NavigationBar from "@/components/NavBar/NavigationBar";
 import { AuthRouting } from "@/app/auth";
-import Localization from "./localizationProvider";
+import Localization from "@/app/localizationProvider";
 
 interface Props {
     children: React.ReactNode;

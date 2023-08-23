@@ -1,64 +1,64 @@
 import React from "react";
 import { SelectChangeEvent } from "@mui/material";
 
-type valueSetter = {
+type ValueSetter = {
     (value: string): void;
 };
 
-type booleanSetter = {
+type BooleanSetter = {
     (checked: boolean): void;
 };
 
-export type booleanGroup = {
+export type BooleanGroup = {
     [key: string]: boolean;
 };
 
-type booleanGroupSetter = {
-    (group: booleanGroup): void;
+type BooleanGroupSetter = {
+    (group: BooleanGroup): void;
 };
 
-export type changeEventHandler = {
+export type ChangeEventHandler = {
     (event: React.ChangeEvent<HTMLInputElement>): void;
 };
 
-export type selectChangeEventHandler = {
+export type SelectChangeEventHandler = {
     (event: SelectChangeEvent): void;
 };
 
-const getValueChangeHandler = (setValue: valueSetter): changeEventHandler => {
+const getValueChangeHandler = (setValue: ValueSetter): ChangeEventHandler => {
     return (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(event.target.value);
     };
 };
 
-export const getFreeFormTextHandler = (setValue: valueSetter): changeEventHandler => {
+export const getFreeFormTextHandler = (setValue: ValueSetter): ChangeEventHandler => {
     return getValueChangeHandler(setValue);
 };
 
-export const getPasswordHandler = (setValue: valueSetter): changeEventHandler => {
+export const getPasswordHandler = (setValue: ValueSetter): ChangeEventHandler => {
     return getValueChangeHandler(setValue);
 };
 
-export const getRadioGroupHandler = (setValue: valueSetter): changeEventHandler => {
+export const getRadioGroupHandler = (setValue: ValueSetter): ChangeEventHandler => {
     return getValueChangeHandler(setValue);
 };
 
-export const getDropdownListHandler = (setValue: valueSetter): selectChangeEventHandler => {
+export const getDropdownListHandler = (setValue: ValueSetter): SelectChangeEventHandler => {
     return (event: SelectChangeEvent) => {
         setValue(event.target.value);
     };
 };
 
-export const getCheckboxHandler = (setBoolean: booleanSetter): changeEventHandler => {
+export const getCheckboxHandler = (setBoolean: BooleanSetter): ChangeEventHandler => {
     return (event: React.ChangeEvent<HTMLInputElement>) => {
         setBoolean(event.target.checked);
     };
 };
 
 export const getCheckboxGroupHandler = (
-    booleanGroup: booleanGroup,
-    setBooleanGroup: booleanGroupSetter
-): changeEventHandler => {
+    booleanGroup: BooleanGroup,
+    setBooleanGroup: BooleanGroupSetter
+): ChangeEventHandler => {
     return (event: React.ChangeEvent<HTMLInputElement>) => {
         setBooleanGroup({
             ...booleanGroup,

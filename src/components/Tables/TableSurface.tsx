@@ -1,6 +1,8 @@
+"use client";
+
 import React from "react";
-import { Paper } from "@mui/material";
 import styled from "styled-components";
+import { Paper } from "@mui/material";
 
 const StyledPaper = styled(Paper)`
     margin: 1rem;

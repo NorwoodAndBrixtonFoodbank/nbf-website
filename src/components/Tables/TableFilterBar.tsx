@@ -45,7 +45,7 @@ const TableFilterBar: React.FC<Props> = (props) => {
                 Clear
             </Button>
             {props.headers
-                .filter(([key]) => props.filterKeys?.includes(key) ?? true)
+                .filter(([key]) => props.filterKeys.includes(key))
                 .map(([key, value]) => {
                     return (
                         <StyledFilterBar
