@@ -39,13 +39,17 @@ const availableActions = {
     },
 };
 
-interface ActionsInputComponent {
+interface ActionsInputComponentProps {
     pdfType: String;
     onDateChange: (newDate: Dayjs | null) => void;
     onDriverNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const ActionsInputComponent: React.FC<ActionsInputComponent> = ({ pdfType, onDateChange, onDriverNameChange }) => {
+const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
+    pdfType,
+    onDateChange,
+    onDriverNameChange,
+}) => {
     switch (pdfType) {
         case "Download Driver Overview":
             return (

@@ -64,13 +64,17 @@ export const ShoppingListModalButton: React.FC<ModalButtonProps> = ({ data }) =>
     return <ShoppingList text="Download" parcelId={data[0].parcelId} />;
 };
 
-interface DriverOverviewModalButton {
+interface DriverOverviewModalButtonProps {
     data: ClientsTableRow[];
     date: Dayjs;
     driverName: string;
 }
 
-export const DriverOverviewModalButton: React.FC<DriverOverviewModalButton> = ({ data, date, driverName }) => {
+export const DriverOverviewModalButton: React.FC<DriverOverviewModalButtonProps> = ({
+    data,
+    date,
+    driverName,
+}) => {
     const parcelIds = data.map((parcel) => {
         return parcel.parcelId;
     });
@@ -111,7 +115,6 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                 {props.showSelectedParcels ? (
                     <>
                         <Heading>Parcels selected for download:</Heading>
-
                         <div>
                             {props.data.map((parcel, index) => {
                                 return (
