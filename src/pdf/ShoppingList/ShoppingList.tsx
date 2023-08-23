@@ -9,7 +9,7 @@ interface Props {
 }
 
 const ShoppingList = ({ text, parcelId }: Props): React.ReactElement => {
-    const [data, setData] = useState<null | ShoppingListPDFDataProps>(null);
+    const [data, setData] = useState<ShoppingListPDFDataProps | null>(null);
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {

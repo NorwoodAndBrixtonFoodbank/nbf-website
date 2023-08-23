@@ -2,7 +2,7 @@ import ActionBar from "@/app/clients/ActionBar";
 import React from "react";
 import StyleManager from "@/app/themes";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
-import Localization from "../localizationProvider";
+import Localization from "@/app/localizationProvider";
 import { Schema } from "@/database_utils";
 
 describe("Clients - Action Bar", () => {
@@ -103,7 +103,7 @@ describe("Clients - Action Bar", () => {
         return (
             <Localization>
                 <StyleManager>
-                    <ActionBar {...{ data: mockData, selected }} />
+                <ActionBar data={mockData} selected={selected} />
                 </StyleManager>
             </Localization>
         );
