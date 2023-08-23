@@ -112,37 +112,40 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
         <Modal {...props} header={props.header} headerId="action-modal-header">
             <ModalInner>
                 {props.inputComponent}
-                {props.showSelectedParcels ? (
+                {props.errorText && <small>{props.errorText}</small>}
+                {loadPdf ? (
                     <>
-                        <Heading>Parcels selected for download:</Heading>
-                        <div>
-                            {props.data.map((parcel, index) => {
-                                return (
-                                    <StatusText key={index}>
-                                        {parcel.collectionCentre}
-                                        {parcel.fullName && ` - ${parcel.fullName}`}
-                                        {parcel.collectionDatetime &&
-                                            `\n @ ${dayjs(parcel.collectionDatetime!).format(
-                                                "DD/MM/YYYY HH:mm"
-                                            )}`}
-                                    </StatusText>
-                                );
-                            })}
-                        </div>
+                        <Heading> The PDF is ready to be downloaded. </Heading>
+                        <Centerer>{props.children}</Centerer>
                     </>
                 ) : (
-                    <></>
+                    <>
+                        <Heading>Parcels selected for download:</Heading>
+                        {props.showSelectedParcels ? (
+                            <div>
+                                {props.data.map((parcel, index) => {
+                                    return (
+                                        <StatusText key={index}>
+                                            {parcel.collectionCentre}
+                                            {parcel.fullName && ` - ${parcel.fullName}`}
+                                            {parcel.collectionDatetime &&
+                                                `\n @ ${dayjs(parcel.collectionDatetime!).format(
+                                                    "DD/MM/YYYY HH:mm"
+                                                )}`}
+                                        </StatusText>
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <></>
+                        )}
+                        <Centerer>
+                            <Button variant="contained" onClick={() => setLoadPdf(true)}>
+                                Create PDF
+                            </Button>
+                        </Centerer>
+                    </>
                 )}
-                {props.errorText && <small>{props.errorText}</small>}
-                <Centerer>
-                    {loadPdf ? (
-                        props.children
-                    ) : (
-                        <Button variant="contained" onClick={() => setLoadPdf(true)}>
-                            Create PDF
-                        </Button>
-                    )}
-                </Centerer>
             </ModalInner>
         </Modal>
     );
