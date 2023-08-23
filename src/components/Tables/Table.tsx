@@ -313,7 +313,7 @@ const Table = <TableName extends keyof Schema>({
         });
     }
 
-    if (reorderable || onEdit) {
+    if (reorderable || onEdit || onDelete) {
         columns.unshift({
             name: <p>Sort</p>,
             cell: (row, filteredRowIndex) => {

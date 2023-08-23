@@ -55,11 +55,12 @@ interface Props {
 }
 
 const UsersTable: React.FC<Props> = (props) => {
+    console.log(props.userData);
     const [userToDelete, setUserToDelete] = useState<UserRow>();
     const [refreshRequired, setRefreshRequired] = useState(false);
 
-    const userOnDelete = (rowIndex: number): void => {
-        setUserToDelete(props.userData[rowIndex]); // TODO VFB-23 Change onDelete in table to return row
+    const userOnDelete = (userRow: UserRow): void => {
+        setUserToDelete(userRow); // TODO VFB-23 Change onDelete in table to return row
     };
 
     const onUserDeleteConfirmation = async (): Promise<void> => {
