@@ -1,6 +1,10 @@
-import supabase from "@/supabaseClient";
 import { Schema } from "@/database_utils";
 import { Datum } from "@/components/Tables/Table";
+import supabase from "@/supabaseServer";
+import {
+    familyCountToFamilyCategory,
+    formatDatetimeAsDate,
+} from "@/app/clients/getExpandedClientDetails";
 
 export interface ClientsTableRow extends Datum {
     primaryKey: string;
@@ -99,26 +103,6 @@ export const getCongestionChargeDetails = async (
     });
 
     return JSON.parse(response.data);
-};
-
-export const familyCountToFamilyCategory = (count: number): string => {
-    if (count <= 1) {
-        return "Single";
-    }
-
-    if (count <= 9) {
-        return `Family of ${count}`;
-    }
-
-    return "Family of 10+";
-};
-
-export const formatDatetimeAsDate = (datetime: string | null): string => {
-    if (datetime === null || isNaN(Date.parse(datetime))) {
-        return "-";
-    }
-
-    return new Date(datetime).toLocaleDateString("en-GB");
 };
 
 export const datetimeToPackingTimeLabel = (datetime: string | null): string => {

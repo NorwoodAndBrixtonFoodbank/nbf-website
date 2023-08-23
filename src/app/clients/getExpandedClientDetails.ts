@@ -1,10 +1,26 @@
 import supabase from "@/supabaseClient";
 import { Schema } from "@/database_utils";
-import {
-    familyCountToFamilyCategory,
-    formatDatetimeAsDate,
-} from "@/app/clients/getClientsTableData";
 import { Data } from "@/components/DataViewer/DataViewer";
+
+export const familyCountToFamilyCategory = (count: number): string => {
+    if (count <= 1) {
+        return "Single";
+    }
+
+    if (count <= 9) {
+        return `Family of ${count}`;
+    }
+
+    return "Family of 10+";
+};
+
+export const formatDatetimeAsDate = (datetime: string | null): string => {
+    if (datetime === null || isNaN(Date.parse(datetime))) {
+        return "-";
+    }
+
+    return new Date(datetime).toLocaleDateString("en-GB");
+};
 
 export type RawClientDetails = Awaited<ReturnType<typeof getRawClientDetails>>;
 
