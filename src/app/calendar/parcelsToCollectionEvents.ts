@@ -1,29 +1,13 @@
-import { Schema } from "@/database_utils";
-import supabase from "@/supabaseClient";
 import { CalendarEvent } from "@/components/Calendar/Calendar";
+import { ParcelWithClientName } from "@/app/calendar/getParcelsWithCollectionDate";
 
-export type ParcelWithClientName = Schema["parcels"] & { clients: { full_name: string } | null };
-
-const COLLECTION_DURATION_MS = 30 * 60 * 1000;
-
-export interface LocationColorMap {
+interface LocationColorMap {
     [location: string]: { color: string; text: string };
 }
 
-export const getParcelsWithCollectionDate = async (): Promise<ParcelWithClientName[]> => {
-    const { data, error } = await supabase
-        .from("parcels")
-        .select("*, clients ( full_name )")
-        .not("collection_datetime", "is", null);
+const COLLECTION_DURATION_MS = 30 * 60 * 1000;
 
-    if (error) {
-        throw new Error("Database error");
-    }
-
-    return data;
-};
-
-export const parcelsToCollectionEvents = (
+const parcelsToCollectionEvents = (
     parcels: ParcelWithClientName[],
     colorMap: LocationColorMap
 ): CalendarEvent[] => {
@@ -50,3 +34,5 @@ export const parcelsToCollectionEvents = (
         return event;
     });
 };
+
+export default parcelsToCollectionEvents;

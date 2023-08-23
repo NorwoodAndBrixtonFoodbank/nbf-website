@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { CenterComponent, FormErrorText, StyledForm } from "@/components/Form/formStyling";
 import Button from "@mui/material/Button";

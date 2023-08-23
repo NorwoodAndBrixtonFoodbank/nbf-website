@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import NavigationBar from "@/components/NavBar/NavigationBar";
+import NavigationBar from "@/components/NavigationBar/NavigationBar";
 import { AppRouterContext, AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import StyleManager from "@/app/themes";
 const StyledNavigationBar: React.FC<{}> = () => {

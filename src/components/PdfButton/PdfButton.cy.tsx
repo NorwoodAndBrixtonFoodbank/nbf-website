@@ -1,6 +1,6 @@
 import React from "react";
 import PdfButton, { formatFileName } from "@/components/PdfButton/PdfButton";
-import ShippingLabelsPdf, { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
+import ShippingLabelsPDF, { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPDF";
 
 const downloadsFolder = Cypress.config("downloadsFolder");
 const fileName = "ShippingLabels.pdf";
@@ -48,7 +48,7 @@ describe("Export Pdf Button", () => {
                 text="Click"
                 fileName={fileName}
                 data={parcelClientsData}
-                pdfComponent={ShippingLabelsPdf}
+                pdfComponent={ShippingLabelsPDF}
             />
         );
     });

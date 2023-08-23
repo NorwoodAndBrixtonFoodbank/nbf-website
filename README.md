@@ -63,7 +63,7 @@ npx supabase gen types typescript --project-id <PROJECT_ID> --schema public > sr
 
 * Pages are server-side
   * Any state/styled-components should be placed in the components/ folder and have a "use client" directive at the top
-  * Note that the `loading.tsx` at root will be displayed if async until unblocked
+  * Note that the `Loading.tsx` at root will be displayed if async until unblocked
   * `const metadata` should be exported with a `title:` attribute
   * Colours should be loaded from the `props.theme` in styled_components - the theme can be set in `src/app/themes.tsx`
 

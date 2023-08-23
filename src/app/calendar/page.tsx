@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import React from "react";
 import ParcelCalendar from "@/app/calendar/ParcelCalendar";
-import { getParcelsWithCollectionDate } from "@/app/calendar/parcelCalendarFunctions";
+import getParcelsWithCollectionDate from "@/app/calendar/getParcelsWithCollectionDate";
 
 const CalendarPage = async (): Promise<React.ReactElement> => {
     const parcelsWithCollectionDate = await getParcelsWithCollectionDate();

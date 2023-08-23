@@ -1,9 +1,9 @@
-import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
-import { Database } from "@/database_types_file";
 import {
+    BooleanGroup,
     ChangeEventHandler,
     SelectChangeEventHandler,
 } from "@/components/DataInput/inputHandlerFactories";
+import { Database } from "@/database_types_file";
 
 type Field = Fields[keyof Fields];
 export type ErrorSetter = (errorKey: string, errorType: Errors) => void;

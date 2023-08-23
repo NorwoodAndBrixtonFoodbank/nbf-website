@@ -11,7 +11,7 @@ export default getExpandedClientDetails;
 export type RawClientDetails = Awaited<ReturnType<typeof getRawClientDetails>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const getRawClientDetails = async (parcelId: string) => {
+const getRawClientDetails = async (parcelId: string) => {
     const response = await supabase
         .from("parcels")
         .select(

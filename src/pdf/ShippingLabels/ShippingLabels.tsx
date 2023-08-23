@@ -2,7 +2,7 @@ import React from "react";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/database_utils";
 import PdfButton from "@/components/PdfButton/PdfButton";
-import ShippingLabelsPdf, { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
+import ShippingLabelsPDF, { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPDF";
 
 const formatDatetime = (datetimeString: string | null, isDatetime: boolean): string => {
     if (datetimeString === null) {
@@ -17,11 +17,9 @@ const formatDatetime = (datetimeString: string | null, isDatetime: boolean): str
         minute: "2-digit",
     };
 
-    const formattedDate = isDatetime
+    return isDatetime
         ? new Date(datetimeString).toLocaleString([], dateOptions)
         : new Date(datetimeString).toLocaleDateString();
-
-    return formattedDate;
 };
 
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<Schema["parcels"][]> => {
@@ -80,7 +78,7 @@ const ShippingLabels = async ({ text, parcelIds }: Props): Promise<React.ReactEl
             text={text}
             fileName="ShippingLabels.pdf"
             data={requiredData}
-            pdfComponent={ShippingLabelsPdf}
+            pdfComponent={ShippingLabelsPDF}
         />
     );
 };

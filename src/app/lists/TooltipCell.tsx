@@ -1,6 +1,8 @@
+"use client";
+
 import SpeechBubbleIcon from "@/components/Icons/SpeechBubbleIcon";
 import React, { useState } from "react";
-import { styled, useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 
 const CellDiv = styled.div`
     display: flex;

@@ -73,7 +73,8 @@ const SuccessText = styled.p`
     font-size: 0.8rem;
 `;
 
-const CommentContainer: React.FC<CommentProps> = ({ originalComment }) => {
+const CommentBox: React.FC<CommentProps> = ({ originalComment }) => {
+    const [resetComment, setResetComment] = useState(originalComment);
     const [value, setValue] = useState(originalComment);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
@@ -125,4 +126,4 @@ const CommentContainer: React.FC<CommentProps> = ({ originalComment }) => {
     );
 };
 
-export default CommentContainer;
+export default CommentBox;
