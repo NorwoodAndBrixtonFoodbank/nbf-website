@@ -1,18 +1,15 @@
-import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import React from "react";
 import { CardProps } from "@/components/Form/formFunctions";
+import { getDropdownListHandler } from "@/components/DataInput/inputHandlerFactories";
+import UserRoleDropdownInput from "@/app/admin/common/UserRoleDropdownInput";
 
-const UserRole: React.FC<CardProps> = () => {
+const UserRole: React.FC<CardProps> = ({ fieldSetter }) => {
     return (
         <GenericFormCard title="User Role" required>
-            <DropdownListInput
-                listTitle="User Role"
+            <UserRoleDropdownInput
                 defaultValue="caller"
-                labelsAndValues={[
-                    ["Caller", "caller"],
-                    ["Admin", "admin"],
-                ]}
+                onChange={getDropdownListHandler((role: string) => fieldSetter("role", role))}
             />
         </GenericFormCard>
     );

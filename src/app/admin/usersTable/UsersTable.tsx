@@ -2,26 +2,10 @@
 
 import React, { useState } from "react";
 import Table, { Row, TableColumnDisplayFunctions, TableHeaders } from "@/components/Tables/Table";
-import styled from "styled-components";
-import Modal from "@/components/Modal/Modal";
-import { deleteUser } from "@/app/admin/adminActions";
-import Button from "@mui/material/Button";
-import DeleteIcon from "@mui/icons-material/Delete";
-import RefreshPageButton from "@/app/admin/RefreshPageButton";
 import { UserRow } from "@/app/admin/page";
-
-const DangerDialog = styled(Modal)`
-    & #deleteUserDialog {
-        background-color: ${(props) => props.theme.error};
-    }
-`;
-
-export const OptionButtonDiv = styled.div`
-    display: flex;
-    padding-top: 1rem;
-    gap: 1rem;
-    justify-content: center;
-`;
+import ManageUserModal from "@/app/admin/manageUser/ManageUserModal";
+import DeleteUserDialog from "@/app/admin/deleteUser/DeleteUserDialog";
+import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 
 const usersTableHeaderKeysAndLabels: TableHeaders = [
     ["id", "User ID"],
@@ -55,24 +39,16 @@ interface Props {
 }
 
 const UsersTable: React.FC<Props> = (props) => {
-    const [userToDelete, setUserToDelete] = useState<UserRow>();
-    const [refreshRequired, setRefreshRequired] = useState(false);
+    const [userToDelete, setUserToDelete] = useState<UserRow | null>(null);
+
+    const [userToEdit, setUserToEdit] = useState<UserRow | null>(null);
 
     const userOnDelete = (rowIndex: number): void => {
-        setUserToDelete(props.userData[rowIndex]); // TODO VFB-23 Change onDelete in table to return row
+        setUserToDelete(props.userData[rowIndex]);
     };
 
-    const onUserDeleteConfirmation = async (): Promise<void> => {
-        await deleteUser(userToDelete!.id);
-
-        // TODO VFB-23 Handle error on request to deleteUser()
-
-        setUserToDelete(undefined);
-        setRefreshRequired(true);
-    };
-
-    const onUserDeleteCancellation = (): void => {
-        setUserToDelete(undefined);
+    const userOnEdit = (rowIndex: number): void => {
+        setUserToEdit(props.userData[rowIndex]);
     };
 
     return (
@@ -81,41 +57,16 @@ const UsersTable: React.FC<Props> = (props) => {
                 data={props.userData}
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
                 onDelete={userOnDelete}
+                onEdit={userOnEdit}
                 headerFilters={["email"]}
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
+                toggleableHeaders={["id", "email", "userRole", "createdAt", "updatedAt"]}
             />
 
-            {refreshRequired ? (
-                <OptionButtonDiv>
-                    <RefreshPageButton />
-                </OptionButtonDiv>
-            ) : (
-                <></>
-            )}
-
-            <DangerDialog
-                header="DELETE USER"
-                headerId="deleteUserDialog"
-                isOpen={userToDelete !== undefined}
-                onClose={onUserDeleteCancellation}
-            >
-                Are you sure you want to delete user <b>{userToDelete ? userToDelete.email : ""}</b>
-                ?
-                <br />
-                <OptionButtonDiv>
-                    <Button
-                        color="error"
-                        variant="outlined"
-                        startIcon={<DeleteIcon />}
-                        onClick={onUserDeleteConfirmation}
-                    >
-                        CONFIRM
-                    </Button>
-                    <Button color="secondary" onClick={onUserDeleteCancellation}>
-                        CANCEL
-                    </Button>
-                </OptionButtonDiv>
-            </DangerDialog>
+            <OptionButtonsDiv>
+                <DeleteUserDialog userToDelete={userToDelete} setUserToDelete={setUserToDelete} />
+                <ManageUserModal userToEdit={userToEdit} setUserToEdit={setUserToEdit} />
+            </OptionButtonsDiv>
         </>
     );
 };
