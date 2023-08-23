@@ -7,7 +7,7 @@ import {
     ErrorLargeText,
     ErrorSecondaryText,
     ErrorRetryText,
-} from "@/app/errorPageStyling";
+} from "@/app/errorStylingandMessages";
 
 interface ErrorProps {
     error: Error;

@@ -12,6 +12,17 @@ export interface LocationColorMap {
     [location: string]: { color: string; text: string };
 }
 
+export const getParcelsWithCollectionDate = async (): Promise<ParcelWithClientName[]> => {
+    const { data, error } = await supabase
+        .from("parcels")
+        .select("*, clients ( full_name )")
+        .not("collection_datetime", "is", null);
+    if (error) {
+        throw new Error("We were unable to fetch the parcels data. Please try again later");
+    }
+    return data;
+};
+
 export const parcelsToCollectionEvents = (
     parcels: ParcelsWithExtraFields[],
     colorMap: LocationColorMap

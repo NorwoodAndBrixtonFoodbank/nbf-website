@@ -5,7 +5,7 @@ import {
     ErrorPanel,
     ErrorLargeText,
     ErrorSecondaryText,
-} from "@/app/errorPageStyling";
+} from "@/app/errorStylingandMessages";
 import LinkButton from "@/components/Buttons/LinkButton";
 
 const NotFoundPage: React.FC<{}> = () => {

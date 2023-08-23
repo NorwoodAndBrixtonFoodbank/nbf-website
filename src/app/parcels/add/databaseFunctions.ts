@@ -1,5 +1,6 @@
 import supabase from "@/supabaseClient";
 import { InsertSchema, Schema } from "@/database_utils";
+import { RequestErrorMessage } from "@/app/errorStylingandMessages";
 
 type InsertedParcels = InsertSchema["parcels"];
 type FetchedParcels = Pick<Schema["parcels"], "primary_key" | "client_id">;
@@ -14,5 +15,5 @@ export const insertParcel = async (parcelRecord: InsertedParcels): Promise<Fetch
     if (error === null && Math.floor(status / 100) === 2) {
         return ids![0];
     }
-    throw new Error("We could not process the request at this time. Please try again later.");
+    throw new Error(RequestErrorMessage);
 };

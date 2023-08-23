@@ -3,6 +3,7 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { checkboxGroupToArray, Fields, Person } from "@/components/Form/formFunctions";
 import supabase from "@/supabaseClient";
 import { PostgrestError } from "@supabase/supabase-js";
+import { RequestErrorMessage } from "@/app/errorStylingandMessages";
 
 type FamilyDatabaseInsertRecord = InsertSchema["families"];
 type FamilyDatabaseUpdateRecord = UpdateSchema["families"];
@@ -78,7 +79,7 @@ const deleteAdultMembers = async (
         .limit(count);
 
     if (errorExists(error, status)) {
-        throw new Error("We could not process the request at this time. Please try again later.");
+        throw new Error(RequestErrorMessage);
     }
 };
 
@@ -94,9 +95,7 @@ const updateChildren = async (children: Person[]): Promise<void> => {
             .eq("primary_key", child.primaryKey);
 
         if (errorExists(error, status)) {
-            throw new Error(
-                "We could not process the request at this time. Please try again later."
-            );
+            throw new Error(RequestErrorMessage);
         }
     }
 };
@@ -109,9 +108,7 @@ const deleteChildren = async (children: Person[]): Promise<void> => {
             .eq("primary_key", child.primaryKey);
 
         if (errorExists(error, status)) {
-            throw new Error(
-                "We could not process the request at this time. Please try again later."
-            );
+            throw new Error(RequestErrorMessage);
         }
     }
 };
@@ -126,7 +123,7 @@ const insertClient = async (
     } = await supabase.from("clients").insert(clientRecord).select("primary_key, family_id");
 
     if (errorExists(error, status)) {
-        throw new Error("We could not process the request at this time. Please try again later.");
+        throw new Error(RequestErrorMessage);
     }
     return ids![0];
 };
@@ -143,7 +140,7 @@ const insertFamily = async (peopleArray: Person[], familyID: string): Promise<vo
     const { status, error } = await supabase.from("families").insert(familyRecords);
 
     if (errorExists(error, status)) {
-        throw new Error("We could not process the request at this time. Please try again later.");
+        throw new Error(RequestErrorMessage);
     }
 };
 
@@ -162,7 +159,7 @@ const updateClient = async (
         .select("primary_key, family_id");
 
     if (errorExists(error, status)) {
-        throw new Error("We could not process the request at this time. Please try again later.");
+        throw new Error(RequestErrorMessage);
     }
     return ids![0];
 };
@@ -256,7 +253,7 @@ export const submitAddClientForm: SubmitFormHelper = async (fields, router) => {
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
         await revertClientInsert(ids.primary_key);
-        throw new Error("We could not process the request at this time. Please try again later.");
+        throw new Error(RequestErrorMessage);
     }
 };
 
@@ -274,6 +271,6 @@ export const submitEditClientForm: SubmitFormHelper = async (
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
         await revertClientUpdate(clientBeforeUpdate);
-        throw new Error("We could not process the request at this time. Please try again later.");
+        throw new Error(RequestErrorMessage);
     }
 };
