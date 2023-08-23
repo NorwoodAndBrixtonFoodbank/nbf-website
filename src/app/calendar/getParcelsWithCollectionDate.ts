@@ -10,9 +10,6 @@ const getParcelsWithCollectionDate = async (): Promise<ParcelWithClientName[]> =
         .not("collection_datetime", "is", null);
 
     if (error) {
-        console.error("\n\n\n");
-        console.error(error);
-        console.error("\n\n\n");
         throw new Error("Database error");
     }
 
