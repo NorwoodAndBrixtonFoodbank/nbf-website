@@ -10,7 +10,6 @@ interface CalendarFilterAccordionProps {
 
 const ContainerDiv = styled.div`
     display: grid;
-    // split rows into 4 columns
     grid-template-columns: repeat(3, 1fr);
     margin-bottom: 1rem;
     justify-content: center;
