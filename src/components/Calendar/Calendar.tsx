@@ -207,12 +207,7 @@ const filterEventsByLocation = (
     locations: string[],
     allEvents: CalendarEvent[]
 ): CalendarEvent[] => {
-    const viewedEvents: CalendarEvent[] = [];
-    allEvents.forEach((event: CalendarEvent) => {
-        if (locations.includes(event.location)) {
-            viewedEvents.push(event);
-        }
-    });
+    const viewedEvents = allEvents.filter((event) => locations.includes(event.location));
     return makeAllDayEventsInclusive(viewedEvents);
 };
 
