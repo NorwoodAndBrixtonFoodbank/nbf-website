@@ -4,22 +4,22 @@ import React, { Suspense, useState } from "react";
 import Table, { Row, TableHeaders } from "@/components/Tables/Table";
 
 import { useTheme } from "styled-components";
-import { ClientsTableRow } from "@/app/clients/getClientsTableData";
+import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
 import DeliveryIcon from "@/components/Icons/DeliveryIcon";
 import CollectionIcon from "@/components/Icons/CollectionIcon";
-import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
-import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
+import ExpandedParcelDetails from "@/app/parcels/ExpandedParcelDetails";
+import ExpandedParcelDetailsFallback from "@/app/parcels/ExpandedParcelDetailsFallback";
 import Icon from "@/components/Icons/Icon";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal/Modal";
 import { Schema } from "@/database_utils";
 import TableSurface from "@/components/Tables/TableSurface";
 import { CenterComponent } from "@/components/Form/formStyling";
-import ActionBar from "@/app/clients/ActionBar";
-import AddParcelsButton from "@/app/clients/AddParcelsButton";
+import ActionBar from "@/app/parcels/ActionBar";
+import AddParcelsButton from "@/app/parcels/AddParcelsButton";
 
 // TODO Change Button to LinkButton
 
@@ -97,16 +97,16 @@ const clientTableColumnStyleOptions = {
 };
 
 interface Props {
-    clientsTableData: ClientsTableRow[];
+    clientsTableData: ParcelsTableRow[];
 }
 
-const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
+const ParcelsPage: React.FC<Props> = ({ clientsTableData }) => {
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [selected, setSelected] = useState<number[]>([]);
     const theme = useTheme();
 
     const rowToIconsColumn = (row: Row): React.ReactElement => {
-        const data = row.data as ClientsTableRow;
+        const data = row.data as ParcelsTableRow;
 
         return (
             <>
@@ -121,7 +121,7 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
     };
 
     const rowToDeliveryCollectionColumn = (row: Row): React.ReactElement => {
-        const data = row.data as ClientsTableRow;
+        const data = row.data as ParcelsTableRow;
 
         if (data.collectionCentre === "Delivery") {
             return (
@@ -149,7 +149,7 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
     };
 
     const onClientTableRowClick = (row: Row): void => {
-        const data = row.data as ClientsTableRow;
+        const data = row.data as ParcelsTableRow;
         setSelectedParcelId(data.parcelId);
     };
 
@@ -186,8 +186,8 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
                 onClose={onExpandedClientDetailsClose}
                 headerId="expandedClientDetailsModal"
             >
-                <Suspense fallback={<ExpandedClientDetailsFallback />}>
-                    <ExpandedClientDetails parcelId={selectedParcelId} />
+                <Suspense fallback={<ExpandedParcelDetailsFallback />}>
+                    <ExpandedParcelDetails parcelId={selectedParcelId} />
                 </Suspense>
             </Modal>
             <CenterComponent>
@@ -197,4 +197,4 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
     );
 };
 
-export default ClientsPage;
+export default ParcelsPage;

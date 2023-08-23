@@ -2,16 +2,16 @@ import { Schema } from "@/database_utils";
 import { Data } from "@/components/DataViewer/DataViewer";
 import supabase from "@/supabaseClient";
 
-const getExpandedClientDetails = async (parcelId: string): Promise<ExpandedClientDetails> => {
-    const rawClientDetails = await getRawClientDetails(parcelId);
-    return rawDataToExpandedClientDetails(rawClientDetails);
+const getExpandedParcelDetails = async (parcelId: string): Promise<ExpandedParcelDetails> => {
+    const rawClientDetails = await getRawParcelDetails(parcelId);
+    return rawDataToExpandedParcelDetails(rawClientDetails);
 };
-export default getExpandedClientDetails;
+export default getExpandedParcelDetails;
 
-export type RawClientDetails = Awaited<ReturnType<typeof getRawClientDetails>>;
+export type RawParcelDetails = Awaited<ReturnType<typeof getRawParcelDetails>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const getRawClientDetails = async (parcelId: string) => {
+export const getRawParcelDetails = async (parcelId: string) => {
     const response = await supabase
         .from("parcels")
         .select(
@@ -71,7 +71,7 @@ export const formatDatetimeAsDate = (datetime: string | null): string => {
     return new Date(datetime).toLocaleDateString("en-GB");
 };
 
-export interface ExpandedClientDetails extends Data {
+export interface ExpandedParcelDetails extends Data {
     "voucher_#": Schema["parcels"]["voucher_number"];
     full_name: Schema["clients"]["full_name"];
     phone_number: Schema["clients"]["phone_number"];
@@ -89,10 +89,10 @@ export interface ExpandedClientDetails extends Data {
     extra_information: Schema["clients"]["extra_information"];
 }
 
-export const rawDataToExpandedClientDetails = (
-    rawClientDetails: RawClientDetails
-): ExpandedClientDetails => {
-    if (rawClientDetails === null) {
+export const rawDataToExpandedParcelDetails = (
+    rawParcelDetails: RawParcelDetails
+): ExpandedParcelDetails => {
+    if (rawParcelDetails === null) {
         return {
             "voucher_#": "",
             full_name: "",
@@ -112,14 +112,14 @@ export const rawDataToExpandedClientDetails = (
         };
     }
 
-    const client = rawClientDetails.client!;
+    const client = rawParcelDetails.client!;
 
     return {
-        "voucher_#": rawClientDetails.voucher_number,
+        "voucher_#": rawParcelDetails.voucher_number,
         full_name: client.full_name,
         phone_number: client.phone_number,
-        packing_date: formatDatetimeAsDate(rawClientDetails.packing_datetime),
-        packing_time: formatDatetimeAsTime(rawClientDetails.packing_datetime),
+        packing_date: formatDatetimeAsDate(rawParcelDetails.packing_datetime),
+        packing_time: formatDatetimeAsTime(rawParcelDetails.packing_datetime),
         delivery_instructions: client.delivery_instructions,
         address: formatAddressFromClientDetails(client),
         household: formatHouseholdFromFamilyDetails(client.family),

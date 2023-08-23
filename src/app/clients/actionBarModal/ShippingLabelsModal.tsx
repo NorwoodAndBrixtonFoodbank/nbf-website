@@ -5,12 +5,12 @@ import styled from "styled-components";
 import ShippingLabels from "@/pdf/ShippingLabels/ShippingLabels";
 import Modal from "@/components/Modal/Modal";
 import dayjs from "dayjs";
-import { ClientsTableRow } from "@/app/clients/getClientsTableData";
+import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 
 interface SharedModalProps {
     isOpen: boolean;
     onClose: () => void;
-    data: ClientsTableRow[];
+    data: ParcelsTableRow[];
     status: string | null;
     header: string;
     headerId: string;

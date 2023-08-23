@@ -10,13 +10,13 @@ import LinkButton from "@/components/Buttons/LinkButton";
 import Button from "@mui/material/Button";
 import TableSurface from "@/components/Tables/TableSurface";
 import Table, { Datum, TableHeaders } from "@/components/Tables/Table";
-import { ClientsTableRow } from "@/app/clients/getClientsTableData";
+import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 
 interface Props {
-    data: ClientsTableRow[];
+    data: ParcelsTableRow[];
 }
 
-interface ClientsListRow extends Datum {
+interface ClientsTableRow extends Datum {
     primaryKey: string;
     fullName: Schema["clients"]["full_name"];
     familyCategory: string;
@@ -48,9 +48,9 @@ const headers: TableHeaders = [
     ["addressPostcode", "Postcode"],
 ];
 
-const showClients = (data: ClientsTableRow[]): ClientsListRow[] => {
+const showClients = (data: ParcelsTableRow[]): ClientsTableRow[] => {
     const primaryKeys: string[] = [];
-    const clientsData: ClientsListRow[] = [];
+    const clientsData: ClientsTableRow[] = [];
 
     for (const datum of data) {
         if (!primaryKeys.includes(datum.primaryKey)) {

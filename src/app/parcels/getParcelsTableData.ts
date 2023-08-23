@@ -1,12 +1,12 @@
-import { CongestionChargeDetails, ProcessingData } from "@/app/clients/fetchDataFromServer";
+import { CongestionChargeDetails, ProcessingData } from "@/app/parcels/fetchDataFromServer";
 import { Schema } from "@/database_utils";
 import { Datum } from "@/components/Tables/Table";
 import {
     familyCountToFamilyCategory,
     formatDatetimeAsDate,
-} from "@/app/clients/getExpandedClientDetails";
+} from "@/app/parcels/getExpandedParcelDetails";
 
-export interface ClientsTableRow extends Datum {
+export interface ParcelsTableRow extends Datum {
     primaryKey: string;
     parcelId: Schema["parcels"]["primary_key"];
     flaggedForAttention: boolean;
@@ -24,8 +24,8 @@ export interface ClientsTableRow extends Datum {
 export const processingDataToClientsTableData = (
     processingData: ProcessingData,
     congestionCharge: CongestionChargeDetails[]
-): ClientsTableRow[] => {
-    const clientTableRows: ClientsTableRow[] = [];
+): ParcelsTableRow[] => {
+    const clientTableRows: ParcelsTableRow[] = [];
 
     if (processingData.length !== congestionCharge.length) {
         throw new Error(

@@ -133,6 +133,7 @@ const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
 
     const pages = [
         ["Clients", "/clients"],
+        ["Parcels", "/parcels"],
         ["Lists", "/lists"],
         ["Calendar", "/calendar"],
         ["Admin", "/admin"], // TODO VFB-23 Prevent non-admins from viewing and accessing this page

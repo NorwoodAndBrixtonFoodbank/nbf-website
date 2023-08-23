@@ -19,8 +19,8 @@ const clientDetailFields = [
     "EXTRA INFORMATION",
 ];
 
-const ExpandedClientDetailsFallback: React.FC<{}> = () => {
+const ExpandedParcelDetailsFallback: React.FC<{}> = () => {
     return <DataViewerFallback fieldPlaceholders={clientDetailFields} />;
 };
 
-export default ExpandedClientDetailsFallback;
+export default ExpandedParcelDetailsFallback;
