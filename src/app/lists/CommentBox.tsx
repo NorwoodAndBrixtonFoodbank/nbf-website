@@ -73,7 +73,6 @@ const SuccessText = styled.p`
 `;
 
 const CommentContainer: React.FC<CommentProps> = ({ originalComment }) => {
-    const [resetComment, setResetComment] = useState(originalComment);
     const [value, setValue] = useState(originalComment);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
@@ -88,7 +87,6 @@ const CommentContainer: React.FC<CommentProps> = ({ originalComment }) => {
             setSuccessMessage("");
         } else {
             setErrorMessage("");
-            setResetComment(value);
             setSuccessMessage("Comment successfully updated.");
             window.location.reload();
         }
@@ -98,7 +96,7 @@ const CommentContainer: React.FC<CommentProps> = ({ originalComment }) => {
             <HeaderAndButtonContainer>
                 <h2>Comments</h2>
                 <ButtonContainer>
-                    <Button variant="outlined" onClick={() => setValue(resetComment)}>
+                    <Button variant="outlined" onClick={() => setValue(originalComment)}>
                         Reset
                     </Button>
                     <Button variant="contained" onClick={onSubmit}>
