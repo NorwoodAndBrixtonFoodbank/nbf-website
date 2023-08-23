@@ -88,7 +88,7 @@ const mergeDateAndTime = (date: Date, time: Date): Date => {
     );
 };
 
-const collectionCentreToAbbreviation = {
+const collectionCentreToKey = {
     "Brixton Hill - Methodist Church": "81e40902-fe22-43f8-8ad3-1417b376374f",
     "Clapham - St Stephens Church": "8e8398d9-d87a-4d86-aef8-da61cbe5e8ca",
     "N&B - Emmanuel Church": "4178b43c-fe2e-4fb7-a33b-233d44e3764d",
@@ -97,7 +97,8 @@ const collectionCentreToAbbreviation = {
     "Waterloo - Oasis": "5925c0c1-3076-4d2b-a16d-c291c42b2924",
     "Waterloo - St George the Martyr": "963ed8f0-f32a-4273-8c0b-5c8671402088",
     "Waterloo - St Johns": "e0276cca-294c-4c3c-bc69-9e9e9b9f3c05",
-    "Delivery": "7c891da8-a4c1-4fb6-b1cd-c90ef5fbbca9",
+    Delivery: "7c891da8-a4c1-4fb6-b1cd-c90ef5fbbca9",
+    "": null,
 };
 
 const AddParcelForm: React.FC<AddParcelFormProps> = ({ id }) => {
@@ -151,7 +152,9 @@ const AddParcelForm: React.FC<AddParcelFormProps> = ({ id }) => {
 
         const isDelivery = fields.shippingMethod === "Delivery";
 
-        const collectionCentreId = collectionCentreToAbbreviation[isDelivery ? "Delivery" : fields.collectionCentre];
+        const collectionCentre = isDelivery ? "Delivery" : fields.collectionCentre ?? "";
+        // @ts-ignore TS7053 - collectionCentre should be a key of object
+        const collectionCentreId = collectionCentreToKey[collectionCentre];
 
         const formToAdd = {
             client_id: id,
