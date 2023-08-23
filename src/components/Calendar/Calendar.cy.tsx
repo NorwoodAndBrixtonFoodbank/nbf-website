@@ -26,6 +26,7 @@ describe("<Calendar />", () => {
             start: testDate,
             end: dayAfterTestDate,
             allDay: true,
+            location: "Brixton Hill - Methodist Church",
         },
         {
             id: "b",
@@ -34,6 +35,7 @@ describe("<Calendar />", () => {
             end: testDate,
             allDay: false,
             description: "a piece of description text",
+            location: "Brixton Hill - Methodist Church",
         },
     ];
     it("calendar renders", () => {
