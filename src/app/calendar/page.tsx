@@ -5,7 +5,6 @@ import { getParcelsWithCollectionDate } from "@/app/calendar/parcelCalendarFunct
 
 const CalendarPage = async (): Promise<React.ReactElement> => {
     const parcelsWithCollectionDate = await getParcelsWithCollectionDate();
-
     return (
         <main>
             <ParcelCalendar parcelsWithCollectionDate={parcelsWithCollectionDate} />

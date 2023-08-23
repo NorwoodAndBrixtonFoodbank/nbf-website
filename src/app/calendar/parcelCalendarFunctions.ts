@@ -46,6 +46,7 @@ export const parcelsToCollectionEvents = (
             backgroundColor: eventColor.color,
             borderColor: eventColor.color,
             textColor: eventColor.text,
+            location: location,
         };
         return event;
     });
