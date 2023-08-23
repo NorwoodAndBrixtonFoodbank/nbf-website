@@ -2,12 +2,11 @@ import supabase from "@/supabaseClient";
 import { fetchClients, fetchFamilies } from "@/common/fetch";
 import {
     ClientSummary,
-    HouseholdSummary,
     prepareClientSummary,
-    prepareHouseholdSummary,
     prepareRequirementSummary,
     RequirementSummary,
-} from "@/common/format";
+} from "@/common/formatClientsData";
+import { HouseholdSummary, prepareHouseholdSummary } from "@/common/formatFamiliesData";
 
 export type ClientData = ClientSummary & HouseholdSummary & RequirementSummary;
 

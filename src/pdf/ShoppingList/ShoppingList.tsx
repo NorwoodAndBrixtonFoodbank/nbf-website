@@ -1,5 +1,5 @@
 import React from "react";
-import prepareData from "@/pdf/ShoppingList/getShoppingListData";
+import getShoppingListData from "@/pdf/ShoppingList/getShoppingListData";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import ShoppingListPDF from "@/pdf/ShoppingList/ShoppingListPDF";
 

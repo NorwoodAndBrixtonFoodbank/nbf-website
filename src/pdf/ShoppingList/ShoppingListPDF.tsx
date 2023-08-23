@@ -2,13 +2,11 @@
 
 import React from "react";
 import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
-import { Item, ParcelInfo, ShoppingListPDFDataProps } from "@/pdf/ShoppingList/getShoppingListData";
-import {
-    ClientSummary,
-    formatCamelCaseKey,
-    HouseholdSummary,
-    RequirementSummary,
-} from "@/common/format";
+import { ClientSummary, RequirementSummary } from "@/common/formatClientsData";
+import { HouseholdSummary } from "@/common/formatFamiliesData";
+import { formatCamelCaseKey } from "@/common/format";
+import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
+import { Item, ShoppingListPDFDataProps } from "@/pdf/ShoppingList/shoppingListPDFDataProps";
 
 export type BlockProps = ParcelInfo | HouseholdSummary | RequirementSummary;
 

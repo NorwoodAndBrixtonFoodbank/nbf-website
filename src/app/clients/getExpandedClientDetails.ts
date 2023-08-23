@@ -72,21 +72,21 @@ export const formatDatetimeAsDate = (datetime: string | null): string => {
 };
 
 export interface ExpandedClientDetails extends Data {
-    "voucher_#": Schema["parcels"]["voucher_number"];
-    full_name: Schema["clients"]["full_name"];
-    phone_number: Schema["clients"]["phone_number"];
-    packing_date: string;
-    packing_time: string;
-    delivery_instructions: Schema["clients"]["delivery_instructions"];
+    voucherNumber: Schema["parcels"]["voucher_number"];
+    fullName: Schema["clients"]["full_name"];
+    phoneNumber: Schema["clients"]["phone_number"];
+    packingDate: string;
+    packingTime: string;
+    deliveryInstructions: Schema["clients"]["delivery_instructions"];
     address: string;
     household: string;
-    "age_&_gender_of_children": string;
-    dietary_requirements: string;
-    feminine_products: string;
-    baby_products: Schema["clients"]["baby_food"];
-    pet_food: string;
-    other_requirements: string;
-    extra_information: Schema["clients"]["extra_information"];
+    ageAndGenderOfChildren: string;
+    dietaryRequirements: string;
+    feminineProducts: string;
+    babyProducts: Schema["clients"]["baby_food"];
+    petFood: string;
+    otherRequirements: string;
+    extraInformation: Schema["clients"]["extra_information"];
 }
 
 export const rawDataToExpandedClientDetails = (
@@ -94,42 +94,42 @@ export const rawDataToExpandedClientDetails = (
 ): ExpandedClientDetails => {
     if (rawClientDetails === null) {
         return {
-            "voucher_#": "",
-            full_name: "",
-            phone_number: "",
-            packing_date: "",
-            packing_time: "",
-            delivery_instructions: "",
+            voucherNumber: "",
+            fullName: "",
+            phoneNumber: "",
+            packingDate: "",
+            packingTime: "",
+            deliveryInstructions: "",
             address: "",
             household: "",
-            "age_&_gender_of_children": "",
-            dietary_requirements: "",
-            feminine_products: "",
-            baby_products: null,
-            pet_food: "",
-            other_requirements: "",
-            extra_information: "",
+            ageAndGenderOfChildren: "",
+            dietaryRequirements: "",
+            feminineProducts: "",
+            babyProducts: null,
+            petFood: "",
+            otherRequirements: "",
+            extraInformation: "",
         };
     }
 
     const client = rawClientDetails.client!;
 
     return {
-        "voucher_#": rawClientDetails.voucher_number,
-        full_name: client.full_name,
-        phone_number: client.phone_number,
-        packing_date: formatDatetimeAsDate(rawClientDetails.packing_datetime),
-        packing_time: formatDatetimeAsTime(rawClientDetails.packing_datetime),
-        delivery_instructions: client.delivery_instructions,
+        voucherNumber: rawClientDetails.voucher_number,
+        fullName: client.full_name,
+        phoneNumber: client.phone_number,
+        packingDate: formatDatetimeAsDate(rawClientDetails.packing_datetime),
+        packingTime: formatDatetimeAsTime(rawClientDetails.packing_datetime),
+        deliveryInstructions: client.delivery_instructions,
         address: formatAddressFromClientDetails(client),
         household: formatHouseholdFromFamilyDetails(client.family),
-        "age_&_gender_of_children": formatBreakdownOfChildrenFromFamilyDetails(client.family),
-        dietary_requirements: client.dietary_requirements.join(", "),
-        feminine_products: client.feminine_products.join(", "),
-        baby_products: client.baby_food,
-        pet_food: client.pet_food.join(", "),
-        other_requirements: client.other_items.join(", "),
-        extra_information: client.extra_information,
+        ageAndGenderOfChildren: formatBreakdownOfChildrenFromFamilyDetails(client.family),
+        dietaryRequirements: client.dietary_requirements.join(", "),
+        feminineProducts: client.feminine_products.join(", "),
+        babyProducts: client.baby_food,
+        petFood: client.pet_food.join(", "),
+        otherRequirements: client.other_items.join(", "),
+        extraInformation: client.extra_information,
     };
 };
 
