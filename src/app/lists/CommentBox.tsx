@@ -74,7 +74,6 @@ const SuccessText = styled.p`
 `;
 
 const CommentBox: React.FC<CommentProps> = ({ originalComment }) => {
-    const [resetComment, setResetComment] = useState(originalComment);
     const [value, setValue] = useState(originalComment);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
