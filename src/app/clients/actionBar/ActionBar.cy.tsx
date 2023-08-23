@@ -60,7 +60,7 @@ describe("Clients - Action Bar", () => {
 
     [
         ["status", "Request Denied"],
-        ["action", "Print Shopping List"],
+        ["action", "Download Shopping List"],
     ].forEach(([type, example]) => {
         describe(`${type} menu`, () => {
             it(`should open the menu when the ${type} button is clicked`, () => {
