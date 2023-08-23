@@ -6,8 +6,8 @@ import Button from "@mui/material/Button";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 import Paper from "@mui/material/Paper/Paper";
 import Alert from "@mui/material/Alert";
-import Statuses from "./Statuses";
-import Actions from "./Actions";
+import Statuses from "@/app/clients/actionBar/Statuses";
+import Actions from "@/app/clients/actionBar/Actions";
 
 interface Props {
     selected: number[];
@@ -19,12 +19,11 @@ const OuterDiv = styled.div`
     padding: 1rem;
     gap: 0.5rem;
     border-radius: 0.5rem;
-    background-color: ${(props) => props.theme.surfaceBackgroundColor};
+    background-color: ${(props) => props.theme.main.background[5]};
 `;
 
 const AlertBox = styled.div`
-    padding: 0 1rem 1rem;
-    gap: 0.5rem;
+    padding: 0.5rem 1rem 1rem;
     border-radius: 0.5rem;
 `;
 
@@ -74,9 +73,7 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                     Actions
                 </Button>
             </OuterDiv>
-            {modalError === null ? (
-                <></>
-            ) : (
+            {!(modalError === null) && (
                 <AlertBox>
                     <Alert severity="error">{modalError}</Alert>
                 </AlertBox>

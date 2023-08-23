@@ -42,10 +42,10 @@ const ModalInner = styled.div`
 
 const StatusText = styled.p`
     margin-left: 1rem;
-    border-top: 1px solid darkgrey;
+    border-top: 1px solid ${(props) => props.theme.main.lighterForeground[2]};
     padding: 1rem 0;
     &:last-child {
-        border-bottom: 1px solid darkgrey;
+        border-bottom: 1px solid ${(props) => props.theme.main.lighterForeground[2]};
     }
 `;
 
@@ -121,8 +121,8 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                 ) : (
                     <>
                         <Heading>Parcels selected for download:</Heading>
-                        {props.showSelectedParcels ? (
-                            <div>
+                        {props.showSelectedParcels && (
+                            <>
                                 {props.data.map((parcel, index) => {
                                     return (
                                         <StatusText key={index}>
@@ -135,9 +135,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                         </StatusText>
                                     );
                                 })}
-                            </div>
-                        ) : (
-                            <></>
+                            </>
                         )}
                         <Centerer>
                             <Button variant="contained" onClick={() => setLoadPdf(true)}>

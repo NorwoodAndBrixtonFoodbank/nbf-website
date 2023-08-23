@@ -23,7 +23,9 @@ const statuses = [
     "Delivery Failed",
     "Delivery Cancelled",
     "Fulfilled with Trussell Trust",
-];
+] as const;
+
+type statusType = (typeof statuses)[number];
 
 interface Props {
     selected: number[];
@@ -43,7 +45,7 @@ const Statuses: React.FC<Props> = ({
     setModalError,
 }) => {
     const selectedData = Array.from(selected.map((index) => data[index]));
-    const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+    const [selectedStatus, setSelectedStatus] = useState<statusType | null>(null);
     const [statusModal, setStatusModal] = useState(false);
 
     const submitStatus = async (date: Dayjs): Promise<void> => {

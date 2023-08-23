@@ -31,10 +31,10 @@ const ModalInner = styled.div`
 
 const StatusText = styled.p`
     margin-left: 1rem;
-    border-top: 1px solid darkgrey;
+    border-top: 1px solid ${(props) => props.theme.main.lighterForeground[2]};
     padding: 1rem 0;
     &:last-child {
-        border-bottom: 1px solid darkgrey;
+        border-bottom: 1px solid ${(props) => props.theme.main.lighterForeground[2]};
     }
 `;
 
@@ -77,20 +77,18 @@ const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
                     <TimePicker value={date} onChange={onTimeChange} disableFuture />
                 </Row>
                 Applying To:
-                <div>
-                    {props.data.map((parcel, index) => {
-                        return (
-                            <StatusText key={index}>
-                                {parcel.collectionCentre}
-                                {parcel.fullName && ` - ${parcel.fullName}`}
-                                {parcel.collectionDatetime &&
-                                    `\n @ ${dayjs(parcel.collectionDatetime!).format(
-                                        "DD/MM/YYYY HH:mm"
-                                    )}`}
-                            </StatusText>
-                        );
-                    })}
-                </div>
+                {props.data.map((parcel, index) => {
+                    return (
+                        <StatusText key={index}>
+                            {parcel.collectionCentre}
+                            {parcel.fullName && ` - ${parcel.fullName}`}
+                            {parcel.collectionDatetime &&
+                                `\n @ ${dayjs(parcel.collectionDatetime!).format(
+                                    "DD/MM/YYYY HH:mm"
+                                )}`}
+                        </StatusText>
+                    );
+                })}
                 {props.errorText && <small>{props.errorText}</small>}
                 <Button type="button" variant="contained" onClick={() => props.onSubmit(date)}>
                     Submit

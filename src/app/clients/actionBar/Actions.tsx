@@ -13,29 +13,29 @@ import ActionsModal, {
     ShoppingListModalButton,
 } from "@/app/clients/actionBar/ActionsModal";
 
-const notMoreThanOne = (value: number): boolean => {
+const isNotMoreThanOne = (value: number): boolean => {
     return value < 1;
 };
 
-const notEqualsOne = (value: number): boolean => {
+const doesNotEqualsOne = (value: number): boolean => {
     return value !== 1;
 };
 
 const availableActions = {
     "Download Shipping Labels": {
         showSelectedParcels: true,
-        errorCondition: notMoreThanOne,
-        errorMessage: "Please select rows for download.",
+        errorCondition: isNotMoreThanOne,
+        errorMessage: "Please select at least 1 row for download",
     },
     "Download Shopping List": {
         showSelectedParcels: true,
-        errorCondition: notEqualsOne,
+        errorCondition: doesNotEqualsOne,
         errorMessage: "Please select only 1 row for download.",
     },
     "Download Driver Overview": {
         showSelectedParcels: true,
-        errorCondition: notMoreThanOne,
-        errorMessage: "Please select rows for download.",
+        errorCondition: isNotMoreThanOne,
+        errorMessage: "Please select at least 1 row for download",
     },
 };
 
@@ -120,40 +120,40 @@ const Actions: React.FC<Props> = ({
     return (
         <>
             {Object.entries(availableActions).map(([key, value]) => {
-                return selectedAction === key ? (
-                    <ActionsModal
-                        key={key}
-                        showSelectedParcels={value.showSelectedParcels}
-                        isOpen
-                        onClose={() => {
-                            setSelectedAction(null);
-                            setModalError(null);
-                            setDate(dayjs(new Date()));
-                            setDriverName("");
-                        }}
-                        data={selectedData}
-                        header={key}
-                        errorText={modalError}
-                        inputComponent={
-                            <ActionsInputComponent
-                                pdfType={key}
-                                onDateChange={onDateChange}
-                                onDriverNameChange={onDriverNameChange}
-                            />
-                        }
-                    >
-                        <ActionsButton
-                            pdfType={selectedAction}
+                return (
+                    selectedAction === key && (
+                        <ActionsModal
+                            key={key}
+                            showSelectedParcels={value.showSelectedParcels}
+                            isOpen
+                            onClose={() => {
+                                setSelectedAction(null);
+                                setModalError(null);
+                                setDate(dayjs(new Date()));
+                                setDriverName("");
+                            }}
                             data={selectedData}
-                            date={date}
-                            driverName={driverName}
-                        />
-                    </ActionsModal>
-                ) : (
-                    <></>
+                            header={key}
+                            errorText={modalError}
+                            inputComponent={
+                                <ActionsInputComponent
+                                    pdfType={key}
+                                    onDateChange={onDateChange}
+                                    onDriverNameChange={onDriverNameChange}
+                                />
+                            }
+                        >
+                            <ActionsButton
+                                pdfType={selectedAction}
+                                data={selectedData}
+                                date={date}
+                                driverName={driverName}
+                            />
+                        </ActionsModal>
+                    )
                 );
             })}
-            {actionAnchorElement ? (
+            {actionAnchorElement && (
                 <Menu
                     open
                     onClose={() => setActionAnchorElement(null)}
@@ -181,8 +181,6 @@ const Actions: React.FC<Props> = ({
                         })}
                     </MenuList>
                 </Menu>
-            ) : (
-                <></>
             )}
         </>
     );

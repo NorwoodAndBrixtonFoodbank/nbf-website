@@ -9,9 +9,9 @@ const formatDatetime = (datetimeString: string | null): Date | null => {
 };
 
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<Schema["parcels"][]> => {
-    const { data, error } = await supabase.from("parcels").select("*").in("primary_key", parcelIds);
-    if (error !== null) {
-        throw Error(`${error.code}: ${error.message}`);
+    const { data, error } = await supabase.from("parcels").select().in("primary_key", parcelIds);
+    if (error) {
+        throw Error("We were unable to fetch the parcels data. Please try again later");
     }
     return data ?? [];
 };
@@ -19,11 +19,11 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<Schema["parce
 const getClientById = async (clientId: string): Promise<Schema["clients"] | null> => {
     const { data, error } = await supabase
         .from("clients")
-        .select("*")
+        .select()
         .eq("primary_key", clientId)
         .single();
-    if (error !== null) {
-        throw Error(`${error.code}: ${error.message}`);
+    if (error) {
+        throw Error("We were unable to fetch the clients data. Please try again later");
     }
     return data ?? null;
 };
