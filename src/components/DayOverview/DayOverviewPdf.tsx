@@ -80,14 +80,16 @@ const dateTimeToAMPM = (datetime: string): string => {
 };
 
 const CustomSVG: React.FC<CustomSVGProps> = ({ icon, color, fill }) => {
-    const path = icon.icon[4];
+    const svgPath = icon.icon[4];
+    const formattedSvgPath = typeof svgPath === "string" ? svgPath : svgPath[0];
+
     return (
         <Svg width={11} height={11} viewBox="0 0 512 512" style={styles.svg}>
             <Path
                 fill={fill ? color : undefined}
                 stroke={color}
                 strokeWidth={40}
-                d={typeof path === "string" ? path : path[0]}
+                d={formattedSvgPath}
             />
         </Svg>
     );

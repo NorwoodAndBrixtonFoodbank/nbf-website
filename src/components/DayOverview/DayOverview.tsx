@@ -29,8 +29,7 @@ export const getCurrentDate = (date: Date, hyphen: boolean = false): string => {
         day: "2-digit",
     });
 
-    const separator = hyphen ? "-" : "";
-    return formattedDate.replaceAll("-", separator);
+    return hyphen ? formattedDate : formattedDate.replaceAll("-", "");
 };
 
 const getParcelsOfSpecificDateAndLocation = async (
