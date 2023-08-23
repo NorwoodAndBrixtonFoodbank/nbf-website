@@ -90,6 +90,7 @@ const CommentContainer: React.FC<CommentProps> = ({ originalComment }) => {
             setErrorMessage("");
             setResetComment(value);
             setSuccessMessage("Comment successfully updated.");
+            window.location.reload();
         }
     };
     return (
