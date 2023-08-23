@@ -1,3 +1,5 @@
+"use client";
+
 import Paper from "@mui/material/Paper";
 import styled from "styled-components";
 
@@ -32,3 +34,10 @@ export const ErrorRetryText = styled.p`
 
 export const RequestErrorMessage =
     "We could not process the request at this time. Please try again later.";
+
+export class ValidationError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "ValidationError";
+    }
+}

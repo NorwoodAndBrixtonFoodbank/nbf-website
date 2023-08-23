@@ -54,5 +54,6 @@ export const fetchComment = async (): Promise<string> => {
             "We could not fetch the lists comment at this time. Please try again later."
         );
     }
-    return data![0].value ?? "";
+    console.log(data)
+    return data?.[0]?.value ?? "";
 };
