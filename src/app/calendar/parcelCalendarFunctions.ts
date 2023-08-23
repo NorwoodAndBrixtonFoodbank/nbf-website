@@ -34,13 +34,13 @@ export const parcelsToCollectionEvents = (
         const collectionEnd = new Date(collectionStart.getTime() + COLLECTION_DURATION_MS);
 
         const collectionCentre = parcel.collection_centre ?? "default";
-        const location = collectionCentre !== "default" ? `[${collectionCentre}]` : "";
+        const location = collectionCentre !== "default" ? `${collectionCentre}` : "";
 
         const eventColor = colorMap[collectionCentre] ?? colorMap.default;
 
         const event: CalendarEvent = {
             id: parcel.primary_key,
-            title: `${fullName} ${location}`,
+            title: `${fullName} [${location}]`,
             start: collectionStart,
             end: collectionEnd,
             backgroundColor: eventColor.color,
