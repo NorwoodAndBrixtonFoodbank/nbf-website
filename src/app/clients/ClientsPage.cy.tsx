@@ -1,7 +1,11 @@
 import {
+    CongestionChargeDetails,
+    ProcessingData,
+    RawClientDetails,
+} from "@/app/clients/fetchDataFromServer";
+import {
     datetimeToPackingTimeLabel,
     eventToStatusMessage,
-    ProcessingData,
     processingDataToClientsTableData,
 } from "@/app/clients/getClientsTableData";
 import {
@@ -11,7 +15,6 @@ import {
     formatDatetimeAsDate,
     formatDatetimeAsTime,
     formatHouseholdFromFamilyDetails,
-    RawClientDetails,
     rawDataToExpandedClientDetails,
 } from "@/app/clients/getExpandedClientDetails";
 
@@ -42,6 +45,13 @@ const sampleProcessingData: ProcessingData = [
                 timestamp: "2023-08-04T13:30:00+00:00",
             },
         ],
+    },
+];
+
+const sampleCongestionChargeData: CongestionChargeDetails[] = [
+    {
+        postcode: "SW1A 2AA",
+        congestionCharge: true,
     },
 ];
 
@@ -78,36 +88,27 @@ const sampleRawExpandedClientDetails: RawClientDetails = {
 describe("Clients Page", () => {
     describe("Backend Processing for Table Data", () => {
         it("Fields are set correctly", () => {
-            cy.intercept("POST", "**/check-congestion-charge", (req) => {
-                const response = req.body.postcodes.map((postcode: string) => ({
-                    postcode,
-                    congestionCharge: true,
-                }));
-
-                req.reply(JSON.stringify(response));
-            });
-
-            cy.wrap(null).then(() =>
-                processingDataToClientsTableData(sampleProcessingData).then((clientTableData) => {
-                    expect(clientTableData).to.deep.equal([
-                        {
-                            primaryKey: "PRIMARY_KEY_1",
-                            parcelId: "PRIMARY_KEY",
-                            flaggedForAttention: false,
-                            requiresFollowUpPhoneCall: true,
-                            fullName: "CLIENT_NAME",
-                            familyCategory: "Family of 3",
-                            addressPostcode: "SW1A 2AA",
-                            collectionCentre: "COLLECTION_CENTRE",
-                            collectionDatetime: "2023-08-04T13:30:00+00:00",
-                            congestionChargeApplies: true,
-                            packingDate: "04/08/2023",
-                            packingTimeLabel: "PM",
-                            lastStatus: "LAST_EVENT @ 04/08/2023",
-                        },
-                    ]);
-                })
+            const clientTableData = processingDataToClientsTableData(
+                sampleProcessingData,
+                sampleCongestionChargeData
             );
+            expect(clientTableData).to.deep.equal([
+                {
+                    primaryKey: "PRIMARY_KEY_1",
+                    parcelId: "PRIMARY_KEY",
+                    flaggedForAttention: false,
+                    requiresFollowUpPhoneCall: true,
+                    fullName: "CLIENT_NAME",
+                    familyCategory: "Family of 3",
+                    addressPostcode: "SW1A 2AA",
+                    collectionCentre: "COLLECTION_CENTRE",
+                    collectionDatetime: "2023-08-04T13:30:00+00:00",
+                    congestionChargeApplies: true,
+                    packingDate: "04/08/2023",
+                    packingTimeLabel: "PM",
+                    lastStatus: "LAST_EVENT @ 04/08/2023",
+                },
+            ]);
         });
 
         it("familyCountToFamilyCategory()", () => {
