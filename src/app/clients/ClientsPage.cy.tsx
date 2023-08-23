@@ -2,7 +2,7 @@ import { CongestionChargeDetails, ProcessingData } from "@/app/clients/fetchData
 import {
     ParcelsTableRow,
     datetimeToPackingTimeLabel,
-    eventToStatusMessage,
+    eventToLastStatus,
     processingDataToClientsTableData,
 } from "@/app/clients/getClientsTableData";
 import {
@@ -114,7 +114,10 @@ describe("Clients Page", () => {
                         congestionChargeApplies: true,
                     },
                     packingTimeLabel: "PM",
-                    lastStatus: "Called and Confirmed",
+                    lastStatus: {
+                        name: "LAST_EVENT",
+                        timestamp: new Date("2023-08-04T13:30:00+00:00"),
+                    },
                     voucherNumber: "VOUCHER_1",
                     packingDatetime: new Date("2023-08-04T13:30:00+00:00"),
                     iconsColumn: {
@@ -148,12 +151,15 @@ describe("Clients Page", () => {
 
         it("eventToStatusMessage()", () => {
             expect(
-                eventToStatusMessage({
+                eventToLastStatus({
                     event_name: "EVENT",
                     timestamp: "2023-08-04T13:30:00+00:00",
                 })
-            ).to.eq("EVENT @ 04/08/2023");
-            expect(eventToStatusMessage(null)).to.eq("-");
+            ).to.deep.eq({
+                name: "EVENT",
+                timestamp: new Date("2023-08-04T13:30:00+00:00"),
+            });
+            expect(eventToLastStatus(null)).to.eq(null);
         });
     });
 

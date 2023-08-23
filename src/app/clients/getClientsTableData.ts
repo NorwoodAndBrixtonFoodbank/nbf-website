@@ -17,7 +17,10 @@ export interface ParcelsTableRow {
     };
     packingTimeLabel: PackingTimeLabel | null;
     collectionDatetime: Date | null;
-    lastStatus: string;
+    lastStatus: {
+        name: string;
+        timestamp: Date;
+    } | null;
     voucherNumber: string | null;
     iconsColumn: {
         flaggedForAttention: boolean;
@@ -56,7 +59,7 @@ export const processingDataToClientsTableData = (
                 ? new Date(parcel.collection_datetime)
                 : null,
             packingTimeLabel: datetimeToPackingTimeLabel(parcel.packing_datetime),
-            lastStatus: eventToStatusMessage(parcel.events[0] ?? null),
+            lastStatus: eventToLastStatus(parcel.events[0] ?? null),
             voucherNumber: parcel.voucher_number,
             packingDatetime: parcel.packing_datetime ? new Date(parcel.packing_datetime) : null,
             iconsColumn: {
@@ -79,12 +82,15 @@ export const datetimeToPackingTimeLabel = (datetime: string | null): PackingTime
     return new Date(datetime).getHours() <= 11 ? "AM" : "PM";
 };
 
-export const eventToStatusMessage = (
-    event: Pick<Schema["events"], "event_name" | "timestamp"> | null
-): string => {
-    if (event === null) {
-        return "-";
+export const eventToLastStatus = (
+    event: Pick<Schema["events"], "event_name" | "timestamp"> | undefined | null
+): ParcelsTableRow["lastStatus"] => {
+    if (!event) {
+        return null;
     }
 
-    return `${event.event_name} @ ${formatDatetimeAsDate(event.timestamp)}`;
+    return {
+        name: event.event_name,
+        timestamp: new Date(event.timestamp),
+    };
 };

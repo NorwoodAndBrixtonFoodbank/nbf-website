@@ -41,6 +41,11 @@ export interface ColumnStyleOptions {
     hide?: number;
 }
 
+export interface SortOptions<Data, Key extends keyof Data> {
+    key: Key;
+    sortFunction?: (datapoint1: Data[Key], datapoint2: Data[Key]) => number;
+}
+
 interface Props<Data> {
     data: Data[];
     headerKeysAndLabels: TableHeaders<Data>;
@@ -51,7 +56,7 @@ interface Props<Data> {
     pagination?: boolean;
     defaultShownHeaders?: readonly (keyof Data)[];
     toggleableHeaders?: readonly (keyof Data)[];
-    sortable?: (keyof Data)[];
+    sortable?: (keyof Data | SortOptions<Data, any>)[];
     onEdit?: (data: number) => void;
     onDelete?: (data: number) => void;
     columnDisplayFunctions?: { [headerKey in keyof Data]?: ColumnDisplayFunction<Data[headerKey]> };
@@ -101,6 +106,13 @@ const defaultColumnStyleOptions: ColumnStyleOptions = {
     maxWidth: "20rem",
 };
 
+const defaultSortFunction = <T extends unknown>(left: T, right: T): number => {
+    if (left === right) {
+        return 0;
+    }
+    return left < right ? -1 : 1;
+};
+
 const Table = <Data extends unknown>({
     data: inputData,
     headerKeysAndLabels,
@@ -112,7 +124,7 @@ const Table = <Data extends unknown>({
     onEdit,
     pagination,
     reorderable = false,
-    sortable,
+    sortable = [],
     toggleableHeaders = [],
     onRowClick,
     columnDisplayFunctions = {},
@@ -173,6 +185,21 @@ const Table = <Data extends unknown>({
         }
     }, [selectedCheckboxes, selectAllCheckBox]);
 
+    const sortOptions = sortable.map((sortOption) => {
+        if (sortOption instanceof Object) {
+            return sortOption;
+        }
+        return {
+            key: sortOption,
+            sortFunction: (datapoint: Data[keyof Data], otherDatapoint: Data[keyof Data]) => {
+                if (datapoint === otherDatapoint) {
+                    return 0;
+                }
+                return datapoint < otherDatapoint ? -1 : 1;
+            },
+        };
+    });
+
     const columns: TableColumn<Row<Data>>[] = (
         toggleableHeaders ? shownHeaders : headerKeysAndLabels
     ).map(([headerKey, headerName]) => {
@@ -181,10 +208,16 @@ const Table = <Data extends unknown>({
             columnStyleOptions[headerKey] ?? {}
         );
 
+        const sortOption = sortOptions.find((sortOption) => sortOption.key === headerKey);
+
+        const sortFunction = sortOption?.sortFunction ?? defaultSortFunction;
+        const sortable = sortOption !== undefined;
+
         return {
             name: headerName,
             selector: (row) => row.data[headerKey] ?? "",
-            sortable: sortable?.some((sortKey) => sortKey === headerKey),
+            sortable,
+            sortFunction: (row1, row2) => sortFunction(row1.data[headerKey], row2.data[headerKey]),
             cell(row) {
                 return (
                     <CustomCell

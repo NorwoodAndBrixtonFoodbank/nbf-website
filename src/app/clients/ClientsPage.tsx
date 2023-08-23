@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense, useState } from "react";
-import Table, { Row, TableHeaders } from "@/components/Tables/Table";
+import Table, { Row, SortOptions, TableHeaders } from "@/components/Tables/Table";
 
 import { useTheme } from "styled-components";
 import { ParcelsTableRow } from "@/app/clients/getClientsTableData";
@@ -18,7 +18,7 @@ import Modal from "@/components/Modal/Modal";
 import { Schema } from "@/database_utils";
 import TableSurface from "@/components/Tables/TableSurface";
 import { CenterComponent } from "@/components/Form/formStyling";
-import ActionBar from "@/app/clients/ActionBar";
+import ActionBar, { statuses } from "@/app/clients/ActionBar";
 import AddParcelsButton from "@/app/clients/AddParcelsButton";
 
 // TODO Change Button to LinkButton
@@ -146,6 +146,15 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
         packingDatetime: (datetime: ParcelsTableRow["packingDatetime"]): string => {
             return datetime ? datetime.toLocaleDateString() : "";
         },
+        lastStatus: (status: ParcelsTableRow["lastStatus"]): React.ReactNode => {
+            if (status === null) {
+                return <></>;
+            }
+
+            const { name, timestamp } = status;
+
+            return `${name} @ ${timestamp.toLocaleDateString()}`;
+        },
     };
 
     const onClientTableRowClick = (row: Row<ParcelsTableRow>): void => {
@@ -154,6 +163,23 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
 
     const onExpandedClientDetailsClose = (): void => {
         setSelectedParcelId(null);
+    };
+
+    const lastStatusSortOptions: SortOptions<ParcelsTableRow, "lastStatus"> = {
+        key: "lastStatus",
+        sortFunction: (lastStatus1, lastStatus2) => {
+            const idx1 = statuses.findIndex((status) => status === lastStatus1?.name);
+            const idx2 = statuses.findIndex((status) => status === lastStatus2?.name);
+            if (idx1 === -1) {
+                return 1;
+            }
+
+            if (idx2 === -1) {
+                return -1;
+            }
+
+            return idx1 - idx2;
+        },
     };
 
     return (
@@ -169,7 +195,12 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
                     checkboxes={true}
                     onRowSelection={setSelected}
                     pagination={true}
-                    sortable={["fullName", "familyCategory", "packingDatetime"]}
+                    sortable={[
+                        "fullName",
+                        "familyCategory",
+                        "packingDatetime",
+                        lastStatusSortOptions,
+                    ]}
                     filters={["addressPostcode", "lastStatus"]}
                     toggleableHeaders={toggleableHeaders}
                 />

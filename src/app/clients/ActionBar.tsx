@@ -22,7 +22,7 @@ interface Props {
 
 export type Status = (typeof statuses)[number];
 
-const statuses = [
+export const statuses = [
     "Request Denied",
     "No Status",
     "Pending More Info",
