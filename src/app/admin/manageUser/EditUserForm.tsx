@@ -20,12 +20,12 @@ const EditUserForm: React.FC<Props> = (props) => {
     const [role, setRole] = useState<string>(props.userToEdit.userRole);
 
     const onEditConfirm = async (): Promise<void> => {
-        const response = await updateUser({
+        const { error } = await updateUser({
             userId: props.userToEdit.id,
             attributes: { app_metadata: { role } },
         });
 
-        if (response.error === null) {
+        if (error === null) {
             props.onConfirm({
                 success: true,
                 message: (

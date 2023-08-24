@@ -26,9 +26,9 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
     }
 
     const onDeleteConfirm = async (): Promise<void> => {
-        const response = await deleteUser(props.userToDelete!.id);
+        const { error } = await deleteUser(props.userToDelete!.id);
 
-        if (response.error === null) {
+        if (error === null) {
             props.setAlertOptions({
                 success: true,
                 message: (
@@ -55,7 +55,7 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
         <DangerDialog
             header="DELETE USER"
             headerId="deleteUserDialog"
-            isOpen={true}
+            isOpen
             onClose={onDeleteCancel}
         >
             Are you sure you want to delete user <b>{props.userToDelete.email}</b>

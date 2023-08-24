@@ -21,7 +21,6 @@ const ManageUserOptions: React.FC<Props> = ({ setManageMode, onCancel }) => {
     return (
         <>
             <EditHeader>Options</EditHeader>
-
             <OptionsSection>
                 <Button
                     variant="outlined"

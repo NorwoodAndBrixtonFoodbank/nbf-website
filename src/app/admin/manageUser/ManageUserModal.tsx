@@ -75,7 +75,7 @@ const ManageUserModal: React.FC<Props> = (props) => {
         <Modal
             header={`${modes[manageMode].header}`}
             headerId="editUserModal"
-            isOpen={true}
+            isOpen
             onClose={onCancel}
         >
             <ManageModalContent>

@@ -105,7 +105,7 @@ const CreateUserForm: React.FC<{}> = () => {
                     </Button>
                 )}
 
-                {submitError ? <Alert severity="error">{submitError}</Alert> : <></>}
+                {submitError && <Alert severity="error">{submitError}</Alert>}
             </StyledForm>
         </CenterComponent>
     );
