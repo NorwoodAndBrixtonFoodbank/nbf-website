@@ -135,11 +135,17 @@ const FilterAccordion = <Data extends unknown>({
                             const headerLabel = headerKeyAndLabel[1];
                             return (
                                 <ContainerDiv key={headerLabel}>
-                                    <Checkbox
-                                        color="secondary"
-                                        checked={shownHeaderKeys.includes(key)}
-                                        onChange={getOnChanged(key)}
-                                    />
+                                    <label
+                                        htmlFor={`${headerLabel}-checkbox`}
+                                        aria-label={`Toggle ${headerLabel} column`}
+                                    >
+                                        <Checkbox
+                                            color="secondary"
+                                            checked={shownHeaderKeys.includes(key)}
+                                            onChange={getOnChanged(key)}
+                                            id={`${headerLabel}-checkbox`}
+                                        />
+                                    </label>
                                     <p>{headerLabel}</p>
                                 </ContainerDiv>
                             );

@@ -41,9 +41,10 @@ const Styling = styled.div`
     }
 `;
 
-const FilterHeading = styled.h3`
+const FilterHeading = styled.h2`
     width: 100%;
     text-align: left;
+    font-size: large;
 `;
 
 const Grow = styled.div`
