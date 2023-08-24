@@ -49,6 +49,7 @@ describe("Export Pdf Button", () => {
                 fileName={fileName}
                 data={parcelClientsData}
                 pdfComponent={ShippingLabelsPdf}
+                formatName={false}
             />
         );
     });
@@ -57,15 +58,13 @@ describe("Export Pdf Button", () => {
 
     it("File is saved", () => {
         cy.get("a").click();
-        const formattedFileName = formatFileName(fileName);
-        cy.readFile(`${downloadsFolder}/${formattedFileName}`);
+        cy.readFile(`${downloadsFolder}/${fileName}`);
     });
 
     it("All data of shipping label is included in the file", () => {
         cy.get("a").click();
-        const formattedFileName = formatFileName(fileName);
         for (const field of allFields) {
-            cy.task("readPdf", `${downloadsFolder}/${formattedFileName}`).should("contain", field);
+            cy.task("readPdf", `${downloadsFolder}/${fileName}`).should("contain", field);
         }
     });
 });
