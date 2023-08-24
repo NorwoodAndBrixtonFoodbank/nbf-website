@@ -305,7 +305,7 @@ export interface Database {
       parcels: {
         Row: {
           client_id: string
-          collection_centre: string | null
+          collection_centres: string | null
           collection_datetime: string | null
           packing_datetime: string | null
           primary_key: string
