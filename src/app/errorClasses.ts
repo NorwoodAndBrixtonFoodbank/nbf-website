@@ -6,8 +6,10 @@ export class FetchError extends Error {
 }
 
 export class RequestError extends Error {
-    constructor() {
-        super("We could not process the request at this time. Please try again later.");
+    constructor(faultyArea = "") {
+        super(
+            `We could not process the request ${faultyArea} at this time. Please try again later.`
+        );
         this.name = "RequestError";
     }
 }

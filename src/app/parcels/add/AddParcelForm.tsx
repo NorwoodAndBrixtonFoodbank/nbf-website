@@ -194,9 +194,7 @@ const AddParcelForm: React.FC<AddParcelFormProps> = ({ id }) => {
                         Add Parcel
                     </Button>
                 </CenterComponent>
-                <FormErrorText>
-                    {submitErrorMessage === "" ? submitError : submitErrorMessage}
-                </FormErrorText>
+                <FormErrorText>{submitErrorMessage || submitError}</FormErrorText>
             </StyledForm>
         </CenterComponent>
     );

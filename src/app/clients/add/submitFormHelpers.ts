@@ -70,7 +70,7 @@ const deleteAdultMembers = async (
         .limit(count);
 
     if (error) {
-        throw new RequestError();
+        throw new RequestError("to delete adult member data");
     }
 };
 
@@ -86,7 +86,7 @@ const updateChildren = async (children: Person[]): Promise<void> => {
             .eq("primary_key", child.primaryKey);
 
         if (error) {
-            throw new RequestError();
+            throw new RequestError("to update the children data");
         }
     }
 };
@@ -99,7 +99,7 @@ const deleteChildren = async (children: Person[]): Promise<void> => {
             .eq("primary_key", child.primaryKey);
 
         if (error) {
-            throw new RequestError();
+            throw new RequestError("to delete children data");
         }
     }
 };
@@ -113,7 +113,7 @@ const insertClient = async (
         .select("primary_key, family_id");
 
     if (error) {
-        throw new RequestError();
+        throw new RequestError("to insert a client");
     }
     return ids![0];
 };
@@ -130,7 +130,7 @@ const insertFamily = async (peopleArray: Person[], familyID: string): Promise<vo
     const { error } = await supabase.from("families").insert(familyRecords);
 
     if (error) {
-        throw new RequestError();
+        throw new RequestError("to insert a family");
     }
 };
 
@@ -145,7 +145,7 @@ const updateClient = async (
         .select("primary_key, family_id");
 
     if (error) {
-        throw new RequestError();
+        throw new RequestError("to update a client");
     }
     return ids![0];
 };
@@ -244,7 +244,7 @@ export const submitAddClientForm: SubmitFormHelper = async (fields, router) => {
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
         await revertClientInsert(ids.primary_key);
-        throw new RequestError();
+        throw new RequestError("to submit the add client form");
     }
 };
 
@@ -262,6 +262,6 @@ export const submitEditClientForm: SubmitFormHelper = async (
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
         await revertClientUpdate(clientBeforeUpdate);
-        throw new RequestError();
+        throw new RequestError("to submit the edit client form");
     }
 };

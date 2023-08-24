@@ -161,7 +161,7 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editMod
                         Submit
                     </Button>
                 </CenterComponent>
-                <FormErrorText>{submitErrorMessage + submitError}</FormErrorText>
+                <FormErrorText>{submitErrorMessage || submitError}</FormErrorText>
             </StyledForm>
         </CenterComponent>
     );
