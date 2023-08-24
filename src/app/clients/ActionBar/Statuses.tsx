@@ -94,8 +94,9 @@ const Statuses: React.FC<Props> = ({
                 headerId="status-modal-header"
                 onSubmit={submitStatus}
                 errorText={modalError}
-                children={<></>}
-            />
+            >
+                <></>
+            </StatusesBarModal>
 
             <Menu
                 open={statusAnchorElement !== null}

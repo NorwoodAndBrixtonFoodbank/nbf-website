@@ -6,7 +6,7 @@ import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 
-interface StatusesBarModalProps extends React.ComponentProps<typeof Modal>{
+interface StatusesBarModalProps extends React.ComponentProps<typeof Modal> {
     data: ClientsTableRow[];
     onSubmit: (date: Dayjs) => void;
     errorText: string | null;
