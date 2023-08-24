@@ -8,7 +8,7 @@ import {
     DayOverviewData,
     getCurrentDate,
     ParcelOfSpecificDateAndLocation,
-} from "@/components/DayOverview/DayOverview";
+} from "@/pdf/DayOverview/DayOverview";
 
 interface DayOverviewSubtitleProps {
     subtitleKey: string;

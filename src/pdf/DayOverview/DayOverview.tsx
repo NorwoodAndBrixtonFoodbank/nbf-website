@@ -1,10 +1,8 @@
-"use client";
-
 import React from "react";
 import supabase from "@/supabaseClient";
-import DayOverviewButton from "@/components/DayOverview/DayOverviewButton";
 import { Schema } from "@/database_utils";
-import { DatabaseError } from "@/app/errorClasses";
+import PdfButton from "@/components/PdfButton/PdfButton";
+import DayOverviewPdf from "./DayOverviewPdf";
 
 interface Props {
     text: string;
@@ -61,9 +59,11 @@ const getParcelsOfSpecificDateAndLocation = async (
         .lt("collection_datetime", endDateString)
         .eq("collection_centre", collectionCentreKey)
         .order("collection_datetime");
-
+    
     if (error) {
-        throw new DatabaseError("fetch", "parcels data");
+        throw new Error(
+            "We were unable to fetch the parcels with the specified collection date and location."
+        );
     }
 
     return data;
@@ -78,8 +78,12 @@ const fetchCollectionCentreNameAndAbbreviation = async (
         .eq("primary_key", collectionCentreKey)
         .maybeSingle();
 
+    // TODO VFB-22 Check if error message is consistent
+
     if (error) {
-        throw new DatabaseError("fetch", "collection centre data");
+        throw new Error(
+            "We were unable to fetch the collection centre data. Please try again later"
+        );
     }
 
     return data!;
@@ -107,7 +111,7 @@ const DayOverview = async ({
         data: parcelsOfSpecificDate,
     };
 
-    return <DayOverviewButton data={data} text={text} fileName={fileName} />;
+    return <PdfButton text={text} fileName={fileName} data={data} pdfComponent={DayOverviewPdf} />;
 };
 
 export default DayOverview;

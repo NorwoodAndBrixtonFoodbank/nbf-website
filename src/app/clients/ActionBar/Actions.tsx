@@ -8,11 +8,12 @@ import dayjs, { Dayjs } from "dayjs";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 import ActionsModal, { DriverOverviewInput } from "@/app/clients/ActionBar/ActionsModal";
 import {
+    DayOverviewModalButton,
     DriverOverviewModalButton,
     ShippingLabelsModalButton,
     ShoppingListModalButton,
 } from "@/app/clients/ActionBar/ActionsModalButton";
-
+// "7c891da8-a4c1-4fb6-b1cd-c90ef5fbbca
 const isNotMoreThanOne = (value: number): boolean => {
     return value < 1;
 };
@@ -21,7 +22,12 @@ const doesNotEqualsOne = (value: number): boolean => {
     return value !== 1;
 };
 
-type PdfType = "Download Shipping Labels" | "Download Shopping List" | "Download Driver Overview";
+const doesNotEqualsZero = (value: number): boolean => {
+    return value !== 0;
+};
+
+
+type PdfType = "Download Shipping Labels" | "Download Shopping List" | "Download Driver Overview" | "Download Day Overview";
 
 type AvailableActionsType = {
     [pdfKey in PdfType]: {
@@ -46,6 +52,11 @@ const availableActions: AvailableActionsType = {
         showSelectedParcels: true,
         errorCondition: isNotMoreThanOne,
         errorMessage: "Please select at least 1 row for download.",
+    },
+    "Download Day Overview": {
+        showSelectedParcels: true,
+        errorCondition: doesNotEqualsZero,
+        errorMessage: "The day overview will show the parcels for a particular date and location. It will show not the currently selected parcel. Please unselect the parcels.",
     },
 };
 
@@ -88,6 +99,8 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({ pdfType, data, date, driv
             return <ShoppingListModalButton data={data} />;
         case "Download Driver Overview":
             return <DriverOverviewModalButton data={data} date={date} driverName={driverName} />;
+        case "Download Day Overview":
+            return <DayOverviewModalButton />
         default:
             <></>;
     }
