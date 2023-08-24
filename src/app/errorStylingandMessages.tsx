@@ -31,13 +31,3 @@ export const ErrorRetryText = styled.p`
     font-size: 0.75rem;
     color: ${(props) => props.theme.error};
 `;
-
-export const RequestErrorMessage =
-    "We could not process the request at this time. Please try again later.";
-
-export class ValidationError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "ValidationError";
-    }
-}

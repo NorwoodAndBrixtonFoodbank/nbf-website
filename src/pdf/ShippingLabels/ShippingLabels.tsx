@@ -3,6 +3,7 @@ import supabase from "@/supabaseClient";
 import { Schema } from "@/database_utils";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import ShippingLabelsPdf, { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
+import { FetchError } from "@/app/errorClasses";
 
 const formatDatetime = (datetimeString: string | null, isDatetime: boolean): string => {
     if (datetimeString === null) {
@@ -27,7 +28,7 @@ const formatDatetime = (datetimeString: string | null, isDatetime: boolean): str
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<Schema["parcels"][]> => {
     const { data, error } = await supabase.from("parcels").select("*").in("primary_key", parcelIds);
     if (error !== null) {
-        throw Error(`${error.code}: ${error.message}`);
+        throw new FetchError("the delivery parcels data");
     }
     return data ?? [];
 };
@@ -39,7 +40,7 @@ const getClientById = async (clientId: string): Promise<Schema["clients"] | null
         .eq("primary_key", clientId)
         .single();
     if (error !== null) {
-        throw Error(`${error.code}: ${error.message}`);
+        throw new FetchError("the delivery parcels data");
     }
     return data ?? null;
 };

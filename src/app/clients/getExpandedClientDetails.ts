@@ -1,6 +1,7 @@
 import { Schema } from "@/database_utils";
 import { Data } from "@/components/DataViewer/DataViewer";
 import supabase from "@/supabaseClient";
+import { FetchError } from "@/app/errorClasses";
 
 const getExpandedClientDetails = async (parcelId: string): Promise<ExpandedClientDetails> => {
     const rawClientDetails = await getRawClientDetails(parcelId);
@@ -48,9 +49,7 @@ export const getRawClientDetails = async (parcelId: string) => {
         .eq("primary_key", parcelId)
         .single();
     if (error) {
-        throw new Error(
-            "We could not fetch the client's details at this time. Please try again later."
-        );
+        throw new FetchError("the client's details");
     }
     return data;
 };

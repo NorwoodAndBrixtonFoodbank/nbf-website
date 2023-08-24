@@ -8,6 +8,7 @@ import {
     ErrorSecondaryText,
     ErrorRetryText,
 } from "@/app/errorStylingandMessages";
+import { FetchError } from "@/app/errorClasses";
 
 interface ErrorProps {
     error: Error;
@@ -15,6 +16,12 @@ interface ErrorProps {
 }
 
 const ErrorPage: React.FC<ErrorProps> = ({ error, reset }) => {
+    let message;
+    if (error instanceof FetchError) {
+        message = "Validation Error";
+    } else {
+        message = error.message;
+    }
     const [ErrorMessage, SetErrorMessage] = useState("");
 
     const retry = (): void => {
@@ -27,7 +34,7 @@ const ErrorPage: React.FC<ErrorProps> = ({ error, reset }) => {
         <ErrorCenterer>
             <ErrorPanel elevation={5}>
                 <ErrorLargeText>OOPS!</ErrorLargeText>
-                <ErrorSecondaryText>{error.message}</ErrorSecondaryText>
+                <ErrorSecondaryText>{message}</ErrorSecondaryText>
                 <Button variant="outlined" onClick={retry}>
                     Try again
                 </Button>

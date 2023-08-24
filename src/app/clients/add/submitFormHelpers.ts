@@ -3,7 +3,7 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { checkboxGroupToArray, Fields, Person } from "@/components/Form/formFunctions";
 import supabase from "@/supabaseClient";
 import { PostgrestError } from "@supabase/supabase-js";
-import { RequestErrorMessage } from "@/app/errorStylingandMessages";
+import { FetchError, RequestError } from "@/app/errorClasses";
 
 type FamilyDatabaseInsertRecord = InsertSchema["families"];
 type FamilyDatabaseUpdateRecord = UpdateSchema["families"];
@@ -42,7 +42,7 @@ const getChildrenInDatabase = async (familyID: string): Promise<string[]> => {
         .not("age", "is", null);
 
     if (errorExists(error, status)) {
-        throw new Error(
+        throw new FetchError(
             "We could not fetch the children data at this time. Please try again later."
         );
     }
@@ -58,9 +58,7 @@ const getNumberAdults = async (familyID: string, gender: string): Promise<number
         .is("age", null);
 
     if (errorExists(error, status)) {
-        throw new Error(
-            "We could not fetch the number of adults data at this time. Please try again later."
-        );
+        throw new FetchError("the number of adults data");
     }
     return count!;
 };
@@ -79,7 +77,7 @@ const deleteAdultMembers = async (
         .limit(count);
 
     if (errorExists(error, status)) {
-        throw new Error(RequestErrorMessage);
+        throw new RequestError();
     }
 };
 
@@ -95,7 +93,7 @@ const updateChildren = async (children: Person[]): Promise<void> => {
             .eq("primary_key", child.primaryKey);
 
         if (errorExists(error, status)) {
-            throw new Error(RequestErrorMessage);
+            throw new RequestError();
         }
     }
 };
@@ -108,7 +106,7 @@ const deleteChildren = async (children: Person[]): Promise<void> => {
             .eq("primary_key", child.primaryKey);
 
         if (errorExists(error, status)) {
-            throw new Error(RequestErrorMessage);
+            throw new RequestError();
         }
     }
 };
@@ -123,7 +121,7 @@ const insertClient = async (
     } = await supabase.from("clients").insert(clientRecord).select("primary_key, family_id");
 
     if (errorExists(error, status)) {
-        throw new Error(RequestErrorMessage);
+        throw new RequestError();
     }
     return ids![0];
 };
@@ -140,7 +138,7 @@ const insertFamily = async (peopleArray: Person[], familyID: string): Promise<vo
     const { status, error } = await supabase.from("families").insert(familyRecords);
 
     if (errorExists(error, status)) {
-        throw new Error(RequestErrorMessage);
+        throw new RequestError();
     }
 };
 
@@ -159,7 +157,7 @@ const updateClient = async (
         .select("primary_key, family_id");
 
     if (errorExists(error, status)) {
-        throw new Error(RequestErrorMessage);
+        throw new RequestError();
     }
     return ids![0];
 };
@@ -253,7 +251,7 @@ export const submitAddClientForm: SubmitFormHelper = async (fields, router) => {
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
         await revertClientInsert(ids.primary_key);
-        throw new Error(RequestErrorMessage);
+        throw new RequestError();
     }
 };
 
@@ -271,6 +269,6 @@ export const submitEditClientForm: SubmitFormHelper = async (
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
         await revertClientUpdate(clientBeforeUpdate);
-        throw new Error(RequestErrorMessage);
+        throw new RequestError();
     }
 };

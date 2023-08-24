@@ -16,7 +16,7 @@ const Clients: () => Promise<React.ReactElement> = async () => {
     return (
         <main>
             <Title>Clients Page</Title>
-            <ClientsPage clientsTableData={data} />
+            <ClientsPage clientsTableData={formattedData} />
         </main>
     );
 };
