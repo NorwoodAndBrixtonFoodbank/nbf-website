@@ -17,6 +17,7 @@ export enum Errors {
     invalid = "Please enter a valid entry.",
     submit = "Please ensure all fields have been entered correctly. Required fields are labelled with an asterisk.",
     external = "Please try again later.",
+    pastDate = "Please enter a date in the future.",
 }
 
 export const numberRegex = /^\d+$/;
@@ -145,6 +146,22 @@ export const onChangeDateOrTime = (
     }
     errorSetter(key, Errors.none);
     fieldSetter(key, value);
+};
+
+export const onChangeDate = (
+    fieldSetter: FieldSetter,
+    errorSetter: ErrorSetter,
+    key: string,
+    value: Date | null
+): void => {
+    onChangeDateOrTime(fieldSetter, errorSetter, key, value);
+    const today = new Date();
+    if (value === null || isNaN(Date.parse(value.toString()))) {
+        return;
+    }
+    if (value < today) {
+        errorSetter(key, Errors.pastDate);
+    }
 };
 
 export const errorExists = (errorType: Errors): boolean => {
