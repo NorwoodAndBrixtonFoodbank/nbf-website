@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import getShoppingListData from "@/pdf/ShoppingList/getShoppingListData";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import ShoppingListPDF from "@/pdf/ShoppingList/ShoppingListPDF";
+import { ShoppingListPDFDataProps } from "@/pdf/ShoppingList/shoppingListPDFDataProps";
 
 interface Props {
     text: string;
@@ -13,7 +14,7 @@ const ShoppingList = ({ text, parcelId }: Props): React.ReactElement => {
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
-            const preparedData = await prepareData(parcelId);
+            const preparedData = await getShoppingListData(parcelId);
             setData(preparedData);
         };
 
