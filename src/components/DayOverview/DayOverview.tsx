@@ -45,7 +45,7 @@ const getParcelsOfSpecificDateAndLocation = async (
     endDate.setDate(date.getDate() + 1);
     const endDateString = endDate.toISOString();
 
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from("parcels")
         .select(
             `collection_datetime, 
@@ -63,7 +63,7 @@ const getParcelsOfSpecificDateAndLocation = async (
 
     // TODO VFB-22 Check if error message is consistent
 
-    if (!data) {
+    if (error) {
         throw new Error(
             "We were unable to fetch the parcels with the specified collection date and location."
         );
@@ -75,21 +75,21 @@ const getParcelsOfSpecificDateAndLocation = async (
 const fetchCollectionCentreNameAndAbbreviation = async (
     collectionCentreKey: string
 ): Promise<CollectionCentreNameAndAbbreviation> => {
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from("collection_centres")
-        .select("name, acronym")
+        .select()
         .eq("primary_key", collectionCentreKey)
-        .limit(1);
+        .maybeSingle();
 
     // TODO VFB-22 Check if error message is consistent
 
-    if (!data) {
+    if (error) {
         throw new Error(
             "We were unable to fetch the collection centre data. Please try again later"
         );
     }
 
-    return data[0];
+    return data!;
 };
 
 const DayOverview = async ({
@@ -104,10 +104,13 @@ const DayOverview = async ({
 
     const dateString = getCurrentDate(date);
 
-    const fileName = `DayOverview_${dateString}_${collectionCentreNameAndAbbreviation?.acronym}.pdf`;
+    const acronym = `_${collectionCentreNameAndAbbreviation?.acronym}` ?? "";
+    const location = collectionCentreNameAndAbbreviation?.name ?? "";
+
+    const fileName = `DayOverview_${dateString}${acronym}.pdf`;
     const data: DayOverviewData = {
         date: date,
-        location: collectionCentreNameAndAbbreviation?.name,
+        location: location,
         data: parcelsOfSpecificDate,
     };
 
