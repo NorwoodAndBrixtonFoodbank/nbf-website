@@ -10,7 +10,7 @@ interface RolesInterface {
     [key: string]: string[];
 }
 
-export const rolesToHiddenPages: RolesInterface = {
+export const roleToHiddenPages: RolesInterface = {
     admin: [],
     caller: ["/admin", "/lists"],
 };
