@@ -1,5 +1,7 @@
 import { CalendarEvent } from "@/components/Calendar/Calendar";
-import { ParcelWithClientName } from "@/app/calendar/getParcelsWithCollectionDate";
+import { Schema } from "@/database_utils";
+
+export type ParcelWithClientName = Schema["parcels"] & { clients: { full_name: string } | null };
 
 export interface LocationColorMap {
     [location: string]: { color: string; text: string };
