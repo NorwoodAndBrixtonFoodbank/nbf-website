@@ -6,8 +6,8 @@ import Button from "@mui/material/Button";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 import Paper from "@mui/material/Paper/Paper";
 import Alert from "@mui/material/Alert";
-import Statuses from "@/app/clients/actionBar/Statuses";
-import Actions from "@/app/clients/actionBar/Actions";
+import Statuses from "@/app/clients/ActionBar/Statuses";
+import Actions from "@/app/clients/ActionBar/Actions";
 
 interface Props {
     selected: number[];

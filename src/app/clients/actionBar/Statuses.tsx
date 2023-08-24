@@ -7,7 +7,7 @@ import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import { Dayjs } from "dayjs";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
-import StatusesBarModal from "@/app/clients/actionBar/StatusesModal";
+import StatusesBarModal from "@/app/clients/ActionBar/StatusesModal";
 
 const statuses = [
     "Request Denied",
@@ -94,6 +94,7 @@ const Statuses: React.FC<Props> = ({
                 headerId="status-modal-header"
                 onSubmit={submitStatus}
                 errorText={modalError}
+                children={<></>}
             />
 
             <Menu

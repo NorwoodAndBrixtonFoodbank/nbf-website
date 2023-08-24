@@ -6,12 +6,12 @@ import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import dayjs, { Dayjs } from "dayjs";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
-import ActionsModal, { DriverOverviewInput } from "@/app/clients/actionBar/ActionsModal";
+import ActionsModal, { DriverOverviewInput } from "@/app/clients/ActionBar/ActionsModal";
 import {
     DriverOverviewModalButton,
     ShippingLabelsModalButton,
     ShoppingListModalButton,
-} from "@/app/clients/actionBar/ActionsModalButton";
+} from "@/app/clients/ActionBar/ActionsModalButton";
 
 const isNotMoreThanOne = (value: number): boolean => {
     return value < 1;
@@ -21,7 +21,17 @@ const doesNotEqualsOne = (value: number): boolean => {
     return value !== 1;
 };
 
-const availableActions = {
+type PdfType = "Download Shipping Labels" | "Download Shopping List" | "Download Driver Overview";
+
+type AvailableActionsType = {
+    [pdfKey in PdfType]: {
+        showSelectedParcels: boolean;
+        errorCondition: (value: number) => boolean;
+        errorMessage: string;
+    };
+};
+
+const availableActions: AvailableActionsType = {
     "Download Shipping Labels": {
         showSelectedParcels: true,
         errorCondition: isNotMoreThanOne,
@@ -40,7 +50,7 @@ const availableActions = {
 };
 
 interface ActionsInputComponentProps {
-    pdfType: String;
+    pdfType: PdfType;
     onDateChange: (newDate: Dayjs | null) => void;
     onDriverNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -64,7 +74,7 @@ const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
 };
 
 interface ActionsButtonProps {
-    pdfType: String;
+    pdfType: PdfType;
     data: ClientsTableRow[];
     date: Dayjs;
     driverName: string;
@@ -100,7 +110,7 @@ const Actions: React.FC<Props> = ({
     modalError,
     setModalError,
 }) => {
-    const [selectedAction, setSelectedAction] = useState<string | null>(null);
+    const [selectedAction, setSelectedAction] = useState<PdfType | null>(null);
     const [date, setDate] = useState(dayjs(new Date()));
     const [driverName, setDriverName] = useState("");
 
@@ -127,7 +137,7 @@ const Actions: React.FC<Props> = ({
     };
 
     const onMenuItemClick = (
-        key: string,
+        key: PdfType,
         errorCondition: (value: number) => boolean,
         errorMessage: string
     ): (() => void) => {
@@ -155,6 +165,7 @@ const Actions: React.FC<Props> = ({
                             onClose={onModalClose}
                             data={selectedData}
                             header={key}
+                            headerId="action-modal-header"
                             errorText={modalError}
                             inputComponent={
                                 <ActionsInputComponent
@@ -186,7 +197,7 @@ const Actions: React.FC<Props> = ({
                                 <MenuItem
                                     key={key}
                                     onClick={onMenuItemClick(
-                                        key,
+                                        key as PdfType,
                                         value.errorCondition,
                                         value.errorMessage
                                     )}

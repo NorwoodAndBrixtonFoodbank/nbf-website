@@ -9,13 +9,9 @@ import { Button } from "@mui/material";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import { DatePicker } from "@mui/x-date-pickers";
 
-interface ActionsModalProps {
-    isOpen: boolean;
-    onClose: () => void;
+interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     data: ClientsTableRow[];
-    header: string;
     errorText: string | null;
-    children: React.ReactElement;
     inputComponent?: React.ReactElement;
     showSelectedParcels: boolean;
 }
@@ -76,7 +72,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
     }, [loading, loadPdf]);
 
     return (
-        <Modal {...props} header={props.header} headerId="action-modal-header">
+        <Modal {...props}>
             <ModalInner>
                 {!loadPdf && props.inputComponent}
                 {props.errorText && <small>{props.errorText}</small>}

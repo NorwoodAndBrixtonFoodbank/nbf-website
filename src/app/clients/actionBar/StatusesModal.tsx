@@ -6,13 +6,9 @@ import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 
-interface StatusesBarModalProps {
-    isOpen: boolean;
-    onClose: () => void;
+interface StatusesBarModalProps extends React.ComponentProps<typeof Modal>{
     data: ClientsTableRow[];
     onSubmit: (date: Dayjs) => void;
-    header: string;
-    headerId: string;
     errorText: string | null;
 }
 
@@ -61,7 +57,7 @@ const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
         );
 
     return (
-        <Modal {...props} header={props.header} headerId={props.headerId}>
+        <Modal {...props}>
             <ModalInner>
                 <Row>
                     Date:

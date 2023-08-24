@@ -18,7 +18,7 @@ import Modal from "@/components/Modal/Modal";
 import { Schema } from "@/database_utils";
 import TableSurface from "@/components/Tables/TableSurface";
 import { CenterComponent } from "@/components/Form/formStyling";
-import ActionBar from "@/app/clients/actionBar/ActionBar";
+import ActionBar from "@/app/clients/ActionBar/ActionBar";
 import AddParcelsButton from "@/app/clients/AddParcelsButton";
 
 // TODO Change Button to LinkButton
