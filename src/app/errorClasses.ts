@@ -5,11 +5,11 @@ export class FetchError extends Error {
     }
 }
 
-export class RequestError extends Error {
+export class DatabaseError extends Error {
     constructor(faultyArea = "") {
         super(
             `We could not process the request ${faultyArea} at this time. Please try again later.`
         );
-        this.name = "RequestError";
+        this.name = "DatabaseError";
     }
 }

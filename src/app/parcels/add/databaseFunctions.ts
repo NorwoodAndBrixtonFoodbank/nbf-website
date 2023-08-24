@@ -1,6 +1,6 @@
 import supabase from "@/supabaseClient";
 import { InsertSchema, Schema } from "@/database_utils";
-import { RequestError } from "@/app/errorClasses";
+import { DatabaseError } from "@/app/errorClasses";
 
 type InsertedParcels = InsertSchema["parcels"];
 type FetchedParcels = Pick<Schema["parcels"], "primary_key" | "client_id">;
@@ -15,5 +15,5 @@ export const insertParcel = async (parcelRecord: InsertedParcels): Promise<Fetch
     if (error === null && Math.floor(status / 100) === 2) {
         return ids![0];
     }
-    throw new RequestError();
+    throw new DatabaseError();
 };
