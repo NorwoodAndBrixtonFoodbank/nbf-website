@@ -76,14 +76,17 @@ export interface Database {
         Row: {
           acronym: string
           name: string
+          primary_key: string
         }
         Insert: {
           acronym?: string
           name?: string
+          primary_key?: string
         }
         Update: {
           acronym?: string
           name?: string
+          primary_key?: string
         }
         Relationships: []
       }
@@ -335,7 +338,7 @@ export interface Database {
             foreignKeyName: "parcels_collection_centre_fkey"
             columns: ["collection_centre"]
             referencedRelation: "collection_centres"
-            referencedColumns: ["name"]
+            referencedColumns: ["primary_key"]
           }
         ]
       }
