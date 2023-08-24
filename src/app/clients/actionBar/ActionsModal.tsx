@@ -2,15 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import ShippingLabels from "@/pdf/ShippingLabels/ShippingLabels";
 import Modal from "@/components/Modal/Modal";
 import dayjs, { Dayjs } from "dayjs";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
-import ShoppingList from "@/pdf/ShoppingList/ShoppingList";
-import DriverOverview from "@/pdf/DriverOverview/DriverOverview";
 import { Button } from "@mui/material";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import { DatePicker } from "@mui/x-date-pickers";
+
 interface ActionsModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -48,45 +46,6 @@ const StatusText = styled.p`
     }
 `;
 
-interface ModalButtonProps {
-    data: ClientsTableRow[];
-}
-
-export const ShippingLabelsModalButton: React.FC<ModalButtonProps> = ({ data }) => {
-    const parcelIds = data.map((parcel) => {
-        return parcel.parcelId;
-    });
-    return <ShippingLabels text="Download" parcelIds={parcelIds} />;
-};
-
-export const ShoppingListModalButton: React.FC<ModalButtonProps> = ({ data }) => {
-    return <ShoppingList text="Download" parcelId={data[0].parcelId} />;
-};
-
-interface DriverOverviewModalButtonProps {
-    data: ClientsTableRow[];
-    date: Dayjs;
-    driverName: string;
-}
-
-export const DriverOverviewModalButton: React.FC<DriverOverviewModalButtonProps> = ({
-    data,
-    date,
-    driverName,
-}) => {
-    const parcelIds = data.map((parcel) => {
-        return parcel.parcelId;
-    });
-    return (
-        <DriverOverview
-            driverName={driverName}
-            date={date.toDate()}
-            text="Download"
-            parcelIds={parcelIds}
-        />
-    );
-};
-
 interface DriverOverviewInputProps {
     onDateChange: (newDate: Dayjs | null) => void;
     onDriverNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -109,14 +68,12 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
     const [loadPdf, setLoadPdf] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    console.log(loadPdf, loading);
-
     useEffect(() => {
         if (loading && !loadPdf) {
             setLoadPdf(true);
             setLoading(false);
         }
-    }, [loading]);
+    }, [loading, loadPdf]);
 
     return (
         <Modal {...props} header={props.header} headerId="action-modal-header">

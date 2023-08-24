@@ -44,9 +44,10 @@ const Statuses: React.FC<Props> = ({
     modalError,
     setModalError,
 }) => {
-    const selectedData = Array.from(selected.map((index) => data[index]));
     const [selectedStatus, setSelectedStatus] = useState<statusType | null>(null);
     const [statusModal, setStatusModal] = useState(false);
+
+    const selectedData = Array.from(selected.map((index) => data[index]));
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
         const toInsert = selectedData
@@ -72,6 +73,14 @@ const Statuses: React.FC<Props> = ({
         }
     };
 
+    const onMenuItemClick = (status: statusType): (() => void) => {
+        return () => {
+            setSelectedStatus(status);
+            setStatusModal(true);
+            setStatusAnchorElement(null);
+        };
+    };
+
     return (
         <>
             <StatusesBarModal
@@ -95,14 +104,7 @@ const Statuses: React.FC<Props> = ({
                 <MenuList id="status-menu">
                     {statuses.map((status, index) => {
                         return (
-                            <MenuItem
-                                key={index}
-                                onClick={() => {
-                                    setSelectedStatus(status);
-                                    setStatusModal(true);
-                                    setStatusAnchorElement(null);
-                                }}
-                            >
+                            <MenuItem key={index} onClick={onMenuItemClick(status)}>
                                 {status}
                             </MenuItem>
                         );

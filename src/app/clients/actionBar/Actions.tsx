@@ -6,12 +6,12 @@ import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import dayjs, { Dayjs } from "dayjs";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
-import ActionsModal, {
-    DriverOverviewInput,
+import ActionsModal, { DriverOverviewInput } from "@/app/clients/actionBar/ActionsModal";
+import {
     DriverOverviewModalButton,
     ShippingLabelsModalButton,
     ShoppingListModalButton,
-} from "@/app/clients/actionBar/ActionsModal";
+} from "@/app/clients/actionBar/ActionsModalButton";
 
 const isNotMoreThanOne = (value: number): boolean => {
     return value < 1;
@@ -25,7 +25,7 @@ const availableActions = {
     "Download Shipping Labels": {
         showSelectedParcels: true,
         errorCondition: isNotMoreThanOne,
-        errorMessage: "Please select at least 1 row for download",
+        errorMessage: "Please select at least 1 row for download.",
     },
     "Download Shopping List": {
         showSelectedParcels: true,
@@ -35,7 +35,7 @@ const availableActions = {
     "Download Driver Overview": {
         showSelectedParcels: true,
         errorCondition: isNotMoreThanOne,
-        errorMessage: "Please select at least 1 row for download",
+        errorMessage: "Please select at least 1 row for download.",
     },
 };
 
@@ -100,10 +100,11 @@ const Actions: React.FC<Props> = ({
     modalError,
     setModalError,
 }) => {
-    const selectedData = Array.from(selected.map((index) => data[index]));
     const [selectedAction, setSelectedAction] = useState<string | null>(null);
     const [date, setDate] = useState(dayjs(new Date()));
     const [driverName, setDriverName] = useState("");
+
+    const selectedData = Array.from(selected.map((index) => data[index]));
 
     const onDriverNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setDriverName(event.target.value);
@@ -117,6 +118,31 @@ const Actions: React.FC<Props> = ({
                 .set("day", newDate?.day() ?? date.day())
         );
     };
+
+    const onModalClose = (): void => {
+        setSelectedAction(null);
+        setModalError(null);
+        setDate(dayjs(new Date()));
+        setDriverName("");
+    };
+
+    const onMenuItemClick = (
+        key: string,
+        errorCondition: (value: number) => boolean,
+        errorMessage: string
+    ): (() => void) => {
+        return () => {
+            if (errorCondition(selectedData.length)) {
+                setActionAnchorElement(null);
+                setModalError(errorMessage);
+            } else {
+                setSelectedAction(key);
+                setActionAnchorElement(null);
+                setModalError(null);
+            }
+        };
+    };
+
     return (
         <>
             {Object.entries(availableActions).map(([key, value]) => {
@@ -126,12 +152,7 @@ const Actions: React.FC<Props> = ({
                             key={key}
                             showSelectedParcels={value.showSelectedParcels}
                             isOpen
-                            onClose={() => {
-                                setSelectedAction(null);
-                                setModalError(null);
-                                setDate(dayjs(new Date()));
-                                setDriverName("");
-                            }}
+                            onClose={onModalClose}
                             data={selectedData}
                             header={key}
                             errorText={modalError}
@@ -164,16 +185,11 @@ const Actions: React.FC<Props> = ({
                             return (
                                 <MenuItem
                                     key={key}
-                                    onClick={() => {
-                                        if (value.errorCondition(selectedData.length)) {
-                                            setActionAnchorElement(null);
-                                            setModalError(value.errorMessage);
-                                        } else {
-                                            setSelectedAction(key);
-                                            setActionAnchorElement(null);
-                                            setModalError(null);
-                                        }
-                                    }}
+                                    onClick={onMenuItemClick(
+                                        key,
+                                        value.errorCondition,
+                                        value.errorMessage
+                                    )}
                                 >
                                     {key}
                                 </MenuItem>
