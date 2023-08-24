@@ -2,7 +2,6 @@ import { InsertSchema, Schema, UpdateSchema } from "@/database_utils";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { checkboxGroupToArray, Fields, Person } from "@/components/Form/formFunctions";
 import supabase from "@/supabaseClient";
-import { PostgrestError } from "@supabase/supabase-js";
 import { FetchError, RequestError } from "@/app/errorClasses";
 
 type FamilyDatabaseInsertRecord = InsertSchema["families"];
@@ -22,10 +21,6 @@ interface PeopleGroupedByAction {
     [key: string]: Person[];
 }
 
-const errorExists = (error: PostgrestError | null, status: number): boolean => {
-    return error !== null || Math.floor(status / 100) !== 2;
-};
-
 const personToFamilyRecord = (person: Person, familyID: string): FamilyDatabaseInsertRecord[] => {
     return Array(person.quantity ?? 1).fill({
         family_id: familyID,
@@ -35,27 +30,27 @@ const personToFamilyRecord = (person: Person, familyID: string): FamilyDatabaseI
 };
 
 const getChildrenInDatabase = async (familyID: string): Promise<string[]> => {
-    const { data, status, error } = await supabase
+    const { data, error } = await supabase
         .from("families")
         .select("primary_key")
         .eq("family_id", familyID)
         .not("age", "is", null);
 
-    if (errorExists(error, status)) {
+    if (error) {
         throw new FetchError("the children data");
     }
     return data!.map((datum) => datum.primary_key);
 };
 
 const getNumberAdults = async (familyID: string, gender: string): Promise<number> => {
-    const { count, status, error } = await supabase
+    const { count, error } = await supabase
         .from("families")
         .select("*", { count: "exact", head: true })
         .eq("family_id", familyID)
         .eq("gender", gender)
         .is("age", null);
 
-    if (errorExists(error, status)) {
+    if (error) {
         throw new FetchError("the number of adults data");
     }
     return count!;
@@ -66,7 +61,7 @@ const deleteAdultMembers = async (
     gender: string,
     count: number
 ): Promise<void> => {
-    const { status, error } = await supabase
+    const { error } = await supabase
         .from("families")
         .delete()
         .eq("family_id", familyID)
@@ -74,7 +69,7 @@ const deleteAdultMembers = async (
         .is("age", null)
         .limit(count);
 
-    if (errorExists(error, status)) {
+    if (error) {
         throw new RequestError();
     }
 };
@@ -85,12 +80,12 @@ const updateChildren = async (children: Person[]): Promise<void> => {
             gender: child.gender,
             age: child.age,
         };
-        const { status, error } = await supabase
+        const { error } = await supabase
             .from("families")
             .update(record)
             .eq("primary_key", child.primaryKey);
 
-        if (errorExists(error, status)) {
+        if (error) {
             throw new RequestError();
         }
     }
@@ -98,12 +93,12 @@ const updateChildren = async (children: Person[]): Promise<void> => {
 
 const deleteChildren = async (children: Person[]): Promise<void> => {
     for (const child of children) {
-        const { status, error } = await supabase
+        const { error } = await supabase
             .from("families")
             .delete()
             .eq("primary_key", child.primaryKey);
 
-        if (errorExists(error, status)) {
+        if (error) {
             throw new RequestError();
         }
     }
@@ -112,13 +107,12 @@ const deleteChildren = async (children: Person[]): Promise<void> => {
 const insertClient = async (
     clientRecord: ClientDatabaseInsertRecord
 ): Promise<ClientAndFamilyIds> => {
-    const {
-        data: ids,
-        status,
-        error,
-    } = await supabase.from("clients").insert(clientRecord).select("primary_key, family_id");
+    const { data: ids, error } = await supabase
+        .from("clients")
+        .insert(clientRecord)
+        .select("primary_key, family_id");
 
-    if (errorExists(error, status)) {
+    if (error) {
         throw new RequestError();
     }
     return ids![0];
@@ -133,9 +127,9 @@ const insertFamily = async (peopleArray: Person[], familyID: string): Promise<vo
         }
     }
 
-    const { status, error } = await supabase.from("families").insert(familyRecords);
+    const { error } = await supabase.from("families").insert(familyRecords);
 
-    if (errorExists(error, status)) {
+    if (error) {
         throw new RequestError();
     }
 };
@@ -144,17 +138,13 @@ const updateClient = async (
     clientRecord: ClientDatabaseUpdateRecord,
     primaryKey: string
 ): Promise<ClientAndFamilyIds> => {
-    const {
-        data: ids,
-        status,
-        error,
-    } = await supabase
+    const { data: ids, error } = await supabase
         .from("clients")
         .update(clientRecord)
         .eq("primary_key", primaryKey)
         .select("primary_key, family_id");
 
-    if (errorExists(error, status)) {
+    if (error) {
         throw new RequestError();
     }
     return ids![0];
@@ -198,7 +188,12 @@ const updateFamily = async (
 };
 
 const revertClientInsert = async (primaryKey: string): Promise<void> => {
-    await supabase.from("clients").delete().eq("primary_key", primaryKey);
+    const { error } = await supabase.from("clients").delete().eq("primary_key", primaryKey);
+    if (error) {
+        throw new Error(
+            "We could not revert an incomplete client insert at this time, and there may be faulty data stored. Please contact a developer for assistance."
+        );
+    }
 };
 
 const revertClientUpdate = async (initialRecords: ClientDatabaseUpdateRecord): Promise<void> => {
