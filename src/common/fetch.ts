@@ -2,7 +2,7 @@ import { Schema } from "@/database_utils";
 import supabaseClient from "@/supabaseClient";
 import supabaseServer from "@/supabaseServer";
 
-type Supabase = typeof supabaseClient | typeof supabaseServer;
+export type Supabase = typeof supabaseClient | typeof supabaseServer;
 
 export const fetchParcels = async (
     parcelID: string,

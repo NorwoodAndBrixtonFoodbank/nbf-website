@@ -1,11 +1,7 @@
 import { Schema } from "@/database_utils";
-import supabaseClient from "@/supabaseClient";
-import supabaseServer from "@/supabaseServer";
 import { CalendarEvent } from "@/components/Calendar/Calendar";
+import { Supabase } from "@/common/fetch";
 
-
-// TODO: maybe put this line below somewheere???????/ exported??????? used a lot?????
-type Supabase = typeof supabaseClient | typeof supabaseServer;
 export type ParcelWithClientName = Schema["parcels"] & { clients: { full_name: string } | null };
 
 const COLLECTION_DURATION_MS = 30 * 60 * 1000;
