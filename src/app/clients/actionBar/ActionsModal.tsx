@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import ShippingLabels from "@/pdf/ShippingLabels/ShippingLabels";
 import Modal from "@/components/Modal/Modal";
@@ -11,7 +11,6 @@ import DriverOverview from "@/pdf/DriverOverview/DriverOverview";
 import { Button } from "@mui/material";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import { DatePicker } from "@mui/x-date-pickers";
-
 interface ActionsModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -108,10 +107,21 @@ export const DriverOverviewInput: React.FC<DriverOverviewInputProps> = ({
 
 const ActionsModal: React.FC<ActionsModalProps> = (props) => {
     const [loadPdf, setLoadPdf] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    console.log(loadPdf, loading);
+
+    useEffect(() => {
+        if (loading && !loadPdf) {
+            setLoadPdf(true);
+            setLoading(false);
+        }
+    }, [loading]);
+
     return (
         <Modal {...props} header={props.header} headerId="action-modal-header">
             <ModalInner>
-                {props.inputComponent}
+                {!loadPdf && props.inputComponent}
                 {props.errorText && <small>{props.errorText}</small>}
                 {loadPdf ? (
                     <>
@@ -138,8 +148,12 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                             </>
                         )}
                         <Centerer>
-                            <Button variant="contained" onClick={() => setLoadPdf(true)}>
-                                Create PDF
+                            <Button
+                                disabled={loading}
+                                variant="contained"
+                                onClick={() => setLoading(true)}
+                            >
+                                {loading ? "Loading..." : "Create PDF"}
                             </Button>
                         </Centerer>
                     </>
