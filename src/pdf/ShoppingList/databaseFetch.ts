@@ -40,8 +40,6 @@ export const fetchFamilies = async (familyID: string): Promise<Schema["families"
 
 export const fetchLists = async (): Promise<Schema["lists"][]> => {
     const { data, error } = await supabase.from("lists").select();
-    console.log(data);
-    console.log(error);
     if (error) {
         throw new FetchError("the lists data");
     }
