@@ -3,6 +3,10 @@ import { CalendarEvent } from "@/components/Calendar/Calendar";
 
 export type ParcelWithClientName = Schema["parcels"] & { clients: { full_name: string } | null };
 
+type ParcelsWithExtraFields = ParcelWithClientName & {
+    collection_centres: { name: string | null };
+};
+
 const COLLECTION_DURATION_MS = 30 * 60 * 1000;
 
 export interface LocationColorMap {
@@ -10,7 +14,7 @@ export interface LocationColorMap {
 }
 
 export const parcelsToCollectionEvents = (
-    parcels: ParcelWithClientName[],
+    parcels: ParcelsWithExtraFields[],
     colorMap: LocationColorMap
 ): CalendarEvent[] => {
     return parcels.map((parcel) => {

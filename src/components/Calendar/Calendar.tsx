@@ -230,7 +230,7 @@ const Calendar: React.FC<CalendarProps> = ({
         calendarApi.changeView("timeGridDay", info.dateStr);
     };
 
-    const [locations, setLocations] = useState(initialLocations);
+    const [locations, setLocations] = useState<string[]>([]);
 
     return (
         <>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Checkbox } from "@mui/material";
+import { Checkbox, FormControlLabel } from "@mui/material";
 import React from "react";
 import styled from "styled-components";
 
@@ -45,21 +45,25 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
             {allLocations.map((location) => {
                 return (
                     <CheckboxAndTitleDiv key={location}>
-                        <Checkbox
-                            checked={currentLocations.includes(location)}
-                            onChange={(event) => {
-                                if (event.target.checked) {
-                                    editLocations([...currentLocations, location]);
-                                    return;
-                                }
-                                editLocations(
-                                    currentLocations.filter(
-                                        (testLocation) => testLocation !== location
-                                    )
-                                );
-                            }}
+                        <FormControlLabel
+                            label={`${location}`}
+                            control={
+                                <Checkbox
+                                    checked={currentLocations.includes(location)}
+                                    onChange={(event) => {
+                                        if (event.target.checked) {
+                                            editLocations([...currentLocations, location]);
+                                            return;
+                                        }
+                                        editLocations(
+                                            currentLocations.filter(
+                                                (testLocation) => testLocation !== location
+                                            )
+                                        );
+                                    }}
+                                />
+                            }
                         />
-                        {location}
                     </CheckboxAndTitleDiv>
                 );
             })}
