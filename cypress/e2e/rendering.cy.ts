@@ -21,6 +21,12 @@ describe("Rendering tests", () => {
         cy.get("h1").should("contain.text", "Collection Time for Parcels");
     });
 
+    it("Renders parcels page", () => {
+        cy.visit("/parcels");
+
+        cy.get("h1").should("contain.text", "Parcels Page");
+    });
+
     it("Renders clients/add page", () => {
         cy.visit("/clients/add");
 

@@ -21,6 +21,13 @@ describe("Accessibility tests in light mode", () => {
         cy.checkAccessibility();
     });
 
+    it("Checks parcels page", () => {
+        cy.login();
+        cy.visit("/parcels");
+
+        cy.checkAccessibility();
+    });
+
     it("Checks clients/add page", () => {
         cy.login();
         cy.visit("/clients/add");
@@ -31,12 +38,6 @@ describe("Accessibility tests in light mode", () => {
     it("Checks parcels/add/[id] page", () => {
         cy.login();
         cy.visit("/parcels/add/1");
-
-        cy.checkAccessibility();
-    });
-
-    it("Checks shopping-list page", () => {
-        cy.visit("/shopping-list");
 
         cy.checkAccessibility();
     });
@@ -77,16 +78,17 @@ describe("Accessibility tests in dark mode", () => {
         cy.checkAccessibility();
     });
 
-    it("Checks clients/add page", () => {
+    it("Checks parcels page", () => {
         cy.login();
-        cy.visit("/clients/add");
+        cy.visit("/parcels");
         cy.get("label[aria-label='Theme Switch']").click();
 
         cy.checkAccessibility();
     });
 
-    it("Checks shopping-list page", () => {
-        cy.visit("/shopping-list");
+    it("Checks clients/add page", () => {
+        cy.login();
+        cy.visit("/clients/add");
         cy.get("label[aria-label='Theme Switch']").click();
 
         cy.checkAccessibility();
