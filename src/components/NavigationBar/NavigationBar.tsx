@@ -11,7 +11,7 @@ import LightDarkSlider from "@/components/NavigationBar/LightDarkSlider";
 import SignOutButton from "@/components/NavigationBar/SignOutButton";
 import NavBarButton from "@/components/Buttons/NavBarButton";
 import { usePathname } from "next/navigation";
-import { RoleUpdateContext, rolesToHiddenPages } from "@/app/roles";
+import { RoleUpdateContext, roleToHiddenPages } from "@/app/roles";
 
 export const NavBarHeight = "4rem";
 
@@ -118,7 +118,7 @@ interface RoleProps {
 
 const RoleDependent: React.FC<RoleProps> = ({ children, role, pathname }) => {
     const hiddenPages = role
-        ? rolesToHiddenPages[role]
+        ? roleToHiddenPages[role]
         : ["/clients", "/lists", "/calendar", "/admin"];
     if (hiddenPages.includes(pathname)) {
         return <></>;
