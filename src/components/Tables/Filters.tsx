@@ -55,7 +55,7 @@ interface TextFilterProps<Data, Key extends keyof Data> {
     initialValue?: string;
 }
 
-const defaultToString = (value: any): string => {
+const defaultToString = (value: unknown): string => {
     if (typeof value === "string") {
         return value;
     }
