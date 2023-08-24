@@ -80,9 +80,18 @@ const headers = [
 interface TestTableProps {
     checkboxes?: boolean;
     toggleableHeaders?: (keyof TestData)[];
+    pagination?: boolean;
+    filters?: (keyof TestData)[];
+    sortable?: (keyof TestData)[];
 }
 
-const Component: React.FC<TestTableProps> = ({ checkboxes = true, toggleableHeaders }) => {
+const Component: React.FC<TestTableProps> = ({
+    checkboxes = true,
+    toggleableHeaders,
+    pagination = false,
+    filters = [],
+    sortable = [],
+}) => {
     return (
         <StyleManager>
             <Table
@@ -90,8 +99,9 @@ const Component: React.FC<TestTableProps> = ({ checkboxes = true, toggleableHead
                 headerKeysAndLabels={headers}
                 checkboxes={checkboxes}
                 toggleableHeaders={toggleableHeaders}
-                filters={["full_name", "phone_number"]}
-                sortable={["full_name", "phone_number"]}
+                filters={filters}
+                sortable={sortable}
+                pagination={pagination}
             />
         </StyleManager>
     );
@@ -100,6 +110,9 @@ const Component: React.FC<TestTableProps> = ({ checkboxes = true, toggleableHead
 const ComponentWithSmallerData: React.FC<TestTableProps> = ({
     checkboxes = true,
     toggleableHeaders,
+    pagination = false,
+    filters = [],
+    sortable = [],
 }) => {
     return (
         <StyleManager>
@@ -108,8 +121,9 @@ const ComponentWithSmallerData: React.FC<TestTableProps> = ({
                 headerKeysAndLabels={headers}
                 checkboxes={checkboxes}
                 toggleableHeaders={toggleableHeaders}
-                filters={["full_name", "phone_number"]}
-                sortable={["full_name", "phone_number"]}
+                filters={filters}
+                sortable={sortable}
+                pagination={pagination}
             />
         </StyleManager>
     );
@@ -129,14 +143,14 @@ describe("<Table />", () => {
     });
 
     it("filter is correct", () => {
-        cy.mount(<Component />);
-        cy.get("input[placeholder='Filter by Name']").type("Tom");
+        cy.mount(<Component filters={["full_name"]} />);
+        cy.get("input[type='text']").first().type("Tom");
         cy.contains("Tom");
         cy.should("not.have.value", "Sam");
     });
 
     it("sorting is correct", () => {
-        cy.mount(<Component />);
+        cy.mount(<Component filters={[]} sortable={["full_name"]} />);
         cy.get("div").contains("Name").parent().click();
         cy.get("div[data-column-id='2'][role='cell']").as("table");
         cy.get("@table").eq(0).contains("Adrian Key");
@@ -147,15 +161,15 @@ describe("<Table />", () => {
     });
 
     it("clear button is working", () => {
-        cy.mount(<Component />);
-        cy.get("input[placeholder='Filter by Name']").type("Tom");
+        cy.mount(<Component filters={["full_name"]} />);
+        cy.get("input[type='text']").type("Tom");
         cy.get("button").contains("Clear").click();
         cy.contains("Sam");
-        cy.get("input[placeholder='Filter by Name']").should("have.value", "");
+        cy.get("input[type='text']").should("have.value", "");
     });
 
     it("pagination page change is working", () => {
-        cy.mount(<Component />);
+        cy.mount(<Component pagination />);
         cy.get("div[data-column-id='2'][role='cell']").as("table");
         cy.get("@table").eq(0).contains("Tom");
         cy.get("button[id='pagination-next-page']").click();
@@ -163,7 +177,7 @@ describe("<Table />", () => {
     });
 
     it("pagination number of items is working", () => {
-        cy.mount(<Component />);
+        cy.mount(<Component pagination />);
         cy.get("select[aria-label='Rows per page:']").select("15");
         cy.get("div[data-column-id='2'][role='cell']").as("table");
         cy.get("@table").eq(14).contains("Chloe");
@@ -196,16 +210,16 @@ describe("<Table />", () => {
     });
 
     it("filtering does not affect checkbox", () => {
-        cy.mount(<Component />);
+        cy.mount(<Component filters={["full_name"]} />);
         cy.get("input[aria-label='Select row 0']").should("not.be.checked");
         cy.get("input[aria-label='Select row 0']").click();
-        cy.get("input[placeholder='Filter by Name']").type("Sam");
-        cy.get("input[placeholder='Filter by Name']").clear();
+        cy.get("input[type='text']").type("Sam");
+        cy.get("input[type='text']").clear();
         cy.get("input[aria-label='Select row 0']").should("be.checked");
     });
 
     it("changing page does not affect checkbox", () => {
-        cy.mount(<Component />);
+        cy.mount(<Component pagination />);
         cy.get("input[aria-label='Select row 0']").should("not.be.checked");
         cy.get("input[aria-label='Select row 0']").click();
         cy.get("button[id='pagination-next-page']").click();
@@ -214,7 +228,7 @@ describe("<Table />", () => {
     });
 
     it("pagination limit does not affect checkbox", () => {
-        cy.mount(<Component />);
+        cy.mount(<Component pagination />);
         cy.get("select[aria-label='Rows per page:']").select("15");
         cy.get("input[aria-label='Select row 14']").should("not.be.checked");
 
@@ -233,7 +247,7 @@ describe("<Table />", () => {
     });
 
     it("sorting does not affect checkbox", () => {
-        cy.mount(<Component />);
+        cy.mount(<Component sortable={["full_name"]} />);
 
         cy.get("input[aria-label='Select row 0']").click();
         cy.get("input[aria-label='Select row 0']").should("be.checked");
@@ -295,12 +309,5 @@ describe("<Table />", () => {
         cy.get("div.MuiAccordionSummary-root").click();
         cy.get("div.MuiAccordionDetails-root").contains("Name");
         cy.get("div.MuiAccordionDetails-root").contains("Phone Number");
-    });
-
-    it("filter input renders", () => {
-        cy.mount(<ComponentWithSmallerData checkboxes={false} />);
-
-        cy.get("input[placeholder*='Filter by Name']").should("exist");
-        cy.get("input[placeholder*='Filter by Phone Number']").should("exist");
     });
 });

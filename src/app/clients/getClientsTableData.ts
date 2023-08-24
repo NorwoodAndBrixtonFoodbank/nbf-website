@@ -1,9 +1,6 @@
 import { CongestionChargeDetails, ProcessingData } from "@/app/clients/fetchDataFromServer";
 import { Schema } from "@/database_utils";
-import {
-    familyCountToFamilyCategory,
-    formatDatetimeAsDate,
-} from "@/app/clients/getExpandedClientDetails";
+import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
 
 export interface ParcelsTableRow {
     parcelId: Schema["parcels"]["primary_key"];
