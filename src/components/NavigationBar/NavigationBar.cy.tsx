@@ -3,6 +3,7 @@
 import React from "react";
 import NavigationBar from "@/components/NavigationBar/NavigationBar";
 import { AppRouterContext, AppRouterInstance } from "next/dist/shared/lib/app-router-context";
+import { RoleUpdateContext } from "@/app/roles";
 import StyleManager from "@/app/themes";
 const StyledNavigationBar: React.FC<{}> = () => {
     return (
@@ -21,10 +22,15 @@ describe("<NavigationBar />", () => {
         refresh: () => {},
     };
 
+    const role = "admin";
+    const setRole = (): void => {};
+
     const RouterWrappedNavBar = (
-        <AppRouterContext.Provider value={router}>
-            <StyledNavigationBar />
-        </AppRouterContext.Provider>
+        <RoleUpdateContext.Provider value={{ role, setRole }}>
+            <AppRouterContext.Provider value={router}>
+                <StyledNavigationBar />
+            </AppRouterContext.Provider>
+        </RoleUpdateContext.Provider>
     );
 
     it("Renders on desktop", () => {
