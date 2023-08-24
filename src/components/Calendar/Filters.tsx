@@ -22,9 +22,10 @@ const ContainerDiv = styled.div`
     grid-template-columns: 1fr;
     @media (min-width: 700px) {
         grid-template-columns: repeat(2, 1fr);
+    }
     @media (min-width: 1100px) {
         grid-template-columns: repeat(3, 1fr);
-
+    }
 `;
 
 const CheckboxAndTitleDiv = styled.div`

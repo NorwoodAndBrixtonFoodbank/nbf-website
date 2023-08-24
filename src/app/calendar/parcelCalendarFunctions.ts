@@ -3,8 +3,8 @@ import { CalendarEvent } from "@/components/Calendar/Calendar";
 
 export type ParcelWithClientName = Schema["parcels"] & { clients: { full_name: string } | null };
 
-type ParcelsWithExtraFields = ParcelWithClientName & {
-    collection_centres: { name: string | null };
+export type ParcelsWithExtraFields = ParcelWithClientName & {
+    collection_centres: { name: string } | null;
 };
 
 const COLLECTION_DURATION_MS = 30 * 60 * 1000;
@@ -23,7 +23,7 @@ export const parcelsToCollectionEvents = (
         const collectionStart = new Date(parcel.collection_datetime!);
         const collectionEnd = new Date(collectionStart.getTime() + COLLECTION_DURATION_MS);
 
-        const collectionCentre = parcel.collection_centres.name ?? "default";
+        const collectionCentre = parcel.collection_centres!.name ?? "default";
         const location = collectionCentre !== "default" ? `${collectionCentre}` : "";
 
         const eventColor = colorMap[collectionCentre] ?? colorMap.default;

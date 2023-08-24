@@ -2,9 +2,9 @@ import { Metadata } from "next";
 import React from "react";
 import ParcelCalendar from "@/app/calendar/ParcelCalendar";
 import supabase from "@/supabaseServer";
-import { ParcelWithClientName } from "./parcelCalendarFunctions";
+import { ParcelsWithExtraFields } from "@/app/calendar/parcelCalendarFunctions";
 
-export const getParcelsWithCollectionDate = async (): Promise<ParcelWithClientName[]> => {
+export const getParcelsWithCollectionDate = async (): Promise<ParcelsWithExtraFields[]> => {
     const { data, error } = await supabase
         .from("parcels")
         .select("*, clients ( full_name ), collection_centres (name)")
@@ -12,7 +12,6 @@ export const getParcelsWithCollectionDate = async (): Promise<ParcelWithClientNa
     if (error) {
         throw new Error("Database error");
     }
-    console.log(data);
     return data;
 };
 
