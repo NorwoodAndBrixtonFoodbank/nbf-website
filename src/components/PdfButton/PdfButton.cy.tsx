@@ -1,5 +1,5 @@
 import React from "react";
-import PdfButton, { formatFileName } from "@/components/PdfButton/PdfButton";
+import PdfButton from "@/components/PdfButton/PdfButton";
 import ShippingLabelsPdf, { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
 
 const downloadsFolder = Cypress.config("downloadsFolder");
