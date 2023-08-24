@@ -42,9 +42,7 @@ const getChildrenInDatabase = async (familyID: string): Promise<string[]> => {
         .not("age", "is", null);
 
     if (errorExists(error, status)) {
-        throw new FetchError(
-            "We could not fetch the children data at this time. Please try again later."
-        );
+        throw new FetchError("the children data");
     }
     return data!.map((datum) => datum.primary_key);
 };
