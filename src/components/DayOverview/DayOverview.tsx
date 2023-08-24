@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import supabase from "@/supabaseClient";
 import DayOverviewButton from "@/components/DayOverview/DayOverviewButton";
@@ -6,7 +8,7 @@ import { Schema } from "@/database_utils";
 interface Props {
     text: string;
     date: Date;
-    location: string;
+    collectionCentreKey: string;
 }
 
 export type ParcelOfSpecificDateAndLocation = Pick<Schema["parcels"], "collection_datetime"> & {
@@ -22,6 +24,8 @@ export interface DayOverviewData {
     data: ParcelOfSpecificDateAndLocation[];
 }
 
+type CollectionCentreNameAndAbbreviation = Pick<Schema["collection_centres"], "name" | "acronym">;
+
 export const getCurrentDate = (date: Date, hyphen: boolean = false): string => {
     const formattedDate = date.toLocaleString("en-CA", {
         year: "numeric",
@@ -34,14 +38,14 @@ export const getCurrentDate = (date: Date, hyphen: boolean = false): string => {
 
 const getParcelsOfSpecificDateAndLocation = async (
     date: Date,
-    collectionCentre: string
+    collectionCentreKey: string
 ): Promise<ParcelOfSpecificDateAndLocation[]> => {
     const startDateString = date.toISOString();
     const endDate = new Date(date);
     endDate.setDate(date.getDate() + 1);
     const endDateString = endDate.toISOString();
 
-    const { data, error } = await supabase
+    const { data } = await supabase
         .from("parcels")
         .select(
             `collection_datetime, 
@@ -54,12 +58,12 @@ const getParcelsOfSpecificDateAndLocation = async (
         )
         .gte("collection_datetime", startDateString)
         .lt("collection_datetime", endDateString)
-        .eq("collection_centre", collectionCentre)
+        .eq("collection_centre", collectionCentreKey)
         .order("collection_datetime");
 
     // TODO VFB-22 Check if error message is consistent
 
-    if (error) {
+    if (!data) {
         throw new Error(
             "We were unable to fetch the parcels with the specified collection date and location."
         );
@@ -68,40 +72,42 @@ const getParcelsOfSpecificDateAndLocation = async (
     return data;
 };
 
-const collectionCentreToAbbreviation = (
-    collectionCentre: Schema["parcels"]["collection_centre"]
-): string => {
-    switch (collectionCentre) {
-        case "Brixton Hill - Methodist Church":
-            return "BH_MC";
-        case "Clapham - St Stephens Church":
-            return "CLP_SC";
-        case "N&B - Emmanuel Church":
-            return "NAB_EC";
-        case "Streatham - Immanuel & St Andrew":
-            return "STM_IS";
-        case "Vauxhall Hope Church":
-            return "VHC";
-        case "Waterloo - Oasis":
-            return "WAT_OA";
-        case "Waterloo - St George the Martyr":
-            return "WAT_SG";
-        case "Waterloo - St Johns":
-            return "WAT_SJ";
-        case "Delivery":
-            return "Delivery";
-        default:
-            throw new Error("Invalid location");
+const fetchCollectionCentreNameAndAbbreviation = async (
+    collectionCentreKey: string
+): Promise<CollectionCentreNameAndAbbreviation> => {
+    const { data } = await supabase
+        .from("collection_centres")
+        .select("name, acronym")
+        .eq("primary_key", collectionCentreKey)
+        .limit(1);
+
+    // TODO VFB-22 Check if error message is consistent
+
+    if (!data) {
+        throw new Error(
+            "We were unable to fetch the collection centre data. Please try again later"
+        );
     }
+
+    return data[0];
 };
 
-const DayOverview = async ({ text, date, location }: Props): Promise<React.ReactElement> => {
-    const parcelsOfSpecificDate = await getParcelsOfSpecificDateAndLocation(date, location);
+const DayOverview = async ({
+    text,
+    date,
+    collectionCentreKey,
+}: Props): Promise<React.ReactElement> => {
+    const [collectionCentreNameAndAbbreviation, parcelsOfSpecificDate] = await Promise.all([
+        fetchCollectionCentreNameAndAbbreviation(collectionCentreKey),
+        getParcelsOfSpecificDateAndLocation(date, collectionCentreKey),
+    ]);
+
     const dateString = getCurrentDate(date);
-    const fileName = `DayOverview_${dateString}_${collectionCentreToAbbreviation(location)}.pdf`;
+
+    const fileName = `DayOverview_${dateString}_${collectionCentreNameAndAbbreviation?.acronym}.pdf`;
     const data: DayOverviewData = {
         date: date,
-        location: location,
+        location: collectionCentreNameAndAbbreviation?.name,
         data: parcelsOfSpecificDate,
     };
 
