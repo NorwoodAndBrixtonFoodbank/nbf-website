@@ -71,7 +71,7 @@ const ActionBar: React.FC<Props> = (props) => {
                     Actions
                 </Button>
             </OuterDiv>
-            {modalError  && (
+            {modalError && (
                 <AlertBox>
                     <Alert severity="error">{modalError}</Alert>
                 </AlertBox>
