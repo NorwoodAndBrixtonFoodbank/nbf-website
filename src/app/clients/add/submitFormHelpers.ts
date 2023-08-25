@@ -2,7 +2,7 @@ import { InsertSchema, Schema, UpdateSchema } from "@/database_utils";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { checkboxGroupToArray, Fields, Person } from "@/components/Form/formFunctions";
 import supabase from "@/supabaseClient";
-import { FetchError, DatabaseError } from "@/app/errorClasses";
+import { DatabaseError } from "@/app/errorClasses";
 
 type FamilyDatabaseInsertRecord = InsertSchema["families"];
 type FamilyDatabaseUpdateRecord = UpdateSchema["families"];
@@ -37,7 +37,7 @@ const getChildrenInDatabase = async (familyID: string): Promise<string[]> => {
         .not("age", "is", null);
 
     if (error) {
-        throw new FetchError("the children data");
+        throw new DatabaseError("fetch", "children data");
     }
     return data!.map((datum) => datum.primary_key);
 };
@@ -51,7 +51,7 @@ const getNumberAdults = async (familyID: string, gender: string): Promise<number
         .is("age", null);
 
     if (error) {
-        throw new FetchError("the number of adults data");
+        throw new DatabaseError("fetch", "adults data");
     }
     return count!;
 };
@@ -70,7 +70,7 @@ const deleteAdultMembers = async (
         .limit(count);
 
     if (error) {
-        throw new DatabaseError("to delete adult member data");
+        throw new DatabaseError("delete", "adult member data");
     }
 };
 
@@ -86,7 +86,7 @@ const updateChildren = async (children: Person[]): Promise<void> => {
             .eq("primary_key", child.primaryKey);
 
         if (error) {
-            throw new DatabaseError("to update the children data");
+            throw new DatabaseError("update", "children data");
         }
     }
 };
@@ -99,7 +99,7 @@ const deleteChildren = async (children: Person[]): Promise<void> => {
             .eq("primary_key", child.primaryKey);
 
         if (error) {
-            throw new DatabaseError("to delete children data");
+            throw new DatabaseError("delete", "children data");
         }
     }
 };
@@ -113,7 +113,7 @@ const insertClient = async (
         .select("primary_key, family_id");
 
     if (error) {
-        throw new DatabaseError("to insert a client");
+        throw new DatabaseError("insert", "client data");
     }
     return ids![0];
 };
@@ -130,7 +130,7 @@ const insertFamily = async (peopleArray: Person[], familyID: string): Promise<vo
     const { error } = await supabase.from("families").insert(familyRecords);
 
     if (error) {
-        throw new DatabaseError("to insert a family");
+        throw new DatabaseError("insert", "family data");
     }
 };
 
@@ -145,7 +145,7 @@ const updateClient = async (
         .select("primary_key, family_id");
 
     if (error) {
-        throw new DatabaseError("to update a client");
+        throw new DatabaseError("update", "client data");
     }
     return ids![0];
 };
@@ -244,7 +244,7 @@ export const submitAddClientForm: SubmitFormHelper = async (fields, router) => {
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
         await revertClientInsert(ids.primary_key);
-        throw new DatabaseError("to submit the add client form");
+        throw new DatabaseError("insert", "client data");
     }
 };
 
@@ -262,6 +262,6 @@ export const submitEditClientForm: SubmitFormHelper = async (
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
         await revertClientUpdate(clientBeforeUpdate);
-        throw new DatabaseError("to submit the edit client form");
+        throw new DatabaseError("update", "client data");
     }
 };

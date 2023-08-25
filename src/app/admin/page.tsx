@@ -6,7 +6,7 @@ import { Datum } from "@/components/Tables/Table";
 import { Database } from "@/database_types_file";
 import supabase from "@/supabaseServer";
 import { User } from "@supabase/gotrue-js";
-import { FetchError } from "@/app/errorClasses";
+import { DatabaseError } from "@/app/errorClasses";
 
 // disables caching
 export const revalidate = 0;
@@ -23,7 +23,7 @@ const getUsers = async (): Promise<UserRow[]> => {
     const { data, error } = await supabase.functions.invoke("admin-get-users");
 
     if (error) {
-        throw new FetchError("user information");
+        throw new DatabaseError("fetch", "user information");
     }
 
     const users: User[] = JSON.parse(data);

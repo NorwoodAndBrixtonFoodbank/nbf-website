@@ -3,7 +3,7 @@ import React, { ReactElement } from "react";
 import ListsDataView, { ListRow } from "@/app/lists/ListDataview";
 import Title from "@/components/Title/Title";
 import supabase from "@/supabaseServer";
-import { FetchError } from "@/app/errorClasses";
+import { DatabaseError } from "@/app/errorClasses";
 
 // disables caching
 export const revalidate = 0;
@@ -16,7 +16,7 @@ interface Props {
 const fetchList = async (): Promise<ListRow[]> => {
     const { data, error } = await supabase.from("lists").select();
     if (error) {
-        throw new FetchError("the lists data");
+        throw new DatabaseError("fetch", "lists data");
     }
     return data;
 };
@@ -24,7 +24,7 @@ const fetchList = async (): Promise<ListRow[]> => {
 const fetchComment = async (): Promise<string> => {
     const { data, error } = await supabase.from("website_data").select().eq("name", "lists_text");
     if (error) {
-        throw new FetchError("the lists comment");
+        throw new DatabaseError("fetch", "lists comment");
     }
     return data?.[0]?.value ?? "";
 };

@@ -15,5 +15,5 @@ export const insertParcel = async (parcelRecord: InsertedParcels): Promise<Fetch
     if (error === null && Math.floor(status / 100) === 2) {
         return ids![0];
     }
-    throw new DatabaseError();
+    throw new DatabaseError("insert", "parcel data");
 };

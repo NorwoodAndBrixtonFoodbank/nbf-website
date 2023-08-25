@@ -1,6 +1,6 @@
 import { Schema } from "@/database_utils";
 import { CalendarEvent } from "@/components/Calendar/Calendar";
-import { FetchError } from "@/app/errorClasses";
+import { DatabaseError } from "@/app/errorClasses";
 
 type ClientName = { clients: { full_name: string } | null };
 type CollectionCentres = { collection_centres: { name: string } | null };
@@ -19,7 +19,7 @@ export const getParcelsWithCollectionDate = async (): Promise<ParcelWithClientNa
         .select("*, clients ( full_name )")
         .not("collection_datetime", "is", null);
     if (error) {
-        throw new FetchError("the parcels data");
+        throw new DatabaseError("fetch", "parcels data");
     }
     return data;
 };

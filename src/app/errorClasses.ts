@@ -1,15 +1,10 @@
-export class FetchError extends Error {
-    constructor(faultyArea = "the data") {
-        super(`We could not fetch ${faultyArea} at this time. Please try again later.`);
-        this.name = "FetchError";
-    }
-}
-
 export class DatabaseError extends Error {
-    constructor(faultyArea = "") {
+    constructor(errorCategory: DatabaseOperation, faultyArea = "") {
         super(
-            `We could not process the request ${faultyArea} at this time. Please try again later.`
+            `We could not ${errorCategory} the ${faultyArea} at this time. Please try again later.`
         );
         this.name = "DatabaseError";
     }
 }
+
+type DatabaseOperation = "fetch" | "insert" | "update" | "delete";
