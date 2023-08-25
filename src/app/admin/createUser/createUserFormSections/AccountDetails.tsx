@@ -9,11 +9,30 @@ import {
     errorText,
     onChangeText,
 } from "@/components/Form/formFunctions";
-import { passwordRule, passwordRuleDisplay } from "@/app/admin/common/passwordConfig";
+import { checkPassword, userPasswordRules } from "@/app/admin/common/passwordConfig";
+import { getPasswordHandler } from "@/components/DataInput/inputHandlerFactories";
 
 const emailRegex = /^\S+@\S+$/;
 
-const AccountDetails: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSetter }) => {
+const AccountDetails: React.FC<CardProps> = ({ fields, fieldSetter, formErrors, errorSetter }) => {
+    let passwordError = Errors.initial;
+    let passwordHelperText: string | null = "";
+
+    const passwordOnChange = getPasswordHandler((password: string) => {
+        fieldSetter("password", password);
+        passwordHelperText = checkPassword(password, userPasswordRules);
+
+        if (password.length === 0) {
+            passwordError = Errors.required;
+        } else if (passwordHelperText !== null) {
+            passwordError = Errors.invalid;
+        } else {
+            passwordError = Errors.none;
+        }
+
+        errorSetter("password", passwordError);
+    });
+
     return (
         <GenericFormCard
             title="Account Details"
@@ -32,18 +51,10 @@ const AccountDetails: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSet
                     error={errorExists(formErrors.password)}
                     helperText={
                         errorText(formErrors.password) === Errors.invalid
-                            ? passwordRuleDisplay
+                            ? checkPassword(fields.password, userPasswordRules)!
                             : errorText(formErrors.password)
                     }
-                    onChange={onChangeText(
-                        fieldSetter,
-                        errorSetter,
-                        "password",
-                        true,
-                        undefined,
-                        undefined,
-                        passwordRule
-                    )}
+                    onChange={passwordOnChange}
                 />
             </>
         </GenericFormCard>
