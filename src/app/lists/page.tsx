@@ -26,12 +26,12 @@ const fetchComment = async (): Promise<string> => {
     if (error) {
         throw new DatabaseError("fetch", "lists comment");
     }
-    return data?.[0]?.value ?? "";
+    return data[0].value ?? "";
 };
 
 const fetchData = async (): Promise<Props> => {
-    const values = await Promise.all([fetchList(), fetchComment()]);
-    return { data: values[0], comment: values[1] };
+    const [data, comment] = await Promise.all([fetchList(), fetchComment()]);
+    return { data, comment };
 };
 
 const Lists = async (): Promise<ReactElement> => {

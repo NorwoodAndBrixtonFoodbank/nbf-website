@@ -51,5 +51,5 @@ export const fetchComment = async (): Promise<string> => {
     if (error) {
         throw new DatabaseError("fetch", "lists comment");
     }
-    return data?.[0]?.value ?? "";
+    return data[0].value ?? "";
 };
