@@ -15,7 +15,12 @@ export type CollectionCentresLabelsAndValues = [
     Schema["collection_centres"]["primary_key"]
 ][];
 
-const getCollectionCentresLabelsAndValues = async (): Promise<CollectionCentresLabelsAndValues> => {
+type CollectionCentresInfo = [
+    Schema["collection_centres"]["primary_key"],
+    CollectionCentresLabelsAndValues
+];
+
+const getCollectionCentresInfo = async (): Promise<CollectionCentresInfo> => {
     const { data, error } = await supabase.from("collection_centres").select("primary_key, name");
 
     if (error) {
@@ -23,19 +28,25 @@ const getCollectionCentresLabelsAndValues = async (): Promise<CollectionCentresL
             "We were unable to fetch the collection centre data. Please try again later"
         );
     }
-
-    return data
+    const collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues = data
         .filter((collectionCentre) => collectionCentre.name !== "Delivery")
         .map((collectionCentre) => [collectionCentre.name, collectionCentre.primary_key]);
+
+    const deliveryPrimaryKey = data.filter(
+        (collectionCentre) => collectionCentre.name === "Delivery"
+    )[0].primary_key;
+
+    return [deliveryPrimaryKey, collectionCentresLabelsAndValues];
 };
 
 const AddParcels = async ({ params }: AddParcelParameters): Promise<React.ReactElement> => {
-    const collectionCentresLabelsAndValues = await getCollectionCentresLabelsAndValues();
+    const [deliveryPrimaryKey, collectionCentresLabelsAndValues] = await getCollectionCentresInfo();
 
     return (
         <main>
             <AddParcelForm
                 id={params.id}
+                deliveryPrimaryKey={deliveryPrimaryKey}
                 collectionCentresLabelsAndValues={collectionCentresLabelsAndValues}
             />
         </main>

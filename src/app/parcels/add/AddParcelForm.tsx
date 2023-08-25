@@ -23,6 +23,7 @@ import { insertParcel } from "@/app/parcels/add/databaseFunctions";
 import Button from "@mui/material/Button";
 import Title from "@/components/Title/Title";
 import { CollectionCentresLabelsAndValues } from "@/app/parcels/add/[id]/page";
+import { Schema } from "@/database_utils";
 
 interface AddParcelFields {
     voucherNumber: string;
@@ -36,6 +37,7 @@ interface AddParcelFields {
 
 interface AddParcelFormProps {
     id: string;
+    deliveryPrimaryKey: Schema["collection_centres"]["primary_key"];
     collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues;
 }
 
@@ -86,7 +88,11 @@ const mergeDateAndTime = (date: Date, time: Date): Date => {
     );
 };
 
-const AddParcelForm: React.FC<AddParcelFormProps> = ({ id, collectionCentresLabelsAndValues }) => {
+const AddParcelForm: React.FC<AddParcelFormProps> = ({
+    id,
+    deliveryPrimaryKey,
+    collectionCentresLabelsAndValues,
+}) => {
     const router = useRouter();
     const [fields, setFields] = useState(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
@@ -141,7 +147,7 @@ const AddParcelForm: React.FC<AddParcelFormProps> = ({ id, collectionCentresLabe
             client_id: id,
             packing_datetime: packingDateTime.toISOString(),
             voucher_number: fields.voucherNumber,
-            collection_centre: isDelivery ? "Delivery" : fields.collectionCentre,
+            collection_centre: isDelivery ? deliveryPrimaryKey : fields.collectionCentre,
             collection_datetime: collectionDateTime,
         };
         try {

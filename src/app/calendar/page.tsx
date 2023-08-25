@@ -4,6 +4,7 @@ import ParcelCalendar from "@/app/calendar/ParcelCalendar";
 import { ParcelsWithExtraFields } from "@/app/calendar/parcelCalendarFunctions";
 import { Schema } from "@/database_utils";
 import supabase from "@/supabaseServer";
+export const revalidate = 0;
 
 const getCollectionCentres = async (): Promise<Schema["collection_centres"]["name"][]> => {
     const { data, error } = await supabase.from("collection_centres").select("name");

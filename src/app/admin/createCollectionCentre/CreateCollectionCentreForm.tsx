@@ -19,6 +19,7 @@ import AcronymCard from "@/app/admin/createCollectionCentre/createCollectionCent
 import supabase from "@/supabaseClient";
 
 const initialFields: Schema["collection_centres"] = {
+    primary_key: "",
     name: "",
     acronym: "",
 };
