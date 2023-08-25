@@ -2,7 +2,7 @@ import React from "react";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/database_utils";
 import PdfButton from "@/components/PdfButton/PdfButton";
-import ShippingLabelsPdf, { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
+import ShippingLabelsPDF, { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPDF";
 import { DatabaseError } from "@/app/errorClasses";
 
 const formatDatetime = (datetimeString: string | null, isDatetime: boolean): string => {

@@ -4,7 +4,8 @@ import Calendar from "@/components/Calendar/Calendar";
 import Title from "@/components/Title/Title";
 import React from "react";
 import styled, { RainbowPalette, useTheme } from "styled-components";
-import parcelsToCollectionEvents, {
+
+import {
     LocationColorMap,
     parcelsToCollectionEvents,
     ParcelsWithExtraFields,
