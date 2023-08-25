@@ -75,9 +75,14 @@ const Statuses: React.FC<Props> = ({
 
     const onMenuItemClick = (status: statusType): (() => void) => {
         return () => {
-            setSelectedStatus(status);
-            setStatusModal(true);
-            setStatusAnchorElement(null);
+            if (selectedData.length !== 0) {
+                setSelectedStatus(status);
+                setStatusModal(true);
+                setStatusAnchorElement(null);
+                setModalError(null);
+            } else {
+                setModalError("Please select at least 1 row.");
+            }
         };
     };
 
