@@ -9,9 +9,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshPageButton from "@/app/admin/RefreshPageButton";
 import { Schema } from "@/database_utils";
 import supabase from "@/supabaseClient";
+import { DatabaseError } from "@/app/errorClasses";
 
 const DangerDialog = styled(Modal)`
-    & #deleteCollectionCentreDialog {
+    & .header {
         background-color: ${(props) => props.theme.error};
     }
 `;
@@ -48,11 +49,8 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
             .delete()
             .eq("name", collectionCentreToDelete!.name);
 
-        // TODO display error message in table
         if (error) {
-            throw new Error(
-                "We could not delete the collection centre at this time. Please try again later."
-            );
+            throw new DatabaseError("delete", "collection centre data");
         }
 
         setCollectionCentreToDelete(undefined);
@@ -93,10 +91,10 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
                         startIcon={<DeleteIcon />}
                         onClick={onCollectionCentreDeleteConfirmation}
                     >
-                        CONFIRM
+                        Confirm
                     </Button>
                     <Button color="secondary" onClick={onCollectionCentreDeleteCancellation}>
-                        CANCEL
+                        Cancel
                     </Button>
                 </OptionButtonDiv>
             </DangerDialog>

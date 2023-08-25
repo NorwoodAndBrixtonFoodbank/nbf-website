@@ -3,6 +3,7 @@ import React from "react";
 import AddParcelForm from "@/app/parcels/add/AddParcelForm";
 import { Schema } from "@/database_utils";
 import supabase from "@/supabaseServer";
+import { DatabaseError } from "@/app/errorClasses";
 
 interface AddParcelParameters {
     params: {
@@ -24,9 +25,7 @@ const getCollectionCentresInfo = async (): Promise<CollectionCentresInfo> => {
     const { data, error } = await supabase.from("collection_centres").select("primary_key, name");
 
     if (error) {
-        throw new Error(
-            "We were unable to fetch the collection centre data. Please try again later"
-        );
+        throw new DatabaseError("fetch", "collection centre data");
     }
     const collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues = data
         .filter((collectionCentre) => collectionCentre.name !== "Delivery")

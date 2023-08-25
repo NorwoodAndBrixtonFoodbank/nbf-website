@@ -36,7 +36,7 @@ interface Props {
     collectionCentreData: Schema["collection_centres"][];
 }
 
-const StyledIcon = styled(FontAwesomeIcon)`
+const PanelIcon = styled(FontAwesomeIcon)`
     padding-right: 0.9rem;
 `;
 
@@ -51,7 +51,7 @@ const AdminPage: React.FC<Props> = (props) => {
         },
         { panelTitle: "Create User", panelIcon: faUserPlus, panelContent: <CreateUserForm /> },
         {
-            panelTitle: "Collection Tables Centre",
+            panelTitle: "Collection Centres Table",
             panelIcon: faCity,
             panelContent: (
                 <CollectionCentresTable collectionCentreData={props.collectionCentreData} />

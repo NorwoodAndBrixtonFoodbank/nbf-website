@@ -4,6 +4,8 @@ import ParcelCalendar from "@/app/calendar/ParcelCalendar";
 import { ParcelsWithExtraFields } from "@/app/calendar/parcelCalendarFunctions";
 import { Schema } from "@/database_utils";
 import supabase from "@/supabaseServer";
+import { DatabaseError } from "@/app/errorClasses";
+
 export const revalidate = 0;
 
 const getCollectionCentres = async (): Promise<Schema["collection_centres"]["name"][]> => {
@@ -20,13 +22,13 @@ const getParcelsWithCollectionDate = async (): Promise<ParcelsWithExtraFields[]>
         .from("parcels")
         .select(
             `*, 
-                    clients ( full_name ), 
-                    collection_centres ( name )`
+            clients ( full_name ), 
+            collection_centres ( name )`
         )
         .not("collection_datetime", "is", null);
 
     if (error) {
-        throw new Error("We were unable to fetch the parcels data. Please try again later");
+        throw new DatabaseError("fetch", "user information");
     }
 
     return data;
