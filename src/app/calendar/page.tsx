@@ -4,6 +4,8 @@ import ParcelCalendar from "@/app/calendar/ParcelCalendar";
 import supabase from "@/supabaseServer";
 import { ParcelsWithExtraFields } from "@/app/calendar/parcelCalendarFunctions";
 
+export const dynamic = "force-dynamic";
+
 const getParcelsWithCollectionDate = async (): Promise<ParcelsWithExtraFields[]> => {
     const { data, error } = await supabase
         .from("parcels")
