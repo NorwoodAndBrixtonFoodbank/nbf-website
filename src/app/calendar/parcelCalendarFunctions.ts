@@ -1,6 +1,5 @@
 import { Schema } from "@/database_utils";
 import { CalendarEvent } from "@/components/Calendar/Calendar";
-import { DatabaseError } from "@/app/errorClasses";
 
 type ClientName = { clients: { full_name: string } | null };
 type CollectionCentres = { collection_centres: { name: string } | null };
@@ -12,18 +11,6 @@ const COLLECTION_DURATION_MS = 30 * 60 * 1000;
 export interface LocationColorMap {
     [location: string]: { color: string; text: string };
 }
-
-export const getParcelsWithCollectionDate = async (): Promise<ParcelWithClientName[]> => {
-    const { data, error } = await supabase
-        .from("parcels")
-        .select("*, clients ( full_name )")
-        .not("collection_datetime", "is", null);
-    if (error) {
-        throw new DatabaseError("fetch", "parcels data");
-    }
-    return data;
-};
-
 export const parcelsToCollectionEvents = (
     parcels: ParcelsWithExtraFields[],
     colorMap: LocationColorMap
