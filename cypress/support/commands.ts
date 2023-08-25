@@ -22,8 +22,8 @@ const loginWithRetry = (iteration: number = 0): void => {
         return;
     }
 
-    cy.get("h1").then((heading) => {
-        if (heading.text().includes("Login")) {
+    cy.url().then((url) => {
+        if (url.includes("login")) {
             cy.get("button[type='submit']").then((submitButton) => {
                 if (submitButton.not(":disabled")) {
                     submitButton.trigger("click");
