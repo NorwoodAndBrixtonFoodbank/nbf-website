@@ -59,7 +59,7 @@ const getParcelsOfSpecificDateAndLocation = async (
         .lt("collection_datetime", endDateString)
         .eq("collection_centre", collectionCentreKey)
         .order("collection_datetime");
-    
+
     if (error) {
         throw new Error(
             "We were unable to fetch the parcels with the specified collection date and location."

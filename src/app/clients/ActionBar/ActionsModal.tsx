@@ -49,11 +49,6 @@ interface DriverOverviewInputProps {
     onDriverNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-interface DriverOverviewInputProps {
-    onDateChange: (newDate: Dayjs | null) => void;
-    onDriverNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
 export const DriverOverviewInput: React.FC<DriverOverviewInputProps> = ({
     onDateChange,
     onDriverNameChange,
@@ -76,7 +71,7 @@ interface DayOverviewInputProps {
 export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
     onDateChange,
     onCollectionCentreChange,
-    setCollectionCentre
+    setCollectionCentre,
 }) => {
     const [collectionCentres, setCollectionCentres] = useState<[string, string][] | null>(null);
 
@@ -96,14 +91,15 @@ export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
                 item.primary_key,
             ]);
             setCollectionCentres(transformedData);
-            setCollectionCentre(transformedData[0][1])
+            setCollectionCentre(transformedData[0][1]);
         })();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
         <>
             <Heading>Location</Heading>
-            {(collectionCentres !== null) && (
+            {collectionCentres !== null && (
                 <DropdownListInput
                     onChange={onCollectionCentreChange}
                     labelsAndValues={collectionCentres}

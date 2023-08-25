@@ -23,14 +23,11 @@ export const ShoppingListModalButton: React.FC<ModalButtonProps> = ({ data }) =>
     return <ShoppingList text="Download" parcelId={data[0].parcelId} />;
 };
 
-export const DayOverviewModalButton: React.FC<{collectionCentre: string, date: Date}> = ({collectionCentre, date}) => {
-    return (
-        <DayOverview
-            text="Download"
-            date={date}
-            collectionCentreKey={collectionCentre}
-        />
-    );
+export const DayOverviewModalButton: React.FC<{ collectionCentre: string; date: Date }> = ({
+    collectionCentre,
+    date,
+}) => {
+    return <DayOverview text="Download" date={date} collectionCentreKey={collectionCentre} />;
 };
 
 interface DriverOverviewModalButtonProps {
