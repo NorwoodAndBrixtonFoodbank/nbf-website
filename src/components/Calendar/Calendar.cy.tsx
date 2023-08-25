@@ -54,6 +54,7 @@ describe("<Calendar />", () => {
 
     it("events render", () => {
         cy.mount(<StyledCalendar initialEvents={sampleEvents} initialDate={testDate} />);
+        cy.get("label").contains("Brixton Hill - Methodist Church").click();
         cy.get(".fc-event").should("be.visible");
     });
 
@@ -99,18 +100,21 @@ describe("<Calendar />", () => {
 
     it("shows description when event with description is clicked", () => {
         cy.mount(<StyledCalendar initialEvents={sampleEvents} initialDate={testDate} />);
+        cy.get("label").contains("Brixton Hill - Methodist Church").click();
         cy.get(".fc-event-title").contains("event2").parent().click();
         cy.get(".MuiDialog-container").should("include.text", "a piece of description text");
     });
 
     it("does not show description when event without description is clicked", () => {
         cy.mount(<StyledCalendar initialEvents={sampleEvents} initialDate={testDate} />);
+        cy.get("label").contains("Brixton Hill - Methodist Church").click();
         cy.get(".fc-event-title").contains("event1").click();
         cy.get(".MuiDialog-container").should("not.include.text", "description");
     });
 
     it("shows correct date for full day event", () => {
         cy.mount(<StyledCalendar initialEvents={sampleEvents} initialDate={testDate} />);
+        cy.get("label").contains("Brixton Hill - Methodist Church").click();
         cy.get(".fc-event-title").contains("event1").click();
         cy.get(".MuiDialog-container").should(
             "include.text",
@@ -148,6 +152,7 @@ describe("<Calendar />", () => {
 
     it("shows correct date for non-full day event", () => {
         cy.mount(<StyledCalendar initialEvents={sampleEvents} initialDate={testDate} />);
+        cy.get("label").contains("Brixton Hill - Methodist Church").click();
         cy.get(".fc-event-title").contains("event2").parent().click();
         cy.get(".MuiDialog-container").should(
             "include.text",
