@@ -15,6 +15,10 @@ const PanelIcon = styled(FontAwesomeIcon)`
     margin-right: 0.5em;
 `;
 
+const PanelTitle = styled.h2`
+    text-transform: uppercase;
+`;
+
 interface Panel {
     panelTitle: string;
     panelIcon: IconDefinition;
@@ -28,11 +32,11 @@ interface Props {
 const AdminPage: React.FC<Props> = (props) => {
     const adminPanels: Panel[] = [
         {
-            panelTitle: "USERS TABLE",
+            panelTitle: "Users Table",
             panelIcon: faUsers,
             panelContent: <UsersTable userData={props.userData} />,
         },
-        { panelTitle: "CREATE USER", panelIcon: faUserPlus, panelContent: <CreateUserForm /> },
+        { panelTitle: "Create User", panelIcon: faUserPlus, panelContent: <CreateUserForm /> },
     ];
 
     return (
@@ -43,7 +47,7 @@ const AdminPage: React.FC<Props> = (props) => {
                         <Accordion elevation={0}>
                             <AccordionSummary expandIcon={<ExpandMore />}>
                                 <PanelIcon size="2x" icon={panelIcon} />
-                                <h2>{panelTitle}</h2>
+                                <PanelTitle>{panelTitle}</PanelTitle>
                             </AccordionSummary>
                             <AccordionDetails>{panelContent}</AccordionDetails>
                         </Accordion>
