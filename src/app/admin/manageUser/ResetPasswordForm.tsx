@@ -26,7 +26,7 @@ interface Props {
 }
 
 const ResetPasswordForm: React.FC<Props> = (props) => {
-    const [password, setPassword] = useState<string>("");
+    const [password, setPassword] = useState("");
     const passwordIsValid = checkPassword(password, userPasswordRules) === null;
 
     const onConfirmPassword = async (): Promise<void> => {

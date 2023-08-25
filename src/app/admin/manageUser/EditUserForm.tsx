@@ -25,7 +25,7 @@ const EditUserForm: React.FC<Props> = (props) => {
             attributes: { app_metadata: { role } },
         });
 
-        if (error === null) {
+        if (!error) {
             props.onConfirm({
                 success: true,
                 message: (

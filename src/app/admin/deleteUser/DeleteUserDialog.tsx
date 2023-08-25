@@ -28,7 +28,7 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
     const onDeleteConfirm = async (): Promise<void> => {
         const { error } = await deleteUser(props.userToDelete!.id);
 
-        if (error === null) {
+        if (!error) {
             props.setAlertOptions({
                 success: true,
                 message: (
