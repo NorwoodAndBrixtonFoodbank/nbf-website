@@ -8,11 +8,12 @@ import styled, { RainbowPalette, useTheme } from "styled-components";
 import {
     LocationColorMap,
     parcelsToCollectionEvents,
-    ParcelWithClientName,
+    ParcelsWithExtraFields,
 } from "@/app/calendar/parcelCalendarFunctions";
 
 interface ParcelCalendarProps {
-    parcelsWithCollectionDate: ParcelWithClientName[];
+    parcelsWithCollectionDate: ParcelsWithExtraFields[];
+    collectionCentres: string[];
 }
 
 interface ColorTextProps {
@@ -64,6 +65,7 @@ const ParcelCalendar: React.FC<ParcelCalendarProps> = (props) => {
                             colorMap
                         )}
                         editable={false}
+                        initialLocations={props.collectionCentres}
                     />
                 </CalendarWrapper>
             </Centerer>

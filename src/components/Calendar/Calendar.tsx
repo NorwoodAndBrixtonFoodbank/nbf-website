@@ -9,12 +9,14 @@ import { EventClickArg } from "@fullcalendar/core";
 import styled from "styled-components";
 import EventModal from "@/components/Calendar/EventModal";
 import { Paper } from "@mui/material";
+import CalendarFilters from "@/components/Calendar/Filters";
 
 export interface CalendarProps {
     initialEvents: CalendarEvent[];
     view?: string;
     editable?: boolean;
     initialDate?: Date;
+    initialLocations: string[];
 }
 
 export interface CalendarEvent {
@@ -27,6 +29,7 @@ export interface CalendarEvent {
     borderColor?: string;
     textColor?: string;
     allDay?: boolean;
+    location: string;
 }
 
 const CalendarStyling = styled(Paper)`
@@ -190,11 +193,20 @@ const makeAllDayEventsInclusive = (endDateExclusiveEvents: CalendarEvent[]): Cal
     });
 };
 
+const filterEventsByLocation = (
+    locations: string[],
+    allEvents: CalendarEvent[]
+): CalendarEvent[] => {
+    const viewedEvents = allEvents.filter((event) => locations.includes(event.location));
+    return makeAllDayEventsInclusive(viewedEvents);
+};
+
 const Calendar: React.FC<CalendarProps> = ({
     initialEvents,
     view = "dayGridMonth",
     editable = false,
     initialDate,
+    initialLocations,
 }) => {
     const [eventClick, setEventClick] = useState<CalendarEvent | null>(null);
     const calendarRef = useRef<FullCalendar>(null);
@@ -209,10 +221,17 @@ const Calendar: React.FC<CalendarProps> = ({
         calendarApi.changeView("timeGridDay", info.dateStr);
     };
 
+    const [locations, setLocations] = useState<string[]>([]);
+
     return (
         <>
             <EventModal eventClick={eventClick} setEventClick={setEventClick} />
             <CalendarStyling>
+                <CalendarFilters
+                    allLocations={initialLocations}
+                    editLocations={setLocations}
+                    currentLocations={locations}
+                />
                 <FullCalendar
                     ref={calendarRef}
                     viewClassNames="calendar-view"
@@ -222,7 +241,7 @@ const Calendar: React.FC<CalendarProps> = ({
                         center: "title",
                         right: "dayGridMonth,timeGridWeek,timeGridDay",
                     }}
-                    events={makeAllDayEventsInclusive(initialEvents)}
+                    events={filterEventsByLocation(locations, initialEvents)}
                     initialView={view}
                     editable={editable}
                     selectable={editable}
