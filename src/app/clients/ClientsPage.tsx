@@ -21,6 +21,7 @@ import { CenterComponent } from "@/components/Form/formStyling";
 import ActionBar, { statuses } from "@/app/clients/ActionBar";
 import AddParcelsButton from "@/app/clients/AddParcelsButton";
 import { dateFilter } from "@/components/Tables/Filters";
+import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
 
 // TODO Change Button to LinkButton
 
@@ -149,12 +150,15 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData: parcelsTableData }) =>
         },
         lastStatus: (status: ParcelsTableRow["lastStatus"]): React.ReactNode => {
             if (status === null) {
-                return <></>;
+                return null;
             }
 
             const { name, timestamp } = status;
 
             return `${name} @ ${timestamp.toLocaleDateString()}`;
+        },
+        familyCategory: (familyCategory: ParcelsTableRow["familyCategory"]): string => {
+            return familyCountToFamilyCategory(familyCategory);
         },
     };
 

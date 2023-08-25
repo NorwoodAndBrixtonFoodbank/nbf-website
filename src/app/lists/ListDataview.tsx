@@ -1,6 +1,6 @@
 "use client";
 
-import Table, { ColumnStyleOptions } from "@/components/Tables/Table";
+import Table, { ColumnDisplayFunctions, ColumnStyles } from "@/components/Tables/Table";
 import React, { useState } from "react";
 import styled from "styled-components";
 import EditModal, { EditModalState } from "@/app/lists/EditModal";
@@ -50,44 +50,31 @@ export const headerKeysAndLabels = [
     ["8", "Family of 8"],
     ["9", "Family of 9"],
     ["10", "Family of 10"],
-] as const;
+] satisfies [keyof ListRow, string][];
 
 const displayQuantityAndNotes = (data: QuantityAndNotes): React.ReactElement => {
     return <TooltipCell cellValue={data.quantity} tooltipValue={data.notes ?? ""} />;
 };
 
 const listDataViewColumnDisplayFunctions = {
-    "1": displayQuantityAndNotes,
-    "2": displayQuantityAndNotes,
-    "3": displayQuantityAndNotes,
-    "4": displayQuantityAndNotes,
-    "5": displayQuantityAndNotes,
-    "6": displayQuantityAndNotes,
-    "7": displayQuantityAndNotes,
-    "8": displayQuantityAndNotes,
-    "9": displayQuantityAndNotes,
-    "10": displayQuantityAndNotes,
-};
+    ...Object.fromEntries(
+        headerKeysAndLabels.slice(1).map(([key]) => [key, displayQuantityAndNotes])
+    ),
+} satisfies ColumnDisplayFunctions<ListRow>;
 
-const defaultStyleOptions: ColumnStyleOptions = {
-    minWidth: "10rem",
-    center: true,
-};
-
-const listsColumnStyleOptions = {
+const listsColumnStyleOptions: ColumnStyles<ListRow> = {
     itemName: {
         minWidth: "8rem",
     },
-    "1": defaultStyleOptions,
-    "2": defaultStyleOptions,
-    "3": defaultStyleOptions,
-    "4": defaultStyleOptions,
-    "5": defaultStyleOptions,
-    "6": defaultStyleOptions,
-    "7": defaultStyleOptions,
-    "8": defaultStyleOptions,
-    "9": defaultStyleOptions,
-    "10": defaultStyleOptions,
+    ...Object.fromEntries(
+        headerKeysAndLabels.slice(1).map(([key]) => [
+            key,
+            {
+                minWidth: "10rem",
+                center: true,
+            },
+        ])
+    ),
 };
 
 const ListsDataView: React.FC<Props> = (props) => {
@@ -102,19 +89,18 @@ const ListsDataView: React.FC<Props> = (props) => {
     }
 
     const rows = props.data.map((row) => {
-        const newRow: ListRow = {
+        const newRow = {
             itemName: row.item_name,
-            "1": { quantity: row["1_quantity"], notes: row["1_notes"] },
-            "2": { quantity: row["2_quantity"], notes: row["2_notes"] },
-            "3": { quantity: row["3_quantity"], notes: row["3_notes"] },
-            "4": { quantity: row["4_quantity"], notes: row["4_notes"] },
-            "5": { quantity: row["5_quantity"], notes: row["5_notes"] },
-            "6": { quantity: row["6_quantity"], notes: row["6_notes"] },
-            "7": { quantity: row["7_quantity"], notes: row["7_notes"] },
-            "8": { quantity: row["8_quantity"], notes: row["8_notes"] },
-            "9": { quantity: row["9_quantity"], notes: row["9_notes"] },
-            "10": { quantity: row["10_quantity"], notes: row["10_notes"] },
-        };
+            ...Object.fromEntries(
+                headerKeysAndLabels.slice(1).map(([key]) => [
+                    key,
+                    {
+                        quantity: row[`${key}_quantity` as keyof Schema["lists"]],
+                        notes: row[`${key}_notes` as keyof Schema["lists"]],
+                    },
+                ])
+            ),
+        } as ListRow; // this cast is needed here as the type system can't infer what Object.fromEntries will return
         return newRow;
     });
 
@@ -174,7 +160,7 @@ const ListsDataView: React.FC<Props> = (props) => {
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
             <TableSurface>
                 <CommentBox originalComment={props.comment} />
-                <Table
+                <Table<ListRow>
                     checkboxes={false}
                     headerKeysAndLabels={headerKeysAndLabels}
                     toggleableHeaders={toggleableHeaders}

@@ -9,7 +9,6 @@ export interface Filter<Data, State> {
     filterComponent: (state: State, setState: (state: State) => void) => React.ReactElement;
     state: State;
     initialState: State;
-    clear: (state: State, setState: (state: State) => void) => void;
 }
 
 export interface KeyedFilter<Data, Key extends keyof Data, State> extends Filter<Data, State> {
@@ -96,9 +95,6 @@ export const textFilter = <Data, Key extends keyof Data>({
                 </TextFilterStyling>
             );
         },
-        clear: (_oldState, setState) => {
-            setState(initialValue);
-        },
     });
 };
 
@@ -140,7 +136,7 @@ export const dateFilter = <Data, Key extends keyof Data>({
         state: initialValue,
         initialState: initialValue,
         shouldFilter: (data, state) => {
-            const date = data[key] as Date;
+            const date = data[key];
             const from = state.from;
             const to = state.to;
 
@@ -161,7 +157,7 @@ export const dateFilter = <Data, Key extends keyof Data>({
                         onChange={(value) =>
                             setState({
                                 ...state,
-                                from: value as Date,
+                                from: value,
                             })
                         }
                         maxDate={state.to}
@@ -172,7 +168,7 @@ export const dateFilter = <Data, Key extends keyof Data>({
                         onAccept={(value) =>
                             setState({
                                 ...state,
-                                to: value as Date,
+                                to: value,
                             })
                         }
                         minDate={state.from}
@@ -181,9 +177,6 @@ export const dateFilter = <Data, Key extends keyof Data>({
                     />
                 </DateFilterContainer>
             );
-        },
-        clear: (_oldState, setState) => {
-            setState(initialValue);
         },
     });
 };

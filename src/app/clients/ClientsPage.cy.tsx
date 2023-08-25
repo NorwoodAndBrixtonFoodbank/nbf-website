@@ -87,15 +87,6 @@ const sampleRawExpandedClientDetails: RawClientDetails = {
 describe("Clients Page", () => {
     describe("Backend Processing for Table Data", () => {
         it("Fields are set correctly", () => {
-            cy.intercept("POST", "**/check-congestion-charge", (req) => {
-                const response = req.body.postcodes.map((postcode: string) => ({
-                    postcode,
-                    congestionCharge: true,
-                }));
-
-                req.reply(JSON.stringify(response));
-            });
-
             const result = processingDataToClientsTableData(
                 sampleProcessingData,
                 sampleCongestionChargeData
@@ -106,7 +97,7 @@ describe("Clients Page", () => {
                     parcelId: "PRIMARY_KEY1",
                     primaryKey: "PRIMARY_KEY2",
                     fullName: "CLIENT_NAME",
-                    familyCategory: "Family of 3",
+                    familyCategory: 3,
                     addressPostcode: "SW1A 2AA",
                     collectionDatetime: new Date("2023-08-04T13:30:00+00:00"),
                     deliveryCollection: {

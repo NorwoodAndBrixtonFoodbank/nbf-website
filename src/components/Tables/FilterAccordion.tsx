@@ -7,6 +7,7 @@ import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import Icon from "@/components/Icons/Icon";
 import { TableHeaders } from "@/components/Tables/Table";
 import { Filter } from "@/components/Tables/Filters";
+import { filtersToComponents } from "./TableFilterBar";
 
 interface FilterAccordionProps<Data> {
     toggleableHeaders?: readonly (keyof Data)[];
@@ -85,7 +86,7 @@ const SectionLabel = styled.small`
     font-weight: bold;
 `;
 
-const FilterAccordion = <Data extends unknown>({
+const FilterAccordion = <Data,>({
     toggleableHeaders,
     shownHeaderKeys,
     setShownHeaderKeys,
@@ -116,17 +117,7 @@ const FilterAccordion = <Data extends unknown>({
                     </Row>
                 </AccordionSummary>
                 <AccordionDetails>
-                    {filters.map((filter, index) => {
-                        const onFilter = (state: any): void => {
-                            const newFilters = [...filters];
-                            newFilters[index] = {
-                                ...newFilters[index],
-                                state,
-                            };
-                            setFilters(newFilters);
-                        };
-                        return filter.filterComponent(filter.state, onFilter);
-                    })}
+                    {filtersToComponents(filters, setFilters)}
                     <ColumnSelectRow>
                         <SectionLabel>Select Columns:</SectionLabel>
                         {(toggleableHeaders ?? []).map((key) => {

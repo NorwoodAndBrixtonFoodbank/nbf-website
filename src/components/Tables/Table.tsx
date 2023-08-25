@@ -14,6 +14,7 @@ import {
 import IconButton from "@mui/material/IconButton/IconButton";
 import Icon from "@/components/Icons/Icon";
 import { Filter, headerLabelFromKey, textFilter } from "@/components/Tables/Filters";
+import { Primitive } from "react-data-table-component/dist/src/DataTable/types";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -23,23 +24,22 @@ export interface Row<Data> {
 }
 
 export type ColumnDisplayFunction<T> = (data: T) => ReactNode;
+export type ColumnDisplayFunctions<Data> = {
+    [headerKey in keyof Data]?: ColumnDisplayFunction<Data[headerKey]>;
+};
+export type ColumnStyles<Data> = {
+    [headerKey in keyof Data]?: ColumnStyleOptions;
+};
 
 export type OnRowClickFunction<Data> = (
     row: Row<Data>,
     event: React.MouseEvent<Element, MouseEvent>
 ) => void;
 
-export interface ColumnStyleOptions {
-    grow?: number;
-    width?: string;
-    minWidth?: string;
-    maxWidth?: string;
-    right?: boolean;
-    center?: boolean;
-    wrap?: boolean;
-    allowOverflow?: boolean;
-    hide?: number;
-}
+export type ColumnStyleOptions = Omit<
+    TableColumn<unknown>,
+    "name" | "selector" | "sortable" | "sortFunction" | "cell"
+>;
 
 export interface SortOptions<Data, Key extends keyof Data> {
     key: Key;
@@ -60,19 +60,19 @@ interface Props<Data> {
     sortable?: (keyof Data | SortOptions<Data, any>)[];
     onEdit?: (data: number) => void;
     onDelete?: (data: number) => void;
-    columnDisplayFunctions?: { [headerKey in keyof Data]?: ColumnDisplayFunction<Data[headerKey]> };
-    columnStyleOptions?: { [headerKey in keyof Data]?: ColumnStyleOptions };
+    columnDisplayFunctions?: ColumnDisplayFunctions<Data>;
+    columnStyleOptions?: ColumnStyles<Data>;
     onRowClick?: OnRowClickFunction<Data>;
     autoFilter?: boolean;
 }
 
 interface CellProps<Data> {
     row: Row<Data>;
-    columnDisplayFunctions: { [headerKey in keyof Data]?: ColumnDisplayFunction<Data[headerKey]> };
+    columnDisplayFunctions: ColumnDisplayFunctions<Data>;
     headerKey: keyof Data;
 }
 
-const CustomCell = <Data extends unknown>({
+const CustomCell = <Data,>({
     row,
     columnDisplayFunctions,
     headerKey,
@@ -101,20 +101,13 @@ const StyledIconButton = styled(IconButton)`
     margin: 0.1rem;
 `;
 
-const defaultColumnStyleOptions: ColumnStyleOptions = {
+const defaultColumnStyleOptions = {
     grow: 1,
     minWidth: "2rem",
     maxWidth: "20rem",
-};
+} as const;
 
-const defaultSortFunction = <T extends unknown>(left: T, right: T): number => {
-    if (left === right) {
-        return 0;
-    }
-    return left < right ? -1 : 1;
-};
-
-const Table = <Data extends unknown>({
+const Table = <Data,>({
     data: inputData,
     headerKeysAndLabels,
     checkboxes,
@@ -199,18 +192,10 @@ const Table = <Data extends unknown>({
         }
         return {
             key: sortOption,
-            sortFunction: (datapoint: Data[keyof Data], otherDatapoint: Data[keyof Data]) => {
-                if (datapoint === otherDatapoint) {
-                    return 0;
-                }
-                return datapoint < otherDatapoint ? -1 : 1;
-            },
         };
     });
 
-    const columns: TableColumn<Row<Data>>[] = (
-        toggleableHeaders ? shownHeaders : headerKeysAndLabels
-    ).map(([headerKey, headerName]) => {
+    const columns: TableColumn<Row<Data>>[] = shownHeaders.map(([headerKey, headerName]) => {
         const columnStyles = Object.assign(
             { ...defaultColumnStyleOptions },
             columnStyleOptions[headerKey] ?? {}
@@ -218,14 +203,16 @@ const Table = <Data extends unknown>({
 
         const sortOption = sortOptions.find((sortOption) => sortOption.key === headerKey);
 
-        const sortFunction = sortOption?.sortFunction ?? defaultSortFunction;
+        const sortFunction = sortOption?.sortFunction;
         const sortable = sortOption !== undefined;
 
         return {
-            name: headerName,
-            selector: (row) => row.data[headerKey] ?? "",
+            name: <>{headerName}</>,
+            selector: (row) => row.data[headerKey] as Primitive, // The type cast here is needed as the type of selector is (row) => Primitive, but as we are using a custom cell, we can have it be anything
             sortable,
-            sortFunction: (row1, row2) => sortFunction(row1.data[headerKey], row2.data[headerKey]),
+            sortFunction: sortFunction
+                ? (row1, row2) => sortFunction(row1.data[headerKey], row2.data[headerKey])
+                : undefined,
             cell(row) {
                 return (
                     <CustomCell
@@ -274,9 +261,9 @@ const Table = <Data extends unknown>({
         });
     }
 
-    if (reorderable || onEdit) {
+    if (reorderable || onEdit || onDelete) {
         columns.unshift({
-            name: <p>Sort</p>,
+            name: "",
             cell: (row: Row<Data>) => {
                 const onEditClick = (): void => {
                     onEdit!(row.rowId);
@@ -328,6 +315,21 @@ const Table = <Data extends unknown>({
 
     const toDisplay = autoFilter ? rows.filter(shouldFilterRow) : rows;
 
+    const handleClear = (): void => {
+        setPrimaryFilters((filters) =>
+            filters.map((filter) => ({
+                ...filter,
+                state: filter.initialState,
+            }))
+        );
+        setAdditionalFilters((filters) =>
+            filters.map((filter) => ({
+                ...filter,
+                state: filter.initialState,
+            }))
+        );
+    };
+
     return (
         <Styling>
             <NoSsr>
@@ -339,14 +341,7 @@ const Table = <Data extends unknown>({
                     subHeader
                     subHeaderComponent={
                         <TableFilterBar<Data>
-                            handleClear={() =>
-                                setPrimaryFilters((filters) =>
-                                    filters.map((filter) => ({
-                                        ...filter,
-                                        state: filter.initialState,
-                                    }))
-                                )
-                            }
+                            handleClear={handleClear}
                             setFilters={setPrimaryFilters}
                             toggleableHeaders={toggleableHeaders}
                             filters={primaryFilters}

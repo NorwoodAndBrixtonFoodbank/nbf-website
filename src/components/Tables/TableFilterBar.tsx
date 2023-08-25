@@ -51,7 +51,24 @@ const Grow = styled.div`
     flex-grow: 1;
 `;
 
-const TableFilterBar = <Data extends unknown>(props: Props<Data>): React.ReactElement => {
+export const filtersToComponents = <Data,>(
+    filters: Filter<Data, any>[],
+    setFilters: (filters: Filter<Data, any>[]) => void
+): React.ReactElement[] => {
+    return filters.map((filter, index) => {
+        const onFilter = (state: any): void => {
+            const newFilters = [...filters];
+            newFilters[index] = {
+                ...newFilters[index],
+                state,
+            };
+            setFilters(newFilters);
+        };
+        return filter.filterComponent(filter.state, onFilter);
+    });
+};
+
+const TableFilterBar = <Data,>(props: Props<Data>): React.ReactElement => {
     if (props.filters.length === 0 && props.toggleableHeaders.length === 0) {
         return <></>;
     }
@@ -62,17 +79,7 @@ const TableFilterBar = <Data extends unknown>(props: Props<Data>): React.ReactEl
             <Styling>
                 {props.filters.length > 0 && (
                     <>
-                        {props.filters.map((filter, index) => {
-                            const onFilter = (state: any): void => {
-                                const newFilters = [...props.filters];
-                                newFilters[index] = {
-                                    ...newFilters[index],
-                                    state,
-                                };
-                                props.setFilters(newFilters);
-                            };
-                            return filter.filterComponent(filter.state, onFilter);
-                        })}
+                        {filtersToComponents(props.filters, props.setFilters)}
                         <Grow />
                         <StyledButton
                             variant="outlined"
