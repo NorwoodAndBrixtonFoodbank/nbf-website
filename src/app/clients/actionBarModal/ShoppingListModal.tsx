@@ -4,7 +4,7 @@ import React from "react";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
 import dayjs from "dayjs";
-import { ParcelsTableRow } from "@/app/clients/getClientsTableData";
+import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import ShoppingList from "@/pdf/ShoppingList/ShoppingList";
 
 interface SharedModalProps {

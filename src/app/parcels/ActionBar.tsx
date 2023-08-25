@@ -9,11 +9,11 @@ import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import { Dayjs } from "dayjs";
-import { ParcelsTableRow } from "@/app/clients/getClientsTableData";
+import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import Paper from "@mui/material/Paper/Paper";
 import Alert from "@mui/material/Alert";
 import ShoppingListModal from "@/app/clients/actionBarModal/ShoppingListModal";
-import ActionBarModal from "@/app/clients/ActionBarModal";
+import ActionBarModal from "@/app/parcels/ActionBarModal";
 
 interface Props {
     selected: number[];

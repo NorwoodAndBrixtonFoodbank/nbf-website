@@ -124,6 +124,7 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
 
     const pages = [
         ["Clients", "/clients"],
+        ["Parcels", "/parcels"],
         ["Lists", "/lists"],
         ["Calendar", "/calendar"],
         ["Admin", "/admin"],

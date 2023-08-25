@@ -1,4 +1,4 @@
-import { CongestionChargeDetails, ProcessingData } from "@/app/clients/fetchDataFromServer";
+import { CongestionChargeDetails, ProcessingData } from "@/app/parcels/fetchDataFromServer";
 import { Schema } from "@/databaseUtils";
 
 export interface ParcelsTableRow {
