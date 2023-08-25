@@ -222,7 +222,6 @@ const Calendar: React.FC<CalendarProps> = ({
     };
 
     const [locations, setLocations] = useState<string[]>([]);
-    console.log(initialLocations);
 
     return (
         <>

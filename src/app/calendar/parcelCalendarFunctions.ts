@@ -1,11 +1,10 @@
 import { Schema } from "@/database_utils";
 import { CalendarEvent } from "@/components/Calendar/Calendar";
 
-export type ParcelWithClientName = Schema["parcels"] & { clients: { full_name: string } | null };
-
+type ClientName = { clients: { full_name: string } | null };
 type CollectionCentres = { collection_centres: { name: string } | null };
 
-export type ParcelsWithExtraFields = ParcelWithClientName & CollectionCentres;
+export type ParcelsWithExtraFields = Schema["parcels"] & ClientName & CollectionCentres;
 
 const COLLECTION_DURATION_MS = 30 * 60 * 1000;
 
@@ -23,10 +22,9 @@ export const parcelsToCollectionEvents = (
         const collectionStart = new Date(parcel.collection_datetime!);
         const collectionEnd = new Date(collectionStart.getTime() + COLLECTION_DURATION_MS);
 
-        const collectionCentre = parcel.collection_centres!.name ?? "default";
-        const location = collectionCentre !== "default" ? `${collectionCentre}` : "";
+        const location = parcel.collection_centres!.name ?? "";
 
-        const eventColor = colorMap[collectionCentre] ?? colorMap.default;
+        const eventColor = colorMap[location] ?? colorMap.default;
 
         const event: CalendarEvent = {
             id: parcel.primary_key,
@@ -36,7 +34,7 @@ export const parcelsToCollectionEvents = (
             backgroundColor: eventColor.color,
             borderColor: eventColor.color,
             textColor: eventColor.text,
-            location: collectionCentre,
+            location: location,
         };
         return event;
     });
