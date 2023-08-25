@@ -69,11 +69,6 @@ const ListsDataView: React.FC<Props> = (props) => {
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-    if (props.data === null) {
-        throw new Error("No data found");
-    }
-
     const toggleableHeaders = headerKeysAndLabels.map(([key]) => key);
 
     // remove description header

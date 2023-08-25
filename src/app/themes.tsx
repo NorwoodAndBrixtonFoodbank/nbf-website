@@ -152,7 +152,9 @@ interface Props {
 
 export const ThemeUpdateContext = createContext((dark: boolean): void => {
     throw new Error(
-        `attempted to set theme outside of a ThemeUpdateContext.Provider: Dark: ${dark}`
+        `Attempted to set theme to ${
+            dark ? "dark" : "light"
+        } theme outside of a ThemeUpdateContext.Provider`
     );
 });
 

@@ -4,6 +4,7 @@ import React from "react";
 import supabase from "@/supabaseClient";
 import DayOverviewButton from "@/components/DayOverview/DayOverviewButton";
 import { Schema } from "@/database_utils";
+import { DatabaseError } from "@/app/errorClasses";
 
 interface Props {
     text: string;
@@ -61,12 +62,8 @@ const getParcelsOfSpecificDateAndLocation = async (
         .eq("collection_centre", collectionCentreKey)
         .order("collection_datetime");
 
-    // TODO VFB-22 Check if error message is consistent
-
     if (error) {
-        throw new Error(
-            "We were unable to fetch the parcels with the specified collection date and location."
-        );
+        throw new DatabaseError("fetch", "parcels data");
     }
 
     return data;
@@ -81,12 +78,8 @@ const fetchCollectionCentreNameAndAbbreviation = async (
         .eq("primary_key", collectionCentreKey)
         .maybeSingle();
 
-    // TODO VFB-22 Check if error message is consistent
-
     if (error) {
-        throw new Error(
-            "We were unable to fetch the collection centre data. Please try again later"
-        );
+        throw new DatabaseError("fetch", "collection centre data");
     }
 
     return data!;

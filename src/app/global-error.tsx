@@ -8,16 +8,19 @@ import {
 } from "@/app/errorStylingandMessages";
 import LinkButton from "@/components/Buttons/LinkButton";
 
-const NotFoundPage: React.FC<{}> = () => {
+const GlobalError: React.FC<{}> = () => {
     return (
         <ErrorCenterer>
             <ErrorPanel elevation={5}>
                 <ErrorLargeText>OOPS!</ErrorLargeText>
-                <ErrorSecondaryText>404 Error || This page does not exist</ErrorSecondaryText>
+                <ErrorSecondaryText>
+                    There has been an error. Please try again or contact a developer if the problem
+                    persists.
+                </ErrorSecondaryText>
                 <LinkButton link="/clients">Return to Home</LinkButton>
             </ErrorPanel>
         </ErrorCenterer>
     );
 };
 
-export default NotFoundPage;
+export default GlobalError;

@@ -11,7 +11,6 @@ const COLLECTION_DURATION_MS = 30 * 60 * 1000;
 export interface LocationColorMap {
     [location: string]: { color: string; text: string };
 }
-
 export const parcelsToCollectionEvents = (
     parcels: ParcelsWithExtraFields[],
     colorMap: LocationColorMap

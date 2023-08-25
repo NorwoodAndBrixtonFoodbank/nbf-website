@@ -82,9 +82,8 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
             .flat();
 
         const { error } = await supabase.from("events").insert(toInsert);
-
         if (error) {
-            setModalError(error.message);
+            setModalError("We could not update the status at this time. Please try again.");
         } else {
             setStatusModal(false);
             setModalError(null);

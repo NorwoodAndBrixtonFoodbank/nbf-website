@@ -6,6 +6,7 @@ import { Datum } from "@/components/Tables/Table";
 import { Database } from "@/database_types_file";
 import supabase from "@/supabaseServer";
 import { User } from "@supabase/gotrue-js";
+import { DatabaseError } from "@/app/errorClasses";
 
 // disables caching
 export const revalidate = 0;
@@ -21,9 +22,8 @@ export interface UserRow extends Datum {
 const getUsers = async (): Promise<UserRow[]> => {
     const { data, error } = await supabase.functions.invoke("admin-get-users");
 
-    // TODO VFB-23 Move error handling of this request to client side
     if (error) {
-        throw new Error("Unable to fetch the user information.");
+        throw new DatabaseError("fetch", "user information");
     }
 
     const users: User[] = JSON.parse(data);
@@ -40,7 +40,6 @@ const getUsers = async (): Promise<UserRow[]> => {
 };
 
 const Admin = async (): Promise<ReactElement> => {
-    // TODO VFB-23 Handle error returned by admin-get-users
     const userData = await getUsers();
 
     return (

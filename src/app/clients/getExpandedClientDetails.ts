@@ -1,6 +1,7 @@
 import { Schema } from "@/database_utils";
 import { Data } from "@/components/DataViewer/DataViewer";
 import supabase from "@/supabaseClient";
+import { DatabaseError } from "@/app/errorClasses";
 
 const getExpandedClientDetails = async (parcelId: string): Promise<ExpandedClientDetails> => {
     const rawClientDetails = await getRawClientDetails(parcelId);
@@ -12,7 +13,7 @@ export type RawClientDetails = Awaited<ReturnType<typeof getRawClientDetails>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const getRawClientDetails = async (parcelId: string) => {
-    const response = await supabase
+    const { data, error } = await supabase
         .from("parcels")
         .select(
             `
@@ -47,8 +48,10 @@ export const getRawClientDetails = async (parcelId: string) => {
         )
         .eq("primary_key", parcelId)
         .single();
-
-    return response.data;
+    if (error) {
+        throw new DatabaseError("fetch", "client data");
+    }
+    return data;
 };
 
 export const familyCountToFamilyCategory = (count: number): string => {

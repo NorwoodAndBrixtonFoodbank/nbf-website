@@ -1,8 +1,9 @@
 import { Metadata } from "next";
 import React, { ReactElement } from "react";
 import ListsDataView, { ListRow } from "@/app/lists/ListDataview";
-import supabase from "@/supabaseServer";
 import Title from "@/components/Title/Title";
+import supabase from "@/supabaseServer";
+import { DatabaseError } from "@/app/errorClasses";
 
 // disables caching
 export const revalidate = 0;
@@ -12,12 +13,25 @@ interface Props {
     comment: string;
 }
 
+const fetchList = async (): Promise<ListRow[]> => {
+    const { data, error } = await supabase.from("lists").select();
+    if (error) {
+        throw new DatabaseError("fetch", "lists data");
+    }
+    return data;
+};
+
+const fetchComment = async (): Promise<string> => {
+    const { data, error } = await supabase.from("website_data").select().eq("name", "lists_text");
+    if (error) {
+        throw new DatabaseError("fetch", "lists comment");
+    }
+    return data[0].value ?? "";
+};
+
 const fetchData = async (): Promise<Props> => {
-    const values = await Promise.all([
-        supabase.from("lists").select(),
-        supabase.from("website_data").select().eq("name", "lists_text"),
-    ]);
-    return { data: values[0].data ?? [], comment: values[1].data![0].value ?? "" };
+    const [data, comment] = await Promise.all([fetchList(), fetchComment()]);
+    return { data, comment };
 };
 
 const Lists = async (): Promise<ReactElement> => {
