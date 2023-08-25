@@ -133,6 +133,18 @@ export const valueOnChangeRadioGroup = (
     };
 };
 
+export const valueOnChangeDropdownList = (
+    fieldSetter: FieldSetter,
+    errorSetter: ErrorSetter,
+    key: string
+): selectChangeEventHandler => {
+    return (event) => {
+        const input = event.target.value;
+        fieldSetter(key, input);
+        errorSetter(key, Errors.none);
+    };
+};
+
 export const onChangeDateOrTime = (
     fieldSetter: FieldSetter,
     errorSetter: ErrorSetter,

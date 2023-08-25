@@ -58,7 +58,7 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
 
     return (
         <DangerDialog
-            header="DELETE USER"
+            header="Delete User"
             headerId="deleteUserDialog"
             isOpen
             onClose={onDeleteCancel}

@@ -23,32 +23,8 @@ import AddParcelsButton from "@/app/clients/AddParcelsButton";
 import { dateFilter } from "@/components/Tables/Filters";
 import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
 
-const collectionCentreToAbbreviation = (
-    collectionCentre: Schema["parcels"]["collection_centre"]
-): string => {
-    switch (collectionCentre) {
-        case "Brixton Hill - Methodist Church":
-            return "BH-MC";
-        case "Clapham - St Stephens Church":
-            return "CLP-SC";
-        case "N&B - Emmanuel Church":
-            return "NAB-EC";
-        case "Streatham - Immanuel & St Andrew":
-            return "STM-IS";
-        case "Vauxhall Hope Church":
-            return "VHC";
-        case "Waterloo - Oasis":
-            return "WAT-OA";
-        case "Waterloo - St George the Martyr":
-            return "WAT-SG";
-        case "Waterloo - St Johns":
-            return "WAT-SJ";
-        default:
-            return "-";
-    }
-};
-
-const parcelTableKeysAndLabels: TableHeaders<ParcelsTableRow> = [
+export const clientTableHeaderKeysAndLabels: TableHeaders = [
+    ["iconsColumn", ""],
     ["fullName", "Name"],
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],

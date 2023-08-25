@@ -42,18 +42,31 @@ const ParcelCalendar: React.FC<ParcelCalendarProps> = (props) => {
         };
     };
 
-    const colorMap: LocationColorMap = {
-        "Brixton Hill - Methodist Church": getColorText("lightRed"),
-        "Clapham - St Stephens Church": getColorText("lightOrange"),
-        "N&B - Emmanuel Church": getColorText("lightYellow"),
-        "Streatham - Immanuel & St Andrew": getColorText("lightGreen"),
-        "Vauxhall Hope Church": getColorText("darkGreen"),
-        "Waterloo - Oasis": getColorText("lightBlue"),
-        "Waterloo - St George the Martyr": getColorText("darkBlue"),
-        "Waterloo - St Johns": getColorText("lightPurple"),
-        Delivery: getColorText("darkPurple"),
-        default: getColorText("lightBrown"),
-    };
+    const colorArray: (keyof RainbowPalette)[] = [
+        "lightBrown",
+        "lightRed",
+        "lightPurple",
+        "lightOrange",
+        "lightBlue",
+        "lightYellow",
+        "lightGreen",
+        "darkGreen",
+        "darkBlue",
+        "darkPurple",
+        "darkBrown",
+        "darkYellow",
+        "darkOrange",
+        "darkRed",
+    ];
+
+    const colorMap: LocationColorMap = [...props.collectionCentres, "default"].reduce(
+        (prevColorMap, currentCollectionCentre, currentIndex) => ({
+            ...prevColorMap,
+            [currentCollectionCentre]: getColorText(colorArray[currentIndex % colorArray.length]),
+        }),
+        {} as LocationColorMap
+    );
+
     return (
         <>
             <Title>Collection Time for Parcels</Title>

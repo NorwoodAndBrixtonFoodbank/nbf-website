@@ -11,13 +11,17 @@ describe("Clients - Action Bar", () => {
             primaryKey: "primaryKey1",
             addressPostcode: "AB1 2CD",
             deliveryCollection: {
-                collectionCentre: "Centre 1",
+                collectionCentreName: "Centre 1",
+                collectionCentreAcronym: "C1",
                 congestionChargeApplies: false,
             },
             collectionDatetime: new Date(),
             familyCategory: 1,
             fullName: "John Smith",
-            lastStatus: { name: "Delivered", timestamp: new Date() },
+            lastStatus: {
+                name: "Delivered",
+                timestamp: new Date()
+            },
             packingDatetime: new Date(),
             packingTimeLabel: "AM",
             parcelId: "123456789",
@@ -30,11 +34,18 @@ describe("Clients - Action Bar", () => {
         {
             primaryKey: "primaryKey2",
             addressPostcode: "AB1 aaaa2CD",
-            deliveryCollection: { collectionCentre: "Centraaaae 1", congestionChargeApplies: true },
+            deliveryCollection: {
+                collectionCentreName: "Centraaaae 1",
+                collectionCentreAcronym: "C1",
+                congestionChargeApplies: true
+            },
             collectionDatetime: new Date(),
             familyCategory: 1,
             fullName: "John Smaaaaith",
-            lastStatus: { name: "Called and Confirmed", timestamp: new Date() },
+            lastStatus: {
+                name: "Called and Confirmed",
+                timestamp: new Date()
+            },
             packingDatetime: new Date(),
             packingTimeLabel: "PM",
             parcelId: "123456aaaa789",
