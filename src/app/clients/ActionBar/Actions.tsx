@@ -6,14 +6,18 @@ import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import dayjs, { Dayjs } from "dayjs";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
-import ActionsModal, { DriverOverviewInput } from "@/app/clients/ActionBar/ActionsModal";
+import ActionsModal, {
+    DayOverviewInput,
+    DriverOverviewInput,
+} from "@/app/clients/ActionBar/ActionsModal";
 import {
     DayOverviewModalButton,
     DriverOverviewModalButton,
     ShippingLabelsModalButton,
     ShoppingListModalButton,
 } from "@/app/clients/ActionBar/ActionsModalButton";
-// "7c891da8-a4c1-4fb6-b1cd-c90ef5fbbca
+import { SelectChangeEvent } from "@mui/material";
+
 const isNotMoreThanOne = (value: number): boolean => {
     return value < 1;
 };
@@ -26,8 +30,11 @@ const doesNotEqualsZero = (value: number): boolean => {
     return value !== 0;
 };
 
-
-type PdfType = "Download Shipping Labels" | "Download Shopping List" | "Download Driver Overview" | "Download Day Overview";
+type PdfType =
+    | "Download Shipping Labels"
+    | "Download Shopping List"
+    | "Download Driver Overview"
+    | "Download Day Overview";
 
 type AvailableActionsType = {
     [pdfKey in PdfType]: {
@@ -54,9 +61,10 @@ const availableActions: AvailableActionsType = {
         errorMessage: "Please select at least 1 row for download.",
     },
     "Download Day Overview": {
-        showSelectedParcels: true,
+        showSelectedParcels: false,
         errorCondition: doesNotEqualsZero,
-        errorMessage: "The day overview will show the parcels for a particular date and location. It will show not the currently selected parcel. Please unselect the parcels.",
+        errorMessage:
+            "The day overview will show the parcels for a particular date and location. It will show not the currently selected parcel. Please unselect the parcels.",
     },
 };
 
@@ -64,12 +72,16 @@ interface ActionsInputComponentProps {
     pdfType: PdfType;
     onDateChange: (newDate: Dayjs | null) => void;
     onDriverNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onCollectionCentreChange: (event: SelectChangeEvent) => void;
+    setCollectionCentre: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
     pdfType,
     onDateChange,
     onDriverNameChange,
+    onCollectionCentreChange,
+    setCollectionCentre,
 }) => {
     switch (pdfType) {
         case "Download Driver Overview":
@@ -77,6 +89,14 @@ const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
                 <DriverOverviewInput
                     onDateChange={onDateChange}
                     onDriverNameChange={onDriverNameChange}
+                />
+            );
+        case "Download Day Overview":
+            return (
+                <DayOverviewInput
+                    onDateChange={onDateChange}
+                    onCollectionCentreChange={onCollectionCentreChange}
+                    setCollectionCentre={setCollectionCentre}
                 />
             );
         default:
@@ -89,9 +109,16 @@ interface ActionsButtonProps {
     data: ClientsTableRow[];
     date: Dayjs;
     driverName: string;
+    collectionCentre: string;
 }
 
-const ActionsButton: React.FC<ActionsButtonProps> = ({ pdfType, data, date, driverName }) => {
+const ActionsButton: React.FC<ActionsButtonProps> = ({
+    pdfType,
+    data,
+    date,
+    driverName,
+    collectionCentre,
+}) => {
     switch (pdfType) {
         case "Download Shipping Labels":
             return <ShippingLabelsModalButton data={data} />;
@@ -100,7 +127,9 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({ pdfType, data, date, driv
         case "Download Driver Overview":
             return <DriverOverviewModalButton data={data} date={date} driverName={driverName} />;
         case "Download Day Overview":
-            return <DayOverviewModalButton />
+            return (
+                <DayOverviewModalButton collectionCentre={collectionCentre} date={date.toDate()} />
+            );
         default:
             <></>;
     }
@@ -126,6 +155,7 @@ const Actions: React.FC<Props> = ({
     const [selectedAction, setSelectedAction] = useState<PdfType | null>(null);
     const [date, setDate] = useState(dayjs(new Date()));
     const [driverName, setDriverName] = useState("");
+    const [collectionCentre, setCollectionCentre] = useState("");
 
     const selectedData = Array.from(selected.map((index) => data[index]));
 
@@ -133,13 +163,12 @@ const Actions: React.FC<Props> = ({
         setDriverName(event.target.value);
     };
 
+    const onCollectionCentreChange = (event: SelectChangeEvent): void => {
+        setCollectionCentre(event.target.value);
+    };
+
     const onDateChange = (newDate: Dayjs | null): void => {
-        setDate((date) =>
-            date
-                .set("year", newDate?.year() ?? date.year())
-                .set("month", newDate?.month() ?? date.month())
-                .set("day", newDate?.day() ?? date.day())
-        );
+        setDate(newDate!);
     };
 
     const onModalClose = (): void => {
@@ -185,6 +214,8 @@ const Actions: React.FC<Props> = ({
                                     pdfType={key}
                                     onDateChange={onDateChange}
                                     onDriverNameChange={onDriverNameChange}
+                                    onCollectionCentreChange={onCollectionCentreChange}
+                                    setCollectionCentre={setCollectionCentre}
                                 />
                             }
                         >
@@ -193,6 +224,7 @@ const Actions: React.FC<Props> = ({
                                 data={selectedData}
                                 date={date}
                                 driverName={driverName}
+                                collectionCentre={collectionCentre}
                             />
                         </ActionsModal>
                     )

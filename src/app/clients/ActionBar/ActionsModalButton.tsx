@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 import ShippingLabels from "@/pdf/ShippingLabels/ShippingLabels";
@@ -21,12 +23,12 @@ export const ShoppingListModalButton: React.FC<ModalButtonProps> = ({ data }) =>
     return <ShoppingList text="Download" parcelId={data[0].parcelId} />;
 };
 
-export const DayOverviewModalButton: React.FC<{}> = () => {
+export const DayOverviewModalButton: React.FC<{collectionCentre: string, date: Date}> = ({collectionCentre, date}) => {
     return (
         <DayOverview
             text="Download"
-            date={new Date("July 17, 2023")}
-            collectionCentreKey="81e40902-fe22-43f8-8ad3-1417b376374f"
+            date={date}
+            collectionCentreKey={collectionCentre}
         />
     );
 };

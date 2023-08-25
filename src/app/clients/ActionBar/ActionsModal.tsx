@@ -5,9 +5,11 @@ import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
 import dayjs, { Dayjs } from "dayjs";
 import { ClientsTableRow } from "@/app/clients/getClientsTableData";
-import { Button } from "@mui/material";
+import { Button, SelectChangeEvent } from "@mui/material";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { DatePicker } from "@mui/x-date-pickers";
+import { DatePicker, DesktopDatePicker } from "@mui/x-date-pickers";
+import DropdownListInput from "@/components/DataInput/DropdownListInput";
+import supabase from "@/supabaseClient";
 
 interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     data: ClientsTableRow[];
@@ -47,6 +49,11 @@ interface DriverOverviewInputProps {
     onDriverNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+interface DriverOverviewInputProps {
+    onDateChange: (newDate: Dayjs | null) => void;
+    onDriverNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
 export const DriverOverviewInput: React.FC<DriverOverviewInputProps> = ({
     onDateChange,
     onDriverNameChange,
@@ -56,6 +63,55 @@ export const DriverOverviewInput: React.FC<DriverOverviewInputProps> = ({
             <Heading>Delivery Information</Heading>
             <FreeFormTextInput onChange={onDriverNameChange} label="Driver's Name" />
             <DatePicker onChange={onDateChange} disablePast />
+        </>
+    );
+};
+
+interface DayOverviewInputProps {
+    onDateChange: (newDate: Dayjs | null) => void;
+    onCollectionCentreChange: (event: SelectChangeEvent) => void;
+    setCollectionCentre: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
+    onDateChange,
+    onCollectionCentreChange,
+    setCollectionCentre
+}) => {
+    const [collectionCentres, setCollectionCentres] = useState<[string, string][] | null>(null);
+
+    useEffect(() => {
+        (async () => {
+            const { data, error } = await supabase
+                .from("collection_centres")
+                .select("primary_key, name");
+            if (error) {
+                throw Error(
+                    "We were unable to fetch the collection centre data. Please try again later"
+                );
+            }
+
+            const transformedData: [string, string][] = data.map((item) => [
+                item.name,
+                item.primary_key,
+            ]);
+            setCollectionCentres(transformedData);
+            setCollectionCentre(transformedData[0][1])
+        })();
+    }, []);
+
+    return (
+        <>
+            <Heading>Location</Heading>
+            {(collectionCentres !== null) && (
+                <DropdownListInput
+                    onChange={onCollectionCentreChange}
+                    labelsAndValues={collectionCentres}
+                    defaultValue={collectionCentres[0][1]}
+                />
+            )}
+            <Heading>Date</Heading>
+            <DesktopDatePicker onChange={onDateChange} />
         </>
     );
 };
@@ -83,9 +139,9 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                     </>
                 ) : (
                     <>
-                        <Heading>Parcels selected for download:</Heading>
                         {props.showSelectedParcels && (
                             <>
+                                <Heading>Parcels selected for download:</Heading>
                                 {props.data.map((parcel, index) => {
                                     return (
                                         <StatusText key={index}>
