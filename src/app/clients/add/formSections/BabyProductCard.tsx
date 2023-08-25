@@ -12,9 +12,9 @@ import {
 } from "@/components/Form/formFunctions";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import GenericFormCard from "@/components/Form/GenericFormCard";
-import { selectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
+import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 
-const getBaby = (fieldSetter: FieldSetter, errorSetter: ErrorSetter): selectChangeEventHandler => {
+const getBaby = (fieldSetter: FieldSetter, errorSetter: ErrorSetter): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
         if (input === "Yes") {

@@ -21,8 +21,6 @@ import { CenterComponent } from "@/components/Form/formStyling";
 import ActionBar from "@/app/clients/ActionBar";
 import AddParcelsButton from "@/app/clients/AddParcelsButton";
 
-// TODO Change Button to LinkButton
-
 const collectionCentreToAbbreviation = (
     collectionCentre: Schema["parcels"]["collection_centre"]
 ): string => {

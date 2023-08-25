@@ -161,7 +161,7 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
             </Menu>
             {actionAnchorElement ? (
                 <Menu
-                    open={actionAnchorElement !== null}
+                    open
                     onClose={() => setActionAnchorElement(null)}
                     anchorEl={actionAnchorElement}
                 >

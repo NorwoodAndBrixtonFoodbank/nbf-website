@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { FormSubheading, FormText, StyledCard } from "@/components/Form/formStyling";
 import styled from "styled-components";
@@ -5,7 +7,7 @@ import styled from "styled-components";
 interface Props {
     title: string;
     required: boolean;
-    children: React.ReactElement;
+    children: React.ReactNode;
     text?: string;
 }
 

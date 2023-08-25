@@ -5,7 +5,7 @@ import LinkButton from "@/components/Buttons/LinkButton";
 import styled from "styled-components";
 import { CenterComponent, StyledCard } from "@/components/Form/formStyling";
 import getClientData, { ClientData } from "@/app/clients/[id]/getClientData";
-import { formatCamelCaseKey } from "@/pdf/ShoppingList/dataPreparation";
+import { formatCamelCaseKey } from "@/common/format";
 
 interface Props {
     clientID: string;

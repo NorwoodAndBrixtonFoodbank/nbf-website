@@ -1,9 +1,9 @@
-import { booleanGroup } from "@/components/DataInput/inputHandlerFactories";
-import { Database } from "@/database_types_file";
 import {
-    changeEventHandler,
-    selectChangeEventHandler,
+    BooleanGroup,
+    ChangeEventHandler,
+    SelectChangeEventHandler,
 } from "@/components/DataInput/inputHandlerFactories";
+import { Database } from "@/database_types_file";
 
 type Field = Fields[keyof Fields];
 export type ErrorSetter = (errorKey: string, errorType: Errors) => void;
@@ -88,7 +88,7 @@ export const onChangeText = (
     regex?: RegExp,
     formattingFunction?: (value: string) => Field,
     additionalCondition?: (value: string) => boolean
-): selectChangeEventHandler => {
+): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
         const errorType = getErrorType(input, required, regex, additionalCondition);
@@ -102,9 +102,9 @@ export const onChangeText = (
 
 export const onChangeCheckbox = (
     fieldSetter: FieldSetter,
-    currentObject: booleanGroup,
+    currentObject: BooleanGroup,
     key: string
-): changeEventHandler => {
+): ChangeEventHandler => {
     return (event) => {
         const newObject = { ...currentObject, [event.target.name]: event.target.checked };
         fieldSetter(key, newObject);
@@ -114,7 +114,7 @@ export const onChangeCheckbox = (
 export const onChangeRadioGroup = (
     fieldSetter: FieldSetter,
     key: string
-): selectChangeEventHandler => {
+): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
         fieldSetter(key, input === "Yes");
@@ -125,7 +125,7 @@ export const valueOnChangeRadioGroup = (
     fieldSetter: FieldSetter,
     errorSetter: ErrorSetter,
     key: string
-): selectChangeEventHandler => {
+): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
         fieldSetter(key, input);
@@ -172,7 +172,7 @@ export const errorText = (errorType: Errors): string => {
     return errorType === Errors.initial ? Errors.none : errorType;
 };
 
-export const checkboxGroupToArray = (checkedBoxes: booleanGroup): string[] => {
+export const checkboxGroupToArray = (checkedBoxes: BooleanGroup): string[] => {
     return Object.keys(checkedBoxes).filter((key) => checkedBoxes[key]);
 };
 

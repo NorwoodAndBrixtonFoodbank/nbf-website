@@ -1,9 +1,9 @@
 import StyleManager from "@/app/themes";
 import { Metadata } from "next";
 import React from "react";
-import NavigationBar from "@/components/NavBar/NavigationBar";
+import NavigationBar from "@/components/NavigationBar/NavigationBar";
 import { AuthRouting } from "@/app/auth";
-import Localization from "./localizationProvider";
+import Localization from "@/app/Localization";
 
 interface Props {
     children: React.ReactNode;

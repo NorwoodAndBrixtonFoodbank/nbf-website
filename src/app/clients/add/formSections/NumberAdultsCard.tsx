@@ -12,7 +12,7 @@ import {
     Gender,
 } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
-import { selectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
+import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 import { GappedDiv } from "@/components/Form/formStyling";
 
 const getNumberAdultsDefault = (adults: Person[], gender: string): string | undefined => {
@@ -37,7 +37,7 @@ const getNumberAdults = (
     errorSetter: ErrorSetter,
     adults: Person[],
     gender: Gender
-): selectChangeEventHandler => {
+): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
         const newValue = adults;

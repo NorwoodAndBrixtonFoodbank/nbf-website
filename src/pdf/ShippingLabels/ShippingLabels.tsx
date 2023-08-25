@@ -18,11 +18,9 @@ const formatDatetime = (datetimeString: string | null, isDatetime: boolean): str
         minute: "2-digit",
     };
 
-    const formattedDate = isDatetime
+    return isDatetime
         ? new Date(datetimeString).toLocaleString([], dateOptions)
         : new Date(datetimeString).toLocaleDateString();
-
-    return formattedDate;
 };
 
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<Schema["parcels"][]> => {
@@ -81,7 +79,7 @@ const ShippingLabels = async ({ text, parcelIds }: Props): Promise<React.ReactEl
             text={text}
             fileName="ShippingLabels.pdf"
             data={requiredData}
-            pdfComponent={ShippingLabelsPdf}
+            pdfComponent={ShippingLabelsPDF}
         />
     );
 };

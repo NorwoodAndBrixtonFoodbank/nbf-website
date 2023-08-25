@@ -2,13 +2,13 @@
 
 import React from "react";
 import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
-import {
-    BlockProps,
-    ClientSummary,
-    formatCamelCaseKey,
-    Item,
-    ShoppingListPDFDataProps,
-} from "@/pdf/ShoppingList/dataPreparation";
+import { ClientSummary, RequirementSummary } from "@/common/formatClientsData";
+import { HouseholdSummary } from "@/common/formatFamiliesData";
+import { formatCamelCaseKey } from "@/common/format";
+import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
+import { Item, ShoppingListPDFDataProps } from "@/pdf/ShoppingList/shoppingListPDFDataProps";
+
+export type BlockProps = ParcelInfo | HouseholdSummary | RequirementSummary;
 
 const styles = StyleSheet.create({
     paper: {
@@ -155,8 +155,8 @@ const DisplayItemsList: React.FC<DisplayItemsListProps> = ({ itemsList }) => {
 const DisplayAsBlock: React.FC<BlockProps> = (data: BlockProps) => {
     return (
         <View style={styles.infoCell}>
-            {Object.keys(data).map((propKey, index) => (
-                <OneLine key={index} header={formatCamelCaseKey(propKey)} value={data[propKey]} />
+            {Object.entries(data).map(([propKey, propValue], index) => (
+                <OneLine key={index} header={formatCamelCaseKey(propKey)} value={propValue} />
             ))}
         </View>
     );
