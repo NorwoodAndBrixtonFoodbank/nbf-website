@@ -1,7 +1,7 @@
 import { DatabaseAutoType } from "@/databaseUtils";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextMiddleware, NextRequest, NextResponse } from "next/server";
-import { roleToHiddenPages } from "@/app/roles";
+import { roleToShownPages } from "@/app/roles";
 
 const middleware: NextMiddleware = async (req: NextRequest) => {
     const res = NextResponse.next();
@@ -22,8 +22,8 @@ const middleware: NextMiddleware = async (req: NextRequest) => {
         return NextResponse.redirect(new URL("/clients", req.url));
     }
     const userRole = user?.app_metadata.role;
-    const blockedPages = roleToHiddenPages[userRole] ?? [];
-    if (blockedPages.includes(req.nextUrl.pathname)) {
+    const shownPages = roleToShownPages[userRole] ?? ["/login"];
+    if (!shownPages.includes(req.nextUrl.pathname)) {
         const url = req.nextUrl;
         url.pathname = "/404";
         return NextResponse.rewrite(url);

@@ -10,9 +10,9 @@ interface RolesInterface {
     [key: string]: string[];
 }
 
-export const roleToHiddenPages: RolesInterface = {
-    admin: [],
-    caller: ["/admin", "/lists"],
+export const roleToShownPages: RolesInterface = {
+    admin: ["/admin", "/calendar", "/clients", "/lists", "/parcels"],
+    caller: ["/calendar", "/clients", "/parcels"],
 };
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const RoleUpdateContext = createContext({ role: "", setRole: (role: string): void => {} });
