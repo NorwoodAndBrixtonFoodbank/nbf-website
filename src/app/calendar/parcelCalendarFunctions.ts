@@ -3,9 +3,9 @@ import { CalendarEvent } from "@/components/Calendar/Calendar";
 
 export type ParcelWithClientName = Schema["parcels"] & { clients: { full_name: string } | null };
 
-export type ParcelsWithExtraFields = ParcelWithClientName & {
-    collection_centres: { name: string } | null;
-};
+type CollectionCentres = { collection_centres: { name: string } | null };
+
+export type ParcelsWithExtraFields = ParcelWithClientName & CollectionCentres;
 
 const COLLECTION_DURATION_MS = 30 * 60 * 1000;
 

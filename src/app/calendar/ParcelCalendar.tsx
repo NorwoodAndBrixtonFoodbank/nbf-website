@@ -13,6 +13,7 @@ import {
 
 interface ParcelCalendarProps {
     parcelsWithCollectionDate: ParcelsWithExtraFields[];
+    collectionCentres: string[];
 }
 
 interface ColorTextProps {
@@ -64,6 +65,7 @@ const ParcelCalendar: React.FC<ParcelCalendarProps> = (props) => {
                             colorMap
                         )}
                         editable={false}
+                        initialLocations={props.collectionCentres}
                     />
                 </CalendarWrapper>
             </Centerer>

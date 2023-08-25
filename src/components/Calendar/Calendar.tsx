@@ -16,6 +16,7 @@ export interface CalendarProps {
     view?: string;
     editable?: boolean;
     initialDate?: Date;
+    initialLocations: string[];
 }
 
 export interface CalendarEvent {
@@ -192,17 +193,6 @@ const makeAllDayEventsInclusive = (endDateExclusiveEvents: CalendarEvent[]): Cal
     });
 };
 
-// TODO VFB-27: Get this from database
-const initialLocations = [
-    "Vauxhall Hope Church",
-    "Waterloo - St George the Martyr",
-    "Waterloo - Oasis",
-    "Waterloo - St Johns",
-    "Brixton Hill - Methodist Church",
-    "N&B - Emmanuel Church",
-    "Streatham - Immanuel and St Andrew",
-];
-
 const filterEventsByLocation = (
     locations: string[],
     allEvents: CalendarEvent[]
@@ -216,6 +206,7 @@ const Calendar: React.FC<CalendarProps> = ({
     view = "dayGridMonth",
     editable = false,
     initialDate,
+    initialLocations,
 }) => {
     const [eventClick, setEventClick] = useState<CalendarEvent | null>(null);
     const calendarRef = useRef<FullCalendar>(null);
@@ -231,6 +222,7 @@ const Calendar: React.FC<CalendarProps> = ({
     };
 
     const [locations, setLocations] = useState<string[]>([]);
+    console.log(initialLocations);
 
     return (
         <>
