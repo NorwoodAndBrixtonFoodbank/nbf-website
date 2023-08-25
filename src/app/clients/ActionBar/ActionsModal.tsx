@@ -10,6 +10,7 @@ import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import { DatePicker, DesktopDatePicker } from "@mui/x-date-pickers";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import supabase from "@/supabaseClient";
+import { DatabaseError } from "@/app/errorClasses";
 
 interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     data: ClientsTableRow[];
@@ -81,9 +82,7 @@ export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
                 .from("collection_centres")
                 .select("primary_key, name");
             if (error) {
-                throw Error(
-                    "We were unable to fetch the collection centre data. Please try again later"
-                );
+                throw new DatabaseError("fetch", "collection centres");
             }
 
             const transformedData: [string, string][] = data.map((item) => [
@@ -99,7 +98,7 @@ export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
     return (
         <>
             <Heading>Location</Heading>
-            {collectionCentres !== null && (
+            {collectionCentres && (
                 <DropdownListInput
                     onChange={onCollectionCentreChange}
                     labelsAndValues={collectionCentres}

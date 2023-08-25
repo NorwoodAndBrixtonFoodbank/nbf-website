@@ -3,6 +3,7 @@ import supabase from "@/supabaseClient";
 import { Schema } from "@/database_utils";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import DriverOverviewPDF, { DriverOverviewTableData } from "@/pdf/DriverOverview/DriverOverviewPDF";
+import { DatabaseError } from "@/app/errorClasses";
 
 const formatDatetime = (datetimeString: string | null): Date | null => {
     return datetimeString ? new Date(datetimeString) : null;
@@ -11,7 +12,7 @@ const formatDatetime = (datetimeString: string | null): Date | null => {
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<Schema["parcels"][]> => {
     const { data, error } = await supabase.from("parcels").select().in("primary_key", parcelIds);
     if (error) {
-        throw Error("We were unable to fetch the parcels data. Please try again later");
+        throw new DatabaseError("fetch", "parcels");
     }
     return data ?? [];
 };
@@ -23,7 +24,7 @@ const getClientById = async (clientId: string): Promise<Schema["clients"] | null
         .eq("primary_key", clientId)
         .single();
     if (error) {
-        throw Error("We were unable to fetch the clients data. Please try again later");
+        throw new DatabaseError("fetch", "clients");
     }
     return data ?? null;
 };

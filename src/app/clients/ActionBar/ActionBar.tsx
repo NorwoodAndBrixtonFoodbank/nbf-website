@@ -31,7 +31,7 @@ const StyledPaper = styled(Paper)`
     margin: 1rem;
 `;
 
-const ActionBar: React.FC<Props> = ({ selected, data }) => {
+const ActionBar: React.FC<Props> = (props) => {
     const [statusAnchorElement, setStatusAnchorElement] = useState<HTMLElement | null>(null);
     const [actionAnchorElement, setActionAnchorElement] = useState<HTMLElement | null>(null);
 
@@ -40,16 +40,14 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
     return (
         <StyledPaper>
             <Statuses
-                selected={selected}
-                data={data}
+                {...props}
                 statusAnchorElement={statusAnchorElement}
                 setStatusAnchorElement={setStatusAnchorElement}
                 modalError={modalError}
                 setModalError={setModalError}
             />
             <Actions
-                selected={selected}
-                data={data}
+                {...props}
                 actionAnchorElement={actionAnchorElement}
                 setActionAnchorElement={setActionAnchorElement}
                 modalError={modalError}
@@ -73,7 +71,7 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                     Actions
                 </Button>
             </OuterDiv>
-            {!(modalError === null) && (
+            {modalError  && (
                 <AlertBox>
                     <Alert severity="error">{modalError}</Alert>
                 </AlertBox>

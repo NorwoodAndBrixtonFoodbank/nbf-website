@@ -3,6 +3,7 @@ import supabase from "@/supabaseClient";
 import { Schema } from "@/database_utils";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import DayOverviewPdf from "./DayOverviewPdf";
+import { DatabaseError } from "@/app/errorClasses";
 
 interface Props {
     text: string;
@@ -61,9 +62,7 @@ const getParcelsOfSpecificDateAndLocation = async (
         .order("collection_datetime");
 
     if (error) {
-        throw new Error(
-            "We were unable to fetch the parcels with the specified collection date and location."
-        );
+        throw new DatabaseError("fetch", "parcels");
     }
 
     return data;
@@ -81,9 +80,7 @@ const fetchCollectionCentreNameAndAbbreviation = async (
     // TODO VFB-22 Check if error message is consistent
 
     if (error) {
-        throw new Error(
-            "We were unable to fetch the collection centre data. Please try again later"
-        );
+        throw new DatabaseError("fetch", "collection centre");
     }
 
     return data!;

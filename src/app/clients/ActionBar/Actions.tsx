@@ -153,7 +153,7 @@ const Actions: React.FC<Props> = ({
     setModalError,
 }) => {
     const [selectedAction, setSelectedAction] = useState<PdfType | null>(null);
-    const [date, setDate] = useState(dayjs(new Date()));
+    const [date, setDate] = useState(dayjs());
     const [driverName, setDriverName] = useState("");
     const [collectionCentre, setCollectionCentre] = useState("");
 
@@ -174,7 +174,7 @@ const Actions: React.FC<Props> = ({
     const onModalClose = (): void => {
         setSelectedAction(null);
         setModalError(null);
-        setDate(dayjs(new Date()));
+        setDate(dayjs());
         setDriverName("");
     };
 
