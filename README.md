@@ -54,7 +54,7 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
 
 If you change the database, you can regenerate the types with:
 ```shell
-npx supabase gen types typescript --project-id <PROJECT_ID> --schema public > src/database_types_file.ts
+npx supabase gen types typescript --project-id <PROJECT_ID> --schema public > src/databaseTypesFile.ts
 ```
 
 ## NextJS design choices
@@ -63,7 +63,7 @@ npx supabase gen types typescript --project-id <PROJECT_ID> --schema public > sr
 
 * Pages are server-side
   * Any state/styled-components should be placed in the components/ folder and have a "use client" directive at the top
-  * Note that the `Loading.tsx` at root will be displayed if async until unblocked
+  * Note that the `loading.tsx` at root will be displayed if async until unblocked
   * `const metadata` should be exported with a `title:` attribute
   * Colours should be loaded from the `props.theme` in styled_components - the theme can be set in `src/app/themes.tsx`
 

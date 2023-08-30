@@ -1,4 +1,4 @@
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 import { displayList } from "@/common/format";
 
 interface NappySizeAndExtraInformation {

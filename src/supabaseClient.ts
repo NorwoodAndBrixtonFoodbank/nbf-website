@@ -1,4 +1,4 @@
-import { Database } from "@/database_types_file";
+import { Database } from "@/databaseTypesFile";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 const supabase = createClientComponentClient<Database>();

@@ -6,7 +6,7 @@ import { ClientSummary, RequirementSummary } from "@/common/formatClientsData";
 import { HouseholdSummary } from "@/common/formatFamiliesData";
 import { formatCamelCaseKey } from "@/common/format";
 import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
-import { Item, ShoppingListPDFDataProps } from "@/pdf/ShoppingList/shoppingListPDFDataProps";
+import { Item, ShoppingListPdfDataProps } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
 
 export type BlockProps = ParcelInfo | HouseholdSummary | RequirementSummary;
 
@@ -194,10 +194,10 @@ const DisplayClientSummary: React.FC<ClientSummary> = (clientSummary) => {
 };
 
 interface ShoppingListPDFProps {
-    data: ShoppingListPDFDataProps;
+    data: ShoppingListPdfDataProps;
 }
 
-const ShoppingListPDF: React.FC<ShoppingListPDFProps> = ({ data }) => {
+const ShoppingListPdf: React.FC<ShoppingListPDFProps> = ({ data }) => {
     return (
         <Document>
             <Page size="A4">
@@ -237,4 +237,4 @@ const ShoppingListPDF: React.FC<ShoppingListPDFProps> = ({ data }) => {
     );
 };
 
-export default ShoppingListPDF;
+export default ShoppingListPdf;

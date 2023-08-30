@@ -10,7 +10,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import EditModal, { EditModalState, listQuantityNoteAndLabels } from "@/app/lists/EditModal";
 import supabase from "@/supabaseClient";
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 import ConfirmDialog from "@/components/Modal/ConfirmDialog";
 import Snackbar from "@mui/material/Snackbar/Snackbar";
 import Alert from "@mui/material/Alert/Alert";

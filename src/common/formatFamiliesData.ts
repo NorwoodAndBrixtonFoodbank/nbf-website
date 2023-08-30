@@ -1,5 +1,5 @@
 import { Person } from "@/components/Form/formFunctions";
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 import { displayList } from "@/common/format";
 
 export interface HouseholdSummary {

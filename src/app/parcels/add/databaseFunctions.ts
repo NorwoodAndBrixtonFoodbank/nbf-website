@@ -1,5 +1,5 @@
 import supabase from "@/supabaseClient";
-import { InsertSchema, Schema } from "@/database_utils";
+import { InsertSchema, Schema } from "@/databaseUtils";
 import { DatabaseError } from "@/app/errorClasses";
 
 type InsertedParcels = InsertSchema["parcels"];

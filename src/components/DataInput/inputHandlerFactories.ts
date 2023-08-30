@@ -2,7 +2,9 @@ import React from "react";
 import { SelectChangeEvent } from "@mui/material";
 
 type ValueSetter<Value> = (value: Value) => void;
+
 export type ChangeEventHandler = (event: React.ChangeEvent<HTMLInputElement>) => void;
+
 export type SelectChangeEventHandler = (event: SelectChangeEvent) => void;
 
 export interface BooleanGroup {

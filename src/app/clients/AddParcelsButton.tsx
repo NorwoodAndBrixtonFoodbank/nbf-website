@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 import PopUpButton from "@/components/Buttons/PopUpButton";
 import LinkButton from "@/components/Buttons/LinkButton";
 import Button from "@mui/material/Button";

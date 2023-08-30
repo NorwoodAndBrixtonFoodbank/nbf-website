@@ -1,8 +1,8 @@
 import React from "react";
 import supabase from "@/supabaseClient";
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 import PdfButton from "@/components/PdfButton/PdfButton";
-import ShippingLabelsPDF, { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPDF";
+import ShippingLabelsPdf, { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
 import { DatabaseError } from "@/app/errorClasses";
 
 const formatDatetime = (datetimeString: string | null, isDatetime: boolean): string => {
@@ -79,7 +79,7 @@ const ShippingLabels = async ({ text, parcelIds }: Props): Promise<React.ReactEl
             text={text}
             fileName="ShippingLabels.pdf"
             data={requiredData}
-            pdfComponent={ShippingLabelsPDF}
+            pdfComponent={ShippingLabelsPdf}
         />
     );
 };

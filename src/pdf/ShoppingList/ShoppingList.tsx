@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from "react";
 import getShoppingListData from "@/pdf/ShoppingList/getShoppingListData";
 import PdfButton from "@/components/PdfButton/PdfButton";
-import ShoppingListPDF from "@/pdf/ShoppingList/ShoppingListPDF";
-import { ShoppingListPDFDataProps } from "@/pdf/ShoppingList/shoppingListPDFDataProps";
+import ShoppingListPdf from "@/pdf/ShoppingList/ShoppingListPdf";
+import { ShoppingListPdfDataProps } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
 
 interface Props {
     text: string;
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const ShoppingList = ({ text, parcelId }: Props): React.ReactElement => {
-    const [data, setData] = useState<ShoppingListPDFDataProps | null>(null);
+    const [data, setData] = useState<ShoppingListPdfDataProps | null>(null);
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
@@ -32,7 +32,7 @@ const ShoppingList = ({ text, parcelId }: Props): React.ReactElement => {
             text={text}
             fileName="ShoppingList.pdf"
             data={data}
-            pdfComponent={ShoppingListPDF}
+            pdfComponent={ShoppingListPdf}
         />
     );
 };

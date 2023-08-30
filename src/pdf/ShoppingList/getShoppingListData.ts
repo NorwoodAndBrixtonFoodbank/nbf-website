@@ -1,4 +1,4 @@
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { fetchClients, fetchComment, fetchFamilies } from "@/common/fetch";
 import {
@@ -10,8 +10,8 @@ import { prepareHouseholdSummary } from "@/common/formatFamiliesData";
 import { prepareParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import {
     prepareItemsList,
-    ShoppingListPDFDataProps,
-} from "@/pdf/ShoppingList/shoppingListPDFDataProps";
+    ShoppingListPdfDataProps,
+} from "@/pdf/ShoppingList/shoppingListPdfDataProps";
 
 interface ClientDataAndFamilyData {
     clientData: Schema["clients"];
@@ -25,7 +25,7 @@ const getClientAndFamilyData = async (clientID: string): Promise<ClientDataAndFa
     return { clientData: clientData, familyData: familyData };
 };
 
-const getShoppingListData = async (parcelID: string): Promise<ShoppingListPDFDataProps> => {
+const getShoppingListData = async (parcelID: string): Promise<ShoppingListPdfDataProps> => {
     const { parcelInfo, clientID } = await prepareParcelInfo(parcelID);
     const { clientData, familyData } = await getClientAndFamilyData(clientID);
     const itemsList = await prepareItemsList(familyData.length);

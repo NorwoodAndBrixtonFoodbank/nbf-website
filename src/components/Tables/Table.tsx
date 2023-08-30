@@ -15,7 +15,9 @@ import IconButton from "@mui/material/IconButton/IconButton";
 import Icon from "@/components/Icons/Icon";
 
 type OnRowClickFunction = (row: Row, event: React.MouseEvent<Element, MouseEvent>) => void;
+
 type ColumnDisplayFunction = (row: Row) => React.ReactNode;
+
 export type TableHeaders = [string, string][];
 
 export interface Datum {

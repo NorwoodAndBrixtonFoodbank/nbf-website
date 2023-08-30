@@ -3,7 +3,7 @@ import {
     ChangeEventHandler,
     SelectChangeEventHandler,
 } from "@/components/DataInput/inputHandlerFactories";
-import { Database } from "@/database_types_file";
+import { Database } from "@/databaseTypesFile";
 
 type Field = Fields[keyof Fields];
 export type ErrorSetter = (errorKey: string, errorType: Errors) => void;

@@ -3,7 +3,7 @@ import { ClientSummary, RequirementSummary } from "@/common/formatClientsData";
 import { HouseholdSummary } from "@/common/formatFamiliesData";
 import { fetchLists } from "@/common/fetch";
 import supabase from "@/supabaseClient";
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 
 export interface Item {
     description: string;
@@ -11,7 +11,7 @@ export interface Item {
     notes: string;
 }
 
-export interface ShoppingListPDFDataProps {
+export interface ShoppingListPdfDataProps {
     postcode: string;
     parcelInfo: ParcelInfo;
     clientSummary: ClientSummary;

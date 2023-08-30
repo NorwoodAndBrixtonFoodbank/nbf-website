@@ -1,4 +1,4 @@
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 import { Data } from "@/components/DataViewer/DataViewer";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";

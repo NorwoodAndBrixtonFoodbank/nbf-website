@@ -1,9 +1,6 @@
 import { DatabaseError } from "@/app/errorClasses";
-import { Schema } from "@/database_utils";
-import supabaseClient from "@/supabaseClient";
-import supabaseServer from "@/supabaseServer";
-
-export type Supabase = typeof supabaseClient | typeof supabaseServer;
+import { Schema } from "@/databaseUtils";
+import { Supabase } from "@/supabaseUtils";
 
 export const fetchParcels = async (
     parcelID: string,

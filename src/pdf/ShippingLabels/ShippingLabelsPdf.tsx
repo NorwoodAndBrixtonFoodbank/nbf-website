@@ -83,7 +83,7 @@ export interface ShippingLabelsPdfProps {
     data: ParcelClients[];
 }
 
-const ShippingLabelsPDF: React.FC<ShippingLabelsPdfProps> = ({ data }) => {
+const ShippingLabelsPdf: React.FC<ShippingLabelsPdfProps> = ({ data }) => {
     return (
         <Document>
             <Page size="A4" style={styles.page}>
@@ -102,4 +102,4 @@ const ShippingLabelsPDF: React.FC<ShippingLabelsPdfProps> = ({ data }) => {
     );
 };
 
-export default ShippingLabelsPDF;
+export default ShippingLabelsPdf;

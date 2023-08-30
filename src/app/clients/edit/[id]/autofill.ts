@@ -1,4 +1,4 @@
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 import { ClientFields } from "@/app/clients/add/ClientForm";
 import { Person } from "@/components/Form/formFunctions";
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";

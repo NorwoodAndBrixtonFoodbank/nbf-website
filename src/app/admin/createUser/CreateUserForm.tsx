@@ -16,7 +16,7 @@ import { createUser } from "@/app/admin/adminActions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import RefreshPageButton from "@/app/admin/RefreshPageButton";
-import { Database } from "@/database_types_file";
+import { Database } from "@/databaseTypesFile";
 
 interface CreateUserDetails {
     email: string;
