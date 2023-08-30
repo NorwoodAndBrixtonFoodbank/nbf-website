@@ -1,5 +1,6 @@
 "use client";
 
+import { NoSSR } from "next/dist/shared/lib/lazy-dynamic/dynamic-no-ssr";
 import React, { ReactElement } from "react";
 import UsersTable from "@/app/admin/usersTable/UsersTable";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
@@ -46,7 +47,9 @@ const AdminPage: React.FC<Props> = (props) => {
                     <TableSurface key={index}>
                         <Accordion elevation={0}>
                             <AccordionSummary expandIcon={<ExpandMore />}>
-                                <PanelIcon size="2x" icon={panelIcon} />
+                                <NoSSR>
+                                    <PanelIcon size="2x" icon={panelIcon} />
+                                </NoSSR>
                                 <PanelTitle>{panelTitle}</PanelTitle>
                             </AccordionSummary>
                             <AccordionDetails>{panelContent}</AccordionDetails>
