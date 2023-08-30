@@ -1,7 +1,7 @@
-import React from "react";
+import { checkPassword, userPasswordRules } from "@/app/admin/common/passwordConfig";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
+import { getPasswordHandler } from "@/components/DataInput/inputHandlerFactories";
 import PasswordInput from "@/components/DataInput/PasswordInput";
-import GenericFormCard from "@/components/Form/GenericFormCard";
 import {
     CardProps,
     errorExists,
@@ -9,8 +9,8 @@ import {
     errorText,
     onChangeText,
 } from "@/components/Form/formFunctions";
-import { checkPassword, userPasswordRules } from "@/app/admin/common/passwordConfig";
-import { getPasswordHandler } from "@/components/DataInput/inputHandlerFactories";
+import GenericFormCard from "@/components/Form/GenericFormCard";
+import React from "react";
 
 const emailRegex = /^\S+@\S+$/;
 
@@ -33,6 +33,11 @@ const AccountDetails: React.FC<CardProps> = ({ fields, fieldSetter, formErrors, 
         errorSetter("password", passwordError);
     });
 
+    const getHelperText =
+        errorText(formErrors.password) === Errors.invalid
+            ? checkPassword(fields.password, userPasswordRules)!
+            : errorText(formErrors.password);
+
     return (
         <GenericFormCard
             title="Account Details"
@@ -49,11 +54,7 @@ const AccountDetails: React.FC<CardProps> = ({ fields, fieldSetter, formErrors, 
                 <PasswordInput
                     label="Password"
                     error={errorExists(formErrors.password)}
-                    helperText={
-                        errorText(formErrors.password) === Errors.invalid
-                            ? checkPassword(fields.password, userPasswordRules)!
-                            : errorText(formErrors.password)
-                    }
+                    helperText={getHelperText}
                     onChange={passwordOnChange}
                 />
             </>

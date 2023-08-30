@@ -1,3 +1,4 @@
+import { DatabaseEnums } from "@/database_utils";
 import React, { useState } from "react";
 import { EditHeader, EditOption } from "@/app/admin/manageUser/ManageUserModal";
 import UserRoleDropdownInput from "@/app/admin/common/UserRoleDropdownInput";
@@ -17,7 +18,7 @@ interface Props {
 }
 
 const EditUserForm: React.FC<Props> = (props) => {
-    const [role, setRole] = useState<string>(props.userToEdit.userRole);
+    const [role, setRole] = useState(props.userToEdit.userRole);
 
     const onEditConfirm = async (): Promise<void> => {
         const { error } = await updateUser({
@@ -45,7 +46,9 @@ const EditUserForm: React.FC<Props> = (props) => {
                 <EditHeader>Role</EditHeader>
                 <UserRoleDropdownInput
                     defaultValue={props.userToEdit.userRole}
-                    onChange={getDropdownListHandler((role: string) => setRole(role))}
+                    onChange={getDropdownListHandler((role: string) =>
+                        setRole(role as DatabaseEnums["role"])
+                    )}
                 />
             </EditOption>
 

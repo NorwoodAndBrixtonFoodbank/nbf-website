@@ -2,7 +2,10 @@ import React from "react";
 import Alert from "@mui/material/Alert/Alert";
 import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 
-export type AlertOptions = { success: boolean | undefined; message: React.ReactNode };
+export type AlertOptions = {
+    success: boolean | undefined;
+    message: React.ReactNode;
+};
 export type SetAlertOptions = (alertOptions: AlertOptions) => void;
 
 interface Props {

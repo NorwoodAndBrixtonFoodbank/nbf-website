@@ -9,8 +9,13 @@ import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import { SetAlertOptions } from "@/app/admin/common/SuccessFailureAlert";
 
 const DangerDialog = styled(Modal)`
-    & #deleteUserDialog {
+    .MuiPaper-root > div:first-child {
         background-color: ${(props) => props.theme.error};
+        text-transform: uppercase;
+    }
+
+    button {
+        text-transform: uppercase;
     }
 `;
 
@@ -68,10 +73,10 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
                     startIcon={<DeleteIcon />}
                     onClick={onDeleteConfirm}
                 >
-                    CONFIRM
+                    Confirm
                 </Button>
                 <Button color="secondary" onClick={onDeleteCancel}>
-                    CANCEL
+                    Cancel
                 </Button>
             </OptionButtonsDiv>
         </DangerDialog>
