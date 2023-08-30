@@ -29,7 +29,7 @@ const filenameTimestampNow = (): string => {
     return `${year}_${month}_${day}_${hours}_${minutes}_${seconds}`;
 };
 
-export const formatFileName = (fileName: string): string => {
+const formatFileName = (fileName: string): string => {
     const newFileName = fileName.endsWith(".pdf") ? fileName.slice(0, -4) : fileName;
     return `${newFileName}_${filenameTimestampNow()}.pdf`;
 };
