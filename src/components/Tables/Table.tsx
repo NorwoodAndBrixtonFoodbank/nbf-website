@@ -1,9 +1,9 @@
 "use client";
 
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
-import styled from "styled-components";
 import { NoSsr } from "@mui/material";
 import {
     faAnglesUp,
@@ -14,23 +14,22 @@ import {
 import IconButton from "@mui/material/IconButton/IconButton";
 import Icon from "@/components/Icons/Icon";
 
+type OnRowClickFunction = (row: Row, event: React.MouseEvent<Element, MouseEvent>) => void;
+
+type ColumnDisplayFunction = (row: Row) => React.ReactNode;
+
+export type TableHeaders = [string, string][];
+
 export interface Datum {
     [headerKey: string]: string | number | boolean | null;
 }
-
-export type TableHeaders = [string, string][];
 
 export interface Row {
     rowId: number;
     data: Datum;
 }
 
-export type ColumnDisplayFunction = (row: Row) => ReactNode;
-export type TableColumnDisplayFunctions = { [headerKey: string]: ColumnDisplayFunction };
-
-export type OnRowClickFunction = (row: Row, e: React.MouseEvent<Element, MouseEvent>) => void;
-
-export interface ColumnStyleOptions {
+interface ColumnStyleOptions {
     grow?: number;
     width?: string;
     minWidth?: string;
@@ -41,7 +40,14 @@ export interface ColumnStyleOptions {
     allowOverflow?: boolean;
     hide?: number;
 }
-export type TableColumnStyleOptions = { [headerKey: string]: ColumnStyleOptions };
+
+export interface TableColumnStyleOptions {
+    [headerKey: string]: ColumnStyleOptions;
+}
+
+export interface TableColumnDisplayFunctions {
+    [headerKey: string]: ColumnDisplayFunction;
+}
 
 interface Props {
     data: Datum[];
@@ -66,13 +72,13 @@ const doesRowIncludeFilterText = (
     filterText: FilterText,
     headers: TableHeaders
 ): boolean => {
-    for (const [headerKey, _headerLabel] of headers) {
-        if (
-            !(row.data[headerKey] ?? "")
-                .toString()
-                .toLowerCase()
-                .includes((filterText[headerKey] ?? "").toLowerCase())
-        ) {
+    for (const [headerKey] of headers) {
+        const cellIncludesFilterText = (row.data[headerKey] ?? "")
+            .toString()
+            .toLowerCase()
+            .includes((filterText[headerKey] ?? "").toLowerCase());
+
+        if (!cellIncludesFilterText) {
             return false;
         }
     }
@@ -92,7 +98,7 @@ const dataToRows = (data: Datum[], headers: TableHeaders): Row[] => {
     return data.map((datum: Datum, currentIndex: number) => {
         const row: Row = { rowId: currentIndex, data: { ...datum } };
 
-        for (const [headerKey, _headerLabel] of headers) {
+        for (const [headerKey] of headers) {
             const databaseValue = datum[headerKey] ?? "";
             row.data[headerKey] = Array.isArray(databaseValue)
                 ? databaseValue.join(", ")
@@ -107,13 +113,13 @@ const filterRows = (rows: Row[], filterText: FilterText, headers: TableHeaders):
     return rows.filter((row) => doesRowIncludeFilterText(row, filterText, headers));
 };
 
-interface CellProps {
+interface CustomCellProps {
     row: Row;
     columnDisplayFunctions: TableColumnDisplayFunctions;
     headerKey: string;
 }
 
-const CustomCell: React.FC<CellProps> = ({ row, columnDisplayFunctions, headerKey }) => {
+const CustomCell: React.FC<CustomCellProps> = ({ row, columnDisplayFunctions, headerKey }) => {
     return (
         <>
             {columnDisplayFunctions[headerKey]

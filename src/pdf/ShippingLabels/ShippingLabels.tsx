@@ -1,6 +1,6 @@
 import React from "react";
 import supabase from "@/supabaseClient";
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import ShippingLabelsPdf, { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
 import { DatabaseError } from "@/app/errorClasses";
@@ -18,11 +18,9 @@ const formatDatetime = (datetimeString: string | null, isDatetime: boolean): str
         minute: "2-digit",
     };
 
-    const formattedDate = isDatetime
+    return isDatetime
         ? new Date(datetimeString).toLocaleString([], dateOptions)
         : new Date(datetimeString).toLocaleDateString();
-
-    return formattedDate;
 };
 
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<Schema["parcels"][]> => {

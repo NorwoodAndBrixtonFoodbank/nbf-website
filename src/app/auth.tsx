@@ -3,9 +3,13 @@
 import React, { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { DatabaseAutoType } from "@/database_utils";
+import { DatabaseAutoType } from "@/databaseUtils";
 
-export const AuthRouting: React.FC<{ children: React.ReactNode }> = ({ children = <></> }) => {
+interface Props {
+    children: React.ReactNode;
+}
+
+export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
     const supabase = createClientComponentClient<DatabaseAutoType>();
     const router = useRouter();
     const pathname = usePathname();

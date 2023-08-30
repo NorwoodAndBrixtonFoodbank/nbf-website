@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { Accordion, Checkbox, AccordionSummary, AccordionDetails } from "@mui/material";
 import styled from "styled-components";
+import { Accordion, Checkbox, AccordionSummary, AccordionDetails } from "@mui/material";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import Icon from "@/components/Icons/Icon";
 

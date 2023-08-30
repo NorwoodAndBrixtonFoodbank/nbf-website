@@ -3,7 +3,7 @@
 import React from "react";
 import supabase from "@/supabaseClient";
 import DayOverviewButton from "@/components/DayOverview/DayOverviewButton";
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 import { DatabaseError } from "@/app/errorClasses";
 
 interface Props {

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 // @ts-nocheck (for Deno references, annoyingly cannot get around for now)
 /* global Deno */
 

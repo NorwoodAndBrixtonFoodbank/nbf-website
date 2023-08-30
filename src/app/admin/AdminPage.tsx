@@ -9,7 +9,7 @@ import CreateUserForm from "@/app/admin/createUser/CreateUserForm";
 import { faUsers, faUserPlus, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { UserRow } from "./page";
+import { UserRow } from "@/app/admin/page";
 
 const PanelIcon = styled(FontAwesomeIcon)`
     margin-right: 0.5em;

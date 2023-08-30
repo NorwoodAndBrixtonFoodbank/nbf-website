@@ -54,7 +54,7 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
 
 If you change the database, you can regenerate the types with:
 ```shell
-npx supabase gen types typescript --project-id <PROJECT_ID> --schema public > src/database_types_file.ts
+npx supabase gen types typescript --project-id <PROJECT_ID> --schema public > src/databaseTypesFile.ts
 ```
 
 ## NextJS design choices

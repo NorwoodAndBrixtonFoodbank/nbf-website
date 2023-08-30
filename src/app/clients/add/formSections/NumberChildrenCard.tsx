@@ -13,7 +13,7 @@ import {
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { StyledCard, FormText } from "@/components/Form/formStyling";
 import GenericFormCard from "@/components/Form/GenericFormCard";
-import { selectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
+import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 
 const maxNumberChildren = (value: string): boolean => {
     return parseInt(value) <= 20;
@@ -24,7 +24,7 @@ const getChild = (
     children: Person[],
     index: number,
     subFieldName: "gender" | "age"
-): selectChangeEventHandler => {
+): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
         if (subFieldName === "gender") {

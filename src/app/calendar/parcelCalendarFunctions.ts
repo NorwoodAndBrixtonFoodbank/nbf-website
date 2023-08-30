@@ -1,4 +1,4 @@
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 import { CalendarEvent } from "@/components/Calendar/Calendar";
 
 type ClientName = { clients: { full_name: string } | null };
@@ -11,6 +11,7 @@ const COLLECTION_DURATION_MS = 30 * 60 * 1000;
 export interface LocationColorMap {
     [location: string]: { color: string; text: string };
 }
+
 export const parcelsToCollectionEvents = (
     parcels: ParcelsWithExtraFields[],
     colorMap: LocationColorMap

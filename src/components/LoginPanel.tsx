@@ -1,13 +1,13 @@
 "use client";
 
-import { DatabaseAutoType } from "@/database_utils";
+import { DatabaseAutoType } from "@/databaseUtils";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import React, { useEffect } from "react";
 import styled, { useTheme } from "styled-components";
 import Title from "@/components/Title/Title";
-import { NavBarHeight } from "@/components/NavBar/NavigationBar";
+import { NavBarHeight } from "@/components/NavigationBar/NavigationBar";
 import Paper from "@mui/material/Paper";
 
 export const LoginMain = styled.main`

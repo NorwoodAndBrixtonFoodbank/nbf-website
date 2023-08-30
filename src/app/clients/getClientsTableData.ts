@@ -1,5 +1,5 @@
 import { CongestionChargeDetails, ProcessingData } from "@/app/clients/fetchDataFromServer";
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 import { Datum } from "@/components/Tables/Table";
 import {
     familyCountToFamilyCategory,

@@ -2,6 +2,7 @@
 
 import React from "react";
 import styled from "styled-components";
+import { formatCamelCaseKey } from "@/common/format";
 
 type valueType = string[] | string | number | boolean | null;
 
@@ -56,7 +57,7 @@ const DataViewer: React.FC<DataViewerProps> = (props) => {
         <ContentDiv>
             {Object.entries(props.data).map(([key, value]) => (
                 <EachItem key={key}>
-                    <Key>{key.toUpperCase().replaceAll("_", " ")}</Key>
+                    <Key>{formatCamelCaseKey(key)}</Key>
                     <Value>{formatDisplayValue(value)}</Value>
                 </EachItem>
             ))}

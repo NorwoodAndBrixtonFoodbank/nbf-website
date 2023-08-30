@@ -1,4 +1,4 @@
-import { InsertSchema, Schema, UpdateSchema } from "@/database_utils";
+import { InsertSchema, Schema, UpdateSchema } from "@/databaseUtils";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { checkboxGroupToArray, Fields, Person } from "@/components/Form/formFunctions";
 import supabase from "@/supabaseClient";

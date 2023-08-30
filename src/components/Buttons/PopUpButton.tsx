@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { ButtonWrap } from "@/components/Buttons/GeneralButtonParts";
