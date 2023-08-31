@@ -1,13 +1,23 @@
-import Link from "next/link";
+"use client";
 import React from "react";
+import {
+    ErrorCenterer,
+    ErrorPanel,
+    ErrorLargeText,
+    ErrorSecondaryText,
+} from "@/app/errorStylingandMessages";
+import LinkButton from "@/components/Buttons/LinkButton";
 
-const NotFound: React.FC<{}> = () => {
+const NotFoundPage: React.FC<{}> = () => {
     return (
-        <>
-            <p> No page found. </p>
-            <Link href="/clients"> Home </Link>
-        </>
+        <ErrorCenterer>
+            <ErrorPanel elevation={5}>
+                <ErrorLargeText>OOPS!</ErrorLargeText>
+                <ErrorSecondaryText>404 Error || This page does not exist</ErrorSecondaryText>
+                <LinkButton link="/clients">Return to Home</LinkButton>
+            </ErrorPanel>
+        </ErrorCenterer>
     );
 };
 
-export default NotFound;
+export default NotFoundPage;

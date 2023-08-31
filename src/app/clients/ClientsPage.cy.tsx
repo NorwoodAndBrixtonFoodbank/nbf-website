@@ -166,21 +166,21 @@ describe("Clients Page", () => {
             });
 
             expect(expandedClientDetails).to.deep.equal({
-                "voucher_#": "VOUCHER_1",
-                full_name: "CLIENT NAME",
-                phone_number: "PHONE NUMBER",
-                packing_date: "04/08/2023",
-                packing_time: expectedTime,
-                delivery_instructions: "INSTRUCTIONS FOR DELIVERY",
+                voucherNumber: "VOUCHER_1",
+                fullName: "CLIENT NAME",
+                phoneNumber: "PHONE NUMBER",
+                packingDate: "04/08/2023",
+                packingTime: expectedTime,
+                deliveryInstructions: "INSTRUCTIONS FOR DELIVERY",
                 address: "Address Line 1, Address Line 2, TOWN, SW1A 2AA",
                 household: "Family of 3 Occupants (2 adults, 1 child)",
-                "age_&_gender_of_children": "5-year-old male",
-                dietary_requirements: "Gluten Free, Halal, No Pasta",
-                feminine_products: "Tampons, Incontinence Pads",
-                baby_products: true,
-                pet_food: "Cat, Dog",
-                other_requirements: "Garlic, Chillies, Hot Water Bottles",
-                extra_information: "EXTRA CLIENT INFORMATION",
+                ageAndGenderOfChildren: "5-year-old male",
+                dietaryRequirements: "Gluten Free, Halal, No Pasta",
+                feminineProducts: "Tampons, Incontinence Pads",
+                babyProducts: true,
+                petFood: "Cat, Dog",
+                otherRequirements: "Garlic, Chillies, Hot Water Bottles",
+                extraInformation: "EXTRA CLIENT INFORMATION",
             });
         });
 

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { ReactElement, ReactNode, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import DataTable, { TableColumn } from "react-data-table-component";
 import TableFilterBar from "@/components/Tables/TableFilterBar";
-import styled from "styled-components";
 import { NoSsr } from "@mui/material";
 import {
     faAnglesUp,
@@ -17,6 +17,16 @@ import { Filter, headerLabelFromKey, textFilter } from "@/components/Tables/Filt
 import { Primitive } from "react-data-table-component/dist/src/DataTable/types";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
+
+type OnRowClickFunction = (row: Row, event: React.MouseEvent<Element, MouseEvent>) => void;
+
+type ColumnDisplayFunction = (row: Row) => React.ReactNode;
+
+export type TableHeaders = [string, string][];
+
+export interface Datum {
+    [headerKey: string]: string | number | boolean | null;
+}
 
 export interface Row<Data> {
     rowId: number;
@@ -65,7 +75,6 @@ interface Props<Data> {
     onRowClick?: OnRowClickFunction<Data>;
     autoFilter?: boolean;
 }
-
 interface CellProps<Data> {
     row: Row<Data>;
     columnDisplayFunctions: ColumnDisplayFunctions<Data>;

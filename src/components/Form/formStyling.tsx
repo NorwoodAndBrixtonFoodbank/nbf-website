@@ -1,5 +1,7 @@
+"use client";
+
 import styled from "styled-components";
-import { Button, Paper } from "@mui/material";
+import { Paper } from "@mui/material";
 
 export const CenterComponent = styled.div`
     display: flex;
@@ -8,7 +10,7 @@ export const CenterComponent = styled.div`
     margin-bottom: 1rem;
 `;
 
-export const StyledForm = styled.div`
+export const StyledForm = styled.form`
     padding: 2em;
     max-width: 1500px;
     display: flex;
@@ -48,18 +50,10 @@ export const FormSubheading = styled.h2`
     padding-bottom: 1em;
 `;
 
-export const FormHeading = styled.h1`
-    padding-bottom: 1em;
-`;
-
 export const FormErrorText = styled(FormText)`
     color: ${(props) => props.theme.error};
     margin-bottom: 3em;
     text-align: center;
-`;
-
-export const SubmitButton = styled(Button)`
-    margin: 1em 0;
 `;
 
 export const GappedDiv = styled.div`

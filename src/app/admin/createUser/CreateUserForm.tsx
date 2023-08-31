@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState } from "react";
-import { CenterComponent, FormErrorText, StyledForm } from "@/components/Form/formStyling";
+import { CenterComponent, StyledForm } from "@/components/Form/formStyling";
 import Button from "@mui/material/Button";
 import AccountDetails from "@/app/admin/createUser/createUserFormSections/AccountDetails";
 import UserRole from "@/app/admin/createUser/createUserFormSections/UserRole";
@@ -13,8 +15,10 @@ import {
 import { createUser } from "@/app/admin/adminActions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
-import RefreshPageButton from "@/app/admin/RefreshPageButton";
-import { Database } from "@/database_types_file";
+import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
+import { Database } from "@/databaseTypesFile";
+import Alert from "@mui/material/Alert/Alert";
+import { User } from "@supabase/gotrue-js";
 
 interface CreateUserDetails {
     email: string;
@@ -44,10 +48,9 @@ const CreateUserForm: React.FC<{}> = () => {
     const errorSetter = setError(setFormErrors, formErrors);
 
     const [submitError, setSubmitError] = useState(Errors.none);
-    const [submitErrorMessage, setSubmitErrorMessage] = useState("");
     const [submitDisabled, setSubmitDisabled] = useState(false);
 
-    const [refreshRequired, setRefreshRequired] = useState(false);
+    const [createdUser, setCreatedUser] = useState<User | null>(null);
 
     const submitForm = async (): Promise<void> => {
         setSubmitDisabled(true);
@@ -58,19 +61,18 @@ const CreateUserForm: React.FC<{}> = () => {
             return;
         }
 
-        const response = await createUser(fields);
+        const { data, error } = await createUser(fields);
 
-        if (response.error) {
+        if (error) {
             setSubmitError(Errors.external);
-            setSubmitErrorMessage(response.error.message);
             setSubmitDisabled(false);
+            setCreatedUser(null);
             return;
         }
 
         setSubmitError(Errors.none);
-        setSubmitErrorMessage("");
         setSubmitDisabled(false);
-        setRefreshRequired(true);
+        setCreatedUser(JSON.parse(data));
     };
 
     return (
@@ -88,8 +90,10 @@ const CreateUserForm: React.FC<{}> = () => {
                     );
                 })}
 
-                {refreshRequired ? (
-                    <RefreshPageButton />
+                {createdUser ? (
+                    <Alert severity="success" action={<RefreshPageButton />}>
+                        User <b>{createdUser.email}</b> created successfully.
+                    </Alert>
                 ) : (
                     <Button
                         startIcon={<FontAwesomeIcon icon={faUserPlus} />}
@@ -101,8 +105,7 @@ const CreateUserForm: React.FC<{}> = () => {
                     </Button>
                 )}
 
-                {/* TODO VFB-23 Improve error message formatting for request errors */}
-                <FormErrorText>{submitErrorMessage + submitError}</FormErrorText>
+                {submitError && <Alert severity="error">{submitError}</Alert>}
             </StyledForm>
         </CenterComponent>
     );

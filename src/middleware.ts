@@ -1,4 +1,4 @@
-import { DatabaseAutoType } from "@/database_utils";
+import { DatabaseAutoType } from "@/databaseUtils";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextMiddleware, NextRequest, NextResponse } from "next/server";
 

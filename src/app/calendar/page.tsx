@@ -23,8 +23,7 @@ const getCollectionCentres = async (): Promise<string[]> => {
         throw new Error("Database error");
     }
     const mappedValues = data.map((centre) => centre.name);
-    const collectionCentres = mappedValues.filter((centre) => centre !== "Delivery");
-    return collectionCentres;
+    return mappedValues.filter((centre) => centre !== "Delivery");
 };
 
 const CalendarPage = async (): Promise<React.ReactElement> => {

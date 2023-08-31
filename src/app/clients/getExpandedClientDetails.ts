@@ -1,6 +1,7 @@
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 import { Data } from "@/components/DataViewer/DataViewer";
 import supabase from "@/supabaseClient";
+import { DatabaseError } from "@/app/errorClasses";
 
 const getExpandedClientDetails = async (parcelId: string): Promise<ExpandedClientDetails> => {
     const rawClientDetails = await getRawClientDetails(parcelId);
@@ -11,8 +12,8 @@ export default getExpandedClientDetails;
 export type RawClientDetails = Awaited<ReturnType<typeof getRawClientDetails>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const getRawClientDetails = async (parcelId: string) => {
-    const response = await supabase
+const getRawClientDetails = async (parcelId: string) => {
+    const { data, error } = await supabase
         .from("parcels")
         .select(
             `
@@ -47,8 +48,10 @@ export const getRawClientDetails = async (parcelId: string) => {
         )
         .eq("primary_key", parcelId)
         .single();
-
-    return response.data;
+    if (error) {
+        throw new DatabaseError("fetch", "client data");
+    }
+    return data;
 };
 
 export const familyCountToFamilyCategory = (count: number): string => {
@@ -72,21 +75,21 @@ export const formatDatetimeAsDate = (datetime: string | null): string => {
 };
 
 export interface ExpandedClientDetails extends Data {
-    "voucher_#": Schema["parcels"]["voucher_number"];
-    full_name: Schema["clients"]["full_name"];
-    phone_number: Schema["clients"]["phone_number"];
-    packing_date: string;
-    packing_time: string;
-    delivery_instructions: Schema["clients"]["delivery_instructions"];
+    voucherNumber: string;
+    fullName: string;
+    phoneNumber: string;
+    packingDate: string;
+    packingTime: string;
+    deliveryInstructions: string;
     address: string;
     household: string;
-    "age_&_gender_of_children": string;
-    dietary_requirements: string;
-    feminine_products: string;
-    baby_products: Schema["clients"]["baby_food"];
-    pet_food: string;
-    other_requirements: string;
-    extra_information: Schema["clients"]["extra_information"];
+    ageAndGenderOfChildren: string;
+    dietaryRequirements: string;
+    feminineProducts: string;
+    babyProducts: boolean | null;
+    petFood: string;
+    otherRequirements: string;
+    extraInformation: string;
 }
 
 export const rawDataToExpandedClientDetails = (
@@ -94,42 +97,42 @@ export const rawDataToExpandedClientDetails = (
 ): ExpandedClientDetails => {
     if (rawClientDetails === null) {
         return {
-            "voucher_#": "",
-            full_name: "",
-            phone_number: "",
-            packing_date: "",
-            packing_time: "",
-            delivery_instructions: "",
+            voucherNumber: "",
+            fullName: "",
+            phoneNumber: "",
+            packingDate: "",
+            packingTime: "",
+            deliveryInstructions: "",
             address: "",
             household: "",
-            "age_&_gender_of_children": "",
-            dietary_requirements: "",
-            feminine_products: "",
-            baby_products: null,
-            pet_food: "",
-            other_requirements: "",
-            extra_information: "",
+            ageAndGenderOfChildren: "",
+            dietaryRequirements: "",
+            feminineProducts: "",
+            babyProducts: null,
+            petFood: "",
+            otherRequirements: "",
+            extraInformation: "",
         };
     }
 
     const client = rawClientDetails.client!;
 
     return {
-        "voucher_#": rawClientDetails.voucher_number,
-        full_name: client.full_name,
-        phone_number: client.phone_number,
-        packing_date: formatDatetimeAsDate(rawClientDetails.packing_datetime),
-        packing_time: formatDatetimeAsTime(rawClientDetails.packing_datetime),
-        delivery_instructions: client.delivery_instructions,
+        voucherNumber: rawClientDetails.voucher_number ?? "",
+        fullName: client.full_name,
+        phoneNumber: client.phone_number,
+        packingDate: formatDatetimeAsDate(rawClientDetails.packing_datetime),
+        packingTime: formatDatetimeAsTime(rawClientDetails.packing_datetime),
+        deliveryInstructions: client.delivery_instructions,
         address: formatAddressFromClientDetails(client),
         household: formatHouseholdFromFamilyDetails(client.family),
-        "age_&_gender_of_children": formatBreakdownOfChildrenFromFamilyDetails(client.family),
-        dietary_requirements: client.dietary_requirements.join(", "),
-        feminine_products: client.feminine_products.join(", "),
-        baby_products: client.baby_food,
-        pet_food: client.pet_food.join(", "),
-        other_requirements: client.other_items.join(", "),
-        extra_information: client.extra_information,
+        ageAndGenderOfChildren: formatBreakdownOfChildrenFromFamilyDetails(client.family),
+        dietaryRequirements: client.dietary_requirements.join(", "),
+        feminineProducts: client.feminine_products.join(", "),
+        babyProducts: client.baby_food,
+        petFood: client.pet_food.join(", "),
+        otherRequirements: client.other_items.join(", "),
+        extraInformation: client.extra_information,
     };
 };
 

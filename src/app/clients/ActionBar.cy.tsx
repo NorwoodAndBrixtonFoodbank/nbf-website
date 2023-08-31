@@ -1,9 +1,9 @@
 import ActionBar from "@/app/clients/ActionBar";
 import React from "react";
 import StyleManager from "@/app/themes";
-import { Schema } from "@/database_utils";
-import { ParcelsTableRow } from "@/app/clients/getClientsTableData";
-import Localization from "@/app/localizationProvider";
+import { ClientsTableRow } from "@/app/clients/getClientsTableData";
+import { Schema } from "@/databaseUtils";
+import Localization from "@/app/Localization";
 
 describe("Clients - Action Bar", () => {
     const mockData: ParcelsTableRow[] = [

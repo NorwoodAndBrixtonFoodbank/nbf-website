@@ -10,7 +10,9 @@
     "next",
     "next/core-web-vitals",
     "plugin:prettier/recommended",
-    "plugin:cypress/recommended"
+    "plugin:cypress/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript"
   ],
   "rules": {
     "indent": ["error", 4, {
@@ -30,7 +32,9 @@
     // to deal with false positives in type annotations, turn on typescript-specific rules
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": ["error", {"varsIgnorePattern": "^_"}],
-    "id-length": "error"
+    "id-length": "error",
+    "import/no-named-as-default": "off",
+    "import/no-self-import": "warn"
   },
-  "ignorePatterns": ["database_types_file.ts"]
+  "ignorePatterns": ["databaseTypesFile.ts"]
 }

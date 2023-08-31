@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
+const DriverOverviewPdf: React.FC<DriverOverviewCardProps> = ({ data }) => {
     const header = (
         <View style={[styles.tableHeader, styles.flexRow]}>
             <View style={[styles.tableColumn, styles.nameColumnWidth]}>
@@ -207,4 +207,4 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
     );
 };
 
-export default DriverOverviewCard;
+export default DriverOverviewPdf;

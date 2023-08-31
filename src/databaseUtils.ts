@@ -1,4 +1,4 @@
-import { Database } from "@/database_types_file";
+import { Database } from "@/databaseTypesFile";
 
 export type DatabaseAutoType = Database;
 
@@ -15,3 +15,5 @@ export type InsertSchema = {
 export type UpdateSchema = {
     [key in keyof Tables]: Tables[key]["Update"];
 };
+
+export type DatabaseEnums = Database["public"]["Enums"];

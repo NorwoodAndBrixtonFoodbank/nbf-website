@@ -7,21 +7,12 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Link from "next/link";
 import styled from "styled-components";
 import Button from "@mui/material/Button";
-import LightDarkSlider from "@/components/NavBar/LightDarkSlider";
-import SignOutButton from "@/components/NavBar/SignOutButton";
+import LightDarkSlider from "@/components/NavigationBar/LightDarkSlider";
+import SignOutButton from "@/components/NavigationBar/SignOutButton";
 import NavBarButton from "@/components/Buttons/NavBarButton";
 import { usePathname } from "next/navigation";
 
 export const NavBarHeight = "4rem";
-
-export const PageButton = styled(Button)`
-    color: white;
-    font-size: 1.25rem;
-    margin: 10px;
-    &:hover {
-        background-color: ${(props) => props.theme.primaryBackgroundColor};
-    }
-`;
 
 const StyledSwipeableDrawer = styled(SwipeableDrawer)`
     & .MuiPaper-root {
@@ -120,7 +111,7 @@ interface Props {
     children?: React.ReactNode;
 }
 
-const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
+const NavigationBar: React.FC<Props> = ({ children }) => {
     const [drawer, setDrawer] = React.useState(false);
 
     const openDrawer = (): void => {
@@ -135,7 +126,7 @@ const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
         ["Clients", "/clients"],
         ["Lists", "/lists"],
         ["Calendar", "/calendar"],
-        ["Admin", "/admin"], // TODO VFB-23 Prevent non-admins from viewing and accessing this page
+        ["Admin", "/admin"],
     ];
 
     return (
@@ -191,4 +182,4 @@ const ResponsiveAppBar: React.FC<Props> = ({ children }) => {
         </>
     );
 };
-export default ResponsiveAppBar;
+export default NavigationBar;

@@ -1,9 +1,11 @@
+"use client";
+
 import { FormLabel, Switch } from "@mui/material";
 import styled, { useTheme } from "styled-components";
 import React, { useContext } from "react";
 
-import Sun from "@/components/NavBar/Sun.svg";
-import Moon from "@/components/NavBar/Moon.svg";
+import Sun from "@/components/NavigationBar/Sun.svg";
+import Moon from "@/components/NavigationBar/Moon.svg";
 import { ThemeUpdateContext } from "@/app/themes";
 
 const StyledSwitch = styled(Switch)`

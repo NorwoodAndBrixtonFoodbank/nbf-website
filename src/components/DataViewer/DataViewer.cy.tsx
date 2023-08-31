@@ -7,9 +7,9 @@ const longName = `John With A ${"Very ".repeat(20)}Long Name`;
 
 const data = {
     id: longString,
-    full_name: longName,
-    phone_number: 1234567,
-    dietary_requirements: null,
+    fullName: longName,
+    phoneNumber: 1234567,
+    dietaryRequirements: null,
 };
 
 const StyledDataViewer: React.FC<DataViewerProps> = (props) => {
