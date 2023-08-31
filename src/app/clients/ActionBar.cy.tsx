@@ -20,7 +20,7 @@ describe("Clients - Action Bar", () => {
             fullName: "John Smith",
             lastStatus: {
                 name: "Delivered",
-                timestamp: new Date()
+                timestamp: new Date(),
             },
             packingDatetime: new Date(),
             packingTimeLabel: "AM",
@@ -37,14 +37,14 @@ describe("Clients - Action Bar", () => {
             deliveryCollection: {
                 collectionCentreName: "Centraaaae 1",
                 collectionCentreAcronym: "C1",
-                congestionChargeApplies: true
+                congestionChargeApplies: true,
             },
             collectionDatetime: new Date(),
             familyCategory: 1,
             fullName: "John Smaaaaith",
             lastStatus: {
                 name: "Called and Confirmed",
-                timestamp: new Date()
+                timestamp: new Date(),
             },
             packingDatetime: new Date(),
             packingTimeLabel: "PM",
@@ -184,7 +184,7 @@ describe("Clients - Action Bar", () => {
             cy.get(`input[value="${timeString}"]`).should("exist");
             selectedIndices.forEach((index) => {
                 cy.get(".MuiPaper-root").contains(
-                    mockData[index].deliveryCollection.collectionCentre!
+                    mockData[index].deliveryCollection.collectionCentreAcronym
                 );
                 cy.get(".MuiPaper-root").contains(mockData[index].fullName);
             });
@@ -273,7 +273,7 @@ describe("Clients - Action Bar", () => {
                 "@interceptWebData",
             ]);
             cy.get("#action-modal-header").should("exist");
-            cy.get(".MuiPaper-root").contains(row.deliveryCollection.collectionCentre!);
+            cy.get(".MuiPaper-root").contains(row.deliveryCollection.collectionCentreAcronym);
             cy.get(".MuiPaper-root").contains(row.fullName);
         });
     });

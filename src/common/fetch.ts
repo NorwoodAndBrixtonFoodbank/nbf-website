@@ -8,7 +8,10 @@ type CollectionCentre = {
 
 type ParcelWithCollectionCentre = Omit<Schema["parcels"], "collection_centre"> & CollectionCentre;
 
-export const fetchParcels = async (parcelID: string): Promise<ParcelWithCollectionCentre> => {
+export const fetchParcels = async (
+    parcelID: string,
+    supabase: Supabase
+): Promise<ParcelWithCollectionCentre> => {
     const { data, error } = await supabase
         .from("parcels")
         .select(

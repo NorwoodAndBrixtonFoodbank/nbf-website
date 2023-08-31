@@ -21,7 +21,7 @@ const sampleProcessingData: ProcessingData = [
         parcel_id: "PRIMARY_KEY",
         collection_centre: {
             name: "COLLECTION_CENTRE",
-            acronym: "CC"
+            acronym: "CC",
         },
         collection_datetime: "2023-08-04T13:30:00+00:00",
         packing_datetime: "2023-08-04T13:30:00+00:00",

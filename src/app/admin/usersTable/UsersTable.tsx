@@ -61,7 +61,7 @@ const UsersTable: React.FC<Props> = (props) => {
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
                 onDelete={userOnDelete}
                 onEdit={userOnEdit}
-                headerFilters={["email", "userRole"]}
+                filters={["email", "userRole"]}
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
                 toggleableHeaders={["id", "createdAt", "updatedAt"]}
                 defaultShownHeaders={["email", "userRole", "createdAt", "updatedAt"]}

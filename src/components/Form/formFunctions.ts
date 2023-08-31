@@ -137,7 +137,7 @@ export const valueOnChangeDropdownList = (
     fieldSetter: FieldSetter,
     errorSetter: ErrorSetter,
     key: string
-): selectChangeEventHandler => {
+): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
         fieldSetter(key, input);

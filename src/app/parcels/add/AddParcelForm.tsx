@@ -23,7 +23,7 @@ import { insertParcel } from "@/app/parcels/add/databaseFunctions";
 import Button from "@mui/material/Button";
 import Title from "@/components/Title/Title";
 import { CollectionCentresLabelsAndValues } from "@/app/parcels/add/[id]/page";
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 
 interface AddParcelFields {
     voucherNumber: string;

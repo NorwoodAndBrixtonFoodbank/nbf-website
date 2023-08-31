@@ -61,11 +61,10 @@ const CreateUserForm: React.FC<{}> = () => {
             return;
         }
 
-        const { error } = await createUser(fields);
+        const { data, error } = await createUser(fields);
 
         if (error) {
             setSubmitError(Errors.external);
-            setSubmitErrorMessage(error.message);
             setSubmitDisabled(false);
             setCreatedUser(null);
             return;

@@ -6,8 +6,8 @@ import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
-import RefreshPageButton from "@/app/admin/RefreshPageButton";
-import { Schema } from "@/database_utils";
+import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
+import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 
@@ -29,7 +29,7 @@ export const OptionButtonDiv = styled.div`
     justify-content: center;
 `;
 
-const collectionCentresTableHeaderKeysAndLabels: TableHeaders = [
+const collectionCentresTableHeaderKeysAndLabels: TableHeaders<Schema["collection_centres"]> = [
     ["primary_key", "Centre ID"],
     ["name", "Name"],
     ["acronym", "Acronym"],
@@ -73,7 +73,7 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
                 headerKeysAndLabels={collectionCentresTableHeaderKeysAndLabels}
                 onDelete={collectionCentreOnDelete}
                 defaultShownHeaders={["name", "acronym"]}
-                headerFilters={["name", "acronym"]}
+                filters={["name", "acronym"]}
                 toggleableHeaders={["primary_key"]}
             />
 

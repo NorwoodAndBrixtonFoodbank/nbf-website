@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import React from "react";
 import AddParcelForm from "@/app/parcels/add/AddParcelForm";
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseServer";
 import { DatabaseError } from "@/app/errorClasses";
 

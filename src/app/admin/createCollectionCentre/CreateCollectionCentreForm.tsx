@@ -12,14 +12,13 @@ import {
 } from "@/components/Form/formFunctions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBuildingCircleArrowRight } from "@fortawesome/free-solid-svg-icons";
-import RefreshPageButton from "@/app/admin/RefreshPageButton";
-import { Schema } from "@/database_utils";
+import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
+import { InsertSchema } from "@/databaseUtils";
 import NameCard from "@/app/admin/createCollectionCentre/NameCard";
 import AcronymCard from "@/app/admin/createCollectionCentre/AcronymCard";
 import supabase from "@/supabaseClient";
 
-const initialFields: Schema["collection_centres"] = {
-    primary_key: "",
+const initialFields: InsertSchema["collection_centres"] = {
     name: "",
     acronym: "",
 };

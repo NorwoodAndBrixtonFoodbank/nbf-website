@@ -6,7 +6,7 @@ import { Database } from "@/databaseTypesFile";
 import supabase from "@/supabaseServer";
 import { User } from "@supabase/gotrue-js";
 import { DatabaseError } from "@/app/errorClasses";
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 
 // disables caching
 export const revalidate = 0;

@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import React from "react";
 import ParcelCalendar from "@/app/calendar/ParcelCalendar";
 import { ParcelsWithExtraFields } from "@/app/calendar/parcelCalendarFunctions";
-import { Schema } from "@/database_utils";
+import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseServer";
 import { DatabaseError } from "@/app/errorClasses";
 
