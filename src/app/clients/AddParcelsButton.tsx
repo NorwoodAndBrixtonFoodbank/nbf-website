@@ -18,7 +18,7 @@ interface Props {
 interface ClientsTableRow {
     primaryKey: string;
     fullName: Schema["clients"]["full_name"];
-    familyCategory: string;
+    familyCategory: number;
     addressPostcode: Schema["clients"]["address_postcode"];
 }
 

@@ -2,12 +2,6 @@
 
 import React, { useState } from "react";
 import Table from "@/components/Tables/Table";
-import styled from "styled-components";
-import Modal from "@/components/Modal/Modal";
-import { deleteUser } from "@/app/admin/adminActions";
-import Button from "@mui/material/Button";
-import DeleteIcon from "@mui/icons-material/Delete";
-import RefreshPageButton from "@/app/admin/RefreshPageButton";
 import { UserRow } from "@/app/admin/page";
 import ManageUserModal from "@/app/admin/manageUser/ManageUserModal";
 import DeleteUserDialog from "@/app/admin/deleteUser/DeleteUserDialog";
@@ -68,7 +62,6 @@ const UsersTable: React.FC<Props> = (props) => {
                 onDelete={userOnDelete}
                 filters={["email"]}
                 onEdit={userOnEdit}
-                headerFilters={["email"]}
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
                 toggleableHeaders={["id", "email", "userRole", "createdAt", "updatedAt"]}
             />

@@ -18,22 +18,12 @@ import { Primitive } from "react-data-table-component/dist/src/DataTable/types";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
-type OnRowClickFunction = (row: Row, event: React.MouseEvent<Element, MouseEvent>) => void;
-
-type ColumnDisplayFunction = (row: Row) => React.ReactNode;
-
-export type TableHeaders = [string, string][];
-
-export interface Datum {
-    [headerKey: string]: string | number | boolean | null;
-}
-
 export interface Row<Data> {
     rowId: number;
     data: Data;
 }
 
-export type ColumnDisplayFunction<T> = (data: T) => ReactNode;
+export type ColumnDisplayFunction<T> = (data: T) => React.ReactNode;
 export type ColumnDisplayFunctions<Data> = {
     [headerKey in keyof Data]?: ColumnDisplayFunction<Data[headerKey]>;
 };
@@ -134,7 +124,7 @@ const Table = <Data,>({
     columnDisplayFunctions = {},
     columnStyleOptions = {},
     autoFilter = true,
-}: Props<Data>): ReactElement => {
+}: Props<Data>): React.ReactElement => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
     );

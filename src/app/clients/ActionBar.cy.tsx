@@ -1,7 +1,7 @@
 import ActionBar from "@/app/clients/ActionBar";
+import { ParcelsTableRow } from "@/app/clients/getClientsTableData";
 import React from "react";
 import StyleManager from "@/app/themes";
-import { ClientsTableRow } from "@/app/clients/getClientsTableData";
 import { Schema } from "@/databaseUtils";
 import Localization from "@/app/Localization";
 
