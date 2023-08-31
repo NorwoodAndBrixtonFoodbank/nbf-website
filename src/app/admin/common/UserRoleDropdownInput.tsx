@@ -1,7 +1,7 @@
 import React from "react";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
-import { Database } from "@/database_types_file";
-import { selectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
+import { Database } from "@/databaseTypesFile";
+import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 
 const roleLabelsAndValues: [string, string][] = [
     ["Caller", "caller"],
@@ -10,7 +10,7 @@ const roleLabelsAndValues: [string, string][] = [
 
 interface Props {
     defaultValue: Database["public"]["Enums"]["role"];
-    onChange: selectChangeEventHandler;
+    onChange: SelectChangeEventHandler;
 }
 
 const UserRoleDropdownInput: React.FC<Props> = (props) => {

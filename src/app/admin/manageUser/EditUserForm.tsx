@@ -1,4 +1,4 @@
-import { DatabaseEnums } from "@/database_utils";
+import { DatabaseEnums } from "@/databaseUtils";
 import React, { useState } from "react";
 import { EditHeader, EditOption } from "@/app/admin/manageUser/ManageUserModal";
 import UserRoleDropdownInput from "@/app/admin/common/UserRoleDropdownInput";
