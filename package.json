@@ -9,7 +9,7 @@
     "lint": "next lint --dir . && npm run check_types",
     "lint_fix": "next lint --fix --dir . && npm run check_types",
     "check_types": "tsc && echo 'No typescript errors!'",
-    "open:cypress": "start-server-and-test 'next dev -p 3100' http://localhost:3100 'npx cypress open --config baseUrl=http://localhost:3100'",
+    "open:cypress": "start-server-and-test 'next start -p 3100' http://localhost:3100 'npx cypress open --config baseUrl=http://localhost:3100'",
     "test": "start-server-and-test test:runner_server_release http://localhost:3200 test:runner",
     "test:component": "start-server-and-test test:runner_server_release http://localhost:3200 test:runner_component",
     "test:e2e": "start-server-and-test test:runner_server_release http://localhost:3200 test:runner_e2e",

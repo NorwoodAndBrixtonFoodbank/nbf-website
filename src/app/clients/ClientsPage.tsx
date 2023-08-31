@@ -52,7 +52,7 @@ const parcelTableKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["fullName", "Name"],
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],
-    ["deliveryCollection", ""],
+    ["deliveryCollection", "Collection"],
     ["packingDatetime", "Packing Date"],
     ["packingTimeLabel", "Time"],
     ["lastStatus", "Last Status"],
