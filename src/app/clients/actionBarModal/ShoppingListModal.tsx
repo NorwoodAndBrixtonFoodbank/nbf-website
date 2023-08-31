@@ -4,13 +4,13 @@ import React from "react";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
 import dayjs from "dayjs";
-import { ClientsTableRow } from "@/app/clients/getClientsTableData";
+import { ParcelsTableRow } from "@/app/clients/getClientsTableData";
 import ShoppingList from "@/pdf/ShoppingList/ShoppingList";
 
 interface SharedModalProps {
     isOpen: boolean;
     onClose: () => void;
-    data: ClientsTableRow;
+    data: ParcelsTableRow;
     status: string | null;
     header: string;
     headerId: string;
@@ -47,7 +47,7 @@ const ShoppingListModal: React.FC<SharedModalProps> = (props) => {
                 Parcels selected for printing:
                 <div>
                     <StatusText>
-                        {props.data.collectionCentre}
+                        {props.data.deliveryCollection.collectionCentre}
                         {props.data.fullName && ` - ${props.data.fullName}`}
                         {props.data.collectionDatetime &&
                             `\n @ ${dayjs(props.data.collectionDatetime!).format(

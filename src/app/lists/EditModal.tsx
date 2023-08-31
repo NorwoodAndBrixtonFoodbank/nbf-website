@@ -39,7 +39,7 @@ const DisplayContents = styled.div`
     display: contents;
 `;
 
-export const listQuantityNoteAndLabels: [keyof Schema["lists"], keyof Schema["lists"], string][] = [
+const listQuantityNoteAndLabels: [keyof Schema["lists"], keyof Schema["lists"], string][] = [
     ["1_quantity", "1_notes", "Single"],
     ["2_quantity", "2_notes", "Family of 2"],
     ["3_quantity", "3_notes", "Family of 3"],

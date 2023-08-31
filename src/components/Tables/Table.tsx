@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import DataTable, { TableColumn } from "react-data-table-component";
-import TableFilterBar, { FilterText } from "@/components/Tables/TableFilterBar";
+import TableFilterBar from "@/components/Tables/TableFilterBar";
 import { NoSsr } from "@mui/material";
 import {
     faAnglesUp,
@@ -13,120 +13,86 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import IconButton from "@mui/material/IconButton/IconButton";
 import Icon from "@/components/Icons/Icon";
+import { Filter, headerLabelFromKey, textFilter } from "@/components/Tables/Filters";
+import { Primitive } from "react-data-table-component/dist/src/DataTable/types";
 
-type OnRowClickFunction = (row: Row, event: React.MouseEvent<Element, MouseEvent>) => void;
+export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
-type ColumnDisplayFunction = (row: Row) => React.ReactNode;
-
-export type TableHeaders = [string, string][];
-
-export interface Datum {
-    [headerKey: string]: string | number | boolean | null;
-}
-
-export interface Row {
+export interface Row<Data> {
     rowId: number;
-    data: Datum;
+    data: Data;
 }
 
-interface ColumnStyleOptions {
-    grow?: number;
-    width?: string;
-    minWidth?: string;
-    maxWidth?: string;
-    right?: boolean;
-    center?: boolean;
-    wrap?: boolean;
-    allowOverflow?: boolean;
-    hide?: number;
+export type ColumnDisplayFunction<T> = (data: T) => React.ReactNode;
+export type ColumnDisplayFunctions<Data> = {
+    [headerKey in keyof Data]?: ColumnDisplayFunction<Data[headerKey]>;
+};
+export type ColumnStyles<Data> = {
+    [headerKey in keyof Data]?: ColumnStyleOptions;
+};
+
+export type OnRowClickFunction<Data> = (
+    row: Row<Data>,
+    event: React.MouseEvent<Element, MouseEvent>
+) => void;
+
+export type ColumnStyleOptions = Omit<
+    TableColumn<unknown>,
+    "name" | "selector" | "sortable" | "sortFunction" | "cell"
+>;
+
+export interface SortOptions<Data, Key extends keyof Data> {
+    key: Key;
+    sortFunction?: (datapoint1: Data[Key], datapoint2: Data[Key]) => number;
 }
 
-export interface TableColumnStyleOptions {
-    [headerKey: string]: ColumnStyleOptions;
-}
-
-export interface TableColumnDisplayFunctions {
-    [headerKey: string]: ColumnDisplayFunction;
-}
-
-interface Props {
-    data: Datum[];
-    headerKeysAndLabels: TableHeaders;
+interface Props<Data> {
+    data: Data[];
+    headerKeysAndLabels: TableHeaders<Data>;
     checkboxes?: boolean;
     onRowSelection?: (rowIds: number[]) => void;
     reorderable?: boolean;
-    headerFilters?: string[];
+    filters?: (Filter<Data, any> | keyof Data)[];
+    additionalFilters?: (Filter<Data, any> | keyof Data)[];
     pagination?: boolean;
-    defaultShownHeaders?: string[];
-    toggleableHeaders?: string[];
-    sortable?: boolean;
+    defaultShownHeaders?: readonly (keyof Data)[];
+    toggleableHeaders?: readonly (keyof Data)[];
+    sortable?: (keyof Data | SortOptions<Data, any>)[];
     onEdit?: (data: number) => void;
     onDelete?: (data: number) => void;
-    columnDisplayFunctions?: TableColumnDisplayFunctions;
-    columnStyleOptions?: TableColumnStyleOptions;
-    onRowClick?: OnRowClickFunction;
+    columnDisplayFunctions?: ColumnDisplayFunctions<Data>;
+    columnStyleOptions?: ColumnStyles<Data>;
+    onRowClick?: OnRowClickFunction<Data>;
+    autoFilter?: boolean;
+}
+interface CellProps<Data> {
+    row: Row<Data>;
+    columnDisplayFunctions: ColumnDisplayFunctions<Data>;
+    headerKey: keyof Data;
 }
 
-const doesRowIncludeFilterText = (
-    row: Row,
-    filterText: FilterText,
-    headers: TableHeaders
-): boolean => {
-    for (const [headerKey] of headers) {
-        const cellIncludesFilterText = (row.data[headerKey] ?? "")
-            .toString()
-            .toLowerCase()
-            .includes((filterText[headerKey] ?? "").toLowerCase());
-
-        if (!cellIncludesFilterText) {
-            return false;
-        }
-    }
-    return true;
-};
-
-const dataToFilteredRows = (
-    data: Datum[],
-    filterText: FilterText,
-    headers: TableHeaders
-): Row[] => {
-    const rows = dataToRows(data, headers);
-    return filterRows(rows, filterText, headers);
-};
-
-const dataToRows = (data: Datum[], headers: TableHeaders): Row[] => {
-    return data.map((datum: Datum, currentIndex: number) => {
-        const row: Row = { rowId: currentIndex, data: { ...datum } };
-
-        for (const [headerKey] of headers) {
-            const databaseValue = datum[headerKey] ?? "";
-            row.data[headerKey] = Array.isArray(databaseValue)
-                ? databaseValue.join(", ")
-                : databaseValue;
-        }
-
-        return row;
-    });
-};
-
-const filterRows = (rows: Row[], filterText: FilterText, headers: TableHeaders): Row[] => {
-    return rows.filter((row) => doesRowIncludeFilterText(row, filterText, headers));
-};
-
-interface CustomCellProps {
-    row: Row;
-    columnDisplayFunctions: TableColumnDisplayFunctions;
-    headerKey: string;
-}
-
-const CustomCell: React.FC<CustomCellProps> = ({ row, columnDisplayFunctions, headerKey }) => {
-    return (
+const CustomCell = <Data,>({
+    row,
+    columnDisplayFunctions,
+    headerKey,
+}: CellProps<Data>): React.ReactElement => {
+    const element: unknown = (
         <>
             {columnDisplayFunctions[headerKey]
-                ? columnDisplayFunctions[headerKey](row)
+                ? columnDisplayFunctions[headerKey]!(row.data[headerKey])
                 : row.data[headerKey]}
         </>
     );
+
+    if (!React.isValidElement(element)) {
+        throw new Error(
+            `${element} is not a valid JSX element, add a column display function for ${String(
+                headerKey
+            )}`
+        );
+    }
+
+    return element;
 };
 
 const StyledIconButton = styled(IconButton)`
@@ -134,38 +100,56 @@ const StyledIconButton = styled(IconButton)`
     margin: 0.1rem;
 `;
 
-const defaultColumnStyleOptions: ColumnStyleOptions = {
+const defaultColumnStyleOptions = {
     grow: 1,
     minWidth: "2rem",
     maxWidth: "20rem",
-};
+} as const;
 
-const Table: React.FC<Props> = ({
+const Table = <Data,>({
     data: inputData,
     headerKeysAndLabels,
     checkboxes,
     onRowSelection,
     defaultShownHeaders,
-    headerFilters,
+    filters: filterKeysOrObjects = [],
+    additionalFilters: additionalFilterKeysOrObjects = [],
     onDelete,
     onEdit,
     pagination,
     reorderable = false,
-    sortable = true,
-    toggleableHeaders,
+    sortable = [],
+    toggleableHeaders = [],
     onRowClick,
     columnDisplayFunctions = {},
     columnStyleOptions = {},
-}) => {
+    autoFilter = true,
+}: Props<Data>): React.ReactElement => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
     );
 
     const shownHeaders = headerKeysAndLabels.filter(([key]) => shownHeaderKeys.includes(key));
 
-    const [data, setData] = useState(inputData);
+    const toFilter = (filter: Filter<Data, any> | keyof Data): Filter<Data, any> => {
+        if (filter instanceof Object) {
+            return filter;
+        }
+        return textFilter<Data, keyof Data>({
+            key: filter,
+            label: headerLabelFromKey(headerKeysAndLabels, filter),
+        });
+    };
 
-    const [filterText, setFilterText] = useState<FilterText>({});
+    const [primaryFilters, setPrimaryFilters] = useState(filterKeysOrObjects.map(toFilter));
+
+    const [additionalFilters, setAdditionalFilters] = useState(
+        additionalFilterKeysOrObjects.map(toFilter)
+    );
+
+    const allFilters = [...primaryFilters, ...additionalFilters];
+
+    const [data, setData] = useState(inputData);
 
     const [selectedCheckboxes, setSelectedCheckboxes] = useState(
         new Array<boolean>(data.length).fill(false)
@@ -201,18 +185,33 @@ const Table: React.FC<Props> = ({
         }
     }, [selectedCheckboxes, selectAllCheckBox]);
 
-    const columns: TableColumn<Row>[] = (
-        toggleableHeaders ? shownHeaders : headerKeysAndLabels
-    ).map(([headerKey, headerName]) => {
+    const sortOptions = sortable.map((sortOption) => {
+        if (sortOption instanceof Object) {
+            return sortOption;
+        }
+        return {
+            key: sortOption,
+        };
+    });
+
+    const columns: TableColumn<Row<Data>>[] = shownHeaders.map(([headerKey, headerName]) => {
         const columnStyles = Object.assign(
             { ...defaultColumnStyleOptions },
             columnStyleOptions[headerKey] ?? {}
         );
 
+        const sortOption = sortOptions.find((sortOption) => sortOption.key === headerKey);
+
+        const sortFunction = sortOption?.sortFunction;
+        const sortable = sortOption !== undefined;
+
         return {
-            name: headerName,
-            selector: (row) => row.data[headerKey] ?? "",
-            sortable: sortable,
+            name: <>{headerName}</>,
+            selector: (row) => row.data[headerKey] as Primitive, // The type cast here is needed as the type of selector is (row) => Primitive, but as we are using a custom cell, we can have it be anything
+            sortable,
+            sortFunction: sortFunction
+                ? (row1, row2) => sortFunction(row1.data[headerKey], row2.data[headerKey])
+                : undefined,
             cell(row) {
                 return (
                     <CustomCell
@@ -222,7 +221,6 @@ const Table: React.FC<Props> = ({
                     />
                 );
             },
-
             ...columnStyles,
         };
     });
@@ -250,7 +248,7 @@ const Table: React.FC<Props> = ({
                     onClick={toggleAllCheckBox}
                 />
             ),
-            cell: (row: Row) => (
+            cell: (row: Row<Data>) => (
                 <input
                     type="checkbox"
                     aria-label={`Select row ${row.rowId}`}
@@ -265,49 +263,41 @@ const Table: React.FC<Props> = ({
     if (reorderable || onEdit || onDelete) {
         columns.unshift({
             name: "",
-            cell: (row: Row) => {
+            cell: (row: Row<Data>) => {
                 const onEditClick = (): void => {
                     onEdit!(row.rowId);
                 };
 
                 return (
                     <EditAndReorderArrowDiv>
-                        {reorderable ? (
+                        {reorderable && (
                             <StyledIconButton
                                 onClick={() => swapRows(row.rowId, row.rowId - 1)}
                                 aria-label="reorder row upwards"
                             >
                                 <StyledIcon icon={faAnglesUp} />
                             </StyledIconButton>
-                        ) : (
-                            <></>
                         )}
-                        {onEdit ? (
+                        {onEdit && (
                             <StyledIconButton onClick={onEditClick} aria-label="edit">
                                 <StyledIcon icon={faPenToSquare} />
                             </StyledIconButton>
-                        ) : (
-                            <></>
                         )}
-                        {reorderable ? (
+                        {reorderable && (
                             <StyledIconButton
                                 onClick={() => swapRows(row.rowId, row.rowId + 1)}
                                 aria-label="reorder row downwards"
                             >
                                 <StyledIcon icon={faAnglesDown} />
                             </StyledIconButton>
-                        ) : (
-                            <></>
                         )}
-                        {onDelete ? (
+                        {onDelete && (
                             <StyledIconButton
                                 onClick={() => onDelete!(row.rowId)}
                                 aria-label="delete"
                             >
                                 <StyledIcon icon={faTrashAlt} />
                             </StyledIconButton>
-                        ) : (
-                            <></>
                         )}
                     </EditAndReorderArrowDiv>
                 );
@@ -316,35 +306,46 @@ const Table: React.FC<Props> = ({
         });
     }
 
-    const onFilter = (event: React.ChangeEvent<HTMLInputElement>, filterField: string): void => {
-        setFilterText({ ...filterText, [filterField]: event.target.value });
+    const rows = data.map((data, index) => ({ rowId: index, data }));
+
+    const shouldFilterRow = (row: Row<Data>): boolean => {
+        return allFilters.every((filter) => !filter.shouldFilter(row.data, filter.state));
     };
+
+    const toDisplay = autoFilter ? rows.filter(shouldFilterRow) : rows;
 
     const handleClear = (): void => {
-        if (filterText) {
-            setFilterText({});
-        }
+        setPrimaryFilters((filters) =>
+            filters.map((filter) => ({
+                ...filter,
+                state: filter.initialState,
+            }))
+        );
+        setAdditionalFilters((filters) =>
+            filters.map((filter) => ({
+                ...filter,
+                state: filter.initialState,
+            }))
+        );
     };
-
-    const filterKeys = headerFilters ?? headerKeysAndLabels.map(([headerKey]) => headerKey);
 
     return (
         <Styling>
             <NoSsr>
                 <DataTable
-                    // types are fine without the cast when not using styled components, not sure what's happening here
                     columns={columns}
-                    data={dataToFilteredRows(data, filterText, headerKeysAndLabels)}
+                    data={toDisplay}
                     keyField="rowId"
                     fixedHeader
                     subHeader
                     subHeaderComponent={
-                        <TableFilterBar
-                            filterText={filterText}
-                            filterKeys={filterKeys}
-                            toggleableHeaders={toggleableHeaders}
-                            onFilter={onFilter}
+                        <TableFilterBar<Data>
                             handleClear={handleClear}
+                            setFilters={setPrimaryFilters}
+                            toggleableHeaders={toggleableHeaders}
+                            filters={primaryFilters}
+                            additionalFilters={additionalFilters}
+                            setAdditionalFilters={setAdditionalFilters}
                             headers={headerKeysAndLabels}
                             setShownHeaderKeys={setShownHeaderKeys}
                             shownHeaderKeys={shownHeaderKeys}
@@ -377,21 +378,6 @@ const Styling = styled.div`
     // the component with the filter bars
     & > header {
         background-color: transparent;
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        padding: 10px;
-        gap: min(1rem, 5vw);
-        overflow: visible;
-        @media (min-width: 500px) {
-            flex-wrap: nowrap;
-        }
-
-        // the clear button
-        & > button {
-            border-radius: 0.4rem;
-        }
     }
 
     // the entire table component including the header and the pagination bar

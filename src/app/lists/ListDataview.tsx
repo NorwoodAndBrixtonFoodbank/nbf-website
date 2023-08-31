@@ -1,14 +1,9 @@
 "use client";
 
-import Table, {
-    Datum,
-    Row,
-    TableColumnDisplayFunctions,
-    TableColumnStyleOptions,
-} from "@/components/Tables/Table";
+import Table, { ColumnDisplayFunctions, ColumnStyles } from "@/components/Tables/Table";
 import React, { useState } from "react";
 import styled from "styled-components";
-import EditModal, { EditModalState, listQuantityNoteAndLabels } from "@/app/lists/EditModal";
+import EditModal, { EditModalState } from "@/app/lists/EditModal";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
 import ConfirmDialog from "@/components/Modal/ConfirmDialog";
@@ -19,49 +14,68 @@ import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
 
-export type ListRow = Schema["lists"] & Datum;
+interface ListRow {
+    itemName: string;
+    "1": QuantityAndNotes;
+    "2": QuantityAndNotes;
+    "3": QuantityAndNotes;
+    "4": QuantityAndNotes;
+    "5": QuantityAndNotes;
+    "6": QuantityAndNotes;
+    "7": QuantityAndNotes;
+    "8": QuantityAndNotes;
+    "9": QuantityAndNotes;
+    "10": QuantityAndNotes;
+}
+
+interface QuantityAndNotes {
+    quantity: string;
+    notes: string | null;
+}
 
 interface Props {
-    data: ListRow[];
+    data: Schema["lists"][];
     comment: string;
 }
 
-export const headerKeysAndLabels: [string, string][] = [
-    ["item_name", "Description"],
-    ["1_quantity", "Single"],
-    ["2_quantity", "Family of 2"],
-    ["3_quantity", "Family of 3"],
-    ["4_quantity", "Family of 4"],
-    ["5_quantity", "Family of 5"],
-    ["6_quantity", "Family of 6"],
-    ["7_quantity", "Family of 7"],
-    ["8_quantity", "Family of 8"],
-    ["9_quantity", "Family of 9"],
-    ["10_quantity", "Family of 10+"],
-];
+export const headerKeysAndLabels = [
+    ["itemName", "Description"],
+    ["1", "Single"],
+    ["2", "Family of 2"],
+    ["3", "Family of 3"],
+    ["4", "Family of 4"],
+    ["5", "Family of 5"],
+    ["6", "Family of 6"],
+    ["7", "Family of 7"],
+    ["8", "Family of 8"],
+    ["9", "Family of 9"],
+    ["10", "Family of 10"],
+] satisfies [keyof ListRow, string][];
 
-const listDataviewColumnDisplayFunctions: TableColumnDisplayFunctions = {};
-const listsColumnStyleOptions: TableColumnStyleOptions = {};
+const displayQuantityAndNotes = (data: QuantityAndNotes): React.ReactElement => {
+    return <TooltipCell cellValue={data.quantity} tooltipValue={data.notes ?? ""} />;
+};
 
-listQuantityNoteAndLabels.forEach(([headerKey, noteKey]) => {
-    if (headerKey.endsWith("quantity")) {
-        // Column Display Function
-        listDataviewColumnDisplayFunctions[headerKey] = (row: Row) => {
-            const data = row.data as ListRow;
-            return (
-                <TooltipCell
-                    cellValue={data[headerKey]?.toString() ?? ""}
-                    tooltipValue={data[noteKey]?.toString() ?? ""}
-                />
-            );
-        };
-        // Column Style Function
-        listsColumnStyleOptions[headerKey] = {
-            minWidth: "9rem",
-            center: true,
-        };
-    }
-});
+const listDataViewColumnDisplayFunctions = {
+    ...Object.fromEntries(
+        headerKeysAndLabels.slice(1).map(([key]) => [key, displayQuantityAndNotes])
+    ),
+} satisfies ColumnDisplayFunctions<ListRow>;
+
+const listsColumnStyleOptions: ColumnStyles<ListRow> = {
+    itemName: {
+        minWidth: "8rem",
+    },
+    ...Object.fromEntries(
+        headerKeysAndLabels.slice(1).map(([key]) => [
+            key,
+            {
+                minWidth: "10rem",
+                center: true,
+            },
+        ])
+    ),
+};
 
 const ListsDataView: React.FC<Props> = (props) => {
     const [modal, setModal] = useState<EditModalState>();
@@ -69,6 +83,27 @@ const ListsDataView: React.FC<Props> = (props) => {
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+    if (props.data === null) {
+        throw new Error("No data found");
+    }
+
+    const rows = props.data.map((row) => {
+        const newRow = {
+            itemName: row.item_name,
+            ...Object.fromEntries(
+                headerKeysAndLabels.slice(1).map(([key]) => [
+                    key,
+                    {
+                        quantity: row[`${key}_quantity` as keyof Schema["lists"]],
+                        notes: row[`${key}_notes` as keyof Schema["lists"]],
+                    },
+                ])
+            ),
+        } as ListRow; // this cast is needed here as the type system can't infer what Object.fromEntries will return
+        return newRow;
+    });
+
     const toggleableHeaders = headerKeysAndLabels.map(([key]) => key);
 
     // remove description header
@@ -122,24 +157,21 @@ const ListsDataView: React.FC<Props> = (props) => {
                     <Alert severity="error">{errorMsg}</Alert>
                 </SnackBarDiv>
             </Snackbar>
-
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
-
             <TableSurface>
                 <CommentBox originalComment={props.comment} />
-                <Table
+                <Table<ListRow>
                     checkboxes={false}
                     headerKeysAndLabels={headerKeysAndLabels}
                     toggleableHeaders={toggleableHeaders}
-                    defaultShownHeaders={["item_name", ...toggleableHeaders]}
-                    data={props.data}
+                    data={rows}
                     reorderable
-                    headerFilters={["item_name"]}
+                    filters={["itemName"]}
                     pagination={false}
                     onEdit={onEdit}
                     onDelete={onDeleteButtonClick}
-                    sortable={false}
-                    columnDisplayFunctions={listDataviewColumnDisplayFunctions}
+                    sortable={[]}
+                    columnDisplayFunctions={listDataViewColumnDisplayFunctions}
                     columnStyleOptions={listsColumnStyleOptions}
                 />
                 <ButtonMargin>

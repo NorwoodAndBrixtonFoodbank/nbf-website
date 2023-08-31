@@ -5,19 +5,26 @@ import styled from "styled-components";
 import { Accordion, Checkbox, AccordionSummary, AccordionDetails } from "@mui/material";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import Icon from "@/components/Icons/Icon";
+import { TableHeaders } from "@/components/Tables/Table";
+import { Filter } from "@/components/Tables/Filters";
+import { filtersToComponents } from "./TableFilterBar";
 
-interface FilterAccordionProps {
-    toggleableHeaders?: string[];
-    shownHeaderKeys: string[];
-    setShownHeaderKeys: (headers: string[]) => void;
-    headers: [string, string][];
+interface FilterAccordionProps<Data> {
+    toggleableHeaders?: readonly (keyof Data)[];
+    shownHeaderKeys: readonly (keyof Data)[];
+    setShownHeaderKeys: (headers: (keyof Data)[]) => void;
+    headers: TableHeaders<Data>;
+    filters: Filter<Data, any>[];
+    setFilters: (filters: Filter<Data, any>[]) => void;
 }
 
 const Styling = styled.div`
     flex-grow: 1;
-    height: 39px;
-    overflow: visible;
+    place-self: center;
     z-index: 2;
+    margin: 1rem 0;
+    height: 3rem;
+    overflow: visible;
 `;
 
 const ContainerDiv = styled.div`
@@ -42,6 +49,13 @@ const Spacer = styled.div`
     flex-grow: 1;
 `;
 
+const ColumnSelectRow = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+`;
+
 const StyledAccordion = styled(Accordion)`
     &.MuiPaper-root {
         background-color: ${(props) => props.theme.main.background[1]};
@@ -57,9 +71,6 @@ const StyledAccordion = styled(Accordion)`
             flex-basis: auto;
             gap: 1rem;
         }
-        & .MuiButtonBase-root {
-            min-height: 39px;
-        }
         & .MuiAccordionSummary-content {
             > div {
                 height: 10px;
@@ -71,13 +82,21 @@ const StyledAccordion = styled(Accordion)`
     }
 `;
 
-const FilterAccordion: React.FC<FilterAccordionProps> = ({
+const SectionLabel = styled.small`
+    font-weight: bold;
+`;
+
+const FilterAccordion = <Data,>({
     toggleableHeaders,
     shownHeaderKeys,
     setShownHeaderKeys,
     headers,
-}) => {
-    const getOnChanged = (key: string): ((event: React.ChangeEvent<HTMLInputElement>) => void) => {
+    filters,
+    setFilters,
+}: FilterAccordionProps<Data>): React.ReactElement => {
+    const getOnChanged = (
+        key: keyof Data
+    ): ((event: React.ChangeEvent<HTMLInputElement>) => void) => {
         return (event) => {
             if (event.target.checked) {
                 setShownHeaderKeys([...shownHeaderKeys, key]);
@@ -92,27 +111,37 @@ const FilterAccordion: React.FC<FilterAccordionProps> = ({
             <StyledAccordion>
                 <AccordionSummary>
                     <Row>
-                        <p>Select Columns</p>
+                        <p>Additional Filters</p>
                         <Spacer />
                         <Icon icon={faChevronDown} />
                     </Row>
                 </AccordionSummary>
                 <AccordionDetails>
-                    {(toggleableHeaders ?? []).map((key) => {
-                        const headerKeyAndLabel = headers.find(([headerKey]) => headerKey === key);
-                        const headerLabel = headerKeyAndLabel ? headerKeyAndLabel[1] : key;
-                        return (
-                            <ContainerDiv key={key}>
-                                <Checkbox
-                                    color="secondary"
-                                    key={key}
-                                    checked={shownHeaderKeys.includes(key)}
-                                    onChange={getOnChanged(key)}
-                                />
-                                <p>{headerLabel}</p>
-                            </ContainerDiv>
-                        );
-                    })}
+                    {filtersToComponents(filters, setFilters)}
+                    <ColumnSelectRow>
+                        <SectionLabel>Select Columns:</SectionLabel>
+                        {(toggleableHeaders ?? []).map((key) => {
+                            const headerKeyAndLabel =
+                                headers.find(([headerKey]) => headerKey === key) ?? key.toString();
+                            const headerLabel = headerKeyAndLabel[1];
+                            return (
+                                <ContainerDiv key={headerLabel}>
+                                    <label
+                                        htmlFor={`${headerLabel}-checkbox`}
+                                        aria-label={`Toggle ${headerLabel} column`}
+                                    >
+                                        <Checkbox
+                                            color="secondary"
+                                            checked={shownHeaderKeys.includes(key)}
+                                            onChange={getOnChanged(key)}
+                                            id={`${headerLabel}-checkbox`}
+                                        />
+                                    </label>
+                                    <p>{headerLabel}</p>
+                                </ContainerDiv>
+                            );
+                        })}
+                    </ColumnSelectRow>
                 </AccordionDetails>
             </StyledAccordion>
         </Styling>

@@ -1,10 +1,10 @@
 "use client";
 
 import React, { Suspense, useState } from "react";
-import Table, { Row, TableHeaders } from "@/components/Tables/Table";
+import Table, { Row, SortOptions, TableHeaders } from "@/components/Tables/Table";
 
 import { useTheme } from "styled-components";
-import { ClientsTableRow } from "@/app/clients/getClientsTableData";
+import { ParcelsTableRow } from "@/app/clients/getClientsTableData";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
@@ -18,8 +18,10 @@ import Modal from "@/components/Modal/Modal";
 import { Schema } from "@/databaseUtils";
 import TableSurface from "@/components/Tables/TableSurface";
 import { CenterComponent } from "@/components/Form/formStyling";
-import ActionBar from "@/app/clients/ActionBar";
+import ActionBar, { statuses } from "@/app/clients/ActionBar";
 import AddParcelsButton from "@/app/clients/AddParcelsButton";
+import { dateFilter } from "@/components/Tables/Filters";
+import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
 
 const collectionCentreToAbbreviation = (
     collectionCentre: Schema["parcels"]["collection_centre"]
@@ -46,24 +48,25 @@ const collectionCentreToAbbreviation = (
     }
 };
 
-export const clientTableHeaderKeysAndLabels: TableHeaders = [
-    ["iconsColumn", ""],
+const parcelTableKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["fullName", "Name"],
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],
-    ["deliveryCollection", ""],
-    ["packingDate", "Packing Date"],
+    ["deliveryCollection", "Collection"],
+    ["packingDatetime", "Packing Date"],
     ["packingTimeLabel", "Time"],
     ["lastStatus", "Last Status"],
+    ["voucherNumber", "Voucher"],
 ];
 
-const toggleableHeaders = [
+const toggleableHeaders: readonly (keyof ParcelsTableRow)[] = [
     "fullName",
     "familyCategory",
     "addressPostcode",
-    "packingDate",
+    "packingDatetime",
     "packingTimeLabel",
     "lastStatus",
+    "voucherNumber",
 ];
 
 const clientTableColumnStyleOptions = {
@@ -79,10 +82,10 @@ const clientTableColumnStyleOptions = {
     addressPostcode: {
         hide: 800,
     },
-    deliveryCollection: {
+    collectionCentre: {
         minWidth: "6rem",
     },
-    packingDate: {
+    packingDatetime: {
         hide: 800,
     },
     packingTimeLabel: {
@@ -92,84 +95,124 @@ const clientTableColumnStyleOptions = {
     lastStatus: {
         minWidth: "8rem",
     },
+    voucherNumber: {
+        hide: 800,
+    },
 };
 
 interface Props {
-    clientsTableData: ClientsTableRow[];
+    clientsTableData: ParcelsTableRow[];
 }
 
-const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
+const ClientsPage: React.FC<Props> = ({ clientsTableData: parcelsTableData }) => {
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [selected, setSelected] = useState<number[]>([]);
     const theme = useTheme();
 
-    const rowToIconsColumn = (row: Row): React.ReactElement => {
-        const data = row.data as ClientsTableRow;
-
-        return (
-            <>
-                {data.flaggedForAttention ? <FlaggedForAttentionIcon /> : <></>}
-                {data.requiresFollowUpPhoneCall ? (
-                    <PhoneIcon color={theme.main.largeForeground[0]} />
-                ) : (
-                    <></>
-                )}
-            </>
-        );
-    };
-
-    const rowToDeliveryCollectionColumn = (row: Row): React.ReactElement => {
-        const data = row.data as ClientsTableRow;
-
-        if (data.collectionCentre === "Delivery") {
+    const clientTableColumnDisplayFunctions = {
+        iconsColumn: ({
+            flaggedForAttention,
+            requiresFollowUpPhoneCall,
+        }: ParcelsTableRow["iconsColumn"]): React.ReactElement => {
             return (
                 <>
-                    <DeliveryIcon color={theme.main.largeForeground[0]} />
-                    {data.congestionChargeApplies ? <CongestionChargeAppliesIcon /> : <></>}
+                    {flaggedForAttention && <FlaggedForAttentionIcon />}
+                    {requiresFollowUpPhoneCall && (
+                        <PhoneIcon color={theme.main.largeForeground[0]} />
+                    )}
                 </>
             );
-        }
+        },
+        deliveryCollection: (data: ParcelsTableRow["deliveryCollection"]): React.ReactElement => {
+            if (data.collectionCentre === "Delivery") {
+                return (
+                    <>
+                        <DeliveryIcon color={theme.main.largeForeground[0]} />
+                        {data.congestionChargeApplies && <CongestionChargeAppliesIcon />}
+                    </>
+                );
+            }
 
-        return (
-            <>
-                <CollectionIcon
-                    color={theme.main.largeForeground[0]}
-                    collectionPoint={data.collectionCentre}
-                />
-                {collectionCentreToAbbreviation(data.collectionCentre)}
-            </>
-        );
+            return (
+                <>
+                    <CollectionIcon
+                        color={theme.main.largeForeground[0]}
+                        collectionPoint={data.collectionCentre}
+                    />
+                    {collectionCentreToAbbreviation(data.collectionCentre)}
+                </>
+            );
+        },
+        packingDatetime: (datetime: ParcelsTableRow["packingDatetime"]): string => {
+            return datetime ? datetime.toLocaleDateString() : "";
+        },
+        lastStatus: (status: ParcelsTableRow["lastStatus"]): React.ReactNode => {
+            if (status === null) {
+                return null;
+            }
+
+            const { name, timestamp } = status;
+
+            return `${name} @ ${timestamp.toLocaleDateString()}`;
+        },
+        familyCategory: (familyCategory: ParcelsTableRow["familyCategory"]): string => {
+            return familyCountToFamilyCategory(familyCategory);
+        },
     };
 
-    const clientTableColumnDisplayFunctions = {
-        iconsColumn: rowToIconsColumn,
-        deliveryCollection: rowToDeliveryCollectionColumn,
-    };
-
-    const onClientTableRowClick = (row: Row): void => {
-        const data = row.data as ClientsTableRow;
-        setSelectedParcelId(data.parcelId);
+    const onClientTableRowClick = (row: Row<ParcelsTableRow>): void => {
+        setSelectedParcelId(row.data.parcelId);
     };
 
     const onExpandedClientDetailsClose = (): void => {
         setSelectedParcelId(null);
     };
 
+    const lastStatusSortOptions: SortOptions<ParcelsTableRow, "lastStatus"> = {
+        key: "lastStatus",
+        sortFunction: (lastStatus1, lastStatus2) => {
+            const idx1 = statuses.findIndex((status) => status === lastStatus1?.name);
+            const idx2 = statuses.findIndex((status) => status === lastStatus2?.name);
+            if (idx1 === -1) {
+                return 1;
+            }
+
+            if (idx2 === -1) {
+                return -1;
+            }
+
+            return idx1 - idx2;
+        },
+    };
+
     return (
         <>
-            <ActionBar data={clientsTableData} selected={selected} />
+            <ActionBar data={parcelsTableData} selected={selected} />
             <TableSurface>
                 <Table
-                    data={clientsTableData}
-                    headerKeysAndLabels={clientTableHeaderKeysAndLabels}
+                    data={parcelsTableData}
+                    headerKeysAndLabels={parcelTableKeysAndLabels}
                     columnDisplayFunctions={clientTableColumnDisplayFunctions}
                     columnStyleOptions={clientTableColumnStyleOptions}
                     onRowClick={onClientTableRowClick}
                     checkboxes={true}
                     onRowSelection={setSelected}
                     pagination={true}
-                    sortable={true}
-                    headerFilters={["addressPostcode"]}
+                    sortable={[
+                        "fullName",
+                        "familyCategory",
+                        "packingDatetime",
+                        lastStatusSortOptions,
+                    ]}
+                    filters={[
+                        dateFilter<ParcelsTableRow, "packingDatetime">({
+                            key: "packingDatetime",
+                            label: "Packing Date",
+                        }),
+                        "addressPostcode",
+                        "lastStatus",
+                    ]}
+                    additionalFilters={["fullName", "voucherNumber"]}
                     toggleableHeaders={toggleableHeaders}
                 />
             </TableSurface>
@@ -189,7 +232,7 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData }) => {
                 </Suspense>
             </Modal>
             <CenterComponent>
-                <AddParcelsButton data={clientsTableData} />
+                <AddParcelsButton data={parcelsTableData} />
             </CenterComponent>
         </>
     );

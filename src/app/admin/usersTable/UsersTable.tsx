@@ -1,20 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
-import Table, { Row, TableColumnDisplayFunctions, TableHeaders } from "@/components/Tables/Table";
+import Table from "@/components/Tables/Table";
 import { UserRow } from "@/app/admin/page";
 import ManageUserModal from "@/app/admin/manageUser/ManageUserModal";
 import DeleteUserDialog from "@/app/admin/deleteUser/DeleteUserDialog";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import SuccessFailureAlert, { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
 
-const usersTableHeaderKeysAndLabels: TableHeaders = [
+const usersTableHeaderKeysAndLabels = [
     ["id", "User ID"],
     ["email", "Email"],
     ["userRole", "Role"],
     ["createdAt", "Created At"],
     ["updatedAt", "Updated At"],
-];
+] as const;
 
 const formatTimestamp = (timestamp: number): string => {
     if (isNaN(timestamp)) {
@@ -24,14 +24,12 @@ const formatTimestamp = (timestamp: number): string => {
     return new Date(timestamp).toLocaleString("en-gb");
 };
 
-const userTableColumnDisplayFunctions: TableColumnDisplayFunctions = {
-    createdAt: (row: Row) => {
-        const rowData = row.data as UserRow;
-        return formatTimestamp(rowData.createdAt);
+const userTableColumnDisplayFunctions = {
+    createdAt: (createdAt: number) => {
+        return formatTimestamp(createdAt);
     },
-    updatedAt: (row: Row) => {
-        const rowData = row.data as UserRow;
-        return formatTimestamp(rowData.updatedAt);
+    updatedAt: (updatedAt: number) => {
+        return formatTimestamp(updatedAt);
     },
 };
 
@@ -62,8 +60,8 @@ const UsersTable: React.FC<Props> = (props) => {
                 data={props.userData}
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
                 onDelete={userOnDelete}
+                filters={["email"]}
                 onEdit={userOnEdit}
-                headerFilters={["email"]}
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
                 toggleableHeaders={["id", "email", "userRole", "createdAt", "updatedAt"]}
             />

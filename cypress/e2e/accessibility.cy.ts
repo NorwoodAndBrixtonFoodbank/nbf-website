@@ -47,6 +47,7 @@ describe("Accessibility tests in light mode", () => {
     it("Checks admin page", () => {
         cy.login();
         cy.visit("/admin");
+        cy.get("h1").should("exist");
 
         cy.checkAccessibility();
     });
@@ -107,6 +108,7 @@ describe("Accessibility tests in dark mode", () => {
     it("Checks admin page", () => {
         cy.login();
         cy.visit("/admin");
+        cy.get("h1").should("exist");
         cy.get("label[aria-label='Theme Switch']").click();
 
         cy.checkAccessibility();

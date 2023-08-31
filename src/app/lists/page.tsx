@@ -1,6 +1,7 @@
+import { Schema } from "@/databaseUtils";
 import { Metadata } from "next";
-import React, { ReactElement } from "react";
-import ListsDataView, { ListRow } from "@/app/lists/ListDataview";
+import React from "react";
+import ListsDataView from "@/app/lists/ListDataview";
 import Title from "@/components/Title/Title";
 import supabase from "@/supabaseServer";
 import { DatabaseError } from "@/app/errorClasses";
@@ -9,11 +10,11 @@ import { DatabaseError } from "@/app/errorClasses";
 export const revalidate = 0;
 
 interface Props {
-    data: ListRow[];
+    data: Schema["lists"][];
     comment: string;
 }
 
-const fetchList = async (): Promise<ListRow[]> => {
+const fetchList = async (): Promise<Schema["lists"][]> => {
     const { data, error } = await supabase.from("lists").select();
     if (error) {
         throw new DatabaseError("fetch", "lists data");
@@ -34,7 +35,7 @@ const fetchData = async (): Promise<Props> => {
     return { data, comment };
 };
 
-const Lists = async (): Promise<ReactElement> => {
+const Lists = async (): Promise<React.ReactElement> => {
     const { data, comment } = await fetchData();
     return (
         <main>

@@ -13,9 +13,11 @@ const Centerer = styled.div`
 
 const Loading: React.FC<{}> = () => {
     return (
-        <Centerer>
-            <CircularProgress />
-        </Centerer>
+        <main>
+            <Centerer>
+                <CircularProgress />
+            </Centerer>
+        </main>
     );
 };
 

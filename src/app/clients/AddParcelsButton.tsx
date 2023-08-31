@@ -8,17 +8,17 @@ import PopUpButton from "@/components/Buttons/PopUpButton";
 import LinkButton from "@/components/Buttons/LinkButton";
 import Button from "@mui/material/Button";
 import TableSurface from "@/components/Tables/TableSurface";
-import Table, { Datum, TableHeaders } from "@/components/Tables/Table";
-import { ClientsTableRow } from "@/app/clients/getClientsTableData";
+import Table, { TableHeaders } from "@/components/Tables/Table";
+import { ParcelsTableRow } from "@/app/clients/getClientsTableData";
 
 interface Props {
-    data: ClientsTableRow[];
+    data: ParcelsTableRow[];
 }
 
-interface ClientsListRow extends Datum {
+interface ClientsTableRow {
     primaryKey: string;
     fullName: Schema["clients"]["full_name"];
-    familyCategory: string;
+    familyCategory: number;
     addressPostcode: Schema["clients"]["address_postcode"];
 }
 
@@ -41,15 +41,15 @@ const styleOptions = {
     },
 };
 
-const headers: TableHeaders = [
+const headers: TableHeaders<ClientsTableRow> = [
     ["fullName", "Name"],
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],
 ];
 
-const showClients = (data: ClientsTableRow[]): ClientsListRow[] => {
+const showClients = (data: ParcelsTableRow[]): ClientsTableRow[] => {
     const primaryKeys: string[] = [];
-    const clientsData: ClientsListRow[] = [];
+    const clientsData: ClientsTableRow[] = [];
 
     for (const datum of data) {
         if (!primaryKeys.includes(datum.primaryKey)) {
@@ -77,11 +77,11 @@ const AddParcelsButton: React.FC<Props> = ({ data }) => {
                             data={clientData}
                             headerKeysAndLabels={headers}
                             onRowClick={(row) => router.push(`/clients/${row.data.primaryKey}`)}
-                            sortable
+                            sortable={["addressPostcode", "familyCategory", "fullName"]}
                             pagination
                             checkboxes={false}
                             columnStyleOptions={styleOptions}
-                            headerFilters={["fullName"]}
+                            filters={["fullName"]}
                         />
                     </TableSurface>
                     <Button onClick={() => setExistingClientsView(false)}>Back</Button>

@@ -12,6 +12,7 @@ interface Props {
     multiline?: boolean;
     maxRows?: number;
     minRows?: number;
+    className?: string;
 }
 
 const FreeFormTextInput: React.FC<Props> = (props) => {

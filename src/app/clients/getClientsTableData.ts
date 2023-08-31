@@ -1,31 +1,35 @@
 import { CongestionChargeDetails, ProcessingData } from "@/app/clients/fetchDataFromServer";
 import { Schema } from "@/databaseUtils";
-import { Datum } from "@/components/Tables/Table";
-import {
-    familyCountToFamilyCategory,
-    formatDatetimeAsDate,
-} from "@/app/clients/getExpandedClientDetails";
 
-export interface ClientsTableRow extends Datum {
-    primaryKey: string;
+export interface ParcelsTableRow {
     parcelId: Schema["parcels"]["primary_key"];
-    flaggedForAttention: boolean;
-    requiresFollowUpPhoneCall: boolean;
-    fullName: Schema["clients"]["full_name"];
-    familyCategory: string;
-    addressPostcode: Schema["clients"]["address_postcode"];
-    collectionCentre: string;
-    congestionChargeApplies: boolean;
-    packingTimeLabel: string;
-    collectionDatetime: string;
-    lastStatus: string;
+    primaryKey: Schema["clients"]["primary_key"];
+    fullName: string;
+    familyCategory: number;
+    addressPostcode: string;
+    deliveryCollection: {
+        collectionCentre: string | null;
+        congestionChargeApplies: boolean;
+    };
+    packingTimeLabel: PackingTimeLabel | null;
+    collectionDatetime: Date | null;
+    lastStatus: {
+        name: string;
+        timestamp: Date;
+    } | null;
+    voucherNumber: string | null;
+    iconsColumn: {
+        flaggedForAttention: boolean;
+        requiresFollowUpPhoneCall: boolean;
+    };
+    packingDatetime: Date | null;
 }
 
 export const processingDataToClientsTableData = (
     processingData: ProcessingData,
     congestionCharge: CongestionChargeDetails[]
-): ClientsTableRow[] => {
-    const clientTableRows: ClientsTableRow[] = [];
+): ParcelsTableRow[] => {
+    const clientTableRows: ParcelsTableRow[] = [];
 
     if (processingData.length !== congestionCharge.length) {
         throw new Error(
@@ -38,39 +42,51 @@ export const processingDataToClientsTableData = (
         const client = parcel.client!;
 
         clientTableRows.push({
-            primaryKey: client.primary_key,
             parcelId: parcel.parcel_id,
-            flaggedForAttention: client.flagged_for_attention,
-            requiresFollowUpPhoneCall: client.signposting_call_required,
+            primaryKey: client.primary_key,
             fullName: client.full_name,
-            familyCategory: familyCountToFamilyCategory(client.family.length),
+            familyCategory: client.family.length,
             addressPostcode: client.address_postcode,
-            collectionCentre: parcel.collection_centre ?? "-",
-            congestionChargeApplies: congestionCharge[index].congestionCharge,
-            packingDate: formatDatetimeAsDate(parcel.packing_datetime),
+            deliveryCollection: {
+                collectionCentre: parcel.collection_centre ?? "-",
+                congestionChargeApplies: congestionCharge[index].congestionCharge,
+            },
+            collectionDatetime: parcel.collection_datetime
+                ? new Date(parcel.collection_datetime)
+                : null,
             packingTimeLabel: datetimeToPackingTimeLabel(parcel.packing_datetime),
-            collectionDatetime: parcel.collection_datetime ?? "-",
-            lastStatus: eventToStatusMessage(parcel.events[0] ?? null),
+            lastStatus: eventToLastStatus(parcel.events[0] ?? null),
+            voucherNumber: parcel.voucher_number,
+            packingDatetime: parcel.packing_datetime ? new Date(parcel.packing_datetime) : null,
+            iconsColumn: {
+                flaggedForAttention: client.flagged_for_attention,
+                requiresFollowUpPhoneCall: client.signposting_call_required,
+            },
         });
     }
 
     return clientTableRows;
 };
 
-export const datetimeToPackingTimeLabel = (datetime: string | null): string => {
+export type PackingTimeLabel = "AM" | "PM";
+
+export const datetimeToPackingTimeLabel = (datetime: string | null): PackingTimeLabel | null => {
     if (datetime === null || isNaN(Date.parse(datetime))) {
-        return "-";
+        return null;
     }
 
     return new Date(datetime).getHours() <= 11 ? "AM" : "PM";
 };
 
-export const eventToStatusMessage = (
-    event: Pick<Schema["events"], "event_name" | "timestamp"> | null
-): string => {
-    if (event === null) {
-        return "-";
+export const eventToLastStatus = (
+    event: Pick<Schema["events"], "event_name" | "timestamp"> | undefined | null
+): ParcelsTableRow["lastStatus"] => {
+    if (!event) {
+        return null;
     }
 
-    return `${event.event_name} @ ${formatDatetimeAsDate(event.timestamp)}`;
+    return {
+        name: event.event_name,
+        timestamp: new Date(event.timestamp),
+    };
 };

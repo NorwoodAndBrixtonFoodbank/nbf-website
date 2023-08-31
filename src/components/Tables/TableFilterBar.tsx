@@ -1,70 +1,107 @@
 "use client";
 
 import React from "react";
-import styled from "styled-components";
 import FilterAccordion from "@/components/Tables/FilterAccordion";
 import Button from "@mui/material/Button";
+import { TableHeaders } from "@/components/Tables/Table";
+import { Filter } from "@/components/Tables/Filters";
+import styled from "styled-components";
+import { FilterAltOffOutlined } from "@mui/icons-material";
 
-export interface FilterText {
-    [key: string]: string;
+interface Props<Data> {
+    setFilters: (filters: Filter<Data, any>[]) => void;
+    setAdditionalFilters: (filters: Filter<Data, any>[]) => void;
+    handleClear: () => void;
+    headers: TableHeaders<Data>;
+    filters: Filter<Data, any>[];
+    additionalFilters: Filter<Data, any>[];
+    toggleableHeaders: readonly (keyof Data)[];
+    setShownHeaderKeys: (headers: (keyof Data)[]) => void;
+    shownHeaderKeys: readonly (keyof Data)[];
 }
 
-const StyledFilterAccordion = styled(FilterAccordion)`
-    width: 100%;
-    overflow: visible;
+const StyledButton = styled(Button)`
+    align-self: center;
+    justify-self: flex-end;
 `;
 
-const StyledFilterBar = styled.input`
-    height: 39px;
-    font-size: 14px;
-    width: 15rem;
+const Styling = styled.div`
+    background-color: transparent;
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    padding: 0.5rem 0;
+    gap: 2rem;
     overflow: visible;
-    box-shadow: none;
-    padding: 4px 12px 4px 12px;
+    display: flex;
+    width: 100%;
 
-    &:focus {
-        outline: none;
+    @media (min-width: 500px) {
+        flex-wrap: nowrap;
     }
 `;
 
-interface Props {
-    filterText: FilterText;
-    onFilter: (event: React.ChangeEvent<HTMLInputElement>, filterField: string) => void;
-    handleClear: () => void;
-    headers: [string, string][];
-    filterKeys: string[];
-    toggleableHeaders?: string[];
-    setShownHeaderKeys: (headers: string[]) => void;
-    shownHeaderKeys: string[];
-}
+const FilterHeading = styled.h2`
+    width: 100%;
+    text-align: left;
+    font-size: large;
+`;
 
-const TableFilterBar: React.FC<Props> = (props) => {
+const Grow = styled.div`
+    flex-grow: 1;
+`;
+
+export const filtersToComponents = <Data,>(
+    filters: Filter<Data, any>[],
+    setFilters: (filters: Filter<Data, any>[]) => void
+): React.ReactElement[] => {
+    return filters.map((filter, index) => {
+        const onFilter = (state: any): void => {
+            const newFilters = [...filters];
+            newFilters[index] = {
+                ...newFilters[index],
+                state,
+            };
+            setFilters(newFilters);
+        };
+        return filter.filterComponent(filter.state, onFilter);
+    });
+};
+
+const TableFilterBar = <Data,>(props: Props<Data>): React.ReactElement => {
+    if (props.filters.length === 0 && props.toggleableHeaders.length === 0) {
+        return <></>;
+    }
+
     return (
         <>
-            <Button variant="contained" onClick={props.handleClear}>
-                Clear
-            </Button>
-            {props.headers
-                .filter(([key]) => props.filterKeys.includes(key))
-                .map(([key, value]) => {
-                    return (
-                        <StyledFilterBar
-                            key={key}
-                            type="text"
-                            value={props.filterText[key] ?? ""}
-                            placeholder={`Filter by ${value}`}
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                props.onFilter(event, key)
-                            }
-                        />
-                    );
-                })}
-            <StyledFilterAccordion
-                toggleableHeaders={props.toggleableHeaders}
-                shownHeaderKeys={props.shownHeaderKeys}
-                setShownHeaderKeys={props.setShownHeaderKeys}
-                headers={props.headers}
-            />
+            <FilterHeading>Filters</FilterHeading>
+            <Styling>
+                {props.filters.length > 0 && (
+                    <>
+                        {filtersToComponents(props.filters, props.setFilters)}
+                        <Grow />
+                        <StyledButton
+                            variant="outlined"
+                            onClick={props.handleClear}
+                            color="primary"
+                            startIcon={<FilterAltOffOutlined color="primary" />}
+                        >
+                            Clear
+                        </StyledButton>
+                    </>
+                )}
+            </Styling>
+            {props.toggleableHeaders.length !== 0 && (
+                <FilterAccordion
+                    toggleableHeaders={props.toggleableHeaders}
+                    shownHeaderKeys={props.shownHeaderKeys}
+                    setShownHeaderKeys={props.setShownHeaderKeys}
+                    headers={props.headers}
+                    filters={props.additionalFilters}
+                    setFilters={props.setAdditionalFilters}
+                />
+            )}
         </>
     );
 };

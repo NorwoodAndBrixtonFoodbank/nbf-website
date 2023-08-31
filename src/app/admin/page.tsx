@@ -2,7 +2,6 @@ import React, { ReactElement } from "react";
 import Title from "@/components/Title/Title";
 import { Metadata } from "next";
 import AdminPage from "@/app/admin/AdminPage";
-import { Datum } from "@/components/Tables/Table";
 import { Database } from "@/databaseTypesFile";
 import supabase from "@/supabaseServer";
 import { User } from "@supabase/gotrue-js";
@@ -11,7 +10,7 @@ import { DatabaseError } from "@/app/errorClasses";
 // disables caching
 export const revalidate = 0;
 
-export interface UserRow extends Datum {
+export interface UserRow {
     id: string;
     email: string;
     userRole: Database["public"]["Enums"]["role"];
