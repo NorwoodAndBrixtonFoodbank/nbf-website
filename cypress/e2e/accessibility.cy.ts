@@ -35,17 +35,18 @@ describe("Accessibility tests in light mode", () => {
         cy.checkAccessibility();
     });
 
-    it("Checks shopping-list page", () => {
-        cy.visit("/shopping-list");
-
-        cy.checkAccessibility();
-    });
-
     it("Checks login page", () => {
         cy.visit("/login");
 
         // wait for hydration
         cy.get("[data-loaded='true']", { timeout: 10000 }).should("exist");
+
+        cy.checkAccessibility();
+    });
+
+    it("Checks admin page", () => {
+        cy.login();
+        cy.visit("/admin");
 
         cy.checkAccessibility();
     });
@@ -85,13 +86,6 @@ describe("Accessibility tests in dark mode", () => {
         cy.checkAccessibility();
     });
 
-    it("Checks shopping-list page", () => {
-        cy.visit("/shopping-list");
-        cy.get("label[aria-label='Theme Switch']").click();
-
-        cy.checkAccessibility();
-    });
-
     it("Checks parcels/add/[id] page", () => {
         cy.login();
         cy.visit("/parcels/add/1");
@@ -105,6 +99,14 @@ describe("Accessibility tests in dark mode", () => {
 
         // wait for hydration
         cy.get("[data-loaded='true']", { timeout: 10000 }).should("exist");
+        cy.get("label[aria-label='Theme Switch']").click();
+
+        cy.checkAccessibility();
+    });
+
+    it("Checks admin page", () => {
+        cy.login();
+        cy.visit("/admin");
         cy.get("label[aria-label='Theme Switch']").click();
 
         cy.checkAccessibility();

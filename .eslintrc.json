@@ -36,5 +36,5 @@
     "import/no-named-as-default": "off",
     "import/no-self-import": "warn"
   },
-  "ignorePatterns": ["database_types_file.ts"]
+  "ignorePatterns": ["databaseTypesFile.ts"]
 }

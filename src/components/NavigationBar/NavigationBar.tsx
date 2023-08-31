@@ -126,7 +126,7 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
         ["Clients", "/clients"],
         ["Lists", "/lists"],
         ["Calendar", "/calendar"],
-        ["Admin", "/admin"], // TODO VFB-23 Prevent non-admins from viewing and accessing this page
+        ["Admin", "/admin"],
     ];
 
     return (

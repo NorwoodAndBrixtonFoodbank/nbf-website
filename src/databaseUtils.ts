@@ -15,3 +15,5 @@ export type InsertSchema = {
 export type UpdateSchema = {
     [key in keyof Tables]: Tables[key]["Update"];
 };
+
+export type DatabaseEnums = Database["public"]["Enums"];
