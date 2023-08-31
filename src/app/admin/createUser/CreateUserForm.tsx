@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { CenterComponent, StyledForm } from "@/components/Form/formStyling";
 import Button from "@mui/material/Button";
-import AccountDetails from "@/app/admin/createUser/createUserFormSections/AccountDetails";
-import UserRole from "@/app/admin/createUser/createUserFormSections/UserRole";
+import AccountDetails from "@/app/admin/createUser/AccountDetails";
+import UserRole from "@/app/admin/createUser/UserRole";
 import {
     checkErrorOnSubmit,
     Errors,

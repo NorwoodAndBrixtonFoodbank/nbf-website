@@ -21,9 +21,15 @@ const getParcelsWithCollectionDate = async (): Promise<ParcelsWithExtraFields[]>
     const { data, error } = await supabase
         .from("parcels")
         .select(
-            `*, 
-            clients ( full_name ), 
-            collection_centres ( name )`
+            `
+            *, 
+            clients (
+                full_name
+            ), 
+            collection_centres (
+                name
+            )
+        `
         )
         .not("collection_datetime", "is", null);
 

@@ -44,9 +44,7 @@ const getCollectionCentres = async (): Promise<Schema["collection_centres"][]> =
 
     // TODO VFB-23 Move error handling of this request to client side
     if (error) {
-        throw new Error(
-            "We were unable to fetch the collection centres at this time. Please try again later."
-        );
+        throw new DatabaseError("fetch", "collection centres");
     }
 
     return data;

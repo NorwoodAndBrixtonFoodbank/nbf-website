@@ -14,8 +14,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBuildingCircleArrowRight } from "@fortawesome/free-solid-svg-icons";
 import RefreshPageButton from "@/app/admin/RefreshPageButton";
 import { Schema } from "@/database_utils";
-import NameCard from "@/app/admin/createCollectionCentre/createCollectionCentreFormSections/NameCard";
-import AcronymCard from "@/app/admin/createCollectionCentre/createCollectionCentreFormSections/AcronymCard";
+import NameCard from "@/app/admin/createCollectionCentre/NameCard";
+import AcronymCard from "@/app/admin/createCollectionCentre/AcronymCard";
 import supabase from "@/supabaseClient";
 
 const initialFields: Schema["collection_centres"] = {

@@ -14,6 +14,11 @@ import { DatabaseError } from "@/app/errorClasses";
 const DangerDialog = styled(Modal)`
     & .header {
         background-color: ${(props) => props.theme.error};
+        text-transform: uppercase;
+    }
+
+    button {
+        text-transform: uppercase;
     }
 `;
 
@@ -67,7 +72,9 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
                 data={props.collectionCentreData}
                 headerKeysAndLabels={collectionCentresTableHeaderKeysAndLabels}
                 onDelete={collectionCentreOnDelete}
-                headerFilters={["name"]}
+                defaultShownHeaders={["name", "acronym"]}
+                headerFilters={["name", "acronym"]}
+                toggleableHeaders={["primary_key"]}
             />
 
             {refreshRequired && (
@@ -77,7 +84,7 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
             )}
 
             <DangerDialog
-                header="DELETE COLLECTION CENTRE"
+                header="Delete Collection Centre"
                 headerId="deleteCollectionCentreDialog"
                 isOpen={collectionCentreToDelete !== undefined}
                 onClose={onCollectionCentreDeleteCancellation}
