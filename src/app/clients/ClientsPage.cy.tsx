@@ -97,7 +97,7 @@ describe("Clients Page", () => {
 
             const expected: ParcelsTableRow[] = [
                 {
-                    parcelId: "PRIMARY_KEY1",
+                    parcelId: "PRIMARY_KEY",
                     primaryKey: "PRIMARY_KEY2",
                     fullName: "CLIENT_NAME",
                     familyCategory: 3,
