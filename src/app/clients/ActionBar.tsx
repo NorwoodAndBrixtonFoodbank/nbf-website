@@ -117,7 +117,7 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                     data={selectedData}
                     status={selectedAction}
                     header="Print Shipping Labels"
-                    headerId="action-modal-header"
+                    headerId="printShippingLabels"
                     errorText={modalError}
                 />
             ) : (
@@ -133,7 +133,7 @@ const ActionBar: React.FC<Props> = ({ selected, data }) => {
                     data={selectedData[0]}
                     status={selectedAction}
                     header="Print Shopping List"
-                    headerId="action-modal-header"
+                    headerId="printShoppingList"
                     errorText={modalError}
                 />
             ) : (

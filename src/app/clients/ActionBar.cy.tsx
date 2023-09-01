@@ -242,7 +242,7 @@ describe("Clients - Action Bar", () => {
                 "@interceptLists",
                 "@interceptWebData",
             ]);
-            cy.get("#action-modal-header").should("exist");
+            cy.get("#printShoppingList").should("exist");
         });
 
         it("should close the modal when the close button is clicked", () => {
@@ -256,9 +256,9 @@ describe("Clients - Action Bar", () => {
                 "@interceptLists",
                 "@interceptWebData",
             ]);
-            cy.get("#action-modal-header").should("exist");
+            cy.get("#printShoppingList").should("exist");
             cy.get("[aria-label='Close Button']").click();
-            cy.get("#action-modal-header").should("not.exist");
+            cy.get("#printShoppingList").should("not.exist");
         });
 
         it("should have a modal that contains the selected data", () => {
@@ -272,7 +272,7 @@ describe("Clients - Action Bar", () => {
                 "@interceptLists",
                 "@interceptWebData",
             ]);
-            cy.get("#action-modal-header").should("exist");
+            cy.get("#printShoppingList").should("exist");
             cy.get(".MuiPaper-root").contains(row.deliveryCollection.collectionCentreAcronym);
             cy.get(".MuiPaper-root").contains(row.fullName);
         });
