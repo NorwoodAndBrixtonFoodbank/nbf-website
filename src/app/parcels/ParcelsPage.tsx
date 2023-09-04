@@ -17,9 +17,7 @@ import Icon from "@/components/Icons/Icon";
 import { faBoxArchive } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal/Modal";
 import TableSurface from "@/components/Tables/TableSurface";
-import { CenterComponent } from "@/components/Form/formStyling";
 import ActionBar from "@/app/parcels/ActionBar";
-import AddParcelsButton from "@/app/parcels/AddParcelsButton";
 
 export const clientTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -171,9 +169,6 @@ const ParcelsPage: React.FC<Props> = ({ parcelsTableData }) => {
                     <ExpandedParcelDetails parcelId={selectedParcelId} />
                 </Suspense>
             </Modal>
-            <CenterComponent>
-                <AddParcelsButton />
-            </CenterComponent>
         </>
     );
 };

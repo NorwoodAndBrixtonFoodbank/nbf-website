@@ -2,7 +2,6 @@
 
 import supabase from "@/supabaseClient";
 import React, { useState } from "react";
-import ShippingLabelsModal from "@/app/clients/actionBarModal/ShippingLabelsModal";
 import styled from "styled-components";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu/Menu";
@@ -12,7 +11,8 @@ import { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import Paper from "@mui/material/Paper/Paper";
 import Alert from "@mui/material/Alert";
-import ShoppingListModal from "@/app/clients/actionBarModal/ShoppingListModal";
+import ShoppingListModal from "@/app/parcels/actionBarModal/ShoppingListModal";
+import ShippingLabelsModal from "@/app/parcels/actionBarModal/ShippingLabelsModal";
 import ActionBarModal from "@/app/parcels/ActionBarModal";
 
 interface Props {

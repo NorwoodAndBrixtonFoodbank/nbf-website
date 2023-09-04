@@ -3,8 +3,8 @@ import { Data } from "@/components/DataViewer/DataViewer";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 
-const getExpandedClientDetails = async (parcelId: string): Promise<ExpandedClientDetails> => {
-    const rawClientDetails = await getRawClientDetails(parcelId);
+const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientDetails> => {
+    const rawClientDetails = await getRawClientDetails(clientId);
     return rawDataToExpandedClientDetails(rawClientDetails);
 };
 export default getExpandedClientDetails;
@@ -12,15 +12,11 @@ export default getExpandedClientDetails;
 export type RawClientDetails = Awaited<ReturnType<typeof getRawClientDetails>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const getRawClientDetails = async (parcelId: string) => {
+const getRawClientDetails = async (clientId: string) => {
     const { data, error } = await supabase
-        .from("parcels")
+        .from("clients")
         .select(
             `
-        voucher_number,
-        packing_datetime,
-
-        client:clients(
             primary_key,
             full_name,
             phone_number,
@@ -30,24 +26,23 @@ const getRawClientDetails = async (parcelId: string) => {
             address_town,
             address_county,
             address_postcode,
-
+    
             family:families(
                 age,
                 gender
             ),
-
+    
             dietary_requirements,
             feminine_products,
             baby_food,
             pet_food,
             other_items,
             extra_information
+        `
         )
-
-    `
-        )
-        .eq("primary_key", parcelId)
+        .eq("primary_key", clientId)
         .single();
+
     if (error) {
         throw new DatabaseError("fetch", "client data");
     }
@@ -75,11 +70,8 @@ export const formatDatetimeAsDate = (datetime: string | null): string => {
 };
 
 export interface ExpandedClientDetails extends Data {
-    voucherNumber: string;
     fullName: string;
     phoneNumber: string;
-    packingDate: string;
-    packingTime: string;
     deliveryInstructions: string;
     address: string;
     household: string;
@@ -92,37 +84,10 @@ export interface ExpandedClientDetails extends Data {
     extraInformation: string;
 }
 
-export const rawDataToExpandedClientDetails = (
-    rawClientDetails: RawClientDetails
-): ExpandedClientDetails => {
-    if (rawClientDetails === null) {
-        return {
-            voucherNumber: "",
-            fullName: "",
-            phoneNumber: "",
-            packingDate: "",
-            packingTime: "",
-            deliveryInstructions: "",
-            address: "",
-            household: "",
-            ageAndGenderOfChildren: "",
-            dietaryRequirements: "",
-            feminineProducts: "",
-            babyProducts: null,
-            petFood: "",
-            otherRequirements: "",
-            extraInformation: "",
-        };
-    }
-
-    const client = rawClientDetails.client!;
-
+export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientDetails => {
     return {
-        voucherNumber: rawClientDetails.voucher_number ?? "",
         fullName: client.full_name,
         phoneNumber: client.phone_number,
-        packingDate: formatDatetimeAsDate(rawClientDetails.packing_datetime),
-        packingTime: formatDatetimeAsTime(rawClientDetails.packing_datetime),
         deliveryInstructions: client.delivery_instructions,
         address: formatAddressFromClientDetails(client),
         household: formatHouseholdFromFamilyDetails(client.family),
@@ -134,14 +99,6 @@ export const rawDataToExpandedClientDetails = (
         otherRequirements: client.other_items.join(", "),
         extraInformation: client.extra_information,
     };
-};
-
-export const formatDatetimeAsTime = (datetime: string | null): string => {
-    if (datetime === null || isNaN(Date.parse(datetime))) {
-        return "-";
-    }
-
-    return new Date(datetime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 };
 
 export const formatAddressFromClientDetails = (
