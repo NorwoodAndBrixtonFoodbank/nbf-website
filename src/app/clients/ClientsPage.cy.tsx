@@ -18,8 +18,11 @@ import {
 
 const sampleProcessingData: ProcessingData = [
     {
-        parcel_id: "PRIMARY_KEY1",
-        collection_centre: "COLLECTION_CENTRE",
+        parcel_id: "PRIMARY_KEY",
+        collection_centre: {
+            name: "COLLECTION_CENTRE",
+            acronym: "CC",
+        },
         collection_datetime: "2023-08-04T13:30:00+00:00",
         packing_datetime: "2023-08-04T13:30:00+00:00",
         voucher_number: "VOUCHER_1",
@@ -94,14 +97,15 @@ describe("Clients Page", () => {
 
             const expected: ParcelsTableRow[] = [
                 {
-                    parcelId: "PRIMARY_KEY1",
+                    parcelId: "PRIMARY_KEY",
                     primaryKey: "PRIMARY_KEY2",
                     fullName: "CLIENT_NAME",
                     familyCategory: 3,
                     addressPostcode: "SW1A 2AA",
                     collectionDatetime: new Date("2023-08-04T13:30:00+00:00"),
                     deliveryCollection: {
-                        collectionCentre: "COLLECTION_CENTRE",
+                        collectionCentreName: "COLLECTION_CENTRE",
+                        collectionCentreAcronym: "CC",
                         congestionChargeApplies: true,
                     },
                     packingTimeLabel: "PM",

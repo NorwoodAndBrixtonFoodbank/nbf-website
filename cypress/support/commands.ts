@@ -14,6 +14,18 @@ import { Result } from "axe-core";
 import "@cypress/code-coverage/support";
 import "cypress-axe";
 
+declare global {
+    namespace Cypress {
+        /* eslint-disable no-unused-vars */
+        interface Chainable {
+            login: () => void;
+            checkAccessibility: (options?: object) => void;
+        }
+
+        /* eslint-enable no-unused-vars */
+    }
+}
+
 const loginWithRetry = (iteration: number = 0): void => {
     if (iteration >= 4) {
         // This only ever seems to happen on GH Actions on the first test, so we can just log and move on
@@ -57,7 +69,7 @@ Cypress.Commands.add("login", () => {
     // Remember to cy.visit(url) as the first action after a login :)
 });
 
-Cypress.Commands.add("checkAccessibility", () => {
+Cypress.Commands.add("checkAccessibility", (options?) => {
     const terminalLog = (violations: Result[]): void => {
         cy.task(
             "table",
@@ -71,24 +83,7 @@ Cypress.Commands.add("checkAccessibility", () => {
     };
 
     cy.injectAxe();
-    cy.checkA11y(undefined, undefined, terminalLog);
-});
-
-Cypress.Commands.add("checkColorContrast", () => {
-    const terminalLog = (violations: Result[]): void => {
-        cy.task(
-            "table",
-            violations.map(({ id, impact, description, nodes }) => ({
-                id,
-                impact,
-                description,
-                length: nodes.length,
-            }))
-        );
-    };
-
-    cy.injectAxe();
-    cy.checkA11y(undefined, { runOnly: { type: "tag", values: ["wcag2aa"] } }, terminalLog);
+    cy.checkA11y(undefined, options, terminalLog);
 });
 
 Cypress.on("uncaught:exception", (err) => {

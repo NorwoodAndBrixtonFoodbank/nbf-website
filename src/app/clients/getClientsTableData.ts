@@ -4,11 +4,12 @@ import { Schema } from "@/databaseUtils";
 export interface ParcelsTableRow {
     parcelId: Schema["parcels"]["primary_key"];
     primaryKey: Schema["clients"]["primary_key"];
-    fullName: string;
+    fullName: Schema["clients"]["full_name"];
     familyCategory: number;
-    addressPostcode: string;
+    addressPostcode: Schema["clients"]["address_postcode"];
     deliveryCollection: {
-        collectionCentre: string | null;
+        collectionCentreName: string;
+        collectionCentreAcronym: string;
         congestionChargeApplies: boolean;
     };
     packingTimeLabel: PackingTimeLabel | null;
@@ -48,7 +49,8 @@ export const processingDataToClientsTableData = (
             familyCategory: client.family.length,
             addressPostcode: client.address_postcode,
             deliveryCollection: {
-                collectionCentre: parcel.collection_centre ?? "-",
+                collectionCentreName: parcel.collection_centre?.name ?? "-",
+                collectionCentreAcronym: parcel.collection_centre?.acronym ?? "-",
                 congestionChargeApplies: congestionCharge[index].congestionCharge,
             },
             collectionDatetime: parcel.collection_datetime

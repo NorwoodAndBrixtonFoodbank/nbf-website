@@ -1,14 +1,18 @@
 import React from "react";
-import { CardProps, valueOnChangeRadioGroup, errorText } from "@/components/Form/formFunctions";
+import { CardProps, errorText, valueOnChangeDropdownList } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
-import RadioGroupInput from "@/components/DataInput/RadioGroupInput";
 import { ErrorText } from "@/components/Form/formStyling";
+import { CollectionCentresLabelsAndValues } from "@/app/parcels/add/[id]/page";
+import DropdownListInput from "@/components/DataInput/DropdownListInput";
 
-const CollectionCentreCard: React.FC<CardProps> = ({
+interface CollectionCentreCardProps extends CardProps {
+    collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues;
+}
+const CollectionCentreCard: React.FC<CollectionCentreCardProps> = ({
     fieldSetter,
     errorSetter,
     formErrors,
-    fields,
+    collectionCentresLabelsAndValues,
 }) => {
     return (
         <GenericFormCard
@@ -17,19 +21,16 @@ const CollectionCentreCard: React.FC<CardProps> = ({
             text="What centre is the client collecting their parcel from?"
         >
             <>
-                <RadioGroupInput
-                    labelsAndValues={[
-                        ["Vauxhall Hope Church", "Vauxhall Hope Church"],
-                        ["Waterloo - St George the Martyr", "Waterloo - St George the Martyr"],
-                        ["Waterloo - Oasis", "Waterloo - Oasis"],
-                        ["Waterloo - St Johns", "Waterloo - St Johns"],
-                        ["Brixton Hill - Methodist Church", "Brixton Hill - Methodist Church"],
-                        ["N&B - Emmanuel Church", "N&B - Emmanuel Church"],
-                        ["Streatham - Immanuel & St Andrew", "Streatham - Immanuel & St Andrew"],
-                    ]}
-                    onChange={valueOnChangeRadioGroup(fieldSetter, errorSetter, "collectionCentre")}
-                    value={fields.collectionCentre}
-                ></RadioGroupInput>
+                <DropdownListInput
+                    labelsAndValues={collectionCentresLabelsAndValues}
+                    listTitle="Collection Centre"
+                    defaultValue={collectionCentresLabelsAndValues[0][0]}
+                    onChange={valueOnChangeDropdownList(
+                        fieldSetter,
+                        errorSetter,
+                        "collectionCentre"
+                    )}
+                />
                 <ErrorText>{errorText(formErrors.collectionCentre)}</ErrorText>
             </>
         </GenericFormCard>

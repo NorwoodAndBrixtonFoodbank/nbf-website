@@ -2,7 +2,6 @@
 
 import React, { Suspense, useState } from "react";
 import Table, { Row, SortOptions, TableHeaders } from "@/components/Tables/Table";
-
 import { useTheme } from "styled-components";
 import { ParcelsTableRow } from "@/app/clients/getClientsTableData";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
@@ -15,7 +14,6 @@ import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFa
 import Icon from "@/components/Icons/Icon";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal/Modal";
-import { Schema } from "@/databaseUtils";
 import TableSurface from "@/components/Tables/TableSurface";
 import { CenterComponent } from "@/components/Form/formStyling";
 import ActionBar, { statuses } from "@/app/clients/ActionBar";
@@ -23,32 +21,8 @@ import AddParcelsButton from "@/app/clients/AddParcelsButton";
 import { dateFilter } from "@/components/Tables/Filters";
 import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
 
-const collectionCentreToAbbreviation = (
-    collectionCentre: Schema["parcels"]["collection_centre"]
-): string => {
-    switch (collectionCentre) {
-        case "Brixton Hill - Methodist Church":
-            return "BH-MC";
-        case "Clapham - St Stephens Church":
-            return "CLP-SC";
-        case "N&B - Emmanuel Church":
-            return "NAB-EC";
-        case "Streatham - Immanuel & St Andrew":
-            return "STM-IS";
-        case "Vauxhall Hope Church":
-            return "VHC";
-        case "Waterloo - Oasis":
-            return "WAT-OA";
-        case "Waterloo - St George the Martyr":
-            return "WAT-SG";
-        case "Waterloo - St Johns":
-            return "WAT-SJ";
-        default:
-            return "-";
-    }
-};
-
 const parcelTableKeysAndLabels: TableHeaders<ParcelsTableRow> = [
+    ["iconsColumn", "Flags"],
     ["fullName", "Name"],
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],
@@ -124,7 +98,7 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData: parcelsTableData }) =>
             );
         },
         deliveryCollection: (data: ParcelsTableRow["deliveryCollection"]): React.ReactElement => {
-            if (data.collectionCentre === "Delivery") {
+            if (data.collectionCentreName === "Delivery") {
                 return (
                     <>
                         <DeliveryIcon color={theme.main.largeForeground[0]} />
@@ -137,9 +111,9 @@ const ClientsPage: React.FC<Props> = ({ clientsTableData: parcelsTableData }) =>
                 <>
                     <CollectionIcon
                         color={theme.main.largeForeground[0]}
-                        collectionPoint={data.collectionCentre}
+                        collectionPoint={data.collectionCentreName}
                     />
-                    {collectionCentreToAbbreviation(data.collectionCentre)}
+                    {data.collectionCentreAcronym}
                 </>
             );
         },

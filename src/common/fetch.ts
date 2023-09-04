@@ -2,11 +2,25 @@ import { DatabaseError } from "@/app/errorClasses";
 import { Schema } from "@/databaseUtils";
 import { Supabase } from "@/supabaseUtils";
 
+type CollectionCentre = {
+    collection_centre: { name: Schema["collection_centres"]["name"] } | null;
+};
+
+type ParcelWithCollectionCentre = Omit<Schema["parcels"], "collection_centre"> & CollectionCentre;
+
 export const fetchParcels = async (
     parcelID: string,
     supabase: Supabase
-): Promise<Schema["parcels"]> => {
-    const { data, error } = await supabase.from("parcels").select().eq("primary_key", parcelID);
+): Promise<ParcelWithCollectionCentre> => {
+    const { data, error } = await supabase
+        .from("parcels")
+        .select(
+            `*, 
+            collection_centre:collection_centres ( 
+                name
+            )`
+        )
+        .eq("primary_key", parcelID);
     if (error) {
         throw new DatabaseError("fetch", "parcel data");
     }

@@ -29,7 +29,12 @@ export const getProcessingData = async () => {
         .select(
             `
         parcel_id:primary_key,
-        collection_centre,
+        
+        collection_centre:collection_centres ( 
+            name, 
+            acronym
+         ),
+         
         collection_datetime,
         packing_datetime,
         voucher_number,

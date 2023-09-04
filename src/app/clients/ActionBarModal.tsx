@@ -83,7 +83,7 @@ const ActionBarModal: React.FC<SharedModalProps> = (props) => {
                     {props.data.map((parcel, index) => {
                         return (
                             <StatusText key={index}>
-                                {parcel.deliveryCollection.collectionCentre}
+                                {parcel.deliveryCollection.collectionCentreAcronym}
                                 {parcel.fullName && ` - ${parcel.fullName}`}
                                 {parcel.collectionDatetime &&
                                     `\n @ ${dayjs(parcel.collectionDatetime!).format(

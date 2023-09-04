@@ -60,10 +60,11 @@ const UsersTable: React.FC<Props> = (props) => {
                 data={props.userData}
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
                 onDelete={userOnDelete}
-                filters={["email"]}
                 onEdit={userOnEdit}
+                filters={["email", "userRole"]}
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
-                toggleableHeaders={["id", "email", "userRole", "createdAt", "updatedAt"]}
+                toggleableHeaders={["id", "createdAt", "updatedAt"]}
+                defaultShownHeaders={["email", "userRole", "createdAt", "updatedAt"]}
             />
 
             <DeleteUserDialog

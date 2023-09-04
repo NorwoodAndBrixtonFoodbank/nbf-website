@@ -32,7 +32,7 @@ export const prepareParcelInfo = async (parcelID: string): Promise<ParcelInfoAnd
         voucherNumber: fetchedData.voucher_number ?? "",
         packingDate: formatDate(fetchedData.packing_datetime),
         collectionDate: formatDate(fetchedData.collection_datetime),
-        collectionSite: fetchedData.collection_centre ?? "",
+        collectionSite: fetchedData.collection_centre?.name ?? "",
     };
 
     if (parcelInfo.collectionSite === "Delivery") {

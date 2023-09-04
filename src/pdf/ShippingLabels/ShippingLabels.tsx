@@ -5,6 +5,9 @@ import PdfButton from "@/components/PdfButton/PdfButton";
 import ShippingLabelsPdf, { ParcelClients } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
 import { DatabaseError } from "@/app/errorClasses";
 
+type ParcelWithCollectionCentre = Omit<Schema["parcels"], "collection_centre"> & {
+    collection_centre: { name: Schema["collection_centres"]["name"] } | null;
+};
 const formatDatetime = (datetimeString: string | null, isDatetime: boolean): string => {
     if (datetimeString === null) {
         return "No recorded date";
@@ -23,8 +26,18 @@ const formatDatetime = (datetimeString: string | null, isDatetime: boolean): str
         : new Date(datetimeString).toLocaleDateString();
 };
 
-const getParcelsForDelivery = async (parcelIds: string[]): Promise<Schema["parcels"][]> => {
-    const { data, error } = await supabase.from("parcels").select("*").in("primary_key", parcelIds);
+const getParcelsForDelivery = async (
+    parcelIds: string[]
+): Promise<ParcelWithCollectionCentre[]> => {
+    const { data, error } = await supabase
+        .from("parcels")
+        .select(
+            `*, 
+            collection_centre:collection_centres ( 
+                name
+            )`
+        )
+        .in("primary_key", parcelIds);
     if (error !== null) {
         throw new DatabaseError("fetch", " delivery parcels data");
     }
@@ -34,7 +47,7 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<Schema["parce
 const getClientById = async (clientId: string): Promise<Schema["clients"] | null> => {
     const { data, error } = await supabase
         .from("clients")
-        .select("*")
+        .select()
         .eq("primary_key", clientId)
         .single();
     if (error !== null) {
@@ -51,7 +64,7 @@ const getRequiredData = async (parcelIds: string[]): Promise<ParcelClients[]> =>
             const client = await getClientById(parcel.client_id);
             return {
                 packing_datetime: formatDatetime(parcel.packing_datetime, false),
-                collection_centre: parcel.collection_centre ?? "",
+                collection_centre: parcel.collection_centre?.name ?? "",
                 collection_datetime: formatDatetime(parcel.collection_datetime, true),
                 voucher_number: parcel.voucher_number ?? "",
                 full_name: client?.full_name,

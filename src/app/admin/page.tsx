@@ -6,6 +6,7 @@ import { Database } from "@/databaseTypesFile";
 import supabase from "@/supabaseServer";
 import { User } from "@supabase/gotrue-js";
 import { DatabaseError } from "@/app/errorClasses";
+import { Schema } from "@/databaseUtils";
 
 // disables caching
 export const revalidate = 0;
@@ -38,13 +39,26 @@ const getUsers = async (): Promise<UserRow[]> => {
     });
 };
 
+const getCollectionCentres = async (): Promise<Schema["collection_centres"][]> => {
+    const { data, error } = await supabase.from("collection_centres").select();
+
+    // TODO VFB-23 Move error handling of this request to client side
+    if (error) {
+        throw new DatabaseError("fetch", "collection centres");
+    }
+
+    return data;
+};
 const Admin = async (): Promise<ReactElement> => {
-    const userData = await getUsers();
+    const [userData, collectionCentreData] = await Promise.all([
+        getUsers(),
+        getCollectionCentres(),
+    ]);
 
     return (
         <main>
             <Title>Admin Panel</Title>
-            <AdminPage userData={userData} />
+            <AdminPage userData={userData} collectionCentreData={collectionCentreData} />
         </main>
     );
 };

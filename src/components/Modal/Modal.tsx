@@ -88,7 +88,7 @@ const Modal: React.FC<ModalProps> = (props) => {
             aria-labelledby={props.headerId}
             className={props.className}
         >
-            <Header id={props.headerId}>
+            <Header id={props.headerId} className="header">
                 {props.header}
                 <CloseButton onClick={props.onClose} aria-label="Close Button">
                     <StyledIcon icon={faClose} />

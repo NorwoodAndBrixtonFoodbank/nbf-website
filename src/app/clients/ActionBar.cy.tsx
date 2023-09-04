@@ -11,13 +11,17 @@ describe("Clients - Action Bar", () => {
             primaryKey: "primaryKey1",
             addressPostcode: "AB1 2CD",
             deliveryCollection: {
-                collectionCentre: "Centre 1",
+                collectionCentreName: "Centre 1",
+                collectionCentreAcronym: "C1",
                 congestionChargeApplies: false,
             },
             collectionDatetime: new Date(),
             familyCategory: 1,
             fullName: "John Smith",
-            lastStatus: { name: "Delivered", timestamp: new Date() },
+            lastStatus: {
+                name: "Delivered",
+                timestamp: new Date(),
+            },
             packingDatetime: new Date(),
             packingTimeLabel: "AM",
             parcelId: "123456789",
@@ -30,11 +34,18 @@ describe("Clients - Action Bar", () => {
         {
             primaryKey: "primaryKey2",
             addressPostcode: "AB1 aaaa2CD",
-            deliveryCollection: { collectionCentre: "Centraaaae 1", congestionChargeApplies: true },
+            deliveryCollection: {
+                collectionCentreName: "Centraaaae 1",
+                collectionCentreAcronym: "C1",
+                congestionChargeApplies: true,
+            },
             collectionDatetime: new Date(),
             familyCategory: 1,
             fullName: "John Smaaaaith",
-            lastStatus: { name: "Called and Confirmed", timestamp: new Date() },
+            lastStatus: {
+                name: "Called and Confirmed",
+                timestamp: new Date(),
+            },
             packingDatetime: new Date(),
             packingTimeLabel: "PM",
             parcelId: "123456aaaa789",
@@ -173,7 +184,7 @@ describe("Clients - Action Bar", () => {
             cy.get(`input[value="${timeString}"]`).should("exist");
             selectedIndices.forEach((index) => {
                 cy.get(".MuiPaper-root").contains(
-                    mockData[index].deliveryCollection.collectionCentre!
+                    mockData[index].deliveryCollection.collectionCentreAcronym
                 );
                 cy.get(".MuiPaper-root").contains(mockData[index].fullName);
             });
@@ -231,7 +242,7 @@ describe("Clients - Action Bar", () => {
                 "@interceptLists",
                 "@interceptWebData",
             ]);
-            cy.get("#action-modal-header").should("exist");
+            cy.get("#printShoppingList").should("exist");
         });
 
         it("should close the modal when the close button is clicked", () => {
@@ -245,9 +256,9 @@ describe("Clients - Action Bar", () => {
                 "@interceptLists",
                 "@interceptWebData",
             ]);
-            cy.get("#action-modal-header").should("exist");
+            cy.get("#printShoppingList").should("exist");
             cy.get("[aria-label='Close Button']").click();
-            cy.get("#action-modal-header").should("not.exist");
+            cy.get("#printShoppingList").should("not.exist");
         });
 
         it("should have a modal that contains the selected data", () => {
@@ -261,8 +272,8 @@ describe("Clients - Action Bar", () => {
                 "@interceptLists",
                 "@interceptWebData",
             ]);
-            cy.get("#action-modal-header").should("exist");
-            cy.get(".MuiPaper-root").contains(row.deliveryCollection.collectionCentre!);
+            cy.get("#printShoppingList").should("exist");
+            cy.get(".MuiPaper-root").contains(row.deliveryCollection.collectionCentreAcronym);
             cy.get(".MuiPaper-root").contains(row.fullName);
         });
     });

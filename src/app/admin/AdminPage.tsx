@@ -7,14 +7,19 @@ import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import { ExpandMore } from "@mui/icons-material";
 import TableSurface from "@/components/Tables/TableSurface";
 import CreateUserForm from "@/app/admin/createUser/CreateUserForm";
-import { faUsers, faUserPlus, IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import {
+    faUsers,
+    faUserPlus,
+    faCity,
+    faBuildingCircleArrowRight,
+    IconDefinition,
+} from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { UserRow } from "@/app/admin/page";
-
-const PanelIcon = styled(FontAwesomeIcon)`
-    margin-right: 0.5em;
-`;
+import CollectionCentresTable from "@/app/admin/collectionCentresTable/CollectionCentresTable";
+import { Schema } from "@/databaseUtils";
+import CreateCollectionCentreForm from "@/app/admin/createCollectionCentre/CreateCollectionCentreForm";
 
 const PanelTitle = styled.h2`
     text-transform: uppercase;
@@ -28,7 +33,12 @@ interface Panel {
 
 interface Props {
     userData: UserRow[];
+    collectionCentreData: Schema["collection_centres"][];
 }
+
+const PanelIcon = styled(FontAwesomeIcon)`
+    padding-right: 0.9rem;
+`;
 
 const AdminPage: React.FC<Props> = (props) => {
     const adminPanels: Panel[] = [
@@ -38,6 +48,18 @@ const AdminPage: React.FC<Props> = (props) => {
             panelContent: <UsersTable userData={props.userData} />,
         },
         { panelTitle: "Create User", panelIcon: faUserPlus, panelContent: <CreateUserForm /> },
+        {
+            panelTitle: "Collection Centres Table",
+            panelIcon: faCity,
+            panelContent: (
+                <CollectionCentresTable collectionCentreData={props.collectionCentreData} />
+            ),
+        },
+        {
+            panelTitle: "Create Collection Centre",
+            panelIcon: faBuildingCircleArrowRight,
+            panelContent: <CreateCollectionCentreForm />,
+        },
     ];
 
     return (
