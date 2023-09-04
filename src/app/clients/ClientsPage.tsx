@@ -35,6 +35,22 @@ const Centerer = styled.div`
     justify-content: center;
 `;
 
+const OutsideDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+`;
+
+const ButtonsDiv = styled.div`
+    flex: none;
+    max-height: 10%;
+`;
+
+const ContentDiv = styled.div`
+    overflow: auto;
+    max-height: 90%;
+`;
+
 const ClientsPage: React.FC<Props> = ({ data }) => {
     const theme = useTheme();
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
@@ -73,15 +89,22 @@ const ClientsPage: React.FC<Props> = ({ data }) => {
                 onClose={() => setModalIsOpen(false)}
                 headerId="clientsDetailModal"
             >
-                <Centerer>
-                    <LinkButton link={`/clients/edit/${activeData?.primaryKey}`}>
-                        Edit Client
-                    </LinkButton>
-                    <LinkButton link={`/parcels/add/${activeData?.primaryKey}`}>
-                        Add Parcel
-                    </LinkButton>
-                </Centerer>
-                <DataViewer data={activeData ?? {}} />
+                <OutsideDiv>
+                    <ContentDiv>
+                        <DataViewer data={activeData ?? {}} />
+                    </ContentDiv>
+
+                    <ButtonsDiv>
+                        <Centerer>
+                            <LinkButton link={`/clients/edit/${activeData?.primaryKey}`}>
+                                Edit Client
+                            </LinkButton>
+                            <LinkButton link={`/parcels/add/${activeData?.primaryKey}`}>
+                                Add Parcel
+                            </LinkButton>
+                        </Centerer>
+                    </ButtonsDiv>
+                </OutsideDiv>
             </Modal>
         </>
     );

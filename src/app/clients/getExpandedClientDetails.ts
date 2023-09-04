@@ -61,15 +61,8 @@ export const familyCountToFamilyCategory = (count: number): string => {
     return "Family of 10+";
 };
 
-export const formatDatetimeAsDate = (datetime: string | null): string => {
-    if (datetime === null || isNaN(Date.parse(datetime))) {
-        return "-";
-    }
-
-    return new Date(datetime).toLocaleDateString("en-GB");
-};
-
 export interface ExpandedClientDetails extends Data {
+    primaryKey: string;
     fullName: string;
     phoneNumber: string;
     deliveryInstructions: string;
@@ -86,6 +79,7 @@ export interface ExpandedClientDetails extends Data {
 
 export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientDetails => {
     return {
+        primaryKey: client.primary_key,
         fullName: client.full_name,
         phoneNumber: client.phone_number,
         deliveryInstructions: client.delivery_instructions,
