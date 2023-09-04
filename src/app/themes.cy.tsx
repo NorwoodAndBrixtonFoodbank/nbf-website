@@ -1,8 +1,8 @@
 "use client";
 
+import StyleManager, { darkTheme, lightTheme } from "@/app/themes";
 import React from "react";
-import styled, { DefaultTheme, StandardPaletteList, StandardPalette } from "styled-components";
-import StyleManager, { lightTheme, darkTheme } from "@/app/themes";
+import styled, { DefaultTheme, StandardPalette, StandardPaletteList } from "styled-components";
 
 const ForegroundWithBackground: React.FC<StandardPalette> = (props) => {
     const StyledH1 = styled.h1`
@@ -71,13 +71,15 @@ const GenerateForegroundWithBackground: React.FC<{ theme: DefaultTheme }> = (pro
 };
 
 describe("Light and dark mode buttons work", () => {
+    const checkColourContrastOnly = { runOnly: { type: "tag", values: ["wcag2aa"] } };
+
     it("Light mode theme colors are all accessible", () => {
         cy.mount(<GenerateForegroundWithBackground theme={lightTheme} />);
-        cy.checkColorContrast();
+        cy.checkAccessibility(checkColourContrastOnly);
     });
 
     it("Dark mode theme colors are all accessible", () => {
         cy.mount(<GenerateForegroundWithBackground theme={darkTheme} />);
-        cy.checkColorContrast();
+        cy.checkAccessibility(checkColourContrastOnly);
     });
 });

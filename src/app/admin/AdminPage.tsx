@@ -40,8 +40,6 @@ const PanelIcon = styled(FontAwesomeIcon)`
     padding-right: 0.9rem;
 `;
 
-// TODO VFB-23 Add accessibility tests for the admin page
-
 const AdminPage: React.FC<Props> = (props) => {
     const adminPanels: Panel[] = [
         {

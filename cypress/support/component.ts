@@ -23,16 +23,13 @@ import { mount } from "cypress/react18";
 // Alternatively, can be defined in cypress/support/component.d.ts
 // with a <reference path="./component" /> at the top of your spec.
 declare global {
-    /* eslint-disable no-unused-vars */
     namespace Cypress {
+        /* eslint-disable no-unused-vars */
         interface Chainable {
             mount: typeof mount;
-            login: () => void;
-            checkAccessibility: () => void;
-            checkColorContrast: () => void;
         }
+        /* eslint-enable no-unused-vars */
     }
-    /* eslint-enable no-unused-vars */
 }
 
 Cypress.Commands.add("mount", mount);
