@@ -1,213 +1,111 @@
 "use client";
 
-import React, { Suspense, useState } from "react";
-import Table, { Row, SortOptions, TableHeaders } from "@/components/Tables/Table";
-import { useTheme } from "styled-components";
-import { ParcelsTableRow } from "@/app/clients/getClientsTableData";
-import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
-import PhoneIcon from "@/components/Icons/PhoneIcon";
-import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
-import DeliveryIcon from "@/components/Icons/DeliveryIcon";
-import CollectionIcon from "@/components/Icons/CollectionIcon";
-import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
-import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
+import getExpandedClientDetails, {
+    ExpandedClientDetails,
+} from "@/app/clients/getExpandedClientDetails";
+import LinkButton from "@/components/Buttons/LinkButton";
+import DataViewer from "@/components/DataViewer/DataViewer";
 import Icon from "@/components/Icons/Icon";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal/Modal";
+import Table, { TableHeaders } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
-import { CenterComponent } from "@/components/Form/formStyling";
-import ActionBar, { statuses } from "@/app/clients/ActionBar";
-import AddParcelsButton from "@/app/clients/AddParcelsButton";
-import { dateFilter } from "@/components/Tables/Filters";
-import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import React, { useState } from "react";
+import styled, { useTheme } from "styled-components";
 
-const parcelTableKeysAndLabels: TableHeaders<ParcelsTableRow> = [
-    ["iconsColumn", "Flags"],
+export interface ClientsTableRow {
+    primaryKey: string;
+    fullName: string;
+    familyCategory: string;
+    addressPostcode: string;
+}
+
+interface Props {
+    data: ClientsTableRow[];
+}
+
+const headers: TableHeaders<ClientsTableRow> = [
     ["fullName", "Name"],
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],
-    ["deliveryCollection", "Collection"],
-    ["packingDatetime", "Packing Date"],
-    ["packingTimeLabel", "Time"],
-    ["lastStatus", "Last Status"],
-    ["voucherNumber", "Voucher"],
 ];
 
-const toggleableHeaders: readonly (keyof ParcelsTableRow)[] = [
-    "fullName",
-    "familyCategory",
-    "addressPostcode",
-    "packingDatetime",
-    "packingTimeLabel",
-    "lastStatus",
-    "voucherNumber",
-];
+const Centerer = styled.div`
+    display: flex;
+    justify-content: center;
+`;
 
-const clientTableColumnStyleOptions = {
-    iconsColumn: {
-        width: "3rem",
-    },
-    fullName: {
-        minWidth: "8rem",
-    },
-    familyCategory: {
-        hide: 550,
-    },
-    addressPostcode: {
-        hide: 800,
-    },
-    collectionCentre: {
-        minWidth: "6rem",
-    },
-    packingDatetime: {
-        hide: 800,
-    },
-    packingTimeLabel: {
-        hide: 800,
-        minWidth: "6rem",
-    },
-    lastStatus: {
-        minWidth: "8rem",
-    },
-    voucherNumber: {
-        hide: 800,
-    },
-};
+const OutsideDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+`;
 
-interface Props {
-    clientsTableData: ParcelsTableRow[];
-}
+const ButtonsDiv = styled.div`
+    flex: none;
+    max-height: 10%;
+`;
 
-const ClientsPage: React.FC<Props> = ({ clientsTableData: parcelsTableData }) => {
-    const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
-    const [selected, setSelected] = useState<number[]>([]);
+const ContentDiv = styled.div`
+    overflow: auto;
+    max-height: 90%;
+`;
+
+const ClientsPage: React.FC<Props> = ({ data }) => {
     const theme = useTheme();
-
-    const clientTableColumnDisplayFunctions = {
-        iconsColumn: ({
-            flaggedForAttention,
-            requiresFollowUpPhoneCall,
-        }: ParcelsTableRow["iconsColumn"]): React.ReactElement => {
-            return (
-                <>
-                    {flaggedForAttention && <FlaggedForAttentionIcon />}
-                    {requiresFollowUpPhoneCall && (
-                        <PhoneIcon color={theme.main.largeForeground[0]} />
-                    )}
-                </>
-            );
-        },
-        deliveryCollection: (data: ParcelsTableRow["deliveryCollection"]): React.ReactElement => {
-            if (data.collectionCentreName === "Delivery") {
-                return (
-                    <>
-                        <DeliveryIcon color={theme.main.largeForeground[0]} />
-                        {data.congestionChargeApplies && <CongestionChargeAppliesIcon />}
-                    </>
-                );
-            }
-
-            return (
-                <>
-                    <CollectionIcon
-                        color={theme.main.largeForeground[0]}
-                        collectionPoint={data.collectionCentreName}
-                    />
-                    {data.collectionCentreAcronym}
-                </>
-            );
-        },
-        packingDatetime: (datetime: ParcelsTableRow["packingDatetime"]): string => {
-            return datetime ? datetime.toLocaleDateString() : "";
-        },
-        lastStatus: (status: ParcelsTableRow["lastStatus"]): React.ReactNode => {
-            if (status === null) {
-                return null;
-            }
-
-            const { name, timestamp } = status;
-
-            return `${name} @ ${timestamp.toLocaleDateString()}`;
-        },
-        familyCategory: (familyCategory: ParcelsTableRow["familyCategory"]): string => {
-            return familyCountToFamilyCategory(familyCategory);
-        },
-    };
-
-    const onClientTableRowClick = (row: Row<ParcelsTableRow>): void => {
-        setSelectedParcelId(row.data.parcelId);
-    };
-
-    const onExpandedClientDetailsClose = (): void => {
-        setSelectedParcelId(null);
-    };
-
-    const lastStatusSortOptions: SortOptions<ParcelsTableRow, "lastStatus"> = {
-        key: "lastStatus",
-        sortFunction: (lastStatus1, lastStatus2) => {
-            const idx1 = statuses.findIndex((status) => status === lastStatus1?.name);
-            const idx2 = statuses.findIndex((status) => status === lastStatus2?.name);
-            if (idx1 === -1) {
-                return 1;
-            }
-
-            if (idx2 === -1) {
-                return -1;
-            }
-
-            return idx1 - idx2;
-        },
-    };
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+    const [activeData, setActiveData] = useState<ExpandedClientDetails | null>(null);
 
     return (
         <>
-            <ActionBar data={parcelsTableData} selected={selected} />
             <TableSurface>
                 <Table
-                    data={parcelsTableData}
-                    headerKeysAndLabels={parcelTableKeysAndLabels}
-                    columnDisplayFunctions={clientTableColumnDisplayFunctions}
-                    columnStyleOptions={clientTableColumnStyleOptions}
-                    onRowClick={onClientTableRowClick}
-                    checkboxes={true}
-                    onRowSelection={setSelected}
-                    pagination={true}
-                    sortable={[
-                        "fullName",
-                        "familyCategory",
-                        "packingDatetime",
-                        lastStatusSortOptions,
-                    ]}
-                    filters={[
-                        dateFilter<ParcelsTableRow, "packingDatetime">({
-                            key: "packingDatetime",
-                            label: "Packing Date",
-                        }),
-                        "addressPostcode",
-                        "lastStatus",
-                    ]}
-                    additionalFilters={["fullName", "voucherNumber"]}
-                    toggleableHeaders={toggleableHeaders}
+                    data={data}
+                    headerKeysAndLabels={headers}
+                    onRowClick={(row) =>
+                        getExpandedClientDetails(row.data.primaryKey).then((data) => {
+                            setModalIsOpen(true);
+                            setActiveData(data);
+                        })
+                    }
+                    sortable={["fullName", "familyCategory", "addressPostcode"]}
+                    pagination
+                    checkboxes={false}
+                    filters={["fullName"]}
                 />
             </TableSurface>
+            <Centerer>
+                <LinkButton link="/clients/add">Add Client</LinkButton>
+            </Centerer>
+
             <Modal
                 header={
                     <>
-                        <Icon icon={faUser} color={theme.primary.largeForeground[2]} /> Client
-                        Details
+                        <Icon icon={faUser} color={theme.primary.largeForeground[2]} />
+                        Client Details
                     </>
                 }
-                isOpen={selectedParcelId !== null}
-                onClose={onExpandedClientDetailsClose}
-                headerId="expandedClientDetailsModal"
+                isOpen={modalIsOpen}
+                onClose={() => setModalIsOpen(false)}
+                headerId="clientsDetailModal"
             >
-                <Suspense fallback={<ExpandedClientDetailsFallback />}>
-                    <ExpandedClientDetails parcelId={selectedParcelId} />
-                </Suspense>
+                <OutsideDiv>
+                    <ContentDiv>
+                        <DataViewer data={activeData ?? {}} />
+                    </ContentDiv>
+
+                    <ButtonsDiv>
+                        <Centerer>
+                            <LinkButton link={`/clients/edit/${activeData?.primaryKey}`}>
+                                Edit Client
+                            </LinkButton>
+                            <LinkButton link={`/parcels/add/${activeData?.primaryKey}`}>
+                                Add Parcel
+                            </LinkButton>
+                        </Centerer>
+                    </ButtonsDiv>
+                </OutsideDiv>
             </Modal>
-            <CenterComponent>
-                <AddParcelsButton data={parcelsTableData} />
-            </CenterComponent>
         </>
     );
 };

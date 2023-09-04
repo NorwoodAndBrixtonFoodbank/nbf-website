@@ -2,15 +2,15 @@
 
 import React from "react";
 import styled from "styled-components";
-import ShippingLabels from "@/pdf/ShippingLabels/ShippingLabels";
 import Modal from "@/components/Modal/Modal";
 import dayjs from "dayjs";
-import { ParcelsTableRow } from "@/app/clients/getClientsTableData";
+import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
+import ShoppingList from "@/pdf/ShoppingList/ShoppingList";
 
 interface SharedModalProps {
     isOpen: boolean;
     onClose: () => void;
-    data: ParcelsTableRow[];
+    data: ParcelsTableRow;
     status: string | null;
     header: string;
     headerId: string;
@@ -38,36 +38,30 @@ const StatusText = styled.p`
     }
 `;
 
-const ShippingLabelsModal: React.FC<SharedModalProps> = (props) => {
-    const parcelIds = props.data.map((parcel) => {
-        return parcel.parcelId;
-    });
+const ShoppingListModal: React.FC<SharedModalProps> = (props) => {
+    const parcelId = props.data.parcelId;
 
     return (
         <Modal {...props} header={props.header} headerId={props.headerId}>
             <ModalInner>
                 Parcels selected for printing:
                 <div>
-                    {props.data.map((parcel, index) => {
-                        return (
-                            <StatusText key={index}>
-                                {parcel.deliveryCollection.collectionCentreAcronym}
-                                {parcel.fullName && ` - ${parcel.fullName}`}
-                                {parcel.collectionDatetime &&
-                                    `\n @ ${dayjs(parcel.collectionDatetime!).format(
-                                        "DD/MM/YYYY HH:mm"
-                                    )}`}
-                            </StatusText>
-                        );
-                    })}
+                    <StatusText>
+                        {props.data.deliveryCollection.collectionCentreAcronym}
+                        {props.data.fullName && ` - ${props.data.fullName}`}
+                        {props.data.collectionDatetime &&
+                            `\n @ ${dayjs(props.data.collectionDatetime!).format(
+                                "DD/MM/YYYY HH:mm"
+                            )}`}
+                    </StatusText>
                 </div>
                 {props.errorText && <small>{props.errorText}</small>}
                 <Centerer>
-                    <ShippingLabels text="Print" parcelIds={parcelIds} />
+                    <ShoppingList text="Print" parcelId={parcelId} />
                 </Centerer>
             </ModalInner>
         </Modal>
     );
 };
 
-export default ShippingLabelsModal;
+export default ShoppingListModal;

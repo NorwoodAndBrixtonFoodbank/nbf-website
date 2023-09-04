@@ -2,15 +2,15 @@
 
 import React from "react";
 import styled from "styled-components";
+import ShippingLabels from "@/pdf/ShippingLabels/ShippingLabels";
 import Modal from "@/components/Modal/Modal";
 import dayjs from "dayjs";
-import { ParcelsTableRow } from "@/app/clients/getClientsTableData";
-import ShoppingList from "@/pdf/ShoppingList/ShoppingList";
+import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 
 interface SharedModalProps {
     isOpen: boolean;
     onClose: () => void;
-    data: ParcelsTableRow;
+    data: ParcelsTableRow[];
     status: string | null;
     header: string;
     headerId: string;
@@ -38,30 +38,36 @@ const StatusText = styled.p`
     }
 `;
 
-const ShoppingListModal: React.FC<SharedModalProps> = (props) => {
-    const parcelId = props.data.parcelId;
+const ShippingLabelsModal: React.FC<SharedModalProps> = (props) => {
+    const parcelIds = props.data.map((parcel) => {
+        return parcel.parcelId;
+    });
 
     return (
         <Modal {...props} header={props.header} headerId={props.headerId}>
             <ModalInner>
                 Parcels selected for printing:
                 <div>
-                    <StatusText>
-                        {props.data.deliveryCollection.collectionCentreAcronym}
-                        {props.data.fullName && ` - ${props.data.fullName}`}
-                        {props.data.collectionDatetime &&
-                            `\n @ ${dayjs(props.data.collectionDatetime!).format(
-                                "DD/MM/YYYY HH:mm"
-                            )}`}
-                    </StatusText>
+                    {props.data.map((parcel, index) => {
+                        return (
+                            <StatusText key={index}>
+                                {parcel.deliveryCollection.collectionCentreAcronym}
+                                {parcel.fullName && ` - ${parcel.fullName}`}
+                                {parcel.collectionDatetime &&
+                                    `\n @ ${dayjs(parcel.collectionDatetime!).format(
+                                        "DD/MM/YYYY HH:mm"
+                                    )}`}
+                            </StatusText>
+                        );
+                    })}
                 </div>
                 {props.errorText && <small>{props.errorText}</small>}
                 <Centerer>
-                    <ShoppingList text="Print" parcelId={parcelId} />
+                    <ShippingLabels text="Print" parcelIds={parcelIds} />
                 </Centerer>
             </ModalInner>
         </Modal>
     );
 };
 
-export default ShoppingListModal;
+export default ShippingLabelsModal;

@@ -6,6 +6,27 @@ describe("Accessibility tests in light mode", () => {
         cy.checkAccessibility();
     });
 
+    it("Checks clients/add page", () => {
+        cy.login();
+        cy.visit("/clients/add");
+
+        cy.checkAccessibility();
+    });
+
+    it("Checks parcels page", () => {
+        cy.login();
+        cy.visit("/parcels");
+
+        cy.checkAccessibility();
+    });
+
+    it("Checks parcels/add/[id] page", () => {
+        cy.login();
+        cy.visit("/parcels/add/1");
+
+        cy.checkAccessibility();
+    });
+
     it("Checks lists page", () => {
         cy.login();
         cy.visit("/lists");
@@ -21,29 +42,6 @@ describe("Accessibility tests in light mode", () => {
         cy.checkAccessibility();
     });
 
-    it("Checks clients/add page", () => {
-        cy.login();
-        cy.visit("/clients/add");
-
-        cy.checkAccessibility();
-    });
-
-    it("Checks parcels/add/[id] page", () => {
-        cy.login();
-        cy.visit("/parcels/add/1");
-
-        cy.checkAccessibility();
-    });
-
-    it("Checks login page", () => {
-        cy.visit("/login");
-
-        // wait for hydration
-        cy.get("[data-loaded='true']", { timeout: 10000 }).should("exist");
-
-        cy.checkAccessibility();
-    });
-
     it("Checks admin page", () => {
         cy.login();
         cy.visit("/admin");
@@ -55,6 +53,15 @@ describe("Accessibility tests in light mode", () => {
                 "duplicate-id": { enabled: false },
             },
         });
+    });
+
+    it("Checks login page", () => {
+        cy.visit("/login");
+
+        // wait for hydration
+        cy.get("[data-loaded='true']", { timeout: 10000 }).should("exist");
+
+        cy.checkAccessibility();
     });
 });
 
@@ -67,6 +74,30 @@ describe("Accessibility tests in dark mode", () => {
         cy.checkAccessibility();
     });
 
+    it("Checks clients/add page", () => {
+        cy.login();
+        cy.visit("/clients/add");
+        cy.get("label[aria-label='Theme Switch']").click();
+
+        cy.checkAccessibility();
+    });
+
+    it("Checks parcels page", () => {
+        cy.login();
+        cy.visit("/parcels");
+        cy.get("label[aria-label='Theme Switch']").click();
+
+        cy.checkAccessibility();
+    });
+
+    it("Checks parcels/add/[id] page", () => {
+        cy.login();
+        cy.visit("/parcels/add/1");
+        cy.get("label[aria-label='Theme Switch']").click();
+
+        cy.checkAccessibility();
+    });
+
     it("Checks lists page", () => {
         cy.login();
         cy.visit("/lists");
@@ -84,32 +115,6 @@ describe("Accessibility tests in dark mode", () => {
         cy.checkAccessibility();
     });
 
-    it("Checks clients/add page", () => {
-        cy.login();
-        cy.visit("/clients/add");
-        cy.get("label[aria-label='Theme Switch']").click();
-
-        cy.checkAccessibility();
-    });
-
-    it("Checks parcels/add/[id] page", () => {
-        cy.login();
-        cy.visit("/parcels/add/1");
-        cy.get("label[aria-label='Theme Switch']").click();
-
-        cy.checkAccessibility();
-    });
-
-    it("Checks login page", () => {
-        cy.visit("/login");
-
-        // wait for hydration
-        cy.get("[data-loaded='true']", { timeout: 10000 }).should("exist");
-        cy.get("label[aria-label='Theme Switch']").click();
-
-        cy.checkAccessibility();
-    });
-
     it("Checks admin page", () => {
         cy.login();
         cy.visit("/admin");
@@ -122,5 +127,15 @@ describe("Accessibility tests in dark mode", () => {
                 "duplicate-id": { enabled: false },
             },
         });
+    });
+
+    it("Checks login page", () => {
+        cy.visit("/login");
+
+        // wait for hydration
+        cy.get("[data-loaded='true']", { timeout: 10000 }).should("exist");
+        cy.get("label[aria-label='Theme Switch']").click();
+
+        cy.checkAccessibility();
     });
 });

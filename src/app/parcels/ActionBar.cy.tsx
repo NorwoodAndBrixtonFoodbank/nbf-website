@@ -1,5 +1,5 @@
-import ActionBar from "@/app/clients/ActionBar";
-import { ParcelsTableRow } from "@/app/clients/getClientsTableData";
+import ActionBar from "@/app/parcels/ActionBar";
+import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import React from "react";
 import StyleManager from "@/app/themes";
 import { Schema } from "@/databaseUtils";

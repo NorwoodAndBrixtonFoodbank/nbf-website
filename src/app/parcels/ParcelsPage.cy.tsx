@@ -1,10 +1,10 @@
-import { CongestionChargeDetails, ProcessingData } from "@/app/clients/fetchDataFromServer";
+import { CongestionChargeDetails, ProcessingData } from "@/app/parcels/fetchDataFromServer";
 import {
     ParcelsTableRow,
     datetimeToPackingTimeLabel,
     eventToLastStatus,
     processingDataToClientsTableData,
-} from "@/app/clients/getClientsTableData";
+} from "@/app/parcels/getParcelsTableData";
 import {
     familyCountToFamilyCategory,
     formatAddressFromClientDetails,
@@ -12,9 +12,9 @@ import {
     formatDatetimeAsDate,
     formatDatetimeAsTime,
     formatHouseholdFromFamilyDetails,
-    rawDataToExpandedClientDetails,
-    RawClientDetails,
-} from "@/app/clients/getExpandedClientDetails";
+    rawDataToExpandedParcelDetails,
+    RawParcelDetails,
+} from "@/app/parcels/getExpandedParcelDetails";
 
 const sampleProcessingData: ProcessingData = [
     {
@@ -57,7 +57,7 @@ const sampleCongestionChargeData: CongestionChargeDetails[] = [
     },
 ];
 
-const sampleRawExpandedClientDetails: RawClientDetails = {
+const sampleRawExpandedClientDetails: RawParcelDetails = {
     voucher_number: "VOUCHER_1",
     packing_datetime: "2023-08-04T13:30:00+00:00",
 
@@ -160,7 +160,7 @@ describe("Clients Page", () => {
 
     describe("Backend Processing for Expanded Client Details", () => {
         it("Fields are set correctly", () => {
-            const expandedClientDetails = rawDataToExpandedClientDetails(
+            const expandedClientDetails = rawDataToExpandedParcelDetails(
                 sampleRawExpandedClientDetails
             );
 
