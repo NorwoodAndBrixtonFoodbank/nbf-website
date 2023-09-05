@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { DatabaseAutoType } from "@/databaseUtils";
+import { RoleUpdateContext } from "@/app/roles";
 
 interface Props {
     children: React.ReactNode;
@@ -13,7 +14,8 @@ export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
     const supabase = createClientComponentClient<DatabaseAutoType>();
     const router = useRouter();
     const pathname = usePathname();
-    const [loggedIn, setLoggedIn] = React.useState<boolean>();
+    const [loggedIn, setLoggedIn] = useState<boolean>();
+    const { setRole } = useContext(RoleUpdateContext);
 
     // This fixes issues with navigation when the user has signed in but then signed out and caching still allows them to
     // access pages. It also fixes authentication flow issues on sign in and sign out
@@ -48,6 +50,14 @@ export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
         }
     };
 
+    const findUserRole: () => Promise<void> = async () => {
+        const {
+            data: { user },
+        } = await supabase.auth.getUser();
+        const userRole = user?.app_metadata.role;
+        setRole(userRole);
+    };
+
     useEffect(() => {
         const {
             data: { subscription },
@@ -60,6 +70,7 @@ export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
 
     useEffect(() => {
         onRouteChange();
+        findUserRole();
         // eslint-disable-next-line react-hooks/exhaustive-deps -- We don't need onRouteChange in the dependency array
     }, [loggedIn, pathname, router]);
 

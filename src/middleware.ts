@@ -1,6 +1,7 @@
 import { DatabaseAutoType } from "@/databaseUtils";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextMiddleware, NextRequest, NextResponse } from "next/server";
+import { roleCanAccessPage } from "@/app/roles";
 
 const middleware: NextMiddleware = async (req: NextRequest) => {
     const res = NextResponse.next();
@@ -20,8 +21,13 @@ const middleware: NextMiddleware = async (req: NextRequest) => {
     if (user && req.nextUrl.pathname === "/login") {
         return NextResponse.redirect(new URL("/clients", req.url));
     }
+    const userRole = user?.app_metadata.role ?? "";
 
-    return res;
+    if (!roleCanAccessPage(userRole, req.nextUrl.pathname)) {
+        const url = req.nextUrl;
+        url.pathname = "/404";
+        return NextResponse.rewrite(url);
+    }
 };
 
 export const config = {

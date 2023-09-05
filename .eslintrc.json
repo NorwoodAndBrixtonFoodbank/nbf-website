@@ -29,12 +29,15 @@
     "react/react-in-jsx-scope": "off",
     "curly": "error",
     "react/jsx-curly-brace-presence": "error",
-    // to deal with false positives in type annotations, turn on typescript-specific rules
-    "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": ["error", {"varsIgnorePattern": "^_"}],
     "id-length": "error",
     "import/no-named-as-default": "off",
-    "import/no-self-import": "warn"
+    "import/no-self-import": "warn",
+    // to deal with false positives in type annotations, turn on typescript-specific rules
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error", {
+      "varsIgnorePattern": "^_",
+      "argsIgnorePattern": "^_"
+    }]
   },
   "ignorePatterns": ["databaseTypesFile.ts"]
 }

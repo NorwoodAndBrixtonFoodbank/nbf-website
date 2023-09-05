@@ -99,7 +99,6 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editMod
 
         const extraChildren: Person[] = Array(fields.numberChildren - fields.children.length)
             .fill(0)
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             .map((_item) => {
                 return {
                     gender: "other",

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useContext } from "react";
 import AppBar from "@mui/material/AppBar";
 import MenuIcon from "@mui/icons-material/Menu";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
@@ -11,6 +11,7 @@ import LightDarkSlider from "@/components/NavigationBar/LightDarkSlider";
 import SignOutButton from "@/components/NavigationBar/SignOutButton";
 import NavBarButton from "@/components/Buttons/NavBarButton";
 import { usePathname } from "next/navigation";
+import { RoleUpdateContext, roleCanAccessPage } from "@/app/roles";
 
 export const NavBarHeight = "4rem";
 
@@ -99,17 +100,34 @@ const SignOutButtonContainer = styled(NavElementContainer)`
 
 const LoginDependent: React.FC<Props> = (props) => {
     const pathname = usePathname();
-
     if (pathname === "/login") {
         return <></>;
     }
-
     return <>{props.children}</>;
 };
 
 interface Props {
     children?: React.ReactNode;
 }
+
+interface RoleProps {
+    children?: React.ReactNode;
+    pathname: string;
+}
+
+const RoleDependent: React.FC<RoleProps> = ({ children, pathname }) => {
+    const { role } = useContext(RoleUpdateContext);
+
+    return <>{roleCanAccessPage(role, pathname) && children}</>;
+};
+
+const pages = [
+    ["Clients", "/clients"],
+    ["Parcels", "/parcels"],
+    ["Lists", "/lists"],
+    ["Calendar", "/calendar"],
+    ["Admin", "/admin"],
+];
 
 const NavigationBar: React.FC<Props> = ({ children }) => {
     const [drawer, setDrawer] = React.useState(false);
@@ -122,25 +140,23 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
         setDrawer(false);
     };
 
-    const pages = [
-        ["Clients", "/clients"],
-        ["Parcels", "/parcels"],
-        ["Lists", "/lists"],
-        ["Calendar", "/calendar"],
-        ["Admin", "/admin"],
-    ];
-
     return (
         <>
             <LoginDependent>
                 <StyledSwipeableDrawer open={drawer} onClose={closeDrawer} onOpen={openDrawer}>
                     <DrawerInner>
                         {pages.map(([page, link]) => (
-                            <DrawerButtonWrapper key={page}>
-                                <UnstyledLink href={link} onClick={closeDrawer} prefetch={false}>
-                                    <DrawerButton variant="text">{page}</DrawerButton>
-                                </UnstyledLink>
-                            </DrawerButtonWrapper>
+                            <RoleDependent key={page} pathname={link}>
+                                <DrawerButtonWrapper>
+                                    <UnstyledLink
+                                        href={link}
+                                        onClick={closeDrawer}
+                                        prefetch={false}
+                                    >
+                                        <DrawerButton variant="text">{page}</DrawerButton>
+                                    </UnstyledLink>
+                                </DrawerButtonWrapper>
+                            </RoleDependent>
                         ))}
                     </DrawerInner>
                 </StyledSwipeableDrawer>
@@ -148,29 +164,26 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
             <AppBar>
                 <AppBarInner>
                     <MobileNavMenuContainer>
-                        <LoginDependent>
-                            <Button
-                                color="secondary"
-                                aria-label="Mobile Menu Button"
-                                onClick={openDrawer}
-                            >
-                                <MenuIcon />
-                            </Button>
-                        </LoginDependent>
+                        <Button
+                            color="secondary"
+                            aria-label="Mobile Menu Button"
+                            onClick={openDrawer}
+                        >
+                            <MenuIcon />
+                        </Button>
                     </MobileNavMenuContainer>
-
                     <LogoElementContainer>
                         <UnstyledLink href="/" prefetch={false}>
                             <Logo alt="Vauxhall Foodbank Logo" src="/logo.webp" />
                         </UnstyledLink>
                     </LogoElementContainer>
-                    <LoginDependent>
-                        <DesktopButtonContainer>
-                            {pages.map(([page, link]) => (
-                                <NavBarButton link={link} page={page} key={page} />
-                            ))}
-                        </DesktopButtonContainer>
-                    </LoginDependent>
+                    <DesktopButtonContainer>
+                        {pages.map(([page, link]) => (
+                            <RoleDependent key={page} pathname={link}>
+                                <NavBarButton link={link} page={page} />
+                            </RoleDependent>
+                        ))}
+                    </DesktopButtonContainer>
                     <SignOutButtonContainer>
                         <LightDarkSlider />
                         <LoginDependent>
