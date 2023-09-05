@@ -1,24 +1,41 @@
 "use client";
 
+import { DatabaseEnums } from "@/databaseUtils";
 import React, { useState, createContext } from "react";
 
 interface Props {
     children: React.ReactNode;
 }
 
-interface RolesInterface {
-    [key: string]: string[];
-}
+type Roles = DatabaseEnums["role"] | "";
 
-export const roleToShownPages: RolesInterface = {
+type RolesInterface = {
+    [key in Roles]: string[];
+};
+
+const roleToShownPages: RolesInterface = {
     admin: ["/admin", "/calendar", "/clients", "/lists", "/parcels"],
     caller: ["/calendar", "/clients", "/parcels"],
+    "": ["/login"],
 };
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const RoleUpdateContext = createContext({ role: "", setRole: (role: string): void => {} });
+
+export const roleCanAccessPage = (role: Roles, url: string): boolean => {
+    const accessList = roleToShownPages[role] ?? [];
+    return accessList.some((page) => url.startsWith(page));
+};
+
+interface RoleUpdateContextType {
+    role: Roles;
+    setRole: (_role: Roles) => void;
+}
+
+export const RoleUpdateContext = createContext<RoleUpdateContextType>({
+    role: "",
+    setRole: (_role) => {},
+});
 
 export const RoleManager: React.FC<Props> = ({ children }) => {
-    const [role, setRole] = useState("");
+    const [role, setRole] = useState<Roles>("");
 
     return (
         <RoleUpdateContext.Provider value={{ role, setRole }}>

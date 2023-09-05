@@ -11,7 +11,7 @@ import LightDarkSlider from "@/components/NavigationBar/LightDarkSlider";
 import SignOutButton from "@/components/NavigationBar/SignOutButton";
 import NavBarButton from "@/components/Buttons/NavBarButton";
 import { usePathname } from "next/navigation";
-import { RoleUpdateContext, roleToShownPages } from "@/app/roles";
+import { RoleUpdateContext, roleCanAccessPage } from "@/app/roles";
 
 export const NavBarHeight = "4rem";
 
@@ -112,16 +112,13 @@ interface Props {
 
 interface RoleProps {
     children?: React.ReactNode;
-    role: string;
     pathname: string;
 }
 
-const RoleDependent: React.FC<RoleProps> = ({ children, role, pathname }) => {
-    const shownPages = role ? roleToShownPages[role] : [];
-    if (!shownPages.includes(pathname)) {
-        return <></>;
-    }
-    return <>{children}</>;
+const RoleDependent: React.FC<RoleProps> = ({ children, pathname }) => {
+    const { role } = useContext(RoleUpdateContext);
+
+    return <>{roleCanAccessPage(role, pathname) && children}</>;
 };
 
 const pages = [
@@ -143,15 +140,13 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
         setDrawer(false);
     };
 
-    const { role } = useContext(RoleUpdateContext);
-
     return (
         <>
             <LoginDependent>
                 <StyledSwipeableDrawer open={drawer} onClose={closeDrawer} onOpen={openDrawer}>
                     <DrawerInner>
                         {pages.map(([page, link]) => (
-                            <RoleDependent role={role} key={page} pathname={link}>
+                            <RoleDependent key={page} pathname={link}>
                                 <DrawerButtonWrapper>
                                     <UnstyledLink
                                         href={link}
@@ -184,7 +179,7 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
                     </LogoElementContainer>
                     <DesktopButtonContainer>
                         {pages.map(([page, link]) => (
-                            <RoleDependent role={role} key={page} pathname={link}>
+                            <RoleDependent key={page} pathname={link}>
                                 <NavBarButton link={link} page={page} />
                             </RoleDependent>
                         ))}
