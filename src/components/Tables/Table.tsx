@@ -1,20 +1,20 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import DataTable, { TableColumn } from "react-data-table-component";
+import Icon from "@/components/Icons/Icon";
+import { Filter, headerLabelFromKey, textFilter } from "@/components/Tables/Filters";
 import TableFilterBar from "@/components/Tables/TableFilterBar";
-import { NoSsr } from "@mui/material";
 import {
-    faAnglesUp,
     faAnglesDown,
+    faAnglesUp,
     faPenToSquare,
     faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
+import { NoSsr } from "@mui/material";
 import IconButton from "@mui/material/IconButton/IconButton";
-import Icon from "@/components/Icons/Icon";
-import { Filter, headerLabelFromKey, textFilter } from "@/components/Tables/Filters";
+import React, { useEffect, useState } from "react";
+import DataTable, { TableColumn } from "react-data-table-component";
 import { Primitive } from "react-data-table-component/dist/src/DataTable/types";
+import styled from "styled-components";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -51,7 +51,6 @@ interface Props<Data> {
     headerKeysAndLabels: TableHeaders<Data>;
     checkboxes?: boolean;
     onRowSelection?: (rowIds: number[]) => void;
-    reorderable?: boolean;
     filters?: (Filter<Data, any> | keyof Data)[];
     additionalFilters?: (Filter<Data, any> | keyof Data)[];
     pagination?: boolean;
@@ -60,11 +59,13 @@ interface Props<Data> {
     sortable?: (keyof Data | SortOptions<Data, any>)[];
     onEdit?: (data: number) => void;
     onDelete?: (data: number) => void;
+    onSwapRows?: (row1: Data, row2: Data) => Promise<void>;
     columnDisplayFunctions?: ColumnDisplayFunctions<Data>;
     columnStyleOptions?: ColumnStyles<Data>;
     onRowClick?: OnRowClickFunction<Data>;
     autoFilter?: boolean;
 }
+
 interface CellProps<Data> {
     row: Row<Data>;
     columnDisplayFunctions: ColumnDisplayFunctions<Data>;
@@ -116,8 +117,8 @@ const Table = <Data,>({
     additionalFilters: additionalFilterKeysOrObjects = [],
     onDelete,
     onEdit,
+    onSwapRows,
     pagination,
-    reorderable = false,
     sortable = [],
     toggleableHeaders = [],
     onRowClick,
@@ -225,17 +226,37 @@ const Table = <Data,>({
         };
     });
 
-    const swapRows = (rowId1: number, rowId2: number): void => {
+    const [isSwapping, setIsSwapping] = useState(false);
+
+    const swapRows = (rowId1: number, upwards: boolean): void => {
+        if (isSwapping) {
+            return;
+        }
+        setIsSwapping(true);
+
+        const rowId2 = rowId1 + (upwards ? -1 : 1);
+
         if (rowId1 < 0 || rowId2 < 0 || rowId1 >= data.length || rowId2 >= data.length) {
+            setIsSwapping(false);
             return;
         }
 
-        const newData = [...data];
-        const temp = newData[rowId1];
-        newData[rowId1] = newData[rowId2];
-        newData[rowId2] = temp;
+        const clientSideRefresh = (): void => {
+            // Update viewed table data once specific functions are done (without re-fetch)
+            const newData = [...data];
+            const temp = newData[rowId1];
+            newData[rowId1] = newData[rowId2];
+            newData[rowId2] = temp;
 
-        setData(newData);
+            setData(newData);
+            setIsSwapping(false);
+        };
+
+        if (onSwapRows) {
+            onSwapRows(data[rowId1], data[rowId2]).then(clientSideRefresh);
+        } else {
+            clientSideRefresh();
+        }
     };
 
     if (checkboxes) {
@@ -260,48 +281,41 @@ const Table = <Data,>({
         });
     }
 
-    if (reorderable || onEdit || onDelete) {
+    if (onDelete || onEdit || onSwapRows) {
         columns.unshift({
             name: "",
-            cell: (row: Row<Data>) => {
-                const onEditClick = (): void => {
-                    onEdit!(row.rowId);
-                };
-
-                return (
-                    <EditAndReorderArrowDiv>
-                        {reorderable && (
-                            <StyledIconButton
-                                onClick={() => swapRows(row.rowId, row.rowId - 1)}
-                                aria-label="reorder row upwards"
-                            >
-                                <StyledIcon icon={faAnglesUp} />
-                            </StyledIconButton>
-                        )}
-                        {onEdit && (
-                            <StyledIconButton onClick={onEditClick} aria-label="edit">
-                                <StyledIcon icon={faPenToSquare} />
-                            </StyledIconButton>
-                        )}
-                        {reorderable && (
-                            <StyledIconButton
-                                onClick={() => swapRows(row.rowId, row.rowId + 1)}
-                                aria-label="reorder row downwards"
-                            >
-                                <StyledIcon icon={faAnglesDown} />
-                            </StyledIconButton>
-                        )}
-                        {onDelete && (
-                            <StyledIconButton
-                                onClick={() => onDelete!(row.rowId)}
-                                aria-label="delete"
-                            >
-                                <StyledIcon icon={faTrashAlt} />
-                            </StyledIconButton>
-                        )}
-                    </EditAndReorderArrowDiv>
-                );
-            },
+            cell: (row: Row<Data>) => (
+                <EditAndReorderArrowDiv>
+                    {onSwapRows && (
+                        <StyledIconButton
+                            onClick={() => swapRows(row.rowId, true)}
+                            aria-label="reorder row upwards"
+                            disabled={isSwapping}
+                        >
+                            <StyledIcon icon={faAnglesUp} />
+                        </StyledIconButton>
+                    )}
+                    {onEdit && (
+                        <StyledIconButton onClick={() => onEdit!(row.rowId)} aria-label="edit">
+                            <StyledIcon icon={faPenToSquare} />
+                        </StyledIconButton>
+                    )}
+                    {onSwapRows && (
+                        <StyledIconButton
+                            onClick={() => swapRows(row.rowId, false)}
+                            aria-label="reorder row downwards"
+                            disabled={isSwapping}
+                        >
+                            <StyledIcon icon={faAnglesDown} />
+                        </StyledIconButton>
+                    )}
+                    {onDelete && (
+                        <StyledIconButton onClick={() => onDelete!(row.rowId)} aria-label="delete">
+                            <StyledIcon icon={faTrashAlt} />
+                        </StyledIconButton>
+                    )}
+                </EditAndReorderArrowDiv>
+            ),
             width: "5rem",
         });
     }

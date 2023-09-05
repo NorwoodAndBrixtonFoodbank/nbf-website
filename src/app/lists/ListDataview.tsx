@@ -1,5 +1,6 @@
 "use client";
 
+import { DatabaseError } from "@/app/errorClasses";
 import Table, { ColumnDisplayFunctions, ColumnStyles } from "@/components/Tables/Table";
 import React, { useState } from "react";
 import styled from "styled-components";
@@ -15,6 +16,8 @@ import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
 
 interface ListRow {
+    primaryKey: string;
+    rowOrder: number;
     itemName: string;
     "1": QuantityAndNotes;
     "2": QuantityAndNotes;
@@ -90,15 +93,19 @@ const ListsDataView: React.FC<Props> = (props) => {
 
     const rows = props.data.map((row) => {
         const newRow = {
+            primaryKey: row.primary_key,
+            rowOrder: row.row_order,
             itemName: row.item_name,
             ...Object.fromEntries(
-                headerKeysAndLabels.slice(1).map(([key]) => [
-                    key,
-                    {
-                        quantity: row[`${key}_quantity` as keyof Schema["lists"]],
-                        notes: row[`${key}_notes` as keyof Schema["lists"]],
-                    },
-                ])
+                headerKeysAndLabels
+                    .filter(([key]) => /^\d+$/.test(key))
+                    .map(([key]) => [
+                        key,
+                        {
+                            quantity: row[`${key}_quantity` as keyof Schema["lists"]],
+                            notes: row[`${key}_notes` as keyof Schema["lists"]],
+                        },
+                    ])
             ),
         } as ListRow; // this cast is needed here as the type system can't infer what Object.fromEntries will return
         return newRow;
@@ -106,11 +113,29 @@ const ListsDataView: React.FC<Props> = (props) => {
 
     const toggleableHeaders = headerKeysAndLabels.map(([key]) => key);
 
-    // remove description header
-    toggleableHeaders.shift();
-
     const onEdit = (index: number): void => {
         setModal(props.data[index]);
+    };
+
+    const onSwapRows = async (row1: ListRow, row2: ListRow): Promise<void> => {
+        const { error } = await supabase.from("lists").upsert([
+            {
+                primary_key: row1.primaryKey,
+                row_order: row2.rowOrder,
+            },
+            {
+                primary_key: row2.primaryKey,
+                row_order: row1.rowOrder,
+            },
+        ]);
+
+        if (error) {
+            throw new DatabaseError("update", "lists items");
+        }
+
+        const temp = row1.rowOrder;
+        row1.rowOrder = row2.rowOrder;
+        row2.rowOrder = temp;
     };
 
     const onDeleteButtonClick = (index: number): void => {
@@ -165,11 +190,11 @@ const ListsDataView: React.FC<Props> = (props) => {
                     headerKeysAndLabels={headerKeysAndLabels}
                     toggleableHeaders={toggleableHeaders}
                     data={rows}
-                    reorderable
                     filters={["itemName"]}
                     pagination={false}
                     onEdit={onEdit}
                     onDelete={onDeleteButtonClick}
+                    onSwapRows={onSwapRows}
                     sortable={[]}
                     columnDisplayFunctions={listDataViewColumnDisplayFunctions}
                     columnStyleOptions={listsColumnStyleOptions}

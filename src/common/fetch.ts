@@ -62,7 +62,7 @@ export const fetchFamilies = async (
 };
 
 export const fetchLists = async (supabase: Supabase): Promise<Schema["lists"][]> => {
-    const { data, error } = await supabase.from("lists").select();
+    const { data, error } = await supabase.from("lists").select().order("row_order");
     if (error) {
         throw new DatabaseError("fetch", "lists data");
     }
