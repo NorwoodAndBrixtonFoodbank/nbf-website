@@ -37,9 +37,9 @@ export const config = {
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
-         * - logo.png (so navbar can load on login page)
+         * - logo.* (logo images for navbar and pdfs)
          */
-        "/((?!_next/static|_next/image|favicon.ico|logo.webp).*)",
+        "/((?!_next/static|_next/image|favicon.ico|logo.*).*)",
     ],
 };
 
