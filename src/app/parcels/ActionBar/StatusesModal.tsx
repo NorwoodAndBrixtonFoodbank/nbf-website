@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Button from "@mui/material/Button/Button";
@@ -8,13 +6,9 @@ import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 
-interface SharedModalProps {
-    isOpen: boolean;
-    onClose: () => void;
+interface StatusesBarModalProps extends React.ComponentProps<typeof Modal> {
     data: ParcelsTableRow[];
     onSubmit: (date: Dayjs) => void;
-    header: string;
-    headerId: string;
     errorText: string | null;
 }
 
@@ -33,14 +27,14 @@ const ModalInner = styled.div`
 
 const StatusText = styled.p`
     margin-left: 1rem;
-    border-top: 1px solid darkgrey;
+    border-top: 1px solid ${(props) => props.theme.main.lighterForeground[2]};
     padding: 1rem 0;
     &:last-child {
-        border-bottom: 1px solid darkgrey;
+        border-bottom: 1px solid ${(props) => props.theme.main.lighterForeground[2]};
     }
 `;
 
-const ActionBarModal: React.FC<SharedModalProps> = (props) => {
+const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
     const [date, setDate] = useState(dayjs(new Date()));
 
     useEffect(() => {
@@ -63,7 +57,7 @@ const ActionBarModal: React.FC<SharedModalProps> = (props) => {
         );
 
     return (
-        <Modal {...props} header={props.header} headerId={props.headerId}>
+        <Modal {...props}>
             <ModalInner>
                 <Row>
                     Date:
@@ -79,20 +73,18 @@ const ActionBarModal: React.FC<SharedModalProps> = (props) => {
                     <TimePicker value={date} onChange={onTimeChange} disableFuture />
                 </Row>
                 Applying To:
-                <div>
-                    {props.data.map((parcel, index) => {
-                        return (
-                            <StatusText key={index}>
-                                {parcel.deliveryCollection.collectionCentreAcronym}
-                                {parcel.fullName && ` - ${parcel.fullName}`}
-                                {parcel.collectionDatetime &&
-                                    `\n @ ${dayjs(parcel.collectionDatetime!).format(
-                                        "DD/MM/YYYY HH:mm"
-                                    )}`}
-                            </StatusText>
-                        );
-                    })}
-                </div>
+                {props.data.map((parcel, index) => {
+                    return (
+                        <StatusText key={index}>
+                            {parcel.deliveryCollection.collectionCentreAcronym}
+                            {parcel.fullName && ` - ${parcel.fullName}`}
+                            {parcel.collectionDatetime &&
+                                `\n @ ${dayjs(parcel.collectionDatetime!).format(
+                                    "DD/MM/YYYY HH:mm"
+                                )}`}
+                        </StatusText>
+                    );
+                })}
                 {props.errorText && <small>{props.errorText}</small>}
                 <Button type="button" variant="contained" onClick={() => props.onSubmit(date)}>
                     Submit
@@ -102,4 +94,4 @@ const ActionBarModal: React.FC<SharedModalProps> = (props) => {
     );
 };
 
-export default ActionBarModal;
+export default StatusesBarModal;

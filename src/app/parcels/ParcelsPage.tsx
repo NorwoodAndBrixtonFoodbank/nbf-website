@@ -17,7 +17,7 @@ import Icon from "@/components/Icons/Icon";
 import { faBoxArchive } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal/Modal";
 import TableSurface from "@/components/Tables/TableSurface";
-import ActionBar from "@/app/parcels/ActionBar";
+import ActionBar from "@/app/parcels/ActionBar/ActionBar";
 
 export const clientTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
