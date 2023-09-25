@@ -2,8 +2,9 @@
 
 import React from "react";
 import supabase from "@/supabaseClient";
-import DayOverviewButton from "@/components/DayOverview/DayOverviewButton";
 import { Schema } from "@/databaseUtils";
+import PdfButton from "@/components/PdfButton/PdfButton";
+import DayOverviewPdf from "./DayOverviewPdf";
 import { DatabaseError } from "@/app/errorClasses";
 
 interface Props {
@@ -63,7 +64,7 @@ const getParcelsOfSpecificDateAndLocation = async (
         .order("collection_datetime");
 
     if (error) {
-        throw new DatabaseError("fetch", "parcels data");
+        throw new DatabaseError("fetch", "parcels");
     }
 
     return data;
@@ -79,7 +80,7 @@ const fetchCollectionCentreNameAndAbbreviation = async (
         .maybeSingle();
 
     if (error) {
-        throw new DatabaseError("fetch", "collection centre data");
+        throw new DatabaseError("fetch", "collection centre");
     }
 
     return data!;
@@ -107,7 +108,7 @@ const DayOverview = async ({
         data: parcelsOfSpecificDate,
     };
 
-    return <DayOverviewButton data={data} text={text} fileName={fileName} />;
+    return <PdfButton text={text} fileName={fileName} data={data} pdfComponent={DayOverviewPdf} />;
 };
 
 export default DayOverview;
