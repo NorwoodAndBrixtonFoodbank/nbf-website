@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import getShoppingListData from "@/pdf/ShoppingList/getShoppingListData";
 import PdfButton from "@/components/PdfButton/PdfButton";
