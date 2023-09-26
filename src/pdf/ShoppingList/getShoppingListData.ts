@@ -1,6 +1,6 @@
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
-import { fetchClients, fetchComment, fetchFamilies } from "@/common/fetch";
+import { fetchClient, fetchComment, fetchFamily } from "@/common/fetch";
 import {
     prepareClientSummary,
     prepareRequirementSummary,
@@ -19,8 +19,8 @@ interface ClientDataAndFamilyData {
 }
 
 const getClientAndFamilyData = async (clientID: string): Promise<ClientDataAndFamilyData> => {
-    const clientData = await fetchClients(clientID, supabase);
-    const familyData = await fetchFamilies(clientData.family_id, supabase);
+    const clientData = await fetchClient(clientID, supabase);
+    const familyData = await fetchFamily(clientData.family_id, supabase);
 
     return { clientData: clientData, familyData: familyData };
 };

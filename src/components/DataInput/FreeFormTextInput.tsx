@@ -5,6 +5,7 @@ import { TextField } from "@mui/material";
 interface Props {
     label?: string;
     defaultValue?: string;
+    type?: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     error?: boolean;
     helperText?: string;

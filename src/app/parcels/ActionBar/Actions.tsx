@@ -9,6 +9,7 @@ import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import ActionsModal, {
     DayOverviewInput,
     DriverOverviewInput,
+    ShippingLabelsInput,
 } from "@/app/parcels/ActionBar/ActionsModal";
 import {
     DayOverviewModalButton,
@@ -18,15 +19,15 @@ import {
 } from "@/app/parcels/ActionBar/ActionsModalButton";
 import { SelectChangeEvent } from "@mui/material";
 
-const isNotMoreThanOne = (value: number): boolean => {
+const isNotAtLeastOne = (value: number): boolean => {
     return value < 1;
 };
 
-const doesNotEqualsOne = (value: number): boolean => {
+const doesNotEqualOne = (value: number): boolean => {
     return value !== 1;
 };
 
-const doesNotEqualsZero = (value: number): boolean => {
+const doesNotEqualZero = (value: number): boolean => {
     return value !== 0;
 };
 
@@ -47,22 +48,22 @@ type AvailableActionsType = {
 const availableActions: AvailableActionsType = {
     "Download Shipping Labels": {
         showSelectedParcels: true,
-        errorCondition: isNotMoreThanOne,
-        errorMessage: "Please select at least 1 row for download.",
+        errorCondition: doesNotEqualOne,
+        errorMessage: "Please select exactly one parcel.",
     },
     "Download Shopping List": {
         showSelectedParcels: true,
-        errorCondition: doesNotEqualsOne,
-        errorMessage: "Please select only 1 row for download.",
+        errorCondition: isNotAtLeastOne,
+        errorMessage: "Please select at least one parcel.",
     },
     "Download Driver Overview": {
         showSelectedParcels: true,
-        errorCondition: isNotMoreThanOne,
-        errorMessage: "Please select at least 1 row for download.",
+        errorCondition: isNotAtLeastOne,
+        errorMessage: "Please select at least one parcel.",
     },
     "Download Day Overview": {
         showSelectedParcels: false,
-        errorCondition: doesNotEqualsZero,
+        errorCondition: doesNotEqualZero,
         errorMessage:
             "The day overview will show the parcels for a particular date and location. It will show not the currently selected parcel. Please unselect the parcels.",
     },
@@ -71,6 +72,7 @@ const availableActions: AvailableActionsType = {
 interface ActionsInputComponentProps {
     pdfType: PdfType;
     onDateChange: (newDate: Dayjs | null) => void;
+    onLabelQuantityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onDriverNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onCollectionCentreChange: (event: SelectChangeEvent) => void;
     setCollectionCentre: React.Dispatch<React.SetStateAction<string>>;
@@ -79,11 +81,14 @@ interface ActionsInputComponentProps {
 const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
     pdfType,
     onDateChange,
+    onLabelQuantityChange,
     onDriverNameChange,
     onCollectionCentreChange,
     setCollectionCentre,
 }) => {
     switch (pdfType) {
+        case "Download Shipping Labels":
+            return <ShippingLabelsInput onLabelQuantityChange={onLabelQuantityChange} />;
         case "Download Driver Overview":
             return (
                 <DriverOverviewInput
@@ -108,6 +113,7 @@ interface ActionsButtonProps {
     pdfType: PdfType;
     data: ParcelsTableRow[];
     date: Dayjs;
+    labelQuantity: number;
     driverName: string;
     collectionCentre: string;
 }
@@ -116,12 +122,13 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
     pdfType,
     data,
     date,
+    labelQuantity,
     driverName,
     collectionCentre,
 }) => {
     switch (pdfType) {
         case "Download Shipping Labels":
-            return <ShippingLabelsModalButton data={data} />;
+            return <ShippingLabelsModalButton data={data} labelQuantity={labelQuantity} />;
         case "Download Shopping List":
             return <ShoppingListModalButton data={data} />;
         case "Download Driver Overview":
@@ -153,11 +160,16 @@ const Actions: React.FC<Props> = ({
     setModalError,
 }) => {
     const [selectedAction, setSelectedAction] = useState<PdfType | null>(null);
+    const [labelQuantity, setLabelQuantity] = useState<number>(0);
     const [date, setDate] = useState(dayjs());
     const [driverName, setDriverName] = useState("");
     const [collectionCentre, setCollectionCentre] = useState("");
 
     const selectedData = Array.from(selected.map((index) => data[index]));
+
+    const onLabelQuantityChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        setLabelQuantity(parseInt(event.target.value, 10) ?? 0);
+    };
 
     const onDriverNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setDriverName(event.target.value);
@@ -213,6 +225,7 @@ const Actions: React.FC<Props> = ({
                                 <ActionsInputComponent
                                     pdfType={key}
                                     onDateChange={onDateChange}
+                                    onLabelQuantityChange={onLabelQuantityChange}
                                     onDriverNameChange={onDriverNameChange}
                                     onCollectionCentreChange={onCollectionCentreChange}
                                     setCollectionCentre={setCollectionCentre}
@@ -223,6 +236,7 @@ const Actions: React.FC<Props> = ({
                                 pdfType={selectedAction}
                                 data={selectedData}
                                 date={date}
+                                labelQuantity={labelQuantity}
                                 driverName={driverName}
                                 collectionCentre={collectionCentre}
                             />
