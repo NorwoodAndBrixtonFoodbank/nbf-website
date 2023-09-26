@@ -3,7 +3,8 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 
-export interface ParcelClients {
+export interface ShippingLabelData {
+    labelQuantity: number;
     packing_datetime: string;
     collection_centre: string;
     collection_datetime: string;
@@ -18,6 +19,13 @@ export interface ParcelClients {
     delivery_instructions?: string;
 }
 
+const mmToPixels = (mm: number): number => {
+    const pixelsPerMmAt72Dpi = 72 / 25.4;
+    return mm * pixelsPerMmAt72Dpi;
+};
+
+const labelSizePixels = { width: mmToPixels(200), height: mmToPixels(63) };
+
 const styles = StyleSheet.create({
     page: {
         display: "flex",
@@ -30,74 +38,75 @@ const styles = StyleSheet.create({
     col: { flex: 1, margin: 5 },
 });
 
-interface ParcelCardProps {
-    datum: ParcelClients;
+interface LabelCardProps {
+    data: ShippingLabelData;
     index: number;
-    total: number;
+    quantity: number;
 }
 
-const ParcelCard: React.FC<ParcelCardProps> = ({ datum, index, total }) => {
+const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
     return (
-        <View style={styles.cardWrapper} wrap={false}>
-            <View style={styles.row}>
-                <Text style={styles.col}>
-                    <Text style={styles.heading}>name:</Text> {datum.full_name}
-                </Text>
-                <Text style={styles.col}>
-                    <Text style={styles.heading}>contact:</Text> {datum.phone_number}
-                </Text>
-                <Text style={[styles.col, { textAlign: "right" }]}>
-                    <Text style={styles.heading}>packed:</Text> {datum.packing_datetime}
-                </Text>
-            </View>
-            <View style={[styles.row, { minHeight: 100 }]}>
-                <View style={styles.col}>
-                    <Text>{datum.address_1}</Text>
-                    <Text>{datum.address_2}</Text>
-                    <Text>{datum.address_town}</Text>
-                    <Text>{datum.address_county}</Text>
-                    <Text>{datum.address_postcode}</Text>
+        <Page size={labelSizePixels} style={styles.page}>
+            <View style={styles.cardWrapper} wrap={false}>
+                <View style={styles.row}>
+                    <Text style={styles.col}>
+                        <Text style={styles.heading}>name:</Text> {data.full_name}
+                    </Text>
+                    <Text style={styles.col}>
+                        <Text style={styles.heading}>contact:</Text> {data.phone_number}
+                    </Text>
+                    <Text style={[styles.col, { textAlign: "right" }]}>
+                        <Text style={styles.heading}>packed:</Text> {data.packing_datetime}
+                    </Text>
                 </View>
-                <View style={styles.col}>
-                    <Text style={styles.heading}>delivery instructions:</Text>
-                    <Text>{datum.delivery_instructions}</Text>
+                <View style={[styles.row, { minHeight: 100 }]}>
+                    <View style={styles.col}>
+                        <Text>{data.address_1}</Text>
+                        <Text>{data.address_2}</Text>
+                        <Text>{data.address_town}</Text>
+                        <Text>{data.address_county}</Text>
+                        <Text>{data.address_postcode}</Text>
+                    </View>
+                    <View style={styles.col}>
+                        <Text style={styles.heading}>delivery instructions:</Text>
+                        <Text>{data.delivery_instructions}</Text>
+                    </View>
+                    <View style={styles.col}></View>
                 </View>
-                <View style={styles.col}></View>
+                <View style={styles.row}>
+                    <Text style={styles.col}>
+                        <Text style={styles.heading}>{data.voucher_number}</Text>
+                    </Text>
+                    <Text style={styles.col}>
+                        {data.collection_datetime} | {data.collection_centre}
+                    </Text>
+                    <Text style={[styles.col, { textAlign: "right" }]}>
+                        {index + 1}/{quantity}
+                    </Text>
+                </View>
             </View>
-            <View style={styles.row}>
-                <Text style={styles.col}>
-                    <Text style={styles.heading}>{datum.voucher_number}</Text>
-                </Text>
-                <Text style={styles.col}>
-                    {datum.collection_datetime} | {datum.collection_centre}
-                </Text>
-                <Text style={[styles.col, { textAlign: "right" }]}>
-                    {index + 1}/{total}
-                </Text>
-            </View>
-        </View>
+        </Page>
     );
 };
 
 export interface ShippingLabelsPdfProps {
-    data: ParcelClients[];
+    data: ShippingLabelData;
 }
 
 const ShippingLabelsPdf: React.FC<ShippingLabelsPdfProps> = ({ data }) => {
     return (
         <Document>
-            <Page size="A4" style={styles.page}>
-                {data.map((datum, datumIndex) => {
+            {data.labelQuantity > 0 &&
+                [...Array(data.labelQuantity)].map((value: undefined, index: number) => {
                     return (
-                        <ParcelCard
-                            key={datumIndex}
-                            datum={datum}
-                            index={datumIndex}
-                            total={data.length}
+                        <LabelCard
+                            key={index}
+                            data={data}
+                            index={index}
+                            quantity={data.labelQuantity}
                         />
                     );
                 })}
-            </Page>
         </Document>
     );
 };

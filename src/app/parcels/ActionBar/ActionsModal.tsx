@@ -45,6 +45,21 @@ const StatusText = styled.p`
     }
 `;
 
+interface ShippingLabelsInputProps {
+    onLabelQuantityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+export const ShippingLabelsInput: React.FC<ShippingLabelsInputProps> = ({
+    onLabelQuantityChange,
+}) => {
+    return (
+        <>
+            <Heading>Shipping Labels</Heading>
+            <FreeFormTextInput type="number" onChange={onLabelQuantityChange} label="Quantity" />
+        </>
+    );
+};
+
 interface DriverOverviewInputProps {
     onDateChange: (newDate: Dayjs | null) => void;
     onDriverNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -136,11 +151,13 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                     <>
                         {props.showSelectedParcels && (
                             <>
-                                <Heading>Parcels selected for download:</Heading>
+                                <Heading>
+                                    {props.data.length === 1 ? "Parcel" : "Parcels"} selected:
+                                </Heading>
                                 {props.data.map((parcel, index) => {
                                     return (
                                         <StatusText key={index}>
-                                            {parcel.deliveryCollection.collectionCentreAcronym}
+                                            {parcel.addressPostcode}
                                             {parcel.fullName && ` - ${parcel.fullName}`}
                                             {parcel.collectionDatetime &&
                                                 `\n @ ${dayjs(parcel.collectionDatetime!).format(

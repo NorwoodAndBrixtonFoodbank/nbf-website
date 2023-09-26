@@ -8,7 +8,7 @@ type CollectionCentre = {
 
 type ParcelWithCollectionCentre = Omit<Schema["parcels"], "collection_centre"> & CollectionCentre;
 
-export const fetchParcels = async (
+export const fetchParcel = async (
     parcelID: string,
     supabase: Supabase
 ): Promise<ParcelWithCollectionCentre> => {
@@ -33,7 +33,7 @@ export const fetchParcels = async (
     return data[0];
 };
 
-export const fetchClients = async (
+export const fetchClient = async (
     primaryKey: string,
     supabase: Supabase
 ): Promise<Schema["clients"]> => {
@@ -50,7 +50,7 @@ export const fetchClients = async (
     return data[0];
 };
 
-export const fetchFamilies = async (
+export const fetchFamily = async (
     familyID: string,
     supabase: Supabase
 ): Promise<Schema["families"][]> => {

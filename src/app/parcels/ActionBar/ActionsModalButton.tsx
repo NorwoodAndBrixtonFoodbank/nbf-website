@@ -12,11 +12,17 @@ interface ModalButtonProps {
     data: ParcelsTableRow[];
 }
 
-export const ShippingLabelsModalButton: React.FC<ModalButtonProps> = ({ data }) => {
-    const parcelIds = data.map((parcel) => {
-        return parcel.parcelId;
-    });
-    return <ShippingLabels text="Download" parcelIds={parcelIds} />;
+interface ShippingLabelsButtonProps extends ModalButtonProps {
+    labelQuantity: number;
+}
+
+export const ShippingLabelsModalButton: React.FC<ShippingLabelsButtonProps> = ({
+    data,
+    labelQuantity,
+}) => {
+    return (
+        <ShippingLabels text="Download" parcelId={data[0].parcelId} labelQuantity={labelQuantity} />
+    );
 };
 
 export const ShoppingListModalButton: React.FC<ModalButtonProps> = ({ data }) => {

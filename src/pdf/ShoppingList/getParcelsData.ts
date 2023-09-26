@@ -1,4 +1,4 @@
-import { fetchParcels } from "@/common/fetch";
+import { fetchParcel } from "@/common/fetch";
 import supabase from "@/supabaseClient";
 
 export interface ParcelInfo {
@@ -27,7 +27,7 @@ const formatDate = (dateString: string | null): string => {
 };
 
 export const prepareParcelInfo = async (parcelID: string): Promise<ParcelInfoAndClientID> => {
-    const fetchedData = await fetchParcels(parcelID, supabase);
+    const fetchedData = await fetchParcel(parcelID, supabase);
     const parcelInfo: ParcelInfo = {
         voucherNumber: fetchedData.voucher_number ?? "",
         packingDate: formatDate(fetchedData.packing_datetime),
