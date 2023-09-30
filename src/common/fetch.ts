@@ -3,7 +3,10 @@ import { Schema } from "@/databaseUtils";
 import { Supabase } from "@/supabaseUtils";
 
 type CollectionCentre = {
-    collection_centre: { name: Schema["collection_centres"]["name"] } | null;
+    collection_centre: {
+        name: Schema["collection_centres"]["name"];
+        acronym: Schema["collection_centres"]["acronym"];
+    } | null;
 };
 
 type ParcelWithCollectionCentre = Omit<Schema["parcels"], "collection_centre"> & CollectionCentre;
@@ -17,7 +20,8 @@ export const fetchParcel = async (
         .select(
             `*, 
             collection_centre:collection_centres ( 
-                name
+                name,
+                acronym
             )`
         )
         .eq("primary_key", parcelID);

@@ -9,6 +9,7 @@ interface Props<T> {
     text: string;
     pdfComponent: React.FC<{ data: T }>;
     fileName: string;
+    clickHandler?: () => void;
     formatName?: boolean;
 }
 
@@ -39,6 +40,7 @@ const PdfButton = <T,>({
     text,
     pdfComponent: PdfComponent,
     fileName,
+    clickHandler = () => {},
     formatName = true,
 }: Props<T>): React.ReactElement => {
     return (
@@ -47,7 +49,9 @@ const PdfButton = <T,>({
                 document={<PdfComponent data={data} />}
                 fileName={formatName ? formatFileName(fileName) : fileName}
             >
-                <Button variant="contained">{text}</Button>
+                <Button variant="contained" onClick={clickHandler}>
+                    {text}
+                </Button>
             </PDFDownloadLink>
         </NoSsr>
     );

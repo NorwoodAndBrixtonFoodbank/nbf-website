@@ -1,11 +1,10 @@
-"use client";
-
 import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 
 export interface ShippingLabelData {
-    labelQuantity: number;
-    packing_datetime: string;
+    label_quantity: number;
+    parcel_id: string;
+    packing_time_of_day: string;
     collection_centre: string;
     collection_datetime: string;
     voucher_number: string;
@@ -24,18 +23,47 @@ const mmToPixels = (mm: number): number => {
     return mm * pixelsPerMmAt72Dpi;
 };
 
-const labelSizePixels = { width: mmToPixels(200), height: mmToPixels(63) };
+const labelSizePixels = { width: mmToPixels(200), height: mmToPixels(62) };
 
 const styles = StyleSheet.create({
     page: {
+        padding: "0.2cm",
+        fontFamily: "Helvetica",
+        fontSize: "11pt",
+        lineHeight: 1.25,
+    },
+    cardWrapper: {
+        border: "1.5pt solid black",
+        height: "100%",
         display: "flex",
         flexDirection: "column",
-        fontSize: "11pt",
     },
-    cardWrapper: { border: "1pt solid black", margin: 10 },
-    heading: { fontFamily: "Helvetica-Bold", textTransform: "uppercase" },
-    row: { display: "flex", flexDirection: "row" },
-    col: { flex: 1, margin: 5 },
+    topRow: {
+        justifyContent: "flex-start",
+        flexBasis: "20%",
+        display: "flex",
+        flexDirection: "row",
+    },
+    middleRow: { flex: 1, display: "flex", flexDirection: "row" },
+    bottomRow: {
+        justifyContent: "flex-end",
+        flexBasis: "30%",
+        display: "flex",
+        flexDirection: "row",
+    },
+    leftCol: { justifyContent: "flex-start", flexBasis: "36%" },
+    middleCol: { flex: 1 },
+    rightCol: { justifyContent: "flex-end", flexBasis: "25%" },
+    bottomAlign: { marginTop: "auto" },
+    headingText: { fontFamily: "Helvetica-Bold", textTransform: "uppercase" },
+    largeText: {
+        fontSize: "29pt",
+        lineHeight: 1,
+    },
+    mediumText: {
+        fontSize: "19pt",
+        lineHeight: 1,
+    },
 });
 
 interface LabelCardProps {
@@ -48,41 +76,61 @@ const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
     return (
         <Page size={labelSizePixels} style={styles.page}>
             <View style={styles.cardWrapper} wrap={false}>
-                <View style={styles.row}>
-                    <Text style={styles.col}>
-                        <Text style={styles.heading}>name:</Text> {data.full_name}
+                <View style={styles.topRow}>
+                    <Text style={styles.leftCol}>
+                        <Text style={styles.headingText}>Name:</Text>
+                        <Text> {data.full_name}</Text>
                     </Text>
-                    <Text style={styles.col}>
-                        <Text style={styles.heading}>contact:</Text> {data.phone_number}
+                    <Text style={styles.middleCol}>
+                        <Text style={styles.headingText}>Contact:</Text>
+                        <Text> {data.phone_number}</Text>
                     </Text>
-                    <Text style={[styles.col, { textAlign: "right" }]}>
-                        <Text style={styles.heading}>packed:</Text> {data.packing_datetime}
+                    <Text style={styles.rightCol}>
+                        <Text style={styles.headingText}>Packed:</Text>
+                        <Text> {data.packing_time_of_day}</Text>
                     </Text>
                 </View>
-                <View style={[styles.row, { minHeight: 100 }]}>
-                    <View style={styles.col}>
-                        <Text>{data.address_1}</Text>
-                        <Text>{data.address_2}</Text>
-                        <Text>{data.address_town}</Text>
-                        <Text>{data.address_county}</Text>
-                        <Text>{data.address_postcode}</Text>
+                <View style={styles.middleRow}>
+                    <View style={styles.leftCol}>
+                        <Text>
+                            {data.address_1}
+                            <br />
+                        </Text>
+                        <Text>
+                            {data.address_2}
+                            <br />
+                        </Text>
+                        <Text>
+                            {data.address_town}
+                            <br />
+                        </Text>
+                        <Text>
+                            {data.address_county}
+                            <br />
+                        </Text>
                     </View>
-                    <View style={styles.col}>
-                        <Text style={styles.heading}>delivery instructions:</Text>
+                    <View>
+                        <Text style={styles.headingText}>Delivery Instructions:</Text>
                         <Text>{data.delivery_instructions}</Text>
                     </View>
-                    <View style={styles.col}></View>
                 </View>
-                <View style={styles.row}>
-                    <Text style={styles.col}>
-                        <Text style={styles.heading}>{data.voucher_number}</Text>
-                    </Text>
-                    <Text style={styles.col}>
-                        {data.collection_datetime} | {data.collection_centre}
-                    </Text>
-                    <Text style={[styles.col, { textAlign: "right" }]}>
-                        {index + 1}/{quantity}
-                    </Text>
+                <View style={styles.bottomRow}>
+                    <View style={[styles.leftCol, styles.bottomAlign]}>
+                        <Text style={styles.largeText}>{data.address_postcode}</Text>
+                    </View>
+                    <View style={[styles.middleCol, styles.bottomAlign]}>
+                        <Text style={styles.mediumText}>
+                            {data.packing_time_of_day} |
+                            {data.collection_centre !== "DLVR"
+                                ? data.collection_centre // TODO VFB-56 needs icon
+                                : "Delivery"}
+                        </Text>
+                    </View>
+                    <View style={[styles.rightCol, styles.bottomAlign]}>
+                        <Text style={styles.mediumText}>
+                            Item {index + 1} of {quantity}
+                        </Text>
+                    </View>
                 </View>
             </View>
         </Page>
@@ -96,14 +144,14 @@ export interface ShippingLabelsPdfProps {
 const ShippingLabelsPdf: React.FC<ShippingLabelsPdfProps> = ({ data }) => {
     return (
         <Document>
-            {data.labelQuantity > 0 &&
-                [...Array(data.labelQuantity)].map((value: undefined, index: number) => {
+            {data.label_quantity > 0 &&
+                [...Array(data.label_quantity)].map((value: undefined, index: number) => {
                     return (
                         <LabelCard
                             key={index}
                             data={data}
                             index={index}
-                            quantity={data.labelQuantity}
+                            quantity={data.label_quantity}
                         />
                     );
                 })}

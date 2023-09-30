@@ -3,6 +3,8 @@ import supabase from "@/supabaseClient";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import ShippingLabelsPdf, { ShippingLabelData } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
 import { fetchClient, fetchParcel } from "@/common/fetch";
+import { saveParcelStatus } from "@/app/parcels/ActionBar/Statuses";
+import { datetimeToPackingTimeLabel } from "@/app/parcels/getParcelsTableData";
 
 const formatDatetime = (datetimeString: string | null, isDatetime: boolean): string => {
     if (datetimeString === null) {
@@ -30,9 +32,10 @@ const getRequiredData = async (
     const client = await fetchClient(parcel.client_id, supabase);
 
     return {
-        labelQuantity: labelQuantity,
-        packing_datetime: formatDatetime(parcel.packing_datetime, false),
-        collection_centre: parcel.collection_centre?.name ?? "",
+        label_quantity: labelQuantity,
+        parcel_id: parcelId,
+        packing_time_of_day: datetimeToPackingTimeLabel(parcel.packing_datetime) ?? "",
+        collection_centre: parcel.collection_centre?.acronym ?? "",
         collection_datetime: formatDatetime(parcel.collection_datetime, true),
         voucher_number: parcel.voucher_number ?? "",
         full_name: client?.full_name,
@@ -58,14 +61,21 @@ const ShippingLabels = async ({
     labelQuantity,
 }: Props): Promise<React.ReactElement> => {
     const requiredData = await getRequiredData(parcelId, labelQuantity);
+    requiredData.label_quantity = labelQuantity;
 
-    requiredData.labelQuantity = labelQuantity;
     return (
         <PdfButton
             text={text}
             fileName="ShippingLabels.pdf"
             data={requiredData}
             pdfComponent={ShippingLabelsPdf}
+            clickHandler={() => {
+                saveParcelStatus(
+                    requiredData.parcel_id,
+                    "Shipping Label Printed",
+                    String(labelQuantity)
+                );
+            }}
         />
     );
 };

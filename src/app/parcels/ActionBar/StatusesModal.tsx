@@ -76,7 +76,7 @@ const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
                 {props.data.map((parcel, index) => {
                     return (
                         <StatusText key={index}>
-                            {parcel.deliveryCollection.collectionCentreAcronym}
+                            {parcel.addressPostcode}
                             {parcel.fullName && ` - ${parcel.fullName}`}
                             {parcel.collectionDatetime &&
                                 `\n @ ${dayjs(parcel.collectionDatetime!).format(
