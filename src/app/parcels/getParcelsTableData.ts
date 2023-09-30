@@ -1,4 +1,4 @@
-import { CongestionChargeDetails, ProcessingData } from "@/app/parcels/fetchDataFromServer";
+import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fetchDataFromServer";
 import { Schema } from "@/databaseUtils";
 
 export interface ParcelsTableRow {
@@ -17,6 +17,7 @@ export interface ParcelsTableRow {
     lastStatus: {
         name: string;
         timestamp: Date;
+        eventData: string | null;
     } | null;
     voucherNumber: string | null;
     iconsColumn: {
@@ -27,7 +28,7 @@ export interface ParcelsTableRow {
 }
 
 export const processingDataToClientsTableData = (
-    processingData: ProcessingData,
+    processingData: ParcelProcessingData,
     congestionCharge: CongestionChargeDetails[]
 ): ParcelsTableRow[] => {
     const clientTableRows: ParcelsTableRow[] = [];
@@ -81,7 +82,7 @@ export const datetimeToPackingTimeLabel = (datetime: string | null): PackingTime
 };
 
 export const eventToLastStatus = (
-    event: Pick<Schema["events"], "event_name" | "timestamp"> | undefined | null
+    event: Pick<Schema["events"], "event_name" | "timestamp" | "event_data"> | undefined | null
 ): ParcelsTableRow["lastStatus"] => {
     if (!event) {
         return null;
@@ -89,6 +90,7 @@ export const eventToLastStatus = (
 
     return {
         name: event.event_name,
+        eventData: event.event_data,
         timestamp: new Date(event.timestamp),
     };
 };

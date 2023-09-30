@@ -19,6 +19,7 @@ describe("Clients - Action Bar", () => {
             fullName: "John Smith",
             lastStatus: {
                 name: "Delivered",
+                eventData: "Some information",
                 timestamp: new Date(),
             },
             packingDatetime: new Date(),
@@ -35,7 +36,7 @@ describe("Clients - Action Bar", () => {
             addressPostcode: "AB1 aaaa2CD",
             deliveryCollection: {
                 collectionCentreName: "Centraaaae 1",
-                collectionCentreAcronym: "C1",
+                collectionCentreAcronym: "C2",
                 congestionChargeApplies: true,
             },
             collectionDatetime: new Date(),
@@ -43,6 +44,7 @@ describe("Clients - Action Bar", () => {
             fullName: "John Smaaaaith",
             lastStatus: {
                 name: "Called and Confirmed",
+                eventData: null,
                 timestamp: new Date(),
             },
             packingDatetime: new Date(),
@@ -128,9 +130,7 @@ describe("Clients - Action Bar", () => {
             });
             cy.get(`input[value="${timeString}"]`).should("exist");
             selectedIndices.forEach((index) => {
-                cy.get(".MuiPaper-root").contains(
-                    mockData[index].deliveryCollection.collectionCentreAcronym
-                );
+                cy.get(".MuiPaper-root").contains(mockData[index].addressPostcode);
                 cy.get(".MuiPaper-root").contains(mockData[index].fullName);
             });
         });
@@ -169,7 +169,7 @@ describe("Clients - Action Bar", () => {
             cy.get("#action-menu").should("exist");
             cy.get("#action-menu").contains("Download Shopping List").click();
             cy.get("#action-modal-header").should("exist");
-            cy.get(".MuiPaper-root").contains(row.deliveryCollection.collectionCentreAcronym);
+            cy.get(".MuiPaper-root").contains(row.addressPostcode);
             cy.get(".MuiPaper-root").contains(row.fullName);
         });
     });

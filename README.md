@@ -57,6 +57,8 @@ If you change the database, you can regenerate the types with:
 npx supabase gen types typescript --project-id <PROJECT_ID> --schema public > src/databaseTypesFile.ts
 ```
 
+Note that to use the Supabase CLI as above you'll need to have created a personal access token in Supabase and done `npx supabase login`.
+
 ## NextJS design choices
 
 * Functional arrow components

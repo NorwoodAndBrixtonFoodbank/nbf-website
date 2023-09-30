@@ -1,4 +1,4 @@
-import { CongestionChargeDetails, ProcessingData } from "@/app/parcels/fetchDataFromServer";
+import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fetchDataFromServer";
 import {
     ParcelsTableRow,
     datetimeToPackingTimeLabel,
@@ -16,7 +16,7 @@ import {
     RawParcelDetails,
 } from "@/app/parcels/getExpandedParcelDetails";
 
-const sampleProcessingData: ProcessingData = [
+const sampleProcessingData: ParcelProcessingData = [
     {
         parcel_id: "PRIMARY_KEY",
         collection_centre: {
@@ -44,6 +44,7 @@ const sampleProcessingData: ProcessingData = [
         events: [
             {
                 event_name: "LAST_EVENT",
+                event_data: "SOME_RELATED_DATA",
                 timestamp: "2023-08-04T13:30:00+00:00",
             },
         ],
@@ -111,6 +112,7 @@ describe("Clients Page", () => {
                     packingTimeLabel: "PM",
                     lastStatus: {
                         name: "LAST_EVENT",
+                        eventData: "SOME_RELATED_DATA",
                         timestamp: new Date("2023-08-04T13:30:00+00:00"),
                     },
                     voucherNumber: "VOUCHER_1",
@@ -148,10 +150,12 @@ describe("Clients Page", () => {
             expect(
                 eventToLastStatus({
                     event_name: "EVENT",
+                    event_data: "SOME_RELATED_DATA",
                     timestamp: "2023-08-04T13:30:00+00:00",
                 })
             ).to.deep.eq({
                 name: "EVENT",
+                eventData: "SOME_RELATED_DATA",
                 timestamp: new Date("2023-08-04T13:30:00+00:00"),
             });
             expect(eventToLastStatus(null)).to.eq(null);

@@ -5,9 +5,10 @@ import React, { useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import StatusesBarModal from "@/app/parcels/ActionBar/StatusesModal";
+import { DatabaseError } from "@/app/errorClasses";
 
 const statuses = [
     "Request Denied",
@@ -23,9 +24,32 @@ const statuses = [
     "Delivery Failed",
     "Delivery Cancelled",
     "Fulfilled with Trussell Trust",
+    "Shipping Label Printed",
 ] as const;
 
 type statusType = (typeof statuses)[number];
+
+const nonMenuStatuses: statusType[] = ["Shipping Label Printed"];
+
+export const saveParcelStatus = async (
+    parcelId: string,
+    statusName: statusType,
+    statusEventData?: string | null,
+    date?: Dayjs | null
+): Promise<void> => {
+    const timestamp = (date ?? dayjs()).set("second", 0).toISOString();
+    const toInsert = {
+        event_name: statusName,
+        parcel_id: parcelId,
+        event_data: statusEventData,
+        timestamp,
+    };
+
+    const { error } = await supabase.from("events").insert(toInsert);
+    if (error) {
+        throw new DatabaseError("insert", "status event");
+    }
+};
 
 interface Props {
     selected: number[];
@@ -50,6 +74,7 @@ const Statuses: React.FC<Props> = ({
     const selectedData = Array.from(selected.map((index) => data[index]));
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
+        // TODO VFB-53: refactor this so it shares with saveParcelStatus()
         const toInsert = selectedData
             .map((parcel: ParcelsTableRow) => {
                 const event_name = selectedStatus!;
@@ -109,13 +134,15 @@ const Statuses: React.FC<Props> = ({
                 anchorEl={statusAnchorElement}
             >
                 <MenuList id="status-menu">
-                    {statuses.map((status, index) => {
-                        return (
-                            <MenuItem key={index} onClick={onMenuItemClick(status)}>
-                                {status}
-                            </MenuItem>
-                        );
-                    })}
+                    {statuses
+                        .filter((status) => !nonMenuStatuses.includes(status))
+                        .map((status, index) => {
+                            return (
+                                <MenuItem key={index} onClick={onMenuItemClick(status)}>
+                                    {status}
+                                </MenuItem>
+                            );
+                        })}
                 </MenuList>
             </Menu>
         </>

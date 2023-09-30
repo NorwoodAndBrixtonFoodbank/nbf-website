@@ -6,7 +6,7 @@ export type CongestionChargeDetails = {
 };
 
 export const getCongestionChargeDetails = async (
-    processingData: ProcessingData
+    processingData: ParcelProcessingData
 ): Promise<CongestionChargeDetails[]> => {
     const postcodes = [];
     for (const parcel of processingData) {
@@ -20,7 +20,7 @@ export const getCongestionChargeDetails = async (
     return JSON.parse(response.data);
 };
 
-export type ProcessingData = Awaited<ReturnType<typeof getProcessingData>>;
+export type ParcelProcessingData = Awaited<ReturnType<typeof getProcessingData>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const getProcessingData = async () => {
@@ -54,6 +54,7 @@ export const getProcessingData = async () => {
         
         events (
             event_name,
+            event_data,
             timestamp
         )
     `

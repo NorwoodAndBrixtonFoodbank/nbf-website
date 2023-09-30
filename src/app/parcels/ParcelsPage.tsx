@@ -117,8 +117,12 @@ const ParcelsPage: React.FC<Props> = ({ parcelsTableData }) => {
         if (!data) {
             return "-";
         }
-        const { name, timestamp } = data;
-        return `${name} @ ${formatDatetimeAsDate(timestamp)}`;
+        const { name, eventData, timestamp } = data;
+        return (
+            `${name}` +
+            (eventData ? ` (${eventData})` : "") +
+            ` @ ${formatDatetimeAsDate(timestamp)}`
+        );
     };
 
     const clientTableColumnDisplayFunctions = {
