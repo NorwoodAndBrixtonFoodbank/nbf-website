@@ -28,7 +28,7 @@ const statuses = [
     "Shopping List Downloaded",
 ] as const;
 
-type statusType = (typeof statuses)[number];
+export type statusType = (typeof statuses)[number];
 
 const nonMenuStatuses: statusType[] = ["Shipping Labels Downloaded", "Shopping List Downloaded"];
 
