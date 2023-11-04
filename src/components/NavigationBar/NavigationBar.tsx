@@ -174,7 +174,7 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
                     </MobileNavMenuContainer>
                     <LogoElementContainer>
                         <UnstyledLink href="/" prefetch={false}>
-                            <Logo alt="Vauxhall Foodbank Logo" src="/logo.webp" />
+                            <Logo alt="Lambeth Foodbank Logo" src="/logo.webp" />
                         </UnstyledLink>
                     </LogoElementContainer>
                     <DesktopButtonContainer>
