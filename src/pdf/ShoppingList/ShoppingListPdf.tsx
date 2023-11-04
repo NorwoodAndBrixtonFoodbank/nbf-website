@@ -1,12 +1,14 @@
-"use client";
-
 import React from "react";
 import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
 import { ClientSummary, RequirementSummary } from "@/common/formatClientsData";
 import { HouseholdSummary } from "@/common/formatFamiliesData";
 import { formatCamelCaseKey } from "@/common/format";
 import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
-import { Item, ShoppingListPdfDataProps } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
+import {
+    Item,
+    ShoppingListPdfData,
+    ShoppingListPdfDataList,
+} from "@/pdf/ShoppingList/shoppingListPdfDataProps";
 
 export type BlockProps = ParcelInfo | HouseholdSummary | RequirementSummary;
 
@@ -193,46 +195,58 @@ const DisplayClientSummary: React.FC<ClientSummary> = (clientSummary) => {
     );
 };
 
+interface SingleShoppingListProps {
+    parcelData: ShoppingListPdfData;
+}
+
+const SingleShoppingList: React.FC<SingleShoppingListProps> = ({ parcelData }) => {
+    return (
+        <Page size="A4">
+            <View style={{ height: "0.75in" }} fixed />
+            <View style={styles.paper}>
+                <View style={[styles.flexRow, styles.pdfHeader]}>
+                    <View style={styles.flexColumn}>
+                        <Text style={styles.title}>Shopping List</Text>
+                        <Text style={styles.subtitle}>POSTCODE: {parcelData.postcode}</Text>
+                    </View>
+                    {/* eslint-disable-next-line jsx-a11y/alt-text -- React-PDF Image doesn't  have alt text property*/}
+                    <Image src="/logo.png" style={[styles.flexRow, styles.logoStyling]} />
+                </View>
+                <DisplayAsBlock {...parcelData.parcelInfo} />
+                <DisplayClientSummary {...parcelData.clientSummary} />
+                <View style={[styles.flexRow, styles.infoBlock]}>
+                    <DisplayAsBlock {...parcelData.householdSummary} />
+                    <DisplayAsBlock {...parcelData.requirementSummary} />
+                </View>
+                <View>
+                    <TableHeadings />
+                    <DisplayItemsList itemsList={parcelData.itemsList} />
+                </View>
+                <View style={styles.flexColumn} wrap={false}>
+                    <Text style={[styles.keyText, { paddingTop: "5pt" }]}>
+                        Warehouse Manager Notes
+                    </Text>
+                    <Text style={styles.normalText}>{parcelData.endNotes}</Text>
+                    <Text style={[styles.keyText, styles.inputText]}>Date Packed:</Text>
+                    <Text style={[styles.keyText, styles.inputText]}>Packer Name:</Text>
+                    <Text style={[styles.keyText, styles.inputText]}>Packer Signature:</Text>
+                </View>
+            </View>
+            <View style={{ height: "0.75in" }} fixed />
+        </Page>
+    );
+};
+
 interface ShoppingListPDFProps {
-    data: ShoppingListPdfDataProps;
+    data: ShoppingListPdfDataList;
 }
 
 const ShoppingListPdf: React.FC<ShoppingListPDFProps> = ({ data }) => {
     return (
         <Document>
-            <Page size="A4">
-                <View style={{ height: "0.75in" }} fixed />
-                <View style={styles.paper}>
-                    <View style={[styles.flexRow, styles.pdfHeader]}>
-                        <View style={styles.flexColumn}>
-                            <Text style={styles.title}>Shopping List</Text>
-                            <Text style={styles.subtitle}>POSTCODE: {data.postcode}</Text>
-                        </View>
-                        {/* eslint-disable-next-line jsx-a11y/alt-text -- React-PDF Image doesn't  have alt text property*/}
-                        <Image src="/logo.png" style={[styles.flexRow, styles.logoStyling]} />
-                    </View>
-                    <DisplayAsBlock {...data.parcelInfo} />
-                    <DisplayClientSummary {...data.clientSummary} />
-                    <View style={[styles.flexRow, styles.infoBlock]}>
-                        <DisplayAsBlock {...data.householdSummary} />
-                        <DisplayAsBlock {...data.requirementSummary} />
-                    </View>
-                    <View>
-                        <TableHeadings />
-                        <DisplayItemsList itemsList={data.itemsList} />
-                    </View>
-                    <View style={styles.flexColumn} wrap={false}>
-                        <Text style={[styles.keyText, { paddingTop: "5pt" }]}>
-                            Warehouse Manager Notes
-                        </Text>
-                        <Text style={styles.normalText}>{data.endNotes}</Text>
-                        <Text style={[styles.keyText, styles.inputText]}>Date Packed:</Text>
-                        <Text style={[styles.keyText, styles.inputText]}>Packer Name:</Text>
-                        <Text style={[styles.keyText, styles.inputText]}>Packer Signature:</Text>
-                    </View>
-                </View>
-                <View style={{ height: "0.75in" }} fixed />
-            </Page>
+            {data.lists.map((parcelData: ShoppingListPdfData, index: number) => {
+                return <SingleShoppingList key={index} parcelData={parcelData} />;
+            })}
         </Document>
     );
 };

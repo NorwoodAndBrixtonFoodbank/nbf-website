@@ -24,26 +24,31 @@ const statuses = [
     "Delivery Failed",
     "Delivery Cancelled",
     "Fulfilled with Trussell Trust",
-    "Shipping Label Printed",
+    "Shipping Labels Downloaded",
+    "Shopping List Downloaded",
 ] as const;
 
 type statusType = (typeof statuses)[number];
 
-const nonMenuStatuses: statusType[] = ["Shipping Label Printed"];
+const nonMenuStatuses: statusType[] = ["Shipping Labels Downloaded", "Shopping List Downloaded"];
 
 export const saveParcelStatus = async (
-    parcelId: string,
+    parcelIds: string[],
     statusName: statusType,
     statusEventData?: string | null,
     date?: Dayjs | null
 ): Promise<void> => {
     const timestamp = (date ?? dayjs()).set("second", 0).toISOString();
-    const toInsert = {
-        event_name: statusName,
-        parcel_id: parcelId,
-        event_data: statusEventData,
-        timestamp,
-    };
+    const toInsert = parcelIds
+        .map((parcelId: string) => {
+            return {
+                event_name: statusName,
+                parcel_id: parcelId,
+                event_data: statusEventData,
+                timestamp,
+            };
+        })
+        .flat();
 
     const { error } = await supabase.from("events").insert(toInsert);
     if (error) {
@@ -74,27 +79,20 @@ const Statuses: React.FC<Props> = ({
     const selectedData = Array.from(selected.map((index) => data[index]));
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
-        // TODO VFB-53: refactor this so it shares with saveParcelStatus()
-        const toInsert = selectedData
-            .map((parcel: ParcelsTableRow) => {
-                const event_name = selectedStatus!;
-                const timestamp = date.set("second", 0).toISOString();
-                return {
-                    event_name,
-                    parcel_id: parcel.parcelId,
-                    timestamp,
-                };
-            })
-            .flat();
-
-        const { error } = await supabase.from("events").insert(toInsert);
-
-        if (error) {
-            setModalError(error.message);
-        } else {
+        try {
+            saveParcelStatus(
+                selectedData.map((parcel: ParcelsTableRow) => {
+                    return parcel.parcelId;
+                }),
+                selectedStatus!,
+                null,
+                date
+            );
             setStatusModal(false);
             setModalError(null);
             window.location.reload();
+        } catch (error: any) {
+            setModalError(error.message);
         }
     };
 

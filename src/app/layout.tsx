@@ -29,8 +29,8 @@ const App: React.FC<Props> = ({ children }) => (
 );
 export const metadata: Metadata = {
     title: {
-        template: "%s | Vauxhall Foodbank",
-        default: "Vauxhall Foodbank",
+        template: "%s | Lambeth Foodbank",
+        default: "Lambeth Foodbank",
     },
     description: "Providing foodbank services to clients in south London.",
 };

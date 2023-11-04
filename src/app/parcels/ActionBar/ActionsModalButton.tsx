@@ -26,7 +26,14 @@ export const ShippingLabelsModalButton: React.FC<ShippingLabelsButtonProps> = ({
 };
 
 export const ShoppingListModalButton: React.FC<ModalButtonProps> = ({ data }) => {
-    return <ShoppingList text="Download" parcelId={data[0].parcelId} />;
+    return (
+        <ShoppingList
+            text="Download"
+            parcelIds={data.map((parcel: ParcelsTableRow) => {
+                return parcel.parcelId;
+            })}
+        />
+    );
 };
 
 export const DayOverviewModalButton: React.FC<{ collectionCentre: string; date: Date }> = ({

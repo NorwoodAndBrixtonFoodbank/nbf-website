@@ -11,7 +11,7 @@ export interface Item {
     notes: string;
 }
 
-export interface ShoppingListPdfDataProps {
+export interface ShoppingListPdfData {
     postcode: string;
     parcelInfo: ParcelInfo;
     clientSummary: ClientSummary;
@@ -19,6 +19,10 @@ export interface ShoppingListPdfDataProps {
     requirementSummary: RequirementSummary;
     itemsList: Item[];
     endNotes: string;
+}
+
+export interface ShoppingListPdfDataList {
+    lists: ShoppingListPdfData[];
 }
 
 const getQuantityAndNotes = (
@@ -36,7 +40,7 @@ const getQuantityAndNotes = (
     };
 };
 
-export const prepareItemsList = async (householdSize: number): Promise<Item[]> => {
+export const prepareItemsListForHousehold = async (householdSize: number): Promise<Item[]> => {
     const listData = await fetchLists(supabase);
     return listData.map((row): Item => {
         return {
