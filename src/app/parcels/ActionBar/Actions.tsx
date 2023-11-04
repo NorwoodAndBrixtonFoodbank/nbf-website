@@ -10,6 +10,7 @@ import ActionsModal, {
     DayOverviewInput,
     DriverOverviewInput,
     ShippingLabelsInput,
+    ShoppingListsConfirmation,
 } from "@/app/parcels/ActionBar/ActionsModal";
 import {
     DayOverviewModalButton,
@@ -71,6 +72,7 @@ const availableActions: AvailableActionsType = {
 
 interface ActionsInputComponentProps {
     pdfType: PdfType;
+    selectedParcels: ParcelsTableRow[];
     onDateChange: (newDate: Dayjs | null) => void;
     onLabelQuantityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onDriverNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -80,6 +82,7 @@ interface ActionsInputComponentProps {
 
 const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
     pdfType,
+    selectedParcels,
     onDateChange,
     onLabelQuantityChange,
     onDriverNameChange,
@@ -89,6 +92,8 @@ const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
     switch (pdfType) {
         case "Download Shipping Labels":
             return <ShippingLabelsInput onLabelQuantityChange={onLabelQuantityChange} />;
+        case "Download Shopping Lists":
+            return <ShoppingListsConfirmation parcels={selectedParcels} />;
         case "Download Driver Overview":
             return (
                 <DriverOverviewInput
@@ -224,6 +229,7 @@ const Actions: React.FC<Props> = ({
                             inputComponent={
                                 <ActionsInputComponent
                                     pdfType={key}
+                                    selectedParcels={selectedData}
                                     onDateChange={onDateChange}
                                     onLabelQuantityChange={onLabelQuantityChange}
                                     onDriverNameChange={onDriverNameChange}

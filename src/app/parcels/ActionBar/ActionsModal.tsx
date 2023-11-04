@@ -7,10 +7,11 @@ import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import { Button, SelectChangeEvent } from "@mui/material";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { DatePicker, DesktopDatePicker } from "@mui/x-date-pickers";
+import { DatePicker } from "@mui/x-date-pickers";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
+import { statusType } from "./Statuses";
 
 interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     data: ParcelsTableRow[];
@@ -29,6 +30,11 @@ const Heading = styled.div`
     margin: 0.3rem;
 `;
 
+const Paragraph = styled.p`
+    font-size: 1rem;
+    margin: 0.3rem;
+`;
+
 const ModalInner = styled.div`
     display: flex;
     flex-direction: column;
@@ -36,13 +42,14 @@ const ModalInner = styled.div`
     align-items: stretch;
 `;
 
-const StatusText = styled.p`
+const ListItem = styled.p<{ emphasised?: boolean }>`
     margin-left: 1rem;
-    border-top: 1px solid ${(props) => props.theme.main.lighterForeground[2]};
-    padding: 1rem 0;
-    &:last-child {
-        border-bottom: 1px solid ${(props) => props.theme.main.lighterForeground[2]};
-    }
+    padding: 0.5rem 0;
+    ${(props) =>
+        props.emphasised &&
+        `
+            font-weight: 800;
+        `}
 `;
 
 interface ShippingLabelsInputProps {
@@ -57,6 +64,36 @@ export const ShippingLabelsInput: React.FC<ShippingLabelsInputProps> = ({
             <Heading>Shipping Labels</Heading>
             <FreeFormTextInput type="number" onChange={onLabelQuantityChange} label="Quantity" />
         </>
+    );
+};
+
+interface ShoppingListsConfirmationProps {
+    parcels: ParcelsTableRow[];
+}
+
+export const ShoppingListsConfirmation: React.FC<ShoppingListsConfirmationProps> = ({
+    parcels,
+}) => {
+    const maxPostcodesToShow = 4;
+    const statusToFind: statusType = "Shopping List Downloaded";
+
+    const printedListPostcodes = parcels
+        .filter((parcel) => parcel.lastStatus?.name.startsWith(statusToFind))
+        .map((parcel) => parcel.addressPostcode);
+
+    return printedListPostcodes.length > 0 ? (
+        <>
+            <Heading>Shopping Lists</Heading>
+            <Paragraph>
+                Lists have already been printed for {printedListPostcodes.length} parcels with
+                postcodes:
+                {printedListPostcodes.slice(0, maxPostcodesToShow).join(", ")}
+                {printedListPostcodes.length > maxPostcodesToShow ? ", ..." : "."}
+            </Paragraph>
+            <Paragraph>Are you sure you want to print again?</Paragraph>
+        </>
+    ) : (
+        <></>
     );
 };
 
@@ -121,7 +158,7 @@ export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
                 />
             )}
             <Heading>Date</Heading>
-            <DesktopDatePicker onChange={onDateChange} />
+            <DatePicker onChange={onDateChange} />
         </>
     );
 };
@@ -129,6 +166,7 @@ export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
 const ActionsModal: React.FC<ActionsModalProps> = (props) => {
     const [loadPdf, setLoadPdf] = useState(false);
     const [loading, setLoading] = useState(false);
+    const maxParcelsToShow = 5;
 
     useEffect(() => {
         if (loading && !loadPdf) {
@@ -154,18 +192,23 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                 <Heading>
                                     {props.data.length === 1 ? "Parcel" : "Parcels"} selected:
                                 </Heading>
-                                {props.data.map((parcel, index) => {
+                                {props.data.slice(0, maxParcelsToShow).map((parcel, index) => {
                                     return (
-                                        <StatusText key={index}>
+                                        <ListItem key={index}>
                                             {parcel.addressPostcode}
                                             {parcel.fullName && ` - ${parcel.fullName}`}
                                             {parcel.collectionDatetime &&
                                                 `\n @ ${dayjs(parcel.collectionDatetime!).format(
                                                     "DD/MM/YYYY HH:mm"
                                                 )}`}
-                                        </StatusText>
+                                        </ListItem>
                                     );
                                 })}
+                                {props.data.length > maxParcelsToShow ? (
+                                    <ListItem emphasised>...</ListItem>
+                                ) : (
+                                    <></>
+                                )}
                             </>
                         )}
                         <Centerer>
