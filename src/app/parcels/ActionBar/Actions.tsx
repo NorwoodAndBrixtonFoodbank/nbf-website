@@ -33,13 +33,13 @@ const doesNotEqualZero = (value: number): boolean => {
 
 type PdfType =
     | "Download Shipping Labels"
-    | "Download Shopping List"
+    | "Download Shopping Lists"
     | "Download Driver Overview"
     | "Download Day Overview";
 
 type AvailableActionsType = {
     [pdfKey in PdfType]: {
-        showSelectedParcels: boolean;
+        showSelectedParcelsInModal: boolean;
         errorCondition: (value: number) => boolean;
         errorMessage: string;
     };
@@ -47,22 +47,22 @@ type AvailableActionsType = {
 
 const availableActions: AvailableActionsType = {
     "Download Shipping Labels": {
-        showSelectedParcels: true,
+        showSelectedParcelsInModal: true,
         errorCondition: doesNotEqualOne,
         errorMessage: "Please select exactly one parcel.",
     },
-    "Download Shopping List": {
-        showSelectedParcels: true,
+    "Download Shopping Lists": {
+        showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
     },
     "Download Driver Overview": {
-        showSelectedParcels: true,
+        showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
     },
     "Download Day Overview": {
-        showSelectedParcels: false,
+        showSelectedParcelsInModal: false,
         errorCondition: doesNotEqualZero,
         errorMessage:
             "The day overview will show the parcels for a particular date and location. It will show not the currently selected parcel. Please unselect the parcels.",
@@ -129,7 +129,7 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
     switch (pdfType) {
         case "Download Shipping Labels":
             return <ShippingLabelsModalButton data={data} labelQuantity={labelQuantity} />;
-        case "Download Shopping List":
+        case "Download Shopping Lists":
             return <ShoppingListModalButton data={data} />;
         case "Download Driver Overview":
             return <DriverOverviewModalButton data={data} date={date} driverName={driverName} />;
@@ -214,7 +214,7 @@ const Actions: React.FC<Props> = ({
                     selectedAction === key && (
                         <ActionsModal
                             key={key}
-                            showSelectedParcels={value.showSelectedParcels}
+                            showSelectedParcels={value.showSelectedParcelsInModal}
                             isOpen
                             onClose={onModalClose}
                             data={selectedData}

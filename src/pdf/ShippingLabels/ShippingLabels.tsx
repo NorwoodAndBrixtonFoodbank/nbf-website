@@ -70,11 +70,15 @@ const ShippingLabels = async ({
             data={requiredData}
             pdfComponent={ShippingLabelsPdf}
             clickHandler={() => {
-                saveParcelStatus(
-                    requiredData.parcel_id,
-                    "Shipping Label Printed",
-                    String(labelQuantity)
-                );
+                try {
+                    saveParcelStatus(
+                        [requiredData.parcel_id],
+                        "Shipping Labels Downloaded",
+                        String(labelQuantity)
+                    );
+                } catch (error: any) {
+                    // TODO: VFB-54: this needs to be reported to the user. Can we hook into the ActionBar.tsx setModalError()?
+                }
             }}
         />
     );

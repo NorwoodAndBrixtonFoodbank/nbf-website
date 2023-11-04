@@ -9,8 +9,9 @@ import {
 import { prepareHouseholdSummary } from "@/common/formatFamiliesData";
 import { prepareParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import {
-    prepareItemsList,
-    ShoppingListPdfDataProps,
+    prepareItemsListForHousehold,
+    ShoppingListPdfData,
+    ShoppingListPdfDataList,
 } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
 
 interface ClientDataAndFamilyData {
@@ -25,10 +26,12 @@ const getClientAndFamilyData = async (clientID: string): Promise<ClientDataAndFa
     return { clientData: clientData, familyData: familyData };
 };
 
-const getShoppingListData = async (parcelID: string): Promise<ShoppingListPdfDataProps> => {
-    const { parcelInfo, clientID } = await prepareParcelInfo(parcelID);
-    const { clientData, familyData } = await getClientAndFamilyData(clientID);
-    const itemsList = await prepareItemsList(familyData.length);
+const getShoppingListDataForSingleParcel = async (
+    parcelId: string
+): Promise<ShoppingListPdfData> => {
+    const { parcelInfo, clientID: clientId } = await prepareParcelInfo(parcelId);
+    const { clientData, familyData } = await getClientAndFamilyData(clientId);
+    const itemsList = await prepareItemsListForHousehold(familyData.length);
 
     const clientSummary = prepareClientSummary(clientData);
     const householdSummary = prepareHouseholdSummary(familyData);
@@ -47,6 +50,16 @@ const getShoppingListData = async (parcelID: string): Promise<ShoppingListPdfDat
         requirementSummary: requirementSummary,
         itemsList: itemsList,
         endNotes: endNotes,
+    };
+};
+
+const getShoppingListData = async (parcelIds: string[]): Promise<ShoppingListPdfDataList> => {
+    return {
+        lists: await Promise.all(
+            parcelIds.map(async (parcelId: string) => {
+                return await getShoppingListDataForSingleParcel(parcelId);
+            })
+        ),
     };
 };
 
