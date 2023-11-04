@@ -4,8 +4,8 @@ describe("Authentication tests", () => {
 
     const extendedTimeout = { timeout: 10000 };
 
-    const buttonReachablePaths = ["/", "/clients", "/lists", "/calendar"];
-    const allPaths = [...buttonReachablePaths, "/clients/add"];
+    const buttonReachablePaths = ["/", "/parcels", "/clients", "/lists", "/calendar"];
+    const allPaths = [...buttonReachablePaths, "/parcels/add"];
 
     it("Redirected to login page", () => {
         for (const url of allPaths) {
@@ -14,7 +14,7 @@ describe("Authentication tests", () => {
         }
     });
 
-    it("Redirected to clients after login", () => {
+    it("Redirected to parcels after login", () => {
         cy.visit("/login");
 
         cy.get("[data-loaded='true']", extendedTimeout).should("exist");
@@ -27,20 +27,20 @@ describe("Authentication tests", () => {
 
         cy.get("button[type='submit']").click();
 
-        cy.url(extendedTimeout).should("include", "/clients");
+        cy.url(extendedTimeout).should("include", "/parcels");
     });
 
-    it("Get to clients page", () => {
+    it("Get to parcels page", () => {
         cy.login();
-        cy.visit("/clients");
+        cy.visit("/parcels");
 
-        cy.url().should("include", "/clients");
+        cy.url().should("include", "/parcels");
     });
 
     it("Sign out", () => {
         cy.login();
-        cy.visit("/clients");
-        cy.url().should("include", "/clients");
+        cy.visit("/parcels");
+        cy.url().should("include", "/parcels");
         cy.get("button[aria-label='Sign Out Button']").click();
 
         cy.url().should("include", "/login");

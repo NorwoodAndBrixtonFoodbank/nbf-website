@@ -8,6 +8,15 @@ const nextConfig = {
         newNextLinkBehavior: true,
         serverActions: true,
     },
+    async redirects() {
+        return [
+            {
+                source: "/",
+                destination: "/parcels",
+                permanent: false,
+            },
+        ];
+    },
 };
 
 module.exports = nextConfig;

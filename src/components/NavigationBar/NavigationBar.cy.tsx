@@ -47,6 +47,7 @@ describe("<NavigationBar />", () => {
         cy.viewport(1366, 768);
         cy.mount(RouterWrappedNavBar);
 
+        cy.get("a[href='/parcels']").contains("Parcels").should("exist");
         cy.get("a[href='/clients']").contains("Clients").should("exist");
         cy.get("a[href='/lists']").contains("Lists").should("exist");
         cy.get("a[href='/calendar']").contains("Calendar").should("exist");
@@ -57,6 +58,7 @@ describe("<NavigationBar />", () => {
         cy.mount(RouterWrappedNavBar);
 
         cy.get("button[aria-label='Mobile Menu Button']").click();
+        cy.get("a[href='/parcels']").contains("Parcels").should("exist");
         cy.get("a[href='/clients']").contains("Clients").should("exist");
         cy.get("a[href='/lists']").contains("Lists").should("exist");
         cy.get("a[href='/calendar']").contains("Calendar").should("exist");
@@ -67,6 +69,7 @@ describe("<NavigationBar />", () => {
         cy.mount(RouterWrappedNavBar);
 
         cy.get("button[aria-label='Mobile Menu Button']").should("not.be.visible");
+        cy.get("button").contains("Parcels").filter(":visible").should("have.length", 1);
         cy.get("button").contains("Clients").filter(":visible").should("have.length", 1);
         cy.get("button").contains("Lists").filter(":visible").should("have.length", 1);
         cy.get("button").contains("Calendar").filter(":visible").should("have.length", 1);
@@ -76,6 +79,7 @@ describe("<NavigationBar />", () => {
         cy.viewport(360, 760);
         cy.mount(RouterWrappedNavBar);
 
+        cy.get("button").contains("Parcels").should("not.be.visible");
         cy.get("button").contains("Clients").should("not.be.visible");
         cy.get("button").contains("Lists").should("not.be.visible");
         cy.get("button").contains("Calendar").should("not.be.visible");

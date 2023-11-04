@@ -19,7 +19,7 @@ const middleware: NextMiddleware = async (req: NextRequest) => {
         return NextResponse.redirect(new URL("/login", req.url));
     }
     if (user && req.nextUrl.pathname === "/login") {
-        return NextResponse.redirect(new URL("/clients", req.url));
+        return NextResponse.redirect(new URL("/", req.url));
     }
     const userRole = user?.app_metadata.role ?? "";
 

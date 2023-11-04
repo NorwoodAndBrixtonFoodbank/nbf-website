@@ -13,5 +13,5 @@ export const GET: NextMiddleware = async (req: NextRequest) => {
         await supabase.auth.exchangeCodeForSession(code);
     }
 
-    return NextResponse.redirect(new URL("/clients", req.url));
+    return NextResponse.redirect(new URL("/", req.url));
 };

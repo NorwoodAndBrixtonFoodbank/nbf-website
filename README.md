@@ -30,7 +30,7 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
   * Note that the login page can be slightly flaky, but if it doesn't immediately error then it should be signed in!
     Pressing any of the navigation bar buttons will not then redirect you to the login page.
 
-* The bets place to start is `src/app`, where the website is based! Look at the folder structure for an idea of what the
+* The best place to start is `src/app`, where the website is based! Look at the folder structure for an idea of what the
   website navigation will be.
 
 * (Optional) Install 'axe DevTools' to check that the website is accessible:
@@ -42,6 +42,8 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
     * This has hot-reloading, so will update every time you save any TypeScript document.
 
 * Use `npm run lint_fix` to get ESLint to try and fix any linting mistakes, and to report anything it cannot fix.
+
+* Use `npm run build` to make an optimised build - you'll need to do this before running tests.
 
 * Use `npm run test` to run all tests. This will run both component and integration tests (which will stop if any fail).
   * Can single out test suites with:
@@ -57,7 +59,7 @@ If you change the database, you can regenerate the types with:
 npx supabase gen types typescript --project-id <PROJECT_ID> --schema public > src/databaseTypesFile.ts
 ```
 
-Note that to use the Supabase CLI as above you'll need to have created a personal access token in Supabase and done `npx supabase login`.
+Note that to use the Supabase CLI as above you'll need to have created a personal access token in Supabase and run `npx supabase login`.
 
 ## NextJS design choices
 
