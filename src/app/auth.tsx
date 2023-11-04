@@ -27,7 +27,7 @@ export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
         }
 
         if (loggedIn && pathname.startsWith("/login")) {
-            return "/clients";
+            return "/";
         }
         if (!loggedIn && !pathname.startsWith("/login")) {
             return "/login";

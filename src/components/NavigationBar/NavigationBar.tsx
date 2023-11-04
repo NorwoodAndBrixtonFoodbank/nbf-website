@@ -122,8 +122,8 @@ const RoleDependent: React.FC<RoleProps> = ({ children, pathname }) => {
 };
 
 const pages = [
-    ["Clients", "/clients"],
     ["Parcels", "/parcels"],
+    ["Clients", "/clients"],
     ["Lists", "/lists"],
     ["Calendar", "/calendar"],
     ["Admin", "/admin"],

@@ -14,7 +14,7 @@ const NotFoundPage: React.FC<{}> = () => {
             <ErrorPanel elevation={5}>
                 <ErrorLargeText>OOPS!</ErrorLargeText>
                 <ErrorSecondaryText>404 Error || This page does not exist</ErrorSecondaryText>
-                <LinkButton link="/clients">Return to Home</LinkButton>
+                <LinkButton link="/">Return to Home</LinkButton>
             </ErrorPanel>
         </ErrorCenterer>
     );
