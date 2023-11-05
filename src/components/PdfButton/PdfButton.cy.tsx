@@ -1,47 +1,117 @@
-// TODO VFB-54: this needs to be converted to Shopping List data (multiple parcels)
-//
+// TODO: VFB-64
 // import React from "react";
 // import PdfButton from "@/components/PdfButton/PdfButton";
-// import ShippingLabelsPdf, { ShippingLabelData } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
+// import ShoppingListPdf from "@/pdf/ShoppingList/ShoppingListPdf";
+// import { ShoppingListPdfDataList } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
 
 // const downloadsFolder = Cypress.config("downloadsFolder");
-// const fileName = "ShippingLabels.pdf";
-// const parcelClientsData: ShippingLabelData[] = [
-//     {
-//         packing_datetime: "19/06/2023",
-//         collection_centre: "Delivery",
-//         collection_datetime: "31/07/2023, 14:00",
-//         voucher_number: "VOUCHER-NUMBER-2",
-//         full_name: "Harry Potter",
-//         phone_number: "07987654321",
-//         address_1: "Hogwarts Castle",
-//         address_2: "",
-//         address_town: "Scottish Highlands",
-//         address_county: "United Kingdom",
-//         address_postcode: "YE11OW",
-//         delivery_instructions: "Owls only no floo powder please.",
-//     },
-//     {
-//         packing_datetime: "20/06/2023",
-//         collection_centre: "Delivery",
-//         collection_datetime: "31/08/2023, 14:00",
-//         voucher_number: "VOUCHER-NUMBER-2",
-//         full_name: "Nessie",
-//         phone_number: "0799999999",
-//         address_1: "Loch Ness",
-//         address_2: "Inverness",
-//         address_town: "Scottish Highlands",
-//         address_county: "United Kingdom",
-//         address_postcode: "NE55IE",
-//         delivery_instructions: "Throw it in the water and leave as quickly as possible.",
-//     },
-// ];
+// const fileName = "ShoppingLists.pdf";
 
-// const allFields = parcelClientsData
+// const dataForShoppingListParcels: ShoppingListPdfDataList = {
+//     lists: [
+//         {
+//             postcode: "NE5 5IE",
+//             parcelInfo: {
+//                 voucherNumber: "random-vchr-num",
+//                 packingDate: "01/07/2023, 09:00",
+//                 collectionDate: "01/07/2023, 14:00",
+//                 collectionSite: "Magic Collection Centre",
+//             },
+//             clientSummary: {
+//                 name: "Nessie Loch",
+//                 contact: "0799999999",
+//                 address: "Loch Ness\nScottish Highlands\nNE5 5IE",
+//                 extraInformation: "",
+//             },
+//             householdSummary: {
+//                 householdSize: "1 Adult 0 Children",
+//                 genderBreakdown: "0 Female 1 Male",
+//                 numberOfBabies: "0",
+//                 ageAndGenderOfChildren: "",
+//             },
+//             requirementSummary: {
+//                 feminineProductsRequired: "None",
+//                 babyProductsRequired: "No",
+//                 petFoodRequired: "None",
+//                 dietaryRequirements: "None",
+//                 otherItems: "Chillies, Hot Water Bottle",
+//             },
+//             itemsList: [
+//                 {
+//                     description: "Savoury Snacks (Crisps etc)",
+//                     quantity: "3 individual or 1 packet",
+//                     notes: "",
+//                 },
+//                 {
+//                     description: "Instant Noodles / Pasta",
+//                     quantity: "2",
+//                     notes: "Any single instant pasta or noodles, not rice",
+//                 },
+//             ],
+//             endNotes: "Space is valuable! Please don't leave boxes half empty - pack efficiently",
+//         },
+//         {
+//             postcode: "YE1 1OW",
+//             parcelInfo: {
+//                 voucherNumber: "some-vchr-num",
+//                 packingDate: "24/06/2023, 14:30",
+//                 collectionDate: "24/06/2023, 16:30",
+//                 collectionSite: "Delivery",
+//             },
+//             clientSummary: {
+//                 name: "Harry Potter",
+//                 contact: "07987654321",
+//                 address: "Hogwarts Castle\nThree Quarters Town\nDumbartonshire\nYE1 1OW",
+//                 extraInformation: "Owl food needed",
+//             },
+//             householdSummary: {
+//                 householdSize: "2 Adults 1 Child",
+//                 genderBreakdown: "2 Female 1 Male 0 Other",
+//                 numberOfBabies: "0",
+//                 ageAndGenderOfChildren: "8 M",
+//             },
+//             requirementSummary: {
+//                 feminineProductsRequired: "Tampons, Pads",
+//                 babyProductsRequired: "No",
+//                 petFoodRequired: "None",
+//                 dietaryRequirements: "Gluten free, Diabetic",
+//                 otherItems: "Spices, Ginger, Blankets",
+//             },
+//             itemsList: [
+//                 {
+//                     description: "Washing Up Liquid",
+//                     quantity: "1 decanted bottle",
+//                     notes: "Only use decanted, please don't use full bottle",
+//                 },
+//                 {
+//                     description: "Tinned Tomatoes",
+//                     quantity: "2",
+//                     notes: "",
+//                 },
+//             ],
+//             endNotes: "Space is valuable! Please don't leave boxes half empty - pack efficiently",
+//         },
+//     ],
+// };
+
+// const getFieldValuesFromObject = (obj: object): string[] => {
+//     return Object.values(obj)
+//         .map((field) => {
+//             if (typeof field === "object") {
+//                 return getFieldValuesFromObject(field);
+//             }
+//             return String(field);
+//         })
+//         .flat();
+// };
+
+// const allFields = dataForShoppingListParcels.lists
 //     .map((obj) => {
-//         return Object.values(obj);
+//         return getFieldValuesFromObject(obj);
 //     })
 //     .flat();
+
+// console.dir(allFields);
 
 // describe("Export Pdf Button", () => {
 //     beforeEach(() => {
@@ -49,8 +119,8 @@
 //             <PdfButton
 //                 text="Click"
 //                 fileName={fileName}
-//                 data={parcelClientsData}
-//                 pdfComponent={ShippingLabelsPdf}
+//                 data={dataForShoppingListParcels}
+//                 pdfComponent={ShoppingListPdf}
 //                 formatName={false}
 //             />
 //         );
@@ -59,7 +129,8 @@
 //     it("Renders", () => {});
 
 //     it("File is saved", () => {
-//         cy.get("a").click();
+//         // eslint-disable-next-line quotes
+//         cy.get('a[download="' + fileName + '"]').click();
 //         cy.readFile(`${downloadsFolder}/${fileName}`);
 //     });
 

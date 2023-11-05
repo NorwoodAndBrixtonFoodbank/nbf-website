@@ -77,7 +77,7 @@ const ShippingLabels = async ({
                         String(labelQuantity)
                     );
                 } catch (error: any) {
-                    // TODO: VFB-54: this needs to be reported to the user. Can we hook into the ActionBar.tsx setModalError()?
+                    // TODO: VFB-61: this needs to be reported to the user. Can we hook into the ActionBar.tsx setModalError()?
                 }
             }}
         />
