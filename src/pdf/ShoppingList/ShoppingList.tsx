@@ -21,7 +21,7 @@ const ShoppingList = async ({ text, parcelIds }: Props): Promise<React.ReactElem
                 try {
                     saveParcelStatus(parcelIds, "Shopping List Downloaded");
                 } catch (error: any) {
-                    // TODO: VFB-54: this needs to be reported to the user. Can we hook into the ActionBar.tsx setModalError()?
+                    // TODO: VFB-61: this needs to be reported to the user. Can we hook into the ActionBar.tsx setModalError()?
                 }
             }}
         />

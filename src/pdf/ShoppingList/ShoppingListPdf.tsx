@@ -96,7 +96,7 @@ interface OneLineProps {
 
 const OneLine: React.FC<OneLineProps> = ({ header, value }) => {
     return (
-        <Text style={[styles.keyText, { textTransform: "capitalize" }]}>
+        <Text style={styles.keyText}>
             {header}: <Text style={styles.normalText}>{value}</Text>
         </Text>
     );

@@ -34,15 +34,15 @@ export const prepareClientSummary = (clientData: Schema["clients"]): ClientSumma
     const {
         address_1,
         address_2,
+        address_town,
         address_county,
         address_postcode,
-        address_town,
         full_name,
         phone_number,
         extra_information,
     } = clientData;
 
-    const address = [address_1, address_2, address_county, address_postcode, address_town]
+    const address = [address_1, address_2, address_town, address_county, address_postcode]
         .filter((value) => value !== "")
         .join("\n");
 
