@@ -11,8 +11,8 @@ import StatusesBarModal from "@/app/parcels/ActionBar/StatusesModal";
 import { DatabaseError } from "@/app/errorClasses";
 
 const statuses = [
-    "Request Denied",
     "No Status",
+    "Request Denied",
     "Pending More Info",
     "Called and Confirmed",
     "Called and No Response",
@@ -26,11 +26,18 @@ const statuses = [
     "Fulfilled with Trussell Trust",
     "Shipping Labels Downloaded",
     "Shopping List Downloaded",
+    "Out for Delivery",
+    "Request Deleted",
 ] as const;
 
 export type statusType = (typeof statuses)[number];
 
-const nonMenuStatuses: statusType[] = ["Shipping Labels Downloaded", "Shopping List Downloaded"];
+const nonMenuStatuses: statusType[] = [
+    "Shipping Labels Downloaded",
+    "Shopping List Downloaded",
+    "Out for Delivery",
+    "Request Deleted",
+];
 
 export const saveParcelStatus = async (
     parcelIds: string[],
