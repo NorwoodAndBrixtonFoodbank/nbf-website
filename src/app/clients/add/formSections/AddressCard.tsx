@@ -15,7 +15,7 @@ const postcodeRegex =
 // Regex source: https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/488478/Bulk_Data_Transfer_-_additional_validation_valid_from_12_November_2015.pdf
 
 const formatPostcode = (value: string): string => {
-    return value.replace(/\s/g, "").toUpperCase();
+    return value.toUpperCase();
 };
 
 const AddressCard: React.FC<CardProps> = ({ formErrors, errorSetter, fieldSetter, fields }) => {
