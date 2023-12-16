@@ -1,13 +1,13 @@
 import { Metadata } from "next";
 import React from "react";
-import AddParcelForm from "@/app/parcels/add/AddParcelForm";
+import ParcelForm from "@/app/parcels/form/ParcelForm";
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseServer";
 import { DatabaseError } from "@/app/errorClasses";
 
 interface AddParcelParameters {
     params: {
-        id: string;
+        clientId: string;
     };
 }
 
@@ -43,8 +43,8 @@ const AddParcels = async ({ params }: AddParcelParameters): Promise<React.ReactE
 
     return (
         <main>
-            <AddParcelForm
-                id={params.id}
+            <ParcelForm
+                clientId={params.clientId}
                 deliveryPrimaryKey={deliveryPrimaryKey}
                 collectionCentresLabelsAndValues={collectionCentresLabelsAndValues}
             />
