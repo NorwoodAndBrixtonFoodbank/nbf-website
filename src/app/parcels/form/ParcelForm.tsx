@@ -12,20 +12,20 @@ import { CenterComponent, StyledForm, FormErrorText } from "@/components/Form/fo
 
 import { useRouter } from "next/navigation";
 
-import VoucherNumberCard from "@/app/parcels/add/formSections/VoucherNumberCard";
-import PackingDateCard from "@/app/parcels/add/formSections/PackingDateCard";
-import TimeOfDayCard from "@/app/parcels/add/formSections/TimeofDayCard";
-import ShippingMethodCard from "@/app/parcels/add/formSections/ShippingMethodCard";
-import CollectionDateCard from "@/app/parcels/add/formSections/CollectionDateCard";
-import CollectionTimeCard from "@/app/parcels/add/formSections/CollectionTimeCard";
-import CollectionCentreCard from "@/app/parcels/add/formSections/CollectionCentreCard";
+import VoucherNumberCard from "@/app/parcels/form/formSections/VoucherNumberCard";
+import PackingDateCard from "@/app/parcels/form/formSections/PackingDateCard";
+import TimeOfDayCard from "@/app/parcels/form/formSections/TimeofDayCard";
+import ShippingMethodCard from "@/app/parcels/form/formSections/ShippingMethodCard";
+import CollectionDateCard from "@/app/parcels/form/formSections/CollectionDateCard";
+import CollectionTimeCard from "@/app/parcels/form/formSections/CollectionTimeCard";
+import CollectionCentreCard from "@/app/parcels/form/formSections/CollectionCentreCard";
 import { insertParcel } from "@/app/parcels/add/databaseFunctions";
 import Button from "@mui/material/Button";
 import Title from "@/components/Title/Title";
-import { CollectionCentresLabelsAndValues } from "@/app/parcels/add/[id]/page";
+import { CollectionCentresLabelsAndValues } from "@/app/parcels/add/[clientId]/page";
 import { Schema } from "@/databaseUtils";
 
-interface AddParcelFields {
+interface ParcelFields {
     voucherNumber: string;
     packingDate: Date | null;
     timeOfDay: Date | null;
@@ -35,8 +35,8 @@ interface AddParcelFields {
     collectionCentre: string | null;
 }
 
-interface AddParcelFormProps {
-    id: string;
+interface ParcelFormProps {
+    clientId: string;
     deliveryPrimaryKey: Schema["collection_centres"]["primary_key"];
     collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues;
 }
@@ -58,7 +58,7 @@ const noCollectionFormSections = [
     ShippingMethodCard,
 ];
 
-const initialFields: AddParcelFields = {
+const initialFields: ParcelFields = {
     voucherNumber: "",
     packingDate: null,
     timeOfDay: null,
@@ -88,8 +88,16 @@ const mergeDateAndTime = (date: Date, time: Date): Date => {
     );
 };
 
-const AddParcelForm: React.FC<AddParcelFormProps> = ({
-    id,
+// TODO VFB-43:
+// The Add/Edit Client Form takes { initialFields, initialFormErrors, editMode, clientID }
+// The Parcel Form could take { initialFields, initialFormErrors, clientId, editMode, parcelId } - where
+// clientId is ignored if editMode is true.
+// The param deliveryPrimaryKey will need to remain until VFB-55 is done.
+// I'm not sure why collectionCentresLabelsAndValues is fetched in the page rather than the form; the
+// form can make DB calls and it seems cleaner to do it here.
+
+const ParcelForm: React.FC<ParcelFormProps> = ({
+    clientId,
     deliveryPrimaryKey,
     collectionCentresLabelsAndValues,
 }) => {
@@ -144,7 +152,7 @@ const AddParcelForm: React.FC<AddParcelFormProps> = ({
         const isDelivery = fields.shippingMethod === "Delivery";
 
         const formToAdd = {
-            client_id: id,
+            client_id: clientId,
             packing_datetime: packingDateTime.toISOString(),
             voucher_number: fields.voucherNumber,
             collection_centre: isDelivery ? deliveryPrimaryKey : fields.collectionCentre,
@@ -179,7 +187,7 @@ const AddParcelForm: React.FC<AddParcelFormProps> = ({
                 })}
                 <CenterComponent>
                     <Button variant="contained" onClick={submitForm} disabled={submitDisabled}>
-                        Add Parcel
+                        Submit
                     </Button>
                 </CenterComponent>
                 <FormErrorText>{submitErrorMessage || submitError}</FormErrorText>
@@ -188,4 +196,4 @@ const AddParcelForm: React.FC<AddParcelFormProps> = ({
     );
 };
 
-export default AddParcelForm;
+export default ParcelForm;
