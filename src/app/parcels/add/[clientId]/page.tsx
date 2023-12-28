@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import React from "react";
 import ParcelForm, { ParcelFields } from "@/app/parcels/form/ParcelForm";
 import { Errors, FormErrors } from "@/components/Form/formFunctions";
-import { getCollectionCentresInfo } from "../databaseFunctions";
+import { getCollectionCentresInfo } from "../../form/serverDatabaseFunctions";
 
 interface AddParcelParameters {
     params: {
@@ -14,7 +14,7 @@ const initialFields: ParcelFields = {
     clientId: null,
     voucherNumber: "",
     packingDate: null,
-    timeOfDay: null,
+    packingTime: null,
     shippingMethod: "",
     collectionDate: null,
     collectionTime: null,
@@ -24,7 +24,7 @@ const initialFields: ParcelFields = {
 const initialFormErrors: FormErrors = {
     voucherNumber: Errors.none,
     packingDate: Errors.initial,
-    timeOfDay: Errors.initial,
+    packingTime: Errors.initial,
     shippingMethod: Errors.initial,
     collectionDate: Errors.initial,
     collectionTime: Errors.initial,

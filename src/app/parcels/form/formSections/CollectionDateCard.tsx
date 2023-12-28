@@ -1,8 +1,9 @@
 import React from "react";
 import { CardProps, onChangeDate, errorText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
-import { DesktopDatePicker } from "@mui/x-date-pickers";
+import { DatePicker } from "@mui/x-date-pickers";
 import { ErrorText } from "@/components/Form/formStyling";
+import dayjs from "dayjs";
 
 const CollectionDateCard: React.FC<CardProps> = ({
     fieldSetter,
@@ -17,13 +18,12 @@ const CollectionDateCard: React.FC<CardProps> = ({
             text="What date is the client collecting their parcel?"
         >
             <>
-                <DesktopDatePicker
+                <DatePicker
                     onChange={(value): void => {
-                        const newValue = value as Date | null;
-                        onChangeDate(fieldSetter, errorSetter, "collectionDate", newValue);
+                        onChangeDate(fieldSetter, errorSetter, "collectionDate", value);
                     }}
                     label="Date"
-                    value={fields.collectionDate}
+                    value={fields.collectionDate ? dayjs(fields.collectionDate) : null}
                     disablePast
                 />
                 <ErrorText>{errorText(formErrors.collectionDate)}</ErrorText>

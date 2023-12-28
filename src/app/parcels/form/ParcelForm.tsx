@@ -15,28 +15,26 @@ import { useRouter } from "next/navigation";
 
 import VoucherNumberCard from "@/app/parcels/form/formSections/VoucherNumberCard";
 import PackingDateCard from "@/app/parcels/form/formSections/PackingDateCard";
-import TimeOfDayCard from "@/app/parcels/form/formSections/TimeofDayCard";
+import PackingTimeCard from "@/app/parcels/form/formSections/PackingTimeCard";
 import ShippingMethodCard from "@/app/parcels/form/formSections/ShippingMethodCard";
 import CollectionDateCard from "@/app/parcels/form/formSections/CollectionDateCard";
 import CollectionTimeCard from "@/app/parcels/form/formSections/CollectionTimeCard";
 import CollectionCentreCard from "@/app/parcels/form/formSections/CollectionCentreCard";
-import {
-    CollectionCentresLabelsAndValues,
-    insertParcel,
-    updateParcel,
-} from "@/app/parcels/add/databaseFunctions";
+import { insertParcel, updateParcel } from "@/app/parcels/form/clientDatabaseFunctions";
 import Button from "@mui/material/Button";
 import Title from "@/components/Title/Title";
 import { Schema } from "@/databaseUtils";
+import { CollectionCentresLabelsAndValues } from "./serverDatabaseFunctions";
+import dayjs, { Dayjs } from "dayjs";
 
 export interface ParcelFields extends Fields {
     clientId: string | null;
     voucherNumber: string | null;
-    packingDate: Date | null;
-    timeOfDay: Date | null;
+    packingDate: string | null;
+    packingTime: string | null;
     shippingMethod: string | null;
-    collectionDate: Date | null;
-    collectionTime: Date | null;
+    collectionDate: string | null;
+    collectionTime: string | null;
     collectionCentre: string | null;
 }
 
@@ -53,7 +51,7 @@ interface ParcelFormProps {
 const withCollectionFormSections = [
     VoucherNumberCard,
     PackingDateCard,
-    TimeOfDayCard,
+    PackingTimeCard,
     ShippingMethodCard,
     CollectionDateCard,
     CollectionTimeCard,
@@ -63,18 +61,14 @@ const withCollectionFormSections = [
 const noCollectionFormSections = [
     VoucherNumberCard,
     PackingDateCard,
-    TimeOfDayCard,
+    PackingTimeCard,
     ShippingMethodCard,
 ];
 
-const mergeDateAndTime = (date: Date, time: Date): Date => {
-    return new Date(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate(),
-        time.getHours(),
-        time.getMinutes()
-    );
+const mergeDateAndTime = (date: string, time: string): Dayjs => {
+    // dayjs objects are immutable so the setter methods return a new object
+    const dayjsTime = dayjs(time);
+    return dayjs(date).hour(dayjsTime.hour()).minute(dayjsTime.minute());
 };
 
 // TODO VFB-55:
@@ -114,7 +108,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             inputError = checkErrorOnSubmit(formErrors, setFormErrors, [
                 "voucherNumber",
                 "packingDate",
-                "timeOfDay",
+                "packingTime",
                 "shippingMethod",
             ]);
         }
@@ -125,15 +119,15 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         }
 
         const packingDateTime = mergeDateAndTime(
-            new Date(fields.packingDate!),
-            new Date(fields.timeOfDay!)
-        );
+            fields.packingDate!,
+            fields.packingTime!
+        ).toISOString();
 
         let collectionDateTime = null;
         if (fields.shippingMethod === "Collection") {
             collectionDateTime = mergeDateAndTime(
-                new Date(fields.collectionDate!),
-                new Date(fields.collectionTime!)
+                fields.collectionDate!,
+                fields.collectionTime!
             ).toISOString();
         }
 
@@ -141,7 +135,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
 
         const formToAdd = {
             client_id: (clientId || fields.clientId)!,
-            packing_datetime: packingDateTime.toISOString(),
+            packing_datetime: packingDateTime,
             voucher_number: fields.voucherNumber,
             collection_centre: isDelivery ? deliveryPrimaryKey : fields.collectionCentre,
             collection_datetime: collectionDateTime,
@@ -166,7 +160,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     return (
         <CenterComponent>
             <StyledForm>
-                <Title>Add Parcel</Title>
+                <Title>Parcel Form</Title>
                 {formSections.map((Card, index) => {
                     return (
                         <Card

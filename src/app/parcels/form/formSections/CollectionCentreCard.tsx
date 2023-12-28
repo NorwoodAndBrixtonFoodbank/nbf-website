@@ -3,7 +3,7 @@ import { CardProps, errorText, valueOnChangeDropdownList } from "@/components/Fo
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
-import { CollectionCentresLabelsAndValues } from "../../add/databaseFunctions";
+import { CollectionCentresLabelsAndValues } from "../serverDatabaseFunctions";
 
 interface CollectionCentreCardProps extends CardProps {
     collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues;
@@ -12,6 +12,7 @@ const CollectionCentreCard: React.FC<CollectionCentreCardProps> = ({
     fieldSetter,
     errorSetter,
     formErrors,
+    fields,
     collectionCentresLabelsAndValues,
 }) => {
     return (
@@ -24,7 +25,7 @@ const CollectionCentreCard: React.FC<CollectionCentreCardProps> = ({
                 <DropdownListInput
                     labelsAndValues={collectionCentresLabelsAndValues}
                     listTitle="Collection Centre"
-                    defaultValue={collectionCentresLabelsAndValues[0][0]}
+                    defaultValue={fields.collectionCentre || collectionCentresLabelsAndValues[0][0]}
                     onChange={valueOnChangeDropdownList(
                         fieldSetter,
                         errorSetter,

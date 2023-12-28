@@ -4,6 +4,7 @@ import {
     SelectChangeEventHandler,
 } from "@/components/DataInput/inputHandlerFactories";
 import { Database } from "@/databaseTypesFile";
+import dayjs, { Dayjs } from "dayjs";
 
 type Field = Fields[keyof Fields];
 export type ErrorSetter = (errorKey: string, errorType: Errors) => void;
@@ -149,7 +150,7 @@ export const onChangeDateOrTime = (
     fieldSetter: FieldSetter,
     errorSetter: ErrorSetter,
     key: string,
-    value: Date | null
+    value: Dayjs | null
 ): void => {
     if (value === null || isNaN(Date.parse(value.toString()))) {
         fieldSetter(key, null);
@@ -164,14 +165,15 @@ export const onChangeDate = (
     fieldSetter: FieldSetter,
     errorSetter: ErrorSetter,
     key: string,
-    value: Date | null
+    value: Dayjs | null
 ): void => {
     onChangeDateOrTime(fieldSetter, errorSetter, key, value);
-    const today = new Date();
     if (value === null || isNaN(Date.parse(value.toString()))) {
         return;
     }
-    if (value < today) {
+
+    const today = dayjs();
+    if (value.isBefore(today)) {
         errorSetter(key, Errors.pastDate);
     }
 };
