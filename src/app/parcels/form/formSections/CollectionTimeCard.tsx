@@ -1,8 +1,9 @@
 import React from "react";
 import { CardProps, onChangeDateOrTime, errorText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
-import { DesktopTimePicker } from "@mui/x-date-pickers";
+import { TimePicker } from "@mui/x-date-pickers";
 import { ErrorText } from "@/components/Form/formStyling";
+import dayjs from "dayjs";
 
 const CollectionTimeCard: React.FC<CardProps> = ({
     errorSetter,
@@ -17,13 +18,12 @@ const CollectionTimeCard: React.FC<CardProps> = ({
             text="What time is the client collecting their parcel?"
         >
             <>
-                <DesktopTimePicker
+                <TimePicker
                     onChange={(value) => {
-                        const newValue = value as Date | null;
-                        onChangeDateOrTime(fieldSetter, errorSetter, "collectionTime", newValue);
+                        onChangeDateOrTime(fieldSetter, errorSetter, "collectionTime", value);
                     }}
                     label="Time"
-                    value={fields.collectionTime}
+                    value={fields.collectionTime ? dayjs(fields.collectionTime) : null}
                 />
                 <ErrorText>{errorText(formErrors.collectionTime)}</ErrorText>
             </>

@@ -1,10 +1,11 @@
 import React from "react";
 import { CardProps, onChangeDateOrTime, errorText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
-import { DesktopTimePicker } from "@mui/x-date-pickers";
+import { TimePicker } from "@mui/x-date-pickers";
 import { ErrorText } from "@/components/Form/formStyling";
+import dayjs from "dayjs";
 
-const TimeOfDayCard: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSetter, fields }) => {
+const PackingTimeCard: React.FC<CardProps> = ({ errorSetter, fieldSetter, formErrors, fields }) => {
     return (
         <GenericFormCard
             title="Packing Time"
@@ -12,18 +13,17 @@ const TimeOfDayCard: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSett
             text="What time is the parcel due to be packed?"
         >
             <>
-                <DesktopTimePicker
+                <TimePicker
                     onChange={(value) => {
-                        const newValue = value as Date | null;
-                        onChangeDateOrTime(fieldSetter, errorSetter, "timeOfDay", newValue);
+                        onChangeDateOrTime(fieldSetter, errorSetter, "packingTime", value);
                     }}
                     label="Time"
-                    value={fields.timeOfDay}
+                    value={fields.packingTime ? dayjs(fields.packingTime) : null}
                 />
-                <ErrorText>{errorText(formErrors.timeOfDay)}</ErrorText>
+                <ErrorText>{errorText(formErrors.packingTime)}</ErrorText>
             </>
         </GenericFormCard>
     );
 };
 
-export default TimeOfDayCard;
+export default PackingTimeCard;

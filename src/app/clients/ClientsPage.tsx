@@ -7,11 +7,12 @@ import LinkButton from "@/components/Buttons/LinkButton";
 import DataViewer from "@/components/DataViewer/DataViewer";
 import Icon from "@/components/Icons/Icon";
 import Modal from "@/components/Modal/Modal";
+import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import Table, { TableHeaders } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
-import styled, { useTheme } from "styled-components";
+import { useTheme } from "styled-components";
 
 export interface ClientsTableRow {
     primaryKey: string;
@@ -29,27 +30,6 @@ const headers: TableHeaders<ClientsTableRow> = [
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],
 ];
-
-const Centerer = styled.div`
-    display: flex;
-    justify-content: center;
-`;
-
-const OutsideDiv = styled.div`
-    display: flex;
-    flex-direction: column;
-    max-height: 80vh;
-`;
-
-const ButtonsDiv = styled.div`
-    flex: none;
-    max-height: 10%;
-`;
-
-const ContentDiv = styled.div`
-    overflow: auto;
-    max-height: 90%;
-`;
 
 const ClientsPage: React.FC<Props> = ({ data }) => {
     const theme = useTheme();

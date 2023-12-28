@@ -1,9 +1,15 @@
 import React from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { CardProps, onChangeText } from "@/components/Form/formFunctions";
+import { CardProps, errorText, onChangeText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
+import { ErrorText } from "@/components/Form/formStyling";
 
-const VoucherNumberCard: React.FC<CardProps> = ({ errorSetter, fieldSetter }) => {
+const VoucherNumberCard: React.FC<CardProps> = ({
+    errorSetter,
+    fieldSetter,
+    formErrors,
+    fields,
+}) => {
     return (
         <GenericFormCard
             title="Voucher Number"
@@ -13,7 +19,9 @@ const VoucherNumberCard: React.FC<CardProps> = ({ errorSetter, fieldSetter }) =>
             <FreeFormTextInput
                 label="Voucher Number"
                 onChange={onChangeText(fieldSetter, errorSetter, "voucherNumber", true)}
+                value={fields.voucherNumber}
             />
+            <ErrorText>{errorText(formErrors.voucherNumber)}</ErrorText>
         </GenericFormCard>
     );
 };

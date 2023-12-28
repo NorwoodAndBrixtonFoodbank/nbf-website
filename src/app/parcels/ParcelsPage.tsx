@@ -18,8 +18,10 @@ import { faBoxArchive } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal/Modal";
 import TableSurface from "@/components/Tables/TableSurface";
 import ActionBar from "@/app/parcels/ActionBar/ActionBar";
+import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
+import LinkButton from "@/components/Buttons/LinkButton";
 
-export const clientTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
+export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
     ["fullName", "Name"],
     ["familyCategory", "Family"],
@@ -132,11 +134,11 @@ const ParcelsPage: React.FC<Props> = ({ parcelsTableData }) => {
         lastStatus: rowToLastStatusColumn,
     };
 
-    const onClientTableRowClick = (row: Row<ParcelsTableRow>): void => {
+    const onParcelTableRowClick = (row: Row<ParcelsTableRow>): void => {
         setSelectedParcelId(row.data.parcelId);
     };
 
-    const onExpandedClientDetailsClose = (): void => {
+    const onExpandedParcelDetailsClose = (): void => {
         setSelectedParcelId(null);
     };
 
@@ -146,10 +148,10 @@ const ParcelsPage: React.FC<Props> = ({ parcelsTableData }) => {
             <TableSurface>
                 <Table
                     data={parcelsTableData}
-                    headerKeysAndLabels={clientTableHeaderKeysAndLabels}
+                    headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
                     columnDisplayFunctions={clientTableColumnDisplayFunctions}
                     columnStyleOptions={clientTableColumnStyleOptions}
-                    onRowClick={onClientTableRowClick}
+                    onRowClick={onParcelTableRowClick}
                     checkboxes
                     onRowSelection={setSelected}
                     pagination
@@ -158,6 +160,7 @@ const ParcelsPage: React.FC<Props> = ({ parcelsTableData }) => {
                     filters={["addressPostcode"]}
                 />
             </TableSurface>
+
             <Modal
                 header={
                     <>
@@ -166,12 +169,24 @@ const ParcelsPage: React.FC<Props> = ({ parcelsTableData }) => {
                     </>
                 }
                 isOpen={selectedParcelId !== null}
-                onClose={onExpandedClientDetailsClose}
-                headerId="expandedClientDetailsModal"
+                onClose={onExpandedParcelDetailsClose}
+                headerId="expandedParcelDetailsModal"
             >
-                <Suspense fallback={<ExpandedParcelDetailsFallback />}>
-                    <ExpandedParcelDetails parcelId={selectedParcelId} />
-                </Suspense>
+                <OutsideDiv>
+                    <ContentDiv>
+                        <Suspense fallback={<ExpandedParcelDetailsFallback />}>
+                            <ExpandedParcelDetails parcelId={selectedParcelId} />
+                        </Suspense>
+                    </ContentDiv>
+
+                    <ButtonsDiv>
+                        <Centerer>
+                            <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
+                                Edit Parcel
+                            </LinkButton>
+                        </Centerer>
+                    </ButtonsDiv>
+                </OutsideDiv>
             </Modal>
         </>
     );

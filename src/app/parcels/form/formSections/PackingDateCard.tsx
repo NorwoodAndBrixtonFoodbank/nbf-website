@@ -1,10 +1,11 @@
 import React from "react";
 import { CardProps, errorText, onChangeDate } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
-import { DesktopDatePicker } from "@mui/x-date-pickers";
+import { DatePicker } from "@mui/x-date-pickers";
 import { ErrorText } from "@/components/Form/formStyling";
+import dayjs from "dayjs";
 
-const PackingDateCard: React.FC<CardProps> = ({ errorSetter, fieldSetter, formErrors }) => {
+const PackingDateCard: React.FC<CardProps> = ({ errorSetter, fieldSetter, formErrors, fields }) => {
     return (
         <GenericFormCard
             title="Packing Date"
@@ -12,12 +13,12 @@ const PackingDateCard: React.FC<CardProps> = ({ errorSetter, fieldSetter, formEr
             text="What date is the parcel due to be packed?"
         >
             <>
-                <DesktopDatePicker
-                    onChange={(value: any): void => {
-                        const newValue = value as Date | null;
-                        onChangeDate(fieldSetter, errorSetter, "packingDate", newValue);
+                <DatePicker
+                    onChange={(value): void => {
+                        onChangeDate(fieldSetter, errorSetter, "packingDate", value);
                     }}
                     label="Date"
+                    value={fields.packingDate ? dayjs(fields.packingDate) : null}
                     disablePast
                 />
                 <ErrorText>{errorText(formErrors.packingDate)}</ErrorText>

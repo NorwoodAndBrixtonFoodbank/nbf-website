@@ -10,9 +10,9 @@ const ExpandedParcelDetails = async ({ parcelId }: Props): Promise<React.ReactEl
     if (!parcelId) {
         return <></>;
     }
-    const expandedClientDetails = await getExpandedParcelDetails(parcelId);
+    const expandedParcelDetails = await getExpandedParcelDetails(parcelId);
 
-    return <DataViewer data={expandedClientDetails} />;
+    return <DataViewer data={expandedParcelDetails} />;
 };
 
 export default ExpandedParcelDetails;
