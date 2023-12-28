@@ -2,8 +2,8 @@ import React from "react";
 import { CardProps, errorText, valueOnChangeDropdownList } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
-import { CollectionCentresLabelsAndValues } from "@/app/parcels/add/[clientId]/page";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
+import { CollectionCentresLabelsAndValues } from "../../add/databaseFunctions";
 
 interface CollectionCentreCardProps extends CardProps {
     collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues;

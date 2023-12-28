@@ -10,7 +10,7 @@ const OtherItemsCard: React.FC<CardProps> = ({ fieldSetter, fields }) => {
                 labelsAndKeys={[
                     ["Garlic", "Garlic"],
                     ["Ginger", "Ginger"],
-                    ["Chilies", "Chilies"],
+                    ["Chillies", "Chillies"],
                     ["Spices", "Spices"],
                     ["Hot Water Bottles", "Hot Water Bottles"],
                     ["Blankets", "Blankets"],

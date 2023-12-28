@@ -6,10 +6,12 @@ type CollectionCentre = {
     collection_centre: {
         name: Schema["collection_centres"]["name"];
         acronym: Schema["collection_centres"]["acronym"];
+        primary_key: Schema["collection_centres"]["primary_key"];
     } | null;
 };
 
-type ParcelWithCollectionCentre = Omit<Schema["parcels"], "collection_centre"> & CollectionCentre;
+export type ParcelWithCollectionCentre = Omit<Schema["parcels"], "collection_centre"> &
+    CollectionCentre;
 
 export const fetchParcel = async (
     parcelID: string,
@@ -21,7 +23,8 @@ export const fetchParcel = async (
             `*, 
             collection_centre:collection_centres ( 
                 name,
-                acronym
+                acronym,
+                primary_key
             )`
         )
         .eq("primary_key", parcelID);
