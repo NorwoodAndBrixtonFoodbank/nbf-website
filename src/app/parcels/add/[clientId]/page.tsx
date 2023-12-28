@@ -1,9 +1,8 @@
 import { Metadata } from "next";
 import React from "react";
-import ParcelForm from "@/app/parcels/form/ParcelForm";
-import { Schema } from "@/databaseUtils";
-import supabase from "@/supabaseServer";
-import { DatabaseError } from "@/app/errorClasses";
+import ParcelForm, { ParcelFields } from "@/app/parcels/form/ParcelForm";
+import { Errors, FormErrors } from "@/components/Form/formFunctions";
+import { getCollectionCentresInfo } from "../databaseFunctions";
 
 interface AddParcelParameters {
     params: {
@@ -11,31 +10,25 @@ interface AddParcelParameters {
     };
 }
 
-export type CollectionCentresLabelsAndValues = [
-    string,
-    Schema["collection_centres"]["primary_key"]
-][];
+const initialFields: ParcelFields = {
+    clientId: null,
+    voucherNumber: "",
+    packingDate: null,
+    timeOfDay: null,
+    shippingMethod: "",
+    collectionDate: null,
+    collectionTime: null,
+    collectionCentre: null,
+};
 
-type CollectionCentresInfo = [
-    Schema["collection_centres"]["primary_key"],
-    CollectionCentresLabelsAndValues
-];
-
-const getCollectionCentresInfo = async (): Promise<CollectionCentresInfo> => {
-    const { data, error } = await supabase.from("collection_centres").select("primary_key, name");
-
-    if (error) {
-        throw new DatabaseError("fetch", "collection centre data");
-    }
-    const collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues = data
-        .filter((collectionCentre) => collectionCentre.name !== "Delivery")
-        .map((collectionCentre) => [collectionCentre.name, collectionCentre.primary_key]);
-
-    const deliveryPrimaryKey = data.filter(
-        (collectionCentre) => collectionCentre.name === "Delivery"
-    )[0].primary_key;
-
-    return [deliveryPrimaryKey, collectionCentresLabelsAndValues];
+const initialFormErrors: FormErrors = {
+    voucherNumber: Errors.none,
+    packingDate: Errors.initial,
+    timeOfDay: Errors.initial,
+    shippingMethod: Errors.initial,
+    collectionDate: Errors.initial,
+    collectionTime: Errors.initial,
+    collectionCentre: Errors.initial,
 };
 
 const AddParcels = async ({ params }: AddParcelParameters): Promise<React.ReactElement> => {
@@ -44,7 +37,10 @@ const AddParcels = async ({ params }: AddParcelParameters): Promise<React.ReactE
     return (
         <main>
             <ParcelForm
+                initialFields={initialFields}
+                initialFormErrors={initialFormErrors}
                 clientId={params.clientId}
+                editMode={false}
                 deliveryPrimaryKey={deliveryPrimaryKey}
                 collectionCentresLabelsAndValues={collectionCentresLabelsAndValues}
             />

@@ -7,6 +7,7 @@ import {
     setError,
     setField,
     checkErrorOnSubmit,
+    Fields,
 } from "@/components/Form/formFunctions";
 import { CenterComponent, StyledForm, FormErrorText } from "@/components/Form/formStyling";
 
@@ -19,14 +20,18 @@ import ShippingMethodCard from "@/app/parcels/form/formSections/ShippingMethodCa
 import CollectionDateCard from "@/app/parcels/form/formSections/CollectionDateCard";
 import CollectionTimeCard from "@/app/parcels/form/formSections/CollectionTimeCard";
 import CollectionCentreCard from "@/app/parcels/form/formSections/CollectionCentreCard";
-import { insertParcel } from "@/app/parcels/add/databaseFunctions";
+import {
+    CollectionCentresLabelsAndValues,
+    insertParcel,
+    updateParcel,
+} from "@/app/parcels/add/databaseFunctions";
 import Button from "@mui/material/Button";
 import Title from "@/components/Title/Title";
-import { CollectionCentresLabelsAndValues } from "@/app/parcels/add/[clientId]/page";
 import { Schema } from "@/databaseUtils";
 
-interface ParcelFields {
-    voucherNumber: string;
+export interface ParcelFields extends Fields {
+    clientId: string | null;
+    voucherNumber: string | null;
     packingDate: Date | null;
     timeOfDay: Date | null;
     shippingMethod: string | null;
@@ -36,7 +41,11 @@ interface ParcelFields {
 }
 
 interface ParcelFormProps {
-    clientId: string;
+    initialFields: ParcelFields;
+    initialFormErrors: FormErrors;
+    clientId?: string;
+    editMode: boolean;
+    parcelId?: string;
     deliveryPrimaryKey: Schema["collection_centres"]["primary_key"];
     collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues;
 }
@@ -58,26 +67,6 @@ const noCollectionFormSections = [
     ShippingMethodCard,
 ];
 
-const initialFields: ParcelFields = {
-    voucherNumber: "",
-    packingDate: null,
-    timeOfDay: null,
-    shippingMethod: "",
-    collectionDate: null,
-    collectionTime: null,
-    collectionCentre: null,
-};
-
-const initialFormErrors: FormErrors = {
-    voucherNumber: Errors.none,
-    packingDate: Errors.initial,
-    timeOfDay: Errors.initial,
-    shippingMethod: Errors.initial,
-    collectionDate: Errors.initial,
-    collectionTime: Errors.initial,
-    collectionCentre: Errors.initial,
-};
-
 const mergeDateAndTime = (date: Date, time: Date): Date => {
     return new Date(
         date.getFullYear(),
@@ -88,16 +77,15 @@ const mergeDateAndTime = (date: Date, time: Date): Date => {
     );
 };
 
-// TODO VFB-43:
-// The Add/Edit Client Form takes { initialFields, initialFormErrors, editMode, clientID }
-// The Parcel Form could take { initialFields, initialFormErrors, clientId, editMode, parcelId } - where
-// clientId is ignored if editMode is true.
+// TODO VFB-55:
 // The param deliveryPrimaryKey will need to remain until VFB-55 is done.
-// I'm not sure why collectionCentresLabelsAndValues is fetched in the page rather than the form; the
-// form can make DB calls and it seems cleaner to do it here.
 
 const ParcelForm: React.FC<ParcelFormProps> = ({
+    initialFields,
+    initialFormErrors,
     clientId,
+    editMode,
+    parcelId,
     deliveryPrimaryKey,
     collectionCentresLabelsAndValues,
 }) => {
@@ -152,15 +140,20 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         const isDelivery = fields.shippingMethod === "Delivery";
 
         const formToAdd = {
-            client_id: clientId,
+            client_id: (clientId || fields.clientId)!,
             packing_datetime: packingDateTime.toISOString(),
             voucher_number: fields.voucherNumber,
             collection_centre: isDelivery ? deliveryPrimaryKey : fields.collectionCentre,
             collection_datetime: collectionDateTime,
         };
+
         try {
-            await insertParcel(formToAdd);
-            router.push("/clients/");
+            if (editMode) {
+                await updateParcel(formToAdd, parcelId!);
+            } else {
+                await insertParcel(formToAdd);
+            }
+            router.push("/parcels/");
         } catch (error: unknown) {
             if (error instanceof Error) {
                 setSubmitError(Errors.external);
@@ -169,6 +162,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         }
         setSubmitDisabled(false);
     };
+
     return (
         <CenterComponent>
             <StyledForm>
