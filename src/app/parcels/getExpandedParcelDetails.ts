@@ -207,8 +207,10 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
 
     return childDetails.join(", ");
 };
+
 const getExpandedParcelDetails = async (parcelId: string): Promise<ExpandedParcelDetails> => {
     const rawParcelDetails = await getRawParcelDetails(parcelId);
     return rawDataToExpandedParcelDetails(rawParcelDetails);
 };
+
 export default getExpandedParcelDetails;

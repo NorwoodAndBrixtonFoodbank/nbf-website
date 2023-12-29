@@ -41,7 +41,7 @@ const toggleableHeaders: (keyof ParcelsTableRow)[] = [
     "lastStatus",
 ];
 
-const clientTableColumnStyleOptions = {
+const parcelTableColumnStyleOptions = {
     iconsColumn: {
         width: "3rem",
     },
@@ -127,7 +127,7 @@ const ParcelsPage: React.FC<Props> = ({ parcelsTableData }) => {
         );
     };
 
-    const clientTableColumnDisplayFunctions = {
+    const parcelTableColumnDisplayFunctions = {
         iconsColumn: rowToIconsColumn,
         deliveryCollection: rowToDeliveryCollectionColumn,
         packingDatetime: formatDatetimeAsDate,
@@ -149,8 +149,8 @@ const ParcelsPage: React.FC<Props> = ({ parcelsTableData }) => {
                 <Table
                     data={parcelsTableData}
                     headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
-                    columnDisplayFunctions={clientTableColumnDisplayFunctions}
-                    columnStyleOptions={clientTableColumnStyleOptions}
+                    columnDisplayFunctions={parcelTableColumnDisplayFunctions}
+                    columnStyleOptions={parcelTableColumnStyleOptions}
                     onRowClick={onParcelTableRowClick}
                     checkboxes
                     onRowSelection={setSelected}
