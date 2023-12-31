@@ -40,6 +40,36 @@ export const fetchParcel = async (
     return data[0];
 };
 
+export type CollectionCentresLabelsAndValues = [
+    string,
+    Schema["collection_centres"]["primary_key"]
+][];
+
+type CollectionCentresInfo = [
+    Schema["collection_centres"]["primary_key"],
+    CollectionCentresLabelsAndValues
+];
+
+export const getCollectionCentresInfo = async (
+    supabase: Supabase
+): Promise<CollectionCentresInfo> => {
+    var { data, error } = await supabase.from("collection_centres").select("primary_key, name");
+
+    if (error) {
+        throw new DatabaseError("fetch", "collection centre data");
+    }
+
+    const collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues = data!
+        .filter((collectionCentre) => collectionCentre.name !== "Delivery")
+        .map((collectionCentre) => [collectionCentre.name, collectionCentre.primary_key]);
+
+    const deliveryPrimaryKey = data!.filter(
+        (collectionCentre) => collectionCentre.name === "Delivery"
+    )[0].primary_key;
+
+    return [deliveryPrimaryKey, collectionCentresLabelsAndValues];
+};
+
 export const fetchClient = async (
     primaryKey: string,
     supabase: Supabase
