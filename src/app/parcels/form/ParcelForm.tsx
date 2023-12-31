@@ -24,8 +24,8 @@ import { insertParcel, updateParcel } from "@/app/parcels/form/clientDatabaseFun
 import Button from "@mui/material/Button";
 import Title from "@/components/Title/Title";
 import { Schema } from "@/databaseUtils";
-import { CollectionCentresLabelsAndValues } from "./serverDatabaseFunctions";
 import dayjs, { Dayjs } from "dayjs";
+import { CollectionCentresLabelsAndValues } from "@/common/fetch";
 
 export interface ParcelFields extends Fields {
     clientId: string | null;
@@ -37,6 +37,27 @@ export interface ParcelFields extends Fields {
     collectionTime: string | null;
     collectionCentre: string | null;
 }
+
+export const initialParcelFields: ParcelFields = {
+    clientId: null,
+    voucherNumber: "",
+    packingDate: null,
+    packingTime: null,
+    shippingMethod: "",
+    collectionDate: null,
+    collectionTime: null,
+    collectionCentre: null,
+};
+
+export const initialParcelFormErrors: FormErrors = {
+    voucherNumber: Errors.none,
+    packingDate: Errors.initial,
+    packingTime: Errors.initial,
+    shippingMethod: Errors.initial,
+    collectionDate: Errors.initial,
+    collectionTime: Errors.initial,
+    collectionCentre: Errors.initial,
+};
 
 interface ParcelFormProps {
     initialFields: ParcelFields;
