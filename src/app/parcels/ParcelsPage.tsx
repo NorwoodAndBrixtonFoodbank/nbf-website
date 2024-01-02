@@ -1,11 +1,14 @@
 "use client";
 
 import { formatDatetimeAsDate } from "@/app/parcels/getExpandedParcelDetails";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Table, { Row, TableHeaders } from "@/components/Tables/Table";
 
 import { useTheme } from "styled-components";
-import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
+import {
+    ParcelsTableRow,
+    processingDataToParcelsTableData,
+} from "@/app/parcels/getParcelsTableData";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
@@ -20,6 +23,11 @@ import TableSurface from "@/components/Tables/TableSurface";
 import ActionBar from "@/app/parcels/ActionBar/ActionBar";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import LinkButton from "@/components/Buttons/LinkButton";
+import supabase from "@/supabaseClient";
+import {
+    getCongestionChargeDetailsForParcels,
+    getParcelProcessingData,
+} from "./fetchParcelTableData";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -69,14 +77,29 @@ const parcelTableColumnStyleOptions = {
     },
 };
 
-interface Props {
-    parcelsTableData: ParcelsTableRow[];
-}
+// VFB-50: with this solution, think about: VFB-31 (parcel filters) & VFB-29 (request pagination)
 
-const ParcelsPage: React.FC<Props> = ({ parcelsTableData }) => {
+const fetchAndFormatParcelTablesData = async (): Promise<ParcelsTableRow[]> => {
+    const processingData = await getParcelProcessingData(supabase);
+    const congestionCharge = await getCongestionChargeDetailsForParcels(processingData, supabase);
+    const formattedData = processingDataToParcelsTableData(processingData, congestionCharge);
+
+    return formattedData;
+};
+
+const ParcelsPage: React.FC<{}> = () => {
+    const [isLoading, setIsLoading] = useState(true);
+    const [tableData, setTableData] = useState<ParcelsTableRow[]>([]);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [selected, setSelected] = useState<number[]>([]);
     const theme = useTheme();
+
+    useEffect(() => {
+        (async () => {
+            setTableData(await fetchAndFormatParcelTablesData());
+            setIsLoading(false);
+        })();
+    }, []);
 
     const rowToIconsColumn = ({
         flaggedForAttention,
@@ -144,50 +167,58 @@ const ParcelsPage: React.FC<Props> = ({ parcelsTableData }) => {
 
     return (
         <>
-            <ActionBar data={parcelsTableData} selected={selected} />
-            <TableSurface>
-                <Table
-                    data={parcelsTableData}
-                    headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
-                    columnDisplayFunctions={parcelTableColumnDisplayFunctions}
-                    columnStyleOptions={parcelTableColumnStyleOptions}
-                    onRowClick={onParcelTableRowClick}
-                    checkboxes
-                    onRowSelection={setSelected}
-                    pagination
-                    sortable={toggleableHeaders}
-                    toggleableHeaders={toggleableHeaders}
-                    filters={["addressPostcode"]}
-                />
-            </TableSurface>
+            <ActionBar data={tableData} selected={selected} />
+            {isLoading ? (
+                <></>
+            ) : (
+                <>
+                    <TableSurface>
+                        <Table
+                            data={tableData}
+                            headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
+                            columnDisplayFunctions={parcelTableColumnDisplayFunctions}
+                            columnStyleOptions={parcelTableColumnStyleOptions}
+                            onRowClick={onParcelTableRowClick}
+                            checkboxes
+                            onRowSelection={setSelected}
+                            pagination
+                            sortable={toggleableHeaders}
+                            toggleableHeaders={toggleableHeaders}
+                            filters={["addressPostcode"]}
+                        />
+                    </TableSurface>
+                    <Modal
+                        header={
+                            <>
+                                <Icon
+                                    icon={faBoxArchive}
+                                    color={theme.primary.largeForeground[2]}
+                                />{" "}
+                                Parcel Details
+                            </>
+                        }
+                        isOpen={selectedParcelId !== null}
+                        onClose={onExpandedParcelDetailsClose}
+                        headerId="expandedParcelDetailsModal"
+                    >
+                        <OutsideDiv>
+                            <ContentDiv>
+                                <Suspense fallback={<ExpandedParcelDetailsFallback />}>
+                                    <ExpandedParcelDetails parcelId={selectedParcelId} />
+                                </Suspense>
+                            </ContentDiv>
 
-            <Modal
-                header={
-                    <>
-                        <Icon icon={faBoxArchive} color={theme.primary.largeForeground[2]} /> Parcel
-                        Details
-                    </>
-                }
-                isOpen={selectedParcelId !== null}
-                onClose={onExpandedParcelDetailsClose}
-                headerId="expandedParcelDetailsModal"
-            >
-                <OutsideDiv>
-                    <ContentDiv>
-                        <Suspense fallback={<ExpandedParcelDetailsFallback />}>
-                            <ExpandedParcelDetails parcelId={selectedParcelId} />
-                        </Suspense>
-                    </ContentDiv>
-
-                    <ButtonsDiv>
-                        <Centerer>
-                            <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
-                                Edit Parcel
-                            </LinkButton>
-                        </Centerer>
-                    </ButtonsDiv>
-                </OutsideDiv>
-            </Modal>
+                            <ButtonsDiv>
+                                <Centerer>
+                                    <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
+                                        Edit Parcel
+                                    </LinkButton>
+                                </Centerer>
+                            </ButtonsDiv>
+                        </OutsideDiv>
+                    </Modal>
+                </>
+            )}
         </>
     );
 };

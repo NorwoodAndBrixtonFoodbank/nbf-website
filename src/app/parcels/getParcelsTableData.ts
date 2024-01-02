@@ -1,4 +1,4 @@
-import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fetchDataFromServer";
+import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fetchParcelTableData";
 import { Schema } from "@/databaseUtils";
 
 export interface ParcelsTableRow {
@@ -27,11 +27,11 @@ export interface ParcelsTableRow {
     packingDatetime: Date | null;
 }
 
-export const processingDataToClientsTableData = (
+export const processingDataToParcelsTableData = (
     processingData: ParcelProcessingData,
     congestionCharge: CongestionChargeDetails[]
 ): ParcelsTableRow[] => {
-    const clientTableRows: ParcelsTableRow[] = [];
+    const parcelTableRows: ParcelsTableRow[] = [];
 
     if (processingData.length !== congestionCharge.length) {
         throw new Error(
@@ -43,7 +43,7 @@ export const processingDataToClientsTableData = (
         const parcel = processingData[index];
         const client = parcel.client!;
 
-        clientTableRows.push({
+        parcelTableRows.push({
             parcelId: parcel.parcel_id,
             primaryKey: client.primary_key,
             fullName: client.full_name,
@@ -68,7 +68,7 @@ export const processingDataToClientsTableData = (
         });
     }
 
-    return clientTableRows;
+    return parcelTableRows;
 };
 
 export type PackingTimeLabel = "AM" | "PM";

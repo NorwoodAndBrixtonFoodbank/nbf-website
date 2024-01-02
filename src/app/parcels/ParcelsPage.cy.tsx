@@ -1,9 +1,9 @@
-import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fetchDataFromServer";
+import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fetchParcelTableData";
 import {
     ParcelsTableRow,
     datetimeToPackingTimeLabel,
     eventToLastStatus,
-    processingDataToClientsTableData,
+    processingDataToParcelsTableData,
 } from "@/app/parcels/getParcelsTableData";
 import {
     familyCountToFamilyCategory,
@@ -91,7 +91,7 @@ const sampleRawExpandedClientDetails: RawParcelDetails = {
 describe("Clients Page", () => {
     describe("Backend Processing for Table Data", () => {
         it("Fields are set correctly", () => {
-            const result = processingDataToClientsTableData(
+            const result = processingDataToParcelsTableData(
                 sampleProcessingData,
                 sampleCongestionChargeData
             );
