@@ -3,7 +3,7 @@ import { CardProps, errorText, valueOnChangeDropdownList } from "@/components/Fo
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
-import { CollectionCentresLabelsAndValues } from "../serverDatabaseFunctions";
+import { CollectionCentresLabelsAndValues } from "@/common/fetch";
 
 interface CollectionCentreCardProps extends CardProps {
     collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues;

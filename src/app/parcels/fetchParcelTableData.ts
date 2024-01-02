@@ -1,12 +1,14 @@
-import supabase from "@/supabaseServer";
+import { Supabase } from "@/supabaseUtils";
+import { DatabaseError, EdgeFunctionError } from "../errorClasses";
 
 export type CongestionChargeDetails = {
     postcode: string;
     congestionCharge: boolean;
 };
 
-export const getCongestionChargeDetails = async (
-    processingData: ParcelProcessingData
+export const getCongestionChargeDetailsForParcels = async (
+    processingData: ParcelProcessingData,
+    supabase: Supabase
 ): Promise<CongestionChargeDetails[]> => {
     const postcodes = [];
     for (const parcel of processingData) {
@@ -17,14 +19,18 @@ export const getCongestionChargeDetails = async (
         body: { postcodes: postcodes },
     });
 
-    return JSON.parse(response.data);
+    if (response.error) {
+        throw new EdgeFunctionError("congestion charge check");
+    }
+
+    return response.data;
 };
 
-export type ParcelProcessingData = Awaited<ReturnType<typeof getProcessingData>>;
+export type ParcelProcessingData = Awaited<ReturnType<typeof getParcelProcessingData>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const getProcessingData = async () => {
-    const response = await supabase
+export const getParcelProcessingData = async (supabase: Supabase) => {
+    const { data, error } = await supabase
         .from("parcels")
         .select(
             `
@@ -63,5 +69,9 @@ export const getProcessingData = async () => {
         .order("timestamp", { ascending: false, foreignTable: "events" })
         .limit(1, { foreignTable: "events" });
 
-    return response.data ?? [];
+    if (error) {
+        throw new DatabaseError("fetch", "parcel table data");
+    }
+
+    return data ?? [];
 };
