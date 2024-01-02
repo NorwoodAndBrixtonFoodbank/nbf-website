@@ -87,7 +87,7 @@
     "react-dom": "18.2.0",
     "react-modal": "^3.16.1",
     "start-server-and-test": "^2.0.0",
-    "styled-components": "^6.0.0-rc.3",
+    "styled-components": "^6.0.4",
     "supabase": "^1.68.6",
     "typescript": "^5.2.2"
   }
