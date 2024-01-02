@@ -26,7 +26,7 @@ const getUsers = async (): Promise<UserRow[]> => {
         throw new DatabaseError("fetch", "user information");
     }
 
-    const users: User[] = JSON.parse(data);
+    const users: User[] = data;
 
     return users.map((user: User) => {
         return {

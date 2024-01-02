@@ -72,7 +72,7 @@ const CreateUserForm: React.FC<{}> = () => {
 
         setSubmitError(Errors.none);
         setSubmitDisabled(false);
-        setCreatedUser(JSON.parse(data));
+        setCreatedUser(data);
     };
 
     return (
