@@ -4,7 +4,7 @@
 
 import { type Handler, serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@latest";
-import { corsHeaders } from "../_shared/cors.ts";
+import { corsHeaders, generateCorsOptionsForJsonResponse } from "../_shared/cors.ts";
 import { AdminUserAttributes } from "https://esm.sh/@supabase/gotrue-js@latest";
 
 interface UpdateUserRequestBody {
@@ -16,12 +16,6 @@ serve(async (req: Handler): Promise<Response> => {
     if (req.method === "OPTIONS") {
         return new Response("ok", { headers: corsHeaders });
     }
-
-    const generateHeaders = (status: number): any => ({
-        ...corsHeaders,
-        "Content-Type": "application/json",
-        status,
-    });
 
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -42,16 +36,22 @@ serve(async (req: Handler): Promise<Response> => {
     if (userError) {
         return new Response(
             JSON.stringify({ error: userError.message }),
-            generateHeaders(userError.status ?? 400)
+            generateCorsOptionsForJsonResponse(userError.status ?? 400)
         );
     }
 
     if (user === null) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), generateHeaders(401));
+        return new Response(
+            JSON.stringify({ error: "Unauthorized" }),
+            generateCorsOptionsForJsonResponse(401)
+        );
     }
 
     if (user.app_metadata.role !== "admin") {
-        return new Response(JSON.stringify({ error: "Forbidden" }), generateHeaders(403));
+        return new Response(
+            JSON.stringify({ error: "Forbidden" }),
+            generateCorsOptionsForJsonResponse(403)
+        );
     }
 
     // -- Process Request -- //
@@ -68,9 +68,9 @@ serve(async (req: Handler): Promise<Response> => {
     if (error) {
         return new Response(
             JSON.stringify({ error: error.message }),
-            generateHeaders(error.status ?? 400)
+            generateCorsOptionsForJsonResponse(error.status ?? 400)
         );
     }
 
-    return new Response(JSON.stringify(data.user), generateHeaders(200));
+    return new Response(JSON.stringify(data.user), generateCorsOptionsForJsonResponse(200));
 });
