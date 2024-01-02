@@ -77,8 +77,6 @@ const parcelTableColumnStyleOptions = {
     },
 };
 
-// VFB-50: with this solution, think about: VFB-31 (parcel filters) & VFB-29 (request pagination)
-
 const fetchAndFormatParcelTablesData = async (): Promise<ParcelsTableRow[]> => {
     const processingData = await getParcelProcessingData(supabase);
     const congestionCharge = await getCongestionChargeDetailsForParcels(processingData, supabase);
@@ -99,6 +97,20 @@ const ParcelsPage: React.FC<{}> = () => {
             setTableData(await fetchAndFormatParcelTablesData());
             setIsLoading(false);
         })();
+    }, []);
+
+    useEffect(() => {
+        // This requires that the DB table has Realtime turned on
+        const subscriptionChannel = supabase
+            .channel("parcels-table-changes")
+            .on("postgres_changes", { event: "*", schema: "public", table: "parcels" }, async () =>
+                setTableData(await fetchAndFormatParcelTablesData())
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(subscriptionChannel);
+        };
     }, []);
 
     const rowToIconsColumn = ({
