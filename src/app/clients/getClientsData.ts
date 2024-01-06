@@ -1,14 +1,15 @@
 import { ClientsTableRow } from "@/app/clients/ClientsPage";
-import supabase from "@/supabaseServer";
 import { familyCountToFamilyCategory } from "@/app/parcels/getExpandedParcelDetails";
 import { DatabaseError } from "@/app/errorClasses";
+import { Supabase } from "@/supabaseUtils";
 
-const getClientsData = async (): Promise<ClientsTableRow[]> => {
+const getClientsData = async (supabase: Supabase): Promise<ClientsTableRow[]> => {
     const data: ClientsTableRow[] = [];
 
     const { data: clients, error: clientError } = await supabase
         .from("clients")
-        .select("primary_key, full_name, family_id, address_postcode");
+        .select("primary_key, full_name, family_id, address_postcode")
+        .order("full_name");
 
     if (clientError) {
         throw new DatabaseError("fetch", "clients");
