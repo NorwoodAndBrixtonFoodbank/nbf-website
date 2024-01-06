@@ -5,7 +5,7 @@ import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { processExtraInformation } from "@/common/formatClientsData";
 
 const getNumberAdultsByGender = (family: Schema["families"][], gender: string): number => {
-    return family.filter((member) => member.gender === gender).length;
+    return family.filter((member) => member.age === null && member.gender === gender).length;
 };
 
 const arrayToBooleanGroup = (data: string[]): BooleanGroup => {
