@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 import React from "react";
 import supabase from "@/supabaseServer";
-import ClientForm from "@/app/clients/add/ClientForm";
+import ClientForm from "@/app/clients/form/ClientForm";
 import { Errors, FormErrors } from "@/components/Form/formFunctions";
 import autofill from "@/app/clients/edit/[id]/autofill";
 import { fetchClient, fetchFamily } from "@/common/fetch";
