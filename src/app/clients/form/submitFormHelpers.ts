@@ -67,6 +67,7 @@ const deleteAdultMembers = async (
         .eq("family_id", familyID)
         .eq("gender", gender)
         .is("age", null)
+        .order("primary_key")
         .limit(count);
 
     if (error) {
@@ -196,11 +197,14 @@ const revertClientInsert = async (primaryKey: string): Promise<void> => {
     }
 };
 
-const revertClientUpdate = async (initialRecords: ClientDatabaseUpdateRecord): Promise<void> => {
+const revertClientUpdate = async (
+    initialRecords: ClientDatabaseUpdateRecord,
+    primaryKey: string
+): Promise<void> => {
     const { error } = await supabase
         .from("clients")
         .update(initialRecords)
-        .eq("primary_key", initialRecords.primary_key);
+        .eq("primary_key", primaryKey);
     if (error) {
         throw new Error(
             "We could not revert an incomplete client update at this time, and there may be faulty data stored. Please contact a developer for assistance."
@@ -261,7 +265,7 @@ export const submitEditClientForm: SubmitFormHelper = async (
         await updateFamily(fields.adults, fields.children, ids.family_id);
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
-        await revertClientUpdate(clientBeforeUpdate);
+        await revertClientUpdate(clientBeforeUpdate, primaryKey!);
         throw new DatabaseError("update", "client data");
     }
 };
