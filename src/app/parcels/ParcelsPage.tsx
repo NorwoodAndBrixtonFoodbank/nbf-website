@@ -100,7 +100,7 @@ const ParcelsPage: React.FC<{}> = () => {
     }, []);
 
     useEffect(() => {
-        // This requires that the DB table has Realtime turned on
+        // This requires that the DB parcels table has Realtime turned on
         const subscriptionChannel = supabase
             .channel("parcels-table-changes")
             .on("postgres_changes", { event: "*", schema: "public", table: "parcels" }, async () =>
