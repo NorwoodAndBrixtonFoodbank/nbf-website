@@ -18,22 +18,22 @@ import {
     FormText,
     StyledForm,
 } from "@/components/Form/formStyling";
-import FullNameCard from "@/app/clients/add/formSections/FullNameCard";
-import PhoneNumberCard from "@/app/clients/add/formSections/PhoneNumberCard";
-import AddressCard from "@/app/clients/add/formSections/AddressCard";
-import NumberAdultsCard from "@/app/clients/add/formSections/NumberAdultsCard";
-import NumberChildrenCard from "@/app/clients/add/formSections/NumberChildrenCard";
-import DietaryRequirementCard from "@/app/clients/add/formSections/DietaryRequirementCard";
-import FeminineProductCard from "@/app/clients/add/formSections/FeminineProductCard";
-import BabyProductCard from "@/app/clients/add/formSections/BabyProductCard";
-import PetFoodCard from "@/app/clients/add/formSections/PetFoodCard";
-import OtherItemsCard from "@/app/clients/add/formSections/OtherItemsCard";
-import DeliveryInstructionsCard from "@/app/clients/add/formSections/DeliveryInstructionsCard";
-import ExtraInformationCard from "@/app/clients/add/formSections/ExtraInformationCard";
-import AttentionFlagCard from "@/app/clients/add/formSections/AttentionFlagCard";
-import SignpostingCallCard from "@/app/clients/add/formSections/SignpostingCallCard";
+import FullNameCard from "@/app/clients/form/formSections/FullNameCard";
+import PhoneNumberCard from "@/app/clients/form/formSections/PhoneNumberCard";
+import AddressCard from "@/app/clients/form/formSections/AddressCard";
+import NumberAdultsCard from "@/app/clients/form/formSections/NumberAdultsCard";
+import NumberChildrenCard from "@/app/clients/form/formSections/NumberChildrenCard";
+import DietaryRequirementCard from "@/app/clients/form/formSections/DietaryRequirementCard";
+import FeminineProductCard from "@/app/clients/form/formSections/FeminineProductCard";
+import BabyProductCard from "@/app/clients/form/formSections/BabyProductCard";
+import PetFoodCard from "@/app/clients/form/formSections/PetFoodCard";
+import OtherItemsCard from "@/app/clients/form/formSections/OtherItemsCard";
+import DeliveryInstructionsCard from "@/app/clients/form/formSections/DeliveryInstructionsCard";
+import ExtraInformationCard from "@/app/clients/form/formSections/ExtraInformationCard";
+import AttentionFlagCard from "@/app/clients/form/formSections/AttentionFlagCard";
+import SignpostingCallCard from "@/app/clients/form/formSections/SignpostingCallCard";
 import Button from "@mui/material/Button";
-import { submitAddClientForm, submitEditClientForm } from "@/app/clients/add/submitFormHelpers";
+import { submitAddClientForm, submitEditClientForm } from "@/app/clients/form/submitFormHelpers";
 import Title from "@/components/Title/Title";
 
 interface Props {

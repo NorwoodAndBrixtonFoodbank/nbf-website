@@ -1,5 +1,5 @@
 import { Schema } from "@/databaseUtils";
-import { ClientFields } from "@/app/clients/add/ClientForm";
+import { ClientFields } from "@/app/clients/form/ClientForm";
 import { Person } from "@/components/Form/formFunctions";
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { processExtraInformation } from "@/common/formatClientsData";
