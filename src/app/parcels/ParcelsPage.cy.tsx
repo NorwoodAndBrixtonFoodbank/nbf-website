@@ -101,7 +101,7 @@ describe("Clients Page", () => {
                     parcelId: "PRIMARY_KEY",
                     primaryKey: "PRIMARY_KEY2",
                     fullName: "CLIENT_NAME",
-                    familyCategory: 3,
+                    familyCategory: "Family of 3",
                     addressPostcode: "SW1A 2AA",
                     collectionDatetime: new Date("2023-08-04T13:30:00+00:00"),
                     deliveryCollection: {
