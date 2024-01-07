@@ -4,7 +4,7 @@ import React from "react";
 import StyleManager from "@/app/themes";
 import Localization from "@/app/Localization";
 
-describe("Clients - Action Bar", () => {
+describe("Parcels - Action Bar", () => {
     const mockData: ParcelsTableRow[] = [
         {
             primaryKey: "primaryKey1",
@@ -15,7 +15,7 @@ describe("Clients - Action Bar", () => {
                 congestionChargeApplies: false,
             },
             collectionDatetime: new Date(),
-            familyCategory: 1,
+            familyCategory: "Single",
             fullName: "John Smith",
             lastStatus: {
                 name: "Delivered",
@@ -40,7 +40,7 @@ describe("Clients - Action Bar", () => {
                 congestionChargeApplies: true,
             },
             collectionDatetime: new Date(),
-            familyCategory: 1,
+            familyCategory: "Family of 4",
             fullName: "John Smaaaaith",
             lastStatus: {
                 name: "Called and Confirmed",

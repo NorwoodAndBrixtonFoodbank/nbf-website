@@ -1,11 +1,12 @@
 import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fetchParcelTableData";
+import { familyCountToFamilyCategory } from "@/app/parcels/getExpandedParcelDetails";
 import { Schema } from "@/databaseUtils";
 
 export interface ParcelsTableRow {
     parcelId: Schema["parcels"]["primary_key"];
     primaryKey: Schema["clients"]["primary_key"];
     fullName: Schema["clients"]["full_name"];
-    familyCategory: number;
+    familyCategory: string;
     addressPostcode: Schema["clients"]["address_postcode"];
     deliveryCollection: {
         collectionCentreName: string;
@@ -47,7 +48,7 @@ export const processingDataToParcelsTableData = (
             parcelId: parcel.parcel_id,
             primaryKey: client.primary_key,
             fullName: client.full_name,
-            familyCategory: client.family.length,
+            familyCategory: familyCountToFamilyCategory(client.family.length),
             addressPostcode: client.address_postcode,
             deliveryCollection: {
                 collectionCentreName: parcel.collection_centre?.name ?? "-",
