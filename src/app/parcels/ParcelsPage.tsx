@@ -37,16 +37,29 @@ export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["fullName", "Name"],
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],
+    ["phoneNumber", "Phone"],
+    ["voucherNumber", "Voucher"],
     ["deliveryCollection", "Collection"],
     ["packingDatetime", "Packing Date"],
     ["packingTimeLabel", "Time"],
     ["lastStatus", "Last Status"],
 ];
 
+const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
+    "fullName",
+    "familyCategory",
+    "addressPostcode",
+    "packingDatetime",
+    "packingTimeLabel",
+    "lastStatus",
+];
+
 const toggleableHeaders: (keyof ParcelsTableRow)[] = [
     "fullName",
     "familyCategory",
     "addressPostcode",
+    "phoneNumber",
+    "voucherNumber",
     "packingDatetime",
     "packingTimeLabel",
     "lastStatus",
@@ -233,8 +246,20 @@ const ParcelsPage: React.FC<{}> = () => {
                             onRowSelection={setSelected}
                             pagination
                             sortable={toggleableHeaders}
+                            defaultShownHeaders={defaultShownHeaders}
                             toggleableHeaders={toggleableHeaders}
-                            filters={["addressPostcode"]}
+                            filters={[
+                                "fullName",
+                                "addressPostcode",
+                                "deliveryCollection",
+                                "packingTimeLabel",
+                            ]}
+                            additionalFilters={[
+                                "familyCategory",
+                                "phoneNumber",
+                                "voucherNumber",
+                                "lastStatus",
+                            ]}
                         />
                     </TableSurface>
                     <Modal
