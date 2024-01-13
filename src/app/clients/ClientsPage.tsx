@@ -37,10 +37,20 @@ const ClientsPage: React.FC<{}> = () => {
     const theme = useTheme();
 
     useEffect(() => {
+        let staleFetch = false;
+
         (async () => {
-            setTableData(await getClientsData(supabase));
+            setIsLoading(true);
+            const fetchedData = await getClientsData(supabase);
+            if (staleFetch) {
+                setTableData(fetchedData);
+            }
             setIsLoading(false);
         })();
+
+        return () => {
+            staleFetch = true;
+        };
     }, []);
 
     useEffect(() => {
