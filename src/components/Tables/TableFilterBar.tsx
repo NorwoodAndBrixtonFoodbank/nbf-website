@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import { TableHeaders } from "@/components/Tables/Table";
 import { Filter } from "@/components/Tables/Filters";
 import styled from "styled-components";
-import { FilterAltOffOutlined } from "@mui/icons-material";
+import { FilterAltOffOutlined, FilterAltOutlined } from "@mui/icons-material";
 
 interface Props<Data> {
     setFilters: (filters: Filter<Data, any>[]) => void;
@@ -25,26 +25,22 @@ const StyledButton = styled(Button)`
     justify-self: flex-end;
 `;
 
-const Styling = styled.div`
+const FiltersAndIconContainer = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     background-color: transparent;
-    display: flex;
-    align-items: stretch;
-    flex-wrap: wrap;
-    padding: 0.5rem 0;
-    gap: 2rem;
-    overflow: visible;
-    display: flex;
-    width: 100%;
-
-    @media (min-width: 500px) {
-        flex-wrap: nowrap;
-    }
+    padding: 0;
 `;
 
-const FilterHeading = styled.h2`
+const FilterContainer = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 0.5rem 0;
+    gap: 1rem;
+    overflow: visible;
     width: 100%;
-    text-align: left;
-    font-size: large;
 `;
 
 const Grow = styled.div`
@@ -75,23 +71,25 @@ const TableFilterBar = <Data,>(props: Props<Data>): React.ReactElement => {
 
     return (
         <>
-            <FilterHeading>Filters</FilterHeading>
-            <Styling>
-                {props.filters.length > 0 && (
-                    <>
-                        {filtersToComponents(props.filters, props.setFilters)}
-                        <Grow />
-                        <StyledButton
-                            variant="outlined"
-                            onClick={props.handleClear}
-                            color="primary"
-                            startIcon={<FilterAltOffOutlined color="primary" />}
-                        >
-                            Clear
-                        </StyledButton>
-                    </>
-                )}
-            </Styling>
+            <FiltersAndIconContainer>
+                <FilterAltOutlined />
+                <FilterContainer>
+                    {props.filters.length > 0 && (
+                        <>
+                            {filtersToComponents(props.filters, props.setFilters)}
+                            <Grow />
+                            <StyledButton
+                                variant="outlined"
+                                onClick={props.handleClear}
+                                color="inherit"
+                                startIcon={<FilterAltOffOutlined />}
+                            >
+                                Clear
+                            </StyledButton>
+                        </>
+                    )}
+                </FilterContainer>
+            </FiltersAndIconContainer>
             {props.toggleableHeaders.length !== 0 && (
                 <FilterAccordion
                     toggleableHeaders={props.toggleableHeaders}
