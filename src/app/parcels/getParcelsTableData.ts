@@ -8,6 +8,7 @@ export interface ParcelsTableRow {
     fullName: Schema["clients"]["full_name"];
     familyCategory: string;
     addressPostcode: Schema["clients"]["address_postcode"];
+    phoneNumber: Schema["clients"]["phone_number"];
     deliveryCollection: {
         collectionCentreName: string;
         collectionCentreAcronym: string;
@@ -50,6 +51,7 @@ export const processingDataToParcelsTableData = (
             fullName: client.full_name,
             familyCategory: familyCountToFamilyCategory(client.family.length),
             addressPostcode: client.address_postcode,
+            phoneNumber: client.phone_number,
             deliveryCollection: {
                 collectionCentreName: parcel.collection_centre?.name ?? "-",
                 collectionCentreAcronym: parcel.collection_centre?.acronym ?? "-",

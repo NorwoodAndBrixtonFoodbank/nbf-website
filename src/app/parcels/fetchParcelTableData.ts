@@ -52,6 +52,7 @@ export const getParcelProcessingData = async (supabase: Supabase, dateRange: Dat
             address_postcode,
             flagged_for_attention,
             signposting_call_required,
+            phone_number,
             
             family:families (
                 age,
