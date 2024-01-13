@@ -18,13 +18,8 @@ interface FilterAccordionProps<Data> {
     setFilters: (filters: Filter<Data, any>[]) => void;
 }
 
-const Styling = styled.div`
-    flex-grow: 1;
-    place-self: center;
-    z-index: 2;
+const AccordionStyling = styled.div`
     margin: 1rem 0;
-    height: 3rem;
-    overflow: visible;
 `;
 
 const ContainerDiv = styled.div`
@@ -107,7 +102,7 @@ const FilterAccordion = <Data,>({
     };
 
     return (
-        <Styling>
+        <AccordionStyling>
             <StyledAccordion>
                 <AccordionSummary>
                     <Row>
@@ -144,7 +139,7 @@ const FilterAccordion = <Data,>({
                     </ColumnSelectRow>
                 </AccordionDetails>
             </StyledAccordion>
-        </Styling>
+        </AccordionStyling>
     );
 };
 

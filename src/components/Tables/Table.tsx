@@ -344,33 +344,32 @@ const Table = <Data,>({
     };
 
     return (
-        <Styling>
-            <NoSsr>
-                <DataTable
-                    columns={columns}
-                    data={toDisplay}
-                    keyField="rowId"
-                    fixedHeader
-                    subHeader
-                    subHeaderComponent={
-                        <TableFilterBar<Data>
-                            handleClear={handleClear}
-                            setFilters={setPrimaryFilters}
-                            toggleableHeaders={toggleableHeaders}
-                            filters={primaryFilters}
-                            additionalFilters={additionalFilters}
-                            setAdditionalFilters={setAdditionalFilters}
-                            headers={headerKeysAndLabels}
-                            setShownHeaderKeys={setShownHeaderKeys}
-                            shownHeaderKeys={shownHeaderKeys}
-                        />
-                    }
-                    pagination={pagination ?? true}
-                    persistTableHead
-                    onRowClicked={onRowClick}
-                />
-            </NoSsr>
-        </Styling>
+        <>
+            <TableFilterBar<Data>
+                handleClear={handleClear}
+                setFilters={setPrimaryFilters}
+                toggleableHeaders={toggleableHeaders}
+                filters={primaryFilters}
+                additionalFilters={additionalFilters}
+                setAdditionalFilters={setAdditionalFilters}
+                headers={headerKeysAndLabels}
+                setShownHeaderKeys={setShownHeaderKeys}
+                shownHeaderKeys={shownHeaderKeys}
+            />
+            <TableStyling>
+                <NoSsr>
+                    <DataTable
+                        columns={columns}
+                        data={toDisplay}
+                        keyField="rowId"
+                        fixedHeader
+                        pagination={pagination ?? true}
+                        persistTableHead
+                        onRowClicked={onRowClick}
+                    />
+                </NoSsr>
+            </TableStyling>
+        </>
     );
 };
 
@@ -388,10 +387,11 @@ const StyledIcon = styled(Icon)`
     margin: 0;
 `;
 
-const Styling = styled.div`
+const TableStyling = styled.div`
     // the component with the filter bars
     & > header {
         background-color: transparent;
+        padding: 0;
     }
 
     // the entire table component including the header and the pagination bar
