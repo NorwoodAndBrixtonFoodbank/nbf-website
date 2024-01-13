@@ -1,5 +1,6 @@
 import { Supabase } from "@/supabaseUtils";
 import { DatabaseError, EdgeFunctionError } from "../errorClasses";
+import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
 
 export type CongestionChargeDetails = {
     postcode: string;
@@ -29,7 +30,7 @@ export const getCongestionChargeDetailsForParcels = async (
 export type ParcelProcessingData = Awaited<ReturnType<typeof getParcelProcessingData>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const getParcelProcessingData = async (supabase: Supabase) => {
+export const getParcelProcessingData = async (supabase: Supabase, dateRange: DateRangeState) => {
     const { data, error } = await supabase
         .from("parcels")
         .select(
@@ -65,6 +66,8 @@ export const getParcelProcessingData = async (supabase: Supabase) => {
         )
     `
         )
+        .gte("packing_datetime", dateRange.from)
+        .lte("packing_datetime", dateRange.to)
         .order("packing_datetime", { ascending: false })
         .order("timestamp", { ascending: false, foreignTable: "events" })
         .limit(1, { foreignTable: "events" });

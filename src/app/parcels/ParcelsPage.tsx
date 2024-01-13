@@ -4,11 +4,13 @@ import { formatDatetimeAsDate } from "@/app/parcels/getExpandedParcelDetails";
 import React, { Suspense, useEffect, useState } from "react";
 import Table, { Row, TableHeaders } from "@/components/Tables/Table";
 
-import { useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import {
     ParcelsTableRow,
     processingDataToParcelsTableData,
 } from "@/app/parcels/getParcelsTableData";
+import { ControlContainer } from "@/components/Form/formStyling";
+import DateRangeInputs, { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
@@ -28,6 +30,7 @@ import {
     getCongestionChargeDetailsForParcels,
     getParcelProcessingData,
 } from "./fetchParcelTableData";
+import dayjs from "dayjs";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -77,8 +80,19 @@ const parcelTableColumnStyleOptions = {
     },
 };
 
-const fetchAndFormatParcelTablesData = async (): Promise<ParcelsTableRow[]> => {
-    const processingData = await getParcelProcessingData(supabase);
+const PreTableControls = styled.div`
+    margin: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: stretch;
+    justify-content: space-between;
+`;
+
+const fetchAndFormatParcelTablesData = async (
+    dateRange: DateRangeState
+): Promise<ParcelsTableRow[]> => {
+    const processingData = await getParcelProcessingData(supabase, dateRange);
     const congestionCharge = await getCongestionChargeDetailsForParcels(processingData, supabase);
     const formattedData = processingDataToParcelsTableData(processingData, congestionCharge);
 
@@ -86,32 +100,48 @@ const fetchAndFormatParcelTablesData = async (): Promise<ParcelsTableRow[]> => {
 };
 
 const ParcelsPage: React.FC<{}> = () => {
+    const today = dayjs();
+
     const [isLoading, setIsLoading] = useState(true);
+    const [packingDateRange, setPackingDateRange] = useState<DateRangeState>({
+        from: today,
+        to: today,
+    });
     const [tableData, setTableData] = useState<ParcelsTableRow[]>([]);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [selected, setSelected] = useState<number[]>([]);
     const theme = useTheme();
 
     useEffect(() => {
+        let staleFetch = false;
+
         (async () => {
-            setTableData(await fetchAndFormatParcelTablesData());
+            setIsLoading(true);
+            const formattedData = await fetchAndFormatParcelTablesData(packingDateRange);
+            if (!staleFetch) {
+                setTableData(formattedData);
+            }
             setIsLoading(false);
         })();
-    }, []);
+
+        return () => {
+            staleFetch = true;
+        };
+    }, [packingDateRange]);
 
     useEffect(() => {
         // This requires that the DB parcels table has Realtime turned on
         const subscriptionChannel = supabase
             .channel("parcels-table-changes")
             .on("postgres_changes", { event: "*", schema: "public", table: "parcels" }, async () =>
-                setTableData(await fetchAndFormatParcelTablesData())
+                setTableData(await fetchAndFormatParcelTablesData(packingDateRange))
             )
             .subscribe();
 
         return () => {
             supabase.removeChannel(subscriptionChannel);
         };
-    }, []);
+    }, [packingDateRange]);
 
     const rowToIconsColumn = ({
         flaggedForAttention,
@@ -179,7 +209,15 @@ const ParcelsPage: React.FC<{}> = () => {
 
     return (
         <>
-            <ActionBar data={tableData} selected={selected} />
+            <PreTableControls>
+                <ControlContainer>
+                    <DateRangeInputs
+                        range={packingDateRange}
+                        setRange={setPackingDateRange}
+                    ></DateRangeInputs>
+                </ControlContainer>
+                <ActionBar data={tableData} selected={selected} />
+            </PreTableControls>
             {isLoading ? (
                 <></>
             ) : (
