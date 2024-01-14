@@ -8,6 +8,7 @@ import Alert from "@mui/material/Alert";
 import Statuses from "@/app/parcels/ActionBar/Statuses";
 import Actions from "@/app/parcels/ActionBar/Actions";
 import { ControlContainer } from "@/components/Form/formStyling";
+import { ArrowDropDown } from "@mui/icons-material";
 
 interface Props {
     selected: number[];
@@ -57,6 +58,7 @@ const ActionBar: React.FC<Props> = (props) => {
                     onClick={(event) => setStatusAnchorElement(event.currentTarget)}
                     type="button"
                     id="status-button"
+                    endIcon={<ArrowDropDown />}
                 >
                     Statuses
                 </Button>
@@ -65,6 +67,7 @@ const ActionBar: React.FC<Props> = (props) => {
                     onClick={(event) => setActionAnchorElement(event.currentTarget)}
                     type="button"
                     id="action-button"
+                    endIcon={<ArrowDropDown />}
                 >
                     Actions
                 </Button>
