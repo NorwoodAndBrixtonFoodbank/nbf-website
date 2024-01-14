@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import FilterAccordion from "@/components/Tables/FilterAccordion";
 import Button from "@mui/material/Button";
 import { TableHeaders } from "@/components/Tables/Table";
@@ -65,7 +65,16 @@ export const filtersToComponents = <Data,>(
 };
 
 const TableFilterBar = <Data,>(props: Props<Data>): React.ReactElement => {
-    if (props.filters.length === 0 && props.toggleableHeaders.length === 0) {
+    const [showAdditional, setShowAdditional] = useState(false);
+
+    const hasAdditional =
+        props.additionalFilters.length !== 0 || props.toggleableHeaders.length !== 0;
+
+    const handleToggleAdditional = (): void => {
+        setShowAdditional(!showAdditional);
+    };
+
+    if (props.filters.length === 0 && !hasAdditional) {
         return <></>;
     }
 
@@ -80,6 +89,14 @@ const TableFilterBar = <Data,>(props: Props<Data>): React.ReactElement => {
                             <Grow />
                             <StyledButton
                                 variant="outlined"
+                                onClick={handleToggleAdditional}
+                                color="inherit"
+                                startIcon={<FilterAltOutlined />}
+                            >
+                                {showAdditional ? "Less" : "More"}
+                            </StyledButton>
+                            <StyledButton
+                                variant="outlined"
                                 onClick={props.handleClear}
                                 color="inherit"
                                 startIcon={<FilterAltOffOutlined />}
@@ -90,15 +107,28 @@ const TableFilterBar = <Data,>(props: Props<Data>): React.ReactElement => {
                     )}
                 </FilterContainer>
             </FiltersAndIconContainer>
-            {props.toggleableHeaders.length !== 0 && (
-                <FilterAccordion
-                    toggleableHeaders={props.toggleableHeaders}
-                    shownHeaderKeys={props.shownHeaderKeys}
-                    setShownHeaderKeys={props.setShownHeaderKeys}
-                    headers={props.headers}
-                    filters={props.additionalFilters}
-                    setFilters={props.setAdditionalFilters}
-                />
+            {hasAdditional && showAdditional && (
+                <>
+                    <FiltersAndIconContainer>
+                        <FilterAltOutlined />
+                        <FilterContainer>
+                            {props.additionalFilters.length > 0 && (
+                                <>
+                                    {filtersToComponents(
+                                        props.additionalFilters,
+                                        props.setAdditionalFilters
+                                    )}
+                                </>
+                            )}
+                        </FilterContainer>
+                    </FiltersAndIconContainer>
+                    <FilterAccordion
+                        toggleableHeaders={props.toggleableHeaders}
+                        shownHeaderKeys={props.shownHeaderKeys}
+                        setShownHeaderKeys={props.setShownHeaderKeys}
+                        headers={props.headers}
+                    />
+                </>
             )}
         </>
     );
