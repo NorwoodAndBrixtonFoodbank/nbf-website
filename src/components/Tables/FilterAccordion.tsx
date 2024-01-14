@@ -2,25 +2,15 @@
 
 import React from "react";
 import styled from "styled-components";
-import { Accordion, Checkbox, AccordionSummary, AccordionDetails } from "@mui/material";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import Icon from "@/components/Icons/Icon";
+import { Accordion, Checkbox, AccordionDetails } from "@mui/material";
 import { TableHeaders } from "@/components/Tables/Table";
-import { Filter } from "@/components/Tables/Filters";
-import { filtersToComponents } from "./TableFilterBar";
 
 interface FilterAccordionProps<Data> {
     toggleableHeaders?: readonly (keyof Data)[];
     shownHeaderKeys: readonly (keyof Data)[];
     setShownHeaderKeys: (headers: (keyof Data)[]) => void;
     headers: TableHeaders<Data>;
-    filters: Filter<Data, any>[];
-    setFilters: (filters: Filter<Data, any>[]) => void;
 }
-
-const AccordionStyling = styled.div`
-    margin: 1rem 0;
-`;
 
 const ContainerDiv = styled.div`
     display: flex;
@@ -33,17 +23,6 @@ const ContainerDiv = styled.div`
     }
 `;
 
-const Row = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-`;
-
-const Spacer = styled.div`
-    flex-grow: 1;
-`;
-
 const ColumnSelectRow = styled.div`
     display: flex;
     flex-wrap: wrap;
@@ -54,7 +33,6 @@ const ColumnSelectRow = styled.div`
 const StyledAccordion = styled(Accordion)`
     &.MuiPaper-root {
         background-color: ${(props) => props.theme.main.background[1]};
-        border: 1px solid ${(props) => props.theme.main.lighterForeground[1]};
         box-shadow: none;
         background-image: none;
 
@@ -86,8 +64,6 @@ const FilterAccordion = <Data,>({
     shownHeaderKeys,
     setShownHeaderKeys,
     headers,
-    filters,
-    setFilters,
 }: FilterAccordionProps<Data>): React.ReactElement => {
     const getOnChanged = (
         key: keyof Data
@@ -102,17 +78,9 @@ const FilterAccordion = <Data,>({
     };
 
     return (
-        <AccordionStyling>
+        <div>
             <StyledAccordion>
-                <AccordionSummary>
-                    <Row>
-                        <p>Additional Filters</p>
-                        <Spacer />
-                        <Icon icon={faChevronDown} />
-                    </Row>
-                </AccordionSummary>
                 <AccordionDetails>
-                    {filtersToComponents(filters, setFilters)}
                     <ColumnSelectRow>
                         <SectionLabel>Select Columns:</SectionLabel>
                         {(toggleableHeaders ?? []).map((key) => {
@@ -139,7 +107,7 @@ const FilterAccordion = <Data,>({
                     </ColumnSelectRow>
                 </AccordionDetails>
             </StyledAccordion>
-        </AccordionStyling>
+        </div>
     );
 };
 
