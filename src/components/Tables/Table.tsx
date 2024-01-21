@@ -1,7 +1,7 @@
 "use client";
 
 import Icon from "@/components/Icons/Icon";
-import { Filter, headerLabelFromKey, textFilter } from "@/components/Tables/Filters";
+import { Filter, headerLabelFromKey } from "@/components/Tables/Filters";
 import TableFilterBar from "@/components/Tables/TableFilterBar";
 import {
     faAnglesDown,
@@ -15,6 +15,7 @@ import React, { useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import { Primitive } from "react-data-table-component/dist/src/DataTable/types";
 import styled from "styled-components";
+import { textFilter } from "./TextFilter";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 

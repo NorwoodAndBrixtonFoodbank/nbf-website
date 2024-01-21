@@ -31,6 +31,8 @@ import {
     getParcelProcessingData,
 } from "./fetchParcelTableData";
 import dayjs from "dayjs";
+import { checklistFilter } from "@/components/Tables/ChecklistFilter";
+import { Filter } from "@/components/Tables/Filters";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -49,6 +51,7 @@ const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
     "fullName",
     "familyCategory",
     "addressPostcode",
+    "deliveryCollection",
     "packingDatetime",
     "packingTimeLabel",
     "lastStatus",
@@ -60,6 +63,7 @@ const toggleableHeaders: (keyof ParcelsTableRow)[] = [
     "addressPostcode",
     "phoneNumber",
     "voucherNumber",
+    "deliveryCollection",
     "packingDatetime",
     "packingTimeLabel",
     "lastStatus",
@@ -220,6 +224,73 @@ const ParcelsPage: React.FC<{}> = () => {
         setSelectedParcelId(null);
     };
 
+    const buildDeliveryCollectionFilter = (
+        tableData: ParcelsTableRow[]
+    ): Filter<ParcelsTableRow, any> => {
+        const keySet = new Set();
+        const options = tableData
+            .map((row) => {
+                if (!keySet.has(row.deliveryCollection.collectionCentreAcronym)) {
+                    keySet.add(row.deliveryCollection.collectionCentreAcronym);
+                    return row.deliveryCollection;
+                } else {
+                    return null;
+                }
+            })
+            .filter((option) => option != null)
+            .sort();
+
+        return checklistFilter<ParcelsTableRow, any>({
+            key: "deliveryCollection",
+            filterLabel: "Collection",
+            itemLabelsAndKeys: options.map((option) => [
+                option!.collectionCentreName,
+                option!.collectionCentreAcronym,
+            ]),
+            initialCheckedKeys: options.map((option) => option!.collectionCentreAcronym),
+        });
+    };
+
+    const buildPackingTimeFilter = (tableData: ParcelsTableRow[]): Filter<ParcelsTableRow, any> => {
+        const options = Array.from(
+            new Set(tableData.map((row) => row.packingTimeLabel as string)).values()
+        ).sort();
+        return checklistFilter<ParcelsTableRow, any>({
+            key: "packingTimeLabel",
+            filterLabel: "Packing Time",
+            itemLabelsAndKeys: options.map((value) => [value, value]),
+            initialCheckedKeys: options,
+        });
+    };
+
+    const lastStatusCellMatchOverride = (
+        rowData: ParcelsTableRow,
+        selectedKeys: string[]
+    ): boolean => {
+        const cellData = rowData["lastStatus"];
+
+        return (
+            (!cellData && selectedKeys.includes("None")) ||
+            selectedKeys.some((key) => cellData?.name.includes(key))
+        );
+    };
+
+    const buildLastStatusFilter = (tableData: ParcelsTableRow[]): Filter<ParcelsTableRow, any> => {
+        const options = Array.from(
+            new Set(
+                tableData.map((row) => (row.lastStatus ? row.lastStatus.name : "None"))
+            ).values()
+        ).sort();
+
+        return checklistFilter<ParcelsTableRow, any>({
+            key: "lastStatus",
+            filterLabel: "Last Status",
+            itemLabelsAndKeys: options.map((value) => [value, value]),
+            initialCheckedKeys: options,
+            cellMatchOverride: lastStatusCellMatchOverride,
+        });
+    };
+
     return (
         <>
             <PreTableControls>
@@ -251,14 +322,14 @@ const ParcelsPage: React.FC<{}> = () => {
                             filters={[
                                 "fullName",
                                 "addressPostcode",
-                                "deliveryCollection",
-                                "packingTimeLabel",
+                                buildDeliveryCollectionFilter(tableData),
+                                buildPackingTimeFilter(tableData),
                             ]}
                             additionalFilters={[
                                 "familyCategory",
                                 "phoneNumber",
                                 "voucherNumber",
-                                "lastStatus",
+                                buildLastStatusFilter(tableData),
                             ]}
                         />
                     </TableSurface>
