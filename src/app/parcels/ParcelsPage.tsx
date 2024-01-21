@@ -1,14 +1,13 @@
 "use client";
 
-import { formatDatetimeAsDate } from "@/app/parcels/getExpandedParcelDetails";
 import React, { Suspense, useEffect, useState } from "react";
 import Table, { Row, TableHeaders } from "@/components/Tables/Table";
-
 import styled, { useTheme } from "styled-components";
 import {
     ParcelsTableRow,
     processingDataToParcelsTableData,
 } from "@/app/parcels/getParcelsTableData";
+import { formatDatetimeAsDate } from "@/app/parcels/getExpandedParcelDetails";
 import { ControlContainer } from "@/components/Form/formStyling";
 import DateRangeInputs, { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";

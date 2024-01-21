@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { KeyedFilter, defaultToString, keyedFilter } from "./Filters";
 import CheckboxGroupPopup from "../DataInput/CheckboxGroupPopup";

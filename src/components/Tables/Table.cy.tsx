@@ -297,17 +297,4 @@ describe("<Table />", () => {
         cy.get("input[aria-label='Select row 5']").should("not.exist");
         cy.get("input[aria-label='Select row 10']").should("not.exist");
     });
-
-    it("accordion works", () => {
-        cy.mount(
-            <ComponentWithSmallerData
-                checkboxes={false}
-                toggleableHeaders={["full_name", "phone_number"]}
-            />
-        );
-
-        cy.get("div.MuiAccordionSummary-root").click();
-        cy.get("div.MuiAccordionDetails-root").contains("Name");
-        cy.get("div.MuiAccordionDetails-root").contains("Phone Number");
-    });
 });
