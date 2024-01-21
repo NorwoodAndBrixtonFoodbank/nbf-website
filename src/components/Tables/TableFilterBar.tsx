@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import FilterAccordion from "@/components/Tables/FilterAccordion";
 import Button from "@mui/material/Button";
 import { TableHeaders } from "@/components/Tables/Table";
 import { Filter } from "@/components/Tables/Filters";
 import styled from "styled-components";
 import { FilterAltOffOutlined, FilterAltOutlined } from "@mui/icons-material";
+import ColumnTogglePopup from "@/components/Tables/ColumnTogglePopup";
 
 interface Props<Data> {
     setFilters: (filters: Filter<Data, any>[]) => void;
@@ -120,14 +120,15 @@ const TableFilterBar = <Data,>(props: Props<Data>): React.ReactElement => {
                                     )}
                                 </>
                             )}
+                            <Grow />
+                            <ColumnTogglePopup
+                                toggleableHeaders={props.toggleableHeaders}
+                                shownHeaderKeys={props.shownHeaderKeys}
+                                setShownHeaderKeys={props.setShownHeaderKeys}
+                                headers={props.headers}
+                            />
                         </FilterContainer>
                     </FiltersAndIconContainer>
-                    <FilterAccordion
-                        toggleableHeaders={props.toggleableHeaders}
-                        shownHeaderKeys={props.shownHeaderKeys}
-                        setShownHeaderKeys={props.setShownHeaderKeys}
-                        headers={props.headers}
-                    />
                 </>
             )}
         </>
