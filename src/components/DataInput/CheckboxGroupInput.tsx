@@ -14,7 +14,7 @@ const CheckboxGroupInput: React.FC<Props> = (props) => {
     return (
         <FormControl>
             {props.groupLabel && <FormLabel>{props.groupLabel}</FormLabel>}
-            <FormGroup sx={{ padding: "6px" }}>
+            <FormGroup>
                 {props.labelsAndKeys.map(([label, key]) => {
                     return (
                         <FormControlLabel

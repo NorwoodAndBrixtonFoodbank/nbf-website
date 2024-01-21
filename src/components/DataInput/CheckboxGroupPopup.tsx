@@ -4,6 +4,7 @@ import { Button, Popover } from "@mui/material";
 import React, { useState } from "react";
 import CheckboxGroupInput from "./CheckboxGroupInput";
 import { ArrowDropDown } from "@mui/icons-material";
+import styled from "styled-components";
 
 interface Props {
     labelsAndKeys: [string, string][];
@@ -11,6 +12,10 @@ interface Props {
     groupLabel?: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
+
+const ContainerDiv = styled.div`
+    padding: 6px;
+`;
 
 const CheckboxGroupPopup: React.FC<Props> = (props) => {
     const [popoverAnchorElement, setPopoverAnchorElement] = useState<HTMLElement | null>(null);
@@ -24,11 +29,13 @@ const CheckboxGroupPopup: React.FC<Props> = (props) => {
                     anchorEl={popoverAnchorElement}
                     anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
                 >
-                    <CheckboxGroupInput
-                        labelsAndKeys={props.labelsAndKeys}
-                        defaultCheckedKeys={props.defaultCheckedKeys ?? []}
-                        onChange={props.onChange}
-                    />
+                    <ContainerDiv>
+                        <CheckboxGroupInput
+                            labelsAndKeys={props.labelsAndKeys}
+                            defaultCheckedKeys={props.defaultCheckedKeys ?? []}
+                            onChange={props.onChange}
+                        />
+                    </ContainerDiv>
                 </Popover>
             )}
             <Button
