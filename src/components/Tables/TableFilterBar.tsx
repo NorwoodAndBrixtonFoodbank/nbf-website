@@ -87,14 +87,16 @@ const TableFilterBar = <Data,>(props: Props<Data>): React.ReactElement => {
                         <>
                             {filtersToComponents(props.filters, props.setFilters)}
                             <Grow />
-                            <StyledButton
-                                variant="outlined"
-                                onClick={handleToggleAdditional}
-                                color="inherit"
-                                startIcon={<FilterAltOutlined />}
-                            >
-                                {showAdditional ? "Less" : "More"}
-                            </StyledButton>
+                            {hasAdditional && (
+                                <StyledButton
+                                    variant="outlined"
+                                    onClick={handleToggleAdditional}
+                                    color="inherit"
+                                    startIcon={<FilterAltOutlined />}
+                                >
+                                    {showAdditional ? "Less" : "More"}
+                                </StyledButton>
+                            )}
                             <StyledButton
                                 variant="outlined"
                                 onClick={props.handleClear}
@@ -121,12 +123,14 @@ const TableFilterBar = <Data,>(props: Props<Data>): React.ReactElement => {
                                 </>
                             )}
                             <Grow />
-                            <ColumnTogglePopup
-                                toggleableHeaders={props.toggleableHeaders}
-                                shownHeaderKeys={props.shownHeaderKeys}
-                                setShownHeaderKeys={props.setShownHeaderKeys}
-                                headers={props.headers}
-                            />
+                            {props.toggleableHeaders.length > 0 && (
+                                <ColumnTogglePopup
+                                    toggleableHeaders={props.toggleableHeaders}
+                                    shownHeaderKeys={props.shownHeaderKeys}
+                                    setShownHeaderKeys={props.setShownHeaderKeys}
+                                    headers={props.headers}
+                                />
+                            )}
                         </FilterContainer>
                     </FiltersAndIconContainer>
                 </>

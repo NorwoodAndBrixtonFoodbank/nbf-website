@@ -31,6 +31,7 @@ const sampleProcessingData: ParcelProcessingData = [
             primary_key: "PRIMARY_KEY2",
             full_name: "CLIENT_NAME",
             address_postcode: "SW1A 2AA",
+            phone_number: "08642 123",
             flagged_for_attention: false,
             signposting_call_required: true,
 
@@ -103,6 +104,7 @@ describe("Clients Page", () => {
                     fullName: "CLIENT_NAME",
                     familyCategory: "Family of 3",
                     addressPostcode: "SW1A 2AA",
+                    phoneNumber: "08642 123",
                     collectionDatetime: new Date("2023-08-04T13:30:00+00:00"),
                     deliveryCollection: {
                         collectionCentreName: "COLLECTION_CENTRE",
