@@ -42,7 +42,7 @@ const ClientsPage: React.FC<{}> = () => {
         (async () => {
             setIsLoading(true);
             const fetchedData = await getClientsData(supabase);
-            if (staleFetch) {
+            if (!staleFetch) {
                 setTableData(fetchedData);
             }
             setIsLoading(false);
