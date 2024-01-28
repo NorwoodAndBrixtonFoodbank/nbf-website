@@ -47,6 +47,7 @@ export const checklistFilter = <Data, Key extends keyof Data>({
 
             return (
                 <CheckboxGroupPopup
+                    key={filterLabel}
                     labelsAndKeys={itemLabelsAndKeys}
                     defaultCheckedKeys={state}
                     groupLabel={filterLabel}
