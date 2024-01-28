@@ -13,9 +13,9 @@ import { NoSsr } from "@mui/material";
 import IconButton from "@mui/material/IconButton/IconButton";
 import React, { useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import { Primitive } from "react-data-table-component/dist/src/DataTable/types";
 import styled from "styled-components";
 import { textFilter } from "./TextFilter";
+import { Primitive } from "react-data-table-component/dist/DataTable/types";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
