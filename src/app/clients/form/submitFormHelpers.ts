@@ -1,5 +1,5 @@
 import { InsertSchema, Schema, UpdateSchema } from "@/databaseUtils";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { checkboxGroupToArray, Fields, Person } from "@/components/Form/formFunctions";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
