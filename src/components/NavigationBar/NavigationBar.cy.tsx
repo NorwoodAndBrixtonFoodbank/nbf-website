@@ -2,7 +2,10 @@
 
 import React from "react";
 import NavigationBar from "@/components/NavigationBar/NavigationBar";
-import { AppRouterContext, AppRouterInstance } from "next/dist/shared/lib/app-router-context";
+import {
+    AppRouterContext,
+    AppRouterInstance,
+} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { RoleUpdateContext } from "@/app/roles";
 import StyleManager from "@/app/themes";
 const StyledNavigationBar: React.FC<{}> = () => {
