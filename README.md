@@ -55,9 +55,9 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
 ### Supabase development
 
 To use the Supabase CLI:
-* You'll need to have created a personal access token in Supabase and run `npx supabase login`
+* You'll need to have created a personal access token in Supabase and run `supabase login`
 * For many supabase features you'll need to have Docker Desktop running
-* Run the commands as `npx supabase [...]`
+* Run the commands as `supabase [...]`
 
 ### Database
 Database migrations are tracked under /supabase/migrations.
@@ -80,11 +80,11 @@ Database migrations are tracked under /supabase/migrations.
 You can regenerate the types
 - from the local database
   ```shell
-  npx supabase gen types typescript --local --schema public > src/databaseTypesFile.ts
+  supabase gen types typescript --local --schema public > src/databaseTypesFile.ts
   ```
 - from the deployed database
   ```shell
-  npx supabase gen types typescript --project-id <PROJECT_ID> --schema public > src/databaseTypesFile.ts
+  supabase gen types typescript --project-id <PROJECT_ID> --schema public > src/databaseTypesFile.ts
   ```
   
 #### Make database changes
