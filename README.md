@@ -52,14 +52,75 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
     * `npm run test:coverage` for a full coverage report at the end
   * Can open the Cypress UI to see individual results with `npm run open:cypress`
 
-### Admin development (Supabase setup)
+### Supabase development
 
-If you change the database, you can regenerate the types with:
-```shell
-npx supabase gen types typescript --project-id <PROJECT_ID> --schema public > src/databaseTypesFile.ts
+To use the Supabase CLI:
+* You'll need to have created a personal access token in Supabase and run `supabase login`
+* For many supabase features you'll need to have Docker Desktop running
+* Run the commands as `supabase [...]`
+
+### Database
+Database migrations are tracked under /supabase/migrations.
+
+#### Update and connect to the local database
+* Select the database to pull from. This will be our deployed dev database. 
+  ```shell
+  supabase link --project-ref <PROJECT_ID>
+  ```
+* Pull any new changes from the database.
+  ```shell
+  supabase pull
+  ```
+* Start Supabase services on your local machine. This command will give you the "DB URL" you can use to connect to the database.
+  ```shell
+  supabase start
+  ```
+
+#### Update the TypeScript database type definition
+You can regenerate the types
+- from the local database
+  ```shell
+  supabase gen types typescript --local --schema public > src/databaseTypesFile.ts
+  ```
+- from the deployed database
+  ```shell
+  supabase gen types typescript --project-id <PROJECT_ID> --schema public > src/databaseTypesFile.ts
+  ```
+  
+#### Make database changes
+You can either
+- Access the local Supabase console to update tables, and use 
+  ```shell
+  supabase db diff > supabase/migrations/<date_time_and_name_of_migration>.sql
+  ```
+  to generate a migration sql file, or
+- Create a migration file using 
+  ```shell
+  supabase migration new <name_of_migration>
+  ```
+  and write sql queries yourself
+
+#### Apply migrations to local database
+Ensure you have all the migration files saved in `supabase/migrations` and run
+```bash
+supabase db reset
 ```
 
-Note that to use the Supabase CLI as above you'll need to have created a personal access token in Supabase and run `npx supabase login`.
+#### Apply migrations to deployed database
+Migrations aren't currently integrated into the CI pipeline, so need to be applied manually to other environments when promoting changes. To apply manually:
+* Run `supabase link --project-ref <PROJECT_ID>` to select the target database
+* Run `supabase db pull` to capture any changes required for the local database to catch up with the deployed database 
+* `supbase db push` to apply outstanding migrations
+
+To check they've been applied correctly, either:
+* `supabase db diff --linked` to run against the linked deployed database
+* `supabase db diff` to run against the local database
+* `supabase migration list` on both dev and target databases can be compared
+
+#### Useful links
+- [Local Development](https://supabase.com/docs/guides/cli/local-development)
+- [Managing Environments](https://supabase.com/docs/guides/cli/managing-environments)
+- [Deploy a migration](https://supabase.com/docs/guides/cli/managing-environments?environment=ci#deploy-a-migration)
 
 ## NextJS design choices
 
