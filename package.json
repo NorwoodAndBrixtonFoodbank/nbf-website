@@ -90,5 +90,10 @@
     "styled-components": "^6.0.4",
     "supabase": "^1.142.2",
     "typescript": "^5.2.2"
+  },
+  "devDependencies": {
+    "@snaplet/copycat": "^4.1.0",
+    "@snaplet/seed": "^0.88.2",
+    "snaplet": "^0.88.2"
   }
 }
