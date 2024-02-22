@@ -117,6 +117,11 @@ To check they've been applied correctly, either:
 * `supabase db diff` to run against the local database
 * `supabase migration list` on both dev and target databases can be compared
 
+#### Seed the local database
+```shell
+npx tsx seed.mts > supabase/seed.sql
+```
+
 #### Useful links
 - [Local Development](https://supabase.com/docs/guides/cli/local-development)
 - [Managing Environments](https://supabase.com/docs/guides/cli/managing-environments)
