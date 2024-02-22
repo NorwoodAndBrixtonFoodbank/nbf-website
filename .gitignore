@@ -48,3 +48,6 @@ coverage
 cypress/videos
 cypress/screenshots
 cypress/downloads
+
+# Supabase tools
+supabase/tools/**/*.js

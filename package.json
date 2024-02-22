@@ -22,7 +22,8 @@
     "coverage:generate": "nyc instrument --delete src .nyc_output --compact=false --all",
     "coverage:run_tests": "start-server-and-test coverage:server http://localhost:3200 test:runner",
     "coverage:server": "nyc npm run test:runner_server_dev",
-    "coverage:report": "nyc report --reporter html && nyc report --reporter text-summary"
+    "coverage:report": "nyc report --reporter html && nyc report --reporter text-summary",
+    "dev:create_admin_user": "tsc supabase/tools/create-admin-user.ts && node supabase/tools/create-admin-user.js"
   },
   "nyc": {
     "all": true,
