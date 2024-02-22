@@ -153,78 +153,78 @@ export type Database = {
       }
       lists: {
         Row: {
-          "1_notes": string | null
-          "1_quantity": string
-          "10_notes": string | null
-          "10_quantity": string
-          "2_notes": string | null
-          "2_quantity": string
-          "3_notes": string | null
-          "3_quantity": string
-          "4_notes": string | null
-          "4_quantity": string
-          "5_notes": string | null
-          "5_quantity": string
-          "6_notes": string | null
-          "6_quantity": string
-          "7_notes": string | null
-          "7_quantity": string
-          "8_notes": string | null
-          "8_quantity": string
-          "9_notes": string | null
-          "9_quantity": string
           item_name: string
+          notes_for_1: string | null
+          notes_for_10: string | null
+          notes_for_2: string | null
+          notes_for_3: string | null
+          notes_for_4: string | null
+          notes_for_5: string | null
+          notes_for_6: string | null
+          notes_for_7: string | null
+          notes_for_8: string | null
+          notes_for_9: string | null
           primary_key: string
+          quantity_for_1: string
+          quantity_for_10: string
+          quantity_for_2: string
+          quantity_for_3: string
+          quantity_for_4: string
+          quantity_for_5: string
+          quantity_for_6: string
+          quantity_for_7: string
+          quantity_for_8: string
+          quantity_for_9: string
           row_order: number
         }
         Insert: {
-          "1_notes"?: string | null
-          "1_quantity"?: string
-          "10_notes"?: string | null
-          "10_quantity"?: string
-          "2_notes"?: string | null
-          "2_quantity"?: string
-          "3_notes"?: string | null
-          "3_quantity"?: string
-          "4_notes"?: string | null
-          "4_quantity"?: string
-          "5_notes"?: string | null
-          "5_quantity"?: string
-          "6_notes"?: string | null
-          "6_quantity"?: string
-          "7_notes"?: string | null
-          "7_quantity"?: string
-          "8_notes"?: string | null
-          "8_quantity"?: string
-          "9_notes"?: string | null
-          "9_quantity"?: string
           item_name?: string
+          notes_for_1?: string | null
+          notes_for_10?: string | null
+          notes_for_2?: string | null
+          notes_for_3?: string | null
+          notes_for_4?: string | null
+          notes_for_5?: string | null
+          notes_for_6?: string | null
+          notes_for_7?: string | null
+          notes_for_8?: string | null
+          notes_for_9?: string | null
           primary_key?: string
+          quantity_for_1?: string
+          quantity_for_10?: string
+          quantity_for_2?: string
+          quantity_for_3?: string
+          quantity_for_4?: string
+          quantity_for_5?: string
+          quantity_for_6?: string
+          quantity_for_7?: string
+          quantity_for_8?: string
+          quantity_for_9?: string
           row_order?: number
         }
         Update: {
-          "1_notes"?: string | null
-          "1_quantity"?: string
-          "10_notes"?: string | null
-          "10_quantity"?: string
-          "2_notes"?: string | null
-          "2_quantity"?: string
-          "3_notes"?: string | null
-          "3_quantity"?: string
-          "4_notes"?: string | null
-          "4_quantity"?: string
-          "5_notes"?: string | null
-          "5_quantity"?: string
-          "6_notes"?: string | null
-          "6_quantity"?: string
-          "7_notes"?: string | null
-          "7_quantity"?: string
-          "8_notes"?: string | null
-          "8_quantity"?: string
-          "9_notes"?: string | null
-          "9_quantity"?: string
           item_name?: string
+          notes_for_1?: string | null
+          notes_for_10?: string | null
+          notes_for_2?: string | null
+          notes_for_3?: string | null
+          notes_for_4?: string | null
+          notes_for_5?: string | null
+          notes_for_6?: string | null
+          notes_for_7?: string | null
+          notes_for_8?: string | null
+          notes_for_9?: string | null
           primary_key?: string
+          quantity_for_1?: string
+          quantity_for_10?: string
+          quantity_for_2?: string
+          quantity_for_3?: string
+          quantity_for_4?: string
+          quantity_for_5?: string
+          quantity_for_6?: string
+          quantity_for_7?: string
+          quantity_for_8?: string
+          quantity_for_9?: string
           row_order?: number
         }
         Relationships: []
