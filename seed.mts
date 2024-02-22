@@ -1,5 +1,6 @@
 import { createSeedClient } from '@snaplet/seed';
 import { copycat } from '@snaplet/copycat'
+import seedrandom from "seedrandom";
 
 const possibleDietaryRequirements = ["Gluten Free", "Dairy Free", "Vegetarian", "Vegan", "Pescatarian", "Halal", "Diabetic", "Nut Allergy", "Seafood Allergy", "No Bread", "No Pasta", "No Rice", "No Pork", "No Beef"]
 const possibleFeminineProducts = ["Tampons", "Pads", "Incontinence Pads"]
@@ -28,6 +29,9 @@ const eventNamesWithNoData = [
   "Out for Delivery",
   "Request Deleted",
 ]
+
+const earliestDate = new Date(2024, 0, 1) // 2024/01/01
+const latestDate = new Date(2025, 0, 1) // 2025/01/01
 
 async function generateSeed() {
   const seed = await createSeedClient({
@@ -116,7 +120,10 @@ async function generateSeed() {
   ])
 
   await seed.parcels(x =>
-      x(5000, {}),
+      x(5000, {
+        packingDatetime: (ctx) => getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
+        collectionDatetime: (ctx => getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed))
+      }),
       {
         connect: true
       }
@@ -125,12 +132,19 @@ async function generateSeed() {
   await seed.events(x => x(4000, {
     eventName: (ctx) => copycat.oneOfString(ctx.seed, eventNamesWithNumberData),
     eventData: (ctx) => copycat.int(ctx.seed, {min: 1, max: 10}).toString(),
+    timestamp: (ctx) => getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed)
   }), {connect: true})
 
   await seed.events(x => x(10000, {
     eventName: (ctx) => copycat.oneOfString(ctx.seed, eventNamesWithNoData),
     eventData: ''
   }), {connect: true})
+}
+
+function getPseudoRandomDateBetween(start: Date, end: Date, seed: string): Date {
+  const randomNumberGenerator = seedrandom(seed)
+
+  return new Date(start.getTime() + randomNumberGenerator() * (end.getTime() - start.getTime()));
 }
 
 generateSeed()

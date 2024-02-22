@@ -118,9 +118,17 @@ To check they've been applied correctly, either:
 * `supabase migration list` on both dev and target databases can be compared
 
 #### Seed the local database
+The local database is generated based on the code in `seed.mts`. This uses Snaplet to generate a large amount of data.
+Run
 ```shell
 npx tsx seed.mts > supabase/seed.sql
 ```
+to generate the SQL queries needed to populate the database.
+Then run
+```shell
+supabase db reset
+```
+to rebuild the database from the migration files and `seed.sql`.
 
 #### Useful links
 - [Local Development](https://supabase.com/docs/guides/cli/local-development)
