@@ -1,11 +1,27 @@
 import * as dotenv from "dotenv";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 dotenv.config({ path: "./.env.local" });
 
 createAdminUser()
 
+type Role = 'admin' | 'caller'
+
 async function createAdminUser() {
+    const supabase = getSupabaseClient()
+
+    const adminEmail = 'admin@example.com'
+    const adminPassword = 'admin123'
+    await createUser(supabase, adminEmail, adminPassword, 'admin')
+    console.log(`Created an admin user: ${adminEmail} (${adminPassword})`)
+
+    const callerEmail = 'caller@example.com'
+    const callerPassword = 'caller123'
+    await createUser(supabase, callerEmail, callerPassword, 'caller')
+    console.log(`Created a caller user: ${callerEmail} (${callerPassword})`)
+}
+
+function getSupabaseClient() {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY
 
@@ -17,7 +33,7 @@ async function createAdminUser() {
         throw new Error('Supabase key is not ')
     }
 
-    const supabase = createClient(
+    return createClient(
         supabaseUrl,
         supabaseKey,
         {
@@ -27,20 +43,20 @@ async function createAdminUser() {
             }
         }
     )
+}
 
-    const { data, error } = await supabase.auth.admin.createUser({
-        email: 'Team-VauxhallFoodbank@softwire.com',
-        password: 'Test123',
-        email_confirm: false,
-        phone_confirm: false,
+async function createUser(supabase: SupabaseClient,email: string, password: string, role: Role) {
+    const { error } = await supabase.auth.admin.createUser({
+        email: email,
+        password: password,
+        email_confirm: true,
+        phone_confirm: true,
         app_metadata: {
-            role: 'admin'
+            role: role
         }
     })
 
     if (error) {
-        console.error(error)
-    } else {
-        console.log(`Created an admin user: ${data.user?.email}`)
+        throw new Error(`Failed to create ${role} user: ${email}. ${error}`,)
     }
 }
