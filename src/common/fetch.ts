@@ -42,12 +42,12 @@ export const fetchParcel = async (
 
 export type CollectionCentresLabelsAndValues = [
     string,
-    Schema["collection_centres"]["primary_key"]
+    Schema["collection_centres"]["primary_key"],
 ][];
 
 type CollectionCentresInfo = [
     Schema["collection_centres"]["primary_key"],
-    CollectionCentresLabelsAndValues
+    CollectionCentresLabelsAndValues,
 ];
 
 export const getCollectionCentresInfo = async (

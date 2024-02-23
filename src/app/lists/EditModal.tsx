@@ -40,16 +40,16 @@ const DisplayContents = styled.div`
 `;
 
 const listQuantityNoteAndLabels: [keyof Schema["lists"], keyof Schema["lists"], string][] = [
-    ["1_quantity", "1_notes", "Single"],
-    ["2_quantity", "2_notes", "Family of 2"],
-    ["3_quantity", "3_notes", "Family of 3"],
-    ["4_quantity", "4_notes", "Family of 4"],
-    ["5_quantity", "5_notes", "Family of 5"],
-    ["6_quantity", "6_notes", "Family of 6"],
-    ["7_quantity", "7_notes", "Family of 7"],
-    ["8_quantity", "8_notes", "Family of 8"],
-    ["9_quantity", "9_notes", "Family of 9"],
-    ["10_quantity", "10_notes", "Family of 10+"],
+    ["quantity_for_1", "notes_for_1", "Single"],
+    ["quantity_for_2", "notes_for_2", "Family of 2"],
+    ["quantity_for_3", "notes_for_3", "Family of 3"],
+    ["quantity_for_4", "notes_for_4", "Family of 4"],
+    ["quantity_for_5", "notes_for_5", "Family of 5"],
+    ["quantity_for_6", "notes_for_6", "Family of 6"],
+    ["quantity_for_7", "notes_for_7", "Family of 7"],
+    ["quantity_for_8", "notes_for_8", "Family of 8"],
+    ["quantity_for_9", "notes_for_9", "Family of 9"],
+    ["quantity_for_10", "notes_for_10", "Family of 10+"],
 ];
 
 const EditModal: React.FC<Props> = ({ data, onClose }) => {
