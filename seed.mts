@@ -1,3 +1,4 @@
+// @ts-nocheck next build will have an issue with this if snaplet has not generated the data structure e.g. in the pipeline
 import { createSeedClient } from '@snaplet/seed';
 import { copycat } from '@snaplet/copycat'
 import seedrandom from "seedrandom";

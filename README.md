@@ -119,16 +119,14 @@ To check they've been applied correctly, either:
 
 #### Seed the local database
 The local database is generated based on the code in `seed.mts`. This uses Snaplet to generate a large amount of data.
-Run
+To generate te SQL queries needed to populate database, run
 ```shell
 npx tsx seed.mts > supabase/seed.sql
 ```
-to generate the SQL queries needed to populate the database.
-Then run
+To rebuild the database from the migration files and `seed.sql`, run
 ```shell
 supabase db reset
 ```
-to rebuild the database from the migration files and `seed.sql`.
 
 #### Useful links
 - [Local Development](https://supabase.com/docs/guides/cli/local-development)
