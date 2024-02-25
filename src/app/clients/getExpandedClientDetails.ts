@@ -62,13 +62,12 @@ export const familyCountToFamilyCategory = (count: number): string => {
 };
 
 export interface ExpandedClientDetails extends Data {
-    primaryKey: string;
     fullName: string;
-    phoneNumber: string;
-    deliveryInstructions: string;
     address: string;
+    deliveryInstructions: string;
+    phoneNumber: string;
     household: string;
-    ageAndGenderOfChildren: string;
+    children: string;
     dietaryRequirements: string;
     feminineProducts: string;
     babyProducts: boolean | null;
@@ -79,13 +78,12 @@ export interface ExpandedClientDetails extends Data {
 
 export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientDetails => {
     return {
-        primaryKey: client.primary_key,
         fullName: client.full_name,
-        phoneNumber: client.phone_number,
-        deliveryInstructions: client.delivery_instructions,
         address: formatAddressFromClientDetails(client),
+        deliveryInstructions: client.delivery_instructions,
+        phoneNumber: client.phone_number,
         household: formatHouseholdFromFamilyDetails(client.family),
-        ageAndGenderOfChildren: formatBreakdownOfChildrenFromFamilyDetails(client.family),
+        children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
         dietaryRequirements: client.dietary_requirements.join(", "),
         feminineProducts: client.feminine_products.join(", "),
         babyProducts: client.baby_food,

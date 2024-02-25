@@ -3,25 +3,16 @@
 import React from "react";
 import { Skeleton } from "@mui/material";
 import styled from "styled-components";
+import { DataViewerContainer, DataViewerItem } from "./DataViewer";
 
 const SkeletonKey = styled(Skeleton)`
-    display: inline-block;
-    color: transparent;
-    border-radius: 0.7em;
+    flex: 0 0 30%;
     padding: 0.2em 0.5em;
+    color: transparent;
 `;
 
 const SkeletonValue = styled(Skeleton)`
     padding: 0.2em 0.5em;
-`;
-
-const SkeletonItem = styled.div`
-    padding-bottom: 1em;
-`;
-
-const SkeletonDiv = styled.div`
-    width: 1000px;
-    max-width: 100%;
 `;
 
 const defaultFieldPlaceholders = [
@@ -38,16 +29,16 @@ interface Props {
 
 const DataViewerFallback: React.FC<Props> = ({ fieldPlaceholders = defaultFieldPlaceholders }) => {
     return (
-        <SkeletonDiv>
+        <DataViewerContainer>
             {fieldPlaceholders.map((placeholder, index) => {
                 return (
-                    <SkeletonItem key={index}>
+                    <DataViewerItem key={index}>
                         <SkeletonKey variant="text">{placeholder}</SkeletonKey>
                         <SkeletonValue variant="text" width={200} />
-                    </SkeletonItem>
+                    </DataViewerItem>
                 );
             })}
-        </SkeletonDiv>
+        </DataViewerContainer>
     );
 };
 

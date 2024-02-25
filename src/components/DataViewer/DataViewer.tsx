@@ -10,26 +10,28 @@ export interface Data {
     [key: string]: valueType;
 }
 
-const Key = styled.div`
-    color: ${(props) => props.theme.primary.foreground[1]};
-    background-color: ${(props) => props.theme.primary.background[1]};
+export const DataViewerContainer = styled.div`
+    width: 800px;
+    max-width: 100%;
 
-    display: inline-block;
-    border-radius: 0.7em;
+    display: flex;
+    flex-direction: column;
+`;
+
+export const DataViewerItem = styled.div`
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 0.5em;
+`;
+
+const Key = styled.div`
+    flex: 0 0 30%;
+    font-weight: 600;
     padding: 0.2em 0.5em;
 `;
 
 const Value = styled.div`
     padding: 0.2em 0.5em;
-`;
-
-const EachItem = styled.div`
-    padding-bottom: 1em;
-`;
-
-const ContentDiv = styled.div`
-    width: 1000px;
-    max-width: 100%;
 `;
 
 const valueIsEmpty = (value: valueType): boolean => {
@@ -54,14 +56,14 @@ export interface DataViewerProps {
 
 const DataViewer: React.FC<DataViewerProps> = (props) => {
     return (
-        <ContentDiv>
+        <DataViewerContainer>
             {Object.entries(props.data).map(([key, value]) => (
-                <EachItem key={key}>
+                <DataViewerItem key={key}>
                     <Key>{formatCamelCaseKey(key)}</Key>
                     <Value>{formatDisplayValue(value)}</Value>
-                </EachItem>
+                </DataViewerItem>
             ))}
-        </ContentDiv>
+        </DataViewerContainer>
     );
 };
 export default DataViewer;
