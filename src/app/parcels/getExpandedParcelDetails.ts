@@ -14,6 +14,10 @@ export const getRawParcelDetails = async (parcelId: string) => {
         voucher_number,
         packing_datetime,
 
+        collection_centre:collection_centres (
+            name
+         ),
+
         client:clients(
             primary_key,
             full_name,
@@ -28,14 +32,7 @@ export const getRawParcelDetails = async (parcelId: string) => {
             family:families(
                 age,
                 gender
-            ),
-
-            dietary_requirements,
-            feminine_products,
-            baby_food,
-            pet_food,
-            other_items,
-            extra_information
+            )
         )
 
     `
@@ -75,19 +72,14 @@ export const formatDatetimeAsDate = (datetime: Date | string | null): string => 
 export interface ExpandedParcelDetails extends Data {
     voucherNumber: string;
     fullName: string;
+    address: string;
+    deliveryInstructions: string;
     phoneNumber: string;
+    household: string;
+    children: string;
     packingDate: string;
     packingTime: string;
-    deliveryInstructions: string;
-    address: string;
-    household: string;
-    ageAndGenderOfChildren: string;
-    dietaryRequirements: string;
-    feminineProducts: string;
-    babyProducts: boolean | null;
-    petFood: string;
-    otherRequirements: string;
-    extraInformation: string;
+    collection: string;
 }
 
 export const rawDataToExpandedParcelDetails = (
@@ -97,19 +89,14 @@ export const rawDataToExpandedParcelDetails = (
         return {
             voucherNumber: "",
             fullName: "",
+            address: "",
+            deliveryInstructions: "",
             phoneNumber: "",
+            household: "",
+            children: "",
             packingDate: "",
             packingTime: "",
-            deliveryInstructions: "",
-            address: "",
-            household: "",
-            ageAndGenderOfChildren: "",
-            dietaryRequirements: "",
-            feminineProducts: "",
-            babyProducts: null,
-            petFood: "",
-            otherRequirements: "",
-            extraInformation: "",
+            collection: "",
         };
     }
 
@@ -118,19 +105,14 @@ export const rawDataToExpandedParcelDetails = (
     return {
         voucherNumber: rawParcelDetails.voucher_number ?? "",
         fullName: client.full_name,
+        address: formatAddressFromClientDetails(client),
+        deliveryInstructions: client.delivery_instructions,
         phoneNumber: client.phone_number,
+        household: formatHouseholdFromFamilyDetails(client.family),
+        children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
         packingDate: formatDatetimeAsDate(rawParcelDetails.packing_datetime),
         packingTime: formatDatetimeAsTime(rawParcelDetails.packing_datetime),
-        deliveryInstructions: client.delivery_instructions,
-        address: formatAddressFromClientDetails(client),
-        household: formatHouseholdFromFamilyDetails(client.family),
-        ageAndGenderOfChildren: formatBreakdownOfChildrenFromFamilyDetails(client.family),
-        dietaryRequirements: client.dietary_requirements.join(", "),
-        feminineProducts: client.feminine_products.join(", "),
-        babyProducts: client.baby_food,
-        petFood: client.pet_food.join(", "),
-        otherRequirements: client.other_items.join(", "),
-        extraInformation: client.extra_information,
+        collection: rawParcelDetails.collection_centre?.name ?? "",
     };
 };
 

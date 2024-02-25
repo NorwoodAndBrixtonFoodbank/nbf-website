@@ -4,19 +4,14 @@ import DataViewerFallback from "@/components/DataViewer/DataViewerFallback";
 const clientDetailFields = [
     "VOUCHER #",
     "FULL NAME",
+    "ADDRESS",
     "PHONE NUMBER",
+    "DELIVERY_INSTRUCTIONS",
+    "HOUSEHOLD",
+    "CHILDREN",
     "PACKING DATE",
     "PACKING TIME",
-    "DELIVERY_INSTRUCTIONS",
-    "ADDRESS",
-    "HOUSEHOLD",
-    "AGE & GENDER OF CHILDREN",
-    "DIETARY REQUIREMENTS",
-    "FEMININE PRODUCTS",
-    "BABY PRODUCTS",
-    "PET FOOD",
-    "OTHER REQUIREMENTS",
-    "EXTRA INFORMATION",
+    "COLLECTION",
 ];
 
 const ExpandedParcelDetailsFallback: React.FC<{}> = () => {

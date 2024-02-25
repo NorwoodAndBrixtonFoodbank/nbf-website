@@ -63,6 +63,10 @@ const sampleRawExpandedClientDetails: RawParcelDetails = {
     voucher_number: "VOUCHER_1",
     packing_datetime: "2023-08-04T13:30:00+00:00",
 
+    collection_centre: {
+        name: "A COLLECTION CENTRE",
+    },
+
     client: {
         primary_key: "PRIMARY_KEY_1",
         full_name: "CLIENT NAME",
@@ -79,17 +83,10 @@ const sampleRawExpandedClientDetails: RawParcelDetails = {
             { age: 5, gender: "male" },
             { age: 24, gender: "other" },
         ],
-
-        dietary_requirements: ["Gluten Free", "Halal", "No Pasta"],
-        feminine_products: ["Tampons", "Incontinence Pads"],
-        baby_food: true,
-        pet_food: ["Cat", "Dog"],
-        other_items: ["Garlic", "Chillies", "Hot Water Bottles"],
-        extra_information: "EXTRA CLIENT INFORMATION",
     },
 };
 
-describe("Clients Page", () => {
+describe("Parcels Page", () => {
     describe("Backend Processing for Table Data", () => {
         it("Fields are set correctly", () => {
             const result = processingDataToParcelsTableData(
@@ -164,7 +161,7 @@ describe("Clients Page", () => {
         });
     });
 
-    describe("Backend Processing for Expanded Client Details", () => {
+    describe("Backend Processing for Expanded Parcel Details", () => {
         it("Fields are set correctly", () => {
             const expandedClientDetails = rawDataToExpandedParcelDetails(
                 sampleRawExpandedClientDetails
@@ -178,19 +175,14 @@ describe("Clients Page", () => {
             expect(expandedClientDetails).to.deep.equal({
                 voucherNumber: "VOUCHER_1",
                 fullName: "CLIENT NAME",
+                address: "Address Line 1, Address Line 2, TOWN, SW1A 2AA",
+                deliveryInstructions: "INSTRUCTIONS FOR DELIVERY",
                 phoneNumber: "PHONE NUMBER",
+                household: "Family of 3 Occupants (2 adults, 1 child)",
+                children: "5-year-old male",
                 packingDate: "04/08/2023",
                 packingTime: expectedTime,
-                deliveryInstructions: "INSTRUCTIONS FOR DELIVERY",
-                address: "Address Line 1, Address Line 2, TOWN, SW1A 2AA",
-                household: "Family of 3 Occupants (2 adults, 1 child)",
-                ageAndGenderOfChildren: "5-year-old male",
-                dietaryRequirements: "Gluten Free, Halal, No Pasta",
-                feminineProducts: "Tampons, Incontinence Pads",
-                babyProducts: true,
-                petFood: "Cat, Dog",
-                otherRequirements: "Garlic, Chillies, Hot Water Bottles",
-                extraInformation: "EXTRA CLIENT INFORMATION",
+                collection: "A COLLECTION CENTRE",
             });
         });
 
