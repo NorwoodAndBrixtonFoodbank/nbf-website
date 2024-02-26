@@ -8,7 +8,7 @@ export function getLocalSupabaseClient(): SupabaseClient {
         throw new Error("Supabse URL it not specified");
     }
 
-    if (!supabaseUrl.includes("localhost") && !supabaseUrl.includes('127.0.0.1')) {
+    if (!supabaseUrl.includes("localhost") && !supabaseUrl.includes("127.0.0.1")) {
         throw new Error("Supabse URL needs to be a localhost port");
     }
 
