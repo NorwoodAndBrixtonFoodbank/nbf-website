@@ -51,14 +51,7 @@ const eventNamesWithNoData = [
     "Request Deleted",
 ];
 
-const possibleParcelPostCodes = [
-    "E1 6AA",
-    "E1 6AD",
-    "E1 6AG",
-    "CB2 3JU",
-    "CB24 4RT",
-    "CB8 9LJ"
-]
+const possibleParcelPostCodes = ["E1 6AA", "E1 6AD", "E1 6AG", "CB2 3JU", "CB24 4RT", "CB8 9LJ"];
 
 const earliestDate = new Date(2024, 0, 1); // 2024/01/01
 const latestDate = new Date(2025, 0, 1); // 2025/01/01

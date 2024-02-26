@@ -5,15 +5,15 @@ export function getLocalSupabaseClient(): SupabaseClient {
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl) {
-        throw new Error("Supabse URL it not specified");
+        throw new Error("Supabase URL is not specified");
     }
 
     if (!supabaseUrl.includes("localhost") && !supabaseUrl.includes("127.0.0.1")) {
-        throw new Error("Supabse URL needs to be a localhost port");
+        throw new Error("Supabase URL needs to be a localhost port");
     }
 
     if (!supabaseKey) {
-        throw new Error("Supabase key is not ");
+        throw new Error("Supabase key is not set");
     }
 
     return createClient(supabaseUrl, supabaseKey, {

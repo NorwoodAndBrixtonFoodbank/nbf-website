@@ -114,7 +114,7 @@ This
 Migrations aren't currently integrated into the CI pipeline, so need to be applied manually to other environments when promoting changes. To apply manually:
 * Run `supabase link --project-ref <PROJECT_ID>` to select the target database
 * Run `supabase db pull` to capture any changes required for the local database to catch up with the deployed database 
-* `supbase db push` to apply outstanding migrations
+* `supabase db push` to apply outstanding migrations
 
 To check they've been applied correctly, either:
 * `supabase db diff --linked` to run against the linked deployed database
