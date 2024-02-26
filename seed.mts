@@ -54,7 +54,7 @@ const eventNamesWithNoData = [
 const earliestDate = new Date(2024, 0, 1); // 2024/01/01
 const latestDate = new Date(2025, 0, 1); // 2025/01/01
 
-async function generateSeed(): Proimse<void> {
+async function generateSeed(): Promise<void> {
     const seed = await createSeedClient({
         dryRun: process.env.DRY !== "0",
     });
@@ -101,6 +101,10 @@ async function generateSeed(): Proimse<void> {
         {
             name: "Clapham - St Stephens Church",
             acronym: "CLP-SC",
+        },
+        {
+            name: "Delivery",
+            acronym: "DLVR",
         },
     ]);
 

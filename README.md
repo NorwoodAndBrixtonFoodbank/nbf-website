@@ -74,7 +74,6 @@ Database migrations are tracked under /supabase/migrations.
 * Start Supabase services on your local machine. This command will give you the "DB URL" you can use to connect to the database.
   ```shell
   supabase start
-  supabase functions serve
   ```
 
 #### Update the TypeScript database type definition
@@ -130,7 +129,7 @@ npx tsx seed.mts > supabase/seed.sql
 ```
 To rebuild the database from the migration files and `seed.sql`, run
 ```shell
-supabase db reset
+npm run dev:reset_supabase
 ```
 
 #### Useful links
