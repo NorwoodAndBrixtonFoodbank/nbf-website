@@ -54,6 +54,8 @@ const eventNamesWithNoData = [
 const earliestDate = new Date(2024, 0, 1); // 2024/01/01
 const latestDate = new Date(2025, 0, 1); // 2025/01/01
 
+generateSeed();
+
 async function generateSeed(): Promise<void> {
     const seed = await createSeedClient({
         dryRun: process.env.DRY !== "0",
@@ -197,5 +199,3 @@ function getPseudoRandomDateBetween(start: Date, end: Date, seed: string): Date 
 
     return new Date(start.getTime() + randomNumberGenerator() * (end.getTime() - start.getTime()));
 }
-
-generateSeed();

@@ -11,15 +11,8 @@ type Role = "admin" | "caller";
 async function createAdminUser(): Promise<void> {
     const supabase = getLocalSupabaseClient();
 
-    const adminEmail = "admin@example.com";
-    const adminPassword = "admin123";
-    await createUser(supabase, adminEmail, adminPassword, "admin");
-    console.log(`Created an admin user: ${adminEmail} (${adminPassword})`);
-
-    const callerEmail = "caller@example.com";
-    const callerPassword = "caller123";
-    await createUser(supabase, callerEmail, callerPassword, "caller");
-    console.log(`Created a caller user: ${callerEmail} (${callerPassword})`);
+    await createUser(supabase, "admin@example.com", "admin123", "admin");
+    await createUser(supabase, "caller@example.com", "caller123", "caller");
 }
 
 async function createUser(
@@ -41,4 +34,6 @@ async function createUser(
     if (error) {
         throw new Error(`Failed to create ${role} user: ${email}. ${error}`);
     }
+
+    console.log(`Created a ${role} user: ${email} (${password})`);
 }
