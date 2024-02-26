@@ -106,15 +106,16 @@ Ensure you have all the migration files saved in `supabase/migrations` and run
 npm run dev:reset_supabase
 ```
 This 
-- resets the supabase database based on the migration files
+- resets the Supabase database based on the migration files
 - create an admin user and a caller user
 - uploads the congestion charge postcodes to the local Supabase storage
 
 #### Apply migrations to deployed database
 Migrations aren't currently integrated into the CI pipeline, so need to be applied manually to other environments when promoting changes. To apply manually:
 * Run `supabase link --project-ref <PROJECT_ID>` to select the target database
-* Run `supabase db pull` to capture any changes required for the local database to catch up with the deployed database 
-* `supabase db push` to apply outstanding migrations
+* Run `supabase migration list` to compare what migrations are applied locally and on remote
+* Run `supabase db push --dry-run` to check which outstanding migrations would be pushed 
+* Run `supabase db push` to apply the migrations
 
 To check they've been applied correctly, either:
 * `supabase db diff --linked` to run against the linked deployed database
