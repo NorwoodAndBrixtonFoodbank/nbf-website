@@ -1,4 +1,4 @@
-import supabaseClient from "@/supabaseClient";
-import supabaseServer from "@/supabaseServer";
+import { Database } from "@/databaseTypesFile";
+import { SupabaseClient } from "@supabase/supabase-js";
 
-export type Supabase = typeof supabaseClient | typeof supabaseServer;
+export type Supabase = SupabaseClient<Database>;
