@@ -51,6 +51,15 @@ const eventNamesWithNoData = [
     "Request Deleted",
 ];
 
+const possibleParcelPostCodes = [
+    "E1 6AA",
+    "E1 6AD",
+    "E1 6AG",
+    "CB2 3JU",
+    "CB24 4RT",
+    "CB8 9LJ"
+]
+
 const earliestDate = new Date(2024, 0, 1); // 2024/01/01
 const latestDate = new Date(2025, 0, 1); // 2025/01/01
 
@@ -71,7 +80,7 @@ async function generateSeed(): Promise<void> {
             address2: (ctx) => copycat.streetAddress(ctx.seed),
             addressTown: (ctx) => copycat.city(ctx.seed),
             addressCounty: (ctx) => copycat.state(ctx.seed),
-            addressPostcode: (ctx) => copycat.countryCode(ctx.seed),
+            addressPostcode: (ctx) => copycat.oneOf(ctx.seed, possibleParcelPostCodes),
             deliveryInstructions: (ctx) => copycat.sentence(ctx.seed, { maxWords: 20 }),
             familyId: (ctx) => copycat.uuid(ctx.seed),
             dietaryRequirements: (ctx) =>
