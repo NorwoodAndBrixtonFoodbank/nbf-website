@@ -92,9 +92,9 @@ You can regenerate the types
 You can either
 - Access the local Supabase console to update tables, and use 
   ```shell
-  supabase db diff > supabase/migrations/<date_time_and_name_of_migration>.sql
+  supabase db diff -f <name_of_migration>
   ```
-  to generate a migration sql file, or
+  to generate a migration sql file (recommended), or
 - Create a migration file using 
   ```shell
   supabase migration new <name_of_migration>
@@ -104,8 +104,12 @@ You can either
 #### Apply migrations to local database
 Ensure you have all the migration files saved in `supabase/migrations` and run
 ```bash
-supabase db reset
+npm run dev:reset_supabase
 ```
+This 
+- resets the supabase database based on the migration files
+- create an admin user and a caller user
+- uploads the congestion charge postcodes to the local Supabase storage
 
 #### Apply migrations to deployed database
 Migrations aren't currently integrated into the CI pipeline, so need to be applied manually to other environments when promoting changes. To apply manually:

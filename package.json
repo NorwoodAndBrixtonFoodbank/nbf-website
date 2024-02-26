@@ -24,7 +24,8 @@
     "coverage:server": "nyc npm run test:runner_server_dev",
     "coverage:report": "nyc report --reporter html && nyc report --reporter text-summary",
     "dev:create_admin_user": "tsc supabase/tools/create-admin-user.ts && node supabase/tools/create-admin-user.js",
-    "dev:create_bucket": "tsc supabase/tools/createStorage.ts && node supabase/tools/createStorage.js"
+    "dev:create_bucket": "tsc supabase/tools/createStorage.ts && node supabase/tools/createStorage.js",
+    "dev:reset_supabase": "supabase db reset && npm run dev:create_admin_user && npm run dev:create_bucket"
   },
   "nyc": {
     "all": true,
