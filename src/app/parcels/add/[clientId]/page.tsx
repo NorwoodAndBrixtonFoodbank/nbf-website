@@ -14,9 +14,8 @@ interface AddParcelParameters {
 }
 
 const AddParcels = async ({ params }: AddParcelParameters): Promise<React.ReactElement> => {
-    const [deliveryPrimaryKey, collectionCentresLabelsAndValues] = await getCollectionCentresInfo(
-        supabase
-    );
+    const [deliveryPrimaryKey, collectionCentresLabelsAndValues] =
+        await getCollectionCentresInfo(supabase);
 
     return (
         <main>

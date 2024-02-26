@@ -91,9 +91,9 @@ You can regenerate the types
 You can either
 - Access the local Supabase console to update tables, and use 
   ```shell
-  supabase db diff > supabase/migrations/<date_time_and_name_of_migration>.sql
+  supabase db diff -f <name_of_migration>
   ```
-  to generate a migration sql file, or
+  to generate a migration sql file (recommended), or
 - Create a migration file using 
   ```shell
   supabase migration new <name_of_migration>
@@ -103,19 +103,34 @@ You can either
 #### Apply migrations to local database
 Ensure you have all the migration files saved in `supabase/migrations` and run
 ```bash
-supabase db reset
+npm run dev:reset_supabase
 ```
+This 
+- resets the supabase database based on the migration files
+- create an admin user and a caller user
+- uploads the congestion charge postcodes to the local Supabase storage
 
 #### Apply migrations to deployed database
 Migrations aren't currently integrated into the CI pipeline, so need to be applied manually to other environments when promoting changes. To apply manually:
 * Run `supabase link --project-ref <PROJECT_ID>` to select the target database
 * Run `supabase db pull` to capture any changes required for the local database to catch up with the deployed database 
-* `supbase db push` to apply outstanding migrations
+* `supabase db push` to apply outstanding migrations
 
 To check they've been applied correctly, either:
 * `supabase db diff --linked` to run against the linked deployed database
 * `supabase db diff` to run against the local database
 * `supabase migration list` on both dev and target databases can be compared
+
+#### Seed the local database
+The local database is generated based on the code in `seed.mts`. This uses Snaplet to generate a large amount of data.
+To generate te SQL queries needed to populate database, run
+```shell
+npx tsx seed.mts > supabase/seed.sql
+```
+To rebuild the database from the migration files and `seed.sql`, run
+```shell
+npm run dev:reset_supabase
+```
 
 #### Useful links
 - [Local Development](https://supabase.com/docs/guides/cli/local-development)
