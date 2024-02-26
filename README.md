@@ -74,6 +74,7 @@ Database migrations are tracked under /supabase/migrations.
 * Start Supabase services on your local machine. This command will give you the "DB URL" you can use to connect to the database.
   ```shell
   supabase start
+  supabase functions serve
   ```
 
 #### Update the TypeScript database type definition
