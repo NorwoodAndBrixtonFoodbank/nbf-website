@@ -4,11 +4,11 @@ import { getLocalSupabaseClient } from "./getLocalSupabaseClient";
 
 dotenv.config({ path: "./.env.local" });
 
-createAdminUser();
+createAdminAndCallerUsers();
 
 type Role = "admin" | "caller";
 
-async function createAdminUser(): Promise<void> {
+async function createAdminAndCallerUsers(): Promise<void> {
     const supabase = getLocalSupabaseClient();
 
     await createUser(supabase, "admin@example.com", "admin123", "admin");

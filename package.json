@@ -23,7 +23,7 @@
     "coverage:run_tests": "start-server-and-test coverage:server http://localhost:3200 test:runner",
     "coverage:server": "nyc npm run test:runner_server_dev",
     "coverage:report": "nyc report --reporter html && nyc report --reporter text-summary",
-    "dev:create_admin_user": "tsc supabase/tools/create-admin-user.ts && node supabase/tools/create-admin-user.js",
+    "dev:create_admin_user": "tsc supabase/tools/createAdminAndCallerUsers.ts && node supabase/tools/createAdminAndCallerUsers.js",
     "dev:create_bucket": "tsc supabase/tools/createStorage.ts && node supabase/tools/createStorage.js",
     "dev:reset_supabase": "supabase db reset && npm run dev:create_admin_user && npm run dev:create_bucket"
   },
