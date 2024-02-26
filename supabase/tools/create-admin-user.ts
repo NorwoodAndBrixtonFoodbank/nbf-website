@@ -1,5 +1,6 @@
 import * as dotenv from "dotenv";
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { getLocalSupabaseClient } from "./getLocalSupabaseClient";
 
 dotenv.config({ path: "./.env.local" });
 
@@ -8,7 +9,7 @@ createAdminUser();
 type Role = "admin" | "caller";
 
 async function createAdminUser(): Promise<void> {
-    const supabase = getSupabaseClient();
+    const supabase = getLocalSupabaseClient();
 
     const adminEmail = "admin@example.com";
     const adminPassword = "admin123";
@@ -19,26 +20,6 @@ async function createAdminUser(): Promise<void> {
     const callerPassword = "caller123";
     await createUser(supabase, callerEmail, callerPassword, "caller");
     console.log(`Created a caller user: ${callerEmail} (${callerPassword})`);
-}
-
-function getSupabaseClient(): SupabaseClient {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl) {
-        throw new Error("Supabse URL it not specified");
-    }
-
-    if (!supabaseKey) {
-        throw new Error("Supabase key is not ");
-    }
-
-    return createClient(supabaseUrl, supabaseKey, {
-        auth: {
-            persistSession: false,
-            autoRefreshToken: false,
-        },
-    });
 }
 
 async function createUser(
