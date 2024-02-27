@@ -116,12 +116,13 @@ const fetchAndFormatParcelTablesData = async (
 };
 
 const ParcelsPage: React.FC<{}> = () => {
-    const today = dayjs();
+    const todayStart = dayjs().startOf("day");
+    const todayEnd = dayjs().endOf("day");
 
     const [isLoading, setIsLoading] = useState(true);
     const [packingDateRange, setPackingDateRange] = useState<DateRangeState>({
-        from: today,
-        to: today,
+        from: todayStart,
+        to: todayEnd,
     });
     const [tableData, setTableData] = useState<ParcelsTableRow[]>([]);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
