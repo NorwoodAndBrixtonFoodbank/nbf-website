@@ -32,6 +32,8 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
 * Run website locally (`npm run dev`) and try to log in with the Test User (see Keeper) to verify it all works!
   * Note that the login page can be slightly flaky, but if it doesn't immediately error then it should be signed in!
     Pressing any of the navigation bar buttons will not then redirect you to the login page.
+* Follow the [Update and connect to the local database](#update-and-connect-to-the-local-database) and [Apply migrations to local database](#apply-migrations-to-local-database) steps to set up the local database
+* Use the output of `supabase start` to replace the details in `.env.local` so that our website can connect to the local database.
 
 * The best place to start is `src/app`, where the website is based! Look at the folder structure for an idea of what the
   website navigation will be.
@@ -70,14 +72,28 @@ Database migrations are tracked under /supabase/migrations.
   ```shell
   supabase link --project-ref <PROJECT_ID>
   ```
+  You will be prompted for the database password, which can be found in Keeper.
 * Pull any new changes from the database.
   ```shell
-  supabase pull
+  supabase db pull
   ```
 * Start Supabase services on your local machine. This command will give you the "DB URL" you can use to connect to the database.
   ```shell
   supabase start
   ```
+
+#### Make database changes
+You can either
+- Access the local Supabase console to update tables, and use
+  ```shell
+  supabase db diff -f <name_of_migration>
+  ```
+  to generate a migration sql file (recommended), or
+- Create a migration file using
+  ```shell
+  supabase migration new <name_of_migration>
+  ```
+  and write sql queries yourself
 
 #### Update the TypeScript database type definition
 You can regenerate the types
@@ -89,19 +105,6 @@ You can regenerate the types
   ```shell
   supabase gen types typescript --project-id <PROJECT_ID> --schema public > src/databaseTypesFile.ts
   ```
-  
-#### Make database changes
-You can either
-- Access the local Supabase console to update tables, and use 
-  ```shell
-  supabase db diff -f <name_of_migration>
-  ```
-  to generate a migration sql file (recommended), or
-- Create a migration file using 
-  ```shell
-  supabase migration new <name_of_migration>
-  ```
-  and write sql queries yourself
 
 #### Apply migrations to local database
 Ensure you have all the migration files saved in `supabase/migrations` and run
@@ -109,7 +112,7 @@ Ensure you have all the migration files saved in `supabase/migrations` and run
 npm run dev:reset_supabase
 ```
 This 
-- resets the Supabase database based on the migration files
+- resets the Supabase database based on the migration files and the seed data
 - create an admin user and a caller user
 - uploads the congestion charge postcodes to the local Supabase storage
 
