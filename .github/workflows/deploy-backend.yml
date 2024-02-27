@@ -24,6 +24,3 @@ jobs:
         run: npx supabase db push --dry-run
       - name: Apply the migration
         run: npx supabase db push
-
-
-
