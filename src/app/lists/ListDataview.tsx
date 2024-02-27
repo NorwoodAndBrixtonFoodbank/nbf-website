@@ -102,8 +102,8 @@ const ListsDataView: React.FC<Props> = (props) => {
                     .map(([key]) => [
                         key,
                         {
-                            quantity: row[`${key}_quantity` as keyof Schema["lists"]],
-                            notes: row[`${key}_notes` as keyof Schema["lists"]],
+                            quantity: row[`quantity_for_${key}` as keyof Schema["lists"]],
+                            notes: row[`notes_for_${key}` as keyof Schema["lists"]],
                         },
                     ])
             ),

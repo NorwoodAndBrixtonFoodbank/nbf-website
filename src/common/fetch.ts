@@ -107,9 +107,16 @@ export const fetchLists = async (supabase: Supabase): Promise<Schema["lists"][]>
 };
 
 export const fetchComment = async (supabase: Supabase): Promise<string> => {
-    const { data, error } = await supabase.from("website_data").select().eq("name", "lists_text");
+    const { data, error } = await supabase
+        .from("website_data")
+        .select()
+        .eq("name", "lists_text")
+        .limit(1)
+        .single();
+
     if (error) {
         throw new DatabaseError("fetch", "lists comment");
     }
-    return data[0].value ?? "";
+
+    return data.value;
 };
