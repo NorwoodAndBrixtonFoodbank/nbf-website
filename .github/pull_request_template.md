@@ -1,8 +1,15 @@
-[Please replace this line with a brief summary of what you've changed, and tick the boxes below once complete]
+## What's changed
+REPLACE_THIS_LINE
 
-- [ ] Make sure you've verified it works on dev via `npm run dev`
-- [ ] Make sure you've verified it works on prod via `npm run build` and `npm run start`
+## Screenshots / Videos
+| Before     | After      |
+|------------|------------|
+| paste_here | paste_here |
+
+## Checklist
+- [ ] Make sure you've verified it works via `npm run dev`
+- [ ] Make sure you've verified it works via `npm run build && npm run start`
 - [ ] Make sure you've fixed all linting problems with `npm run lint_fix`
-  - Will also be automatically checked on pull request!
+  - Will also be automatically checked on pull request
 - [ ] Make sure you've tested via `npm run test`
-  - Will also be automatically checked on pull request!
+  - Will also be automatically checked on pull request
