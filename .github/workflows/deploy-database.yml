@@ -28,7 +28,6 @@ jobs:
 
   reset-dev-database-data:
     name: Reset data in dev database
-    needs: deploy-dev-database
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     env:
