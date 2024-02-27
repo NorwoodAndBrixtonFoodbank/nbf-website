@@ -1,6 +1,5 @@
 name: Deploy database
 on:
-  pull_request:
   workflow_dispatch:
   push:
     paths:
@@ -29,7 +28,8 @@ jobs:
 
   reset-dev-database-data:
     name: Reset data in dev database
-#    if: github.event_name == 'workflow_dispatch'
+    needs: deploy-dev-database
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     env:
       SUPABASE_DEV_PROJECT_ID: ${{ secrets.SUPABASE_DEV_PROJECT_ID }}
