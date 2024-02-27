@@ -1,6 +1,5 @@
 name: Deploy backend
 on:
-  pull_request:
   push:
     paths:
       supabase/migrations/**.sql
@@ -22,7 +21,7 @@ jobs:
       - name: Link to the project
         run: npx supabase link --project-ref $SUPABASE_DEV_PROJECT_ID
       - name: Dry run the migration
-        run: npx supabase db push --dry-run --debug
+        run: npx supabase db push --dry-run
       - name: Apply the migration
         run: npx supabase db push
 
