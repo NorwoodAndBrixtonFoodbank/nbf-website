@@ -3,12 +3,13 @@ import React from "react";
 import ParcelCalendar from "@/app/calendar/ParcelCalendar";
 import { ParcelsWithExtraFields } from "@/app/calendar/parcelCalendarFunctions";
 import { Schema } from "@/databaseUtils";
-import supabase from "@/supabaseServer";
+import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { DatabaseError } from "@/app/errorClasses";
 
 export const revalidate = 0;
 
 const getCollectionCentres = async (): Promise<Schema["collection_centres"]["name"][]> => {
+    const supabase = getSupabaseServerComponentClient();
     const { data, error } = await supabase.from("collection_centres").select("name");
     if (error) {
         throw new Error("Database error");
@@ -18,6 +19,7 @@ const getCollectionCentres = async (): Promise<Schema["collection_centres"]["nam
 };
 
 const getParcelsWithCollectionDate = async (): Promise<ParcelsWithExtraFields[]> => {
+    const supabase = getSupabaseServerComponentClient();
     const { data, error } = await supabase
         .from("parcels")
         .select(

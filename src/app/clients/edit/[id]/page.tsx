@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 import React from "react";
-import supabase from "@/supabaseServer";
+import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import ClientForm from "@/app/clients/form/ClientForm";
 import { Errors, FormErrors } from "@/components/Form/formFunctions";
 import autofill from "@/app/clients/edit/[id]/autofill";
@@ -14,6 +14,7 @@ interface EditClientsParameters {
 const EditClients: ({ params }: EditClientsParameters) => Promise<React.ReactElement> = async ({
     params,
 }: EditClientsParameters) => {
+    const supabase = getSupabaseServerComponentClient();
     const clientData = await fetchClient(params.id, supabase);
     const familyData = await fetchFamily(clientData.family_id, supabase);
     const initialFields = autofill(clientData, familyData);
