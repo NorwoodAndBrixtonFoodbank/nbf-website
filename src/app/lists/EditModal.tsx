@@ -82,6 +82,23 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
             headerId="editList"
             isOpen={data !== undefined}
             onClose={onClose}
+            footer={
+                <>
+                    <Button variant="contained" color="primary" onClick={onSubmit}>
+                        Submit
+                    </Button>
+                    <Snackbar
+                        message={errorMsg}
+                        autoHideDuration={3000}
+                        onClose={() => setErrorMsg(null)}
+                        open={errorMsg !== null}
+                    >
+                        <SnackBarDiv>
+                            <Alert severity="error">{errorMsg}</Alert>
+                        </SnackBarDiv>
+                    </Snackbar>
+                </>
+            }
         >
             <ModalInner>
                 <h3>Description</h3>
@@ -109,19 +126,6 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                         </DisplayContents>
                     );
                 })}
-                <Button variant="contained" color="primary" onClick={onSubmit}>
-                    Submit
-                </Button>
-                <Snackbar
-                    message={errorMsg}
-                    autoHideDuration={3000}
-                    onClose={() => setErrorMsg(null)}
-                    open={errorMsg !== null}
-                >
-                    <SnackBarDiv>
-                        <Alert severity="error">{errorMsg}</Alert>
-                    </SnackBarDiv>
-                </Snackbar>
             </ModalInner>
         </Modal>
     );

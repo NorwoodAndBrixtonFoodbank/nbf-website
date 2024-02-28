@@ -31,6 +31,20 @@ const Header = styled.div`
     width: 100%;
 `;
 
+const Footer = styled.div`
+    display: flex;
+    position: sticky;
+    justify-content: center;
+    align-items: center;
+    color: ${(props) => props.theme.primary.largeForeground[2]};
+    background-color: ${(props) => props.theme.primary.background[2]};
+
+    font-size: 1.5em;
+    font-weight: bolder;
+    padding: 0.75em 1em;
+    width: 100%;
+`;
+
 const Content = styled.div`
     overflow-y: auto;
     overflow-wrap: break-word;
@@ -73,6 +87,7 @@ export interface ModalProps {
     onClose: () => void;
     headerId: string;
     className?: string;
+    footer: ReactNode;
 }
 
 const StyledIcon = styled(Icon)`
@@ -95,6 +110,7 @@ const Modal: React.FC<ModalProps> = (props) => {
                 </CloseButton>
             </Header>
             <Content>{props.children}</Content>
+            <Footer className="footer">{props.footer}</Footer>
         </StyledDialog>
     );
 };
