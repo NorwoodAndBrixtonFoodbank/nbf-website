@@ -77,7 +77,12 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
     };
 
     return (
-        <Modal header="Edit List" headerId="editList" isOpen={data !== undefined} onClose={onClose}>
+        <Modal
+            header={"Edit List Item - " + toSubmit.item_name}
+            headerId="editList"
+            isOpen={data !== undefined}
+            onClose={onClose}
+        >
             <ModalInner>
                 <h3>Description</h3>
                 <TextInput
