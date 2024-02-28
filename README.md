@@ -99,11 +99,11 @@ You can either
 You can regenerate the types
 - from the local database
   ```shell
-  supabase gen types typescript --local --schema public > src/databaseTypesFile.ts
+  npm run db:local:generate_types
   ```
 - from the deployed database
   ```shell
-  supabase gen types typescript --project-id <PROJECT_ID> --schema public > src/databaseTypesFile.ts
+  npm run db:remote:generate_types -- --project-id <PROJECT_ID>
   ```
 
 #### Apply migrations to local database
@@ -132,7 +132,7 @@ To check they've been applied correctly, either:
 The local database is generated based on the code in `seed.mts`. This uses Snaplet to generate a large amount of data.
 To generate te SQL queries needed to populate database, run
 ```shell
-npx tsx seed.mts > supabase/seed.sql
+npm run db:generate_seed
 ```
 To rebuild the database from the migration files and `seed.sql`, run
 ```shell
