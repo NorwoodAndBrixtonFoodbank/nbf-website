@@ -70,28 +70,28 @@ Database migrations are tracked under /supabase/migrations.
 #### Update and connect to the local database
 * Select the database to pull from. This will be our deployed dev database. 
   ```shell
-  supabase link --project-ref <PROJECT_ID>
+  npx supabase link --project-ref <PROJECT_ID>
   ```
   You will be prompted for the database password, which can be found in Keeper.
 * Pull any new changes from the database.
   ```shell
-  supabase db pull
+  npx supabase db pull
   ```
 * Start Supabase services on your local machine. This command will give you the "DB URL" you can use to connect to the database.
   ```shell
-  supabase start
+  npx supabase start
   ```
 
 #### Make database changes
 You can either
 - Access the local Supabase console to update tables, and use
   ```shell
-  supabase db diff -f <name_of_migration>
+  npx supabase db diff -f <name_of_migration>
   ```
   to generate a migration sql file (recommended), or
 - Create a migration file using
   ```shell
-  supabase migration new <name_of_migration>
+  npx supabase migration new <name_of_migration>
   ```
   and write sql queries yourself
 
@@ -106,38 +106,15 @@ You can regenerate the types
   npm run db:remote:generate_types -- --project-id <PROJECT_ID>
   ```
 
-#### Apply migrations to local database
-Ensure you have all the migration files saved in `supabase/migrations` and run
-```bash
-npm run dev:reset_supabase
-```
-This 
-- resets the Supabase database based on the migration files and the seed data
-- create an admin user and a caller user
-- uploads the congestion charge postcodes to the local Supabase storage
-
-#### Apply migrations to deployed database
-Migrations aren't currently integrated into the CI pipeline, so need to be applied manually to other environments when promoting changes. To apply manually:
-* Run `supabase link --project-ref <PROJECT_ID>` to select the target database
-* Run `supabase migration list` to compare what migrations are applied locally and on remote
-* Run `supabase db push --dry-run` to check which outstanding migrations would be pushed 
-* Run `supabase db push` to apply the migrations
-
-To check they've been applied correctly, either:
-* `supabase db diff --linked` to run against the linked deployed database
-* `supabase db diff` to run against the local database
-* `supabase migration list` on both dev and target databases can be compared
-
-#### Seed the local database
-The local database is generated based on the code in `seed.mts`. This uses Snaplet to generate a large amount of data.
-To generate te SQL queries needed to populate database, run
-```shell
-npm run db:generate_seed
-```
-To rebuild the database from the migration files and `seed.sql`, run
-```shell
-npm run dev:reset_supabase
-```
+#### Useful commands
+- `npx supabase migration list` to compare what migrations are applied locally and on remote
+- `npm run dev:reset_supabase` to
+  - reset the Supabase database based on the migration files and the seed data
+  - create an admin user and a caller user with the following credentials:
+    - admin@example.com (admin123)
+    - caller@example.com (caller123)
+  - upload the congestion charge postcodes to the local Supabase storage
+- `npm run db:generate_seed` to generate `seed.sql` based on `seed.mts`. This does not automatically put the data in the database. You'll need to run `npm run dev:reset_supabase`.
 
 #### Useful links
 - [Local Development](https://supabase.com/docs/guides/cli/local-development)
