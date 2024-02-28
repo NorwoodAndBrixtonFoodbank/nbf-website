@@ -36,7 +36,7 @@ const Footer = styled.div`
     justify-content: center;
     align-items: center;
     color: ${(props) => props.theme.primary.largeForeground[2]};
-    background-color: ${(props) => props.theme.primary.background[2]};
+    background-color: ${(props) => props.theme.main.background[3]};
 
     font-size: 1.5em;
     font-weight: bolder;
