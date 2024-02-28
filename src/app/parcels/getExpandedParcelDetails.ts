@@ -202,16 +202,10 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
 export const processEventsDetails = (
     events: Pick<Schema["events"], "event_data" | "event_name" | "timestamp">[]
 ): EventTableRow[] => {
-    const eventTableRows: EventTableRow[] = [];
-
-    for (const event of events) {
-        eventTableRows.push({
-            eventInfo: `${event.event_name}` + (event.event_data ? ` (${event.event_data})` : ""),
-            timestamp: new Date(event.timestamp),
-        });
-    }
-
-    return eventTableRows;
+    return events.map((event) => ({
+        eventInfo: event.event_name + (event.event_data ? ` (${event.event_data})` : ""),
+        timestamp: new Date(event.timestamp),
+    }));
 };
 
 const getExpandedParcelDetails = async (parcelId: string): Promise<ExpandedParcelDetails> => {
