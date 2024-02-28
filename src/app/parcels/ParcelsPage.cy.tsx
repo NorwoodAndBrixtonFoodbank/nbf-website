@@ -12,6 +12,7 @@ import {
     formatDatetimeAsDate,
     formatDatetimeAsTime,
     formatHouseholdFromFamilyDetails,
+    processEventsDetails,
     rawDataToExpandedParcelData,
     RawParcelDetails,
 } from "@/app/parcels/getExpandedParcelDetails";
@@ -278,6 +279,29 @@ describe("Parcels Page", () => {
                     { age: 26, gender: "male" },
                 ])
             ).to.eq("No Children");
+        });
+
+        it("processEventsDetails()", () => {
+            expect(
+                processEventsDetails([
+                    {
+                        event_name: "Event 1",
+                        timestamp: "2023-08-04T13:30:00+00:00",
+                        event_data: "",
+                    },
+                    {
+                        event_name: "Event 2",
+                        timestamp: "2023-06-04T15:30:00+00:00",
+                        event_data: "Message",
+                    },
+                ])
+            ).to.deep.eq([
+                { eventInfo: "Event 1", timestamp: new Date("2023-08-04T13:30:00+00:00") },
+                {
+                    eventInfo: "Event 2 (Message)",
+                    timestamp: new Date("2023-06-04T15:30:00+00:00"),
+                },
+            ]);
         });
     });
 });

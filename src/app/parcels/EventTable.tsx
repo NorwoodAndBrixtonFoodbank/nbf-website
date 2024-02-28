@@ -5,16 +5,16 @@ import Table, { TableHeaders } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
 
 export interface EventTableRow {
-    event: string;
+    eventInfo: string;
     timestamp: Date;
 }
 
 export const eventsTableHeaderKeysAndLabels: TableHeaders<EventTableRow> = [
-    ["event", "Event"],
+    ["eventInfo", "Event"],
     ["timestamp", "Timestamp"],
 ];
 
-const defaultShownHeaders: (keyof EventTableRow)[] = ["event", "timestamp"];
+const defaultShownHeaders: (keyof EventTableRow)[] = ["eventInfo", "timestamp"];
 
 export interface EventTableProps {
     tableData: EventTableRow[];
