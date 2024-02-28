@@ -2,7 +2,7 @@ import { Schema } from "@/databaseUtils";
 import { Data } from "@/components/DataViewer/DataViewer";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
-
+import { EventTableRow } from "./EventTable";
 export type RawParcelDetails = Awaited<ReturnType<typeof getRawParcelDetails>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -73,7 +73,7 @@ export const formatDatetimeAsDate = (datetime: Date | string | null): string => 
     return new Date(datetime).toLocaleDateString("en-GB");
 };
 
-export interface ExpandedParcelDetails extends Data {
+export interface ExpandedParcelData extends Data {
     voucherNumber: string;
     fullName: string;
     address: string;
@@ -84,12 +84,16 @@ export interface ExpandedParcelDetails extends Data {
     packingDate: string;
     packingTime: string;
     collection: string;
-    history: string;
 }
 
-export const rawDataToExpandedParcelDetails = (
+export interface ExpandedParcelDetails {
+    expandedParcelData: ExpandedParcelData,
+    events: EventTableRow[]
+}
+
+export const rawDataToExpandedParcelData = (
     rawParcelDetails: RawParcelDetails
-): ExpandedParcelDetails => {
+): ExpandedParcelData => {
     if (rawParcelDetails === null) {
         return {
             voucherNumber: "",
@@ -102,7 +106,6 @@ export const rawDataToExpandedParcelDetails = (
             packingDate: "",
             packingTime: "",
             collection: "",
-            history: ""
         };
     }
 
@@ -119,7 +122,6 @@ export const rawDataToExpandedParcelDetails = (
         packingDate: formatDatetimeAsDate(rawParcelDetails.packing_datetime),
         packingTime: formatDatetimeAsTime(rawParcelDetails.packing_datetime),
         collection: rawParcelDetails.collection_centre?.name ?? "",
-        history: formatHistoryFromEvents(rawParcelDetails.events),
     };
 };
 
@@ -197,24 +199,20 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
     return childDetails.join(", ");
 };
 
-export const formatHistoryFromEvents = (
-    events: Pick<Schema["events"], "event_data" | "event_name" | "timestamp">[]
-): string => {
-    const history = [];
+const processEventsDetails = ( events: Pick<Schema["events"], "event_data" | "event_name" | "timestamp">[] ): EventTableRow[] => {
+    const eventTableRows: EventTableRow[] = [];
 
     for (const event of events) {
-        history.push(
-            `${event.event_name}` +
-            (event.event_data ? ` (${event.event_data})` : "") +
-            ` @ ${formatDatetimeAsDate(event.timestamp)}`
-        );
+        eventTableRows.push({eventName: event.event_name, timestamp: new Date(event.timestamp), eventData: event.event_data});
     }
-    return history.join(", ");
+
+    return eventTableRows;
 }
 
 const getExpandedParcelDetails = async (parcelId: string): Promise<ExpandedParcelDetails> => {
     const rawParcelDetails = await getRawParcelDetails(parcelId);
-    return rawDataToExpandedParcelDetails(rawParcelDetails);
+    return {expandedParcelData: rawDataToExpandedParcelData(rawParcelDetails), events: processEventsDetails(rawParcelDetails.events)};
 };
+
 
 export default getExpandedParcelDetails;
