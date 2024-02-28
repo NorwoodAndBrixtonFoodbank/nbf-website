@@ -33,8 +33,12 @@ export const getRawParcelDetails = async (parcelId: string) => {
                 age,
                 gender
             )
+        ),
+        events:events (
+            event_name,
+            timestamp,
+            event_data
         )
-
     `
         )
         .eq("primary_key", parcelId)
@@ -80,6 +84,7 @@ export interface ExpandedParcelDetails extends Data {
     packingDate: string;
     packingTime: string;
     collection: string;
+    history: string;
 }
 
 export const rawDataToExpandedParcelDetails = (
@@ -97,6 +102,7 @@ export const rawDataToExpandedParcelDetails = (
             packingDate: "",
             packingTime: "",
             collection: "",
+            history: ""
         };
     }
 
@@ -113,6 +119,7 @@ export const rawDataToExpandedParcelDetails = (
         packingDate: formatDatetimeAsDate(rawParcelDetails.packing_datetime),
         packingTime: formatDatetimeAsTime(rawParcelDetails.packing_datetime),
         collection: rawParcelDetails.collection_centre?.name ?? "",
+        history: formatHistoryFromEvents(rawParcelDetails.events),
     };
 };
 
@@ -189,6 +196,21 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
 
     return childDetails.join(", ");
 };
+
+export const formatHistoryFromEvents = (
+    events: Pick<Schema["events"], "event_data" | "event_name" | "timestamp">[]
+): string => {
+    const history = [];
+
+    for (const event of events) {
+        history.push(
+            `${event.event_name}` +
+            (event.event_data ? ` (${event.event_data})` : "") +
+            ` @ ${formatDatetimeAsDate(event.timestamp)}`
+        );
+    }
+    return history.join(", ");
+}
 
 const getExpandedParcelDetails = async (parcelId: string): Promise<ExpandedParcelDetails> => {
     const rawParcelDetails = await getRawParcelDetails(parcelId);
