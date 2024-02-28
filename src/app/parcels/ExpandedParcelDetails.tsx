@@ -16,7 +16,7 @@ const ExpandedParcelDetails = async ({ parcelId }: Props): Promise<React.ReactEl
     return (
         <>
             <DataViewer data={expandedParcelDetails.expandedParcelData} />
-            <EventTable tableData={expandedParcelDetails.events} />
+            <EventTable tableData={expandedParcelDetails.events.sort((eventA, eventB) => eventB.timestamp.getTime() - eventA.timestamp.getTime())} />
         </>
     );
 };
