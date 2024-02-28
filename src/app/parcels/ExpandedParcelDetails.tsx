@@ -13,10 +13,12 @@ const ExpandedParcelDetails = async ({ parcelId }: Props): Promise<React.ReactEl
     }
     const expandedParcelDetails = await getExpandedParcelDetails(parcelId);
 
-    return (<> 
+    return (
+        <>
             <DataViewer data={expandedParcelDetails.expandedParcelData} />
             <EventTable tableData={expandedParcelDetails.events} />
-        </>)
+        </>
+    );
 };
 
 export default ExpandedParcelDetails;

@@ -1,11 +1,8 @@
 "use client";
 
 import React from "react";
-import Table, {TableHeaders } from "@/components/Tables/Table";
-import styled, { useTheme } from "styled-components";
-import { formatDatetimeAsDate, formatDatetimeAsTime } from "@/app/parcels/getExpandedParcelDetails";
+import Table, { TableHeaders } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
-import { Schema } from "@/databaseUtils";
 
 export interface EventTableRow {
     event: string;
@@ -17,13 +14,10 @@ export const eventsTableHeaderKeysAndLabels: TableHeaders<EventTableRow> = [
     ["timestamp", "Timestamp"],
 ];
 
-const defaultShownHeaders: (keyof EventTableRow)[] = [
-    "event",
-    "timestamp",
-];
+const defaultShownHeaders: (keyof EventTableRow)[] = ["event", "timestamp"];
 
 export interface EventTableProps {
-    tableData: EventTableRow[]
+    tableData: EventTableRow[];
 }
 
 const formatDatetimeAsDatetime = (datetime: Date): string => {
@@ -31,8 +25,6 @@ const formatDatetimeAsDatetime = (datetime: Date): string => {
 };
 
 const EventTable: React.FC<EventTableProps> = (props) => {
-    const theme = useTheme();
-
     const eventsTableColumnDisplayFunctions = {
         timestamp: formatDatetimeAsDatetime,
     };

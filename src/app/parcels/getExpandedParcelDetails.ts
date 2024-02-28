@@ -87,8 +87,8 @@ export interface ExpandedParcelData extends Data {
 }
 
 export interface ExpandedParcelDetails {
-    expandedParcelData: ExpandedParcelData,
-    events: EventTableRow[]
+    expandedParcelData: ExpandedParcelData;
+    events: EventTableRow[];
 }
 
 export const rawDataToExpandedParcelData = (
@@ -199,21 +199,27 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
     return childDetails.join(", ");
 };
 
-const processEventsDetails = ( events: Pick<Schema["events"], "event_data" | "event_name" | "timestamp">[] ): EventTableRow[] => {
+const processEventsDetails = (
+    events: Pick<Schema["events"], "event_data" | "event_name" | "timestamp">[]
+): EventTableRow[] => {
     const eventTableRows: EventTableRow[] = [];
 
     for (const event of events) {
-        eventTableRows.push({event: `${event.event_name}` +
-        (event.event_data ? ` (${event.event_data})` : ""), timestamp: new Date(event.timestamp)});
+        eventTableRows.push({
+            event: `${event.event_name}` + (event.event_data ? ` (${event.event_data})` : ""),
+            timestamp: new Date(event.timestamp),
+        });
     }
 
     return eventTableRows;
-}
+};
 
 const getExpandedParcelDetails = async (parcelId: string): Promise<ExpandedParcelDetails> => {
     const rawParcelDetails = await getRawParcelDetails(parcelId);
-    return {expandedParcelData: rawDataToExpandedParcelData(rawParcelDetails), events: processEventsDetails(rawParcelDetails.events)};
+    return {
+        expandedParcelData: rawDataToExpandedParcelData(rawParcelDetails),
+        events: processEventsDetails(rawParcelDetails.events),
+    };
 };
-
 
 export default getExpandedParcelDetails;

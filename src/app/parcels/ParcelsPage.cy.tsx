@@ -12,7 +12,7 @@ import {
     formatDatetimeAsDate,
     formatDatetimeAsTime,
     formatHouseholdFromFamilyDetails,
-    rawDataToExpandedParcelDetails,
+    rawDataToExpandedParcelData,
     RawParcelDetails,
 } from "@/app/parcels/getExpandedParcelDetails";
 
@@ -84,6 +84,15 @@ const sampleRawExpandedClientDetails: RawParcelDetails = {
             { age: 24, gender: "other" },
         ],
     },
+
+    events: [
+        { event_name: "Event 1", timestamp: "2023-06-04T13:30:00+00:00", event_data: "" },
+        {
+            event_name: "Event 2",
+            timestamp: "2023-06-04T13:30:00+00:00",
+            event_data: "Something happened",
+        },
+    ],
 };
 
 describe("Parcels Page", () => {
@@ -163,7 +172,7 @@ describe("Parcels Page", () => {
 
     describe("Backend Processing for Expanded Parcel Details", () => {
         it("Fields are set correctly", () => {
-            const expandedClientDetails = rawDataToExpandedParcelDetails(
+            const expandedClientDetails = rawDataToExpandedParcelData(
                 sampleRawExpandedClientDetails
             );
 
