@@ -32,7 +32,7 @@ const Header = styled.div`
 `;
 
 const Content = styled.div`
-    overflow-y: hidden;
+    overflow-y: auto;
     overflow-wrap: break-word;
     padding: 1em 1.5em 1.5em;
     width: 100%;
