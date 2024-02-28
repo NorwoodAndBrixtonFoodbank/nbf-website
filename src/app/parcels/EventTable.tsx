@@ -8,21 +8,18 @@ import TableSurface from "@/components/Tables/TableSurface";
 import { Schema } from "@/databaseUtils";
 
 export interface EventTableRow {
-    eventName: string;
+    event: string;
     timestamp: Date;
-    eventData: string | null;
 }
 
 export const eventsTableHeaderKeysAndLabels: TableHeaders<EventTableRow> = [
-    ["eventName", "Name"],
+    ["event", "Event"],
     ["timestamp", "Timestamp"],
-    ["eventData", "Event Data"]
 ];
 
 const defaultShownHeaders: (keyof EventTableRow)[] = [
-    "eventName",
+    "event",
     "timestamp",
-    "eventData"
 ];
 
 export interface EventTableProps {

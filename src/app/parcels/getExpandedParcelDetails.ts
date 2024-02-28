@@ -203,7 +203,8 @@ const processEventsDetails = ( events: Pick<Schema["events"], "event_data" | "ev
     const eventTableRows: EventTableRow[] = [];
 
     for (const event of events) {
-        eventTableRows.push({eventName: event.event_name, timestamp: new Date(event.timestamp), eventData: event.event_data});
+        eventTableRows.push({event: `${event.event_name}` +
+        (event.event_data ? ` (${event.event_data})` : ""), timestamp: new Date(event.timestamp)});
     }
 
     return eventTableRows;
