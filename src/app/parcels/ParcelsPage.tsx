@@ -120,8 +120,8 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const [isLoading, setIsLoading] = useState(true);
     const [packingDateRange, setPackingDateRange] = useState<DateRangeState>({
-        from: today,
-        to: today,
+        from: today.startOf('day'),
+        to: today.endOf('day'),
     });
     const [tableData, setTableData] = useState<ParcelsTableRow[]>([]);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
@@ -129,19 +129,15 @@ const ParcelsPage: React.FC<{}> = () => {
     const theme = useTheme();
 
     useEffect(() => {
-        let staleFetch = false;
 
         (async () => {
             setIsLoading(true);
             const formattedData = await fetchAndFormatParcelTablesData(packingDateRange);
-            if (!staleFetch) {
-                setTableData(formattedData);
-            }
+            setTableData(formattedData);
             setIsLoading(false);
         })();
 
         return () => {
-            staleFetch = true;
         };
     }, [packingDateRange]);
 
