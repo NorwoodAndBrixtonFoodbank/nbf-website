@@ -70,10 +70,10 @@ jobs:
       NEXT_PUBLIC_CYPRESS_TEST_PASS: admin123
     steps:
       - name: Checkout this repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install npm
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
 
       - name: Install dependencies
         run: npm ci
@@ -113,7 +113,7 @@ jobs:
     name: Verify generated database types
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: supabase/setup-cli@v1
         with:
