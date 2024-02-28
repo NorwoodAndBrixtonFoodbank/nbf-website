@@ -13,7 +13,6 @@ export const StyledDialog = styled(Dialog)`
         padding: 0;
         margin: 5%;
         overflow: hidden;
-        max-width: 90%;
     }
 `;
 
@@ -102,6 +101,8 @@ const Modal: React.FC<ModalProps> = (props) => {
             onClose={props.onClose}
             aria-labelledby={props.headerId}
             className={props.className}
+            fullWidth
+            maxWidth="md"
         >
             <Header id={props.headerId} className="header">
                 {props.header}
