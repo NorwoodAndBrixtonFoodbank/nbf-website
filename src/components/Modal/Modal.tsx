@@ -86,7 +86,7 @@ export interface ModalProps {
     onClose: () => void;
     headerId: string;
     className?: string;
-    footer: ReactNode;
+    footer?: ReactNode;
 }
 
 const StyledIcon = styled(Icon)`
