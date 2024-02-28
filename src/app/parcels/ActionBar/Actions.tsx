@@ -14,6 +14,7 @@ import ActionsModal, {
 } from "@/app/parcels/ActionBar/ActionsModal";
 import {
     DayOverviewModalButton,
+    DeleteParcelRequestModalButton,
     DriverOverviewModalButton,
     ShippingLabelsModalButton,
     ShoppingListModalButton,
@@ -36,7 +37,8 @@ type PdfType =
     | "Download Shipping Labels"
     | "Download Shopping Lists"
     | "Download Driver Overview"
-    | "Download Day Overview";
+    | "Download Day Overview"
+    | "Delete Parcel Request";
 
 type AvailableActionsType = {
     [pdfKey in PdfType]: {
@@ -68,6 +70,11 @@ const availableActions: AvailableActionsType = {
         errorMessage:
             "The day overview will show the parcels for a particular date and location. It will show not the currently selected parcel. Please unselect the parcels.",
     },
+    "Delete Parcel Request": {
+        showSelectedParcelsInModal: true,
+        errorCondition: isNotAtLeastOne,
+        errorMessage: "Please select at least one parcel.",
+    }
 };
 
 interface ActionsInputComponentProps {
@@ -142,6 +149,8 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
             return (
                 <DayOverviewModalButton collectionCentre={collectionCentre} date={date.toDate()} />
             );
+        case "Delete Parcel Request":
+            return <DeleteParcelRequestModalButton data={data} />
         default:
             <></>;
     }
