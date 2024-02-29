@@ -3,12 +3,7 @@
 import React from "react";
 import Table, { TableHeaders } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
-// import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-// import DeliveryIcon from "@/components/Icons/DeliveryIcon";
-// import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
-// import CollectionIcon from "@/components/Icons/CollectionIcon";
-// import { useTheme } from "styled-components";
-// import { formatDatetimeAsDate } from "@/app/parcels/getExpandedParcelDetails";
+import { useRouter } from "next/navigation";
 
 export interface ClientParcelTableRow {
     parcelId: string;
@@ -28,11 +23,8 @@ export interface ClientParcelTableProps {
     tableData: ClientParcelTableRow[];
 }
 
-// const formatDatetimeAsDatetime = (datetime: Date): string => {
-//     return datetime.toLocaleString("en-GB");
-// };
-
 const ClientParcelsTable: React.FC<ClientParcelTableProps> = (props) => {
+    const router = useRouter();
     return (
         <>
             <TableSurface>
@@ -40,7 +32,7 @@ const ClientParcelsTable: React.FC<ClientParcelTableProps> = (props) => {
                     data={props.tableData}
                     headerKeysAndLabels={headers}
                     pagination
-                    onRowClick={(row) => console.log(row.data.parcelId)}
+                    onRowClick={(row) => router.push(`parcels?parcelId=${row.data.parcelId}`)}
                 />
             </TableSurface>
         </>
