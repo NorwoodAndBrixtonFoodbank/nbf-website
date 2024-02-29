@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
 import dayjs, { Dayjs } from "dayjs";
@@ -18,6 +18,10 @@ interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     errorText: string | null;
     inputComponent?: React.ReactElement;
     showSelectedParcels: boolean;
+    message?: string;
+    buttons: React.ReactElement;
+    loading: boolean;
+    setLoading: Dispatch<SetStateAction<boolean>>;
 }
 
 const Centerer = styled.div`
@@ -165,15 +169,14 @@ export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
 
 const ActionsModal: React.FC<ActionsModalProps> = (props) => {
     const [loadPdf, setLoadPdf] = useState(false);
-    const [loading, setLoading] = useState(false);
     const maxParcelsToShow = 5;
 
     useEffect(() => {
-        if (loading && !loadPdf) {
+        if (props.loading && !loadPdf) {
             setLoadPdf(true);
-            setLoading(false);
+            props.setLoading(false);
         }
-    }, [loading, loadPdf]);
+    }, [props.loading, loadPdf]);
 
     return (
         <Modal {...props}>
@@ -189,6 +192,9 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                     <>
                         {props.showSelectedParcels && (
                             <>
+                                <Heading>
+                                    {props.message}
+                                </Heading>
                                 <Heading>
                                     {props.data.length === 1 ? "Parcel" : "Parcels"} selected:
                                 </Heading>
@@ -211,15 +217,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                 )}
                             </>
                         )}
-                        <Centerer>
-                            <Button
-                                disabled={loading}
-                                variant="contained"
-                                onClick={() => setLoading(true)}
-                            >
-                                {loading ? "Loading..." : "Create PDF"}
-                            </Button>
-                        </Centerer>
+                        {props.buttons}
                     </>
                 )}
             </ModalInner>

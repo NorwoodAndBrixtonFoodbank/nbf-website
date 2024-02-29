@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { SetStateAction, useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
@@ -19,7 +19,9 @@ import {
     ShippingLabelsModalButton,
     ShoppingListModalButton,
 } from "@/app/parcels/ActionBar/ActionsModalButton";
-import { SelectChangeEvent } from "@mui/material";
+import { Button, SelectChangeEvent } from "@mui/material";
+import { Centerer } from "@/components/Modal/ModalFormStyles";
+import { styled } from "styled-components";
 
 const isNotAtLeastOne = (value: number): boolean => {
     return value < 1;
@@ -45,6 +47,7 @@ type AvailableActionsType = {
         showSelectedParcelsInModal: boolean;
         errorCondition: (value: number) => boolean;
         errorMessage: string;
+        message?: string;
     };
 };
 
@@ -74,6 +77,7 @@ const availableActions: AvailableActionsType = {
         showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
+        message: "Are you sure you want to delete the selected parcel request?"
     }
 };
 
@@ -120,6 +124,56 @@ const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
             <></>;
     }
 };
+
+interface ActionsButtonComponentProps {
+    loading: boolean;
+    setLoading: React.Dispatch<SetStateAction<boolean>>;
+    actionType: PdfType;
+}
+
+const ActionsButtonComponent: React.FC<ActionsButtonComponentProps> = ({
+    loading,
+    setLoading,
+    actionType
+}) => {
+    const ConfirmButtons = styled.div`
+        display: flex;
+        flex-direction: row;
+        gap: 2rem;
+        align-items: stretch;
+    `;
+
+    switch (actionType) {
+        case "Delete Parcel Request":
+            return (<Centerer>
+            <ConfirmButtons>
+            <Button
+                disabled={loading}
+                variant="contained"
+                onClick={() => setLoading(true)}
+            >
+                {loading ? "Loading..." : "Cancel"}
+            </Button>
+            <Button
+                disabled={loading}
+                variant="contained"
+                onClick={() => setLoading(true)}
+            >
+                {loading ? "Loading..." : "Delete"}
+            </Button>
+            </ConfirmButtons>
+            </Centerer>)
+        default:
+            return (<Centerer>
+                <Button
+                    disabled={loading}
+                    variant="contained"
+                    onClick={() => setLoading(true)}
+                >
+                    {loading ? "Loading..." : "Create PDF"}
+                </Button>
+                </Centerer>);
+    }}
 
 interface ActionsButtonProps {
     pdfType: PdfType;
@@ -178,6 +232,7 @@ const Actions: React.FC<Props> = ({
     const [date, setDate] = useState(dayjs());
     const [driverName, setDriverName] = useState("");
     const [collectionCentre, setCollectionCentre] = useState("");
+    const [loading, setLoading] = useState<boolean>(false);
 
     const selectedData = Array.from(selected.map((index) => data[index]));
 
@@ -235,6 +290,9 @@ const Actions: React.FC<Props> = ({
                             header={key}
                             headerId="action-modal-header"
                             errorText={modalError}
+                            message={value.message}
+                            loading={loading}
+                            setLoading={setLoading}
                             inputComponent={
                                 <ActionsInputComponent
                                     pdfType={key}
@@ -244,6 +302,13 @@ const Actions: React.FC<Props> = ({
                                     onDriverNameChange={onDriverNameChange}
                                     onCollectionCentreChange={onCollectionCentreChange}
                                     setCollectionCentre={setCollectionCentre}
+                                />
+                            }
+                            buttons={
+                                <ActionsButtonComponent
+                                    actionType={key}
+                                    loading={loading}
+                                    setLoading={setLoading}   
                                 />
                             }
                         >
