@@ -1,5 +1,6 @@
 import React from "react";
 import DataViewerFallback from "@/components/DataViewer/DataViewerFallback";
+import EventTable from "./EventTable";
 
 const clientDetailFields = [
     "VOUCHER #",
@@ -15,7 +16,12 @@ const clientDetailFields = [
 ];
 
 const ExpandedParcelDetailsFallback: React.FC<{}> = () => {
-    return <DataViewerFallback fieldPlaceholders={clientDetailFields} />;
+    return (
+        <>
+            <DataViewerFallback fieldPlaceholders={clientDetailFields} />;
+            <EventTable tableData={[]} />
+        </>
+    );
 };
 
 export default ExpandedParcelDetailsFallback;
