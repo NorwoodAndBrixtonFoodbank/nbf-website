@@ -75,10 +75,10 @@ describe("Parcels - Action Bar", () => {
         );
     };
     describe("Statuses", () => {
-        const [selectedIndices, setSelectedIndices] = React.useState([0, 1]);
+        const selectedIndices = [0, 1];
 
         beforeEach(() => {
-            cy.mount(<MockActionBar selected={selectedIndices} setSelected={setSelectedIndices} />);
+            cy.mount(<MockActionBar selected={selectedIndices} setSelected={() => {}} />);
         });
 
         it("should open the status menu when the status button is clicked", () => {
@@ -141,10 +141,10 @@ describe("Parcels - Action Bar", () => {
 
     describe("Actions", () => {
         const row = mockData[0];
-        const [selectedIndices, setSelectedIndices] = React.useState([0]);
+        const selectedIndices = [0, 1];
 
         beforeEach(() => {
-            cy.mount(<MockActionBar selected={selectedIndices} setSelected={setSelectedIndices} />);
+            cy.mount(<MockActionBar selected={selectedIndices} setSelected={() => {}} />);
         });
 
         it("should open the action menu when the action button is clicked", () => {
