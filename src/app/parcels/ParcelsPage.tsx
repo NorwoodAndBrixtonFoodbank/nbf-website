@@ -130,12 +130,20 @@ const ParcelsPage: React.FC<{}> = () => {
     const theme = useTheme();
 
     useEffect(() => {
+        let staleFetch = false;
+
         (async () => {
             setIsLoading(true);
             const formattedData = await fetchAndFormatParcelTablesData(packingDateRange);
-            setTableData(formattedData);
+            if (!staleFetch) {
+                setTableData(formattedData);
+            }
             setIsLoading(false);
         })();
+
+        return () => {
+            staleFetch = true;
+        };
     }, [packingDateRange]);
 
     useEffect(() => {
