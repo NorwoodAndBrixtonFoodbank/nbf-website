@@ -291,7 +291,7 @@ const ParcelsPage: React.FC<{}> = () => {
             key: "lastStatus",
             filterLabel: "Last Status",
             itemLabelsAndKeys: options.map((value) => [value, value]),
-            initialCheckedKeys: options,
+            initialCheckedKeys: options.filter((value) => value !== "Request Deleted"),
             cellMatchOverride: lastStatusCellMatchOverride,
         });
     };

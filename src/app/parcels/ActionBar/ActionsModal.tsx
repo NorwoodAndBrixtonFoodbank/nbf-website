@@ -12,7 +12,6 @@ import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { saveParcelStatus, statusType } from "./Statuses";
-import { InsertSchema, Schema } from "@/databaseUtils";
 
 interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     data: ParcelsTableRow[];
@@ -174,9 +173,12 @@ export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
 };
 
 const deleteParcels = async (parcels: ParcelsTableRow[]): Promise<void> => {
-    await saveParcelStatus(parcels.map((parcel)=>parcel.parcelId), "Request Deleted");
+    await saveParcelStatus(
+        parcels.map((parcel) => parcel.parcelId),
+        "Request Deleted"
+    );
     return;
-    }; //assume successful for now  
+}; //assume successful for now
 
 const ActionsModal: React.FC<ActionsModalProps> = (props) => {
     const [loading, setLoading] = useState(false);
