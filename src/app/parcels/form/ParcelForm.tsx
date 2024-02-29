@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Errors,
     FormErrors,
@@ -26,6 +26,15 @@ import Title from "@/components/Title/Title";
 import { Schema } from "@/databaseUtils";
 import dayjs, { Dayjs } from "dayjs";
 import { CollectionCentresLabelsAndValues } from "@/common/fetch";
+import getExpandedClientDetails, {
+    ExpandedClientDetails,
+} from "@/app/clients/getExpandedClientDetails";
+import Modal from "@/components/Modal/Modal";
+import Icon from "@/components/Icons/Icon";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
+import DataViewer from "@/components/DataViewer/DataViewer";
+import { useTheme } from "styled-components";
 
 export interface ParcelFields extends Fields {
     clientId: string | null;
@@ -110,6 +119,16 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     const [submitError, setSubmitError] = useState(Errors.none);
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
     const [submitDisabled, setSubmitDisabled] = useState(false);
+    const [clientName, setClientName] = useState("");
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+    const [activeData, setActiveData] = useState<ExpandedClientDetails | null>(null);
+    const theme = useTheme();
+
+    useEffect(() => {
+        if (clientId) {
+            getExpandedClientDetails(clientId).then((response) => setClientName(response.fullName));
+        }
+    }, [clientId]);
 
     const formSections =
         fields.shippingMethod === "Collection"
@@ -178,10 +197,25 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         setSubmitDisabled(false);
     };
 
+    // @ts-ignore
     return (
         <CenterComponent>
             <StyledForm>
                 <Title>Parcel Form</Title>
+                <Button
+                    variant="contained"
+                    type="button"
+                    onClick={() => {
+                        if (clientId) {
+                            getExpandedClientDetails(clientId).then((data) => {
+                                setActiveData(data);
+                                setModalIsOpen(true);
+                            });
+                        }
+                    }}
+                >
+                    {clientName}
+                </Button>
                 {formSections.map((Card, index) => {
                     return (
                         <Card
@@ -201,6 +235,23 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                 </CenterComponent>
                 <FormErrorText>{submitErrorMessage || submitError}</FormErrorText>
             </StyledForm>
+            <Modal
+                header={
+                    <>
+                        <Icon icon={faUser} color={theme.primary.largeForeground[2]} />
+                        Client Details
+                    </>
+                }
+                isOpen={modalIsOpen}
+                onClose={() => setModalIsOpen(false)}
+                headerId="clientsDetailModal"
+            >
+                <OutsideDiv>
+                    <ContentDiv>
+                        <DataViewer data={{ ...activeData } ?? {}} />
+                    </ContentDiv>
+                </OutsideDiv>
+            </Modal>
         </CenterComponent>
     );
 };
