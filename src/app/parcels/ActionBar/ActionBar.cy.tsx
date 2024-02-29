@@ -1,6 +1,6 @@
 import ActionBar from "@/app/parcels/ActionBar/ActionBar";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import React from "react";
+import React, { SetStateAction } from "react";
 import StyleManager from "@/app/themes";
 import Localization from "@/app/Localization";
 
@@ -62,22 +62,23 @@ describe("Parcels - Action Bar", () => {
 
     interface Props {
         selected: number[];
+        setSelected: React.Dispatch<SetStateAction<number[]>>;
     }
 
-    const MockActionBar: React.FC<Props> = ({ selected }) => {
+    const MockActionBar: React.FC<Props> = ({ selected, setSelected }) => {
         return (
             <Localization>
                 <StyleManager>
-                    <ActionBar data={mockData} selected={selected} />
+                    <ActionBar data={mockData} selected={selected} setSelected={setSelected} />
                 </StyleManager>
             </Localization>
         );
     };
     describe("Statuses", () => {
-        const selectedIndices = [0, 1];
+        const [selectedIndices, setSelectedIndices] = React.useState([0, 1]);
 
         beforeEach(() => {
-            cy.mount(<MockActionBar selected={selectedIndices} />);
+            cy.mount(<MockActionBar selected={selectedIndices} setSelected={setSelectedIndices} />);
         });
 
         it("should open the status menu when the status button is clicked", () => {
@@ -140,9 +141,10 @@ describe("Parcels - Action Bar", () => {
 
     describe("Actions", () => {
         const row = mockData[0];
+        const [selectedIndices, setSelectedIndices] = React.useState([0]);
 
         beforeEach(() => {
-            cy.mount(<MockActionBar selected={[0]} />);
+            cy.mount(<MockActionBar selected={selectedIndices} setSelected={setSelectedIndices} />);
         });
 
         it("should open the action menu when the action button is clicked", () => {

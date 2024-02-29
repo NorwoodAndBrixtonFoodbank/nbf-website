@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
 import dayjs, { Dayjs } from "dayjs";
@@ -12,6 +12,7 @@ import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { statusType } from "./Statuses";
+import { InsertSchema, Schema } from "@/databaseUtils";
 
 interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     data: ParcelsTableRow[];
@@ -19,9 +20,7 @@ interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     inputComponent?: React.ReactElement;
     showSelectedParcels: boolean;
     message?: string;
-    buttons: React.ReactElement;
-    loading: boolean;
-    setLoading: Dispatch<SetStateAction<boolean>>;
+    downloadable: boolean;
 }
 
 const Centerer = styled.div`
@@ -54,6 +53,13 @@ const ListItem = styled.p<{ emphasised?: boolean }>`
         `
             font-weight: 800;
         `}
+`;
+
+const ConfirmButtons = styled.div`
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    align-items: stretch;
 `;
 
 interface ShippingLabelsInputProps {
@@ -167,16 +173,39 @@ export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
     );
 };
 
+type EventInsertRecord = InsertSchema["events"];
+type EventAndParcelIds = Pick<Schema["events"], "primary_key" | "parcel_id">;
+
+export const insertEvent = async (eventRecord: EventInsertRecord): Promise<EventAndParcelIds> => {
+    const {
+        data: ids,
+        status,
+        error,
+    } = await supabase.from("events").insert(eventRecord).select("primary_key, parcel_id");
+
+    if (error === null && Math.floor(status / 100) === 2) {
+        return ids![0];
+    }
+    throw new DatabaseError("insert", "event data");
+};
+
+const deleteParcels = (parcels: ParcelsTableRow[]): void => {
+    parcels.forEach((parcel) => {
+        insertEvent({ event_name: "Request Deleted", parcel_id: parcel.parcelId });
+    }); //assume successful for now
+};
+
 const ActionsModal: React.FC<ActionsModalProps> = (props) => {
+    const [loading, setLoading] = useState(false);
     const [loadPdf, setLoadPdf] = useState(false);
     const maxParcelsToShow = 5;
 
     useEffect(() => {
-        if (props.loading && !loadPdf) {
+        if (loading && !loadPdf) {
             setLoadPdf(true);
-            props.setLoading(false);
+            setLoading(false);
         }
-    }, [props.loading, loadPdf]);
+    }, [loading, loadPdf]);
 
     return (
         <Modal {...props}>
@@ -185,16 +214,19 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                 {props.errorText && <small>{props.errorText}</small>}
                 {loadPdf ? (
                     <>
-                        <Heading> The PDF is ready to be downloaded. </Heading>
+                        {props.downloadable ? (
+                            <Heading> The PDF is ready to be downloaded. </Heading>
+                        ) : (
+                            <Heading>Parcel(s) deleted</Heading>
+                        )}
+
                         <Centerer>{props.children}</Centerer>
                     </>
                 ) : (
                     <>
                         {props.showSelectedParcels && (
                             <>
-                                <Heading>
-                                    {props.message}
-                                </Heading>
+                                <Heading>{props.message}</Heading>
                                 <Heading>
                                     {props.data.length === 1 ? "Parcel" : "Parcels"} selected:
                                 </Heading>
@@ -217,7 +249,39 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                 )}
                             </>
                         )}
-                        {props.buttons}
+                        {props.downloadable ? (
+                            <Centerer>
+                                <Button
+                                    disabled={loading}
+                                    variant="contained"
+                                    onClick={() => setLoading(true)}
+                                >
+                                    {loading ? "Loading..." : "Create PDF"}
+                                </Button>
+                            </Centerer>
+                        ) : (
+                            <Centerer>
+                                <ConfirmButtons>
+                                    <Button
+                                        disabled={loading}
+                                        variant="contained"
+                                        onClick={props.onClose}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        disabled={loading}
+                                        variant="contained"
+                                        onClick={() => {
+                                            setLoading(true);
+                                            deleteParcels(props.data);
+                                        }}
+                                    >
+                                        Delete
+                                    </Button>
+                                </ConfirmButtons>
+                            </Centerer>
+                        )}
                     </>
                 )}
             </ModalInner>

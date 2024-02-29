@@ -83,7 +83,13 @@ const Statuses: React.FC<Props> = ({
     const [selectedStatus, setSelectedStatus] = useState<statusType | null>(null);
     const [statusModal, setStatusModal] = useState(false);
 
-    const selectedData = Array.from(selected.map((index) => data[index]));
+    const [selectedData, setSelectedData] = useState(
+        Array.from(selected.map((index) => data[index]))
+    );
+
+    React.useEffect(() => {
+        setSelectedData(Array.from(selected.map((index) => data[index])));
+    }, [selected, data]);
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
         try {

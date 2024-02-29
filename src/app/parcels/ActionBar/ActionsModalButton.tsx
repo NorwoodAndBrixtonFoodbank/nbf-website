@@ -66,14 +66,3 @@ export const DriverOverviewModalButton: React.FC<DriverOverviewModalButtonProps>
         />
     );
 };
-
-export const DeleteParcelRequestModalButton: React.FC<ModalButtonProps> = ({ data }) => {
-    return (
-        <ShoppingList
-            text="Delete Parcel Request"
-            parcelIds={data.map((parcel: ParcelsTableRow) => {
-                return parcel.parcelId;
-            })}
-        />
-    );
-};

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
@@ -14,14 +14,11 @@ import ActionsModal, {
 } from "@/app/parcels/ActionBar/ActionsModal";
 import {
     DayOverviewModalButton,
-    DeleteParcelRequestModalButton,
     DriverOverviewModalButton,
     ShippingLabelsModalButton,
     ShoppingListModalButton,
 } from "@/app/parcels/ActionBar/ActionsModalButton";
-import { Button, SelectChangeEvent } from "@mui/material";
-import { Centerer } from "@/components/Modal/ModalFormStyles";
-import { styled } from "styled-components";
+import { SelectChangeEvent } from "@mui/material";
 
 const isNotAtLeastOne = (value: number): boolean => {
     return value < 1;
@@ -48,6 +45,7 @@ type AvailableActionsType = {
         errorCondition: (value: number) => boolean;
         errorMessage: string;
         message?: string;
+        downloadable: boolean;
     };
 };
 
@@ -56,29 +54,34 @@ const availableActions: AvailableActionsType = {
         showSelectedParcelsInModal: true,
         errorCondition: doesNotEqualOne,
         errorMessage: "Please select exactly one parcel.",
+        downloadable: true,
     },
     "Download Shopping Lists": {
         showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
+        downloadable: true,
     },
     "Download Driver Overview": {
         showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
+        downloadable: true,
     },
     "Download Day Overview": {
         showSelectedParcelsInModal: false,
         errorCondition: doesNotEqualZero,
         errorMessage:
             "The day overview will show the parcels for a particular date and location. It will show not the currently selected parcel. Please unselect the parcels.",
+        downloadable: true,
     },
     "Delete Parcel Request": {
         showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
-        message: "Are you sure you want to delete the selected parcel request?"
-    }
+        message: "Are you sure you want to delete the selected parcel request?",
+        downloadable: false,
+    },
 };
 
 interface ActionsInputComponentProps {
@@ -125,56 +128,6 @@ const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
     }
 };
 
-interface ActionsButtonComponentProps {
-    loading: boolean;
-    setLoading: React.Dispatch<SetStateAction<boolean>>;
-    actionType: PdfType;
-}
-
-const ActionsButtonComponent: React.FC<ActionsButtonComponentProps> = ({
-    loading,
-    setLoading,
-    actionType
-}) => {
-    const ConfirmButtons = styled.div`
-        display: flex;
-        flex-direction: row;
-        gap: 2rem;
-        align-items: stretch;
-    `;
-
-    switch (actionType) {
-        case "Delete Parcel Request":
-            return (<Centerer>
-            <ConfirmButtons>
-            <Button
-                disabled={loading}
-                variant="contained"
-                onClick={() => setLoading(true)}
-            >
-                {loading ? "Loading..." : "Cancel"}
-            </Button>
-            <Button
-                disabled={loading}
-                variant="contained"
-                onClick={() => setLoading(true)}
-            >
-                {loading ? "Loading..." : "Delete"}
-            </Button>
-            </ConfirmButtons>
-            </Centerer>)
-        default:
-            return (<Centerer>
-                <Button
-                    disabled={loading}
-                    variant="contained"
-                    onClick={() => setLoading(true)}
-                >
-                    {loading ? "Loading..." : "Create PDF"}
-                </Button>
-                </Centerer>);
-    }}
-
 interface ActionsButtonProps {
     pdfType: PdfType;
     data: ParcelsTableRow[];
@@ -203,8 +156,6 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
             return (
                 <DayOverviewModalButton collectionCentre={collectionCentre} date={date.toDate()} />
             );
-        case "Delete Parcel Request":
-            return <DeleteParcelRequestModalButton data={data} />
         default:
             <></>;
     }
@@ -212,6 +163,7 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
 
 interface Props {
     selected: number[];
+    setSelected: React.Dispatch<React.SetStateAction<number[]>>;
     data: ParcelsTableRow[];
     actionAnchorElement: HTMLElement | null;
     setActionAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
@@ -221,6 +173,7 @@ interface Props {
 
 const Actions: React.FC<Props> = ({
     selected,
+    setSelected,
     data,
     actionAnchorElement,
     setActionAnchorElement,
@@ -232,9 +185,14 @@ const Actions: React.FC<Props> = ({
     const [date, setDate] = useState(dayjs());
     const [driverName, setDriverName] = useState("");
     const [collectionCentre, setCollectionCentre] = useState("");
-    const [loading, setLoading] = useState<boolean>(false);
 
-    const selectedData = Array.from(selected.map((index) => data[index]));
+    const [selectedData, setSelectedData] = useState(
+        Array.from(selected.map((index) => data[index]))
+    );
+
+    React.useEffect(() => {
+        setSelectedData(Array.from(selected.map((index) => data[index])));
+    }, [selected, data]);
 
     const onLabelQuantityChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setLabelQuantity(parseInt(event.target.value, 10) ?? 0);
@@ -257,6 +215,7 @@ const Actions: React.FC<Props> = ({
         setModalError(null);
         setDate(dayjs());
         setDriverName("");
+        setSelected([]);
     };
 
     const onMenuItemClick = (
@@ -291,8 +250,7 @@ const Actions: React.FC<Props> = ({
                             headerId="action-modal-header"
                             errorText={modalError}
                             message={value.message}
-                            loading={loading}
-                            setLoading={setLoading}
+                            downloadable={value.downloadable}
                             inputComponent={
                                 <ActionsInputComponent
                                     pdfType={key}
@@ -302,13 +260,6 @@ const Actions: React.FC<Props> = ({
                                     onDriverNameChange={onDriverNameChange}
                                     onCollectionCentreChange={onCollectionCentreChange}
                                     setCollectionCentre={setCollectionCentre}
-                                />
-                            }
-                            buttons={
-                                <ActionsButtonComponent
-                                    actionType={key}
-                                    loading={loading}
-                                    setLoading={setLoading}   
                                 />
                             }
                         >

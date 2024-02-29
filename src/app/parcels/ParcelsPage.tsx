@@ -130,29 +130,34 @@ const ParcelsPage: React.FC<{}> = () => {
     const theme = useTheme();
 
     useEffect(() => {
-        let staleFetch = false;
-
         (async () => {
             setIsLoading(true);
             const formattedData = await fetchAndFormatParcelTablesData(packingDateRange);
-            if (!staleFetch) {
-                setTableData(formattedData);
-            }
+            setTableData(formattedData);
             setIsLoading(false);
         })();
-
-        return () => {
-            staleFetch = true;
-        };
     }, [packingDateRange]);
 
     useEffect(() => {
-        // This requires that the DB parcels table has Realtime turned on
+        // This requires that both the DB parcels and events tables have Realtime turned on
         const subscriptionChannel = supabase
             .channel("parcels-table-changes")
-            .on("postgres_changes", { event: "*", schema: "public", table: "parcels" }, async () =>
-                setTableData(await fetchAndFormatParcelTablesData(packingDateRange))
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "parcels" },
+                async () => {
+                    setIsLoading(true);
+                    setTableData(await fetchAndFormatParcelTablesData(packingDateRange));
+                    setIsLoading(false);
+                }
             )
+            .on("postgres_changes", { event: "*", schema: "public", table: "events" }, async () => {
+                {
+                    setIsLoading(true);
+                    setTableData(await fetchAndFormatParcelTablesData(packingDateRange));
+                    setIsLoading(false);
+                }
+            })
             .subscribe();
 
         return () => {
@@ -300,7 +305,7 @@ const ParcelsPage: React.FC<{}> = () => {
                         setRange={setPackingDateRange}
                     ></DateRangeInputs>
                 </ControlContainer>
-                <ActionBar data={tableData} selected={selected} />
+                <ActionBar data={tableData} selected={selected} setSelected={setSelected} />
             </PreTableControls>
             {isLoading ? (
                 <></>
@@ -330,7 +335,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                 "phoneNumber",
                                 "voucherNumber",
                                 buildLastStatusFilter(tableData),
-                            ]}
+                            ]} //need a way to clear checkboxes and remember search
                         />
                     </TableSurface>
                     <Modal

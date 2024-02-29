@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { SetStateAction, useState } from "react";
 import styled from "styled-components";
 import Button from "@mui/material/Button";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
@@ -13,6 +13,7 @@ import { ArrowDropDown } from "@mui/icons-material";
 interface Props {
     selected: number[];
     data: ParcelsTableRow[];
+    setSelected: React.Dispatch<SetStateAction<number[]>>;
 }
 
 const ActionsContainer = styled(ControlContainer)`
