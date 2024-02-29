@@ -11,7 +11,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
-import { statusType } from "./Statuses";
+import { saveParcelStatus, statusType } from "./Statuses";
 import { InsertSchema, Schema } from "@/databaseUtils";
 
 interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
@@ -173,27 +173,10 @@ export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
     );
 };
 
-type EventInsertRecord = InsertSchema["events"];
-type EventAndParcelIds = Pick<Schema["events"], "primary_key" | "parcel_id">;
-
-export const insertEvent = async (eventRecord: EventInsertRecord): Promise<EventAndParcelIds> => {
-    const {
-        data: ids,
-        status,
-        error,
-    } = await supabase.from("events").insert(eventRecord).select("primary_key, parcel_id");
-
-    if (error === null && Math.floor(status / 100) === 2) {
-        return ids![0];
-    }
-    throw new DatabaseError("insert", "event data");
-};
-
-const deleteParcels = (parcels: ParcelsTableRow[]): void => {
-    parcels.forEach((parcel) => {
-        insertEvent({ event_name: "Request Deleted", parcel_id: parcel.parcelId });
-    }); //assume successful for now
-};
+const deleteParcels = async (parcels: ParcelsTableRow[]): Promise<void> => {
+    await saveParcelStatus(parcels.map((parcel)=>parcel.parcelId), "Request Deleted");
+    return;
+    }; //assume successful for now  
 
 const ActionsModal: React.FC<ActionsModalProps> = (props) => {
     const [loading, setLoading] = useState(false);

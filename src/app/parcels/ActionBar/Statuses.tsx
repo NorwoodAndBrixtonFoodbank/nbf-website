@@ -103,7 +103,6 @@ const Statuses: React.FC<Props> = ({
             );
             setStatusModal(false);
             setModalError(null);
-            window.location.reload();
         } catch (error: any) {
             setModalError(error.message);
         }
