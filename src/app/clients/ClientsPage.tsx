@@ -45,6 +45,18 @@ const ClientsPage: React.FC<{}> = () => {
     const clientId = searchParams.get("clientId");
 
     useEffect(() => {
+        if (clientId) {
+            getExpandedClientDetails(clientId).then((data) => {
+                setActiveData(data);
+                setModalIsOpen(true);
+                getExpandedClientParcelsDetails(clientId).then((data) => {
+                    setClientParcelData(data);
+                });
+            });
+        }
+    }, [clientId]);
+
+    useEffect(() => {
         let staleFetch = false;
 
         (async () => {
@@ -93,7 +105,6 @@ const ClientsPage: React.FC<{}> = () => {
                                     router.push(`clients/?clientId=${row.data.primaryKey}`);
                                     setModalIsOpen(true);
                                     setActiveData(data);
-                                    console.log(clientId);
                                     getExpandedClientParcelsDetails(row.data.primaryKey).then(
                                         (data) => {
                                             setClientParcelData(data);
