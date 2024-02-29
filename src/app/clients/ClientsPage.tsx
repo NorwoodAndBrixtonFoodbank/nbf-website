@@ -17,6 +17,7 @@ import { useTheme } from "styled-components";
 import getClientsData from "./getClientsData";
 import { getExpandedClientParcelsDetails } from "@/app/clients/getClientParcelsData";
 import ClientParcelsTable, { ClientParcelTableRow } from "@/app/clients/ClientParcelsTable";
+import { useSearchParams, useRouter } from "next/navigation";
 
 export interface ClientsTableRow {
     primaryKey: string;
@@ -38,6 +39,10 @@ const ClientsPage: React.FC<{}> = () => {
     const [activeData, setActiveData] = useState<ExpandedClientDetails | null>(null);
     const [clientParcelData, setClientParcelData] = useState<ClientParcelTableRow[] | null>(null);
     const theme = useTheme();
+    const router = useRouter();
+
+    const searchParams = useSearchParams();
+    const clientId = searchParams.get("clientId");
 
     useEffect(() => {
         let staleFetch = false;
@@ -73,11 +78,6 @@ const ClientsPage: React.FC<{}> = () => {
         };
     }, []);
 
-    // use effect with dependency for active data, when active data is set then fetch the parcels data
-    useEffect(() => {
-        console.log(clientParcelData);
-    }, [clientParcelData]);
-
     return (
         <>
             {isLoading ? (
@@ -90,9 +90,10 @@ const ClientsPage: React.FC<{}> = () => {
                             headerKeysAndLabels={headers}
                             onRowClick={(row) =>
                                 getExpandedClientDetails(row.data.primaryKey).then((data) => {
-                                    console.log(row.data.primaryKey);
+                                    router.push(`clients/?clientId=${row.data.primaryKey}`);
                                     setModalIsOpen(true);
                                     setActiveData(data);
+                                    console.log(clientId);
                                     getExpandedClientParcelsDetails(row.data.primaryKey).then(
                                         (data) => {
                                             setClientParcelData(data);
@@ -118,7 +119,10 @@ const ClientsPage: React.FC<{}> = () => {
                             </>
                         }
                         isOpen={modalIsOpen}
-                        onClose={() => setModalIsOpen(false)}
+                        onClose={() => {
+                            setModalIsOpen(false);
+                            router.push("clients/");
+                        }}
                         headerId="clientsDetailModal"
                     >
                         <OutsideDiv>
