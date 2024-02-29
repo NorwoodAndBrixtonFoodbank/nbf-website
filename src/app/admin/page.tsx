@@ -3,7 +3,7 @@ import Title from "@/components/Title/Title";
 import { Metadata } from "next";
 import AdminPage from "@/app/admin/AdminPage";
 import { Database } from "@/databaseTypesFile";
-import supabase from "@/supabaseServer";
+import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { User } from "@supabase/gotrue-js";
 import { DatabaseError } from "@/app/errorClasses";
 import { Schema } from "@/databaseUtils";
@@ -20,6 +20,7 @@ export interface UserRow {
 }
 
 const getUsers = async (): Promise<UserRow[]> => {
+    const supabase = getSupabaseServerComponentClient();
     const { data, error } = await supabase.functions.invoke("admin-get-users");
 
     if (error) {
@@ -40,6 +41,7 @@ const getUsers = async (): Promise<UserRow[]> => {
 };
 
 const getCollectionCentres = async (): Promise<Schema["collection_centres"][]> => {
+    const supabase = getSupabaseServerComponentClient();
     const { data, error } = await supabase.from("collection_centres").select();
 
     // TODO VFB-23 Move error handling of this request to client side

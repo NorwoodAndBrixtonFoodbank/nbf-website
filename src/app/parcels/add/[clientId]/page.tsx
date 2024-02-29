@@ -4,7 +4,7 @@ import ParcelForm, {
     initialParcelFields,
     initialParcelFormErrors,
 } from "@/app/parcels/form/ParcelForm";
-import supabase from "@/supabaseServer";
+import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { getCollectionCentresInfo } from "@/common/fetch";
 
 interface AddParcelParameters {
@@ -14,6 +14,7 @@ interface AddParcelParameters {
 }
 
 const AddParcels = async ({ params }: AddParcelParameters): Promise<React.ReactElement> => {
+    const supabase = getSupabaseServerComponentClient();
     const [deliveryPrimaryKey, collectionCentresLabelsAndValues] =
         await getCollectionCentresInfo(supabase);
 

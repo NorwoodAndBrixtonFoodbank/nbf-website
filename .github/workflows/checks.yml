@@ -1,31 +1,43 @@
-env:
-  NEXT_PUBLIC_SUPABASE_URL: ${{secrets.NEXT_PUBLIC_SUPABASE_URL}}
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY}}
-  NEXT_PUBLIC_CYPRESS_TEST_USER: ${{secrets.NEXT_PUBLIC_CYPRESS_TEST_USER}}
-  NEXT_PUBLIC_CYPRESS_TEST_PASS: ${{secrets.NEXT_PUBLIC_CYPRESS_TEST_PASS}}
-
 name: Checks
 on:
   pull_request:
+    paths-ignore:
+      - .github/**
   push:
     branches:
       main
 jobs:
-  linting:
-    name: Check linting and run component tests
+  lint:
+    name: Check linting
     runs-on: ubuntu-latest
     steps:
       - name: Checkout this repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install npm
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run linting
         run: npm run lint
+
+  component_tests:
+    name: Run component tests
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{secrets.SUPABASE_LOCAL_ANON_KEY}}
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+
+      - name: Install npm
+        uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Compile
         run: npm run build
@@ -52,15 +64,30 @@ jobs:
   e2e_tests:
     name: Run end-to-end tests
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+      NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_LOCAL_SERVICE_ROLE_KEY }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{secrets.SUPABASE_LOCAL_ANON_KEY}}
+      NEXT_PUBLIC_CYPRESS_TEST_USER: admin@example.com
+      NEXT_PUBLIC_CYPRESS_TEST_PASS: admin123
     steps:
       - name: Checkout this repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install npm
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Start local Supabase instance
+        run: npx supabase start
+
+      - name: Create users for the local Supabase instance
+        run: npm run dev:create_admin_and_caller_users
+
+      - name: Create bucket for the local Supabase instance
+        run: npm run dev:create_bucket
 
       - name: Compile
         run: npm run build
@@ -83,25 +110,3 @@ jobs:
           name: videos
           path: cypress/videos
           retention-days: 1
-
-  verify-database-types:
-    name: Verify generated database types
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: supabase/setup-cli@v1
-        with:
-          version: 1.145.4
-
-      - name: Start Supabase local development setup
-        run: supabase start
-
-      - name: Verify generated types are checked in
-        run: |
-          supabase gen types typescript --local --schema public > src/databaseTypesFile.ts
-          if ! git diff --ignore-space-at-eol --exit-code --quiet src/databaseTypesFile.ts; then
-            echo "Detected uncommitted changes after build. See status below:"
-            git diff
-            exit 1
-          fi

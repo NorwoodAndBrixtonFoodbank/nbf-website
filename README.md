@@ -13,6 +13,9 @@ have been delivered to clients. See [their website](https://vauxhall.foodbank.or
 * Material UI for component library
 * Cypress for both component unit tests and integration tests (may add Jest in the future!)
 
+## Prerequisite
+- You need Docker installed. The easiest way to get started is to download [Docker Desktop](https://www.docker.com/products/docker-desktop/). If you are using Windows, you may have to run `net localgroup docker-users <your_softwire_username> /ADD` as an administrator to add yourself to the docker-users group, where `<your_softwire_username>` is your non-admin Softwire username.
+
 ## Development
 
 ### First time setup 
@@ -29,6 +32,8 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
 * Run website locally (`npm run dev`) and try to log in with the Test User (see Keeper) to verify it all works!
   * Note that the login page can be slightly flaky, but if it doesn't immediately error then it should be signed in!
     Pressing any of the navigation bar buttons will not then redirect you to the login page.
+* Follow the [Update and connect to the local database](#update-and-connect-to-the-local-database) and [Apply migrations to local database](#apply-migrations-to-local-database) steps to set up the local database
+* Use the output of `supabase start` to replace the details in `.env.local` so that our website can connect to the local database.
 
 * The best place to start is `src/app`, where the website is based! Look at the folder structure for an idea of what the
   website navigation will be.
@@ -65,73 +70,51 @@ Database migrations are tracked under /supabase/migrations.
 #### Update and connect to the local database
 * Select the database to pull from. This will be our deployed dev database. 
   ```shell
-  supabase link --project-ref <PROJECT_ID>
+  npx supabase link --project-ref <PROJECT_ID>
   ```
+  You will be prompted for the database password, which can be found in Keeper.
 * Pull any new changes from the database.
   ```shell
-  supabase pull
+  npx supabase db pull
   ```
 * Start Supabase services on your local machine. This command will give you the "DB URL" you can use to connect to the database.
   ```shell
-  supabase start
+  npx supabase start
   ```
+
+#### Make database changes
+You can either
+- Access the local Supabase console to update tables, and use
+  ```shell
+  npx supabase db diff -f <name_of_migration>
+  ```
+  to generate a migration sql file (recommended), or
+- Create a migration file using
+  ```shell
+  npx supabase migration new <name_of_migration>
+  ```
+  and write sql queries yourself
 
 #### Update the TypeScript database type definition
 You can regenerate the types
 - from the local database
   ```shell
-  supabase gen types typescript --local --schema public > src/databaseTypesFile.ts
+  npm run db:local:generate_types
   ```
 - from the deployed database
   ```shell
-  supabase gen types typescript --project-id <PROJECT_ID> --schema public > src/databaseTypesFile.ts
+  npm run db:remote:generate_types -- --project-id <PROJECT_ID>
   ```
-  
-#### Make database changes
-You can either
-- Access the local Supabase console to update tables, and use 
-  ```shell
-  supabase db diff -f <name_of_migration>
-  ```
-  to generate a migration sql file (recommended), or
-- Create a migration file using 
-  ```shell
-  supabase migration new <name_of_migration>
-  ```
-  and write sql queries yourself
 
-#### Apply migrations to local database
-Ensure you have all the migration files saved in `supabase/migrations` and run
-```bash
-npm run dev:reset_supabase
-```
-This 
-- resets the Supabase database based on the migration files
-- create an admin user and a caller user
-- uploads the congestion charge postcodes to the local Supabase storage
-
-#### Apply migrations to deployed database
-Migrations aren't currently integrated into the CI pipeline, so need to be applied manually to other environments when promoting changes. To apply manually:
-* Run `supabase link --project-ref <PROJECT_ID>` to select the target database
-* Run `supabase migration list` to compare what migrations are applied locally and on remote
-* Run `supabase db push --dry-run` to check which outstanding migrations would be pushed 
-* Run `supabase db push` to apply the migrations
-
-To check they've been applied correctly, either:
-* `supabase db diff --linked` to run against the linked deployed database
-* `supabase db diff` to run against the local database
-* `supabase migration list` on both dev and target databases can be compared
-
-#### Seed the local database
-The local database is generated based on the code in `seed.mts`. This uses Snaplet to generate a large amount of data.
-To generate te SQL queries needed to populate database, run
-```shell
-npx tsx seed.mts > supabase/seed.sql
-```
-To rebuild the database from the migration files and `seed.sql`, run
-```shell
-npm run dev:reset_supabase
-```
+#### Useful commands
+- `npx supabase migration list` to compare what migrations are applied locally and on remote
+- `npm run dev:reset_supabase` to
+  - reset the Supabase database based on the migration files and the seed data
+  - create an admin user and a caller user with the following credentials:
+    - admin@example.com (admin123)
+    - caller@example.com (caller123)
+  - upload the congestion charge postcodes to the local Supabase storage
+- `npm run db:generate_seed` to generate `seed.sql` based on `seed.mts`. This does not automatically put the data in the database. You'll need to run `npm run dev:reset_supabase`.
 
 #### Useful links
 - [Local Development](https://supabase.com/docs/guides/cli/local-development)
