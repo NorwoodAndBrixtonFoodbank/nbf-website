@@ -1,6 +1,8 @@
 name: Checks
 on:
   pull_request:
+    paths-ignore:
+      - .github/**
   push:
     branches:
       main
