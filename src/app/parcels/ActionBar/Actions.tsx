@@ -44,7 +44,6 @@ type AvailableActionsType = {
         showSelectedParcelsInModal: boolean;
         errorCondition: (value: number) => boolean;
         errorMessage: string;
-        message?: string;
         downloadable: boolean;
     };
 };
@@ -79,7 +78,6 @@ const availableActions: AvailableActionsType = {
         showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
-        message: "Are you sure you want to delete the selected parcel request?",
         downloadable: false,
     },
 };
@@ -249,7 +247,6 @@ const Actions: React.FC<Props> = ({
                             header={key}
                             headerId="action-modal-header"
                             errorText={modalError}
-                            message={value.message}
                             downloadable={value.downloadable}
                             inputComponent={
                                 <ActionsInputComponent

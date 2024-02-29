@@ -18,7 +18,6 @@ interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     errorText: string | null;
     inputComponent?: React.ReactElement;
     showSelectedParcels: boolean;
-    message?: string;
     downloadable: boolean;
 }
 
@@ -209,9 +208,14 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                     </>
                 ) : (
                     <>
+                        {!props.downloadable && (
+                            <Heading>
+                                Are you sure you want to delete the selected parcel{" "}
+                                {props.data.length === 1 ? "request" : "requests"}?
+                            </Heading>
+                        )}
                         {props.showSelectedParcels && (
                             <>
-                                <Heading>{props.message}</Heading>
                                 <Heading>
                                     {props.data.length === 1 ? "Parcel" : "Parcels"} selected:
                                 </Heading>
