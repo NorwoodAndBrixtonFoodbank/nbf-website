@@ -18,7 +18,6 @@ const clientDetailFields = [
 const ExpandedParcelDetailsFallback: React.FC<{}> = () => {
     return (
         <>
-            {" "}
             <DataViewerFallback fieldPlaceholders={clientDetailFields} />;
             <EventTable tableData={[]} />
         </>
