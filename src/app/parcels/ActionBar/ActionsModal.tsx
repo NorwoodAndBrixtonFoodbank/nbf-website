@@ -201,7 +201,9 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                         {props.downloadable ? (
                             <Heading> The PDF is ready to be downloaded. </Heading>
                         ) : (
-                            <Heading>Parcel(s) deleted</Heading>
+                            <Heading>
+                                {props.data.length === 1 ? "Parcel" : "Parcels"} deleted
+                            </Heading>
                         )}
 
                         <Centerer>{props.children}</Centerer>
