@@ -15,6 +15,7 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
 import { useTheme } from "styled-components";
 import getClientsData from "./getClientsData";
+import { ExpandedClientParcelDetails, getExpandedClientParcelsDetails } from "@/app/clients/getClientParcelsData";
 
 export interface ClientsTableRow {
     primaryKey: string;
@@ -34,6 +35,9 @@ const ClientsPage: React.FC<{}> = () => {
     const [tableData, setTableData] = useState<ClientsTableRow[]>([]);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [activeData, setActiveData] = useState<ExpandedClientDetails | null>(null);
+    const [clientParcelData, setClientParcelData] = useState<ExpandedClientParcelDetails[] | null>(
+        null
+    );
     const theme = useTheme();
 
     useEffect(() => {
@@ -70,6 +74,11 @@ const ClientsPage: React.FC<{}> = () => {
         };
     }, []);
 
+    // use effect with dependency for active data, when active data is set then fetch the parcels data
+    // useEffect((activeData.) => {
+    //     const parcelData = await getClientParcelData()
+    // }, [activeData]);
+
     return (
         <>
             {isLoading ? (
@@ -82,8 +91,14 @@ const ClientsPage: React.FC<{}> = () => {
                             headerKeysAndLabels={headers}
                             onRowClick={(row) =>
                                 getExpandedClientDetails(row.data.primaryKey).then((data) => {
+                                    console.log(row.data.primaryKey);
                                     setModalIsOpen(true);
                                     setActiveData(data);
+                                    getExpandedClientParcelsDetails(row.data.primaryKey).then(
+                                        (data) => {
+                                            setClientParcelData(data);
+                                        }
+                                    );
                                 })
                             }
                             sortable={["fullName", "familyCategory", "addressPostcode"]}
@@ -110,6 +125,7 @@ const ClientsPage: React.FC<{}> = () => {
                         <OutsideDiv>
                             <ContentDiv>
                                 <DataViewer data={activeData ?? {}} />
+                                <p>{}</p>
                             </ContentDiv>
 
                             <ButtonsDiv>
