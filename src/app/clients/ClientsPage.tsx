@@ -15,7 +15,8 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
 import { useTheme } from "styled-components";
 import getClientsData from "./getClientsData";
-import { ExpandedClientParcelDetails, getExpandedClientParcelsDetails } from "@/app/clients/getClientParcelsData";
+import { getExpandedClientParcelsDetails } from "@/app/clients/getClientParcelsData";
+import ClientParcelsTable, { ClientParcelTableRow } from "@/app/clients/ClientParcelsTable";
 
 export interface ClientsTableRow {
     primaryKey: string;
@@ -35,9 +36,7 @@ const ClientsPage: React.FC<{}> = () => {
     const [tableData, setTableData] = useState<ClientsTableRow[]>([]);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [activeData, setActiveData] = useState<ExpandedClientDetails | null>(null);
-    const [clientParcelData, setClientParcelData] = useState<ExpandedClientParcelDetails[] | null>(
-        null
-    );
+    const [clientParcelData, setClientParcelData] = useState<ClientParcelTableRow[] | null>(null);
     const theme = useTheme();
 
     useEffect(() => {
@@ -75,9 +74,9 @@ const ClientsPage: React.FC<{}> = () => {
     }, []);
 
     // use effect with dependency for active data, when active data is set then fetch the parcels data
-    // useEffect((activeData.) => {
-    //     const parcelData = await getClientParcelData()
-    // }, [activeData]);
+    useEffect(() => {
+        console.log(clientParcelData);
+    }, [clientParcelData]);
 
     return (
         <>
@@ -125,7 +124,11 @@ const ClientsPage: React.FC<{}> = () => {
                         <OutsideDiv>
                             <ContentDiv>
                                 <DataViewer data={activeData ?? {}} />
-                                <p>{}</p>
+                                {clientParcelData ? (
+                                    <ClientParcelsTable tableData={clientParcelData} />
+                                ) : (
+                                    <>No data</>
+                                )}
                             </ContentDiv>
 
                             <ButtonsDiv>

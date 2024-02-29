@@ -5,6 +5,13 @@ import { formatDatetimeAsDate, formatDatetimeAsTime } from "@/app/parcels/getExp
 
 export type RawClientParcelsDetails = Awaited<ReturnType<typeof getRawClientParcelsDetails>>;
 type ClientParcelDetails = RawClientParcelsDetails[number];
+interface ParcelsDetail {
+    parcel_id: string;
+    collection_centre?: { name: string; acronym: string } | null;
+    collection_datetime: string | Date | null;
+    packing_datetime: string | null;
+    voucher_number?: string | null;
+}
 export const getExpandedClientParcelsDetails = async (
     clientId: string
 ): Promise<ExpandedClientParcelDetails[]> => {
@@ -14,7 +21,7 @@ export const getExpandedClientParcelsDetails = async (
     });
     return formattedList;
 };
-const getRawClientParcelsDetails = async (clientId: string) => {
+const getRawClientParcelsDetails = async (clientId: string): Promise<ParcelsDetail[]> => {
     const { data, error } = await supabase
         .from("parcels")
         .select(
@@ -46,7 +53,7 @@ export interface ExpandedClientParcelDetails extends Data {
     voucherNumber: string;
     packingDate: string;
     packingTime: string;
-    collection: string;
+    collectionCentre: string;
 }
 
 export const rawDataToExpandedClientParcelsDetails = (
@@ -57,6 +64,6 @@ export const rawDataToExpandedClientParcelsDetails = (
         voucherNumber: parcel.voucher_number ?? "-",
         packingDate: formatDatetimeAsDate(parcel.packing_datetime),
         packingTime: formatDatetimeAsTime(parcel.packing_datetime),
-        collection: parcel.collection_centre?.name ?? "-",
+        collectionCentre: parcel.collection_centre?.name ?? "-",
     };
 };
