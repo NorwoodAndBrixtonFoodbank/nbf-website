@@ -141,9 +141,9 @@ const Statuses: React.FC<Props> = ({
                 <MenuList id="status-menu">
                     {statuses
                         .filter((status) => !nonMenuStatuses.includes(status))
-                        .map((status, index) => {
+                        .map((status) => {
                             return (
-                                <MenuItem key={index} onClick={onMenuItemClick(status)}>
+                                <MenuItem key={status} onClick={onMenuItemClick(status)}>
                                     {status}
                                 </MenuItem>
                             );

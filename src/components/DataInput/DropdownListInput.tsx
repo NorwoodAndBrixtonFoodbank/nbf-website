@@ -19,9 +19,9 @@ const DropdownListInput: React.FC<Props> = (props) => {
                 label={props.listTitle}
                 onChange={props.onChange}
             >
-                {props.labelsAndValues.map(([label, value], index) => {
+                {props.labelsAndValues.map(([label, value]) => {
                     return (
-                        <MenuItem key={index} value={value}>
+                        <MenuItem key={value} value={value}>
                             {label}
                         </MenuItem>
                     );

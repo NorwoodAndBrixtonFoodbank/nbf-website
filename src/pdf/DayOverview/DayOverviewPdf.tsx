@@ -151,7 +151,7 @@ const DayOverviewContent: React.FC<DayOverviewContentProps> = ({ date, location,
             <View style={{ borderLeft: "1 solid black" }}>
                 <DayOverviewHeader />
                 {data.map((datum, index) => (
-                    <DayOverviewRow key={index} row={datum} />
+                    <DayOverviewRow key={index} row={datum} /> // eslint-disable-line react/no-array-index-key
                 ))}
             </View>
         </>

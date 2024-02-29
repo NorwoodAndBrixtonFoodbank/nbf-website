@@ -22,10 +22,10 @@ const RadioGroupInput: React.FC<Props> = (props) => {
                 defaultValue={props.defaultValue}
                 value={props.value}
             >
-                {props.labelsAndValues.map(([label, value], index) => {
+                {props.labelsAndValues.map(([label, value]) => {
                     return (
                         <FormControlLabel
-                            key={index}
+                            key={value}
                             label={label}
                             value={value}
                             control={<Radio />}

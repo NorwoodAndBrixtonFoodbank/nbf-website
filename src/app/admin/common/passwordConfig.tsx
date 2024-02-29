@@ -27,8 +27,8 @@ export const getPasswordRuleList = (passwordRules: PasswordRule[]): ReactElement
         <>
             Password must meet the following criteria:
             <ul>
-                {passwordRules.map(({ message }, index) => (
-                    <li key={index}>{message}</li>
+                {passwordRules.map(({ message }) => (
+                    <li key={message}>{message}</li>
                 ))}
             </ul>
         </>
