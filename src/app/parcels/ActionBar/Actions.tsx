@@ -129,7 +129,7 @@ const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
 
 interface ActionsButtonProps {
     pdfType: PdfType;
-    data: ParcelsTableRow[];
+    parcels: ParcelsTableRow[];
     date: Dayjs;
     labelQuantity: number;
     driverName: string;
@@ -138,7 +138,7 @@ interface ActionsButtonProps {
 
 const ActionsButton: React.FC<ActionsButtonProps> = ({
     pdfType,
-    data,
+    parcels,
     date,
     labelQuantity,
     driverName,
@@ -146,11 +146,13 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
 }) => {
     switch (pdfType) {
         case "Download Shipping Labels":
-            return <ShippingLabelsModalButton data={data} labelQuantity={labelQuantity} />;
+            return <ShippingLabelsModalButton parcels={parcels} labelQuantity={labelQuantity} />;
         case "Download Shopping Lists":
-            return <ShoppingListModalButton data={data} />;
+            return <ShoppingListModalButton parcels={parcels} />;
         case "Download Driver Overview":
-            return <DriverOverviewModalButton data={data} date={date} driverName={driverName} />;
+            return (
+                <DriverOverviewModalButton parcels={parcels} date={date} driverName={driverName} />
+            );
         case "Download Day Overview":
             return (
                 <DayOverviewModalButton collectionCentre={collectionCentre} date={date.toDate()} />
@@ -163,7 +165,7 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
 interface Props {
     selectedRowIndices: number[];
     setSelectedRowIndices: React.Dispatch<React.SetStateAction<number[]>>;
-    data: ParcelsTableRow[];
+    parcels: ParcelsTableRow[];
     actionAnchorElement: HTMLElement | null;
     setActionAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     modalError: string | null;
@@ -173,11 +175,11 @@ interface Props {
 const Actions: React.FC<Props> = ({
     selectedRowIndices,
     setSelectedRowIndices,
-    data,
+    parcels: data,
     actionAnchorElement,
     setActionAnchorElement,
     modalError,
-    setModalError
+    setModalError,
 }) => {
     const [selectedAction, setSelectedAction] = useState<PdfType | null>(null);
     const [labelQuantity, setLabelQuantity] = useState<number>(0);
@@ -263,7 +265,7 @@ const Actions: React.FC<Props> = ({
                         >
                             <ActionsButton
                                 pdfType={selectedAction}
-                                data={selectedData}
+                                parcels={selectedData}
                                 date={date}
                                 labelQuantity={labelQuantity}
                                 driverName={driverName}

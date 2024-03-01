@@ -66,7 +66,7 @@ export const saveParcelStatus = async (
 
 interface Props {
     selectedRowIndices: number[];
-    data: ParcelsTableRow[];
+    parcels: ParcelsTableRow[];
     statusAnchorElement: HTMLElement | null;
     setStatusAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     modalError: string | null;
@@ -75,7 +75,7 @@ interface Props {
 
 const Statuses: React.FC<Props> = ({
     selectedRowIndices,
-    data,
+    parcels,
     statusAnchorElement,
     setStatusAnchorElement,
     modalError,
@@ -83,14 +83,7 @@ const Statuses: React.FC<Props> = ({
 }) => {
     const [selectedStatus, setSelectedStatus] = useState<statusType | null>(null);
     const [statusModal, setStatusModal] = useState(false);
-
-    const [selectedData, setSelectedData] = useState(
-        Array.from(selectedRowIndices.map((index) => data[index]))
-    );
-
-    React.useEffect(() => {
-        setSelectedData(Array.from(selectedRowIndices.map((index) => data[index])));
-    }, [selectedRowIndices, data]);
+    const selectedData = Array.from(selectedRowIndices.map((index) => parcels[index]));
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
         try {

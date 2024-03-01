@@ -12,7 +12,7 @@ import { ArrowDropDown } from "@mui/icons-material";
 
 interface Props {
     selectedRowIndices: number[];
-    data: ParcelsTableRow[];
+    parcels: ParcelsTableRow[];
     setSelectedRowIndices: React.Dispatch<SetStateAction<number[]>>;
 }
 

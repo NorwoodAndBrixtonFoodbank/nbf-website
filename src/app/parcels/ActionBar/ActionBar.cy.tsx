@@ -69,7 +69,11 @@ describe("Parcels - Action Bar", () => {
         return (
             <Localization>
                 <StyleManager>
-                    <ActionBar data={mockData} selected={selected} setSelected={setSelected} />
+                    <ActionBar
+                        parcels={mockData}
+                        selectedRowIndices={selected}
+                        setSelectedRowIndices={setSelected}
+                    />
                 </StyleManager>
             </Localization>
         );

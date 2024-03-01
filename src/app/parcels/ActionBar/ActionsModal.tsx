@@ -13,7 +13,7 @@ import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { saveParcelStatus, statusType } from "./Statuses";
 
-export type ActionType = 'pdfDownload' | 'deleteParcel';
+export type ActionType = "pdfDownload" | "deleteParcel";
 
 interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     data: ParcelsTableRow[];
@@ -21,7 +21,7 @@ interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     inputComponent?: React.ReactElement;
     showSelectedParcels: boolean;
     actionType: ActionType;
-    setSelectedRowIndices: React.Dispatch<SetStateAction<number[]>>
+    setSelectedRowIndices: React.Dispatch<SetStateAction<number[]>>;
 }
 
 const Centerer = styled.div`
@@ -177,7 +177,9 @@ export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
 const deleteParcels = async (parcels: ParcelsTableRow[]): Promise<void> => {
     await saveParcelStatus(
         parcels.map((parcel) => parcel.parcelId),
-        "Request Deleted"
+        "Request Deleted",
+        "Amelia test",
+        dayjs().endOf("year")
     );
     return;
 }; //assume successful for now
@@ -248,7 +250,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                 <Button
                                     disabled={loading}
                                     variant="contained"
-                                    onClick={() => setLoading(true)}
+                                    onClick={() => setLoadPdf(true)}
                                 >
                                     {loading ? "Loading..." : "Create PDF"}
                                 </Button>

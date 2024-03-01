@@ -148,22 +148,24 @@ const ParcelsPage: React.FC<{}> = () => {
 
     useEffect(() => {
         // This requires that both the DB parcels and events tables have Realtime turned on
+        const loadParcelTableData = async (): Promise<void> => {
+            setIsLoading(true);
+            setTableData(await fetchAndFormatParcelTablesData(packingDateRange));
+            setIsLoading(false);
+        };
+
         const subscriptionChannel = supabase
             .channel("parcels-table-changes")
             .on(
                 "postgres_changes",
                 { event: "*", schema: "public", table: "parcels" },
                 async () => {
-                    setIsLoading(true);
-                    setTableData(await fetchAndFormatParcelTablesData(packingDateRange));
-                    setIsLoading(false);
+                    await loadParcelTableData();
                 }
             )
             .on("postgres_changes", { event: "*", schema: "public", table: "events" }, async () => {
                 {
-                    setIsLoading(true);
-                    setTableData(await fetchAndFormatParcelTablesData(packingDateRange));
-                    setIsLoading(false);
+                    await loadParcelTableData();
                 }
             })
             .subscribe();
@@ -313,7 +315,11 @@ const ParcelsPage: React.FC<{}> = () => {
                         setRange={setPackingDateRange}
                     ></DateRangeInputs>
                 </ControlContainer>
-                <ActionBar data={tableData} selectedRowIndices={selectedRowIndices} setSelectedRowIndices={setSelectedRowIndices} />
+                <ActionBar
+                    parcels={tableData}
+                    selectedRowIndices={selectedRowIndices}
+                    setSelectedRowIndices={setSelectedRowIndices}
+                />
             </PreTableControls>
             {isLoading ? (
                 <></>
