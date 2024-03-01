@@ -74,6 +74,7 @@ const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
                 </Row>
                 Applying To:
                 {props.data.map((parcel, index) => {
+                    if (parcel) {
                     return (
                         <StatusText key={index}>
                             {parcel.addressPostcode}
@@ -83,7 +84,7 @@ const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
                                     "DD/MM/YYYY HH:mm"
                                 )}`}
                         </StatusText>
-                    );
+                    );}
                 })}
                 {props.errorText && <small>{props.errorText}</small>}
                 <Button type="button" variant="contained" onClick={() => props.onSubmit(date)}>

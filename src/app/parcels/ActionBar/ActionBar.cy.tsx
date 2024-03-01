@@ -63,9 +63,10 @@ describe("Parcels - Action Bar", () => {
     interface Props {
         selected: number[];
         setSelected: React.Dispatch<SetStateAction<number[]>>;
+        setSelectedCheckboxes: React.Dispatch<SetStateAction<boolean[]>>;
     }
 
-    const MockActionBar: React.FC<Props> = ({ selected, setSelected }) => {
+    const MockActionBar: React.FC<Props> = ({ selected, setSelected, setSelectedCheckboxes }) => {
         return (
             <Localization>
                 <StyleManager>
@@ -73,6 +74,8 @@ describe("Parcels - Action Bar", () => {
                         parcels={mockData}
                         selectedRowIndices={selected}
                         setSelectedRowIndices={setSelected}
+                        setSelectedCheckboxes={setSelectedCheckboxes}
+
                     />
                 </StyleManager>
             </Localization>
@@ -82,7 +85,7 @@ describe("Parcels - Action Bar", () => {
         const selectedIndices = [0, 1];
 
         beforeEach(() => {
-            cy.mount(<MockActionBar selected={selectedIndices} setSelected={() => {}} />);
+            cy.mount(<MockActionBar selected={selectedIndices} setSelected={() => {}} setSelectedCheckboxes={()=>{}}/>);
         });
 
         it("should open the status menu when the status button is clicked", () => {
@@ -148,7 +151,7 @@ describe("Parcels - Action Bar", () => {
         const selectedIndices = [0, 1];
 
         beforeEach(() => {
-            cy.mount(<MockActionBar selected={selectedIndices} setSelected={() => {}} />);
+            cy.mount(<MockActionBar selected={selectedIndices} setSelected={() => {}} setSelectedCheckboxes={() => {}} />);
         });
 
         it("should open the action menu when the action button is clicked", () => {

@@ -127,6 +127,9 @@ const ParcelsPage: React.FC<{}> = () => {
     const [tableData, setTableData] = useState<ParcelsTableRow[]>([]);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [selectedRowIndices, setSelectedRowIndices] = useState<number[]>([]);
+    const [selectedCheckboxes, setSelectedCheckboxes] = useState(
+        new Array<boolean>(tableData.length).fill(false)
+    );
     const theme = useTheme();
 
     useEffect(() => {
@@ -174,6 +177,11 @@ const ParcelsPage: React.FC<{}> = () => {
             supabase.removeChannel(subscriptionChannel);
         };
     }, [packingDateRange]);
+
+    
+    useEffect(() => {
+        setSelectedCheckboxes(new Array<boolean>(tableData.length).fill(false))
+    }, [tableData]);
 
     const rowToIconsColumn = ({
         flaggedForAttention,
@@ -319,6 +327,7 @@ const ParcelsPage: React.FC<{}> = () => {
                     parcels={tableData}
                     selectedRowIndices={selectedRowIndices}
                     setSelectedRowIndices={setSelectedRowIndices}
+                    setSelectedCheckboxes={setSelectedCheckboxes}
                 />
             </PreTableControls>
             {isLoading ? (
@@ -349,7 +358,9 @@ const ParcelsPage: React.FC<{}> = () => {
                                 "phoneNumber",
                                 "voucherNumber",
                                 buildLastStatusFilter(tableData),
-                            ]} //need a way to clear checkboxes and remember search
+                            ]}
+                            selectedCheckboxes={selectedCheckboxes}
+                            setSelectedCheckboxes={setSelectedCheckboxes}
                         />
                     </TableSurface>
                     <Modal

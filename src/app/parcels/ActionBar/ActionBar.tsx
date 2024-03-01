@@ -14,6 +14,7 @@ interface Props {
     selectedRowIndices: number[];
     parcels: ParcelsTableRow[];
     setSelectedRowIndices: React.Dispatch<SetStateAction<number[]>>;
+    setSelectedCheckboxes: React.Dispatch<SetStateAction<boolean[]>>;
 }
 
 const ActionsContainer = styled(ControlContainer)`

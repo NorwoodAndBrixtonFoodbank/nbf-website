@@ -35,6 +35,9 @@ const ClientsPage: React.FC<{}> = () => {
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [activeData, setActiveData] = useState<ExpandedClientDetails | null>(null);
     const theme = useTheme();
+    const [selectedCheckboxes, setSelectedCheckboxes] = useState(
+        new Array<boolean>(tableData.length).fill(false)
+    );
 
     useEffect(() => {
         let staleFetch = false;
@@ -90,6 +93,8 @@ const ClientsPage: React.FC<{}> = () => {
                             pagination
                             checkboxes={false}
                             filters={["fullName"]}
+                            selectedCheckboxes={selectedCheckboxes}
+                            setSelectedCheckboxes={setSelectedCheckboxes}
                         />
                     </TableSurface>
                     <Centerer>

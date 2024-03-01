@@ -11,7 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { NoSsr } from "@mui/material";
 import IconButton from "@mui/material/IconButton/IconButton";
-import React, { useEffect, useState } from "react";
+import React, { SetStateAction, useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import styled from "styled-components";
 import { textFilter } from "./TextFilter";
@@ -65,6 +65,9 @@ interface Props<Data> {
     columnStyleOptions?: ColumnStyles<Data>;
     onRowClick?: OnRowClickFunction<Data>;
     autoFilter?: boolean;
+    selectedCheckboxes: boolean[];
+    setSelectedCheckboxes: React.Dispatch<SetStateAction<boolean[]>>;
+
 }
 
 interface CellProps<Data> {
@@ -126,6 +129,10 @@ const Table = <Data,>({
     columnDisplayFunctions = {},
     columnStyleOptions = {},
     autoFilter = true,
+    selectedCheckboxes,
+    setSelectedCheckboxes
+
+
 }: Props<Data>): React.ReactElement => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
@@ -153,10 +160,6 @@ const Table = <Data,>({
 
     const [data, setData] = useState(inputData);
 
-    const [selectedCheckboxes, setSelectedCheckboxes] = useState(
-        new Array<boolean>(data.length).fill(false)
-    );
-
     const updateCheckboxes = (newSelection: boolean[]): void => {
         setSelectedCheckboxes(newSelection);
         onRowSelection?.(
@@ -181,7 +184,7 @@ const Table = <Data,>({
     };
 
     useEffect(() => {
-        const allChecked = selectedCheckboxes.every((item) => item);
+        const allChecked = selectedCheckboxes?.length > 0 ? selectedCheckboxes.every((item) => item) : false;
         if (allChecked !== selectAllCheckBox) {
             setSelectAllCheckBox(allChecked);
         }

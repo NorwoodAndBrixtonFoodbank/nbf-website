@@ -170,6 +170,7 @@ interface Props {
     setActionAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     modalError: string | null;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
+    setSelectedCheckboxes: React.Dispatch<React.SetStateAction<boolean[]>>;
 }
 
 const Actions: React.FC<Props> = ({
@@ -180,6 +181,7 @@ const Actions: React.FC<Props> = ({
     setActionAnchorElement,
     modalError,
     setModalError,
+    setSelectedCheckboxes,
 }) => {
     const [selectedAction, setSelectedAction] = useState<PdfType | null>(null);
     const [labelQuantity, setLabelQuantity] = useState<number>(0);
@@ -251,6 +253,7 @@ const Actions: React.FC<Props> = ({
                             headerId="action-modal-header"
                             errorText={modalError}
                             actionType={value.actionType}
+                            setSelectedCheckboxes={setSelectedCheckboxes}
                             inputComponent={
                                 <ActionsInputComponent
                                     pdfType={key}

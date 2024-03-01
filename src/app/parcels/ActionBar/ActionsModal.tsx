@@ -22,6 +22,7 @@ interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     showSelectedParcels: boolean;
     actionType: ActionType;
     setSelectedRowIndices: React.Dispatch<SetStateAction<number[]>>;
+    setSelectedCheckboxes: React.Dispatch<SetStateAction<boolean[]>>;
 }
 
 const Centerer = styled.div`
@@ -177,9 +178,7 @@ export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
 const deleteParcels = async (parcels: ParcelsTableRow[]): Promise<void> => {
     await saveParcelStatus(
         parcels.map((parcel) => parcel.parcelId),
-        "Request Deleted",
-        "Amelia test",
-        dayjs().endOf("year")
+        "Request Deleted"
     );
     return;
 }; //assume successful for now
@@ -272,6 +271,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                             setLoading(true);
                                             deleteParcels(props.data);
                                             props.setSelectedRowIndices([]);
+                                            props.setSelectedCheckboxes([]);
                                         }}
                                     >
                                         Delete
