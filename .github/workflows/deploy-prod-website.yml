@@ -1,0 +1,18 @@
+name: Set the production branch to current commit to trigger prod website deployment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  set-prod-branch:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+
+      - name: Set production branch to current commit
+        run: |
+          git checkout production
+          git reset --hard ${{ github.sha }}
+          git push --force origin production
