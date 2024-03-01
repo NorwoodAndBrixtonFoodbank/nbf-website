@@ -115,6 +115,15 @@ const fetchAndFormatParcelTablesData = async (
     return formattedData;
 };
 
+const areDateRangesIdentical = (
+    dateRangeA: DateRangeState,
+    dateRangeB: DateRangeState
+): boolean => {
+    return dateRangeA.from && dateRangeB.from && dateRangeA.to && dateRangeB.to
+        ? dateRangeA.from?.isSame(dateRangeB.from) && dateRangeA.to?.isSame(dateRangeB.to)
+        : false;
+};
+
 const ParcelsPage: React.FC<{}> = () => {
     const startOfToday = dayjs().startOf("day");
     const endOfToday = dayjs().endOf("day");
@@ -132,10 +141,10 @@ const ParcelsPage: React.FC<{}> = () => {
     useEffect(() => {
         (async () => {
             setIsLoading(true);
-            const dateRangeToFetch = packingDateRange;
+            const dateRangeToFetch = { ...packingDateRange };
             const tableData = await fetchAndFormatParcelTablesData(dateRangeToFetch);
 
-            if (dateRangeToFetch === packingDateRange) {
+            if (areDateRangesIdentical(dateRangeToFetch, packingDateRange)) {
                 setTableData(tableData);
             }
 
