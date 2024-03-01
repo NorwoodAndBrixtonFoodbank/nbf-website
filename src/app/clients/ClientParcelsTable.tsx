@@ -9,7 +9,6 @@ export interface ClientParcelTableRow {
     parcelId: string;
     voucherNumber: string;
     packingDate: string;
-    packingTime: string;
     collectionCentre: string;
 }
 
@@ -20,22 +19,20 @@ const headers: TableHeaders<ClientParcelTableRow> = [
 ];
 
 export interface ClientParcelTableProps {
-    tableData: ClientParcelTableRow[];
+    parcelsData: ClientParcelTableRow[];
 }
 
 const ClientParcelsTable: React.FC<ClientParcelTableProps> = (props) => {
     const router = useRouter();
     return (
-        <>
-            <TableSurface>
-                <Table
-                    data={props.tableData}
-                    headerKeysAndLabels={headers}
-                    pagination
-                    onRowClick={(row) => router.push(`parcels?parcelId=${row.data.parcelId}`)}
-                />
-            </TableSurface>
-        </>
+        <TableSurface>
+            <Table
+                data={props.parcelsData}
+                headerKeysAndLabels={headers}
+                pagination
+                onRowClick={(row) => router.push(`/parcels?parcelId=${row.data.parcelId}`)}
+            />
+        </TableSurface>
     );
 };
 

@@ -34,9 +34,9 @@ const headers: TableHeaders<ClientsTableRow> = [
 
 const ClientsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
-    const [tableData, setTableData] = useState<ClientsTableRow[]>([]);
+    const [clientsTableData, setClientsTableData] = useState<ClientsTableRow[]>([]);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-    const [activeData, setActiveData] = useState<ExpandedClientDetails | null>(null);
+    const [clientData, setClientData] = useState<ExpandedClientDetails | null>(null);
     const [clientParcelData, setClientParcelData] = useState<ClientParcelTableRow[] | null>(null);
     const theme = useTheme();
     const router = useRouter();
@@ -47,7 +47,7 @@ const ClientsPage: React.FC<{}> = () => {
     useEffect(() => {
         if (clientId) {
             getExpandedClientDetails(clientId).then((data) => {
-                setActiveData(data);
+                setClientData(data);
                 setModalIsOpen(true);
                 getExpandedClientParcelsDetails(clientId).then((data) => {
                     setClientParcelData(data);
@@ -63,7 +63,7 @@ const ClientsPage: React.FC<{}> = () => {
             setIsLoading(true);
             const fetchedData = await getClientsData(supabase);
             if (!staleFetch) {
-                setTableData(fetchedData);
+                setClientsTableData(fetchedData);
             }
             setIsLoading(false);
         })();
@@ -78,10 +78,10 @@ const ClientsPage: React.FC<{}> = () => {
         const subscriptionChannel = supabase
             .channel("parcels-table-changes")
             .on("postgres_changes", { event: "*", schema: "public", table: "clients" }, async () =>
-                setTableData(await getClientsData(supabase))
+                setClientsTableData(await getClientsData(supabase))
             )
             .on("postgres_changes", { event: "*", schema: "public", table: "families" }, async () =>
-                setTableData(await getClientsData(supabase))
+                setClientsTableData(await getClientsData(supabase))
             )
             .subscribe();
 
@@ -98,19 +98,10 @@ const ClientsPage: React.FC<{}> = () => {
                 <>
                     <TableSurface>
                         <Table
-                            data={tableData}
+                            data={clientsTableData}
                             headerKeysAndLabels={headers}
                             onRowClick={(row) =>
-                                getExpandedClientDetails(row.data.primaryKey).then((data) => {
-                                    router.push(`clients/?clientId=${row.data.primaryKey}`);
-                                    setModalIsOpen(true);
-                                    setActiveData(data);
-                                    getExpandedClientParcelsDetails(row.data.primaryKey).then(
-                                        (data) => {
-                                            setClientParcelData(data);
-                                        }
-                                    );
-                                })
+                                router.push(`/clients/?clientId=${row.data.primaryKey}`)
                             }
                             sortable={["fullName", "familyCategory", "addressPostcode"]}
                             pagination
@@ -138,9 +129,9 @@ const ClientsPage: React.FC<{}> = () => {
                     >
                         <OutsideDiv>
                             <ContentDiv>
-                                <DataViewer data={activeData ?? {}} />
+                                <DataViewer data={clientData ?? {}} />
                                 {clientParcelData ? (
-                                    <ClientParcelsTable tableData={clientParcelData} />
+                                    <ClientParcelsTable parcelsData={clientParcelData} />
                                 ) : (
                                     <>No data</>
                                 )}
@@ -148,10 +139,10 @@ const ClientsPage: React.FC<{}> = () => {
 
                             <ButtonsDiv>
                                 <Centerer>
-                                    <LinkButton link={`/clients/edit/${activeData?.primaryKey}`}>
+                                    <LinkButton link={`/clients/edit/${clientData?.primaryKey}`}>
                                         Edit Client
                                     </LinkButton>
-                                    <LinkButton link={`/parcels/add/${activeData?.primaryKey}`}>
+                                    <LinkButton link={`/parcels/add/${clientData?.primaryKey}`}>
                                         Add Parcel
                                     </LinkButton>
                                 </Centerer>
