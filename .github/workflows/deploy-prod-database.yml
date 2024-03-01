@@ -1,4 +1,4 @@
-name: Deploy database
+name: Deploy prod database
 on:
   push:
     branches:

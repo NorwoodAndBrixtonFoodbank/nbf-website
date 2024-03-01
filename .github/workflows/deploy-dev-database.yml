@@ -1,4 +1,4 @@
-name: Deploy database
+name: Deploy dev database
 on:
   workflow_dispatch:
   push:
