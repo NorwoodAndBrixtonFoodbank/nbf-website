@@ -56,34 +56,40 @@ const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
     "lastStatus",
 ];
 
-const statusNamesInWorkflowOrder = [  "-", "No Status",
-"Request Denied",
-"Pending More Info",
-"Called and Confirmed",
-"Called and No Response",
-"Shopping List Downloaded",
-"Ready to Dispatch",
-"Received by Centre",
-"Collection Failed",
-"Parcel Collected",
-"Shipping Labels Downloaded",
-"Out for Delivery",
-"Delivered",
-"Delivery Failed",
-"Delivery Cancelled",
-"Fulfilled with Trussell Trust",
-"Request Deleted"]
+const statusNamesInWorkflowOrder = [
+    "-",
+    "No Status",
+    "Request Denied",
+    "Pending More Info",
+    "Called and Confirmed",
+    "Called and No Response",
+    "Shopping List Downloaded",
+    "Ready to Dispatch",
+    "Received by Centre",
+    "Collection Failed",
+    "Parcel Collected",
+    "Shipping Labels Downloaded",
+    "Out for Delivery",
+    "Delivered",
+    "Delivery Failed",
+    "Delivery Cancelled",
+    "Fulfilled with Trussell Trust",
+    "Request Deleted",
+];
 
-const sortStatusByWorkflowOrder = (statusA: ParcelsTableRow["lastStatus"], statusB: ParcelsTableRow["lastStatus"]) => {
+const sortStatusByWorkflowOrder = (
+    statusA: ParcelsTableRow["lastStatus"],
+    statusB: ParcelsTableRow["lastStatus"]
+): number => {
     const indexA = statusNamesInWorkflowOrder.indexOf(statusA?.name ?? "-");
     const indexB = statusNamesInWorkflowOrder.indexOf(statusB?.name ?? "-");
     if (indexA > indexB) {
-        return 1;
-    } else if (indexB > indexA) {
         return -1;
-    } return 0;
-
-}
+    } else if (indexB > indexA) {
+        return 1;
+    }
+    return 0;
+};
 
 const sortable: (keyof ParcelsTableRow | SortOptions<ParcelsTableRow, any>)[] = [
     "fullName",
@@ -94,7 +100,7 @@ const sortable: (keyof ParcelsTableRow | SortOptions<ParcelsTableRow, any>)[] = 
     "deliveryCollection",
     "packingDatetime",
     "packingTimeLabel",
-    {key: "lastStatus", sortFunction: sortStatusByWorkflowOrder}
+    { key: "lastStatus", sortFunction: sortStatusByWorkflowOrder },
 ];
 
 const toggleableHeaders: (keyof ParcelsTableRow)[] = [
