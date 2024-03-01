@@ -21,7 +21,7 @@ import CollectionDateCard from "@/app/parcels/form/formSections/CollectionDateCa
 import CollectionTimeCard from "@/app/parcels/form/formSections/CollectionTimeCard";
 import CollectionCentreCard from "@/app/parcels/form/formSections/CollectionCentreCard";
 import { insertParcel, updateParcel } from "@/app/parcels/form/clientDatabaseFunctions";
-import Button from "@mui/material/Button";
+import { IconButton, Button } from "@mui/material";
 import Title from "@/components/Title/Title";
 import { Schema } from "@/databaseUtils";
 import dayjs, { Dayjs } from "dayjs";
@@ -30,6 +30,7 @@ import getExpandedClientDetails, {
     ExpandedClientDetails,
 } from "@/app/clients/getExpandedClientDetails";
 import Modal from "@/components/Modal/Modal";
+import InformationIcon from "@/components/Icons/InformationIcon";
 import Icon from "@/components/Icons/Icon";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
@@ -119,16 +120,17 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     const [submitError, setSubmitError] = useState(Errors.none);
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
     const [submitDisabled, setSubmitDisabled] = useState(false);
-    const [clientName, setClientName] = useState("");
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-    const [activeData, setActiveData] = useState<ExpandedClientDetails | null>(null);
+    const [clientDetails, setClientDetails] = useState<ExpandedClientDetails | null>(null);
     const theme = useTheme();
 
     useEffect(() => {
-        if (clientId) {
-            getExpandedClientDetails(clientId).then((response) => setClientName(response.fullName));
+        if (initialFields.clientId) {
+            getExpandedClientDetails(initialFields.clientId).then((response) =>
+                setClientDetails(response)
+            );
         }
-    }, [clientId]);
+    }, [initialFields]);
 
     const formSections =
         fields.shippingMethod === "Collection"
@@ -202,20 +204,19 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         <CenterComponent>
             <StyledForm>
                 <Title>Parcel Form</Title>
-                <Button
-                    variant="contained"
-                    type="button"
-                    onClick={() => {
-                        if (clientId) {
-                            getExpandedClientDetails(clientId).then((data) => {
-                                setActiveData(data);
-                                setModalIsOpen(true);
-                            });
-                        }
-                    }}
-                >
-                    {clientName}
-                </Button>
+                <div>
+                    {clientDetails?.fullName}
+                    <IconButton
+                        aria-label="Button for Client Information"
+                        type="button"
+                        size="large"
+                        onClick={() => {
+                            setModalIsOpen(true);
+                        }}
+                    >
+                        <InformationIcon color={theme.primary.background[3]} />
+                    </IconButton>
+                </div>
                 {formSections.map((Card, index) => {
                     return (
                         <Card
@@ -238,7 +239,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             <Modal
                 header={
                     <>
-                        <Icon icon={faUser} color={theme.primary.largeForeground[2]} />
+                        <Icon icon={faUser} color={theme.primary.background[2]} />
                         Client Details
                     </>
                 }
@@ -248,7 +249,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             >
                 <OutsideDiv>
                     <ContentDiv>
-                        <DataViewer data={{ ...activeData } ?? {}} />
+                        <DataViewer data={{ ...clientDetails } ?? {}} />
                     </ContentDiv>
                 </OutsideDiv>
             </Modal>
