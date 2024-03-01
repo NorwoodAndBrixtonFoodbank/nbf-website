@@ -148,7 +148,7 @@ const ShippingLabelsPdf: React.FC<ShippingLabelsPdfProps> = ({ data }) => {
                 [...Array(data.label_quantity)].map((value: undefined, index: number) => {
                     return (
                         <LabelCard
-                            key={index}
+                            key={index} // eslint-disable-line react/no-array-index-key
                             data={data}
                             index={index}
                             quantity={data.label_quantity}
