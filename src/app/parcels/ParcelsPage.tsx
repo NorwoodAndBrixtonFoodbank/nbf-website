@@ -119,15 +119,15 @@ const areDateRangesIdentical = (
     dateRangeA: DateRangeState,
     dateRangeB: DateRangeState
 ): boolean => {
-    return areDaysIdentical(dateRangeA.from, dateRangeB.from) && areDaysIdentical(dateRangeA.to, dateRangeB.to);
+    return (
+        areDaysIdentical(dateRangeA.from, dateRangeB.from) &&
+        areDaysIdentical(dateRangeA.to, dateRangeB.to)
+    );
 };
 
-const areDaysIdentical = (
-    dayA: dayjs.Dayjs | null,
-    dayB: dayjs.Dayjs | null
-): boolean => {
-    return (dayA && dayB) ? dayA.isSame(dayB) : dayA === dayB;
-}
+const areDaysIdentical = (dayA: dayjs.Dayjs | null, dayB: dayjs.Dayjs | null): boolean => {
+    return dayA && dayB ? dayA.isSame(dayB) : dayA === dayB;
+};
 
 const ParcelsPage: React.FC<{}> = () => {
     const startOfToday = dayjs().startOf("day");
