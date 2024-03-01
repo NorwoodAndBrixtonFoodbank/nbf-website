@@ -11,7 +11,7 @@ env:
 
 jobs:
   deploy-prod-database:
-    name: Deploy to prod database
+    name: Deploy prod database
     environment: prod
     runs-on: ubuntu-latest
     steps:

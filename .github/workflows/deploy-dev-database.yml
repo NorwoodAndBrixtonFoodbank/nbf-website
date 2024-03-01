@@ -14,7 +14,7 @@ env:
 
 jobs:
   deploy-dev-database:
-    name: Deploy to dev database
+    name: Deploy dev database
     environment: dev
     runs-on: ubuntu-latest
     steps:
