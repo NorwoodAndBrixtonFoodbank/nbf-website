@@ -129,8 +129,11 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             getExpandedClientDetails(initialFields.clientId).then((response) =>
                 setClientDetails(response)
             );
+        } else if (clientId) {
+            getExpandedClientDetails(clientId).then((response) => setClientDetails(response));
         }
-    }, [initialFields]);
+        console.log(clientDetails);
+    }, [initialFields, clientId]);
 
     const formSections =
         fields.shippingMethod === "Collection"
@@ -217,6 +220,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                         <InformationIcon color={theme.primary.background[3]} />
                     </IconButton>
                 </div>
+
                 {formSections.map((Card, index) => {
                     return (
                         <Card
