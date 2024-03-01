@@ -7,13 +7,13 @@ on:
 jobs:
   set-prod-branch:
     runs-on: ubuntu-latest
-    environment: prod
+#    environment: prod
     steps:
       - name: Checkout this repo
         uses: actions/checkout@v4
 
       - name: Set production branch to current commit
         run: |
-          git checkout production
+          git switch prod
           git reset --hard ${{ github.sha }}
-          git push --force origin production
+          git push --force origin prod
