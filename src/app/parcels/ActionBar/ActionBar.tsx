@@ -11,9 +11,9 @@ import { ControlContainer } from "@/components/Form/formStyling";
 import { ArrowDropDown } from "@mui/icons-material";
 
 interface Props {
-    selected: number[];
+    selectedRowIndices: number[];
     data: ParcelsTableRow[];
-    setSelected: React.Dispatch<SetStateAction<number[]>>;
+    setSelectedRowIndices: React.Dispatch<SetStateAction<number[]>>;
 }
 
 const ActionsContainer = styled(ControlContainer)`

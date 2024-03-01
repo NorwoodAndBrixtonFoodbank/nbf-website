@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
 import dayjs, { Dayjs } from "dayjs";
@@ -13,12 +13,15 @@ import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { saveParcelStatus, statusType } from "./Statuses";
 
+export type ActionType = 'pdfDownload' | 'deleteParcel';
+
 interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     data: ParcelsTableRow[];
     errorText: string | null;
     inputComponent?: React.ReactElement;
     showSelectedParcels: boolean;
-    downloadable: boolean;
+    actionType: ActionType;
+    setSelectedRowIndices: React.Dispatch<SetStateAction<number[]>>
 }
 
 const Centerer = styled.div`
@@ -198,7 +201,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                 {props.errorText && <small>{props.errorText}</small>}
                 {loadPdf ? (
                     <>
-                        {props.downloadable ? (
+                        {props.actionType === "pdfDownload" ? (
                             <Heading> The PDF is ready to be downloaded. </Heading>
                         ) : (
                             <Heading>
@@ -210,7 +213,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                     </>
                 ) : (
                     <>
-                        {!props.downloadable && (
+                        {props.actionType === "deleteParcel" && (
                             <Heading>
                                 Are you sure you want to delete the selected parcel{" "}
                                 {props.data.length === 1 ? "request" : "requests"}?
@@ -240,7 +243,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                 )}
                             </>
                         )}
-                        {props.downloadable ? (
+                        {props.actionType === "pdfDownload" ? (
                             <Centerer>
                                 <Button
                                     disabled={loading}
@@ -266,6 +269,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                         onClick={() => {
                                             setLoading(true);
                                             deleteParcels(props.data);
+                                            props.setSelectedRowIndices([]);
                                         }}
                                     >
                                         Delete

@@ -59,12 +59,13 @@ export const saveParcelStatus = async (
 
     const { error } = await supabase.from("events").insert(toInsert);
     if (error) {
+        console.error(error);
         throw new DatabaseError("insert", "status event");
     }
 };
 
 interface Props {
-    selected: number[];
+    selectedRowIndices: number[];
     data: ParcelsTableRow[];
     statusAnchorElement: HTMLElement | null;
     setStatusAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
@@ -73,7 +74,7 @@ interface Props {
 }
 
 const Statuses: React.FC<Props> = ({
-    selected,
+    selectedRowIndices,
     data,
     statusAnchorElement,
     setStatusAnchorElement,
@@ -84,12 +85,12 @@ const Statuses: React.FC<Props> = ({
     const [statusModal, setStatusModal] = useState(false);
 
     const [selectedData, setSelectedData] = useState(
-        Array.from(selected.map((index) => data[index]))
+        Array.from(selectedRowIndices.map((index) => data[index]))
     );
 
     React.useEffect(() => {
-        setSelectedData(Array.from(selected.map((index) => data[index])));
-    }, [selected, data]);
+        setSelectedData(Array.from(selectedRowIndices.map((index) => data[index])));
+    }, [selectedRowIndices, data]);
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
         try {

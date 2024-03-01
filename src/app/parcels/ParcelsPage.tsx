@@ -126,7 +126,7 @@ const ParcelsPage: React.FC<{}> = () => {
     });
     const [tableData, setTableData] = useState<ParcelsTableRow[]>([]);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
-    const [selected, setSelected] = useState<number[]>([]);
+    const [selectedRowIndices, setSelectedRowIndices] = useState<number[]>([]);
     const theme = useTheme();
 
     useEffect(() => {
@@ -313,7 +313,7 @@ const ParcelsPage: React.FC<{}> = () => {
                         setRange={setPackingDateRange}
                     ></DateRangeInputs>
                 </ControlContainer>
-                <ActionBar data={tableData} selected={selected} setSelected={setSelected} />
+                <ActionBar data={tableData} selectedRowIndices={selectedRowIndices} setSelectedRowIndices={setSelectedRowIndices} />
             </PreTableControls>
             {isLoading ? (
                 <></>
@@ -327,7 +327,7 @@ const ParcelsPage: React.FC<{}> = () => {
                             columnStyleOptions={parcelTableColumnStyleOptions}
                             onRowClick={onParcelTableRowClick}
                             checkboxes
-                            onRowSelection={setSelected}
+                            onRowSelection={setSelectedRowIndices}
                             pagination
                             sortable={toggleableHeaders}
                             defaultShownHeaders={defaultShownHeaders}

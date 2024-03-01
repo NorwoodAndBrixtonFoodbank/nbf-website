@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import ActionsModal, {
+    ActionType,
     DayOverviewInput,
     DriverOverviewInput,
     ShippingLabelsInput,
@@ -44,7 +45,7 @@ type AvailableActionsType = {
         showSelectedParcelsInModal: boolean;
         errorCondition: (value: number) => boolean;
         errorMessage: string;
-        downloadable: boolean;
+        actionType: ActionType;
     };
 };
 
@@ -53,32 +54,32 @@ const availableActions: AvailableActionsType = {
         showSelectedParcelsInModal: true,
         errorCondition: doesNotEqualOne,
         errorMessage: "Please select exactly one parcel.",
-        downloadable: true,
+        actionType: "pdfDownload",
     },
     "Download Shopping Lists": {
         showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
-        downloadable: true,
+        actionType: "pdfDownload",
     },
     "Download Driver Overview": {
         showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
-        downloadable: true,
+        actionType: "pdfDownload",
     },
     "Download Day Overview": {
         showSelectedParcelsInModal: false,
         errorCondition: doesNotEqualZero,
         errorMessage:
             "The day overview will show the parcels for a particular date and location. It will show not the currently selected parcel. Please unselect the parcels.",
-        downloadable: true,
+        actionType: "pdfDownload",
     },
     "Delete Parcel Request": {
         showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
-        downloadable: false,
+        actionType: "deleteParcel",
     },
 };
 
@@ -160,8 +161,8 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
 };
 
 interface Props {
-    selected: number[];
-    setSelected: React.Dispatch<React.SetStateAction<number[]>>;
+    selectedRowIndices: number[];
+    setSelectedRowIndices: React.Dispatch<React.SetStateAction<number[]>>;
     data: ParcelsTableRow[];
     actionAnchorElement: HTMLElement | null;
     setActionAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
@@ -170,13 +171,13 @@ interface Props {
 }
 
 const Actions: React.FC<Props> = ({
-    selected,
-    setSelected,
+    selectedRowIndices,
+    setSelectedRowIndices,
     data,
     actionAnchorElement,
     setActionAnchorElement,
     modalError,
-    setModalError,
+    setModalError
 }) => {
     const [selectedAction, setSelectedAction] = useState<PdfType | null>(null);
     const [labelQuantity, setLabelQuantity] = useState<number>(0);
@@ -185,12 +186,12 @@ const Actions: React.FC<Props> = ({
     const [collectionCentre, setCollectionCentre] = useState("");
 
     const [selectedData, setSelectedData] = useState(
-        Array.from(selected.map((index) => data[index]))
+        Array.from(selectedRowIndices.map((index) => data[index]))
     );
 
-    React.useEffect(() => {
-        setSelectedData(Array.from(selected.map((index) => data[index])));
-    }, [selected, data]);
+    useEffect(() => {
+        setSelectedData(Array.from(selectedRowIndices.map((index) => data[index])));
+    }, [selectedRowIndices, data]);
 
     const onLabelQuantityChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setLabelQuantity(parseInt(event.target.value, 10) ?? 0);
@@ -213,7 +214,6 @@ const Actions: React.FC<Props> = ({
         setModalError(null);
         setDate(dayjs());
         setDriverName("");
-        setSelected([]);
     };
 
     const onMenuItemClick = (
@@ -241,13 +241,14 @@ const Actions: React.FC<Props> = ({
                         <ActionsModal
                             key={key}
                             showSelectedParcels={value.showSelectedParcelsInModal}
+                            setSelectedRowIndices={setSelectedRowIndices}
                             isOpen
                             onClose={onModalClose}
                             data={selectedData}
                             header={key}
                             headerId="action-modal-header"
                             errorText={modalError}
-                            downloadable={value.downloadable}
+                            actionType={value.actionType}
                             inputComponent={
                                 <ActionsInputComponent
                                     pdfType={key}
