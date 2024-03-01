@@ -50,7 +50,7 @@ const GenerateForegroundWithBackground: React.FC<{ theme: DefaultTheme }> = (pro
         <StyleManager>
             {singleColourThemes.map((theme, index) => (
                 <ForegroundWithBackground
-                    key={index}
+                    key={index} // eslint-disable-line react/no-array-index-key
                     background={theme.background}
                     foreground={theme.foreground}
                     largeForeground={theme.largeForeground}
@@ -59,7 +59,7 @@ const GenerateForegroundWithBackground: React.FC<{ theme: DefaultTheme }> = (pro
             {gradientThemes.map((theme) =>
                 theme.background.map((background, index) => (
                     <ForegroundWithBackground
-                        key={index + singleColourThemes.length}
+                        key={index + singleColourThemes.length} // eslint-disable-line react/no-array-index-key
                         background={background}
                         foreground={theme.foreground[index]}
                         largeForeground={theme.largeForeground[index]}

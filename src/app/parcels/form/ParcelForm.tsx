@@ -185,7 +185,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                 {formSections.map((Card, index) => {
                     return (
                         <Card
-                            key={index}
+                            key={index} // eslint-disable-line react/no-array-index-key
                             formErrors={formErrors}
                             errorSetter={errorSetter}
                             fieldSetter={fieldSetter}
