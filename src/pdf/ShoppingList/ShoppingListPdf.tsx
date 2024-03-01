@@ -148,7 +148,7 @@ const DisplayItemsList: React.FC<DisplayItemsListProps> = ({ itemsList }) => {
     return (
         <View>
             {itemsList.map((item, index) => (
-                <ItemToRow {...item} key={index} />
+                <ItemToRow {...item} key={index} /> // eslint-disable-line react/no-array-index-key
             ))}
         </View>
     );
@@ -157,8 +157,8 @@ const DisplayItemsList: React.FC<DisplayItemsListProps> = ({ itemsList }) => {
 const DisplayAsBlock: React.FC<BlockProps> = (data: BlockProps) => {
     return (
         <View style={styles.infoCell}>
-            {Object.entries(data).map(([propKey, propValue], index) => (
-                <OneLine key={index} header={formatCamelCaseKey(propKey)} value={propValue} />
+            {Object.entries(data).map(([propKey, propValue]) => (
+                <OneLine key={propKey} header={formatCamelCaseKey(propKey)} value={propValue} />
             ))}
         </View>
     );
@@ -245,7 +245,7 @@ const ShoppingListPdf: React.FC<ShoppingListPDFProps> = ({ data }) => {
     return (
         <Document>
             {data.lists.map((parcelData: ShoppingListPdfData, index: number) => {
-                return <SingleShoppingList key={index} parcelData={parcelData} />;
+                return <SingleShoppingList key={index} parcelData={parcelData} />; // eslint-disable-line react/no-array-index-key
             })}
         </Document>
     );

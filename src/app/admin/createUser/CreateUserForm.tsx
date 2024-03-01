@@ -81,7 +81,7 @@ const CreateUserForm: React.FC<{}> = () => {
                 {formSections.map((Card, index) => {
                     return (
                         <Card
-                            key={index}
+                            key={index} // eslint-disable-line react/no-array-index-key
                             fields={fields}
                             fieldSetter={fieldSetter}
                             formErrors={formErrors}

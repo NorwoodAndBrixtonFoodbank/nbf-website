@@ -147,7 +147,7 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editMod
                 {formSections.map((Card, index) => {
                     return (
                         <Card
-                            key={index}
+                            key={index} // eslint-disable-line react/no-array-index-key
                             formErrors={formErrors}
                             errorSetter={errorSetter}
                             fieldSetter={fieldSetter}

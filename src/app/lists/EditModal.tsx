@@ -123,7 +123,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                                     defaultValue={toSubmit[noteKey]?.toString() ?? ""}
                                     label="Notes"
                                     onChange={(event) => setKey(event, noteKey)}
-                                    fullWidth={true}
+                                    fullWidth
                                 />
                             </DataWithTooltipDiv>
                         </DisplayContents>

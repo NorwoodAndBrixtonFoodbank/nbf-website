@@ -30,9 +30,9 @@ interface Props {
 const DataViewerFallback: React.FC<Props> = ({ fieldPlaceholders = defaultFieldPlaceholders }) => {
     return (
         <DataViewerContainer>
-            {fieldPlaceholders.map((placeholder, index) => {
+            {fieldPlaceholders.map((placeholder) => {
                 return (
-                    <DataViewerItem key={index}>
+                    <DataViewerItem key={placeholder}>
                         <SkeletonKey variant="text">{placeholder}</SkeletonKey>
                         <SkeletonValue variant="text" width={200} />
                     </DataViewerItem>
