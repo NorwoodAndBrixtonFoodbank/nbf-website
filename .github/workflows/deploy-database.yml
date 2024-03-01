@@ -10,6 +10,7 @@ on:
 jobs:
   deploy-dev-database:
     name: Deploy to dev database
+    environment: dev
     runs-on: ubuntu-latest
     env:
       SUPABASE_DEV_PROJECT_ID: ${{ secrets.SUPABASE_DEV_PROJECT_ID }}
@@ -48,6 +49,7 @@ jobs:
   reset-dev-database-data:
     name: Reset data in dev database
     if: github.event_name == 'workflow_dispatch'
+    environment: dev
     runs-on: ubuntu-latest
     env:
       SUPABASE_DEV_PROJECT_ID: ${{ secrets.SUPABASE_DEV_PROJECT_ID }}
