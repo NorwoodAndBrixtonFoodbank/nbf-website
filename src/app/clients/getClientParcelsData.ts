@@ -15,9 +15,7 @@ export const getExpandedClientParcelsDetails = async (
     clientId: string
 ): Promise<ExpandedClientParcelDetails[]> => {
     const rawClientParcelsDetails = await getRawClientParcelsDetails(clientId);
-    const formattedList = rawClientParcelsDetails.map((parcel) => {
-        return rawDataToExpandedClientParcelsDetails(parcel);
-    });
+    const formattedList = rawClientParcelsDetails.map(rawDataToExpandedClientParcelsDetails);
     return formattedList;
 };
 const getRawClientParcelsDetails = async (clientId: string): Promise<ParcelsDetail[]> => {
