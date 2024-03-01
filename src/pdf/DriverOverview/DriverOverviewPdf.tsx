@@ -138,6 +138,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
 
     const table = data.tableData.map((rowData, index) => {
         return (
+            // eslint-disable-next-line react/no-array-index-key
             <View key={index} style={[styles.tableRow, styles.flexRow]} wrap={false}>
                 <View style={[styles.tableColumn, styles.nameColumnWidth]}>
                     <Text>{rowData.name}</Text>
