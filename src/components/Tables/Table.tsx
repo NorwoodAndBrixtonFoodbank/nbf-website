@@ -9,13 +9,15 @@ import {
     faPenToSquare,
     faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { NoSsr } from "@mui/material";
+import { NoSsr, TablePagination } from "@mui/material";
 import IconButton from "@mui/material/IconButton/IconButton";
-import React, { useEffect, useState } from "react";
+import React, { SetStateAction, useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import styled from "styled-components";
 import { textFilter } from "./TextFilter";
 import { Primitive } from "react-data-table-component/dist/DataTable/types";
+import { CustomPagination } from "./CustomPagination";
+import { Supabase } from "@/supabaseUtils";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -65,6 +67,11 @@ interface Props<Data> {
     columnStyleOptions?: ColumnStyles<Data>;
     onRowClick?: OnRowClickFunction<Data>;
     autoFilter?: boolean;
+    loading: boolean;
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    getData: (supabase: Supabase, start: number, end: number) => Promise<Data[]>;
+    supabase: Supabase;
+    getCount: (supabase: Supabase) => Promise<number>;
 }
 
 interface CellProps<Data> {
@@ -126,7 +133,43 @@ const Table = <Data,>({
     columnDisplayFunctions = {},
     columnStyleOptions = {},
     autoFilter = true,
+    loading,
+    setLoading,
+    getData,
+    supabase,
+    getCount,
+    
 }: Props<Data>): React.ReactElement => {
+    const [totalRows, setTotalRows] = useState(0);
+    const [perPage, setPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const getStartPoint = (currentPage: number, perPage: number): number => (currentPage * perPage);
+    const getEndPoint = (currentPage: number, perPage: number): number => ((currentPage + 1) * perPage);
+
+    const fetchData = async (page: number, perPage: number) => {
+        setLoading(true);
+        const fetchedData = await getData(supabase, getStartPoint(page, perPage), getEndPoint(page, perPage));
+        setData(fetchedData);
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        (async () => {
+            setTotalRows(await getCount(supabase))})();
+        fetchData(1, perPage);
+    }, []);
+
+    const handlePageChange = (newPage: number) => {
+        fetchData(newPage, perPage);
+        setCurrentPage(newPage);
+    }
+
+    const handlePerRowsChange = async (newPerPage: number, page: number) => {
+        fetchData(page, newPerPage);
+        setPerPage(newPerPage);
+    }
+
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
     );
@@ -367,6 +410,11 @@ const Table = <Data,>({
                         pagination={pagination ?? true}
                         persistTableHead
                         onRowClicked={onRowClick}
+                        paginationServer={pagination ?? true}
+                        paginationTotalRows={totalRows}
+                        paginationDefaultPage={currentPage}
+                        onChangePage={handlePageChange}
+                        onChangeRowsPerPage={handlePerRowsChange}
                     />
                 </NoSsr>
             </TableStyling>

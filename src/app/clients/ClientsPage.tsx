@@ -14,7 +14,7 @@ import supabase from "@/supabaseClient";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
 import { useTheme } from "styled-components";
-import getClientsData from "./getClientsData";
+import getClientsData, { getClientsCount } from "./getClientsData";
 
 export interface ClientsTableRow {
     primaryKey: string;
@@ -30,51 +30,56 @@ const headers: TableHeaders<ClientsTableRow> = [
 ];
 
 const ClientsPage: React.FC<{}> = () => {
-    const [isLoading, setIsLoading] = useState(true);
+    const [count, setCount] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
     const [tableData, setTableData] = useState<ClientsTableRow[]>([]);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [activeData, setActiveData] = useState<ExpandedClientDetails | null>(null);
     const theme = useTheme();
 
     useEffect(() => {
-        let staleFetch = false;
-
         (async () => {
-            setIsLoading(true);
-            const fetchedData = await getClientsData(supabase);
-            if (!staleFetch) {
-                setTableData(fetchedData);
-            }
-            setIsLoading(false);
-        })();
-
-        return () => {
-            staleFetch = true;
-        };
+            setCount(await getClientsCount(supabase))})();
     }, []);
 
-    useEffect(() => {
-        // This requires that the DB clients and families tables have Realtime turned on
-        const subscriptionChannel = supabase
-            .channel("parcels-table-changes")
-            .on("postgres_changes", { event: "*", schema: "public", table: "clients" }, async () =>
-                setTableData(await getClientsData(supabase))
-            )
-            .on("postgres_changes", { event: "*", schema: "public", table: "families" }, async () =>
-                setTableData(await getClientsData(supabase))
-            )
-            .subscribe();
+    // useEffect(() => {
+    //     let staleFetch = false;
 
-        return () => {
-            supabase.removeChannel(subscriptionChannel);
-        };
-    }, []);
+    //     (async () => {
+    //         setIsLoading(true);
+    //         const fetchedData = await getClientsData(supabase);
+    //         if (!staleFetch) {
+    //             setTableData(fetchedData);
+    //         }
+    //         setIsLoading(false);
+    //     })();
+
+    //     return () => {
+    //         staleFetch = true;
+    //     };
+    // }, []);
+
+    // useEffect(() => {
+    //     // This requires that the DB clients and families tables have Realtime turned on
+    //     const subscriptionChannel = supabase
+    //         .channel("parcels-table-changes")
+    //         .on("postgres_changes", { event: "*", schema: "public", table: "clients" }, async () =>
+    //             {setCount(await getClientsCount(supabase));
+    //             setTableData(await getClientsData(supabase));}
+    //         )
+    //         .on("postgres_changes", { event: "*", schema: "public", table: "families" }, async () =>
+    //             {setCount(await getClientsCount(supabase));
+    //             setTableData(await getClientsData(supabase));}
+    //         )
+    //         .subscribe();
+
+    //     return () => {
+    //         supabase.removeChannel(subscriptionChannel);
+    //     };
+    // }, []);
 
     return (
         <>
-            {isLoading ? (
-                <></>
-            ) : (
                 <>
                     <TableSurface>
                         <Table
@@ -90,6 +95,11 @@ const ClientsPage: React.FC<{}> = () => {
                             pagination
                             checkboxes={false}
                             filters={["fullName"]}
+                            loading={isLoading}
+                            setLoading={setIsLoading}
+                            getData={getClientsData}
+                            getCount={getClientsCount}
+                            supabase={supabase}
                         />
                     </TableSurface>
                     <Centerer>
@@ -125,7 +135,6 @@ const ClientsPage: React.FC<{}> = () => {
                         </OutsideDiv>
                     </Modal>
                 </>
-            )}
         </>
     );
 };
