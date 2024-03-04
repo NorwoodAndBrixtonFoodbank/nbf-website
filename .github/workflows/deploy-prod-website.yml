@@ -11,9 +11,12 @@ jobs:
     steps:
       - name: Checkout this repo
         uses: actions/checkout@v4
+#        with:
+#          ref: prod
 
       - name: Set production branch to current commit
         run: |
-          git switch prod
+          git fetch
+          git checkout prod
           git reset --hard ${{ github.sha }}
           git push --force origin prod
