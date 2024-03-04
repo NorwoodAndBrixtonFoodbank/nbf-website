@@ -5,17 +5,14 @@ import ClientParcelsTable from "@/app/clients/ClientParcelsTable";
 import { getExpandedClientParcelsDetails } from "@/app/clients/getClientParcelsData";
 
 interface Props {
-    clientId: string | null;
+    clientId: string;
 }
 
 const ExpandedClientDetails = async ({ clientId }: Props): Promise<React.ReactElement> => {
-    if (!clientId) {
-        return <></>;
-    }
-
     const expandedClientDetails = await getExpandedClientDetails(clientId);
 
     const expandedClientParcelsDetails = await getExpandedClientParcelsDetails(clientId);
+
     return (
         <>
             <DataViewer data={expandedClientDetails} />
