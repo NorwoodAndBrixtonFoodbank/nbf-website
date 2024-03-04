@@ -9,7 +9,12 @@ import {
     checkErrorOnSubmit,
     Fields,
 } from "@/components/Form/formFunctions";
-import { CenterComponent, StyledForm, FormErrorText, StyledName } from "@/components/Form/formStyling";
+import {
+    CenterComponent,
+    StyledForm,
+    FormErrorText,
+    StyledName,
+} from "@/components/Form/formStyling";
 
 import { useRouter } from "next/navigation";
 
