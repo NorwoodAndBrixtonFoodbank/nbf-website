@@ -5,7 +5,7 @@ on:
     paths:
       supabase/migrations/**.sql
     branches:
-      main
+      dev
 
 env:
   SUPABASE_DEV_PROJECT_ID: ${{ secrets.SUPABASE_DEV_PROJECT_ID }}
