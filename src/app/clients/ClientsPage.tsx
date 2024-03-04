@@ -31,7 +31,6 @@ const headers: TableHeaders<ClientsTableRow> = [
 const ClientsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [clientsTableData, setClientsTableData] = useState<ClientsTableRow[]>([]);
-    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const theme = useTheme();
     const router = useRouter();
 
@@ -84,7 +83,6 @@ const ClientsPage: React.FC<{}> = () => {
                             headerKeysAndLabels={headers}
                             onRowClick={(row) => {
                                 router.push(`/clients/?clientId=${row.data.clientId}`);
-                                setModalIsOpen(true);
                             }}
                             sortable={["fullName", "familyCategory", "addressPostcode"]}
                             pagination
@@ -103,10 +101,9 @@ const ClientsPage: React.FC<{}> = () => {
                                 Client Details
                             </>
                         }
-                        isOpen={modalIsOpen}
+                        isOpen={clientId !== null}
                         onClose={() => {
                             router.push("clients/");
-                            setModalIsOpen(false);
                         }}
                         headerId="clientsDetailModal"
                     >
