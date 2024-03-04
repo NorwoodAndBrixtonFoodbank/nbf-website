@@ -30,7 +30,7 @@ import getExpandedClientDetails, {
     ExpandedClientDetails,
 } from "@/app/clients/getExpandedClientDetails";
 import Modal from "@/components/Modal/Modal";
-import InformationIcon from "@/components/Icons/InformationIcon";
+import InfoIcon from "@mui/icons-material/Info";
 import Icon from "@/components/Icons/Icon";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
@@ -125,15 +125,18 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     const theme = useTheme();
 
     useEffect(() => {
-        if (initialFields.clientId) {
-            getExpandedClientDetails(initialFields.clientId).then((response) =>
-                setClientDetails(response)
-            );
-        } else if (clientId) {
-            getExpandedClientDetails(clientId).then((response) => setClientDetails(response));
+        const clientIdForFetch = initialFields.clientId ? initialFields.clientId : clientId;
+
+        if (!clientDetails && clientIdForFetch) {
+            getExpandedClientDetails(clientIdForFetch)
+                .then((response) => {
+                    setClientDetails(response);
+                })
+                .catch(() => {
+                    setClientDetails(null);
+                });
         }
-        console.log(clientDetails);
-    }, [initialFields, clientId]);
+    }, []);
 
     const formSections =
         fields.shippingMethod === "Collection"
@@ -207,20 +210,21 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         <CenterComponent>
             <StyledForm>
                 <Title>Parcel Form</Title>
-                <div>
-                    {clientDetails?.fullName}
-                    <IconButton
-                        aria-label="Button for Client Information"
-                        type="button"
-                        size="large"
-                        onClick={() => {
-                            setModalIsOpen(true);
-                        }}
-                    >
-                        <InformationIcon color={theme.primary.background[3]} />
-                    </IconButton>
-                </div>
-
+                {clientDetails && (
+                    <div>
+                        {clientDetails?.fullName}
+                        <IconButton
+                            aria-label="Button for Client Information"
+                            type="button"
+                            size="large"
+                            onClick={() => {
+                                setModalIsOpen(true);
+                            }}
+                        >
+                            <InfoIcon />
+                        </IconButton>
+                    </div>
+                )}
                 {formSections.map((Card, index) => {
                     return (
                         <Card
@@ -240,23 +244,25 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                 </CenterComponent>
                 <FormErrorText>{submitErrorMessage || submitError}</FormErrorText>
             </StyledForm>
-            <Modal
-                header={
-                    <>
-                        <Icon icon={faUser} color={theme.primary.background[2]} />
-                        Client Details
-                    </>
-                }
-                isOpen={modalIsOpen}
-                onClose={() => setModalIsOpen(false)}
-                headerId="clientsDetailModal"
-            >
-                <OutsideDiv>
-                    <ContentDiv>
-                        <DataViewer data={{ ...clientDetails } ?? {}} />
-                    </ContentDiv>
-                </OutsideDiv>
-            </Modal>
+            {clientDetails && (
+                <Modal
+                    header={
+                        <>
+                            <Icon icon={faUser} color={theme.primary.background[2]} />
+                            Client Details
+                        </>
+                    }
+                    isOpen={modalIsOpen}
+                    onClose={() => setModalIsOpen(false)}
+                    headerId="clientsDetailModal"
+                >
+                    <OutsideDiv>
+                        <ContentDiv>
+                            <DataViewer data={{ ...clientDetails } ?? {}} />
+                        </ContentDiv>
+                    </OutsideDiv>
+                </Modal>
+            )}
         </CenterComponent>
     );
 };

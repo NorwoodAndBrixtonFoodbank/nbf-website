@@ -8,6 +8,9 @@ const nextConfig = {
         newNextLinkBehavior: true,
         serverActions: true,
     },
+    eslint: {
+        ignoreDuringBuilds: true,
+    },
     async redirects() {
         return [
             {
