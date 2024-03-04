@@ -16,8 +16,8 @@ import DataTable, { TableColumn } from "react-data-table-component";
 import styled from "styled-components";
 import { textFilter } from "./TextFilter";
 import { Primitive } from "react-data-table-component/dist/DataTable/types";
-import { CustomPagination } from "./CustomPagination";
 import { Supabase } from "@/supabaseUtils";
+import { RealtimeChannel, RealtimePostgresChangesFilter } from "@supabase/supabase-js";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -72,6 +72,7 @@ interface Props<Data> {
     getData: (supabase: Supabase, start: number, end: number) => Promise<Data[]>;
     supabase: Supabase;
     getCount: (supabase: Supabase) => Promise<number>;
+    subscriptions: RealtimePostgresChangesFilter<"*">[];
 }
 
 interface CellProps<Data> {
@@ -138,6 +139,7 @@ const Table = <Data,>({
     getData,
     supabase,
     getCount,
+    subscriptions,
     
 }: Props<Data>): React.ReactElement => {
     const [totalRows, setTotalRows] = useState(0);
@@ -153,12 +155,33 @@ const Table = <Data,>({
         setData(fetchedData);
         setLoading(false);
     }
+    const fetchCount = async () => {
+        setTotalRows(await getCount(supabase));
+    };
 
     useEffect(() => {
-        (async () => {
-            setTotalRows(await getCount(supabase))})();
-        fetchData(1, perPage);
+        fetchCount();
+        fetchData(currentPage, perPage);
     }, []);
+
+    useEffect(() => {
+        // This requires that the DB subscribed tables have Realtime turned on
+        let subscriptionChannel = supabase
+            .channel("table-changes")
+        
+        subscriptions.forEach((subscription) => subscriptionChannel = subscriptionChannel
+            .on("postgres_changes", subscription, async () =>
+                {fetchCount();
+                fetchData(currentPage, perPage);}
+            ))
+        subscriptionChannel.subscribe();
+
+
+        return () => {
+            supabase.removeChannel(subscriptionChannel);
+        };
+    }, []);
+
 
     const handlePageChange = (newPage: number) => {
         fetchData(newPage, perPage);

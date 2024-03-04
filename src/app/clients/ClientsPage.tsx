@@ -59,25 +59,6 @@ const ClientsPage: React.FC<{}> = () => {
     //     };
     // }, []);
 
-    // useEffect(() => {
-    //     // This requires that the DB clients and families tables have Realtime turned on
-    //     const subscriptionChannel = supabase
-    //         .channel("parcels-table-changes")
-    //         .on("postgres_changes", { event: "*", schema: "public", table: "clients" }, async () =>
-    //             {setCount(await getClientsCount(supabase));
-    //             setTableData(await getClientsData(supabase));}
-    //         )
-    //         .on("postgres_changes", { event: "*", schema: "public", table: "families" }, async () =>
-    //             {setCount(await getClientsCount(supabase));
-    //             setTableData(await getClientsData(supabase));}
-    //         )
-    //         .subscribe();
-
-    //     return () => {
-    //         supabase.removeChannel(subscriptionChannel);
-    //     };
-    // }, []);
-
     return (
         <>
                 <>
@@ -100,6 +81,7 @@ const ClientsPage: React.FC<{}> = () => {
                             getData={getClientsData}
                             getCount={getClientsCount}
                             supabase={supabase}
+                            subscriptions={[{ event: "*", schema: "public", table: "clients" }, { event: "*", schema: "public", table: "families" }]}
                         />
                     </TableSurface>
                     <Centerer>
