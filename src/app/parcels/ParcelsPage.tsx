@@ -178,9 +178,8 @@ const ParcelsPage: React.FC<{}> = () => {
         };
     }, [packingDateRange]);
 
-    
     useEffect(() => {
-        setSelectedCheckboxes(new Array<boolean>(tableData.length).fill(false))
+        setSelectedCheckboxes(new Array<boolean>(tableData.length).fill(false));
     }, [tableData]);
 
     const rowToIconsColumn = ({

@@ -75,7 +75,6 @@ describe("Parcels - Action Bar", () => {
                         selectedRowIndices={selected}
                         setSelectedRowIndices={setSelected}
                         setSelectedCheckboxes={setSelectedCheckboxes}
-
                     />
                 </StyleManager>
             </Localization>
@@ -85,7 +84,13 @@ describe("Parcels - Action Bar", () => {
         const selectedIndices = [0, 1];
 
         beforeEach(() => {
-            cy.mount(<MockActionBar selected={selectedIndices} setSelected={() => {}} setSelectedCheckboxes={()=>{}}/>);
+            cy.mount(
+                <MockActionBar
+                    selected={selectedIndices}
+                    setSelected={() => {}}
+                    setSelectedCheckboxes={() => {}}
+                />
+            );
         });
 
         it("should open the status menu when the status button is clicked", () => {
@@ -151,7 +156,13 @@ describe("Parcels - Action Bar", () => {
         const selectedIndices = [0, 1];
 
         beforeEach(() => {
-            cy.mount(<MockActionBar selected={selectedIndices} setSelected={() => {}} setSelectedCheckboxes={() => {}} />);
+            cy.mount(
+                <MockActionBar
+                    selected={selectedIndices}
+                    setSelected={() => {}}
+                    setSelectedCheckboxes={() => {}}
+                />
+            );
         });
 
         it("should open the action menu when the action button is clicked", () => {

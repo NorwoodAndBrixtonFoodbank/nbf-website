@@ -66,6 +66,10 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
         setCollectionCentreToDelete(undefined);
     };
 
+    const [selectedCheckboxes, setSelectedCheckboxes] = useState(
+        new Array<boolean>(props.collectionCentreData.length).fill(false)
+    );
+
     return (
         <>
             <Table
@@ -75,6 +79,8 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
                 defaultShownHeaders={["name", "acronym"]}
                 filters={["name", "acronym"]}
                 toggleableHeaders={["primary_key"]}
+                selectedCheckboxes={selectedCheckboxes}
+                setSelectedCheckboxes={setSelectedCheckboxes}
             />
 
             {refreshRequired && (

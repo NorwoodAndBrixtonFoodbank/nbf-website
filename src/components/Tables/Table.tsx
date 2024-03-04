@@ -11,7 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { NoSsr } from "@mui/material";
 import IconButton from "@mui/material/IconButton/IconButton";
-import React, { SetStateAction, useEffect, useState } from "react";
+import React, { SetStateAction, useEffect, useRef, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import styled from "styled-components";
 import { textFilter } from "./TextFilter";
@@ -65,9 +65,8 @@ interface Props<Data> {
     columnStyleOptions?: ColumnStyles<Data>;
     onRowClick?: OnRowClickFunction<Data>;
     autoFilter?: boolean;
-    selectedCheckboxes: boolean[];
-    setSelectedCheckboxes: React.Dispatch<SetStateAction<boolean[]>>;
-
+    selectedCheckboxes?: boolean[];
+    setSelectedCheckboxes?: React.Dispatch<SetStateAction<boolean[]>>;
 }
 
 interface CellProps<Data> {
@@ -129,11 +128,13 @@ const Table = <Data,>({
     columnDisplayFunctions = {},
     columnStyleOptions = {},
     autoFilter = true,
-    selectedCheckboxes,
-    setSelectedCheckboxes
-
-
+    selectedCheckboxes = new Array<boolean>(inputData.length).fill(false),
+    setSelectedCheckboxes = (value: boolean[]) => {selectedCheckboxes = value},
 }: Props<Data>): React.ReactElement => {
+
+    // const selectedCheckboxes = selectedCheckboxes ?? useRef({current: new Array<boolean>(inputData.length).fill(false)});
+    // const setSelectedCheckboxes = setSelectedCheckboxes ?? (newArray: boolean[]) => {selectedCheckboxes.current = newArray};
+
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
     );
@@ -161,7 +162,7 @@ const Table = <Data,>({
     const [data, setData] = useState(inputData);
 
     const updateCheckboxes = (newSelection: boolean[]): void => {
-        setSelectedCheckboxes(newSelection);
+        setSelectedCheckboxes!(newSelection);
         onRowSelection?.(
             newSelection
                 .map((selected, index) => (selected ? index : -1))
@@ -172,7 +173,7 @@ const Table = <Data,>({
     const [selectAllCheckBox, setSelectAllCheckBox] = useState(false);
 
     const toggleOwnCheckBox = (rowId: number): void => {
-        const selectCheckBoxesCopy = [...selectedCheckboxes];
+        const selectCheckBoxesCopy = [...selectedCheckboxes!];
         selectCheckBoxesCopy[rowId] = !selectCheckBoxesCopy[rowId];
         updateCheckboxes(selectCheckBoxesCopy);
     };
@@ -184,7 +185,8 @@ const Table = <Data,>({
     };
 
     useEffect(() => {
-        const allChecked = selectedCheckboxes?.length > 0 ? selectedCheckboxes.every((item) => item) : false;
+        const allChecked =
+            selectedCheckboxes!?.length > 0 ? selectedCheckboxes!.every((item) => item) : false;
         if (allChecked !== selectAllCheckBox) {
             setSelectAllCheckBox(allChecked);
         }
@@ -277,7 +279,7 @@ const Table = <Data,>({
                 <input
                     type="checkbox"
                     aria-label={`Select row ${row.rowId}`}
-                    checked={selectedCheckboxes[row.rowId]}
+                    checked={selectedCheckboxes![row.rowId]}
                     onClick={() => toggleOwnCheckBox(row.rowId)}
                 />
             ),

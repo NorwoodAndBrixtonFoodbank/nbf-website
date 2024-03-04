@@ -75,16 +75,17 @@ const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
                 Applying To:
                 {props.data.map((parcel, index) => {
                     if (parcel) {
-                    return (
-                        <StatusText key={index}>
-                            {parcel.addressPostcode}
-                            {parcel.fullName && ` - ${parcel.fullName}`}
-                            {parcel.collectionDatetime &&
-                                `\n @ ${dayjs(parcel.collectionDatetime!).format(
-                                    "DD/MM/YYYY HH:mm"
-                                )}`}
-                        </StatusText>
-                    );}
+                        return (
+                            <StatusText key={index}>
+                                {parcel.addressPostcode}
+                                {parcel.fullName && ` - ${parcel.fullName}`}
+                                {parcel.collectionDatetime &&
+                                    `\n @ ${dayjs(parcel.collectionDatetime!).format(
+                                        "DD/MM/YYYY HH:mm"
+                                    )}`}
+                            </StatusText>
+                        );
+                    }
                 })}
                 {props.errorText && <small>{props.errorText}</small>}
                 <Button type="button" variant="contained" onClick={() => props.onSubmit(date)}>
