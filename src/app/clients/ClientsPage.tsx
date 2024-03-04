@@ -1,26 +1,21 @@
 "use client";
 
-import getExpandedClientDetails, {
-    ExpandedClientDetails,
-} from "@/app/clients/getExpandedClientDetails";
 import LinkButton from "@/components/Buttons/LinkButton";
-import DataViewer from "@/components/DataViewer/DataViewer";
 import Icon from "@/components/Icons/Icon";
 import Modal from "@/components/Modal/Modal";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
-import Table, { TableHeaders } from "@/components/Tables/Table";
+import Table, { Row, TableHeaders } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
 import supabase from "@/supabaseClient";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
 import { useTheme } from "styled-components";
 import getClientsData from "./getClientsData";
-import { getExpandedClientParcelsDetails } from "@/app/clients/getClientParcelsData";
-import ClientParcelsTable, { ClientParcelTableRow } from "@/app/clients/ClientParcelsTable";
 import { useSearchParams, useRouter } from "next/navigation";
+import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 
 export interface ClientsTableRow {
-    primaryKey: string;
+    clientId: string;
     fullName: string;
     familyCategory: string;
     addressPostcode: string;
@@ -32,28 +27,30 @@ const headers: TableHeaders<ClientsTableRow> = [
     ["addressPostcode", "Postcode"],
 ];
 
+const clientIdParam = "clientId";
 const ClientsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [clientsTableData, setClientsTableData] = useState<ClientsTableRow[]>([]);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-    const [clientData, setClientData] = useState<ExpandedClientDetails | null>(null);
-    const [clientParcelData, setClientParcelData] = useState<ClientParcelTableRow[] | null>(null);
+    // const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
     const theme = useTheme();
     const router = useRouter();
 
     const searchParams = useSearchParams();
-    const clientId = searchParams.get("clientId");
+    const clientId = searchParams.get(clientIdParam);
+
+    const onClientTableRowClick = (row: Row<ClientsTableRow>): void => {
+        router.push(`clients/?${clientIdParam}=${row.data.clientId}`);
+        // setModalIsOpen(true)
+    };
 
     useEffect(() => {
-        if (clientId) {
-            getExpandedClientDetails(clientId).then((data) => {
-                setClientData(data);
-                setModalIsOpen(true);
-                getExpandedClientParcelsDetails(clientId).then((data) => {
-                    setClientParcelData(data);
-                });
-            });
-        }
+        setModalIsOpen(clientId !== null);
+        // if (clientId) {
+        //     setSelectedClientId(clientId);
+        //     console.log(selectedClientId);
+        //     // setModalIsOpen(true);
+        // }
     }, [clientId]);
 
     useEffect(() => {
@@ -100,9 +97,7 @@ const ClientsPage: React.FC<{}> = () => {
                         <Table
                             data={clientsTableData}
                             headerKeysAndLabels={headers}
-                            onRowClick={(row) =>
-                                router.push(`/clients/?clientId=${row.data.primaryKey}`)
-                            }
+                            onRowClick={onClientTableRowClick}
                             sortable={["fullName", "familyCategory", "addressPostcode"]}
                             pagination
                             checkboxes={false}
@@ -113,6 +108,7 @@ const ClientsPage: React.FC<{}> = () => {
                         <LinkButton link="/clients/add">Add Client</LinkButton>
                     </Centerer>
 
+                    {/*{clientId && (*/}
                     <Modal
                         header={
                             <>
@@ -122,33 +118,30 @@ const ClientsPage: React.FC<{}> = () => {
                         }
                         isOpen={modalIsOpen}
                         onClose={() => {
-                            setModalIsOpen(false);
+                            // setModalIsOpen(false)
+                            // setSelectedClientId(null);
                             router.push("clients/");
                         }}
                         headerId="clientsDetailModal"
                     >
                         <OutsideDiv>
                             <ContentDiv>
-                                <DataViewer data={clientData ?? {}} />
-                                {clientParcelData ? (
-                                    <ClientParcelsTable parcelsData={clientParcelData} />
-                                ) : (
-                                    <>No data</>
-                                )}
+                                <ExpandedClientDetails clientId={clientId} />
                             </ContentDiv>
 
                             <ButtonsDiv>
                                 <Centerer>
-                                    <LinkButton link={`/clients/edit/${clientData?.primaryKey}`}>
+                                    <LinkButton link={`/clients/edit/${clientId}`}>
                                         Edit Client
                                     </LinkButton>
-                                    <LinkButton link={`/parcels/add/${clientData?.primaryKey}`}>
+                                    <LinkButton link={`/parcels/add/${clientId}`}>
                                         Add Parcel
                                     </LinkButton>
                                 </Centerer>
                             </ButtonsDiv>
                         </OutsideDiv>
                     </Modal>
+                    {/*)}*/}
                 </>
             )}
         </>

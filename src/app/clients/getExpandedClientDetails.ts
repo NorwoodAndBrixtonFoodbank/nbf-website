@@ -3,7 +3,7 @@ import { Data } from "@/components/DataViewer/DataViewer";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 
-const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientDetails> => {
+const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
     const rawClientDetails = await getRawClientDetails(clientId);
     return rawDataToExpandedClientDetails(rawClientDetails);
 };
@@ -61,7 +61,7 @@ export const familyCountToFamilyCategory = (count: number): string => {
     return "Family of 10+";
 };
 
-export interface ExpandedClientDetails extends Data {
+export interface ExpandedClientData extends Data {
     fullName: string;
     address: string;
     deliveryInstructions: string;
@@ -76,7 +76,7 @@ export interface ExpandedClientDetails extends Data {
     extraInformation: string;
 }
 
-export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientDetails => {
+export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientData => {
     return {
         fullName: client.full_name,
         address: formatAddressFromClientDetails(client),

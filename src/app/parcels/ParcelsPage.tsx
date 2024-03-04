@@ -115,7 +115,7 @@ const fetchAndFormatParcelTablesData = async (
 
     return formattedData;
 };
-
+const parcelIdParam = "parcelId";
 const ParcelsPage: React.FC<{}> = () => {
     const startOfToday = dayjs().startOf("day");
     const endOfToday = dayjs().endOf("day");
@@ -133,7 +133,7 @@ const ParcelsPage: React.FC<{}> = () => {
     const router = useRouter();
 
     const searchParams = useSearchParams();
-    const parcelId = searchParams.get("parcelId");
+    const parcelId = searchParams.get(parcelIdParam);
 
     useEffect(() => {
         if (parcelId) {
@@ -231,7 +231,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const onParcelTableRowClick = (row: Row<ParcelsTableRow>): void => {
         setSelectedParcelId(row.data.parcelId);
-        router.push(`parcels/?parcelId=${row.data.parcelId}`);
+        router.push(`parcels/?${parcelIdParam}=${row.data.parcelId}`);
     };
 
     const buildDeliveryCollectionFilter = (
