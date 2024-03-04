@@ -31,7 +31,6 @@ export const statusNamesInWorkflowOrder = [
     "Request Deleted",
 ];
 
-
 export type statusType = (typeof statusNamesInWorkflowOrder)[number];
 
 const nonMenuStatuses: statusType[] = [
