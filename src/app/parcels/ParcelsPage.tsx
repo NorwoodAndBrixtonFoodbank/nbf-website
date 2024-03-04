@@ -127,7 +127,7 @@ const ParcelsPage: React.FC<{}> = () => {
     const [tableData, setTableData] = useState<ParcelsTableRow[]>([]);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [selectedRowIndices, setSelectedRowIndices] = useState<number[]>([]);
-    const [selectedCheckboxes, setSelectedCheckboxes] = useState(
+    const [selectedCheckboxes, setSelectedCheckboxes] = useState<boolean[]>(
         new Array<boolean>(tableData.length).fill(false)
     );
     const theme = useTheme();
@@ -180,6 +180,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
     useEffect(() => {
         setSelectedCheckboxes(new Array<boolean>(tableData.length).fill(false));
+        setSelectedRowIndices([]);
     }, [tableData]);
 
     const rowToIconsColumn = ({

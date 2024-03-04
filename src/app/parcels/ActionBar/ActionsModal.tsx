@@ -180,7 +180,6 @@ const deleteParcels = async (parcels: ParcelsTableRow[]): Promise<void> => {
         parcels.map((parcel) => parcel.parcelId),
         "Request Deleted"
     );
-    return;
 }; //assume successful for now
 
 const ActionsModal: React.FC<ActionsModalProps> = (props) => {

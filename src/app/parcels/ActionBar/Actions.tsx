@@ -33,7 +33,7 @@ const doesNotEqualZero = (value: number): boolean => {
     return value !== 0;
 };
 
-type PdfType =
+type ActionName =
     | "Download Shipping Labels"
     | "Download Shopping Lists"
     | "Download Driver Overview"
@@ -41,7 +41,7 @@ type PdfType =
     | "Delete Parcel Request";
 
 type AvailableActionsType = {
-    [pdfKey in PdfType]: {
+    [actionKey in ActionName]: {
         showSelectedParcelsInModal: boolean;
         errorCondition: (value: number) => boolean;
         errorMessage: string;
@@ -84,7 +84,7 @@ const availableActions: AvailableActionsType = {
 };
 
 interface ActionsInputComponentProps {
-    pdfType: PdfType;
+    actionName: ActionName;
     selectedParcels: ParcelsTableRow[];
     onDateChange: (newDate: Dayjs | null) => void;
     onLabelQuantityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -94,7 +94,7 @@ interface ActionsInputComponentProps {
 }
 
 const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
-    pdfType,
+    actionName,
     selectedParcels,
     onDateChange,
     onLabelQuantityChange,
@@ -102,7 +102,7 @@ const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
     onCollectionCentreChange,
     setCollectionCentre,
 }) => {
-    switch (pdfType) {
+    switch (actionName) {
         case "Download Shipping Labels":
             return <ShippingLabelsInput onLabelQuantityChange={onLabelQuantityChange} />;
         case "Download Shopping Lists":
@@ -128,7 +128,7 @@ const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
 };
 
 interface ActionsButtonProps {
-    pdfType: PdfType;
+    pdfType: ActionName;
     parcels: ParcelsTableRow[];
     date: Dayjs;
     labelQuantity: number;
@@ -183,7 +183,7 @@ const Actions: React.FC<Props> = ({
     setModalError,
     setSelectedCheckboxes,
 }) => {
-    const [selectedAction, setSelectedAction] = useState<PdfType | null>(null);
+    const [selectedAction, setSelectedAction] = useState<ActionName | null>(null);
     const [labelQuantity, setLabelQuantity] = useState<number>(0);
     const [date, setDate] = useState(dayjs());
     const [driverName, setDriverName] = useState("");
@@ -221,7 +221,7 @@ const Actions: React.FC<Props> = ({
     };
 
     const onMenuItemClick = (
-        key: PdfType,
+        key: ActionName,
         errorCondition: (value: number) => boolean,
         errorMessage: string
     ): (() => void) => {
@@ -256,7 +256,7 @@ const Actions: React.FC<Props> = ({
                             setSelectedCheckboxes={setSelectedCheckboxes}
                             inputComponent={
                                 <ActionsInputComponent
-                                    pdfType={key}
+                                    actionName={key}
                                     selectedParcels={selectedData}
                                     onDateChange={onDateChange}
                                     onLabelQuantityChange={onLabelQuantityChange}
@@ -290,7 +290,7 @@ const Actions: React.FC<Props> = ({
                                 <MenuItem
                                     key={key}
                                     onClick={onMenuItemClick(
-                                        key as PdfType,
+                                        key as ActionName,
                                         value.errorCondition,
                                         value.errorMessage
                                     )}

@@ -59,7 +59,6 @@ export const saveParcelStatus = async (
 
     const { error } = await supabase.from("events").insert(toInsert);
     if (error) {
-        console.error(error);
         throw new DatabaseError("insert", "status event");
     }
 };
@@ -83,7 +82,7 @@ const Statuses: React.FC<Props> = ({
 }) => {
     const [selectedStatus, setSelectedStatus] = useState<statusType | null>(null);
     const [statusModal, setStatusModal] = useState(false);
-    const selectedData = Array.from(selectedRowIndices.map((index) => parcels[index]));
+    const selectedData = selectedRowIndices.map((index) => parcels[index]);
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
         try {

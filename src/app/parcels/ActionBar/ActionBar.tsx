@@ -37,14 +37,18 @@ const ActionBar: React.FC<Props> = (props) => {
         <>
             <ActionsContainer>
                 <Statuses
-                    {...props}
+                    parcels={props.parcels}
+                    selectedRowIndices={props.selectedRowIndices}
                     statusAnchorElement={statusAnchorElement}
                     setStatusAnchorElement={setStatusAnchorElement}
                     modalError={modalError}
                     setModalError={setModalError}
                 />
                 <Actions
-                    {...props}
+                    parcels={props.parcels}
+                    setSelectedRowIndices={props.setSelectedRowIndices}
+                    selectedRowIndices={props.selectedRowIndices}
+                    setSelectedCheckboxes={props.setSelectedCheckboxes}
                     actionAnchorElement={actionAnchorElement}
                     setActionAnchorElement={setActionAnchorElement}
                     modalError={modalError}
