@@ -91,7 +91,7 @@ const sortStatusByWorkflowOrder = (
     return 0;
 };
 
-const sortable: (keyof ParcelsTableRow | SortOptions<ParcelsTableRow, any>)[] = [
+const sortable: (keyof ParcelsTableRow | SortOptions<ParcelsTableRow, "lastStatus">)[] = [
     "fullName",
     "familyCategory",
     "addressPostcode",
