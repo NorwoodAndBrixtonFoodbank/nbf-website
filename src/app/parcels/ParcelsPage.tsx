@@ -356,7 +356,7 @@ const ParcelsPage: React.FC<{}> = () => {
                         isOpen={modalIsOpen}
                         onClose={() => {
                             setModalIsOpen(false);
-                            router.push("parcels/");
+                            router.push("/parcels");
                         }}
                         headerId="expandedParcelDetailsModal"
                     >
