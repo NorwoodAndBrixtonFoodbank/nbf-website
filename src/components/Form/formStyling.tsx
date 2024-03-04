@@ -36,6 +36,11 @@ export const StyledCard = styled(Paper)`
     }
 `;
 
+export const StyledName = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
 export const ErrorText = styled.p`
     color: ${(props) => props.theme.error};
     font-size: 0.75rem;

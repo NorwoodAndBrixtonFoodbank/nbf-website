@@ -9,7 +9,7 @@ import {
     checkErrorOnSubmit,
     Fields,
 } from "@/components/Form/formFunctions";
-import { CenterComponent, StyledForm, FormErrorText } from "@/components/Form/formStyling";
+import { CenterComponent, StyledForm, FormErrorText, StyledName } from "@/components/Form/formStyling";
 
 import { useRouter } from "next/navigation";
 
@@ -211,8 +211,8 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             <StyledForm>
                 <Title>Parcel Form</Title>
                 {clientDetails && (
-                    <div>
-                        {clientDetails?.fullName}
+                    <StyledName>
+                        <h2>{clientDetails?.fullName}</h2>
                         <IconButton
                             aria-label="Button for Client Information"
                             type="button"
@@ -223,7 +223,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                         >
                             <InfoIcon />
                         </IconButton>
-                    </div>
+                    </StyledName>
                 )}
                 {formSections.map((Card, index) => {
                     return (
