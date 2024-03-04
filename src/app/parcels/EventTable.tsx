@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Table, { TableHeaders } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
 
@@ -28,9 +28,6 @@ const EventTable: React.FC<EventTableProps> = (props) => {
     const eventsTableColumnDisplayFunctions = {
         timestamp: formatDatetimeAsDatetime,
     };
-    const [selectedCheckboxes, setSelectedCheckboxes] = useState(
-        new Array<boolean>(props.tableData.length).fill(false)
-    );
 
     return (
         <>
@@ -41,8 +38,6 @@ const EventTable: React.FC<EventTableProps> = (props) => {
                     columnDisplayFunctions={eventsTableColumnDisplayFunctions}
                     pagination
                     defaultShownHeaders={defaultShownHeaders}
-                    selectedCheckboxes={selectedCheckboxes}
-                    setSelectedCheckboxes={setSelectedCheckboxes}
                 />
             </TableSurface>
         </>

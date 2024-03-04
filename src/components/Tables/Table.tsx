@@ -11,7 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { NoSsr } from "@mui/material";
 import IconButton from "@mui/material/IconButton/IconButton";
-import React, { SetStateAction, useEffect, useRef, useState } from "react";
+import React, { SetStateAction, useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import styled from "styled-components";
 import { textFilter } from "./TextFilter";
@@ -128,12 +128,15 @@ const Table = <Data,>({
     columnDisplayFunctions = {},
     columnStyleOptions = {},
     autoFilter = true,
-    selectedCheckboxes = new Array<boolean>(inputData.length).fill(false),
-    setSelectedCheckboxes = (value: boolean[]) => {selectedCheckboxes = value},
+    selectedCheckboxes,
+    setSelectedCheckboxes,
 }: Props<Data>): React.ReactElement => {
+    const [selectedCheckboxesDefault, setSelectedCheckboxesDefault] = useState(
+        new Array<boolean>(inputData.length).fill(false)
+    );
 
-    // const selectedCheckboxes = selectedCheckboxes ?? useRef({current: new Array<boolean>(inputData.length).fill(false)});
-    // const setSelectedCheckboxes = setSelectedCheckboxes ?? (newArray: boolean[]) => {selectedCheckboxes.current = newArray};
+    selectedCheckboxes = selectedCheckboxes ?? selectedCheckboxesDefault;
+    setSelectedCheckboxes = setSelectedCheckboxes ?? setSelectedCheckboxesDefault;
 
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)

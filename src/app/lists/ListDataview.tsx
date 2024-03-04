@@ -159,10 +159,6 @@ const ListsDataView: React.FC<Props> = (props) => {
         }
     };
 
-    const [selectedCheckboxes, setSelectedCheckboxes] = useState(
-        new Array<boolean>(props.data.length).fill(false)
-    );
-
     return (
         <>
             <ConfirmDialog
@@ -202,8 +198,6 @@ const ListsDataView: React.FC<Props> = (props) => {
                     sortable={[]}
                     columnDisplayFunctions={listDataViewColumnDisplayFunctions}
                     columnStyleOptions={listsColumnStyleOptions}
-                    selectedCheckboxes={selectedCheckboxes}
-                    setSelectedCheckboxes={setSelectedCheckboxes}
                 />
                 <ButtonMargin>
                     <Button variant="contained" onClick={() => setModal(null)}>

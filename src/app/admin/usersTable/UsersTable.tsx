@@ -53,10 +53,6 @@ const UsersTable: React.FC<Props> = (props) => {
     const userOnEdit = (rowIndex: number): void => {
         setUserToEdit(props.userData[rowIndex]);
     };
-    const [selectedCheckboxes, setSelectedCheckboxes] = useState(
-        new Array<boolean>(props.userData.length).fill(false)
-    );
-
     return (
         <>
             <Table
@@ -68,8 +64,6 @@ const UsersTable: React.FC<Props> = (props) => {
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
                 toggleableHeaders={["id", "createdAt", "updatedAt"]}
                 defaultShownHeaders={["email", "userRole", "createdAt", "updatedAt"]}
-                selectedCheckboxes={selectedCheckboxes}
-                setSelectedCheckboxes={setSelectedCheckboxes}
             />
 
             <DeleteUserDialog
