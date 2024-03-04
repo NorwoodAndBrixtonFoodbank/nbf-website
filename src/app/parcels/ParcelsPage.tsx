@@ -32,6 +32,7 @@ import {
 import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { Filter } from "@/components/Tables/Filters";
+import { statusNamesInWorkflowOrder } from "./ActionBar/Statuses";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -54,27 +55,6 @@ const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
     "packingDatetime",
     "packingTimeLabel",
     "lastStatus",
-];
-
-const statusNamesInWorkflowOrder = [
-    "-",
-    "No Status",
-    "Request Denied",
-    "Pending More Info",
-    "Called and Confirmed",
-    "Called and No Response",
-    "Shopping List Downloaded",
-    "Ready to Dispatch",
-    "Received by Centre",
-    "Collection Failed",
-    "Parcel Collected",
-    "Shipping Labels Downloaded",
-    "Out for Delivery",
-    "Delivered",
-    "Delivery Failed",
-    "Delivery Cancelled",
-    "Fulfilled with Trussell Trust",
-    "Request Deleted",
 ];
 
 const sortStatusByWorkflowOrder = (
