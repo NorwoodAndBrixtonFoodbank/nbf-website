@@ -83,7 +83,7 @@ const ClientsPage: React.FC<{}> = () => {
                             data={clientsTableData}
                             headerKeysAndLabels={headers}
                             onRowClick={(row) => {
-                                router.push(`/clients/?${clientIdParam}=${row.data.clientId}`);
+                                router.push(`/clients?${clientIdParam}=${row.data.clientId}`);
                             }}
                             sortable={["fullName", "familyCategory", "addressPostcode"]}
                             pagination
@@ -104,7 +104,7 @@ const ClientsPage: React.FC<{}> = () => {
                         }
                         isOpen={clientId !== null}
                         onClose={() => {
-                            router.push("clients/");
+                            router.push("/clients");
                         }}
                         headerId="clientsDetailModal"
                     >

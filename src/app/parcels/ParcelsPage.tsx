@@ -231,7 +231,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const onParcelTableRowClick = (row: Row<ParcelsTableRow>): void => {
         setSelectedParcelId(row.data.parcelId);
-        router.push(`parcels/?${parcelIdParam}=${row.data.parcelId}`);
+        router.push(`/parcels?${parcelIdParam}=${row.data.parcelId}`);
     };
 
     const buildDeliveryCollectionFilter = (
