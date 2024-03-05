@@ -1,6 +1,7 @@
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
+import { Data } from "@/components/DataViewer/DataViewer";
 
 const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
     const rawClientDetails = await getRawClientDetails(clientId);
@@ -60,7 +61,7 @@ export const familyCountToFamilyCategory = (count: number): string => {
     return "Family of 10+";
 };
 
-export interface ExpandedClientDetails {
+export interface ExpandedClientData extends Data {
     primaryKey: string;
     fullName: string;
     address: string;

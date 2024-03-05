@@ -32,7 +32,7 @@ import { Schema } from "@/databaseUtils";
 import dayjs, { Dayjs } from "dayjs";
 import { CollectionCentresLabelsAndValues } from "@/common/fetch";
 import getExpandedClientDetails, {
-    ExpandedClientDetails,
+    ExpandedClientData,
 } from "@/app/clients/getExpandedClientDetails";
 import Modal from "@/components/Modal/Modal";
 import InfoIcon from "@mui/icons-material/Info";
@@ -126,7 +126,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
     const [submitDisabled, setSubmitDisabled] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-    const [clientDetails, setClientDetails] = useState<ExpandedClientDetails | null>(null);
+    const [clientDetails, setClientDetails] = useState<ExpandedClientData | null>(null);
     const theme = useTheme();
     const clientIdForFetch = initialFields.clientId ? initialFields.clientId : clientId;
 
