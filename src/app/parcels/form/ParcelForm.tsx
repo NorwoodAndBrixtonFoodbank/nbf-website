@@ -210,7 +210,6 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         setSubmitDisabled(false);
     };
 
-    // @ts-ignore
     return (
         <CenterComponent>
             <StyledForm>
