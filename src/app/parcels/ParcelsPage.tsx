@@ -115,7 +115,9 @@ const fetchAndFormatParcelTablesData = async (
 
     return formattedData;
 };
+
 const parcelIdParam = "parcelId";
+
 const ParcelsPage: React.FC<{}> = () => {
     const startOfToday = dayjs().startOf("day");
     const endOfToday = dayjs().endOf("day");

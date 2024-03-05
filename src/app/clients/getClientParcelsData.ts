@@ -4,13 +4,16 @@ import { Data } from "@/components/DataViewer/DataViewer";
 import { formatDatetimeAsDate } from "@/app/parcels/getExpandedParcelDetails";
 
 export type RawClientParcelsDetails = Awaited<ReturnType<typeof getRawClientParcelsDetails>>;
+
 type ClientParcelDetails = RawClientParcelsDetails[number];
+
 export interface ParcelsDetail {
     parcel_id: string;
     collection_centre?: { name: string } | null;
     packing_datetime: string | null;
     voucher_number?: string | null;
 }
+
 export const getClientParcelsDetails = async (
     clientId: string
 ): Promise<ExpandedClientParcelDetails[]> => {
@@ -18,6 +21,7 @@ export const getClientParcelsDetails = async (
     const formattedList = rawClientParcelsDetails.map(rawDataToClientParcelsDetails);
     return formattedList;
 };
+
 const getRawClientParcelsDetails = async (clientId: string): Promise<ParcelsDetail[]> => {
     const { data, error } = await supabase
         .from("parcels")
