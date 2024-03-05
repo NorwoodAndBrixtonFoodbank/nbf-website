@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
-import dayjs, { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import { Button, SelectChangeEvent } from "@mui/material";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
@@ -12,6 +12,7 @@ import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { statusType } from "./Statuses";
+import ShowParcels from "./ShowParcels";
 
 export type ActionType = "pdfDownload" | "deleteParcel";
 
@@ -44,16 +45,6 @@ const ModalInner = styled.div`
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;
-`;
-
-const ListItem = styled.p<{ emphasised?: boolean }>`
-    margin-left: 1rem;
-    padding: 0.5rem 0;
-    ${(props) =>
-        props.emphasised &&
-        `
-            font-weight: 800;
-        `}
 `;
 
 const ConfirmButtons = styled.div`
@@ -212,31 +203,10 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                             </Heading>
                         )}
                         {props.showSelectedParcels && (
-                            <>
-                                <Heading>
-                                    {props.selectedParcels.length === 1 ? "Parcel" : "Parcels"}{" "}
-                                    selected:
-                                </Heading>
-                                {props.selectedParcels
-                                    .slice(0, maxParcelsToShow)
-                                    .map((parcel, index) => {
-                                        return (
-                                            <ListItem key={index}>
-                                                {parcel.addressPostcode}
-                                                {parcel.fullName && ` - ${parcel.fullName}`}
-                                                {parcel.collectionDatetime &&
-                                                    `\n @ ${dayjs(
-                                                        parcel.collectionDatetime!
-                                                    ).format("DD/MM/YYYY HH:mm")}`}
-                                            </ListItem>
-                                        );
-                                    })}
-                                {props.selectedParcels.length > maxParcelsToShow ? (
-                                    <ListItem emphasised>...</ListItem>
-                                ) : (
-                                    <></>
-                                )}
-                            </>
+                            <ShowParcels
+                                parcels={props.selectedParcels}
+                                maxParcelsToShow={maxParcelsToShow}
+                            />
                         )}
                         {props.actionType === "pdfDownload" ? (
                             <Centerer>

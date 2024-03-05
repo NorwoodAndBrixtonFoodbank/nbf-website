@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import Table, { Row, TableHeaders } from "@/components/Tables/Table";
 import styled, { useTheme } from "styled-components";
 import {
@@ -33,6 +33,7 @@ import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { Filter } from "@/components/Tables/Filters";
 import { saveParcelStatus } from "./ActionBar/Statuses";
+import Loading from "../loading";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -130,6 +131,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const [selectedRowIndices, setSelectedRowIndices] = useState<number[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
+    const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const theme = useTheme();
 
@@ -153,9 +155,16 @@ const ParcelsPage: React.FC<{}> = () => {
     useEffect(() => {
         // This requires that both the DB parcels and events tables have Realtime turned on
         const loadParcelTableData = async (): Promise<void> => {
+            if (timer.current) {
+                clearTimeout(timer.current);
+                timer.current = null;
+            }
+
             setIsLoading(true);
-            setTableData(await fetchAndFormatParcelTablesData(packingDateRange));
-            setIsLoading(false);
+            timer.current = setTimeout(async () => {
+                setTableData(await fetchAndFormatParcelTablesData(packingDateRange));
+                setIsLoading(false);
+            }, 500);
         };
 
         const subscriptionChannel = supabase
@@ -168,16 +177,14 @@ const ParcelsPage: React.FC<{}> = () => {
                 }
             )
             .on("postgres_changes", { event: "*", schema: "public", table: "events" }, async () => {
-                {
-                    await loadParcelTableData();
-                }
+                await loadParcelTableData();
             })
             .subscribe();
 
         return () => {
             supabase.removeChannel(subscriptionChannel);
         };
-    }, [packingDateRange]);
+    }, [packingDateRange, isLoading]);
 
     useEffect(() => {
         setSelectedRowIndices([]);
@@ -207,7 +214,7 @@ const ParcelsPage: React.FC<{}> = () => {
         if (allChecked !== isAllCheckBoxSelected) {
             setAllCheckBoxSelected(allChecked);
         }
-    }, [tableData, selectedRowIndices, isAllCheckBoxSelected]);
+    }, [tableData.length, selectedRowIndices, isAllCheckBoxSelected]);
 
     const rowToIconsColumn = ({
         flaggedForAttention,
@@ -341,11 +348,13 @@ const ParcelsPage: React.FC<{}> = () => {
     };
 
     const deleteParcels = async (parcels: ParcelsTableRow[]): Promise<void> => {
+        setIsLoading(true);
         await saveParcelStatus(
             parcels.map((parcel) => parcel.parcelId),
             "Request Deleted"
         );
         setSelectedRowIndices([]);
+        setIsLoading(false);
     }; //assume successful for now?
 
     return (
@@ -360,10 +369,11 @@ const ParcelsPage: React.FC<{}> = () => {
                 <ActionBar
                     selectedParcels={selectedRowIndices.map((index) => tableData[index])}
                     onDeleteParcels={deleteParcels}
+                    setIsLoading={setIsLoading}
                 />
             </PreTableControls>
             {isLoading ? (
-                <></>
+                <Loading />
             ) : (
                 <>
                     <TableSurface>

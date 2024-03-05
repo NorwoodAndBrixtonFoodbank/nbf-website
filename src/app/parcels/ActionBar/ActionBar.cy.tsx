@@ -67,6 +67,7 @@ describe("Parcels - Action Bar", () => {
                     <ActionBar
                         selectedParcels={selectedParcels}
                         onDeleteParcels={onDeleteParcels}
+                        setIsLoading={() => {}}
                     />
                 </StyleManager>
             </Localization>
@@ -83,6 +84,7 @@ describe("Parcels - Action Bar", () => {
                 <MockActionBar
                     selectedParcels={selectedParcels}
                     onDeleteParcels={onDeleteParcels}
+                    setIsLoading={() => {}}
                 />
             );
         });
@@ -157,6 +159,7 @@ describe("Parcels - Action Bar", () => {
                 <MockActionBar
                     selectedParcels={selectedParcels}
                     onDeleteParcels={onDeleteParcels}
+                    setIsLoading={() => {}}
                 />
             );
         });

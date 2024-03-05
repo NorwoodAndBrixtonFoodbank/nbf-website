@@ -13,6 +13,7 @@ import { ArrowDropDown } from "@mui/icons-material";
 export interface ActionBarProps {
     selectedParcels: ParcelsTableRow[];
     onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
+    setIsLoading: (isLoading: boolean) => void;
 }
 
 const ActionsContainer = styled(ControlContainer)`
@@ -40,6 +41,7 @@ const ActionBar: React.FC<ActionBarProps> = (props) => {
                     setStatusAnchorElement={setStatusAnchorElement}
                     modalError={modalError}
                     setModalError={setModalError}
+                    setIsLoading={props.setIsLoading}
                 />
                 <Actions
                     selectedParcels={props.selectedParcels}
