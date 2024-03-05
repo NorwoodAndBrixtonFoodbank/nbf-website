@@ -3,7 +3,7 @@
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import supabase from "@/supabaseClient";
 import Button from "@mui/material/Button";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 interface CommentProps {
