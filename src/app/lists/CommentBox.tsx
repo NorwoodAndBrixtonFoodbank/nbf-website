@@ -105,7 +105,7 @@ const CommentBox: React.FC<CommentProps> = ({ originalComment }) => {
             window.location.reload();
         }
     };
-    
+
     return (
         <Wrapper>
             <HeaderAndButtonContainer>
