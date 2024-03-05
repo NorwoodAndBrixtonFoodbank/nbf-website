@@ -105,7 +105,7 @@ const CommentBox: React.FC<CommentProps> = ({ originalComment }) => {
     return (
         <Wrapper>
             <HeaderAndButtonContainer>
-                <h3>Comments</h3>
+                <h2>Comments</h2>
                 <ButtonContainer>
                     <Button variant="outlined" onClick={() => setValue(originalComment)}>
                         Cancel
