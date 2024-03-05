@@ -101,7 +101,7 @@ const ClientsPage: React.FC<{}> = () => {
                     >
                         <OutsideDiv>
                             <ContentDiv>
-                                <DataViewer data={activeData ?? {}} />
+                                <DataViewer data={{ ...activeData } ?? {}} />
                             </ContentDiv>
 
                             <ButtonsDiv>
