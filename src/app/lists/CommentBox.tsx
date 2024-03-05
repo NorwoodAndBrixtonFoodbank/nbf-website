@@ -3,7 +3,7 @@
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import supabase from "@/supabaseClient";
 import Button from "@mui/material/Button";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 interface CommentProps {
@@ -17,16 +17,16 @@ const HeaderAndButtonContainer = styled.div`
     min-width: 8rem;
     flex-direction: column;
     gap: 1rem;
+    margin-left: 1rem;
     justify-content: space-between;
     @media (min-width: 800px) {
-        width: 15%;
+        width: 10%;
     }
 `;
 
 const Wrapper = styled.div`
     display: flex;
     align-items: center;
-    justify-content: space-around;
     flex-wrap: wrap;
     background-color: ${(props) => props.theme.main.background[2]};
     border-radius: 1rem;
@@ -41,6 +41,7 @@ const CommentBoxContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    flex-grow: 1;
     @media (min-width: 800px) {
         width: 75%;
         margin-bottom: 1rem;
@@ -73,10 +74,22 @@ const SuccessText = styled.p`
     font-size: 0.8rem;
 `;
 
+const WarningText = styled.p`
+    color: ${(props) => props.theme.primary.background[3]};
+    margin: 1rem 0 0;
+    font-size: 0.8rem;
+`;
+
 const CommentBox: React.FC<CommentProps> = ({ originalComment }) => {
     const [value, setValue] = useState(originalComment);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
+    const [unsavedChanges, setUnsavedChanges] = useState(false);
+
+    useEffect(() => {
+        setUnsavedChanges(value !== originalComment);
+    }, [value, originalComment]);
+
     const onChangeSetValue = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setValue(event.target.value);
     };
@@ -92,16 +105,17 @@ const CommentBox: React.FC<CommentProps> = ({ originalComment }) => {
             window.location.reload();
         }
     };
+    
     return (
         <Wrapper>
             <HeaderAndButtonContainer>
-                <h2>Comments</h2>
+                <h3>Comments</h3>
                 <ButtonContainer>
                     <Button variant="outlined" onClick={() => setValue(originalComment)}>
-                        Reset
+                        Cancel
                     </Button>
                     <Button variant="contained" onClick={onSubmit}>
-                        Submit
+                        Save
                     </Button>
                 </ButtonContainer>
             </HeaderAndButtonContainer>
@@ -118,6 +132,7 @@ const CommentBox: React.FC<CommentProps> = ({ originalComment }) => {
                     maxRows={4}
                     minRows={4}
                 />
+                {unsavedChanges && <WarningText>There are unsaved changes!</WarningText>}
                 {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
                 {successMessage && <SuccessText>{successMessage}</SuccessText>}
             </CommentBoxContainer>
