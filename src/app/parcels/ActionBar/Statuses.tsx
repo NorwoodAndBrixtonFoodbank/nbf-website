@@ -64,8 +64,7 @@ export const saveParcelStatus = async (
 };
 
 interface Props {
-    selectedRowIndices: number[];
-    parcels: ParcelsTableRow[];
+    selectedParcels: ParcelsTableRow[];
     statusAnchorElement: HTMLElement | null;
     setStatusAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     modalError: string | null;
@@ -73,8 +72,7 @@ interface Props {
 }
 
 const Statuses: React.FC<Props> = ({
-    selectedRowIndices,
-    parcels,
+    selectedParcels,
     statusAnchorElement,
     setStatusAnchorElement,
     modalError,
@@ -82,12 +80,11 @@ const Statuses: React.FC<Props> = ({
 }) => {
     const [selectedStatus, setSelectedStatus] = useState<statusType | null>(null);
     const [statusModal, setStatusModal] = useState(false);
-    const selectedData = selectedRowIndices.map((index) => parcels[index]);
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
         try {
             saveParcelStatus(
-                selectedData.map((parcel: ParcelsTableRow) => {
+                selectedParcels.map((parcel: ParcelsTableRow) => {
                     return parcel.parcelId;
                 }),
                 selectedStatus!,
@@ -103,7 +100,7 @@ const Statuses: React.FC<Props> = ({
 
     const onMenuItemClick = (status: statusType): (() => void) => {
         return () => {
-            if (selectedData.length !== 0) {
+            if (selectedParcels.length !== 0) {
                 setSelectedStatus(status);
                 setStatusModal(true);
                 setStatusAnchorElement(null);
@@ -122,7 +119,7 @@ const Statuses: React.FC<Props> = ({
                     setStatusModal(false);
                     setModalError(null);
                 }}
-                data={selectedData}
+                data={selectedParcels}
                 header={selectedStatus ?? "Apply Status"}
                 headerId="status-modal-header"
                 onSubmit={submitStatus}

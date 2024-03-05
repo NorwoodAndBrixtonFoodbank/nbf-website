@@ -32,6 +32,7 @@ import {
 import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { Filter } from "@/components/Tables/Filters";
+import { saveParcelStatus } from "./ActionBar/Statuses";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -340,6 +341,14 @@ const ParcelsPage: React.FC<{}> = () => {
         });
     };
 
+    const deleteParcels = async (parcels: ParcelsTableRow[]): Promise<void> => {
+        await saveParcelStatus(
+            parcels.map((parcel) => parcel.parcelId),
+            "Request Deleted"
+        );
+        setSelectedRowIndices([]);
+    };//assume successful for now?
+
     return (
         <>
             <PreTableControls>
@@ -349,10 +358,10 @@ const ParcelsPage: React.FC<{}> = () => {
                         setRange={setPackingDateRange}
                     ></DateRangeInputs>
                 </ControlContainer>
-                {/* <ActionBar
-                    parcels={tableData}
-                    selectedRowIndices={selectedRowIndices}
-                /> */}
+                <ActionBar
+                    selectedParcels={selectedRowIndices.map((index) => tableData[index])}
+                    onDeleteParcels={deleteParcels}
+                />
             </PreTableControls>
             {isLoading ? (
                 <></>
@@ -365,7 +374,6 @@ const ParcelsPage: React.FC<{}> = () => {
                             columnDisplayFunctions={parcelTableColumnDisplayFunctions}
                             columnStyleOptions={parcelTableColumnStyleOptions}
                             onRowClick={onParcelTableRowClick}
-                            onRowSelection={setSelectedRowIndices}
                             pagination
                             sortable={toggleableHeaders}
                             defaultShownHeaders={defaultShownHeaders}

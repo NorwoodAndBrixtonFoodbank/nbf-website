@@ -16,13 +16,12 @@ import { saveParcelStatus, statusType } from "./Statuses";
 export type ActionType = "pdfDownload" | "deleteParcel";
 
 interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
-    data: ParcelsTableRow[];
+    selectedParcels: ParcelsTableRow[];
     errorText: string | null;
     inputComponent?: React.ReactElement;
     showSelectedParcels: boolean;
     actionType: ActionType;
-    setSelectedRowIndices: React.Dispatch<SetStateAction<number[]>>;
-    setSelectedCheckboxes: React.Dispatch<SetStateAction<boolean[]>>;
+    onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
 }
 
 const Centerer = styled.div`
@@ -175,13 +174,6 @@ export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
     );
 };
 
-const deleteParcels = async (parcels: ParcelsTableRow[]): Promise<void> => {
-    await saveParcelStatus(
-        parcels.map((parcel) => parcel.parcelId),
-        "Request Deleted"
-    );
-}; //assume successful for now
-
 const ActionsModal: React.FC<ActionsModalProps> = (props) => {
     const [loading, setLoading] = useState(false);
     const [loadPdf, setLoadPdf] = useState(false);
@@ -205,7 +197,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                             <Heading> The PDF is ready to be downloaded. </Heading>
                         ) : (
                             <Heading>
-                                {props.data.length === 1 ? "Parcel" : "Parcels"} deleted
+                                {props.selectedParcels.length === 1 ? "Parcel" : "Parcels"} deleted
                             </Heading>
                         )}
 
@@ -216,15 +208,15 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                         {props.actionType === "deleteParcel" && (
                             <Heading>
                                 Are you sure you want to delete the selected parcel{" "}
-                                {props.data.length === 1 ? "request" : "requests"}?
+                                {props.selectedParcels.length === 1 ? "request" : "requests"}?
                             </Heading>
                         )}
                         {props.showSelectedParcels && (
                             <>
                                 <Heading>
-                                    {props.data.length === 1 ? "Parcel" : "Parcels"} selected:
+                                    {props.selectedParcels.length === 1 ? "Parcel" : "Parcels"} selected:
                                 </Heading>
-                                {props.data.slice(0, maxParcelsToShow).map((parcel, index) => {
+                                {props.selectedParcels.slice(0, maxParcelsToShow).map((parcel, index) => {
                                     return (
                                         <ListItem key={index}>
                                             {parcel.addressPostcode}
@@ -236,7 +228,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                         </ListItem>
                                     );
                                 })}
-                                {props.data.length > maxParcelsToShow ? (
+                                {props.selectedParcels.length > maxParcelsToShow ? (
                                     <ListItem emphasised>...</ListItem>
                                 ) : (
                                     <></>
@@ -268,9 +260,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                         variant="contained"
                                         onClick={() => {
                                             setLoading(true);
-                                            deleteParcels(props.data);
-                                            props.setSelectedRowIndices([]);
-                                            props.setSelectedCheckboxes([]);
+                                            props.onDeleteParcels(props.selectedParcels);
                                         }}
                                     >
                                         Delete

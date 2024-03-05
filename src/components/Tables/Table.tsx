@@ -61,7 +61,6 @@ type CheckboxConfig = {
 interface Props<Data> {
     data: Data[];
     headerKeysAndLabels: TableHeaders<Data>;
-    onRowSelection?: (rowIds: number[]) => void;
     filters?: (Filter<Data, any> | keyof Data)[];
     additionalFilters?: (Filter<Data, any> | keyof Data)[];
     pagination?: boolean;
@@ -122,7 +121,6 @@ const defaultColumnStyleOptions = {
 const Table = <Data,>({
     data: inputData,
     headerKeysAndLabels,
-    onRowSelection,
     defaultShownHeaders,
     filters: filterKeysOrObjects = [],
     additionalFilters: additionalFilterKeysOrObjects = [],

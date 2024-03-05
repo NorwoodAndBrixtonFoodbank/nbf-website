@@ -129,7 +129,7 @@ const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
 
 interface ActionsButtonProps {
     pdfType: ActionName;
-    parcels: ParcelsTableRow[];
+    selectedParcels: ParcelsTableRow[];
     date: Dayjs;
     labelQuantity: number;
     driverName: string;
@@ -138,7 +138,7 @@ interface ActionsButtonProps {
 
 const ActionsButton: React.FC<ActionsButtonProps> = ({
     pdfType,
-    parcels,
+    selectedParcels,
     date,
     labelQuantity,
     driverName,
@@ -146,12 +146,12 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
 }) => {
     switch (pdfType) {
         case "Download Shipping Labels":
-            return <ShippingLabelsModalButton parcels={parcels} labelQuantity={labelQuantity} />;
+            return <ShippingLabelsModalButton parcels={selectedParcels} labelQuantity={labelQuantity} />;
         case "Download Shopping Lists":
-            return <ShoppingListModalButton parcels={parcels} />;
+            return <ShoppingListModalButton parcels={selectedParcels} />;
         case "Download Driver Overview":
             return (
-                <DriverOverviewModalButton parcels={parcels} date={date} driverName={driverName} />
+                <DriverOverviewModalButton parcels={selectedParcels} date={date} driverName={driverName} />
             );
         case "Download Day Overview":
             return (
@@ -163,25 +163,21 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
 };
 
 interface Props {
-    selectedRowIndices: number[];
-    setSelectedRowIndices: React.Dispatch<React.SetStateAction<number[]>>;
-    parcels: ParcelsTableRow[];
+    selectedParcels: ParcelsTableRow[];
+    onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
     actionAnchorElement: HTMLElement | null;
     setActionAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     modalError: string | null;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
-    setSelectedCheckboxes: React.Dispatch<React.SetStateAction<boolean[]>>;
 }
 
 const Actions: React.FC<Props> = ({
-    selectedRowIndices,
-    setSelectedRowIndices,
-    parcels: data,
+    selectedParcels,
+    onDeleteParcels,
     actionAnchorElement,
     setActionAnchorElement,
     modalError,
     setModalError,
-    setSelectedCheckboxes,
 }) => {
     const [selectedAction, setSelectedAction] = useState<ActionName | null>(null);
     const [labelQuantity, setLabelQuantity] = useState<number>(0);
@@ -189,13 +185,13 @@ const Actions: React.FC<Props> = ({
     const [driverName, setDriverName] = useState("");
     const [collectionCentre, setCollectionCentre] = useState("");
 
-    const [selectedData, setSelectedData] = useState(
-        Array.from(selectedRowIndices.map((index) => data[index]))
-    );
+    // const [selectedData, setSelectedData] = useState(
+    //     Array.from(selectedRowIndices.map((index) => data[index]))
+    // );
 
-    useEffect(() => {
-        setSelectedData(Array.from(selectedRowIndices.map((index) => data[index])));
-    }, [selectedRowIndices, data]);
+    // useEffect(() => {
+    //     setSelectedData(Array.from(selectedRowIndices.map((index) => data[index])));
+    // }, [selectedRowIndices, data]);
 
     const onLabelQuantityChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setLabelQuantity(parseInt(event.target.value, 10) ?? 0);
@@ -226,7 +222,7 @@ const Actions: React.FC<Props> = ({
         errorMessage: string
     ): (() => void) => {
         return () => {
-            if (errorCondition(selectedData.length)) {
+            if (errorCondition(selectedParcels.length)) {
                 setActionAnchorElement(null);
                 setModalError(errorMessage);
             } else {
@@ -245,19 +241,18 @@ const Actions: React.FC<Props> = ({
                         <ActionsModal
                             key={key}
                             showSelectedParcels={value.showSelectedParcelsInModal}
-                            setSelectedRowIndices={setSelectedRowIndices}
                             isOpen
                             onClose={onModalClose}
-                            data={selectedData}
+                            selectedParcels={selectedParcels}
                             header={key}
                             headerId="action-modal-header"
                             errorText={modalError}
                             actionType={value.actionType}
-                            setSelectedCheckboxes={setSelectedCheckboxes}
+                            onDeleteParcels={onDeleteParcels}
                             inputComponent={
                                 <ActionsInputComponent
                                     actionName={key}
-                                    selectedParcels={selectedData}
+                                    selectedParcels={selectedParcels}
                                     onDateChange={onDateChange}
                                     onLabelQuantityChange={onLabelQuantityChange}
                                     onDriverNameChange={onDriverNameChange}
@@ -268,7 +263,7 @@ const Actions: React.FC<Props> = ({
                         >
                             <ActionsButton
                                 pdfType={selectedAction}
-                                parcels={selectedData}
+                                selectedParcels={selectedParcels}
                                 date={date}
                                 labelQuantity={labelQuantity}
                                 driverName={driverName}

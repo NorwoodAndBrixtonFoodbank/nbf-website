@@ -11,10 +11,8 @@ import { ControlContainer } from "@/components/Form/formStyling";
 import { ArrowDropDown } from "@mui/icons-material";
 
 interface Props {
-    selectedRowIndices: number[];
-    parcels: ParcelsTableRow[];
-    setSelectedRowIndices: React.Dispatch<SetStateAction<number[]>>;
-    setSelectedCheckboxes: React.Dispatch<SetStateAction<boolean[]>>;
+    selectedParcels: ParcelsTableRow[];
+    onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
 }
 
 const ActionsContainer = styled(ControlContainer)`
@@ -37,18 +35,15 @@ const ActionBar: React.FC<Props> = (props) => {
         <>
             <ActionsContainer>
                 <Statuses
-                    parcels={props.parcels}
-                    selectedRowIndices={props.selectedRowIndices}
+                    selectedParcels={props.selectedParcels}
                     statusAnchorElement={statusAnchorElement}
                     setStatusAnchorElement={setStatusAnchorElement}
                     modalError={modalError}
                     setModalError={setModalError}
                 />
                 <Actions
-                    parcels={props.parcels}
-                    setSelectedRowIndices={props.setSelectedRowIndices}
-                    selectedRowIndices={props.selectedRowIndices}
-                    setSelectedCheckboxes={props.setSelectedCheckboxes}
+                    selectedParcels={props.selectedParcels}
+                    onDeleteParcels={props.onDeleteParcels}
                     actionAnchorElement={actionAnchorElement}
                     setActionAnchorElement={setActionAnchorElement}
                     modalError={modalError}
