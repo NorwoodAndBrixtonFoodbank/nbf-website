@@ -38,7 +38,7 @@ const EventTable: React.FC<EventTableProps> = (props) => {
                     columnDisplayFunctions={eventsTableColumnDisplayFunctions}
                     pagination
                     defaultShownHeaders={defaultShownHeaders}
-                    checkboxConfig={{displayed:false}}
+                    checkboxConfig={{ displayed: false }}
                 />
             </TableSurface>
         </>

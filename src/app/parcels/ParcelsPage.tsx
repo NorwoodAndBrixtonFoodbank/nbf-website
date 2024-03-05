@@ -184,31 +184,30 @@ const ParcelsPage: React.FC<{}> = () => {
     }, [tableData]);
 
     const selectOrDeselectRow = (rowIndex: number): void => {
-        setSelectedRowIndices(currentIndices => {
-          if (currentIndices.includes(rowIndex)) {
-            return currentIndices.filter(index => index !== rowIndex)
-          }
-          return currentIndices.concat([rowIndex])
+        setSelectedRowIndices((currentIndices) => {
+            if (currentIndices.includes(rowIndex)) {
+                return currentIndices.filter((index) => index !== rowIndex);
+            }
+            return currentIndices.concat([rowIndex]);
         });
     };
-    
+
     const toggleAllCheckBox = (isAllCheckBoxSelected: boolean): void => {
         if (isAllCheckBoxSelected) {
             setSelectedRowIndices([]);
             setAllCheckBoxSelected(false);
         } else {
-            setSelectedRowIndices(tableData.map((data,index) => index));
+            setSelectedRowIndices(tableData.map((data, index) => index));
             setAllCheckBoxSelected(true);
         }
-        };
-    
-        useEffect(() => {
-            const allChecked =
-                selectedRowIndices.length === tableData.length;
-            if (allChecked !== isAllCheckBoxSelected) {
-                setAllCheckBoxSelected(allChecked);
-            }
-        }, [selectedRowIndices, isAllCheckBoxSelected]);
+    };
+
+    useEffect(() => {
+        const allChecked = selectedRowIndices.length === tableData.length;
+        if (allChecked !== isAllCheckBoxSelected) {
+            setAllCheckBoxSelected(allChecked);
+        }
+    }, [tableData, selectedRowIndices, isAllCheckBoxSelected]);
 
     const rowToIconsColumn = ({
         flaggedForAttention,
@@ -347,7 +346,7 @@ const ParcelsPage: React.FC<{}> = () => {
             "Request Deleted"
         );
         setSelectedRowIndices([]);
-    };//assume successful for now?
+    }; //assume successful for now?
 
     return (
         <>
@@ -390,11 +389,15 @@ const ParcelsPage: React.FC<{}> = () => {
                                 "voucherNumber",
                                 buildLastStatusFilter(tableData),
                             ]}
-                            checkboxConfig={{    displayed: true,
+                            checkboxConfig={{
+                                displayed: true,
                                 selectedRowIndices: selectedRowIndices,
                                 isAllCheckboxChecked: isAllCheckBoxSelected,
-                                onCheckboxClicked: (rowIndex: number) => selectOrDeselectRow(rowIndex),
-                                onAllCheckboxClicked: (isAllCheckBoxSelected: boolean) => toggleAllCheckBox(isAllCheckBoxSelected)}}
+                                onCheckboxClicked: (rowIndex: number) =>
+                                    selectOrDeselectRow(rowIndex),
+                                onAllCheckboxClicked: (isAllCheckBoxSelected: boolean) =>
+                                    toggleAllCheckBox(isAllCheckBoxSelected),
+                            }}
                         />
                     </TableSurface>
                     <Modal

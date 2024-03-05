@@ -197,7 +197,7 @@ const ListsDataView: React.FC<Props> = (props) => {
                     sortable={[]}
                     columnDisplayFunctions={listDataViewColumnDisplayFunctions}
                     columnStyleOptions={listsColumnStyleOptions}
-                    checkboxConfig={{displayed:false}}
+                    checkboxConfig={{ displayed: false }}
                 />
                 <ButtonMargin>
                     <Button variant="contained" onClick={() => setModal(null)}>

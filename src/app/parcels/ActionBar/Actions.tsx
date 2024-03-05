@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
@@ -146,12 +146,21 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
 }) => {
     switch (pdfType) {
         case "Download Shipping Labels":
-            return <ShippingLabelsModalButton parcels={selectedParcels} labelQuantity={labelQuantity} />;
+            return (
+                <ShippingLabelsModalButton
+                    parcels={selectedParcels}
+                    labelQuantity={labelQuantity}
+                />
+            );
         case "Download Shopping Lists":
             return <ShoppingListModalButton parcels={selectedParcels} />;
         case "Download Driver Overview":
             return (
-                <DriverOverviewModalButton parcels={selectedParcels} date={date} driverName={driverName} />
+                <DriverOverviewModalButton
+                    parcels={selectedParcels}
+                    date={date}
+                    driverName={driverName}
+                />
             );
         case "Download Day Overview":
             return (

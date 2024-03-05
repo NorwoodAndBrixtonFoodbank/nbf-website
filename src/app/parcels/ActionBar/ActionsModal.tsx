@@ -1,6 +1,6 @@
 "use client";
 
-import React, { SetStateAction, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
 import dayjs, { Dayjs } from "dayjs";
@@ -11,7 +11,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
-import { saveParcelStatus, statusType } from "./Statuses";
+import { statusType } from "./Statuses";
 
 export type ActionType = "pdfDownload" | "deleteParcel";
 
@@ -214,20 +214,23 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                         {props.showSelectedParcels && (
                             <>
                                 <Heading>
-                                    {props.selectedParcels.length === 1 ? "Parcel" : "Parcels"} selected:
+                                    {props.selectedParcels.length === 1 ? "Parcel" : "Parcels"}{" "}
+                                    selected:
                                 </Heading>
-                                {props.selectedParcels.slice(0, maxParcelsToShow).map((parcel, index) => {
-                                    return (
-                                        <ListItem key={index}>
-                                            {parcel.addressPostcode}
-                                            {parcel.fullName && ` - ${parcel.fullName}`}
-                                            {parcel.collectionDatetime &&
-                                                `\n @ ${dayjs(parcel.collectionDatetime!).format(
-                                                    "DD/MM/YYYY HH:mm"
-                                                )}`}
-                                        </ListItem>
-                                    );
-                                })}
+                                {props.selectedParcels
+                                    .slice(0, maxParcelsToShow)
+                                    .map((parcel, index) => {
+                                        return (
+                                            <ListItem key={index}>
+                                                {parcel.addressPostcode}
+                                                {parcel.fullName && ` - ${parcel.fullName}`}
+                                                {parcel.collectionDatetime &&
+                                                    `\n @ ${dayjs(
+                                                        parcel.collectionDatetime!
+                                                    ).format("DD/MM/YYYY HH:mm")}`}
+                                            </ListItem>
+                                        );
+                                    })}
                                 {props.selectedParcels.length > maxParcelsToShow ? (
                                     <ListItem emphasised>...</ListItem>
                                 ) : (

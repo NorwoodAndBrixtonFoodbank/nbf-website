@@ -11,7 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { NoSsr } from "@mui/material";
 import IconButton from "@mui/material/IconButton/IconButton";
-import React, { SetStateAction, useEffect, useState } from "react";
+import React, { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import styled from "styled-components";
 import { textFilter } from "./TextFilter";
@@ -47,20 +47,22 @@ export interface SortOptions<Data, Key extends keyof Data> {
     sortFunction?: (datapoint1: Data[Key], datapoint2: Data[Key]) => number;
 }
 
-
-type CheckboxConfig = {
-    displayed: true,
-    selectedRowIndices: number[],
-    isAllCheckboxChecked: boolean,
-    onCheckboxClicked: (rowIndex: number) => void,
-    onAllCheckboxClicked: (isAllCheckboxChecked: boolean) => void,
-} | {
-    displayed: false,
-}
+export type CheckboxConfig =
+    | {
+          displayed: true;
+          selectedRowIndices: number[];
+          isAllCheckboxChecked: boolean;
+          onCheckboxClicked: (rowIndex: number) => void;
+          onAllCheckboxClicked: (isAllCheckboxChecked: boolean) => void;
+      }
+    | {
+          displayed: false;
+      };
 
 interface Props<Data> {
     data: Data[];
     headerKeysAndLabels: TableHeaders<Data>;
+    checkboxConfig: CheckboxConfig;
     filters?: (Filter<Data, any> | keyof Data)[];
     additionalFilters?: (Filter<Data, any> | keyof Data)[];
     pagination?: boolean;
@@ -74,7 +76,6 @@ interface Props<Data> {
     columnStyleOptions?: ColumnStyles<Data>;
     onRowClick?: OnRowClickFunction<Data>;
     autoFilter?: boolean;
-    checkboxConfig: CheckboxConfig;
 }
 
 interface CellProps<Data> {
@@ -136,13 +137,6 @@ const Table = <Data,>({
     autoFilter = true,
     checkboxConfig,
 }: Props<Data>): React.ReactElement => {
-    // const [selectedCheckboxesDefault, setSelectedCheckboxesDefault] = useState(
-    //     new Array<boolean>(inputData.length).fill(false)
-    // );
-
-    // selectedCheckboxes = selectedCheckboxes ?? selectedCheckboxesDefault;
-    // setSelectedCheckboxes = setSelectedCheckboxes ?? setSelectedCheckboxesDefault;
-
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
     );
@@ -168,37 +162,6 @@ const Table = <Data,>({
     const allFilters = [...primaryFilters, ...additionalFilters];
 
     const [data, setData] = useState(inputData);
-
-    // const updateCheckboxes = (newSelection: boolean[]): void => {
-    //     setSelectedCheckboxes!(newSelection);
-    //     onRowSelection?.(
-    //         newSelection
-    //             .map((selected, index) => (selected ? index : -1))
-    //             .filter((index) => index !== -1)
-    //     );
-    // };
-
-    // const [selectAllCheckBox, setSelectAllCheckBox] = useState(false);
-
-    // const toggleOwnCheckBox = (rowId: number): void => {
-    //     const selectCheckBoxesCopy = [...selectedCheckboxes!];
-    //     selectCheckBoxesCopy[rowId] = !selectCheckBoxesCopy[rowId];
-    //     updateCheckboxes(selectCheckBoxesCopy);
-    // };
-
-    // const toggleAllCheckBox = (): void => {
-    //     const newSelection = new Array<boolean>(data.length).fill(!selectAllCheckBox);
-    //     updateCheckboxes(newSelection);
-    //     setSelectAllCheckBox(!selectAllCheckBox);
-    // };
-
-    // useEffect(() => {
-    //     const allChecked =
-    //         selectedCheckboxes!?.length > 0 ? selectedCheckboxes!.every((item) => item) : false;
-    //     if (allChecked !== selectAllCheckBox) {
-    //         setSelectAllCheckBox(allChecked);
-    //     }
-    // }, [selectedCheckboxes, selectAllCheckBox]);
 
     const sortOptions = sortable.map((sortOption) => {
         if (sortOption instanceof Object) {
@@ -280,7 +243,9 @@ const Table = <Data,>({
                     type="checkbox"
                     aria-label="Select all rows"
                     checked={checkboxConfig.isAllCheckboxChecked}
-                    onClick={() => checkboxConfig.onAllCheckboxClicked(checkboxConfig.isAllCheckboxChecked)}
+                    onClick={() =>
+                        checkboxConfig.onAllCheckboxClicked(checkboxConfig.isAllCheckboxChecked)
+                    }
                 />
             ),
             cell: (row: Row<Data>) => (

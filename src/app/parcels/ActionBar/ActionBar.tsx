@@ -1,6 +1,6 @@
 "use client";
 
-import React, { SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Button from "@mui/material/Button";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
@@ -10,7 +10,7 @@ import Actions from "@/app/parcels/ActionBar/Actions";
 import { ControlContainer } from "@/components/Form/formStyling";
 import { ArrowDropDown } from "@mui/icons-material";
 
-interface Props {
+export interface ActionBarProps {
     selectedParcels: ParcelsTableRow[];
     onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
 }
@@ -25,7 +25,7 @@ const AlertBox = styled.div`
     border-radius: 0.5rem;
 `;
 
-const ActionBar: React.FC<Props> = (props) => {
+const ActionBar: React.FC<ActionBarProps> = (props) => {
     const [statusAnchorElement, setStatusAnchorElement] = useState<HTMLElement | null>(null);
     const [actionAnchorElement, setActionAnchorElement] = useState<HTMLElement | null>(null);
 

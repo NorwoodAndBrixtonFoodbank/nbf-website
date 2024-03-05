@@ -1,6 +1,6 @@
-import ActionBar from "@/app/parcels/ActionBar/ActionBar";
+import ActionBar, { ActionBarProps } from "@/app/parcels/ActionBar/ActionBar";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import React, { SetStateAction } from "react";
+import React from "react";
 import StyleManager from "@/app/themes";
 import Localization from "@/app/Localization";
 
@@ -60,35 +60,29 @@ describe("Parcels - Action Bar", () => {
         },
     ];
 
-    interface Props {
-        selected: number[];
-        setSelected: React.Dispatch<SetStateAction<number[]>>;
-        setSelectedCheckboxes: React.Dispatch<SetStateAction<boolean[]>>;
-    }
-
-    const MockActionBar: React.FC<Props> = ({ selected, setSelected, setSelectedCheckboxes }) => {
+    const MockActionBar: React.FC<ActionBarProps> = ({ selectedParcels, onDeleteParcels }) => {
         return (
             <Localization>
                 <StyleManager>
                     <ActionBar
-                        parcels={mockData}
-                        selectedRowIndices={selected}
-                        setSelectedRowIndices={setSelected}
-                        setSelectedCheckboxes={setSelectedCheckboxes}
+                        selectedParcels={selectedParcels}
+                        onDeleteParcels={onDeleteParcels}
                     />
                 </StyleManager>
             </Localization>
         );
     };
     describe("Statuses", () => {
-        const selectedIndices = [0, 1];
+        const selectedParcels = mockData.slice(0, 2);
+        const onDeleteParcels = (parcels: ParcelsTableRow[]): void => {
+            selectedParcels.filter((parcelToDelete) => !parcels.includes(parcelToDelete));
+        };
 
         beforeEach(() => {
             cy.mount(
                 <MockActionBar
-                    selected={selectedIndices}
-                    setSelected={() => {}}
-                    setSelectedCheckboxes={() => {}}
+                    selectedParcels={selectedParcels}
+                    onDeleteParcels={onDeleteParcels}
                 />
             );
         });
@@ -144,23 +138,25 @@ describe("Parcels - Action Bar", () => {
                 minute: "2-digit",
             });
             cy.get(`input[value="${timeString}"]`).should("exist");
-            selectedIndices.forEach((index) => {
-                cy.get(".MuiPaper-root").contains(mockData[index].addressPostcode);
-                cy.get(".MuiPaper-root").contains(mockData[index].fullName);
+            selectedParcels.forEach((parcel) => {
+                cy.get(".MuiPaper-root").contains(parcel.addressPostcode);
+                cy.get(".MuiPaper-root").contains(parcel.fullName);
             });
         });
     });
 
     describe("Actions", () => {
-        const row = mockData[0];
-        const selectedIndices = [0, 1];
+        const selectedParcels = mockData.slice(0, 2);
+        const onDeleteParcels = (parcels: ParcelsTableRow[]): void => {
+            selectedParcels.filter((parcelToDelete) => !parcels.includes(parcelToDelete));
+        };
+        const row = selectedParcels[0];
 
         beforeEach(() => {
             cy.mount(
                 <MockActionBar
-                    selected={selectedIndices}
-                    setSelected={() => {}}
-                    setSelectedCheckboxes={() => {}}
+                    selectedParcels={selectedParcels}
+                    onDeleteParcels={onDeleteParcels}
                 />
             );
         });

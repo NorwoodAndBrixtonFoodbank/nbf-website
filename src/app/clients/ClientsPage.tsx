@@ -88,7 +88,7 @@ const ClientsPage: React.FC<{}> = () => {
                             }
                             sortable={["fullName", "familyCategory", "addressPostcode"]}
                             pagination
-                            checkboxConfig={{displayed:false}}
+                            checkboxConfig={{ displayed: false }}
                             filters={["fullName"]}
                         />
                     </TableSurface>

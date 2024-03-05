@@ -75,7 +75,7 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
                 defaultShownHeaders={["name", "acronym"]}
                 filters={["name", "acronym"]}
                 toggleableHeaders={["primary_key"]}
-                checkboxConfig={{displayed:false}}
+                checkboxConfig={{ displayed: false }}
             />
 
             {refreshRequired && (
