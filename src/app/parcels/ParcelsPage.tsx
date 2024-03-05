@@ -365,7 +365,6 @@ const ParcelsPage: React.FC<{}> = () => {
                             columnDisplayFunctions={parcelTableColumnDisplayFunctions}
                             columnStyleOptions={parcelTableColumnStyleOptions}
                             onRowClick={onParcelTableRowClick}
-                            checkboxes
                             onRowSelection={setSelectedRowIndices}
                             pagination
                             sortable={toggleableHeaders}

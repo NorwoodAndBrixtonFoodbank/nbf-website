@@ -64,6 +64,7 @@ const UsersTable: React.FC<Props> = (props) => {
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
                 toggleableHeaders={["id", "createdAt", "updatedAt"]}
                 defaultShownHeaders={["email", "userRole", "createdAt", "updatedAt"]}
+                checkboxConfig={{displayed:false}}
             />
 
             <DeleteUserDialog
