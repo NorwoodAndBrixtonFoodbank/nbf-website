@@ -15,7 +15,7 @@ const ExpandedClientDetails = async ({ clientId }: Props): Promise<React.ReactEl
 
     return (
         <>
-            <DataViewer data={expandedClientDetails} />
+            <DataViewer data={{ ...expandedClientDetails }} />
             <ClientParcelsTable parcelsData={expandedClientParcelsDetails} />
         </>
     );

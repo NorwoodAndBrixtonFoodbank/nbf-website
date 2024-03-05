@@ -60,7 +60,7 @@ export const familyCountToFamilyCategory = (count: number): string => {
     return "Family of 10+";
 };
 
-export interface ExpandedClientDetails {
+export interface ExpandedClientData {
     primaryKey: string;
     fullName: string;
     address: string;
