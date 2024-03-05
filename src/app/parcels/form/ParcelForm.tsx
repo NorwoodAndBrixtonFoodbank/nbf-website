@@ -128,10 +128,9 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [clientDetails, setClientDetails] = useState<ExpandedClientDetails | null>(null);
     const theme = useTheme();
+    const clientIdForFetch = initialFields.clientId ? initialFields.clientId : clientId;
 
     useEffect(() => {
-        const clientIdForFetch = initialFields.clientId ? initialFields.clientId : clientId;
-
         if (!clientDetails && clientIdForFetch) {
             getExpandedClientDetails(clientIdForFetch)
                 .then((response) => {
@@ -141,7 +140,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                     setClientDetails(null);
                 });
         }
-    }, []);
+    }, [clientDetails, clientIdForFetch]);
 
     const formSections =
         fields.shippingMethod === "Collection"
