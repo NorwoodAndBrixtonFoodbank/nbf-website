@@ -47,6 +47,17 @@ export interface SortOptions<Data, Key extends keyof Data> {
     sortFunction?: (datapoint1: Data[Key], datapoint2: Data[Key]) => number;
 }
 
+
+type CheckboxConfig = {
+    displayed: true,
+    selectedRowIndices: number[],
+    isAllCheckboxChecked: boolean,
+    onCheckboxClicked: (rowIndex: number) => void,
+    onAllCheckboxClicked: (isAllCheckboxChecked: boolean) => void,
+} | {
+    displayed: false,
+}
+
 interface Props<Data> {
     data: Data[];
     headerKeysAndLabels: TableHeaders<Data>;
@@ -65,8 +76,7 @@ interface Props<Data> {
     columnStyleOptions?: ColumnStyles<Data>;
     onRowClick?: OnRowClickFunction<Data>;
     autoFilter?: boolean;
-    selectedCheckboxes?: boolean[];
-    setSelectedCheckboxes?: React.Dispatch<SetStateAction<boolean[]>>;
+    checkboxConfig: CheckboxConfig;
 }
 
 interface CellProps<Data> {
@@ -113,7 +123,7 @@ const defaultColumnStyleOptions = {
 const Table = <Data,>({
     data: inputData,
     headerKeysAndLabels,
-    checkboxes,
+    checkboxes: showCheckboxes,
     onRowSelection,
     defaultShownHeaders,
     filters: filterKeysOrObjects = [],
@@ -128,15 +138,14 @@ const Table = <Data,>({
     columnDisplayFunctions = {},
     columnStyleOptions = {},
     autoFilter = true,
-    selectedCheckboxes,
-    setSelectedCheckboxes,
+    checkboxConfig,
 }: Props<Data>): React.ReactElement => {
-    const [selectedCheckboxesDefault, setSelectedCheckboxesDefault] = useState(
-        new Array<boolean>(inputData.length).fill(false)
-    );
+    // const [selectedCheckboxesDefault, setSelectedCheckboxesDefault] = useState(
+    //     new Array<boolean>(inputData.length).fill(false)
+    // );
 
-    selectedCheckboxes = selectedCheckboxes ?? selectedCheckboxesDefault;
-    setSelectedCheckboxes = setSelectedCheckboxes ?? setSelectedCheckboxesDefault;
+    // selectedCheckboxes = selectedCheckboxes ?? selectedCheckboxesDefault;
+    // setSelectedCheckboxes = setSelectedCheckboxes ?? setSelectedCheckboxesDefault;
 
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
@@ -164,36 +173,36 @@ const Table = <Data,>({
 
     const [data, setData] = useState(inputData);
 
-    const updateCheckboxes = (newSelection: boolean[]): void => {
-        setSelectedCheckboxes!(newSelection);
-        onRowSelection?.(
-            newSelection
-                .map((selected, index) => (selected ? index : -1))
-                .filter((index) => index !== -1)
-        );
-    };
+    // const updateCheckboxes = (newSelection: boolean[]): void => {
+    //     setSelectedCheckboxes!(newSelection);
+    //     onRowSelection?.(
+    //         newSelection
+    //             .map((selected, index) => (selected ? index : -1))
+    //             .filter((index) => index !== -1)
+    //     );
+    // };
 
-    const [selectAllCheckBox, setSelectAllCheckBox] = useState(false);
+    // const [selectAllCheckBox, setSelectAllCheckBox] = useState(false);
 
-    const toggleOwnCheckBox = (rowId: number): void => {
-        const selectCheckBoxesCopy = [...selectedCheckboxes!];
-        selectCheckBoxesCopy[rowId] = !selectCheckBoxesCopy[rowId];
-        updateCheckboxes(selectCheckBoxesCopy);
-    };
+    // const toggleOwnCheckBox = (rowId: number): void => {
+    //     const selectCheckBoxesCopy = [...selectedCheckboxes!];
+    //     selectCheckBoxesCopy[rowId] = !selectCheckBoxesCopy[rowId];
+    //     updateCheckboxes(selectCheckBoxesCopy);
+    // };
 
-    const toggleAllCheckBox = (): void => {
-        const newSelection = new Array<boolean>(data.length).fill(!selectAllCheckBox);
-        updateCheckboxes(newSelection);
-        setSelectAllCheckBox(!selectAllCheckBox);
-    };
+    // const toggleAllCheckBox = (): void => {
+    //     const newSelection = new Array<boolean>(data.length).fill(!selectAllCheckBox);
+    //     updateCheckboxes(newSelection);
+    //     setSelectAllCheckBox(!selectAllCheckBox);
+    // };
 
-    useEffect(() => {
-        const allChecked =
-            selectedCheckboxes!?.length > 0 ? selectedCheckboxes!.every((item) => item) : false;
-        if (allChecked !== selectAllCheckBox) {
-            setSelectAllCheckBox(allChecked);
-        }
-    }, [selectedCheckboxes, selectAllCheckBox]);
+    // useEffect(() => {
+    //     const allChecked =
+    //         selectedCheckboxes!?.length > 0 ? selectedCheckboxes!.every((item) => item) : false;
+    //     if (allChecked !== selectAllCheckBox) {
+    //         setSelectAllCheckBox(allChecked);
+    //     }
+    // }, [selectedCheckboxes, selectAllCheckBox]);
 
     const sortOptions = sortable.map((sortOption) => {
         if (sortOption instanceof Object) {
@@ -268,22 +277,22 @@ const Table = <Data,>({
         }
     };
 
-    if (checkboxes) {
+    if (checkboxConfig.displayed) {
         columns.unshift({
             name: (
                 <input
                     type="checkbox"
                     aria-label="Select all rows"
-                    checked={selectAllCheckBox}
-                    onClick={toggleAllCheckBox}
+                    checked={checkboxConfig.isAllCheckboxChecked}
+                    onClick={() => checkboxConfig.onAllCheckboxClicked(checkboxConfig.isAllCheckboxChecked)}
                 />
             ),
             cell: (row: Row<Data>) => (
                 <input
                     type="checkbox"
                     aria-label={`Select row ${row.rowId}`}
-                    checked={selectedCheckboxes![row.rowId]}
-                    onClick={() => toggleOwnCheckBox(row.rowId)}
+                    checked={checkboxConfig.selectedRowIndices.includes(row.rowId)}
+                    onClick={() => checkboxConfig.onCheckboxClicked(row.rowId)}
                 />
             ),
             width: "47px",

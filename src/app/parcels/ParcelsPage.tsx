@@ -126,10 +126,10 @@ const ParcelsPage: React.FC<{}> = () => {
     });
     const [tableData, setTableData] = useState<ParcelsTableRow[]>([]);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
+
     const [selectedRowIndices, setSelectedRowIndices] = useState<number[]>([]);
-    const [selectedCheckboxes, setSelectedCheckboxes] = useState<boolean[]>(
-        new Array<boolean>(tableData.length).fill(false)
-    );
+    const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
+
     const theme = useTheme();
 
     useEffect(() => {
@@ -179,9 +179,35 @@ const ParcelsPage: React.FC<{}> = () => {
     }, [packingDateRange]);
 
     useEffect(() => {
-        setSelectedCheckboxes(new Array<boolean>(tableData.length).fill(false));
         setSelectedRowIndices([]);
     }, [tableData]);
+
+    const selectOrDeselectRow = (rowIndex: number): void => {
+        setSelectedRowIndices(currentIndices => {
+          if (currentIndices.includes(rowIndex)) {
+            return currentIndices.filter(index => index !== rowIndex)
+          }
+          return currentIndices.concat([rowIndex])
+        });
+    };
+    
+    const toggleAllCheckBox = (isAllCheckBoxSelected: boolean): void => {
+        if (isAllCheckBoxSelected) {
+            setSelectedRowIndices([]);
+            setAllCheckBoxSelected(false);
+        } else {
+            setSelectedRowIndices(tableData.map((data,index) => index));
+            setAllCheckBoxSelected(true);
+        }
+        };
+    
+        useEffect(() => {
+            const allChecked =
+                selectedRowIndices.length === tableData.length;
+            if (allChecked !== isAllCheckBoxSelected) {
+                setAllCheckBoxSelected(allChecked);
+            }
+        }, [selectedRowIndices, isAllCheckBoxSelected]);
 
     const rowToIconsColumn = ({
         flaggedForAttention,
@@ -323,12 +349,10 @@ const ParcelsPage: React.FC<{}> = () => {
                         setRange={setPackingDateRange}
                     ></DateRangeInputs>
                 </ControlContainer>
-                <ActionBar
+                {/* <ActionBar
                     parcels={tableData}
                     selectedRowIndices={selectedRowIndices}
-                    setSelectedRowIndices={setSelectedRowIndices}
-                    setSelectedCheckboxes={setSelectedCheckboxes}
-                />
+                /> */}
             </PreTableControls>
             {isLoading ? (
                 <></>
@@ -359,8 +383,11 @@ const ParcelsPage: React.FC<{}> = () => {
                                 "voucherNumber",
                                 buildLastStatusFilter(tableData),
                             ]}
-                            selectedCheckboxes={selectedCheckboxes}
-                            setSelectedCheckboxes={setSelectedCheckboxes}
+                            checkboxConfig={{    displayed: true,
+                                selectedRowIndices: selectedRowIndices,
+                                isAllCheckboxChecked: isAllCheckBoxSelected,
+                                onCheckboxClicked: (rowIndex: number) => selectOrDeselectRow(rowIndex),
+                                onAllCheckboxClicked: (isAllCheckBoxSelected: boolean) => toggleAllCheckBox(isAllCheckBoxSelected)}}
                         />
                     </TableSurface>
                     <Modal
