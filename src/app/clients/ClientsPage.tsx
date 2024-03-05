@@ -39,20 +39,12 @@ const ClientsPage: React.FC<{}> = () => {
     const clientId = searchParams.get(clientIdParam);
 
     useEffect(() => {
-        let staleFetch = false;
-
         (async () => {
             setIsLoading(true);
             const fetchedData = await getClientsData(supabase);
-            if (!staleFetch) {
-                setClientsTableData(fetchedData);
-            }
+            setClientsTableData(fetchedData);
             setIsLoading(false);
         })();
-
-        return () => {
-            staleFetch = true;
-        };
     }, []);
 
     useEffect(() => {
