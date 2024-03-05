@@ -94,7 +94,7 @@
     "react-modal": "^3.16.1",
     "start-server-and-test": "^2.0.0",
     "styled-components": "^6.0.4",
-    "supabase": "^1.145.4",
+    "supabase": "^1.142.2",
     "typescript": "^5.2.2"
   },
   "devDependencies": {

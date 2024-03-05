@@ -84,11 +84,7 @@ const CommentBox: React.FC<CommentProps> = ({ originalComment }) => {
     const [value, setValue] = useState(originalComment);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
-    const [unsavedChanges, setUnsavedChanges] = useState(false);
-
-    useEffect(() => {
-        setUnsavedChanges(value !== originalComment);
-    }, [value, originalComment]);
+    const hasUnsavedChanges = value !== originalComment;
 
     const onChangeSetValue = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setValue(event.target.value);
@@ -132,7 +128,7 @@ const CommentBox: React.FC<CommentProps> = ({ originalComment }) => {
                     maxRows={4}
                     minRows={4}
                 />
-                {unsavedChanges && <WarningText>There are unsaved changes!</WarningText>}
+                {hasUnsavedChanges && <WarningText>There are unsaved changes!</WarningText>}
                 {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
                 {successMessage && <SuccessText>{successMessage}</SuccessText>}
             </CommentBoxContainer>
