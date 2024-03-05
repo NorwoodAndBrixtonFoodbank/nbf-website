@@ -1,7 +1,7 @@
 import {
     ExpandedClientParcelDetails,
     ParcelsDetail,
-    rawDataToExpandedClientParcelsDetails,
+    rawDataToClientParcelsDetails,
 } from "@/app/clients/getClientParcelsData";
 
 const sampleParcelData: ParcelsDetail = {
@@ -22,7 +22,7 @@ const sampleExpandedClientParcelDetails: ExpandedClientParcelDetails = {
 
 describe("getClientParcelsData", () => {
     it("Should format the data correctly", () => {
-        const result = rawDataToExpandedClientParcelsDetails(sampleParcelData);
+        const result = rawDataToClientParcelsDetails(sampleParcelData);
         expect(result).to.deep.equal(sampleExpandedClientParcelDetails);
     });
 });

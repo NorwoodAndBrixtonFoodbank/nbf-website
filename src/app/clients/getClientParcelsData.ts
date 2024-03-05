@@ -11,11 +11,11 @@ export interface ParcelsDetail {
     packing_datetime: string | null;
     voucher_number?: string | null;
 }
-export const getExpandedClientParcelsDetails = async (
+export const getClientParcelsDetails = async (
     clientId: string
 ): Promise<ExpandedClientParcelDetails[]> => {
     const rawClientParcelsDetails = await getRawClientParcelsDetails(clientId);
-    const formattedList = rawClientParcelsDetails.map(rawDataToExpandedClientParcelsDetails);
+    const formattedList = rawClientParcelsDetails.map(rawDataToClientParcelsDetails);
     return formattedList;
 };
 const getRawClientParcelsDetails = async (clientId: string): Promise<ParcelsDetail[]> => {
@@ -48,7 +48,7 @@ export interface ExpandedClientParcelDetails extends Data {
     collectionCentre: string;
 }
 
-export const rawDataToExpandedClientParcelsDetails = (
+export const rawDataToClientParcelsDetails = (
     parcel: ClientParcelDetails
 ): ExpandedClientParcelDetails => {
     return {
