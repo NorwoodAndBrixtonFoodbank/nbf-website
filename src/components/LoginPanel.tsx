@@ -4,7 +4,7 @@ import { DatabaseAutoType } from "@/databaseUtils";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import Title from "@/components/Title/Title";
 import { NavBarHeight } from "@/components/NavigationBar/NavigationBar";
@@ -54,10 +54,12 @@ const LoginPanel: React.FC<{}> = () => {
     const theme = useTheme();
 
     const [loaded, setLoaded] = React.useState(false);
+    const [baseUrl, setBaseUrl] = useState<string | null>(null);
 
     useEffect(() => {
+        setBaseUrl(window.location.origin);
         setLoaded(true);
-    }, []);
+    }, [baseUrl]);
 
     return (
         <MiddleDiv elevation={5} data-loaded={loaded} id="login-panel">
@@ -83,7 +85,7 @@ const LoginPanel: React.FC<{}> = () => {
                         },
                     },
                 }}
-                redirectTo={`${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`}
+                redirectTo={`${baseUrl}/auth/callback`}
             />
         </MiddleDiv>
     );
