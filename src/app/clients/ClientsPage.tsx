@@ -13,7 +13,7 @@ import { useTheme } from "styled-components";
 import getClientsData from "./getClientsData";
 import { useSearchParams, useRouter } from "next/navigation";
 import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
-import ExpandedParcelDetailsFallback from "@/app/parcels/ExpandedParcelDetailsFallback";
+import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -110,7 +110,7 @@ const ClientsPage: React.FC<{}> = () => {
                         <OutsideDiv>
                             <ContentDiv>
                                 {clientId && (
-                                    <Suspense fallback={<ExpandedParcelDetailsFallback />}>
+                                    <Suspense fallback={<ExpandedClientDetailsFallback />}>
                                         <ExpandedClientDetails clientId={clientId} />
                                     </Suspense>
                                 )}
