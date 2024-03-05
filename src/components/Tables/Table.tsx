@@ -50,7 +50,6 @@ export interface SortOptions<Data, Key extends keyof Data> {
 }
 
 interface Props<Data> {
-    data: Data[];
     headerKeysAndLabels: TableHeaders<Data>;
     checkboxes?: boolean;
     onRowSelection?: (rowIds: number[]) => void;
@@ -117,7 +116,6 @@ const defaultColumnStyleOptions = {
 } as const;
 
 const Table = <Data,>({
-    data: inputData,
     headerKeysAndLabels,
     checkboxes,
     onRowSelection,
@@ -142,6 +140,7 @@ const Table = <Data,>({
     subscriptions,
     
 }: Props<Data>): React.ReactElement => {
+    const [data, setData] = useState<Data[]>([]);
     const [totalRows, setTotalRows] = useState(0);
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
@@ -149,15 +148,16 @@ const Table = <Data,>({
     const getStartPoint = (currentPage: number, perPage: number): number => (currentPage * perPage);
     const getEndPoint = (currentPage: number, perPage: number): number => ((currentPage + 1) * perPage);
 
+    const fetchCount = async () => {
+        setTotalRows(await getCount(supabase));
+    };
+
     const fetchData = async (page: number, perPage: number) => {
         setLoading(true);
         const fetchedData = await getData(supabase, getStartPoint(page, perPage), getEndPoint(page, perPage));
         setData(fetchedData);
         setLoading(false);
     }
-    const fetchCount = async () => {
-        setTotalRows(await getCount(supabase));
-    };
 
     useEffect(() => {
         fetchCount();
@@ -216,8 +216,6 @@ const Table = <Data,>({
     );
 
     const allFilters = [...primaryFilters, ...additionalFilters];
-
-    const [data, setData] = useState(inputData);
 
     const [selectedCheckboxes, setSelectedCheckboxes] = useState(
         new Array<boolean>(data.length).fill(false)

@@ -30,43 +30,18 @@ const headers: TableHeaders<ClientsTableRow> = [
 
 const clientIdParam = "clientId";
 const ClientsPage: React.FC<{}> = () => {
-    const [count, setCount] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
-    const [clientsTableData, setClientsTableData] = useState<ClientsTableRow[]>([]);
     const theme = useTheme();
     const router = useRouter();
 
     const searchParams = useSearchParams();
     const clientId = searchParams.get(clientIdParam);
 
-    useEffect(() => {
-        (async () => {
-            setCount(await getClientsCount(supabase))})();
-    }, []);
-
-    // useEffect(() => {
-    //     let staleFetch = false;
-
-    //     (async () => {
-    //         setIsLoading(true);
-    //         const fetchedData = await getClientsData(supabase);
-    //         if (!staleFetch) {
-    //             setTableData(fetchedData);
-    //         }
-    //         setIsLoading(false);
-    //     })();
-
-    //     return () => {
-    //         staleFetch = true;
-    //     };
-    // }, []);
-
     return (
         <>
                 <>
                     <TableSurface>
                         <Table
-                            data={clientsTableData}
                             headerKeysAndLabels={headers}
                             onRowClick={(row) => {
                                 router.push(`/clients?${clientIdParam}=${row.data.clientId}`);
