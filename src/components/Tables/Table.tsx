@@ -65,7 +65,6 @@ interface Props<Data> {
     columnStyleOptions?: ColumnStyles<Data>;
     onRowClick?: OnRowClickFunction<Data>;
     autoFilter?: boolean;
-    pointerOnHover?: boolean;
 }
 
 interface CellProps<Data> {
@@ -127,7 +126,6 @@ const Table = <Data,>({
     columnDisplayFunctions = {},
     columnStyleOptions = {},
     autoFilter = true,
-    pointerOnHover,
 }: Props<Data>): React.ReactElement => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
@@ -369,7 +367,6 @@ const Table = <Data,>({
                         pagination={pagination ?? true}
                         persistTableHead
                         onRowClicked={onRowClick}
-                        pointerOnHover={pointerOnHover}
                     />
                 </NoSsr>
             </TableStyling>
