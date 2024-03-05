@@ -32,6 +32,7 @@ import {
 import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { Filter } from "@/components/Tables/Filters";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -115,6 +116,8 @@ const fetchAndFormatParcelTablesData = async (
     return formattedData;
 };
 
+const parcelIdParam = "parcelId";
+
 const areDateRangesIdentical = (
     dateRangeA: DateRangeState,
     dateRangeB: DateRangeState
@@ -141,7 +144,19 @@ const ParcelsPage: React.FC<{}> = () => {
     const [tableData, setTableData] = useState<ParcelsTableRow[]>([]);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [selected, setSelected] = useState<number[]>([]);
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const theme = useTheme();
+    const router = useRouter();
+
+    const searchParams = useSearchParams();
+    const parcelId = searchParams.get(parcelIdParam);
+
+    useEffect(() => {
+        if (parcelId) {
+            setSelectedParcelId(parcelId);
+            setModalIsOpen(true);
+        }
+    }, [parcelId]);
 
     useEffect(() => {
         (async () => {
@@ -229,10 +244,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const onParcelTableRowClick = (row: Row<ParcelsTableRow>): void => {
         setSelectedParcelId(row.data.parcelId);
-    };
-
-    const onExpandedParcelDetailsClose = (): void => {
-        setSelectedParcelId(null);
+        router.push(`/parcels?${parcelIdParam}=${row.data.parcelId}`);
     };
 
     const buildDeliveryCollectionFilter = (
@@ -354,8 +366,11 @@ const ParcelsPage: React.FC<{}> = () => {
                                 Parcel Details
                             </>
                         }
-                        isOpen={selectedParcelId !== null}
-                        onClose={onExpandedParcelDetailsClose}
+                        isOpen={modalIsOpen}
+                        onClose={() => {
+                            setModalIsOpen(false);
+                            router.push("/parcels");
+                        }}
                         headerId="expandedParcelDetailsModal"
                     >
                         <OutsideDiv>

@@ -2,7 +2,7 @@ import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 
-const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientDetails> => {
+const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
     const rawClientDetails = await getRawClientDetails(clientId);
     return rawDataToExpandedClientDetails(rawClientDetails);
 };
@@ -76,7 +76,7 @@ export interface ExpandedClientDetails {
     extraInformation: string;
 }
 
-export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientDetails => {
+export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientData => {
     return {
         primaryKey: client.primary_key,
         fullName: client.full_name,

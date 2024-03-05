@@ -1,10 +1,6 @@
 "use client";
 
-import getExpandedClientDetails, {
-    ExpandedClientDetails,
-} from "@/app/clients/getExpandedClientDetails";
 import LinkButton from "@/components/Buttons/LinkButton";
-import DataViewer from "@/components/DataViewer/DataViewer";
 import Icon from "@/components/Icons/Icon";
 import Modal from "@/components/Modal/Modal";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
@@ -12,12 +8,15 @@ import Table, { TableHeaders } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
 import supabase from "@/supabaseClient";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useTheme } from "styled-components";
 import getClientsData from "./getClientsData";
+import { useSearchParams, useRouter } from "next/navigation";
+import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
+import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
 
 export interface ClientsTableRow {
-    primaryKey: string;
+    clientId: string;
     fullName: string;
     familyCategory: string;
     addressPostcode: string;
@@ -29,18 +28,21 @@ const headers: TableHeaders<ClientsTableRow> = [
     ["addressPostcode", "Postcode"],
 ];
 
+const clientIdParam = "clientId";
 const ClientsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
-    const [tableData, setTableData] = useState<ClientsTableRow[]>([]);
-    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-    const [activeData, setActiveData] = useState<ExpandedClientDetails | null>(null);
+    const [clientsTableData, setClientsTableData] = useState<ClientsTableRow[]>([]);
     const theme = useTheme();
+    const router = useRouter();
+
+    const searchParams = useSearchParams();
+    const clientId = searchParams.get(clientIdParam);
 
     useEffect(() => {
         (async () => {
             setIsLoading(true);
             const fetchedData = await getClientsData(supabase);
-            setTableData(fetchedData);
+            setClientsTableData(fetchedData);
             setIsLoading(false);
         })();
     }, []);
@@ -50,10 +52,10 @@ const ClientsPage: React.FC<{}> = () => {
         const subscriptionChannel = supabase
             .channel("parcels-table-changes")
             .on("postgres_changes", { event: "*", schema: "public", table: "clients" }, async () =>
-                setTableData(await getClientsData(supabase))
+                setClientsTableData(await getClientsData(supabase))
             )
             .on("postgres_changes", { event: "*", schema: "public", table: "families" }, async () =>
-                setTableData(await getClientsData(supabase))
+                setClientsTableData(await getClientsData(supabase))
             )
             .subscribe();
 
@@ -70,14 +72,11 @@ const ClientsPage: React.FC<{}> = () => {
                 <>
                     <TableSurface>
                         <Table
-                            data={tableData}
+                            data={clientsTableData}
                             headerKeysAndLabels={headers}
-                            onRowClick={(row) =>
-                                getExpandedClientDetails(row.data.primaryKey).then((data) => {
-                                    setModalIsOpen(true);
-                                    setActiveData(data);
-                                })
-                            }
+                            onRowClick={(row) => {
+                                router.push(`/clients?${clientIdParam}=${row.data.clientId}`);
+                            }}
                             sortable={["fullName", "familyCategory", "addressPostcode"]}
                             pagination
                             checkboxes={false}
@@ -95,21 +94,27 @@ const ClientsPage: React.FC<{}> = () => {
                                 Client Details
                             </>
                         }
-                        isOpen={modalIsOpen}
-                        onClose={() => setModalIsOpen(false)}
+                        isOpen={clientId !== null}
+                        onClose={() => {
+                            router.push("/clients");
+                        }}
                         headerId="clientsDetailModal"
                     >
                         <OutsideDiv>
                             <ContentDiv>
-                                <DataViewer data={{ ...activeData } ?? {}} />
+                                {clientId && (
+                                    <Suspense fallback={<ExpandedClientDetailsFallback />}>
+                                        <ExpandedClientDetails clientId={clientId} />
+                                    </Suspense>
+                                )}
                             </ContentDiv>
 
                             <ButtonsDiv>
                                 <Centerer>
-                                    <LinkButton link={`/clients/edit/${activeData?.primaryKey}`}>
+                                    <LinkButton link={`/clients/edit/${clientId}`}>
                                         Edit Client
                                     </LinkButton>
-                                    <LinkButton link={`/parcels/add/${activeData?.primaryKey}`}>
+                                    <LinkButton link={`/parcels/add/${clientId}`}>
                                         Add Parcel
                                     </LinkButton>
                                 </Centerer>
