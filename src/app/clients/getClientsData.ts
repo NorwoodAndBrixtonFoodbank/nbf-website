@@ -28,7 +28,7 @@ const getClientsData = async (supabase: Supabase, start: number, end: number): P
         }
 
         data.push({
-            primaryKey: client.primary_key,
+            clientId: client.primary_key,
             fullName: client.full_name,
             familyCategory: familyCountToFamilyCategory(count),
             addressPostcode: client.address_postcode,

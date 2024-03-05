@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint --dir . && npm run check_types",
+    "lint": "next lint --dir . --ignore-path .gitignore && npm run check_types",
     "lint_fix": "next lint --fix --dir . --ignore-path .gitignore && npm run check_types",
     "check_types": "tsc && echo 'No typescript errors!'",
     "open:cypress": "start-server-and-test 'next start -p 3100' http://localhost:3100 'npx cypress open --config baseUrl=http://localhost:3100'",

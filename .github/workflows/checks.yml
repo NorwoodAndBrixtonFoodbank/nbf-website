@@ -5,6 +5,7 @@ on:
       - .github/**
   push:
     branches:
+      dev
       main
 jobs:
   lint:

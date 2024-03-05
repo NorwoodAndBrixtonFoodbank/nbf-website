@@ -7,6 +7,8 @@ REPLACE_THIS_LINE
 | paste_here | paste_here |
 
 ## Checklist
+- [ ] The ticket is up-to-date - Please document any deviations from the original approach if there is any.
+- [ ] I have documented the testing steps for QA 
 - [ ] Make sure you've verified it works via `npm run dev`
 - [ ] Make sure you've verified it works via `npm run build` and `npm run start`
 - [ ] Make sure you've fixed all linting problems with `npm run lint_fix`

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Errors,
     FormErrors,
@@ -9,7 +9,12 @@ import {
     checkErrorOnSubmit,
     Fields,
 } from "@/components/Form/formFunctions";
-import { CenterComponent, StyledForm, FormErrorText } from "@/components/Form/formStyling";
+import {
+    CenterComponent,
+    StyledForm,
+    FormErrorText,
+    StyledName,
+} from "@/components/Form/formStyling";
 
 import { useRouter } from "next/navigation";
 
@@ -21,11 +26,21 @@ import CollectionDateCard from "@/app/parcels/form/formSections/CollectionDateCa
 import CollectionTimeCard from "@/app/parcels/form/formSections/CollectionTimeCard";
 import CollectionCentreCard from "@/app/parcels/form/formSections/CollectionCentreCard";
 import { insertParcel, updateParcel } from "@/app/parcels/form/clientDatabaseFunctions";
-import Button from "@mui/material/Button";
+import { IconButton, Button } from "@mui/material";
 import Title from "@/components/Title/Title";
 import { Schema } from "@/databaseUtils";
 import dayjs, { Dayjs } from "dayjs";
 import { CollectionCentresLabelsAndValues } from "@/common/fetch";
+import getExpandedClientDetails, {
+    ExpandedClientData,
+} from "@/app/clients/getExpandedClientDetails";
+import Modal from "@/components/Modal/Modal";
+import InfoIcon from "@mui/icons-material/Info";
+import Icon from "@/components/Icons/Icon";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
+import DataViewer from "@/components/DataViewer/DataViewer";
+import { useTheme } from "styled-components";
 
 export interface ParcelFields extends Fields {
     clientId: string | null;
@@ -110,6 +125,22 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     const [submitError, setSubmitError] = useState(Errors.none);
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
     const [submitDisabled, setSubmitDisabled] = useState(false);
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+    const [clientDetails, setClientDetails] = useState<ExpandedClientData | null>(null);
+    const theme = useTheme();
+    const clientIdForFetch = initialFields.clientId ? initialFields.clientId : clientId;
+
+    useEffect(() => {
+        if (!clientDetails && clientIdForFetch) {
+            getExpandedClientDetails(clientIdForFetch)
+                .then((response) => {
+                    setClientDetails(response);
+                })
+                .catch(() => {
+                    setClientDetails(null);
+                });
+        }
+    }, [clientDetails, clientIdForFetch]);
 
     const formSections =
         fields.shippingMethod === "Collection"
@@ -182,6 +213,21 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         <CenterComponent>
             <StyledForm>
                 <Title>Parcel Form</Title>
+                {clientDetails && (
+                    <StyledName>
+                        <h2>{clientDetails.fullName}</h2>
+                        <IconButton
+                            aria-label="Button for Client Information"
+                            type="button"
+                            size="large"
+                            onClick={() => {
+                                setModalIsOpen(true);
+                            }}
+                        >
+                            <InfoIcon />
+                        </IconButton>
+                    </StyledName>
+                )}
                 {formSections.map((Card, index) => {
                     return (
                         <Card
@@ -201,6 +247,25 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                 </CenterComponent>
                 <FormErrorText>{submitErrorMessage || submitError}</FormErrorText>
             </StyledForm>
+            {clientDetails && (
+                <Modal
+                    header={
+                        <>
+                            <Icon icon={faUser} color={theme.primary.background[2]} />
+                            <h2>Client Details</h2>
+                        </>
+                    }
+                    isOpen={modalIsOpen}
+                    onClose={() => setModalIsOpen(false)}
+                    headerId="clientsDetailModal"
+                >
+                    <OutsideDiv>
+                        <ContentDiv>
+                            <DataViewer data={{ ...clientDetails } ?? {}} />
+                        </ContentDiv>
+                    </OutsideDiv>
+                </Modal>
+            )}
         </CenterComponent>
     );
 };
