@@ -1,5 +1,4 @@
 import { Schema } from "@/databaseUtils";
-import { Data } from "@/components/DataViewer/DataViewer";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 
@@ -61,7 +60,8 @@ export const familyCountToFamilyCategory = (count: number): string => {
     return "Family of 10+";
 };
 
-export interface ExpandedClientData extends Data {
+export interface ExpandedClientDetails {
+    primaryKey: string;
     fullName: string;
     address: string;
     deliveryInstructions: string;
@@ -78,6 +78,7 @@ export interface ExpandedClientData extends Data {
 
 export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientData => {
     return {
+        primaryKey: client.primary_key,
         fullName: client.full_name,
         address: formatAddressFromClientDetails(client),
         deliveryInstructions: client.delivery_instructions,
