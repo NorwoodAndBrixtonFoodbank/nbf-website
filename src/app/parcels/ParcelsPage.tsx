@@ -61,17 +61,15 @@ const sortStatusByWorkflowOrder = (
     statusA: ParcelsTableRow["lastStatus"],
     statusB: ParcelsTableRow["lastStatus"]
 ): number => {
-    const indexA = statusNamesInWorkflowOrder.indexOf(statusA?.name ?? "-");
-    const indexB = statusNamesInWorkflowOrder.indexOf(statusB?.name ?? "-");
-    if (indexA > indexB) {
-        return -1;
-    } else if (indexB > indexA) {
-        return 1;
+    const indexA = statusNamesInWorkflowOrder.indexOf(statusA?.name ?? "");
+    const indexB = statusNamesInWorkflowOrder.indexOf(statusB?.name ?? "");
+    if (indexA === indexB) {
+        return 0;
     }
-    return 0;
+    return indexA < indexB ? 1 : -1;
 };
 
-const sortable: (keyof ParcelsTableRow | SortOptions<ParcelsTableRow, "lastStatus">)[] = [
+const sortableColumns: (keyof ParcelsTableRow | SortOptions<ParcelsTableRow, "lastStatus">)[] = [
     "fullName",
     "familyCategory",
     "addressPostcode",
@@ -343,7 +341,7 @@ const ParcelsPage: React.FC<{}> = () => {
                             checkboxes
                             onRowSelection={setSelected}
                             pagination
-                            sortable={sortable}
+                            sortable={sortableColumns}
                             defaultShownHeaders={defaultShownHeaders}
                             toggleableHeaders={toggleableHeaders}
                             filters={[

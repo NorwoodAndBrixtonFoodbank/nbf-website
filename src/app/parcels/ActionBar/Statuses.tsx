@@ -11,7 +11,6 @@ import StatusesBarModal from "@/app/parcels/ActionBar/StatusesModal";
 import { DatabaseError } from "@/app/errorClasses";
 
 export const statusNamesInWorkflowOrder = [
-    "-",
     "No Status",
     "Request Denied",
     "Pending More Info",
