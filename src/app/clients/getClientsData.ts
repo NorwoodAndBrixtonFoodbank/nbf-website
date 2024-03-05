@@ -26,7 +26,7 @@ const getClientsData = async (supabase: Supabase): Promise<ClientsTableRow[]> =>
         }
 
         data.push({
-            clientId: client.primary_key,
+            primaryKey: client.primary_key,
             fullName: client.full_name,
             familyCategory: familyCountToFamilyCategory(count),
             addressPostcode: client.address_postcode,
