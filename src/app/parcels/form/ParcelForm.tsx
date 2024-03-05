@@ -215,7 +215,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                 <Title>Parcel Form</Title>
                 {clientDetails && (
                     <StyledName>
-                        <h2>{clientDetails?.fullName}</h2>
+                        <h2>{clientDetails.fullName}</h2>
                         <IconButton
                             aria-label="Button for Client Information"
                             type="button"
