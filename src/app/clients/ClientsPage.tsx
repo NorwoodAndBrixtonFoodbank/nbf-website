@@ -28,6 +28,7 @@ const headers: TableHeaders<ClientsTableRow> = [
     ["addressPostcode", "Postcode"],
 ];
 
+const clientIdParam = "clientId";
 const ClientsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [clientsTableData, setClientsTableData] = useState<ClientsTableRow[]>([]);
@@ -35,7 +36,7 @@ const ClientsPage: React.FC<{}> = () => {
     const router = useRouter();
 
     const searchParams = useSearchParams();
-    const clientId = searchParams.get("clientId");
+    const clientId = searchParams.get(clientIdParam);
 
     useEffect(() => {
         let staleFetch = false;
@@ -82,7 +83,7 @@ const ClientsPage: React.FC<{}> = () => {
                             data={clientsTableData}
                             headerKeysAndLabels={headers}
                             onRowClick={(row) => {
-                                router.push(`/clients/?clientId=${row.data.clientId}`);
+                                router.push(`/clients/?${clientIdParam}=${row.data.clientId}`);
                             }}
                             sortable={["fullName", "familyCategory", "addressPostcode"]}
                             pagination
