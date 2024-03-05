@@ -254,7 +254,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                     header={
                         <>
                             <Icon icon={faUser} color={theme.primary.background[2]} />
-                            Client Details
+                            <h2>Client Details</h2>
                         </>
                     }
                     isOpen={modalIsOpen}
