@@ -21,6 +21,7 @@ import { UserRow } from "@/app/admin/page";
 import CollectionCentresTable from "@/app/admin/collectionCentresTable/CollectionCentresTable";
 import { Schema } from "@/databaseUtils";
 import CreateCollectionCentreForm from "@/app/admin/createCollectionCentre/CreateCollectionCentreForm";
+import PackingSlotsTable from "@/app/admin/packingSlotsTable/PackingSlotsTable";
 
 const PanelTitle = styled.h2`
     text-transform: uppercase;
@@ -35,6 +36,7 @@ interface Panel {
 interface Props {
     userData: UserRow[];
     collectionCentreData: Schema["collection_centres"][];
+    packingSlotData: Schema["packing_slots"][];
 }
 
 const PanelIcon = styled(FontAwesomeIcon)`
@@ -61,11 +63,11 @@ const AdminPage: React.FC<Props> = (props) => {
             panelIcon: faBuildingCircleArrowRight,
             panelContent: <CreateCollectionCentreForm />,
         },
-        // {
-        //     panelTitle: "Modify Packing Slots",
-        //     panelIcon: faBoxOpen,
-        //     panelContent:
-        // }
+        {
+            panelTitle: "Modify Packing Slots",
+            panelIcon: faBoxOpen,
+            panelContent: <PackingSlotsTable packingSlotsData={props.packingSlotData} />,
+        },
     ];
 
     return (

@@ -51,16 +51,32 @@ const getCollectionCentres = async (): Promise<Schema["collection_centres"][]> =
 
     return data;
 };
+
+const getPackingSlots = async (): Promise<Schema["packing_slots"][]> => {
+    const supabase = getSupabaseServerComponentClient();
+    const { data, error } = await supabase.from("packing_slots").select();
+    if (error) {
+        throw new DatabaseError("fetch", "packing slots");
+    }
+
+    return data;
+};
+
 const Admin = async (): Promise<ReactElement> => {
-    const [userData, collectionCentreData] = await Promise.all([
+    const [userData, collectionCentreData, packingSlotData] = await Promise.all([
         getUsers(),
         getCollectionCentres(),
+        getPackingSlots(),
     ]);
 
     return (
         <main>
             <Title>Admin Panel</Title>
-            <AdminPage userData={userData} collectionCentreData={collectionCentreData} />
+            <AdminPage
+                userData={userData}
+                collectionCentreData={collectionCentreData}
+                packingSlotData={packingSlotData}
+            />
         </main>
     );
 };

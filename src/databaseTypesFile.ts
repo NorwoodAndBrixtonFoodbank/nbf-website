@@ -310,19 +310,19 @@ export type Database = {
       packing_slots: {
         Row: {
           id: number
-          is_hidden: boolean | null
+          is_hidden: boolean
           name: string
           order: number
         }
         Insert: {
           id?: number
-          is_hidden?: boolean | null
+          is_hidden: boolean
           name: string
           order: number
         }
         Update: {
           id?: number
-          is_hidden?: boolean | null
+          is_hidden?: boolean
           name?: string
           order?: number
         }

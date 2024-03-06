@@ -5011,3 +5011,5 @@ INSERT INTO public.events (primary_key,event_name,timestamp,parcel_id,event_data
 INSERT INTO public.website_data (name,value) VALUES ('lists_text', 'Space is valuable! Please don''t leave boxes half empty - pack efficiently!
 BOXES MUST BE PACKED FLAT SO THAT THEY CAN BE STACKED. Do not leave items sticking out of the top.
 We do have a selection of ''free from'' goods as well as vegan and halal products. If you''re uncertain about any additional dietary needs, please speak to one of the team.');
+INSERT INTO public.packing_slots (id,name,is_hidden,"order") VALUES (1, 'AM', 'f', 0), (2, 'PM', 'f', 1);
+SELECT setval('public.packing_slots_id_seq'::regclass, (SELECT MAX("id") FROM "public"."packing_slots"));

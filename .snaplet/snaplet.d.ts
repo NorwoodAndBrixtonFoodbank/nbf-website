@@ -11,8 +11,6 @@ type Enum_pgsodium_key_status = 'default' | 'expired' | 'invalid' | 'valid';
 type Enum_pgsodium_key_type = 'aead-det' | 'aead-ietf' | 'auth' | 'generichash' | 'hmacsha256' | 'hmacsha512' | 'kdf' | 'secretbox' | 'secretstream' | 'shorthash' | 'stream_xchacha20';
 type Enum_public_gender = 'female' | 'male' | 'other';
 type Enum_public_role = 'admin' | 'caller';
-type Enum_realtime_action = 'DELETE' | 'ERROR' | 'INSERT' | 'TRUNCATE' | 'UPDATE';
-type Enum_realtime_equality_op = 'eq' | 'gt' | 'gte' | 'in' | 'lt' | 'lte' | 'neq';
 interface Table_net_http_response {
   id: number | null;
   status_code: number | null;
@@ -41,12 +39,6 @@ interface Table_storage_buckets {
   file_size_limit: number | null;
   allowed_mime_types: string[] | null;
   owner_id: string | null;
-}
-interface Table_realtime_channels {
-  id: number;
-  name: string;
-  inserted_at: string;
-  updated_at: string;
 }
 interface Table_public_clients {
   primary_key: string;
@@ -243,6 +235,12 @@ interface Table_storage_objects {
   version: string | null;
   owner_id: string | null;
 }
+interface Table_public_packing_slots {
+  id: number;
+  name: string;
+  is_hidden: boolean;
+  order: number;
+}
 interface Table_public_parcels {
   primary_key: string;
   client_id: string;
@@ -286,10 +284,6 @@ interface Table_auth_saml_relay_states {
 interface Table_auth_schema_migrations {
   version: string;
 }
-interface Table_realtime_schema_migrations {
-  version: number;
-  inserted_at: string | null;
-}
 interface Table_supabase_migrations_schema_migrations {
   version: string;
   statements: string[] | null;
@@ -330,34 +324,6 @@ interface Table_auth_sso_providers {
   resource_id: string | null;
   created_at: string | null;
   updated_at: string | null;
-}
-interface Table_realtime_subscription {
-  id: number;
-  subscription_id: string;
-  /**
-  * We couldn't determine the type of this column. The type might be coming from an unknown extension
-  * or be specific to your database. Please if it's a common used type report this issue so we can fix it!
-  * Otherwise, please manually type this column by casting it to the correct type.
-  * @example
-  * Here is a cast example for copycat use:
-  * ```
-  * copycat.scramble(row.unknownColumn as string)
-  * ```
-  */
-  entity: unknown;
-  /**
-  * We couldn't determine the type of this column. The type might be coming from an unknown extension
-  * or be specific to your database. Please if it's a common used type report this issue so we can fix it!
-  * Otherwise, please manually type this column by casting it to the correct type.
-  * @example
-  * Here is a cast example for copycat use:
-  * ```
-  * copycat.scramble(row.unknownColumn as string)
-  * ```
-  */
-  filters: unknown[];
-  claims: Json;
-  created_at: string;
 }
 interface Table_auth_users {
   instance_id: string | null;
@@ -447,13 +413,12 @@ interface Schema_public {
   families: Table_public_families;
   lists: Table_public_lists;
   lists_hotel: Table_public_lists_hotel;
+  packing_slots: Table_public_packing_slots;
   parcels: Table_public_parcels;
   website_data: Table_public_website_data;
 }
 interface Schema_realtime {
-  channels: Table_realtime_channels;
-  schema_migrations: Table_realtime_schema_migrations;
-  subscription: Table_realtime_subscription;
+
 }
 interface Schema_storage {
   buckets: Table_storage_buckets;
