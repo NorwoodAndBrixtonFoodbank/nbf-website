@@ -70,7 +70,7 @@ interface Props<Data> {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     getData: (supabase: Supabase, start: number, end: number, filters: Filter<Data, any>[], perPage: number) => Promise<Data[]>;
     supabase: Supabase;
-    getCount: (supabase: Supabase) => Promise<number>;
+    getCount: (supabase: Supabase, filters: Filter<Data, any>[]) => Promise<number>;
     subscriptions: RealtimePostgresChangesFilter<"*">[];
 }
 
@@ -149,7 +149,7 @@ const Table = <Data,>({
     const getEndPoint = (currentPage: number, perPage: number): number => ((currentPage) * perPage - 1);
 
     const fetchCount = async () => {
-        setTotalRows(await getCount(supabase));
+        setTotalRows(await getCount(supabase, allFilters));
     };
 
     const fetchData = async (page: number, perPage: number) => {
@@ -383,6 +383,7 @@ const Table = <Data,>({
         console.log(data);
         (async () => {        if (rows.length < perPage) {
             setLoading(true);
+            await fetchCount();
             await fetchData(currentPage, perPage); //to do: combine getFilteredData for all filters? maybe just have 1 function for getData that takes in states of all filters :)
             setLoading(false);
         }})();

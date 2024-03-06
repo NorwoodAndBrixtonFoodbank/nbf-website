@@ -86,10 +86,16 @@ const getClientsData = async (supabase: Supabase, start: number, end: number, fi
 //     return data;
 // };
 
-export const getClientsCount = async (supabase: Supabase): Promise<number> => {
-    const { count, error: clientError } = await supabase
+export const getClientsCount = async (supabase: Supabase, filters: Filter<ClientsTableRow, any>[]): Promise<number> => {
+    
+    let query = supabase
   .from('clients')
   .select('*', { count: 'exact', head: true });
+
+  filters.forEach((filter) => {
+    query = filter.filterMethod(query, filter.state);
+})
+const { count, error: clientError } = await query
   
   if (clientError || count === null) {
     throw new DatabaseError("fetch", "clients");
