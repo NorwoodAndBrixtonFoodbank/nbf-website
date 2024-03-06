@@ -59,7 +59,7 @@ const LoginPanel: React.FC<{}> = () => {
     useEffect(() => {
         setBaseUrl(window.location.origin);
         setLoaded(true);
-    }, [baseUrl]);
+    }, []);
 
     return (
         <MiddleDiv elevation={5} data-loaded={loaded} id="login-panel">
