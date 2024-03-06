@@ -68,7 +68,7 @@ interface Props<Data> {
     autoFilter?: boolean;
     loading: boolean;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-    getData: (supabase: Supabase, start: number, end: number) => Promise<Data[]>;
+    getData: (supabase: Supabase, start: number, end: number, filters: Filter<Data, any>[], perPage: number) => Promise<Data[]>;
     supabase: Supabase;
     getCount: (supabase: Supabase) => Promise<number>;
     subscriptions: RealtimePostgresChangesFilter<"*">[];
@@ -146,7 +146,7 @@ const Table = <Data,>({
     const [currentPage, setCurrentPage] = useState(1);
 
     const getStartPoint = (currentPage: number, perPage: number): number => (currentPage * perPage);
-    const getEndPoint = (currentPage: number, perPage: number): number => ((currentPage + 1) * perPage);
+    const getEndPoint = (currentPage: number, perPage: number): number => ((currentPage + 1) * perPage - 1);
 
     const fetchCount = async () => {
         setTotalRows(await getCount(supabase));
@@ -154,7 +154,7 @@ const Table = <Data,>({
 
     const fetchData = async (page: number, perPage: number) => {
         setLoading(true);
-        const fetchedData = await getData(supabase, getStartPoint(page, perPage), getEndPoint(page, perPage));
+        const fetchedData = await getData(supabase, getStartPoint(page, perPage), getEndPoint(page, perPage), allFilters, perPage);
         setData(fetchedData);
         setLoading(false);
     }
@@ -198,19 +198,6 @@ const Table = <Data,>({
     );
 
     const shownHeaders = headerKeysAndLabels.filter(([key]) => shownHeaderKeys.includes(key));
-
-    // const toFilter = (filter: Filter<Data, any>): Filter<Data, any> => {
-    //     if (filter instanceof Object) {
-    //         return filter;
-    //     }
-    //     // return textFilter<Data, keyof Data>({
-    //     //     key: filter,
-    //     //     label: headerLabelFromKey(headerKeysAndLabels, filter),
-    //     //     getFilteredData(supabase, start, end) {
-    //     //         getDa
-    //     //     },
-    //     // });
-    // };
 
     const [primaryFilters, setPrimaryFilters] = useState(filters);
 
@@ -388,21 +375,18 @@ const Table = <Data,>({
 
     const rows = data.map((data, index) => ({ rowId: index, data }));
 
-    const shouldFilterRow = (row: Row<Data>): boolean => {
-        return allFilters.every((filter) => !filter.shouldFilter(row.data, filter.state));
-    };
-
-    const toDisplay = autoFilter ? rows.filter(shouldFilterRow) : rows;
+    useEffect(() => {
+        setData([]);
+    }, allFilters)
 
     useEffect(() => {
-        //fetchCount();
-        (async () => {        if (toDisplay.length < perPage) {
+        console.log(data);
+        (async () => {        if (rows.length < perPage) {
             setLoading(true);
-            setData(await allFilters[0].getFilteredData(supabase, perPage, allFilters[0].state)); //to do: combine getFilteredData for all filters? maybe just have 1 function for getData that takes in states of all filters :)
+            await fetchData(currentPage, perPage); //to do: combine getFilteredData for all filters? maybe just have 1 function for getData that takes in states of all filters :)
             setLoading(false);
         }})();
-
-    }, [toDisplay]);
+    }, [rows, allFilters]);
 
     const handleClear = (): void => {
         setPrimaryFilters((filters) =>
@@ -436,7 +420,7 @@ const Table = <Data,>({
                 <NoSsr>
                     <DataTable
                         columns={columns}
-                        data={toDisplay}
+                        data={rows}
                         keyField="rowId"
                         fixedHeader
                         pagination={pagination ?? true}

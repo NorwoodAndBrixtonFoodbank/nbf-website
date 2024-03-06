@@ -10,13 +10,15 @@ import supabase from "@/supabaseClient";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState, Suspense } from "react";
 import { useTheme } from "styled-components";
-import getClientsData, { getClientsCount, getClientsDataFilteredByName } from "./getClientsData";
+import getClientsData, { getClientsCount } from "./getClientsData";
 import { useSearchParams, useRouter } from "next/navigation";
 import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
 import { textFilter } from "@/components/Tables/TextFilter";
 import { Filter } from "@/components/Tables/Filters";
 import { fullName } from "@snaplet/copycat/dist/fullName";
+import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
+import { Database } from "@/databaseTypesFile";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -31,10 +33,12 @@ const headers: TableHeaders<ClientsTableRow> = [
     ["addressPostcode", "Postcode"],
 ];
 
+const fullnameSearchFilter = (query: PostgrestFilterBuilder<Database["public"], any, any>, state: string): PostgrestFilterBuilder<Database["public"], any, any> => {
+    return query.ilike('full_name', `%${state}%`);
+}
+
 const filters: Filter<ClientsTableRow, any>[] = [
-    textFilter({key: "fullName", getFilteredData
-        :
-    getClientsDataFilteredByName, headers: headers})
+    textFilter({key: "fullName", headers: headers, filterMethod: fullnameSearchFilter})
 ]
 
 const clientIdParam = "clientId";
