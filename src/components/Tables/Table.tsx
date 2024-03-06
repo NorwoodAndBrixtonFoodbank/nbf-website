@@ -53,8 +53,8 @@ interface Props<Data> {
     headerKeysAndLabels: TableHeaders<Data>;
     checkboxes?: boolean;
     onRowSelection?: (rowIds: number[]) => void;
-    filters?: (Filter<Data, any> | keyof Data)[];
-    additionalFilters?: (Filter<Data, any> | keyof Data)[];
+    filters?: (Filter<Data, any>)[];
+    additionalFilters?: (Filter<Data, any>)[];
     pagination?: boolean;
     defaultShownHeaders?: readonly (keyof Data)[];
     toggleableHeaders?: readonly (keyof Data)[];
@@ -120,8 +120,8 @@ const Table = <Data,>({
     checkboxes,
     onRowSelection,
     defaultShownHeaders,
-    filters: filterKeysOrObjects = [],
-    additionalFilters: additionalFilterKeysOrObjects = [],
+    filters = [],
+    additionalFilters: addFilters = [],
     onDelete,
     onEdit,
     onSwapRows,
@@ -199,21 +199,22 @@ const Table = <Data,>({
 
     const shownHeaders = headerKeysAndLabels.filter(([key]) => shownHeaderKeys.includes(key));
 
-    const toFilter = (filter: Filter<Data, any> | keyof Data): Filter<Data, any> => {
-        if (filter instanceof Object) {
-            return filter;
-        }
-        return textFilter<Data, keyof Data>({
-            key: filter,
-            label: headerLabelFromKey(headerKeysAndLabels, filter),
-        });
-    };
+    // const toFilter = (filter: Filter<Data, any>): Filter<Data, any> => {
+    //     if (filter instanceof Object) {
+    //         return filter;
+    //     }
+    //     // return textFilter<Data, keyof Data>({
+    //     //     key: filter,
+    //     //     label: headerLabelFromKey(headerKeysAndLabels, filter),
+    //     //     getFilteredData(supabase, start, end) {
+    //     //         getDa
+    //     //     },
+    //     // });
+    // };
 
-    const [primaryFilters, setPrimaryFilters] = useState(filterKeysOrObjects.map(toFilter));
+    const [primaryFilters, setPrimaryFilters] = useState(filters);
 
-    const [additionalFilters, setAdditionalFilters] = useState(
-        additionalFilterKeysOrObjects.map(toFilter)
-    );
+    const [additionalFilters, setAdditionalFilters] = useState(addFilters);
 
     const allFilters = [...primaryFilters, ...additionalFilters];
 
@@ -392,6 +393,16 @@ const Table = <Data,>({
     };
 
     const toDisplay = autoFilter ? rows.filter(shouldFilterRow) : rows;
+
+    useEffect(() => {
+        //fetchCount();
+        (async () => {        if (toDisplay.length < perPage) {
+            setLoading(true);
+            setData(await allFilters[0].getFilteredData(supabase, perPage, allFilters[0].state)); //to do: combine getFilteredData for all filters? maybe just have 1 function for getData that takes in states of all filters :)
+            setLoading(false);
+        }})();
+
+    }, [toDisplay]);
 
     const handleClear = (): void => {
         setPrimaryFilters((filters) =>

@@ -1,11 +1,15 @@
 import React from "react";
 import styled from "styled-components";
 import FreeFormTextInput from "../DataInput/FreeFormTextInput";
-import { KeyedFilter, defaultToString, keyedFilter } from "./Filters";
+import { KeyedFilter, defaultToString, headerLabelFromKey, keyedFilter } from "./Filters";
+import { Supabase } from "@/supabaseUtils";
+import { TableHeaders } from "./Table";
 
-interface TextFilterProps<Data, Key extends keyof Data> {
+interface TextFilterProps<Data, Key> {
     key: Key;
-    label: string;
+    getFilteredData: (supabase: Supabase, limit: number, state: string) => Promise<Data[]>;
+    headers: TableHeaders<Data>;
+    label?: string;
     caseSensitive?: boolean;
     initialValue?: string;
 }
@@ -19,12 +23,15 @@ const TextFilterStyling = styled.div`
 export const textFilter = <Data, Key extends keyof Data>({
     key,
     label,
+    getFilteredData,
+    headers,
     caseSensitive = false,
     initialValue = "",
 }: TextFilterProps<Data, Key>): KeyedFilter<Data, Key, string> => {
-    return keyedFilter(key, label, {
+    return keyedFilter(key, label ?? headerLabelFromKey(headers, key), {
         state: initialValue,
         initialState: initialValue,
+        getFilteredData: getFilteredData,
         shouldFilter: (data, state) => {
             let string = defaultToString(data[key]);
 

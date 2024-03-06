@@ -1,11 +1,13 @@
 import React from "react";
 import { TableHeaders } from "@/components/Tables/Table";
+import { Supabase } from "@/supabaseUtils";
 
 export interface Filter<Data, State> {
     shouldFilter: (data: Data, state: State) => boolean;
     filterComponent: (state: State, setState: (state: State) => void) => React.ReactElement;
     state: State;
     initialState: State;
+    getFilteredData: (supabase: Supabase, limit: number, state: State) => Promise<Data[]>;
 }
 
 export interface KeyedFilter<Data, Key extends keyof Data, State> extends Filter<Data, State> {

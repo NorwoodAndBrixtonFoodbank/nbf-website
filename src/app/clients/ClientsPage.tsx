@@ -10,10 +10,13 @@ import supabase from "@/supabaseClient";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState, Suspense } from "react";
 import { useTheme } from "styled-components";
-import getClientsData, { getClientsCount } from "./getClientsData";
+import getClientsData, { getClientsCount, getClientsDataFilteredByName } from "./getClientsData";
 import { useSearchParams, useRouter } from "next/navigation";
 import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
+import { textFilter } from "@/components/Tables/TextFilter";
+import { Filter } from "@/components/Tables/Filters";
+import { fullName } from "@snaplet/copycat/dist/fullName";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -27,6 +30,12 @@ const headers: TableHeaders<ClientsTableRow> = [
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],
 ];
+
+const filters: Filter<ClientsTableRow, any>[] = [
+    textFilter({key: "fullName", getFilteredData
+        :
+    getClientsDataFilteredByName, headers: headers})
+]
 
 const clientIdParam = "clientId";
 const ClientsPage: React.FC<{}> = () => {
@@ -49,7 +58,7 @@ const ClientsPage: React.FC<{}> = () => {
                             sortable={["fullName", "familyCategory", "addressPostcode"]}
                             pagination
                             checkboxes={false}
-                            filters={["fullName"]}
+                            filters={filters}
                             loading={isLoading}
                             setLoading={setIsLoading}
                             getData={getClientsData}
