@@ -1,18 +1,23 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Schema } from "@/databaseUtils";
 import {
     DataGrid,
-    GridColDef,
+    GridActionsCellItem,
+    GridColDef, GridRowId,
     GridRowModes,
     GridRowModesModel,
     GridRowsProp,
-    GridToolbarContainer,
+    GridToolbarContainer
 } from "@mui/x-data-grid";
 import { Switch } from "@mui/material";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import SaveIcon from "@mui/icons-material/Save";
+import CancelIcon from "@mui/icons-material/Close";
 
 interface Props {
     packingSlotsData: Schema["packing_slots"][];
@@ -28,9 +33,8 @@ function EditToolbar(props: EditToolbarProps): React.JSX.Element {
     const { setRows, setRowModesModel, nextId } = props;
 
     const handleClick = (): void => {
-        //how to pass in the next id?
         const id = nextId;
-        setRows((oldRows) => [...oldRows, { id, name: "", age: "", isNew: true }]);
+        setRows((oldRows) => [...oldRows, { id, name: "", is_hidden: "", order: "", isNew: true }]);
         setRowModesModel((oldModel) => ({
             ...oldModel,
             [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
@@ -40,7 +44,7 @@ function EditToolbar(props: EditToolbarProps): React.JSX.Element {
     return (
         <GridToolbarContainer>
             <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-                Add record
+                Add new slot
             </Button>
         </GridToolbarContainer>
     );
@@ -49,6 +53,10 @@ function EditToolbar(props: EditToolbarProps): React.JSX.Element {
 const PackingSlotsTable: React.FC<Props> = (props) => {
     const [rows, setRows] = React.useState(props.packingSlotsData);
     const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
+
+    const handleSaveClick = (id: GridRowId) => () => {
+        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+    };
 
     const packingSlotsTableHeaderKeysAndLabels: GridColDef[] = [
         { field: "name", headerName: "Slot Name", flex: 1, editable: true },
@@ -65,6 +73,52 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
             },
         },
         { field: "order", headerName: "Order (Smallest number on top)", flex: 1, editable: true },
+        {
+            field: "actions",
+            type: "actions",
+            headerName: "Actions",
+            width: 100,
+            cellClassName: "actions",
+            getActions: ({ id }) => {
+                const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+                if (isInEditMode) {
+                    return [
+                        <GridActionsCellItem
+                            icon={<SaveIcon />}
+                            label="Save"
+                            sx={{
+                                color: "primary.main",
+                            }}
+                            onClick={handleSaveClick(id)}
+                        />,
+                        <GridActionsCellItem
+                            icon={<CancelIcon />}
+                            label="Cancel"
+                            className="textPrimary"
+                            onClick={() => {}}
+                            color="inherit"
+                        />,
+                    ];
+                }
+
+                return [
+                    <GridActionsCellItem
+                        icon={<EditIcon />}
+                        label="Edit"
+                        className="textPrimary"
+                        onClick={() => {}}
+                        color="inherit"
+                    />,
+                    <GridActionsCellItem
+                        icon={<DeleteIcon />}
+                        label="Delete"
+                        onClick={() => {}}
+                        color="inherit"
+                    />,
+                ];
+            },
+        },
     ];
 
     const nextId = props.packingSlotsData.length + 1;
