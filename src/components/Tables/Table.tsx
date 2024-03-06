@@ -145,8 +145,8 @@ const Table = <Data,>({
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const getStartPoint = (currentPage: number, perPage: number): number => (currentPage * perPage);
-    const getEndPoint = (currentPage: number, perPage: number): number => ((currentPage + 1) * perPage - 1);
+    const getStartPoint = (currentPage: number, perPage: number): number => ((currentPage - 1) * perPage);
+    const getEndPoint = (currentPage: number, perPage: number): number => ((currentPage) * perPage - 1);
 
     const fetchCount = async () => {
         setTotalRows(await getCount(supabase));
