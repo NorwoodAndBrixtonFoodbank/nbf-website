@@ -53,7 +53,7 @@ const LoginPanel: React.FC<{}> = () => {
     const supabase = createClientComponentClient<DatabaseAutoType>();
     const theme = useTheme();
 
-    const [loaded, setLoaded] = React.useState(false);
+    const [loaded, setLoaded] = useState(false);
     const [baseUrl, setBaseUrl] = useState<string | null>(null);
 
     useEffect(() => {
