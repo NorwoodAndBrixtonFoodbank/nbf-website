@@ -307,6 +307,27 @@ export type Database = {
         }
         Relationships: []
       }
+      packing_slots: {
+        Row: {
+          id: number
+          is_hidden: boolean | null
+          name: string
+          order: number
+        }
+        Insert: {
+          id?: number
+          is_hidden?: boolean | null
+          name: string
+          order: number
+        }
+        Update: {
+          id?: number
+          is_hidden?: boolean | null
+          name?: string
+          order?: number
+        }
+        Relationships: []
+      }
       parcels: {
         Row: {
           client_id: string

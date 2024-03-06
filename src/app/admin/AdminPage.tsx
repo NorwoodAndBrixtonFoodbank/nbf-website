@@ -12,6 +12,7 @@ import {
     faUserPlus,
     faCity,
     faBuildingCircleArrowRight,
+    faBoxOpen,
     IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
@@ -60,6 +61,11 @@ const AdminPage: React.FC<Props> = (props) => {
             panelIcon: faBuildingCircleArrowRight,
             panelContent: <CreateCollectionCentreForm />,
         },
+        // {
+        //     panelTitle: "Modify Packing Slots",
+        //     panelIcon: faBoxOpen,
+        //     panelContent:
+        // }
     ];
 
     return (
