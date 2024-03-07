@@ -15,3 +15,11 @@ export const createPackingSlot = async (tableData: DBPackingSlotData): Promise<v
         throw new DatabaseError("insert", "packing slots");
     }
 };
+
+export const updatePackingSlot = async (tableData: DBPackingSlotData): Promise<void> => {
+    const { error } = await supabase.from("packing_slots").update(tableData).eq("id", tableData.id);
+
+    if (error) {
+        throw new DatabaseError("update", "packing slots");
+    }
+};

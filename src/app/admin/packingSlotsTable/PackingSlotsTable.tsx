@@ -5,6 +5,8 @@ import {
     DataGrid,
     GridActionsCellItem,
     GridColDef,
+    GridEventListener,
+    GridRowEditStopReasons,
     GridRowId,
     GridRowModes,
     GridRowModesModel,
@@ -70,6 +72,20 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
         return newRow;
     };
 
+    const handleRowModesModelChange = (newRowModesModel: GridRowModesModel): void => {
+        setRowModesModel(newRowModesModel);
+    };
+
+    const handleRowEditStop: GridEventListener<"rowEditStop"> = (params, event) => {
+        if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+            event.defaultMuiPrevented = true;
+        }
+    };
+
+    const handleEditClick = (id: GridRowId) => () => {
+        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+    };
+
     const packingSlotsTableHeaderKeysAndLabels: GridColDef[] = [
         { field: "name", headerName: "Slot Name", flex: 1, editable: true },
         {
@@ -120,7 +136,7 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
                         icon={<EditIcon />}
                         label="Edit"
                         className="textPrimary"
-                        onClick={() => {}}
+                        onClick={handleEditClick(id)}
                         color="inherit"
                     />,
                     <GridActionsCellItem
@@ -143,6 +159,8 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
                 columns={packingSlotsTableHeaderKeysAndLabels}
                 editMode="row"
                 rowModesModel={rowModesModel}
+                onRowModesModelChange={handleRowModesModelChange}
+                onRowEditStop={handleRowEditStop}
                 processRowUpdate={processRowUpdate}
                 slots={{
                     toolbar: EditToolbar,
