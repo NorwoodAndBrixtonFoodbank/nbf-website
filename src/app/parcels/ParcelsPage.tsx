@@ -241,13 +241,13 @@ const buildLastStatusFilter = (
     //     ).values()
     // ).sort();
 
-    const options = statuses; //cheat for now
+    const options = statuses; //cheat for now. TODO
 
     return checklistFilter<ParcelsTableRow, any>({
         key: "lastStatus",
         filterLabel: "Last Status",
         itemLabelsAndKeys: options.map((value) => [value, value]),
-        initialCheckedKeys: options,
+        initialCheckedKeys: options.filter((option) => option !== "Request Deleted"),
         //cellMatchOverride: lastStatusCellMatchOverride, todo: wtf is this
         filterMethod: lastStatusSearch,
 
