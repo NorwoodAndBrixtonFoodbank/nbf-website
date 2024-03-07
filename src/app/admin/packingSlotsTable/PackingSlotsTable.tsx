@@ -19,7 +19,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
-import { createPackingSlot } from "@/app/admin/packingSlotsTable/PackingSlotActions";
+import {
+    createPackingSlot,
+    updatePackingSlot,
+} from "@/app/admin/packingSlotsTable/PackingSlotActions";
 
 interface Props {
     packingSlotsData: Row[];
@@ -36,6 +39,7 @@ interface Row {
     name: string;
     is_hidden: boolean;
     order: number;
+    isNew: boolean;
 }
 
 function EditToolbar(props: EditToolbarProps): React.JSX.Element {
@@ -43,7 +47,10 @@ function EditToolbar(props: EditToolbarProps): React.JSX.Element {
 
     const handleClick = (): void => {
         const id = nextId;
-        setRows((oldRows) => [...oldRows, { id, name: "", is_hidden: "", order: "" }]);
+        setRows((oldRows) => [
+            ...oldRows,
+            { id, name: "", is_hidden: false, order: id, isNew: true },
+        ]);
         setRowModesModel((oldModel) => ({
             ...oldModel,
             [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
@@ -68,7 +75,11 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
     };
 
     const processRowUpdate = (newRow: Row): Row => {
-        createPackingSlot(newRow);
+        if (newRow.isNew) {
+            createPackingSlot(newRow);
+        } else if (newRow.isNew === undefined) {
+            updatePackingSlot(newRow);
+        }
         return newRow;
     };
 
