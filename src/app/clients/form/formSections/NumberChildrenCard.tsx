@@ -66,7 +66,7 @@ const NumberChildrenCard: React.FC<CardProps> = ({
                 />
                 {fields.children.map((child: Person, index: number) => {
                     return (
-                        <StyledCard key={index}>
+                        <StyledCard key={child.primaryKey}>
                             <FormText>Child {index + 1}</FormText>
                             <DropdownListInput
                                 labelsAndValues={[

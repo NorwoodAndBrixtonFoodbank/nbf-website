@@ -105,6 +105,26 @@ You can regenerate the types
   ```shell
   npm run db:remote:generate_types -- --project-id <PROJECT_ID>
   ```
+#### Create sample data in tables
+- Create sample data by updating seed.mts
+- Login to snaplet
+  ```shell
+  npx snaplet auth setup
+  ```
+- Follow link and log in using credentials in keeper
+- Regenerate assets in sync with your new database 
+  ```shell
+  npx snaplet generate
+  ```
+- If error with createSeedClient, close IDE and restart
+- Then generate `seed.sql` from `seed.mts`
+  ```shell
+  npm run db:generate_seed
+  ```
+- Finally put the data into the database
+  ```shell
+  npm run dev:reset_supabase
+  ```
 
 #### Useful commands
 - `npx supabase migration list` to compare what migrations are applied locally and on remote

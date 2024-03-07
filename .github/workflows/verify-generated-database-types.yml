@@ -9,6 +9,7 @@ on:
       - supabase/migrations/**.sql
       - src/databaseTypesFile.ts
     branches:
+      dev
       main
 
 jobs:

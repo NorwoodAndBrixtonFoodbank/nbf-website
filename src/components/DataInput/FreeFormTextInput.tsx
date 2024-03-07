@@ -14,6 +14,7 @@ interface Props {
     maxRows?: number;
     minRows?: number;
     className?: string;
+    fullWidth?: boolean;
 }
 
 const FreeFormTextInput: React.FC<Props> = (props) => {
