@@ -1,26 +1,26 @@
 "use client";
 
 import React from "react";
-import { Schema } from "@/databaseUtils";
 import {
     DataGrid,
     GridActionsCellItem,
-    GridColDef, GridRowId,
+    GridColDef,
+    GridRowId,
     GridRowModes,
     GridRowModesModel,
     GridRowsProp,
-    GridToolbarContainer
+    GridToolbarContainer,
 } from "@mui/x-data-grid";
-import { Switch } from "@mui/material";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
+import { createPackingSlot } from "@/app/admin/packingSlotsTable/PackingSlotActions";
 
 interface Props {
-    packingSlotsData: Schema["packing_slots"][];
+    packingSlotsData: Row[];
 }
 
 interface EditToolbarProps {
@@ -29,12 +29,19 @@ interface EditToolbarProps {
     nextId: number;
 }
 
+interface Row {
+    id: number;
+    name: string;
+    is_hidden: boolean;
+    order: number;
+}
+
 function EditToolbar(props: EditToolbarProps): React.JSX.Element {
     const { setRows, setRowModesModel, nextId } = props;
 
     const handleClick = (): void => {
         const id = nextId;
-        setRows((oldRows) => [...oldRows, { id, name: "", is_hidden: "", order: "", isNew: true }]);
+        setRows((oldRows) => [...oldRows, { id, name: "", is_hidden: "", order: "" }]);
         setRowModesModel((oldModel) => ({
             ...oldModel,
             [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
@@ -58,21 +65,27 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
     };
 
+    const processRowUpdate = (newRow: Row): Row => {
+        createPackingSlot(newRow);
+        return newRow;
+    };
+
     const packingSlotsTableHeaderKeysAndLabels: GridColDef[] = [
         { field: "name", headerName: "Slot Name", flex: 1, editable: true },
         {
             field: "is_hidden",
+            type: "boolean",
             headerName: "Show",
             flex: 1,
-            renderCell: (params) => {
-                if (!params.value) {
-                    return <Switch defaultChecked={true} />;
-                } else {
-                    return <Switch />;
-                }
-            },
+            editable: true,
         },
-        { field: "order", headerName: "Order (Smallest number on top)", flex: 1, editable: true },
+        {
+            field: "order",
+            type: "number",
+            headerName: "Order (Smallest number on top)",
+            flex: 1,
+            editable: true,
+        },
         {
             field: "actions",
             type: "actions",
@@ -130,6 +143,7 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
                 columns={packingSlotsTableHeaderKeysAndLabels}
                 editMode="row"
                 rowModesModel={rowModesModel}
+                processRowUpdate={processRowUpdate}
                 slots={{
                     toolbar: EditToolbar,
                 }}
