@@ -32,10 +32,9 @@ import {
 import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { Filter } from "@/components/Tables/Filters";
-import { saveParcelStatus } from "./ActionBar/Statuses";
+import { saveParcelStatus, statusNamesInWorkflowOrder } from "./ActionBar/Statuses";
 import { CircularProgress } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
-import { statusNamesInWorkflowOrder } from "./ActionBar/Statuses";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],

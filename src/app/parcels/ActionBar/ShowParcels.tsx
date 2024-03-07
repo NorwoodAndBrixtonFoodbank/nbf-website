@@ -27,9 +27,9 @@ const SelectedParcelsOverview: React.FC<ShowParcelsProps> = (props) => {
     return (
         <>
             <Heading>{props.parcels.length === 1 ? "Parcel" : "Parcels"} selected:</Heading>
-            {props.parcels.slice(0, props.maxParcelsToShow).map((parcel, index) => {
+            {props.parcels.slice(0, props.maxParcelsToShow).map((parcel) => {
                 return (
-                    <ListItem key={index}>
+                    <ListItem key={parcel.parcelId}>
                         {parcel.addressPostcode}
                         {parcel.fullName && ` - ${parcel.fullName}`}
                         {parcel.collectionDatetime &&
