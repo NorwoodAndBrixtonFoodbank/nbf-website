@@ -7,6 +7,8 @@ import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { User } from "@supabase/gotrue-js";
 import { DatabaseError } from "@/app/errorClasses";
 import { Schema } from "@/databaseUtils";
+import { PackingSlotRow } from "@/app/admin/packingSlotsTable/PackingSlotsTable";
+import { DBPackingSlotData } from "@/app/admin/packingSlotsTable/PackingSlotActions";
 
 // disables caching
 export const revalidate = 0;
@@ -54,12 +56,23 @@ const getCollectionCentres = async (): Promise<Schema["collection_centres"][]> =
 
 const getPackingSlots = async (): Promise<Schema["packing_slots"][]> => {
     const supabase = getSupabaseServerComponentClient();
-    const { data, error } = await supabase.from("packing_slots").select();
+    const { data, error } = await supabase.from("packing_slots").select().order("order");
     if (error) {
         throw new DatabaseError("fetch", "packing slots");
     }
+    const packingSlots: DBPackingSlotData[] = data;
 
-    return data;
+    const processedData = packingSlots.map((data: DBPackingSlotData): PackingSlotRow => {
+        return {
+            name: data.name,
+            id: data.id,
+            is_hidden: data.is_hidden,
+            order: data.order,
+            isNew: false,
+        };
+    });
+
+    return processedData;
 };
 
 const Admin = async (): Promise<ReactElement> => {

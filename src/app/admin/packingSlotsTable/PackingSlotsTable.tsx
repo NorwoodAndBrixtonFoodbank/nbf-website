@@ -21,11 +21,12 @@ import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import {
     createPackingSlot,
+    deletePackingSlot,
     updatePackingSlot,
 } from "@/app/admin/packingSlotsTable/PackingSlotActions";
 
 interface Props {
-    packingSlotsData: Row[];
+    packingSlotsData: PackingSlotRow[];
 }
 
 interface EditToolbarProps {
@@ -34,7 +35,7 @@ interface EditToolbarProps {
     nextId: number;
 }
 
-interface Row {
+export interface PackingSlotRow {
     id: number;
     name: string;
     is_hidden: boolean;
@@ -74,7 +75,7 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
     };
 
-    const processRowUpdate = (newRow: Row): Row => {
+    const processRowUpdate = (newRow: PackingSlotRow): PackingSlotRow => {
         if (newRow.isNew) {
             createPackingSlot(newRow);
         } else if (newRow.isNew === undefined) {
@@ -95,6 +96,11 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
 
     const handleEditClick = (id: GridRowId) => () => {
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+    };
+
+    const handleDeleteClick = (id: GridRowId) => () => {
+        deletePackingSlot(id);
+        setRows(rows.filter((row) => row.id !== id));
     };
 
     const packingSlotsTableHeaderKeysAndLabels: GridColDef[] = [
@@ -153,7 +159,7 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
                     <GridActionsCellItem
                         icon={<DeleteIcon />}
                         label="Delete"
-                        onClick={() => {}}
+                        onClick={handleDeleteClick(id)}
                         color="inherit"
                     />,
                 ];

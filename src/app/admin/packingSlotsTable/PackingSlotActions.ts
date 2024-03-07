@@ -1,7 +1,8 @@
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
+import { GridRowId } from "@mui/x-data-grid";
 
-interface DBPackingSlotData {
+export interface DBPackingSlotData {
     id: number;
     name: string;
     is_hidden: boolean;
@@ -36,13 +37,21 @@ export const createPackingSlot = async (tableData: packingSlotTableRowData): Pro
 export const updatePackingSlot = async (tableData: packingSlotTableRowData): Promise<void> => {
     console.log("updating");
     const processedData = processRowData(tableData);
-    console.log(typeof processedData.id);
     const { error } = await supabase
         .from("packing_slots")
         .update(processedData)
         .eq("id", processedData.id);
+
     if (error) {
-        console.log(error);
+        throw new DatabaseError("update", "packing slots");
+    }
+};
+
+export const deletePackingSlot = async (id: GridRowId): Promise<void> => {
+    console.log("deleting");
+    const { error } = await supabase.from("packing_slots").delete().eq("id", id);
+
+    if (error) {
         throw new DatabaseError("update", "packing slots");
     }
 };
