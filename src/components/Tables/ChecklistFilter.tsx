@@ -3,13 +3,15 @@
 import React from "react";
 import { KeyedFilter, defaultToString, keyedFilter } from "./Filters";
 import CheckboxGroupPopup from "../DataInput/CheckboxGroupPopup";
+import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
+import { Database } from "@/databaseTypesFile";
 
 interface ChecklistFilterProps<Data, Key extends keyof Data> {
     key: Key;
     filterLabel: string;
     itemLabelsAndKeys: [string, string][];
     initialCheckedKeys: string[];
-    cellMatchOverride?: (rowData: Data, selectedKeys: string[]) => boolean;
+    filterMethod: (query: PostgrestFilterBuilder<Database["public"], any, any>, state: string[]) => PostgrestFilterBuilder<Database["public"], any, any>
 }
 
 export const checklistFilter = <Data, Key extends keyof Data>({
@@ -17,7 +19,7 @@ export const checklistFilter = <Data, Key extends keyof Data>({
     filterLabel,
     itemLabelsAndKeys,
     initialCheckedKeys,
-    cellMatchOverride,
+    filterMethod
 }: ChecklistFilterProps<Data, Key>): KeyedFilter<Data, Key, string[]> => {
     const cellMatchesCheckedItems = (rowData: Data, selectedKeys: string[]): boolean => {
         const cellData = defaultToString(rowData[key]);
@@ -27,11 +29,7 @@ export const checklistFilter = <Data, Key extends keyof Data>({
     return keyedFilter(key, filterLabel, {
         state: initialCheckedKeys,
         initialState: initialCheckedKeys,
-        shouldFilter: (rowData, state) => {
-            return cellMatchOverride
-                ? !cellMatchOverride(rowData, state)
-                : !cellMatchesCheckedItems(rowData, state);
-        },
+        filterMethod: filterMethod,
         filterComponent: function (
             state: string[],
             setState: (state: string[]) => void

@@ -5,11 +5,9 @@ import { Database } from "@/databaseTypesFile";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 
 export interface Filter<Data, State> {
-    shouldFilter: (data: Data, state: State) => boolean;
     filterComponent: (state: State, setState: (state: State) => void) => React.ReactElement;
     state: State;
     initialState: State;
-    //getFilteredData: (supabase: Supabase, limit: number, state: State) => Promise<Data[]>;
     filterMethod: (query: PostgrestFilterBuilder<Database["public"], any, any>, state: State) => PostgrestFilterBuilder<Database["public"], any, any>
 }
 

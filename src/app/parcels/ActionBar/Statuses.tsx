@@ -10,7 +10,7 @@ import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import StatusesBarModal from "@/app/parcels/ActionBar/StatusesModal";
 import { DatabaseError } from "@/app/errorClasses";
 
-const statuses = [
+export const statuses = [
     "No Status",
     "Request Denied",
     "Pending More Info",
@@ -28,7 +28,7 @@ const statuses = [
     "Shopping List Downloaded",
     "Out for Delivery",
     "Request Deleted",
-] as const;
+] //as const;
 
 export type statusType = (typeof statuses)[number];
 

@@ -19,6 +19,7 @@ import { Filter } from "@/components/Tables/Filters";
 import { fullName } from "@snaplet/copycat/dist/fullName";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
+import { RealtimePostgresChangesFilter } from "@supabase/supabase-js";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -33,13 +34,15 @@ const headers: TableHeaders<ClientsTableRow> = [
     ["addressPostcode", "Postcode"],
 ];
 
-const fullnameSearchFilter = (query: PostgrestFilterBuilder<Database["public"], any, any>, state: string): PostgrestFilterBuilder<Database["public"], any, any> => {
+const fullNameSearch = (query: PostgrestFilterBuilder<Database["public"], any, any>, state: string): PostgrestFilterBuilder<Database["public"], any, any> => {
     return query.ilike('full_name', `%${state}%`);
 }
 
 const filters: Filter<ClientsTableRow, any>[] = [
-    textFilter({key: "fullName", headers: headers, filterMethod: fullnameSearchFilter})
+    textFilter({key: "fullName", label: "Name", headers: headers, filterMethod: fullNameSearch})
 ]
+
+const subscriptions: RealtimePostgresChangesFilter<"*">[] = [{ event: "*", schema: "public", table: "clients" }, { event: "*", schema: "public", table: "families" }]
 
 const clientIdParam = "clientId";
 const ClientsPage: React.FC<{}> = () => {
@@ -68,7 +71,7 @@ const ClientsPage: React.FC<{}> = () => {
                             getData={getClientsData}
                             getCount={getClientsCount}
                             supabase={supabase}
-                            subscriptions={[{ event: "*", schema: "public", table: "clients" }, { event: "*", schema: "public", table: "families" }]}
+                            subscriptions={subscriptions}
                         />
                     </TableSurface>
                     <Centerer>

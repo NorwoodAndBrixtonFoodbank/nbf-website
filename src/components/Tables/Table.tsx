@@ -68,7 +68,7 @@ interface Props<Data> {
     autoFilter?: boolean;
     loading: boolean;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-    getData: (supabase: Supabase, start: number, end: number, filters: Filter<Data, any>[], perPage: number) => Promise<Data[]>;
+    getData: (supabase: Supabase, start: number, end: number, filters: Filter<Data, any>[]) => Promise<Data[]>;
     supabase: Supabase;
     getCount: (supabase: Supabase, filters: Filter<Data, any>[]) => Promise<number>;
     subscriptions: RealtimePostgresChangesFilter<"*">[];
@@ -154,7 +154,7 @@ const Table = <Data,>({
 
     const fetchData = async (page: number, perPage: number) => {
         setLoading(true);
-        const fetchedData = await getData(supabase, getStartPoint(page, perPage), getEndPoint(page, perPage), allFilters, perPage);
+        const fetchedData = await getData(supabase, getStartPoint(page, perPage), getEndPoint(page, perPage), allFilters);
         setData(fetchedData);
         setLoading(false);
     }
@@ -374,20 +374,29 @@ const Table = <Data,>({
     }
 
     const rows = data.map((data, index) => ({ rowId: index, data }));
+    const filterStates = allFilters.map((filter)=>filter.state);
 
     useEffect(() => {
-        setData([]);
-    }, allFilters)
-
-    useEffect(() => {
-        console.log(data);
-        (async () => {        if (rows.length < perPage) {
+        console.log("hi");
+        console.log(filterStates);
+        console.log("count", totalRows);
+        (async () => {        
+            //if (rows.length < perPage)
             setLoading(true);
             await fetchCount();
-            await fetchData(currentPage, perPage); //to do: combine getFilteredData for all filters? maybe just have 1 function for getData that takes in states of all filters :)
-            setLoading(false);
-        }})();
-    }, [rows, allFilters]);
+            await fetchData(currentPage, perPage);
+            setLoading(false);})();
+    }, filterStates)
+
+    // useEffect(() => {
+    //     console.log("refetching data");
+    //     (async () => {        if (rows.length < perPage) {
+    //         setLoading(true);
+    //         await fetchCount();
+    //         await fetchData(currentPage, perPage);
+    //         setLoading(false);
+    //     }})();
+    // }, [rows]);
 
     const handleClear = (): void => {
         setPrimaryFilters((filters) =>

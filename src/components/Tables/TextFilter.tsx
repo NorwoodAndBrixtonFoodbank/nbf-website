@@ -11,7 +11,7 @@ interface TextFilterProps<Data, Key> {
     key: Key;
     //getFilteredData: (supabase: Supabase, limit: number, state: string) => Promise<Data[]>;
     headers: TableHeaders<Data>;
-    label?: string;
+    label: string;
     caseSensitive?: boolean;
     initialValue?: string;
     filterMethod: (query: PostgrestFilterBuilder<Database["public"], any, any>, state: string) => PostgrestFilterBuilder<Database["public"], any, any>
@@ -37,16 +37,6 @@ export const textFilter = <Data, Key extends keyof Data>({
         initialState: initialValue,
         //getFilteredData: getFilteredData,
         filterMethod: filterMethod,
-        shouldFilter: (data, state) => {
-            let string = defaultToString(data[key]);
-
-            if (!caseSensitive) {
-                string = string.toLowerCase();
-                state = state.toLowerCase();
-            }
-
-            return !string.includes(state);
-        },
         filterComponent: (state, setState) => {
             return (
                 <TextFilterStyling key={label}>
