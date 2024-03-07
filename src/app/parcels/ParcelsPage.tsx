@@ -232,7 +232,7 @@ const buildLastStatusFilter = (
     //tableData: ParcelsTableRow[]
     ): Filter<ParcelsTableRow, any> => {
     const lastStatusSearch = (query: PostgrestFilterBuilder<Database["public"], any, any>, state: string[]): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.in('events.name', state); //not sure if this will work?
+        return query.in('events.event_name', state); //not sure if this will work?
     }
     
     // const options = Array.from(
@@ -289,7 +289,7 @@ const ParcelsPage: React.FC<{}> = () => {
         textFilter({key: "familyCategory", label: "Family", headers: parcelTableHeaderKeysAndLabels, filterMethod: fullNameSearch}),
         textFilter({key: "phoneNumber", label: "Phone", headers: parcelTableHeaderKeysAndLabels, filterMethod: phoneSearch}),
         textFilter({key: "voucherNumber", label: "Voucher", headers: parcelTableHeaderKeysAndLabels, filterMethod: voucherSearch}),
-        //buildLastStatusFilter()
+        buildLastStatusFilter()
     ]
 
     useEffect(() => {

@@ -63,7 +63,7 @@ export const getParcelProcessingData = async (supabase: Supabase, start: number,
             )
         ),
         
-        events (
+        events!inner (
             event_name,
             event_data,
             timestamp
@@ -104,7 +104,38 @@ export const getParcelsCount = async (supabase: Supabase, filters: Filter<Parcel
     
     let query = supabase
   .from('parcels')
-  .select('*,         collection_centre:collection_centres!inner (name, acronym), client:clients!inner(primary_key,full_name, address_postcode,family:families (age)), events(*)', { count: 'exact', head: true });
+  .select( `
+  parcel_id:primary_key,
+  
+  collection_centre:collection_centres!inner ( 
+      name, 
+      acronym
+   ),
+   
+  collection_datetime,
+  packing_datetime,
+  voucher_number,
+  
+  client:clients!inner (
+      primary_key,
+      full_name,
+      address_postcode,
+      flagged_for_attention,
+      signposting_call_required,
+      phone_number,
+      
+      family:families (
+          age,
+          gender
+      )
+  ),
+  
+  events!inner (
+      event_name,
+      event_data,
+      timestamp
+  )
+`, { count: 'exact', head: true });
 
   filters.forEach((filter) => {
     query = filter.filterMethod(query, filter.state);
