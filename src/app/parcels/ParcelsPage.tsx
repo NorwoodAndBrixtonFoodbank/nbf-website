@@ -169,7 +169,7 @@ const buildDeliveryCollectionFilter = (
     //tableData: ParcelsTableRow[]
 ): Filter<ParcelsTableRow, any> => {
     const deliveryCollectionSearch = (query: PostgrestFilterBuilder<Database["public"], any, any>, state: string[]): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.in('collection_center.name', state);
+        return query.in('collection_centre.acronym', state);
     }
     const keySet = new Set();
     // const options = tableData todo get this working: depends on data which is a state managed by table. change options to be a state
@@ -281,7 +281,7 @@ const ParcelsPage: React.FC<{}> = () => {
         dateFilter,
         textFilter({key: "fullName", label: "Name", headers: parcelTableHeaderKeysAndLabels, filterMethod: fullNameSearch}),
         textFilter({key: "addressPostcode", label: "Postcode", headers: parcelTableHeaderKeysAndLabels, filterMethod: postcodeSearch}),
-        //buildDeliveryCollectionFilter(),
+        buildDeliveryCollectionFilter(),
         //buildPackingTimeFilter(),
     ]
     

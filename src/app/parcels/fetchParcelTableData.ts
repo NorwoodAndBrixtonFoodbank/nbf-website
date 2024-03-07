@@ -40,7 +40,7 @@ export const getParcelProcessingData = async (supabase: Supabase, start: number,
             `
         parcel_id:primary_key,
         
-        collection_centre:collection_centres ( 
+        collection_centre:collection_centres!inner ( 
             name, 
             acronym
          ),
@@ -104,7 +104,7 @@ export const getParcelsCount = async (supabase: Supabase, filters: Filter<Parcel
     
     let query = supabase
   .from('parcels')
-  .select('*, client:clients!inner(primary_key,full_name, address_postcode,family:families (age)), events(*)', { count: 'exact', head: true });
+  .select('*,         collection_centre:collection_centres!inner (name, acronym), client:clients!inner(primary_key,full_name, address_postcode,family:families (age)), events(*)', { count: 'exact', head: true });
 
   filters.forEach((filter) => {
     query = filter.filterMethod(query, filter.state);
