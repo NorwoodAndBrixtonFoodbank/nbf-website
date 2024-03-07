@@ -13,7 +13,6 @@ export const StyledDialog = styled(Dialog)`
         padding: 0;
         margin: 5%;
         overflow: hidden;
-        max-width: 90%;
     }
 `;
 
@@ -31,8 +30,22 @@ const Header = styled.div`
     width: 100%;
 `;
 
+const Footer = styled.div`
+    display: flex;
+    position: sticky;
+    justify-content: center;
+    align-items: center;
+    color: ${(props) => props.theme.primary.largeForeground[2]};
+    background-color: ${(props) => props.theme.main.background[3]};
+
+    font-size: 1.5em;
+    font-weight: bolder;
+    padding: 0.75em 1em;
+    width: 100%;
+`;
+
 const Content = styled.div`
-    overflow-y: hidden;
+    overflow-y: auto;
     overflow-wrap: break-word;
     padding: 1em 1.5em 1.5em;
     width: 100%;
@@ -73,6 +86,7 @@ export interface ModalProps {
     onClose: () => void;
     headerId: string;
     className?: string;
+    footer?: ReactNode;
 }
 
 const StyledIcon = styled(Icon)`
@@ -87,6 +101,8 @@ const Modal: React.FC<ModalProps> = (props) => {
             onClose={props.onClose}
             aria-labelledby={props.headerId}
             className={props.className}
+            fullWidth
+            maxWidth="md"
         >
             <Header id={props.headerId} className="header">
                 {props.header}
@@ -95,6 +111,7 @@ const Modal: React.FC<ModalProps> = (props) => {
                 </CloseButton>
             </Header>
             <Content>{props.children}</Content>
+            <Footer className="footer">{props.footer}</Footer>
         </StyledDialog>
     );
 };

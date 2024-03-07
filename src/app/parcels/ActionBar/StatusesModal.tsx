@@ -73,9 +73,9 @@ const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
                     <TimePicker value={date} onChange={onTimeChange} disableFuture />
                 </Row>
                 Applying To:
-                {props.data.map((parcel, index) => {
+                {props.data.map((parcel) => {
                     return (
-                        <StatusText key={index}>
+                        <StatusText key={parcel.primaryKey}>
                             {parcel.addressPostcode}
                             {parcel.fullName && ` - ${parcel.fullName}`}
                             {parcel.collectionDatetime &&

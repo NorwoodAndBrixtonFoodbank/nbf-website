@@ -64,9 +64,9 @@ const AdminPage: React.FC<Props> = (props) => {
 
     return (
         <>
-            {adminPanels.map(({ panelTitle, panelIcon, panelContent }, index) => {
+            {adminPanels.map(({ panelTitle, panelIcon, panelContent }) => {
                 return (
-                    <TableSurface key={index}>
+                    <TableSurface key={panelTitle}>
                         <Accordion elevation={0}>
                             <AccordionSummary expandIcon={<ExpandMore />}>
                                 <NoSSR>

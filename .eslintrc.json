@@ -37,7 +37,9 @@
     "@typescript-eslint/no-unused-vars": ["error", {
       "varsIgnorePattern": "^_",
       "argsIgnorePattern": "^_"
-    }]
+    }],
+    "react/jsx-key": "error",
+    "react/no-array-index-key": "error"
   },
   "ignorePatterns": ["databaseTypesFile.ts"]
 }

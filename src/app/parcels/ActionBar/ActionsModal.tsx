@@ -192,9 +192,9 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                 <Heading>
                                     {props.data.length === 1 ? "Parcel" : "Parcels"} selected:
                                 </Heading>
-                                {props.data.slice(0, maxParcelsToShow).map((parcel, index) => {
+                                {props.data.slice(0, maxParcelsToShow).map((parcel) => {
                                     return (
-                                        <ListItem key={index}>
+                                        <ListItem key={parcel.primaryKey}>
                                             {parcel.addressPostcode}
                                             {parcel.fullName && ` - ${parcel.fullName}`}
                                             {parcel.collectionDatetime &&

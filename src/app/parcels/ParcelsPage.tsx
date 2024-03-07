@@ -32,6 +32,7 @@ import {
 import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { Filter } from "@/components/Tables/Filters";
+import { useRouter, useSearchParams } from "next/navigation";
 import { statusNamesInWorkflowOrder } from "./ActionBar/Statuses";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
@@ -140,6 +141,22 @@ const fetchAndFormatParcelTablesData = async (
     return formattedData;
 };
 
+const parcelIdParam = "parcelId";
+
+const areDateRangesIdentical = (
+    dateRangeA: DateRangeState,
+    dateRangeB: DateRangeState
+): boolean => {
+    return (
+        areDaysIdentical(dateRangeA.from, dateRangeB.from) &&
+        areDaysIdentical(dateRangeA.to, dateRangeB.to)
+    );
+};
+
+const areDaysIdentical = (dayA: dayjs.Dayjs | null, dayB: dayjs.Dayjs | null): boolean => {
+    return dayA && dayB ? dayA.isSame(dayB) : dayA === dayB;
+};
+
 const ParcelsPage: React.FC<{}> = () => {
     const startOfToday = dayjs().startOf("day");
     const endOfToday = dayjs().endOf("day");
@@ -152,23 +169,32 @@ const ParcelsPage: React.FC<{}> = () => {
     const [tableData, setTableData] = useState<ParcelsTableRow[]>([]);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [selected, setSelected] = useState<number[]>([]);
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const theme = useTheme();
+    const router = useRouter();
+
+    const searchParams = useSearchParams();
+    const parcelId = searchParams.get(parcelIdParam);
 
     useEffect(() => {
-        let staleFetch = false;
+        if (parcelId) {
+            setSelectedParcelId(parcelId);
+            setModalIsOpen(true);
+        }
+    }, [parcelId]);
 
+    useEffect(() => {
         (async () => {
             setIsLoading(true);
-            const formattedData = await fetchAndFormatParcelTablesData(packingDateRange);
-            if (!staleFetch) {
-                setTableData(formattedData);
+            const dateRangeToFetch = { ...packingDateRange };
+            const tableData = await fetchAndFormatParcelTablesData(dateRangeToFetch);
+
+            if (areDateRangesIdentical(dateRangeToFetch, packingDateRange)) {
+                setTableData(tableData);
             }
+
             setIsLoading(false);
         })();
-
-        return () => {
-            staleFetch = true;
-        };
     }, [packingDateRange]);
 
     useEffect(() => {
@@ -243,10 +269,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const onParcelTableRowClick = (row: Row<ParcelsTableRow>): void => {
         setSelectedParcelId(row.data.parcelId);
-    };
-
-    const onExpandedParcelDetailsClose = (): void => {
-        setSelectedParcelId(null);
+        router.push(`/parcels?${parcelIdParam}=${row.data.parcelId}`);
     };
 
     const buildDeliveryCollectionFilter = (
@@ -368,8 +391,11 @@ const ParcelsPage: React.FC<{}> = () => {
                                 Parcel Details
                             </>
                         }
-                        isOpen={selectedParcelId !== null}
-                        onClose={onExpandedParcelDetailsClose}
+                        isOpen={modalIsOpen}
+                        onClose={() => {
+                            setModalIsOpen(false);
+                            router.push("/parcels");
+                        }}
                         headerId="expandedParcelDetailsModal"
                     >
                         <OutsideDiv>
