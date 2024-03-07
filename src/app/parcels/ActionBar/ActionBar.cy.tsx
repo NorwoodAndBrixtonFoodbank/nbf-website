@@ -67,7 +67,8 @@ describe("Parcels - Action Bar", () => {
                     <ActionBar
                         selectedParcels={selectedParcels}
                         onDeleteParcels={onDeleteParcels}
-                        setIsLoading={() => {}}
+                        hasSavedParcelStatus={() => {}}
+                        willSaveParcelStatus={() => {}}
                     />
                 </StyleManager>
             </Localization>
@@ -84,7 +85,8 @@ describe("Parcels - Action Bar", () => {
                 <MockActionBar
                     selectedParcels={selectedParcels}
                     onDeleteParcels={onDeleteParcels}
-                    setIsLoading={() => {}}
+                    hasSavedParcelStatus={() => {}}
+                    willSaveParcelStatus={() => {}}
                 />
             );
         });
@@ -159,7 +161,8 @@ describe("Parcels - Action Bar", () => {
                 <MockActionBar
                     selectedParcels={selectedParcels}
                     onDeleteParcels={onDeleteParcels}
-                    setIsLoading={() => {}}
+                    hasSavedParcelStatus={() => {}}
+                    willSaveParcelStatus={() => {}}
                 />
             );
         });

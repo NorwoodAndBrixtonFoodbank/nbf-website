@@ -23,7 +23,7 @@ interface ShowParcelsProps {
     maxParcelsToShow: number;
 }
 
-const ShowParcels: React.FC<ShowParcelsProps> = (props) => {
+const SelectedParcelsOverview: React.FC<ShowParcelsProps> = (props) => {
     return (
         <>
             <Heading>{props.parcels.length === 1 ? "Parcel" : "Parcels"} selected:</Heading>
@@ -33,17 +33,13 @@ const ShowParcels: React.FC<ShowParcelsProps> = (props) => {
                         {parcel.addressPostcode}
                         {parcel.fullName && ` - ${parcel.fullName}`}
                         {parcel.collectionDatetime &&
-                            `\n @ ${dayjs(parcel.collectionDatetime!).format("DD/MM/YYYY HH:mm")}`}
+                            ` @ ${dayjs(parcel.collectionDatetime!).format("DD/MM/YYYY HH:mm")}`}
                     </ListItem>
                 );
             })}
-            {props.parcels.length > props.maxParcelsToShow ? (
-                <ListItem emphasised>...</ListItem>
-            ) : (
-                <></>
-            )}
+            {props.parcels.length > props.maxParcelsToShow && <ListItem emphasised>...</ListItem>}
         </>
     );
 };
 
-export default ShowParcels;
+export default SelectedParcelsOverview;

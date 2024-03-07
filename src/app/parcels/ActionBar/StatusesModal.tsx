@@ -5,7 +5,7 @@ import Modal from "@/components/Modal/Modal";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import ShowParcels from "./ShowParcels";
+import SelectedParcelsOverview from "./ShowParcels";
 
 interface StatusesBarModalProps extends React.ComponentProps<typeof Modal> {
     selectedParcels: ParcelsTableRow[];
@@ -66,8 +66,10 @@ const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
                     Time:
                     <TimePicker value={date} onChange={onTimeChange} disableFuture />
                 </Row>
-                Applying To:
-                <ShowParcels parcels={props.selectedParcels} maxParcelsToShow={maxParcelsToShow} />
+                <SelectedParcelsOverview
+                    parcels={props.selectedParcels}
+                    maxParcelsToShow={maxParcelsToShow}
+                />
                 {props.errorText && <small>{props.errorText}</small>}
                 <Button type="button" variant="contained" onClick={() => props.onSubmit(date)}>
                     Submit

@@ -194,14 +194,6 @@ const Actions: React.FC<Props> = ({
     const [driverName, setDriverName] = useState("");
     const [collectionCentre, setCollectionCentre] = useState("");
 
-    // const [selectedData, setSelectedData] = useState(
-    //     Array.from(selectedRowIndices.map((index) => data[index]))
-    // );
-
-    // useEffect(() => {
-    //     setSelectedData(Array.from(selectedRowIndices.map((index) => data[index])));
-    // }, [selectedRowIndices, data]);
-
     const onLabelQuantityChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setLabelQuantity(parseInt(event.target.value, 10) ?? 0);
     };

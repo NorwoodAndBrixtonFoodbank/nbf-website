@@ -110,7 +110,7 @@ const Component: React.FC<TestTableProps> = ({
         });
     };
 
-    const toggleAllCheckBox = (isAllCheckBoxSelected: boolean): void => {
+    const toggleAllCheckBox = (): void => {
         if (isAllCheckBoxSelected) {
             setSelectedRowIndices([]);
             setAllCheckBoxSelected(false);
@@ -126,17 +126,19 @@ const Component: React.FC<TestTableProps> = ({
             setAllCheckBoxSelected(allChecked);
         }
     }, [tableData, selectedRowIndices, isAllCheckBoxSelected]);
+
     const trueCheckboxConfig: CheckboxConfig = {
         displayed: true,
         selectedRowIndices: selectedRowIndices,
         isAllCheckboxChecked: isAllCheckBoxSelected,
         onCheckboxClicked: (rowIndex: number) => selectOrDeselectRow(rowIndex),
-        onAllCheckboxClicked: (isAllCheckBoxSelected: boolean) =>
-            toggleAllCheckBox(isAllCheckBoxSelected),
+        onAllCheckboxClicked: () => toggleAllCheckBox(),
     };
+
     const falseCheckboxConfig: CheckboxConfig = {
         displayed: false,
     };
+
     return (
         <StyleManager>
             <Table

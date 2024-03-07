@@ -33,7 +33,7 @@ import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { Filter } from "@/components/Tables/Filters";
 import { saveParcelStatus } from "./ActionBar/Statuses";
-import Loading from "../loading";
+import { CircularProgress } from "@mui/material";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -199,7 +199,7 @@ const ParcelsPage: React.FC<{}> = () => {
         });
     };
 
-    const toggleAllCheckBox = (isAllCheckBoxSelected: boolean): void => {
+    const toggleAllCheckBox = (): void => {
         if (isAllCheckBoxSelected) {
             setSelectedRowIndices([]);
             setAllCheckBoxSelected(false);
@@ -369,11 +369,15 @@ const ParcelsPage: React.FC<{}> = () => {
                 <ActionBar
                     selectedParcels={selectedRowIndices.map((index) => tableData[index])}
                     onDeleteParcels={deleteParcels}
-                    setIsLoading={setIsLoading}
+                    willSaveParcelStatus={() => setIsLoading(true)}
+                    hasSavedParcelStatus={() => setIsLoading(false)}
                 />
             </PreTableControls>
             {isLoading ? (
-                <Loading />
+                <Centerer>
+                    {" "}
+                    <CircularProgress />{" "}
+                </Centerer>
             ) : (
                 <>
                     <TableSurface>
@@ -405,8 +409,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                 isAllCheckboxChecked: isAllCheckBoxSelected,
                                 onCheckboxClicked: (rowIndex: number) =>
                                     selectOrDeselectRow(rowIndex),
-                                onAllCheckboxClicked: (isAllCheckBoxSelected: boolean) =>
-                                    toggleAllCheckBox(isAllCheckBoxSelected),
+                                onAllCheckboxClicked: () => toggleAllCheckBox(),
                             }}
                         />
                     </TableSurface>

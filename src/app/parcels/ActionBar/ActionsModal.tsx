@@ -12,7 +12,7 @@ import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { statusType } from "./Statuses";
-import ShowParcels from "./ShowParcels";
+import SelectedParcelsOverview from "./ShowParcels";
 
 export type ActionType = "pdfDownload" | "deleteParcel";
 
@@ -203,7 +203,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                             </Heading>
                         )}
                         {props.showSelectedParcels && (
-                            <ShowParcels
+                            <SelectedParcelsOverview
                                 parcels={props.selectedParcels}
                                 maxParcelsToShow={maxParcelsToShow}
                             />

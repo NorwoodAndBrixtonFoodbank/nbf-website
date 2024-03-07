@@ -69,7 +69,8 @@ interface Props {
     setStatusAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     modalError: string | null;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
-    setIsLoading: (isLoading: boolean) => void;
+    willSaveParcelStatus: () => void;
+    hasSavedParcelStatus: () => void;
 }
 
 const Statuses: React.FC<Props> = ({
@@ -78,13 +79,14 @@ const Statuses: React.FC<Props> = ({
     setStatusAnchorElement,
     modalError,
     setModalError,
-    setIsLoading,
+    willSaveParcelStatus,
+    hasSavedParcelStatus,
 }) => {
     const [selectedStatus, setSelectedStatus] = useState<statusType | null>(null);
     const [statusModal, setStatusModal] = useState(false);
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
-        setIsLoading(true);
+        willSaveParcelStatus();
         try {
             await saveParcelStatus(
                 selectedParcels.map((parcel: ParcelsTableRow) => {
@@ -99,7 +101,7 @@ const Statuses: React.FC<Props> = ({
         } catch (error: any) {
             setModalError(error.message);
         }
-        setIsLoading(false);
+        hasSavedParcelStatus();
     };
 
     const onMenuItemClick = (status: statusType): (() => void) => {
