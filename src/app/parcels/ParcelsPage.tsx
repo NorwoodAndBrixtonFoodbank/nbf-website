@@ -142,7 +142,8 @@ const postcodeSearch = (query: PostgrestFilterBuilder<Database["public"], any, a
 }
 
 const familySearch = (query: PostgrestFilterBuilder<Database["public"], any, any>, state: string): PostgrestFilterBuilder<Database["public"], any, any> => {
-    return query.ilike('client.family_category', `%${state}%`);
+
+    return query.eq('client.family.sum()', {state})
 }
 
 const phoneSearch = (query: PostgrestFilterBuilder<Database["public"], any, any>, state: string): PostgrestFilterBuilder<Database["public"], any, any> => {
@@ -286,7 +287,7 @@ const ParcelsPage: React.FC<{}> = () => {
     ]
     
     const additionalFilters: Filter<ParcelsTableRow, any>[] = [
-        textFilter({key: "familyCategory", label: "Family", headers: parcelTableHeaderKeysAndLabels, filterMethod: fullNameSearch}),
+        textFilter({key: "familyCategory", label: "Family", headers: parcelTableHeaderKeysAndLabels, filterMethod: familySearch}),
         textFilter({key: "phoneNumber", label: "Phone", headers: parcelTableHeaderKeysAndLabels, filterMethod: phoneSearch}),
         textFilter({key: "voucherNumber", label: "Voucher", headers: parcelTableHeaderKeysAndLabels, filterMethod: voucherSearch}),
         buildLastStatusFilter()
