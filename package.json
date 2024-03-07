@@ -95,7 +95,9 @@
     "start-server-and-test": "^2.0.0",
     "styled-components": "^6.0.4",
     "supabase": "^1.142.2",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "winston": "^3.12.0",
+    "winston-cloudwatch": "^6.2.0"
   },
   "devDependencies": {
     "@snaplet/copycat": "^5.0.0",
