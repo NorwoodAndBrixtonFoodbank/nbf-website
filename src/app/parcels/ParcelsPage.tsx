@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense, useEffect, useState } from "react";
-import Table, { Row, TableHeaders } from "@/components/Tables/Table";
+import Table, { Row, SortOptions, TableHeaders } from "@/components/Tables/Table";
 import styled, { useTheme } from "styled-components";
 import {
     ParcelsTableRow,
@@ -33,6 +33,7 @@ import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { Filter } from "@/components/Tables/Filters";
 import { useRouter, useSearchParams } from "next/navigation";
+import { statusNamesInWorkflowOrder } from "./ActionBar/Statuses";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -55,6 +56,30 @@ const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
     "packingDatetime",
     "packingTimeLabel",
     "lastStatus",
+];
+
+const sortStatusByWorkflowOrder = (
+    statusA: ParcelsTableRow["lastStatus"],
+    statusB: ParcelsTableRow["lastStatus"]
+): number => {
+    const indexA = statusNamesInWorkflowOrder.indexOf(statusA?.name ?? "");
+    const indexB = statusNamesInWorkflowOrder.indexOf(statusB?.name ?? "");
+    if (indexA === indexB) {
+        return 0;
+    }
+    return indexA < indexB ? 1 : -1;
+};
+
+const sortableColumns: (keyof ParcelsTableRow | SortOptions<ParcelsTableRow, "lastStatus">)[] = [
+    "fullName",
+    "familyCategory",
+    "addressPostcode",
+    "phoneNumber",
+    "voucherNumber",
+    "deliveryCollection",
+    "packingDatetime",
+    "packingTimeLabel",
+    { key: "lastStatus", sortFunction: sortStatusByWorkflowOrder },
 ];
 
 const toggleableHeaders: (keyof ParcelsTableRow)[] = [
@@ -339,7 +364,7 @@ const ParcelsPage: React.FC<{}> = () => {
                             checkboxes
                             onRowSelection={setSelected}
                             pagination
-                            sortable={toggleableHeaders}
+                            sortable={sortableColumns}
                             defaultShownHeaders={defaultShownHeaders}
                             toggleableHeaders={toggleableHeaders}
                             filters={[

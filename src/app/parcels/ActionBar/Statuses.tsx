@@ -10,27 +10,27 @@ import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import StatusesBarModal from "@/app/parcels/ActionBar/StatusesModal";
 import { DatabaseError } from "@/app/errorClasses";
 
-const statuses = [
+export const statusNamesInWorkflowOrder = [
     "No Status",
     "Request Denied",
     "Pending More Info",
     "Called and Confirmed",
     "Called and No Response",
+    "Shopping List Downloaded",
     "Ready to Dispatch",
     "Received by Centre",
     "Collection Failed",
     "Parcel Collected",
+    "Shipping Labels Downloaded",
+    "Out for Delivery",
     "Delivered",
     "Delivery Failed",
     "Delivery Cancelled",
     "Fulfilled with Trussell Trust",
-    "Shipping Labels Downloaded",
-    "Shopping List Downloaded",
-    "Out for Delivery",
     "Request Deleted",
-] as const;
+];
 
-export type statusType = (typeof statuses)[number];
+export type statusType = (typeof statusNamesInWorkflowOrder)[number];
 
 const nonMenuStatuses: statusType[] = [
     "Shipping Labels Downloaded",
@@ -139,7 +139,7 @@ const Statuses: React.FC<Props> = ({
                 anchorEl={statusAnchorElement}
             >
                 <MenuList id="status-menu">
-                    {statuses
+                    {statusNamesInWorkflowOrder
                         .filter((status) => !nonMenuStatuses.includes(status))
                         .map((status) => {
                             return (
