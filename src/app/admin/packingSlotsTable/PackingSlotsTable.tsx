@@ -78,7 +78,7 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
     const processRowUpdate = (newRow: PackingSlotRow): PackingSlotRow => {
         if (newRow.isNew) {
             createPackingSlot(newRow);
-        } else if (newRow.isNew === undefined) {
+        } else {
             updatePackingSlot(newRow);
         }
         return newRow;
@@ -101,6 +101,18 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
     const handleDeleteClick = (id: GridRowId) => () => {
         deletePackingSlot(id);
         setRows(rows.filter((row) => row.id !== id));
+    };
+
+    const handleCancelClick = (id: GridRowId) => () => {
+        setRowModesModel({
+            ...rowModesModel,
+            [id]: { mode: GridRowModes.View, ignoreModifications: true },
+        });
+
+        const editedRow = rows.find((row) => row.id === id);
+        if (editedRow!.isNew) {
+            setRows(rows.filter((row) => row.id !== id));
+        }
     };
 
     const packingSlotsTableHeaderKeysAndLabels: GridColDef[] = [
@@ -142,7 +154,7 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
                             icon={<CancelIcon />}
                             label="Cancel"
                             className="textPrimary"
-                            onClick={() => {}}
+                            onClick={handleCancelClick(id)}
                             color="inherit"
                         />,
                     ];
