@@ -109,7 +109,7 @@ You can regenerate the types
 - Create sample data by updating seed.mts
 - Login to snaplet
   ```shell
-  snaplet auth setup
+  npx snaplet auth setup
   ```
 - Follow link and log in using credentials in keeper
 - Regenerate assets in sync with your new database 
