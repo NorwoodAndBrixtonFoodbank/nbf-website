@@ -51,23 +51,17 @@ export interface SortOptions<Data, Key extends keyof Data> {
     sortMethod: (query: PostgrestFilterBuilder<Database["public"], any, any>, sortDirection: SortOrder) => PostgrestFilterBuilder<Database["public"], any, any>;
 }
 
-interface ActiveSortState<Data> {
-    sortActive: true,
-    column: CustomColumn<Data>,
-    sortDirection: SortOrder
-}
-
-interface InactiveSortState {
-    sortActive: false
+export interface SortState<Data> {
+    sortDirection: SortOrder,
+    key: keyof Data,
 }
 
 type SortMethod = (query: PostgrestFilterBuilder<Database["public"], any, any>, sortDirection: SortOrder) => PostgrestFilterBuilder<Database["public"], any, any>
 
 
-export type SortState<Data> = ActiveSortState<Data> | InactiveSortState
-
 export interface CustomColumn<Data> extends TableColumn<Row<Data>> {
     sortMethod?: (query: PostgrestFilterBuilder<Database["public"], any, any>, sortDirection: SortOrder) => PostgrestFilterBuilder<Database["public"], any, any>
+    //sortField?: keyof Data,
 }
 
 
@@ -80,7 +74,7 @@ interface Props<Data> {
     pagination?: boolean;
     defaultShownHeaders?: readonly (keyof Data)[];
     toggleableHeaders?: readonly (keyof Data)[];
-    sortMethods?: SortOptions<Data, any>[];
+    sortableColumns?: SortOptions<Data, any>[];
     onEdit?: (data: number) => void;
     onDelete?: (data: number) => void;
     onSwapRows?: (row1: Data, row2: Data) => Promise<void>;
@@ -90,10 +84,11 @@ interface Props<Data> {
     autoFilter?: boolean;
     loading: boolean;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-    getData: (supabase: Supabase, start: number, end: number, filters: Filter<Data, any>[], sortState: SortState<Data>) => Promise<Data[]>;
+    getData: (supabase: Supabase, start: number, end: number, filters: Filter<Data, any>[], sortState: SortState<Data>, columns: CustomColumn<Data>[]) => Promise<Data[]>;
     supabase: Supabase;
     getCount: (supabase: Supabase, filters: Filter<Data, any>[]) => Promise<number>;
     subscriptions: RealtimePostgresChangesFilter<"*">[];
+    defaultSortState: SortState<Data>;
     //sortConfig: ()
 }
 
@@ -149,7 +144,7 @@ const Table = <Data,>({
     onEdit,
     onSwapRows,
     pagination,
-    sortMethods = [],
+    sortableColumns = [],
     toggleableHeaders = [],
     onRowClick,
     columnDisplayFunctions = {},
@@ -161,12 +156,16 @@ const Table = <Data,>({
     supabase,
     getCount,
     subscriptions,
+    defaultSortState
 }: Props<Data>): React.ReactElement => {
     const [data, setData] = useState<Data[]>([]);
     const [totalRows, setTotalRows] = useState(0);
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
-    const [sortState, setSortState] = useState<SortState<Data>>({sortActive: false});
+    const [sortState, setSortState] = useState<SortState<Data>>(defaultSortState);
+    useEffect(() => {
+        console.log("sortstate changed: ", sortState);
+    }, [sortState.key]);
 
     const getStartPoint = (currentPage: number, perPage: number): number => ((currentPage - 1) * perPage);
     const getEndPoint = (currentPage: number, perPage: number): number => ((currentPage) * perPage - 1);
@@ -177,7 +176,7 @@ const Table = <Data,>({
 
     const fetchData = async () => {
         setLoading(true);
-        const fetchedData = await getData(supabase, getStartPoint(currentPage, perPage), getEndPoint(currentPage, perPage), allFilters, sortState);
+        const fetchedData = await getData(supabase, getStartPoint(currentPage, perPage), getEndPoint(currentPage, perPage), allFilters, sortState, columns);
         setData(fetchedData);
         setLoading(false);
     }
@@ -275,7 +274,7 @@ const Table = <Data,>({
             columnStyleOptions[headerKey] ?? {}
         );
 
-        const sortMethod = sortMethods.find((sortMethod) => sortMethod.key === headerKey);
+        const sortMethod = sortableColumns.find((sortMethod) => sortMethod.key === headerKey);
 
         //const sortFunction = sortOption?.sortFunction;
         const sortable = sortMethod !== undefined;
@@ -303,8 +302,11 @@ const Table = <Data,>({
         };
     });
 
-    const handleSort = async (column: TableColumn<Row<Data>>, sortDirection: SortOrder) => {
-        setSortState({sortActive: true, column: column, sortDirection: sortDirection});
+    const handleSort = async (column: CustomColumn<Data>, sortDirection: SortOrder) => {
+        console.log(column);
+        if (column.sortable) {
+            console.log("fired");
+        setSortState({key: column.sortField as keyof Data, sortDirection: sortDirection})};
     }
 
     const [isSwapping, setIsSwapping] = useState(false);

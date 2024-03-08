@@ -100,7 +100,7 @@ const Component: React.FC<TestTableProps> = ({
                 checkboxes={checkboxes}
                 toggleableHeaders={toggleableHeaders}
                 filters={filters}
-                sortMethods={sortable}
+                sortableColumns={sortable}
                 pagination={pagination}
             />
         </StyleManager>
@@ -122,7 +122,7 @@ const ComponentWithSmallerData: React.FC<TestTableProps> = ({
                 checkboxes={checkboxes}
                 toggleableHeaders={toggleableHeaders}
                 filters={filters}
-                sortMethods={sortable}
+                sortableColumns={sortable}
                 pagination={pagination}
             />
         </StyleManager>

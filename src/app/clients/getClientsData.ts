@@ -8,14 +8,23 @@ import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database, Tables } from "@/databaseTypesFile";
 import { Schema, } from "@/databaseUtils";
 import { GenericSchema } from "@supabase/postgrest-js/dist/module/types";
+import { CustomColumn, SortState } from "@/components/Tables/Table";
 
-const getClientsData = async (supabase: Supabase, start: number, end: number, filters: Filter<ClientsTableRow, any>[]): Promise<ClientsTableRow[]> => {
+const getClientsData = async (supabase: Supabase, start: number, end: number, filters: Filter<ClientsTableRow, any>[], sortState: SortState<ClientsTableRow>, columns: CustomColumn<ClientsTableRow>[]): Promise<ClientsTableRow[]> => {
     const data: ClientsTableRow[] = [];
 
     let query = supabase
         .from("clients")
         .select("primary_key, full_name, family_id, address_postcode", {count: 'exact'})
-        .order("full_name");
+
+        const columnToSortBy = columns.find((column)=>column.sortField===sortState.key);
+
+    if (columnToSortBy?.sortMethod) {
+            query = columnToSortBy.sortMethod(query, sortState.sortDirection);
+        } else {
+            query = query.order("full_name")
+        }
+
 
     filters.forEach((filter) => {
         query = filter.filterMethod(query, filter.state);

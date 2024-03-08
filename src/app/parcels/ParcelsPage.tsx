@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense, useEffect, useState } from "react";
-import Table, { Row, SortOptions, TableHeaders } from "@/components/Tables/Table";
+import Table, { Row, SortOptions, SortState, TableHeaders } from "@/components/Tables/Table";
 import styled, { useTheme } from "styled-components";
 import {
     ParcelsTableRow,
@@ -42,6 +42,7 @@ import { Database } from "@/databaseTypesFile";
 import { textFilter } from "@/components/Tables/TextFilter";
 import { dateFilter } from "@/components/Tables/DateFilter";
 import { SortOrder } from "react-data-table-component";
+
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -318,6 +319,8 @@ const ParcelsPage: React.FC<{}> = () => {
         buildLastStatusFilter() //hardcoded options
     ]
 
+    const defaultSortState: SortState<ParcelsTableRow> = {key: "packingDatetime", sortDirection: "desc" as SortOrder}
+
     useEffect(() => {
         if (parcelId) {
             setSelectedParcelId(parcelId);
@@ -411,7 +414,7 @@ const ParcelsPage: React.FC<{}> = () => {
                             checkboxes
                             onRowSelection={setSelected}
                             pagination
-                            sortMethods={sortableColumns}
+                            sortableColumns={sortableColumns}
                             defaultShownHeaders={defaultShownHeaders}
                             toggleableHeaders={toggleableHeaders}
                             filters={filters}
@@ -420,6 +423,7 @@ const ParcelsPage: React.FC<{}> = () => {
                             loading={isLoading}
                             setLoading={setIsLoading}
                             supabase={supabase}
+                            defaultSortState={defaultSortState}
                         />
                     </TableSurface>
                     <Modal
