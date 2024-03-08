@@ -76,29 +76,26 @@ export const swapRows = async (
     row1: packingSlotTableRowData,
     row2: packingSlotTableRowData
 ): Promise<void> => {
-    const { error } = await supabase.from("packing_slots").upsert(
-        [
-            {
-                primary_key: row1.id,
-                order: row2.order,
-                name: row1.name,
-                is_hidden: row1.is_hidden,
-            },
-            {
-                primary_key: row2.id,
-                order: row1.order,
-                name: row2.name,
-                is_hidden: row2.is_hidden,
-            },
-        ],
-        { onConflict: "ignoreDuplicates" }
-    );
+    console.log(row1.order, row2.order);
+    const newRow1order = row1.order - 1;
+    const newRow2order = row2.order + 1;
+    console.log(newRow1order, newRow2order);
+    const { error } = await supabase.from("packing_slots").upsert([
+        {
+            primary_key: row1.id,
+            order: newRow1order,
+            name: row1.name,
+            is_hidden: row1.is_hidden,
+        },
+        {
+            primary_key: row2.id,
+            order: newRow2order,
+            name: row2.name,
+            is_hidden: row2.is_hidden,
+        },
+    ]);
 
     if (error) {
         throw new DatabaseError("update", "packing_slots");
     }
-
-    const temp = row1.order;
-    row1.order = row2.order;
-    row2.order = temp;
 };

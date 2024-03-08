@@ -122,9 +122,8 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
         }
     };
 
-    const handleUpClick = (id: GridRowId) => () => {
-        const intId = typeof id === "number" ? id : parseInt(id);
-        const rowIndex = intId - 1;
+    const handleUpClick = (id: GridRowId, row: PackingSlotRow) => () => {
+        const rowIndex = row.order - 1;
         if (rowIndex > 0) {
             const newRowsArray = rows.toSpliced(rowIndex, 1);
             newRowsArray.splice(rowIndex - 1, 0, rows[rowIndex]);
@@ -142,13 +141,13 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
             headerName: "Order",
             width: 100,
             cellClassName: "actions",
-            getActions: ({ id }) => {
+            getActions: ({ id, row }) => {
                 return [
                     <GridActionsCellItem
                         icon={<ArrowCircleUpIcon />}
                         label="Up"
                         className="textPrimary"
-                        onClick={handleUpClick(id)}
+                        onClick={handleUpClick(id, row)}
                         color="inherit"
                         key="Up"
                     />,
