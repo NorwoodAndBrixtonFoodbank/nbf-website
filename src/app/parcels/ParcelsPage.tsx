@@ -193,7 +193,6 @@ const buildDateFilter = (initialState: DateRangeState): Filter<ParcelsTableRow, 
 }
 
 const buildDeliveryCollectionFilter = (
-    //tableData: ParcelsTableRow[]
 ): Filter<ParcelsTableRow, any> => {
     const deliveryCollectionSearch = (query: PostgrestFilterBuilder<Database["public"], any, any>, state: string[]): PostgrestFilterBuilder<Database["public"], any, any> => {
         return query.in('collection_centre.acronym', state);
@@ -225,7 +224,6 @@ const buildDeliveryCollectionFilter = (
 };
 
 const buildPackingTimeFilter = (
-    //tableData: ParcelsTableRow[]
     ): Filter<ParcelsTableRow, any> => {
     const packingTimeSearch = (query: PostgrestFilterBuilder<Database["public"], any, any>, state: string[]): PostgrestFilterBuilder<Database["public"], any, any> => {
         return query//.in('packing_datetime', `%${state}%`);
@@ -256,13 +254,12 @@ const lastStatusCellMatchOverride = (
 };
 
 const buildLastStatusFilter = (
-    //tableData: ParcelsTableRow[]
     ): Filter<ParcelsTableRow, any> => {
     const lastStatusSearch = (query: PostgrestFilterBuilder<Database["public"], any, any>, state: string[]): PostgrestFilterBuilder<Database["public"], any, any> => {
         return query.in('events.event_name', state); //not sure if this will work?
     }
     
-    // const options = Array.from(
+    // const options = Array.from( //as above
     //     new Set(
     //         tableData.map((row) => (row.lastStatus ? row.lastStatus.name : "None"))
     //     ).values()
@@ -275,7 +272,7 @@ const buildLastStatusFilter = (
         filterLabel: "Last Status",
         itemLabelsAndKeys: options.map((value) => [value, value]),
         initialCheckedKeys: options.filter((option) => option !== "Request Deleted"),
-        //cellMatchOverride: lastStatusCellMatchOverride, todo: wtf is this
+        //cellMatchOverride: lastStatusCellMatchOverride, todo: wtf is this :0
         filterMethod: lastStatusSearch,
 
     });
@@ -286,10 +283,6 @@ const ParcelsPage: React.FC<{}> = () => {
     const endOfToday = dayjs().endOf("day");
 
     const [isLoading, setIsLoading] = useState(true);
-    // const [packingDateRange, setPackingDateRange] = useState<DateRangeState>({
-    //     from: startOfToday,
-    //     to: endOfToday,
-    // });
     const [tableData, setTableData] = useState<ParcelsTableRow[]>([]);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [selected, setSelected] = useState<number[]>([]);
@@ -395,7 +388,7 @@ const ParcelsPage: React.FC<{}> = () => {
         <>
             <PreTableControls>
                 <ControlContainer>
-                    {/* <DateRangeInputs
+                    {/* NOTE: should probs move date range input back to top of page on UI somehow. <DateRangeInputs
                         range={packingDateRange}
                         setRange={setPackingDateRange}
                     ></DateRangeInputs> */}

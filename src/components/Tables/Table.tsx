@@ -61,7 +61,6 @@ type SortMethod = (query: PostgrestFilterBuilder<Database["public"], any, any>, 
 
 export interface CustomColumn<Data> extends TableColumn<Row<Data>> {
     sortMethod?: (query: PostgrestFilterBuilder<Database["public"], any, any>, sortDirection: SortOrder) => PostgrestFilterBuilder<Database["public"], any, any>
-    //sortField?: keyof Data,
 }
 
 
@@ -89,7 +88,6 @@ interface Props<Data> {
     getCount: (supabase: Supabase, filters: Filter<Data, any>[]) => Promise<number>;
     subscriptions: RealtimePostgresChangesFilter<"*">[];
     defaultSortState: SortState<Data>;
-    //sortConfig: ()
 }
 
 interface CellProps<Data> {
@@ -259,15 +257,6 @@ const Table = <Data,>({
         }
     }, [selectedCheckboxes, selectAllCheckBox]);
 
-    // const sortMethods = sortable.map((sortOption) => {
-    //     if (sortOption instanceof Object) {
-    //         return sortOption;
-    //     }
-    //     return {
-    //         key: sortOption,
-    //     };
-    // });
-
     const columns: CustomColumn<Data>[] = shownHeaders.map(([headerKey, headerName]) => {
         const columnStyles = Object.assign(
             { ...defaultColumnStyleOptions },
@@ -276,7 +265,6 @@ const Table = <Data,>({
 
         const sortMethod = sortableColumns.find((sortMethod) => sortMethod.key === headerKey);
 
-        //const sortFunction = sortOption?.sortFunction;
         const sortable = sortMethod !== undefined;
 
 
@@ -284,9 +272,6 @@ const Table = <Data,>({
             name: <>{headerName}</>,
             selector: (row) => row.data[headerKey] as Primitive, // The type cast here is needed as the type of selector is (row) => Primitive, but as we are using a custom cell, we can have it be anything
             sortable,
-            // sortFunction: sortFunction
-            //     ? (row1, row2) => sortFunction(row1.data[headerKey], row2.data[headerKey])
-            //     : undefined,
             cell(row) {
                 return (
                     <CustomCell
@@ -407,26 +392,12 @@ const Table = <Data,>({
     const filterStates = allFilters.map((filter)=>filter.state);
 
     useEffect(() => {
-        console.log("hi");
-        console.log(filterStates);
-        console.log("count", totalRows);
         (async () => {        
-            //if (rows.length < perPage)
             setLoading(true);
             await fetchCount();
             await fetchData();
             setLoading(false);})();
     }, filterStates)
-
-    // useEffect(() => {
-    //     console.log("refetching data");
-    //     (async () => {        if (rows.length < perPage) {
-    //         setLoading(true);
-    //         await fetchCount();
-    //         await fetchData(currentPage, perPage);
-    //         setLoading(false);
-    //     }})();
-    // }, [rows]);
 
     const handleClear = (): void => {
         setPrimaryFilters((filters) =>
