@@ -63,7 +63,6 @@ export interface CustomColumn<Data> extends TableColumn<Row<Data>> {
     sortMethod?: (query: PostgrestFilterBuilder<Database["public"], any, any>, sortDirection: SortOrder) => PostgrestFilterBuilder<Database["public"], any, any>
 }
 
-
 interface Props<Data> {
     headerKeysAndLabels: TableHeaders<Data>;
     checkboxes?: boolean;
@@ -83,11 +82,11 @@ interface Props<Data> {
     autoFilter?: boolean;
     loading: boolean;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-    getData: (supabase: Supabase, start: number, end: number, filters: Filter<Data, any>[], sortState: SortState<Data>, columns: CustomColumn<Data>[]) => Promise<Data[]>;
+    getData: ((supabase: Supabase, start: number, end: number, filters: Filter<Data, any>[], columns: CustomColumn<Data>[], sortState?: SortState<Data>)  => Promise<Data[]>) | ((supabase: Supabase, start: number, end: number) => Promise<Data[]>);
     supabase: Supabase;
-    getCount: (supabase: Supabase, filters: Filter<Data, any>[]) => Promise<number>;
-    subscriptions: RealtimePostgresChangesFilter<"*">[];
-    defaultSortState: SortState<Data>;
+    getCount: ((supabase: Supabase, filters: Filter<Data, any>[]) => Promise<number>) | ((supabase: Supabase) => Promise<number>)
+    subscriptions?: RealtimePostgresChangesFilter<"*">[];
+    defaultSortState?: SortState<Data>;
 }
 
 interface CellProps<Data> {
@@ -153,17 +152,14 @@ const Table = <Data,>({
     getData,
     supabase,
     getCount,
-    subscriptions,
+    subscriptions = [],
     defaultSortState
 }: Props<Data>): React.ReactElement => {
     const [data, setData] = useState<Data[]>([]);
     const [totalRows, setTotalRows] = useState(0);
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
-    const [sortState, setSortState] = useState<SortState<Data>>(defaultSortState);
-    useEffect(() => {
-        console.log("sortstate changed: ", sortState);
-    }, [sortState.key]);
+    const [sortState, setSortState] = useState<SortState<Data>|undefined>(defaultSortState);
 
     const getStartPoint = (currentPage: number, perPage: number): number => ((currentPage - 1) * perPage);
     const getEndPoint = (currentPage: number, perPage: number): number => ((currentPage) * perPage - 1);
@@ -174,7 +170,7 @@ const Table = <Data,>({
 
     const fetchData = async () => {
         setLoading(true);
-        const fetchedData = await getData(supabase, getStartPoint(currentPage, perPage), getEndPoint(currentPage, perPage), allFilters, sortState, columns);
+        const fetchedData = await getData(supabase, getStartPoint(currentPage, perPage), getEndPoint(currentPage, perPage), allFilters, columns, sortState);
         setData(fetchedData);
         setLoading(false);
     }
