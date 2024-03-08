@@ -143,7 +143,7 @@ const postcodeSearch = (query: PostgrestFilterBuilder<Database["public"], any, a
 
 const familySearch = (query: PostgrestFilterBuilder<Database["public"], any, any>, state: string): PostgrestFilterBuilder<Database["public"], any, any> => {
 
-    return query.eq('client.family.sum()', {state})
+    return query//.eq('client.family', {state})
 }
 
 const phoneSearch = (query: PostgrestFilterBuilder<Database["public"], any, any>, state: string): PostgrestFilterBuilder<Database["public"], any, any> => {
