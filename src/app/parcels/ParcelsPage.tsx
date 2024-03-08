@@ -41,6 +41,7 @@ import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { textFilter } from "@/components/Tables/TextFilter";
 import { dateFilter } from "@/components/Tables/DateFilter";
+import { SortOrder } from "react-data-table-component";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -77,16 +78,16 @@ const sortStatusByWorkflowOrder = (
     return indexA < indexB ? 1 : -1;
 };
 
-const sortableColumns: (keyof ParcelsTableRow | SortOptions<ParcelsTableRow, "lastStatus">)[] = [
-    "fullName",
-    "familyCategory",
-    "addressPostcode",
-    "phoneNumber",
-    "voucherNumber",
-    "deliveryCollection",
-    "packingDatetime",
-    "packingTimeLabel",
-    { key: "lastStatus", sortFunction: sortStatusByWorkflowOrder },
+const sortableColumns: (SortOptions<ParcelsTableRow, any>)[] = [
+    {key: "fullName", sortMethod: (query, sortDirection) => query.order("client(full_name)", {ascending: sortDirection === "asc"})},
+    //{key: "familyCategory",sortMethod: (query, sortDirection) => query.order("client(full_name)", {ascending: sortDirection === "asc"})}, broke
+    {key: "addressPostcode",sortMethod: (query, sortDirection) => query.order("client(address_postcode)", {ascending: sortDirection === "asc"})},
+    {key: "phoneNumber",sortMethod: (query, sortDirection) => query.order("client(phone_number)", {ascending: sortDirection === "asc"})},
+    {key: "voucherNumber",sortMethod: (query, sortDirection) => query.order("voucher_number", {ascending: sortDirection === "asc"})},
+    {key: "deliveryCollection",sortMethod: (query, sortDirection) => query.order("collection_centre(name)", {ascending: sortDirection === "asc"})},
+    {key: "packingDatetime",sortMethod: (query, sortDirection) => query.order("packing_datetime", {ascending: sortDirection === "asc"})},
+    //{key: "packingTimeLabel",sortMethod: (query, sortDirection) => query.order("client(full_name)", {ascending: sortDirection === "asc"})}, broke
+    //{ key: "lastStatus", sortMethod: sortStatusByWorkflowOrder }, to dofix
 ];
 
 const toggleableHeaders: (keyof ParcelsTableRow)[] = [
@@ -410,7 +411,7 @@ const ParcelsPage: React.FC<{}> = () => {
                             checkboxes
                             onRowSelection={setSelected}
                             pagination
-                            sortable={toggleableHeaders}
+                            sortMethods={sortableColumns}
                             defaultShownHeaders={defaultShownHeaders}
                             toggleableHeaders={toggleableHeaders}
                             filters={filters}

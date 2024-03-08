@@ -62,7 +62,7 @@ const ClientsPage: React.FC<{}> = () => {
                             onRowClick={(row) => {
                                 router.push(`/clients?${clientIdParam}=${row.data.clientId}`);
                             }}
-                            sortable={["fullName", "familyCategory", "addressPostcode"]}
+                            sortMethods={["fullName", "familyCategory", "addressPostcode"]}
                             pagination
                             checkboxes={false}
                             filters={filters}

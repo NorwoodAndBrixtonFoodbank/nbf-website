@@ -15,9 +15,11 @@ import React, { SetStateAction, useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import styled from "styled-components";
 import { textFilter } from "./TextFilter";
-import { Primitive } from "react-data-table-component/dist/DataTable/types";
+import { Primitive, SortOrder } from "react-data-table-component/dist/DataTable/types";
 import { Supabase } from "@/supabaseUtils";
 import { RealtimeChannel, RealtimePostgresChangesFilter } from "@supabase/supabase-js";
+import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
+import { Database } from "@/databaseTypesFile";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -46,8 +48,28 @@ export type ColumnStyleOptions = Omit<
 
 export interface SortOptions<Data, Key extends keyof Data> {
     key: Key;
-    sortFunction?: (datapoint1: Data[Key], datapoint2: Data[Key]) => number;
+    sortMethod: (query: PostgrestFilterBuilder<Database["public"], any, any>, sortDirection: SortOrder) => PostgrestFilterBuilder<Database["public"], any, any>;
 }
+
+interface ActiveSortState<Data> {
+    sortActive: true,
+    column: CustomColumn<Data>,
+    sortDirection: SortOrder
+}
+
+interface InactiveSortState {
+    sortActive: false
+}
+
+type SortMethod = (query: PostgrestFilterBuilder<Database["public"], any, any>, sortDirection: SortOrder) => PostgrestFilterBuilder<Database["public"], any, any>
+
+
+export type SortState<Data> = ActiveSortState<Data> | InactiveSortState
+
+export interface CustomColumn<Data> extends TableColumn<Row<Data>> {
+    sortMethod?: (query: PostgrestFilterBuilder<Database["public"], any, any>, sortDirection: SortOrder) => PostgrestFilterBuilder<Database["public"], any, any>
+}
+
 
 interface Props<Data> {
     headerKeysAndLabels: TableHeaders<Data>;
@@ -58,7 +80,7 @@ interface Props<Data> {
     pagination?: boolean;
     defaultShownHeaders?: readonly (keyof Data)[];
     toggleableHeaders?: readonly (keyof Data)[];
-    sortable?: (keyof Data | SortOptions<Data, any>)[];
+    sortMethods?: SortOptions<Data, any>[];
     onEdit?: (data: number) => void;
     onDelete?: (data: number) => void;
     onSwapRows?: (row1: Data, row2: Data) => Promise<void>;
@@ -68,10 +90,11 @@ interface Props<Data> {
     autoFilter?: boolean;
     loading: boolean;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-    getData: (supabase: Supabase, start: number, end: number, filters: Filter<Data, any>[]) => Promise<Data[]>;
+    getData: (supabase: Supabase, start: number, end: number, filters: Filter<Data, any>[], sortState: SortState<Data>) => Promise<Data[]>;
     supabase: Supabase;
     getCount: (supabase: Supabase, filters: Filter<Data, any>[]) => Promise<number>;
     subscriptions: RealtimePostgresChangesFilter<"*">[];
+    //sortConfig: ()
 }
 
 interface CellProps<Data> {
@@ -126,7 +149,7 @@ const Table = <Data,>({
     onEdit,
     onSwapRows,
     pagination,
-    sortable = [],
+    sortMethods = [],
     toggleableHeaders = [],
     onRowClick,
     columnDisplayFunctions = {},
@@ -138,12 +161,12 @@ const Table = <Data,>({
     supabase,
     getCount,
     subscriptions,
-    
 }: Props<Data>): React.ReactElement => {
     const [data, setData] = useState<Data[]>([]);
     const [totalRows, setTotalRows] = useState(0);
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
+    const [sortState, setSortState] = useState<SortState<Data>>({sortActive: false});
 
     const getStartPoint = (currentPage: number, perPage: number): number => ((currentPage - 1) * perPage);
     const getEndPoint = (currentPage: number, perPage: number): number => ((currentPage) * perPage - 1);
@@ -152,17 +175,17 @@ const Table = <Data,>({
         setTotalRows(await getCount(supabase, allFilters));
     };
 
-    const fetchData = async (page: number, perPage: number) => {
+    const fetchData = async () => {
         setLoading(true);
-        const fetchedData = await getData(supabase, getStartPoint(page, perPage), getEndPoint(page, perPage), allFilters);
+        const fetchedData = await getData(supabase, getStartPoint(currentPage, perPage), getEndPoint(currentPage, perPage), allFilters, sortState);
         setData(fetchedData);
         setLoading(false);
     }
 
     useEffect(() => {
         fetchCount();
-        fetchData(currentPage, perPage);
-    }, []);
+        fetchData();
+    }, [currentPage, perPage, sortState]);
 
     useEffect(() => {
         // This requires that the DB subscribed tables have Realtime turned on
@@ -172,7 +195,7 @@ const Table = <Data,>({
         subscriptions.forEach((subscription) => subscriptionChannel = subscriptionChannel
             .on("postgres_changes", subscription, async () =>
                 {fetchCount();
-                fetchData(currentPage, perPage);}
+                fetchData();}
             ))
         subscriptionChannel.subscribe();
 
@@ -184,12 +207,10 @@ const Table = <Data,>({
 
 
     const handlePageChange = (newPage: number) => {
-        fetchData(newPage, perPage);
         setCurrentPage(newPage);
     }
 
     const handlePerRowsChange = async (newPerPage: number, page: number) => {
-        fetchData(page, newPerPage);
         setPerPage(newPerPage);
     }
 
@@ -239,33 +260,34 @@ const Table = <Data,>({
         }
     }, [selectedCheckboxes, selectAllCheckBox]);
 
-    const sortOptions = sortable.map((sortOption) => {
-        if (sortOption instanceof Object) {
-            return sortOption;
-        }
-        return {
-            key: sortOption,
-        };
-    });
+    // const sortMethods = sortable.map((sortOption) => {
+    //     if (sortOption instanceof Object) {
+    //         return sortOption;
+    //     }
+    //     return {
+    //         key: sortOption,
+    //     };
+    // });
 
-    const columns: TableColumn<Row<Data>>[] = shownHeaders.map(([headerKey, headerName]) => {
+    const columns: CustomColumn<Data>[] = shownHeaders.map(([headerKey, headerName]) => {
         const columnStyles = Object.assign(
             { ...defaultColumnStyleOptions },
             columnStyleOptions[headerKey] ?? {}
         );
 
-        const sortOption = sortOptions.find((sortOption) => sortOption.key === headerKey);
+        const sortMethod = sortMethods.find((sortMethod) => sortMethod.key === headerKey);
 
-        const sortFunction = sortOption?.sortFunction;
-        const sortable = sortOption !== undefined;
+        //const sortFunction = sortOption?.sortFunction;
+        const sortable = sortMethod !== undefined;
+
 
         return {
             name: <>{headerName}</>,
             selector: (row) => row.data[headerKey] as Primitive, // The type cast here is needed as the type of selector is (row) => Primitive, but as we are using a custom cell, we can have it be anything
             sortable,
-            sortFunction: sortFunction
-                ? (row1, row2) => sortFunction(row1.data[headerKey], row2.data[headerKey])
-                : undefined,
+            // sortFunction: sortFunction
+            //     ? (row1, row2) => sortFunction(row1.data[headerKey], row2.data[headerKey])
+            //     : undefined,
             cell(row) {
                 return (
                     <CustomCell
@@ -276,8 +298,14 @@ const Table = <Data,>({
                 );
             },
             ...columnStyles,
+            sortField: headerKey,
+            ... (sortMethod ?? {sortMethod: sortMethod})
         };
     });
+
+    const handleSort = async (column: TableColumn<Row<Data>>, sortDirection: SortOrder) => {
+        setSortState({sortActive: true, column: column, sortDirection: sortDirection});
+    }
 
     const [isSwapping, setIsSwapping] = useState(false);
 
@@ -384,7 +412,7 @@ const Table = <Data,>({
             //if (rows.length < perPage)
             setLoading(true);
             await fetchCount();
-            await fetchData(currentPage, perPage);
+            await fetchData();
             setLoading(false);})();
     }, filterStates)
 
@@ -441,6 +469,8 @@ const Table = <Data,>({
                         paginationDefaultPage={currentPage}
                         onChangePage={handlePageChange}
                         onChangeRowsPerPage={handlePerRowsChange}
+                        sortServer={true}
+                        onSort={handleSort}
                     />
                 </NoSsr>
             </TableStyling>

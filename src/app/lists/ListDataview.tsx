@@ -195,7 +195,7 @@ const ListsDataView: React.FC<Props> = (props) => {
                     onEdit={onEdit}
                     onDelete={onDeleteButtonClick}
                     onSwapRows={onSwapRows}
-                    sortable={[]}
+                    sortMethods={[]}
                     columnDisplayFunctions={listDataViewColumnDisplayFunctions}
                     columnStyleOptions={listsColumnStyleOptions}
                 />
