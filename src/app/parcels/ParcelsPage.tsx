@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense, useEffect, useState } from "react";
-import Table, { Row, TableHeaders } from "@/components/Tables/Table";
+import Table, { Row, SortOptions, TableHeaders } from "@/components/Tables/Table";
 import styled, { useTheme } from "styled-components";
 import {
     ParcelsTableRow,
@@ -35,12 +35,12 @@ import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { Filter } from "@/components/Tables/Filters";
 import { useRouter, useSearchParams } from "next/navigation";
+import { statusNamesInWorkflowOrder } from "./ActionBar/Statuses";
 import { RealtimePostgresChangesFilter } from "@supabase/supabase-js";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { textFilter } from "@/components/Tables/TextFilter";
 import { dateFilter } from "@/components/Tables/DateFilter";
-import { statuses } from "./ActionBar/Statuses";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -63,6 +63,30 @@ const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
     "packingDatetime",
     "packingTimeLabel",
     "lastStatus",
+];
+
+const sortStatusByWorkflowOrder = (
+    statusA: ParcelsTableRow["lastStatus"],
+    statusB: ParcelsTableRow["lastStatus"]
+): number => {
+    const indexA = statusNamesInWorkflowOrder.indexOf(statusA?.name ?? "");
+    const indexB = statusNamesInWorkflowOrder.indexOf(statusB?.name ?? "");
+    if (indexA === indexB) {
+        return 0;
+    }
+    return indexA < indexB ? 1 : -1;
+};
+
+const sortableColumns: (keyof ParcelsTableRow | SortOptions<ParcelsTableRow, "lastStatus">)[] = [
+    "fullName",
+    "familyCategory",
+    "addressPostcode",
+    "phoneNumber",
+    "voucherNumber",
+    "deliveryCollection",
+    "packingDatetime",
+    "packingTimeLabel",
+    { key: "lastStatus", sortFunction: sortStatusByWorkflowOrder },
 ];
 
 const toggleableHeaders: (keyof ParcelsTableRow)[] = [
@@ -242,7 +266,7 @@ const buildLastStatusFilter = (
     //     ).values()
     // ).sort();
 
-    const options = statuses; //cheat for now. TODO
+    const options: string[] = statusNamesInWorkflowOrder; //cheat for now. TODO
 
     return checklistFilter<ParcelsTableRow, any>({
         key: "lastStatus",
@@ -282,15 +306,15 @@ const ParcelsPage: React.FC<{}> = () => {
         dateFilter,
         textFilter({key: "fullName", label: "Name", headers: parcelTableHeaderKeysAndLabels, filterMethod: fullNameSearch}),
         textFilter({key: "addressPostcode", label: "Postcode", headers: parcelTableHeaderKeysAndLabels, filterMethod: postcodeSearch}),
-        buildDeliveryCollectionFilter(),
-        //buildPackingTimeFilter(),
+        buildDeliveryCollectionFilter(), //hardcoded options
+        //buildPackingTimeFilter(), //broken
     ]
     
     const additionalFilters: Filter<ParcelsTableRow, any>[] = [
-        textFilter({key: "familyCategory", label: "Family", headers: parcelTableHeaderKeysAndLabels, filterMethod: familySearch}),
+        textFilter({key: "familyCategory", label: "Family", headers: parcelTableHeaderKeysAndLabels, filterMethod: familySearch}), //broken
         textFilter({key: "phoneNumber", label: "Phone", headers: parcelTableHeaderKeysAndLabels, filterMethod: phoneSearch}),
         textFilter({key: "voucherNumber", label: "Voucher", headers: parcelTableHeaderKeysAndLabels, filterMethod: voucherSearch}),
-        buildLastStatusFilter()
+        buildLastStatusFilter() //hardcoded options
     ]
 
     useEffect(() => {
