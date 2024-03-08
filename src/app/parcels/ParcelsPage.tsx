@@ -422,8 +422,7 @@ const ParcelsPage: React.FC<{}> = () => {
             </PreTableControls>
             {isLoading ? (
                 <Centerer>
-                    {" "}
-                    <CircularProgress />{" "}
+                    <CircularProgress aria-label="table-progress-bar" />
                 </Centerer>
             ) : (
                 <>
