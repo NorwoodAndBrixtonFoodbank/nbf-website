@@ -309,22 +309,22 @@ export type Database = {
       }
       packing_slots: {
         Row: {
-          id: number
           is_hidden: boolean
           name: string
           order: number
+          primary_key: string
         }
         Insert: {
-          id?: number
           is_hidden: boolean
           name: string
           order: number
+          primary_key?: string
         }
         Update: {
-          id?: number
           is_hidden?: boolean
           name?: string
           order?: number
+          primary_key?: string
         }
         Relationships: []
       }

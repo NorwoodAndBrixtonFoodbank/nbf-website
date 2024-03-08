@@ -8,7 +8,6 @@ import { User } from "@supabase/gotrue-js";
 import { DatabaseError } from "@/app/errorClasses";
 import { Schema } from "@/databaseUtils";
 import { PackingSlotRow } from "@/app/admin/packingSlotsTable/PackingSlotsTable";
-import { DBPackingSlotData } from "@/app/admin/packingSlotsTable/PackingSlotActions";
 
 // disables caching
 export const revalidate = 0;
@@ -54,20 +53,19 @@ const getCollectionCentres = async (): Promise<Schema["collection_centres"][]> =
     return data;
 };
 
-const getPackingSlots = async (): Promise<Schema["packing_slots"][]> => {
+const getPackingSlots = async (): Promise<PackingSlotRow[]> => {
     const supabase = getSupabaseServerComponentClient();
     const { data, error } = await supabase.from("packing_slots").select().order("order");
     if (error) {
         throw new DatabaseError("fetch", "packing slots");
     }
-    const packingSlots: DBPackingSlotData[] = data;
 
-    const processedData = packingSlots.map((data: DBPackingSlotData): PackingSlotRow => {
+    const processedData = data.map((row): PackingSlotRow => {
         return {
-            name: data.name,
-            id: data.id,
-            is_hidden: data.is_hidden,
-            order: data.order,
+            name: row.name,
+            id: row.primary_key,
+            is_hidden: row.is_hidden,
+            order: row.order,
             isNew: false,
         };
     });

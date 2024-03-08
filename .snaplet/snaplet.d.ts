@@ -236,7 +236,7 @@ interface Table_storage_objects {
   owner_id: string | null;
 }
 interface Table_public_packing_slots {
-  id: number;
+  primary_key: string;
   name: string;
   is_hidden: boolean;
   order: number;

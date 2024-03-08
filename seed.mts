@@ -209,12 +209,12 @@ async function generateSeed(): Promise<void> {
         {
             name: "AM",
             isHidden: false,
-            order: 0,
+            order: 1,
         },
         {
             name: "PM",
             isHidden: false,
-            order: 1,
+            order: 2,
         }
     ])
 }

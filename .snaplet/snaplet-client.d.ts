@@ -322,7 +322,7 @@ type Override = {
   packing_slots?: {
     name?: string;
     fields?: {
-      id?: string;
+      primary_key?: string;
       name?: string;
       is_hidden?: string;
       order?: string;
@@ -632,7 +632,6 @@ export interface Fingerprint {
     bucket?: FingerprintRelationField;
   }
   packingSlots?: {
-    id?: FingerprintNumberField;
     order?: FingerprintNumberField;
   }
   parcels?: {

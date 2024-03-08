@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
     DataGrid,
     GridActionsCellItem,
@@ -19,9 +19,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
+import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
+import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import {
+    // addPriorityPackingSlotOrder,
     createPackingSlot,
     deletePackingSlot,
+    swapRows,
     updatePackingSlot,
 } from "@/app/admin/packingSlotsTable/PackingSlotActions";
 
@@ -36,7 +40,7 @@ interface EditToolbarProps {
 }
 
 export interface PackingSlotRow {
-    id: number;
+    id: string;
     name: string;
     is_hidden: boolean;
     order: number;
@@ -71,6 +75,9 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
     const [rows, setRows] = React.useState(props.packingSlotsData);
     const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
 
+    useEffect(() => {
+        console.log(rows);
+    }, [rows]);
     const handleSaveClick = (id: GridRowId) => () => {
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
     };
@@ -115,7 +122,46 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
         }
     };
 
+    const handleUpClick = (id: GridRowId) => () => {
+        const intId = typeof id === "number" ? id : parseInt(id);
+        const rowIndex = intId - 1;
+        if (rowIndex > 0) {
+            const newRowsArray = rows.toSpliced(rowIndex, 1);
+            newRowsArray.splice(rowIndex - 1, 0, rows[rowIndex]);
+            const row1 = rows[rowIndex];
+            const row2 = rows[rowIndex - 1];
+            swapRows(row1, row2);
+            setRows(newRowsArray);
+        }
+    };
+
     const packingSlotsTableHeaderKeysAndLabels: GridColDef[] = [
+        {
+            field: "order",
+            type: "actions",
+            headerName: "Order",
+            width: 100,
+            cellClassName: "actions",
+            getActions: ({ id }) => {
+                return [
+                    <GridActionsCellItem
+                        icon={<ArrowCircleUpIcon />}
+                        label="Up"
+                        className="textPrimary"
+                        onClick={handleUpClick(id)}
+                        color="inherit"
+                        key="Up"
+                    />,
+                    <GridActionsCellItem
+                        icon={<ArrowCircleDownIcon />}
+                        label="Down"
+                        onClick={() => {}}
+                        color="inherit"
+                        key="Down"
+                    />,
+                ];
+            },
+        },
         { field: "name", headerName: "Slot Name", flex: 1, editable: true },
         {
             field: "is_hidden",
@@ -125,17 +171,10 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
             editable: true,
         },
         {
-            field: "order",
-            type: "number",
-            headerName: "Order (Smallest number on top)",
-            flex: 1,
-            editable: true,
-        },
-        {
             field: "actions",
             type: "actions",
             headerName: "Actions",
-            width: 100,
+            flex: 1,
             cellClassName: "actions",
             getActions: ({ id }) => {
                 const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
@@ -149,6 +188,7 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
                                 color: "primary.main",
                             }}
                             onClick={handleSaveClick(id)}
+                            key="Save"
                         />,
                         <GridActionsCellItem
                             icon={<CancelIcon />}
@@ -156,6 +196,7 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
                             className="textPrimary"
                             onClick={handleCancelClick(id)}
                             color="inherit"
+                            key="Cancel"
                         />,
                     ];
                 }
@@ -167,12 +208,14 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
                         className="textPrimary"
                         onClick={handleEditClick(id)}
                         color="inherit"
+                        key="Edit"
                     />,
                     <GridActionsCellItem
                         icon={<DeleteIcon />}
                         label="Delete"
                         onClick={handleDeleteClick(id)}
                         color="inherit"
+                        key="Delete"
                     />,
                 ];
             },
