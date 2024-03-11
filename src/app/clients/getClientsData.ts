@@ -2,13 +2,8 @@ import { ClientsTableRow } from "@/app/clients/ClientsPage";
 import { familyCountToFamilyCategory } from "@/app/parcels/getExpandedParcelDetails";
 import { DatabaseError } from "@/app/errorClasses";
 import { Supabase } from "@/supabaseUtils";
-import { cl } from "@fullcalendar/core/internal-common";
 import { Filter } from "@/components/Tables/Filters";
-import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
-import { Database, Tables } from "@/databaseTypesFile";
-import { Schema, } from "@/databaseUtils";
-import { GenericSchema } from "@supabase/postgrest-js/dist/module/types";
-import { CustomColumn, ActiveSortState, SortState } from "@/components/Tables/Table";
+import { SortState } from "@/components/Tables/Table";
 
 const getClientsData = async (supabase: Supabase, start: number, end: number, filters: Filter<ClientsTableRow, any>[], sortState: SortState<ClientsTableRow>): Promise<ClientsTableRow[]> => {
     const data: ClientsTableRow[] = [];

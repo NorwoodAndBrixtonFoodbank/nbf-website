@@ -1,9 +1,8 @@
 import { Supabase } from "@/supabaseUtils";
 import { DatabaseError, EdgeFunctionError } from "../errorClasses";
-import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
 import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsTableData";
 import { Filter } from "@/components/Tables/Filters";
-import { CustomColumn, ActiveSortState, SortState } from "@/components/Tables/Table";
+import { SortState } from "@/components/Tables/Table";
 
 export type CongestionChargeDetails = {
     postcode: string;

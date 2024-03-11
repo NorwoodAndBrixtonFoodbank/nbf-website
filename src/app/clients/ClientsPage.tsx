@@ -4,7 +4,7 @@ import LinkButton from "@/components/Buttons/LinkButton";
 import Icon from "@/components/Icons/Icon";
 import Modal from "@/components/Modal/Modal";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
-import Table, { SortOptions, ActiveSortState, TableHeaders, SortState } from "@/components/Tables/Table";
+import Table, { SortOptions, TableHeaders, SortState } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
 import supabase from "@/supabaseClient";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -16,11 +16,9 @@ import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
 import { textFilter } from "@/components/Tables/TextFilter";
 import { Filter } from "@/components/Tables/Filters";
-import { fullName } from "@snaplet/copycat/dist/fullName";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { RealtimePostgresChangesFilter } from "@supabase/supabase-js";
-import { SortOrder } from "react-data-table-component";
 
 export interface ClientsTableRow {
     clientId: string;

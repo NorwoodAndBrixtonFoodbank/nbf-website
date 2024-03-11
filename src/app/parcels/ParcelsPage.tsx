@@ -1,15 +1,14 @@
 "use client";
 
 import React, { Suspense, useEffect, useState } from "react";
-import Table, { Row, SortOptions, ActiveSortState, TableHeaders, SortState } from "@/components/Tables/Table";
+import Table, { Row, SortOptions, TableHeaders, SortState } from "@/components/Tables/Table";
 import styled, { useTheme } from "styled-components";
 import {
     ParcelsTableRow,
-    processingDataToParcelsTableData,
 } from "@/app/parcels/getParcelsTableData";
 import { formatDatetimeAsDate } from "@/app/parcels/getExpandedParcelDetails";
 import { ControlContainer } from "@/components/Form/formStyling";
-import DateRangeInputs, { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
+import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
@@ -26,8 +25,6 @@ import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
 import {
-    getCongestionChargeDetailsForParcels,
-    getParcelProcessingData,
     getParcelsCount,
     getParcelsData,
 } from "./fetchParcelTableData";
@@ -41,7 +38,6 @@ import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { textFilter } from "@/components/Tables/TextFilter";
 import { dateFilter } from "@/components/Tables/DateFilter";
-import { SortOrder } from "react-data-table-component";
 
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
