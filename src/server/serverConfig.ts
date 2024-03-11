@@ -28,11 +28,11 @@ function getCloudWatchConfig(): CloudWatchConfig {
     }
 
     if (!accessKey) {
-        throw new Error("CloudWatch access key ID is not found in environment");
+        throw new Error("CloudWatch access key is not found in environment");
     }
 
     if (!secretAccessKey) {
-        throw new Error("CloudWatch access key ID is not found in environment");
+        throw new Error("CloudWatch secret access key is not found in environment");
     }
 
     return {

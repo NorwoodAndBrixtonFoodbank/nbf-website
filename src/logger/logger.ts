@@ -2,15 +2,11 @@
 
 import winston, { createLogger, format, Logger } from "winston";
 import WinstonCloudwatch from "winston-cloudwatch";
-
-import * as dotenv from "dotenv";
 import { serverConfig } from "@/server/serverConfig";
-
-dotenv.config({ path: "./.env.local" });
 
 const logger = getLogger();
 
-type LogEvent = (message: string, meta: Record<string, any>) => Promise<void>;
+type LogEvent = (message: string, meta?: Record<string, any>) => Promise<void>;
 
 export const logError: LogEvent = (message, meta) => {
     logger.error(message, meta);
