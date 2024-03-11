@@ -210,6 +210,9 @@ const Calendar: React.FC<CalendarProps> = ({
 }) => {
     const [eventClick, setEventClick] = useState<CalendarEvent | null>(null);
     const calendarRef = useRef<FullCalendar>(null);
+    const [calendarStartTime] = useState("10:00:00");
+    const [calendarEndTime] = useState("15:00:00");
+    const [locations, setLocations] = useState<string[]>([]);
 
     const handleEventClick = (info: EventClickArg): void => {
         const id = info.event.id;
@@ -220,8 +223,6 @@ const Calendar: React.FC<CalendarProps> = ({
         const calendarApi = calendarRef.current!.getApi();
         calendarApi.changeView("timeGridDay", info.dateStr);
     };
-
-    const [locations, setLocations] = useState<string[]>([]);
 
     return (
         <>
@@ -262,6 +263,8 @@ const Calendar: React.FC<CalendarProps> = ({
                         timeGridWeek: {
                             displayEventTime: false,
                             titleFormat: { year: "numeric", month: "short" },
+                            calendarStartTime,
+                            calendarEndTime,
                         },
                         timeGridDay: {
                             eventTimeFormat: {
@@ -270,6 +273,8 @@ const Calendar: React.FC<CalendarProps> = ({
                                 meridiem: "short",
                             },
                             titleFormat: { year: "numeric", month: "short", day: "numeric" },
+                            calendarStartTime,
+                            calendarEndTime,
                         },
                     }}
                     eventInteractive={true}
