@@ -12,17 +12,17 @@ const logger = getLogger();
 
 type LogEvent = (message: string, meta: Record<string, any>) => Promise<void>;
 
-export const logError: LogEvent = (message, meta): Promise<void> => {
+export const logError: LogEvent = (message, meta) => {
     logger.error(message, meta);
     return Promise.resolve();
 };
 
-export const logWarning: LogEvent = (message, meta): Promise<void> => {
+export const logWarning: LogEvent = (message, meta) => {
     logger.warn(message, meta);
     return Promise.resolve();
 };
 
-export const logInfo: LogEvent = (message, meta): Promise<void> => {
+export const logInfo: LogEvent = (message, meta) => {
     logger.info(message, meta);
     return Promise.resolve();
 };
