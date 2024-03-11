@@ -70,8 +70,6 @@ const ClientsPage: React.FC<{}> = () => {
     const startPoint = (currentPage - 1) * perPage;
     const endPoint = currentPage * perPage - 1;
 
-    const allFilterStates = primaryFilters.map((filter) => filter.state);
-
     useEffect(() => {
         (async () => {
             setIsLoading(true);
@@ -149,10 +147,10 @@ const ClientsPage: React.FC<{}> = () => {
                         }}
                         sortableColumns={sortableColumns}
                         pagination
-                        checkboxes={false}
                         primaryFilters={primaryFilters}
                         setPrimaryFilters={setPrimaryFilters}
                         onSort={setSortState}
+                        checkboxConfig={{ displayed: false }}
                     />
                 </TableSurface>
                 <Centerer>

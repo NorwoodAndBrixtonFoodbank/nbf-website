@@ -186,7 +186,6 @@ const ListsDataView: React.FC<Props> = (props) => {
             <TableSurface>
                 <CommentBox originalComment={props.comment} />
                 <Table<ListRow>
-                    checkboxes={false}
                     headerKeysAndLabels={headerKeysAndLabels}
                     toggleableHeaders={toggleableHeaders}
                     dataPortion={rows}
@@ -198,6 +197,7 @@ const ListsDataView: React.FC<Props> = (props) => {
                     sortableColumns={[]}
                     columnDisplayFunctions={listDataViewColumnDisplayFunctions}
                     columnStyleOptions={listsColumnStyleOptions}
+                    checkboxConfig={{ displayed: false }}
                 />
                 <ButtonMargin>
                     <Button variant="contained" onClick={() => setModal(null)}>

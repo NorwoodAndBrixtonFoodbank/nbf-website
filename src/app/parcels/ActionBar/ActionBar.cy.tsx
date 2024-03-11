@@ -1,4 +1,4 @@
-import ActionBar from "@/app/parcels/ActionBar/ActionBar";
+import ActionBar, { ActionBarProps } from "@/app/parcels/ActionBar/ActionBar";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import React from "react";
 import StyleManager from "@/app/themes";
@@ -60,24 +60,35 @@ describe("Parcels - Action Bar", () => {
         },
     ];
 
-    interface Props {
-        selected: number[];
-    }
-
-    const MockActionBar: React.FC<Props> = ({ selected }) => {
+    const MockActionBar: React.FC<ActionBarProps> = ({ selectedParcels, onDeleteParcels }) => {
         return (
             <Localization>
                 <StyleManager>
-                    <ActionBar data={mockData} selected={selected} />
+                    <ActionBar
+                        selectedParcels={selectedParcels}
+                        onDeleteParcels={onDeleteParcels}
+                        hasSavedParcelStatus={() => {}}
+                        willSaveParcelStatus={() => {}}
+                    />
                 </StyleManager>
             </Localization>
         );
     };
     describe("Statuses", () => {
-        const selectedIndices = [0, 1];
+        const selectedParcels = mockData.slice(0, 2);
+        const onDeleteParcels = (parcels: ParcelsTableRow[]): void => {
+            selectedParcels.filter((parcelToDelete) => !parcels.includes(parcelToDelete));
+        };
 
         beforeEach(() => {
-            cy.mount(<MockActionBar selected={selectedIndices} />);
+            cy.mount(
+                <MockActionBar
+                    selectedParcels={selectedParcels}
+                    onDeleteParcels={onDeleteParcels}
+                    hasSavedParcelStatus={() => {}}
+                    willSaveParcelStatus={() => {}}
+                />
+            );
         });
 
         it("should open the status menu when the status button is clicked", () => {
@@ -131,18 +142,29 @@ describe("Parcels - Action Bar", () => {
                 minute: "2-digit",
             });
             cy.get(`input[value="${timeString}"]`).should("exist");
-            selectedIndices.forEach((index) => {
-                cy.get(".MuiPaper-root").contains(mockData[index].addressPostcode);
-                cy.get(".MuiPaper-root").contains(mockData[index].fullName);
+            selectedParcels.forEach((parcel) => {
+                cy.get(".MuiPaper-root").contains(parcel.addressPostcode);
+                cy.get(".MuiPaper-root").contains(parcel.fullName);
             });
         });
     });
 
     describe("Actions", () => {
-        const row = mockData[0];
+        const selectedParcels = mockData.slice(0, 2);
+        const onDeleteParcels = (parcels: ParcelsTableRow[]): void => {
+            selectedParcels.filter((parcelToDelete) => !parcels.includes(parcelToDelete));
+        };
+        const row = selectedParcels[0];
 
         beforeEach(() => {
-            cy.mount(<MockActionBar selected={[0]} />);
+            cy.mount(
+                <MockActionBar
+                    selectedParcels={selectedParcels}
+                    onDeleteParcels={onDeleteParcels}
+                    hasSavedParcelStatus={() => {}}
+                    willSaveParcelStatus={() => {}}
+                />
+            );
         });
 
         it("should open the action menu when the action button is clicked", () => {

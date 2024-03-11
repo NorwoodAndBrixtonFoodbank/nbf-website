@@ -64,31 +64,32 @@ export const saveParcelStatus = async (
 };
 
 interface Props {
-    selected: number[];
-    data: ParcelsTableRow[];
+    selectedParcels: ParcelsTableRow[];
     statusAnchorElement: HTMLElement | null;
     setStatusAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     modalError: string | null;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
+    willSaveParcelStatus: () => void;
+    hasSavedParcelStatus: () => void;
 }
 
 const Statuses: React.FC<Props> = ({
-    selected,
-    data,
+    selectedParcels,
     statusAnchorElement,
     setStatusAnchorElement,
     modalError,
     setModalError,
+    willSaveParcelStatus,
+    hasSavedParcelStatus,
 }) => {
     const [selectedStatus, setSelectedStatus] = useState<statusType | null>(null);
     const [statusModal, setStatusModal] = useState(false);
 
-    const selectedData = Array.from(selected.map((index) => data[index]));
-
     const submitStatus = async (date: Dayjs): Promise<void> => {
+        willSaveParcelStatus();
         try {
-            saveParcelStatus(
-                selectedData.map((parcel: ParcelsTableRow) => {
+            await saveParcelStatus(
+                selectedParcels.map((parcel: ParcelsTableRow) => {
                     return parcel.parcelId;
                 }),
                 selectedStatus!,
@@ -97,15 +98,15 @@ const Statuses: React.FC<Props> = ({
             );
             setStatusModal(false);
             setModalError(null);
-            window.location.reload();
         } catch (error: any) {
             setModalError(error.message);
         }
+        hasSavedParcelStatus();
     };
 
     const onMenuItemClick = (status: statusType): (() => void) => {
         return () => {
-            if (selectedData.length !== 0) {
+            if (selectedParcels.length !== 0) {
                 setSelectedStatus(status);
                 setStatusModal(true);
                 setStatusAnchorElement(null);
@@ -124,7 +125,7 @@ const Statuses: React.FC<Props> = ({
                     setStatusModal(false);
                     setModalError(null);
                 }}
-                data={selectedData}
+                selectedParcels={selectedParcels}
                 header={selectedStatus ?? "Apply Status"}
                 headerId="status-modal-header"
                 onSubmit={submitStatus}

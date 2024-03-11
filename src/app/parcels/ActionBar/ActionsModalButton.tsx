@@ -9,7 +9,7 @@ import DriverOverview from "@/pdf/DriverOverview/DriverOverview";
 import { Dayjs } from "dayjs";
 
 interface ModalButtonProps {
-    data: ParcelsTableRow[];
+    parcels: ParcelsTableRow[];
 }
 
 interface ShippingLabelsButtonProps extends ModalButtonProps {
@@ -17,19 +17,23 @@ interface ShippingLabelsButtonProps extends ModalButtonProps {
 }
 
 export const ShippingLabelsModalButton: React.FC<ShippingLabelsButtonProps> = ({
-    data,
+    parcels,
     labelQuantity,
 }) => {
     return (
-        <ShippingLabels text="Download" parcelId={data[0].parcelId} labelQuantity={labelQuantity} />
+        <ShippingLabels
+            text="Download"
+            parcelId={parcels[0].parcelId}
+            labelQuantity={labelQuantity}
+        />
     );
 };
 
-export const ShoppingListModalButton: React.FC<ModalButtonProps> = ({ data }) => {
+export const ShoppingListModalButton: React.FC<ModalButtonProps> = ({ parcels }) => {
     return (
         <ShoppingList
             text="Download"
-            parcelIds={data.map((parcel: ParcelsTableRow) => {
+            parcelIds={parcels.map((parcel: ParcelsTableRow) => {
                 return parcel.parcelId;
             })}
         />
@@ -44,17 +48,17 @@ export const DayOverviewModalButton: React.FC<{ collectionCentre: string; date: 
 };
 
 interface DriverOverviewModalButtonProps {
-    data: ParcelsTableRow[];
+    parcels: ParcelsTableRow[];
     date: Dayjs;
     driverName: string;
 }
 
 export const DriverOverviewModalButton: React.FC<DriverOverviewModalButtonProps> = ({
-    data,
+    parcels,
     date,
     driverName,
 }) => {
-    const parcelIds = data.map((parcel) => {
+    const parcelIds = parcels.map((parcel) => {
         return parcel.parcelId;
     });
     return (

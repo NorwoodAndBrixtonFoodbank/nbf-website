@@ -11,7 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { NoSsr } from "@mui/material";
 import IconButton from "@mui/material/IconButton/IconButton";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import styled from "styled-components";
 import { Primitive, SortOrder } from "react-data-table-component/dist/DataTable/types";
@@ -69,6 +69,18 @@ export interface CustomColumn<Data> extends TableColumn<Row<Data>> {
     ) => PostgrestFilterBuilder<Database["public"], any, any>;
 }
 
+export type CheckboxConfig =
+    | {
+          displayed: true;
+          selectedRowIndices: number[];
+          isAllCheckboxChecked: boolean;
+          onCheckboxClicked: (rowIndex: number) => void;
+          onAllCheckboxClicked: (isAllCheckboxChecked: boolean) => void;
+      }
+    | {
+          displayed: false;
+      };
+
 interface Props<Data> {
     dataPortion: Data[];
     setDataPortion: (dataPortion: Data[]) => void;
@@ -77,12 +89,12 @@ interface Props<Data> {
     onPageChange: (newPage: number) => void;
     onPerPageChage: (perPage: number) => void;
     onSort?: (sortState: SortState<Data>) => void;
-    checkboxes?: boolean;
     onRowSelection?: (rowIds: number[]) => void;
     primaryFilters?: Filter<any>[];
     additionalFilters?: Filter<any>[];
     setPrimaryFilters?: (primaryFilters: Filter<any>[]) => void;
     setAdditionalFilters?: (primaryFilters: Filter<any>[]) => void;
+    checkboxConfig: CheckboxConfig;
     pagination?: boolean;
     defaultShownHeaders?: readonly (keyof Data)[];
     toggleableHeaders?: readonly (keyof Data)[];
@@ -141,8 +153,6 @@ const Table = <Data,>({
     setDataPortion,
     totalRows,
     headerKeysAndLabels,
-    checkboxes,
-    onRowSelection,
     defaultShownHeaders,
     primaryFilters = [],
     setPrimaryFilters = () => {},
@@ -160,46 +170,13 @@ const Table = <Data,>({
     onPageChange,
     onPerPageChage,
     onSort = () => {},
+    checkboxConfig,
 }: Props<Data>): React.ReactElement => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
     );
 
     const shownHeaders = headerKeysAndLabels.filter(([key]) => shownHeaderKeys.includes(key));
-
-    const [selectedCheckboxes, setSelectedCheckboxes] = useState(
-        new Array<boolean>(dataPortion.length).fill(false)
-    );
-
-    const updateCheckboxes = (newSelection: boolean[]): void => {
-        setSelectedCheckboxes(newSelection);
-        onRowSelection?.(
-            newSelection
-                .map((selected, index) => (selected ? index : -1))
-                .filter((index) => index !== -1)
-        );
-    };
-
-    const [selectAllCheckBox, setSelectAllCheckBox] = useState(false);
-
-    const toggleOwnCheckBox = (rowId: number): void => {
-        const selectCheckBoxesCopy = [...selectedCheckboxes];
-        selectCheckBoxesCopy[rowId] = !selectCheckBoxesCopy[rowId];
-        updateCheckboxes(selectCheckBoxesCopy);
-    };
-
-    const toggleAllCheckBox = (): void => {
-        const newSelection = new Array<boolean>(dataPortion.length).fill(!selectAllCheckBox);
-        updateCheckboxes(newSelection);
-        setSelectAllCheckBox(!selectAllCheckBox);
-    };
-
-    useEffect(() => {
-        const allChecked = selectedCheckboxes.every((item) => item);
-        if (allChecked !== selectAllCheckBox) {
-            setSelectAllCheckBox(allChecked);
-        }
-    }, [selectedCheckboxes, selectAllCheckBox]);
 
     const columns: CustomColumn<Data>[] = shownHeaders.map(([headerKey, headerName]) => {
         const columnStyles = Object.assign(
@@ -280,22 +257,24 @@ const Table = <Data,>({
         }
     };
 
-    if (checkboxes) {
+    if (checkboxConfig.displayed) {
         columns.unshift({
             name: (
                 <input
                     type="checkbox"
                     aria-label="Select all rows"
-                    checked={selectAllCheckBox}
-                    onClick={toggleAllCheckBox}
+                    checked={checkboxConfig.isAllCheckboxChecked}
+                    onClick={() =>
+                        checkboxConfig.onAllCheckboxClicked(checkboxConfig.isAllCheckboxChecked)
+                    }
                 />
             ),
             cell: (row: Row<Data>) => (
                 <input
                     type="checkbox"
                     aria-label={`Select row ${row.rowId}`}
-                    checked={selectedCheckboxes[row.rowId]}
-                    onClick={() => toggleOwnCheckBox(row.rowId)}
+                    checked={checkboxConfig.selectedRowIndices.includes(row.rowId)}
+                    onClick={() => checkboxConfig.onCheckboxClicked(row.rowId)}
                 />
             ),
             width: "47px",

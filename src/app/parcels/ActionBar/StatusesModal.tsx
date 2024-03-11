@@ -5,9 +5,10 @@ import Modal from "@/components/Modal/Modal";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
+import SelectedParcelsOverview from "./SelectedParcelsOverview";
 
 interface StatusesBarModalProps extends React.ComponentProps<typeof Modal> {
-    data: ParcelsTableRow[];
+    selectedParcels: ParcelsTableRow[];
     onSubmit: (date: Dayjs) => void;
     errorText: string | null;
 }
@@ -23,15 +24,6 @@ const ModalInner = styled.div`
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;
-`;
-
-const StatusText = styled.p`
-    margin-left: 1rem;
-    border-top: 1px solid ${(props) => props.theme.main.lighterForeground[2]};
-    padding: 1rem 0;
-    &:last-child {
-        border-bottom: 1px solid ${(props) => props.theme.main.lighterForeground[2]};
-    }
 `;
 
 const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
@@ -56,6 +48,8 @@ const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
                 .set("minute", newDate?.minute() ?? date.minute())
         );
 
+    const maxParcelsToShow = 5;
+
     return (
         <Modal {...props}>
             <ModalInner>
@@ -72,19 +66,10 @@ const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
                     Time:
                     <TimePicker value={date} onChange={onTimeChange} disableFuture />
                 </Row>
-                Applying To:
-                {props.data.map((parcel) => {
-                    return (
-                        <StatusText key={parcel.primaryKey}>
-                            {parcel.addressPostcode}
-                            {parcel.fullName && ` - ${parcel.fullName}`}
-                            {parcel.collectionDatetime &&
-                                `\n @ ${dayjs(parcel.collectionDatetime!).format(
-                                    "DD/MM/YYYY HH:mm"
-                                )}`}
-                        </StatusText>
-                    );
-                })}
+                <SelectedParcelsOverview
+                    parcels={props.selectedParcels}
+                    maxParcelsToShow={maxParcelsToShow}
+                />
                 {props.errorText && <small>{props.errorText}</small>}
                 <Button type="button" variant="contained" onClick={() => props.onSubmit(date)}>
                     Submit
