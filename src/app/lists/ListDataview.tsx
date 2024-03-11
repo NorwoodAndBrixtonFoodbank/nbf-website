@@ -83,7 +83,7 @@ const listsColumnStyleOptions: ColumnStyles<ListRow> = {
 
 const ListsDataView: React.FC<ListDataViewProps> = ({
     listOfIngridients,
-    setListOfIngridients: setData,
+    setListOfIngridients: setListOfIngridients,
     comment,
 }) => {
     const [modal, setModal] = useState<EditModalState>();
@@ -139,12 +139,12 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         row1Item.row_order = row2Order;
         row2Item.row_order = row1Order;
 
-        const newRowOrder = [...listOfIngridients];
+        const newListOfIngridients = [...listOfIngridients];
 
-        newRowOrder[row1Index] = row2Item;
-        newRowOrder[row2Index] = row1Item;
+        newListOfIngridients[row1Index] = row2Item;
+        newListOfIngridients[row2Index] = row1Item;
 
-        setData(newRowOrder);
+        setListOfIngridients(newListOfIngridients);
     };
     const onSwapRows = async (row1: ListRow, row2: ListRow): Promise<void> => {
         const { error } = await supabase.from("lists").upsert([
