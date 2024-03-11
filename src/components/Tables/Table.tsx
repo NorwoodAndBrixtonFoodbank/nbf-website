@@ -74,7 +74,7 @@ interface Props<Data> {
     headerKeysAndLabels: TableHeaders<Data>;
     onPageChange: (newPage: number) => void;
     onPerPageChage: (perPage: number) => void;
-    onSort: (sortState: SortState<Data>) => void;
+    onSort?: (sortState: SortState<Data>) => void;
     checkboxes?: boolean;
     onRowSelection?: (rowIds: number[]) => void;
     primaryFilters?: (Filter<Data, any>)[];
@@ -157,7 +157,7 @@ const Table = <Data,>({
     columnStyleOptions = {},
     onPageChange,
     onPerPageChage,
-    onSort
+    onSort = () => {}
 }: Props<Data>): React.ReactElement => {
 
     const [shownHeaderKeys, setShownHeaderKeys] = useState(

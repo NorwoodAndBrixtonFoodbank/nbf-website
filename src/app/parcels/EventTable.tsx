@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Table, { TableHeaders } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
 import { Supabase } from "@/supabaseUtils";
@@ -19,33 +19,50 @@ export const eventsTableHeaderKeysAndLabels: TableHeaders<EventTableRow> = [
 const defaultShownHeaders: (keyof EventTableRow)[] = ["eventInfo", "timestamp"];
 
 export interface EventTableProps {
-    getEventTableData: (supabase: Supabase, start: number, end: number) => Promise<EventTableRow[]>,
-    getEventTableCount: (supabase: Supabase) => Promise<number>
+    tableData: EventTableRow[];
 }
 
 const formatDatetimeAsDatetime = (datetime: Date): string => {
     return datetime.toLocaleString("en-GB");
 };
 
+const getEventsData = (tableData: EventTableRow[], start: number, end: number) => (tableData.slice(start,end))
+
 const EventTable: React.FC<EventTableProps> = (props) => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [eventsDataPortion, setEventsDataPortion] = useState<EventTableRow[]>([]);
 
     const eventsTableColumnDisplayFunctions = {
         timestamp: formatDatetimeAsDatetime
     };
 
+    const [perPage, setPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const getStartPoint = (): number => ((currentPage - 1) * perPage);
+    const getEndPoint = (): number => ((currentPage) * perPage - 1);
+
+    const fetchData = () => {
+        setEventsDataPortion(getEventsData(props.tableData, getStartPoint(), getEndPoint()));
+    }
+    useEffect(()=>{
+        fetchData();
+    },[perPage,currentPage])
+
+
     return (
         <>
             <TableSurface>
                 <Table
-                    dataPortion={props.tableData}
+                    dataPortion={eventsDataPortion}
+                    setDataPortion={setEventsDataPortion}
+                    totalRows={props.tableData.length}
+                    onPageChange={setCurrentPage}
+                    onPerPageChage={setPerPage}
                     headerKeysAndLabels={eventsTableHeaderKeysAndLabels}
                     columnDisplayFunctions={eventsTableColumnDisplayFunctions}
                     pagination
                     defaultShownHeaders={defaultShownHeaders}
-                    supabase={supabase}
-                    loading={isLoading}
-                    setLoading={setIsLoading}
                 />
             </TableSurface>
         </>

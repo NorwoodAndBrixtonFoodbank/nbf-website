@@ -68,7 +68,7 @@ export const getParcelProcessingData = async (supabase: Supabase, start: number,
             event_data,
             timestamp
         )
-    `,{ count: 'exact', head: true }
+    `
         )
         if (sortState.sort && sortState.column.sortMethod) {
             query = sortState.column.sortMethod(query, sortState.sortDirection);
@@ -87,11 +87,9 @@ export const getParcelProcessingData = async (supabase: Supabase, start: number,
         const { data, error} = await query
 
     if (error) {
-        console.log(error);
         throw new DatabaseError("fetch", "parcel table data");
         
     }
-    console.log(data);
     return data ?? [];
 };
 
@@ -156,3 +154,4 @@ const { count, error } = await query
   }
   return count;
 }
+

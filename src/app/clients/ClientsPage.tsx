@@ -57,30 +57,46 @@ const ClientsPage: React.FC<{}> = () => {
     const [sortState, setSortState] = useState<SortState<ClientsTableRow>>({sort: false});
     const [primaryFilters, setPrimaryFilters] = useState<Filter<ClientsTableRow, any>[]>(filters);
 
-    const getStartPoint = (currentPage: number, perPage: number): number => ((currentPage - 1) * perPage);
-    const getEndPoint = (currentPage: number, perPage: number): number => ((currentPage) * perPage - 1);
 
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
+    const startPoint = (currentPage - 1) * perPage;
+    const endPoint = (currentPage) * perPage - 1;
+
     const allFilterStates = primaryFilters.map((filter)=>filter.state)
 
-    const fetchCount = async () => {
-        setTotalRows(await getClientsCount(supabase, filters));
-    };
-
-    const fetchData = async () => {
-        const fetchedData = await getClientsData(supabase, getStartPoint(currentPage, perPage), getEndPoint(currentPage, perPage), filters, sortState);
-        console.log(fetchedData);
+    const loadCountAndData = async () => {
+        setIsLoading(true);
+        setTotalRows(await getClientsCount(supabase, primaryFilters));
+        const fetchedData = await getClientsData(supabase, startPoint, endPoint, primaryFilters, sortState);
         setClientsDataPortion(fetchedData);
+        setIsLoading(false);
     }
 
     useEffect(() => {
         (async () => {        
-            setIsLoading(true);
-            await fetchCount();
-            await fetchData();
-            setIsLoading(false);})();
+            loadCountAndData()})();
     }, [currentPage, perPage, sortState, ...allFilterStates]);
+
+    //remember to deal with what happens if filters change twice and requests come back out of order. deal with in useeffect that sets data inside Table
+    useEffect(() => {
+        // This requires that the DB parcels table has Realtime turned on
+        const subscriptionChannel = supabase
+            .channel("parcels-table-changes")
+            .on("postgres_changes", { event: "*", schema: "public", table: "clients" }, async () => loadCountAndData()
+            )
+            .on("postgres_changes", { event: "*", schema: "public", table: "collection_centres" }, async () =>
+                loadCountAndData()
+            )
+            .on("postgres_changes", { event: "*", schema: "public", table: "families" }, async () =>
+                loadCountAndData()
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(subscriptionChannel);
+        };
+    }, []);
     const theme = useTheme();
     const router = useRouter();
 

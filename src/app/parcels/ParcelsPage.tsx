@@ -318,30 +318,26 @@ const ParcelsPage: React.FC<{}> = () => {
         }
     }, [parcelId]);
 
-    const getStartPoint = (currentPage: number, perPage: number): number => ((currentPage - 1) * perPage);
-    const getEndPoint = (currentPage: number, perPage: number): number => ((currentPage) * perPage - 1);
 
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
+    const startPoint = (currentPage - 1) * perPage;
+    const endPoint = (currentPage) * perPage - 1;
+
     const allFilters = [...primaryFilters, ...additionalFilters];
     const allFilterStates = allFilters.map((filter)=>filter.state)
 
-    const fetchCount = async () => {
+    const loadCountAndData = async () => {
+        setIsLoading(true);
         setTotalRows(await getParcelsCount(supabase, allFilters));
-    };
-
-    const fetchData = async () => {
-        const fetchedData = await getParcelsData(supabase, getStartPoint(currentPage, perPage), getEndPoint(currentPage, perPage), allFilters, sortState);
-        console.log(fetchedData);
+        const fetchedData = await getParcelsData(supabase, startPoint, endPoint, allFilters, sortState);
         setParcelsDataPortion(fetchedData);
+        setIsLoading(false);
     }
 
     useEffect(() => {
         (async () => {        
-            setIsLoading(true);
-            await fetchCount();
-            await fetchData();
-            setIsLoading(false);})();
+            loadCountAndData()})();
     }, [currentPage, perPage, sortState, ...allFilterStates]);
 
     //remember to deal with what happens if filters change twice and requests come back out of order. deal with in useeffect that sets data inside Table
@@ -349,9 +345,10 @@ const ParcelsPage: React.FC<{}> = () => {
         // This requires that the DB parcels table has Realtime turned on
         const subscriptionChannel = supabase
             .channel("parcels-table-changes")
-            .on("postgres_changes", { event: "*", schema: "public", table: "parcels" }, async () =>
-                {       fetchCount();
-                    fetchData();}
+            .on("postgres_changes", { event: "*", schema: "public", table: "parcels" }, async () => loadCountAndData()
+            )
+            .on("postgres_changes", { event: "*", schema: "public", table: "events" }, async () =>
+                loadCountAndData()
             )
             .subscribe();
 
