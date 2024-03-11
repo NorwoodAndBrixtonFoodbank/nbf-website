@@ -215,8 +215,8 @@ async function generateSeed(): Promise<void> {
             name: "PM",
             isShown: true,
             order: 2,
-        }
-    ])
+        },
+    ]);
 }
 
 function getPseudoRandomDateBetween(start: Date, end: Date, seed: string): Date {
