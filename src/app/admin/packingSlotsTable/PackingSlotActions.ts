@@ -1,6 +1,8 @@
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { GridRowId } from "@mui/x-data-grid";
+import { Supabase } from "@/supabaseUtils";
+import { PackingSlotRow } from "@/app/admin/packingSlotsTable/PackingSlotsTable";
 
 export interface DBPackingSlotData {
     primary_key?: string;
@@ -18,6 +20,25 @@ export interface DataGridPackingSlotRow {
 interface packingSlotTableRowData extends DataGridPackingSlotRow {
     isNew: boolean;
 }
+
+export const fetchPackingSlots = async (): Promise<PackingSlotRow[]> => {
+    const { data, error } = await supabase.from("packing_slots").select().order("order");
+    if (error) {
+        throw new DatabaseError("fetch", "packing slots");
+    }
+
+    const processedData = data.map((row): PackingSlotRow => {
+        return {
+            name: row.name,
+            id: row.primary_key,
+            is_hidden: row.is_hidden,
+            order: row.order,
+            isNew: false,
+        };
+    });
+
+    return processedData;
+};
 
 const processRowData = (tableData: packingSlotTableRowData): DBPackingSlotData => {
     const data = { ...tableData };

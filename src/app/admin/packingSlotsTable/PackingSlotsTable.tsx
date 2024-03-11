@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import supabase from "@/supabaseClient";
 import {
     DataGrid,
     GridActionsCellItem,
@@ -25,6 +26,7 @@ import {
     // addPriorityPackingSlotOrder,
     createPackingSlot,
     deletePackingSlot,
+    fetchPackingSlots,
     swapRows,
     updatePackingSlot,
 } from "@/app/admin/packingSlotsTable/PackingSlotActions";
@@ -72,14 +74,32 @@ function EditToolbar(props: EditToolbarProps): React.JSX.Element {
 }
 
 const PackingSlotsTable: React.FC<Props> = (props) => {
-    const [rows, setRows] = React.useState(props.packingSlotsData);
-    const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
+    const [rows, setRows] = useState(props.packingSlotsData);
+    const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
     useEffect(() => {
         console.log(rows);
     }, [rows]);
+
+    useEffect(() => {
+        // This requires that the DB table has Realtime turned on
+        const subscriptionChannel = supabase
+            .channel("packing-slot-table-changes")
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "packing_slots" },
+                async () => setRows(await fetchPackingSlots())
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(subscriptionChannel);
+        };
+    }, []);
+
     const handleSaveClick = (id: GridRowId) => () => {
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+        setRows(rows);
     };
 
     const processRowUpdate = (newRow: PackingSlotRow): PackingSlotRow => {
@@ -221,7 +241,7 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
         },
     ];
 
-    const nextId = props.packingSlotsData.length + 1;
+    const nextId = rows.length + 1;
 
     return (
         <>
