@@ -221,11 +221,14 @@ const ParcelsPage: React.FC<{}> = () => {
             .channel("parcels-table-changes")
             .on(
                 "postgres_changes",
-                { event: "*", schema: "public", table: "parcels" }, loadParcelTableData
-                
+                { event: "*", schema: "public", table: "parcels" },
+                loadParcelTableData
             )
-            .on("postgres_changes", { event: "*", schema: "public", table: "events" }, 
-                 loadParcelTableData)
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "events" },
+                loadParcelTableData
+            )
             .subscribe();
 
         return () => {

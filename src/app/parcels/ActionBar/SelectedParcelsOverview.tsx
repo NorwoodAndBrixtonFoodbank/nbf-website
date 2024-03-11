@@ -28,14 +28,13 @@ const SelectedParcelsOverview: React.FC<ShowParcelsProps> = (props) => {
         <>
             <Heading>{props.parcels.length === 1 ? "Parcel" : "Parcels"} selected:</Heading>
             {props.parcels.slice(0, props.maxParcelsToShow).map((parcel) => (
-                    <ListItem key={parcel.parcelId}>
-                        {parcel.addressPostcode}
-                        {parcel.fullName && ` - ${parcel.fullName}`}
-                        {parcel.collectionDatetime &&
-                            ` @ ${dayjs(parcel.collectionDatetime!).format("DD/MM/YYYY HH:mm")}`}
-                    </ListItem>
-                )
-            )}
+                <ListItem key={parcel.parcelId}>
+                    {parcel.addressPostcode}
+                    {parcel.fullName && ` - ${parcel.fullName}`}
+                    {parcel.collectionDatetime &&
+                        ` @ ${dayjs(parcel.collectionDatetime!).format("DD/MM/YYYY HH:mm")}`}
+                </ListItem>
+            ))}
             {props.parcels.length > props.maxParcelsToShow && <ListItem emphasised>...</ListItem>}
         </>
     );
