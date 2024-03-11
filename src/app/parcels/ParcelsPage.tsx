@@ -172,7 +172,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const [selectedRowIndices, setSelectedRowIndices] = useState<number[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
-    const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const fetchParcelsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const theme = useTheme();
@@ -205,13 +205,13 @@ const ParcelsPage: React.FC<{}> = () => {
     useEffect(() => {
         // This requires that both the DB parcels and events tables have Realtime turned on
         const loadParcelTableData = async (): Promise<void> => {
-            if (timer.current) {
-                clearTimeout(timer.current);
-                timer.current = null;
+            if (fetchParcelsTimer.current) {
+                clearTimeout(fetchParcelsTimer.current);
+                fetchParcelsTimer.current = null;
             }
 
             setIsLoading(true);
-            timer.current = setTimeout(async () => {
+            fetchParcelsTimer.current = setTimeout(async () => {
                 setTableData(await fetchAndFormatParcelTablesData(packingDateRange));
                 setIsLoading(false);
             }, 500);
@@ -221,20 +221,17 @@ const ParcelsPage: React.FC<{}> = () => {
             .channel("parcels-table-changes")
             .on(
                 "postgres_changes",
-                { event: "*", schema: "public", table: "parcels" },
-                async () => {
-                    await loadParcelTableData();
-                }
+                { event: "*", schema: "public", table: "parcels" }, loadParcelTableData
+                
             )
-            .on("postgres_changes", { event: "*", schema: "public", table: "events" }, async () => {
-                await loadParcelTableData();
-            })
+            .on("postgres_changes", { event: "*", schema: "public", table: "events" }, 
+                 loadParcelTableData)
             .subscribe();
 
         return () => {
             supabase.removeChannel(subscriptionChannel);
         };
-    }, [packingDateRange, isLoading]);
+    }, [packingDateRange]);
 
     useEffect(() => {
         setSelectedRowIndices([]);
@@ -402,7 +399,7 @@ const ParcelsPage: React.FC<{}> = () => {
         );
         setSelectedRowIndices([]);
         setIsLoading(false);
-    }; //assume successful for now?
+    };
 
     return (
         <>

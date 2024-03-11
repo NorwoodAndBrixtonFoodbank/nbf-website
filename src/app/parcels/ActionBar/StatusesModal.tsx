@@ -5,7 +5,7 @@ import Modal from "@/components/Modal/Modal";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import SelectedParcelsOverview from "./ShowParcels";
+import SelectedParcelsOverview from "./SelectedParcelsOverview";
 
 interface StatusesBarModalProps extends React.ComponentProps<typeof Modal> {
     selectedParcels: ParcelsTableRow[];

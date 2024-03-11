@@ -12,7 +12,7 @@ import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { statusType } from "./Statuses";
-import SelectedParcelsOverview from "./ShowParcels";
+import SelectedParcelsOverview from "./SelectedParcelsOverview";
 
 export type ActionType = "pdfDownload" | "deleteParcel";
 
