@@ -7,6 +7,7 @@ import MenuItem from "@mui/material/MenuItem/MenuItem";
 import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import ActionsModal, {
+    ActionType,
     DayOverviewInput,
     DriverOverviewInput,
     ShippingLabelsInput,
@@ -32,17 +33,19 @@ const doesNotEqualZero = (value: number): boolean => {
     return value !== 0;
 };
 
-type PdfType =
+type ActionName =
     | "Download Shipping Labels"
     | "Download Shopping Lists"
     | "Download Driver Overview"
-    | "Download Day Overview";
+    | "Download Day Overview"
+    | "Delete Parcel Request";
 
 type AvailableActionsType = {
-    [pdfKey in PdfType]: {
+    [actionKey in ActionName]: {
         showSelectedParcelsInModal: boolean;
         errorCondition: (value: number) => boolean;
         errorMessage: string;
+        actionType: ActionType;
     };
 };
 
@@ -51,27 +54,37 @@ const availableActions: AvailableActionsType = {
         showSelectedParcelsInModal: true,
         errorCondition: doesNotEqualOne,
         errorMessage: "Please select exactly one parcel.",
+        actionType: "pdfDownload",
     },
     "Download Shopping Lists": {
         showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
+        actionType: "pdfDownload",
     },
     "Download Driver Overview": {
         showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
+        actionType: "pdfDownload",
     },
     "Download Day Overview": {
         showSelectedParcelsInModal: false,
         errorCondition: doesNotEqualZero,
         errorMessage:
             "The day overview will show the parcels for a particular date and location. It will show not the currently selected parcel. Please unselect the parcels.",
+        actionType: "pdfDownload",
+    },
+    "Delete Parcel Request": {
+        showSelectedParcelsInModal: true,
+        errorCondition: isNotAtLeastOne,
+        errorMessage: "Please select at least one parcel.",
+        actionType: "deleteParcel",
     },
 };
 
 interface ActionsInputComponentProps {
-    pdfType: PdfType;
+    actionName: ActionName;
     selectedParcels: ParcelsTableRow[];
     onDateChange: (newDate: Dayjs | null) => void;
     onLabelQuantityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -81,7 +94,7 @@ interface ActionsInputComponentProps {
 }
 
 const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
-    pdfType,
+    actionName,
     selectedParcels,
     onDateChange,
     onLabelQuantityChange,
@@ -89,7 +102,7 @@ const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
     onCollectionCentreChange,
     setCollectionCentre,
 }) => {
-    switch (pdfType) {
+    switch (actionName) {
         case "Download Shipping Labels":
             return <ShippingLabelsInput onLabelQuantityChange={onLabelQuantityChange} />;
         case "Download Shopping Lists":
@@ -115,8 +128,8 @@ const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
 };
 
 interface ActionsButtonProps {
-    pdfType: PdfType;
-    data: ParcelsTableRow[];
+    pdfType: ActionName;
+    selectedParcels: ParcelsTableRow[];
     date: Dayjs;
     labelQuantity: number;
     driverName: string;
@@ -125,7 +138,7 @@ interface ActionsButtonProps {
 
 const ActionsButton: React.FC<ActionsButtonProps> = ({
     pdfType,
-    data,
+    selectedParcels,
     date,
     labelQuantity,
     driverName,
@@ -133,11 +146,22 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
 }) => {
     switch (pdfType) {
         case "Download Shipping Labels":
-            return <ShippingLabelsModalButton data={data} labelQuantity={labelQuantity} />;
+            return (
+                <ShippingLabelsModalButton
+                    parcels={selectedParcels}
+                    labelQuantity={labelQuantity}
+                />
+            );
         case "Download Shopping Lists":
-            return <ShoppingListModalButton data={data} />;
+            return <ShoppingListModalButton parcels={selectedParcels} />;
         case "Download Driver Overview":
-            return <DriverOverviewModalButton data={data} date={date} driverName={driverName} />;
+            return (
+                <DriverOverviewModalButton
+                    parcels={selectedParcels}
+                    date={date}
+                    driverName={driverName}
+                />
+            );
         case "Download Day Overview":
             return (
                 <DayOverviewModalButton collectionCentre={collectionCentre} date={date.toDate()} />
@@ -148,8 +172,8 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
 };
 
 interface Props {
-    selected: number[];
-    data: ParcelsTableRow[];
+    selectedParcels: ParcelsTableRow[];
+    onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
     actionAnchorElement: HTMLElement | null;
     setActionAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     modalError: string | null;
@@ -157,20 +181,18 @@ interface Props {
 }
 
 const Actions: React.FC<Props> = ({
-    selected,
-    data,
+    selectedParcels,
+    onDeleteParcels,
     actionAnchorElement,
     setActionAnchorElement,
     modalError,
     setModalError,
 }) => {
-    const [selectedAction, setSelectedAction] = useState<PdfType | null>(null);
+    const [selectedAction, setSelectedAction] = useState<ActionName | null>(null);
     const [labelQuantity, setLabelQuantity] = useState<number>(0);
     const [date, setDate] = useState(dayjs());
     const [driverName, setDriverName] = useState("");
     const [collectionCentre, setCollectionCentre] = useState("");
-
-    const selectedData = Array.from(selected.map((index) => data[index]));
 
     const onLabelQuantityChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setLabelQuantity(parseInt(event.target.value, 10) ?? 0);
@@ -196,12 +218,12 @@ const Actions: React.FC<Props> = ({
     };
 
     const onMenuItemClick = (
-        key: PdfType,
+        key: ActionName,
         errorCondition: (value: number) => boolean,
         errorMessage: string
     ): (() => void) => {
         return () => {
-            if (errorCondition(selectedData.length)) {
+            if (errorCondition(selectedParcels.length)) {
                 setActionAnchorElement(null);
                 setModalError(errorMessage);
             } else {
@@ -222,14 +244,16 @@ const Actions: React.FC<Props> = ({
                             showSelectedParcels={value.showSelectedParcelsInModal}
                             isOpen
                             onClose={onModalClose}
-                            data={selectedData}
+                            selectedParcels={selectedParcels}
                             header={key}
                             headerId="action-modal-header"
                             errorText={modalError}
+                            actionType={value.actionType}
+                            onDeleteParcels={onDeleteParcels}
                             inputComponent={
                                 <ActionsInputComponent
-                                    pdfType={key}
-                                    selectedParcels={selectedData}
+                                    actionName={key}
+                                    selectedParcels={selectedParcels}
                                     onDateChange={onDateChange}
                                     onLabelQuantityChange={onLabelQuantityChange}
                                     onDriverNameChange={onDriverNameChange}
@@ -240,7 +264,7 @@ const Actions: React.FC<Props> = ({
                         >
                             <ActionsButton
                                 pdfType={selectedAction}
-                                data={selectedData}
+                                selectedParcels={selectedParcels}
                                 date={date}
                                 labelQuantity={labelQuantity}
                                 driverName={driverName}
@@ -262,7 +286,7 @@ const Actions: React.FC<Props> = ({
                                 <MenuItem
                                     key={key}
                                     onClick={onMenuItemClick(
-                                        key as PdfType,
+                                        key as ActionName,
                                         value.errorCondition,
                                         value.errorMessage
                                     )}

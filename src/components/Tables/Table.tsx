@@ -11,7 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { NoSsr } from "@mui/material";
 import IconButton from "@mui/material/IconButton/IconButton";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import styled from "styled-components";
 import { textFilter } from "./TextFilter";
@@ -47,11 +47,22 @@ export interface SortOptions<Data, Key extends keyof Data> {
     sortFunction?: (datapoint1: Data[Key], datapoint2: Data[Key]) => number;
 }
 
+export type CheckboxConfig =
+    | {
+          displayed: true;
+          selectedRowIndices: number[];
+          isAllCheckboxChecked: boolean;
+          onCheckboxClicked: (rowIndex: number) => void;
+          onAllCheckboxClicked: (isAllCheckboxChecked: boolean) => void;
+      }
+    | {
+          displayed: false;
+      };
+
 interface Props<Data> {
     data: Data[];
     headerKeysAndLabels: TableHeaders<Data>;
-    checkboxes?: boolean;
-    onRowSelection?: (rowIds: number[]) => void;
+    checkboxConfig: CheckboxConfig;
     filters?: (Filter<Data, any> | keyof Data)[];
     additionalFilters?: (Filter<Data, any> | keyof Data)[];
     pagination?: boolean;
@@ -111,8 +122,6 @@ const defaultColumnStyleOptions = {
 const Table = <Data,>({
     data: inputData,
     headerKeysAndLabels,
-    checkboxes,
-    onRowSelection,
     defaultShownHeaders,
     filters: filterKeysOrObjects = [],
     additionalFilters: additionalFilterKeysOrObjects = [],
@@ -126,6 +135,7 @@ const Table = <Data,>({
     columnDisplayFunctions = {},
     columnStyleOptions = {},
     autoFilter = true,
+    checkboxConfig,
 }: Props<Data>): React.ReactElement => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
@@ -152,40 +162,6 @@ const Table = <Data,>({
     const allFilters = [...primaryFilters, ...additionalFilters];
 
     const [data, setData] = useState(inputData);
-
-    const [selectedCheckboxes, setSelectedCheckboxes] = useState(
-        new Array<boolean>(data.length).fill(false)
-    );
-
-    const updateCheckboxes = (newSelection: boolean[]): void => {
-        setSelectedCheckboxes(newSelection);
-        onRowSelection?.(
-            newSelection
-                .map((selected, index) => (selected ? index : -1))
-                .filter((index) => index !== -1)
-        );
-    };
-
-    const [selectAllCheckBox, setSelectAllCheckBox] = useState(false);
-
-    const toggleOwnCheckBox = (rowId: number): void => {
-        const selectCheckBoxesCopy = [...selectedCheckboxes];
-        selectCheckBoxesCopy[rowId] = !selectCheckBoxesCopy[rowId];
-        updateCheckboxes(selectCheckBoxesCopy);
-    };
-
-    const toggleAllCheckBox = (): void => {
-        const newSelection = new Array<boolean>(data.length).fill(!selectAllCheckBox);
-        updateCheckboxes(newSelection);
-        setSelectAllCheckBox(!selectAllCheckBox);
-    };
-
-    useEffect(() => {
-        const allChecked = selectedCheckboxes.every((item) => item);
-        if (allChecked !== selectAllCheckBox) {
-            setSelectAllCheckBox(allChecked);
-        }
-    }, [selectedCheckboxes, selectAllCheckBox]);
 
     const sortOptions = sortable.map((sortOption) => {
         if (sortOption instanceof Object) {
@@ -260,22 +236,24 @@ const Table = <Data,>({
         }
     };
 
-    if (checkboxes) {
+    if (checkboxConfig.displayed) {
         columns.unshift({
             name: (
                 <input
                     type="checkbox"
                     aria-label="Select all rows"
-                    checked={selectAllCheckBox}
-                    onClick={toggleAllCheckBox}
+                    checked={checkboxConfig.isAllCheckboxChecked}
+                    onClick={() =>
+                        checkboxConfig.onAllCheckboxClicked(checkboxConfig.isAllCheckboxChecked)
+                    }
                 />
             ),
             cell: (row: Row<Data>) => (
                 <input
                     type="checkbox"
                     aria-label={`Select row ${row.rowId}`}
-                    checked={selectedCheckboxes[row.rowId]}
-                    onClick={() => toggleOwnCheckBox(row.rowId)}
+                    checked={checkboxConfig.selectedRowIndices.includes(row.rowId)}
+                    onClick={() => checkboxConfig.onCheckboxClicked(row.rowId)}
                 />
             ),
             width: "47px",

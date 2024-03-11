@@ -10,9 +10,11 @@ import Actions from "@/app/parcels/ActionBar/Actions";
 import { ControlContainer } from "@/components/Form/formStyling";
 import { ArrowDropDown } from "@mui/icons-material";
 
-interface Props {
-    selected: number[];
-    data: ParcelsTableRow[];
+export interface ActionBarProps {
+    selectedParcels: ParcelsTableRow[];
+    onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
+    willSaveParcelStatus: () => void;
+    hasSavedParcelStatus: () => void;
 }
 
 const ActionsContainer = styled(ControlContainer)`
@@ -25,7 +27,7 @@ const AlertBox = styled.div`
     border-radius: 0.5rem;
 `;
 
-const ActionBar: React.FC<Props> = (props) => {
+const ActionBar: React.FC<ActionBarProps> = (props) => {
     const [statusAnchorElement, setStatusAnchorElement] = useState<HTMLElement | null>(null);
     const [actionAnchorElement, setActionAnchorElement] = useState<HTMLElement | null>(null);
 
@@ -35,14 +37,17 @@ const ActionBar: React.FC<Props> = (props) => {
         <>
             <ActionsContainer>
                 <Statuses
-                    {...props}
+                    selectedParcels={props.selectedParcels}
                     statusAnchorElement={statusAnchorElement}
                     setStatusAnchorElement={setStatusAnchorElement}
                     modalError={modalError}
                     setModalError={setModalError}
+                    willSaveParcelStatus={props.willSaveParcelStatus}
+                    hasSavedParcelStatus={props.hasSavedParcelStatus}
                 />
                 <Actions
-                    {...props}
+                    selectedParcels={props.selectedParcels}
+                    onDeleteParcels={props.onDeleteParcels}
                     actionAnchorElement={actionAnchorElement}
                     setActionAnchorElement={setActionAnchorElement}
                     modalError={modalError}

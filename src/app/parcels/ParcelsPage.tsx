@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import Table, { Row, SortOptions, TableHeaders } from "@/components/Tables/Table";
 import styled, { useTheme } from "styled-components";
 import {
@@ -32,8 +32,9 @@ import {
 import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { Filter } from "@/components/Tables/Filters";
+import { saveParcelStatus, statusNamesInWorkflowOrder } from "./ActionBar/Statuses";
+import { CircularProgress } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
-import { statusNamesInWorkflowOrder } from "./ActionBar/Statuses";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -168,7 +169,11 @@ const ParcelsPage: React.FC<{}> = () => {
     });
     const [tableData, setTableData] = useState<ParcelsTableRow[]>([]);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
-    const [selected, setSelected] = useState<number[]>([]);
+
+    const [selectedRowIndices, setSelectedRowIndices] = useState<number[]>([]);
+    const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
+    const fetchParcelsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const theme = useTheme();
     const router = useRouter();
@@ -198,11 +203,31 @@ const ParcelsPage: React.FC<{}> = () => {
     }, [packingDateRange]);
 
     useEffect(() => {
-        // This requires that the DB parcels table has Realtime turned on
+        // This requires that both the DB parcels and events tables have Realtime turned on
+        const loadParcelTableData = async (): Promise<void> => {
+            if (fetchParcelsTimer.current) {
+                clearTimeout(fetchParcelsTimer.current);
+                fetchParcelsTimer.current = null;
+            }
+
+            setIsLoading(true);
+            fetchParcelsTimer.current = setTimeout(async () => {
+                setTableData(await fetchAndFormatParcelTablesData(packingDateRange));
+                setIsLoading(false);
+            }, 500);
+        };
+
         const subscriptionChannel = supabase
             .channel("parcels-table-changes")
-            .on("postgres_changes", { event: "*", schema: "public", table: "parcels" }, async () =>
-                setTableData(await fetchAndFormatParcelTablesData(packingDateRange))
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "parcels" },
+                loadParcelTableData
+            )
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "events" },
+                loadParcelTableData
             )
             .subscribe();
 
@@ -210,6 +235,36 @@ const ParcelsPage: React.FC<{}> = () => {
             supabase.removeChannel(subscriptionChannel);
         };
     }, [packingDateRange]);
+
+    useEffect(() => {
+        setSelectedRowIndices([]);
+    }, [tableData]);
+
+    const selectOrDeselectRow = (rowIndex: number): void => {
+        setSelectedRowIndices((currentIndices) => {
+            if (currentIndices.includes(rowIndex)) {
+                return currentIndices.filter((index) => index !== rowIndex);
+            }
+            return currentIndices.concat([rowIndex]);
+        });
+    };
+
+    const toggleAllCheckBox = (): void => {
+        if (isAllCheckBoxSelected) {
+            setSelectedRowIndices([]);
+            setAllCheckBoxSelected(false);
+        } else {
+            setSelectedRowIndices(tableData.map((data, index) => index));
+            setAllCheckBoxSelected(true);
+        }
+    };
+
+    useEffect(() => {
+        const allChecked = selectedRowIndices.length === tableData.length;
+        if (allChecked !== isAllCheckBoxSelected) {
+            setAllCheckBoxSelected(allChecked);
+        }
+    }, [tableData.length, selectedRowIndices, isAllCheckBoxSelected]);
 
     const rowToIconsColumn = ({
         flaggedForAttention,
@@ -334,9 +389,19 @@ const ParcelsPage: React.FC<{}> = () => {
             key: "lastStatus",
             filterLabel: "Last Status",
             itemLabelsAndKeys: options.map((value) => [value, value]),
-            initialCheckedKeys: options,
+            initialCheckedKeys: options.filter((value) => value !== "Request Deleted"),
             cellMatchOverride: lastStatusCellMatchOverride,
         });
+    };
+
+    const deleteParcels = async (parcels: ParcelsTableRow[]): Promise<void> => {
+        setIsLoading(true);
+        await saveParcelStatus(
+            parcels.map((parcel) => parcel.parcelId),
+            "Request Deleted"
+        );
+        setSelectedRowIndices([]);
+        setIsLoading(false);
     };
 
     return (
@@ -348,10 +413,17 @@ const ParcelsPage: React.FC<{}> = () => {
                         setRange={setPackingDateRange}
                     ></DateRangeInputs>
                 </ControlContainer>
-                <ActionBar data={tableData} selected={selected} />
+                <ActionBar
+                    selectedParcels={selectedRowIndices.map((index) => tableData[index])}
+                    onDeleteParcels={deleteParcels}
+                    willSaveParcelStatus={() => setIsLoading(true)}
+                    hasSavedParcelStatus={() => setIsLoading(false)}
+                />
             </PreTableControls>
             {isLoading ? (
-                <></>
+                <Centerer>
+                    <CircularProgress aria-label="table-progress-bar" />
+                </Centerer>
             ) : (
                 <>
                     <TableSurface>
@@ -361,8 +433,6 @@ const ParcelsPage: React.FC<{}> = () => {
                             columnDisplayFunctions={parcelTableColumnDisplayFunctions}
                             columnStyleOptions={parcelTableColumnStyleOptions}
                             onRowClick={onParcelTableRowClick}
-                            checkboxes
-                            onRowSelection={setSelected}
                             pagination
                             sortable={sortableColumns}
                             defaultShownHeaders={defaultShownHeaders}
@@ -379,6 +449,14 @@ const ParcelsPage: React.FC<{}> = () => {
                                 "voucherNumber",
                                 buildLastStatusFilter(tableData),
                             ]}
+                            checkboxConfig={{
+                                displayed: true,
+                                selectedRowIndices: selectedRowIndices,
+                                isAllCheckboxChecked: isAllCheckBoxSelected,
+                                onCheckboxClicked: (rowIndex: number) =>
+                                    selectOrDeselectRow(rowIndex),
+                                onAllCheckboxClicked: () => toggleAllCheckBox(),
+                            }}
                         />
                     </TableSurface>
                     <Modal

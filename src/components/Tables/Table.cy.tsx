@@ -1,5 +1,5 @@
-import React from "react";
-import Table from "@/components/Tables/Table";
+import React, { useEffect, useState } from "react";
+import Table, { CheckboxConfig } from "@/components/Tables/Table";
 import StyleManager from "@/app/themes";
 
 interface TestData {
@@ -78,52 +78,77 @@ const headers = [
 ] as const;
 
 interface TestTableProps {
-    checkboxes?: boolean;
+    displayCheckboxes?: boolean;
     toggleableHeaders?: (keyof TestData)[];
     pagination?: boolean;
     filters?: (keyof TestData)[];
     sortable?: (keyof TestData)[];
+    tableData?: TestData[];
 }
 
 const Component: React.FC<TestTableProps> = ({
-    checkboxes = true,
+    displayCheckboxes = true,
     toggleableHeaders,
     pagination = false,
     filters = [],
     sortable = [],
+    tableData = data,
 }) => {
+    const [selectedRowIndices, setSelectedRowIndices] = useState<number[]>([]);
+    const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
+
+    useEffect(() => {
+        setSelectedRowIndices([]);
+    }, [tableData]);
+
+    const selectOrDeselectRow = (rowIndex: number): void => {
+        setSelectedRowIndices((currentIndices) => {
+            if (currentIndices.includes(rowIndex)) {
+                return currentIndices.filter((index) => index !== rowIndex);
+            }
+            return currentIndices.concat([rowIndex]);
+        });
+    };
+
+    const toggleAllCheckBox = (): void => {
+        if (isAllCheckBoxSelected) {
+            setSelectedRowIndices([]);
+            setAllCheckBoxSelected(false);
+        } else {
+            setSelectedRowIndices(tableData.map((data, index) => index));
+            setAllCheckBoxSelected(true);
+        }
+    };
+
+    useEffect(() => {
+        const allChecked = selectedRowIndices.length === tableData.length;
+        if (allChecked !== isAllCheckBoxSelected) {
+            setAllCheckBoxSelected(allChecked);
+        }
+    }, [tableData, selectedRowIndices, isAllCheckBoxSelected]);
+
+    const trueCheckboxConfig: CheckboxConfig = {
+        displayed: true,
+        selectedRowIndices: selectedRowIndices,
+        isAllCheckboxChecked: isAllCheckBoxSelected,
+        onCheckboxClicked: (rowIndex: number) => selectOrDeselectRow(rowIndex),
+        onAllCheckboxClicked: () => toggleAllCheckBox(),
+    };
+
+    const falseCheckboxConfig: CheckboxConfig = {
+        displayed: false,
+    };
+
     return (
         <StyleManager>
             <Table
                 data={data}
                 headerKeysAndLabels={headers}
-                checkboxes={checkboxes}
                 toggleableHeaders={toggleableHeaders}
                 filters={filters}
                 sortable={sortable}
                 pagination={pagination}
-            />
-        </StyleManager>
-    );
-};
-
-const ComponentWithSmallerData: React.FC<TestTableProps> = ({
-    checkboxes = true,
-    toggleableHeaders,
-    pagination = false,
-    filters = [],
-    sortable = [],
-}) => {
-    return (
-        <StyleManager>
-            <Table
-                data={smallerData}
-                headerKeysAndLabels={headers}
-                checkboxes={checkboxes}
-                toggleableHeaders={toggleableHeaders}
-                filters={filters}
-                sortable={sortable}
-                pagination={pagination}
+                checkboxConfig={displayCheckboxes ? trueCheckboxConfig : falseCheckboxConfig}
             />
         </StyleManager>
     );
@@ -131,7 +156,7 @@ const ComponentWithSmallerData: React.FC<TestTableProps> = ({
 
 describe("<Table />", () => {
     it("renders", () => {
-        cy.mount(<Component />);
+        cy.mount(<Component tableData={data} />);
     });
 
     it("can display data", () => {
@@ -264,7 +289,7 @@ describe("<Table />", () => {
     });
 
     it("checkall box toggles all data", () => {
-        cy.mount(<ComponentWithSmallerData />);
+        cy.mount(<Component tableData={smallerData} />);
         cy.get("input[aria-label='Select all rows']").click();
         cy.get("input[aria-label='Select row 0']").should("be.checked");
         cy.get("input[aria-label='Select row 1']").should("be.checked");
@@ -272,7 +297,7 @@ describe("<Table />", () => {
     });
 
     it("uncheck one row unticks the checkall box", () => {
-        cy.mount(<ComponentWithSmallerData />);
+        cy.mount(<Component tableData={smallerData} />);
         cy.get("input[aria-label='Select all rows']").click();
         cy.get("input[aria-label='Select row 0']").click();
 
@@ -283,7 +308,7 @@ describe("<Table />", () => {
     });
 
     it("check all rows ticks the checkall box", () => {
-        cy.mount(<ComponentWithSmallerData />);
+        cy.mount(<Component tableData={smallerData} />);
         cy.get("input[aria-label='Select row 0']").click();
         cy.get("input[aria-label='Select row 1']").click();
         cy.get("input[aria-label='Select row 2']").click();
@@ -292,7 +317,7 @@ describe("<Table />", () => {
     });
 
     it("checkbox disabling works", () => {
-        cy.mount(<ComponentWithSmallerData checkboxes={false} />);
+        cy.mount(<Component tableData={smallerData} displayCheckboxes={false} />);
         cy.get("input[aria-label='Select row 0']").should("not.exist");
         cy.get("input[aria-label='Select row 5']").should("not.exist");
         cy.get("input[aria-label='Select row 10']").should("not.exist");

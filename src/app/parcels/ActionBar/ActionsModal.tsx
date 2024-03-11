@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
-import dayjs, { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import { Button, SelectChangeEvent } from "@mui/material";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
@@ -12,12 +12,17 @@ import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { statusType } from "./Statuses";
+import SelectedParcelsOverview from "./SelectedParcelsOverview";
+
+export type ActionType = "pdfDownload" | "deleteParcel";
 
 interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
-    data: ParcelsTableRow[];
+    selectedParcels: ParcelsTableRow[];
     errorText: string | null;
     inputComponent?: React.ReactElement;
     showSelectedParcels: boolean;
+    actionType: ActionType;
+    onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
 }
 
 const Centerer = styled.div`
@@ -42,14 +47,11 @@ const ModalInner = styled.div`
     align-items: stretch;
 `;
 
-const ListItem = styled.p<{ emphasised?: boolean }>`
-    margin-left: 1rem;
-    padding: 0.5rem 0;
-    ${(props) =>
-        props.emphasised &&
-        `
-            font-weight: 800;
-        `}
+const ConfirmButtons = styled.div`
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    align-items: stretch;
 `;
 
 interface ShippingLabelsInputProps {
@@ -164,8 +166,8 @@ export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
 };
 
 const ActionsModal: React.FC<ActionsModalProps> = (props) => {
-    const [loadPdf, setLoadPdf] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [loadPdf, setLoadPdf] = useState(false);
     const maxParcelsToShow = 5;
 
     useEffect(() => {
@@ -182,44 +184,63 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                 {props.errorText && <small>{props.errorText}</small>}
                 {loadPdf ? (
                     <>
-                        <Heading> The PDF is ready to be downloaded. </Heading>
+                        {props.actionType === "pdfDownload" ? (
+                            <Heading> The PDF is ready to be downloaded. </Heading>
+                        ) : (
+                            <Heading>
+                                {props.selectedParcels.length === 1 ? "Parcel" : "Parcels"} deleted
+                            </Heading>
+                        )}
+
                         <Centerer>{props.children}</Centerer>
                     </>
                 ) : (
                     <>
-                        {props.showSelectedParcels && (
-                            <>
-                                <Heading>
-                                    {props.data.length === 1 ? "Parcel" : "Parcels"} selected:
-                                </Heading>
-                                {props.data.slice(0, maxParcelsToShow).map((parcel) => {
-                                    return (
-                                        <ListItem key={parcel.primaryKey}>
-                                            {parcel.addressPostcode}
-                                            {parcel.fullName && ` - ${parcel.fullName}`}
-                                            {parcel.collectionDatetime &&
-                                                `\n @ ${dayjs(parcel.collectionDatetime!).format(
-                                                    "DD/MM/YYYY HH:mm"
-                                                )}`}
-                                        </ListItem>
-                                    );
-                                })}
-                                {props.data.length > maxParcelsToShow ? (
-                                    <ListItem emphasised>...</ListItem>
-                                ) : (
-                                    <></>
-                                )}
-                            </>
+                        {props.actionType === "deleteParcel" && (
+                            <Heading>
+                                Are you sure you want to delete the selected parcel{" "}
+                                {props.selectedParcels.length === 1 ? "request" : "requests"}?
+                            </Heading>
                         )}
-                        <Centerer>
-                            <Button
-                                disabled={loading}
-                                variant="contained"
-                                onClick={() => setLoading(true)}
-                            >
-                                {loading ? "Loading..." : "Create PDF"}
-                            </Button>
-                        </Centerer>
+                        {props.showSelectedParcels && (
+                            <SelectedParcelsOverview
+                                parcels={props.selectedParcels}
+                                maxParcelsToShow={maxParcelsToShow}
+                            />
+                        )}
+                        {props.actionType === "pdfDownload" ? (
+                            <Centerer>
+                                <Button
+                                    disabled={loading}
+                                    variant="contained"
+                                    onClick={() => setLoadPdf(true)}
+                                >
+                                    {loading ? "Loading..." : "Create PDF"}
+                                </Button>
+                            </Centerer>
+                        ) : (
+                            <Centerer>
+                                <ConfirmButtons>
+                                    <Button
+                                        disabled={loading}
+                                        variant="contained"
+                                        onClick={props.onClose}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        disabled={loading}
+                                        variant="contained"
+                                        onClick={() => {
+                                            setLoading(true);
+                                            props.onDeleteParcels(props.selectedParcels);
+                                        }}
+                                    >
+                                        Delete
+                                    </Button>
+                                </ConfirmButtons>
+                            </Centerer>
+                        )}
                     </>
                 )}
             </ModalInner>
