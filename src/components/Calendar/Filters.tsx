@@ -1,7 +1,7 @@
 "use client";
 
 import { Checkbox, FormControlLabel } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 
 interface CalendarFilterAccordionProps {
@@ -40,6 +40,9 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
     currentLocations,
     editLocations,
 }) => {
+    useEffect(() => {
+        editLocations(allLocations)
+    })
     const onChange = (event: React.ChangeEvent<HTMLInputElement>, location: string): void => {
         if (event.target.checked) {
             editLocations([...currentLocations, location]);
