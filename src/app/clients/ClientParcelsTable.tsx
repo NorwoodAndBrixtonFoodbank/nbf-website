@@ -27,7 +27,7 @@ const ClientParcelsTable: React.FC<ClientParcelTableProps> = (props) => {
     return (
         <TableSurface>
             <Table
-                data={props.parcelsData}
+                dataPortion={props.parcelsData}
                 headerKeysAndLabels={headers}
                 pagination
                 onRowClick={(row) => router.push(`/parcels?parcelId=${row.data.parcelId}`)}

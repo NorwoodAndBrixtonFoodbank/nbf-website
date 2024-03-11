@@ -38,8 +38,7 @@ const EventTable: React.FC<EventTableProps> = (props) => {
         <>
             <TableSurface>
                 <Table
-                    getData={props.getEventTableData}
-                    getCount={props.getEventTableCount}
+                    dataPortion={props.tableData}
                     headerKeysAndLabels={eventsTableHeaderKeysAndLabels}
                     columnDisplayFunctions={eventsTableColumnDisplayFunctions}
                     pagination

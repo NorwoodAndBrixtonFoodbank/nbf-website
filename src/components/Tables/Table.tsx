@@ -32,6 +32,7 @@ export type ColumnDisplayFunction<T> = (data: T) => React.ReactNode;
 export type ColumnDisplayFunctions<Data> = {
     [headerKey in keyof Data]?: ColumnDisplayFunction<Data[headerKey]>;
 };
+
 export type ColumnStyles<Data> = {
     [headerKey in keyof Data]?: ColumnStyleOptions;
 };
@@ -51,19 +52,15 @@ export interface SortOptions<Data, Key extends keyof Data> {
     sortMethod: (query: PostgrestFilterBuilder<Database["public"], any, any>, sortDirection: SortOrder) => PostgrestFilterBuilder<Database["public"], any, any>;
 }
 
-export interface ActiveSortState<Data> {
-    sort: true
+ interface ActiveSortState<Data> {
+    sort: true,
     sortDirection: SortOrder,
-    key: keyof Data,
+    column: CustomColumn<Data>
 }
-
-export interface InactiveSortState {
-    sort: false
+ interface InactiveSortState {
+    sort: false,
 }
-
 export type SortState<Data> = ActiveSortState<Data> | InactiveSortState
-
-type SortMethod = (query: PostgrestFilterBuilder<Database["public"], any, any>, sortDirection: SortOrder) => PostgrestFilterBuilder<Database["public"], any, any>
 
 
 export interface CustomColumn<Data> extends TableColumn<Row<Data>> {
@@ -71,11 +68,19 @@ export interface CustomColumn<Data> extends TableColumn<Row<Data>> {
 }
 
 interface Props<Data> {
+    dataPortion: Data[];
+    setDataPortion: (dataPortion: Data[]) => void;
+    totalRows: number;
     headerKeysAndLabels: TableHeaders<Data>;
+    onPageChange: (newPage: number) => void;
+    onPerPageChage: (perPage: number) => void;
+    onSort: (sortState: SortState<Data>) => void;
     checkboxes?: boolean;
     onRowSelection?: (rowIds: number[]) => void;
-    filters?: (Filter<Data, any>)[];
+    primaryFilters?: (Filter<Data, any>)[];
     additionalFilters?: (Filter<Data, any>)[];
+    setPrimaryFilters?: (primaryFilters: Filter<Data, any>[]) => void;
+    setAdditionalFilters?: (primaryFilters: Filter<Data, any>[]) => void;
     pagination?: boolean;
     defaultShownHeaders?: readonly (keyof Data)[];
     toggleableHeaders?: readonly (keyof Data)[];
@@ -86,14 +91,6 @@ interface Props<Data> {
     columnDisplayFunctions?: ColumnDisplayFunctions<Data>;
     columnStyleOptions?: ColumnStyles<Data>;
     onRowClick?: OnRowClickFunction<Data>;
-    autoFilter?: boolean;
-    loading: boolean;
-    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-    getData: ((supabase: Supabase, start: number, end: number, filters: Filter<Data, any>[], columns: CustomColumn<Data>[], sortState: SortState<Data>)  => Promise<Data[]>) | ((supabase: Supabase, start: number, end: number) => Promise<Data[]>);
-    supabase: Supabase;
-    getCount: ((supabase: Supabase, filters: Filter<Data, any>[]) => Promise<number>) | ((supabase: Supabase) => Promise<number>)
-    subscriptions?: RealtimePostgresChangesFilter<"*">[];
-    defaultSortState?: SortState<Data>;
 }
 
 interface CellProps<Data> {
@@ -138,12 +135,17 @@ const defaultColumnStyleOptions = {
 } as const;
 
 const Table = <Data,>({
+    dataPortion,
+    setDataPortion,
+    totalRows,
     headerKeysAndLabels,
     checkboxes,
     onRowSelection,
     defaultShownHeaders,
-    filters = [],
-    additionalFilters: addFilters = [],
+    primaryFilters = [],
+    setPrimaryFilters  = ()=>{},
+    additionalFilters = [],
+    setAdditionalFilters = ()=> {},
     onDelete,
     onEdit,
     onSwapRows,
@@ -153,68 +155,10 @@ const Table = <Data,>({
     onRowClick,
     columnDisplayFunctions = {},
     columnStyleOptions = {},
-    autoFilter = true,
-    loading,
-    setLoading,
-    getData,
-    supabase,
-    getCount,
-    subscriptions = [],
-    defaultSortState = {sort: false}
+    onPageChange,
+    onPerPageChage,
+    onSort
 }: Props<Data>): React.ReactElement => {
-    const [data, setData] = useState<Data[]>([]);
-    const [totalRows, setTotalRows] = useState(0);
-    const [perPage, setPerPage] = useState(10);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [sortState, setSortState] = useState<SortState<Data>>(defaultSortState);
-
-    const getStartPoint = (currentPage: number, perPage: number): number => ((currentPage - 1) * perPage);
-    const getEndPoint = (currentPage: number, perPage: number): number => ((currentPage) * perPage - 1);
-
-    const fetchCount = async () => {
-        setTotalRows(await getCount(supabase, allFilters));
-    };
-
-    const fetchData = async () => {
-        setLoading(true);
-        const fetchedData = await getData(supabase, getStartPoint(currentPage, perPage), getEndPoint(currentPage, perPage), allFilters, columns, sortState);
-        console.log(fetchedData);
-        setData(fetchedData);
-        setLoading(false);
-    }
-
-    useEffect(() => {
-        console.log("hi");
-        fetchCount();
-        fetchData();
-    }, [currentPage, perPage, sortState]);
-
-    useEffect(() => {
-        // This requires that the DB subscribed tables have Realtime turned on
-        let subscriptionChannel = supabase
-            .channel("table-changes")
-        
-        subscriptions.forEach((subscription) => subscriptionChannel = subscriptionChannel
-            .on("postgres_changes", subscription, async () =>
-                {fetchCount();
-                fetchData();}
-            ))
-        subscriptionChannel.subscribe();
-
-
-        return () => {
-            supabase.removeChannel(subscriptionChannel);
-        };
-    }, []);
-
-
-    const handlePageChange = (newPage: number) => {
-        setCurrentPage(newPage);
-    }
-
-    const handlePerRowsChange = async (newPerPage: number, page: number) => {
-        setPerPage(newPerPage);
-    }
 
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
@@ -222,14 +166,8 @@ const Table = <Data,>({
 
     const shownHeaders = headerKeysAndLabels.filter(([key]) => shownHeaderKeys.includes(key));
 
-    const [primaryFilters, setPrimaryFilters] = useState(filters);
-
-    const [additionalFilters, setAdditionalFilters] = useState(addFilters);
-
-    const allFilters = [...primaryFilters, ...additionalFilters];
-
     const [selectedCheckboxes, setSelectedCheckboxes] = useState(
-        new Array<boolean>(data.length).fill(false)
+        new Array<boolean>(dataPortion.length).fill(false)
     );
 
     const updateCheckboxes = (newSelection: boolean[]): void => {
@@ -250,7 +188,7 @@ const Table = <Data,>({
     };
 
     const toggleAllCheckBox = (): void => {
-        const newSelection = new Array<boolean>(data.length).fill(!selectAllCheckBox);
+        const newSelection = new Array<boolean>(dataPortion.length).fill(!selectAllCheckBox);
         updateCheckboxes(newSelection);
         setSelectAllCheckBox(!selectAllCheckBox);
     };
@@ -293,10 +231,8 @@ const Table = <Data,>({
     });
 
     const handleSort = async (column: CustomColumn<Data>, sortDirection: SortOrder) => {
-        console.log(column);
-        if (column.sortable) {
-            console.log("fired");
-        setSortState({key: column.sortField as keyof Data, sort: true, sortDirection: sortDirection})};
+        const newSortState: SortState<Data> = {sort: true, column: column, sortDirection: sortDirection};
+        onSort(newSortState);
     }
 
     const [isSwapping, setIsSwapping] = useState(false);
@@ -309,24 +245,24 @@ const Table = <Data,>({
 
         const rowId2 = rowId1 + (upwards ? -1 : 1);
 
-        if (rowId1 < 0 || rowId2 < 0 || rowId1 >= data.length || rowId2 >= data.length) {
+        if (rowId1 < 0 || rowId2 < 0 || rowId1 >= dataPortion.length || rowId2 >= dataPortion.length) {
             setIsSwapping(false);
             return;
         }
 
         const clientSideRefresh = (): void => {
             // Update viewed table data once specific functions are done (without re-fetch)
-            const newData = [...data];
+            const newData = [...dataPortion];
             const temp = newData[rowId1];
             newData[rowId1] = newData[rowId2];
             newData[rowId2] = temp;
 
-            setData(newData);
+            setDataPortion(newData);
             setIsSwapping(false);
         };
 
         if (onSwapRows) {
-            onSwapRows(data[rowId1], data[rowId2]).then(clientSideRefresh);
+            onSwapRows(dataPortion[rowId1], dataPortion[rowId2]).then(clientSideRefresh);
         } else {
             clientSideRefresh();
         }
@@ -393,26 +329,17 @@ const Table = <Data,>({
         });
     }
 
-    const rows = data.map((data, index) => ({ rowId: index, data }));
-    const filterStates = allFilters.map((filter)=>filter.state);
-
-    useEffect(() => {
-        (async () => {        
-            setLoading(true);
-            await fetchCount();
-            await fetchData();
-            setLoading(false);})();
-    }, filterStates)
+    const rows = dataPortion.map((data, index) => ({ rowId: index, data }));
 
     const handleClear = (): void => {
-        setPrimaryFilters((filters) =>
-            filters.map((filter) => ({
+        setPrimaryFilters(
+            primaryFilters.map((filter) => ({
                 ...filter,
                 state: filter.initialState,
             }))
         );
-        setAdditionalFilters((filters) =>
-            filters.map((filter) => ({
+        setAdditionalFilters(
+            additionalFilters.map((filter) => ({
                 ...filter,
                 state: filter.initialState,
             }))
@@ -444,9 +371,9 @@ const Table = <Data,>({
                         onRowClicked={onRowClick}
                         paginationServer={pagination ?? true}
                         paginationTotalRows={totalRows}
-                        paginationDefaultPage={currentPage}
-                        onChangePage={handlePageChange}
-                        onChangeRowsPerPage={handlePerRowsChange}
+                        paginationDefaultPage={1}
+                        onChangePage={onPageChange}
+                        onChangeRowsPerPage={onPerPageChage}
                         sortServer={true}
                         onSort={handleSort}
                     />

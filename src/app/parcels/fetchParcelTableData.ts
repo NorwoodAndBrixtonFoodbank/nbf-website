@@ -33,7 +33,7 @@ export const getCongestionChargeDetailsForParcels = async (
 export type ParcelProcessingData = Awaited<ReturnType<typeof getParcelProcessingData>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const getParcelProcessingData = async (supabase: Supabase, start: number, end: number, filters: Filter<ParcelsTableRow, any>[], columns: CustomColumn<ParcelsTableRow>[], sortState: SortState<ParcelsTableRow>) => {
+export const getParcelProcessingData = async (supabase: Supabase, start: number, end: number, filters: Filter<ParcelsTableRow, any>[], sortState: SortState<ParcelsTableRow>) => {
     
     let query = supabase
         .from("parcels")
@@ -71,11 +71,11 @@ export const getParcelProcessingData = async (supabase: Supabase, start: number,
         )
     `,{ count: 'exact', head: true }
         )
-        if (sortState.sort) {
-        const columnToSortBy = columns?.find((column)=>column.sortField===sortState.key);
-        if (columnToSortBy?.sortMethod) {
-            query = columnToSortBy.sortMethod(query, sortState.sortDirection);
-        }}
+        if (sortState.sort && sortState.column.sortMethod) {
+            query = sortState.column.sortMethod(query, sortState.sortDirection);
+        } else {
+            query = query.order("packing_datetime", {ascending: false});
+        }
         query = query.order("timestamp", { ascending: false, foreignTable: "events" })
         .limit(1, { foreignTable: "events" });
 
@@ -96,8 +96,8 @@ export const getParcelProcessingData = async (supabase: Supabase, start: number,
     return data ?? [];
 };
 
-export const getParcelsData = async (supabase: Supabase, start: number, end: number, filters: Filter<ParcelsTableRow, any[]>[], columns: CustomColumn<ParcelsTableRow>[], sortState: SortState<ParcelsTableRow>): Promise<ParcelsTableRow[]> => {
-    const processingData = await getParcelProcessingData(supabase, start, end, filters, columns, sortState);
+export const getParcelsData = async (supabase: Supabase, start: number, end: number, filters: Filter<ParcelsTableRow, any[]>[], sortState: SortState<ParcelsTableRow>): Promise<ParcelsTableRow[]> => {
+    const processingData = await getParcelProcessingData(supabase, start, end, filters, sortState);
     const congestionCharge = await getCongestionChargeDetailsForParcels(processingData, supabase);
     const formattedData = processingDataToParcelsTableData(processingData, congestionCharge);
 

@@ -95,7 +95,7 @@ const Component: React.FC<TestTableProps> = ({
     return (
         <StyleManager>
             <Table
-                data={data}
+                dataPortion={data}
                 headerKeysAndLabels={headers}
                 checkboxes={checkboxes}
                 toggleableHeaders={toggleableHeaders}
@@ -117,7 +117,7 @@ const ComponentWithSmallerData: React.FC<TestTableProps> = ({
     return (
         <StyleManager>
             <Table
-                data={smallerData}
+                dataPortion={smallerData}
                 headerKeysAndLabels={headers}
                 checkboxes={checkboxes}
                 toggleableHeaders={toggleableHeaders}
