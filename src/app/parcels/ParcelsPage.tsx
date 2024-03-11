@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense, useEffect, useState } from "react";
-import Table, { Row, SortOptions, SortState, TableHeaders } from "@/components/Tables/Table";
+import Table, { Row, SortOptions, ActiveSortState, TableHeaders, SortState } from "@/components/Tables/Table";
 import styled, { useTheme } from "styled-components";
 import {
     ParcelsTableRow,
@@ -312,7 +312,7 @@ const ParcelsPage: React.FC<{}> = () => {
         buildLastStatusFilter() //hardcoded options
     ]
 
-    const defaultSortState: SortState<ParcelsTableRow> = {key: "packingDatetime", sortDirection: "desc" as SortOrder}
+    const defaultSortState: SortState<ParcelsTableRow> = {key: "packingDatetime", sort: true, sortDirection: "desc" as SortOrder}
 
     useEffect(() => {
         if (parcelId) {

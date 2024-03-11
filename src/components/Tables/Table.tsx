@@ -51,10 +51,17 @@ export interface SortOptions<Data, Key extends keyof Data> {
     sortMethod: (query: PostgrestFilterBuilder<Database["public"], any, any>, sortDirection: SortOrder) => PostgrestFilterBuilder<Database["public"], any, any>;
 }
 
-export interface SortState<Data> {
+export interface ActiveSortState<Data> {
+    sort: true
     sortDirection: SortOrder,
     key: keyof Data,
 }
+
+export interface InactiveSortState {
+    sort: false
+}
+
+export type SortState<Data> = ActiveSortState<Data> | InactiveSortState
 
 type SortMethod = (query: PostgrestFilterBuilder<Database["public"], any, any>, sortDirection: SortOrder) => PostgrestFilterBuilder<Database["public"], any, any>
 
@@ -82,7 +89,7 @@ interface Props<Data> {
     autoFilter?: boolean;
     loading: boolean;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-    getData: ((supabase: Supabase, start: number, end: number, filters: Filter<Data, any>[], columns: CustomColumn<Data>[], sortState?: SortState<Data>)  => Promise<Data[]>) | ((supabase: Supabase, start: number, end: number) => Promise<Data[]>);
+    getData: ((supabase: Supabase, start: number, end: number, filters: Filter<Data, any>[], columns: CustomColumn<Data>[], sortState: SortState<Data>)  => Promise<Data[]>) | ((supabase: Supabase, start: number, end: number) => Promise<Data[]>);
     supabase: Supabase;
     getCount: ((supabase: Supabase, filters: Filter<Data, any>[]) => Promise<number>) | ((supabase: Supabase) => Promise<number>)
     subscriptions?: RealtimePostgresChangesFilter<"*">[];
@@ -153,13 +160,13 @@ const Table = <Data,>({
     supabase,
     getCount,
     subscriptions = [],
-    defaultSortState
+    defaultSortState = {sort: false}
 }: Props<Data>): React.ReactElement => {
     const [data, setData] = useState<Data[]>([]);
     const [totalRows, setTotalRows] = useState(0);
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
-    const [sortState, setSortState] = useState<SortState<Data>|undefined>(defaultSortState);
+    const [sortState, setSortState] = useState<SortState<Data>>(defaultSortState);
 
     const getStartPoint = (currentPage: number, perPage: number): number => ((currentPage - 1) * perPage);
     const getEndPoint = (currentPage: number, perPage: number): number => ((currentPage) * perPage - 1);
@@ -171,11 +178,13 @@ const Table = <Data,>({
     const fetchData = async () => {
         setLoading(true);
         const fetchedData = await getData(supabase, getStartPoint(currentPage, perPage), getEndPoint(currentPage, perPage), allFilters, columns, sortState);
+        console.log(fetchedData);
         setData(fetchedData);
         setLoading(false);
     }
 
     useEffect(() => {
+        console.log("hi");
         fetchCount();
         fetchData();
     }, [currentPage, perPage, sortState]);
@@ -287,7 +296,7 @@ const Table = <Data,>({
         console.log(column);
         if (column.sortable) {
             console.log("fired");
-        setSortState({key: column.sortField as keyof Data, sortDirection: sortDirection})};
+        setSortState({key: column.sortField as keyof Data, sort: true, sortDirection: sortDirection})};
     }
 
     const [isSwapping, setIsSwapping] = useState(false);

@@ -4,7 +4,7 @@ import LinkButton from "@/components/Buttons/LinkButton";
 import Icon from "@/components/Icons/Icon";
 import Modal from "@/components/Modal/Modal";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
-import Table, { SortOptions, SortState, TableHeaders } from "@/components/Tables/Table";
+import Table, { SortOptions, ActiveSortState, TableHeaders, SortState } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
 import supabase from "@/supabaseClient";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -60,7 +60,7 @@ const ClientsPage: React.FC<{}> = () => {
     const searchParams = useSearchParams();
     const clientId = searchParams.get(clientIdParam);
 
-    const defaultSortState: SortState<ClientsTableRow> = {key: "fullName", sortDirection: "asc" as SortOrder}
+    const defaultSortState: SortState<ClientsTableRow> = {key: "fullName", sort: true, sortDirection: "asc" as SortOrder}
 
     return (
         <>
