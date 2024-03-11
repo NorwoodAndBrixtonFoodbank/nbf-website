@@ -36,8 +36,9 @@ interface QuantityAndNotes {
     notes: string | null;
 }
 
-interface Props {
-    data: Schema["lists"][];
+interface ListDataViewProps {
+    listOfIngridients: Schema["lists"][];
+    setListOfIngridients: React.Dispatch<React.SetStateAction<Schema["lists"][]>>;
     comment: string;
 }
 
@@ -80,18 +81,22 @@ const listsColumnStyleOptions: ColumnStyles<ListRow> = {
     ),
 };
 
-const ListsDataView: React.FC<Props> = (props) => {
+const ListsDataView: React.FC<ListDataViewProps> = ({
+    listOfIngridients,
+    setListOfIngridients: setListOfIngridients,
+    comment,
+}) => {
     const [modal, setModal] = useState<EditModalState>();
     const [toDelete, setToDelete] = useState<number | null>(null);
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-    if (props.data === null) {
+    if (listOfIngridients === null) {
         throw new Error("No data found");
     }
 
-    const rows = props.data.map((row) => {
+    const rows = listOfIngridients.map((row) => {
         const newRow = {
             primaryKey: row.primary_key,
             rowOrder: row.row_order,
@@ -114,9 +119,33 @@ const ListsDataView: React.FC<Props> = (props) => {
     const toggleableHeaders = headerKeysAndLabels.map(([key]) => key);
 
     const onEdit = (index: number): void => {
-        setModal(props.data[index]);
+        setModal(listOfIngridients[index]);
     };
 
+    const reorderRows = (row1: ListRow, row2: ListRow): void => {
+        const primaryKeys = listOfIngridients.map(
+            (listOfIngridients) => listOfIngridients.primary_key
+        );
+
+        const row1Index = primaryKeys.indexOf(row1.primaryKey);
+        const row2Index = primaryKeys.indexOf(row2.primaryKey);
+
+        const row1Item = listOfIngridients[row1Index];
+        const row1Order = row1Item.row_order;
+
+        const row2Item = listOfIngridients[row2Index];
+        const row2Order = row2Item.row_order;
+
+        row1Item.row_order = row2Order;
+        row2Item.row_order = row1Order;
+
+        const newListOfIngridients = [...listOfIngridients];
+
+        newListOfIngridients[row1Index] = row2Item;
+        newListOfIngridients[row2Index] = row1Item;
+
+        setListOfIngridients(newListOfIngridients);
+    };
     const onSwapRows = async (row1: ListRow, row2: ListRow): Promise<void> => {
         const { error } = await supabase.from("lists").upsert([
             {
@@ -133,9 +162,7 @@ const ListsDataView: React.FC<Props> = (props) => {
             throw new DatabaseError("update", "lists items");
         }
 
-        const temp = row1.rowOrder;
-        row1.rowOrder = row2.rowOrder;
-        row2.rowOrder = temp;
+        reorderRows(row1, row2);
     };
 
     const onDeleteButtonClick = (index: number): void => {
@@ -145,11 +172,11 @@ const ListsDataView: React.FC<Props> = (props) => {
 
     const onConfirmDeletion = async (): Promise<void> => {
         if (toDelete !== null) {
-            const data = props.data[toDelete];
+            const itemToDelete = listOfIngridients[toDelete];
             const { error } = await supabase
                 .from("lists")
                 .delete()
-                .eq("primary_key", data.primary_key);
+                .eq("primary_key", itemToDelete.primary_key);
 
             if (error) {
                 setErrorMsg(error.message);
@@ -163,7 +190,7 @@ const ListsDataView: React.FC<Props> = (props) => {
         <>
             <ConfirmDialog
                 message={`Are you sure you want to delete ${
-                    toDelete ? props.data[toDelete].item_name : ""
+                    toDelete ? listOfIngridients[toDelete].item_name : ""
                 }?`}
                 isOpen={toDeleteModalOpen}
                 onConfirm={onConfirmDeletion}
@@ -184,7 +211,7 @@ const ListsDataView: React.FC<Props> = (props) => {
             </Snackbar>
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
             <TableSurface>
-                <CommentBox originalComment={props.comment} />
+                <CommentBox originalComment={comment} />
                 <Table<ListRow>
                     headerKeysAndLabels={headerKeysAndLabels}
                     toggleableHeaders={toggleableHeaders}
