@@ -97,8 +97,12 @@ export const swapRows = async (
     row2: packingSlotTableRowData
 ): Promise<void> => {
     const updatedRows = await swapOne(row1, row2);
-    await swapTwoUp(updatedRows);
-    console.log(updatedRows);
+
+    if (row1.order - row2.order > 0) {
+        await swapTwoUp(updatedRows);
+    } else {
+        await swapTwoDown(updatedRows);
+    }
 };
 
 const swapOne = async (
@@ -136,6 +140,20 @@ const swapTwoUp = async (updatedRows: DBPackingSlotData[]): Promise<void> => {
         .from("packing_slots")
         .update({
             order: updatedRows[1].order - 1,
+        })
+        .eq("primary_key", updatedRows[0].primary_key);
+
+    if (error) {
+        console.log(error);
+        throw new DatabaseError("update", "packing_slots");
+    }
+};
+
+const swapTwoDown = async (updatedRows: DBPackingSlotData[]): Promise<void> => {
+    const { error } = await supabase
+        .from("packing_slots")
+        .update({
+            order: updatedRows[1].order + 1,
         })
         .eq("primary_key", updatedRows[0].primary_key);
 

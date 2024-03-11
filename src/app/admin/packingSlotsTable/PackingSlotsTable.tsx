@@ -29,6 +29,7 @@ import {
     swapRows,
     updatePackingSlot,
 } from "@/app/admin/packingSlotsTable/PackingSlotActions";
+import { LinearProgress } from "@mui/material";
 
 interface EditToolbarProps {
     setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
@@ -71,14 +72,18 @@ function EditToolbar(props: EditToolbarProps): React.JSX.Element {
 const PackingSlotsTable: React.FC = () => {
     const [rows, setRows] = useState<PackingSlotRow[] | null>(null);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
         console.log(rows);
-    }, [rows]);
+        console.log(isLoading);
+    }, [rows, isLoading]);
 
     async function getPackingSlots(): Promise<void> {
-        const response = await fetchPackingSlots();
-        return setRows(response);
+        await fetchPackingSlots()
+            .then((response) => setRows(response))
+            .catch((error) => console.log(error))
+            .finally(() => setIsLoading(false));
     }
     useEffect(() => {
         getPackingSlots();
@@ -105,10 +110,11 @@ const PackingSlotsTable: React.FC = () => {
     };
 
     const processRowUpdate = (newRow: PackingSlotRow): PackingSlotRow => {
+        setIsLoading(true);
         if (newRow.isNew) {
-            createPackingSlot(newRow);
+            createPackingSlot(newRow).then(() => setIsLoading(false));
         } else {
-            updatePackingSlot(newRow);
+            updatePackingSlot(newRow).then(() => setIsLoading(false));
         }
         return newRow;
     };
@@ -128,7 +134,11 @@ const PackingSlotsTable: React.FC = () => {
     };
 
     const handleDeleteClick = (id: GridRowId) => () => {
-        deletePackingSlot(id);
+        setIsLoading(true);
+        deletePackingSlot(id)
+            .then(() => setIsLoading(false))
+            .catch((error) => console.log(error))
+            .then(() => setIsLoading(false));
     };
 
     const handleCancelClick = (id: GridRowId) => () => {
@@ -149,9 +159,29 @@ const PackingSlotsTable: React.FC = () => {
         const rowIndex = row.order - 1;
         if (rowIndex > 0) {
             if (rows) {
+                setIsLoading(true);
                 const row1 = rows[rowIndex];
                 const row2 = rows[rowIndex - 1];
-                swapRows(row1, row2);
+                swapRows(row1, row2)
+                    .then(() => setIsLoading(false))
+                    .catch((error) => console.log(error))
+                    .finally(() => setIsLoading(false));
+            }
+        }
+        setIsLoading(false);
+    };
+
+    const handleDownClick = (id: GridRowId, row: PackingSlotRow) => () => {
+        const rowIndex = row.order - 1;
+        if (rows) {
+            if (rowIndex < rows.length - 1) {
+                setIsLoading(true);
+                const row1 = rows[rowIndex];
+                const row2 = rows[rowIndex + 1];
+                swapRows(row1, row2)
+                    .then(() => setIsLoading(false))
+                    .catch((error) => console.log(error))
+                    .finally(() => setIsLoading(false));
             }
         }
     };
@@ -176,7 +206,7 @@ const PackingSlotsTable: React.FC = () => {
                     <GridActionsCellItem
                         icon={<ArrowCircleDownIcon />}
                         label="Down"
-                        onClick={() => {}}
+                        onClick={handleDownClick(id, row)}
                         color="inherit"
                         key="Down"
                     />,
@@ -256,10 +286,12 @@ const PackingSlotsTable: React.FC = () => {
                     processRowUpdate={processRowUpdate}
                     slots={{
                         toolbar: EditToolbar,
+                        loadingOverlay: LinearProgress,
                     }}
                     slotProps={{
                         toolbar: { setRows, setRowModesModel, rows },
                     }}
+                    loading={isLoading}
                 />
             )}
         </>

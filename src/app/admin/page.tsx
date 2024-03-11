@@ -61,10 +61,7 @@ const Admin = async (): Promise<ReactElement> => {
     return (
         <main>
             <Title>Admin Panel</Title>
-            <AdminPage
-                userData={userData}
-                collectionCentreData={collectionCentreData}
-            />
+            <AdminPage userData={userData} collectionCentreData={collectionCentreData} />
         </main>
     );
 };
