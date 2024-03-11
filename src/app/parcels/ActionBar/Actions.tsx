@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
@@ -172,22 +172,30 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
 };
 
 interface Props {
-    selectedParcels: ParcelsTableRow[];
+    fetchSelectedParcels: (checkedParcelIds: string[])=>Promise<ParcelsTableRow[]>;
     onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
     actionAnchorElement: HTMLElement | null;
     setActionAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     modalError: string | null;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
+    parcelIds: string[]
 }
 
 const Actions: React.FC<Props> = ({
-    selectedParcels,
+    fetchSelectedParcels,
     onDeleteParcels,
     actionAnchorElement,
     setActionAnchorElement,
     modalError,
     setModalError,
+    parcelIds
 }) => {
+    const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
+
+    useEffect(()=>{
+        (async () => {setSelectedParcels(await fetchSelectedParcels(parcelIds))})();
+    }, [parcelIds])
+    
     const [selectedAction, setSelectedAction] = useState<ActionName | null>(null);
     const [labelQuantity, setLabelQuantity] = useState<number>(0);
     const [date, setDate] = useState(dayjs());

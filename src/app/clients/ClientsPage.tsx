@@ -149,7 +149,7 @@ const ClientsPage: React.FC<{}> = () => {
                         pagination
                         primaryFilters={primaryFilters}
                         setPrimaryFilters={setPrimaryFilters}
-                        onSort={setSortState}
+                        setSortState={setSortState}
                         checkboxConfig={{ displayed: false }}
                     />
                 </TableSurface>

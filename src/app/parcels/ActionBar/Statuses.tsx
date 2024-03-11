@@ -1,7 +1,7 @@
 "use client";
 
 import supabase from "@/supabaseClient";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
@@ -64,26 +64,34 @@ export const saveParcelStatus = async (
 };
 
 interface Props {
-    selectedParcels: ParcelsTableRow[];
+    fetchSelectedParcels: (checkedParceldIds: string[])=>Promise<ParcelsTableRow[]>;
     statusAnchorElement: HTMLElement | null;
     setStatusAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     modalError: string | null;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
     willSaveParcelStatus: () => void;
     hasSavedParcelStatus: () => void;
+    parcelIds: string[]
 }
 
 const Statuses: React.FC<Props> = ({
-    selectedParcels,
+    fetchSelectedParcels,
     statusAnchorElement,
     setStatusAnchorElement,
     modalError,
     setModalError,
     willSaveParcelStatus,
     hasSavedParcelStatus,
+    parcelIds
 }) => {
+    const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
+    
     const [selectedStatus, setSelectedStatus] = useState<statusType | null>(null);
     const [statusModal, setStatusModal] = useState(false);
+
+    useEffect(()=>{
+        (async () => {setSelectedParcels(await fetchSelectedParcels(parcelIds))})();
+    }, [parcelIds])
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
         willSaveParcelStatus();

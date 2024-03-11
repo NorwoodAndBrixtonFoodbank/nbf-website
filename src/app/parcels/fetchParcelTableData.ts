@@ -34,10 +34,11 @@ export type ParcelProcessingData = Awaited<ReturnType<typeof getParcelProcessing
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const getParcelProcessingData = async (
     supabase: Supabase,
-    start: number,
-    end: number,
     filters: Filter<any>[],
-    sortState: SortState<ParcelsTableRow>
+    sortState: SortState<ParcelsTableRow>,
+    start?: number,
+    end?: number,
+    parcelIds?: string[],
 ) => {
     let query = supabase.from("parcels").select(
         `
@@ -86,7 +87,11 @@ export const getParcelProcessingData = async (
         query = filter.filterMethod(query, filter.state);
     });
 
-    query = query.range(start, end);
+    if (typeof start === "number" && typeof end === "number") {query = query.range(start, end)};
+
+    if (parcelIds) {
+        query = query.in('primary_key', parcelIds);
+    }
 
     const { data, error } = await query;
 
@@ -98,12 +103,13 @@ export const getParcelProcessingData = async (
 
 export const getParcelsData = async (
     supabase: Supabase,
-    start: number,
-    end: number,
     filters: Filter<any[]>[],
-    sortState: SortState<ParcelsTableRow>
+    sortState: SortState<ParcelsTableRow>,
+    start?: number,
+    end?: number,
+    parcelIds?: string[]
 ): Promise<ParcelsTableRow[]> => {
-    const processingData = await getParcelProcessingData(supabase, start, end, filters, sortState);
+    const processingData = await getParcelProcessingData(supabase, filters, sortState, start, end, parcelIds);
     const congestionCharge = await getCongestionChargeDetailsForParcels(processingData, supabase);
     const formattedData = processingDataToParcelsTableData(processingData, congestionCharge);
 
@@ -164,4 +170,64 @@ export const getParcelsCount = async (
         throw new DatabaseError("fetch", "parcels");
     }
     return count;
+};
+
+export const getParcelIds = async (
+    supabase: Supabase,
+    filters: Filter<any>[],
+    sortState: SortState<ParcelsTableRow>
+): Promise<string[]> => {
+    let query = supabase.from("parcels").select
+        (
+            `
+      parcel_id:primary_key,
+      
+      collection_centre:collection_centres!inner ( 
+          name, 
+          acronym
+       ),
+       
+      collection_datetime,
+      packing_datetime,
+      voucher_number,
+      
+      client:clients!inner (
+          primary_key,
+          full_name,
+          address_postcode,
+          flagged_for_attention,
+          signposting_call_required,
+          phone_number,
+          
+          family:families (
+              age,
+              gender
+          )
+      ),
+      
+      events!inner (
+          event_name,
+          event_data,
+          timestamp
+      )
+    `);
+
+    filters.forEach((filter) => {
+        query = filter.filterMethod(query, filter.state);
+    });
+
+    if (sortState.sort && sortState.column.sortMethod) {
+        query = sortState.column.sortMethod(query, sortState.sortDirection);
+    } else {
+        query = query.order("packing_datetime", { ascending: false })
+    }
+    query = query
+        .order("timestamp", { ascending: false, foreignTable: "events" })
+        .limit(1, { foreignTable: "events" });
+
+    const { data, error } = await query;
+    if (error) {
+        throw new DatabaseError("fetch", "parcels");
+    }
+    return data.map((parcel)=>parcel.parcel_id) ?? [];
 };

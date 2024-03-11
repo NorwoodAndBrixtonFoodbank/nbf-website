@@ -22,7 +22,7 @@ import ActionBar from "@/app/parcels/ActionBar/ActionBar";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
-import { getParcelsCount, getParcelsData } from "./fetchParcelTableData";
+import { getParcelIds, getParcelsCount, getParcelsData } from "./fetchParcelTableData";
 import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { Filter } from "@/components/Tables/Filters";
@@ -324,7 +324,7 @@ const ParcelsPage: React.FC<{}> = () => {
     const [totalRows, setTotalRows] = useState<number>(0);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
 
-    const [selectedRowIndices, setSelectedRowIndices] = useState<number[]>([]);
+    const [checkedParcelIds, setCheckedParcelIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
     const fetchParcelsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -371,7 +371,7 @@ const ParcelsPage: React.FC<{}> = () => {
             headers: parcelTableHeaderKeysAndLabels,
             filterMethod: voucherSearch,
         }),
-        buildLastStatusFilter(), //hardcoded options
+        buildLastStatusFilter(), //hardcoded options and broken, filters out unwanted events but keeps the parcel :0
     ]);
 
     const [sortState, setSortState] = useState<SortState<ParcelsTableRow>>({ sort: false });
@@ -395,15 +395,15 @@ const ParcelsPage: React.FC<{}> = () => {
             setTotalRows(await getParcelsCount(supabase, allFilters));
             const fetchedData = await getParcelsData(
                 supabase,
+                allFilters,
+                sortState,
                 startPoint,
                 endPoint,
-                allFilters,
-                sortState
             );
             setParcelsDataPortion(fetchedData);
             setIsLoading(false);
         })();
-    }, [startPoint, endPoint, sortState, ...additionalFilters, ...primaryFilters]);
+    }, [startPoint, endPoint, ...primaryFilters, ...additionalFilters, sortState]);
 
     //remember to deal with what happens if filters change twice and requests come back out of order. deal with in useeffect that sets data inside Table
     useEffect(() => {
@@ -420,10 +420,10 @@ const ParcelsPage: React.FC<{}> = () => {
                 setTotalRows(await getParcelsCount(supabase, allFilters));
                 const fetchedData = await getParcelsData(
                     supabase,
+                    allFilters,
+                    sortState,
                     startPoint,
                     endPoint,
-                    allFilters,
-                    sortState
                 );
                 setParcelsDataPortion(fetchedData);
                 setIsLoading(false);
@@ -447,40 +447,37 @@ const ParcelsPage: React.FC<{}> = () => {
         return () => {
             supabase.removeChannel(subscriptionChannel);
         };
-    }, [endPoint, startPoint, sortState, additionalFilters, primaryFilters]);
+    }, [endPoint, startPoint, ...primaryFilters, ...additionalFilters, sortState]);
 
     useEffect(() => {
-        setSelectedRowIndices([]);
-    }, [parcelsDataPortion]);
+        setCheckedParcelIds([]);
+    }, [...primaryFilters, ...additionalFilters]);
 
-    const selectOrDeselectRow = (rowIndex: number): void => {
-        console.log(selectedRowIndices);
-        setSelectedRowIndices((currentIndices) => {
-            if (currentIndices.includes(rowIndex)) {
-                return currentIndices.filter((index) => index !== rowIndex);
+    const selectOrDeselectRow = (parcelId: string): void => {
+        setCheckedParcelIds((currentIndices) => {
+            if (currentIndices.includes(parcelId)) {
+                return currentIndices.filter((dummyParcelId) => dummyParcelId !== parcelId);
             }
-            return currentIndices.concat([rowIndex]);
+            return currentIndices.concat([parcelId]);
         });
     };
 
-    const toggleAllCheckBox = (): void => {
+    const toggleAllCheckBox = async (): Promise<void> => {
         if (isAllCheckBoxSelected) {
-            setSelectedRowIndices([]);
+            setCheckedParcelIds([]);
             setAllCheckBoxSelected(false);
         } else {
-            setSelectedRowIndices(parcelsDataPortion.map((data, index) => index));
+            setCheckedParcelIds(await getParcelIds(supabase, primaryFilters.concat(additionalFilters), sortState));
             setAllCheckBoxSelected(true);
         }
     };
 
-    // useEffect(() => {
-    //     console.log("4");
-    //     //this logic is different now because parcelsDataPortion only represents a portion of the data
-    //     const allChecked = selectedRowIndices.length === parcelsDataPortion.length;
-    //     if (allChecked !== isAllCheckBoxSelected) {
-    //         setAllCheckBoxSelected(allChecked);
-    //     }
-    // }, [parcelsDataPortion.length, selectedRowIndices, isAllCheckBoxSelected]);
+    useEffect(() => {
+        const allChecked = checkedParcelIds.length === totalRows;
+        if (allChecked !== isAllCheckBoxSelected) {
+            setAllCheckBoxSelected(allChecked);
+        }
+    }, [totalRows, checkedParcelIds, isAllCheckBoxSelected]);
 
     const rowToIconsColumn = ({
         flaggedForAttention,
@@ -549,8 +546,18 @@ const ParcelsPage: React.FC<{}> = () => {
             parcels.map((parcel) => parcel.parcelId),
             "Request Deleted"
         );
-        setSelectedRowIndices([]);
+        setCheckedParcelIds([]);
         setIsLoading(false);
+    };
+
+    const getCheckedParcelsData = async (checkedParcelIds: string[]): Promise<ParcelsTableRow[]> => {
+    return await getParcelsData(
+        supabase,
+        primaryFilters.concat(additionalFilters),
+        sortState,
+        undefined,
+        undefined,
+        checkedParcelIds)
     };
 
     return (
@@ -563,18 +570,14 @@ const ParcelsPage: React.FC<{}> = () => {
                     ></DateRangeInputs> */}
                 </ControlContainer>
                 <ActionBar
-                    selectedParcels={selectedRowIndices.map((index) => parcelsDataPortion[index])}
+                    fetchSelectedParcels={async (checkedParcelIds: string[])=> await getCheckedParcelsData(checkedParcelIds)}
                     onDeleteParcels={deleteParcels}
                     willSaveParcelStatus={() => setIsLoading(true)}
                     hasSavedParcelStatus={() => setIsLoading(false)}
+                    parcelIds={checkedParcelIds}
+
                 />
             </PreTableControls>
-            {/* {isLoading ? (
-                <Centerer>
-                    <CircularProgress aria-label="table-progress-bar" />
-                </Centerer>
-            ) : ( */}
-                <>
                     <TableSurface>
                         <Table
                             dataPortion={parcelsDataPortion}
@@ -586,7 +589,6 @@ const ParcelsPage: React.FC<{}> = () => {
                             columnDisplayFunctions={parcelTableColumnDisplayFunctions}
                             columnStyleOptions={parcelTableColumnStyleOptions}
                             onRowClick={onParcelTableRowClick}
-                            onRowSelection={setSelectedRowIndices}
                             pagination
                             sortableColumns={sortableColumns}
                             defaultShownHeaders={defaultShownHeaders}
@@ -595,14 +597,15 @@ const ParcelsPage: React.FC<{}> = () => {
                             additionalFilters={additionalFilters}
                             setPrimaryFilters={setPrimaryFilters}
                             setAdditionalFilters={setAdditionalFilters}
-                            onSort={setSortState}
+                            setSortState={setSortState}
                             checkboxConfig={{
                                 displayed: true,
-                                selectedRowIndices: selectedRowIndices,
+                                selectedRowIds: checkedParcelIds,
                                 isAllCheckboxChecked: isAllCheckBoxSelected,
-                                onCheckboxClicked: (rowIndex: number) =>
-                                    selectOrDeselectRow(rowIndex),
+                                onCheckboxClicked: (parcelData) =>
+                                    selectOrDeselectRow(parcelData.parcelId),
                                 onAllCheckboxClicked: () => toggleAllCheckBox(),
+                                isRowChecked: (parcelData) => checkedParcelIds.includes(parcelData.parcelId)
                             }}
                         />
                     </TableSurface>
@@ -640,8 +643,6 @@ const ParcelsPage: React.FC<{}> = () => {
                         </OutsideDiv>
                     </Modal>
                 </>
-            )}
-        </>
     );
 };
 
