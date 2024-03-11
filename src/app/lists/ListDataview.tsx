@@ -118,6 +118,30 @@ const ListsDataView: React.FC<ListDataViewProps> = ({ listOfIngridients, setData
         setModal(listOfIngridients[index]);
     };
 
+    const reorderRows = (row1: ListRow, row2: ListRow): void => {
+        const primaryKeys = listOfIngridients.map(
+            (listOfIngridients) => listOfIngridients.primary_key
+        );
+
+        const row1Index = primaryKeys.indexOf(row1.primaryKey);
+        const row2Index = primaryKeys.indexOf(row2.primaryKey);
+
+        const row1Item = listOfIngridients[row1Index];
+        const row1Order = row1Item.row_order;
+
+        const row2Item = listOfIngridients[row2Index];
+        const row2Order = row2Item.row_order;
+
+        row1Item.row_order = row2Order;
+        row2Item.row_order = row1Order;
+
+        const newRowOrder = [...listOfIngridients];
+
+        newRowOrder[row1Index] = row2Item;
+        newRowOrder[row2Index] = row1Item;
+
+        setData(newRowOrder);
+    };
     const onSwapRows = async (row1: ListRow, row2: ListRow): Promise<void> => {
         const { error } = await supabase.from("lists").upsert([
             {
@@ -134,28 +158,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({ listOfIngridients, setData
             throw new DatabaseError("update", "lists items");
         }
 
-        const primaryKeys = listOfIngridients.map(
-            (listOfIngridients) => listOfIngridients.primary_key
-        );
-
-        const index1 = primaryKeys.indexOf(row1.primaryKey);
-        const index2 = primaryKeys.indexOf(row2.primaryKey);
-
-        const item1 = listOfIngridients[index1];
-        const order1 = item1.row_order;
-
-        const item2 = listOfIngridients[index2];
-        const order2 = item2.row_order;
-
-        item1.row_order = order2;
-        item2.row_order = order1;
-
-        const newData = [...listOfIngridients];
-
-        newData[index1] = item2;
-        newData[index2] = item1;
-
-        setData(newData);
+        reorderRows(row1, row2);
     };
 
     const onDeleteButtonClick = (index: number): void => {
