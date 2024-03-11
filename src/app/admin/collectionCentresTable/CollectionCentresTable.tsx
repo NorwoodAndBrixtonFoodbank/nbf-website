@@ -69,7 +69,7 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
     return (
         <>
             <Table
-                data={props.collectionCentreData}
+                dataPortion={props.collectionCentreData}
                 headerKeysAndLabels={collectionCentresTableHeaderKeysAndLabels}
                 onDelete={collectionCentreOnDelete}
                 defaultShownHeaders={["name", "acronym"]}

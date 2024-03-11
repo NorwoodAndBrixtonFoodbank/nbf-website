@@ -54,19 +54,51 @@ const sortableColumns: SortOptions<ClientsTableRow, any>[] = [
 const clientIdParam = "clientId";
 const ClientsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(false);
+    const [clientsDataPortion, setClientsDataPortion] = useState<ClientsTableRow[]>([]);
+    const [totalRows, setTotalRows] = useState<number>(0);
+    const [sortState, setSortState] = useState<SortState<ClientsTableRow>>({sort: false});
+    const [primaryFilters, setPrimaryFilters] = useState<Filter<ClientsTableRow, any>[]>(filters);
+
+    const getStartPoint = (currentPage: number, perPage: number): number => ((currentPage - 1) * perPage);
+    const getEndPoint = (currentPage: number, perPage: number): number => ((currentPage) * perPage - 1);
+
+    const [perPage, setPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
+    const allFilterStates = primaryFilters.map((filter)=>filter.state)
+
+    const fetchCount = async () => {
+        setTotalRows(await getClientsCount(supabase, filters));
+    };
+
+    const fetchData = async () => {
+        const fetchedData = await getClientsData(supabase, getStartPoint(currentPage, perPage), getEndPoint(currentPage, perPage), filters, sortState);
+        console.log(fetchedData);
+        setClientsDataPortion(fetchedData);
+    }
+
+    useEffect(() => {
+        (async () => {        
+            setIsLoading(true);
+            await fetchCount();
+            await fetchData();
+            setIsLoading(false);})();
+    }, [currentPage, perPage, sortState, ...allFilterStates]);
     const theme = useTheme();
     const router = useRouter();
 
     const searchParams = useSearchParams();
     const clientId = searchParams.get(clientIdParam);
 
-    const defaultSortState: SortState<ClientsTableRow> = {key: "fullName", sortDirection: "asc" as SortOrder}
-
     return (
         <>
                 <>
                     <TableSurface>
                         <Table
+                        dataPortion={clientsDataPortion}
+                        setDataPortion={setClientsDataPortion}
+                        totalRows={totalRows}
+                        onPageChange={setCurrentPage}
+                        onPerPageChage={setPerPage}
                             headerKeysAndLabels={headers}
                             onRowClick={(row) => {
                                 router.push(`/clients?${clientIdParam}=${row.data.clientId}`);
@@ -74,14 +106,9 @@ const ClientsPage: React.FC<{}> = () => {
                             sortableColumns={sortableColumns}
                             pagination
                             checkboxes={false}
-                            filters={filters}
-                            loading={isLoading}
-                            setLoading={setIsLoading}
-                            getData={getClientsData}
-                            getCount={getClientsCount}
-                            supabase={supabase}
-                            subscriptions={subscriptions}
-                            defaultSortState={defaultSortState}
+                            primaryFilters={primaryFilters}
+                            setPrimaryFilters={setPrimaryFilters}
+                            onSort={setSortState}
                         />
                     </TableSurface>
                     <Centerer>

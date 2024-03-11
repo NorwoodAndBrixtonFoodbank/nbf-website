@@ -283,7 +283,8 @@ const ParcelsPage: React.FC<{}> = () => {
     const endOfToday = dayjs().endOf("day");
 
     const [isLoading, setIsLoading] = useState(true);
-    const [tableData, setTableData] = useState<ParcelsTableRow[]>([]);
+    const [parcelsDataPortion, setParcelsDataPortion] = useState<ParcelsTableRow[]>([]);
+    const [totalRows, setTotalRows] = useState<number>(0);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [selected, setSelected] = useState<number[]>([]);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
@@ -297,22 +298,22 @@ const ParcelsPage: React.FC<{}> = () => {
         to: endOfToday,
     });
 
-    const filters: Filter<ParcelsTableRow, any>[] = [
+    const [primaryFilters, setPrimaryFilters] = useState<Filter<ParcelsTableRow, any>[]>([
         dateFilter,
         textFilter({key: "fullName", label: "Name", headers: parcelTableHeaderKeysAndLabels, filterMethod: fullNameSearch}),
         textFilter({key: "addressPostcode", label: "Postcode", headers: parcelTableHeaderKeysAndLabels, filterMethod: postcodeSearch}),
         buildDeliveryCollectionFilter(), //hardcoded options
         //buildPackingTimeFilter(), //broken
-    ]
+    ])
     
-    const additionalFilters: Filter<ParcelsTableRow, any>[] = [
-        textFilter({key: "familyCategory", label: "Family", headers: parcelTableHeaderKeysAndLabels, filterMethod: familySearch}), //broken
+    const [additionalFilters, setAdditionalFilters] = useState<Filter<ParcelsTableRow, any>[]>([
+        //textFilter({key: "familyCategory", label: "Family", headers: parcelTableHeaderKeysAndLabels, filterMethod: familySearch}), //broken
         textFilter({key: "phoneNumber", label: "Phone", headers: parcelTableHeaderKeysAndLabels, filterMethod: phoneSearch}),
         textFilter({key: "voucherNumber", label: "Voucher", headers: parcelTableHeaderKeysAndLabels, filterMethod: voucherSearch}),
         buildLastStatusFilter() //hardcoded options
-    ]
+    ])
 
-    const defaultSortState: SortState<ParcelsTableRow> = {key: "packingDatetime", sortDirection: "desc" as SortOrder}
+    const [sortState, setSortState] = useState<SortState<ParcelsTableRow>>({sort: false});
 
     useEffect(() => {
         if (parcelId) {
@@ -321,7 +322,47 @@ const ParcelsPage: React.FC<{}> = () => {
         }
     }, [parcelId]);
 
+    const getStartPoint = (currentPage: number, perPage: number): number => ((currentPage - 1) * perPage);
+    const getEndPoint = (currentPage: number, perPage: number): number => ((currentPage) * perPage - 1);
+
+    const [perPage, setPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
+    const allFilters = [...primaryFilters, ...additionalFilters];
+    const allFilterStates = allFilters.map((filter)=>filter.state)
+
+    const fetchCount = async () => {
+        setTotalRows(await getParcelsCount(supabase, allFilters));
+    };
+
+    const fetchData = async () => {
+        const fetchedData = await getParcelsData(supabase, getStartPoint(currentPage, perPage), getEndPoint(currentPage, perPage), allFilters, sortState);
+        console.log(fetchedData);
+        setParcelsDataPortion(fetchedData);
+    }
+
+    useEffect(() => {
+        (async () => {        
+            setIsLoading(true);
+            await fetchCount();
+            await fetchData();
+            setIsLoading(false);})();
+    }, [currentPage, perPage, sortState, ...allFilterStates]);
+
     //remember to deal with what happens if filters change twice and requests come back out of order. deal with in useeffect that sets data inside Table
+    useEffect(() => {
+        // This requires that the DB parcels table has Realtime turned on
+        const subscriptionChannel = supabase
+            .channel("parcels-table-changes")
+            .on("postgres_changes", { event: "*", schema: "public", table: "parcels" }, async () =>
+                {       fetchCount();
+                    fetchData();}
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(subscriptionChannel);
+        };
+    }, []);
 
     const rowToIconsColumn = ({
         flaggedForAttention,
@@ -393,13 +434,16 @@ const ParcelsPage: React.FC<{}> = () => {
                         setRange={setPackingDateRange}
                     ></DateRangeInputs> */}
                 </ControlContainer>
-                <ActionBar data={tableData} selected={selected} />
+                <ActionBar data={parcelsDataPortion} selected={selected} />
             </PreTableControls> 
                 <>
                     <TableSurface>
                         <Table
-                            getData={getParcelsData}
-                            getCount={getParcelsCount}
+                            dataPortion={parcelsDataPortion}
+                            setDataPortion={setParcelsDataPortion}
+                            totalRows={totalRows}
+                            onPageChange={setCurrentPage}
+                            onPerPageChage={setPerPage}
                             headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
                             columnDisplayFunctions={parcelTableColumnDisplayFunctions}
                             columnStyleOptions={parcelTableColumnStyleOptions}
@@ -410,13 +454,11 @@ const ParcelsPage: React.FC<{}> = () => {
                             sortableColumns={sortableColumns}
                             defaultShownHeaders={defaultShownHeaders}
                             toggleableHeaders={toggleableHeaders}
-                            filters={filters}
+                            primaryFilters={primaryFilters}
                             additionalFilters={additionalFilters}
-                            subscriptions={subscriptions}
-                            loading={isLoading}
-                            setLoading={setIsLoading}
-                            supabase={supabase}
-                            defaultSortState={defaultSortState}
+                            setPrimaryFilters={setPrimaryFilters}
+                            setAdditionalFilters={setAdditionalFilters}
+                            onSort={setSortState}
                         />
                     </TableSurface>
                     <Modal

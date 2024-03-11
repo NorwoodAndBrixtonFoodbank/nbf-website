@@ -33,7 +33,7 @@ const EventTable: React.FC<EventTableProps> = (props) => {
         <>
             <TableSurface>
                 <Table
-                    data={props.tableData}
+                    dataPortion={props.tableData}
                     headerKeysAndLabels={eventsTableHeaderKeysAndLabels}
                     columnDisplayFunctions={eventsTableColumnDisplayFunctions}
                     pagination

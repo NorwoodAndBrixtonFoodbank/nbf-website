@@ -57,7 +57,7 @@ const UsersTable: React.FC<Props> = (props) => {
     return (
         <>
             <Table
-                data={props.userData}
+                dataPortion={props.userData}
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
                 onDelete={userOnDelete}
                 onEdit={userOnEdit}

@@ -189,7 +189,7 @@ const ListsDataView: React.FC<Props> = (props) => {
                     checkboxes={false}
                     headerKeysAndLabels={headerKeysAndLabels}
                     toggleableHeaders={toggleableHeaders}
-                    data={rows}
+                    dataPortion={rows}
                     filters={["itemName"]}
                     pagination={false}
                     onEdit={onEdit}
