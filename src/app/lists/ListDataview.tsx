@@ -38,7 +38,7 @@ interface QuantityAndNotes {
 
 interface ListDataViewProps {
     listOfIngridients: Schema["lists"][];
-    setData: React.Dispatch<React.SetStateAction<Schema["lists"][]>>;
+    setListOfIngridients: React.Dispatch<React.SetStateAction<Schema["lists"][]>>;
     comment: string;
 }
 
@@ -82,8 +82,8 @@ const listsColumnStyleOptions: ColumnStyles<ListRow> = {
 };
 
 const ListsDataView: React.FC<ListDataViewProps> = ({
-    listOfIngridients: setListOfIngridients,
-    setData,
+    listOfIngridients,
+    setListOfIngridients: setData,
     comment,
 }) => {
     const [modal, setModal] = useState<EditModalState>();
@@ -92,11 +92,11 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-    if (setListOfIngridients === null) {
+    if (listOfIngridients === null) {
         throw new Error("No data found");
     }
 
-    const rows = setListOfIngridients.map((row) => {
+    const rows = listOfIngridients.map((row) => {
         const newRow = {
             primaryKey: row.primary_key,
             rowOrder: row.row_order,
@@ -119,27 +119,27 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     const toggleableHeaders = headerKeysAndLabels.map(([key]) => key);
 
     const onEdit = (index: number): void => {
-        setModal(setListOfIngridients[index]);
+        setModal(listOfIngridients[index]);
     };
 
     const reorderRows = (row1: ListRow, row2: ListRow): void => {
-        const primaryKeys = setListOfIngridients.map(
+        const primaryKeys = listOfIngridients.map(
             (listOfIngridients) => listOfIngridients.primary_key
         );
 
         const row1Index = primaryKeys.indexOf(row1.primaryKey);
         const row2Index = primaryKeys.indexOf(row2.primaryKey);
 
-        const row1Item = setListOfIngridients[row1Index];
+        const row1Item = listOfIngridients[row1Index];
         const row1Order = row1Item.row_order;
 
-        const row2Item = setListOfIngridients[row2Index];
+        const row2Item = listOfIngridients[row2Index];
         const row2Order = row2Item.row_order;
 
         row1Item.row_order = row2Order;
         row2Item.row_order = row1Order;
 
-        const newRowOrder = [...setListOfIngridients];
+        const newRowOrder = [...listOfIngridients];
 
         newRowOrder[row1Index] = row2Item;
         newRowOrder[row2Index] = row1Item;
@@ -172,7 +172,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
 
     const onConfirmDeletion = async (): Promise<void> => {
         if (toDelete !== null) {
-            const itemToDelete = setListOfIngridients[toDelete];
+            const itemToDelete = listOfIngridients[toDelete];
             const { error } = await supabase
                 .from("lists")
                 .delete()
@@ -190,7 +190,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         <>
             <ConfirmDialog
                 message={`Are you sure you want to delete ${
-                    toDelete ? setListOfIngridients[toDelete].item_name : ""
+                    toDelete ? listOfIngridients[toDelete].item_name : ""
                 }?`}
                 isOpen={toDeleteModalOpen}
                 onConfirm={onConfirmDeletion}
