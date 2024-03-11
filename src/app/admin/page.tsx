@@ -7,8 +7,6 @@ import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { User } from "@supabase/gotrue-js";
 import { DatabaseError } from "@/app/errorClasses";
 import { Schema } from "@/databaseUtils";
-import { PackingSlotRow } from "@/app/admin/packingSlotsTable/PackingSlotsTable";
-import { fetchPackingSlots } from "@/app/admin/packingSlotsTable/PackingSlotActions";
 
 // disables caching
 export const revalidate = 0;
@@ -55,10 +53,9 @@ const getCollectionCentres = async (): Promise<Schema["collection_centres"][]> =
 };
 
 const Admin = async (): Promise<ReactElement> => {
-    const [userData, collectionCentreData, packingSlotData] = await Promise.all([
+    const [userData, collectionCentreData] = await Promise.all([
         getUsers(),
         getCollectionCentres(),
-        fetchPackingSlots(),
     ]);
 
     return (
@@ -67,7 +64,6 @@ const Admin = async (): Promise<ReactElement> => {
             <AdminPage
                 userData={userData}
                 collectionCentreData={collectionCentreData}
-                packingSlotData={packingSlotData}
             />
         </main>
     );

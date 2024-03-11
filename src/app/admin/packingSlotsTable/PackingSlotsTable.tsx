@@ -23,7 +23,6 @@ import CancelIcon from "@mui/icons-material/Close";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import {
-    // addPriorityPackingSlotOrder,
     createPackingSlot,
     deletePackingSlot,
     fetchPackingSlots,
@@ -31,14 +30,10 @@ import {
     updatePackingSlot,
 } from "@/app/admin/packingSlotsTable/PackingSlotActions";
 
-interface Props {
-    packingSlotsData: PackingSlotRow[];
-}
-
 interface EditToolbarProps {
     setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
     setRowModesModel: (newModel: (oldModel: GridRowModesModel) => GridRowModesModel) => void;
-    nextId: number;
+    rows: PackingSlotRow[];
 }
 
 export interface PackingSlotRow {
@@ -50,10 +45,10 @@ export interface PackingSlotRow {
 }
 
 function EditToolbar(props: EditToolbarProps): React.JSX.Element {
-    const { setRows, setRowModesModel, nextId } = props;
+    const { setRows, setRowModesModel, rows } = props;
 
     const handleClick = (): void => {
-        const id = nextId;
+        const id = rows.length + 1;
         setRows((oldRows) => [
             ...oldRows,
             { id, name: "", is_hidden: false, order: id, isNew: true },
@@ -73,13 +68,21 @@ function EditToolbar(props: EditToolbarProps): React.JSX.Element {
     );
 }
 
-const PackingSlotsTable: React.FC<Props> = (props) => {
-    const [rows, setRows] = useState(props.packingSlotsData);
+const PackingSlotsTable: React.FC = () => {
+    const [rows, setRows] = useState<PackingSlotRow[] | null>(null);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
     useEffect(() => {
         console.log(rows);
     }, [rows]);
+
+    async function getPackingSlots(): Promise<void> {
+        const response = await fetchPackingSlots();
+        return setRows(response);
+    }
+    useEffect(() => {
+        getPackingSlots();
+    }, []);
 
     useEffect(() => {
         // This requires that the DB table has Realtime turned on
@@ -99,7 +102,6 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
 
     const handleSaveClick = (id: GridRowId) => () => {
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-        setRows(rows);
     };
 
     const processRowUpdate = (newRow: PackingSlotRow): PackingSlotRow => {
@@ -127,7 +129,6 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
 
     const handleDeleteClick = (id: GridRowId) => () => {
         deletePackingSlot(id);
-        setRows(rows.filter((row) => row.id !== id));
     };
 
     const handleCancelClick = (id: GridRowId) => () => {
@@ -136,21 +137,22 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
             [id]: { mode: GridRowModes.View, ignoreModifications: true },
         });
 
-        const editedRow = rows.find((row) => row.id === id);
-        if (editedRow!.isNew) {
-            setRows(rows.filter((row) => row.id !== id));
+        if (rows) {
+            const editedRow = rows.find((row) => row.id === id);
+            if (editedRow!.isNew) {
+                setRows(rows.filter((row) => row.id !== id));
+            }
         }
     };
 
     const handleUpClick = (id: GridRowId, row: PackingSlotRow) => () => {
         const rowIndex = row.order - 1;
         if (rowIndex > 0) {
-            const newRowsArray = rows.toSpliced(rowIndex, 1);
-            newRowsArray.splice(rowIndex - 1, 0, rows[rowIndex]);
-            const row1 = rows[rowIndex];
-            const row2 = rows[rowIndex - 1];
-            swapRows(row1, row2);
-            setRows(newRowsArray);
+            if (rows) {
+                const row1 = rows[rowIndex];
+                const row2 = rows[rowIndex - 1];
+                swapRows(row1, row2);
+            }
         }
     };
 
@@ -241,25 +243,25 @@ const PackingSlotsTable: React.FC<Props> = (props) => {
         },
     ];
 
-    const nextId = rows.length + 1;
-
     return (
         <>
-            <DataGrid
-                rows={rows}
-                columns={packingSlotsTableHeaderKeysAndLabels}
-                editMode="row"
-                rowModesModel={rowModesModel}
-                onRowModesModelChange={handleRowModesModelChange}
-                onRowEditStop={handleRowEditStop}
-                processRowUpdate={processRowUpdate}
-                slots={{
-                    toolbar: EditToolbar,
-                }}
-                slotProps={{
-                    toolbar: { setRows, setRowModesModel, nextId },
-                }}
-            />
+            {rows && (
+                <DataGrid
+                    rows={rows}
+                    columns={packingSlotsTableHeaderKeysAndLabels}
+                    editMode="row"
+                    rowModesModel={rowModesModel}
+                    onRowModesModelChange={handleRowModesModelChange}
+                    onRowEditStop={handleRowEditStop}
+                    processRowUpdate={processRowUpdate}
+                    slots={{
+                        toolbar: EditToolbar,
+                    }}
+                    slotProps={{
+                        toolbar: { setRows, setRowModesModel, rows },
+                    }}
+                />
+            )}
         </>
     );
 };

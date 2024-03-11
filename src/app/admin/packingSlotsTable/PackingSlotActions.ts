@@ -1,7 +1,6 @@
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { GridRowId } from "@mui/x-data-grid";
-import { Supabase } from "@/supabaseUtils";
 import { PackingSlotRow } from "@/app/admin/packingSlotsTable/PackingSlotsTable";
 
 export interface DBPackingSlotData {
@@ -97,26 +96,51 @@ export const swapRows = async (
     row1: packingSlotTableRowData,
     row2: packingSlotTableRowData
 ): Promise<void> => {
-    console.log(row1.order, row2.order);
-    const newRow1order = row1.order - 1;
-    const newRow2order = row2.order + 1;
-    console.log(newRow1order, newRow2order);
-    const { error } = await supabase.from("packing_slots").upsert([
-        {
-            primary_key: row1.id,
-            order: newRow1order,
-            name: row1.name,
-            is_hidden: row1.is_hidden,
-        },
-        {
-            primary_key: row2.id,
-            order: newRow2order,
-            name: row2.name,
-            is_hidden: row2.is_hidden,
-        },
-    ]);
+    const updatedRows = await swapOne(row1, row2);
+    await swapTwoUp(updatedRows);
+    console.log(updatedRows);
+};
+
+const swapOne = async (
+    rowOne: packingSlotTableRowData,
+    rowTwo: packingSlotTableRowData
+): Promise<DBPackingSlotData[]> => {
+    const { data, error } = await supabase
+        .from("packing_slots")
+        .upsert([
+            {
+                primary_key: rowOne.id,
+                order: -1,
+                name: rowOne.name,
+                is_hidden: rowOne.is_hidden,
+            },
+            {
+                primary_key: rowTwo.id,
+                order: rowOne.order,
+                name: rowTwo.name,
+                is_hidden: rowTwo.is_hidden,
+            },
+        ])
+        .select();
 
     if (error) {
+        console.log(error);
+        throw new DatabaseError("update", "packing_slots");
+    }
+
+    return data;
+};
+
+const swapTwoUp = async (updatedRows: DBPackingSlotData[]): Promise<void> => {
+    const { error } = await supabase
+        .from("packing_slots")
+        .update({
+            order: updatedRows[1].order - 1,
+        })
+        .eq("primary_key", updatedRows[0].primary_key);
+
+    if (error) {
+        console.log(error);
         throw new DatabaseError("update", "packing_slots");
     }
 };
