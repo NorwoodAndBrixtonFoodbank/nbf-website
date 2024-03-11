@@ -390,9 +390,12 @@ const ParcelsPage: React.FC<{}> = () => {
 
     useEffect(() => {
         const allFilters = [...primaryFilters, ...additionalFilters];
+        const freshRequest = () => {
+            return true //for now: ask for help
+        }
         (async () => {
             setIsLoading(true);
-            setTotalRows(await getParcelsCount(supabase, allFilters));
+            const totalRows = await getParcelsCount(supabase, allFilters);
             const fetchedData = await getParcelsData(
                 supabase,
                 allFilters,
@@ -400,7 +403,10 @@ const ParcelsPage: React.FC<{}> = () => {
                 startPoint,
                 endPoint,
             );
-            setParcelsDataPortion(fetchedData);
+            if (freshRequest()) {
+                setTotalRows(totalRows);
+                setParcelsDataPortion(fetchedData);
+            }
             setIsLoading(false);
         })();
     }, [startPoint, endPoint, ...primaryFilters, ...additionalFilters, sortState]);

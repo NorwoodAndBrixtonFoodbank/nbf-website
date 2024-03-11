@@ -74,7 +74,7 @@ export type CheckboxConfig<Data> =
           displayed: true;
           selectedRowIds: string[];
           isAllCheckboxChecked: boolean;
-          onCheckboxClicked: (data: Data) => void;
+          onCheckboxClicked: (row: Data) => void;
           onAllCheckboxClicked: (isAllCheckboxChecked: boolean) => void;
           isRowChecked: (data: Data) => boolean;
       }

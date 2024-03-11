@@ -6,68 +6,84 @@ import { Filter } from "./Filters";
 interface TestData {
     full_name: string;
     phone_number: string;
+    id: string;
 }
 
 const data: TestData[] = [
     {
         full_name: "Tom",
         phone_number: "123456",
+        id: "0",
     },
     {
         full_name: "Sam",
         phone_number: "999",
+        id: "1",
     },
     {
         full_name: "Harper Garrett",
         phone_number: "2171786554",
+        id: "2",
     },
     {
         full_name: "Adrian Key",
         phone_number: "3650099130",
+        id: "3",
     },
     {
         full_name: "Harrell Wallace",
         phone_number: "4650047935",
+        id: "4",
     },
     {
         full_name: "Oneill Curtis",
         phone_number: "7058491995",
+        id: "5",
     },
     {
         full_name: "Herring Rutledge",
         phone_number: "1440882899",
+        id: "6",
     },
     {
         full_name: "Eloise Rowland",
         phone_number: "2580325390",
+        id: "7",
     },
     {
         full_name: "Cathryn Burks",
         phone_number: "7136166489",
+        id: "8",
     },
     {
         full_name: "Paopao",
         phone_number: "7136166469",
+        id: "9",
     },
     {
         full_name: "Forbes Doyle",
         phone_number: "1377097191",
+        id: "10",
     },
     {
         full_name: "Agnes Rosales",
         phone_number: "3334796379",
+        id: "11",
     },
     {
         full_name: "Jan Orr",
         phone_number: "1526538148",
+        id: "12",
     },
     {
         full_name: "Colleen Lowery",
         phone_number: "3980156139",
+        id: "13",
     },
     {
         full_name: "Chloe",
         phone_number: "4567894522",
+        id: "14",
     },
 ];
 
@@ -109,48 +125,49 @@ const Component: React.FC<TestTableProps> = ({
         setTestDataPortion(tableData.slice(startPoint, endPoint));
     }, [startPoint, endPoint, tableData]);
 
-    const [selectedRowIndices, setSelectedRowIndices] = useState<number[]>([]);
+    const [checkedRowIds, setCheckedRowIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
 
     useEffect(() => {
-        setSelectedRowIndices([]);
-    }, [tableData]);
+        setCheckedRowIds([]);
+    }, [primaryFilters]);
 
-    const selectOrDeselectRow = (rowIndex: number): void => {
-        setSelectedRowIndices((currentIndices) => {
-            if (currentIndices.includes(rowIndex)) {
-                return currentIndices.filter((index) => index !== rowIndex);
+    const selectOrDeselectRow = (data: TestData): void => {
+        setCheckedRowIds((checkedIds) => {
+            if (checkedIds.includes(data.id)) {
+                return checkedIds.filter((dummyId) => dummyId !== data.id);
             }
-            return currentIndices.concat([rowIndex]);
+            return checkedIds.concat([data.id]);
         });
     };
 
-    const toggleAllCheckBox = (): void => {
+    const toggleAllCheckBox = async (): Promise<void> => {
         if (isAllCheckBoxSelected) {
-            setSelectedRowIndices([]);
+            setCheckedRowIds([]);
             setAllCheckBoxSelected(false);
         } else {
-            setSelectedRowIndices(tableData.map((data, index) => index));
+            setCheckedRowIds(tableData.map((row)=>row.id));
             setAllCheckBoxSelected(true);
         }
     };
 
     useEffect(() => {
-        const allChecked = selectedRowIndices.length === tableData.length;
+        const allChecked = checkedRowIds.length === tableData.length;
         if (allChecked !== isAllCheckBoxSelected) {
             setAllCheckBoxSelected(allChecked);
         }
-    }, [tableData, selectedRowIndices, isAllCheckBoxSelected]);
+    }, [tableData.length, checkedRowIds, isAllCheckBoxSelected]);
 
-    const trueCheckboxConfig: CheckboxConfig = {
+    const trueCheckboxConfig: CheckboxConfig<TestData> = {
         displayed: true,
-        selectedRowIndices: selectedRowIndices,
+        selectedRowIds: checkedRowIds,
         isAllCheckboxChecked: isAllCheckBoxSelected,
-        onCheckboxClicked: (rowIndex: number) => selectOrDeselectRow(rowIndex),
+        onCheckboxClicked: (data: TestData) => selectOrDeselectRow(data),
         onAllCheckboxClicked: () => toggleAllCheckBox(),
+        isRowChecked: (row: TestData) => checkedRowIds.includes(row.id),
     };
 
-    const falseCheckboxConfig: CheckboxConfig = {
+    const falseCheckboxConfig: CheckboxConfig<TestData> = {
         displayed: false,
     };
 
