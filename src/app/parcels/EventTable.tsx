@@ -39,11 +39,11 @@ const EventTable: React.FC<EventTableProps> = (props) => {
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const getStartPoint = (): number => ((currentPage - 1) * perPage);
-    const getEndPoint = (): number => ((currentPage) * perPage - 1);
+    const startpoint = (currentPage - 1) * perPage;
+    const endpoint = (currentPage) * perPage - 1;
 
     const fetchData = () => {
-        setEventsDataPortion(getEventsData(props.tableData, getStartPoint(), getEndPoint()));
+        setEventsDataPortion(getEventsData(props.tableData, startpoint, endpoint));
     }
     useEffect(()=>{
         fetchData();

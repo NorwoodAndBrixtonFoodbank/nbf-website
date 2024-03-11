@@ -345,10 +345,10 @@ const ParcelsPage: React.FC<{}> = () => {
         // This requires that the DB parcels table has Realtime turned on
         const subscriptionChannel = supabase
             .channel("parcels-table-changes")
-            .on("postgres_changes", { event: "*", schema: "public", table: "parcels" }, async () => loadCountAndData()
+            .on("postgres_changes", { event: "*", schema: "public", table: "parcels" }, loadCountAndData
             )
-            .on("postgres_changes", { event: "*", schema: "public", table: "events" }, async () =>
-                loadCountAndData()
+            .on("postgres_changes", { event: "*", schema: "public", table: "events" }, 
+                loadCountAndData
             )
             .subscribe();
 
