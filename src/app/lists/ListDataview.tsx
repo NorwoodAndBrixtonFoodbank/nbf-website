@@ -81,7 +81,11 @@ const listsColumnStyleOptions: ColumnStyles<ListRow> = {
     ),
 };
 
-const ListsDataView: React.FC<ListDataViewProps> = ({ listOfIngridients: setListOfIngridients, setData, comment }) => {
+const ListsDataView: React.FC<ListDataViewProps> = ({
+    listOfIngridients: setListOfIngridients,
+    setData,
+    comment,
+}) => {
     const [modal, setModal] = useState<EditModalState>();
     const [toDelete, setToDelete] = useState<number | null>(null);
     // need another setState otherwise the modal content changes before the close animation finishes
