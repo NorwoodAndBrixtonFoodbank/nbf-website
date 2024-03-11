@@ -208,12 +208,12 @@ async function generateSeed(): Promise<void> {
     await seed.packingSlots([
         {
             name: "AM",
-            isHidden: false,
+            isShown: true,
             order: 1,
         },
         {
             name: "PM",
-            isHidden: false,
+            isShown: true,
             order: 2,
         }
     ])

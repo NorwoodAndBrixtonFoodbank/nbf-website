@@ -6,14 +6,14 @@ import { PackingSlotRow } from "@/app/admin/packingSlotsTable/PackingSlotsTable"
 export interface DBPackingSlotData {
     primary_key?: string;
     name: string;
-    is_hidden: boolean;
+    is_shown: boolean;
     order: number;
 }
 
 export interface DataGridPackingSlotRow {
     id: string;
     name: string;
-    is_hidden: boolean;
+    is_shown: boolean;
     order: number;
 }
 interface packingSlotTableRowData extends DataGridPackingSlotRow {
@@ -30,7 +30,7 @@ export const fetchPackingSlots = async (): Promise<PackingSlotRow[]> => {
         return {
             name: row.name,
             id: row.primary_key,
-            is_hidden: row.is_hidden,
+            is_shown: row.is_shown,
             order: row.order,
             isNew: false,
         };
@@ -44,7 +44,7 @@ const processRowData = (tableData: packingSlotTableRowData): DBPackingSlotData =
     const newData: DBPackingSlotData = {
         primary_key: data.id,
         name: data.name,
-        is_hidden: data.is_hidden,
+        is_shown: data.is_shown,
         order: data.order,
     };
     return newData;
@@ -54,24 +54,23 @@ const processNewRowData = (tableData: packingSlotTableRowData): DBPackingSlotDat
     const data = { ...tableData };
     const newData: DBPackingSlotData = {
         name: data.name,
-        is_hidden: data.is_hidden,
+        is_shown: data.is_shown,
         order: data.order,
     };
     return newData;
 };
 
 export const createPackingSlot = async (tableData: packingSlotTableRowData): Promise<void> => {
-    console.log("creating");
     const data = processNewRowData(tableData);
     const { error } = await supabase.from("packing_slots").insert(data);
 
     if (error) {
+        console.log(error);
         throw new DatabaseError("insert", "packing slots");
     }
 };
 
 export const updatePackingSlot = async (tableData: packingSlotTableRowData): Promise<void> => {
-    console.log("updating");
     const processedData = processRowData(tableData);
     const { error } = await supabase
         .from("packing_slots")
@@ -84,7 +83,6 @@ export const updatePackingSlot = async (tableData: packingSlotTableRowData): Pro
 };
 
 export const deletePackingSlot = async (id: GridRowId): Promise<void> => {
-    console.log("deleting");
     const { error } = await supabase.from("packing_slots").delete().eq("primary_key", id);
 
     if (error) {
@@ -93,12 +91,12 @@ export const deletePackingSlot = async (id: GridRowId): Promise<void> => {
 };
 
 export const swapRows = async (
-    row1: packingSlotTableRowData,
-    row2: packingSlotTableRowData
+    rowOne: packingSlotTableRowData,
+    rowTwo: packingSlotTableRowData
 ): Promise<void> => {
-    const updatedRows = await swapOne(row1, row2);
+    const updatedRows = await swapOne(rowOne, rowTwo);
 
-    if (row1.order - row2.order > 0) {
+    if (rowOne.order - rowTwo.order > 0) {
         await swapTwoUp(updatedRows);
     } else {
         await swapTwoDown(updatedRows);
@@ -116,13 +114,13 @@ const swapOne = async (
                 primary_key: rowOne.id,
                 order: -1,
                 name: rowOne.name,
-                is_hidden: rowOne.is_hidden,
+                is_shown: rowOne.is_shown,
             },
             {
                 primary_key: rowTwo.id,
                 order: rowOne.order,
                 name: rowTwo.name,
-                is_hidden: rowTwo.is_hidden,
+                is_shown: rowTwo.is_shown,
             },
         ])
         .select();

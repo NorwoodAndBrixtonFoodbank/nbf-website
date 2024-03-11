@@ -5011,4 +5011,4 @@ INSERT INTO public.events (primary_key,event_name,timestamp,parcel_id,event_data
 INSERT INTO public.website_data (name,value) VALUES ('lists_text', 'Space is valuable! Please don''t leave boxes half empty - pack efficiently!
 BOXES MUST BE PACKED FLAT SO THAT THEY CAN BE STACKED. Do not leave items sticking out of the top.
 We do have a selection of ''free from'' goods as well as vegan and halal products. If you''re uncertain about any additional dietary needs, please speak to one of the team.');
-INSERT INTO public.packing_slots (primary_key,name,is_hidden,"order") VALUES ('8660d81e-7967-5b67-a777-ad0792510393', 'AM', 'f', 1), ('ce32dd76-44e5-5eea-9774-12d23f20e850', 'PM', 'f', 2);
+INSERT INTO public.packing_slots (primary_key,name,is_shown,"order") VALUES ('8660d81e-7967-5b67-a777-ad0792510393', 'AM', 't', 1), ('ce32dd76-44e5-5eea-9774-12d23f20e850', 'PM', 't', 2);
