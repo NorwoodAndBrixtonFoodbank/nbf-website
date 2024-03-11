@@ -134,27 +134,28 @@ const ListsDataView: React.FC<ListDataViewProps> = ({ listOfIngridients, setData
             throw new DatabaseError("update", "lists items");
         }
 
+        const primaryKeys = listOfIngridients.map(
+            (listOfIngridients) => listOfIngridients.primary_key
+        );
 
-        const primaryKeys = listOfIngridients.map(listOfIngridients => listOfIngridients.primary_key)
+        const index1 = primaryKeys.indexOf(row1.primaryKey);
+        const index2 = primaryKeys.indexOf(row2.primaryKey);
 
-        const index1 = primaryKeys.indexOf(row1.primaryKey)
-        const index2 = primaryKeys.indexOf(row2.primaryKey)
+        const item1 = listOfIngridients[index1];
+        const order1 = item1.row_order;
 
-        const item1 = listOfIngridients[index1]
-        const order1 = item1.row_order
+        const item2 = listOfIngridients[index2];
+        const order2 = item2.row_order;
 
-        const item2 = listOfIngridients[index2]
-        const order2 = item2.row_order
+        item1.row_order = order2;
+        item2.row_order = order1;
 
-        item1.row_order = order2
-        item2.row_order = order1
+        const newData = [...listOfIngridients];
 
-        const newData = [...listOfIngridients]
+        newData[index1] = item2;
+        newData[index2] = item1;
 
-        newData[index1] = item2
-        newData[index2] = item1
-
-        setData(newData)
+        setData(newData);
     };
 
     const onDeleteButtonClick = (index: number): void => {

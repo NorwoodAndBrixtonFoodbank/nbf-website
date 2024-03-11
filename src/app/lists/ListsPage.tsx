@@ -31,7 +31,11 @@ const ListsPage: React.FC<{}> = () => {
         })();
     }, []);
 
-    return isLoading ? <></> : <ListsDataView listOfIngridients={listsData} setData={setListsData} comment={comment} />;
+    return isLoading ? (
+        <></>
+    ) : (
+        <ListsDataView listOfIngridients={listsData} setData={setListsData} comment={comment} />
+    );
 };
 
 export default ListsPage;
