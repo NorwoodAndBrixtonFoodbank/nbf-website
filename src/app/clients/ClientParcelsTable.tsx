@@ -22,39 +22,41 @@ export interface ClientParcelTableProps {
     parcelsData: ClientParcelTableRow[];
 }
 
-const getClientsParcelData = (tableData: ClientParcelTableRow[], start: number, end: number) => (tableData.slice(start,end))
+const getClientsParcelData = (
+    tableData: ClientParcelTableRow[],
+    start: number,
+    end: number
+): ClientParcelTableRow[] => tableData.slice(start, end);
 
 const ClientParcelsTable: React.FC<ClientParcelTableProps> = (props) => {
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [clientsParcelsDataPortion, setClientsParcelsDataPortion] = useState<ClientParcelTableRow[]>([]);
+    const [clientsParcelsDataPortion, setClientsParcelsDataPortion] = useState<
+        ClientParcelTableRow[]
+    >([]);
 
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const startpoint = (currentPage - 1) * perPage;
-    const endpoint = (currentPage) * perPage - 1;
+    const startPoint = (currentPage - 1) * perPage;
+    const endPoint = currentPage * perPage - 1;
 
-    const fetchData = () => {
-        setClientsParcelsDataPortion(getClientsParcelData(props.parcelsData, startpoint, endpoint));
-    }
-    useEffect(()=>{
-        fetchData();
-    },[perPage,currentPage])
+    useEffect(() => {
+        setClientsParcelsDataPortion(getClientsParcelData(props.parcelsData, startPoint, endPoint));
+    }, [startPoint, endPoint, props.parcelsData]);
     const router = useRouter();
     return (
         <TableSurface>
             <Table
-                    dataPortion={clientsParcelsDataPortion}
-                    setDataPortion={setClientsParcelsDataPortion}
-                    totalRows={props.parcelsData.length}
-                    onPageChange={setCurrentPage}
-                    onPerPageChage={setPerPage}
-                    headerKeysAndLabels={headers}
-                    pagination
+                dataPortion={clientsParcelsDataPortion}
+                setDataPortion={setClientsParcelsDataPortion}
+                totalRows={props.parcelsData.length}
+                onPageChange={setCurrentPage}
+                onPerPageChage={setPerPage}
+                headerKeysAndLabels={headers}
+                pagination
+                onRowClick={(row) => router.push(`/parcels?parcelId=${row.data.parcelId}`)}
             />
         </TableSurface>
     );
 };
 
 export default ClientParcelsTable;
-

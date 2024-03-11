@@ -1,10 +1,7 @@
 import React from "react";
 import DataViewer from "@/components/DataViewer/DataViewer";
-import getExpandedParcelDetails, { processEventsDetails } from "@/app/parcels/getExpandedParcelDetails";
+import getExpandedParcelDetails from "@/app/parcels/getExpandedParcelDetails";
 import EventTable, { EventTableRow } from "./EventTable";
-import { Supabase } from "@/supabaseUtils";
-import { DatabaseError } from "../errorClasses";
-import { extractValidationProps } from "@mui/x-date-pickers/internals";
 
 interface Props {
     parcelId: string | null;

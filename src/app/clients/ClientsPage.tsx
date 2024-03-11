@@ -18,7 +18,6 @@ import { textFilter } from "@/components/Tables/TextFilter";
 import { Filter } from "@/components/Tables/Filters";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
-import { RealtimePostgresChangesFilter } from "@supabase/supabase-js";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -33,62 +32,93 @@ const headers: TableHeaders<ClientsTableRow> = [
     ["addressPostcode", "Postcode"],
 ];
 
-const fullNameSearch = (query: PostgrestFilterBuilder<Database["public"], any, any>, state: string): PostgrestFilterBuilder<Database["public"], any, any> => {
-    return query.ilike('full_name', `%${state}%`);
-}
+const fullNameSearch = (
+    query: PostgrestFilterBuilder<Database["public"], any, any>,
+    state: string
+): PostgrestFilterBuilder<Database["public"], any, any> => {
+    return query.ilike("full_name", `%${state}%`);
+};
 
-const filters: Filter<ClientsTableRow, any>[] = [
-    textFilter({key: "fullName", label: "Name", headers: headers, filterMethod: fullNameSearch})
-]
-
-const subscriptions: RealtimePostgresChangesFilter<"*">[] = [{ event: "*", schema: "public", table: "clients" }, { event: "*", schema: "public", table: "families" }]
+const filters: Filter<any>[] = [
+    textFilter({ key: "fullName", label: "Name", headers: headers, filterMethod: fullNameSearch }),
+];
 
 const sortableColumns: SortOptions<ClientsTableRow, any>[] = [
-    {key: "fullName", sortMethod: (query, sortDirection) => query.order("full_name", {ascending: sortDirection === "asc"})},
+    {
+        key: "fullName",
+        sortMethod: (query, sortDirection) =>
+            query.order("full_name", { ascending: sortDirection === "asc" }),
+    },
     //{key: "familyCategory", sortMethod: (query, sortDirection) => query.order("full_name", {ascending: sortDirection === "asc"})},broke
-    {key: "addressPostcode", sortMethod: (query, sortDirection) => query.order("address_postcode", {ascending: sortDirection === "asc"})}
-]
+    {
+        key: "addressPostcode",
+        sortMethod: (query, sortDirection) =>
+            query.order("address_postcode", { ascending: sortDirection === "asc" }),
+    },
+];
 
 const clientIdParam = "clientId";
 const ClientsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [clientsDataPortion, setClientsDataPortion] = useState<ClientsTableRow[]>([]);
     const [totalRows, setTotalRows] = useState<number>(0);
-    const [sortState, setSortState] = useState<SortState<ClientsTableRow>>({sort: false});
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<ClientsTableRow, any>[]>(filters);
-
+    const [sortState, setSortState] = useState<SortState<ClientsTableRow>>({ sort: false });
+    const [primaryFilters, setPrimaryFilters] = useState<Filter<any>[]>(filters);
 
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const startPoint = (currentPage - 1) * perPage;
-    const endPoint = (currentPage) * perPage - 1;
+    const endPoint = currentPage * perPage - 1;
 
-    const allFilterStates = primaryFilters.map((filter)=>filter.state)
-
-    const loadCountAndData = async () => {
-        setIsLoading(true);
-        setTotalRows(await getClientsCount(supabase, primaryFilters));
-        const fetchedData = await getClientsData(supabase, startPoint, endPoint, primaryFilters, sortState);
-        setClientsDataPortion(fetchedData);
-        setIsLoading(false);
-    }
+    const allFilterStates = primaryFilters.map((filter) => filter.state);
 
     useEffect(() => {
-        (async () => {        
-            loadCountAndData()})();
-    }, [currentPage, perPage, sortState, ...allFilterStates]);
+        (async () => {
+            setIsLoading(true);
+            setTotalRows(await getClientsCount(supabase, primaryFilters));
+            const fetchedData = await getClientsData(
+                supabase,
+                startPoint,
+                endPoint,
+                primaryFilters,
+                sortState
+            );
+            setClientsDataPortion(fetchedData);
+            setIsLoading(false);
+        })();
+    }, [startPoint, endPoint, sortState, primaryFilters]);
 
     //remember to deal with what happens if filters change twice and requests come back out of order. deal with in useeffect that sets data inside Table
     useEffect(() => {
+        const loadCountAndData = async (): Promise<void> => {
+            setIsLoading(true);
+            setTotalRows(await getClientsCount(supabase, primaryFilters));
+            const fetchedData = await getClientsData(
+                supabase,
+                startPoint,
+                endPoint,
+                primaryFilters,
+                sortState
+            );
+            setClientsDataPortion(fetchedData);
+            setIsLoading(false);
+        };
         // This requires that the DB parcels table has Realtime turned on
         const subscriptionChannel = supabase
             .channel("parcels-table-changes")
-            .on("postgres_changes", { event: "*", schema: "public", table: "clients" }, loadCountAndData
-            )
-            .on("postgres_changes", { event: "*", schema: "public", table: "collection_centres" }, 
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "clients" },
                 loadCountAndData
             )
-            .on("postgres_changes", { event: "*", schema: "public", table: "families" }, 
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "collection_centres" },
+                loadCountAndData
+            )
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "families" },
                 loadCountAndData
             )
             .subscribe();
@@ -96,7 +126,7 @@ const ClientsPage: React.FC<{}> = () => {
         return () => {
             supabase.removeChannel(subscriptionChannel);
         };
-    }, []);
+    }, [startPoint, endPoint, primaryFilters, sortState]);
     const theme = useTheme();
     const router = useRouter();
 
@@ -105,65 +135,65 @@ const ClientsPage: React.FC<{}> = () => {
 
     return (
         <>
-                <>
-                    <TableSurface>
-                        <Table
+            <>
+                <TableSurface>
+                    <Table
                         dataPortion={clientsDataPortion}
                         setDataPortion={setClientsDataPortion}
                         totalRows={totalRows}
                         onPageChange={setCurrentPage}
                         onPerPageChage={setPerPage}
-                            headerKeysAndLabels={headers}
-                            onRowClick={(row) => {
-                                router.push(`/clients?${clientIdParam}=${row.data.clientId}`);
-                            }}
-                            sortableColumns={sortableColumns}
-                            pagination
-                            checkboxes={false}
-                            primaryFilters={primaryFilters}
-                            setPrimaryFilters={setPrimaryFilters}
-                            onSort={setSortState}
-                        />
-                    </TableSurface>
-                    <Centerer>
-                        <LinkButton link="/clients/add">Add Client</LinkButton>
-                    </Centerer>
-
-                    <Modal
-                        header={
-                            <>
-                                <Icon icon={faUser} color={theme.primary.largeForeground[2]} />
-                                Client Details
-                            </>
-                        }
-                        isOpen={clientId !== null}
-                        onClose={() => {
-                            router.push("/clients");
+                        headerKeysAndLabels={headers}
+                        onRowClick={(row) => {
+                            router.push(`/clients?${clientIdParam}=${row.data.clientId}`);
                         }}
-                        headerId="clientsDetailModal"
-                    >
-                        <OutsideDiv>
-                            <ContentDiv>
-                                {clientId && (
-                                    <Suspense fallback={<ExpandedClientDetailsFallback />}>
-                                        <ExpandedClientDetails clientId={clientId} />
-                                    </Suspense>
-                                )}
-                            </ContentDiv>
+                        sortableColumns={sortableColumns}
+                        pagination
+                        checkboxes={false}
+                        primaryFilters={primaryFilters}
+                        setPrimaryFilters={setPrimaryFilters}
+                        onSort={setSortState}
+                    />
+                </TableSurface>
+                <Centerer>
+                    <LinkButton link="/clients/add">Add Client</LinkButton>
+                </Centerer>
 
-                            <ButtonsDiv>
-                                <Centerer>
-                                    <LinkButton link={`/clients/edit/${clientId}`}>
-                                        Edit Client
-                                    </LinkButton>
-                                    <LinkButton link={`/parcels/add/${clientId}`}>
-                                        Add Parcel
-                                    </LinkButton>
-                                </Centerer>
-                            </ButtonsDiv>
-                        </OutsideDiv>
-                    </Modal>
-                </>
+                <Modal
+                    header={
+                        <>
+                            <Icon icon={faUser} color={theme.primary.largeForeground[2]} />
+                            Client Details
+                        </>
+                    }
+                    isOpen={clientId !== null}
+                    onClose={() => {
+                        router.push("/clients");
+                    }}
+                    headerId="clientsDetailModal"
+                >
+                    <OutsideDiv>
+                        <ContentDiv>
+                            {clientId && (
+                                <Suspense fallback={<ExpandedClientDetailsFallback />}>
+                                    <ExpandedClientDetails clientId={clientId} />
+                                </Suspense>
+                            )}
+                        </ContentDiv>
+
+                        <ButtonsDiv>
+                            <Centerer>
+                                <LinkButton link={`/clients/edit/${clientId}`}>
+                                    Edit Client
+                                </LinkButton>
+                                <LinkButton link={`/parcels/add/${clientId}`}>
+                                    Add Parcel
+                                </LinkButton>
+                            </Centerer>
+                        </ButtonsDiv>
+                    </OutsideDiv>
+                </Modal>
+            </>
         </>
     );
 };

@@ -5,26 +5,32 @@ import { Supabase } from "@/supabaseUtils";
 import { Filter } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 
-const getClientsData = async (supabase: Supabase, start: number, end: number, filters: Filter<ClientsTableRow, any>[], sortState: SortState<ClientsTableRow>): Promise<ClientsTableRow[]> => {
+const getClientsData = async (
+    supabase: Supabase,
+    start: number,
+    end: number,
+    filters: Filter<any>[],
+    sortState: SortState<ClientsTableRow>
+): Promise<ClientsTableRow[]> => {
     const data: ClientsTableRow[] = [];
 
     let query = supabase
         .from("clients")
-        .select("primary_key, full_name, family_id, address_postcode", {count: 'exact'})
+        .select("primary_key, full_name, family_id, address_postcode", { count: "exact" });
 
-        if (sortState.sort && sortState.column.sortMethod) {
-            query = sortState.column.sortMethod(query, sortState.sortDirection);
-        } else {
-            query = query.order("full_name");
-        }
+    if (sortState.sort && sortState.column.sortMethod) {
+        query = sortState.column.sortMethod(query, sortState.sortDirection);
+    } else {
+        query = query.order("full_name");
+    }
 
     filters.forEach((filter) => {
         query = filter.filterMethod(query, filter.state);
-    })
+    });
 
     query = query.range(start, end);
-    
-    const { data: clients, error: clientError } = await query
+
+    const { data: clients, error: clientError } = await query;
 
     if (clientError) {
         throw new DatabaseError("fetch", "clients");
@@ -51,22 +57,20 @@ const getClientsData = async (supabase: Supabase, start: number, end: number, fi
     return data;
 };
 
-export const getClientsCount = async (supabase: Supabase, filters: Filter<ClientsTableRow, any>[]): Promise<number> => {
-    
-    let query = supabase
-  .from('clients')
-  .select('*', { count: 'exact', head: true });
+export const getClientsCount = async (
+    supabase: Supabase,
+    filters: Filter<any>[]
+): Promise<number> => {
+    let query = supabase.from("clients").select("*", { count: "exact", head: true });
 
-  filters.forEach((filter) => {
-    query = filter.filterMethod(query, filter.state);
-})
-const { count, error: clientError } = await query
-  
-  if (clientError || count === null) {
-    throw new DatabaseError("fetch", "clients");
-
-  }
-  return count;
-}
+    filters.forEach((filter) => {
+        query = filter.filterMethod(query, filter.state);
+    });
+    const { count, error: clientError } = await query;
+    if (clientError || count === null) {
+        throw new DatabaseError("fetch", "clients");
+    }
+    return count;
+};
 
 export default getClientsData;

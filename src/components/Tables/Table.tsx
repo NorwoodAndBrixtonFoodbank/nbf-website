@@ -1,7 +1,7 @@
 "use client";
 
 import Icon from "@/components/Icons/Icon";
-import { Filter, headerLabelFromKey } from "@/components/Tables/Filters";
+import { Filter } from "@/components/Tables/Filters";
 import TableFilterBar from "@/components/Tables/TableFilterBar";
 import {
     faAnglesDown,
@@ -9,15 +9,12 @@ import {
     faPenToSquare,
     faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { NoSsr, TablePagination } from "@mui/material";
+import { NoSsr } from "@mui/material";
 import IconButton from "@mui/material/IconButton/IconButton";
-import React, { SetStateAction, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import styled from "styled-components";
-import { textFilter } from "./TextFilter";
 import { Primitive, SortOrder } from "react-data-table-component/dist/DataTable/types";
-import { Supabase } from "@/supabaseUtils";
-import { RealtimeChannel, RealtimePostgresChangesFilter } from "@supabase/supabase-js";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 
@@ -49,22 +46,27 @@ export type ColumnStyleOptions = Omit<
 
 export interface SortOptions<Data, Key extends keyof Data> {
     key: Key;
-    sortMethod: (query: PostgrestFilterBuilder<Database["public"], any, any>, sortDirection: SortOrder) => PostgrestFilterBuilder<Database["public"], any, any>;
+    sortMethod: (
+        query: PostgrestFilterBuilder<Database["public"], any, any>,
+        sortDirection: SortOrder
+    ) => PostgrestFilterBuilder<Database["public"], any, any>;
 }
 
- interface ActiveSortState<Data> {
-    sort: true,
-    sortDirection: SortOrder,
-    column: CustomColumn<Data>
+interface ActiveSortState<Data> {
+    sort: true;
+    sortDirection: SortOrder;
+    column: CustomColumn<Data>;
 }
- interface InactiveSortState {
-    sort: false,
+interface InactiveSortState {
+    sort: false;
 }
-export type SortState<Data> = ActiveSortState<Data> | InactiveSortState
-
+export type SortState<Data> = ActiveSortState<Data> | InactiveSortState;
 
 export interface CustomColumn<Data> extends TableColumn<Row<Data>> {
-    sortMethod?: (query: PostgrestFilterBuilder<Database["public"], any, any>, sortDirection: SortOrder) => PostgrestFilterBuilder<Database["public"], any, any>
+    sortMethod?: (
+        query: PostgrestFilterBuilder<Database["public"], any, any>,
+        sortDirection: SortOrder
+    ) => PostgrestFilterBuilder<Database["public"], any, any>;
 }
 
 interface Props<Data> {
@@ -77,10 +79,10 @@ interface Props<Data> {
     onSort?: (sortState: SortState<Data>) => void;
     checkboxes?: boolean;
     onRowSelection?: (rowIds: number[]) => void;
-    primaryFilters?: (Filter<Data, any>)[];
-    additionalFilters?: (Filter<Data, any>)[];
-    setPrimaryFilters?: (primaryFilters: Filter<Data, any>[]) => void;
-    setAdditionalFilters?: (primaryFilters: Filter<Data, any>[]) => void;
+    primaryFilters?: Filter<any>[];
+    additionalFilters?: Filter<any>[];
+    setPrimaryFilters?: (primaryFilters: Filter<any>[]) => void;
+    setAdditionalFilters?: (primaryFilters: Filter<any>[]) => void;
     pagination?: boolean;
     defaultShownHeaders?: readonly (keyof Data)[];
     toggleableHeaders?: readonly (keyof Data)[];
@@ -143,9 +145,9 @@ const Table = <Data,>({
     onRowSelection,
     defaultShownHeaders,
     primaryFilters = [],
-    setPrimaryFilters  = ()=>{},
+    setPrimaryFilters = () => {},
     additionalFilters = [],
-    setAdditionalFilters = ()=> {},
+    setAdditionalFilters = () => {},
     onDelete,
     onEdit,
     onSwapRows,
@@ -157,9 +159,8 @@ const Table = <Data,>({
     columnStyleOptions = {},
     onPageChange,
     onPerPageChage,
-    onSort = () => {}
+    onSort = () => {},
 }: Props<Data>): React.ReactElement => {
-
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
     );
@@ -210,7 +211,6 @@ const Table = <Data,>({
 
         const sortable = sortMethod !== undefined;
 
-
         return {
             name: <>{headerName}</>,
             selector: (row) => row.data[headerKey] as Primitive, // The type cast here is needed as the type of selector is (row) => Primitive, but as we are using a custom cell, we can have it be anything
@@ -226,14 +226,21 @@ const Table = <Data,>({
             },
             ...columnStyles,
             sortField: headerKey,
-            ... (sortMethod ?? {sortMethod: sortMethod})
+            ...(sortMethod ?? { sortMethod: sortMethod }),
         };
     });
 
-    const handleSort = async (column: CustomColumn<Data>, sortDirection: SortOrder) => {
-        const newSortState: SortState<Data> = {sort: true, column: column, sortDirection: sortDirection};
+    const handleSort = async (
+        column: CustomColumn<Data>,
+        sortDirection: SortOrder
+    ): Promise<void> => {
+        const newSortState: SortState<Data> = {
+            sort: true,
+            column: column,
+            sortDirection: sortDirection,
+        };
         onSort(newSortState);
-    }
+    };
 
     const [isSwapping, setIsSwapping] = useState(false);
 
@@ -245,7 +252,12 @@ const Table = <Data,>({
 
         const rowId2 = rowId1 + (upwards ? -1 : 1);
 
-        if (rowId1 < 0 || rowId2 < 0 || rowId1 >= dataPortion.length || rowId2 >= dataPortion.length) {
+        if (
+            rowId1 < 0 ||
+            rowId2 < 0 ||
+            rowId1 >= dataPortion.length ||
+            rowId2 >= dataPortion.length
+        ) {
             setIsSwapping(false);
             return;
         }
