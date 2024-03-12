@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
@@ -271,10 +271,6 @@ const Actions: React.FC<Props> = ({
             }
         };
     };
-
-    useEffect(() => {
-        console.log(mapsLinkForParcels());
-    }, [selectedParcels]);
 
     return (
         <>
