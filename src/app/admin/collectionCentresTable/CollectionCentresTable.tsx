@@ -96,7 +96,7 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
 
     useEffect(() => {
         setCollectionCentreDataPortion(
-            collectionCentreDataPortion.filter((row) => {
+            props.collectionCentreData.filter((row) => {
                 return primaryFilters.every((filter) => {
                     if (filter.methodConfig.methodType === FilterMethodType.Client) {
                         return filter.methodConfig.method(row, filter.state, filter.key);
@@ -105,7 +105,7 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
                 });
             })
         );
-    }, [primaryFilters, collectionCentreDataPortion]);
+    }, [primaryFilters, props.collectionCentreData]);
 
     return (
         <>

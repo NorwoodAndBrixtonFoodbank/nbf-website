@@ -75,7 +75,7 @@ const UsersTable: React.FC<Props> = (props) => {
 
     useEffect(() => {
         setUserDataPortion(
-            userDataPortion.filter((row) => {
+            props.userData.filter((row) => {
                 return primaryFilters.every((filter) => {
                     if (filter.methodConfig.methodType === FilterMethodType.Client) {
                         return filter.methodConfig.method(row, filter.state, filter.key);
@@ -84,7 +84,7 @@ const UsersTable: React.FC<Props> = (props) => {
                 });
             })
         );
-    }, [primaryFilters, userDataPortion]);
+    }, [primaryFilters, props.userData]);
 
     return (
         <>
