@@ -10,16 +10,6 @@ export interface DBPackingSlotData {
     order: number;
 }
 
-export interface DataGridPackingSlotRow {
-    id: string;
-    name: string;
-    is_shown: boolean;
-    order: number;
-}
-interface packingSlotTableRowData extends DataGridPackingSlotRow {
-    isNew: boolean;
-}
-
 export const fetchPackingSlots = async (): Promise<PackingSlotRow[]> => {
     const { data, error } = await supabase.from("packing_slots").select().order("order");
     if (error) {
@@ -30,7 +20,7 @@ export const fetchPackingSlots = async (): Promise<PackingSlotRow[]> => {
         return {
             name: row.name,
             id: row.primary_key,
-            is_shown: row.is_shown,
+            isShown: row.is_shown,
             order: row.order,
             isNew: false,
         };
@@ -39,39 +29,34 @@ export const fetchPackingSlots = async (): Promise<PackingSlotRow[]> => {
     return processedData;
 };
 
-const processRowData = (tableData: packingSlotTableRowData): DBPackingSlotData => {
-    const data = { ...tableData };
-    const newData: DBPackingSlotData = {
-        primary_key: data.id,
-        name: data.name,
-        is_shown: data.is_shown,
-        order: data.order,
+const getDbPackingSlotFromTableRow = (row: PackingSlotRow): DBPackingSlotData => {
+    return {
+        primary_key: row.id,
+        name: row.name,
+        is_shown: row.isShown,
+        order: row.order,
     };
-    return newData;
 };
 
-const processNewRowData = (tableData: packingSlotTableRowData): DBPackingSlotData => {
-    const data = { ...tableData };
-    const newData: DBPackingSlotData = {
-        name: data.name,
-        is_shown: data.is_shown,
-        order: data.order,
+const processNewRowData = (newRow: PackingSlotRow): DBPackingSlotData => {
+    return {
+        name: newRow.name,
+        is_shown: newRow.isShown,
+        order: newRow.order,
     };
-    return newData;
 };
 
-export const createPackingSlot = async (tableData: packingSlotTableRowData): Promise<void> => {
-    const data = processNewRowData(tableData);
+export const createPackingSlot = async (newRow: PackingSlotRow): Promise<void> => {
+    const data = processNewRowData(newRow);
     const { error } = await supabase.from("packing_slots").insert(data);
 
     if (error) {
-        console.log(error);
         throw new DatabaseError("insert", "packing slots");
     }
 };
 
-export const updatePackingSlot = async (tableData: packingSlotTableRowData): Promise<void> => {
-    const processedData = processRowData(tableData);
+export const updatePackingSlot = async (row: PackingSlotRow): Promise<void> => {
+    const processedData = getDbPackingSlotFromTableRow(row);
     const { error } = await supabase
         .from("packing_slots")
         .update(processedData)
@@ -90,22 +75,19 @@ export const deletePackingSlot = async (id: GridRowId): Promise<void> => {
     }
 };
 
-export const swapRows = async (
-    rowOne: packingSlotTableRowData,
-    rowTwo: packingSlotTableRowData
-): Promise<void> => {
-    const updatedRows = await swapOne(rowOne, rowTwo);
+export const swapRows = async (rowOne: PackingSlotRow, rowTwo: PackingSlotRow): Promise<void> => {
+    const updatedRows = await swapRowTwoToRowOneOrder(rowOne, rowTwo);
 
     if (rowOne.order - rowTwo.order > 0) {
-        await swapTwoUp(updatedRows);
+        await swapRowOneToRowTwoOrderUpClick(updatedRows);
     } else {
-        await swapTwoDown(updatedRows);
+        await swapRowOneToRowTwoOrderDownClick(updatedRows);
     }
 };
 
-const swapOne = async (
-    rowOne: packingSlotTableRowData,
-    rowTwo: packingSlotTableRowData
+const swapRowTwoToRowOneOrder = async (
+    rowOne: PackingSlotRow,
+    rowTwo: PackingSlotRow
 ): Promise<DBPackingSlotData[]> => {
     const { data, error } = await supabase
         .from("packing_slots")
@@ -114,26 +96,25 @@ const swapOne = async (
                 primary_key: rowOne.id,
                 order: -1,
                 name: rowOne.name,
-                is_shown: rowOne.is_shown,
+                is_shown: rowOne.isShown,
             },
             {
                 primary_key: rowTwo.id,
                 order: rowOne.order,
                 name: rowTwo.name,
-                is_shown: rowTwo.is_shown,
+                is_shown: rowTwo.isShown,
             },
         ])
         .select();
 
     if (error) {
-        console.log(error);
         throw new DatabaseError("update", "packing_slots");
     }
 
     return data;
 };
 
-const swapTwoUp = async (updatedRows: DBPackingSlotData[]): Promise<void> => {
+const swapRowOneToRowTwoOrderUpClick = async (updatedRows: DBPackingSlotData[]): Promise<void> => {
     const { error } = await supabase
         .from("packing_slots")
         .update({
@@ -142,12 +123,13 @@ const swapTwoUp = async (updatedRows: DBPackingSlotData[]): Promise<void> => {
         .eq("primary_key", updatedRows[0].primary_key);
 
     if (error) {
-        console.log(error);
         throw new DatabaseError("update", "packing_slots");
     }
 };
 
-const swapTwoDown = async (updatedRows: DBPackingSlotData[]): Promise<void> => {
+const swapRowOneToRowTwoOrderDownClick = async (
+    updatedRows: DBPackingSlotData[]
+): Promise<void> => {
     const { error } = await supabase
         .from("packing_slots")
         .update({
@@ -156,7 +138,6 @@ const swapTwoDown = async (updatedRows: DBPackingSlotData[]): Promise<void> => {
         .eq("primary_key", updatedRows[0].primary_key);
 
     if (error) {
-        console.log(error);
         throw new DatabaseError("update", "packing_slots");
     }
 };
