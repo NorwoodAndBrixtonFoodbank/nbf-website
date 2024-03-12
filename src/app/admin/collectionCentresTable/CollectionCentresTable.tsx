@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Table, { TableHeaders } from "@/components/Tables/Table";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
@@ -10,6 +10,14 @@ import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
+import { Filter } from "@/components/Tables/Filters";
+import { buildTextFilter, filterDataByText } from "@/components/Tables/TextFilter";
+
+interface CollectionCentresTableRow {
+    acronym: Schema["collection_centres"]["acronym"];
+    name: Schema["collection_centres"]["name"];
+    primary_key: Schema["collection_centres"]["primary_key"];
+}
 
 const DangerDialog = styled(Modal)`
     & .header {
@@ -36,10 +44,11 @@ const collectionCentresTableHeaderKeysAndLabels: TableHeaders<Schema["collection
 ];
 
 interface Props {
-    collectionCentreData: Schema["collection_centres"][];
+    collectionCentreData: CollectionCentresTableRow[]
 }
 
 const CollectionCentresTables: React.FC<Props> = (props) => {
+    const [collectionCentreDataPortion, setCollectionCentreDataPortion] = useState<Schema["collection_centres"][]>(props.collectionCentreData);
     const [collectionCentreToDelete, setCollectionCentreToDelete] =
         useState<Schema["collection_centres"]>();
     const [refreshRequired, setRefreshRequired] = useState(false);
@@ -66,16 +75,28 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
         setCollectionCentreToDelete(undefined);
     };
 
+    const filters: Filter<CollectionCentresTableRow, string>[] = [buildTextFilter({key: "name", label: "Name", headers: collectionCentresTableHeaderKeysAndLabels, methodConfig: {methodType: "data", method: filterDataByText}}) , buildTextFilter({key: "acronym", label: "Acronym", headers: collectionCentresTableHeaderKeysAndLabels, methodConfig: {methodType: "data", method: filterDataByText}})]
+    const [primaryFilters, setPrimaryFilters] = useState<Filter<CollectionCentresTableRow, string>[]>(filters);
+    
+    useEffect(()=> {
+        let filteredData = props.collectionCentreData;
+        primaryFilters.forEach((filter) => {if (filter.methodConfig.methodType === "data") {filteredData = filter.methodConfig.method(filteredData, filter.state, filter.key)}});
+        setCollectionCentreDataPortion(filteredData);
+    }, [...primaryFilters])
+
+
     return (
         <>
             <Table
-                dataPortion={props.collectionCentreData}
+                dataPortion={collectionCentreDataPortion}
                 headerKeysAndLabels={collectionCentresTableHeaderKeysAndLabels}
-                onDelete={collectionCentreOnDelete}
                 defaultShownHeaders={["name", "acronym"]}
-                filters={["name", "acronym"]}
                 toggleableHeaders={["primary_key"]}
+                paginationConfig={{pagination: false}}
                 checkboxConfig={{ displayed: false }}
+                sortConfig={{sortShown: false}}
+                editableConfig={{editable: true, onDelete: collectionCentreOnDelete, setDataPortion: setCollectionCentreDataPortion}}
+                filterConfig={{primaryFiltersShown: true, primaryFilters: primaryFilters, setPrimaryFilters: setPrimaryFilters, additionalFiltersShown: false}}
             />
 
             {refreshRequired && (

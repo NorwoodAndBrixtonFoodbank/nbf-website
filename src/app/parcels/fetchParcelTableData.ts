@@ -34,7 +34,7 @@ export type ParcelProcessingData = Awaited<ReturnType<typeof getParcelProcessing
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const getParcelProcessingData = async (
     supabase: Supabase,
-    filters: Filter<any>[],
+    filters: Filter<ParcelsTableRow, any>[],
     sortState: SortState<ParcelsTableRow>,
     start?: number,
     end?: number,
@@ -83,9 +83,10 @@ export const getParcelProcessingData = async (
         .order("timestamp", { ascending: false, foreignTable: "events" })
         .limit(1, { foreignTable: "events" });
 
-    filters.forEach((filter) => {
-        query = filter.filterMethod(query, filter.state);
-    });
+        filters.forEach((filter) => {
+            if (filter.methodConfig.methodType === "query") {
+            query = filter.methodConfig.method(query, filter.state);}
+        });
 
     if (typeof start === "number" && typeof end === "number") {query = query.range(start, end)};
 
@@ -103,7 +104,7 @@ export const getParcelProcessingData = async (
 
 export const getParcelsData = async (
     supabase: Supabase,
-    filters: Filter<any[]>[],
+    filters: Filter<ParcelsTableRow, any[]>[],
     sortState: SortState<ParcelsTableRow>,
     start?: number,
     end?: number,
@@ -118,7 +119,7 @@ export const getParcelsData = async (
 
 export const getParcelsCount = async (
     supabase: Supabase,
-    filters: Filter<any>[]
+    filters: Filter<ParcelsTableRow, any>[]
 ): Promise<number> => {
     let query = supabase.from("parcels").select(
         `
@@ -157,7 +158,8 @@ export const getParcelsCount = async (
     );
 
     filters.forEach((filter) => {
-        query = filter.filterMethod(query, filter.state);
+        if (filter.methodConfig.methodType === "query") {
+        query = filter.methodConfig.method(query, filter.state);}
     });
 
     query = query
@@ -174,7 +176,7 @@ export const getParcelsCount = async (
 
 export const getParcelIds = async (
     supabase: Supabase,
-    filters: Filter<any>[],
+    filters: Filter<ParcelsTableRow, any>[],
     sortState: SortState<ParcelsTableRow>
 ): Promise<string[]> => {
     let query = supabase.from("parcels").select
@@ -213,9 +215,9 @@ export const getParcelIds = async (
     `);
 
     filters.forEach((filter) => {
-        query = filter.filterMethod(query, filter.state);
+        if (filter.methodConfig.methodType === "query") {
+        query = filter.methodConfig.method(query, filter.state);}
     });
-
     if (sortState.sort && sortState.column.sortMethod) {
         query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {

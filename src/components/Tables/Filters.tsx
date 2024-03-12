@@ -3,38 +3,18 @@ import { TableHeaders } from "@/components/Tables/Table";
 import { Database } from "@/databaseTypesFile";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 
-export interface Filter<State> {
+export type MethodConfig<Data, State> = {method: (
+    query: PostgrestFilterBuilder<Database["public"], any, any>,
+    state: State
+) => PostgrestFilterBuilder<Database["public"], any, any>; methodType: "query"; } | {method: (data: Data[], state: State, key: keyof Data) => Data[]; methodType: "data";};
+
+export interface Filter<Data, State> {
+    key: keyof Data;
     filterComponent: (state: State, setState: (state: State) => void) => React.ReactElement;
     state: State;
     initialState: State;
-    filterMethod: (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: State
-    ) => PostgrestFilterBuilder<Database["public"], any, any>;
+    methodConfig: MethodConfig<Data, State>;
 }
-
-export interface KeyedFilter<Data, Key extends keyof Data, State> extends Filter<State> {
-    key: Key;
-    label: string;
-}
-
-export const isKeyedFilter = <Data, Key extends keyof Data, State>(
-    filter: Filter<State>
-): filter is KeyedFilter<Data, Key, State> => {
-    return "key" in filter;
-};
-
-export const keyedFilter = <Data, Key extends keyof Data, State>(
-    key: Key,
-    label: string,
-    filter: Filter<State>
-): KeyedFilter<Data, Key, State> => {
-    return {
-        key,
-        label,
-        ...filter,
-    };
-};
 
 export const headerLabelFromKey = <Data, Key extends keyof Data>(
     headers: TableHeaders<Data>,
@@ -50,3 +30,16 @@ export const defaultToString = (value: unknown): string => {
 
     return JSON.stringify(value);
 };
+
+
+export const filterRowByText = <Data,>(row: Data, state: string, key: keyof Data): boolean => {
+    let string = defaultToString(row[key]);
+    string = string.toLowerCase();
+    state = state.toLowerCase();
+
+    return !string.includes(state);
+};
+
+export const filterDataByText = <Data,>(data: Data[], state: string, key: keyof Data): Data[] => (
+     data.filter((row)=>filterRowByText(row, state, key))
+)

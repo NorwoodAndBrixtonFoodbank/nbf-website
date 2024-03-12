@@ -1,20 +1,17 @@
 import React from "react";
 import styled from "styled-components";
 import FreeFormTextInput from "../DataInput/FreeFormTextInput";
-import { KeyedFilter, headerLabelFromKey, keyedFilter } from "./Filters";
+import { Filter, MethodConfig, defaultToString} from "./Filters";
 import { TableHeaders } from "./Table";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 
-interface TextFilterProps<Data, Key> {
-    key: Key;
+interface TextFilterProps<Data> {
+    key: keyof Data;
     headers: TableHeaders<Data>;
     label: string;
     initialValue?: string;
-    filterMethod: (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: string
-    ) => PostgrestFilterBuilder<Database["public"], any, any>;
+    methodConfig: MethodConfig<Data, string>;
 }
 
 const TextFilterStyling = styled.div`
@@ -23,18 +20,18 @@ const TextFilterStyling = styled.div`
     }
 `;
 
-export const textFilter = <Data, Key extends keyof Data>({
+export const buildTextFilter = <Data,>({
     key,
     label,
     headers,
     initialValue = "",
-    filterMethod,
-}: TextFilterProps<Data, Key>): KeyedFilter<Data, Key, string> => {
-    return keyedFilter(key, label ?? headerLabelFromKey(headers, key), {
+    methodConfig,
+}: TextFilterProps<Data>): Filter<Data, string> => {
+    return {
         state: initialValue,
         initialState: initialValue,
-        //getFilteredData: getFilteredData,
-        filterMethod: filterMethod,
+        key: key,
+        methodConfig: methodConfig,
         filterComponent: (state, setState) => {
             return (
                 <TextFilterStyling key={label}>
@@ -49,5 +46,16 @@ export const textFilter = <Data, Key extends keyof Data>({
                 </TextFilterStyling>
             );
         },
-    });
+    };
 };
+
+export const filterRowByText = <Data,>(row: Data, state: string, key: keyof Data): boolean => {
+    let string = defaultToString(row[key]);
+    string = string.toLowerCase();
+    state = state.toLowerCase();
+    return string.includes(state);
+};
+
+export const filterDataByText = <Data,>(data: Data[], state: string, key: keyof Data): Data[] => (
+     data.filter((row)=>filterRowByText(row, state, key))
+)

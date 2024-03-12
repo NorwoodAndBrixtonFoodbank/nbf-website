@@ -31,7 +31,7 @@ import { CircularProgress } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
-import { textFilter } from "@/components/Tables/TextFilter";
+import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { dateFilter } from "@/components/Tables/DateFilter";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
@@ -205,22 +205,22 @@ const voucherSearch = (
     return query.ilike("voucher_number", `%${state}%`);
 };
 
-const buildDateFilter = (initialState: DateRangeState): Filter<DateRangeState> => {
+const buildDateFilter = (initialState: DateRangeState): Filter<ParcelsTableRow, DateRangeState> => {
     const dateSearch = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: DateRangeState
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
         return query.gte("packing_datetime", state.from).lte("packing_datetime", state.to);
     };
-    return dateFilter<ParcelsTableRow, any>({
-        key: "dateRange",
-        filterLabel: "",
-        filterMethod: dateSearch,
+    return dateFilter<ParcelsTableRow>({
+        key: "packingDatetime",
+        label: "",
+        methodConfig: {methodType: "query", method: dateSearch},
         initialState: initialState,
     });
 };
 
-const buildDeliveryCollectionFilter = (): Filter<any> => {
+const buildDeliveryCollectionFilter = (): Filter<any, string[]> => {
     const deliveryCollectionSearch = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
@@ -248,7 +248,7 @@ const buildDeliveryCollectionFilter = (): Filter<any> => {
         { collectionCentreName: "Delivery", collectionCentreAcronym: "DLVR" },
     ]; //fudge for now
 
-    return checklistFilter<ParcelsTableRow, any>({
+    return checklistFilter<ParcelsTableRow>({
         key: "deliveryCollection",
         filterLabel: "Collection",
         itemLabelsAndKeys: options.map((option) => [
@@ -256,11 +256,11 @@ const buildDeliveryCollectionFilter = (): Filter<any> => {
             option!.collectionCentreAcronym,
         ]),
         initialCheckedKeys: options.map((option) => option!.collectionCentreAcronym),
-        filterMethod: deliveryCollectionSearch,
+        methodConfig: {methodType: "query", method: deliveryCollectionSearch}
     });
 };
 
-const buildPackingTimeFilter = (): Filter<any> => {
+const buildPackingTimeFilter = (): Filter<ParcelsTableRow, string[]> => {
     const packingTimeSearch = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
@@ -271,12 +271,12 @@ const buildPackingTimeFilter = (): Filter<any> => {
     //     new Set(tableData.map((row) => row.packingTimeLabel as string)).values()
     // ).sort(); //todo same as above
     const options = ["AM", "PM"]; //fudge for now
-    return checklistFilter<ParcelsTableRow, any>({
+    return checklistFilter<ParcelsTableRow>({
         key: "packingTimeLabel",
         filterLabel: "Packing Time",
         itemLabelsAndKeys: options.map((value) => [value, value]),
         initialCheckedKeys: options,
-        filterMethod: packingTimeSearch,
+        methodConfig: {methodType: "query", method: packingTimeSearch}
     });
 };
 
@@ -289,7 +289,7 @@ const lastStatusCellMatchOverride = (rowData: ParcelsTableRow, selectedKeys: str
     );
 };
 
-const buildLastStatusFilter = (): Filter<any> => {
+const buildLastStatusFilter = (): Filter<ParcelsTableRow, string[]> => {
     const lastStatusSearch = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
@@ -305,13 +305,13 @@ const buildLastStatusFilter = (): Filter<any> => {
 
     const options: string[] = statusNamesInWorkflowOrder; //cheat for now. TODO
 
-    return checklistFilter<ParcelsTableRow, any>({
+    return checklistFilter<ParcelsTableRow>({
         key: "lastStatus",
         filterLabel: "Last Status",
         itemLabelsAndKeys: options.map((value) => [value, value]),
         initialCheckedKeys: options.filter((option) => option !== "Request Deleted"),
         //cellMatchOverride: lastStatusCellMatchOverride, todo: wtf is this :0
-        filterMethod: lastStatusSearch,
+        methodConfig: {methodType: "query", method: lastStatusSearch}
     });
 };
 
@@ -339,37 +339,37 @@ const ParcelsPage: React.FC<{}> = () => {
         to: endOfToday,
     });
 
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<any>[]>([
+    const [primaryFilters, setPrimaryFilters] = useState<Filter<ParcelsTableRow, any>[]>([
         dateFilter,
-        textFilter({
+        buildTextFilter({
             key: "fullName",
             label: "Name",
             headers: parcelTableHeaderKeysAndLabels,
-            filterMethod: fullNameSearch,
+            methodConfig:{methodType: "query", method: fullNameSearch}
         }),
-        textFilter({
+        buildTextFilter({
             key: "addressPostcode",
             label: "Postcode",
             headers: parcelTableHeaderKeysAndLabels,
-            filterMethod: postcodeSearch,
+            methodConfig:{methodType: "query", method: postcodeSearch}
         }),
         buildDeliveryCollectionFilter(), //hardcoded options
         //buildPackingTimeFilter(), //broken
     ]);
 
-    const [additionalFilters, setAdditionalFilters] = useState<Filter<any>[]>([
+    const [additionalFilters, setAdditionalFilters] = useState<Filter<ParcelsTableRow, any>[]>([
         //textFilter({key: "familyCategory", label: "Family", headers: parcelTableHeaderKeysAndLabels, filterMethod: familySearch}), //broken
-        textFilter({
+        buildTextFilter({
             key: "phoneNumber",
             label: "Phone",
             headers: parcelTableHeaderKeysAndLabels,
-            filterMethod: phoneSearch,
+            methodConfig:{methodType: "query", method: phoneSearch}
         }),
-        textFilter({
+        buildTextFilter({
             key: "voucherNumber",
             label: "Voucher",
             headers: parcelTableHeaderKeysAndLabels,
-            filterMethod: voucherSearch,
+            methodConfig:{methodType: "query", method: voucherSearch}
         }),
         buildLastStatusFilter(), //hardcoded options and broken, filters out unwanted events but keeps the parcel :0
     ]);
@@ -391,7 +391,7 @@ const ParcelsPage: React.FC<{}> = () => {
     useEffect(() => {
         const allFilters = [...primaryFilters, ...additionalFilters];
         const freshRequest = () => {
-            return true //for now: ask for help
+            return true //to do: ask for help on this
         }
         (async () => {
             setIsLoading(true);
@@ -411,7 +411,6 @@ const ParcelsPage: React.FC<{}> = () => {
         })();
     }, [startPoint, endPoint, ...primaryFilters, ...additionalFilters, sortState]);
 
-    //remember to deal with what happens if filters change twice and requests come back out of order. deal with in useeffect that sets data inside Table
     useEffect(() => {
         // This requires that the DB parcels table has Realtime turned on
         const allFilters = [...primaryFilters, ...additionalFilters];
@@ -587,23 +586,31 @@ const ParcelsPage: React.FC<{}> = () => {
                     <TableSurface>
                         <Table
                             dataPortion={parcelsDataPortion}
-                            setDataPortion={setParcelsDataPortion}
-                            totalRows={totalRows}
-                            onPageChange={setCurrentPage}
-                            onPerPageChage={setPerPage}
+                            paginationConfig={{
+                                pagination: true,
+                                totalRows: totalRows,
+                            onPageChange: setCurrentPage,
+                            onPerPageChange: setPerPage
+                            }}
                             headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
                             columnDisplayFunctions={parcelTableColumnDisplayFunctions}
                             columnStyleOptions={parcelTableColumnStyleOptions}
                             onRowClick={onParcelTableRowClick}
-                            pagination
-                            sortableColumns={sortableColumns}
+                            sortConfig={{
+                                sortShown: true,
+                                sortableColumns: sortableColumns,
+                                setSortState: setSortState
+                            }}
+                            filterConfig={{
+                                primaryFiltersShown: true,
+                                additionalFiltersShown: true,
+                                primaryFilters: primaryFilters,
+                                additionalFilters: additionalFilters,
+                                setPrimaryFilters: setPrimaryFilters,
+                                setAdditionalFilters: setAdditionalFilters
+                            }}
                             defaultShownHeaders={defaultShownHeaders}
                             toggleableHeaders={toggleableHeaders}
-                            primaryFilters={primaryFilters}
-                            additionalFilters={additionalFilters}
-                            setPrimaryFilters={setPrimaryFilters}
-                            setAdditionalFilters={setAdditionalFilters}
-                            setSortState={setSortState}
                             checkboxConfig={{
                                 displayed: true,
                                 selectedRowIds: checkedParcelIds,
@@ -613,6 +620,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                 onAllCheckboxClicked: () => toggleAllCheckBox(),
                                 isRowChecked: (parcelData) => checkedParcelIds.includes(parcelData.parcelId)
                             }}
+                            editableConfig={{editable: false}}
                         />
                     </TableSurface>
                     <Modal

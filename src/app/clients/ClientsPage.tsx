@@ -14,7 +14,7 @@ import getClientsData, { getClientsCount } from "./getClientsData";
 import { useSearchParams, useRouter } from "next/navigation";
 import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
-import { textFilter } from "@/components/Tables/TextFilter";
+import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { Filter } from "@/components/Tables/Filters";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
@@ -39,8 +39,8 @@ const fullNameSearch = (
     return query.ilike("full_name", `%${state}%`);
 };
 
-const filters: Filter<any>[] = [
-    textFilter({ key: "fullName", label: "Name", headers: headers, filterMethod: fullNameSearch }),
+const filters: Filter<ClientsTableRow, any>[] = [
+    buildTextFilter({ key: "fullName", label: "Name", headers: headers, methodConfig: {methodType: "query", method: fullNameSearch }}),
 ];
 
 const sortableColumns: SortOptions<ClientsTableRow, any>[] = [
@@ -63,7 +63,7 @@ const ClientsPage: React.FC<{}> = () => {
     const [clientsDataPortion, setClientsDataPortion] = useState<ClientsTableRow[]>([]);
     const [totalRows, setTotalRows] = useState<number>(0);
     const [sortState, setSortState] = useState<SortState<ClientsTableRow>>({ sort: false });
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<any>[]>(filters);
+    const [primaryFilters, setPrimaryFilters] = useState<Filter<ClientsTableRow, any>[]>(filters);
 
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
@@ -137,20 +137,29 @@ const ClientsPage: React.FC<{}> = () => {
                 <TableSurface>
                     <Table
                         dataPortion={clientsDataPortion}
-                        setDataPortion={setClientsDataPortion}
-                        totalRows={totalRows}
-                        onPageChange={setCurrentPage}
-                        onPerPageChage={setPerPage}
+                        paginationConfig={{
+                            pagination: true,
+                            totalRows: totalRows,
+                        onPageChange: setCurrentPage,
+                        onPerPageChange: setPerPage
+                        }}
+                        sortConfig={{
+                            sortShown: true,
+                            sortableColumns: sortableColumns,
+                            setSortState: setSortState
+                        }}
                         headerKeysAndLabels={headers}
                         onRowClick={(row) => {
                             router.push(`/clients?${clientIdParam}=${row.data.clientId}`);
                         }}
-                        sortableColumns={sortableColumns}
-                        pagination
-                        primaryFilters={primaryFilters}
-                        setPrimaryFilters={setPrimaryFilters}
-                        setSortState={setSortState}
+                        filterConfig={{
+                            primaryFiltersShown: true,
+                            primaryFilters: primaryFilters,
+                            setPrimaryFilters: setPrimaryFilters,
+                            additionalFiltersShown: false
+                        }}
                         checkboxConfig={{ displayed: false }}
+                        editableConfig={{editable: false}}
                     />
                 </TableSurface>
                 <Centerer>

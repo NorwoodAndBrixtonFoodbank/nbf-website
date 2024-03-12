@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Table from "@/components/Tables/Table";
 import { UserRow } from "@/app/admin/page";
 import ManageUserModal from "@/app/admin/manageUser/ManageUserModal";
 import DeleteUserDialog from "@/app/admin/deleteUser/DeleteUserDialog";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import SuccessFailureAlert, { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
+import { Filter } from "@/components/Tables/Filters";
+import { buildTextFilter, filterDataByText } from "@/components/Tables/TextFilter";
 
 const usersTableHeaderKeysAndLabels = [
     ["id", "User ID"],
@@ -38,6 +40,7 @@ interface Props {
 }
 
 const UsersTable: React.FC<Props> = (props) => {
+    const [userDataPortion, setUserDataPortion] = useState<UserRow[]>(props.userData);
     const [userToDelete, setUserToDelete] = useState<UserRow | null>(null);
     const [userToEdit, setUserToEdit] = useState<UserRow | null>(null);
 
@@ -53,18 +56,31 @@ const UsersTable: React.FC<Props> = (props) => {
     const userOnEdit = (rowIndex: number): void => {
         setUserToEdit(props.userData[rowIndex]);
     };
+
+
+    const filters: Filter<UserRow, string>[] = [buildTextFilter({key: "email", label: "Email", headers: usersTableHeaderKeysAndLabels, methodConfig: {methodType: "data", method: filterDataByText}}) , buildTextFilter({key: "userRole", label: "Role", headers: usersTableHeaderKeysAndLabels, methodConfig: {methodType: "data", method: filterDataByText}})]
+    const [primaryFilters, setPrimaryFilters] = useState<Filter<UserRow, string>[]>(filters);
+    
+    useEffect(()=> {
+        let filteredData = props.userData;
+        primaryFilters.forEach((filter) => {if (filter.methodConfig.methodType === "data") {filteredData = filter.methodConfig.method(filteredData, filter.state, filter.key)}});
+        setUserDataPortion(filteredData);
+    }, [...primaryFilters])
+
+
     return (
         <>
             <Table
-                dataPortion={props.userData}
+                dataPortion={userDataPortion}
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
-                onDelete={userOnDelete}
-                onEdit={userOnEdit}
-                filters={["email", "userRole"]}
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
                 toggleableHeaders={["id", "createdAt", "updatedAt"]}
                 defaultShownHeaders={["email", "userRole", "createdAt", "updatedAt"]}
                 checkboxConfig={{ displayed: false }}
+                paginationConfig={{pagination: false}}
+                sortConfig={{sortShown: false}}
+                editableConfig={{editable: true, onDelete: userOnDelete, onEdit: userOnEdit, setDataPortion: setUserDataPortion}}
+                filterConfig={{primaryFiltersShown: true, primaryFilters: primaryFilters, setPrimaryFilters: setPrimaryFilters, additionalFiltersShown: false}}
             />
 
             <DeleteUserDialog

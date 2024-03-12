@@ -22,39 +22,19 @@ export interface ClientParcelTableProps {
     parcelsData: ClientParcelTableRow[];
 }
 
-const getClientsParcelData = (
-    tableData: ClientParcelTableRow[],
-    start: number,
-    end: number
-): ClientParcelTableRow[] => tableData.slice(start, end);
-
 const ClientParcelsTable: React.FC<ClientParcelTableProps> = (props) => {
-    const [clientsParcelsDataPortion, setClientsParcelsDataPortion] = useState<
-        ClientParcelTableRow[]
-    >([]);
-
-    const [perPage, setPerPage] = useState(10);
-    const [currentPage, setCurrentPage] = useState(1);
-
-    const startPoint = (currentPage - 1) * perPage;
-    const endPoint = currentPage * perPage - 1;
-
-    useEffect(() => {
-        setClientsParcelsDataPortion(getClientsParcelData(props.parcelsData, startPoint, endPoint));
-    }, [startPoint, endPoint, props.parcelsData]);
     const router = useRouter();
     return (
         <TableSurface>
             <Table
-                dataPortion={clientsParcelsDataPortion}
-                setDataPortion={setClientsParcelsDataPortion}
-                totalRows={props.parcelsData.length}
-                onPageChange={setCurrentPage}
-                onPerPageChage={setPerPage}
+                dataPortion={props.parcelsData}
                 headerKeysAndLabels={headers}
-                pagination
+                paginationConfig={{pagination: false}}
+                sortConfig={{sortShown: false}}
+                filterConfig={{primaryFiltersShown: false, additionalFiltersShown: false}}
                 onRowClick={(row) => router.push(`/parcels?parcelId=${row.data.parcelId}`)}
                 checkboxConfig={{ displayed: false }}
+                editableConfig={{editable: false}}
             />
         </TableSurface>
     );

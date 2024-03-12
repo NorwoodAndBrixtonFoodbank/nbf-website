@@ -9,7 +9,7 @@ const getClientsData = async (
     supabase: Supabase,
     start: number,
     end: number,
-    filters: Filter<any>[],
+    filters: Filter<ClientsTableRow, any>[],
     sortState: SortState<ClientsTableRow>
 ): Promise<ClientsTableRow[]> => {
     const data: ClientsTableRow[] = [];
@@ -25,7 +25,8 @@ const getClientsData = async (
     }
 
     filters.forEach((filter) => {
-        query = filter.filterMethod(query, filter.state);
+        if (filter.methodConfig.methodType === "query") {
+        query = filter.methodConfig.method(query, filter.state);}
     });
 
     query = query.range(start, end);
@@ -59,12 +60,13 @@ const getClientsData = async (
 
 export const getClientsCount = async (
     supabase: Supabase,
-    filters: Filter<any>[]
+    filters: Filter<ClientsTableRow, any>[]
 ): Promise<number> => {
     let query = supabase.from("clients").select("*", { count: "exact", head: true });
 
     filters.forEach((filter) => {
-        query = filter.filterMethod(query, filter.state);
+        if (filter.methodConfig.methodType === "query") {
+        query = filter.methodConfig.method(query, filter.state);}
     });
     const { count, error: clientError } = await query;
     if (clientError || count === null) {

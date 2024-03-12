@@ -28,36 +28,25 @@ const getEventsData = (tableData: EventTableRow[], start: number, end: number): 
     tableData.slice(start, end);
 
 const EventTable: React.FC<EventTableProps> = (props) => {
-    const [eventsDataPortion, setEventsDataPortion] = useState<EventTableRow[]>([]);
 
     const eventsTableColumnDisplayFunctions = {
         timestamp: formatDatetimeAsDatetime,
     };
 
-    const [perPage, setPerPage] = useState(10);
-    const [currentPage, setCurrentPage] = useState(1);
-
-    const startPoint = (currentPage - 1) * perPage;
-    const endPoint = currentPage * perPage - 1;
-
-    useEffect(() => {
-        setEventsDataPortion(getEventsData(props.tableData, startPoint, endPoint));
-    }, [props.tableData, startPoint, endPoint]);
 
     return (
         <>
             <TableSurface>
                 <Table
-                    dataPortion={eventsDataPortion}
-                    setDataPortion={setEventsDataPortion}
-                    totalRows={props.tableData.length}
-                    onPageChange={setCurrentPage}
-                    onPerPageChage={setPerPage}
+                    dataPortion={props.tableData}
                     headerKeysAndLabels={eventsTableHeaderKeysAndLabels}
                     columnDisplayFunctions={eventsTableColumnDisplayFunctions}
-                    pagination
                     defaultShownHeaders={defaultShownHeaders}
                     checkboxConfig={{ displayed: false }}
+                    filterConfig={{primaryFiltersShown: false, additionalFiltersShown: false}}
+                    sortConfig={{sortShown: false}}
+                    paginationConfig={{pagination: false}}
+                    editableConfig={{editable: false}}
                 />
             </TableSurface>
         </>

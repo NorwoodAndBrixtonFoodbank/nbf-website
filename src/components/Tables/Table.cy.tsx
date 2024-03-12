@@ -98,8 +98,8 @@ interface TestTableProps {
     displayCheckboxes?: boolean;
     toggleableHeaders?: (keyof TestData)[];
     pagination?: boolean;
-    primaryFilters?: Filter<any>[];
-    setPrimaryFilters?: (primaryFilters: Filter<any>[]) => void;
+    primaryFilters?: Filter<TestData, any>[];
+    setPrimaryFilters?: (primaryFilters: Filter<TestData, any>[]) => void;
     sortable?: SortOptions<TestData, any>[];
     tableData?: TestData[];
 }

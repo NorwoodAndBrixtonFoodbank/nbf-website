@@ -1,33 +1,31 @@
 "use client";
 
 import React from "react";
-import { KeyedFilter, keyedFilter } from "./Filters";
 import CheckboxGroupPopup from "../DataInput/CheckboxGroupPopup";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
+import { Filter, MethodConfig } from "./Filters";
 
-interface ChecklistFilterProps<Data, Key extends keyof Data> {
-    key: Key;
+interface ChecklistFilterProps<Data> {
+    key: keyof Data;
     filterLabel: string;
     itemLabelsAndKeys: [string, string][];
     initialCheckedKeys: string[];
-    filterMethod: (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: string[]
-    ) => PostgrestFilterBuilder<Database["public"], any, any>;
+    methodConfig: MethodConfig<Data, string[]>;
 }
 
-export const checklistFilter = <Data, Key extends keyof Data>({
+export const checklistFilter = <Data,>({
     key,
     filterLabel,
     itemLabelsAndKeys,
     initialCheckedKeys,
-    filterMethod,
-}: ChecklistFilterProps<Data, Key>): KeyedFilter<Data, Key, string[]> => {
-    return keyedFilter(key, filterLabel, {
+    methodConfig,
+}: ChecklistFilterProps<Data>): Filter<Data, string[]> => {
+    return {
+        key: key,
         state: initialCheckedKeys,
         initialState: initialCheckedKeys,
-        filterMethod: filterMethod,
+        methodConfig,
         filterComponent: function (
             state: string[],
             setState: (state: string[]) => void
@@ -51,5 +49,5 @@ export const checklistFilter = <Data, Key extends keyof Data>({
                 />
             );
         },
-    });
+    };
 };
