@@ -2,8 +2,6 @@
 
 import React from "react";
 import CheckboxGroupPopup from "../DataInput/CheckboxGroupPopup";
-import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
-import { Database } from "@/databaseTypesFile";
 import { Filter, MethodConfig } from "./Filters";
 
 interface ChecklistFilterProps<Data> {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Table, { TableHeaders } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
 import { useRouter } from "next/navigation";
@@ -29,12 +29,12 @@ const ClientParcelsTable: React.FC<ClientParcelTableProps> = (props) => {
             <Table
                 dataPortion={props.parcelsData}
                 headerKeysAndLabels={headers}
-                paginationConfig={{pagination: false}}
-                sortConfig={{sortShown: false}}
-                filterConfig={{primaryFiltersShown: false, additionalFiltersShown: false}}
+                paginationConfig={{ pagination: false }}
+                sortConfig={{ sortShown: false }}
+                filterConfig={{ primaryFiltersShown: false, additionalFiltersShown: false }}
                 onRowClick={(row) => router.push(`/parcels?parcelId=${row.data.parcelId}`)}
                 checkboxConfig={{ displayed: false }}
-                editableConfig={{editable: false}}
+                editableConfig={{ editable: false }}
             />
         </TableSurface>
     );

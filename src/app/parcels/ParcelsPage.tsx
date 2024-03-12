@@ -27,7 +27,6 @@ import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { Filter } from "@/components/Tables/Filters";
 import { saveParcelStatus, statusNamesInWorkflowOrder } from "./ActionBar/Statuses";
-import { CircularProgress } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
@@ -215,7 +214,7 @@ const buildDateFilter = (initialState: DateRangeState): Filter<ParcelsTableRow, 
     return dateFilter<ParcelsTableRow>({
         key: "packingDatetime",
         label: "",
-        methodConfig: {methodType: "query", method: dateSearch},
+        methodConfig: { methodType: "query", method: dateSearch },
         initialState: initialState,
     });
 };
@@ -256,7 +255,7 @@ const buildDeliveryCollectionFilter = (): Filter<any, string[]> => {
             option!.collectionCentreAcronym,
         ]),
         initialCheckedKeys: options.map((option) => option!.collectionCentreAcronym),
-        methodConfig: {methodType: "query", method: deliveryCollectionSearch}
+        methodConfig: { methodType: "query", method: deliveryCollectionSearch },
     });
 };
 
@@ -276,7 +275,7 @@ const buildPackingTimeFilter = (): Filter<ParcelsTableRow, string[]> => {
         filterLabel: "Packing Time",
         itemLabelsAndKeys: options.map((value) => [value, value]),
         initialCheckedKeys: options,
-        methodConfig: {methodType: "query", method: packingTimeSearch}
+        methodConfig: { methodType: "query", method: packingTimeSearch },
     });
 };
 
@@ -311,7 +310,7 @@ const buildLastStatusFilter = (): Filter<ParcelsTableRow, string[]> => {
         itemLabelsAndKeys: options.map((value) => [value, value]),
         initialCheckedKeys: options.filter((option) => option !== "Request Deleted"),
         //cellMatchOverride: lastStatusCellMatchOverride, todo: wtf is this :0
-        methodConfig: {methodType: "query", method: lastStatusSearch}
+        methodConfig: { methodType: "query", method: lastStatusSearch },
     });
 };
 
@@ -345,13 +344,13 @@ const ParcelsPage: React.FC<{}> = () => {
             key: "fullName",
             label: "Name",
             headers: parcelTableHeaderKeysAndLabels,
-            methodConfig:{methodType: "query", method: fullNameSearch}
+            methodConfig: { methodType: "query", method: fullNameSearch },
         }),
         buildTextFilter({
             key: "addressPostcode",
             label: "Postcode",
             headers: parcelTableHeaderKeysAndLabels,
-            methodConfig:{methodType: "query", method: postcodeSearch}
+            methodConfig: { methodType: "query", method: postcodeSearch },
         }),
         buildDeliveryCollectionFilter(), //hardcoded options
         //buildPackingTimeFilter(), //broken
@@ -363,13 +362,13 @@ const ParcelsPage: React.FC<{}> = () => {
             key: "phoneNumber",
             label: "Phone",
             headers: parcelTableHeaderKeysAndLabels,
-            methodConfig:{methodType: "query", method: phoneSearch}
+            methodConfig: { methodType: "query", method: phoneSearch },
         }),
         buildTextFilter({
             key: "voucherNumber",
             label: "Voucher",
             headers: parcelTableHeaderKeysAndLabels,
-            methodConfig:{methodType: "query", method: voucherSearch}
+            methodConfig: { methodType: "query", method: voucherSearch },
         }),
         buildLastStatusFilter(), //hardcoded options and broken, filters out unwanted events but keeps the parcel :0
     ]);
@@ -390,9 +389,9 @@ const ParcelsPage: React.FC<{}> = () => {
 
     useEffect(() => {
         const allFilters = [...primaryFilters, ...additionalFilters];
-        const freshRequest = () => {
-            return true //to do: ask for help on this
-        }
+        const freshRequest = (): boolean => {
+            return true; //to do: ask for help on this
+        };
         (async () => {
             setIsLoading(true);
             const totalRows = await getParcelsCount(supabase, allFilters);
@@ -401,7 +400,7 @@ const ParcelsPage: React.FC<{}> = () => {
                 allFilters,
                 sortState,
                 startPoint,
-                endPoint,
+                endPoint
             );
             if (freshRequest()) {
                 setTotalRows(totalRows);
@@ -428,7 +427,7 @@ const ParcelsPage: React.FC<{}> = () => {
                     allFilters,
                     sortState,
                     startPoint,
-                    endPoint,
+                    endPoint
                 );
                 setParcelsDataPortion(fetchedData);
                 setIsLoading(false);
@@ -472,7 +471,9 @@ const ParcelsPage: React.FC<{}> = () => {
             setCheckedParcelIds([]);
             setAllCheckBoxSelected(false);
         } else {
-            setCheckedParcelIds(await getParcelIds(supabase, primaryFilters.concat(additionalFilters), sortState));
+            setCheckedParcelIds(
+                await getParcelIds(supabase, primaryFilters.concat(additionalFilters), sortState)
+            );
             setAllCheckBoxSelected(true);
         }
     };
@@ -555,14 +556,17 @@ const ParcelsPage: React.FC<{}> = () => {
         setIsLoading(false);
     };
 
-    const getCheckedParcelsData = async (checkedParcelIds: string[]): Promise<ParcelsTableRow[]> => {
-    return await getParcelsData(
-        supabase,
-        primaryFilters.concat(additionalFilters),
-        sortState,
-        undefined,
-        undefined,
-        checkedParcelIds)
+    const getCheckedParcelsData = async (
+        checkedParcelIds: string[]
+    ): Promise<ParcelsTableRow[]> => {
+        return await getParcelsData(
+            supabase,
+            primaryFilters.concat(additionalFilters),
+            sortState,
+            undefined,
+            undefined,
+            checkedParcelIds
+        );
     };
 
     return (
@@ -575,88 +579,86 @@ const ParcelsPage: React.FC<{}> = () => {
                     ></DateRangeInputs> */}
                 </ControlContainer>
                 <ActionBar
-                    fetchSelectedParcels={async (checkedParcelIds: string[])=> await getCheckedParcelsData(checkedParcelIds)}
+                    fetchSelectedParcels={async (checkedParcelIds: string[]) =>
+                        await getCheckedParcelsData(checkedParcelIds)
+                    }
                     onDeleteParcels={deleteParcels}
                     willSaveParcelStatus={() => setIsLoading(true)}
                     hasSavedParcelStatus={() => setIsLoading(false)}
                     parcelIds={checkedParcelIds}
-
                 />
             </PreTableControls>
-                    <TableSurface>
-                        <Table
-                            dataPortion={parcelsDataPortion}
-                            paginationConfig={{
-                                pagination: true,
-                                totalRows: totalRows,
-                            onPageChange: setCurrentPage,
-                            onPerPageChange: setPerPage
-                            }}
-                            headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
-                            columnDisplayFunctions={parcelTableColumnDisplayFunctions}
-                            columnStyleOptions={parcelTableColumnStyleOptions}
-                            onRowClick={onParcelTableRowClick}
-                            sortConfig={{
-                                sortShown: true,
-                                sortableColumns: sortableColumns,
-                                setSortState: setSortState
-                            }}
-                            filterConfig={{
-                                primaryFiltersShown: true,
-                                additionalFiltersShown: true,
-                                primaryFilters: primaryFilters,
-                                additionalFilters: additionalFilters,
-                                setPrimaryFilters: setPrimaryFilters,
-                                setAdditionalFilters: setAdditionalFilters
-                            }}
-                            defaultShownHeaders={defaultShownHeaders}
-                            toggleableHeaders={toggleableHeaders}
-                            checkboxConfig={{
-                                displayed: true,
-                                selectedRowIds: checkedParcelIds,
-                                isAllCheckboxChecked: isAllCheckBoxSelected,
-                                onCheckboxClicked: (parcelData) =>
-                                    selectOrDeselectRow(parcelData.parcelId),
-                                onAllCheckboxClicked: () => toggleAllCheckBox(),
-                                isRowChecked: (parcelData) => checkedParcelIds.includes(parcelData.parcelId)
-                            }}
-                            editableConfig={{editable: false}}
-                        />
-                    </TableSurface>
-                    <Modal
-                        header={
-                            <>
-                                <Icon
-                                    icon={faBoxArchive}
-                                    color={theme.primary.largeForeground[2]}
-                                />{" "}
-                                Parcel Details
-                            </>
-                        }
-                        isOpen={modalIsOpen}
-                        onClose={() => {
-                            setModalIsOpen(false);
-                            router.push("/parcels");
-                        }}
-                        headerId="expandedParcelDetailsModal"
-                    >
-                        <OutsideDiv>
-                            <ContentDiv>
-                                <Suspense fallback={<ExpandedParcelDetailsFallback />}>
-                                    <ExpandedParcelDetails parcelId={selectedParcelId} />
-                                </Suspense>
-                            </ContentDiv>
+            <TableSurface>
+                <Table
+                    dataPortion={parcelsDataPortion}
+                    paginationConfig={{
+                        pagination: true,
+                        totalRows: totalRows,
+                        onPageChange: setCurrentPage,
+                        onPerPageChange: setPerPage,
+                    }}
+                    headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
+                    columnDisplayFunctions={parcelTableColumnDisplayFunctions}
+                    columnStyleOptions={parcelTableColumnStyleOptions}
+                    onRowClick={onParcelTableRowClick}
+                    sortConfig={{
+                        sortShown: true,
+                        sortableColumns: sortableColumns,
+                        setSortState: setSortState,
+                    }}
+                    filterConfig={{
+                        primaryFiltersShown: true,
+                        additionalFiltersShown: true,
+                        primaryFilters: primaryFilters,
+                        additionalFilters: additionalFilters,
+                        setPrimaryFilters: setPrimaryFilters,
+                        setAdditionalFilters: setAdditionalFilters,
+                    }}
+                    defaultShownHeaders={defaultShownHeaders}
+                    toggleableHeaders={toggleableHeaders}
+                    checkboxConfig={{
+                        displayed: true,
+                        selectedRowIds: checkedParcelIds,
+                        isAllCheckboxChecked: isAllCheckBoxSelected,
+                        onCheckboxClicked: (parcelData) => selectOrDeselectRow(parcelData.parcelId),
+                        onAllCheckboxClicked: () => toggleAllCheckBox(),
+                        isRowChecked: (parcelData) =>
+                            checkedParcelIds.includes(parcelData.parcelId),
+                    }}
+                    editableConfig={{ editable: false }}
+                />
+            </TableSurface>
+            <Modal
+                header={
+                    <>
+                        <Icon icon={faBoxArchive} color={theme.primary.largeForeground[2]} />{" "}
+                        Details
+                    </>
+                }
+                isOpen={modalIsOpen}
+                onClose={() => {
+                    setModalIsOpen(false);
+                    router.push("/parcels");
+                }}
+                headerId="expandedParcelDetailsModal"
+            >
+                <OutsideDiv>
+                    <ContentDiv>
+                        <Suspense fallback={<ExpandedParcelDetailsFallback />}>
+                            <ExpandedParcelDetails parcelId={selectedParcelId} />
+                        </Suspense>
+                    </ContentDiv>
 
-                            <ButtonsDiv>
-                                <Centerer>
-                                    <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
-                                        Edit Parcel
-                                    </LinkButton>
-                                </Centerer>
-                            </ButtonsDiv>
-                        </OutsideDiv>
-                    </Modal>
-                </>
+                    <ButtonsDiv>
+                        <Centerer>
+                            <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
+                                Edit Parcel
+                            </LinkButton>
+                        </Centerer>
+                    </ButtonsDiv>
+                </OutsideDiv>
+            </Modal>
+        </>
     );
 };
 

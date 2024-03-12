@@ -14,10 +14,10 @@ import Button from "@mui/material/Button";
 import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
-import { buildTextFilter, filterDataByText } from "@/components/Tables/TextFilter";
+import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 import { Filter } from "@/components/Tables/Filters";
 
-interface ListRow {
+export interface ListRow {
     primaryKey: string;
     rowOrder: number;
     itemName: string;
@@ -33,17 +33,17 @@ interface ListRow {
     "10": QuantityAndNotes;
 }
 
-interface QuantityAndNotes {
+export interface QuantityAndNotes {
     quantity: string;
     notes: string | null;
 }
 
 interface Props {
-    data: Schema["lists"][];
+    data: ListRow[];
     comment: string;
 }
 
-export const headerKeysAndLabels = [
+export const listsHeaderKeysAndLabels = [
     ["itemName", "Description"],
     ["1", "Single"],
     ["2", "Family of 2"],
@@ -57,13 +57,40 @@ export const headerKeysAndLabels = [
     ["10", "Family of 10"],
 ] satisfies [keyof ListRow, string][];
 
+
+export const listRowToListDB = (listRow: ListRow): Schema["lists"] => ({
+    item_name: listRow.itemName,
+    notes_for_1: listRow[1].notes,
+    notes_for_2: listRow[2].notes,
+    notes_for_3: listRow[3].notes,
+    notes_for_4: listRow[4].notes,
+    notes_for_5: listRow[5].notes,
+    notes_for_6: listRow[6].notes,
+    notes_for_7: listRow[7].notes,
+    notes_for_8: listRow[8].notes,
+    notes_for_9: listRow[9].notes,
+    notes_for_10: listRow[10].notes,
+    quantity_for_1: listRow[1].quantity,
+    quantity_for_2: listRow[2].quantity,
+    quantity_for_3: listRow[3].quantity,
+    quantity_for_4: listRow[4].quantity,
+    quantity_for_5: listRow[5].quantity,
+    quantity_for_6: listRow[6].quantity,
+    quantity_for_7: listRow[7].quantity,
+    quantity_for_8: listRow[8].quantity,
+    quantity_for_9: listRow[9].quantity,
+    quantity_for_10: listRow[10].quantity,
+    primary_key: listRow.primaryKey,
+    row_order: listRow.rowOrder,
+})
+
 const displayQuantityAndNotes = (data: QuantityAndNotes): React.ReactElement => {
     return <TooltipCell cellValue={data.quantity} tooltipValue={data.notes ?? ""} />;
 };
 
 const listDataViewColumnDisplayFunctions = {
     ...Object.fromEntries(
-        headerKeysAndLabels.slice(1).map(([key]) => [key, displayQuantityAndNotes])
+        listsHeaderKeysAndLabels.slice(1).map(([key]) => [key, displayQuantityAndNotes])
     ),
 } satisfies ColumnDisplayFunctions<ListRow>;
 
@@ -72,7 +99,7 @@ const listsColumnStyleOptions: ColumnStyles<ListRow> = {
         minWidth: "8rem",
     },
     ...Object.fromEntries(
-        headerKeysAndLabels.slice(1).map(([key]) => [
+        listsHeaderKeysAndLabels.slice(1).map(([key]) => [
             key,
             {
                 minWidth: "10rem",
@@ -93,27 +120,7 @@ const ListsDataView: React.FC<Props> = (props) => {
         throw new Error("No data found");
     }
 
-    const rows = props.data.map((row) => {
-        const newRow = {
-            primaryKey: row.primary_key,
-            rowOrder: row.row_order,
-            itemName: row.item_name,
-            ...Object.fromEntries(
-                headerKeysAndLabels
-                    .filter(([key]) => /^\d+$/.test(key))
-                    .map(([key]) => [
-                        key,
-                        {
-                            quantity: row[`quantity_for_${key}` as keyof Schema["lists"]],
-                            notes: row[`notes_for_${key}` as keyof Schema["lists"]],
-                        },
-                    ])
-            ),
-        } as ListRow; // this cast is needed here as the type system can't infer what Object.fromEntries will return
-        return newRow;
-    });
-
-    const toggleableHeaders = headerKeysAndLabels.map(([key]) => key);
+    const toggleableHeaders = listsHeaderKeysAndLabels.map(([key]) => key);
 
     const onEdit = (index: number): void => {
         setModal(props.data[index]);
@@ -151,7 +158,7 @@ const ListsDataView: React.FC<Props> = (props) => {
             const { error } = await supabase
                 .from("lists")
                 .delete()
-                .eq("primary_key", data.primary_key);
+                .eq("primary_key", data.primaryKey);
 
             if (error) {
                 setErrorMsg(error.message);
@@ -161,23 +168,36 @@ const ListsDataView: React.FC<Props> = (props) => {
         }
     };
 
-    const [listData, setListData] = useState<ListRow[]>(rows);
+    const [listData, setListData] = useState<ListRow[]>(props.data);
 
-    const filters: Filter<ListRow, string>[] = [buildTextFilter({key: "itemName", label: "Item", headers: headerKeysAndLabels, methodConfig: {methodType: "data", method: filterDataByText}})];
+    const filters: Filter<ListRow, string>[] = [
+        buildTextFilter({
+            key: "itemName",
+            label: "Item",
+            headers: listsHeaderKeysAndLabels,
+            methodConfig: { methodType: "data", method: filterRowByText },
+        }),
+    ];
     const [primaryFilters, setPrimaryFilters] = useState<Filter<ListRow, string>[]>(filters);
-    
-    useEffect(()=> {
-        let filteredData = rows;
-        primaryFilters.forEach((filter) => {if (filter.methodConfig.methodType === "data") {filteredData = filter.methodConfig.method(filteredData, filter.state, filter.key)}});
-        setListData(filteredData);
-    }, [...primaryFilters])
 
+    useEffect(() => {
+        setListData(
+            props.data.filter((row) => {
+                return primaryFilters.every((filter) => {
+                    if (filter.methodConfig.methodType === "data") {
+                        return filter.methodConfig.method(row, filter.state, filter.key);
+                    }
+                    return false;
+                });
+            })
+        );
+    }, [primaryFilters, props.data]);
 
     return (
         <>
             <ConfirmDialog
                 message={`Are you sure you want to delete ${
-                    toDelete ? props.data[toDelete].item_name : ""
+                    toDelete ? props.data[toDelete].itemName : ""
                 }?`}
                 isOpen={toDeleteModalOpen}
                 onConfirm={onConfirmDeletion}
@@ -196,20 +216,31 @@ const ListsDataView: React.FC<Props> = (props) => {
                     <Alert severity="error">{errorMsg}</Alert>
                 </SnackBarDiv>
             </Snackbar>
-            <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
+            <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primaryKey} />
             <TableSurface>
                 <CommentBox originalComment={props.comment} />
                 <Table<ListRow>
-                    headerKeysAndLabels={headerKeysAndLabels}
+                    headerKeysAndLabels={listsHeaderKeysAndLabels}
                     toggleableHeaders={toggleableHeaders}
                     dataPortion={listData}
                     columnDisplayFunctions={listDataViewColumnDisplayFunctions}
                     columnStyleOptions={listsColumnStyleOptions}
                     checkboxConfig={{ displayed: false }}
-                    paginationConfig={{pagination: false}}
-                    sortConfig={{sortShown: false}}
-                    editableConfig={{editable: true, onEdit: onEdit, onDelete: onDeleteButtonClick, onSwapRows: onSwapRows, setDataPortion: setListData}}
-                    filterConfig={{primaryFiltersShown: true, primaryFilters: primaryFilters, setPrimaryFilters: setPrimaryFilters, additionalFiltersShown: false}}
+                    paginationConfig={{ pagination: false }}
+                    sortConfig={{ sortShown: false }}
+                    editableConfig={{
+                        editable: true,
+                        onEdit: onEdit,
+                        onDelete: onDeleteButtonClick,
+                        onSwapRows: onSwapRows,
+                        setDataPortion: setListData,
+                    }}
+                    filterConfig={{
+                        primaryFiltersShown: true,
+                        primaryFilters: primaryFilters,
+                        setPrimaryFilters: setPrimaryFilters,
+                        additionalFiltersShown: false,
+                    }}
                 />
                 <ButtonMargin>
                     <Button variant="contained" onClick={() => setModal(null)}>

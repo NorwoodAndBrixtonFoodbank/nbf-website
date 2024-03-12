@@ -26,7 +26,8 @@ const getClientsData = async (
 
     filters.forEach((filter) => {
         if (filter.methodConfig.methodType === "query") {
-        query = filter.methodConfig.method(query, filter.state);}
+            query = filter.methodConfig.method(query, filter.state);
+        }
     });
 
     query = query.range(start, end);
@@ -66,7 +67,8 @@ export const getClientsCount = async (
 
     filters.forEach((filter) => {
         if (filter.methodConfig.methodType === "query") {
-        query = filter.methodConfig.method(query, filter.state);}
+            query = filter.methodConfig.method(query, filter.state);
+        }
     });
     const { count, error: clientError } = await query;
     if (clientError || count === null) {

@@ -2,8 +2,6 @@
 
 import React from "react";
 import { Filter, MethodConfig } from "./Filters";
-import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
-import { Database } from "@/databaseTypesFile";
 import DateRangeInputs, { DateRangeState } from "../DateRangeInputs/DateRangeInputs";
 
 interface DateFilterProps<Data> {

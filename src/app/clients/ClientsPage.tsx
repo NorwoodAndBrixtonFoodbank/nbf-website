@@ -40,7 +40,12 @@ const fullNameSearch = (
 };
 
 const filters: Filter<ClientsTableRow, any>[] = [
-    buildTextFilter({ key: "fullName", label: "Name", headers: headers, methodConfig: {methodType: "query", method: fullNameSearch }}),
+    buildTextFilter({
+        key: "fullName",
+        label: "Name",
+        headers: headers,
+        methodConfig: { methodType: "query", method: fullNameSearch },
+    }),
 ];
 
 const sortableColumns: SortOptions<ClientsTableRow, any>[] = [
@@ -140,13 +145,13 @@ const ClientsPage: React.FC<{}> = () => {
                         paginationConfig={{
                             pagination: true,
                             totalRows: totalRows,
-                        onPageChange: setCurrentPage,
-                        onPerPageChange: setPerPage
+                            onPageChange: setCurrentPage,
+                            onPerPageChange: setPerPage,
                         }}
                         sortConfig={{
                             sortShown: true,
                             sortableColumns: sortableColumns,
-                            setSortState: setSortState
+                            setSortState: setSortState,
                         }}
                         headerKeysAndLabels={headers}
                         onRowClick={(row) => {
@@ -156,10 +161,10 @@ const ClientsPage: React.FC<{}> = () => {
                             primaryFiltersShown: true,
                             primaryFilters: primaryFilters,
                             setPrimaryFilters: setPrimaryFilters,
-                            additionalFiltersShown: false
+                            additionalFiltersShown: false,
                         }}
                         checkboxConfig={{ displayed: false }}
-                        editableConfig={{editable: false}}
+                        editableConfig={{ editable: false }}
                     />
                 </TableSurface>
                 <Centerer>

@@ -11,7 +11,7 @@ import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { Filter } from "@/components/Tables/Filters";
-import { buildTextFilter, filterDataByText } from "@/components/Tables/TextFilter";
+import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 
 interface CollectionCentresTableRow {
     acronym: Schema["collection_centres"]["acronym"];
@@ -44,11 +44,13 @@ const collectionCentresTableHeaderKeysAndLabels: TableHeaders<Schema["collection
 ];
 
 interface Props {
-    collectionCentreData: CollectionCentresTableRow[]
+    collectionCentreData: CollectionCentresTableRow[];
 }
 
 const CollectionCentresTables: React.FC<Props> = (props) => {
-    const [collectionCentreDataPortion, setCollectionCentreDataPortion] = useState<Schema["collection_centres"][]>(props.collectionCentreData);
+    const [collectionCentreDataPortion, setCollectionCentreDataPortion] = useState<
+        Schema["collection_centres"][]
+    >(props.collectionCentreData);
     const [collectionCentreToDelete, setCollectionCentreToDelete] =
         useState<Schema["collection_centres"]>();
     const [refreshRequired, setRefreshRequired] = useState(false);
@@ -75,15 +77,35 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
         setCollectionCentreToDelete(undefined);
     };
 
-    const filters: Filter<CollectionCentresTableRow, string>[] = [buildTextFilter({key: "name", label: "Name", headers: collectionCentresTableHeaderKeysAndLabels, methodConfig: {methodType: "data", method: filterDataByText}}) , buildTextFilter({key: "acronym", label: "Acronym", headers: collectionCentresTableHeaderKeysAndLabels, methodConfig: {methodType: "data", method: filterDataByText}})]
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<CollectionCentresTableRow, string>[]>(filters);
-    
-    useEffect(()=> {
-        let filteredData = props.collectionCentreData;
-        primaryFilters.forEach((filter) => {if (filter.methodConfig.methodType === "data") {filteredData = filter.methodConfig.method(filteredData, filter.state, filter.key)}});
-        setCollectionCentreDataPortion(filteredData);
-    }, [...primaryFilters])
+    const filters: Filter<CollectionCentresTableRow, string>[] = [
+        buildTextFilter({
+            key: "name",
+            label: "Name",
+            headers: collectionCentresTableHeaderKeysAndLabels,
+            methodConfig: { methodType: "data", method: filterRowByText },
+        }),
+        buildTextFilter({
+            key: "acronym",
+            label: "Acronym",
+            headers: collectionCentresTableHeaderKeysAndLabels,
+            methodConfig: { methodType: "data", method: filterRowByText },
+        }),
+    ];
+    const [primaryFilters, setPrimaryFilters] =
+        useState<Filter<CollectionCentresTableRow, string>[]>(filters);
 
+    useEffect(() => {
+        setCollectionCentreDataPortion(
+            collectionCentreDataPortion.filter((row) => {
+                return primaryFilters.every((filter) => {
+                    if (filter.methodConfig.methodType === "data") {
+                        return filter.methodConfig.method(row, filter.state, filter.key);
+                    }
+                    return false;
+                });
+            })
+        );
+    }, [primaryFilters]);
 
     return (
         <>
@@ -92,11 +114,20 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
                 headerKeysAndLabels={collectionCentresTableHeaderKeysAndLabels}
                 defaultShownHeaders={["name", "acronym"]}
                 toggleableHeaders={["primary_key"]}
-                paginationConfig={{pagination: false}}
+                paginationConfig={{ pagination: false }}
                 checkboxConfig={{ displayed: false }}
-                sortConfig={{sortShown: false}}
-                editableConfig={{editable: true, onDelete: collectionCentreOnDelete, setDataPortion: setCollectionCentreDataPortion}}
-                filterConfig={{primaryFiltersShown: true, primaryFilters: primaryFilters, setPrimaryFilters: setPrimaryFilters, additionalFiltersShown: false}}
+                sortConfig={{ sortShown: false }}
+                editableConfig={{
+                    editable: true,
+                    onDelete: collectionCentreOnDelete,
+                    setDataPortion: setCollectionCentreDataPortion,
+                }}
+                filterConfig={{
+                    primaryFiltersShown: true,
+                    primaryFilters: primaryFilters,
+                    setPrimaryFilters: setPrimaryFilters,
+                    additionalFiltersShown: false,
+                }}
             />
 
             {refreshRequired && (

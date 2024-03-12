@@ -3,10 +3,15 @@ import { TableHeaders } from "@/components/Tables/Table";
 import { Database } from "@/databaseTypesFile";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 
-export type MethodConfig<Data, State> = {method: (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: State
-) => PostgrestFilterBuilder<Database["public"], any, any>; methodType: "query"; } | {method: (data: Data[], state: State, key: keyof Data) => Data[]; methodType: "data";};
+export type MethodConfig<Data, State> =
+    | {
+          method: (
+              query: PostgrestFilterBuilder<Database["public"], any, any>,
+              state: State
+          ) => PostgrestFilterBuilder<Database["public"], any, any>;
+          methodType: "query";
+      }
+    | { method: (row: Data, state: State, key: keyof Data) => boolean; methodType: "data" };
 
 export interface Filter<Data, State> {
     key: keyof Data;
@@ -30,16 +35,3 @@ export const defaultToString = (value: unknown): string => {
 
     return JSON.stringify(value);
 };
-
-
-export const filterRowByText = <Data,>(row: Data, state: string, key: keyof Data): boolean => {
-    let string = defaultToString(row[key]);
-    string = string.toLowerCase();
-    state = state.toLowerCase();
-
-    return !string.includes(state);
-};
-
-export const filterDataByText = <Data,>(data: Data[], state: string, key: keyof Data): Data[] => (
-     data.filter((row)=>filterRowByText(row, state, key))
-)

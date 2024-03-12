@@ -38,7 +38,7 @@ export const getParcelProcessingData = async (
     sortState: SortState<ParcelsTableRow>,
     start?: number,
     end?: number,
-    parcelIds?: string[],
+    parcelIds?: string[]
 ) => {
     let query = supabase.from("parcels").select(
         `
@@ -83,15 +83,18 @@ export const getParcelProcessingData = async (
         .order("timestamp", { ascending: false, foreignTable: "events" })
         .limit(1, { foreignTable: "events" });
 
-        filters.forEach((filter) => {
-            if (filter.methodConfig.methodType === "query") {
-            query = filter.methodConfig.method(query, filter.state);}
-        });
+    filters.forEach((filter) => {
+        if (filter.methodConfig.methodType === "query") {
+            query = filter.methodConfig.method(query, filter.state);
+        }
+    });
 
-    if (typeof start === "number" && typeof end === "number") {query = query.range(start, end)};
+    if (typeof start === "number" && typeof end === "number") {
+        query = query.range(start, end);
+    }
 
     if (parcelIds) {
-        query = query.in('primary_key', parcelIds);
+        query = query.in("primary_key", parcelIds);
     }
 
     const { data, error } = await query;
@@ -110,7 +113,14 @@ export const getParcelsData = async (
     end?: number,
     parcelIds?: string[]
 ): Promise<ParcelsTableRow[]> => {
-    const processingData = await getParcelProcessingData(supabase, filters, sortState, start, end, parcelIds);
+    const processingData = await getParcelProcessingData(
+        supabase,
+        filters,
+        sortState,
+        start,
+        end,
+        parcelIds
+    );
     const congestionCharge = await getCongestionChargeDetailsForParcels(processingData, supabase);
     const formattedData = processingDataToParcelsTableData(processingData, congestionCharge);
 
@@ -159,7 +169,8 @@ export const getParcelsCount = async (
 
     filters.forEach((filter) => {
         if (filter.methodConfig.methodType === "query") {
-        query = filter.methodConfig.method(query, filter.state);}
+            query = filter.methodConfig.method(query, filter.state);
+        }
     });
 
     query = query
@@ -179,9 +190,8 @@ export const getParcelIds = async (
     filters: Filter<ParcelsTableRow, any>[],
     sortState: SortState<ParcelsTableRow>
 ): Promise<string[]> => {
-    let query = supabase.from("parcels").select
-        (
-            `
+    let query = supabase.from("parcels").select(
+        `
       parcel_id:primary_key,
       
       collection_centre:collection_centres!inner ( 
@@ -212,16 +222,18 @@ export const getParcelIds = async (
           event_data,
           timestamp
       )
-    `);
+    `
+    );
 
     filters.forEach((filter) => {
         if (filter.methodConfig.methodType === "query") {
-        query = filter.methodConfig.method(query, filter.state);}
+            query = filter.methodConfig.method(query, filter.state);
+        }
     });
     if (sortState.sort && sortState.column.sortMethod) {
         query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
-        query = query.order("packing_datetime", { ascending: false })
+        query = query.order("packing_datetime", { ascending: false });
     }
     query = query
         .order("timestamp", { ascending: false, foreignTable: "events" })
@@ -231,5 +243,5 @@ export const getParcelIds = async (
     if (error) {
         throw new DatabaseError("fetch", "parcels");
     }
-    return data.map((parcel)=>parcel.parcel_id) ?? [];
+    return data.map((parcel) => parcel.parcel_id) ?? [];
 };

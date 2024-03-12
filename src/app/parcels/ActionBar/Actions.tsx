@@ -172,13 +172,13 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
 };
 
 interface Props {
-    fetchSelectedParcels: (checkedParcelIds: string[])=>Promise<ParcelsTableRow[]>;
+    fetchSelectedParcels: (checkedParcelIds: string[]) => Promise<ParcelsTableRow[]>;
     onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
     actionAnchorElement: HTMLElement | null;
     setActionAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     modalError: string | null;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
-    parcelIds: string[]
+    parcelIds: string[];
 }
 
 const Actions: React.FC<Props> = ({
@@ -188,14 +188,16 @@ const Actions: React.FC<Props> = ({
     setActionAnchorElement,
     modalError,
     setModalError,
-    parcelIds
+    parcelIds,
 }) => {
     const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
 
-    useEffect(()=>{
-        (async () => {setSelectedParcels(await fetchSelectedParcels(parcelIds))})();
-    }, [parcelIds])
-    
+    useEffect(() => {
+        (async () => {
+            setSelectedParcels(await fetchSelectedParcels(parcelIds));
+        })();
+    }, [parcelIds, fetchSelectedParcels]);
+
     const [selectedAction, setSelectedAction] = useState<ActionName | null>(null);
     const [labelQuantity, setLabelQuantity] = useState<number>(0);
     const [date, setDate] = useState(dayjs());

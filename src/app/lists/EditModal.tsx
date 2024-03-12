@@ -3,7 +3,7 @@
 import Modal from "@/components/Modal/Modal";
 import React, { useState } from "react";
 import styled from "styled-components";
-import { SnackBarDiv } from "@/app/lists/ListDataview";
+import { ListRow, QuantityAndNotes, SnackBarDiv, listRowToListDB } from "@/app/lists/ListDataview";
 import TextInput from "@/components/DataInput/FreeFormTextInput";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
@@ -17,7 +17,7 @@ interface Props {
 }
 
 // null => add, undefined => modal closed
-export type EditModalState = Schema["lists"] | null | undefined;
+export type EditModalState = ListRow | null | undefined;
 
 const ModalInner = styled.div`
     display: flex;
@@ -39,41 +39,43 @@ const DisplayContents = styled.div`
     display: contents;
 `;
 
-const listQuantityNoteAndLabels: [keyof Schema["lists"], keyof Schema["lists"], string][] = [
-    ["quantity_for_1", "notes_for_1", "Single"],
-    ["quantity_for_2", "notes_for_2", "Family of 2"],
-    ["quantity_for_3", "notes_for_3", "Family of 3"],
-    ["quantity_for_4", "notes_for_4", "Family of 4"],
-    ["quantity_for_5", "notes_for_5", "Family of 5"],
-    ["quantity_for_6", "notes_for_6", "Family of 6"],
-    ["quantity_for_7", "notes_for_7", "Family of 7"],
-    ["quantity_for_8", "notes_for_8", "Family of 8"],
-    ["quantity_for_9", "notes_for_9", "Family of 9"],
-    ["quantity_for_10", "notes_for_10", "Family of 10+"],
+const listQuantityNoteAndLabels: [keyof Schema["lists"], keyof Schema["lists"], string, string][] = [
+    ["quantity_for_1", "notes_for_1", "Single", "1"],
+    ["quantity_for_2", "notes_for_2", "Family of 2", "2"],
+    ["quantity_for_3", "notes_for_3", "Family of 3", "3"],
+    ["quantity_for_4", "notes_for_4", "Family of 4", "4"],
+    ["quantity_for_5", "notes_for_5", "Family of 5", "5"],
+    ["quantity_for_6", "notes_for_6", "Family of 6", "6"],
+    ["quantity_for_7", "notes_for_7", "Family of 7", "7"],
+    ["quantity_for_8", "notes_for_8", "Family of 8", "8"],
+    ["quantity_for_9", "notes_for_9", "Family of 9", "9"],
+    ["quantity_for_10", "notes_for_10", "Family of 10+", "10"],
 ];
 
 const EditModal: React.FC<Props> = ({ data, onClose }) => {
-    const [toSubmit, setToSubmit] = useState<Partial<Schema["lists"]>>(data ? data : {});
+    const [toSubmit, setToSubmit] = useState<ListRow|null|undefined>(data);
 
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     const setKey = (event: React.ChangeEvent<HTMLInputElement>, key: string): void => {
         const newValue = event.target.value;
-        setToSubmit({ ...toSubmit, [key]: newValue });
+        toSubmit && setToSubmit({ ...toSubmit, [key]: newValue });
     };
 
     const onSubmit = async (): Promise<void> => {
+        if (toSubmit) {
+        const toSubmitDB = listRowToListDB(toSubmit);
         const table = supabase.from("lists");
         const { error } =
             data === null
-                ? await table.insert(toSubmit)
-                : await table.update(toSubmit).eq("primary_key", toSubmit.primary_key);
+                ? await table.insert(toSubmitDB)
+                : await table.update(toSubmitDB).eq("primary_key", toSubmitDB.primary_key);
 
         if (error) {
             setErrorMsg(error.message);
         } else {
             window.location.reload();
-        }
+        }}
     };
 
     const Footer = (
@@ -94,9 +96,9 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
         </>
     );
 
-    return (
+    if (toSubmit) {return (
         <Modal
-            header={"Edit List Item - " + toSubmit.item_name}
+            header={"Edit List Item - " + toSubmit.itemName}
             headerId="editList"
             isOpen={data !== undefined}
             onClose={onClose}
@@ -105,22 +107,23 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
             <ModalInner>
                 <h3>Description</h3>
                 <TextInput
-                    defaultValue={toSubmit.item_name ?? ""}
+                    defaultValue={toSubmit.itemName ?? ""}
                     onChange={(event) => setKey(event, "item_name")}
                     label="Item Description"
                 />
-                {listQuantityNoteAndLabels.map(([quantityKey, noteKey, label]) => {
+                {listQuantityNoteAndLabels.map(([quantityKey, noteKey, label, listRowKey]) => {
+                    const quantityAndNotes = toSubmit[listRowKey as keyof ListRow] as QuantityAndNotes;
                     return (
                         <DisplayContents key={quantityKey}>
                             <h3>{label}</h3>
                             <DataWithTooltipDiv>
                                 <TextInput
-                                    defaultValue={toSubmit[quantityKey]?.toString() ?? ""}
+                                    defaultValue={quantityAndNotes.quantity.toString() ?? ""}
                                     label="Quantity"
                                     onChange={(event) => setKey(event, quantityKey)}
                                 />
                                 <TextInput
-                                    defaultValue={toSubmit[noteKey]?.toString() ?? ""}
+                                    defaultValue={quantityAndNotes.notes?.toString() ?? ""}
                                     label="Notes"
                                     onChange={(event) => setKey(event, noteKey)}
                                     fullWidth
@@ -131,7 +134,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                 })}
             </ModalInner>
         </Modal>
-    );
+    );}
 };
 
 export default EditModal;

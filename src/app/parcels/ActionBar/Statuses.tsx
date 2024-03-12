@@ -64,14 +64,14 @@ export const saveParcelStatus = async (
 };
 
 interface Props {
-    fetchSelectedParcels: (checkedParceldIds: string[])=>Promise<ParcelsTableRow[]>;
+    fetchSelectedParcels: (checkedParceldIds: string[]) => Promise<ParcelsTableRow[]>;
     statusAnchorElement: HTMLElement | null;
     setStatusAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     modalError: string | null;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
     willSaveParcelStatus: () => void;
     hasSavedParcelStatus: () => void;
-    parcelIds: string[]
+    parcelIds: string[];
 }
 
 const Statuses: React.FC<Props> = ({
@@ -82,16 +82,18 @@ const Statuses: React.FC<Props> = ({
     setModalError,
     willSaveParcelStatus,
     hasSavedParcelStatus,
-    parcelIds
+    parcelIds,
 }) => {
     const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
-    
+
     const [selectedStatus, setSelectedStatus] = useState<statusType | null>(null);
     const [statusModal, setStatusModal] = useState(false);
 
-    useEffect(()=>{
-        (async () => {setSelectedParcels(await fetchSelectedParcels(parcelIds))})();
-    }, [parcelIds])
+    useEffect(() => {
+        (async () => {
+            setSelectedParcels(await fetchSelectedParcels(parcelIds));
+        })();
+    }, [parcelIds, fetchSelectedParcels]);
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
         willSaveParcelStatus();

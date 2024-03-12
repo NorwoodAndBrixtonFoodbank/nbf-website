@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import Table, { CheckboxConfig, FilterConfig, PaginationConfig, SortConfig, SortOptions, SortState } from "@/components/Tables/Table";
+import Table, {
+    CheckboxConfig,
+    FilterConfig,
+    PaginationConfig,
+    SortConfig,
+    SortOptions,
+} from "@/components/Tables/Table";
 import StyleManager from "@/app/themes";
 import { Filter } from "./Filters";
 
@@ -146,7 +152,7 @@ const Component: React.FC<TestTableProps> = ({
             setCheckedRowIds([]);
             setAllCheckBoxSelected(false);
         } else {
-            setCheckedRowIds(tableData.map((row)=>row.id));
+            setCheckedRowIds(tableData.map((row) => row.id));
             setAllCheckBoxSelected(true);
         }
     };
@@ -176,7 +182,7 @@ const Component: React.FC<TestTableProps> = ({
         totalRows: tableData.length,
         onPageChange: setCurrentPage,
         onPerPageChange: setPerPage,
-    }
+    };
 
     const falsePaginationConfig: PaginationConfig = {
         pagination: false,
@@ -186,12 +192,12 @@ const Component: React.FC<TestTableProps> = ({
         primaryFiltersShown: true,
         primaryFilters: primaryFilters,
         setPrimaryFilters: setPrimaryFilters,
-        additionalFiltersShown: false
-    }
+        additionalFiltersShown: false,
+    };
 
     const falseFilterConfig: FilterConfig<TestData> = {
         primaryFiltersShown: false,
-        additionalFiltersShown: false
+        additionalFiltersShown: false,
     };
 
     const trueSortConfig: SortConfig<TestData> = {
@@ -204,18 +210,16 @@ const Component: React.FC<TestTableProps> = ({
         sortShown: false,
     };
 
-
-
     return (
         <StyleManager>
             <Table
-                dataPortion={data}
+                dataPortion={testDataPortion}
                 headerKeysAndLabels={headers}
                 toggleableHeaders={toggleableHeaders}
                 paginationConfig={pagination ? truePaginationConfig : falsePaginationConfig}
                 checkboxConfig={displayCheckboxes ? trueCheckboxConfig : falseCheckboxConfig}
                 filterConfig={primaryFilters ? trueFilterConfig : falseFilterConfig}
-                editableConfig={{editable: false}}
+                editableConfig={{ editable: false }}
                 sortConfig={sortable ? trueSortConfig : falseSortConfig}
             />
         </StyleManager>

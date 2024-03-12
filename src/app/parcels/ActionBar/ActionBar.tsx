@@ -11,7 +11,7 @@ import { ControlContainer } from "@/components/Form/formStyling";
 import { ArrowDropDown } from "@mui/icons-material";
 
 export interface ActionBarProps {
-    fetchSelectedParcels: (checkedParcelIds: string[])=>Promise<ParcelsTableRow[]>;
+    fetchSelectedParcels: (checkedParcelIds: string[]) => Promise<ParcelsTableRow[]>;
     onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
     willSaveParcelStatus: () => void;
     hasSavedParcelStatus: () => void;

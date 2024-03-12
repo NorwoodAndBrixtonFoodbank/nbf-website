@@ -11,7 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { NoSsr } from "@mui/material";
 import IconButton from "@mui/material/IconButton/IconButton";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import styled from "styled-components";
 import { Primitive, SortOrder } from "react-data-table-component/dist/DataTable/types";
@@ -52,19 +52,23 @@ export interface SortOptions<Data, Key extends keyof Data> {
     ) => PostgrestFilterBuilder<Database["public"], any, any>;
 }
 
-export type SortState<Data> = {
-    sort: true;
-    sortDirection: SortOrder;
-    column: CustomColumn<Data>;
-} | {
-    sort: false;
-}
+export type SortState<Data> =
+    | {
+          sort: true;
+          sortDirection: SortOrder;
+          column: CustomColumn<Data>;
+      }
+    | {
+          sort: false;
+      };
 
-export type SortConfig<Data> = {
-    sortShown: true,
-    sortableColumns: SortOptions<Data, any>[];
-    setSortState: (sortState: SortState<Data>) => void;
-} | {sortShown: false};
+export type SortConfig<Data> =
+    | {
+          sortShown: true;
+          sortableColumns: SortOptions<Data, any>[];
+          setSortState: (sortState: SortState<Data>) => void;
+      }
+    | { sortShown: false };
 
 export interface CustomColumn<Data> extends TableColumn<Row<Data>> {
     sortMethod?: (
@@ -86,39 +90,46 @@ export type CheckboxConfig<Data> =
           displayed: false;
       };
 
-export type PaginationConfig = 
-| {
-    pagination: true;
-    totalRows: number,
-    onPageChange: (newPage: number) => void;
-    onPerPageChange: (perPage: number) => void;
-}
-| {
-    pagination: false;
-}
+export type PaginationConfig =
+    | {
+          pagination: true;
+          totalRows: number;
+          onPageChange: (newPage: number) => void;
+          onPerPageChange: (perPage: number) => void;
+      }
+    | {
+          pagination: false;
+      };
 
-export type FilterConfig<Data> = 
-| {
-    primaryFiltersShown: false;
-    additionalFiltersShown: false;
-} | {
-    primaryFiltersShown: true;
-    primaryFilters: Filter<Data, any>[]
-    setPrimaryFilters: (primaryFilters: Filter<Data, any>[]) => void;
-    additionalFiltersShown: false;
-} | {primaryFiltersShown: true;
-primaryFilters: Filter<Data,  any>[]
-setPrimaryFilters: (primaryFilters: Filter<Data,  any>[]) => void;
-additionalFiltersShown: true;
-additionalFilters: Filter<Data, any>[]
-setAdditionalFilters: (additionalFilters: Filter<Data, any>[]) => void;}
+export type FilterConfig<Data> =
+    | {
+          primaryFiltersShown: false;
+          additionalFiltersShown: false;
+      }
+    | {
+          primaryFiltersShown: true;
+          primaryFilters: Filter<Data, any>[];
+          setPrimaryFilters: (primaryFilters: Filter<Data, any>[]) => void;
+          additionalFiltersShown: false;
+      }
+    | {
+          primaryFiltersShown: true;
+          primaryFilters: Filter<Data, any>[];
+          setPrimaryFilters: (primaryFilters: Filter<Data, any>[]) => void;
+          additionalFiltersShown: true;
+          additionalFilters: Filter<Data, any>[];
+          setAdditionalFilters: (additionalFilters: Filter<Data, any>[]) => void;
+      };
 
-export type EditableConfig<Data> = 
-{editable: true;
-    setDataPortion: (dataPortion: Data[]) => void;
-    onEdit?: (data: number) => void;
-    onDelete?: (data: number) => void;
-    onSwapRows?: (row1: Data, row2: Data) => Promise<void>;} | {editable: false}
+export type EditableConfig<Data> =
+    | {
+          editable: true;
+          setDataPortion: (dataPortion: Data[]) => void;
+          onEdit?: (data: number) => void;
+          onDelete?: (data: number) => void;
+          onSwapRows?: (row1: Data, row2: Data) => Promise<void>;
+      }
+    | { editable: false };
 
 interface Props<Data> {
     dataPortion: Data[];
@@ -131,7 +142,7 @@ interface Props<Data> {
     toggleableHeaders?: readonly (keyof Data)[];
     columnDisplayFunctions?: ColumnDisplayFunctions<Data>;
     columnStyleOptions?: ColumnStyles<Data>;
-    editableConfig: EditableConfig<Data>
+    editableConfig: EditableConfig<Data>;
     onRowClick?: OnRowClickFunction<Data>;
 }
 
@@ -188,7 +199,7 @@ const Table = <Data,>({
     sortConfig,
     filterConfig,
     paginationConfig,
-    editableConfig
+    editableConfig,
 }: Props<Data>): React.ReactElement => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
@@ -202,7 +213,9 @@ const Table = <Data,>({
             columnStyleOptions[headerKey] ?? {}
         );
 
-        const sortMethod = sortConfig.sortShown && sortConfig.sortableColumns.find((sortMethod) => sortMethod.key === headerKey);
+        const sortMethod =
+            sortConfig.sortShown &&
+            sortConfig.sortableColumns.find((sortMethod) => sortMethod.key === headerKey);
 
         const sortable = sortMethod !== undefined;
 
@@ -230,51 +243,54 @@ const Table = <Data,>({
         sortDirection: SortOrder
     ): Promise<void> => {
         if (sortConfig.sortShown && Object.keys(column).length) {
-        sortConfig.setSortState({
-            sort: true,
-            column: column,
-            sortDirection: sortDirection,
-        });}
+            sortConfig.setSortState({
+                sort: true,
+                column: column,
+                sortDirection: sortDirection,
+            });
+        }
     };
 
     const [isSwapping, setIsSwapping] = useState(false);
 
     if (editableConfig.editable) {
-    const swapRows = (rowId1: number, upwards: boolean): void => {
-        if (isSwapping) {
-            return;
-        }
-        setIsSwapping(true);
+        const swapRows = (rowId1: number, upwards: boolean): void => {
+            if (isSwapping) {
+                return;
+            }
+            setIsSwapping(true);
 
-        const rowId2 = rowId1 + (upwards ? -1 : 1);
+            const rowId2 = rowId1 + (upwards ? -1 : 1);
 
-        if (
-            rowId1 < 0 ||
-            rowId2 < 0 ||
-            rowId1 >= dataPortion.length ||
-            rowId2 >= dataPortion.length
-        ) {
-            setIsSwapping(false);
-            return;
-        }
+            if (
+                rowId1 < 0 ||
+                rowId2 < 0 ||
+                rowId1 >= dataPortion.length ||
+                rowId2 >= dataPortion.length
+            ) {
+                setIsSwapping(false);
+                return;
+            }
 
-        const clientSideRefresh = (): void => {
-            // Update viewed table data once specific functions are done (without re-fetch)
-            const newData = [...dataPortion];
-            const temp = newData[rowId1];
-            newData[rowId1] = newData[rowId2];
-            newData[rowId2] = temp;
+            const clientSideRefresh = (): void => {
+                // Update viewed table data once specific functions are done (without re-fetch)
+                const newData = [...dataPortion];
+                const temp = newData[rowId1];
+                newData[rowId1] = newData[rowId2];
+                newData[rowId2] = temp;
 
-            editableConfig.setDataPortion(newData);
-            setIsSwapping(false);
+                editableConfig.setDataPortion(newData);
+                setIsSwapping(false);
+            };
+
+            if (editableConfig.onSwapRows) {
+                editableConfig
+                    .onSwapRows(dataPortion[rowId1], dataPortion[rowId2])
+                    .then(clientSideRefresh);
+            } else {
+                clientSideRefresh();
+            }
         };
-
-        if (editableConfig.onSwapRows) {
-            editableConfig.onSwapRows(dataPortion[rowId1], dataPortion[rowId2]).then(clientSideRefresh);
-        } else {
-            clientSideRefresh();
-        }
-    };
         columns.unshift({
             name: "",
             cell: (row: Row<Data>) => (
@@ -289,7 +305,10 @@ const Table = <Data,>({
                         </StyledIconButton>
                     )}
                     {editableConfig.onEdit && (
-                        <StyledIconButton onClick={() => editableConfig.onEdit!(row.rowId)} aria-label="edit">
+                        <StyledIconButton
+                            onClick={() => editableConfig.onEdit!(row.rowId)}
+                            aria-label="edit"
+                        >
                             <StyledIcon icon={faPenToSquare} />
                         </StyledIconButton>
                     )}
@@ -303,7 +322,10 @@ const Table = <Data,>({
                         </StyledIconButton>
                     )}
                     {editableConfig.onDelete && (
-                        <StyledIconButton onClick={() => editableConfig.onDelete!(row.rowId)} aria-label="delete">
+                        <StyledIconButton
+                            onClick={() => editableConfig.onDelete!(row.rowId)}
+                            aria-label="delete"
+                        >
                             <StyledIcon icon={faTrashAlt} />
                         </StyledIconButton>
                     )}
@@ -340,29 +362,39 @@ const Table = <Data,>({
     const rows = dataPortion.map((data, index) => ({ rowId: index, data }));
 
     const handleClear = (): void => {
-        if (filterConfig.primaryFiltersShown) { filterConfig.setPrimaryFilters(
-            filterConfig.primaryFilters.map((filter) => ({
-                ...filter,
-                state: filter.initialState,
-            }))
-        );}
-        if (filterConfig.additionalFiltersShown) {filterConfig.setAdditionalFilters(
-            filterConfig.additionalFilters.map((filter) => ({
-                ...filter,
-                state: filter.initialState,
-            }))
-        );}
+        if (filterConfig.primaryFiltersShown) {
+            filterConfig.setPrimaryFilters(
+                filterConfig.primaryFilters.map((filter) => ({
+                    ...filter,
+                    state: filter.initialState,
+                }))
+            );
+        }
+        if (filterConfig.additionalFiltersShown) {
+            filterConfig.setAdditionalFilters(
+                filterConfig.additionalFilters.map((filter) => ({
+                    ...filter,
+                    state: filter.initialState,
+                }))
+            );
+        }
     };
 
     return (
         <>
             <TableFilterBar<Data>
                 handleClear={handleClear}
-                setFilters={filterConfig.primaryFiltersShown ? filterConfig.setPrimaryFilters : ()=>{}}
+                setFilters={
+                    filterConfig.primaryFiltersShown ? filterConfig.setPrimaryFilters : () => {}
+                }
                 toggleableHeaders={toggleableHeaders}
                 filters={filterConfig.primaryFiltersShown ? filterConfig.primaryFilters : []}
-                additionalFilters={filterConfig.additionalFiltersShown ? filterConfig.additionalFilters : []}
-                setAdditionalFilters={filterConfig.primaryFiltersShown ? filterConfig.setPrimaryFilters : ()=>{}}
+                additionalFilters={
+                    filterConfig.additionalFiltersShown ? filterConfig.additionalFilters : []
+                }
+                setAdditionalFilters={
+                    filterConfig.primaryFiltersShown ? filterConfig.setPrimaryFilters : () => {}
+                }
                 headers={headerKeysAndLabels}
                 setShownHeaderKeys={setShownHeaderKeys}
                 shownHeaderKeys={shownHeaderKeys}
@@ -378,10 +410,18 @@ const Table = <Data,>({
                         persistTableHead
                         onRowClicked={onRowClick}
                         paginationServer={paginationConfig.pagination}
-                        paginationTotalRows={paginationConfig.pagination ? paginationConfig.totalRows : undefined }
+                        paginationTotalRows={
+                            paginationConfig.pagination ? paginationConfig.totalRows : undefined
+                        }
                         paginationDefaultPage={paginationConfig.pagination ? 1 : undefined}
-                        onChangePage={paginationConfig.pagination ? paginationConfig.onPageChange : () => {} }
-                        onChangeRowsPerPage={paginationConfig.pagination ? paginationConfig.onPerPageChange : () => {} }
+                        onChangePage={
+                            paginationConfig.pagination ? paginationConfig.onPageChange : () => {}
+                        }
+                        onChangeRowsPerPage={
+                            paginationConfig.pagination
+                                ? paginationConfig.onPerPageChange
+                                : () => {}
+                        }
                         sortServer={sortConfig.sortShown}
                         onSort={handleSort}
                     />
