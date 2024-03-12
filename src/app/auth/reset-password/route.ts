@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
 import { logError } from "@/logger/logger";
-import { getSupabaseServerComponentClient } from "@/supabaseServer";
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
 
 export async function GET(request: Request): Promise<void> {
-    const supabase = getSupabaseServerComponentClient()
+    const supabase = createRouteHandlerClient({ cookies });
     const { searchParams } = new URL(request.url);
     const authCode = searchParams.get("code");
 
@@ -20,6 +21,10 @@ export async function GET(request: Request): Promise<void> {
         );
         redirect("/");
     }
+
+    await supabase.auth.setSession(data.session);
+
+    const user = await supabase.auth.getUser()
 
     redirect("/reset-password");
 }

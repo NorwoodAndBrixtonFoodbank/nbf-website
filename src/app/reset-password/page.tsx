@@ -6,7 +6,7 @@ import { updatePassword } from "@/authentication/updatePassword";
 
 export default function Page(): ReactElement {
     const [password, setPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState<string | null>(undefined);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const resetPassword = (): void => {
         setErrorMessage(null);
