@@ -15,7 +15,7 @@ import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
 import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
-import { Filter } from "@/components/Tables/Filters";
+import { Filter, FilterMethodType } from "@/components/Tables/Filters";
 
 export interface ListRow {
     primaryKey: string;
@@ -57,7 +57,6 @@ export const listsHeaderKeysAndLabels = [
     ["10", "Family of 10"],
 ] satisfies [keyof ListRow, string][];
 
-
 export const listRowToListDB = (listRow: ListRow): Schema["lists"] => ({
     item_name: listRow.itemName,
     notes_for_1: listRow[1].notes,
@@ -82,7 +81,7 @@ export const listRowToListDB = (listRow: ListRow): Schema["lists"] => ({
     quantity_for_10: listRow[10].quantity,
     primary_key: listRow.primaryKey,
     row_order: listRow.rowOrder,
-})
+});
 
 const displayQuantityAndNotes = (data: QuantityAndNotes): React.ReactElement => {
     return <TooltipCell cellValue={data.quantity} tooltipValue={data.notes ?? ""} />;
@@ -175,7 +174,7 @@ const ListsDataView: React.FC<Props> = (props) => {
             key: "itemName",
             label: "Item",
             headers: listsHeaderKeysAndLabels,
-            methodConfig: { methodType: "data", method: filterRowByText },
+            methodConfig: { methodType: FilterMethodType.Client, method: filterRowByText },
         }),
     ];
     const [primaryFilters, setPrimaryFilters] = useState<Filter<ListRow, string>[]>(filters);
@@ -184,7 +183,7 @@ const ListsDataView: React.FC<Props> = (props) => {
         setListData(
             props.data.filter((row) => {
                 return primaryFilters.every((filter) => {
-                    if (filter.methodConfig.methodType === "data") {
+                    if (filter.methodConfig.methodType === FilterMethodType.Client) {
                         return filter.methodConfig.method(row, filter.state, filter.key);
                     }
                     return false;

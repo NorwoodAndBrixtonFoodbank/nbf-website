@@ -25,25 +25,28 @@ const ListsPage: React.FC<{}> = () => {
         (async () => {
             setIsLoading(true);
             const fetchedData = await fetchData();
-            setListsData(fetchedData.data.map((row) => {
-                const newRow = {
-                    primaryKey: row.primary_key,
-                    rowOrder: row.row_order,
-                    itemName: row.item_name,
-                    ...Object.fromEntries(
-                        listsHeaderKeysAndLabels
-                            .filter(([key]) => /^\d+$/.test(key))
-                            .map(([key]) => [
-                                key,
-                                {
-                                    quantity: row[`quantity_for_${key}` as keyof Schema["lists"]],
-                                    notes: row[`notes_for_${key}` as keyof Schema["lists"]],
-                                },
-                            ])
-                    ),
-                } as ListRow; // this cast is needed here as the type system can't infer what Object.fromEntries will return
-                return newRow;
-            }))
+            setListsData(
+                fetchedData.data.map((row) => {
+                    const newRow = {
+                        primaryKey: row.primary_key,
+                        rowOrder: row.row_order,
+                        itemName: row.item_name,
+                        ...Object.fromEntries(
+                            listsHeaderKeysAndLabels
+                                .filter(([key]) => /^\d+$/.test(key))
+                                .map(([key]) => [
+                                    key,
+                                    {
+                                        quantity:
+                                            row[`quantity_for_${key}` as keyof Schema["lists"]],
+                                        notes: row[`notes_for_${key}` as keyof Schema["lists"]],
+                                    },
+                                ])
+                        ),
+                    } as ListRow; // this cast is needed here as the type system can't infer what Object.fromEntries will return
+                    return newRow;
+                })
+            );
             setComment(fetchedData.comment);
             setIsLoading(false);
         })();

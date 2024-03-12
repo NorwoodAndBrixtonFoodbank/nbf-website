@@ -1,7 +1,7 @@
 import { Supabase } from "@/supabaseUtils";
 import { DatabaseError, EdgeFunctionError } from "../errorClasses";
 import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsTableData";
-import { Filter } from "@/components/Tables/Filters";
+import { Filter, FilterMethodType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 
 export type CongestionChargeDetails = {
@@ -84,7 +84,7 @@ export const getParcelProcessingData = async (
         .limit(1, { foreignTable: "events" });
 
     filters.forEach((filter) => {
-        if (filter.methodConfig.methodType === "query") {
+        if (filter.methodConfig.methodType === FilterMethodType.Server) {
             query = filter.methodConfig.method(query, filter.state);
         }
     });
@@ -168,7 +168,7 @@ export const getParcelsCount = async (
     );
 
     filters.forEach((filter) => {
-        if (filter.methodConfig.methodType === "query") {
+        if (filter.methodConfig.methodType === FilterMethodType.Server) {
             query = filter.methodConfig.method(query, filter.state);
         }
     });
@@ -226,7 +226,7 @@ export const getParcelIds = async (
     );
 
     filters.forEach((filter) => {
-        if (filter.methodConfig.methodType === "query") {
+        if (filter.methodConfig.methodType === FilterMethodType.Server) {
             query = filter.methodConfig.method(query, filter.state);
         }
     });

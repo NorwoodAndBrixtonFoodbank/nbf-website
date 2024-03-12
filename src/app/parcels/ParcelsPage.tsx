@@ -25,7 +25,7 @@ import supabase from "@/supabaseClient";
 import { getParcelIds, getParcelsCount, getParcelsData } from "./fetchParcelTableData";
 import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
-import { Filter } from "@/components/Tables/Filters";
+import { Filter, FilterMethodType } from "@/components/Tables/Filters";
 import { saveParcelStatus, statusNamesInWorkflowOrder } from "./ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
@@ -214,7 +214,7 @@ const buildDateFilter = (initialState: DateRangeState): Filter<ParcelsTableRow, 
     return dateFilter<ParcelsTableRow>({
         key: "packingDatetime",
         label: "",
-        methodConfig: { methodType: "query", method: dateSearch },
+        methodConfig: { methodType: FilterMethodType.Server, method: dateSearch },
         initialState: initialState,
     });
 };
@@ -255,7 +255,7 @@ const buildDeliveryCollectionFilter = (): Filter<any, string[]> => {
             option!.collectionCentreAcronym,
         ]),
         initialCheckedKeys: options.map((option) => option!.collectionCentreAcronym),
-        methodConfig: { methodType: "query", method: deliveryCollectionSearch },
+        methodConfig: { methodType: FilterMethodType.Server, method: deliveryCollectionSearch },
     });
 };
 
@@ -275,7 +275,7 @@ const buildPackingTimeFilter = (): Filter<ParcelsTableRow, string[]> => {
         filterLabel: "Packing Time",
         itemLabelsAndKeys: options.map((value) => [value, value]),
         initialCheckedKeys: options,
-        methodConfig: { methodType: "query", method: packingTimeSearch },
+        methodConfig: { methodType: FilterMethodType.Server, method: packingTimeSearch },
     });
 };
 
@@ -310,7 +310,7 @@ const buildLastStatusFilter = (): Filter<ParcelsTableRow, string[]> => {
         itemLabelsAndKeys: options.map((value) => [value, value]),
         initialCheckedKeys: options.filter((option) => option !== "Request Deleted"),
         //cellMatchOverride: lastStatusCellMatchOverride, todo: wtf is this :0
-        methodConfig: { methodType: "query", method: lastStatusSearch },
+        methodConfig: { methodType: FilterMethodType.Server, method: lastStatusSearch },
     });
 };
 
@@ -344,13 +344,13 @@ const ParcelsPage: React.FC<{}> = () => {
             key: "fullName",
             label: "Name",
             headers: parcelTableHeaderKeysAndLabels,
-            methodConfig: { methodType: "query", method: fullNameSearch },
+            methodConfig: { methodType: FilterMethodType.Server, method: fullNameSearch },
         }),
         buildTextFilter({
             key: "addressPostcode",
             label: "Postcode",
             headers: parcelTableHeaderKeysAndLabels,
-            methodConfig: { methodType: "query", method: postcodeSearch },
+            methodConfig: { methodType: FilterMethodType.Server, method: postcodeSearch },
         }),
         buildDeliveryCollectionFilter(), //hardcoded options
         //buildPackingTimeFilter(), //broken
@@ -362,13 +362,13 @@ const ParcelsPage: React.FC<{}> = () => {
             key: "phoneNumber",
             label: "Phone",
             headers: parcelTableHeaderKeysAndLabels,
-            methodConfig: { methodType: "query", method: phoneSearch },
+            methodConfig: { methodType: FilterMethodType.Server, method: phoneSearch },
         }),
         buildTextFilter({
             key: "voucherNumber",
             label: "Voucher",
             headers: parcelTableHeaderKeysAndLabels,
-            methodConfig: { methodType: "query", method: voucherSearch },
+            methodConfig: { methodType: FilterMethodType.Server, method: voucherSearch },
         }),
         buildLastStatusFilter(), //hardcoded options and broken, filters out unwanted events but keeps the parcel :0
     ]);

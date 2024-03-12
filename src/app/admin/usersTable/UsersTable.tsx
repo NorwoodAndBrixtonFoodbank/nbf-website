@@ -7,7 +7,7 @@ import ManageUserModal from "@/app/admin/manageUser/ManageUserModal";
 import DeleteUserDialog from "@/app/admin/deleteUser/DeleteUserDialog";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import SuccessFailureAlert, { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
-import { Filter } from "@/components/Tables/Filters";
+import { Filter, FilterMethodType } from "@/components/Tables/Filters";
 import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 
 const usersTableHeaderKeysAndLabels = [
@@ -62,31 +62,29 @@ const UsersTable: React.FC<Props> = (props) => {
             key: "email",
             label: "Email",
             headers: usersTableHeaderKeysAndLabels,
-            methodConfig: { methodType: "data", method: filterRowByText },
+            methodConfig: { methodType: FilterMethodType.Client, method: filterRowByText },
         }),
         buildTextFilter({
             key: "userRole",
             label: "Role",
             headers: usersTableHeaderKeysAndLabels,
-            methodConfig: { methodType: "data", method: filterRowByText },
+            methodConfig: { methodType: FilterMethodType.Client, method: filterRowByText },
         }),
     ];
     const [primaryFilters, setPrimaryFilters] = useState<Filter<UserRow, string>[]>(filters);
 
     useEffect(() => {
-        useEffect(() => {
-            setUserDataPortion(
-                userDataPortion.filter((row) => {
-                    return primaryFilters.every((filter) => {
-                        if (filter.methodConfig.methodType === "data") {
-                            return filter.methodConfig.method(row, filter.state, filter.key);
-                        }
-                        return false;
-                    });
-                })
-            );
-        }, [primaryFilters]);
-    }, [primaryFilters]);
+        setUserDataPortion(
+            userDataPortion.filter((row) => {
+                return primaryFilters.every((filter) => {
+                    if (filter.methodConfig.methodType === FilterMethodType.Client) {
+                        return filter.methodConfig.method(row, filter.state, filter.key);
+                    }
+                    return false;
+                });
+            })
+        );
+    }, [primaryFilters, userDataPortion]);
 
     return (
         <>

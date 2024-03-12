@@ -15,7 +15,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
-import { Filter } from "@/components/Tables/Filters";
+import { Filter, FilterMethodType } from "@/components/Tables/Filters";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 
@@ -44,7 +44,7 @@ const filters: Filter<ClientsTableRow, any>[] = [
         key: "fullName",
         label: "Name",
         headers: headers,
-        methodConfig: { methodType: "query", method: fullNameSearch },
+        methodConfig: { methodType: FilterMethodType.Server, method: fullNameSearch },
     }),
 ];
 

@@ -3,15 +3,23 @@ import { TableHeaders } from "@/components/Tables/Table";
 import { Database } from "@/databaseTypesFile";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 
+export enum FilterMethodType {
+    Server = "SERVER",
+    Client = "CLIENT",
+}
+
 export type MethodConfig<Data, State> =
     | {
           method: (
               query: PostgrestFilterBuilder<Database["public"], any, any>,
               state: State
           ) => PostgrestFilterBuilder<Database["public"], any, any>;
-          methodType: "query";
+          methodType: FilterMethodType.Server;
       }
-    | { method: (row: Data, state: State, key: keyof Data) => boolean; methodType: "data" };
+    | {
+          method: (row: Data, state: State, key: keyof Data) => boolean;
+          methodType: FilterMethodType.Client;
+      };
 
 export interface Filter<Data, State> {
     key: keyof Data;

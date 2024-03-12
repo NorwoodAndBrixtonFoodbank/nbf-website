@@ -2,7 +2,7 @@ import { ClientsTableRow } from "@/app/clients/ClientsPage";
 import { familyCountToFamilyCategory } from "@/app/parcels/getExpandedParcelDetails";
 import { DatabaseError } from "@/app/errorClasses";
 import { Supabase } from "@/supabaseUtils";
-import { Filter } from "@/components/Tables/Filters";
+import { Filter, FilterMethodType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 
 const getClientsData = async (
@@ -25,7 +25,7 @@ const getClientsData = async (
     }
 
     filters.forEach((filter) => {
-        if (filter.methodConfig.methodType === "query") {
+        if (filter.methodConfig.methodType === FilterMethodType.Server) {
             query = filter.methodConfig.method(query, filter.state);
         }
     });
@@ -66,7 +66,7 @@ export const getClientsCount = async (
     let query = supabase.from("clients").select("*", { count: "exact", head: true });
 
     filters.forEach((filter) => {
-        if (filter.methodConfig.methodType === "query") {
+        if (filter.methodConfig.methodType === FilterMethodType.Server) {
             query = filter.methodConfig.method(query, filter.state);
         }
     });

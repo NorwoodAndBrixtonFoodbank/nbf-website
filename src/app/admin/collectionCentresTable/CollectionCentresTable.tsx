@@ -10,7 +10,7 @@ import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
-import { Filter } from "@/components/Tables/Filters";
+import { Filter, FilterMethodType } from "@/components/Tables/Filters";
 import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 
 interface CollectionCentresTableRow {
@@ -82,13 +82,13 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
             key: "name",
             label: "Name",
             headers: collectionCentresTableHeaderKeysAndLabels,
-            methodConfig: { methodType: "data", method: filterRowByText },
+            methodConfig: { methodType: FilterMethodType.Client, method: filterRowByText },
         }),
         buildTextFilter({
             key: "acronym",
             label: "Acronym",
             headers: collectionCentresTableHeaderKeysAndLabels,
-            methodConfig: { methodType: "data", method: filterRowByText },
+            methodConfig: { methodType: FilterMethodType.Client, method: filterRowByText },
         }),
     ];
     const [primaryFilters, setPrimaryFilters] =
@@ -98,14 +98,14 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
         setCollectionCentreDataPortion(
             collectionCentreDataPortion.filter((row) => {
                 return primaryFilters.every((filter) => {
-                    if (filter.methodConfig.methodType === "data") {
+                    if (filter.methodConfig.methodType === FilterMethodType.Client) {
                         return filter.methodConfig.method(row, filter.state, filter.key);
                     }
                     return false;
                 });
             })
         );
-    }, [primaryFilters]);
+    }, [primaryFilters, collectionCentreDataPortion]);
 
     return (
         <>
