@@ -40,7 +40,7 @@ interface EditToolbarProps {
 export interface PackingSlotRow {
     id: string;
     name: string;
-    isShown: boolean;
+    is_shown: boolean;
     order: number;
     isNew: boolean;
 }
@@ -52,7 +52,7 @@ function EditToolbar(props: EditToolbarProps): React.JSX.Element {
         const id = rows.length + 1;
         setRows((oldRows) => [
             ...oldRows,
-            { id, name: "", isShown: false, order: id, isNew: true },
+            { id, name: "", is_hidden: false, order: id, isNew: true },
         ]);
         setRowModesModel((oldModel) => ({
             ...oldModel,
@@ -131,8 +131,9 @@ const PackingSlotsTable: React.FC = () => {
     const handleDeleteClick = (id: GridRowId) => () => {
         setIsLoading(true);
         deletePackingSlot(id)
+            .then(() => setIsLoading(false))
             .catch((error) => console.log(error))
-            .finally(() => setIsLoading(false));
+            .then(() => setIsLoading(false));
     };
 
     const handleCancelClick = (id: GridRowId) => () => {
@@ -157,6 +158,7 @@ const PackingSlotsTable: React.FC = () => {
                 const rowOne = rows[rowIndex];
                 const rowTwo = rows[rowIndex - 1];
                 swapRows(rowOne, rowTwo)
+                    .then(() => setIsLoading(false))
                     .catch((error) => console.log(error))
                     .finally(() => setIsLoading(false));
             }
@@ -172,6 +174,7 @@ const PackingSlotsTable: React.FC = () => {
                 const rowOne = rows[rowIndex];
                 const rowTwo = rows[rowIndex + 1];
                 swapRows(rowOne, rowTwo)
+                    .then(() => setIsLoading(false))
                     .catch((error) => console.log(error))
                     .finally(() => setIsLoading(false));
             }
@@ -207,7 +210,7 @@ const PackingSlotsTable: React.FC = () => {
         },
         { field: "name", headerName: "Slot Name", flex: 1, editable: true },
         {
-            field: "isShown",
+            field: "is_shown",
             type: "boolean",
             headerName: "Show",
             flex: 1,

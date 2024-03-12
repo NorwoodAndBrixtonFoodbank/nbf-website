@@ -1,6 +1,6 @@
 create table "public"."packing_slots" (
     "primary_key" uuid not null default gen_random_uuid(),
-    "name" text not null,
+    "name" character varying not null,
     "is_shown" boolean not null,
     "order" smallint not null
 );
