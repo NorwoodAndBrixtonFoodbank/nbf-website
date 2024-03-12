@@ -322,9 +322,17 @@ const ParcelsPage: React.FC<{}> = () => {
         lastStatus: rowToLastStatusColumn,
     };
 
-    const onParcelTableRowClick = (row: Row<ParcelsTableRow>): void => {
-        setSelectedParcelId(row.data.parcelId);
-        router.push(`/parcels?${parcelIdParam}=${row.data.parcelId}`);
+    const onParcelTableRowClick = (row: Row<ParcelsTableRow>, event: Event): void => {
+        const target = event.target as HTMLDivElement;
+        if (target.children.length === 0) {
+            setSelectedParcelId(row.data.parcelId);
+            router.push(`/parcels?${parcelIdParam}=${row.data.parcelId}`);
+        } else if (target.children[0].tagName !== "INPUT") {
+            setSelectedParcelId(row.data.parcelId);
+            router.push(`/parcels?${parcelIdParam}=${row.data.parcelId}`);
+        } else {
+            return;
+        }
     };
 
     const buildDeliveryCollectionFilter = (
