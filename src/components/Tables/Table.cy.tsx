@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Table, { CheckboxConfig, SortOptions } from "@/components/Tables/Table";
+import Table, { CheckboxConfig, FilterConfig, PaginationConfig, SortConfig, SortOptions, SortState } from "@/components/Tables/Table";
 import StyleManager from "@/app/themes";
 import { Filter } from "./Filters";
 
@@ -171,21 +171,52 @@ const Component: React.FC<TestTableProps> = ({
         displayed: false,
     };
 
+    const truePaginationConfig: PaginationConfig = {
+        pagination: true,
+        totalRows: tableData.length,
+        onPageChange: setCurrentPage,
+        onPerPageChange: setPerPage,
+    }
+
+    const falsePaginationConfig: PaginationConfig = {
+        pagination: false,
+    };
+
+    const trueFilterConfig: FilterConfig<TestData> = {
+        primaryFiltersShown: true,
+        primaryFilters: primaryFilters,
+        setPrimaryFilters: setPrimaryFilters,
+        additionalFiltersShown: false
+    }
+
+    const falseFilterConfig: FilterConfig<TestData> = {
+        primaryFiltersShown: false,
+        additionalFiltersShown: false
+    };
+
+    const trueSortConfig: SortConfig<TestData> = {
+        sortShown: true,
+        sortableColumns: sortable,
+        setSortState: () => {}, //to do: get sort and filters working for table test
+    };
+
+    const falseSortConfig: SortConfig<TestData> = {
+        sortShown: false,
+    };
+
+
+
     return (
         <StyleManager>
             <Table
                 dataPortion={data}
-                setDataPortion={setTestDataPortion}
-                onPerPageChage={setPerPage}
-                onPageChange={setCurrentPage}
-                totalRows={tableData.length}
                 headerKeysAndLabels={headers}
                 toggleableHeaders={toggleableHeaders}
-                primaryFilters={primaryFilters}
-                setPrimaryFilters={setPrimaryFilters}
-                sortableColumns={sortable}
-                pagination={pagination}
+                paginationConfig={pagination ? truePaginationConfig : falsePaginationConfig}
                 checkboxConfig={displayCheckboxes ? trueCheckboxConfig : falseCheckboxConfig}
+                filterConfig={primaryFilters ? trueFilterConfig : falseFilterConfig}
+                editableConfig={{editable: false}}
+                sortConfig={sortable ? trueSortConfig : falseSortConfig}
             />
         </StyleManager>
     );
