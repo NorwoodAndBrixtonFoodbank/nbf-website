@@ -81,6 +81,7 @@ const ClientsPage: React.FC<{}> = () => {
                             pagination
                             checkboxConfig={{ displayed: false }}
                             filters={["fullName"]}
+                            pointerOnHover={true}
                         />
                     </TableSurface>
                     <Centerer>
