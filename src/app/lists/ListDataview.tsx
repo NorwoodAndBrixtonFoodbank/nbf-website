@@ -57,28 +57,28 @@ export const listsHeaderKeysAndLabels = [
     ["10", "Family of 10"],
 ] satisfies [keyof ListRow, string][];
 
-export const listRowToListDB = (listRow: ListRow): Schema["lists"] => ({
+export const listRowToListDB = (listRow: Partial<ListRow>): Partial<Schema["lists"]> => ({
     item_name: listRow.itemName,
-    notes_for_1: listRow[1].notes,
-    notes_for_2: listRow[2].notes,
-    notes_for_3: listRow[3].notes,
-    notes_for_4: listRow[4].notes,
-    notes_for_5: listRow[5].notes,
-    notes_for_6: listRow[6].notes,
-    notes_for_7: listRow[7].notes,
-    notes_for_8: listRow[8].notes,
-    notes_for_9: listRow[9].notes,
-    notes_for_10: listRow[10].notes,
-    quantity_for_1: listRow[1].quantity,
-    quantity_for_2: listRow[2].quantity,
-    quantity_for_3: listRow[3].quantity,
-    quantity_for_4: listRow[4].quantity,
-    quantity_for_5: listRow[5].quantity,
-    quantity_for_6: listRow[6].quantity,
-    quantity_for_7: listRow[7].quantity,
-    quantity_for_8: listRow[8].quantity,
-    quantity_for_9: listRow[9].quantity,
-    quantity_for_10: listRow[10].quantity,
+    notes_for_1: listRow[1]?.notes,
+    notes_for_2: listRow[2]?.notes,
+    notes_for_3: listRow[3]?.notes,
+    notes_for_4: listRow[4]?.notes,
+    notes_for_5: listRow[5]?.notes,
+    notes_for_6: listRow[6]?.notes,
+    notes_for_7: listRow[7]?.notes,
+    notes_for_8: listRow[8]?.notes,
+    notes_for_9: listRow[9]?.notes,
+    notes_for_10: listRow[10]?.notes,
+    quantity_for_1: listRow[1]?.quantity,
+    quantity_for_2: listRow[2]?.quantity,
+    quantity_for_3: listRow[3]?.quantity,
+    quantity_for_4: listRow[4]?.quantity,
+    quantity_for_5: listRow[5]?.quantity,
+    quantity_for_6: listRow[6]?.quantity,
+    quantity_for_7: listRow[7]?.quantity,
+    quantity_for_8: listRow[8]?.quantity,
+    quantity_for_9: listRow[9]?.quantity,
+    quantity_for_10: listRow[10]?.quantity,
     primary_key: listRow.primaryKey,
     row_order: listRow.rowOrder,
 });
@@ -122,7 +122,8 @@ const ListsDataView: React.FC<Props> = (props) => {
     const toggleableHeaders = listsHeaderKeysAndLabels.map(([key]) => key);
 
     const onEdit = (index: number): void => {
-        setModal(props.data[index]);
+        console.log("opening edit modal with details: ", props.data[index]);
+        setModal(listRowToListDB(props.data[index]));
     };
 
     const onSwapRows = async (row1: ListRow, row2: ListRow): Promise<void> => {
@@ -215,7 +216,7 @@ const ListsDataView: React.FC<Props> = (props) => {
                     <Alert severity="error">{errorMsg}</Alert>
                 </SnackBarDiv>
             </Snackbar>
-            <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primaryKey} />
+            <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
             <TableSurface>
                 <CommentBox originalComment={props.comment} />
                 <Table<ListRow>

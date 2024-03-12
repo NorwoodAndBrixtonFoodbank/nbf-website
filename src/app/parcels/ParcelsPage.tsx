@@ -408,7 +408,7 @@ const ParcelsPage: React.FC<{}> = () => {
             }
             setIsLoading(false);
         })();
-    }, [startPoint, endPoint, ...primaryFilters, ...additionalFilters, sortState]);
+    }, [startPoint, endPoint, primaryFilters, additionalFilters, sortState]);
 
     useEffect(() => {
         // This requires that the DB parcels table has Realtime turned on
@@ -451,11 +451,11 @@ const ParcelsPage: React.FC<{}> = () => {
         return () => {
             supabase.removeChannel(subscriptionChannel);
         };
-    }, [endPoint, startPoint, ...primaryFilters, ...additionalFilters, sortState]);
+    }, [endPoint, startPoint, primaryFilters, additionalFilters, sortState]);
 
     useEffect(() => {
         setCheckedParcelIds([]);
-    }, [...primaryFilters, ...additionalFilters]);
+    }, [primaryFilters, additionalFilters]);
 
     const selectOrDeselectRow = (parcelId: string): void => {
         setCheckedParcelIds((currentIndices) => {
