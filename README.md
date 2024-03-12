@@ -1,9 +1,9 @@
-Vauxhall Foodbank
+Norwood & Brixton Foodbank
 =================
 
-Vauxhall Foodbank provides foodbank services to clients in south London that have been issued with a foodbank voucher
+Norwood & Brixton Foodbank provides foodbank services to clients in south London that have been issued with a foodbank voucher
 (by front-line professionals like social workers, doctors or police). Since the COVID-19 pandemic, most food parcels
-have been delivered to clients. See [their website](https://vauxhall.foodbank.org.uk/) for information.
+have been delivered to clients. See [their website](https://www.trusselltrust.org/get-help/find-a-foodbank/norwoodbrixton) for information.
 
 ## Technology stack
 
