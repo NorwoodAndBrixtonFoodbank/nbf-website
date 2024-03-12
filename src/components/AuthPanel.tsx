@@ -56,7 +56,7 @@ interface AuthPanelProps {
     passwordField?: AuthTextField;
     submitText: string;
     submit: (() => void) | (() => Promise<void>);
-    showForgotPasswordLink: boolean;
+    authLinks?: AuthLink[];
     errorMessage?: string;
 }
 
@@ -65,12 +65,17 @@ interface AuthTextField {
     setText: (newText: string) => void;
 }
 
+export interface AuthLink {
+    label: string;
+    href: string;
+}
+
 const AuthPanel: React.FC<AuthPanelProps> = ({
     emailField,
     passwordField,
     submitText,
     submit,
-    showForgotPasswordLink,
+    authLinks,
     errorMessage,
 }) => {
     const supabase = createClientComponentClient<DatabaseAutoType>();
@@ -113,18 +118,20 @@ const AuthPanel: React.FC<AuthPanelProps> = ({
                     {submitText}
                 </Button>
 
-                {showForgotPasswordLink && (
-                    <Link
-                        href="/forgot-password"
-                        style={{
-                            color: theme.main.lighterForeground[0],
-                            fontSize: "13px",
-                            textAlign: "center",
-                        }}
-                    >
-                        Forgot your password?
-                    </Link>
-                )}
+                {authLinks &&
+                    authLinks.map((authLink) => (
+                        <Link
+                            key={authLink.label}
+                            href={authLink.href}
+                            style={{
+                                color: theme.main.lighterForeground[0],
+                                fontSize: "13px",
+                                textAlign: "center",
+                            }}
+                        >
+                            {authLink.label}
+                        </Link>
+                    ))}
 
                 {errorMessage && (
                     <span style={{ color: theme.error, fontSize: "13px", textAlign: "center" }}>
