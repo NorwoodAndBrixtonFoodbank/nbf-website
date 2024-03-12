@@ -114,7 +114,9 @@ const swapRowTwoToRowOneOrder = async (
     return data;
 };
 
-const swapRowOneToRowTwoOrderUpClick = async (updatedRowsAfterFirstSwap: DBPackingSlotData[]): Promise<void> => {
+const swapRowOneToRowTwoOrderUpClick = async (
+    updatedRowsAfterFirstSwap: DBPackingSlotData[]
+): Promise<void> => {
     const { error } = await supabase
         .from("packing_slots")
         .update({
