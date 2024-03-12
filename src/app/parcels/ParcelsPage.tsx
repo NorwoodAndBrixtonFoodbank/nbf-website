@@ -322,7 +322,7 @@ const ParcelsPage: React.FC<{}> = () => {
         lastStatus: rowToLastStatusColumn,
     };
 
-    const onParcelTableRowClick = (row: Row<ParcelsTableRow>, event: MouseEvent): void => {
+    const onParcelTableRowClick = (row: Row<ParcelsTableRow>, event: React.MouseEvent): void => {
         const target = event.target as HTMLDivElement;
         if (target.children.length === 0) {
             setSelectedParcelId(row.data.parcelId);
