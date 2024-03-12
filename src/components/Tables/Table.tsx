@@ -465,9 +465,9 @@ const TableStyling = styled.div`
         border-bottom-color: ${(props) => props.theme.main.border};
     }
 
-    // & div.rdt_TableRow :hover {
-    //     background-color: ${(props) => props.theme.main.background[1]};
-    // }
+    & div.rdt_TableRow:hover {
+        background-color: ${(props) => props.theme.main.background[1]};
+    }
 
     & .rdt_TableHeadRow {
         padding: 0.5rem 0.5rem;
