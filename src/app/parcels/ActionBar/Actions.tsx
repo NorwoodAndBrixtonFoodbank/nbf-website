@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
@@ -83,6 +83,12 @@ const availableActions: AvailableActionsType = {
     },
 };
 
+const generateMapAction = {
+    "Generate Map": {
+        errorCondition: isNotAtLeastOne,
+        errorMessage: "Please select at least one parcel.",
+    },
+};
 interface ActionsInputComponentProps {
     actionName: ActionName;
     selectedParcels: ParcelsTableRow[];
@@ -234,6 +240,42 @@ const Actions: React.FC<Props> = ({
         };
     };
 
+    const mapsLinkForParcels = (): string => {
+        const mapsLinkList = ["https://www.google.com/maps/dir/"];
+        selectedParcels.map((parcel) => {
+            mapsLinkList.push(parcel.addressPostcode + "/");
+        });
+        mapsLinkList.push("/");
+        const mapsLinkString = mapsLinkList.join("");
+        return mapsLinkString;
+    };
+
+    const openInNewTab = (url: string): void => {
+        const newWindow = window.open(url, "_blank", "noopener, noreferrer");
+        if (newWindow) {
+            newWindow.opener = null;
+        }
+    };
+
+    const onMapsClick = (
+        errorCondition: (value: number) => boolean,
+        errorMessage: string
+    ): (() => void) => {
+        return () => {
+            if (errorCondition(selectedParcels.length)) {
+                setActionAnchorElement(null);
+                setModalError(errorMessage);
+            } else {
+                const mapsLink = mapsLinkForParcels();
+                openInNewTab(mapsLink);
+            }
+        };
+    };
+
+    useEffect(() => {
+        console.log(mapsLinkForParcels());
+    }, [selectedParcels]);
+
     return (
         <>
             {Object.entries(availableActions).map(([key, value]) => {
@@ -295,6 +337,14 @@ const Actions: React.FC<Props> = ({
                                 </MenuItem>
                             );
                         })}
+                        <MenuItem
+                            onClick={onMapsClick(
+                                generateMapAction["Generate Map"].errorCondition,
+                                generateMapAction["Generate Map"].errorMessage
+                            )}
+                        >
+                            Generate Map
+                        </MenuItem>
                     </MenuList>
                 </Menu>
             )}
