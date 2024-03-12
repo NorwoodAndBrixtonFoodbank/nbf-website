@@ -15,7 +15,12 @@ const middleware: NextMiddleware = async (req: NextRequest) => {
         return res;
     }
 
-    if (!user && req.nextUrl.pathname !== "/login" && req.nextUrl.pathname !== "/forgot-password" && req.nextUrl.pathname !== "/auth/reset-password") {
+    if (
+        !user &&
+        req.nextUrl.pathname !== "/login" &&
+        req.nextUrl.pathname !== "/forgot-password" &&
+        req.nextUrl.pathname !== "/auth/reset-password"
+    ) {
         return NextResponse.redirect(new URL("/login", req.url));
     }
     if (user && req.nextUrl.pathname === "/login") {
