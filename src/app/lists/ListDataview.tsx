@@ -2,7 +2,7 @@
 
 import { DatabaseError } from "@/app/errorClasses";
 import Table, { ColumnDisplayFunctions, ColumnStyles } from "@/components/Tables/Table";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import EditModal, { EditModalState } from "@/app/lists/EditModal";
 import supabase from "@/supabaseClient";
@@ -14,6 +14,8 @@ import Button from "@mui/material/Button";
 import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
+import { buildTextFilter, filterDataByText } from "@/components/Tables/TextFilter";
+import { Filter } from "@/components/Tables/Filters";
 
 interface ListRow {
     primaryKey: string;
@@ -159,6 +161,18 @@ const ListsDataView: React.FC<Props> = (props) => {
         }
     };
 
+    const [listData, setListData] = useState<ListRow[]>(rows);
+
+    const filters: Filter<ListRow, string>[] = [buildTextFilter({key: "itemName", label: "Item", headers: headerKeysAndLabels, methodConfig: {methodType: "data", method: filterDataByText}})];
+    const [primaryFilters, setPrimaryFilters] = useState<Filter<ListRow, string>[]>(filters);
+    
+    useEffect(()=> {
+        let filteredData = rows;
+        primaryFilters.forEach((filter) => {if (filter.methodConfig.methodType === "data") {filteredData = filter.methodConfig.method(filteredData, filter.state, filter.key)}});
+        setListData(filteredData);
+    }, [...primaryFilters])
+
+
     return (
         <>
             <ConfirmDialog
@@ -188,16 +202,14 @@ const ListsDataView: React.FC<Props> = (props) => {
                 <Table<ListRow>
                     headerKeysAndLabels={headerKeysAndLabels}
                     toggleableHeaders={toggleableHeaders}
-                    dataPortion={rows}
-                    filters={["itemName"]}
-                    pagination={false}
-                    onEdit={onEdit}
-                    onDelete={onDeleteButtonClick}
-                    onSwapRows={onSwapRows}
-                    sortableColumns={[]}
+                    dataPortion={listData}
                     columnDisplayFunctions={listDataViewColumnDisplayFunctions}
                     columnStyleOptions={listsColumnStyleOptions}
                     checkboxConfig={{ displayed: false }}
+                    paginationConfig={{pagination: false}}
+                    sortConfig={{sortShown: false}}
+                    editableConfig={{editable: true, onEdit: onEdit, onDelete: onDeleteButtonClick, onSwapRows: onSwapRows, setDataPortion: setListData}}
+                    filterConfig={{primaryFiltersShown: true, primaryFilters: primaryFilters, setPrimaryFilters: setPrimaryFilters, additionalFiltersShown: false}}
                 />
                 <ButtonMargin>
                     <Button variant="contained" onClick={() => setModal(null)}>
