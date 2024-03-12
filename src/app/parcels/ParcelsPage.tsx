@@ -324,14 +324,11 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const onParcelTableRowClick = (row: Row<ParcelsTableRow>, event: React.MouseEvent): void => {
         const target = event.target as HTMLDivElement;
-        if (target.children.length === 0) {
-            setSelectedParcelId(row.data.parcelId);
-            router.push(`/parcels?${parcelIdParam}=${row.data.parcelId}`);
-        } else if (target.children[0].tagName !== "INPUT") {
-            setSelectedParcelId(row.data.parcelId);
-            router.push(`/parcels?${parcelIdParam}=${row.data.parcelId}`);
-        } else {
+        if (target.children.length > 0 && target.children[0].tagName === "INPUT") {
             return;
+        } else {
+            setSelectedParcelId(row.data.parcelId);
+            router.push(`/parcels?${parcelIdParam}=${row.data.parcelId}`);
         }
     };
 
