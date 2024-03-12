@@ -16,7 +16,7 @@ type RolesInterface = {
 const roleToShownPages: RolesInterface = {
     admin: ["/admin", "/calendar", "/clients", "/lists", "/parcels"],
     caller: ["/calendar", "/clients", "/parcels"],
-    "": ["/login", "/forgot-password"],
+    "": ["/login", "/forgot-password", "/auth/reset-password"],
 };
 
 export const roleCanAccessPage = (role: Roles, url: string): boolean => {

@@ -58,6 +58,7 @@ interface AuthPanelProps {
     submit: (() => void) | (() => Promise<void>);
     authLinks?: AuthLink[];
     errorMessage?: string;
+    successMessage?: string;
 }
 
 interface AuthTextField {
@@ -77,6 +78,7 @@ const AuthPanel: React.FC<AuthPanelProps> = ({
     submit,
     authLinks,
     errorMessage,
+    successMessage,
 }) => {
     const supabase = createClientComponentClient<DatabaseAutoType>();
     const theme = useTheme();
@@ -136,6 +138,18 @@ const AuthPanel: React.FC<AuthPanelProps> = ({
                 {errorMessage && (
                     <span style={{ color: theme.error, fontSize: "13px", textAlign: "center" }}>
                         {errorMessage}
+                    </span>
+                )}
+
+                {successMessage && (
+                    <span
+                        style={{
+                            color: theme.main.foreground[0],
+                            fontSize: "13px",
+                            textAlign: "center",
+                        }}
+                    >
+                        {successMessage}
                     </span>
                 )}
             </div>

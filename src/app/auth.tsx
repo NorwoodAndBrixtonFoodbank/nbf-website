@@ -32,7 +32,8 @@ export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
         if (
             !loggedIn &&
             !pathname.startsWith("/login") &&
-            !pathname.startsWith("/forgot-password")
+            !pathname.startsWith("/forgot-password") &&
+            !pathname.startsWith("/auth/reset-password")
         ) {
             return "/login";
         }

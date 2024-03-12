@@ -13,15 +13,20 @@ const authLinks: AuthLink[] = [
 
 const Page: React.FC<{}> = () => {
     const [email, setEmail] = useState("");
-    const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
-
-    // "Check your email for the password reset link"
+    const [errorMessage, setErrorMessage] = useState<string | null>(undefined);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const sendResetPasswordInstructions = (): void => {
-        setErrorMessage(undefined)
-        const redirectUrl = `${window.location.origin}/reset-password`;
+        setSuccessMessage(null);
+        setErrorMessage(null);
+
+        const redirectUrl = `${window.location.origin}/auth/reset-password`;
         requestPasswordReset(email, redirectUrl).then(({ errorMessage }) => {
-            setErrorMessage(errorMessage);
+            if (errorMessage) {
+                setErrorMessage(errorMessage);
+            } else {
+                setSuccessMessage("Check your email for the password reset link");
+            }
         });
     };
 
@@ -32,7 +37,8 @@ const Page: React.FC<{}> = () => {
                 submitText="Send reset password instructions"
                 submit={sendResetPasswordInstructions}
                 authLinks={authLinks}
-                errorMessage={errorMessage}
+                errorMessage={errorMessage ?? undefined}
+                successMessage={successMessage ?? undefined}
             />
         </AuthMain>
     );
