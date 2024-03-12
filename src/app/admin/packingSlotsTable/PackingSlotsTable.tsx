@@ -107,9 +107,13 @@ const PackingSlotsTable: React.FC = () => {
     const processRowUpdate = (newRow: PackingSlotRow): PackingSlotRow => {
         setIsLoading(true);
         if (newRow.isNew) {
-            createPackingSlot(newRow).then(() => setIsLoading(false));
+            createPackingSlot(newRow)
+                .catch((error) => console.log(error))
+                .finally(() => setIsLoading(false));
         } else {
-            updatePackingSlot(newRow).then(() => setIsLoading(false));
+            updatePackingSlot(newRow)
+                .catch((error) => console.log(error))
+                .finally(() => setIsLoading(false));
         }
         return newRow;
     };
@@ -178,7 +182,7 @@ const PackingSlotsTable: React.FC = () => {
         }
     };
 
-    const packingSlotsTableHeaderKeysAndLabels: GridColDef[] = [
+    const packingSlotsColumns: GridColDef[] = [
         {
             field: "order",
             type: "actions",
@@ -270,7 +274,7 @@ const PackingSlotsTable: React.FC = () => {
             {rows && (
                 <DataGrid
                     rows={rows}
-                    columns={packingSlotsTableHeaderKeysAndLabels}
+                    columns={packingSlotsColumns}
                     editMode="row"
                     rowModesModel={rowModesModel}
                     onRowModesModelChange={handleRowModesModelChange}

@@ -76,12 +76,12 @@ export const deletePackingSlot = async (id: GridRowId): Promise<void> => {
 };
 
 export const swapRows = async (rowOne: PackingSlotRow, rowTwo: PackingSlotRow): Promise<void> => {
-    const updatedRows = await swapRowTwoToRowOneOrder(rowOne, rowTwo);
+    const updatedRowsAfterFirstSwap = await swapRowTwoToRowOneOrder(rowOne, rowTwo);
 
     if (rowOne.order - rowTwo.order > 0) {
-        await swapRowOneToRowTwoOrderUpClick(updatedRows);
+        await swapRowOneToRowTwoOrderUpClick(updatedRowsAfterFirstSwap);
     } else {
-        await swapRowOneToRowTwoOrderDownClick(updatedRows);
+        await swapRowOneToRowTwoOrderDownClick(updatedRowsAfterFirstSwap);
     }
 };
 
@@ -114,13 +114,13 @@ const swapRowTwoToRowOneOrder = async (
     return data;
 };
 
-const swapRowOneToRowTwoOrderUpClick = async (updatedRows: DBPackingSlotData[]): Promise<void> => {
+const swapRowOneToRowTwoOrderUpClick = async (updatedRowsAfterFirstSwap: DBPackingSlotData[]): Promise<void> => {
     const { error } = await supabase
         .from("packing_slots")
         .update({
-            order: updatedRows[1].order - 1,
+            order: updatedRowsAfterFirstSwap[1].order - 1,
         })
-        .eq("primary_key", updatedRows[0].primary_key);
+        .eq("primary_key", updatedRowsAfterFirstSwap[0].primary_key);
 
     if (error) {
         throw new DatabaseError("update", "packing_slots");
