@@ -9,8 +9,10 @@ import styled, { useTheme } from "styled-components";
 import Title from "@/components/Title/Title";
 import { NavBarHeight } from "@/components/NavigationBar/NavigationBar";
 import Paper from "@mui/material/Paper";
+import { Button, TextField } from "@mui/material";
+import Link from "next/link";
 
-export const LoginMain = styled.main`
+export const AuthMain = styled.main`
     height: calc(100vh - ${NavBarHeight} * 2);
     display: flex;
     align-content: center;
@@ -64,6 +66,22 @@ const LoginPanel: React.FC<{}> = () => {
     return (
         <MiddleDiv elevation={5} data-loaded={loaded} id="login-panel">
             <Title>Login</Title>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                <TextField id="email" label="Email address" variant="outlined" />
+                <TextField id="password" label="Your Password" variant="outlined" />
+                <Button variant="contained">Sign in</Button>
+                <Link
+                    href="/forgot-password"
+                    style={{
+                        color: theme.main.lighterForeground[0],
+                        fontSize: "13px",
+                        textAlign: "center",
+                    }}
+                >
+                    Forgot your password?
+                </Link>
+            </div>
             <Auth
                 supabaseClient={supabase}
                 providers={[]}

@@ -1,11 +1,11 @@
-import LoginPanel, { LoginMain } from "@/components/LoginPanel";
+import LoginPanel, { AuthMain } from "@/components/LoginPanel";
 import React from "react";
 
 const Login: React.FC<{}> = () => {
     return (
-        <LoginMain>
+        <AuthMain>
             <LoginPanel />
-        </LoginMain>
+        </AuthMain>
     );
 };
 
