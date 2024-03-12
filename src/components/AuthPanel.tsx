@@ -51,7 +51,28 @@ const MiddleDiv = styled(Paper)`
     }
 `;
 
-const LoginPanel: React.FC<{}> = () => {
+interface AuthPanelProps {
+    emailField?: AuthTextField;
+    passwordField?: AuthTextField;
+    submitText: string;
+    submit: (() => void) | (() => Promise<void>);
+    showForgotPasswordLink: boolean;
+    errorMessage?: string;
+}
+
+interface AuthTextField {
+    text: string;
+    setText: (newText: string) => void;
+}
+
+const AuthPanel: React.FC<AuthPanelProps> = ({
+    emailField,
+    passwordField,
+    submitText,
+    submit,
+    showForgotPasswordLink,
+    errorMessage,
+}) => {
     const supabase = createClientComponentClient<DatabaseAutoType>();
     const theme = useTheme();
 
@@ -68,19 +89,48 @@ const LoginPanel: React.FC<{}> = () => {
             <Title>Login</Title>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                <TextField id="email" label="Email address" variant="outlined" />
-                <TextField id="password" label="Your Password" variant="outlined" />
-                <Button variant="contained">Sign in</Button>
-                <Link
-                    href="/forgot-password"
-                    style={{
-                        color: theme.main.lighterForeground[0],
-                        fontSize: "13px",
-                        textAlign: "center",
-                    }}
-                >
-                    Forgot your password?
-                </Link>
+                {emailField && (
+                    <TextField
+                        id="email"
+                        label="Email address"
+                        variant="outlined"
+                        value={emailField.text}
+                        onChange={(event) => emailField.setText(event.target.value)}
+                    />
+                )}
+
+                {passwordField && (
+                    <TextField
+                        id="password"
+                        label="Your Password"
+                        variant="outlined"
+                        value={passwordField.text}
+                        onChange={(event) => passwordField.setText(event.target.value)}
+                    />
+                )}
+
+                <Button variant="contained" onClick={submit}>
+                    {submitText}
+                </Button>
+
+                {showForgotPasswordLink && (
+                    <Link
+                        href="/forgot-password"
+                        style={{
+                            color: theme.main.lighterForeground[0],
+                            fontSize: "13px",
+                            textAlign: "center",
+                        }}
+                    >
+                        Forgot your password?
+                    </Link>
+                )}
+
+                {errorMessage && (
+                    <span style={{ color: theme.error, fontSize: "13px", textAlign: "center" }}>
+                        {errorMessage}
+                    </span>
+                )}
             </div>
             <Auth
                 supabaseClient={supabase}
@@ -109,4 +159,4 @@ const LoginPanel: React.FC<{}> = () => {
     );
 };
 
-export default LoginPanel;
+export default AuthPanel;
