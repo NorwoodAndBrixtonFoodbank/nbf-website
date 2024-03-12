@@ -14,8 +14,8 @@ type RolesInterface = {
 };
 
 const roleToShownPages: RolesInterface = {
-    admin: ["/admin", "/calendar", "/clients", "/lists", "/parcels"],
-    caller: ["/calendar", "/clients", "/parcels"],
+    admin: ["/admin", "/calendar", "/clients", "/lists", "/parcels", "/reset-password"],
+    caller: ["/calendar", "/clients", "/parcels", "/reset-password"],
     "": ["/login", "/forgot-password", "/auth/reset-password"],
 };
 

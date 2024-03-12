@@ -22,9 +22,5 @@ export async function GET(request: Request): Promise<void> {
         redirect("/");
     }
 
-    await supabase.auth.setSession(data.session);
-
-    const user = await supabase.auth.getUser()
-
     redirect("/reset-password");
 }
