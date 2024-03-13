@@ -14,6 +14,8 @@ import Button from "@mui/material/Button";
 import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
+import { v4 as uuidv4 } from "uuid";
+import { logError } from "@/logger/logger";
 
 interface ListRow {
     primaryKey: string;

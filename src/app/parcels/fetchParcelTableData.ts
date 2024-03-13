@@ -27,7 +27,7 @@ export const getCongestionChargeDetailsForParcels = async (
         const meta = {
             error: response.error,
             id: id,
-            location: "app/clients/fetchParcelTableData.ts",
+            location: "app/parcels/fetchParcelTableData.ts",
         };
         void logError("Error with congestion charge check", meta);
         throw new EdgeFunctionError("congestion charge check");
@@ -87,7 +87,7 @@ export const getParcelProcessingData = async (supabase: Supabase, dateRange: Dat
         const meta = {
             error: error,
             id: id,
-            location: "app/clients/fetchParcelTableData.ts",
+            location: "app/parcels/fetchParcelTableData.ts",
         };
         void logError("Error fetching parcel table data", meta);
         throw new DatabaseError("fetch", "parcel table data");
