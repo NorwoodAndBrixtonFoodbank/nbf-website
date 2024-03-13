@@ -112,6 +112,7 @@ const AuthPanel: React.FC<AuthPanelProps> = ({
                         id="email"
                         label="Email address"
                         variant="outlined"
+                        type="email"
                         value={emailField.text}
                         onChange={(event) => emailField.setText(event.target.value)}
                     />

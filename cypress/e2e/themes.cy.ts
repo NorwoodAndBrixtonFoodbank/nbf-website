@@ -3,9 +3,6 @@ import { hexToRgb } from "@mui/material";
 describe("Light and dark mode switch works", () => {
     beforeEach(() => {
         cy.visit("/login");
-
-        // wait for hydration
-        cy.get("[data-loaded='true']", { timeout: 10000 }).should("exist");
     });
 
     it("Switching to Dark Mode Works", () => {
