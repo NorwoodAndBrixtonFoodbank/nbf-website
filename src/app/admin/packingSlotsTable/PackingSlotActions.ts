@@ -3,7 +3,7 @@ import { DatabaseError } from "@/app/errorClasses";
 import { GridRowId } from "@mui/x-data-grid";
 import { PackingSlotRow } from "@/app/admin/packingSlotsTable/PackingSlotsTable";
 
-export interface DBPackingSlotData {
+interface DBPackingSlotData {
     primary_key?: string;
     name: string;
     is_shown: boolean;
