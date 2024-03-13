@@ -19,6 +19,8 @@ import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 import { Database } from "@/databaseTypesFile";
 import Alert from "@mui/material/Alert/Alert";
 import { User } from "@supabase/gotrue-js";
+import { v4 as uuidv4 } from "uuid";
+import { logError, logInfo } from "@/logger/logger";
 
 interface CreateUserDetails {
     email: string;
@@ -64,6 +66,13 @@ const CreateUserForm: React.FC<{}> = () => {
         const { data, error } = await createUser(fields);
 
         if (error) {
+            const id = uuidv4();
+            const meta = {
+                error: error,
+                id: id,
+                location: "app/admin/createUser/CreateUserForm.tsx",
+            };
+            void logError("Error with insert: New user", meta);
             setSubmitError(Errors.external);
             setSubmitDisabled(false);
             setCreatedUser(null);
@@ -73,6 +82,7 @@ const CreateUserForm: React.FC<{}> = () => {
         setSubmitError(Errors.none);
         setSubmitDisabled(false);
         setCreatedUser(data);
+        void logInfo(`User ${fields.email} with role ${fields.role} created successfully.`);
     };
 
     return (
