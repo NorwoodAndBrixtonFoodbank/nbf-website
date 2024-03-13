@@ -24,6 +24,7 @@ import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
 import {
     CollectionCentresOptions,
+    LastStatusOptionsResponse,
     ParcelProcessingData,
     getAllValuesForKeys,
     getParcelIds,
@@ -324,25 +325,26 @@ const buildLastStatusFilter = async (optionsFilters: Filter<ParcelsTableRow, any
         return query.in("events.event_name", state); //not sure if this will work?
     };
 
-    const allLastStatusOptions = (
+    const getAllLastStatusOptions = (
         query: PostgrestQueryBuilder<Database["public"], any, any>
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
         return query.select(
-            " parcel_id:primary_key, packing_datetime, events(event_name, timestamp)"
-        ).order("timestamp", { ascending: false, foreignTable: "events" })
-        .limit(1, { foreignTable: "events" });
+            " parcel_id:primary_key, packing_datetime, last_status(event_name)"
+        )
     };
     const keySet = new Set();
-    const response: Partial<ParcelsTableRow>[] = await getAllValuesForKeys<
-        Partial<ParcelsTableRow>[]
-    >(supabase, allLastStatusOptions, optionsFilters);
+    const response: LastStatusOptionsResponse[] = await getAllValuesForKeys<
+    LastStatusOptionsResponse[]
+    >(supabase, getAllLastStatusOptions, optionsFilters);
+    console.log(response);
     const optionsSet: string[] = response
         .reduce<string[]>((filteredOptions, row) => {
-            if (row?.lastStatus && !keySet.has(row?.lastStatus.name)) {
-                keySet.add(row?.lastStatus.name);
-                filteredOptions.push(row?.lastStatus.name)
+            if (row?.last_status && !keySet.has(row?.last_status[0].event_name)) {
+                keySet.add(row?.last_status[0].event_name);
+                filteredOptions.push(row?.last_status[0].event_name)
             } 
         return filteredOptions.sort()},[]);
+    console.log(optionsSet);
 
     return checklistFilter<ParcelsTableRow>({
         key: "lastStatus",

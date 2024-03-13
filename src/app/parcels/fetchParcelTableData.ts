@@ -276,3 +276,9 @@ export interface CollectionCentresOptions {
     name: string;
     acronym: string;
 }
+
+export interface LastStatusOptionsResponse {
+    parcel_id: string;
+    packing_datetime: Date;
+    last_status: {event_name: string}[]; 
+}
