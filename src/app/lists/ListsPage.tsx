@@ -52,7 +52,15 @@ const ListsPage: React.FC<{}> = () => {
         })();
     }, []);
 
-    return isLoading ? <></> : <ListsDataView data={listsData} comment={comment} />;
+    return isLoading ? (
+        <></>
+    ) : (
+        <ListsDataView
+            listOfIngridients={listsData}
+            setListOfIngridients={setListsData}
+            comment={comment}
+        />
+    );
 };
 
 export default ListsPage;

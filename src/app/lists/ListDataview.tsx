@@ -38,8 +38,9 @@ export interface QuantityAndNotes {
     notes: string | null;
 }
 
-interface Props {
-    data: ListRow[];
+interface ListDataViewProps {
+    listOfIngridients: ListRow[];
+    setListOfIngridients: React.Dispatch<React.SetStateAction<ListRow[]>>;
     comment: string;
 }
 
@@ -108,23 +109,51 @@ const listsColumnStyleOptions: ColumnStyles<ListRow> = {
     ),
 };
 
-const ListsDataView: React.FC<Props> = (props) => {
+const ListsDataView: React.FC<ListDataViewProps> = ({
+    listOfIngridients,
+    setListOfIngridients: setListOfIngridients,
+    comment,
+}) => {
     const [modal, setModal] = useState<EditModalState>();
     const [toDelete, setToDelete] = useState<number | null>(null);
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-    if (props.data === null) {
+    if (listOfIngridients === null) {
         throw new Error("No data found");
     }
 
     const toggleableHeaders = listsHeaderKeysAndLabels.map(([key]) => key);
 
     const onEdit = (index: number): void => {
-        setModal(listRowToListDB(props.data[index]));
+        setModal(listRowToListDB(listOfIngridients[index]));
     };
 
+    const reorderRows = (row1: ListRow, row2: ListRow): void => {
+        const primaryKeys = listOfIngridients.map(
+            (listOfIngridients) => listOfIngridients.primaryKey
+        );
+
+        const row1Index = primaryKeys.indexOf(row1.primaryKey);
+        const row2Index = primaryKeys.indexOf(row2.primaryKey);
+
+        const row1Item = listOfIngridients[row1Index];
+        const row1Order = row1Item.rowOrder;
+
+        const row2Item = listOfIngridients[row2Index];
+        const row2Order = row2Item.rowOrder;
+
+        row1Item.rowOrder = row2Order;
+        row2Item.rowOrder = row1Order;
+
+        const newListOfIngridients = [...listOfIngridients];
+
+        newListOfIngridients[row1Index] = row2Item;
+        newListOfIngridients[row2Index] = row1Item;
+
+        setListOfIngridients(newListOfIngridients);
+    };
     const onSwapRows = async (row1: ListRow, row2: ListRow): Promise<void> => {
         const { error } = await supabase.from("lists").upsert([
             {
@@ -141,9 +170,7 @@ const ListsDataView: React.FC<Props> = (props) => {
             throw new DatabaseError("update", "lists items");
         }
 
-        const temp = row1.rowOrder;
-        row1.rowOrder = row2.rowOrder;
-        row2.rowOrder = temp;
+        reorderRows(row1, row2);
     };
 
     const onDeleteButtonClick = (index: number): void => {
@@ -153,11 +180,11 @@ const ListsDataView: React.FC<Props> = (props) => {
 
     const onConfirmDeletion = async (): Promise<void> => {
         if (toDelete !== null) {
-            const data = props.data[toDelete];
+            const itemToDelete = listOfIngridients[toDelete];
             const { error } = await supabase
                 .from("lists")
                 .delete()
-                .eq("primary_key", data.primaryKey);
+                .eq("primary_key", itemToDelete.primaryKey);
 
             if (error) {
                 setErrorMsg(error.message);
@@ -167,7 +194,7 @@ const ListsDataView: React.FC<Props> = (props) => {
         }
     };
 
-    const [listData, setListData] = useState<ListRow[]>(props.data);
+    const [listData, setListData] = useState<ListRow[]>(listOfIngridients);
 
     const filters: Filter<ListRow, string>[] = [
         buildTextFilter({
@@ -181,7 +208,7 @@ const ListsDataView: React.FC<Props> = (props) => {
 
     useEffect(() => {
         setListData(
-            props.data.filter((row) => {
+            listOfIngridients.filter((row) => {
                 return primaryFilters.every((filter) => {
                     if (filter.methodConfig.methodType === FilterMethodType.Client) {
                         return filter.methodConfig.method(row, filter.state, filter.key);
@@ -190,13 +217,13 @@ const ListsDataView: React.FC<Props> = (props) => {
                 });
             })
         );
-    }, [primaryFilters, props.data]);
+    }, [primaryFilters, listOfIngridients]);
 
     return (
         <>
             <ConfirmDialog
                 message={`Are you sure you want to delete ${
-                    toDelete ? props.data[toDelete].itemName : ""
+                    toDelete ? listOfIngridients[toDelete].itemName : ""
                 }?`}
                 isOpen={toDeleteModalOpen}
                 onConfirm={onConfirmDeletion}
@@ -217,7 +244,7 @@ const ListsDataView: React.FC<Props> = (props) => {
             </Snackbar>
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
             <TableSurface>
-                <CommentBox originalComment={props.comment} />
+                <CommentBox originalComment={comment} />
                 <Table<ListRow>
                     headerKeysAndLabels={listsHeaderKeysAndLabels}
                     toggleableHeaders={toggleableHeaders}
