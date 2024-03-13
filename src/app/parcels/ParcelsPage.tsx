@@ -75,7 +75,7 @@ const sortableColumns: SortOptions<ParcelsTableRow, any>[] = [
         sortMethod: (query, sortDirection) =>
             query.order("client(full_name)", { ascending: sortDirection === "asc" }),
     },
-    //{key: "familyCategory",sortMethod: (query, sortDirection) => query.order("client(full_name)", {ascending: sortDirection === "asc"})}, broke
+    {key: "familyCategory", sortMethod: (query, sortDirection) => query.order("family_count(family_count)", {ascending: sortDirection === "asc"})},
     {
         key: "addressPostcode",
         sortMethod: (query, sortDirection) =>
@@ -353,7 +353,7 @@ const ParcelsPage: React.FC<{}> = () => {
             headers: parcelTableHeaderKeysAndLabels,
             methodConfig: { methodType: FilterMethodType.Server, method: postcodeSearch },
         }),
-        await buildDeliveryCollectionFilter([dateFilter]), //hardcoded options
+        await buildDeliveryCollectionFilter([dateFilter]),
         //buildPackingTimeFilter(), //broken
     ];
 

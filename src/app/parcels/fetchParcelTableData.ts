@@ -74,7 +74,8 @@ export const getParcelProcessingData = async (
             event_name,
             event_data,
             timestamp
-        )
+        ),
+        family_count(*)
     `
     );
     if (sortState.sort && sortState.column.sortMethod) {
@@ -103,6 +104,7 @@ export const getParcelProcessingData = async (
     const { data, error } = await query;
 
     if (error) {
+        console.error(error);
         throw new DatabaseError("fetch", "parcel table data");
     }
     return data ?? [];
@@ -165,7 +167,10 @@ export const getParcelsCount = async (
       event_name,
       event_data,
       timestamp
-  )
+  ),
+  
+      family_count(*)
+    
 `,
         { count: "exact", head: true }
     );
