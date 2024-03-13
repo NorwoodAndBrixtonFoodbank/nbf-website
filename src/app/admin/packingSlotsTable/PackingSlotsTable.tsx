@@ -30,6 +30,7 @@ import {
     updatePackingSlot,
 } from "@/app/admin/packingSlotsTable/PackingSlotActions";
 import { LinearProgress } from "@mui/material";
+import { logError } from "@/logger/logger";
 
 interface EditToolbarProps {
     setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
@@ -70,7 +71,7 @@ function EditToolbar(props: EditToolbarProps): React.JSX.Element {
 }
 
 const PackingSlotsTable: React.FC = () => {
-    const [rows, setRows] = useState<PackingSlotRow[] | null>(null);
+    const [rows, setRows] = useState<PackingSlotRow[]>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -145,40 +146,36 @@ const PackingSlotsTable: React.FC = () => {
             [id]: { mode: GridRowModes.View, ignoreModifications: true },
         });
 
-        if (rows) {
-            const editedRow = rows.find((row) => row.id === id);
-            if (editedRow!.isNew) {
-                setRows(rows.filter((row) => row.id !== id));
-            }
+        const editedRow = rows.find((row) => row.id === id);
+        if (editedRow === undefined) {
+            logError("Edited row in packing slots admin table is undefined onCancelClick");
+        } else if (editedRow.isNew) {
+            setRows((currentValue) => currentValue.filter((row) => row.id !== id));
         }
     };
 
     const handleUpClick = (id: GridRowId, row: PackingSlotRow) => () => {
         const rowIndex = row.order - 1;
         if (rowIndex > 0) {
-            if (rows) {
-                setIsLoading(true);
-                const rowOne = rows[rowIndex];
-                const rowTwo = rows[rowIndex - 1];
-                swapRows(rowOne, rowTwo)
-                    .catch((error) => console.log(error))
-                    .finally(() => setIsLoading(false));
-            }
+            setIsLoading(true);
+            const rowOne = rows[rowIndex];
+            const rowTwo = rows[rowIndex - 1];
+            swapRows(rowOne, rowTwo)
+                .catch((error) => console.log(error))
+                .finally(() => setIsLoading(false));
         }
         setIsLoading(false);
     };
 
     const handleDownClick = (id: GridRowId, row: PackingSlotRow) => () => {
         const rowIndex = row.order - 1;
-        if (rows) {
-            if (rowIndex < rows.length - 1) {
-                setIsLoading(true);
-                const clickedRow = rows[rowIndex];
-                const rowBelow = rows[rowIndex + 1];
-                swapRows(clickedRow, rowBelow)
-                    .catch((error) => console.log(error))
-                    .finally(() => setIsLoading(false));
-            }
+        if (rowIndex < rows.length - 1) {
+            setIsLoading(true);
+            const clickedRow = rows[rowIndex];
+            const rowBelow = rows[rowIndex + 1];
+            swapRows(clickedRow, rowBelow)
+                .catch((error) => console.log(error))
+                .finally(() => setIsLoading(false));
         }
     };
 
