@@ -15,7 +15,7 @@ import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
 import { v4 as uuidv4 } from "uuid";
-import { logError } from "@/logger/logger";
+import { logError, logInfo } from "@/logger/logger";
 
 interface ListRow {
     primaryKey: string;
@@ -39,8 +39,8 @@ interface QuantityAndNotes {
 }
 
 interface ListDataViewProps {
-    listOfIngridients: Schema["lists"][];
-    setListOfIngridients: React.Dispatch<React.SetStateAction<Schema["lists"][]>>;
+    listOfIngredients: Schema["lists"][];
+    setListOfIngredients: React.Dispatch<React.SetStateAction<Schema["lists"][]>>;
     comment: string;
 }
 
@@ -84,8 +84,8 @@ const listsColumnStyleOptions: ColumnStyles<ListRow> = {
 };
 
 const ListsDataView: React.FC<ListDataViewProps> = ({
-    listOfIngridients,
-    setListOfIngridients: setListOfIngridients,
+    listOfIngredients,
+    setListOfIngredients: setListOfIngredients,
     comment,
 }) => {
     const [modal, setModal] = useState<EditModalState>();
@@ -94,11 +94,12 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-    if (listOfIngridients === null) {
+    if (listOfIngredients === null) {
+        void logInfo("No ingredients found @ app/lists/ListDataView.tsx");
         throw new Error("No data found");
     }
 
-    const rows = listOfIngridients.map((row) => {
+    const rows = listOfIngredients.map((row) => {
         const newRow = {
             primaryKey: row.primary_key,
             rowOrder: row.row_order,
@@ -121,32 +122,32 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     const toggleableHeaders = headerKeysAndLabels.map(([key]) => key);
 
     const onEdit = (index: number): void => {
-        setModal(listOfIngridients[index]);
+        setModal(listOfIngredients[index]);
     };
 
     const reorderRows = (row1: ListRow, row2: ListRow): void => {
-        const primaryKeys = listOfIngridients.map(
+        const primaryKeys = listOfIngredients.map(
             (listOfIngridients) => listOfIngridients.primary_key
         );
 
         const row1Index = primaryKeys.indexOf(row1.primaryKey);
         const row2Index = primaryKeys.indexOf(row2.primaryKey);
 
-        const row1Item = listOfIngridients[row1Index];
+        const row1Item = listOfIngredients[row1Index];
         const row1Order = row1Item.row_order;
 
-        const row2Item = listOfIngridients[row2Index];
+        const row2Item = listOfIngredients[row2Index];
         const row2Order = row2Item.row_order;
 
         row1Item.row_order = row2Order;
         row2Item.row_order = row1Order;
 
-        const newListOfIngridients = [...listOfIngridients];
+        const newListOfIngridients = [...listOfIngredients];
 
         newListOfIngridients[row1Index] = row2Item;
         newListOfIngridients[row2Index] = row1Item;
 
-        setListOfIngridients(newListOfIngridients);
+        setListOfIngredients(newListOfIngridients);
     };
     const onSwapRows = async (row1: ListRow, row2: ListRow): Promise<void> => {
         const { error } = await supabase.from("lists").upsert([
@@ -161,6 +162,13 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         ]);
 
         if (error) {
+            const id = uuidv4();
+            const meta = {
+                error: error,
+                id: id,
+                location: "app/lists/ListDataView.tsx",
+            };
+            void logError("Error with upsert: List row item order", meta);
             throw new DatabaseError("update", "lists items");
         }
 
@@ -174,13 +182,20 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
 
     const onConfirmDeletion = async (): Promise<void> => {
         if (toDelete !== null) {
-            const itemToDelete = listOfIngridients[toDelete];
+            const itemToDelete = listOfIngredients[toDelete];
             const { error } = await supabase
                 .from("lists")
                 .delete()
                 .eq("primary_key", itemToDelete.primary_key);
 
             if (error) {
+                const id = uuidv4();
+                const meta = {
+                    error: error,
+                    id: id,
+                    location: "app/lists/ListDataview.tsx",
+                };
+                void logError("Error with delete: Ingredient", meta);
                 setErrorMsg(error.message);
             } else {
                 window.location.reload();
@@ -192,7 +207,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         <>
             <ConfirmDialog
                 message={`Are you sure you want to delete ${
-                    toDelete ? listOfIngridients[toDelete].item_name : ""
+                    toDelete ? listOfIngredients[toDelete].item_name : ""
                 }?`}
                 isOpen={toDeleteModalOpen}
                 onConfirm={onConfirmDeletion}
