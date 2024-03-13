@@ -89,7 +89,7 @@ export const getParcelProcessingData = async (supabase: Supabase, dateRange: Dat
             id: id,
             location: "app/clients/fetchParcelTableData.ts",
         };
-        void logError("Error fetching clients", meta);
+        void logError("Error fetching parcel table data", meta);
         throw new DatabaseError("fetch", "parcel table data");
     }
 
