@@ -14,11 +14,12 @@ const authLinks: AuthLink[] = [
 const Login: React.FC<{}> = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const signIn = (): void => {
+        setErrorMessage(null)
         signInWithPassword({ email, password }).then(({ errorMessage }) => {
-            setErrorMessage(errorMessage);
+            setErrorMessage(errorMessage ?? null);
         });
     };
 
@@ -30,7 +31,7 @@ const Login: React.FC<{}> = () => {
                 submitText="Sign in"
                 submit={signIn}
                 authLinks={authLinks}
-                errorMessage={errorMessage}
+                errorMessage={errorMessage ?? undefined}
             />
         </AuthMain>
     );

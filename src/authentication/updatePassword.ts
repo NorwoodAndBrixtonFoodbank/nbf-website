@@ -5,9 +5,7 @@ interface UpdatePasswordResponse {
     errorMessage?: string;
 }
 
-export async function updatePassword(
-    newPassword: string,
-): Promise<UpdatePasswordResponse> {
+export async function updatePassword(newPassword: string): Promise<UpdatePasswordResponse> {
     const supabase = createClientComponentClient();
 
     const { error } = await supabase.auth.updateUser({ password: newPassword });

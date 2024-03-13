@@ -7,17 +7,17 @@ import { updatePassword } from "@/authentication/updatePassword";
 export default function Page(): ReactElement {
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null)
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const resetPassword = (): void => {
         setErrorMessage(null);
-        setSuccessMessage(null)
+        setSuccessMessage(null);
 
         updatePassword(password).then(({ errorMessage }) => {
             if (errorMessage) {
                 setErrorMessage(errorMessage);
             } else {
-                setSuccessMessage("Password has been reset!")
+                setSuccessMessage("Password has been reset!");
             }
         });
     };

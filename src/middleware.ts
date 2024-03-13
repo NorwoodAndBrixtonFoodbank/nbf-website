@@ -2,6 +2,7 @@ import { DatabaseAutoType } from "@/databaseUtils";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextMiddleware, NextRequest, NextResponse } from "next/server";
 import { roleCanAccessPage } from "@/app/roles";
+import { pathsNotRequiringLogin } from "@/app/auth";
 
 const middleware: NextMiddleware = async (req: NextRequest) => {
     const res = NextResponse.next();
@@ -15,12 +16,11 @@ const middleware: NextMiddleware = async (req: NextRequest) => {
         return res;
     }
 
-    if (
-        !user &&
-        req.nextUrl.pathname !== "/login" &&
-        req.nextUrl.pathname !== "/forgot-password" &&
-        req.nextUrl.pathname !== "/auth/reset-password"
-    ) {
+    const currentPathRequiresLogin = pathsNotRequiringLogin.every(
+        (pathNotRequiringLogin) => !req.nextUrl.pathname.startsWith(pathNotRequiringLogin)
+    );
+
+    if (!user && currentPathRequiresLogin) {
         return NextResponse.redirect(new URL("/login", req.url));
     }
     if (user && req.nextUrl.pathname === "/login") {

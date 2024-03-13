@@ -13,7 +13,7 @@ export async function GET(request: Request): Promise<void> {
         redirect("/");
     }
 
-    const { error, data } = await supabase.auth.exchangeCodeForSession(authCode);
+    const { error } = await supabase.auth.exchangeCodeForSession(authCode);
 
     if (error) {
         void logError(
