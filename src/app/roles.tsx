@@ -13,7 +13,7 @@ type RolesInterface = {
     [key in Roles]: string[];
 };
 
-const pathsShownToCaller = ["/calendar", "/clients", "/parcels", "/reset-password"];
+const pathsShownToCaller = ["/calendar", "/clients", "/parcels", "/update-password"];
 
 const roleToShownPages: RolesInterface = {
     admin: pathsShownToCaller.concat("/admin", "/lists"),

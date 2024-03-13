@@ -23,5 +23,5 @@ export async function GET(request: Request): Promise<void> {
         return redirect("/");
     }
 
-    redirect("/reset-password");
+    redirect("/update-password");
 }
