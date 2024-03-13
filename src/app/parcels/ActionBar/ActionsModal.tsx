@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
 import { Dayjs } from "dayjs";
@@ -177,7 +177,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
         }
     }, [loading, loadPdf]);
 
-    const numberOfParcelsToDelete = useMemo<number>(() => props.selectedParcels.length, []);
+    const [numberOfParcelsToDelete] = useState<number>(props.selectedParcels.length);
 
     return (
         <Modal {...props}>
