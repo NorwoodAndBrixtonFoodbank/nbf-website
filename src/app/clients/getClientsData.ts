@@ -19,7 +19,7 @@ const getClientsData = async (supabase: Supabase): Promise<ClientsTableRow[]> =>
             id: id,
             location: "app/clients/getClientsData.ts",
         };
-        void logError("Error fetching clients", meta);
+        void logError("Error with fetch: clients", meta);
         throw new DatabaseError("fetch", "clients");
     }
 
@@ -36,7 +36,7 @@ const getClientsData = async (supabase: Supabase): Promise<ClientsTableRow[]> =>
                 id: id,
                 location: "app/clients/getClientsData.ts",
             };
-            void logError("Error fetching families", meta);
+            void logError("Error with fetch: families", meta);
             throw new DatabaseError("fetch", "families");
         }
 
