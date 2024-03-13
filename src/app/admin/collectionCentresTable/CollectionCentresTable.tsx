@@ -10,6 +10,8 @@ import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
+import { v4 as uuidv4 } from "uuid";
+import { logError } from "@/logger/logger";
 
 const DangerDialog = styled(Modal)`
     & .header {
@@ -55,6 +57,13 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
             .eq("name", collectionCentreToDelete!.name);
 
         if (error) {
+            const id = uuidv4();
+            const meta = {
+                error: error,
+                id: id,
+                location: "app/admin/collectionCentresTable/CollectionCentresTable.tsx",
+            };
+            void logError("Error with delete: Collection centre data", meta);
             throw new DatabaseError("delete", "collection centre data");
         }
 

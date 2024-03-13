@@ -3,6 +3,8 @@ import { Data } from "@/components/DataViewer/DataViewer";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { EventTableRow } from "./EventTable";
+import { v4 as uuidv4 } from "uuid";
+import { logError } from "@/logger/logger";
 export type RawParcelDetails = Awaited<ReturnType<typeof getRawParcelDetails>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -44,7 +46,14 @@ export const getRawParcelDetails = async (parcelId: string) => {
         .eq("primary_key", parcelId)
         .single();
     if (error) {
-        throw new DatabaseError("fetch", "client data");
+        const id = uuidv4();
+        const meta = {
+            error: error,
+            id: id,
+            location: "app/parcels/getExpandedParcelDetails.ts",
+        };
+        void logError("Error with fetch: Parcel", meta);
+        throw new DatabaseError("fetch", "parcel data");
     }
     return data;
 };
