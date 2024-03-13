@@ -258,6 +258,7 @@ const buildDeliveryCollectionFilter = async (
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
         return query.in("collection_centre.acronym", state);
     };
+
     const getAllDeliveryCollectionOptions = (
         query: PostgrestQueryBuilder<Database["public"], any, any>
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
@@ -269,17 +270,14 @@ const buildDeliveryCollectionFilter = async (
     const response: Partial<ParcelProcessingData> = await getAllValuesForKeys<
         Partial<ParcelProcessingData>
     >(supabase, getAllDeliveryCollectionOptions, optionsFilters);
-    const optionsSet: (CollectionCentresOptions | null)[] = response
-        .map((row) => {
+    const optionsSet: CollectionCentresOptions[] = response.reduce<CollectionCentresOptions[]>(
+        ((filteredOptions, row) => {
             if (row?.collection_centre && !keySet.has(row.collection_centre.acronym)) {
                 keySet.add(row.collection_centre.acronym);
-                return row.collection_centre;
-            } else {
-                return null;
-            }
-        })
-        .filter((option) => option != null)
-        .sort();
+                filteredOptions.push(row.collection_centre)
+            } 
+            return filteredOptions.sort()}), [])
+
     return checklistFilter<ParcelsTableRow>({
         key: "deliveryCollection",
         filterLabel: "Collection",
@@ -318,7 +316,7 @@ const lastStatusCellMatchOverride = (rowData: ParcelsTableRow, selectedKeys: str
     );
 };
 
-const buildLastStatusFilter = (): Filter<ParcelsTableRow, string[]> => {
+const buildLastStatusFilter = async (optionsFilters: Filter<ParcelsTableRow, any>[]):Promise< Filter<ParcelsTableRow, string[]>> => {
     const lastStatusSearch = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
@@ -326,19 +324,31 @@ const buildLastStatusFilter = (): Filter<ParcelsTableRow, string[]> => {
         return query.in("events.event_name", state); //not sure if this will work?
     };
 
-    // const options = Array.from( //as above
-    //     new Set(
-    //         tableData.map((row) => (row.lastStatus ? row.lastStatus.name : "None"))
-    //     ).values()
-    // ).sort();
-
-    const options: string[] = statusNamesInWorkflowOrder; //cheat for now. TODO
+    const allLastStatusOptions = (
+        query: PostgrestQueryBuilder<Database["public"], any, any>
+    ): PostgrestFilterBuilder<Database["public"], any, any> => {
+        return query.select(
+            " parcel_id:primary_key, packing_datetime, events(event_name, timestamp)"
+        ).order("timestamp", { ascending: false, foreignTable: "events" })
+        .limit(1, { foreignTable: "events" });
+    };
+    const keySet = new Set();
+    const response: Partial<ParcelsTableRow>[] = await getAllValuesForKeys<
+        Partial<ParcelsTableRow>[]
+    >(supabase, allLastStatusOptions, optionsFilters);
+    const optionsSet: string[] = response
+        .reduce<string[]>((filteredOptions, row) => {
+            if (row?.lastStatus && !keySet.has(row?.lastStatus.name)) {
+                keySet.add(row?.lastStatus.name);
+                filteredOptions.push(row?.lastStatus.name)
+            } 
+        return filteredOptions.sort()},[]);
 
     return checklistFilter<ParcelsTableRow>({
         key: "lastStatus",
         filterLabel: "Last Status",
-        itemLabelsAndKeys: options.map((value) => [value, value]),
-        initialCheckedKeys: options.filter((option) => option !== "Request Deleted"),
+        itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
+        initialCheckedKeys: optionsSet.filter((option) => option !== "Request Deleted"),
         //cellMatchOverride: lastStatusCellMatchOverride, todo: wtf is this :0
         methodConfig: { methodType: FilterMethodType.Server, method: lastStatusSearch },
     });
@@ -428,7 +438,7 @@ const ParcelsPage: React.FC<{}> = () => {
                     headers: parcelTableHeaderKeysAndLabels,
                     methodConfig: { methodType: FilterMethodType.Server, method: voucherSearch },
                 }),
-                buildLastStatusFilter(), //hardcoded options and broken, filters out unwanted events but keeps the parcel :0
+                await buildLastStatusFilter([dateFilter]), //hardcoded options and broken, filters out unwanted events but keeps the parcel :0
             ];
             return { primaryFilters: primaryFilters, additionalFilters: additionalFilters };
         };
