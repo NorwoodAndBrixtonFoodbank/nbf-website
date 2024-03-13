@@ -22,16 +22,17 @@ import ActionBar from "@/app/parcels/ActionBar/ActionBar";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
-import { getParcelIds, getParcelsCount, getParcelsData } from "./fetchParcelTableData";
+import { CollectionCentresOptions, getAllValuesForKeys, getParcelIds, getParcelsCount, getParcelsData } from "./fetchParcelTableData";
 import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { Filter, FilterMethodType } from "@/components/Tables/Filters";
 import { saveParcelStatus, statusNamesInWorkflowOrder } from "./ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
-import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
+import { PostgrestFilterBuilder, PostgrestQueryBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { dateFilter } from "@/components/Tables/DateFilter";
+import { CircularProgress } from "@mui/material";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -219,42 +220,40 @@ const buildDateFilter = (initialState: DateRangeState): Filter<ParcelsTableRow, 
     });
 };
 
-const buildDeliveryCollectionFilter = (): Filter<any, string[]> => {
+const buildDeliveryCollectionFilter = async (): Promise<Filter<any, string[]>> => {
     const deliveryCollectionSearch = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
         return query.in("collection_centre.acronym", state);
     };
+    const getAllDeliveryCollectionOptions = (
+        query: PostgrestQueryBuilder<Database["public"], any, any>
+    ): PostgrestFilterBuilder<Database["public"], any, any> => {
+        return query.select("collection_centres(*)")
+    };
     const keySet = new Set();
-    // const options = tableData todo get this working: depends on data which is a state managed by table. change options to be a state
-    //     .map((row) => {
-    //         if (!keySet.has(row.deliveryCollection.collectionCentreAcronym)) {
-    //             keySet.add(row.deliveryCollection.collectionCentreAcronym);
-    //             return row.deliveryCollection;
-    //         } else {
-    //             return null;
-    //         }
-    //     })
-    //     .filter((option) => option != null)
-    //     .sort();
-    const options = [
-        {
-            collectionCentreName: "Brixton Hill - Methodist Church",
-            collectionCentreAcronym: "BH-MC",
-        },
-        { collectionCentreName: "Clapham - St Stephens Church", collectionCentreAcronym: "CLP-SC" },
-        { collectionCentreName: "Delivery", collectionCentreAcronym: "DLVR" },
-    ]; //fudge for now
+    const response: CollectionCentresOptions[] = await getAllValuesForKeys<CollectionCentresOptions>(supabase, getAllDeliveryCollectionOptions)
+    const optionsSet: (CollectionCentresOptions | null)[] = response
+        .map((row) => {
+            if (!keySet.has(row.acronym)) {
+                keySet.add(row.acronym);
+                return row;
+            } else {
+                return null;
+            }
+        })
+        .filter((option) => option != null)
+        .sort();
 
     return checklistFilter<ParcelsTableRow>({
         key: "deliveryCollection",
         filterLabel: "Collection",
-        itemLabelsAndKeys: options.map((option) => [
-            option!.collectionCentreName,
-            option!.collectionCentreAcronym,
+        itemLabelsAndKeys: optionsSet.map((option) => [
+            option!.name,
+            option!.acronym,
         ]),
-        initialCheckedKeys: options.map((option) => option!.collectionCentreAcronym),
+        initialCheckedKeys: optionsSet.map((option) => option!.acronym),
         methodConfig: { methodType: FilterMethodType.Server, method: deliveryCollectionSearch },
     });
 };
@@ -338,7 +337,8 @@ const ParcelsPage: React.FC<{}> = () => {
         to: endOfToday,
     });
 
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<ParcelsTableRow, any>[]>([
+    const buildFilters = async() => {
+    const primaryFilters: Filter<ParcelsTableRow, any>[] = [
         dateFilter,
         buildTextFilter({
             key: "fullName",
@@ -352,11 +352,11 @@ const ParcelsPage: React.FC<{}> = () => {
             headers: parcelTableHeaderKeysAndLabels,
             methodConfig: { methodType: FilterMethodType.Server, method: postcodeSearch },
         }),
-        buildDeliveryCollectionFilter(), //hardcoded options
+        //await buildDeliveryCollectionFilter(), //hardcoded options
         //buildPackingTimeFilter(), //broken
-    ]);
+    ];
 
-    const [additionalFilters, setAdditionalFilters] = useState<Filter<ParcelsTableRow, any>[]>([
+    const additionalFilters = [
         //textFilter({key: "familyCategory", label: "Family", headers: parcelTableHeaderKeysAndLabels, filterMethod: familySearch}), //broken
         buildTextFilter({
             key: "phoneNumber",
@@ -371,7 +371,9 @@ const ParcelsPage: React.FC<{}> = () => {
             methodConfig: { methodType: FilterMethodType.Server, method: voucherSearch },
         }),
         buildLastStatusFilter(), //hardcoded options and broken, filters out unwanted events but keeps the parcel :0
-    ]);
+    ]
+    return {primaryFilters: primaryFilters, additionalFilters: additionalFilters}
+    ;}
 
     const [sortState, setSortState] = useState<SortState<ParcelsTableRow>>({ sort: false });
 
@@ -387,8 +389,26 @@ const ParcelsPage: React.FC<{}> = () => {
     const startPoint = (currentPage - 1) * perPage;
     const endPoint = currentPage * perPage - 1;
 
+    const [primaryFilters, setPrimaryFilters] = useState<Filter<ParcelsTableRow, any>[]>([]);
+    const [additionalFilters, setAdditionalFilters] = useState<Filter<ParcelsTableRow, any>[]>([]);
+
+    const [areFiltersLoading, setAreFiltersLoading] = useState<boolean>(true);
+
+
+    useEffect(()=>{
+        (async () => {setAreFiltersLoading(true);
+            const filtersObject = await buildFilters()
+        setPrimaryFilters(filtersObject.primaryFilters);
+        setAdditionalFilters(filtersObject.additionalFilters);
+        setAreFiltersLoading(false);
+        })();
+    }, [])
+
     useEffect(() => {
+        if (!areFiltersLoading) {
+            console.log("requesting data");
         const allFilters = [...primaryFilters, ...additionalFilters];
+        console.log(allFilters);
         const freshRequest = (): boolean => {
             return true; //to do: ask for help on this
         };
@@ -408,11 +428,14 @@ const ParcelsPage: React.FC<{}> = () => {
             }
             setIsLoading(false);
         })();
-    }, [startPoint, endPoint, primaryFilters, additionalFilters, sortState]);
+        console.log(parcelsDataPortion);
+    }
+    }, [startPoint, endPoint, primaryFilters, additionalFilters, sortState, areFiltersLoading]);
 
     useEffect(() => {
         // This requires that the DB parcels table has Realtime turned on
-        const allFilters = [...primaryFilters, ...additionalFilters];
+        if (!areFiltersLoading) 
+        {const allFilters = [...primaryFilters, ...additionalFilters];
         const loadCountAndDataWithTimer = async (): Promise<void> => {
             if (fetchParcelsTimer.current) {
                 clearTimeout(fetchParcelsTimer.current);
@@ -451,7 +474,8 @@ const ParcelsPage: React.FC<{}> = () => {
         return () => {
             supabase.removeChannel(subscriptionChannel);
         };
-    }, [endPoint, startPoint, primaryFilters, additionalFilters, sortState]);
+    }
+    }, [endPoint, startPoint, primaryFilters, additionalFilters, sortState, areFiltersLoading]);
 
     useEffect(() => {
         setCheckedParcelIds([]);

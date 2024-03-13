@@ -3,6 +3,8 @@ import { DatabaseError, EdgeFunctionError } from "../errorClasses";
 import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsTableData";
 import { Filter, FilterMethodType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
+import { PostgrestQueryBuilder, PostgrestFilterBuilder } from "@supabase/postgrest-js";
+import { Database } from "@/databaseTypesFile";
 
 export type CongestionChargeDetails = {
     postcode: string;
@@ -245,3 +247,22 @@ export const getParcelIds = async (
     }
     return data.map((parcel) => parcel.parcel_id) ?? [];
 };
+
+export const getAllValuesForKeys = async <ReturnRow,>(
+    supabase: Supabase,
+    selectMethod: 
+            (query: PostgrestQueryBuilder<Database["public"], any, any>,
+        ) => PostgrestFilterBuilder<Database["public"], any, any>
+): Promise<ReturnRow[]> => {
+    let query = selectMethod(supabase.from("parcels"));
+    const { data, error } = await query;
+    if (error) {
+        throw new DatabaseError("fetch", "parcels");
+    }
+    return data ?? [];
+};
+
+export interface CollectionCentresOptions {
+    name: string,
+    acronym: string
+}
