@@ -14,10 +14,10 @@ export const serverConfig: ServerConfig = {
 };
 
 function getCloudWatchConfig(): CloudWatchConfig {
-    const logGroupName = process.env.AWS_CLOUDWATCH_LOG_GROUP;
-    const logStreamName = process.env.AWS_CLOUD_WATCH_LOG_STREAM;
-    const accessKey = process.env.AWS_CLOUDWATCH_ACCESS_KEY;
-    const secretAccessKey = process.env.AWS_CLOUDWATCH_SECRET_ACCESS_KEY;
+    const logGroupName = process.env.CLOUDWATCH_LOG_GROUP;
+    const logStreamName = process.env.CLOUD_WATCH_LOG_STREAM;
+    const accessKey = process.env.CLOUDWATCH_ACCESS_KEY;
+    const secretAccessKey = process.env.CLOUDWATCH_SECRET_ACCESS_KEY;
 
     if (!logGroupName) {
         throw new Error("CloudWatch log group name is not found in environment");
