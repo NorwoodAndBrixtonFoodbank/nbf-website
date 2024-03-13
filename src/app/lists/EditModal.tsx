@@ -71,7 +71,6 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
 
         if (error) {
             setErrorMsg(error.message);
-            console.error(error);
         } else {
             window.location.reload();
         }

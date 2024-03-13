@@ -393,7 +393,9 @@ const Table = <Data,>({
                     filterConfig.additionalFiltersShown ? filterConfig.additionalFilters : []
                 }
                 setAdditionalFilters={
-                    filterConfig.primaryFiltersShown ? filterConfig.setPrimaryFilters : () => {}
+                    filterConfig.additionalFiltersShown
+                        ? filterConfig.setAdditionalFilters
+                        : () => {}
                 }
                 headers={headerKeysAndLabels}
                 setShownHeaderKeys={setShownHeaderKeys}

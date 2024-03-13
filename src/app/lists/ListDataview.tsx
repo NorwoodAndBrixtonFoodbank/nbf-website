@@ -122,7 +122,6 @@ const ListsDataView: React.FC<Props> = (props) => {
     const toggleableHeaders = listsHeaderKeysAndLabels.map(([key]) => key);
 
     const onEdit = (index: number): void => {
-        console.log("opening edit modal with details: ", props.data[index]);
         setModal(listRowToListDB(props.data[index]));
     };
 
