@@ -190,23 +190,46 @@ const PackingSlotsTable: React.FC = () => {
             width: 100,
             cellClassName: "actions",
             getActions: ({ id, row }) => {
-                return [
-                    <GridActionsCellItem
-                        icon={<ArrowCircleUpIcon />}
-                        label="Up"
-                        className="textPrimary"
-                        onClick={handleUpClick(id, row)}
-                        color="inherit"
-                        key="Up"
-                    />,
-                    <GridActionsCellItem
-                        icon={<ArrowCircleDownIcon />}
-                        label="Down"
-                        onClick={handleDownClick(id, row)}
-                        color="inherit"
-                        key="Down"
-                    />,
-                ];
+                if (row.order === 1) {
+                    return [
+                        <GridActionsCellItem
+                            icon={<ArrowCircleDownIcon />}
+                            label="Down"
+                            onClick={handleDownClick(id, row)}
+                            color="inherit"
+                            key="Down"
+                        />,
+                    ];
+                } else if (rows && row.order === rows.length) {
+                    return [
+                        <GridActionsCellItem
+                            icon={<ArrowCircleUpIcon />}
+                            label="Up"
+                            className="textPrimary"
+                            onClick={handleUpClick(id, row)}
+                            color="inherit"
+                            key="Up"
+                        />,
+                    ];
+                } else {
+                    return [
+                        <GridActionsCellItem
+                            icon={<ArrowCircleUpIcon />}
+                            label="Up"
+                            className="textPrimary"
+                            onClick={handleUpClick(id, row)}
+                            color="inherit"
+                            key="Up"
+                        />,
+                        <GridActionsCellItem
+                            icon={<ArrowCircleDownIcon />}
+                            label="Down"
+                            onClick={handleDownClick(id, row)}
+                            color="inherit"
+                            key="Down"
+                        />,
+                    ];
+                }
             },
         },
         { field: "name", headerName: "Slot Name", flex: 1, editable: true },
