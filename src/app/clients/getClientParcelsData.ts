@@ -2,6 +2,8 @@ import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { Data } from "@/components/DataViewer/DataViewer";
 import { formatDatetimeAsDate } from "@/app/parcels/getExpandedParcelDetails";
+import { v4 as uuidv4 } from "uuid";
+import { logError } from "@/logger/logger";
 
 export type RawClientParcelsDetails = Awaited<ReturnType<typeof getRawClientParcelsDetails>>;
 
@@ -39,6 +41,13 @@ const getRawClientParcelsDetails = async (clientId: string): Promise<ParcelsDeta
         .order("packing_datetime", { ascending: false });
 
     if (error) {
+        const id = uuidv4();
+        const meta = {
+            error: error,
+            id: id,
+            location: "app/clients/getClientParcelsData.ts",
+        };
+        void logError("Error with fetch: parcels table data", meta);
         throw new DatabaseError("fetch", "parcel table data");
     }
 

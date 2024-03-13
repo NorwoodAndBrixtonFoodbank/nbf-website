@@ -1,6 +1,8 @@
 import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fetchParcelTableData";
 import { familyCountToFamilyCategory } from "@/app/parcels/getExpandedParcelDetails";
 import { Schema } from "@/databaseUtils";
+import { v4 as uuidv4 } from "uuid";
+import { logError } from "@/logger/logger";
 
 export interface ParcelsTableRow {
     parcelId: Schema["parcels"]["primary_key"];
@@ -36,6 +38,13 @@ export const processingDataToParcelsTableData = (
     const parcelTableRows: ParcelsTableRow[] = [];
 
     if (processingData.length !== congestionCharge.length) {
+        const id = uuidv4();
+        const meta = {
+            error: `Invalid inputs, got length ${processingData.length} and ${congestionCharge.length}`,
+            id: id,
+            location: "parcels/getParcelsTableData.ts",
+        };
+        void logError("Error with processing parcels table data", meta);
         throw new Error(
             `Invalid inputs, got length ${processingData.length} and ${congestionCharge.length}`
         );
