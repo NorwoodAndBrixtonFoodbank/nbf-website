@@ -106,6 +106,13 @@ export const fetchClient = async (
         const errorMessage = `${
             data.length === 0 ? "No" : "Multiple"
         } records match this client ID.`;
+        const id = uuidv4();
+        const meta = {
+            error: `${errorMessage} ${primaryKey}`,
+            id: id,
+            location: "common/fetch.ts",
+        };
+        void logError("Error with client ID", meta);
         throw new Error(errorMessage);
     }
     return data[0];
