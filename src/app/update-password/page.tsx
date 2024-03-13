@@ -30,7 +30,6 @@ export default function Page(): ReactElement {
                 passwordField={{ text: password, setText: setPassword }}
                 submitText="Update password"
                 onSubmit={initiatePasswordUpdate}
-                authLinks={[]}
                 errorMessage={errorMessage}
                 successMessage={successMessage}
             />

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { ReactElement, useState } from "react";
 import AuthPanel, { AuthLink, AuthMain } from "@/components/AuthPanel";
 import { requestPasswordReset } from "@/authentication/requestPasswordReset";
 
@@ -11,7 +11,7 @@ const linksToDisplay: AuthLink[] = [
     },
 ];
 
-const Page: React.FC<{}> = () => {
+export default function Page(): ReactElement {
     const [email, setEmail] = useState("");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -45,6 +45,4 @@ const Page: React.FC<{}> = () => {
             />
         </AuthMain>
     );
-};
-
-export default Page;
+}

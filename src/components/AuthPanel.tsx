@@ -45,12 +45,18 @@ const MiddleDiv = styled(Paper)`
     }
 `;
 
+const AuthInputSection = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+`;
+
 interface AuthPanelProps {
     title: string;
     emailField: AuthTextField | null;
     passwordField: AuthTextField | null;
     submitText: string;
-    onSubmit: (() => void) | (() => Promise<void>);
+    onSubmit: () => void;
     authLinks?: AuthLink[];
     errorMessage: string | null;
     successMessage: string | null;
@@ -78,11 +84,29 @@ const AuthPanel: React.FC<AuthPanelProps> = ({
 }) => {
     const theme = useTheme();
 
+    const AuthLinkElement = styled(Link)`
+        color: ${theme.main.lighterForeground[0]};
+        font-size: 13px;
+        text-align: center;
+    `;
+
+    const ErrorMessage = styled.span`
+        color: ${theme.error};
+        font-size: 13px;
+        text-align: center;
+    `;
+
+    const SuccessMessage = styled.span`
+        color: ${theme.main.foreground[0]};
+        font-size: 13px;
+        text-align: center;
+    `;
+
     return (
         <MiddleDiv elevation={5} id="login-panel">
             <Title>{title}</Title>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <AuthInputSection>
                 {emailField && (
                     <TextField
                         id="email"
@@ -96,6 +120,7 @@ const AuthPanel: React.FC<AuthPanelProps> = ({
                 {passwordField && (
                     <TextField
                         id="password"
+                        type="password"
                         label="Your Password"
                         variant="outlined"
                         value={passwordField.text}
@@ -109,37 +134,15 @@ const AuthPanel: React.FC<AuthPanelProps> = ({
 
                 {authLinks &&
                     authLinks.map((authLink) => (
-                        <Link
-                            key={authLink.label}
-                            href={authLink.href}
-                            style={{
-                                color: theme.main.lighterForeground[0],
-                                fontSize: "13px",
-                                textAlign: "center",
-                            }}
-                        >
+                        <AuthLinkElement key={authLink.label} href={authLink.href}>
                             {authLink.label}
-                        </Link>
+                        </AuthLinkElement>
                     ))}
 
-                {errorMessage && (
-                    <span style={{ color: theme.error, fontSize: "13px", textAlign: "center" }}>
-                        {errorMessage}
-                    </span>
-                )}
+                {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
 
-                {successMessage && (
-                    <span
-                        style={{
-                            color: theme.main.foreground[0],
-                            fontSize: "13px",
-                            textAlign: "center",
-                        }}
-                    >
-                        {successMessage}
-                    </span>
-                )}
-            </div>
+                {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
+            </AuthInputSection>
         </MiddleDiv>
     );
 };

@@ -1,17 +1,17 @@
 "use client";
 
 import AuthPanel, { AuthLink, AuthMain } from "@/components/AuthPanel";
-import React, { useState } from "react";
+import React, { ReactElement, useState } from "react";
 import { signInWithPassword } from "@/authentication/signIn";
 
-const authLinks: AuthLink[] = [
+const linksToDisplay: AuthLink[] = [
     {
         label: "Forgot your password?",
         href: "/forgot-password",
     },
 ];
 
-const Login: React.FC<{}> = () => {
+export default function Login(): ReactElement {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -31,12 +31,10 @@ const Login: React.FC<{}> = () => {
                 passwordField={{ text: password, setText: setPassword }}
                 submitText="Sign in"
                 onSubmit={initiateSignIn}
-                authLinks={authLinks}
+                authLinks={linksToDisplay}
                 errorMessage={errorMessage}
                 successMessage={null}
             />
         </AuthMain>
     );
-};
-
-export default Login;
+}
