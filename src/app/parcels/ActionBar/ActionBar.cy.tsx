@@ -60,33 +60,41 @@ describe("Parcels - Action Bar", () => {
         },
     ];
 
-    const MockActionBar: React.FC<ActionBarProps> = ({ selectedParcels, onDeleteParcels }) => {
+    const MockActionBar: React.FC<ActionBarProps> = ({
+        fetchSelectedParcels,
+        parcelIds,
+        onDeleteParcels,
+    }) => {
         return (
             <Localization>
                 <StyleManager>
                     <ActionBar
-                        selectedParcels={selectedParcels}
+                        fetchSelectedParcels={fetchSelectedParcels}
                         onDeleteParcels={onDeleteParcels}
                         hasSavedParcelStatus={() => {}}
                         willSaveParcelStatus={() => {}}
+                        parcelIds={parcelIds}
                     />
                 </StyleManager>
             </Localization>
         );
     };
     describe("Statuses", () => {
-        const selectedParcels = mockData.slice(0, 2);
-        const onDeleteParcels = (parcels: ParcelsTableRow[]): void => {
-            selectedParcels.filter((parcelToDelete) => !parcels.includes(parcelToDelete));
+        let parcelIds: string[] = ["123456789", "123456aaaa789"];
+        const onDeleteParcels = (): void => {
+            parcelIds = [];
         };
 
         beforeEach(() => {
             cy.mount(
                 <MockActionBar
-                    selectedParcels={selectedParcels}
+                    fetchSelectedParcels={async (parcelIds: string[]) =>
+                        await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
+                    }
                     onDeleteParcels={onDeleteParcels}
                     hasSavedParcelStatus={() => {}}
                     willSaveParcelStatus={() => {}}
+                    parcelIds={parcelIds}
                 />
             );
         });
@@ -142,7 +150,7 @@ describe("Parcels - Action Bar", () => {
                 minute: "2-digit",
             });
             cy.get(`input[value="${timeString}"]`).should("exist");
-            selectedParcels.forEach((parcel) => {
+            mockData.forEach((parcel: ParcelsTableRow) => {
                 cy.get(".MuiPaper-root").contains(parcel.addressPostcode);
                 cy.get(".MuiPaper-root").contains(parcel.fullName);
             });
@@ -150,19 +158,22 @@ describe("Parcels - Action Bar", () => {
     });
 
     describe("Actions", () => {
-        const selectedParcels = mockData.slice(0, 2);
-        const onDeleteParcels = (parcels: ParcelsTableRow[]): void => {
-            selectedParcels.filter((parcelToDelete) => !parcels.includes(parcelToDelete));
+        let parcelIds: string[] = ["123456789", "123456aaaa789"];
+        const onDeleteParcels = (): void => {
+            parcelIds = [];
         };
-        const row = selectedParcels[0];
+        const row = mockData[0];
 
         beforeEach(() => {
             cy.mount(
                 <MockActionBar
-                    selectedParcels={selectedParcels}
+                    fetchSelectedParcels={async (parcelIds: string[]) =>
+                        await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
+                    }
                     onDeleteParcels={onDeleteParcels}
                     hasSavedParcelStatus={() => {}}
                     willSaveParcelStatus={() => {}}
+                    parcelIds={parcelIds}
                 />
             );
         });
