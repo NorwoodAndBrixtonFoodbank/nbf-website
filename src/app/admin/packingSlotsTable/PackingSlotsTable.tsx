@@ -173,9 +173,9 @@ const PackingSlotsTable: React.FC = () => {
         if (rows) {
             if (rowIndex < rows.length - 1) {
                 setIsLoading(true);
-                const rowOne = rows[rowIndex];
-                const rowTwo = rows[rowIndex + 1];
-                swapRows(rowOne, rowTwo)
+                const clickedRow = rows[rowIndex];
+                const rowBelow = rows[rowIndex + 1];
+                swapRows(clickedRow, rowBelow)
                     .catch((error) => console.log(error))
                     .finally(() => setIsLoading(false));
             }
