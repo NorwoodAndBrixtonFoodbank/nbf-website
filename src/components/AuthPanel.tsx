@@ -1,8 +1,4 @@
-"use client";
-
-import { DatabaseAutoType } from "@/databaseUtils";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled, { useTheme } from "styled-components";
 import Title from "@/components/Title/Title";
 import { NavBarHeight } from "@/components/NavigationBar/NavigationBar";

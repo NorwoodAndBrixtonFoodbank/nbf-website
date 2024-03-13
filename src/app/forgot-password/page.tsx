@@ -34,7 +34,7 @@ const Page: React.FC<{}> = () => {
     return (
         <AuthMain>
             <AuthPanel
-                title={"Forgot password"}
+                title="Forgot password"
                 emailField={{ text: email, setText: setEmail }}
                 passwordField={null}
                 submitText="Send reset password instructions"

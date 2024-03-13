@@ -25,7 +25,7 @@ export default function Page(): ReactElement {
     return (
         <AuthMain>
             <AuthPanel
-                title={"Update password"}
+                title="Update password"
                 emailField={null}
                 passwordField={{ text: password, setText: setPassword }}
                 submitText="Update password"
