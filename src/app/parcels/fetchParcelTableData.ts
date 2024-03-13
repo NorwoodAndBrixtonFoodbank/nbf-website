@@ -5,6 +5,7 @@ import { Filter, FilterMethodType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 import { PostgrestQueryBuilder, PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
+import { partial } from "cypress/types/lodash";
 
 export type CongestionChargeDetails = {
     postcode: string;
@@ -248,17 +249,25 @@ export const getParcelIds = async (
     return data.map((parcel) => parcel.parcel_id) ?? [];
 };
 
-export const getAllValuesForKeys = async <ReturnRow,>(
+export const getAllValuesForKeys = async <Return,>(
     supabase: Supabase,
     selectMethod: 
             (query: PostgrestQueryBuilder<Database["public"], any, any>,
-        ) => PostgrestFilterBuilder<Database["public"], any, any>
-): Promise<ReturnRow[]> => {
+        ) => PostgrestFilterBuilder<Database["public"], any, any>,
+    filters: Filter<ParcelsTableRow, any>[] 
+): Promise<Return> => {
     let query = selectMethod(supabase.from("parcels"));
+    filters.forEach((filter) => {
+        if (filter.methodConfig.methodType === FilterMethodType.Server) {
+            query = filter.methodConfig.method(query, filter.state);
+        }
+    });
     const { data, error } = await query;
     if (error) {
+        console.error(error);
         throw new DatabaseError("fetch", "parcels");
     }
+    console.log("d", data);
     return data ?? [];
 };
 

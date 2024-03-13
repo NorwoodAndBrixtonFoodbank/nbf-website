@@ -22,7 +22,7 @@ import ActionBar from "@/app/parcels/ActionBar/ActionBar";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
-import { CollectionCentresOptions, getAllValuesForKeys, getParcelIds, getParcelsCount, getParcelsData } from "./fetchParcelTableData";
+import { CollectionCentresOptions, ParcelProcessingData, getAllValuesForKeys, getParcelIds, getParcelsCount, getParcelsData } from "./fetchParcelTableData";
 import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { Filter, FilterMethodType } from "@/components/Tables/Filters";
@@ -220,7 +220,7 @@ const buildDateFilter = (initialState: DateRangeState): Filter<ParcelsTableRow, 
     });
 };
 
-const buildDeliveryCollectionFilter = async (): Promise<Filter<any, string[]>> => {
+const buildDeliveryCollectionFilter = async (optionsFilters: Filter<ParcelsTableRow, any>[]): Promise<Filter<ParcelsTableRow, string[]>> => {
     const deliveryCollectionSearch = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
@@ -230,22 +230,23 @@ const buildDeliveryCollectionFilter = async (): Promise<Filter<any, string[]>> =
     const getAllDeliveryCollectionOptions = (
         query: PostgrestQueryBuilder<Database["public"], any, any>
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.select("collection_centres(*)")
+        return query.select(` parcel_id:primary_key, packing_datetime, collection_centre:collection_centres(*)`)
     };
     const keySet = new Set();
-    const response: CollectionCentresOptions[] = await getAllValuesForKeys<CollectionCentresOptions>(supabase, getAllDeliveryCollectionOptions)
+    const response: Partial<ParcelProcessingData> = await getAllValuesForKeys<Partial<ParcelProcessingData>>(supabase, getAllDeliveryCollectionOptions, optionsFilters)
+    console.log("r", response);
     const optionsSet: (CollectionCentresOptions | null)[] = response
         .map((row) => {
-            if (!keySet.has(row.acronym)) {
-                keySet.add(row.acronym);
-                return row;
+            if (row?.collection_centre && !keySet.has(row.collection_centre.acronym)) {
+                keySet.add(row.collection_centre.acronym);
+                return row.collection_centre;
             } else {
                 return null;
             }
         })
         .filter((option) => option != null)
         .sort();
-
+    console.log("K",optionsSet);
     return checklistFilter<ParcelsTableRow>({
         key: "deliveryCollection",
         filterLabel: "Collection",
@@ -352,7 +353,7 @@ const ParcelsPage: React.FC<{}> = () => {
             headers: parcelTableHeaderKeysAndLabels,
             methodConfig: { methodType: FilterMethodType.Server, method: postcodeSearch },
         }),
-        //await buildDeliveryCollectionFilter(), //hardcoded options
+        await buildDeliveryCollectionFilter([dateFilter]), //hardcoded options
         //buildPackingTimeFilter(), //broken
     ];
 
