@@ -1,6 +1,8 @@
 import { Supabase } from "@/supabaseUtils";
 import { DatabaseError, EdgeFunctionError } from "../errorClasses";
 import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
+import { v4 as uuidv4 } from "uuid";
+import { logError } from "@/logger/logger";
 
 export type CongestionChargeDetails = {
     postcode: string;
@@ -21,6 +23,13 @@ export const getCongestionChargeDetailsForParcels = async (
     });
 
     if (response.error) {
+        const id = uuidv4();
+        const meta = {
+            error: response.error,
+            id: id,
+            location: "app/clients/fetchParcelTableData.ts",
+        };
+        void logError("Error with congestion charge check", meta);
         throw new EdgeFunctionError("congestion charge check");
     }
 
@@ -74,6 +83,13 @@ export const getParcelProcessingData = async (supabase: Supabase, dateRange: Dat
         .limit(1, { foreignTable: "events" });
 
     if (error) {
+        const id = uuidv4();
+        const meta = {
+            error: error,
+            id: id,
+            location: "app/clients/fetchParcelTableData.ts",
+        };
+        void logError("Error fetching clients", meta);
         throw new DatabaseError("fetch", "parcel table data");
     }
 
