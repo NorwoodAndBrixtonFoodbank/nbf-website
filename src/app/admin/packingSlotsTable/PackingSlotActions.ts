@@ -16,17 +16,15 @@ export const fetchPackingSlots = async (): Promise<PackingSlotRow[]> => {
         throw new DatabaseError("fetch", "packing slots");
     }
 
-    const processedData = data.map((row): PackingSlotRow => {
-        return {
+    return data.map(
+        (row): PackingSlotRow => ({
             name: row.name,
             id: row.primary_key,
             isShown: row.is_shown,
             order: row.order,
             isNew: false,
-        };
-    });
-
-    return processedData;
+        })
+    );
 };
 
 const getDbPackingSlotFromTableRow = (row: PackingSlotRow): DBPackingSlotData => {
