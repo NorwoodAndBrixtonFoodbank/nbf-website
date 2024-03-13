@@ -2,7 +2,7 @@ import { logError } from "@/logger/logger";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 interface SignInWithPasswordResponse {
-    errorMessage?: string;
+    errorMessage: string | null;
 }
 
 export async function signInWithPassword(credentials: {
@@ -17,5 +17,5 @@ export async function signInWithPassword(credentials: {
         return { errorMessage: error.message };
     }
 
-    return {};
+    return { errorMessage: null };
 }

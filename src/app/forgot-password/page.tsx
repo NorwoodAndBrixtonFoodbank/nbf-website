@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import AuthPanel, { AuthLink, AuthMain } from "@/components/AuthPanel";
 import { requestPasswordReset } from "@/authentication/requestPasswordReset";
 
-const authLinks: AuthLink[] = [
+const linksToDisplay: AuthLink[] = [
     {
         label: "Already have an account? Sign in",
         href: "/login",
@@ -13,15 +13,16 @@ const authLinks: AuthLink[] = [
 
 const Page: React.FC<{}> = () => {
     const [email, setEmail] = useState("");
-    const [errorMessage, setErrorMessage] = useState<string | null>(undefined);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-    const sendResetPasswordInstructions = (): void => {
+    const initiatePasswordResetRequest = (): void => {
         setSuccessMessage(null);
         setErrorMessage(null);
 
         const redirectUrl = `${window.location.origin}/auth/reset-password`;
-        requestPasswordReset(email, redirectUrl).then(({ errorMessage }) => {
+
+        requestPasswordReset({ email, redirectUrl }).then(({ errorMessage }) => {
             if (errorMessage) {
                 setErrorMessage(errorMessage);
             } else {
@@ -33,12 +34,14 @@ const Page: React.FC<{}> = () => {
     return (
         <AuthMain>
             <AuthPanel
+                title={"Forgot password"}
                 emailField={{ text: email, setText: setEmail }}
+                passwordField={null}
                 submitText="Send reset password instructions"
-                submit={sendResetPasswordInstructions}
-                authLinks={authLinks}
-                errorMessage={errorMessage ?? undefined}
-                successMessage={successMessage ?? undefined}
+                onSubmit={initiatePasswordResetRequest}
+                authLinks={linksToDisplay}
+                errorMessage={errorMessage}
+                successMessage={successMessage}
             />
         </AuthMain>
     );

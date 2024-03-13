@@ -9,7 +9,7 @@ export default function Page(): ReactElement {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-    const resetPassword = (): void => {
+    const initiatePasswordUpdate = (): void => {
         setErrorMessage(null);
         setSuccessMessage(null);
 
@@ -25,12 +25,14 @@ export default function Page(): ReactElement {
     return (
         <AuthMain>
             <AuthPanel
+                title={"Update password"}
+                emailField={null}
                 passwordField={{ text: password, setText: setPassword }}
                 submitText="Update password"
-                submit={resetPassword}
+                onSubmit={initiatePasswordUpdate}
                 authLinks={[]}
-                errorMessage={errorMessage ?? undefined}
-                successMessage={successMessage ?? undefined}
+                errorMessage={errorMessage}
+                successMessage={successMessage}
             />
         </AuthMain>
     );

@@ -16,22 +16,24 @@ const Login: React.FC<{}> = () => {
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const signIn = (): void => {
-        setErrorMessage(null)
+    const initiateSignIn = (): void => {
+        setErrorMessage(null);
         signInWithPassword({ email, password }).then(({ errorMessage }) => {
-            setErrorMessage(errorMessage ?? null);
+            setErrorMessage(errorMessage);
         });
     };
 
     return (
         <AuthMain>
             <AuthPanel
+                title="Login"
                 emailField={{ text: email, setText: setEmail }}
                 passwordField={{ text: password, setText: setPassword }}
                 submitText="Sign in"
-                submit={signIn}
+                onSubmit={initiateSignIn}
                 authLinks={authLinks}
-                errorMessage={errorMessage ?? undefined}
+                errorMessage={errorMessage}
+                successMessage={null}
             />
         </AuthMain>
     );

@@ -2,8 +2,6 @@
 
 import { DatabaseAutoType } from "@/databaseUtils";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
 import React, { useEffect, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import Title from "@/components/Title/Title";
@@ -52,13 +50,14 @@ const MiddleDiv = styled(Paper)`
 `;
 
 interface AuthPanelProps {
-    emailField?: AuthTextField;
-    passwordField?: AuthTextField;
+    title: string;
+    emailField: AuthTextField | null;
+    passwordField: AuthTextField | null;
     submitText: string;
-    submit: (() => void) | (() => Promise<void>);
+    onSubmit: (() => void) | (() => Promise<void>);
     authLinks?: AuthLink[];
-    errorMessage?: string;
-    successMessage?: string;
+    errorMessage: string | null;
+    successMessage: string | null;
 }
 
 interface AuthTextField {
@@ -72,28 +71,20 @@ export interface AuthLink {
 }
 
 const AuthPanel: React.FC<AuthPanelProps> = ({
+    title,
     emailField,
     passwordField,
     submitText,
-    submit,
+    onSubmit,
     authLinks,
     errorMessage,
     successMessage,
 }) => {
-    const supabase = createClientComponentClient<DatabaseAutoType>();
     const theme = useTheme();
 
-    const [loaded, setLoaded] = useState(false);
-    const [baseUrl, setBaseUrl] = useState<string | null>(null);
-
-    useEffect(() => {
-        setBaseUrl(window.location.origin);
-        setLoaded(true);
-    }, []);
-
     return (
-        <MiddleDiv elevation={5} data-loaded={loaded} id="login-panel">
-            <Title>Login</Title>
+        <MiddleDiv elevation={5} id="login-panel">
+            <Title>{title}</Title>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 {emailField && (
@@ -116,7 +107,7 @@ const AuthPanel: React.FC<AuthPanelProps> = ({
                     />
                 )}
 
-                <Button variant="contained" onClick={submit}>
+                <Button variant="contained" onClick={onSubmit}>
                     {submitText}
                 </Button>
 
@@ -153,29 +144,6 @@ const AuthPanel: React.FC<AuthPanelProps> = ({
                     </span>
                 )}
             </div>
-            <Auth
-                supabaseClient={supabase}
-                providers={[]}
-                appearance={{
-                    theme: ThemeSupa,
-                    variables: {
-                        default: {
-                            colors: {
-                                inputText: theme.main.foreground[3],
-                                inputBackground: theme.main.background[3],
-                                inputBorder: theme.main.background[3],
-                                inputLabelText: theme.main.foreground[0],
-                                anchorTextColor: theme.main.lighterForeground[0],
-                                brand: theme.primary.background[3],
-                                brandAccent: theme.primary.background[2],
-                                brandButtonText: theme.primary.foreground[3],
-                                messageTextDanger: theme.error,
-                            },
-                        },
-                    },
-                }}
-                redirectTo={`${baseUrl}/auth/callback`}
-            />
         </MiddleDiv>
     );
 };

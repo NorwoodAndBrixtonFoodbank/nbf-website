@@ -2,7 +2,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { logError } from "@/logger/logger";
 
 interface UpdatePasswordResponse {
-    errorMessage?: string;
+    errorMessage: string | null;
 }
 
 export async function updatePassword(newPassword: string): Promise<UpdatePasswordResponse> {
@@ -15,5 +15,5 @@ export async function updatePassword(newPassword: string): Promise<UpdatePasswor
         return { errorMessage: error.message };
     }
 
-    return {};
+    return { errorMessage: null };
 }
