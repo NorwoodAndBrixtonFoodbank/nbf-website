@@ -7,6 +7,8 @@ import Modal from "@/components/Modal/Modal";
 import { deleteUser } from "@/app/admin/adminActions";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import { SetAlertOptions } from "@/app/admin/common/SuccessFailureAlert";
+import { v4 as uuidv4 } from "uuid";
+import { logError, logInfo } from "@/logger/logger";
 
 const DangerDialog = styled(Modal)`
     .MuiPaper-root > div:first-child {
@@ -42,11 +44,19 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
                     </>
                 ),
             });
+            void logInfo(`${props.userToDelete?.email} deleted successfully.`);
         } else {
             props.setAlertOptions({
                 success: false,
                 message: <>Delete User Operation Failed</>,
             });
+            const id = uuidv4();
+            const meta = {
+                error: error,
+                id: id,
+                location: "app/admin/deleteUser/DeleteUserDialog.tsx",
+            };
+            void logError("Error with delete: User", meta);
         }
 
         props.setUserToDelete(null);
