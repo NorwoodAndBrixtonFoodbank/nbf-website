@@ -217,6 +217,16 @@ async function generateSeed(): Promise<void> {
             isShown: true,
             order: 2,
         },
+        {
+            name: "Slot 1",
+            isShown: false,
+            order: 3,
+        },
+        {
+            name: "Slot 2",
+            isShown: false,
+            order: 4,
+        },
     ]);
 }
 
