@@ -241,12 +241,11 @@ const Actions: React.FC<Props> = ({
     };
 
     const mapsLinkForParcels = (): string => {
-        const mapsLinkList = ["https://www.google.com/maps/dir/"];
-        selectedParcels.map((parcel) => {
-            mapsLinkList.push(parcel.addressPostcode + "/");
+        let mapsLinkString = "https://www.google.com/maps/dir";
+        selectedParcels.forEach((parcel) => {
+            mapsLinkString = mapsLinkString.concat("/", parcel.addressPostcode);
         });
-        mapsLinkList.push("/");
-        const mapsLinkString = mapsLinkList.join("");
+        mapsLinkString = mapsLinkString.concat("//");
         return mapsLinkString;
     };
 
