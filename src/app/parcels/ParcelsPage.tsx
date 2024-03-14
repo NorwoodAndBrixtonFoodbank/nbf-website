@@ -98,6 +98,7 @@ const toggleableHeaders: (keyof ParcelsTableRow)[] = [
 const parcelTableColumnStyleOptions = {
     iconsColumn: {
         width: "3rem",
+        ignoreRowClick: true,
     },
     fullName: {
         minWidth: "8rem",
@@ -323,13 +324,13 @@ const ParcelsPage: React.FC<{}> = () => {
     };
 
     const onParcelTableRowClick = (row: Row<ParcelsTableRow>, event: React.MouseEvent): void => {
-        const target = event.target as HTMLElement;
-        if (target.id.startsWith("cell-1")) {
-            return;
-        } else {
+        // const target = event.target as HTMLElement;
+        // if (target.id.startsWith("cell-1")) {
+        //     return;
+        // } else {
             setSelectedParcelId(row.data.parcelId);
             router.push(`/parcels?${parcelIdParam}=${row.data.parcelId}`);
-        }
+        // }
     };
 
     const buildDeliveryCollectionFilter = (
