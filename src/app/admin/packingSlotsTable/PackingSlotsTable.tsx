@@ -124,11 +124,11 @@ const PackingSlotsTable: React.FC = () => {
         setIsLoading(true);
         if (newRow.isNew) {
             dbPackingSlotToInsert(newRow)
-                .catch((error) => console.log(error))
+                .catch((error) => void logError("Insert error with packing slot row", error))
                 .finally(() => setIsLoading(false));
         } else {
             dbPackingSlotToUpdate(newRow)
-                .catch((error) => console.log(error))
+                .catch((error) => void logError("Update error with packing slot row", error))
                 .finally(() => setIsLoading(false));
         }
         return newRow;
@@ -154,7 +154,7 @@ const PackingSlotsTable: React.FC = () => {
     const handleDeleteClick = (id: GridRowId) => () => {
         setIsLoading(true);
         dbPackingSlotToDelete(id)
-            .catch((error) => console.log(error))
+            .catch((error) => void logError("Delete error with packing slot row", error))
             .finally(() => setIsLoading(false));
     };
 
@@ -179,7 +179,7 @@ const PackingSlotsTable: React.FC = () => {
             const rowOne = rows[rowIndex];
             const rowTwo = rows[rowIndex - 1];
             swapRows(rowOne, rowTwo)
-                .catch((error) => console.log(error))
+                .catch((error) => void logError("Upsert error with packing slot row order", error))
                 .finally(() => setIsLoading(false));
         }
         setIsLoading(false);
@@ -192,7 +192,7 @@ const PackingSlotsTable: React.FC = () => {
             const clickedRow = rows[rowIndex];
             const rowBelow = rows[rowIndex + 1];
             swapRows(clickedRow, rowBelow)
-                .catch((error) => console.log(error))
+                .catch((error) => void logError("Upsert error with packing slot row order", error))
                 .finally(() => setIsLoading(false));
         }
     };
