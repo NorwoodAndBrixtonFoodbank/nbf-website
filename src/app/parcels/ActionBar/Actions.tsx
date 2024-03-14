@@ -257,10 +257,7 @@ const Actions: React.FC<Props> = ({
     };
 
     const openInNewTab = (url: string): void => {
-        const newWindow = window.open(url, "_blank", "noopener, noreferrer");
-        if (newWindow) {
-            newWindow.opener = null;
-        }
+        window.open(url, "_blank", "noopener, noreferrer");
     };
 
     const onMapsClick = (
