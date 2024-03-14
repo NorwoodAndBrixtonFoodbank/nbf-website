@@ -34,30 +34,44 @@ const CheckboxAndTitleDiv = styled.div`
     min-width: 300px;
 `;
 
+const SelectAllCheckboxes = styled(Checkbox)`
+
+`;
+
 const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
     allLocations,
     currentLocations,
     editLocations,
 }) => {
-    const onChange = (event: React.ChangeEvent<HTMLInputElement>, location: string): void => {
-        if (event.target.checked) {
-            editLocations([...currentLocations, location]);
-        } else {
-            editLocations(currentLocations.filter((testLocation) => testLocation !== location));
-        }
+    const onCollectionCentreSelectionChange = (event: React.ChangeEvent<HTMLInputElement>, location: string): void => {
+        const newLocations = event.target.checked
+        ? currentLocations.concat(location)
+        : currentLocations.filter((testLocation) => testLocation !== location)
+
+        editLocations(newLocations);
     };
 
     const handleSelectAllChange = (): void => {
-        if (allLocations.length === currentLocations.length) {
-            editLocations([]);
-        } else {
-            editLocations([...allLocations]);
-        }
+        const toggleAllLocations = allLocations.length === currentLocations.length
+        ? ([])
+        : ([...allLocations]);
+
+        editLocations(toggleAllLocations);
     };
 
     return (
         <ContainerDiv>
             <h2>Shown Locations:</h2>
+            <FormControlLabel
+                    label={"Select All"}
+                    control={<SelectAllCheckboxes
+                            checked={allLocations.length === currentLocations.length}
+                            onChange={handleSelectAllChange}
+                        />
+                    }
+                />
+            <CheckboxAndTitleDiv>
+            </CheckboxAndTitleDiv>
             {allLocations.map((location) => {
                 return (
                     <CheckboxAndTitleDiv key={location}>
@@ -66,32 +80,13 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
                             control={
                                 <Checkbox
                                     checked={currentLocations.includes(location)}
-                                    onChange={(event) => {
-                                        if (currentLocations.includes(location)) {
-                                            onChange(event, location);
-                                        } else {
-                                            const oldSelectedLocations = [...currentLocations];
-                                            oldSelectedLocations.push(location);
-                                            editLocations(oldSelectedLocations);
-                                        }
-                                    }}
+                                    onChange={(event) => onCollectionCentreSelectionChange(event, location)}
                                 />
                             }
                         />
                     </CheckboxAndTitleDiv>
                 );
             })}
-            <CheckboxAndTitleDiv>
-                <FormControlLabel
-                    label="Select All"
-                    control={
-                        <Checkbox
-                            checked={allLocations.length === currentLocations.length}
-                            onChange={handleSelectAllChange}
-                        />
-                    }
-                />
-            </CheckboxAndTitleDiv>
         </ContainerDiv>
     );
 };
