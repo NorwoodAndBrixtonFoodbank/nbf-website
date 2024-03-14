@@ -59,6 +59,8 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
     * `npm run test:coverage` for a full coverage report at the end
   * Can open the Cypress UI to see individual results with `npm run open:cypress`
 
+* Use `npx supabase functions serve` if you are receiving an errors such as "congestion zone" to run Supabase functions locally.
+
 ### Supabase development
 
 To use the Supabase CLI:
