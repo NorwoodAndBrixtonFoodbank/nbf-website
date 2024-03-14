@@ -77,7 +77,7 @@ export const swapRows = async (row1: PackingSlotRow, row2: PackingSlotRow): Prom
         row2id: row2.id,
     });
     if (error) {
-        logError("Error with update: packing slots order", error);
+        void logError("Error with update: packing slots order", error);
         throw new DatabaseError("update", "packing slots order");
     }
 };
