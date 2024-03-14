@@ -40,9 +40,6 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
     currentLocations,
     editLocations,
 }) => {
-    useEffect(() => {
-        editLocations(allLocations)
-    })
     const onChange = (event: React.ChangeEvent<HTMLInputElement>, location: string): void => {
         if (event.target.checked) {
             editLocations([...currentLocations, location]);
@@ -65,7 +62,16 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
                             control={
                                 <Checkbox
                                     checked={currentLocations.includes(location)}
-                                    onChange={(event) => onChange(event, location)}
+                                    onChange={(event) => {
+                                        if (currentLocations.includes(location)) {
+                                            onChange(event, location)}
+                                            else {
+                                                const oldSelectedLocations =[...currentLocations];
+                                                oldSelectedLocations.push(location);
+                                                editLocations(oldSelectedLocations);
+                                            }
+                                        }
+                                    }
                                 />
                             }
                         />
