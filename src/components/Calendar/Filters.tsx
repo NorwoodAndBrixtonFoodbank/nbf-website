@@ -1,7 +1,6 @@
 "use client";
 
 import { Checkbox, FormControlLabel } from "@mui/material";
-import React, { useEffect } from "react";
 import styled from "styled-components";
 
 interface CalendarFilterAccordionProps {
@@ -43,24 +42,36 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
     const onChange = (event: React.ChangeEvent<HTMLInputElement>, location: string): void => {
         if (event.target.checked) {
             editLocations([...currentLocations, location]);
-            return;
+            } else {
+                editLocations(currentLocations.filter((testLocation) => testLocation !== location));            }
         }
-        editLocations(currentLocations.filter((testLocation) => testLocation !== location));
+    
+    const handleSelectAllChange = () => {
+        if (allLocations.length === currentLocations.length) {
+            editLocations([]);
+        } else {
+            editLocations([...allLocations]);
+        }
     };
+    
     return (
         <ContainerDiv>
             <h2>Shown Locations:</h2>
-                <p>Select All</p>
-                    <Checkbox
-                        checked={true}
-                    />
-            {allLocations.map((location) => {
-                return (
-                    <CheckboxAndTitleDiv key={location}>
+                    <CheckboxAndTitleDiv>
                         <FormControlLabel
-                            label={`${location}`}
-                            control={
-                                <Checkbox
+                            label={"Select All"}
+                            control={<Checkbox
+                                checked={allLocations.length === currentLocations.length}
+                                onChange={handleSelectAllChange}
+                            />
+                            }/>
+                    </CheckboxAndTitleDiv>
+                    {allLocations.map((location) => {
+                        return (
+                            <CheckboxAndTitleDiv key={location}>
+                                <FormControlLabel
+                                label={`${location}`}
+                                control={<Checkbox
                                     checked={currentLocations.includes(location)}
                                     onChange={(event) => {
                                         if (currentLocations.includes(location)) {
@@ -70,16 +81,14 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
                                                 oldSelectedLocations.push(location);
                                                 editLocations(oldSelectedLocations);
                                             }
-                                        }
-                                    }
+                                        }}
+                                    />}
                                 />
-                            }
-                        />
-                    </CheckboxAndTitleDiv>
-                );
-            })}
-        </ContainerDiv>
-    );
-};
+                            </CheckboxAndTitleDiv>
+                        );
+                    })}
+                </ContainerDiv>
+            );
+        };
 
 export default CalendarFilters;
