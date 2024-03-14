@@ -1,0 +1,57 @@
+name: Bug Report 2
+description: File a bug report
+labels: ["bug"]
+assignees:
+  - rickaw
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: repro-steps
+    validations:
+      required: true
+    attributes:
+      label: Reproduction steps
+      description: Steps to reproduce the bug
+      placeholder: When I press ... it does ...
+  - type: textarea
+    id: expected-behaviour
+    validations:
+      required: true
+    attributes:
+      label: Expected behaviour
+      description: A description of what you expected to happen
+      placeholder: When I press ... it should ...
+  - type: textarea
+    id: screenshots
+    validations:
+      required: false
+    attributes:
+      label: Screenshots / Videos
+      description: If applicable, please add screenshots to help explain the bug
+      placeholder: Please drag and drop your screenshots / videos
+  - type: dropdown
+    id: browsers
+    validations:
+      required: true
+    attributes:
+      label: What browsers are you seeing the problem on?
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+  - type: dropdown
+    id: os
+    validations:
+      required: true
+    attributes:
+      label: What OS is your computer running on?
+      options:
+        - macOS
+        - Windows
+        - Linux
+
