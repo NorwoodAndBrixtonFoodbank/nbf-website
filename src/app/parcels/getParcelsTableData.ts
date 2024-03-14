@@ -1,6 +1,6 @@
 import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fetchParcelTableData";
 import { familyCountToFamilyCategory } from "@/app/parcels/getExpandedParcelDetails";
-import { Schema } from "@/databaseUtils";
+import { Schema, ViewSchema } from "@/databaseUtils";
 
 export interface ParcelsTableRow {
     parcelId: Schema["parcels"]["primary_key"];
@@ -49,7 +49,7 @@ export const processingDataToParcelsTableData = (
             parcelId: parcel.parcel_id,
             primaryKey: client.primary_key,
             fullName: client.full_name,
-            familyCategory: familyCountToFamilyCategory(client.family.length),
+            familyCategory: familyCountToFamilyCategory(parcel.client ? parcel.client.family_count[0].family_count??0 : 0),
             addressPostcode: client.address_postcode,
             phoneNumber: client.phone_number,
             deliveryCollection: {
@@ -61,7 +61,7 @@ export const processingDataToParcelsTableData = (
                 ? new Date(parcel.collection_datetime)
                 : null,
             packingTimeLabel: datetimeToPackingTimeLabel(parcel.packing_datetime),
-            lastStatus: eventToLastStatus(parcel.events[0] ?? null),
+            lastStatus: eventToLastStatus(null),//parcel.last_status[0]??null),
             voucherNumber: parcel.voucher_number,
             packingDatetime: parcel.packing_datetime ? new Date(parcel.packing_datetime) : null,
             iconsColumn: {
@@ -85,9 +85,9 @@ export const datetimeToPackingTimeLabel = (datetime: string | null): PackingTime
 };
 
 export const eventToLastStatus = (
-    event: Pick<Schema["events"], "event_name" | "timestamp" | "event_data"> | undefined | null
+    event: Pick<ViewSchema["last_status_fp3"], "event_name" | "timestamp" | "event_data"> | undefined | null
 ): ParcelsTableRow["lastStatus"] => {
-    if (!event) {
+    if (!(event?.event_name && event.event_data && event.timestamp)) {
         return null;
     }
 

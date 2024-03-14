@@ -26,6 +26,7 @@ import {
     CollectionCentresOptions,
     LastStatusOptionsResponse,
     ParcelProcessingData,
+    StatusResponseRow,
     getAllValuesForKeys,
     getParcelIds,
     getParcelsCount,
@@ -82,11 +83,11 @@ const sortableColumns: SortOptions<ParcelsTableRow, any>[] = [
         sortMethod: (query, sortDirection) =>
             query.order("client(full_name)", { ascending: sortDirection === "asc" }),
     },
-    {
-        key: "familyCategory",
-        sortMethod: (query, sortDirection) =>
-            query.order("family_count(family_count)", { ascending: sortDirection === "asc" }),
-    },
+    // {
+    //     key: "familyCategory",
+    //     sortMethod: (query, sortDirection) =>
+    //         query.order("client(family_count(family_count))", { ascending: sortDirection === "asc" }),
+    // },
     {
         key: "addressPostcode",
         sortMethod: (query, sortDirection) =>
@@ -113,7 +114,8 @@ const sortableColumns: SortOptions<ParcelsTableRow, any>[] = [
             query.order("packing_datetime", { ascending: sortDirection === "asc" }),
     },
     //{key: "packingTimeLabel",sortMethod: (query, sortDirection) => query.order("client(full_name)", {ascending: sortDirection === "asc"})}, broke
-    //{ key: "lastStatus", sortMethod: sortStatusByWorkflowOrder }, to dofix
+    // { key: "lastStatus", sortMethod: (query, sortDirection) =>
+    // query.order("last_status(workflow_order)", { ascending: sortDirection === "asc" })}
 ];
 
 const toggleableHeaders: (keyof ParcelsTableRow)[] = [
@@ -203,22 +205,22 @@ const familySearch = (
         return query;
     }
     if ("Single".includes(state) || "single".includes(state)) {
-        return query.lte("family_count.family_count", 1);
+        return query.lte("client.family_count.family_count", 1);
     }
     if ("Family of".includes(state) || "family of".includes(state)) {
-        return query.gte("family_count.family_count", 2);
+        return query.gte("client.family_count.family_count", 2);
     }
     const stateAsNumber = Number(state);
     if (Number.isNaN(stateAsNumber)) {
-        return query.eq("family_count.family_count", -1);
+        return query.eq("client.family_count.family_count", -1);
     }
     if (stateAsNumber >= 10) {
-        return query.gte("family_count.family_count", 10);
+        return query.gte("client.family_count.family_count", 10);
     }
     if (stateAsNumber <= 1) {
-        return query.lte("family_count.family_count", 1);
+        return query.lte("client.family_count.family_count", 1);
     }
-    return query.eq("family_count.family_count", Number(state));
+    return query.eq("client.family_count.family_count", Number(state));
 };
 
 const phoneSearch = (
@@ -268,7 +270,7 @@ const buildDeliveryCollectionFilter = async (): Promise<Filter<ParcelsTableRow, 
     const keySet = new Set();
     const response: Partial<ParcelProcessingData> = await getAllValuesForKeys<
         Partial<ParcelProcessingData>
-    >(supabase, getAllDeliveryCollectionOptions);
+    >(supabase, "parcels", getAllDeliveryCollectionOptions);
     const optionsSet: CollectionCentresOptions[] = response.reduce<CollectionCentresOptions[]>(
         (filteredOptions, row) => {
             if (row?.collection_centre && !keySet.has(row.collection_centre.acronym)) {
@@ -323,23 +325,23 @@ const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.in("events.event_name", state); //not sure if this will work?
+        return query//.in("last_status.event_name", state);
     };
 
     const getAllLastStatusOptions = (
         query: PostgrestQueryBuilder<Database["public"], any, any>
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.select(" parcel_id:primary_key, packing_datetime, last_status(event_name)");
+        return query.select("event_name");
     };
     const keySet = new Set();
-    const response: LastStatusOptionsResponse[] = await getAllValuesForKeys<
-        LastStatusOptionsResponse[]
-    >(supabase, getAllLastStatusOptions);
+    const response: StatusResponseRow[] = await getAllValuesForKeys<
+    StatusResponseRow[]
+    >(supabase, "status_order", getAllLastStatusOptions);
     console.log(response);
     const optionsSet: string[] = response.reduce<string[]>((filteredOptions, row) => {
-        if (row?.last_status[0] && !keySet.has(row?.last_status[0].event_name)) {
-            keySet.add(row?.last_status[0].event_name);
-            filteredOptions.push(row?.last_status[0].event_name);
+        if (row.event_name && !keySet.has(row.event_name)) {
+            keySet.add(row.event_name);
+            filteredOptions.push(row.event_name);
         }
         return filteredOptions.sort();
     }, []);

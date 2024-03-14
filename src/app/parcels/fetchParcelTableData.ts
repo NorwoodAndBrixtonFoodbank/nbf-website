@@ -2,9 +2,10 @@ import { Supabase } from "@/supabaseUtils";
 import { DatabaseError, EdgeFunctionError } from "../errorClasses";
 import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsTableData";
 import { Filter, FilterMethodType } from "@/components/Tables/Filters";
-import { SortState } from "@/components/Tables/Table";
+import Table, { SortState } from "@/components/Tables/Table";
 import { PostgrestQueryBuilder, PostgrestFilterBuilder } from "@supabase/postgrest-js";
-import { Database } from "@/databaseTypesFile";
+import { Database, Tables } from "@/databaseTypesFile";
+import { TableNames } from "@/databaseUtils";
 
 export type CongestionChargeDetails = {
     postcode: string;
@@ -63,28 +64,21 @@ export const getParcelProcessingData = async (
             signposting_call_required,
             phone_number,
             
-            family:families (
-                age,
-                gender
+            family_count:family_count8!inner(
+                family_count
             )
-        ),
-        
-        events!inner (
-            event_name,
-            event_data,
-            timestamp
-        ),
-        family_count!inner(*)
-    `
+        )
+    `    
+    //    last_status:last_status_z2!inner(parcel_id, event_name, timestamp, event_data, workflow_order)
+    //`
     );
+    //query.limit(1, {foreignTable: "family_count"});
+   // query.limit(1, {foreignTable: "last_status"})
     if (sortState.sort && sortState.column.sortMethod) {
         query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
         query = query.order("packing_datetime", { ascending: false });
     }
-    query = query
-        .order("timestamp", { ascending: false, foreignTable: "events" })
-        .limit(1, { foreignTable: "events" });
 
     filters.forEach((filter) => {
         if (filter.methodConfig.methodType === FilterMethodType.Server) {
@@ -103,6 +97,7 @@ export const getParcelProcessingData = async (
     const { data, error } = await query;
 
     if (error) {
+        console.error(error);
         throw new DatabaseError("fetch", "parcel table data");
     }
     return data ?? [];
@@ -136,42 +131,36 @@ export const getParcelsCount = async (
 ): Promise<number> => {
     let query = supabase.from("parcels").select(
         `
-  parcel_id:primary_key,
-  
-  collection_centre:collection_centres!inner ( 
-      name, 
-      acronym
-   ),
-   
-  collection_datetime,
-  packing_datetime,
-  voucher_number,
-  
-  client:clients!inner (
-      primary_key,
-      full_name,
-      address_postcode,
-      flagged_for_attention,
-      signposting_call_required,
-      phone_number,
-      
-      family:families (
-          age,
-          gender
-      )
-  ),
-  
-  events!inner (
-      event_name,
-      event_data,
-      timestamp
-  ),
-  
-      family_count!inner(*)
-    
-`,
-        { count: "exact", head: true }
+        parcel_id:primary_key,
+        
+        collection_centre:collection_centres!inner ( 
+            name, 
+            acronym
+         ),
+         
+        collection_datetime,
+        packing_datetime,
+        voucher_number,
+        
+        client:clients!inner (
+            primary_key,
+            full_name,
+            address_postcode,
+            flagged_for_attention,
+            signposting_call_required,
+            phone_number,
+            
+            family_count:family_count8!inner(
+                family_count
+            )
+        )
+    `    
+    //    last_status:last_status_z2!inner(parcel_id, event_name, timestamp, event_data, workflow_order)
+    //`,
+    ,    { count: "exact", head: true }
     );
+    //query.limit(1, {foreignTable: "family_count"});
+    //query.limit(1, {foreignTable: "last_status"})
 
     filters.forEach((filter) => {
         if (filter.methodConfig.methodType === FilterMethodType.Server) {
@@ -181,11 +170,10 @@ export const getParcelsCount = async (
 
     query = query
         .order("packing_datetime", { ascending: false })
-        .order("timestamp", { ascending: false, foreignTable: "events" })
-        .limit(1, { foreignTable: "events" });
 
     const { count, error } = await query;
     if (error || count === null) {
+        console.error(error);
         throw new DatabaseError("fetch", "parcels");
     }
     return count;
@@ -210,26 +198,23 @@ export const getParcelIds = async (
       voucher_number,
       
       client:clients!inner (
-          primary_key,
-          full_name,
-          address_postcode,
-          flagged_for_attention,
-          signposting_call_required,
-          phone_number,
-          
-          family:families (
-              age,
-              gender
-          )
-      ),
-      
-      events!inner (
-          event_name,
-          event_data,
-          timestamp
-      )
+        primary_key,
+        full_name,
+        address_postcode,
+        flagged_for_attention,
+        signposting_call_required,
+        phone_number,
+        
+        family_count:family_count8(
+            family_count
+        )
+    )
     `
+    //last_status:last_status_z2!inner(parcel_id, event_name, timestamp, event_data, workflow_order)
+    //`
     );
+    //query.limit(1, {foreignTable: "family_count"});
+    //query.limit(1, {foreignTable: "last_status"});
 
     filters.forEach((filter) => {
         if (filter.methodConfig.methodType === FilterMethodType.Server) {
@@ -241,9 +226,6 @@ export const getParcelIds = async (
     } else {
         query = query.order("packing_datetime", { ascending: false });
     }
-    query = query
-        .order("timestamp", { ascending: false, foreignTable: "events" })
-        .limit(1, { foreignTable: "events" });
 
     const { data, error } = await query;
     if (error) {
@@ -254,14 +236,15 @@ export const getParcelIds = async (
 
 export const getAllValuesForKeys = async <Return>(
     supabase: Supabase,
+    table: TableNames,
     selectMethod: (
         query: PostgrestQueryBuilder<Database["public"], any, any>
     ) => PostgrestFilterBuilder<Database["public"], any, any>
 ): Promise<Return> => {
-    const query = selectMethod(supabase.from("parcels"));
+    const query = selectMethod(supabase.from(table));
     const { data, error } = await query;
     if (error) {
-        throw new DatabaseError("fetch", "parcels");
+        throw new DatabaseError("fetch", table);
     }
     return data ?? [];
 };
@@ -275,4 +258,8 @@ export interface LastStatusOptionsResponse {
     parcel_id: string;
     packing_datetime: Date;
     last_status: { event_name: string }[];
+}
+
+export interface StatusResponseRow {
+    event_name: string
 }

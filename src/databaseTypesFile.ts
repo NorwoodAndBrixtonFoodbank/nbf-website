@@ -114,11 +114,32 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "events_event_name_fkey"
+            columns: ["event_name"]
+            isOneToOne: false
+            referencedRelation: "status_order"
+            referencedColumns: ["event_name"]
+          },
+          {
+            foreignKeyName: "events_parcel_id_fkey"
+            columns: ["parcel_id"]
+            isOneToOne: false
+            referencedRelation: "last_status"
+            referencedColumns: ["parcel_id"]
+          },
+          {
             foreignKeyName: "events_parcel_id_fkey"
             columns: ["parcel_id"]
             isOneToOne: false
             referencedRelation: "parcels"
             referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "events_parcel_id_fkey"
+            columns: ["parcel_id"]
+            isOneToOne: false
+            referencedRelation: "parcels_plus"
+            referencedColumns: ["parcel_id"]
           },
         ]
       }
@@ -321,7 +342,7 @@ export type Database = {
           collection_centre?: string | null
           collection_datetime?: string | null
           packing_datetime?: string | null
-          primary_key?: string
+          primary_key: string
           voucher_number?: string | null
         }
         Update: {
@@ -341,6 +362,13 @@ export type Database = {
             referencedColumns: ["primary_key"]
           },
           {
+            foreignKeyName: "parcels_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "parcels_plus"
+            referencedColumns: ["client_id"]
+          },
+          {
             foreignKeyName: "parcels_collection_centre_fkey"
             columns: ["collection_centre"]
             isOneToOne: false
@@ -348,6 +376,21 @@ export type Database = {
             referencedColumns: ["primary_key"]
           },
         ]
+      }
+      status_order: {
+        Row: {
+          event_name: string
+          workflow_order: number
+        }
+        Insert: {
+          event_name: string
+          workflow_order: number
+        }
+        Update: {
+          event_name?: string
+          workflow_order?: number
+        }
+        Relationships: []
       }
       website_data: {
         Row: {
@@ -366,7 +409,69 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      family_count: {
+        Row: {
+          family_count: number | null
+          family_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "families_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["family_id"]
+          },
+        ]
+      }
+      last_status: {
+        Row: {
+          event_data: string | null
+          event_name: string | null
+          parcel_id: string | null
+          timestamp: string | null
+          workflow_order: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_event_name_fkey"
+            columns: ["event_name"]
+            isOneToOne: false
+            referencedRelation: "status_order"
+            referencedColumns: ["event_name"]
+          },
+        ]
+      }
+      parcels_plus: {
+        Row: {
+          client_address_postcode: string | null
+          client_flagged_for_attention: boolean | null
+          client_full_name: string | null
+          client_id: string | null
+          client_phone_number: string | null
+          client_signposting_call_required: boolean | null
+          collection_centre_acronym: string | null
+          collection_centre_name: string | null
+          collection_datetime: string | null
+          family_count: number | null
+          last_status_event_data: string | null
+          last_status_event_name: string | null
+          last_status_timestamp: string | null
+          last_status_workflow_order: number | null
+          packing_datetime: string | null
+          parcel_id: string | null
+          voucher_number: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_event_name_fkey"
+            columns: ["last_status_event_name"]
+            isOneToOne: false
+            referencedRelation: "status_order"
+            referencedColumns: ["event_name"]
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never
