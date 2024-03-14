@@ -390,7 +390,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      parcel_slot_order_swap: {
+        Args: {
+          row1id: string
+          row2id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       gender: "male" | "female" | "other"

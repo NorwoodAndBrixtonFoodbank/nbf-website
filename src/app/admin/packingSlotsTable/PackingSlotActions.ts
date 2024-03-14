@@ -3,6 +3,7 @@ import { DatabaseError } from "@/app/errorClasses";
 import { GridRowId } from "@mui/x-data-grid";
 import { PackingSlotRow } from "@/app/admin/packingSlotsTable/PackingSlotsTable";
 import { Tables } from "@/databaseTypesFile";
+import { logError } from "@/logger/logger";
 
 type DbPackingSlot = Tables<"packing_slots">;
 type NewDbPackingSlot = Omit<DbPackingSlot, "primary_key">;
@@ -71,68 +72,12 @@ export const dbPackingSlotToDelete = async (id: GridRowId): Promise<void> => {
 };
 
 export const swapRows = async (row1: PackingSlotRow, row2: PackingSlotRow): Promise<void> => {
-    const updatedRowsAfterFirstSwap = await swapRowTwoToRowOneOrder(row1, row2);
-
-    if (row1.order - row2.order > 0) {
-        await swapRowOneToRowTwoOrderUpClick(updatedRowsAfterFirstSwap);
-    } else {
-        await swapRowOneToRowTwoOrderDownClick(updatedRowsAfterFirstSwap);
-    }
-};
-
-const swapRowTwoToRowOneOrder = async (
-    row1: PackingSlotRow,
-    row2: PackingSlotRow
-): Promise<DbPackingSlot[]> => {
-    const { data, error } = await supabase
-        .from("packing_slots")
-        .upsert([
-            {
-                primary_key: row1.id,
-                order: -1,
-                name: row1.name,
-                is_shown: row1.isShown,
-            },
-            {
-                primary_key: row2.id,
-                order: row1.order,
-                name: row2.name,
-                is_shown: row2.isShown,
-            },
-        ])
-        .select();
-
+    const { error } = await supabase.rpc("parcel_slot_order_swap", {
+        row1id: row1.id,
+        row2id: row2.id,
+    });
     if (error) {
-        throw new DatabaseError("update", "packing_slots");
-    }
-
-    return data;
-};
-
-const swapRowOneToRowTwoOrderUpClick = async (
-    updatedRowsAfterFirstSwap: DbPackingSlot[]
-): Promise<void> => {
-    const { error } = await supabase
-        .from("packing_slots")
-        .update({
-            order: updatedRowsAfterFirstSwap[1].order - 1,
-        })
-        .eq("primary_key", updatedRowsAfterFirstSwap[0].primary_key);
-
-    if (error) {
-        throw new DatabaseError("update", "packing_slots");
-    }
-};
-
-const swapRowOneToRowTwoOrderDownClick = async (updatedRows: DbPackingSlot[]): Promise<void> => {
-    const { error } = await supabase
-        .from("packing_slots")
-        .update({
-            order: updatedRows[1].order + 1,
-        })
-        .eq("primary_key", updatedRows[0].primary_key);
-
-    if (error) {
-        throw new DatabaseError("update", "packing_slots");
+        logError("Error with update: packing slots order", error);
+        throw new DatabaseError("update", "packing slots order");
     }
 };
