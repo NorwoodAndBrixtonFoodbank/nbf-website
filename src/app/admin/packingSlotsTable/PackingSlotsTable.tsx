@@ -134,10 +134,6 @@ const PackingSlotsTable: React.FC = () => {
         return newRow;
     };
 
-    const handleRowModesModelChange = (newRowModesModel: GridRowModesModel): void => {
-        setRowModesModel(newRowModesModel);
-    };
-
     const handleRowEditStop: GridEventListener<"rowEditStop"> = (params, event) => {
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {
             event.defaultMuiPrevented = true;
@@ -315,7 +311,7 @@ const PackingSlotsTable: React.FC = () => {
                     columns={packingSlotsColumns}
                     editMode="row"
                     rowModesModel={rowModesModel}
-                    onRowModesModelChange={handleRowModesModelChange}
+                    onRowModesModelChange={setRowModesModel}
                     onRowEditStop={handleRowEditStop}
                     processRowUpdate={processRowUpdate}
                     slots={{
