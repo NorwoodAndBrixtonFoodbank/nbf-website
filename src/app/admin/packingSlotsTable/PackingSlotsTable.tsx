@@ -30,7 +30,7 @@ import {
     dbPackingSlotToUpdate,
 } from "@/app/admin/packingSlotsTable/PackingSlotActions";
 import { LinearProgress } from "@mui/material";
-import { logError } from "@/logger/logger";
+import { logError, logInfo } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 
 interface EditToolbarProps {
@@ -98,7 +98,15 @@ const PackingSlotsTable: React.FC = () => {
                 { event: "*", schema: "public", table: "packing_slots" },
                 async () => setRows(await fetchPackingSlots())
             )
-            .subscribe();
+            .subscribe((status) => {
+                if (status === "TIMED_OUT") {
+                    void logError("Channel Timed Out: Subscribe to packing_slot table");
+                } else if (status === "CHANNEL_ERROR") {
+                    void logError("Channel Error: Subscribe to packing_slot table");
+                } else if (status === "SUBSCRIBED") {
+                    void logInfo("Subscribed to packing_slot table");
+                }
+            });
 
         return () => {
             supabase.removeChannel(subscriptionChannel);
