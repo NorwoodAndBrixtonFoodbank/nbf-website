@@ -202,7 +202,7 @@ const Actions: React.FC<Props> = ({
     modalError,
     setModalError,
 }) => {
-    const [selectedAction, setSelectedAction] = useState<ActionName | null>(null);
+    const [modalToDisplay, setModalToDisplay] = useState<ActionName | null>(null);
     const [labelQuantity, setLabelQuantity] = useState<number>(0);
     const [date, setDate] = useState(dayjs());
     const [driverName, setDriverName] = useState("");
@@ -225,7 +225,7 @@ const Actions: React.FC<Props> = ({
     };
 
     const onModalClose = (): void => {
-        setSelectedAction(null);
+        setModalToDisplay(null);
         setModalError(null);
         setDate(dayjs());
         setDriverName("");
@@ -241,7 +241,7 @@ const Actions: React.FC<Props> = ({
                 setActionAnchorElement(null);
                 setModalError(errorMessage);
             } else {
-                setSelectedAction(key);
+                setModalToDisplay(key);
                 setActionAnchorElement(null);
                 setModalError(null);
             }
@@ -279,7 +279,7 @@ const Actions: React.FC<Props> = ({
         <>
             {Object.entries(availableActions).map(([key, value]) => {
                 return (
-                    selectedAction === key && (
+                    modalToDisplay === key && (
                         <ActionsModal
                             key={key}
                             showSelectedParcels={value.showSelectedParcelsInModal}
@@ -304,7 +304,7 @@ const Actions: React.FC<Props> = ({
                             }
                         >
                             <ActionsButton
-                                pdfType={selectedAction}
+                                pdfType={modalToDisplay}
                                 selectedParcels={selectedParcels}
                                 date={date}
                                 labelQuantity={labelQuantity}
