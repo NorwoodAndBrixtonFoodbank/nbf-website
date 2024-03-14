@@ -333,7 +333,7 @@ const Actions: React.FC<Props> = ({
                                                   key as ActionName,
                                                   value.errorCondition,
                                                   value.errorMessage
-                                            )
+                                              ) // eslint-disable-line indent
                                     }
                                 >
                                     {key}
