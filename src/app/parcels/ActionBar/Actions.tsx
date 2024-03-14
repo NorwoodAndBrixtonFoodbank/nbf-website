@@ -38,7 +38,8 @@ type ActionName =
     | "Download Shopping Lists"
     | "Download Driver Overview"
     | "Download Day Overview"
-    | "Delete Parcel Request";
+    | "Delete Parcel Request"
+    | "Generate Map";
 
 type AvailableActionsType = {
     [actionKey in ActionName]: {
@@ -81,14 +82,14 @@ const availableActions: AvailableActionsType = {
         errorMessage: "Please select at least one parcel.",
         actionType: "deleteParcel",
     },
-};
-
-const generateMapAction = {
     "Generate Map": {
+        showSelectedParcelsInModal: false,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
+        actionType: "generateMap",
     },
 };
+
 interface ActionsInputComponentProps {
     actionName: ActionName;
     selectedParcels: ParcelsTableRow[];
@@ -319,27 +320,33 @@ const Actions: React.FC<Props> = ({
                 >
                     <MenuList id="action-menu">
                         {Object.entries(availableActions).map(([key, value]) => {
-                            return (
-                                <MenuItem
-                                    key={key}
-                                    onClick={onMenuItemClick(
-                                        key as ActionName,
-                                        value.errorCondition,
-                                        value.errorMessage
-                                    )}
-                                >
-                                    {key}
-                                </MenuItem>
-                            );
+                            if (key !== "Generate Map") {
+                                return (
+                                    <MenuItem
+                                        key={key}
+                                        onClick={onMenuItemClick(
+                                            key as ActionName,
+                                            value.errorCondition,
+                                            value.errorMessage
+                                        )}
+                                    >
+                                        {key}
+                                    </MenuItem>
+                                );
+                            } else {
+                                return (
+                                    <MenuItem
+                                        key={key}
+                                        onClick={onMapsClick(
+                                            value.errorCondition,
+                                            value.errorMessage
+                                        )}
+                                    >
+                                        {key}
+                                    </MenuItem>
+                                );
+                            }
                         })}
-                        <MenuItem
-                            onClick={onMapsClick(
-                                generateMapAction["Generate Map"].errorCondition,
-                                generateMapAction["Generate Map"].errorMessage
-                            )}
-                        >
-                            Generate Map
-                        </MenuItem>
                     </MenuList>
                 </Menu>
             )}
