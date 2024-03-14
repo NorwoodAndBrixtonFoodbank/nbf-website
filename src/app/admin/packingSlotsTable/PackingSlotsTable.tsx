@@ -136,6 +136,7 @@ const PackingSlotsTable: React.FC = () => {
 
     const handleRowEditStop: GridEventListener<"rowEditStop"> = (params, event) => {
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+            //prevents default behaviour of saving the edited state when clicking away from row being edited, force user to use save or cancel buttons
             event.defaultMuiPrevented = true;
         }
     };
