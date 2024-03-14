@@ -80,10 +80,7 @@ const PackingSlotsTable: React.FC = () => {
         fetchPackingSlots()
             .then((response) => setRows(response))
             .catch((error) => {
-                const meta = {
-                    error: error,
-                };
-                void logError("Error fetching packing slots", meta);
+                void logError("Error fetching packing slots", error);
                 throw new DatabaseError("fetch", "packing slots");
             })
             .finally(() => setIsLoading(false));
@@ -176,7 +173,7 @@ const PackingSlotsTable: React.FC = () => {
             const rowOne = rows[rowIndex];
             const rowTwo = rows[rowIndex - 1];
             swapRows(rowOne, rowTwo)
-                .catch((error) => void logError("Upsert error with packing slot row order", error))
+                .catch((error) => void logError("Update error with packing slot row order", error))
                 .finally(() => setIsLoading(false));
         }
         setIsLoading(false);
@@ -189,7 +186,7 @@ const PackingSlotsTable: React.FC = () => {
             const clickedRow = rows[rowIndex];
             const rowBelow = rows[rowIndex + 1];
             swapRows(clickedRow, rowBelow)
-                .catch((error) => void logError("Upsert error with packing slot row order", error))
+                .catch((error) => void logError("Update error with packing slot row order", error))
                 .finally(() => setIsLoading(false));
         }
     };
