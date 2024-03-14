@@ -1,6 +1,6 @@
 set check_function_bodies = off;
 
-CREATE OR REPLACE FUNCTION public.parcel_slot_order_swap(row1id uuid, row2id uuid)
+CREATE OR REPLACE FUNCTION public.packing_slot_order_swap(id1 uuid, id2 uuid)
  RETURNS void
  LANGUAGE plpgsql
 AS $function$DECLARE

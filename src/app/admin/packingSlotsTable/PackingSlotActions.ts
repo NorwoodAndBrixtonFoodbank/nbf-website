@@ -72,9 +72,9 @@ export const deleteDbPackingSlot = async (id: GridRowId): Promise<void> => {
 };
 
 export const swapRows = async (row1: PackingSlotRow, row2: PackingSlotRow): Promise<void> => {
-    const { error } = await supabase.rpc("parcel_slot_order_swap", {
-        row1id: row1.id,
-        row2id: row2.id,
+    const { error } = await supabase.rpc("packing_slot_order_swap", {
+        id1: row1.id,
+        id2: row2.id,
     });
     if (error) {
         void logError("Error with update: packing slots order", error);

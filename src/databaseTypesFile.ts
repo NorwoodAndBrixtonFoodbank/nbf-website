@@ -390,10 +390,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      parcel_slot_order_swap: {
+      packing_slot_order_swap: {
         Args: {
-          row1id: string
-          row2id: string
+          id1: string
+          id2: string
         }
         Returns: undefined
       }
