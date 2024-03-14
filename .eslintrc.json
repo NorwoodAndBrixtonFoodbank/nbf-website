@@ -41,5 +41,5 @@
     "react/jsx-key": "error",
     "react/no-array-index-key": "error"
   },
-  "ignorePatterns": ["databaseTypesFile.ts"]
+  "ignorePatterns": ["databaseTypesFile.ts", "database.types.ts"]
 }
