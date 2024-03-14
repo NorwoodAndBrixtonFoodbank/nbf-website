@@ -2,13 +2,10 @@ import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { GridRowId } from "@mui/x-data-grid";
 import { PackingSlotRow } from "@/app/admin/packingSlotsTable/PackingSlotsTable";
+import { Tables } from "@/databaseTypesFile";
 
-interface DBPackingSlotData {
-    primary_key?: string;
-    name: string;
-    is_shown: boolean;
-    order: number;
-}
+type DbPackingSlot = Tables<"packing_slots">;
+type NewDbPackingSlot = Omit<DbPackingSlot, "primary_key">;
 
 export const fetchPackingSlots = async (): Promise<PackingSlotRow[]> => {
     const { data, error } = await supabase.from("packing_slots").select().order("order");
@@ -27,7 +24,7 @@ export const fetchPackingSlots = async (): Promise<PackingSlotRow[]> => {
     );
 };
 
-const formatExistingRowToDBPackingSlot = (row: PackingSlotRow): DBPackingSlotData => {
+const formatExistingRowToDBPackingSlot = (row: PackingSlotRow): DbPackingSlot => {
     return {
         primary_key: row.id,
         name: row.name,
@@ -36,7 +33,7 @@ const formatExistingRowToDBPackingSlot = (row: PackingSlotRow): DBPackingSlotDat
     };
 };
 
-const formatNewRowToDBPackingSlot = (newRow: PackingSlotRow): DBPackingSlotData => {
+const formatNewRowToDBPackingSlot = (newRow: PackingSlotRow): NewDbPackingSlot => {
     return {
         name: newRow.name,
         is_shown: newRow.isShown,
@@ -86,7 +83,7 @@ export const swapRows = async (rowOne: PackingSlotRow, rowTwo: PackingSlotRow): 
 const swapRowTwoToRowOneOrder = async (
     rowOne: PackingSlotRow,
     rowTwo: PackingSlotRow
-): Promise<DBPackingSlotData[]> => {
+): Promise<DbPackingSlot[]> => {
     const { data, error } = await supabase
         .from("packing_slots")
         .upsert([
@@ -113,7 +110,7 @@ const swapRowTwoToRowOneOrder = async (
 };
 
 const swapRowOneToRowTwoOrderUpClick = async (
-    updatedRowsAfterFirstSwap: DBPackingSlotData[]
+    updatedRowsAfterFirstSwap: DbPackingSlot[]
 ): Promise<void> => {
     const { error } = await supabase
         .from("packing_slots")
@@ -127,9 +124,7 @@ const swapRowOneToRowTwoOrderUpClick = async (
     }
 };
 
-const swapRowOneToRowTwoOrderDownClick = async (
-    updatedRows: DBPackingSlotData[]
-): Promise<void> => {
+const swapRowOneToRowTwoOrderDownClick = async (updatedRows: DbPackingSlot[]): Promise<void> => {
     const { error } = await supabase
         .from("packing_slots")
         .update({
