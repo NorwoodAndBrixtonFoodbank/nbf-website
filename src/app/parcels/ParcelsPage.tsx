@@ -323,7 +323,7 @@ const ParcelsPage: React.FC<{}> = () => {
     };
 
     const onParcelTableRowClick = (row: Row<ParcelsTableRow>, event: React.MouseEvent): void => {
-        const target = event.target as HTMLDivElement;
+        const target = event.target as HTMLElement;
         if (target.children.length > 0 && target.children[0].tagName === "INPUT") {
             return;
         } else {
