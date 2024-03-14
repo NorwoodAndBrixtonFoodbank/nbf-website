@@ -42,7 +42,7 @@ const formatNewRowToDBPackingSlot = (newRow: PackingSlotRow): NewDbPackingSlot =
     };
 };
 
-export const dbPackingSlotToInsert = async (newRow: PackingSlotRow): Promise<void> => {
+export const insertNewPackingSlot = async (newRow: PackingSlotRow): Promise<void> => {
     const data = formatNewRowToDBPackingSlot(newRow);
     const { error } = await supabase.from("packing_slots").insert(data);
 
@@ -51,7 +51,7 @@ export const dbPackingSlotToInsert = async (newRow: PackingSlotRow): Promise<voi
     }
 };
 
-export const dbPackingSlotToUpdate = async (row: PackingSlotRow): Promise<void> => {
+export const updateDbPackingSlot = async (row: PackingSlotRow): Promise<void> => {
     const processedData = formatExistingRowToDBPackingSlot(row);
     const { error } = await supabase
         .from("packing_slots")
@@ -63,7 +63,7 @@ export const dbPackingSlotToUpdate = async (row: PackingSlotRow): Promise<void> 
     }
 };
 
-export const dbPackingSlotToDelete = async (id: GridRowId): Promise<void> => {
+export const deleteDbPackingSlot = async (id: GridRowId): Promise<void> => {
     const { error } = await supabase.from("packing_slots").delete().eq("primary_key", id);
 
     if (error) {

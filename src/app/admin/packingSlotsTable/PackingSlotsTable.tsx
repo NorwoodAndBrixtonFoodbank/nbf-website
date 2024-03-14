@@ -23,11 +23,11 @@ import CancelIcon from "@mui/icons-material/Close";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import {
-    dbPackingSlotToInsert,
-    dbPackingSlotToDelete,
+    insertNewPackingSlot,
+    deleteDbPackingSlot,
     fetchPackingSlots,
     swapRows,
-    dbPackingSlotToUpdate,
+    updateDbPackingSlot,
 } from "@/app/admin/packingSlotsTable/PackingSlotActions";
 import { LinearProgress } from "@mui/material";
 import { logError, logInfo } from "@/logger/logger";
@@ -123,11 +123,11 @@ const PackingSlotsTable: React.FC = () => {
     const processRowUpdate = (newRow: PackingSlotRow): PackingSlotRow => {
         setIsLoading(true);
         if (newRow.isNew) {
-            dbPackingSlotToInsert(newRow)
+            insertNewPackingSlot(newRow)
                 .catch((error) => void logError("Insert error with packing slot row", error))
                 .finally(() => setIsLoading(false));
         } else {
-            dbPackingSlotToUpdate(newRow)
+            updateDbPackingSlot(newRow)
                 .catch((error) => void logError("Update error with packing slot row", error))
                 .finally(() => setIsLoading(false));
         }
@@ -150,7 +150,7 @@ const PackingSlotsTable: React.FC = () => {
 
     const handleDeleteClick = (id: GridRowId) => () => {
         setIsLoading(true);
-        dbPackingSlotToDelete(id)
+        deleteDbPackingSlot(id)
             .catch((error) => void logError("Delete error with packing slot row", error))
             .finally(() => setIsLoading(false));
     };
