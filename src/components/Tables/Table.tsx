@@ -371,14 +371,12 @@ const StyledIcon = styled(Icon)`
 
 const TableStyling = styled.div`
     // the component with the filter bars
-
     & > header {
         background-color: transparent;
         padding: 0;
     }
 
     // the entire table component including the header and the pagination bar
-
     & > div {
         border-radius: 1rem;
         background-color: transparent;
@@ -400,13 +398,11 @@ const TableStyling = styled.div`
     }
 
     // the icons in the pagination bar
-
     & svg {
         fill: ${(props) => props.theme.main.lighterForeground[0]};
     }
 
     // formatting all direct children to adhere to the theme
-
     & > div {
         background-color: ${(props) => props.theme.main.background[0]};
         color: ${(props) => props.theme.main.foreground[0]};
@@ -414,7 +410,6 @@ const TableStyling = styled.div`
     }
 
     // the filter bars
-
     & input[type="text"] {
         color: ${(props) => props.theme.main.lighterForeground[1]};
         background-color: ${(props) => props.theme.main.background[1]};
@@ -435,14 +430,12 @@ const TableStyling = styled.div`
         padding: 0 0 0 1rem;
 
         // allowing text overflow so the titles don't get unnecessarily clipped due to react-data-table's layout
-
         & > * {
             overflow: visible;
         }
     }
 
     // the table itself
-
     & .rdt_TableCell,
     & .rdt_TableCol_Sortable,
     & .rdt_TableHeadRow,
@@ -479,7 +472,6 @@ const TableStyling = styled.div`
 
     & .rdt_TableCell {
         // the div containing the text
-
         & > div {
             white-space: normal;
         }
