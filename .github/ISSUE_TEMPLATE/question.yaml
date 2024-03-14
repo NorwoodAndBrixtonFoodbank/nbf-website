@@ -1,0 +1,14 @@
+name: Question
+description: Ask a question to the team
+labels: ["question"]
+assignees:
+  - rickaw
+body:
+  - type: textarea
+    id: question
+    validations:
+      required: true
+    attributes:
+      label: What is your question?
+      placeholder: How do I do ...?
+
