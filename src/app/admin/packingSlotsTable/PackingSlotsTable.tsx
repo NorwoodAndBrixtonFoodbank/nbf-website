@@ -209,7 +209,9 @@ const PackingSlotsTable: React.FC = () => {
                             key="Down"
                         />,
                     ];
-                } else if (rows && row.order === rows.length) {
+                }
+
+                if (rows && row.order === rows.length) {
                     return [
                         <GridActionsCellItem
                             icon={<ArrowCircleUpIcon />}
@@ -218,27 +220,27 @@ const PackingSlotsTable: React.FC = () => {
                             onClick={handleUpClick(id, row)}
                             color="inherit"
                             key="Up"
-                        />,
-                    ];
-                } else {
-                    return [
-                        <GridActionsCellItem
-                            icon={<ArrowCircleUpIcon />}
-                            label="Up"
-                            className="textPrimary"
-                            onClick={handleUpClick(id, row)}
-                            color="inherit"
-                            key="Up"
-                        />,
-                        <GridActionsCellItem
-                            icon={<ArrowCircleDownIcon />}
-                            label="Down"
-                            onClick={handleDownClick(id, row)}
-                            color="inherit"
-                            key="Down"
                         />,
                     ];
                 }
+
+                return [
+                    <GridActionsCellItem
+                        icon={<ArrowCircleUpIcon />}
+                        label="Up"
+                        className="textPrimary"
+                        onClick={handleUpClick(id, row)}
+                        color="inherit"
+                        key="Up"
+                    />,
+                    <GridActionsCellItem
+                        icon={<ArrowCircleDownIcon />}
+                        label="Down"
+                        onClick={handleDownClick(id, row)}
+                        color="inherit"
+                        key="Down"
+                    />,
+                ];
             },
         },
         { field: "name", headerName: "Slot Name", flex: 1, editable: true },
