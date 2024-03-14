@@ -324,7 +324,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const onParcelTableRowClick = (row: Row<ParcelsTableRow>, event: React.MouseEvent): void => {
         const target = event.target as HTMLElement;
-        if (target.children.length > 0 && target.children[0].tagName === "INPUT") {
+        if (target.id.startsWith("cell-1")) {
             return;
         } else {
             setSelectedParcelId(row.data.parcelId);
