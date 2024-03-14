@@ -27,7 +27,7 @@ export const fetchPackingSlots = async (): Promise<PackingSlotRow[]> => {
     );
 };
 
-const getDbPackingSlotFromTableRow = (row: PackingSlotRow): DBPackingSlotData => {
+const formatExistingRowToDBPackingSlot = (row: PackingSlotRow): DBPackingSlotData => {
     return {
         primary_key: row.id,
         name: row.name,
@@ -36,7 +36,7 @@ const getDbPackingSlotFromTableRow = (row: PackingSlotRow): DBPackingSlotData =>
     };
 };
 
-const processNewRowData = (newRow: PackingSlotRow): DBPackingSlotData => {
+const formatNewRowToDBPackingSlot = (newRow: PackingSlotRow): DBPackingSlotData => {
     return {
         name: newRow.name,
         is_shown: newRow.isShown,
@@ -44,8 +44,8 @@ const processNewRowData = (newRow: PackingSlotRow): DBPackingSlotData => {
     };
 };
 
-export const createPackingSlot = async (newRow: PackingSlotRow): Promise<void> => {
-    const data = processNewRowData(newRow);
+export const dbPackingSlotToInsert = async (newRow: PackingSlotRow): Promise<void> => {
+    const data = formatNewRowToDBPackingSlot(newRow);
     const { error } = await supabase.from("packing_slots").insert(data);
 
     if (error) {
@@ -53,8 +53,8 @@ export const createPackingSlot = async (newRow: PackingSlotRow): Promise<void> =
     }
 };
 
-export const updatePackingSlot = async (row: PackingSlotRow): Promise<void> => {
-    const processedData = getDbPackingSlotFromTableRow(row);
+export const dbPackingSlotToUpdate = async (row: PackingSlotRow): Promise<void> => {
+    const processedData = formatExistingRowToDBPackingSlot(row);
     const { error } = await supabase
         .from("packing_slots")
         .update(processedData)
@@ -65,7 +65,7 @@ export const updatePackingSlot = async (row: PackingSlotRow): Promise<void> => {
     }
 };
 
-export const deletePackingSlot = async (id: GridRowId): Promise<void> => {
+export const dbPackingSlotToDelete = async (id: GridRowId): Promise<void> => {
     const { error } = await supabase.from("packing_slots").delete().eq("primary_key", id);
 
     if (error) {

@@ -23,11 +23,11 @@ import CancelIcon from "@mui/icons-material/Close";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import {
-    createPackingSlot,
-    deletePackingSlot,
+    dbPackingSlotToInsert,
+    dbPackingSlotToDelete,
     fetchPackingSlots,
     swapRows,
-    updatePackingSlot,
+    dbPackingSlotToUpdate,
 } from "@/app/admin/packingSlotsTable/PackingSlotActions";
 import { LinearProgress } from "@mui/material";
 import { logError } from "@/logger/logger";
@@ -108,11 +108,11 @@ const PackingSlotsTable: React.FC = () => {
     const processRowUpdate = (newRow: PackingSlotRow): PackingSlotRow => {
         setIsLoading(true);
         if (newRow.isNew) {
-            createPackingSlot(newRow)
+            dbPackingSlotToInsert(newRow)
                 .catch((error) => console.log(error))
                 .finally(() => setIsLoading(false));
         } else {
-            updatePackingSlot(newRow)
+            dbPackingSlotToUpdate(newRow)
                 .catch((error) => console.log(error))
                 .finally(() => setIsLoading(false));
         }
@@ -135,7 +135,7 @@ const PackingSlotsTable: React.FC = () => {
 
     const handleDeleteClick = (id: GridRowId) => () => {
         setIsLoading(true);
-        deletePackingSlot(id)
+        dbPackingSlotToDelete(id)
             .catch((error) => console.log(error))
             .finally(() => setIsLoading(false));
     };
