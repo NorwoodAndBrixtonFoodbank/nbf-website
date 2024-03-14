@@ -248,13 +248,12 @@ const Actions: React.FC<Props> = ({
         };
     };
 
-    const mapsLinkForParcels = (): string => {
-        let mapsLinkString = "https://www.google.com/maps/dir";
-        selectedParcels.forEach((parcel) => {
-            mapsLinkString = mapsLinkString.concat("/", parcel.addressPostcode);
-        });
-        mapsLinkString = mapsLinkString.concat("//");
-        return mapsLinkString;
+    const mapsLinkForSelectedParcels = (): string => {
+        return (
+            "https://www.google.com/maps/dir/" +
+            selectedParcels.map((parcel) => parcel.addressPostcode.replaceAll(" ", "")).join("/") +
+            "//"
+        );
     };
 
     const openInNewTab = (url: string): void => {
@@ -273,7 +272,7 @@ const Actions: React.FC<Props> = ({
                 setActionAnchorElement(null);
                 setModalError(errorMessage);
             } else {
-                const mapsLink = mapsLinkForParcels();
+                const mapsLink = mapsLinkForSelectedParcels();
                 openInNewTab(mapsLink);
             }
         };
