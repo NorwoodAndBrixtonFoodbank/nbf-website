@@ -31,6 +31,7 @@ import {
 } from "@/app/admin/packingSlotsTable/PackingSlotActions";
 import { LinearProgress } from "@mui/material";
 import { logError } from "@/logger/logger";
+import { DatabaseError } from "@/app/errorClasses";
 
 interface EditToolbarProps {
     setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
@@ -75,14 +76,17 @@ const PackingSlotsTable: React.FC = () => {
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    async function getPackingSlots(): Promise<void> {
-        await fetchPackingSlots()
-            .then((response) => setRows(response))
-            .catch((error) => console.log(error))
-            .finally(() => setIsLoading(false));
-    }
     useEffect(() => {
-        getPackingSlots();
+        fetchPackingSlots()
+            .then((response) => setRows(response))
+            .catch((error) => {
+                const meta = {
+                    error: error,
+                };
+                void logError("Error fetching packing slots", meta);
+                throw new DatabaseError("fetch", "packing slots");
+            })
+            .finally(() => setIsLoading(false));
     }, []);
 
     useEffect(() => {

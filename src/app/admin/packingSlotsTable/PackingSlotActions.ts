@@ -70,10 +70,10 @@ export const dbPackingSlotToDelete = async (id: GridRowId): Promise<void> => {
     }
 };
 
-export const swapRows = async (rowOne: PackingSlotRow, rowTwo: PackingSlotRow): Promise<void> => {
-    const updatedRowsAfterFirstSwap = await swapRowTwoToRowOneOrder(rowOne, rowTwo);
+export const swapRows = async (row1: PackingSlotRow, row2: PackingSlotRow): Promise<void> => {
+    const updatedRowsAfterFirstSwap = await swapRowTwoToRowOneOrder(row1, row2);
 
-    if (rowOne.order - rowTwo.order > 0) {
+    if (row1.order - row2.order > 0) {
         await swapRowOneToRowTwoOrderUpClick(updatedRowsAfterFirstSwap);
     } else {
         await swapRowOneToRowTwoOrderDownClick(updatedRowsAfterFirstSwap);
@@ -81,23 +81,23 @@ export const swapRows = async (rowOne: PackingSlotRow, rowTwo: PackingSlotRow): 
 };
 
 const swapRowTwoToRowOneOrder = async (
-    rowOne: PackingSlotRow,
-    rowTwo: PackingSlotRow
+    row1: PackingSlotRow,
+    row2: PackingSlotRow
 ): Promise<DbPackingSlot[]> => {
     const { data, error } = await supabase
         .from("packing_slots")
         .upsert([
             {
-                primary_key: rowOne.id,
+                primary_key: row1.id,
                 order: -1,
-                name: rowOne.name,
-                is_shown: rowOne.isShown,
+                name: row1.name,
+                is_shown: row1.isShown,
             },
             {
-                primary_key: rowTwo.id,
-                order: rowOne.order,
-                name: rowTwo.name,
-                is_shown: rowTwo.isShown,
+                primary_key: row2.id,
+                order: row1.order,
+                name: row2.name,
+                is_shown: row2.isShown,
             },
         ])
         .select();
