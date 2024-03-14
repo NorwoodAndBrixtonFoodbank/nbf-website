@@ -11,7 +11,7 @@ import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { v4 as uuidv4 } from "uuid";
-import { logError } from "@/logger/logger";
+import { logError, logInfo } from "@/logger/logger";
 
 const DangerDialog = styled(Modal)`
     & .header {
@@ -69,6 +69,7 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
 
         setCollectionCentreToDelete(undefined);
         setRefreshRequired(true);
+        void logInfo(`Collection centre: ${collectionCentreToDelete?.name} successfully deleted.`);
     };
 
     const onCollectionCentreDeleteCancellation = (): void => {

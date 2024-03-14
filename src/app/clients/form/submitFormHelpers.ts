@@ -4,7 +4,7 @@ import { checkboxGroupToArray, Fields, Person } from "@/components/Form/formFunc
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { v4 as uuidv4 } from "uuid";
-import { logError } from "@/logger/logger";
+import { logError, logInfo } from "@/logger/logger";
 
 type FamilyDatabaseInsertRecord = InsertSchema["families"];
 type FamilyDatabaseUpdateRecord = UpdateSchema["families"];
@@ -96,6 +96,7 @@ const deleteAdultMembers = async (
         void logError("Error with delete: Adult member data", meta);
         throw new DatabaseError("delete", "adult member data");
     }
+    void logInfo(`Adult members from familyID ${familyID} removed.`);
 };
 
 const updateChildren = async (children: Person[]): Promise<void> => {
@@ -119,6 +120,9 @@ const updateChildren = async (children: Person[]): Promise<void> => {
             void logError("Error with update: Children data", meta);
             throw new DatabaseError("update", "children data");
         }
+        void logInfo(
+            `Child member of familyID ${record.family_id} with childID ${child.primaryKey} updated.`
+        );
     }
 };
 
@@ -139,6 +143,7 @@ const deleteChildren = async (children: Person[]): Promise<void> => {
             void logError("Error with delete: Children data", meta);
             throw new DatabaseError("delete", "children data");
         }
+        void logInfo(`Child with childID ${child.primaryKey} successfully deleted.`);
     }
 };
 
@@ -160,6 +165,7 @@ const insertClient = async (
         void logError("Error with insert: Client data", meta);
         throw new DatabaseError("insert", "client data");
     }
+    void logInfo(`Client ${clientRecord.full_name} successfully created.`);
     return ids![0];
 };
 

@@ -74,7 +74,7 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
         setSubmitErrorMessage("");
         setSubmitDisabled(false);
         setRefreshRequired(true);
-        logInfo(`${fields.name} has been created successfully.`);
+        void logInfo(`Collection centre: ${fields.name} has been created successfully.`);
     };
 
     return (
