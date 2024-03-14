@@ -7,20 +7,20 @@ AS $function$DECLARE
     row1order INT;
     row2order INT;
 BEGIN
-    SELECT "order" INTO row1order FROM packing_slots WHERE primary_key = row1id;
-    SELECT "order" INTO row2order FROM packing_slots WHERE primary_key = row2id;
+    SELECT "order" INTO row1order FROM packing_slots WHERE primary_key = id1;
+    SELECT "order" INTO row2order FROM packing_slots WHERE primary_key = id2;
 
     UPDATE packing_slots
     SET "order" = -1
-    WHERE primary_key = row1id;
+    WHERE primary_key = id1;
 
     UPDATE packing_slots
     SET "order" = row1order
-    WHERE primary_key = row2id;
+    WHERE primary_key = id2;
 
     UPDATE packing_slots
     SET "order" = row2order
-    WHERE primary_key = row1id;
+    WHERE primary_key = id1;
 END;$function$
 ;
 
