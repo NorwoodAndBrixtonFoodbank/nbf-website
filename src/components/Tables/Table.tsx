@@ -382,7 +382,6 @@ const TableStyling = styled.div`
         background-color: transparent;
 
         // the pagination bar
-
         > nav {
             background-color: transparent;
             color: ${(props) => props.theme.main.foreground[0]};
