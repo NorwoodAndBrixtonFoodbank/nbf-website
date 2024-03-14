@@ -21,7 +21,7 @@ body:
     validations:
       required: true
     attributes:
-      label: Describe the solution you'd like
+      label: Describe the solution / feature you'd like
       description: A description of what you want to happen
       placeholder: When I press ... it should ...
   - type: textarea
