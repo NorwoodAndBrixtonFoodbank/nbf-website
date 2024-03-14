@@ -250,9 +250,7 @@ const buildDateFilter = (initialState: DateRangeState): Filter<ParcelsTableRow, 
     });
 };
 
-const buildDeliveryCollectionFilter = async (
-    optionsFilters: Filter<ParcelsTableRow, any>[]
-): Promise<Filter<ParcelsTableRow, string[]>> => {
+const buildDeliveryCollectionFilter = async (): Promise<Filter<ParcelsTableRow, string[]>> => {
     const deliveryCollectionSearch = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
@@ -270,14 +268,17 @@ const buildDeliveryCollectionFilter = async (
     const keySet = new Set();
     const response: Partial<ParcelProcessingData> = await getAllValuesForKeys<
         Partial<ParcelProcessingData>
-    >(supabase, getAllDeliveryCollectionOptions, optionsFilters);
+    >(supabase, getAllDeliveryCollectionOptions);
     const optionsSet: CollectionCentresOptions[] = response.reduce<CollectionCentresOptions[]>(
-        ((filteredOptions, row) => {
+        (filteredOptions, row) => {
             if (row?.collection_centre && !keySet.has(row.collection_centre.acronym)) {
                 keySet.add(row.collection_centre.acronym);
-                filteredOptions.push(row.collection_centre)
-            } 
-            return filteredOptions.sort()}), [])
+                filteredOptions.push(row.collection_centre);
+            }
+            return filteredOptions.sort();
+        },
+        []
+    );
 
     return checklistFilter<ParcelsTableRow>({
         key: "deliveryCollection",
@@ -317,7 +318,7 @@ const lastStatusCellMatchOverride = (rowData: ParcelsTableRow, selectedKeys: str
     );
 };
 
-const buildLastStatusFilter = async (optionsFilters: Filter<ParcelsTableRow, any>[]):Promise< Filter<ParcelsTableRow, string[]>> => {
+const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]>> => {
     const lastStatusSearch = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
@@ -328,22 +329,20 @@ const buildLastStatusFilter = async (optionsFilters: Filter<ParcelsTableRow, any
     const getAllLastStatusOptions = (
         query: PostgrestQueryBuilder<Database["public"], any, any>
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.select(
-            " parcel_id:primary_key, packing_datetime, last_status(event_name)"
-        )
+        return query.select(" parcel_id:primary_key, packing_datetime, last_status(event_name)");
     };
     const keySet = new Set();
     const response: LastStatusOptionsResponse[] = await getAllValuesForKeys<
-    LastStatusOptionsResponse[]
-    >(supabase, getAllLastStatusOptions, optionsFilters);
+        LastStatusOptionsResponse[]
+    >(supabase, getAllLastStatusOptions);
     console.log(response);
-    const optionsSet: string[] = response
-        .reduce<string[]>((filteredOptions, row) => {
-            if (row?.last_status && !keySet.has(row?.last_status[0].event_name)) {
-                keySet.add(row?.last_status[0].event_name);
-                filteredOptions.push(row?.last_status[0].event_name)
-            } 
-        return filteredOptions.sort()},[]);
+    const optionsSet: string[] = response.reduce<string[]>((filteredOptions, row) => {
+        if (row?.last_status[0] && !keySet.has(row?.last_status[0].event_name)) {
+            keySet.add(row?.last_status[0].event_name);
+            filteredOptions.push(row?.last_status[0].event_name);
+        }
+        return filteredOptions.sort();
+    }, []);
     console.log(optionsSet);
 
     return checklistFilter<ParcelsTableRow>({
@@ -417,7 +416,7 @@ const ParcelsPage: React.FC<{}> = () => {
                     headers: parcelTableHeaderKeysAndLabels,
                     methodConfig: { methodType: FilterMethodType.Server, method: postcodeSearch },
                 }),
-                await buildDeliveryCollectionFilter([dateFilter]),
+                await buildDeliveryCollectionFilter(),
                 //buildPackingTimeFilter(), //broken
             ];
 
@@ -427,7 +426,7 @@ const ParcelsPage: React.FC<{}> = () => {
                     label: "Family",
                     headers: parcelTableHeaderKeysAndLabels,
                     methodConfig: { methodType: FilterMethodType.Server, method: familySearch },
-                }), //broken
+                }),
                 buildTextFilter({
                     key: "phoneNumber",
                     label: "Phone",
@@ -440,7 +439,7 @@ const ParcelsPage: React.FC<{}> = () => {
                     headers: parcelTableHeaderKeysAndLabels,
                     methodConfig: { methodType: FilterMethodType.Server, method: voucherSearch },
                 }),
-                await buildLastStatusFilter([dateFilter]), //hardcoded options and broken, filters out unwanted events but keeps the parcel :0
+                await buildLastStatusFilter(),
             ];
             return { primaryFilters: primaryFilters, additionalFilters: additionalFilters };
         };

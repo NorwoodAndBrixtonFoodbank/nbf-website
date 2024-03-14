@@ -256,15 +256,9 @@ export const getAllValuesForKeys = async <Return>(
     supabase: Supabase,
     selectMethod: (
         query: PostgrestQueryBuilder<Database["public"], any, any>
-    ) => PostgrestFilterBuilder<Database["public"], any, any>,
-    filters: Filter<ParcelsTableRow, any>[]
+    ) => PostgrestFilterBuilder<Database["public"], any, any>
 ): Promise<Return> => {
-    let query = selectMethod(supabase.from("parcels"));
-    filters.forEach((filter) => {
-        if (filter.methodConfig.methodType === FilterMethodType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
-    });
+    const query = selectMethod(supabase.from("parcels"));
     const { data, error } = await query;
     if (error) {
         throw new DatabaseError("fetch", "parcels");
@@ -280,5 +274,5 @@ export interface CollectionCentresOptions {
 export interface LastStatusOptionsResponse {
     parcel_id: string;
     packing_datetime: Date;
-    last_status: {event_name: string}[]; 
+    last_status: { event_name: string }[];
 }
