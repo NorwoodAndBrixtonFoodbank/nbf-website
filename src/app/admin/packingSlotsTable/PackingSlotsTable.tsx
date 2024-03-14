@@ -109,12 +109,15 @@ const PackingSlotsTable: React.FC = () => {
             });
 
         return () => {
-            supabase.removeChannel(subscriptionChannel);
+            void supabase.removeChannel(subscriptionChannel);
         };
     }, []);
 
     const handleSaveClick = (id: GridRowId) => () => {
-        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+        setRowModesModel((currentValue) => ({
+            ...currentValue,
+            [id]: { mode: GridRowModes.View },
+        }));
     };
 
     const processRowUpdate = (newRow: PackingSlotRow): PackingSlotRow => {
@@ -142,7 +145,10 @@ const PackingSlotsTable: React.FC = () => {
     };
 
     const handleEditClick = (id: GridRowId) => () => {
-        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+        setRowModesModel((currentValue) => ({
+            ...currentValue,
+            [id]: { mode: GridRowModes.Edit },
+        }));
     };
 
     const handleDeleteClick = (id: GridRowId) => () => {
@@ -153,14 +159,14 @@ const PackingSlotsTable: React.FC = () => {
     };
 
     const handleCancelClick = (id: GridRowId) => () => {
-        setRowModesModel({
-            ...rowModesModel,
+        setRowModesModel((currentValue) => ({
+            ...currentValue,
             [id]: { mode: GridRowModes.View, ignoreModifications: true },
-        });
+        }));
 
         const editedRow = rows.find((row) => row.id === id);
         if (editedRow === undefined) {
-            logError("Edited row in packing slots admin table is undefined onCancelClick");
+            void logError("Edited row in packing slots admin table is undefined onCancelClick");
         } else if (editedRow.isNew) {
             setRows((currentValue) => currentValue.filter((row) => row.id !== id));
         }
