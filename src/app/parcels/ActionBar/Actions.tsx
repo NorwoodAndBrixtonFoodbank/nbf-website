@@ -327,13 +327,13 @@ const Actions: React.FC<Props> = ({
                                 <MenuItem
                                     key={key}
                                     onClick={
-                                        key === "Generate Map"
-                                            ? onMapsClick(value.errorCondition, value.errorMessage)
-                                            : onMenuItemClick(
+                                        value.shouldOpenModal
+                                            ? onMenuItemClick(
                                                   key as ActionName,
                                                   value.errorCondition,
                                                   value.errorMessage
                                               ) // eslint-disable-line indent
+                                            : onMapsClick(value.errorCondition, value.errorMessage)
                                     }
                                 >
                                     {key}
