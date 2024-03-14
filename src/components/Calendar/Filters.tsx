@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import { Checkbox, FormControlLabel } from "@mui/material";
 import styled from "styled-components";
 
@@ -42,53 +42,58 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
     const onChange = (event: React.ChangeEvent<HTMLInputElement>, location: string): void => {
         if (event.target.checked) {
             editLocations([...currentLocations, location]);
-            } else {
-                editLocations(currentLocations.filter((testLocation) => testLocation !== location));            }
+        } else {
+            editLocations(currentLocations.filter((testLocation) => testLocation !== location));
         }
-    
-    const handleSelectAllChange = () => {
+    };
+
+    const handleSelectAllChange = (): void => {
         if (allLocations.length === currentLocations.length) {
             editLocations([]);
         } else {
             editLocations([...allLocations]);
         }
     };
-    
+
     return (
         <ContainerDiv>
             <h2>Shown Locations:</h2>
-                    <CheckboxAndTitleDiv>
+            {allLocations.map((location) => {
+                return (
+                    <CheckboxAndTitleDiv key={location}>
                         <FormControlLabel
-                            label={"Select All"}
-                            control={<Checkbox
-                                checked={allLocations.length === currentLocations.length}
-                                onChange={handleSelectAllChange}
-                            />
-                            }/>
-                    </CheckboxAndTitleDiv>
-                    {allLocations.map((location) => {
-                        return (
-                            <CheckboxAndTitleDiv key={location}>
-                                <FormControlLabel
-                                label={`${location}`}
-                                control={<Checkbox
+                            label={`${location}`}
+                            control={
+                                <Checkbox
                                     checked={currentLocations.includes(location)}
                                     onChange={(event) => {
                                         if (currentLocations.includes(location)) {
-                                            onChange(event, location)}
-                                            else {
-                                                const oldSelectedLocations =[...currentLocations];
-                                                oldSelectedLocations.push(location);
-                                                editLocations(oldSelectedLocations);
-                                            }
-                                        }}
-                                    />}
+                                            onChange(event, location);
+                                        } else {
+                                            const oldSelectedLocations = [...currentLocations];
+                                            oldSelectedLocations.push(location);
+                                            editLocations(oldSelectedLocations);
+                                        }
+                                    }}
                                 />
-                            </CheckboxAndTitleDiv>
-                        );
-                    })}
-                </ContainerDiv>
-            );
-        };
+                            }
+                        />
+                    </CheckboxAndTitleDiv>
+                );
+            })}
+            <CheckboxAndTitleDiv>
+                <FormControlLabel
+                    label="Select All"
+                    control={
+                        <Checkbox
+                            checked={allLocations.length === currentLocations.length}
+                            onChange={handleSelectAllChange}
+                        />
+                    }
+                />
+            </CheckboxAndTitleDiv>
+        </ContainerDiv>
+    );
+};
 
 export default CalendarFilters;
