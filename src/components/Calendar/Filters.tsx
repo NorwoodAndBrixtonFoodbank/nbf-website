@@ -53,6 +53,10 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
     return (
         <ContainerDiv>
             <h2>Shown Locations:</h2>
+                <p>Select All</p>
+                    <Checkbox
+                        checked={true}
+                    />
             {allLocations.map((location) => {
                 return (
                     <CheckboxAndTitleDiv key={location}>
