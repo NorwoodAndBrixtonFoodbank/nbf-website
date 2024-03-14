@@ -47,6 +47,7 @@ type AvailableActionsType = {
         errorCondition: (value: number) => boolean;
         errorMessage: string;
         actionType: ActionType;
+        shouldOpenModal: boolean;
     };
 };
 
@@ -56,18 +57,21 @@ const availableActions: AvailableActionsType = {
         errorCondition: doesNotEqualOne,
         errorMessage: "Please select exactly one parcel.",
         actionType: "pdfDownload",
+        shouldOpenModal: true,
     },
     "Download Shopping Lists": {
         showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
         actionType: "pdfDownload",
+        shouldOpenModal: true,
     },
     "Download Driver Overview": {
         showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
         actionType: "pdfDownload",
+        shouldOpenModal: true,
     },
     "Download Day Overview": {
         showSelectedParcelsInModal: false,
@@ -75,18 +79,21 @@ const availableActions: AvailableActionsType = {
         errorMessage:
             "The day overview will show the parcels for a particular date and location. It will show not the currently selected parcel. Please unselect the parcels.",
         actionType: "pdfDownload",
+        shouldOpenModal: true,
     },
     "Delete Parcel Request": {
         showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
         actionType: "deleteParcel",
+        shouldOpenModal: true,
     },
     "Generate Map": {
         showSelectedParcelsInModal: false,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
         actionType: "generateMap",
+        shouldOpenModal: false,
     },
 };
 
@@ -320,32 +327,22 @@ const Actions: React.FC<Props> = ({
                 >
                     <MenuList id="action-menu">
                         {Object.entries(availableActions).map(([key, value]) => {
-                            if (key !== "Generate Map") {
-                                return (
-                                    <MenuItem
-                                        key={key}
-                                        onClick={onMenuItemClick(
-                                            key as ActionName,
-                                            value.errorCondition,
-                                            value.errorMessage
-                                        )}
-                                    >
-                                        {key}
-                                    </MenuItem>
-                                );
-                            } else {
-                                return (
-                                    <MenuItem
-                                        key={key}
-                                        onClick={onMapsClick(
-                                            value.errorCondition,
-                                            value.errorMessage
-                                        )}
-                                    >
-                                        {key}
-                                    </MenuItem>
-                                );
-                            }
+                            return (
+                                <MenuItem
+                                    key={key}
+                                    onClick={
+                                        key === "Generate Map"
+                                            ? onMapsClick(value.errorCondition, value.errorMessage)
+                                            : onMenuItemClick(
+                                                  key as ActionName,
+                                                  value.errorCondition,
+                                                  value.errorMessage
+                                            )
+                                    }
+                                >
+                                    {key}
+                                </MenuItem>
+                            );
                         })}
                     </MenuList>
                 </Menu>
