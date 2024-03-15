@@ -97,6 +97,7 @@ export const processLastStatus = (
         | null
 ): ParcelsTableRow["lastStatus"] => {
     if (!(event?.last_status_event_name && event.last_status_timestamp)) {
+        console.log("hi");
         return null;
     }
 

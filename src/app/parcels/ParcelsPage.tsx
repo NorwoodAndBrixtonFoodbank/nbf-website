@@ -320,7 +320,13 @@ const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.in("last_status_event_name", state);
+        if (state.includes("-")) {
+            return query.or(
+                `last_status_event_name.is.null,last_status_event_name.in.(${state.join(",")})`
+            );
+        } else {
+            return query.in("last_status_event_name", state);
+        }
     };
 
     const getAllLastStatusOptions = (
@@ -334,7 +340,6 @@ const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]
         "status_order",
         getAllLastStatusOptions
     );
-    console.log(response);
     const optionsSet: string[] = response.reduce<string[]>((filteredOptions, row) => {
         if (row.event_name && !keySet.has(row.event_name)) {
             keySet.add(row.event_name);
@@ -342,7 +347,7 @@ const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]
         }
         return filteredOptions.sort();
     }, []);
-    console.log(optionsSet);
+    optionsSet.push("-");
 
     return checklistFilter<ParcelsTableRow>({
         key: "lastStatus",
