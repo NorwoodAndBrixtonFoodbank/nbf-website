@@ -1,7 +1,6 @@
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
-import { v4 as uuidv4 } from "uuid";
 import { logError } from "@/logger/logger";
 
 const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
@@ -45,14 +44,10 @@ const getRawClientDetails = async (clientId: string) => {
         .single();
 
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "app/clients/getExpandedClientDetails.ts",
-        };
-        void logError("Error with fetch: Client data", meta);
-        throw new DatabaseError("fetch", "client data");
+        const response = logError("Error with fetch: Clients expanded data", error);
+        response.then((errorId) => {
+            throw new DatabaseError("fetch", "clients", errorId);
+        });
     }
     return data;
 };
