@@ -34,27 +34,27 @@ const CheckboxAndTitleDiv = styled.div`
     min-width: 300px;
 `;
 
-const SelectAllCheckboxes = styled(Checkbox)`
-
-`;
+const SelectAllCheckboxes = styled(Checkbox)``;
 
 const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
     allLocations,
     currentLocations,
     editLocations,
 }) => {
-    const onCollectionCentreSelectionChange = (event: React.ChangeEvent<HTMLInputElement>, location: string): void => {
+    const onCollectionCentreSelectionChange = (
+        event: React.ChangeEvent<HTMLInputElement>,
+        location: string
+    ): void => {
         const newLocations = event.target.checked
-        ? currentLocations.concat(location)
-        : currentLocations.filter((testLocation) => testLocation !== location)
+            ? currentLocations.concat(location)
+            : currentLocations.filter((testLocation) => testLocation !== location);
 
         editLocations(newLocations);
     };
 
     const handleSelectAllChange = (): void => {
-        const toggleAllLocations = allLocations.length === currentLocations.length
-        ? ([])
-        : ([...allLocations]);
+        const toggleAllLocations =
+            allLocations.length === currentLocations.length ? [] : [...allLocations];
 
         editLocations(toggleAllLocations);
     };
@@ -63,15 +63,15 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
         <ContainerDiv>
             <h2>Shown Locations:</h2>
             <FormControlLabel
-                    label={"Select All"}
-                    control={<SelectAllCheckboxes
-                            checked={allLocations.length === currentLocations.length}
-                            onChange={handleSelectAllChange}
-                        />
-                    }
-                />
-            <CheckboxAndTitleDiv>
-            </CheckboxAndTitleDiv>
+                label="Select All"
+                control={
+                    <SelectAllCheckboxes
+                        checked={allLocations.length === currentLocations.length}
+                        onChange={handleSelectAllChange}
+                    />
+                }
+            />
+            <CheckboxAndTitleDiv></CheckboxAndTitleDiv>
             {allLocations.map((location) => {
                 return (
                     <CheckboxAndTitleDiv key={location}>
@@ -80,7 +80,9 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
                             control={
                                 <Checkbox
                                     checked={currentLocations.includes(location)}
-                                    onChange={(event) => onCollectionCentreSelectionChange(event, location)}
+                                    onChange={(event) =>
+                                        onCollectionCentreSelectionChange(event, location)
+                                    }
                                 />
                             }
                         />
