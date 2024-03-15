@@ -286,34 +286,24 @@ const buildDeliveryCollectionFilter = async (): Promise<Filter<ParcelsTableRow, 
     });
 };
 
-const buildPackingTimeFilter = (): Filter<ParcelsTableRow, string[]> => {
-    const packingTimeSearch = (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: string[]
-    ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query; //.in('packing_datetime', `%${state}%`);
-    };
-    // const options = Array.from(
-    //     new Set(tableData.map((row) => row.packingTimeLabel as string)).values()
-    // ).sort(); //todo same as above
-    const options = ["AM", "PM"]; //fudge for now
-    return checklistFilter<ParcelsTableRow>({
-        key: "packingTimeLabel",
-        filterLabel: "Packing Time",
-        itemLabelsAndKeys: options.map((value) => [value, value]),
-        initialCheckedKeys: options,
-        methodConfig: { methodType: FilterMethodType.Server, method: packingTimeSearch },
-    });
-};
-
-const lastStatusCellMatchOverride = (rowData: ParcelsTableRow, selectedKeys: string[]): boolean => {
-    const cellData = rowData["lastStatus"];
-
-    return (
-        (!cellData && selectedKeys.includes("None")) ||
-        selectedKeys.some((key) => cellData?.name.includes(key))
-    );
-};
+// const buildPackingTimeFilter = (): Filter<ParcelsTableRow, string[]> => {
+//     const packingTimeSearch = (
+//         query: PostgrestFilterBuilder<Database["public"], any, any>,
+//         state: string[]
+//     ): PostgrestFilterBuilder<Database["public"], any, any> => {
+//         return query; //.in('packing_datetime', `%${state}%`);
+//     };
+//     const options = Array.from(
+//         new Set(tableData.map((row) => row.packingTimeLabel as string)).values()
+//     ).sort(); //todo same as above
+//     return checklistFilter<ParcelsTableRow>({
+//         key: "packingTimeLabel",
+//         filterLabel: "Packing Time",
+//         itemLabelsAndKeys: options.map((value) => [value, value]),
+//         initialCheckedKeys: options,
+//         methodConfig: { methodType: FilterMethodType.Server, method: packingTimeSearch },
+//     });
+// };
 
 const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]>> => {
     const lastStatusSearch = (
@@ -354,7 +344,6 @@ const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]
         filterLabel: "Last Status",
         itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
         initialCheckedKeys: optionsSet.filter((option) => option !== "Request Deleted"),
-        //cellMatchOverride: lastStatusCellMatchOverride, todo: wtf is this :0
         methodConfig: { methodType: FilterMethodType.Server, method: lastStatusSearch },
     });
 };
@@ -482,7 +471,7 @@ const ParcelsPage: React.FC<{}> = () => {
     }, [startPoint, endPoint, primaryFilters, additionalFilters, sortState, areFiltersLoading]);
 
     useEffect(() => {
-        // This requires that the DB parcels table has Realtime turned on
+        // This requires that the DB parcels, events, families, clients and collection_centres tables have Realtime turned on
         if (!areFiltersLoading) {
             const allFilters = [...primaryFilters, ...additionalFilters];
             const loadCountAndDataWithTimer = async (): Promise<void> => {
@@ -516,6 +505,21 @@ const ParcelsPage: React.FC<{}> = () => {
                 .on(
                     "postgres_changes",
                     { event: "*", schema: "public", table: "events" },
+                    loadCountAndDataWithTimer
+                )
+                .on(
+                    "postgres_changes",
+                    { event: "*", schema: "public", table: "families" },
+                    loadCountAndDataWithTimer
+                )
+                .on(
+                    "postgres_changes",
+                    { event: "*", schema: "public", table: "collection_centres" },
+                    loadCountAndDataWithTimer
+                )
+                .on(
+                    "postgres_changes",
+                    { event: "*", schema: "public", table: "clients" },
                     loadCountAndDataWithTimer
                 )
                 .subscribe();

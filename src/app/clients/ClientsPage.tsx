@@ -106,7 +106,7 @@ const ClientsPage: React.FC<{}> = () => {
             setClientsDataPortion(fetchedData);
             setIsLoading(false);
         };
-        // This requires that the DB parcels table has Realtime turned on
+        // This requires that the DB clients, collection_centres, and families tables have Realtime turned on
         const subscriptionChannel = supabase
             .channel("parcels-table-changes")
             .on(
