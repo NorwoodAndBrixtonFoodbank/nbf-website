@@ -26,14 +26,10 @@ const getUsers = async (): Promise<UserRow[]> => {
     const { data, error } = await supabase.functions.invoke("admin-get-users");
 
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "app/admin/page.tsx",
-        };
-        void logError("Error with fetch: Users data", meta);
-        throw new DatabaseError("fetch", "user information");
+        const response = logError("Error with fetch: Users", error);
+        response.then((errorId) => {
+            throw new DatabaseError("fetch", "user information", errorId);
+        });
     }
 
     const users: User[] = data;
@@ -55,17 +51,13 @@ const getCollectionCentres = async (): Promise<Schema["collection_centres"][]> =
 
     // TODO VFB-23 Move error handling of this request to client side
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "app/admin/page.tsx",
-        };
-        void logError("Error with fetch: Collection centres", meta);
-        throw new DatabaseError("fetch", "collection centres");
+        const response = logError("Error with fetch: Collection Centres", error);
+        response.then((errorId) => {
+            throw new DatabaseError("fetch", "collection centres", errorId);
+        });
     }
 
-    return data;
+    return data ? data : [];
 };
 
 const Admin = async (): Promise<ReactElement> => {
