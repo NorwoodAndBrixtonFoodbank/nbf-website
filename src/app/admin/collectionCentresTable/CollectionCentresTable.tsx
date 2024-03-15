@@ -57,14 +57,10 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
             .eq("name", collectionCentreToDelete!.name);
 
         if (error) {
-            const id = uuidv4();
-            const meta = {
-                error: error,
-                id: id,
-                location: "app/admin/collectionCentresTable/CollectionCentresTable.tsx",
-            };
-            void logError("Error with delete: Collection centre data", meta);
-            throw new DatabaseError("delete", "collection centre data");
+            const response = logError("Error with delete: Collection Centre", error);
+            response.then((errorId) => {
+                throw new DatabaseError("delete", "collection centres", errorId);
+            });
         }
 
         setCollectionCentreToDelete(undefined);
