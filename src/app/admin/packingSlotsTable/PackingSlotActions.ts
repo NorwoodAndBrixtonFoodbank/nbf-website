@@ -1,6 +1,5 @@
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
-import { GridRowId } from "@mui/x-data-grid";
 import { PackingSlotRow } from "@/app/admin/packingSlotsTable/PackingSlotsTable";
 import { Tables } from "@/databaseTypesFile";
 import { logError } from "@/logger/logger";
