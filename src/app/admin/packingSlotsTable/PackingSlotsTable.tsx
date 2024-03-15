@@ -199,6 +199,12 @@ const PackingSlotsTable: React.FC = () => {
             width: 100,
             cellClassName: "actions",
             getActions: ({ id, row }) => {
+                const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+                if (isInEditMode) {
+                    return [];
+                }
+
                 if (row.order === 1) {
                     return [
                         <GridActionsCellItem
