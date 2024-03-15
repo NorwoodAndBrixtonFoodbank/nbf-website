@@ -9,7 +9,7 @@ import {
     faPenToSquare,
     faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { NoSsr } from "@mui/material";
+import { CircularProgress, NoSsr } from "@mui/material";
 import IconButton from "@mui/material/IconButton/IconButton";
 import React, { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
@@ -17,6 +17,7 @@ import styled from "styled-components";
 import { Primitive, SortOrder } from "react-data-table-component/dist/DataTable/types";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
+import { Centerer } from "../Modal/ModalFormStyles";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -134,6 +135,7 @@ export type EditableConfig<Data> =
 interface Props<Data> {
     dataPortion: Data[];
     headerKeysAndLabels: TableHeaders<Data>;
+    isLoading?: boolean;
     checkboxConfig: CheckboxConfig<Data>;
     paginationConfig: PaginationConfig;
     sortConfig: SortConfig<Data>;
@@ -190,6 +192,7 @@ const defaultColumnStyleOptions = {
 const Table = <Data,>({
     dataPortion,
     headerKeysAndLabels,
+    isLoading = false,
     defaultShownHeaders,
     toggleableHeaders = [],
     onRowClick,
@@ -426,6 +429,12 @@ const Table = <Data,>({
                         }
                         sortServer={sortConfig.sortShown}
                         onSort={handleSort}
+                        progressComponent={
+                            <Centerer>
+                                <CircularProgress />
+                            </Centerer>
+                        }
+                        progressPending={isLoading}
                     />
                 </NoSsr>
             </TableStyling>

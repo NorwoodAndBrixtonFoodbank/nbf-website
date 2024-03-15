@@ -18,6 +18,7 @@ import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { Filter, FilterMethodType } from "@/components/Tables/Filters";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
+import { CircularProgress } from "@mui/material";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -139,6 +140,11 @@ const ClientsPage: React.FC<{}> = () => {
     return (
         <>
             <>
+                {isLoading && (
+                    <Centerer>
+                        <CircularProgress />
+                    </Centerer>
+                )}
                 <TableSurface>
                     <Table
                         dataPortion={clientsDataPortion}
@@ -165,6 +171,7 @@ const ClientsPage: React.FC<{}> = () => {
                         }}
                         checkboxConfig={{ displayed: false }}
                         editableConfig={{ editable: false }}
+                        isLoading={isLoading}
                     />
                 </TableSurface>
                 <Centerer>

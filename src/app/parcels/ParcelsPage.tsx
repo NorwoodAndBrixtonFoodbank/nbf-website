@@ -40,6 +40,7 @@ import { PostgrestFilterBuilder, PostgrestQueryBuilder } from "@supabase/postgre
 import { Database } from "@/databaseTypesFile";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { dateFilter } from "@/components/Tables/DateFilter";
+import { CircularProgress } from "@mui/material";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -159,19 +160,19 @@ const PreTableControls = styled.div`
 
 const parcelIdParam = "parcelId";
 
-const areDateRangesIdentical = (
-    dateRangeA: DateRangeState,
-    dateRangeB: DateRangeState
-): boolean => {
-    return (
-        areDaysIdentical(dateRangeA.from, dateRangeB.from) &&
-        areDaysIdentical(dateRangeA.to, dateRangeB.to)
-    );
-};
+// const areDateRangesIdentical = (
+//     dateRangeA: DateRangeState,
+//     dateRangeB: DateRangeState
+// ): boolean => {
+//     return (
+//         areDaysIdentical(dateRangeA.from, dateRangeB.from) &&
+//         areDaysIdentical(dateRangeA.to, dateRangeB.to)
+//     );
+// };
 
-const areDaysIdentical = (dayA: dayjs.Dayjs | null, dayB: dayjs.Dayjs | null): boolean => {
-    return dayA && dayB ? dayA.isSame(dayB) : dayA === dayB;
-};
+// const areDaysIdentical = (dayA: dayjs.Dayjs | null, dayB: dayjs.Dayjs | null): boolean => {
+//     return dayA && dayB ? dayA.isSame(dayB) : dayA === dayB;
+// };
 
 const fullNameSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
@@ -382,7 +383,8 @@ const ParcelsPage: React.FC<{}> = () => {
     const [primaryFilters, setPrimaryFilters] = useState<Filter<ParcelsTableRow, any>[]>([]);
     const [additionalFilters, setAdditionalFilters] = useState<Filter<ParcelsTableRow, any>[]>([]);
 
-    const [areFiltersLoading, setAreFiltersLoading] = useState<boolean>(true);
+    const [areFiltersLoadingForFirstTime, setAreFiltersLoadingForFirstTime] =
+        useState<boolean>(true);
 
     useEffect(() => {
         const buildFilters = async (): Promise<{
@@ -437,16 +439,16 @@ const ParcelsPage: React.FC<{}> = () => {
             return { primaryFilters: primaryFilters, additionalFilters: additionalFilters };
         };
         (async () => {
-            setAreFiltersLoading(true);
+            setAreFiltersLoadingForFirstTime(true);
             const filtersObject = await buildFilters();
             setPrimaryFilters(filtersObject.primaryFilters);
             setAdditionalFilters(filtersObject.additionalFilters);
-            setAreFiltersLoading(false);
+            setAreFiltersLoadingForFirstTime(false);
         })();
     }, []);
 
     useEffect(() => {
-        if (!areFiltersLoading) {
+        if (!areFiltersLoadingForFirstTime) {
             const allFilters = [...primaryFilters, ...additionalFilters];
             const freshRequest = (): boolean => {
                 return true; //to do: ask for help on this - we need this for certain
@@ -468,11 +470,18 @@ const ParcelsPage: React.FC<{}> = () => {
                 setIsLoading(false);
             })();
         }
-    }, [startPoint, endPoint, primaryFilters, additionalFilters, sortState, areFiltersLoading]);
+    }, [
+        startPoint,
+        endPoint,
+        primaryFilters,
+        additionalFilters,
+        sortState,
+        areFiltersLoadingForFirstTime,
+    ]);
 
     useEffect(() => {
         // This requires that the DB parcels, events, families, clients and collection_centres tables have Realtime turned on
-        if (!areFiltersLoading) {
+        if (!areFiltersLoadingForFirstTime) {
             const allFilters = [...primaryFilters, ...additionalFilters];
             const loadCountAndDataWithTimer = async (): Promise<void> => {
                 if (fetchParcelsTimer.current) {
@@ -528,7 +537,14 @@ const ParcelsPage: React.FC<{}> = () => {
                 supabase.removeChannel(subscriptionChannel);
             };
         }
-    }, [endPoint, startPoint, primaryFilters, additionalFilters, sortState, areFiltersLoading]);
+    }, [
+        endPoint,
+        startPoint,
+        primaryFilters,
+        additionalFilters,
+        sortState,
+        areFiltersLoadingForFirstTime,
+    ]);
 
     useEffect(() => {
         setCheckedParcelIds([]);
@@ -665,46 +681,54 @@ const ParcelsPage: React.FC<{}> = () => {
                     parcelIds={checkedParcelIds}
                 />
             </PreTableControls>
-            <TableSurface>
-                <Table
-                    dataPortion={parcelsDataPortion}
-                    paginationConfig={{
-                        pagination: true,
-                        totalRows: totalRows,
-                        onPageChange: setCurrentPage,
-                        onPerPageChange: setPerPage,
-                    }}
-                    headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
-                    columnDisplayFunctions={parcelTableColumnDisplayFunctions}
-                    columnStyleOptions={parcelTableColumnStyleOptions}
-                    onRowClick={onParcelTableRowClick}
-                    sortConfig={{
-                        sortShown: true,
-                        sortableColumns: sortableColumns,
-                        setSortState: setSortState,
-                    }}
-                    filterConfig={{
-                        primaryFiltersShown: true,
-                        additionalFiltersShown: true,
-                        primaryFilters: primaryFilters,
-                        additionalFilters: additionalFilters,
-                        setPrimaryFilters: setPrimaryFilters,
-                        setAdditionalFilters: setAdditionalFilters,
-                    }}
-                    defaultShownHeaders={defaultShownHeaders}
-                    toggleableHeaders={toggleableHeaders}
-                    checkboxConfig={{
-                        displayed: true,
-                        selectedRowIds: checkedParcelIds,
-                        isAllCheckboxChecked: isAllCheckBoxSelected,
-                        onCheckboxClicked: (parcelData) => selectOrDeselectRow(parcelData.parcelId),
-                        onAllCheckboxClicked: () => toggleAllCheckBox(),
-                        isRowChecked: (parcelData) =>
-                            checkedParcelIds.includes(parcelData.parcelId),
-                    }}
-                    editableConfig={{ editable: false }}
-                />
-            </TableSurface>
+            {areFiltersLoadingForFirstTime ? (
+                <Centerer>
+                    <CircularProgress />
+                </Centerer>
+            ) : (
+                <TableSurface>
+                    <Table
+                        dataPortion={parcelsDataPortion}
+                        isLoading={isLoading}
+                        paginationConfig={{
+                            pagination: true,
+                            totalRows: totalRows,
+                            onPageChange: setCurrentPage,
+                            onPerPageChange: setPerPage,
+                        }}
+                        headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
+                        columnDisplayFunctions={parcelTableColumnDisplayFunctions}
+                        columnStyleOptions={parcelTableColumnStyleOptions}
+                        onRowClick={onParcelTableRowClick}
+                        sortConfig={{
+                            sortShown: true,
+                            sortableColumns: sortableColumns,
+                            setSortState: setSortState,
+                        }}
+                        filterConfig={{
+                            primaryFiltersShown: true,
+                            additionalFiltersShown: true,
+                            primaryFilters: primaryFilters,
+                            additionalFilters: additionalFilters,
+                            setPrimaryFilters: setPrimaryFilters,
+                            setAdditionalFilters: setAdditionalFilters,
+                        }}
+                        defaultShownHeaders={defaultShownHeaders}
+                        toggleableHeaders={toggleableHeaders}
+                        checkboxConfig={{
+                            displayed: true,
+                            selectedRowIds: checkedParcelIds,
+                            isAllCheckboxChecked: isAllCheckBoxSelected,
+                            onCheckboxClicked: (parcelData) =>
+                                selectOrDeselectRow(parcelData.parcelId),
+                            onAllCheckboxClicked: () => toggleAllCheckBox(),
+                            isRowChecked: (parcelData) =>
+                                checkedParcelIds.includes(parcelData.parcelId),
+                        }}
+                        editableConfig={{ editable: false }}
+                    />
+                </TableSurface>
+            )}
             <Modal
                 header={
                     <>

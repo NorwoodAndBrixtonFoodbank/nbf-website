@@ -43,7 +43,7 @@ export const getParcelProcessingData = async (
     end?: number,
     parcelIds?: string[]
 ) => {
-    let query = supabase.from("parcels_plus1").select("*");
+    let query = supabase.from("parcels_plus").select("*");
     if (sortState.sort && sortState.column.sortMethod) {
         query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
@@ -99,7 +99,7 @@ export const getParcelsCount = async (
     supabase: Supabase,
     filters: Filter<ParcelsTableRow, any>[]
 ): Promise<number> => {
-    let query = supabase.from("parcels_plus1").select("*", { count: "exact", head: true });
+    let query = supabase.from("parcels_plus").select("*", { count: "exact", head: true });
 
     filters.forEach((filter) => {
         if (filter.methodConfig.methodType === FilterMethodType.Server) {
@@ -120,7 +120,7 @@ export const getParcelIds = async (
     filters: Filter<ParcelsTableRow, any>[],
     sortState: SortState<ParcelsTableRow>
 ): Promise<string[]> => {
-    let query = supabase.from("parcels_plus1").select("*");
+    let query = supabase.from("parcels_plus").select("*");
     if (sortState.sort && sortState.column.sortMethod) {
         query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
