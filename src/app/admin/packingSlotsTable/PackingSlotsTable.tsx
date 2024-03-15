@@ -145,9 +145,9 @@ const PackingSlotsTable: React.FC = () => {
         }));
     };
 
-    const handleDeleteClick = (id: GridRowId) => () => {
+    const handleDeleteClick = (row: PackingSlotRow) => () => {
         setIsLoading(true);
-        deleteDbPackingSlot(id)
+        deleteDbPackingSlot(row)
             .catch((error) => void logError("Delete error with packing slot row", error))
             .finally(() => setIsLoading(false));
     };
@@ -257,7 +257,7 @@ const PackingSlotsTable: React.FC = () => {
             headerName: "Actions",
             flex: 1,
             cellClassName: "actions",
-            getActions: ({ id }) => {
+            getActions: ({ id, row }) => {
                 const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
                 if (isInEditMode) {
@@ -294,7 +294,7 @@ const PackingSlotsTable: React.FC = () => {
                     <GridActionsCellItem
                         icon={<DeleteIcon />}
                         label="Delete"
-                        onClick={handleDeleteClick(id)}
+                        onClick={handleDeleteClick(row)}
                         color="inherit"
                         key="Delete"
                     />,

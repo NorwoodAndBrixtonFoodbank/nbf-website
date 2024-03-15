@@ -63,9 +63,10 @@ export const updateDbPackingSlot = async (row: PackingSlotRow): Promise<void> =>
     }
 };
 
-export const deleteDbPackingSlot = async (id: GridRowId): Promise<void> => {
-    const { error } = await supabase.from("packing_slots").delete().eq("primary_key", id);
-
+export const deleteDbPackingSlot = async (row: PackingSlotRow): Promise<void> => {
+    const { error } = await supabase.rpc("packing_slot_delete_and_update", {
+        rowid: row.id,
+    });
     if (error) {
         throw new DatabaseError("delete", "packing slots");
     }

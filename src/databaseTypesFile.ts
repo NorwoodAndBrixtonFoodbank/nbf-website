@@ -390,6 +390,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      packing_slot_delete_and_update: {
+        Args: {
+          rowid: string
+        }
+        Returns: undefined
+      }
       packing_slot_order_swap: {
         Args: {
           id1: string
