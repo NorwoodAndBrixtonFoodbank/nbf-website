@@ -3,18 +3,21 @@
 import winston, { createLogger, format, Logger } from "winston";
 import WinstonCloudwatch from "winston-cloudwatch";
 import { serverConfig } from "@/server/serverConfig";
+import { v4 as uuid } from "uuid";
 
 const logger = getLogger();
 
-type LogEvent = (message: string, meta?: Record<string, any>) => Promise<void>;
+type LogEvent = (message: string, meta?: Record<string, any>) => Promise<string | void>;
 
 export const logError: LogEvent = (message, meta) => {
-    logger.error(message, meta);
-    return Promise.resolve();
+    const id = uuid();
+    logger.error(message, id, meta);
+    return Promise.resolve(id);
 };
 
 export const logWarning: LogEvent = (message, meta) => {
-    logger.warn(message, meta);
+    const id = uuid();
+    logger.warn(message, id, meta);
     return Promise.resolve();
 };
 
