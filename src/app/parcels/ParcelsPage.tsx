@@ -65,47 +65,71 @@ const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
     "lastStatus",
 ];
 
-const sortableColumns: SortOptions<ParcelsTableRow, any>[] = [
+const sortableColumns: SortOptions<ParcelsTableRow, keyof ParcelsTableRow>[] = [
     {
         key: "fullName",
-        sortMethod: (query, sortDirection) =>
-            query.order("client_full_name", { ascending: sortDirection === "asc" }),
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("client_full_name", { ascending: sortDirection === "asc" }),
+            methodType: FilterMethodType.Server,
+        },
     },
     {
         key: "familyCategory",
-        sortMethod: (query, sortDirection) =>
-            query.order("family_count", { ascending: sortDirection === "asc" }),
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("family_count", { ascending: sortDirection === "asc" }),
+            methodType: FilterMethodType.Server,
+        },
     },
     {
         key: "addressPostcode",
-        sortMethod: (query, sortDirection) =>
-            query.order("client_address_postcode", { ascending: sortDirection === "asc" }),
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("client_address_postcode", { ascending: sortDirection === "asc" }),
+            methodType: FilterMethodType.Server,
+        },
     },
     {
         key: "phoneNumber",
-        sortMethod: (query, sortDirection) =>
-            query.order("client_phone_number", { ascending: sortDirection === "asc" }),
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("client_phone_number", { ascending: sortDirection === "asc" }),
+            methodType: FilterMethodType.Server,
+        },
     },
     {
         key: "voucherNumber",
-        sortMethod: (query, sortDirection) =>
-            query.order("voucher_number", { ascending: sortDirection === "asc" }),
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("voucher_number", { ascending: sortDirection === "asc" }),
+            methodType: FilterMethodType.Server,
+        },
     },
     {
         key: "deliveryCollection",
-        sortMethod: (query, sortDirection) =>
-            query.order("collection_centre_name", { ascending: sortDirection === "asc" }),
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("collection_centre_name", { ascending: sortDirection === "asc" }),
+            methodType: FilterMethodType.Server,
+        },
     },
     {
         key: "packingDatetime",
-        sortMethod: (query, sortDirection) =>
-            query.order("packing_datetime", { ascending: sortDirection === "asc" }),
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("packing_datetime", { ascending: sortDirection === "asc" }),
+            methodType: FilterMethodType.Server,
+        },
     },
     //{key: "packingTimeLabel",sortMethod: (query, sortDirection) => query.order("client(full_name)", {ascending: sortDirection === "asc"})}, broke
     {
         key: "lastStatus",
-        sortMethod: (query, sortDirection) =>
-            query.order("last_status_workflow_order", { ascending: sortDirection === "asc" }),
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("last_status_workflow_order", { ascending: sortDirection === "asc" }),
+            methodType: FilterMethodType.Server,
+        },
     },
 ];
 
@@ -546,9 +570,9 @@ const ParcelsPage: React.FC<{}> = () => {
         areFiltersLoadingForFirstTime,
     ]);
 
-    useEffect(() => {
-        setCheckedParcelIds([]);
-    }, [primaryFilters, additionalFilters]);
+    // useEffect(() => {
+    //     setCheckedParcelIds([]);
+    // }, [primaryFilters, additionalFilters]);
 
     const selectOrDeselectRow = (parcelId: string): void => {
         setCheckedParcelIds((currentIndices) => {

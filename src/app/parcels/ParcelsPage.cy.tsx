@@ -154,6 +154,7 @@ describe("Parcels Page", () => {
                 name: "EVENT",
                 eventData: "SOME_RELATED_DATA",
                 timestamp: new Date("2023-08-04T13:30:00+00:00"),
+                workflowOrder: 1,
             });
             expect(processLastStatus(null)).to.eq(null);
         });

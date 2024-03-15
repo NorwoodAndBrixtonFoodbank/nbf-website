@@ -44,17 +44,21 @@ export const getParcelProcessingData = async (
     parcelIds?: string[]
 ) => {
     let query = supabase.from("parcels_plus").select("*");
-    if (sortState.sort && sortState.column.sortMethod) {
-        query = sortState.column.sortMethod(query, sortState.sortDirection);
-    } else {
-        query = query.order("packing_datetime", { ascending: false });
-    }
 
     filters.forEach((filter) => {
         if (filter.methodConfig.methodType === FilterMethodType.Server) {
             query = filter.methodConfig.method(query, filter.state);
         }
     });
+
+    if (
+        sortState.sort &&
+        sortState.column.sortMethodConfig?.methodType === FilterMethodType.Server
+    ) {
+        query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
+    } else {
+        query = query.order("packing_datetime", { ascending: false });
+    }
 
     if (typeof start === "number" && typeof end === "number") {
         query = query.range(start, end);
@@ -121,23 +125,19 @@ export const getParcelIds = async (
     sortState: SortState<ParcelsTableRow>
 ): Promise<string[]> => {
     let query = supabase.from("parcels_plus").select("*");
-    if (sortState.sort && sortState.column.sortMethod) {
-        query = sortState.column.sortMethod(query, sortState.sortDirection);
-    } else {
-        query = query.order("packing_datetime", { ascending: false });
-    }
-
     filters.forEach((filter) => {
         if (filter.methodConfig.methodType === FilterMethodType.Server) {
             query = filter.methodConfig.method(query, filter.state);
         }
     });
-    if (sortState.sort && sortState.column.sortMethod) {
-        query = sortState.column.sortMethod(query, sortState.sortDirection);
+    if (
+        sortState.sort &&
+        sortState.column.sortMethodConfig?.methodType === FilterMethodType.Server
+    ) {
+        query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
     } else {
         query = query.order("packing_datetime", { ascending: false });
     }
-
     const { data, error } = await query;
     if (error) {
         console.error(error);

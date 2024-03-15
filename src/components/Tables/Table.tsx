@@ -1,7 +1,7 @@
 "use client";
 
 import Icon from "@/components/Icons/Icon";
-import { Filter } from "@/components/Tables/Filters";
+import { Filter, FilterMethodType } from "@/components/Tables/Filters";
 import TableFilterBar from "@/components/Tables/TableFilterBar";
 import {
     faAnglesDown,
@@ -47,11 +47,21 @@ export type ColumnStyleOptions = Omit<
 
 export interface SortOptions<Data, Key extends keyof Data> {
     key: Key;
-    sortMethod: (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        sortDirection: SortOrder
-    ) => PostgrestFilterBuilder<Database["public"], any, any>;
+    sortMethodConfig: SortMethodConfig<Data>;
 }
+
+type SortMethodConfig<Data> =
+    | {
+          methodType: FilterMethodType.Server;
+          method: (
+              query: PostgrestFilterBuilder<Database["public"], any, any>,
+              sortDirection: SortOrder
+          ) => PostgrestFilterBuilder<Database["public"], any, any>;
+      }
+    | {
+          methodType: FilterMethodType.Client;
+          method: (data: Data[], sortDirection: SortOrder) => Data[];
+      };
 
 export type SortState<Data> =
     | {
@@ -72,10 +82,7 @@ export type SortConfig<Data> =
     | { sortShown: false };
 
 export interface CustomColumn<Data> extends TableColumn<Row<Data>> {
-    sortMethod?: (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        sortDirection: SortOrder
-    ) => PostgrestFilterBuilder<Database["public"], any, any>;
+    sortMethodConfig?: SortMethodConfig<Data>;
 }
 
 export type CheckboxConfig<Data> =

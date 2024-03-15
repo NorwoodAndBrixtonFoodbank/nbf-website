@@ -18,12 +18,14 @@ const getClientsData = async (
         .from("clients")
         .select("primary_key, full_name, family_id, address_postcode", { count: "exact" });
 
-    if (sortState.sort && sortState.column.sortMethod) {
-        query = sortState.column.sortMethod(query, sortState.sortDirection);
+    if (
+        sortState.sort &&
+        sortState.column.sortMethodConfig?.methodType === FilterMethodType.Server
+    ) {
+        query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
     } else {
         query = query.order("full_name");
     }
-
     filters.forEach((filter) => {
         if (filter.methodConfig.methodType === FilterMethodType.Server) {
             query = filter.methodConfig.method(query, filter.state);

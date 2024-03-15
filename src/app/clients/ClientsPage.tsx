@@ -52,14 +52,20 @@ const filters: Filter<ClientsTableRow, any>[] = [
 const sortableColumns: SortOptions<ClientsTableRow, any>[] = [
     {
         key: "fullName",
-        sortMethod: (query, sortDirection) =>
-            query.order("full_name", { ascending: sortDirection === "asc" }),
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("full_name", { ascending: sortDirection === "asc" }),
+            methodType: FilterMethodType.Server,
+        },
     },
     //{key: "familyCategory", sortMethod: (query, sortDirection) => query.order("full_name", {ascending: sortDirection === "asc"})},broke
     {
         key: "addressPostcode",
-        sortMethod: (query, sortDirection) =>
-            query.order("address_postcode", { ascending: sortDirection === "asc" }),
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("address_postcode", { ascending: sortDirection === "asc" }),
+            methodType: FilterMethodType.Server,
+        },
     },
 ];
 

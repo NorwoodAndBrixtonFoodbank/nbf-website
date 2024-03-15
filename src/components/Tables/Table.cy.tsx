@@ -5,9 +5,12 @@ import Table, {
     PaginationConfig,
     SortConfig,
     SortOptions,
+    SortState,
 } from "@/components/Tables/Table";
 import StyleManager from "@/app/themes";
-import { Filter } from "./Filters";
+import { Filter, FilterMethodType } from "./Filters";
+import { buildTextFilter, filterRowByText } from "./TextFilter";
+import { SortOrder } from "react-data-table-component/dist/DataTable/types";
 
 interface TestData {
     full_name: string;
@@ -104,9 +107,8 @@ interface TestTableProps {
     displayCheckboxes?: boolean;
     toggleableHeaders?: (keyof TestData)[];
     pagination?: boolean;
-    primaryFilters?: Filter<TestData, any>[];
-    setPrimaryFilters?: (primaryFilters: Filter<TestData, any>[]) => void;
-    sortable?: SortOptions<TestData, any>[];
+    filters?: boolean;
+    sortable?: boolean;
     tableData?: TestData[];
 }
 
@@ -114,11 +116,39 @@ const Component: React.FC<TestTableProps> = ({
     displayCheckboxes = true,
     toggleableHeaders,
     pagination = false,
-    primaryFilters = [],
-    setPrimaryFilters = () => {},
-    sortable = [],
+    filters = false,
+    sortable = false,
     tableData = data,
 }) => {
+    const fullNameFilter = buildTextFilter<TestData>({
+        key: "full_name",
+        headers: headers,
+        label: "Name",
+        methodConfig: { methodType: FilterMethodType.Client, method: filterRowByText },
+    });
+
+    const sortByFullName: SortOptions<TestData, "full_name"> = {
+        key: "full_name",
+        sortMethodConfig: {
+            method: (data: TestData[], sortDirection: SortOrder) => {
+                const ascendingData = data.sort((rowA, rowB) =>
+                    rowA.full_name > rowB.full_name ? 1 : rowB.full_name > rowA.full_name ? -1 : 0
+                );
+                if (sortDirection === "asc") {
+                    return ascendingData;
+                } else {
+                    return ascendingData.reverse();
+                }
+            },
+            methodType: FilterMethodType.Client,
+        },
+    };
+
+    const [primaryFilters, setPrimaryFilters] = useState<Filter<TestData, string>[]>([
+        fullNameFilter,
+    ]);
+    const sortableColumns: SortOptions<TestData, keyof TestData>[] = [sortByFullName];
+
     const [testDataPortion, setTestDataPortion] = useState<TestData[]>(tableData);
 
     const [perPage, setPerPage] = useState(10);
@@ -134,9 +164,9 @@ const Component: React.FC<TestTableProps> = ({
     const [checkedRowIds, setCheckedRowIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
 
-    useEffect(() => {
-        setCheckedRowIds([]);
-    }, [primaryFilters]);
+    // useEffect(() => {
+    //     setCheckedRowIds([]);
+    // }, [primaryFilters]);
 
     const selectOrDeselectRow = (data: TestData): void => {
         setCheckedRowIds((checkedIds) => {
@@ -156,6 +186,8 @@ const Component: React.FC<TestTableProps> = ({
             setAllCheckBoxSelected(true);
         }
     };
+
+    const [sortState, setSortState] = useState<SortState<TestData>>({ sort: false });
 
     useEffect(() => {
         const allChecked = checkedRowIds.length === tableData.length;
@@ -202,13 +234,37 @@ const Component: React.FC<TestTableProps> = ({
 
     const trueSortConfig: SortConfig<TestData> = {
         sortShown: true,
-        sortableColumns: sortable,
-        setSortState: () => {}, //to do: get sort and filters working for table test
+        sortableColumns: sortableColumns,
+        setSortState: setSortState,
     };
 
     const falseSortConfig: SortConfig<TestData> = {
         sortShown: false,
     };
+
+    useEffect(() => {
+        setTestDataPortion(
+            tableData.filter((row) => {
+                return primaryFilters.every((filter) => {
+                    if (filter.methodConfig.methodType === FilterMethodType.Client) {
+                        return filter.methodConfig.method(row, filter.state, filter.key);
+                    }
+                    return false;
+                });
+            })
+        );
+    }, [primaryFilters, tableData]);
+
+    useEffect(() => {
+        if (
+            sortState.sort &&
+            sortState.column.sortMethodConfig?.methodType === FilterMethodType.Client
+        ) {
+            setTestDataPortion(
+                sortState.column.sortMethodConfig.method(testDataPortion, sortState.sortDirection)
+            );
+        }
+    }, [sortState, testDataPortion]);
 
     return (
         <StyleManager>
@@ -218,7 +274,7 @@ const Component: React.FC<TestTableProps> = ({
                 toggleableHeaders={toggleableHeaders}
                 paginationConfig={pagination ? truePaginationConfig : falsePaginationConfig}
                 checkboxConfig={displayCheckboxes ? trueCheckboxConfig : falseCheckboxConfig}
-                filterConfig={primaryFilters ? trueFilterConfig : falseFilterConfig}
+                filterConfig={filters ? trueFilterConfig : falseFilterConfig}
                 editableConfig={{ editable: false }}
                 sortConfig={sortable ? trueSortConfig : falseSortConfig}
             />
@@ -239,31 +295,32 @@ describe("<Table />", () => {
         cy.contains("999");
     });
 
-    // it("filter is correct", () => {
-    //     cy.mount(<Component filters={["full_name"]} />);
-    //     cy.get("input[type='text']").first().type("Tom");
-    //     cy.contains("Tom");
-    //     cy.should("not.have.value", "Sam");
-    // });
+    it("filter is correct", () => {
+        cy.mount(<Component filters />);
+        cy.get("input[type='text']").first().type("Tom");
+        cy.contains("Tom");
+        cy.should("not.have.value", "Sam");
+    });
 
-    // it("sorting is correct", () => {
-    //     cy.mount(<Component filters={[]} sortable={["full_name"]} />);
-    //     cy.get("div").contains("Name").parent().click();
-    //     cy.get("div[data-column-id='2'][role='cell']").as("table");
-    //     cy.get("@table").eq(0).contains("Adrian Key");
-    //     cy.get("@table").eq(1).contains("Agnes Rosales");
-    //     cy.get("div").contains("Name").parent().click();
-    //     cy.get("@table").eq(0).contains("Tom");
-    //     cy.get("@table").eq(1).contains("Sam");
-    // });
+    it("sorting is correct", () => {
+        cy.mount(<Component sortable />);
+        cy.get("div").contains("Name").parent().click();
+        cy.get("div").contains("Name").parent().click();
+        cy.get("div[data-column-id='2'][role='cell']").as("table");
+        cy.get("@table").eq(0).contains("Adrian Key");
+        cy.get("@table").eq(1).contains("Agnes Rosales");
+        cy.get("div").contains("Name").parent().click();
+        cy.get("@table").eq(0).contains("Tom");
+        cy.get("@table").eq(1).contains("Sam");
+    });
 
-    // it("clear button is working", () => {
-    //     cy.mount(<Component filters={["full_name"]} />);
-    //     cy.get("input[type='text']").type("Tom");
-    //     cy.get("button").contains("Clear").click();
-    //     cy.contains("Sam");
-    //     cy.get("input[type='text']").should("have.value", "");
-    // });
+    it("clear button is working", () => {
+        cy.mount(<Component filters />);
+        cy.get("input[type='text']").type("Tom");
+        cy.get("button").contains("Clear").click();
+        cy.contains("Sam");
+        cy.get("input[type='text']").should("have.value", "");
+    });
 
     it("pagination page change is working", () => {
         cy.mount(<Component pagination />);
@@ -306,14 +363,14 @@ describe("<Table />", () => {
         cy.get("input[aria-label='Select row 2']").should("be.checked");
     });
 
-    // it("filtering does not affect checkbox", () => {
-    //     cy.mount(<Component filters={["full_name"]} />);
-    //     cy.get("input[aria-label='Select row 0']").should("not.be.checked");
-    //     cy.get("input[aria-label='Select row 0']").click();
-    //     cy.get("input[type='text']").type("Sam");
-    //     cy.get("input[type='text']").clear();
-    //     cy.get("input[aria-label='Select row 0']").should("be.checked");
-    // });
+    it("filtering does not affect checkbox", () => {
+        cy.mount(<Component filters />);
+        cy.get("input[aria-label='Select row 0']").should("not.be.checked");
+        cy.get("input[aria-label='Select row 0']").click();
+        cy.get("input[type='text']").type("Sam");
+        cy.get("input[type='text']").clear();
+        cy.get("input[aria-label='Select row 0']").should("be.checked");
+    });
 
     it("changing page does not affect checkbox", () => {
         cy.mount(<Component pagination />);
@@ -343,22 +400,23 @@ describe("<Table />", () => {
         cy.get("input[aria-label='Select row 14']").should("be.checked");
     });
 
-    // it("sorting does not affect checkbox", () => {
-    //     cy.mount(<Component sortable={["full_name"]} />);
+    it("sorting does not affect checkbox", () => {
+        cy.mount(<Component sortable />);
 
-    //     cy.get("input[aria-label='Select row 0']").click();
-    //     cy.get("input[aria-label='Select row 0']").should("be.checked");
+        cy.get("input[aria-label='Select row 0']").click();
+        cy.get("input[aria-label='Select row 0']").should("be.checked");
 
-    //     cy.get("input[aria-label='Select row 2']").click();
-    //     cy.get("input[aria-label='Select row 2']").should("be.checked");
+        cy.get("input[aria-label='Select row 2']").click();
+        cy.get("input[aria-label='Select row 2']").should("be.checked");
 
-    //     cy.get("div").contains("Name").parent().click();
-    //     cy.get("input[aria-label='Select row 2']").should("be.checked");
-    //     cy.get("div").contains("Name").parent().click();
+        cy.get("div").contains("Name").parent().click();
+        cy.get("div").contains("Name").parent().click();
+        cy.get("input[aria-label='Select row 2']").should("be.checked");
+        cy.get("div").contains("Name").parent().click();
 
-    //     cy.get("input[aria-label='Select row 0']").should("be.checked");
-    //     cy.get("input[aria-label='Select row 2']").should("be.checked");
-    // });
+        cy.get("input[aria-label='Select row 0']").should("be.checked");
+        cy.get("input[aria-label='Select row 2']").should("be.checked");
+    });
 
     it("checkall box toggles all data", () => {
         cy.mount(<Component tableData={smallerData} />);
