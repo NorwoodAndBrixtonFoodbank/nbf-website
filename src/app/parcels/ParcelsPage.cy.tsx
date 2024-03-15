@@ -2,7 +2,7 @@ import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fet
 import {
     ParcelsTableRow,
     datetimeToPackingTimeLabel,
-    eventToLastStatus,
+    processLastStatus,
     processingDataToParcelsTableData,
 } from "@/app/parcels/getParcelsTableData";
 import {
@@ -107,7 +107,7 @@ describe("Parcels Page", () => {
             const expected: ParcelsTableRow[] = [
                 {
                     parcelId: "PRIMARY_KEY",
-                    primaryKey: "PRIMARY_KEY2",
+                    clientId: "PRIMARY_KEY2",
                     fullName: "CLIENT_NAME",
                     familyCategory: "Family of 3",
                     addressPostcode: "SW1A 2AA",
@@ -157,7 +157,7 @@ describe("Parcels Page", () => {
 
         it("eventToStatusMessage()", () => {
             expect(
-                eventToLastStatus({
+                processLastStatus({
                     event_name: "EVENT",
                     event_data: "SOME_RELATED_DATA",
                     timestamp: "2023-08-04T13:30:00+00:00",
@@ -167,7 +167,7 @@ describe("Parcels Page", () => {
                 eventData: "SOME_RELATED_DATA",
                 timestamp: new Date("2023-08-04T13:30:00+00:00"),
             });
-            expect(eventToLastStatus(null)).to.eq(null);
+            expect(processLastStatus(null)).to.eq(null);
         });
     });
 

@@ -2,10 +2,10 @@ import { Supabase } from "@/supabaseUtils";
 import { DatabaseError, EdgeFunctionError } from "../errorClasses";
 import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsTableData";
 import { Filter, FilterMethodType } from "@/components/Tables/Filters";
-import Table, { SortState } from "@/components/Tables/Table";
+import { SortState } from "@/components/Tables/Table";
 import { PostgrestQueryBuilder, PostgrestFilterBuilder } from "@supabase/postgrest-js";
-import { Database, Tables } from "@/databaseTypesFile";
-import { TableNames } from "@/databaseUtils";
+import { Database } from "@/databaseTypesFile";
+import { TableNames, ViewNames } from "@/databaseUtils";
 
 export type CongestionChargeDetails = {
     postcode: string;
@@ -18,7 +18,7 @@ export const getCongestionChargeDetailsForParcels = async (
 ): Promise<CongestionChargeDetails[]> => {
     const postcodes = [];
     for (const parcel of processingData) {
-        postcodes.push(parcel.client!.address_postcode);
+        postcodes.push(parcel.client_address_postcode);
     }
 
     const response = await supabase.functions.invoke("check-congestion-charge", {
@@ -43,37 +43,7 @@ export const getParcelProcessingData = async (
     end?: number,
     parcelIds?: string[]
 ) => {
-    let query = supabase.from("parcels").select(
-        `
-        parcel_id:primary_key,
-        
-        collection_centre:collection_centres!inner ( 
-            name, 
-            acronym
-         ),
-         
-        collection_datetime,
-        packing_datetime,
-        voucher_number,
-        
-        client:clients!inner (
-            primary_key,
-            full_name,
-            address_postcode,
-            flagged_for_attention,
-            signposting_call_required,
-            phone_number,
-            
-            family_count:family_count8!inner(
-                family_count
-            )
-        )
-    `    
-    //    last_status:last_status_z2!inner(parcel_id, event_name, timestamp, event_data, workflow_order)
-    //`
-    );
-    //query.limit(1, {foreignTable: "family_count"});
-   // query.limit(1, {foreignTable: "last_status"})
+    let query = supabase.from("parcels_plus").select("*");
     if (sortState.sort && sortState.column.sortMethod) {
         query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
@@ -91,7 +61,7 @@ export const getParcelProcessingData = async (
     }
 
     if (parcelIds) {
-        query = query.in("primary_key", parcelIds);
+        query = query.in("parcel_id", parcelIds);
     }
 
     const { data, error } = await query;
@@ -129,38 +99,7 @@ export const getParcelsCount = async (
     supabase: Supabase,
     filters: Filter<ParcelsTableRow, any>[]
 ): Promise<number> => {
-    let query = supabase.from("parcels").select(
-        `
-        parcel_id:primary_key,
-        
-        collection_centre:collection_centres!inner ( 
-            name, 
-            acronym
-         ),
-         
-        collection_datetime,
-        packing_datetime,
-        voucher_number,
-        
-        client:clients!inner (
-            primary_key,
-            full_name,
-            address_postcode,
-            flagged_for_attention,
-            signposting_call_required,
-            phone_number,
-            
-            family_count:family_count8!inner(
-                family_count
-            )
-        )
-    `    
-    //    last_status:last_status_z2!inner(parcel_id, event_name, timestamp, event_data, workflow_order)
-    //`,
-    ,    { count: "exact", head: true }
-    );
-    //query.limit(1, {foreignTable: "family_count"});
-    //query.limit(1, {foreignTable: "last_status"})
+    let query = supabase.from("parcels_plus").select("*", { count: "exact", head: true });
 
     filters.forEach((filter) => {
         if (filter.methodConfig.methodType === FilterMethodType.Server) {
@@ -168,8 +107,7 @@ export const getParcelsCount = async (
         }
     });
 
-    query = query
-        .order("packing_datetime", { ascending: false })
+    query = query.order("packing_datetime", { ascending: false });
 
     const { count, error } = await query;
     if (error || count === null) {
@@ -184,37 +122,12 @@ export const getParcelIds = async (
     filters: Filter<ParcelsTableRow, any>[],
     sortState: SortState<ParcelsTableRow>
 ): Promise<string[]> => {
-    let query = supabase.from("parcels").select(
-        `
-      parcel_id:primary_key,
-      
-      collection_centre:collection_centres!inner ( 
-          name, 
-          acronym
-       ),
-       
-      collection_datetime,
-      packing_datetime,
-      voucher_number,
-      
-      client:clients!inner (
-        primary_key,
-        full_name,
-        address_postcode,
-        flagged_for_attention,
-        signposting_call_required,
-        phone_number,
-        
-        family_count:family_count8(
-            family_count
-        )
-    )
-    `
-    //last_status:last_status_z2!inner(parcel_id, event_name, timestamp, event_data, workflow_order)
-    //`
-    );
-    //query.limit(1, {foreignTable: "family_count"});
-    //query.limit(1, {foreignTable: "last_status"});
+    let query = supabase.from("parcels_plus").select("*");
+    if (sortState.sort && sortState.column.sortMethod) {
+        query = sortState.column.sortMethod(query, sortState.sortDirection);
+    } else {
+        query = query.order("packing_datetime", { ascending: false });
+    }
 
     filters.forEach((filter) => {
         if (filter.methodConfig.methodType === FilterMethodType.Server) {
@@ -229,14 +142,15 @@ export const getParcelIds = async (
 
     const { data, error } = await query;
     if (error) {
+        console.error(error);
         throw new DatabaseError("fetch", "parcels");
     }
-    return data.map((parcel) => parcel.parcel_id) ?? [];
+    return data.map((parcel) => parcel.parcel_id ?? "") ?? [];
 };
 
 export const getAllValuesForKeys = async <Return>(
     supabase: Supabase,
-    table: TableNames,
+    table: TableNames | ViewNames,
     selectMethod: (
         query: PostgrestQueryBuilder<Database["public"], any, any>
     ) => PostgrestFilterBuilder<Database["public"], any, any>
@@ -244,6 +158,7 @@ export const getAllValuesForKeys = async <Return>(
     const query = selectMethod(supabase.from(table));
     const { data, error } = await query;
     if (error) {
+        console.error(error);
         throw new DatabaseError("fetch", table);
     }
     return data ?? [];
@@ -261,5 +176,5 @@ export interface LastStatusOptionsResponse {
 }
 
 export interface StatusResponseRow {
-    event_name: string
+    event_name: string;
 }

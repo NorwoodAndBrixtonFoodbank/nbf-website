@@ -170,6 +170,13 @@ export type Database = {
             referencedRelation: "clients"
             referencedColumns: ["family_id"]
           },
+          {
+            foreignKeyName: "families_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "family_count"
+            referencedColumns: ["family_id"]
+          },
         ]
       }
       lists: {
@@ -414,15 +421,7 @@ export type Database = {
           family_count: number | null
           family_id: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "families_family_id_fkey"
-            columns: ["family_id"]
-            isOneToOne: false
-            referencedRelation: "clients"
-            referencedColumns: ["family_id"]
-          },
-        ]
+        Relationships: []
       }
       last_status: {
         Row: {

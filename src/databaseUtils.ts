@@ -21,6 +21,8 @@ export type DatabaseEnums = Database["public"]["Enums"];
 
 export type ViewSchema = {
     [key in keyof Views]: Views[key]["Row"];
-}
+};
 
 export type TableNames = keyof Tables;
+
+export type ViewNames = keyof Views;

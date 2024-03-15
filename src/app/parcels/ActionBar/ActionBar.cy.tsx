@@ -7,7 +7,7 @@ import Localization from "@/app/Localization";
 describe("Parcels - Action Bar", () => {
     const mockData: ParcelsTableRow[] = [
         {
-            primaryKey: "primaryKey1",
+            clientId: "primaryKey1",
             addressPostcode: "AB1 2CD",
             phoneNumber: "0987 654321",
             deliveryCollection: {
@@ -33,7 +33,7 @@ describe("Parcels - Action Bar", () => {
             voucherNumber: "123456789",
         },
         {
-            primaryKey: "primaryKey2",
+            clientId: "primaryKey2",
             addressPostcode: "AB1 aaaa2CD",
             phoneNumber: "+1 234 567",
             deliveryCollection: {

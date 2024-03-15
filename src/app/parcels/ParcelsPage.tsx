@@ -24,7 +24,6 @@ import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
 import {
     CollectionCentresOptions,
-    LastStatusOptionsResponse,
     ParcelProcessingData,
     StatusResponseRow,
     getAllValuesForKeys,
@@ -35,7 +34,7 @@ import {
 import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { Filter, FilterMethodType } from "@/components/Tables/Filters";
-import { saveParcelStatus, statusNamesInWorkflowOrder } from "./ActionBar/Statuses";
+import { saveParcelStatus } from "./ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PostgrestFilterBuilder, PostgrestQueryBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
@@ -65,38 +64,26 @@ const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
     "lastStatus",
 ];
 
-const sortStatusByWorkflowOrder = (
-    statusA: ParcelsTableRow["lastStatus"],
-    statusB: ParcelsTableRow["lastStatus"]
-): number => {
-    const indexA = statusNamesInWorkflowOrder.indexOf(statusA?.name ?? "");
-    const indexB = statusNamesInWorkflowOrder.indexOf(statusB?.name ?? "");
-    if (indexA === indexB) {
-        return 0;
-    }
-    return indexA < indexB ? 1 : -1;
-};
-
 const sortableColumns: SortOptions<ParcelsTableRow, any>[] = [
     {
         key: "fullName",
         sortMethod: (query, sortDirection) =>
-            query.order("client(full_name)", { ascending: sortDirection === "asc" }),
+            query.order("client_full_name", { ascending: sortDirection === "asc" }),
     },
-    // {
-    //     key: "familyCategory",
-    //     sortMethod: (query, sortDirection) =>
-    //         query.order("client(family_count(family_count))", { ascending: sortDirection === "asc" }),
-    // },
+    {
+        key: "familyCategory",
+        sortMethod: (query, sortDirection) =>
+            query.order("family_count", { ascending: sortDirection === "asc" }),
+    },
     {
         key: "addressPostcode",
         sortMethod: (query, sortDirection) =>
-            query.order("client(address_postcode)", { ascending: sortDirection === "asc" }),
+            query.order("client_address_postcode", { ascending: sortDirection === "asc" }),
     },
     {
         key: "phoneNumber",
         sortMethod: (query, sortDirection) =>
-            query.order("client(phone_number)", { ascending: sortDirection === "asc" }),
+            query.order("client_phone_number", { ascending: sortDirection === "asc" }),
     },
     {
         key: "voucherNumber",
@@ -106,7 +93,7 @@ const sortableColumns: SortOptions<ParcelsTableRow, any>[] = [
     {
         key: "deliveryCollection",
         sortMethod: (query, sortDirection) =>
-            query.order("collection_centre(name)", { ascending: sortDirection === "asc" }),
+            query.order("collection_centre_name", { ascending: sortDirection === "asc" }),
     },
     {
         key: "packingDatetime",
@@ -114,8 +101,11 @@ const sortableColumns: SortOptions<ParcelsTableRow, any>[] = [
             query.order("packing_datetime", { ascending: sortDirection === "asc" }),
     },
     //{key: "packingTimeLabel",sortMethod: (query, sortDirection) => query.order("client(full_name)", {ascending: sortDirection === "asc"})}, broke
-    // { key: "lastStatus", sortMethod: (query, sortDirection) =>
-    // query.order("last_status(workflow_order)", { ascending: sortDirection === "asc" })}
+    {
+        key: "lastStatus",
+        sortMethod: (query, sortDirection) =>
+            query.order("last_status_workflow_order", { ascending: sortDirection === "asc" }),
+    },
 ];
 
 const toggleableHeaders: (keyof ParcelsTableRow)[] = [
@@ -187,14 +177,14 @@ const fullNameSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
     state: string
 ): PostgrestFilterBuilder<Database["public"], any, any> => {
-    return query.ilike("client.full_name", `%${state}%`);
+    return query.ilike("client_full_name", `%${state}%`);
 };
 
 const postcodeSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
     state: string
 ): PostgrestFilterBuilder<Database["public"], any, any> => {
-    return query.ilike("client.address_postcode", `%${state}%`);
+    return query.ilike("client_address_postcode", `%${state}%`);
 };
 
 const familySearch = (
@@ -205,29 +195,29 @@ const familySearch = (
         return query;
     }
     if ("Single".includes(state) || "single".includes(state)) {
-        return query.lte("client.family_count.family_count", 1);
+        return query.lte("family_count", 1);
     }
     if ("Family of".includes(state) || "family of".includes(state)) {
-        return query.gte("client.family_count.family_count", 2);
+        return query.gte("family_count", 2);
     }
     const stateAsNumber = Number(state);
-    if (Number.isNaN(stateAsNumber)) {
-        return query.eq("client.family_count.family_count", -1);
+    if (Number.isNaN(stateAsNumber) || stateAsNumber === 0) {
+        return query.eq("family_count", -1);
     }
     if (stateAsNumber >= 10) {
-        return query.gte("client.family_count.family_count", 10);
+        return query.gte("family_count", 10);
     }
     if (stateAsNumber <= 1) {
-        return query.lte("client.family_count.family_count", 1);
+        return query.lte("family_count", 1);
     }
-    return query.eq("client.family_count.family_count", Number(state));
+    return query.eq("family_count", Number(state));
 };
 
 const phoneSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
     state: string
 ): PostgrestFilterBuilder<Database["public"], any, any> => {
-    return query.ilike("client.phone_number", `%${state}%`);
+    return query.ilike("client_phone_number", `%${state}%`);
 };
 
 const voucherSearch = (
@@ -257,25 +247,30 @@ const buildDeliveryCollectionFilter = async (): Promise<Filter<ParcelsTableRow, 
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.in("collection_centre.acronym", state);
+        return query.in("collection_centre_acronym", state);
     };
 
     const getAllDeliveryCollectionOptions = (
         query: PostgrestQueryBuilder<Database["public"], any, any>
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.select(
-            " parcel_id:primary_key, packing_datetime, collection_centre:collection_centres(*)"
-        );
+        return query.select("collection_centre_name, collection_centre_acronym");
     };
     const keySet = new Set();
     const response: Partial<ParcelProcessingData> = await getAllValuesForKeys<
         Partial<ParcelProcessingData>
-    >(supabase, "parcels", getAllDeliveryCollectionOptions);
+    >(supabase, "parcels_plus", getAllDeliveryCollectionOptions);
     const optionsSet: CollectionCentresOptions[] = response.reduce<CollectionCentresOptions[]>(
         (filteredOptions, row) => {
-            if (row?.collection_centre && !keySet.has(row.collection_centre.acronym)) {
-                keySet.add(row.collection_centre.acronym);
-                filteredOptions.push(row.collection_centre);
+            if (
+                row?.collection_centre_acronym &&
+                row.collection_centre_name &&
+                !keySet.has(row.collection_centre_acronym)
+            ) {
+                keySet.add(row.collection_centre_acronym);
+                filteredOptions.push({
+                    name: row.collection_centre_name,
+                    acronym: row.collection_centre_acronym,
+                });
             }
             return filteredOptions.sort();
         },
@@ -325,7 +320,7 @@ const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query//.in("last_status.event_name", state);
+        return query.in("last_status_event_name", state);
     };
 
     const getAllLastStatusOptions = (
@@ -334,9 +329,11 @@ const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]
         return query.select("event_name");
     };
     const keySet = new Set();
-    const response: StatusResponseRow[] = await getAllValuesForKeys<
-    StatusResponseRow[]
-    >(supabase, "status_order", getAllLastStatusOptions);
+    const response: StatusResponseRow[] = await getAllValuesForKeys<StatusResponseRow[]>(
+        supabase,
+        "status_order",
+        getAllLastStatusOptions
+    );
     console.log(response);
     const optionsSet: string[] = response.reduce<string[]>((filteredOptions, row) => {
         if (row.event_name && !keySet.has(row.event_name)) {
