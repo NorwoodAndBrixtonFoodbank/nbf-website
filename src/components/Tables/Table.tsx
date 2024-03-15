@@ -259,6 +259,7 @@ const Table = <Data,>({
                 />
             ),
             width: "47px",
+            ignoreRowClick: true,
         });
     }
 
