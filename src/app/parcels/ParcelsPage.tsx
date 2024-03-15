@@ -310,7 +310,7 @@ const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        if (state.includes("-")) {
+        if (state.includes("None")) {
             return query.or(
                 `last_status_event_name.is.null,last_status_event_name.in.(${state.join(",")})`
             );
@@ -337,7 +337,7 @@ const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]
         }
         return filteredOptions.sort();
     }, []);
-    optionsSet.push("-");
+    optionsSet.push("None");
 
     return checklistFilter<ParcelsTableRow>({
         key: "lastStatus",
@@ -601,7 +601,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const rowToLastStatusColumn = (data: ParcelsTableRow["lastStatus"] | null): string => {
         if (!data) {
-            return "-";
+            return "None";
         }
         const { name, eventData, timestamp } = data;
         return (
