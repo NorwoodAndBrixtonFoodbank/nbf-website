@@ -10,7 +10,6 @@ import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
-import { v4 as uuidv4 } from "uuid";
 import { logError, logInfo } from "@/logger/logger";
 
 const DangerDialog = styled(Modal)`

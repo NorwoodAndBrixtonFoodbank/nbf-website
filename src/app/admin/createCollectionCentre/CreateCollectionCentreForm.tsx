@@ -17,7 +17,6 @@ import { InsertSchema } from "@/databaseUtils";
 import NameCard from "@/app/admin/createCollectionCentre/NameCard";
 import AcronymCard from "@/app/admin/createCollectionCentre/AcronymCard";
 import supabase from "@/supabaseClient";
-import { v4 as uuidv4 } from "uuid";
 import { logError, logInfo } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 

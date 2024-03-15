@@ -7,7 +7,6 @@ import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { User } from "@supabase/gotrue-js";
 import { DatabaseError } from "@/app/errorClasses";
 import { Schema } from "@/databaseUtils";
-import { v4 as uuidv4 } from "uuid";
 import { logError } from "@/logger/logger";
 
 // disables caching
