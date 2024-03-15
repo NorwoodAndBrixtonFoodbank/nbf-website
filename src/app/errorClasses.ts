@@ -1,9 +1,10 @@
 export class DatabaseError extends Error {
-    constructor(errorCategory: DatabaseOperation, faultyArea = "") {
+    constructor(errorCategory: DatabaseOperation, faultyArea = "", errorId: string) {
         super(
             `An error occurred completing the ${errorCategory} operation` +
                 (faultyArea !== "" ? ` (${faultyArea})` : "") +
-                ". Please try again."
+                ". Please try again." +
+                `Error ID: ${errorId}`
         );
         this.name = "DatabaseError";
     }
