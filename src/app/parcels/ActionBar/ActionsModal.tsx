@@ -137,10 +137,11 @@ export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
                 .from("collection_centres")
                 .select("primary_key, name");
             if (error) {
-                const response = logErrorReturnLogId("Error with fetch: Collection centres", error);
-                response.then((errorId) => {
-                    throw new DatabaseError("fetch", "collection centres", errorId);
-                });
+                const logId = await logErrorReturnLogId(
+                    "Error with fetch: Collection centres",
+                    error
+                );
+                throw new DatabaseError("fetch", "collection centres", logId);
             }
 
             const transformedData: [string, string][] = data.map((item) => [
