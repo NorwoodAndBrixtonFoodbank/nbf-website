@@ -25,10 +25,8 @@ const getUsers = async (): Promise<UserRow[]> => {
     const { data, error } = await supabase.functions.invoke("admin-get-users");
 
     if (error) {
-        const response = logErrorReturnLogId("Error with fetch: Users", error);
-        response.then((errorId) => {
-            throw new DatabaseError("fetch", "user information", errorId);
-        });
+        const logId = await logErrorReturnLogId("Error with fetch: Users", error);
+        throw new DatabaseError("fetch", "user information", logId);
     }
 
     const users: User[] = data;
@@ -50,10 +48,8 @@ const getCollectionCentres = async (): Promise<Schema["collection_centres"][]> =
 
     // TODO VFB-23 Move error handling of this request to client side
     if (error) {
-        const response = logErrorReturnLogId("Error with fetch: Collection Centres", error);
-        response.then((errorId) => {
-            throw new DatabaseError("fetch", "collection centres", errorId);
-        });
+        const logId = await logErrorReturnLogId("Error with fetch: Collection Centres", error);
+        throw new DatabaseError("fetch", "collection centres", logId);
     }
 
     return data ? data : [];
