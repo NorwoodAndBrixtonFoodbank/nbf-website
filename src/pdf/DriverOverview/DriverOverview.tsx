@@ -4,7 +4,6 @@ import { Schema } from "@/databaseUtils";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import DriverOverviewPdf, { DriverOverviewTableData } from "@/pdf/DriverOverview/DriverOverviewPdf";
 import { DatabaseError } from "@/app/errorClasses";
-import { v4 as uuidv4 } from "uuid";
 import { logError } from "@/logger/logger";
 
 const formatDatetime = (datetimeString: string | null): Date | null => {
@@ -14,14 +13,10 @@ const formatDatetime = (datetimeString: string | null): Date | null => {
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<Schema["parcels"][]> => {
     const { data, error } = await supabase.from("parcels").select().in("primary_key", parcelIds);
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "pdf/DriverOverview/DriverOverview.tsx",
-        };
-        void logError("Error with fetch: parcels", meta);
-        throw new DatabaseError("fetch", "parcels");
+        const response = logError("Error with fetch: Parcels", error);
+        response.then((errorId) => {
+            throw new DatabaseError("fetch", "parcels", errorId);
+        });
     }
     return data ?? [];
 };
@@ -33,14 +28,10 @@ const getClientById = async (clientId: string): Promise<Schema["clients"] | null
         .eq("primary_key", clientId)
         .single();
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "pdf/DriverOverview/DriverOverview.tsx",
-        };
-        void logError("Error with fetch: clients", meta);
-        throw new DatabaseError("fetch", "clients");
+        const response = logError("Error with fetch: Clients", error);
+        response.then((errorId) => {
+            throw new DatabaseError("fetch", "clients", errorId);
+        });
     }
     return data ?? null;
 };
