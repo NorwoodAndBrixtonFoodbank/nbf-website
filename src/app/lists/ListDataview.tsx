@@ -14,7 +14,6 @@ import Button from "@mui/material/Button";
 import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
-import { v4 as uuidv4 } from "uuid";
 import { logError, logInfo } from "@/logger/logger";
 
 interface ListRow {
@@ -127,7 +126,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
 
     const reorderRows = (row1: ListRow, row2: ListRow): void => {
         const primaryKeys = listOfIngredients.map(
-            (listOfIngridients) => listOfIngridients.primary_key
+            (listOfIngredients) => listOfIngredients.primary_key
         );
 
         const row1Index = primaryKeys.indexOf(row1.primaryKey);
@@ -142,12 +141,12 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         row1Item.row_order = row2Order;
         row2Item.row_order = row1Order;
 
-        const newListOfIngridients = [...listOfIngredients];
+        const newListOfIngredients = [...listOfIngredients];
 
-        newListOfIngridients[row1Index] = row2Item;
-        newListOfIngridients[row2Index] = row1Item;
+        newListOfIngredients[row1Index] = row2Item;
+        newListOfIngredients[row2Index] = row1Item;
 
-        setListOfIngredients(newListOfIngridients);
+        setListOfIngredients(newListOfIngredients);
     };
     const onSwapRows = async (row1: ListRow, row2: ListRow): Promise<void> => {
         const { error } = await supabase.from("lists").upsert([
@@ -162,14 +161,10 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         ]);
 
         if (error) {
-            const id = uuidv4();
-            const meta = {
-                error: error,
-                id: id,
-                location: "app/lists/ListDataView.tsx",
-            };
-            void logError("Error with upsert: List row item order", meta);
-            throw new DatabaseError("update", "lists items");
+            const response = logError("Error with upsert: List row item order", error);
+            response.then((errorId) => {
+                throw new DatabaseError("update", "list items", errorId);
+            });
         }
 
         reorderRows(row1, row2);
@@ -189,14 +184,13 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                 .eq("primary_key", itemToDelete.primary_key);
 
             if (error) {
-                const id = uuidv4();
-                const meta = {
-                    error: error,
-                    id: id,
-                    location: "app/lists/ListDataview.tsx",
-                };
-                void logError("Error with delete: Ingredient", meta);
-                setErrorMsg(error.message);
+                const response = logError(
+                    `Error with delete: Ingredient id ${itemToDelete.primary_key}`,
+                    error
+                );
+                response.then((errorId) => {
+                    setErrorMsg(error.message + `Error ID: ${errorId}`);
+                });
             } else {
                 window.location.reload();
             }
