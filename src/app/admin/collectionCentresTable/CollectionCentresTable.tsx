@@ -56,10 +56,8 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
             .eq("name", collectionCentreToDelete!.name);
 
         if (error) {
-            const response = logErrorReturnLogId("Error with delete: Collection Centre", error);
-            response.then((errorId) => {
-                throw new DatabaseError("delete", "collection centres", errorId);
-            });
+            const logId = await logErrorReturnLogId("Error with delete: Collection Centre", error);
+            throw new DatabaseError("delete", "collection centres", logId);
         }
 
         setCollectionCentreToDelete(undefined);
