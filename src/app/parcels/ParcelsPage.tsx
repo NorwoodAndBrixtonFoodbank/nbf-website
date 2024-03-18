@@ -143,7 +143,6 @@ const fetchAndFormatParcelTablesData = async (
 };
 
 const parcelIdParam = "parcelId";
-const primaryKeyParam = "client";
 
 const areDateRangesIdentical = (
     dateRangeA: DateRangeState,
@@ -170,7 +169,7 @@ const ParcelsPage: React.FC<{}> = () => {
     });
     const [tableData, setTableData] = useState<ParcelsTableRow[]>([]);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
-    const [selectedPrimaryKey, setselectedPrimaryKey] = useState<string | null>(null);
+    const [selectedPrimaryKey, setSelectedPrimaryKey] = useState<string | null>(null);
 
     const [selectedRowIndices, setSelectedRowIndices] = useState<number[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
@@ -182,8 +181,6 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const searchParams = useSearchParams();
     const parcelId = searchParams.get(parcelIdParam);
-    const primaryKey = searchParams.get(primaryKeyParam);
-
 
     useEffect(() => {
         if (parcelId) {
@@ -191,13 +188,6 @@ const ParcelsPage: React.FC<{}> = () => {
             setModalIsOpen(true);
         }
     }, [parcelId]);
-
-    useEffect(() => {
-        console.log("Primary Key:", primaryKey);
-        if (primaryKey) {
-            setselectedPrimaryKey(primaryKey);
-        }
-    }, [primaryKey]);
 
     useEffect(() => {
         (async () => {
@@ -335,9 +325,8 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const onParcelTableRowClick = (row: Row<ParcelsTableRow>): void => {
         setSelectedParcelId(row.data.parcelId);
+        setSelectedPrimaryKey(row.data.primaryKey);
         router.push(`/parcels?${parcelIdParam}=${row.data.parcelId}`);
-        setselectedPrimaryKey(row.data.primaryKey);
-
     };
 
     const buildDeliveryCollectionFilter = (
