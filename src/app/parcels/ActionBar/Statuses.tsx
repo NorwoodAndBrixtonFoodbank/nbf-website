@@ -9,7 +9,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import StatusesBarModal from "@/app/parcels/ActionBar/StatusesModal";
 import { DatabaseError } from "@/app/errorClasses";
-import { logError } from "@/logger/logger";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 export const statusNamesInWorkflowOrder = [
     "No Status",
@@ -60,7 +60,7 @@ export const saveParcelStatus = async (
 
     const { error } = await supabase.from("events").insert(toInsert);
     if (error) {
-        const response = logError("Error with insert: Status event", error);
+        const response = logErrorReturnLogId("Error with insert: Status event", error);
         response.then((errorId) => {
             throw new DatabaseError("insert", "status event", errorId);
         });

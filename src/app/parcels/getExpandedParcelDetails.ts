@@ -3,7 +3,7 @@ import { Data } from "@/components/DataViewer/DataViewer";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { EventTableRow } from "./EventTable";
-import { logError } from "@/logger/logger";
+import { logErrorReturnLogId } from "@/logger/logger";
 export type RawParcelDetails = Awaited<ReturnType<typeof getRawParcelDetails>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -45,7 +45,7 @@ export const getRawParcelDetails = async (parcelId: string) => {
         .eq("primary_key", parcelId)
         .single();
     if (error) {
-        const response = logError("Error with fetch: Parcel", error);
+        const response = logErrorReturnLogId("Error with fetch: Parcel", error);
         response.then((errorId) => {
             throw new DatabaseError("fetch", "parcel", errorId);
         });

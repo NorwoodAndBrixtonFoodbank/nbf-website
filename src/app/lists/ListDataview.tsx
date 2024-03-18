@@ -14,7 +14,7 @@ import Button from "@mui/material/Button";
 import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
-import { logError, logInfo } from "@/logger/logger";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 
 interface ListRow {
     primaryKey: string;
@@ -94,7 +94,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     if (listOfIngredients === null) {
-        void logInfo("No ingredients found @ app/lists/ListDataView.tsx");
+        void logInfoReturnLogId("No ingredients found @ app/lists/ListDataView.tsx");
         throw new Error("No data found");
     }
 
@@ -161,7 +161,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         ]);
 
         if (error) {
-            const response = logError("Error with upsert: List row item order", error);
+            const response = logErrorReturnLogId("Error with upsert: List row item order", error);
             response.then((errorId) => {
                 throw new DatabaseError("update", "list items", errorId);
             });
@@ -184,7 +184,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                 .eq("primary_key", itemToDelete.primary_key);
 
             if (error) {
-                const response = logError(
+                const response = logErrorReturnLogId(
                     `Error with delete: Ingredient id ${itemToDelete.primary_key}`,
                     error
                 );

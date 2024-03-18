@@ -4,7 +4,7 @@ import { Schema } from "@/databaseUtils";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import DayOverviewPdf from "./DayOverviewPdf";
 import { DatabaseError } from "@/app/errorClasses";
-import { logError } from "@/logger/logger";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 interface Props {
     text: string;
@@ -63,7 +63,7 @@ const getParcelsOfSpecificDateAndLocation = async (
         .order("collection_datetime");
 
     if (error) {
-        const response = logError("Error with fetch: Parcel", error);
+        const response = logErrorReturnLogId("Error with fetch: Parcel", error);
         response.then((errorId) => {
             throw new DatabaseError("fetch", "parcel", errorId);
         });
@@ -82,7 +82,7 @@ const fetchCollectionCentreNameAndAbbreviation = async (
         .maybeSingle();
 
     if (error) {
-        const response = logError("Error with fetch: Collection centre", error);
+        const response = logErrorReturnLogId("Error with fetch: Collection centre", error);
         response.then((errorId) => {
             throw new DatabaseError("fetch", "collection centre", errorId);
         });

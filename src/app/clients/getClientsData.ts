@@ -2,7 +2,7 @@ import { ClientsTableRow } from "@/app/clients/ClientsPage";
 import { familyCountToFamilyCategory } from "@/app/parcels/getExpandedParcelDetails";
 import { DatabaseError } from "@/app/errorClasses";
 import { Supabase } from "@/supabaseUtils";
-import { logError } from "@/logger/logger";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 const getClientsData = async (supabase: Supabase): Promise<ClientsTableRow[]> => {
     const data: ClientsTableRow[] = [];
@@ -13,7 +13,7 @@ const getClientsData = async (supabase: Supabase): Promise<ClientsTableRow[]> =>
         .order("full_name");
 
     if (clientError) {
-        const response = logError("Error with fetch: Clients", clientError);
+        const response = logErrorReturnLogId("Error with fetch: Clients", clientError);
         response.then((errorId) => {
             throw new DatabaseError("fetch", "clients", errorId);
         });
@@ -27,7 +27,7 @@ const getClientsData = async (supabase: Supabase): Promise<ClientsTableRow[]> =>
                 .eq("family_id", client.family_id);
 
             if (familyError || count === null) {
-                const response = logError("Error with fetch: Client families", familyError);
+                const response = logErrorReturnLogId("Error with fetch: Client families", familyError);
                 response.then((errorId) => {
                     throw new DatabaseError("fetch", "client families", errorId);
                 });

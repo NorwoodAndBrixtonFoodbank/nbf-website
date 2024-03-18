@@ -10,7 +10,7 @@ import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
-import { logError, logInfo } from "@/logger/logger";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 
 const DangerDialog = styled(Modal)`
     & .header {
@@ -56,7 +56,7 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
             .eq("name", collectionCentreToDelete!.name);
 
         if (error) {
-            const response = logError("Error with delete: Collection Centre", error);
+            const response = logErrorReturnLogId("Error with delete: Collection Centre", error);
             response.then((errorId) => {
                 throw new DatabaseError("delete", "collection centres", errorId);
             });
@@ -64,7 +64,7 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
 
         setCollectionCentreToDelete(undefined);
         setRefreshRequired(true);
-        void logInfo(`Collection centre: ${collectionCentreToDelete?.name} successfully deleted.`);
+        void logInfoReturnLogId(`Collection centre: ${collectionCentreToDelete?.name} successfully deleted.`);
     };
 
     const onCollectionCentreDeleteCancellation = (): void => {

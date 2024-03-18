@@ -19,7 +19,7 @@ import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 import { Database } from "@/databaseTypesFile";
 import Alert from "@mui/material/Alert/Alert";
 import { User } from "@supabase/gotrue-js";
-import { logError, logInfo } from "@/logger/logger";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 
 interface CreateUserDetails {
@@ -70,7 +70,7 @@ const CreateUserForm: React.FC<{}> = () => {
             setSubmitDisabled(false);
             setCreatedUser(null);
 
-            const response = logError("Error with insert: User", error);
+            const response = logErrorReturnLogId("Error with insert: User", error);
             response.then((errorId) => {
                 throw new DatabaseError("insert", "user", errorId);
             });
@@ -79,7 +79,7 @@ const CreateUserForm: React.FC<{}> = () => {
         setSubmitError(Errors.none);
         setSubmitDisabled(false);
         setCreatedUser(data);
-        void logInfo(`User ${fields.email} with role ${fields.role} created successfully.`);
+        void logInfoReturnLogId(`User ${fields.email} with role ${fields.role} created successfully.`);
     };
 
     return (

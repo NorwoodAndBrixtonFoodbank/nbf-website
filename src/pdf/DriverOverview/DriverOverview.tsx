@@ -4,7 +4,7 @@ import { Schema } from "@/databaseUtils";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import DriverOverviewPdf, { DriverOverviewTableData } from "@/pdf/DriverOverview/DriverOverviewPdf";
 import { DatabaseError } from "@/app/errorClasses";
-import { logError } from "@/logger/logger";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 const formatDatetime = (datetimeString: string | null): Date | null => {
     return datetimeString ? new Date(datetimeString) : null;
@@ -13,7 +13,7 @@ const formatDatetime = (datetimeString: string | null): Date | null => {
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<Schema["parcels"][]> => {
     const { data, error } = await supabase.from("parcels").select().in("primary_key", parcelIds);
     if (error) {
-        const response = logError("Error with fetch: Parcels", error);
+        const response = logErrorReturnLogId("Error with fetch: Parcels", error);
         response.then((errorId) => {
             throw new DatabaseError("fetch", "parcels", errorId);
         });
@@ -28,7 +28,7 @@ const getClientById = async (clientId: string): Promise<Schema["clients"] | null
         .eq("primary_key", clientId)
         .single();
     if (error) {
-        const response = logError("Error with fetch: Clients", error);
+        const response = logErrorReturnLogId("Error with fetch: Clients", error);
         response.then((errorId) => {
             throw new DatabaseError("fetch", "clients", errorId);
         });

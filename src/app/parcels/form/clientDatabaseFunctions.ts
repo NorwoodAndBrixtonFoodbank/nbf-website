@@ -2,7 +2,7 @@ import supabase from "@/supabaseClient";
 import { InsertSchema, Schema, UpdateSchema } from "@/databaseUtils";
 import { DatabaseError } from "@/app/errorClasses";
 import { v4 as uuidv4 } from "uuid";
-import { logError } from "@/logger/logger";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 type ParcelDatabaseInsertRecord = InsertSchema["parcels"];
 type ParcelDatabaseUpdateRecord = UpdateSchema["parcels"];
@@ -26,7 +26,7 @@ export const insertParcel = async (
         id: id,
         location: "app/parcels/form/clientDatabaseFunctions.ts",
     };
-    void logError("Error with insert: parcel data", meta);
+    void logErrorReturnLogId("Error with insert: parcel data", meta);
     throw new DatabaseError("insert", "parcel data");
 };
 
@@ -53,6 +53,6 @@ export const updateParcel = async (
         id: id,
         location: "app/parcels/form/clientDatabaseFunctions.ts",
     };
-    void logError("Error with update: parcel data", meta);
+    void logErrorReturnLogId("Error with update: parcel data", meta);
     throw new DatabaseError("update", "parcel data");
 };

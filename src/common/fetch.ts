@@ -2,7 +2,7 @@ import { DatabaseError } from "@/app/errorClasses";
 import { Schema } from "@/databaseUtils";
 import { Supabase } from "@/supabaseUtils";
 import { v4 as uuidv4 } from "uuid";
-import { logError, logWarning } from "@/logger/logger";
+import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 
 type CollectionCentre = {
     collection_centre: {
@@ -37,14 +37,14 @@ export const fetchParcel = async (
             id: id,
             location: "common/fetch.ts",
         };
-        void logError("Error with fetch: Parcel", meta);
+        void logErrorReturnLogId("Error with fetch: Parcel", meta);
         throw new DatabaseError("fetch", "parcel data");
     }
     if (data.length !== 1) {
         const errorMessage = `${
             data.length === 0 ? "No" : "Multiple"
         } records match this parcel ID.`;
-        void logWarning(`${errorMessage} ${parcelID}`);
+        void logWarningReturnLogId(`${errorMessage} ${parcelID}`);
         throw new Error(errorMessage);
     }
     return data[0];
@@ -72,7 +72,7 @@ export const getCollectionCentresInfo = async (
             id: id,
             location: "common/fetch.ts",
         };
-        void logError("Error with fetch: Collection centres data", meta);
+        void logErrorReturnLogId("Error with fetch: Collection centres data", meta);
         throw new DatabaseError("fetch", "collection centre data");
     }
 
@@ -99,7 +99,7 @@ export const fetchClient = async (
             id: id,
             location: "common/fetch.ts",
         };
-        void logError("Error with fetch: Client data", meta);
+        void logErrorReturnLogId("Error with fetch: Client data", meta);
         throw new DatabaseError("fetch", "client data");
     }
     if (data.length !== 1) {
@@ -112,7 +112,7 @@ export const fetchClient = async (
             id: id,
             location: "common/fetch.ts",
         };
-        void logError("Error with client ID", meta);
+        void logErrorReturnLogId("Error with client ID", meta);
         throw new Error(errorMessage);
     }
     return data[0];
@@ -130,7 +130,7 @@ export const fetchFamily = async (
             id: id,
             location: "common/fetch.ts",
         };
-        void logError("Error with fetch: Family data", meta);
+        void logErrorReturnLogId("Error with fetch: Family data", meta);
         throw new DatabaseError("fetch", "family data");
     }
     return data;
@@ -145,7 +145,7 @@ export const fetchLists = async (supabase: Supabase): Promise<Schema["lists"][]>
             id: id,
             location: "common/fetch.ts",
         };
-        void logError("Error with fetch: Lists data", meta);
+        void logErrorReturnLogId("Error with fetch: Lists data", meta);
         throw new DatabaseError("fetch", "lists data");
     }
     return data;
@@ -166,7 +166,7 @@ export const fetchComment = async (supabase: Supabase): Promise<string> => {
             id: id,
             location: "common/fetch.ts",
         };
-        void logError("Error with fetch: Lists comment", meta);
+        void logErrorReturnLogId("Error with fetch: Lists comment", meta);
         throw new DatabaseError("fetch", "lists comment");
     }
 

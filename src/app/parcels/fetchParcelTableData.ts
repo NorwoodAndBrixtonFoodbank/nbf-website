@@ -1,7 +1,7 @@
 import { Supabase } from "@/supabaseUtils";
 import { DatabaseError, EdgeFunctionError } from "../errorClasses";
 import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
-import { logError } from "@/logger/logger";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 export type CongestionChargeDetails = {
     postcode: string;
@@ -22,7 +22,7 @@ export const getCongestionChargeDetailsForParcels = async (
     });
 
     if (response.error) {
-        const logErrorResponse = logError("Error with congestion charge check", response.error);
+        const logErrorResponse = logErrorReturnLogId("Error with congestion charge check", response.error);
         logErrorResponse.then((errorId) => {
             throw new EdgeFunctionError("congestion charge check" + `Error ID: ${errorId}`);
         });
@@ -77,7 +77,7 @@ export const getParcelProcessingData = async (supabase: Supabase, dateRange: Dat
         .limit(1, { foreignTable: "events" });
 
     if (error) {
-        const response = logError("Error with fetch: parcel table", error);
+        const response = logErrorReturnLogId("Error with fetch: parcel table", error);
         response.then((errorId) => {
             throw new DatabaseError("fetch", "parcel table", errorId);
         });

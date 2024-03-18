@@ -10,7 +10,7 @@ import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import { faUserPen } from "@fortawesome/free-solid-svg-icons/faUserPen";
 import { updateUser } from "@/app/admin/adminActions";
 import { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
-import { logInfo } from "@/logger/logger";
+import { logInfoReturnLogId } from "@/logger/logger";
 
 interface Props {
     userToEdit: UserRow;
@@ -36,7 +36,7 @@ const EditUserForm: React.FC<Props> = (props) => {
                     </>
                 ),
             });
-            void logInfo(`User ${props.userToEdit.email} updated successfully`);
+            void logInfoReturnLogId(`User ${props.userToEdit.email} updated successfully`);
         } else {
             props.onConfirm({ success: false, message: <>Edit User Operation Failed</> });
         }
