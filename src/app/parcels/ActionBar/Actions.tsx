@@ -254,6 +254,7 @@ const Actions: React.FC<Props> = ({
         };
     };
 
+
     const mapsLinkForSelectedParcels = (): string => {
         return (
             "https://www.google.com/maps/dir/" +
