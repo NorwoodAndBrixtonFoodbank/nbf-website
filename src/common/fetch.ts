@@ -1,7 +1,6 @@
 import { DatabaseError } from "@/app/errorClasses";
 import { Schema } from "@/databaseUtils";
 import { Supabase } from "@/supabaseUtils";
-import { v4 as uuidv4 } from "uuid";
 import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 
 type CollectionCentre = {
@@ -31,14 +30,8 @@ export const fetchParcel = async (
         )
         .eq("primary_key", parcelID);
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "common/fetch.ts",
-        };
-        void logErrorReturnLogId("Error with fetch: Parcel", meta);
-        throw new DatabaseError("fetch", "parcel data");
+        const logId = await logErrorReturnLogId("Error with fetch: Parcel", error);
+        throw new DatabaseError("fetch", "parcel data", logId);
     }
     if (data.length !== 1) {
         const errorMessage = `${
@@ -63,17 +56,11 @@ type CollectionCentresInfo = [
 export const getCollectionCentresInfo = async (
     supabase: Supabase
 ): Promise<CollectionCentresInfo> => {
-    var { data, error } = await supabase.from("collection_centres").select("primary_key, name");
+    const { data, error } = await supabase.from("collection_centres").select("primary_key, name");
 
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "common/fetch.ts",
-        };
-        void logErrorReturnLogId("Error with fetch: Collection centres data", meta);
-        throw new DatabaseError("fetch", "collection centre data");
+        const logId = await logErrorReturnLogId("Error with fetch: Collection centres data", error);
+        throw new DatabaseError("fetch", "collection centre data", logId);
     }
 
     const collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues = data!
@@ -93,27 +80,18 @@ export const fetchClient = async (
 ): Promise<Schema["clients"]> => {
     const { data, error } = await supabase.from("clients").select().eq("primary_key", primaryKey);
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "common/fetch.ts",
-        };
-        void logErrorReturnLogId("Error with fetch: Client data", meta);
-        throw new DatabaseError("fetch", "client data");
+        const logId = await logErrorReturnLogId("Error with fetch: Client data", error);
+        throw new DatabaseError("fetch", "client data", logId);
     }
     if (data.length !== 1) {
         const errorMessage = `${
             data.length === 0 ? "No" : "Multiple"
         } records match this client ID.`;
-        const id = uuidv4();
-        const meta = {
-            error: `${errorMessage} ${primaryKey}`,
-            id: id,
-            location: "common/fetch.ts",
-        };
-        void logErrorReturnLogId("Error with client ID", meta);
-        throw new Error(errorMessage);
+
+        const logId = await logErrorReturnLogId(
+            "Error with client ID" + `${errorMessage} ${primaryKey}`
+        );
+        throw new Error(errorMessage + `Log ID: ${logId}`);
     }
     return data[0];
 };
@@ -124,14 +102,8 @@ export const fetchFamily = async (
 ): Promise<Schema["families"][]> => {
     const { data, error } = await supabase.from("families").select().eq("family_id", familyID);
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "common/fetch.ts",
-        };
-        void logErrorReturnLogId("Error with fetch: Family data", meta);
-        throw new DatabaseError("fetch", "family data");
+        const logId = await logErrorReturnLogId("Error with fetch: Family data", error);
+        throw new DatabaseError("fetch", "family data", logId);
     }
     return data;
 };
@@ -139,14 +111,8 @@ export const fetchFamily = async (
 export const fetchLists = async (supabase: Supabase): Promise<Schema["lists"][]> => {
     const { data, error } = await supabase.from("lists").select().order("row_order");
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "common/fetch.ts",
-        };
-        void logErrorReturnLogId("Error with fetch: Lists data", meta);
-        throw new DatabaseError("fetch", "lists data");
+        const logId = await logErrorReturnLogId("Error with fetch: Lists data", error);
+        throw new DatabaseError("fetch", "lists data", logId);
     }
     return data;
 };
@@ -160,14 +126,8 @@ export const fetchComment = async (supabase: Supabase): Promise<string> => {
         .single();
 
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "common/fetch.ts",
-        };
-        void logErrorReturnLogId("Error with fetch: Lists comment", meta);
-        throw new DatabaseError("fetch", "lists comment");
+        const logId = await logErrorReturnLogId("Error with fetch: Lists comment", error);
+        throw new DatabaseError("fetch", "lists comment", logId);
     }
 
     return data.value;
