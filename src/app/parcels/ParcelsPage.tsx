@@ -457,6 +457,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                     selectOrDeselectRow(rowIndex),
                                 onAllCheckboxClicked: () => toggleAllCheckBox(),
                             }}
+                            pointerOnHover={true}
                         />
                     </TableSurface>
                     <Modal
