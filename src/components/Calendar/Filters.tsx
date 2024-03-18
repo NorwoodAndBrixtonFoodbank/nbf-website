@@ -1,7 +1,6 @@
 "use client";
-
-import { Checkbox, FormControlLabel } from "@mui/material";
 import React from "react";
+import { Checkbox, FormControlLabel } from "@mui/material";
 import styled from "styled-components";
 
 interface CalendarFilterAccordionProps {
@@ -35,21 +34,44 @@ const CheckboxAndTitleDiv = styled.div`
     min-width: 300px;
 `;
 
+const SelectAllCheckboxes = Checkbox;
+
 const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
     allLocations,
     currentLocations,
     editLocations,
 }) => {
-    const onChange = (event: React.ChangeEvent<HTMLInputElement>, location: string): void => {
-        if (event.target.checked) {
-            editLocations([...currentLocations, location]);
-            return;
-        }
-        editLocations(currentLocations.filter((testLocation) => testLocation !== location));
+    const onCollectionCentreSelectionChange = (
+        event: React.ChangeEvent<HTMLInputElement>,
+        location: string
+    ): void => {
+        const newLocations = event.target.checked
+            ? currentLocations.concat(location)
+            : currentLocations.filter((currentLocation) => currentLocation !== location);
+
+        editLocations(newLocations);
     };
+
+    const handleSelectAllChange = (): void => {
+        const locationsToEnable =
+            allLocations.length === currentLocations.length ? [] : [...allLocations];
+
+        editLocations(locationsToEnable);
+    };
+
     return (
         <ContainerDiv>
             <h2>Shown Locations:</h2>
+            <FormControlLabel
+                label="Select All"
+                control={
+                    <SelectAllCheckboxes
+                        checked={allLocations.length === currentLocations.length}
+                        onChange={handleSelectAllChange}
+                    />
+                }
+            />
+            <CheckboxAndTitleDiv></CheckboxAndTitleDiv>
             {allLocations.map((location) => {
                 return (
                     <CheckboxAndTitleDiv key={location}>
@@ -58,7 +80,9 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
                             control={
                                 <Checkbox
                                     checked={currentLocations.includes(location)}
-                                    onChange={(event) => onChange(event, location)}
+                                    onChange={(event) =>
+                                        onCollectionCentreSelectionChange(event, location)
+                                    }
                                 />
                             }
                         />
