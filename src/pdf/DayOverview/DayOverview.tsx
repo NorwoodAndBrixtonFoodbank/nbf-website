@@ -63,13 +63,11 @@ const getParcelsOfSpecificDateAndLocation = async (
         .order("collection_datetime");
 
     if (error) {
-        const response = logErrorReturnLogId("Error with fetch: Parcel", error);
-        response.then((errorId) => {
-            throw new DatabaseError("fetch", "parcel", errorId);
-        });
+        const logId = await logErrorReturnLogId("Error with fetch: Parcel", error);
+        throw new DatabaseError("fetch", "parcel", logId);
     }
 
-    return data ? data : [];
+    return data;
 };
 
 const fetchCollectionCentreNameAndAbbreviation = async (
@@ -82,10 +80,8 @@ const fetchCollectionCentreNameAndAbbreviation = async (
         .maybeSingle();
 
     if (error) {
-        const response = logErrorReturnLogId("Error with fetch: Collection centre", error);
-        response.then((errorId) => {
-            throw new DatabaseError("fetch", "collection centre", errorId);
-        });
+        const logId = await logErrorReturnLogId("Error with fetch: Collection centre", error);
+        throw new DatabaseError("fetch", "collection centre", logId);
     }
 
     return data!;
