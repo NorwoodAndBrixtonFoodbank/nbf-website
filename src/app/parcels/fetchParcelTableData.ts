@@ -22,10 +22,11 @@ export const getCongestionChargeDetailsForParcels = async (
     });
 
     if (response.error) {
-        const logErrorResponse = logErrorReturnLogId("Error with congestion charge check", response.error);
-        logErrorResponse.then((errorId) => {
-            throw new EdgeFunctionError("congestion charge check" + `Error ID: ${errorId}`);
-        });
+        const logId = await logErrorReturnLogId(
+            "Error with congestion charge check",
+            response.error
+        );
+        throw new EdgeFunctionError("congestion charge check", logId);
     }
     return response.data;
 };
@@ -77,11 +78,9 @@ export const getParcelProcessingData = async (supabase: Supabase, dateRange: Dat
         .limit(1, { foreignTable: "events" });
 
     if (error) {
-        const response = logErrorReturnLogId("Error with fetch: parcel table", error);
-        response.then((errorId) => {
-            throw new DatabaseError("fetch", "parcel table", errorId);
-        });
+        const logId = await logErrorReturnLogId("Error with fetch: parcel table", error);
+        throw new DatabaseError("fetch", "parcel table", logId);
     }
 
-    return data ?? [];
+    return data;
 };
