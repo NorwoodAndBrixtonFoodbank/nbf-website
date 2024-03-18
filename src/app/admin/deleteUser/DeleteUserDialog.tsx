@@ -50,10 +50,8 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
                 success: false,
                 message: <>Delete User Operation Failed</>,
             });
-            const response = logErrorReturnLogId("Error with delete: User", error);
-            response.then((errorId) => {
-                throw new DatabaseError("delete", "user", errorId);
-            });
+            const logId = await logErrorReturnLogId("Error with delete: User", error);
+            throw new DatabaseError("delete", "user", logId);
         }
 
         props.setUserToDelete(null);
