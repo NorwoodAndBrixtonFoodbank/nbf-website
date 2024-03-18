@@ -13,32 +13,28 @@ const getClientsData = async (supabase: Supabase): Promise<ClientsTableRow[]> =>
         .order("full_name");
 
     if (clientError) {
-        const response = logErrorReturnLogId("Error with fetch: Clients", clientError);
-        response.then((errorId) => {
-            throw new DatabaseError("fetch", "clients", errorId);
-        });
+        const logId = await logErrorReturnLogId("Error with fetch: Clients", clientError);
+        throw new DatabaseError("fetch", "clients", logId);
     }
 
-    if (clients) {
-        for (const client of clients) {
-            const { count, error: familyError } = await supabase
-                .from("families")
-                .select("*", { count: "exact", head: true })
-                .eq("family_id", client.family_id);
+    for (const client of clients) {
+        const { count, error: familyError } = await supabase
+            .from("families")
+            .select("*", { count: "exact", head: true })
+            .eq("family_id", client.family_id);
 
-            if (familyError || count === null) {
-                const response = logErrorReturnLogId("Error with fetch: Client families", familyError);
-                response.then((errorId) => {
-                    throw new DatabaseError("fetch", "client families", errorId);
-                });
-            } else {
-                data.push({
-                    clientId: client.primary_key,
-                    fullName: client.full_name,
-                    familyCategory: familyCountToFamilyCategory(count),
-                    addressPostcode: client.address_postcode,
-                });
-            }
+        if (familyError || count === null) {
+            const response = logErrorReturnLogId("Error with fetch: Client families", familyError);
+            response.then((errorId) => {
+                throw new DatabaseError("fetch", "client families", errorId);
+            });
+        } else {
+            data.push({
+                clientId: client.primary_key,
+                fullName: client.full_name,
+                familyCategory: familyCountToFamilyCategory(count),
+                addressPostcode: client.address_postcode,
+            });
         }
     }
 
