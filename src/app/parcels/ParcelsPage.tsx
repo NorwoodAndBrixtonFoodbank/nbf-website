@@ -183,11 +183,15 @@ const ParcelsPage: React.FC<{}> = () => {
     const parcelId = searchParams.get(parcelIdParam);
 
     useEffect(() => {
-        if (parcelId) {
-            setSelectedParcelId(parcelId);
-            setModalIsOpen(true);
+        if (parcelId && tableData.length > 0) {
+            const selectedRow = tableData.find((rowData) => rowData.parcelId === parcelId);
+            if (selectedRow) {
+                setSelectedParcelId(parcelId);
+                setSelectedPrimaryKey(selectedRow.primaryKey);
+                setModalIsOpen(true);
+            }
         }
-    }, [parcelId]);
+    }, [parcelId, tableData]);
 
     useEffect(() => {
         (async () => {
@@ -490,10 +494,10 @@ const ParcelsPage: React.FC<{}> = () => {
                                         Edit Parcel
                                     </LinkButton>
                                     <LinkButton link={`/clients?clientId=${selectedPrimaryKey}`}>
-                                        Customer Profile
+                                        See Client Details
                                     </LinkButton>
                                     <LinkButton link={`/clients/edit/${selectedPrimaryKey}`}>
-                                        Edit Profile
+                                        Edit Client Details
                                     </LinkButton>
                                 </Centerer>
                             </ButtonsDiv>
