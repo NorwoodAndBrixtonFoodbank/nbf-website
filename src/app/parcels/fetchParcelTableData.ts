@@ -1,7 +1,6 @@
 import { Supabase } from "@/supabaseUtils";
 import { DatabaseError, EdgeFunctionError } from "../errorClasses";
 import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
-import { v4 as uuidv4 } from "uuid";
 import { logError } from "@/logger/logger";
 
 export type CongestionChargeDetails = {
@@ -23,16 +22,11 @@ export const getCongestionChargeDetailsForParcels = async (
     });
 
     if (response.error) {
-        const id = uuidv4();
-        const meta = {
-            error: response.error,
-            id: id,
-            location: "app/parcels/fetchParcelTableData.ts",
-        };
-        void logError("Error with congestion charge check", meta);
-        throw new EdgeFunctionError("congestion charge check");
+        const logErrorResponse = logError("Error with congestion charge check", response.error);
+        logErrorResponse.then((errorId) => {
+            throw new EdgeFunctionError("congestion charge check" + `Error ID: ${errorId}`);
+        });
     }
-
     return response.data;
 };
 
@@ -83,14 +77,10 @@ export const getParcelProcessingData = async (supabase: Supabase, dateRange: Dat
         .limit(1, { foreignTable: "events" });
 
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "app/parcels/fetchParcelTableData.ts",
-        };
-        void logError("Error fetching parcel table data", meta);
-        throw new DatabaseError("fetch", "parcel table data");
+        const response = logError("Error with fetch: parcel table", error);
+        response.then((errorId) => {
+            throw new DatabaseError("fetch", "parcel table", errorId);
+        });
     }
 
     return data ?? [];
