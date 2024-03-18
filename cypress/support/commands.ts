@@ -36,11 +36,13 @@ const loginWithRetry = (iteration: number = 0): void => {
 
     cy.url().then((url) => {
         if (url.includes("login")) {
-            cy.get("button[type='submit']").then((submitButton) => {
-                if (submitButton.not(":disabled")) {
-                    submitButton.trigger("click");
-                }
-            });
+            cy.get("button[type='button']")
+                .contains("Sign in")
+                .then((submitButton) => {
+                    if (submitButton.not(":disabled")) {
+                        submitButton.trigger("click");
+                    }
+                });
             cy.wait(Math.pow(2, iteration) * 500);
             loginWithRetry(iteration + 1);
         }
@@ -53,9 +55,6 @@ Cypress.Commands.add("login", () => {
 
     cy.session(email, () => {
         cy.visit("/");
-
-        // wait for hydration
-        cy.get("[data-loaded='true']", { timeout: 10000 }).should("exist");
 
         cy.get("input[type='email']").type(email);
         cy.get("input[type='password']").type(password);

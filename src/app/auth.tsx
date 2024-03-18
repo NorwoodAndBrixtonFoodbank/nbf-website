@@ -10,6 +10,12 @@ interface Props {
     children: React.ReactNode;
 }
 
+export const pathsNotRequiringLogin: readonly string[] = [
+    "/login",
+    "/forgot-password",
+    "/auth/reset-password",
+] as const;
+
 export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
     const supabase = createClientComponentClient<DatabaseAutoType>();
     const router = useRouter();
@@ -29,9 +35,15 @@ export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
         if (loggedIn && pathname.startsWith("/login")) {
             return "/";
         }
-        if (!loggedIn && !pathname.startsWith("/login")) {
+
+        const currentPathRequiresLogin = pathsNotRequiringLogin.every(
+            (pathNotRequiringLogin) => !pathname.startsWith(pathNotRequiringLogin)
+        );
+
+        if (!loggedIn && currentPathRequiresLogin) {
             return "/login";
         }
+
         return null;
     };
 
@@ -54,7 +66,7 @@ export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
         const {
             data: { user },
         } = await supabase.auth.getUser();
-        const userRole = user?.app_metadata.role;
+        const userRole = user?.app_metadata.role ?? "";
         setRole(userRole);
     };
 

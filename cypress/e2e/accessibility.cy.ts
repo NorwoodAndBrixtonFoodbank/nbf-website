@@ -58,9 +58,6 @@ describe("Accessibility tests in light mode", () => {
     it("Checks login page", () => {
         cy.visit("/login");
 
-        // wait for hydration
-        cy.get("[data-loaded='true']", { timeout: 10000 }).should("exist");
-
         cy.checkAccessibility();
     });
 });
@@ -132,8 +129,6 @@ describe("Accessibility tests in dark mode", () => {
     it("Checks login page", () => {
         cy.visit("/login");
 
-        // wait for hydration
-        cy.get("[data-loaded='true']", { timeout: 10000 }).should("exist");
         cy.get("label[aria-label='Theme Switch']").click();
 
         cy.checkAccessibility();
