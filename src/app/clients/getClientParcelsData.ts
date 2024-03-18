@@ -40,13 +40,11 @@ const getRawClientParcelsDetails = async (clientId: string): Promise<ParcelsDeta
         .order("packing_datetime", { ascending: false });
 
     if (error) {
-        const response = logErrorReturnLogId("Error with fetch: CLient parcels", error);
-        response.then((errorId) => {
-            throw new DatabaseError("fetch", "client parcels", errorId);
-        });
+        const logId = await logErrorReturnLogId("Error with fetch: Client parcels", error);
+        throw new DatabaseError("fetch", "client parcels", logId);
     }
 
-    return data ?? [];
+    return data;
 };
 
 export interface ExpandedClientParcelDetails extends Data {
