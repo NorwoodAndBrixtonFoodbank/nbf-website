@@ -4,7 +4,6 @@ import { Schema } from "@/databaseUtils";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import DayOverviewPdf from "./DayOverviewPdf";
 import { DatabaseError } from "@/app/errorClasses";
-import { v4 as uuidv4 } from "uuid";
 import { logError } from "@/logger/logger";
 
 interface Props {
@@ -64,17 +63,13 @@ const getParcelsOfSpecificDateAndLocation = async (
         .order("collection_datetime");
 
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "pdf/DayOverview/DayOverview.tsx",
-        };
-        void logError("Error with fetch: Parcel", meta);
-        throw new DatabaseError("fetch", "parcels");
+        const response = logError("Error with fetch: Parcel", error);
+        response.then((errorId) => {
+            throw new DatabaseError("fetch", "parcel", errorId);
+        });
     }
 
-    return data;
+    return data ? data : [];
 };
 
 const fetchCollectionCentreNameAndAbbreviation = async (
@@ -87,14 +82,10 @@ const fetchCollectionCentreNameAndAbbreviation = async (
         .maybeSingle();
 
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "pdf/DayOverview/DayOverview.tsx",
-        };
-        void logError("Error with fetch: Collection centre", meta);
-        throw new DatabaseError("fetch", "collection centre");
+        const response = logError("Error with fetch: Collection centre", error);
+        response.then((errorId) => {
+            throw new DatabaseError("fetch", "collection centre", errorId);
+        });
     }
 
     return data!;
