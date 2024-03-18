@@ -161,10 +161,11 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         ]);
 
         if (error) {
-            const response = logErrorReturnLogId("Error with upsert: List row item order", error);
-            response.then((errorId) => {
-                throw new DatabaseError("update", "list items", errorId);
-            });
+            const logId = await logErrorReturnLogId(
+                "Error with upsert: List row item order",
+                error
+            );
+            throw new DatabaseError("update", "list items", logId);
         }
 
         reorderRows(row1, row2);
@@ -184,13 +185,11 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                 .eq("primary_key", itemToDelete.primary_key);
 
             if (error) {
-                const response = logErrorReturnLogId(
+                const logId = await logErrorReturnLogId(
                     `Error with delete: Ingredient id ${itemToDelete.primary_key}`,
                     error
                 );
-                response.then((errorId) => {
-                    setErrorMsg(error.message + `Error ID: ${errorId}`);
-                });
+                setErrorMsg(error.message + `Error ID: ${logId}`);
             } else {
                 window.location.reload();
             }
