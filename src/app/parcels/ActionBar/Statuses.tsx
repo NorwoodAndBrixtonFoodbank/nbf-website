@@ -60,10 +60,8 @@ export const saveParcelStatus = async (
 
     const { error } = await supabase.from("events").insert(toInsert);
     if (error) {
-        const response = logErrorReturnLogId("Error with insert: Status event", error);
-        response.then((errorId) => {
-            throw new DatabaseError("insert", "status event", errorId);
-        });
+        const logId = await logErrorReturnLogId("Error with insert: Status event", error);
+        throw new DatabaseError("insert", "status event", logId);
     }
 };
 
