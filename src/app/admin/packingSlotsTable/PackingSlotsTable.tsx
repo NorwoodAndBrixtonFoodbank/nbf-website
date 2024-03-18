@@ -17,14 +17,12 @@ import {
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import {
     insertNewPackingSlot,
-    deleteDbPackingSlot,
     fetchPackingSlots,
     swapRows,
     updateDbPackingSlot,
@@ -145,13 +143,6 @@ const PackingSlotsTable: React.FC = () => {
         }));
     };
 
-    const handleDeleteClick = (row: PackingSlotRow) => () => {
-        setIsLoading(true);
-        deleteDbPackingSlot(row)
-            .catch((error) => void logError("Delete error with packing slot row", error))
-            .finally(() => setIsLoading(false));
-    };
-
     const handleCancelClick = (id: GridRowId) => () => {
         setRowModesModel((currentValue) => ({
             ...currentValue,
@@ -263,7 +254,7 @@ const PackingSlotsTable: React.FC = () => {
             headerName: "Actions",
             flex: 1,
             cellClassName: "actions",
-            getActions: ({ id, row }) => {
+            getActions: ({ id }) => {
                 const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
                 if (isInEditMode) {
@@ -296,13 +287,6 @@ const PackingSlotsTable: React.FC = () => {
                         onClick={handleEditClick(id)}
                         color="inherit"
                         key="Edit"
-                    />,
-                    <GridActionsCellItem
-                        icon={<DeleteIcon />}
-                        label="Delete"
-                        onClick={handleDeleteClick(row)}
-                        color="inherit"
-                        key="Delete"
                     />,
                 ];
             },
