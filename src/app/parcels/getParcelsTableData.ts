@@ -2,7 +2,6 @@ import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fet
 import { familyCountToFamilyCategory } from "@/app/parcels/getExpandedParcelDetails";
 import { Schema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { DatabaseError } from "@/app/errorClasses";
 
 export interface ParcelsTableRow {
     parcelId: Schema["parcels"]["primary_key"];
@@ -31,21 +30,19 @@ export interface ParcelsTableRow {
     packingDatetime: Date | null;
 }
 
-export const processingDataToParcelsTableData = (
+export const processingDataToParcelsTableData = async (
     processingData: ParcelProcessingData,
     congestionCharge: CongestionChargeDetails[]
-): ParcelsTableRow[] => {
+): Promise<ParcelsTableRow[]> => {
     const parcelTableRows: ParcelsTableRow[] = [];
 
     if (processingData.length !== congestionCharge.length) {
-        const response = logErrorReturnLogId(
+        const logId = await logErrorReturnLogId(
             `Error with processing parcels table data. Invalid inputs, got length ${processingData.length} and ${congestionCharge.length}`
         );
-        response.then((errorId) => {
-            throw new Error(
-                `Invalid inputs, got length ${processingData.length} and ${congestionCharge.length}. Error ID: ${errorId}`
-            );
-        });
+        throw new Error(
+            `Invalid inputs, got length ${processingData.length} and ${congestionCharge.length}. Error ID: ${logId}`
+        );
     }
 
     for (let index = 0; index < processingData.length; index++) {
