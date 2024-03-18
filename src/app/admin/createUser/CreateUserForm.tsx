@@ -77,7 +77,9 @@ const CreateUserForm: React.FC<{}> = () => {
         setSubmitError(Errors.none);
         setSubmitDisabled(false);
         setCreatedUser(data);
-        void logInfoReturnLogId(`User ${fields.email} with role ${fields.role} created successfully.`);
+        void logInfoReturnLogId(
+            `User ${fields.email} with role ${fields.role} created successfully.`
+        );
     };
 
     return (

@@ -62,7 +62,9 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
 
         setCollectionCentreToDelete(undefined);
         setRefreshRequired(true);
-        void logInfoReturnLogId(`Collection centre: ${collectionCentreToDelete?.name} successfully deleted.`);
+        void logInfoReturnLogId(
+            `Collection centre: ${collectionCentreToDelete?.name} successfully deleted.`
+        );
     };
 
     const onCollectionCentreDeleteCancellation = (): void => {
