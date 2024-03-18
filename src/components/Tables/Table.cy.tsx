@@ -158,7 +158,7 @@ const Component: React.FC<TestTableProps> = ({
     const endPoint = currentPage * perPage - 1;
 
     useEffect(() => {
-        setTestDataPortion(tableData.slice(startPoint, endPoint));
+        setTestDataPortion(tableData.slice(startPoint, endPoint + 1));
     }, [startPoint, endPoint, tableData]);
 
     const [checkedRowIds, setCheckedRowIds] = useState<string[]>([]);
@@ -332,8 +332,9 @@ describe("<Table />", () => {
 
     it("pagination number of items is working", () => {
         cy.mount(<Component pagination />);
-        cy.get("select[aria-label='Rows per page:']").select("15");
         cy.get("div[data-column-id='2'][role='cell']").as("table");
+        cy.get("@table").eq(15).should("not.exist");
+        cy.get("select[aria-label='Rows per page:']").select("15");
         cy.get("@table").eq(14).contains("Chloe");
         cy.get("@table").eq(15).should("not.exist");
     });
@@ -403,19 +404,19 @@ describe("<Table />", () => {
     it("sorting does not affect checkbox", () => {
         cy.mount(<Component sortable />);
 
-        cy.get("input[aria-label='Select row 0']").click();
+        cy.get("input[aria-label='Select row 0']").click(); //Tom
         cy.get("input[aria-label='Select row 0']").should("be.checked");
 
-        cy.get("input[aria-label='Select row 2']").click();
+        cy.get("input[aria-label='Select row 2']").click(); //Harper Garret
         cy.get("input[aria-label='Select row 2']").should("be.checked");
 
         cy.get("div").contains("Name").parent().click();
         cy.get("div").contains("Name").parent().click();
-        cy.get("input[aria-label='Select row 2']").should("be.checked");
+        cy.get("input[aria-label='Select row 7']").should("be.checked"); //this is now Harper Garret
         cy.get("div").contains("Name").parent().click();
 
-        cy.get("input[aria-label='Select row 0']").should("be.checked");
-        cy.get("input[aria-label='Select row 2']").should("be.checked");
+        cy.get("input[aria-label='Select row 0']").should("be.checked"); //Tom
+        cy.get("input[aria-label='Select row 7']").should("be.checked"); //Harper Garret
     });
 
     it("checkall box toggles all data", () => {

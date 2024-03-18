@@ -707,7 +707,7 @@ const ParcelsPage: React.FC<{}> = () => {
             </PreTableControls>
             {areFiltersLoadingForFirstTime ? (
                 <Centerer>
-                    <CircularProgress />
+                    <CircularProgress aria-label="table-progress-bar" />
                 </Centerer>
             ) : (
                 <TableSurface>

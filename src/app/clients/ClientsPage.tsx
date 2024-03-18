@@ -18,7 +18,6 @@ import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { Filter, FilterMethodType } from "@/components/Tables/Filters";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
-import { CircularProgress } from "@mui/material";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -71,7 +70,7 @@ const sortableColumns: SortOptions<ClientsTableRow, any>[] = [
 
 const clientIdParam = "clientId";
 const ClientsPage: React.FC<{}> = () => {
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [clientsDataPortion, setClientsDataPortion] = useState<ClientsTableRow[]>([]);
     const [totalRows, setTotalRows] = useState<number>(0);
     const [sortState, setSortState] = useState<SortState<ClientsTableRow>>({ sort: false });
@@ -145,80 +144,69 @@ const ClientsPage: React.FC<{}> = () => {
 
     return (
         <>
-            <>
-                {isLoading && (
-                    <Centerer>
-                        <CircularProgress />
-                    </Centerer>
-                )}
-                <TableSurface>
-                    <Table
-                        dataPortion={clientsDataPortion}
-                        paginationConfig={{
-                            pagination: true,
-                            totalRows: totalRows,
-                            onPageChange: setCurrentPage,
-                            onPerPageChange: setPerPage,
-                        }}
-                        sortConfig={{
-                            sortShown: true,
-                            sortableColumns: sortableColumns,
-                            setSortState: setSortState,
-                        }}
-                        headerKeysAndLabels={headers}
-                        onRowClick={(row) => {
-                            router.push(`/clients?${clientIdParam}=${row.data.clientId}`);
-                        }}
-                        filterConfig={{
-                            primaryFiltersShown: true,
-                            primaryFilters: primaryFilters,
-                            setPrimaryFilters: setPrimaryFilters,
-                            additionalFiltersShown: false,
-                        }}
-                        checkboxConfig={{ displayed: false }}
-                        editableConfig={{ editable: false }}
-                        isLoading={isLoading}
-                    />
-                </TableSurface>
-                <Centerer>
-                    <LinkButton link="/clients/add">Add Client</LinkButton>
-                </Centerer>
-
-                <Modal
-                    header={
-                        <>
-                            <Icon icon={faUser} color={theme.primary.largeForeground[2]} />
-                            Client Details
-                        </>
-                    }
-                    isOpen={clientId !== null}
-                    onClose={() => {
-                        router.push("/clients");
+            <TableSurface>
+                <Table
+                    dataPortion={clientsDataPortion}
+                    paginationConfig={{
+                        pagination: true,
+                        totalRows: totalRows,
+                        onPageChange: setCurrentPage,
+                        onPerPageChange: setPerPage,
                     }}
-                    headerId="clientsDetailModal"
-                >
-                    <OutsideDiv>
-                        <ContentDiv>
-                            {clientId && (
-                                <Suspense fallback={<ExpandedClientDetailsFallback />}>
-                                    <ExpandedClientDetails clientId={clientId} />
-                                </Suspense>
-                            )}
-                        </ContentDiv>
+                    sortConfig={{
+                        sortShown: true,
+                        sortableColumns: sortableColumns,
+                        setSortState: setSortState,
+                    }}
+                    headerKeysAndLabels={headers}
+                    onRowClick={(row) => {
+                        router.push(`/clients?${clientIdParam}=${row.data.clientId}`);
+                    }}
+                    filterConfig={{
+                        primaryFiltersShown: true,
+                        primaryFilters: primaryFilters,
+                        setPrimaryFilters: setPrimaryFilters,
+                        additionalFiltersShown: false,
+                    }}
+                    checkboxConfig={{ displayed: false }}
+                    editableConfig={{ editable: false }}
+                    isLoading={isLoading}
+                />
+            </TableSurface>
+            <Centerer>
+                <LinkButton link="/clients/add">Add Client</LinkButton>
+            </Centerer>
 
-                        <ButtonsDiv>
-                            <Centerer>
-                                <LinkButton link={`/clients/edit/${clientId}`}>
-                                    Edit Client
-                                </LinkButton>
-                                <LinkButton link={`/parcels/add/${clientId}`}>
-                                    Add Parcel
-                                </LinkButton>
-                            </Centerer>
-                        </ButtonsDiv>
-                    </OutsideDiv>
-                </Modal>
-            </>
+            <Modal
+                header={
+                    <>
+                        <Icon icon={faUser} color={theme.primary.largeForeground[2]} />
+                        Client Details
+                    </>
+                }
+                isOpen={clientId !== null}
+                onClose={() => {
+                    router.push("/clients");
+                }}
+                headerId="clientsDetailModal"
+            >
+                <OutsideDiv>
+                    <ContentDiv>
+                        {clientId && (
+                            <Suspense fallback={<ExpandedClientDetailsFallback />}>
+                                <ExpandedClientDetails clientId={clientId} />
+                            </Suspense>
+                        )}
+                    </ContentDiv>
+
+                    <ButtonsDiv>
+                        <Centerer>
+                            <LinkButton link={`/clients/edit/${clientId}`}>Edit Client</LinkButton>
+                            <LinkButton link={`/parcels/add/${clientId}`}>Add Parcel</LinkButton>
+                        </Centerer>
+                    </ButtonsDiv>
+                </OutsideDiv>
+            </Modal>
         </>
     );
 };

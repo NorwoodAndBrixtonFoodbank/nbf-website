@@ -438,7 +438,7 @@ const Table = <Data,>({
                         onSort={handleSort}
                         progressComponent={
                             <Centerer>
-                                <CircularProgress />
+                                <CircularProgress aria-label="table-progress-bar" />
                             </Centerer>
                         }
                         progressPending={isLoading}
