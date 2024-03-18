@@ -10,7 +10,7 @@ import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
-import { Filter, FilterMethodType } from "@/components/Tables/Filters";
+import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 
 interface CollectionCentresTableRow {
@@ -82,13 +82,13 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
             key: "name",
             label: "Name",
             headers: collectionCentresTableHeaderKeysAndLabels,
-            methodConfig: { methodType: FilterMethodType.Client, method: filterRowByText },
+            methodConfig: { methodType: PaginationType.Client, method: filterRowByText },
         }),
         buildTextFilter({
             key: "acronym",
             label: "Acronym",
             headers: collectionCentresTableHeaderKeysAndLabels,
-            methodConfig: { methodType: FilterMethodType.Client, method: filterRowByText },
+            methodConfig: { methodType: PaginationType.Client, method: filterRowByText },
         }),
     ];
     const [primaryFilters, setPrimaryFilters] =
@@ -98,7 +98,7 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
         setCollectionCentreDataPortion(
             props.collectionCentreData.filter((row) => {
                 return primaryFilters.every((filter) => {
-                    if (filter.methodConfig.methodType === FilterMethodType.Client) {
+                    if (filter.methodConfig.methodType === PaginationType.Client) {
                         return filter.methodConfig.method(row, filter.state, filter.key);
                     }
                     return false;
@@ -116,7 +116,7 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
                 toggleableHeaders={["primary_key"]}
                 paginationConfig={{ pagination: false }}
                 checkboxConfig={{ displayed: false }}
-                sortConfig={{ sortShown: false }}
+                sortConfig={{ sortPossible: false }}
                 editableConfig={{
                     editable: true,
                     onDelete: collectionCentreOnDelete,

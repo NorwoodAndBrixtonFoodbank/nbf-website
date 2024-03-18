@@ -1,7 +1,7 @@
 import { Supabase } from "@/supabaseUtils";
 import { DatabaseError, EdgeFunctionError } from "../errorClasses";
 import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsTableData";
-import { Filter, FilterMethodType } from "@/components/Tables/Filters";
+import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 import { PostgrestQueryBuilder, PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
@@ -46,15 +46,12 @@ export const getParcelProcessingData = async (
     let query = supabase.from("parcels_plus").select("*");
 
     filters.forEach((filter) => {
-        if (filter.methodConfig.methodType === FilterMethodType.Server) {
+        if (filter.methodConfig.methodType === PaginationType.Server) {
             query = filter.methodConfig.method(query, filter.state);
         }
     });
 
-    if (
-        sortState.sort &&
-        sortState.column.sortMethodConfig?.methodType === FilterMethodType.Server
-    ) {
+    if (sortState.sort && sortState.column.sortMethodConfig?.methodType === PaginationType.Server) {
         query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
     } else {
         query = query.order("packing_datetime", { ascending: false });
@@ -106,7 +103,7 @@ export const getParcelsCount = async (
     let query = supabase.from("parcels_plus").select("*", { count: "exact", head: true });
 
     filters.forEach((filter) => {
-        if (filter.methodConfig.methodType === FilterMethodType.Server) {
+        if (filter.methodConfig.methodType === PaginationType.Server) {
             query = filter.methodConfig.method(query, filter.state);
         }
     });
@@ -126,14 +123,11 @@ export const getParcelIds = async (
 ): Promise<string[]> => {
     let query = supabase.from("parcels_plus").select("*");
     filters.forEach((filter) => {
-        if (filter.methodConfig.methodType === FilterMethodType.Server) {
+        if (filter.methodConfig.methodType === PaginationType.Server) {
             query = filter.methodConfig.method(query, filter.state);
         }
     });
-    if (
-        sortState.sort &&
-        sortState.column.sortMethodConfig?.methodType === FilterMethodType.Server
-    ) {
+    if (sortState.sort && sortState.column.sortMethodConfig?.methodType === PaginationType.Server) {
         query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
     } else {
         query = query.order("packing_datetime", { ascending: false });

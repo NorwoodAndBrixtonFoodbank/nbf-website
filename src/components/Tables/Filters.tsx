@@ -3,7 +3,7 @@ import { TableHeaders } from "@/components/Tables/Table";
 import { Database } from "@/databaseTypesFile";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 
-export enum FilterMethodType {
+export enum PaginationType {
     Server = "SERVER",
     Client = "CLIENT",
 }
@@ -14,11 +14,11 @@ export type MethodConfig<Data, State> =
               query: PostgrestFilterBuilder<Database["public"], any, any>,
               state: State
           ) => PostgrestFilterBuilder<Database["public"], any, any>;
-          methodType: FilterMethodType.Server;
+          methodType: PaginationType.Server;
       }
     | {
           method: (row: Data, state: State, key: keyof Data) => boolean;
-          methodType: FilterMethodType.Client;
+          methodType: PaginationType.Client;
       };
 
 export interface Filter<Data, State> {

@@ -8,7 +8,7 @@ import Table, {
     SortState,
 } from "@/components/Tables/Table";
 import StyleManager from "@/app/themes";
-import { Filter, FilterMethodType } from "./Filters";
+import { Filter, PaginationType } from "./Filters";
 import { buildTextFilter, filterRowByText } from "./TextFilter";
 import { SortOrder } from "react-data-table-component/dist/DataTable/types";
 
@@ -124,30 +124,30 @@ const Component: React.FC<TestTableProps> = ({
         key: "full_name",
         headers: headers,
         label: "Name",
-        methodConfig: { methodType: FilterMethodType.Client, method: filterRowByText },
+        methodConfig: { methodType: PaginationType.Client, method: filterRowByText },
     });
 
-    const sortByFullName: SortOptions<TestData, "full_name"> = {
+    const sortByFullName: SortOptions<TestData> = {
         key: "full_name",
         sortMethodConfig: {
-            method: (data: TestData[], sortDirection: SortOrder) => {
-                const ascendingData = data.sort((rowA, rowB) =>
+            method: (sortDirection: SortOrder) => {
+                const ascendingData = [...testDataPortion].sort((rowA, rowB) =>
                     rowA.full_name > rowB.full_name ? 1 : rowB.full_name > rowA.full_name ? -1 : 0
                 );
                 if (sortDirection === "asc") {
-                    return ascendingData;
+                    setTestDataPortion(ascendingData);
                 } else {
-                    return ascendingData.reverse();
+                    setTestDataPortion([...ascendingData].reverse());
                 }
             },
-            methodType: FilterMethodType.Client,
+            methodType: PaginationType.Client,
         },
     };
 
     const [primaryFilters, setPrimaryFilters] = useState<Filter<TestData, string>[]>([
         fullNameFilter,
     ]);
-    const sortableColumns: SortOptions<TestData, keyof TestData>[] = [sortByFullName];
+    const sortableColumns: SortOptions<TestData>[] = [sortByFullName];
 
     const [testDataPortion, setTestDataPortion] = useState<TestData[]>(tableData);
 
@@ -163,6 +163,8 @@ const Component: React.FC<TestTableProps> = ({
 
     const [checkedRowIds, setCheckedRowIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
+
+    const [sortState, setSortState] = useState<SortState<TestData>>({ sort: false });
 
     // useEffect(() => {
     //     setCheckedRowIds([]);
@@ -186,8 +188,6 @@ const Component: React.FC<TestTableProps> = ({
             setAllCheckBoxSelected(true);
         }
     };
-
-    const [sortState, setSortState] = useState<SortState<TestData>>({ sort: false });
 
     useEffect(() => {
         const allChecked = checkedRowIds.length === tableData.length;
@@ -233,20 +233,20 @@ const Component: React.FC<TestTableProps> = ({
     };
 
     const trueSortConfig: SortConfig<TestData> = {
-        sortShown: true,
+        sortPossible: true,
         sortableColumns: sortableColumns,
         setSortState: setSortState,
     };
 
     const falseSortConfig: SortConfig<TestData> = {
-        sortShown: false,
+        sortPossible: false,
     };
 
     useEffect(() => {
         setTestDataPortion(
             tableData.filter((row) => {
                 return primaryFilters.every((filter) => {
-                    if (filter.methodConfig.methodType === FilterMethodType.Client) {
+                    if (filter.methodConfig.methodType === PaginationType.Client) {
                         return filter.methodConfig.method(row, filter.state, filter.key);
                     }
                     return false;
@@ -258,12 +258,14 @@ const Component: React.FC<TestTableProps> = ({
     useEffect(() => {
         if (
             sortState.sort &&
-            sortState.column.sortMethodConfig?.methodType === FilterMethodType.Client
+            sortState.column.sortMethodConfig?.methodType === PaginationType.Client
         ) {
-            setTestDataPortion(
-                sortState.column.sortMethodConfig.method(testDataPortion, sortState.sortDirection)
-            );
+            sortState.column.sortMethodConfig.method(sortState.sortDirection);
         }
+        sortState.sort &&
+            console.log(
+                `Data set by field ${sortState.column.sortField} in direction ${sortState.sortDirection}. Data is now:\n ${testDataPortion.map((row) => row.full_name)}`
+            );
     }, [sortState, testDataPortion]);
 
     return (
@@ -300,18 +302,6 @@ describe("<Table />", () => {
         cy.get("input[type='text']").first().type("Tom");
         cy.contains("Tom");
         cy.should("not.have.value", "Sam");
-    });
-
-    it("sorting is correct", () => {
-        cy.mount(<Component sortable />);
-        cy.get("div").contains("Name").parent().click();
-        cy.get("div").contains("Name").parent().click();
-        cy.get("div[data-column-id='2'][role='cell']").as("table");
-        cy.get("@table").eq(0).contains("Adrian Key");
-        cy.get("@table").eq(1).contains("Agnes Rosales");
-        cy.get("div").contains("Name").parent().click();
-        cy.get("@table").eq(0).contains("Tom");
-        cy.get("@table").eq(1).contains("Sam");
     });
 
     it("clear button is working", () => {
@@ -401,24 +391,6 @@ describe("<Table />", () => {
         cy.get("input[aria-label='Select row 14']").should("be.checked");
     });
 
-    it("sorting does not affect checkbox", () => {
-        cy.mount(<Component sortable />);
-
-        cy.get("input[aria-label='Select row 0']").click(); //Tom
-        cy.get("input[aria-label='Select row 0']").should("be.checked");
-
-        cy.get("input[aria-label='Select row 2']").click(); //Harper Garret
-        cy.get("input[aria-label='Select row 2']").should("be.checked");
-
-        cy.get("div").contains("Name").parent().click();
-        cy.get("div").contains("Name").parent().click();
-        cy.get("input[aria-label='Select row 7']").should("be.checked"); //this is now Harper Garret
-        cy.get("div").contains("Name").parent().click();
-
-        cy.get("input[aria-label='Select row 0']").should("be.checked"); //Tom
-        cy.get("input[aria-label='Select row 7']").should("be.checked"); //Harper Garret
-    });
-
     it("checkall box toggles all data", () => {
         cy.mount(<Component tableData={smallerData} />);
         cy.get("input[aria-label='Select all rows']").click();
@@ -452,5 +424,35 @@ describe("<Table />", () => {
         cy.get("input[aria-label='Select row 0']").should("not.exist");
         cy.get("input[aria-label='Select row 5']").should("not.exist");
         cy.get("input[aria-label='Select row 10']").should("not.exist");
+    });
+
+    it("sorting is correct", () => {
+        cy.mount(<Component sortable tableData={data} />);
+        cy.get("div").contains("Name").parent().click();
+        cy.get("div[data-column-id='2'][role='cell']").as("table");
+        cy.get("@table").eq(0).contains("Adrian Key");
+        cy.get("@table").eq(1).contains("Agnes Rosales");
+        cy.get("div").contains("Name").parent().click();
+        cy.get("div[data-column-id='2'][role='cell']").as("table2");
+        cy.get("@table2").eq(0).contains("Tom");
+        cy.get("@table2").eq(1).contains("Sam");
+    });
+
+    it("sorting does not affect checkbox", () => {
+        cy.mount(<Component sortable tableData={data} />);
+
+        cy.get("input[aria-label='Select row 0']").click(); //Tom
+        cy.get("input[aria-label='Select row 0']").should("be.checked");
+
+        cy.get("input[aria-label='Select row 2']").click(); //Harper Garret
+        cy.get("input[aria-label='Select row 2']").should("be.checked");
+
+        cy.get("div").contains("Name").parent().click();
+        cy.get("input[aria-label='Select row 14']").should("be.checked"); //Tom
+        cy.get("input[aria-label='Select row 7']").should("be.checked"); //Harper Garret
+
+        cy.get("div").contains("Name").parent().click();
+        cy.get("input[aria-label='Select row 0']").should("be.checked"); //Tom
+        cy.get("input[aria-label='Select row 7']").should("be.checked"); //Harper Garret
     });
 });

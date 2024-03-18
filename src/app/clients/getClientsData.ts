@@ -2,7 +2,7 @@ import { ClientsTableRow } from "@/app/clients/ClientsPage";
 import { familyCountToFamilyCategory } from "@/app/parcels/getExpandedParcelDetails";
 import { DatabaseError } from "@/app/errorClasses";
 import { Supabase } from "@/supabaseUtils";
-import { Filter, FilterMethodType } from "@/components/Tables/Filters";
+import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 
 const getClientsData = async (
@@ -18,16 +18,13 @@ const getClientsData = async (
         .from("clients")
         .select("primary_key, full_name, family_id, address_postcode", { count: "exact" });
 
-    if (
-        sortState.sort &&
-        sortState.column.sortMethodConfig?.methodType === FilterMethodType.Server
-    ) {
+    if (sortState.sort && sortState.column.sortMethodConfig?.methodType === PaginationType.Server) {
         query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
     } else {
         query = query.order("full_name");
     }
     filters.forEach((filter) => {
-        if (filter.methodConfig.methodType === FilterMethodType.Server) {
+        if (filter.methodConfig.methodType === PaginationType.Server) {
             query = filter.methodConfig.method(query, filter.state);
         }
     });
@@ -68,7 +65,7 @@ export const getClientsCount = async (
     let query = supabase.from("clients").select("*", { count: "exact", head: true });
 
     filters.forEach((filter) => {
-        if (filter.methodConfig.methodType === FilterMethodType.Server) {
+        if (filter.methodConfig.methodType === PaginationType.Server) {
             query = filter.methodConfig.method(query, filter.state);
         }
     });

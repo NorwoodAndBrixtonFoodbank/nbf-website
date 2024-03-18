@@ -1,7 +1,7 @@
 "use client";
 
 import Icon from "@/components/Icons/Icon";
-import { Filter, FilterMethodType } from "@/components/Tables/Filters";
+import { Filter, PaginationType } from "@/components/Tables/Filters";
 import TableFilterBar from "@/components/Tables/TableFilterBar";
 import {
     faAnglesDown,
@@ -45,24 +45,23 @@ export type ColumnStyleOptions = Omit<
     "name" | "selector" | "sortable" | "sortFunction" | "cell"
 >;
 
-export interface SortOptions<Data, Key extends keyof Data> {
-    key: Key;
-    sortMethodConfig: SortMethodConfig<Data>;
+export interface SortOptions<Data> {
+    key: keyof Data;
+    sortMethodConfig: SortMethodConfig;
 }
 
-type SortMethodConfig<Data> =
+type SortMethodConfig =
     | {
-          methodType: FilterMethodType.Server;
+          methodType: PaginationType.Server;
           method: (
               query: PostgrestFilterBuilder<Database["public"], any, any>,
               sortDirection: SortOrder
           ) => PostgrestFilterBuilder<Database["public"], any, any>;
       }
     | {
-          methodType: FilterMethodType.Client;
-          method: (data: Data[], sortDirection: SortOrder) => Data[];
+          methodType: PaginationType.Client;
+          method: (sortDirection: SortOrder) => void;
       };
-
 export type SortState<Data> =
     | {
           sort: true;
@@ -75,14 +74,14 @@ export type SortState<Data> =
 
 export type SortConfig<Data> =
     | {
-          sortShown: true;
-          sortableColumns: SortOptions<Data, any>[];
+          sortPossible: true;
+          sortableColumns: SortOptions<Data>[];
           setSortState: (sortState: SortState<Data>) => void;
       }
-    | { sortShown: false };
+    | { sortPossible: false };
 
 export interface CustomColumn<Data> extends TableColumn<Row<Data>> {
-    sortMethodConfig?: SortMethodConfig<Data>;
+    sortMethodConfig?: SortMethodConfig;
 }
 
 export type CheckboxConfig<Data> =
@@ -217,42 +216,48 @@ const Table = <Data,>({
 
     const shownHeaders = headerKeysAndLabels.filter(([key]) => shownHeaderKeys.includes(key));
 
-    const columns: CustomColumn<Data>[] = shownHeaders.map(([headerKey, headerName]) => {
-        const columnStyles = Object.assign(
-            { ...defaultColumnStyleOptions },
-            columnStyleOptions[headerKey] ?? {}
-        );
+    const columns: CustomColumn<Data>[] = shownHeaders.map(
+        ([headerKey, headerName]): CustomColumn<Data> => {
+            const columnStyles = Object.assign(
+                { ...defaultColumnStyleOptions },
+                columnStyleOptions[headerKey] ?? {}
+            );
+            let sortable: boolean;
+            let sortMethodConfig;
+            if (sortConfig.sortPossible) {
+                sortMethodConfig = sortConfig.sortableColumns.find(
+                    (column) => column.key === headerKey
+                )?.sortMethodConfig;
+                sortable = true;
+            } else {
+                sortable = false;
+            }
 
-        const sortMethod =
-            sortConfig.sortShown &&
-            sortConfig.sortableColumns.find((sortMethod) => sortMethod.key === headerKey);
-
-        const sortable = sortMethod !== undefined;
-
-        return {
-            name: <>{headerName}</>,
-            selector: (row) => row.data[headerKey] as Primitive, // The type cast here is needed as the type of selector is (row) => Primitive, but as we are using a custom cell, we can have it be anything
-            sortable,
-            cell(row) {
-                return (
-                    <CustomCell
-                        row={row}
-                        columnDisplayFunctions={columnDisplayFunctions}
-                        headerKey={headerKey}
-                    />
-                );
-            },
-            ...columnStyles,
-            sortField: headerKey,
-            ...(sortMethod ?? { sortMethod: sortMethod }),
-        };
-    });
+            return {
+                name: <>{headerName}</>,
+                selector: (row) => row.data[headerKey] as Primitive, // The type cast here is needed as the type of selector is (row) => Primitive, but as we are using a custom cell, we can have it be anything
+                sortable: sortable,
+                cell(row) {
+                    return (
+                        <CustomCell
+                            row={row}
+                            columnDisplayFunctions={columnDisplayFunctions}
+                            headerKey={headerKey}
+                        />
+                    );
+                },
+                sortField: headerKey.toString(),
+                sortMethodConfig: sortMethodConfig,
+                ...columnStyles,
+            };
+        }
+    );
 
     const handleSort = async (
         column: CustomColumn<Data>,
         sortDirection: SortOrder
     ): Promise<void> => {
-        if (sortConfig.sortShown && Object.keys(column).length) {
+        if (sortConfig.sortPossible && Object.keys(column).length) {
             sortConfig.setSortState({
                 sort: true,
                 column: column,
@@ -434,7 +439,7 @@ const Table = <Data,>({
                                 ? paginationConfig.onPerPageChange
                                 : () => {}
                         }
-                        sortServer={sortConfig.sortShown}
+                        sortServer={sortConfig.sortPossible}
                         onSort={handleSort}
                         progressComponent={
                             <Centerer>

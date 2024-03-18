@@ -33,7 +33,7 @@ import {
 } from "./fetchParcelTableData";
 import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
-import { Filter, FilterMethodType } from "@/components/Tables/Filters";
+import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { saveParcelStatus } from "./ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PostgrestFilterBuilder, PostgrestQueryBuilder } from "@supabase/postgrest-js";
@@ -41,6 +41,8 @@ import { Database } from "@/databaseTypesFile";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { dateFilter } from "@/components/Tables/DateFilter";
 import { CircularProgress } from "@mui/material";
+
+interface RequestParams {allFilters: Filter<ParcelsTableRow, any>[], sortState: SortState<ParcelsTableRow>, startPoint: number, endPoint: number};
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -65,13 +67,13 @@ const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
     "lastStatus",
 ];
 
-const sortableColumns: SortOptions<ParcelsTableRow, keyof ParcelsTableRow>[] = [
+const sortableColumns: SortOptions<ParcelsTableRow>[] = [
     {
         key: "fullName",
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("client_full_name", { ascending: sortDirection === "asc" }),
-            methodType: FilterMethodType.Server,
+            methodType: PaginationType.Server,
         },
     },
     {
@@ -79,7 +81,7 @@ const sortableColumns: SortOptions<ParcelsTableRow, keyof ParcelsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("family_count", { ascending: sortDirection === "asc" }),
-            methodType: FilterMethodType.Server,
+            methodType: PaginationType.Server,
         },
     },
     {
@@ -87,7 +89,7 @@ const sortableColumns: SortOptions<ParcelsTableRow, keyof ParcelsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("client_address_postcode", { ascending: sortDirection === "asc" }),
-            methodType: FilterMethodType.Server,
+            methodType: PaginationType.Server,
         },
     },
     {
@@ -95,7 +97,7 @@ const sortableColumns: SortOptions<ParcelsTableRow, keyof ParcelsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("client_phone_number", { ascending: sortDirection === "asc" }),
-            methodType: FilterMethodType.Server,
+            methodType: PaginationType.Server,
         },
     },
     {
@@ -103,7 +105,7 @@ const sortableColumns: SortOptions<ParcelsTableRow, keyof ParcelsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("voucher_number", { ascending: sortDirection === "asc" }),
-            methodType: FilterMethodType.Server,
+            methodType: PaginationType.Server,
         },
     },
     {
@@ -111,7 +113,7 @@ const sortableColumns: SortOptions<ParcelsTableRow, keyof ParcelsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("collection_centre_name", { ascending: sortDirection === "asc" }),
-            methodType: FilterMethodType.Server,
+            methodType: PaginationType.Server,
         },
     },
     {
@@ -119,7 +121,7 @@ const sortableColumns: SortOptions<ParcelsTableRow, keyof ParcelsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("packing_datetime", { ascending: sortDirection === "asc" }),
-            methodType: FilterMethodType.Server,
+            methodType: PaginationType.Server,
         },
     },
     //{key: "packingTimeLabel",sortMethod: (query, sortDirection) => query.order("client(full_name)", {ascending: sortDirection === "asc"})}, broke
@@ -128,7 +130,7 @@ const sortableColumns: SortOptions<ParcelsTableRow, keyof ParcelsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("last_status_workflow_order", { ascending: sortDirection === "asc" }),
-            methodType: FilterMethodType.Server,
+            methodType: PaginationType.Server,
         },
     },
 ];
@@ -262,7 +264,7 @@ const buildDateFilter = (initialState: DateRangeState): Filter<ParcelsTableRow, 
     return dateFilter<ParcelsTableRow>({
         key: "packingDatetime",
         label: "",
-        methodConfig: { methodType: FilterMethodType.Server, method: dateSearch },
+        methodConfig: { methodType: PaginationType.Server, method: dateSearch },
         initialState: initialState,
     });
 };
@@ -307,7 +309,7 @@ const buildDeliveryCollectionFilter = async (): Promise<Filter<ParcelsTableRow, 
         filterLabel: "Collection",
         itemLabelsAndKeys: optionsSet.map((option) => [option!.name, option!.acronym]),
         initialCheckedKeys: optionsSet.map((option) => option!.acronym),
-        methodConfig: { methodType: FilterMethodType.Server, method: deliveryCollectionSearch },
+        methodConfig: { methodType: PaginationType.Server, method: deliveryCollectionSearch },
     });
 };
 
@@ -369,7 +371,7 @@ const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]
         filterLabel: "Last Status",
         itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
         initialCheckedKeys: optionsSet.filter((option) => option !== "Request Deleted"),
-        methodConfig: { methodType: FilterMethodType.Server, method: lastStatusSearch },
+        methodConfig: { methodType: PaginationType.Server, method: lastStatusSearch },
     });
 };
 
@@ -427,13 +429,13 @@ const ParcelsPage: React.FC<{}> = () => {
                     key: "fullName",
                     label: "Name",
                     headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { methodType: FilterMethodType.Server, method: fullNameSearch },
+                    methodConfig: { methodType: PaginationType.Server, method: fullNameSearch },
                 }),
                 buildTextFilter({
                     key: "addressPostcode",
                     label: "Postcode",
                     headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { methodType: FilterMethodType.Server, method: postcodeSearch },
+                    methodConfig: { methodType: PaginationType.Server, method: postcodeSearch },
                 }),
                 await buildDeliveryCollectionFilter(),
                 //buildPackingTimeFilter(), //broken
@@ -444,19 +446,19 @@ const ParcelsPage: React.FC<{}> = () => {
                     key: "familyCategory",
                     label: "Family",
                     headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { methodType: FilterMethodType.Server, method: familySearch },
+                    methodConfig: { methodType: PaginationType.Server, method: familySearch },
                 }),
                 buildTextFilter({
                     key: "phoneNumber",
                     label: "Phone",
                     headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { methodType: FilterMethodType.Server, method: phoneSearch },
+                    methodConfig: { methodType: PaginationType.Server, method: phoneSearch },
                 }),
                 buildTextFilter({
                     key: "voucherNumber",
                     label: "Voucher",
                     headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { methodType: FilterMethodType.Server, method: voucherSearch },
+                    methodConfig: { methodType: PaginationType.Server, method: voucherSearch },
                 }),
                 await buildLastStatusFilter(),
             ];
@@ -474,8 +476,13 @@ const ParcelsPage: React.FC<{}> = () => {
     useEffect(() => {
         if (!areFiltersLoadingForFirstTime) {
             const allFilters = [...primaryFilters, ...additionalFilters];
-            const freshRequest = (): boolean => {
-                return true; //to do: ask for help on this - we need this for certain
+            const initialRequestParams = {allFilters: {...allFilters}, sortState: {...sortState}, startPoint: startPoint, endPoint: endPoint};
+            const freshRequest = (requestParams: RequestParams, initialRequestParams: RequestParams): boolean => {
+                const filtersSame = requestParams.allFilters.every((filter, index) => filter.state === initialRequestParams.allFilters[index].state); //except we need to replace === with a "is identical" function dependent on the type of "state". add as new attribute to Filter
+                const sortStateSame = requestParams.sortState.sort === initialRequestParams.sortState.sort && (requestParams.sortState.sort && initialRequestParams.sortState.sort) ? (requestParams.sortState.sortDirection === initialRequestParams.sortState.sortDirection && requestParams.sortState.column.sortField === requestParams.sortState.column.sortField) : true;
+                const startPointSame = requestParams.startPoint === initialRequestParams.startPoint;
+                const endPointSame = requestParams.endPoint === initialRequestParams.endPoint;
+                return filtersSame && sortStateSame && startPointSame && endPointSame;
             };
             (async () => {
                 setIsLoading(true);
@@ -487,7 +494,8 @@ const ParcelsPage: React.FC<{}> = () => {
                     startPoint,
                     endPoint
                 );
-                if (freshRequest()) {
+                const requestParams = {allFilters: {...allFilters}, sortState: {...sortState}, startPoint: startPoint, endPoint: endPoint};
+                if (freshRequest(requestParams, initialRequestParams)) {
                     setTotalRows(totalRows);
                     setParcelsDataPortion(fetchedData);
                 }
@@ -707,7 +715,7 @@ const ParcelsPage: React.FC<{}> = () => {
             </PreTableControls>
             {areFiltersLoadingForFirstTime ? (
                 <Centerer>
-                    <CircularProgress aria-label="table-progress-bar" />
+                    <CircularProgress aria-label="table-initial-progress-bar" />
                 </Centerer>
             ) : (
                 <TableSurface>
@@ -725,7 +733,7 @@ const ParcelsPage: React.FC<{}> = () => {
                         columnStyleOptions={parcelTableColumnStyleOptions}
                         onRowClick={onParcelTableRowClick}
                         sortConfig={{
-                            sortShown: true,
+                            sortPossible: true,
                             sortableColumns: sortableColumns,
                             setSortState: setSortState,
                         }}

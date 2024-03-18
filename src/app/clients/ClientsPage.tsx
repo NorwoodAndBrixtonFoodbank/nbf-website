@@ -15,9 +15,10 @@ import { useSearchParams, useRouter } from "next/navigation";
 import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
-import { Filter, FilterMethodType } from "@/components/Tables/Filters";
+import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
+import { CircularProgress } from "@mui/material";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -44,17 +45,17 @@ const filters: Filter<ClientsTableRow, any>[] = [
         key: "fullName",
         label: "Name",
         headers: headers,
-        methodConfig: { methodType: FilterMethodType.Server, method: fullNameSearch },
+        methodConfig: { methodType: PaginationType.Server, method: fullNameSearch },
     }),
 ];
 
-const sortableColumns: SortOptions<ClientsTableRow, any>[] = [
+const sortableColumns: SortOptions<ClientsTableRow>[] = [
     {
         key: "fullName",
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("full_name", { ascending: sortDirection === "asc" }),
-            methodType: FilterMethodType.Server,
+            methodType: PaginationType.Server,
         },
     },
     //{key: "familyCategory", sortMethod: (query, sortDirection) => query.order("full_name", {ascending: sortDirection === "asc"})},broke
@@ -63,13 +64,14 @@ const sortableColumns: SortOptions<ClientsTableRow, any>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("address_postcode", { ascending: sortDirection === "asc" }),
-            methodType: FilterMethodType.Server,
+            methodType: PaginationType.Server,
         },
     },
 ];
 
 const clientIdParam = "clientId";
 const ClientsPage: React.FC<{}> = () => {
+    const [isLoadingForFirstTime, setIsLoadingForFirstTime] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [clientsDataPortion, setClientsDataPortion] = useState<ClientsTableRow[]>([]);
     const [totalRows, setTotalRows] = useState<number>(0);
@@ -94,6 +96,7 @@ const ClientsPage: React.FC<{}> = () => {
             );
             setClientsDataPortion(fetchedData);
             setIsLoading(false);
+            setIsLoadingForFirstTime(false);
         })();
     }, [startPoint, endPoint, sortState, primaryFilters]);
 
@@ -111,6 +114,7 @@ const ClientsPage: React.FC<{}> = () => {
             );
             setClientsDataPortion(fetchedData);
             setIsLoading(false);
+            setIsLoadingForFirstTime(false);
         };
         // This requires that the DB clients, collection_centres, and families tables have Realtime turned on
         const subscriptionChannel = supabase
@@ -144,69 +148,81 @@ const ClientsPage: React.FC<{}> = () => {
 
     return (
         <>
-            <TableSurface>
-                <Table
-                    dataPortion={clientsDataPortion}
-                    paginationConfig={{
-                        pagination: true,
-                        totalRows: totalRows,
-                        onPageChange: setCurrentPage,
-                        onPerPageChange: setPerPage,
-                    }}
-                    sortConfig={{
-                        sortShown: true,
-                        sortableColumns: sortableColumns,
-                        setSortState: setSortState,
-                    }}
-                    headerKeysAndLabels={headers}
-                    onRowClick={(row) => {
-                        router.push(`/clients?${clientIdParam}=${row.data.clientId}`);
-                    }}
-                    filterConfig={{
-                        primaryFiltersShown: true,
-                        primaryFilters: primaryFilters,
-                        setPrimaryFilters: setPrimaryFilters,
-                        additionalFiltersShown: false,
-                    }}
-                    checkboxConfig={{ displayed: false }}
-                    editableConfig={{ editable: false }}
-                    isLoading={isLoading}
-                />
-            </TableSurface>
-            <Centerer>
-                <LinkButton link="/clients/add">Add Client</LinkButton>
-            </Centerer>
+            {isLoadingForFirstTime ? (
+                <Centerer>
+                    <CircularProgress aria-label="table-initial-progress-bar" />
+                </Centerer>
+            ) : (
+                <>
+                    <TableSurface>
+                        <Table
+                            dataPortion={clientsDataPortion}
+                            paginationConfig={{
+                                pagination: true,
+                                totalRows: totalRows,
+                                onPageChange: setCurrentPage,
+                                onPerPageChange: setPerPage,
+                            }}
+                            sortConfig={{
+                                sortPossible: true,
+                                sortableColumns: sortableColumns,
+                                setSortState: setSortState,
+                            }}
+                            headerKeysAndLabels={headers}
+                            onRowClick={(row) => {
+                                router.push(`/clients?${clientIdParam}=${row.data.clientId}`);
+                            }}
+                            filterConfig={{
+                                primaryFiltersShown: true,
+                                primaryFilters: primaryFilters,
+                                setPrimaryFilters: setPrimaryFilters,
+                                additionalFiltersShown: false,
+                            }}
+                            checkboxConfig={{ displayed: false }}
+                            editableConfig={{ editable: false }}
+                            isLoading={isLoading}
+                        />
+                    </TableSurface>
+                    <Centerer>
+                        <LinkButton link="/clients/add">Add Client</LinkButton>
+                    </Centerer>
 
-            <Modal
-                header={
-                    <>
-                        <Icon icon={faUser} color={theme.primary.largeForeground[2]} />
-                        Client Details
-                    </>
-                }
-                isOpen={clientId !== null}
-                onClose={() => {
-                    router.push("/clients");
-                }}
-                headerId="clientsDetailModal"
-            >
-                <OutsideDiv>
-                    <ContentDiv>
-                        {clientId && (
-                            <Suspense fallback={<ExpandedClientDetailsFallback />}>
-                                <ExpandedClientDetails clientId={clientId} />
-                            </Suspense>
-                        )}
-                    </ContentDiv>
+                    <Modal
+                        header={
+                            <>
+                                <Icon icon={faUser} color={theme.primary.largeForeground[2]} />
+                                Client Details
+                            </>
+                        }
+                        isOpen={clientId !== null}
+                        onClose={() => {
+                            router.push("/clients");
+                        }}
+                        headerId="clientsDetailModal"
+                    >
+                        <OutsideDiv>
+                            <ContentDiv>
+                                {clientId && (
+                                    <Suspense fallback={<ExpandedClientDetailsFallback />}>
+                                        <ExpandedClientDetails clientId={clientId} />
+                                    </Suspense>
+                                )}
+                            </ContentDiv>
 
-                    <ButtonsDiv>
-                        <Centerer>
-                            <LinkButton link={`/clients/edit/${clientId}`}>Edit Client</LinkButton>
-                            <LinkButton link={`/parcels/add/${clientId}`}>Add Parcel</LinkButton>
-                        </Centerer>
-                    </ButtonsDiv>
-                </OutsideDiv>
-            </Modal>
+                            <ButtonsDiv>
+                                <Centerer>
+                                    <LinkButton link={`/clients/edit/${clientId}`}>
+                                        Edit Client
+                                    </LinkButton>
+                                    <LinkButton link={`/parcels/add/${clientId}`}>
+                                        Add Parcel
+                                    </LinkButton>
+                                </Centerer>
+                            </ButtonsDiv>
+                        </OutsideDiv>
+                    </Modal>
+                </>
+            )}
         </>
     );
 };

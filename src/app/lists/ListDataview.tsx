@@ -15,7 +15,7 @@ import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
 import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
-import { Filter, FilterMethodType } from "@/components/Tables/Filters";
+import { Filter, PaginationType } from "@/components/Tables/Filters";
 
 export interface ListRow {
     primaryKey: string;
@@ -201,7 +201,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             key: "itemName",
             label: "Item",
             headers: listsHeaderKeysAndLabels,
-            methodConfig: { methodType: FilterMethodType.Client, method: filterRowByText },
+            methodConfig: { methodType: PaginationType.Client, method: filterRowByText },
         }),
     ];
     const [primaryFilters, setPrimaryFilters] = useState<Filter<ListRow, string>[]>(filters);
@@ -210,7 +210,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         setListData(
             listOfIngridients.filter((row) => {
                 return primaryFilters.every((filter) => {
-                    if (filter.methodConfig.methodType === FilterMethodType.Client) {
+                    if (filter.methodConfig.methodType === PaginationType.Client) {
                         return filter.methodConfig.method(row, filter.state, filter.key);
                     }
                     return false;
@@ -253,7 +253,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                     columnStyleOptions={listsColumnStyleOptions}
                     checkboxConfig={{ displayed: false }}
                     paginationConfig={{ pagination: false }}
-                    sortConfig={{ sortShown: false }}
+                    sortConfig={{ sortPossible: false }}
                     editableConfig={{
                         editable: true,
                         onEdit: onEdit,

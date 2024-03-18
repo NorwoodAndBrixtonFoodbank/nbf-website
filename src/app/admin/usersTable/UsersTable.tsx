@@ -7,7 +7,7 @@ import ManageUserModal from "@/app/admin/manageUser/ManageUserModal";
 import DeleteUserDialog from "@/app/admin/deleteUser/DeleteUserDialog";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import SuccessFailureAlert, { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
-import { Filter, FilterMethodType } from "@/components/Tables/Filters";
+import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 
 const usersTableHeaderKeysAndLabels = [
@@ -62,13 +62,13 @@ const UsersTable: React.FC<Props> = (props) => {
             key: "email",
             label: "Email",
             headers: usersTableHeaderKeysAndLabels,
-            methodConfig: { methodType: FilterMethodType.Client, method: filterRowByText },
+            methodConfig: { methodType: PaginationType.Client, method: filterRowByText },
         }),
         buildTextFilter({
             key: "userRole",
             label: "Role",
             headers: usersTableHeaderKeysAndLabels,
-            methodConfig: { methodType: FilterMethodType.Client, method: filterRowByText },
+            methodConfig: { methodType: PaginationType.Client, method: filterRowByText },
         }),
     ];
     const [primaryFilters, setPrimaryFilters] = useState<Filter<UserRow, string>[]>(filters);
@@ -77,7 +77,7 @@ const UsersTable: React.FC<Props> = (props) => {
         setUserDataPortion(
             props.userData.filter((row) => {
                 return primaryFilters.every((filter) => {
-                    if (filter.methodConfig.methodType === FilterMethodType.Client) {
+                    if (filter.methodConfig.methodType === PaginationType.Client) {
                         return filter.methodConfig.method(row, filter.state, filter.key);
                     }
                     return false;
@@ -96,7 +96,7 @@ const UsersTable: React.FC<Props> = (props) => {
                 defaultShownHeaders={["email", "userRole", "createdAt", "updatedAt"]}
                 checkboxConfig={{ displayed: false }}
                 paginationConfig={{ pagination: false }}
-                sortConfig={{ sortShown: false }}
+                sortConfig={{ sortPossible: false }}
                 editableConfig={{
                     editable: true,
                     onDelete: userOnDelete,
