@@ -57,10 +57,11 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
         const { error } = await supabase.from("collection_centres").insert(fields);
 
         if (error) {
-            const logId = await logErrorReturnLogId("Error with insert: collection centre", error);
             setSubmitError(Errors.external);
             setSubmitErrorMessage(error.message);
             setSubmitDisabled(false);
+
+            const logId = await logErrorReturnLogId("Error with insert: collection centre", error);
             throw new DatabaseError("insert", "collection centres", logId);
         }
 
