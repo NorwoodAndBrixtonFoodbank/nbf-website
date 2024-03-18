@@ -3,7 +3,6 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.share
 import { checkboxGroupToArray, Fields, Person } from "@/components/Form/formFunctions";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
-import { v4 as uuidv4 } from "uuid";
 import { logError, logInfo } from "@/logger/logger";
 
 type FamilyDatabaseInsertRecord = InsertSchema["families"];
@@ -39,14 +38,10 @@ const getChildrenInDatabase = async (familyID: string): Promise<string[]> => {
         .not("age", "is", null);
 
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "app/clients/form/submitFormHelpers.ts",
-        };
-        void logError("Error with fetch: Children data", meta);
-        throw new DatabaseError("fetch", "children data");
+        const response = logError("Error with fetch: Children", error);
+        response.then((errorId) => {
+            throw new DatabaseError("fetch", "children", errorId);
+        });
     }
     return data!.map((datum) => datum.primary_key);
 };
@@ -60,14 +55,10 @@ const getNumberAdults = async (familyID: string, gender: string): Promise<number
         .is("age", null);
 
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "app/clients/form/submitFormHelpers.ts",
-        };
-        void logError("Error with fetch: Adults data", meta);
-        throw new DatabaseError("fetch", "adults data");
+        const response = logError("Error with fetch: Adults", error);
+        response.then((errorId) => {
+            throw new DatabaseError("fetch", "adults", errorId);
+        });
     }
     return count!;
 };
@@ -87,14 +78,10 @@ const deleteAdultMembers = async (
         .limit(count);
 
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "app/clients/form/submitFormHelpers.ts",
-        };
-        void logError("Error with delete: Adult member data", meta);
-        throw new DatabaseError("delete", "adult member data");
+        const response = logError("Error with delete: Adult members", error);
+        response.then((errorId) => {
+            throw new DatabaseError("delete", "adult members", errorId);
+        });
     }
     void logInfo(`Adult members from familyID ${familyID} removed.`);
 };
@@ -111,14 +98,10 @@ const updateChildren = async (children: Person[]): Promise<void> => {
             .eq("primary_key", child.primaryKey);
 
         if (error) {
-            const id = uuidv4();
-            const meta = {
-                error: error,
-                id: id,
-                location: "app/clients/form/submitFormHelpers.ts",
-            };
-            void logError("Error with update: Children data", meta);
-            throw new DatabaseError("update", "children data");
+            const response = logError(`Error with update: Child ID ${child.primaryKey}`, error);
+            response.then((errorId) => {
+                throw new DatabaseError("update", "child", errorId);
+            });
         }
         void logInfo(
             `Child member of familyID ${record.family_id} with childID ${child.primaryKey} updated.`
@@ -134,14 +117,10 @@ const deleteChildren = async (children: Person[]): Promise<void> => {
             .eq("primary_key", child.primaryKey);
 
         if (error) {
-            const id = uuidv4();
-            const meta = {
-                error: error,
-                id: id,
-                location: "app/clients/form/submitFormHelpers.ts",
-            };
-            void logError("Error with delete: Children data", meta);
-            throw new DatabaseError("delete", "children data");
+            const response = logError(`Error with delete: Child ID ${child.primaryKey}`, error);
+            response.then((errorId) => {
+                throw new DatabaseError("delete", "child", errorId);
+            });
         }
         void logInfo(`Child with childID ${child.primaryKey} successfully deleted.`);
     }
@@ -156,14 +135,10 @@ const insertClient = async (
         .select("primary_key, family_id");
 
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "app/clients/form/submitFormHelpers.ts",
-        };
-        void logError("Error with insert: Client data", meta);
-        throw new DatabaseError("insert", "client data");
+        const response = logError("Error with insert: Client", error);
+        response.then((errorId) => {
+            throw new DatabaseError("insert", "client", errorId);
+        });
     }
     void logInfo(`Client ${clientRecord.full_name} successfully created.`);
     return ids![0];
@@ -181,14 +156,10 @@ const insertFamily = async (peopleArray: Person[], familyID: string): Promise<vo
     const { error } = await supabase.from("families").insert(familyRecords);
 
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "app/clients/form/submitFormHelpers.ts",
-        };
-        void logError("Error with insert: Family data", meta);
-        throw new DatabaseError("insert", "family data");
+        const response = logError(`Error with insert: Family ID ${familyID}`, error);
+        response.then((errorId) => {
+            throw new DatabaseError("insert", "family", errorId);
+        });
     }
 };
 
@@ -203,14 +174,10 @@ const updateClient = async (
         .select("primary_key, family_id");
 
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "app/clients/form/submitFormHelpers.ts",
-        };
-        void logError("Error with update: Client data", meta);
-        throw new DatabaseError("update", "client data");
+        const response = logError(`Error with update: Client ID ${primaryKey}`, error);
+        response.then((errorId) => {
+            throw new DatabaseError("update", "client", errorId);
+        });
     }
     return ids![0];
 };
@@ -255,16 +222,16 @@ const updateFamily = async (
 const revertClientInsert = async (primaryKey: string): Promise<void> => {
     const { error } = await supabase.from("clients").delete().eq("primary_key", primaryKey);
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "app/clients/form/submitFormHelpers.ts",
-        };
-        void logError("Error with delete: Revert incomplete client insert", meta);
-        throw new Error(
-            "We could not revert an incomplete client insert at this time, and there may be faulty data stored. Please contact a developer for assistance."
+        const response = logError(
+            `Error with delete: Revert incomplete client insert, Client ID ${primaryKey}`,
+            error
         );
+        response.then((errorId) => {
+            throw new Error(
+                "We could not revert an incomplete client insert at this time, and there may be faulty data stored. Please contact a developer for assistance." +
+                    `ErrorID: ${errorId}`
+            );
+        });
     }
 };
 
@@ -277,16 +244,16 @@ const revertClientUpdate = async (
         .update(initialRecords)
         .eq("primary_key", primaryKey);
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "app/clients/form/submitFormHelpers.ts",
-        };
-        void logError("Error with update: Revert incomplete client update", meta);
-        throw new Error(
-            "We could not revert an incomplete client update at this time, and there may be faulty data stored. Please contact a developer for assistance."
+        const response = logError(
+            `Error with delete: Revert incomplete client update, Client ID ${primaryKey}`,
+            error
         );
+        response.then((errorId) => {
+            throw new Error(
+                "We could not revert an incomplete client update at this time, and there may be faulty data stored. Please contact a developer for assistance." +
+                    `ErrorID: ${errorId}`
+            );
+        });
     }
 };
 
@@ -326,14 +293,10 @@ export const submitAddClientForm: SubmitFormHelper = async (fields, router) => {
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
         await revertClientInsert(ids.primary_key);
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "app/clients/form/submitFormHelpers.ts",
-        };
-        void logError("Error with insert: Client data", meta);
-        throw new DatabaseError("insert", "client data");
+        const response = logError(`Error with insert: Client ID ${ids.primary_key}`);
+        response.then((errorId) => {
+            throw new DatabaseError("update", "client", errorId);
+        });
     }
 };
 
@@ -351,13 +314,9 @@ export const submitEditClientForm: SubmitFormHelper = async (
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
         await revertClientUpdate(clientBeforeUpdate, primaryKey!);
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "app/clients/form/submitFormHelpers.ts",
-        };
-        void logError("Error with update: Client data", meta);
-        throw new DatabaseError("update", "client data");
+        const response = logError(`Error with update: Client ID ${ids.primary_key}`);
+        response.then((errorId) => {
+            throw new DatabaseError("update", "client", errorId);
+        });
     }
 };
