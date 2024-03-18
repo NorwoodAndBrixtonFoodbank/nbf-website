@@ -14,6 +14,7 @@ export const AuthMain = styled.main`
 `;
 
 const MiddleDiv = styled(Paper)`
+    flex-grow: 1;
     max-width: 450px;
     border-radius: 10px;
     padding: 2.5rem clamp(20px, 3vw, 50px);
