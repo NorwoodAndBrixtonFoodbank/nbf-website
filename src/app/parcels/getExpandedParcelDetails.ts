@@ -3,7 +3,6 @@ import { Data } from "@/components/DataViewer/DataViewer";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { EventTableRow } from "./EventTable";
-import { v4 as uuidv4 } from "uuid";
 import { logError } from "@/logger/logger";
 export type RawParcelDetails = Awaited<ReturnType<typeof getRawParcelDetails>>;
 
@@ -46,14 +45,10 @@ export const getRawParcelDetails = async (parcelId: string) => {
         .eq("primary_key", parcelId)
         .single();
     if (error) {
-        const id = uuidv4();
-        const meta = {
-            error: error,
-            id: id,
-            location: "app/parcels/getExpandedParcelDetails.ts",
-        };
-        void logError("Error with fetch: Parcel", meta);
-        throw new DatabaseError("fetch", "parcel data");
+        const response = logError("Error with fetch: Parcel", error);
+        response.then((errorId) => {
+            throw new DatabaseError("fetch", "parcel", errorId);
+        });
     }
     return data;
 };
