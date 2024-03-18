@@ -495,7 +495,6 @@ const ParcelsPage: React.FC<{}> = () => {
                                     <ExpandedParcelDetails parcelId={selectedParcelId} />
                                 </Suspense>
                             </ContentDiv>
-
                             <ButtonsDiv>
                                 <Centerer>
                                     <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
@@ -503,6 +502,9 @@ const ParcelsPage: React.FC<{}> = () => {
                                     </LinkButton>
                                     <LinkButton link={`/clients?clientId=${selectedPrimaryKey}`}>
                                         Customer Profile
+                                    </LinkButton>
+                                    <LinkButton link={`/clients/edit/${selectedPrimaryKey}`}>
+                                        Edit Profile
                                     </LinkButton>
                                 </Centerer>
                             </ButtonsDiv>
