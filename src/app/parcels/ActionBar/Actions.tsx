@@ -234,16 +234,22 @@ const Actions: React.FC<Props> = ({
     const onMenuItemClick = (
         key: ActionName,
         errorCondition: (value: number) => boolean,
-        errorMessage: string
+        errorMessage: string,
+        shouldOpenM
     ): (() => void) => {
         return () => {
             if (errorCondition(selectedParcels.length)) {
                 setActionAnchorElement(null);
                 setModalError(errorMessage);
             } else {
-                setModalToDisplay(key);
-                setActionAnchorElement(null);
-                setModalError(null);
+                if (key === "Generate Map") {
+                    const mapsLink = mapsLinkForSelectedParcels();
+                    openInNewTab(mapsLink);
+                } else {
+                    setModalToDisplay(key);
+                    setActionAnchorElement(null);
+                    setModalError(null);
+                }
             }
         };
     };
@@ -258,21 +264,6 @@ const Actions: React.FC<Props> = ({
 
     const openInNewTab = (url: string): void => {
         window.open(url, "_blank", "noopener, noreferrer");
-    };
-
-    const onMapsClick = (
-        errorCondition: (value: number) => boolean,
-        errorMessage: string
-    ): (() => void) => {
-        return () => {
-            if (errorCondition(selectedParcels.length)) {
-                setActionAnchorElement(null);
-                setModalError(errorMessage);
-            } else {
-                const mapsLink = mapsLinkForSelectedParcels();
-                openInNewTab(mapsLink);
-            }
-        };
     };
 
     return (
@@ -326,15 +317,12 @@ const Actions: React.FC<Props> = ({
                             return (
                                 <MenuItem
                                     key={key}
-                                    onClick={
-                                        value.shouldOpenModal
-                                            ? onMenuItemClick(
-                                                  key as ActionName,
-                                                  value.errorCondition,
-                                                  value.errorMessage
-                                              ) // eslint-disable-line indent
-                                            : onMapsClick(value.errorCondition, value.errorMessage)
-                                    }
+                                    onClick={onMenuItemClick(
+                                        key as ActionName,
+                                        value.errorCondition,
+                                        value.errorMessage,
+                                        value.shouldOpenModal,
+                                    )}
                                 >
                                     {key}
                                 </MenuItem>
