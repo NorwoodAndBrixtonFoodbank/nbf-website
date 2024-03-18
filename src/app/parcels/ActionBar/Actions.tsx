@@ -235,14 +235,14 @@ const Actions: React.FC<Props> = ({
         key: ActionName,
         errorCondition: (value: number) => boolean,
         errorMessage: string,
-        shouldOpenM
+        shouldOpenModal: boolean
     ): (() => void) => {
         return () => {
             if (errorCondition(selectedParcels.length)) {
                 setActionAnchorElement(null);
                 setModalError(errorMessage);
             } else {
-                if (key === "Generate Map") {
+                if (!shouldOpenModal) {
                     const mapsLink = mapsLinkForSelectedParcels();
                     openInNewTab(mapsLink);
                 } else {
@@ -321,7 +321,7 @@ const Actions: React.FC<Props> = ({
                                         key as ActionName,
                                         value.errorCondition,
                                         value.errorMessage,
-                                        value.shouldOpenModal,
+                                        value.shouldOpenModal
                                     )}
                                 >
                                     {key}
