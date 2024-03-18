@@ -34,7 +34,7 @@ const CheckboxAndTitleDiv = styled.div`
     min-width: 300px;
 `;
 
-const SelectAllCheckboxes = styled(Checkbox)``;
+const SelectAllCheckboxes = Checkbox;
 
 const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
     allLocations,
@@ -47,16 +47,16 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
     ): void => {
         const newLocations = event.target.checked
             ? currentLocations.concat(location)
-            : currentLocations.filter((testLocation) => testLocation !== location);
+            : currentLocations.filter((currentLocation) => currentLocation !== location);
 
         editLocations(newLocations);
     };
 
     const handleSelectAllChange = (): void => {
-        const toggleAllLocations =
+        const locationsToEnable =
             allLocations.length === currentLocations.length ? [] : [...allLocations];
 
-        editLocations(toggleAllLocations);
+        editLocations(locationsToEnable);
     };
 
     return (
