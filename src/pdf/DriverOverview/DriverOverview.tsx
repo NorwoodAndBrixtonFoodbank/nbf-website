@@ -13,12 +13,10 @@ const formatDatetime = (datetimeString: string | null): Date | null => {
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<Schema["parcels"][]> => {
     const { data, error } = await supabase.from("parcels").select().in("primary_key", parcelIds);
     if (error) {
-        const response = logErrorReturnLogId("Error with fetch: Parcels", error);
-        response.then((errorId) => {
-            throw new DatabaseError("fetch", "parcels", errorId);
-        });
+        const logId = await logErrorReturnLogId("Error with fetch: Parcels", error);
+        throw new DatabaseError("fetch", "parcels", logId);
     }
-    return data ?? [];
+    return data;
 };
 
 const getClientById = async (clientId: string): Promise<Schema["clients"] | null> => {
@@ -28,12 +26,13 @@ const getClientById = async (clientId: string): Promise<Schema["clients"] | null
         .eq("primary_key", clientId)
         .single();
     if (error) {
-        const response = logErrorReturnLogId("Error with fetch: Clients", error);
-        response.then((errorId) => {
-            throw new DatabaseError("fetch", "clients", errorId);
-        });
+        const logId = await logErrorReturnLogId(
+            `Error with fetch: Client with id ${clientId}`,
+            error
+        );
+        throw new DatabaseError("fetch", "client", logId);
     }
-    return data ?? null;
+    return data;
 };
 
 const compare = (first: DriverOverviewTableData, second: DriverOverviewTableData): number => {
