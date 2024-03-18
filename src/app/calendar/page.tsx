@@ -13,10 +13,8 @@ const getCollectionCentres = async (): Promise<Schema["collection_centres"]["nam
     const supabase = getSupabaseServerComponentClient();
     const { data, error } = await supabase.from("collection_centres").select("name");
     if (error) {
-        const response = logErrorReturnLogId("Error with fetch: Collection centre names", error);
-        response.then((errorId) => {
-            throw new DatabaseError("fetch", "collection centre names", errorId);
-        });
+        const logId = await logErrorReturnLogId("Error with fetch: Collection centre names", error);
+        throw new DatabaseError("fetch", "collection centre names", logId);
     }
     const mappedValues = data ? data.map((centre) => centre.name) : [];
     return mappedValues.filter((centre) => centre !== "Delivery");
@@ -40,13 +38,14 @@ const getParcelsWithCollectionDate = async (): Promise<ParcelsWithExtraFields[]>
         .not("collection_datetime", "is", null);
 
     if (error) {
-        const response = logErrorReturnLogId("Error with fetch: Parcels with extra fields", error);
-        response.then((errorId) => {
-            throw new DatabaseError("fetch", "parcels with user information", errorId);
-        });
+        const logId = await logErrorReturnLogId(
+            "Error with fetch: Parcels with extra fields",
+            error
+        );
+        throw new DatabaseError("fetch", "parcels with user information", logId);
     }
 
-    return data ? data : [];
+    return data;
 };
 
 const CalendarPage = async (): Promise<React.ReactElement> => {
