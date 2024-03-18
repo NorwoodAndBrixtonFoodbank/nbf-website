@@ -45,10 +45,8 @@ export const getRawParcelDetails = async (parcelId: string) => {
         .eq("primary_key", parcelId)
         .single();
     if (error) {
-        const response = logErrorReturnLogId("Error with fetch: Parcel", error);
-        response.then((errorId) => {
-            throw new DatabaseError("fetch", "parcel", errorId);
-        });
+        const logId = await logErrorReturnLogId("Error with fetch: Parcel", error);
+        throw new DatabaseError("fetch", "parcel", logId);
     }
     return data;
 };
