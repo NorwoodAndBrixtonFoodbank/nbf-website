@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import { Checkbox, FormControlLabel } from "@mui/material";
 import styled from "styled-components";
 
@@ -61,7 +61,7 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
 
     useEffect(() => {
         editLocations(allLocations);
-    }, [allLocations]);
+    }, [allLocations, editLocations]);
 
     return (
         <ContainerDiv>
