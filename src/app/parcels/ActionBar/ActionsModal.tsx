@@ -14,7 +14,7 @@ import { DatabaseError } from "@/app/errorClasses";
 import { statusType } from "./Statuses";
 import SelectedParcelsOverview from "./SelectedParcelsOverview";
 
-export type ActionType = "pdfDownload" | "deleteParcel";
+export type ActionType = "pdfDownload" | "deleteParcel" | "generateMap";
 
 interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     selectedParcels: ParcelsTableRow[];
