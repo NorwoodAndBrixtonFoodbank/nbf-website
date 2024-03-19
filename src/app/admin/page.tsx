@@ -51,6 +51,7 @@ const getCollectionCentres = async (): Promise<Schema["collection_centres"][]> =
 
     return data;
 };
+
 const Admin = async (): Promise<ReactElement> => {
     const [userData, collectionCentreData] = await Promise.all([
         getUsers(),

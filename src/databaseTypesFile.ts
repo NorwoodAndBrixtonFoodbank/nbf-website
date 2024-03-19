@@ -307,6 +307,27 @@ export type Database = {
         }
         Relationships: []
       }
+      packing_slots: {
+        Row: {
+          is_shown: boolean
+          name: string
+          order: number
+          primary_key: string
+        }
+        Insert: {
+          is_shown: boolean
+          name: string
+          order: number
+          primary_key?: string
+        }
+        Update: {
+          is_shown?: boolean
+          name?: string
+          order?: number
+          primary_key?: string
+        }
+        Relationships: []
+      }
       parcels: {
         Row: {
           client_id: string
@@ -369,7 +390,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      packing_slot_order_swap: {
+        Args: {
+          id1: string
+          id2: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       gender: "male" | "female" | "other"

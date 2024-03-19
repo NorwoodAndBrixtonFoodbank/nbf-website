@@ -32,6 +32,7 @@ async function createUser(
     });
 
     if (error) {
+        console.log(error);
         throw new Error(`Failed to create ${role} user: ${email}. ${error}`);
     }
 
