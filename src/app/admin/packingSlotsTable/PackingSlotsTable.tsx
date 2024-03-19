@@ -93,12 +93,16 @@ const PackingSlotsTable: React.FC = () => {
                 { event: "*", schema: "public", table: "packing_slots" },
                 async () => setRows(await fetchPackingSlots())
             )
-            .subscribe((status) => {
+            .subscribe((status, err) => {
                 if (status === "TIMED_OUT") {
-                    void logError("Channel Timed Out: Subscribe to packing_slot table");
+                    void logError("Channel Timed Out: Subscribe to packing_slot table", err);
+                    setRows([]);
                 } else if (status === "CHANNEL_ERROR") {
-                    void logError("Channel Error: Subscribe to packing_slot table");
-                } else if (status === "SUBSCRIBED") {
+                    void logError("Channel Error: Subscribe to packing_slot table", err);
+                    setRows([]);
+                } else if (status === "CLOSED") {
+                    void logInfo("Subscription to packing_slot table closed");
+                } else {
                     void logInfo("Subscribed to packing_slot table");
                 }
             });
