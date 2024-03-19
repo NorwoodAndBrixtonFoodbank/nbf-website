@@ -205,6 +205,29 @@ async function generateSeed(): Promise<void> {
                 "If you're uncertain about any additional dietary needs, please speak to one of the team.",
         },
     ]);
+
+    await seed.packingSlots([
+        {
+            name: "AM",
+            isShown: true,
+            order: 1,
+        },
+        {
+            name: "PM",
+            isShown: true,
+            order: 2,
+        },
+        {
+            name: "Slot 1",
+            isShown: false,
+            order: 3,
+        },
+        {
+            name: "Slot 2",
+            isShown: false,
+            order: 4,
+        },
+    ]);
 }
 
 function getPseudoRandomDateBetween(start: Date, end: Date, seed: string): Date {

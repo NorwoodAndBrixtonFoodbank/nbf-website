@@ -328,6 +328,15 @@ type Override = {
       buckets?: string;
     };
   }
+  packing_slots?: {
+    name?: string;
+    fields?: {
+      primary_key?: string;
+      name?: string;
+      is_shown?: string;
+      order?: string;
+    };
+  }
   parcels?: {
     name?: string;
     fields?: {
@@ -654,6 +663,9 @@ export interface Fingerprint {
     lastAccessedAt?: FingerprintDateField;
     metadata?: FingerprintJsonField;
     bucket?: FingerprintRelationField;
+  }
+  packingSlots?: {
+    order?: FingerprintNumberField;
   }
   parcels?: {
     packingDatetime?: FingerprintDateField;
