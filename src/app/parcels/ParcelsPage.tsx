@@ -181,7 +181,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const searchParams = useSearchParams();
     const parcelId = searchParams.get(parcelIdParam);
-    
+
     useEffect(() => {
         if (parcelId) {
             setSelectedParcelId(parcelId);
@@ -499,14 +499,18 @@ const ParcelsPage: React.FC<{}> = () => {
                                         Edit Parcel
                                     </LinkButton>
                                     {clientIdIsValidLink && (
-                                    <LinkButton link={`/clients?clientId=${clientIdForSelectedParcel}`}>
-                                        See Client Details
-                                    </LinkButton>
+                                        <LinkButton
+                                            link={`/clients?clientId=${clientIdForSelectedParcel}`}
+                                        >
+                                            See Client Details
+                                        </LinkButton>
                                     )}
                                     {clientIdIsValidLink && (
-                                    <LinkButton link={`/clients/edit/${clientIdForSelectedParcel}`}>
-                                        Edit Client Details
-                                    </LinkButton>
+                                        <LinkButton
+                                            link={`/clients/edit/${clientIdForSelectedParcel}`}
+                                        >
+                                            Edit Client Details
+                                        </LinkButton>
                                     )}
                                 </Centerer>
                             </ButtonsDiv>
