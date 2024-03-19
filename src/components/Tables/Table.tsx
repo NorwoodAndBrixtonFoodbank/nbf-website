@@ -152,6 +152,7 @@ interface Props<Data> {
     columnStyleOptions?: ColumnStyles<Data>;
     editableConfig: EditableConfig<Data>;
     onRowClick?: OnRowClickFunction<Data>;
+    pointerOnHover?: boolean;
 }
 
 interface CellProps<Data> {
@@ -209,6 +210,7 @@ const Table = <Data,>({
     filterConfig,
     paginationConfig,
     editableConfig,
+    pointerOnHover,
 }: Props<Data>): React.ReactElement => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
@@ -371,6 +373,7 @@ const Table = <Data,>({
                 />
             ),
             width: "47px",
+            ignoreRowClick: true,
         });
     }
 
@@ -447,6 +450,7 @@ const Table = <Data,>({
                             </Centerer>
                         }
                         progressPending={isLoading}
+                        pointerOnHover={pointerOnHover}
                     />
                 </NoSsr>
             </TableStyling>
@@ -554,6 +558,10 @@ const TableStyling = styled.div`
         padding: 0.5rem 0.5rem;
         // important needed to override the inline style
         border-bottom-color: ${(props) => props.theme.main.border};
+    }
+
+    & div.rdt_TableRow:hover {
+        background-color: ${(props) => props.theme.main.background[1]};
     }
 
     & .rdt_TableHeadRow {

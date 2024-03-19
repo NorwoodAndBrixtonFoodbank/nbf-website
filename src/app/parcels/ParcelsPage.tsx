@@ -717,6 +717,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                 checkedParcelIds.includes(parcelData.parcelId),
                         }}
                         editableConfig={{ editable: false }}
+                        pointerOnHover={true}
                     />
                 </TableSurface>
             )}

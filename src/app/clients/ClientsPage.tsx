@@ -201,8 +201,13 @@ const ClientsPage: React.FC<{}> = () => {
                                 additionalFiltersShown: false,
                             }}
                             checkboxConfig={{ displayed: false }}
+<<<<<<< HEAD
                             editableConfig={{ editable: false }}
                             isLoading={isLoading}
+=======
+                            filters={["fullName"]}
+                            pointerOnHover={true}
+>>>>>>> dev
                         />
                     </TableSurface>
                     <Centerer>

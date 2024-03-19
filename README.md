@@ -7,11 +7,13 @@ have been delivered to clients. See [their website](https://www.trusselltrust.or
 
 ## Technology stack
 
-* Supabase for hosting (PostgreSQL database, custom authentication)
+* Supabase for hosting the backend (PostgreSQL database, custom authentication)
 * NextJS for full-stack application ('App Router')
 * Styled Components for CSS (CSS-in-JS)
 * Material UI for component library
 * Cypress for both component unit tests and integration tests (may add Jest in the future!)
+* AWS Amplify for hosting the frontend website
+* AWS CloudWatch for logging errors and warnings
 
 ## Prerequisite
 - You need Docker installed. The easiest way to get started is to download [Docker Desktop](https://www.docker.com/products/docker-desktop/). If you are using Windows, you may have to run `net localgroup docker-users <your_softwire_username> /ADD` as an administrator to add yourself to the docker-users group, where `<your_softwire_username>` is your non-admin Softwire username.
@@ -56,6 +58,8 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
     * `npm run test:e2e` for just end-to-end tests
     * `npm run test:coverage` for a full coverage report at the end
   * Can open the Cypress UI to see individual results with `npm run open:cypress`
+
+* Use `npx supabase functions serve` if you are receiving an errors such as "congestion zone" to run Supabase functions locally.
 
 ### Supabase development
 
