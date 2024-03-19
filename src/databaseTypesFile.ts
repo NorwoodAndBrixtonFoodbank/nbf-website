@@ -114,13 +114,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "events_event_name_fkey"
-            columns: ["event_name"]
-            isOneToOne: false
-            referencedRelation: "status_order"
-            referencedColumns: ["event_name"]
-          },
-          {
             foreignKeyName: "events_parcel_id_fkey"
             columns: ["parcel_id"]
             isOneToOne: false
@@ -168,13 +161,6 @@ export type Database = {
             columns: ["family_id"]
             isOneToOne: false
             referencedRelation: "clients"
-            referencedColumns: ["family_id"]
-          },
-          {
-            foreignKeyName: "families_family_id_fkey"
-            columns: ["family_id"]
-            isOneToOne: false
-            referencedRelation: "family_count"
             referencedColumns: ["family_id"]
           },
         ]
@@ -370,7 +356,7 @@ export type Database = {
           collection_centre?: string | null
           collection_datetime?: string | null
           packing_datetime?: string | null
-          primary_key: string
+          primary_key?: string
           voucher_number?: string | null
         }
         Update: {
@@ -459,7 +445,15 @@ export type Database = {
           family_count: number | null
           family_id: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "families_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["family_id"]
+          },
+        ]
       }
       last_status: {
         Row: {
@@ -469,15 +463,7 @@ export type Database = {
           timestamp: string | null
           workflow_order: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "events_event_name_fkey"
-            columns: ["event_name"]
-            isOneToOne: false
-            referencedRelation: "status_order"
-            referencedColumns: ["event_name"]
-          },
-        ]
+        Relationships: []
       }
       parcels_plus: {
         Row: {
@@ -499,15 +485,7 @@ export type Database = {
           parcel_id: string | null
           voucher_number: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "events_event_name_fkey"
-            columns: ["last_status_event_name"]
-            isOneToOne: false
-            referencedRelation: "status_order"
-            referencedColumns: ["event_name"]
-          },
-        ]
+        Relationships: []
       }
     }
     Functions: {

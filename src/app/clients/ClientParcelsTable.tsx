@@ -34,11 +34,8 @@ const ClientParcelsTable: React.FC<ClientParcelTableProps> = (props) => {
                 filterConfig={{ primaryFiltersShown: false, additionalFiltersShown: false }}
                 onRowClick={(row) => router.push(`/parcels?parcelId=${row.data.parcelId}`)}
                 checkboxConfig={{ displayed: false }}
-<<<<<<< HEAD
                 editableConfig={{ editable: false }}
-=======
                 pointerOnHover={true}
->>>>>>> dev
             />
         </TableSurface>
     );
