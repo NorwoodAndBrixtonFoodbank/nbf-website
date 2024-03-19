@@ -1,4 +1,3 @@
-// @ts-nocheck next build will have an issue with this if snaplet has not generated the data structure e.g. in the pipeline
 import { createSeedClient } from "@snaplet/seed";
 import { copycat } from "@snaplet/copycat";
 import seedrandom from "seedrandom";
@@ -228,6 +227,28 @@ async function generateSeed(): Promise<void> {
             order: 4,
         },
     ]);
+
+    await seed.statusOrders(
+        [
+            "No Status",
+            "Request Denied",
+            "Pending More Info",
+            "Called and Confirmed",
+            "Called and No Response",
+            "Shopping List Downloaded",
+            "Ready to Dispatch",
+            "Received by Centre",
+            "Collection Failed",
+            "Parcel Collected",
+            "Shipping Labels Downloaded",
+            "Out for Delivery",
+            "Delivered",
+            "Delivery Failed",
+            "Delivery Cancelled",
+            "Fulfilled with Trussell Trust",
+            "Request Deleted",
+        ].map((event_name, index) => ({ eventName: event_name, workflowOrder: index }))
+    );
 }
 
 function getPseudoRandomDateBetween(start: Date, end: Date, seed: string): Date {

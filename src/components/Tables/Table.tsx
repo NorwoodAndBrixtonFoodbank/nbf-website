@@ -224,16 +224,13 @@ const Table = <Data,>({
                 { ...defaultColumnStyleOptions },
                 columnStyleOptions[headerKey] ?? {}
             );
-            let sortable: boolean;
             let sortMethodConfig;
             if (sortConfig.sortPossible) {
                 sortMethodConfig = sortConfig.sortableColumns.find(
                     (column) => column.key === headerKey
                 )?.sortMethodConfig;
-                sortable = true;
-            } else {
-                sortable = false;
             }
+            const sortable = sortMethodConfig ? true : false;
 
             return {
                 name: <>{headerName}</>,

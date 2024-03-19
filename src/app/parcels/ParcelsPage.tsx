@@ -219,7 +219,7 @@ const familySearch = (
     if (stateAsNumber >= 10) {
         return query.gte("family_count", 10);
     }
-    if (stateAsNumber <= 1) {
+    if (stateAsNumber === 1) {
         return query.lte("family_count", 1);
     }
     return query.eq("family_count", Number(state));
