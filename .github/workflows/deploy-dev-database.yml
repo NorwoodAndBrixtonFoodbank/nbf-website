@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
   push:
     paths:
-      supabase/migrations/**.sql
+      - supabase/migrations/**.sql
     branches:
-      dev
+      - dev
 
 env:
   SUPABASE_DEV_PROJECT_ID: ${{ secrets.SUPABASE_DEV_PROJECT_ID }}

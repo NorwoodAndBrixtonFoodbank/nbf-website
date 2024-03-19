@@ -1,3 +1,8 @@
+/*
+This file is not type checked / linted in the pipeline as createSeedClient requires the database definition to be in node_modules/.snaplet
+which only gets generated after running npx snaplet generate with local database running.
+ */
+
 import { createSeedClient } from "@snaplet/seed";
 import { copycat } from "@snaplet/copycat";
 import seedrandom from "seedrandom";
