@@ -42,7 +42,12 @@ import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { dateFilter } from "@/components/Tables/DateFilter";
 import { CircularProgress } from "@mui/material";
 
-interface RequestParams {allFilters: Filter<ParcelsTableRow, any>[], sortState: SortState<ParcelsTableRow>, startPoint: number, endPoint: number};
+interface RequestParams {
+    allFilters: Filter<ParcelsTableRow, any>[];
+    sortState: SortState<ParcelsTableRow>;
+    startPoint: number;
+    endPoint: number;
+}
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -185,20 +190,6 @@ const PreTableControls = styled.div`
 `;
 
 const parcelIdParam = "parcelId";
-
-// const areDateRangesIdentical = (
-//     dateRangeA: DateRangeState,
-//     dateRangeB: DateRangeState
-// ): boolean => {
-//     return (
-//         areDaysIdentical(dateRangeA.from, dateRangeB.from) &&
-//         areDaysIdentical(dateRangeA.to, dateRangeB.to)
-//     );
-// };
-
-// const areDaysIdentical = (dayA: dayjs.Dayjs | null, dayB: dayjs.Dayjs | null): boolean => {
-//     return dayA && dayB ? dayA.isSame(dayB) : dayA === dayB;
-// };
 
 const fullNameSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
@@ -476,10 +467,31 @@ const ParcelsPage: React.FC<{}> = () => {
     useEffect(() => {
         if (!areFiltersLoadingForFirstTime) {
             const allFilters = [...primaryFilters, ...additionalFilters];
-            const initialRequestParams = {allFilters: {...allFilters}, sortState: {...sortState}, startPoint: startPoint, endPoint: endPoint};
-            const freshRequest = (requestParams: RequestParams, initialRequestParams: RequestParams): boolean => {
-                const filtersSame = requestParams.allFilters.every((filter, index) => filter.state === initialRequestParams.allFilters[index].state); //except we need to replace === with a "is identical" function dependent on the type of "state". add as new attribute to Filter
-                const sortStateSame = requestParams.sortState.sort === initialRequestParams.sortState.sort && (requestParams.sortState.sort && initialRequestParams.sortState.sort) ? (requestParams.sortState.sortDirection === initialRequestParams.sortState.sortDirection && requestParams.sortState.column.sortField === requestParams.sortState.column.sortField) : true;
+            const initialRequestParams = {
+                allFilters: { ...allFilters },
+                sortState: { ...sortState },
+                startPoint: startPoint,
+                endPoint: endPoint,
+            };
+            const freshRequest = (
+                requestParams: RequestParams,
+                initialRequestParams: RequestParams
+            ): boolean => {
+                const filtersSame = Array.from(requestParams.allFilters).every((filter, index) =>
+                    filter.areStatesIdentical(
+                        filter.state,
+                        initialRequestParams.allFilters[index].state
+                    )
+                );
+                const sortStateSame =
+                    requestParams.sortState.sort === initialRequestParams.sortState.sort &&
+                    requestParams.sortState.sort &&
+                    initialRequestParams.sortState.sort
+                        ? requestParams.sortState.sortDirection ===
+                              initialRequestParams.sortState.sortDirection &&
+                          requestParams.sortState.column.sortField ===
+                              requestParams.sortState.column.sortField
+                        : true;
                 const startPointSame = requestParams.startPoint === initialRequestParams.startPoint;
                 const endPointSame = requestParams.endPoint === initialRequestParams.endPoint;
                 return filtersSame && sortStateSame && startPointSame && endPointSame;
@@ -494,7 +506,12 @@ const ParcelsPage: React.FC<{}> = () => {
                     startPoint,
                     endPoint
                 );
-                const requestParams = {allFilters: {...allFilters}, sortState: {...sortState}, startPoint: startPoint, endPoint: endPoint};
+                const requestParams = {
+                    allFilters: { ...allFilters },
+                    sortState: { ...sortState },
+                    startPoint: startPoint,
+                    endPoint: endPoint,
+                };
                 if (freshRequest(requestParams, initialRequestParams)) {
                     setTotalRows(totalRows);
                     setParcelsDataPortion(fetchedData);

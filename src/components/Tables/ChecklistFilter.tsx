@@ -24,6 +24,8 @@ export const checklistFilter = <Data,>({
         state: initialCheckedKeys,
         initialState: initialCheckedKeys,
         methodConfig,
+        areStatesIdentical: (stateA, stateB) =>
+            stateA.length === stateB.length && stateA.every((optionA) => stateB.includes(optionA)),
         filterComponent: function (
             state: string[],
             setState: (state: string[]) => void

@@ -43,6 +43,7 @@ export const buildTextFilter = <Data,>({
                 </TextFilterStyling>
             );
         },
+        areStatesIdentical: (stateA, stateB) => stateA === stateB,
     };
 };
 

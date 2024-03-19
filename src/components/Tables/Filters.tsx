@@ -27,6 +27,7 @@ export interface Filter<Data, State> {
     state: State;
     initialState: State;
     methodConfig: MethodConfig<Data, State>;
+    areStatesIdentical: (stateA: State, stateB: State) => boolean;
 }
 
 export const headerLabelFromKey = <Data, Key extends keyof Data>(
