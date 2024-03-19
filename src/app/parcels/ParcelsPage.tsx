@@ -206,10 +206,10 @@ const familySearch = (
     if (state === "") {
         return query;
     }
-    if ("Single".includes(state) || "single".includes(state)) {
+    if ("single".includes(state.toLowerCase())) {
         return query.lte("family_count", 1);
     }
-    if ("Family of".includes(state) || "family of".includes(state)) {
+    if ("family of".includes(state.toLowerCase())) {
         return query.gte("family_count", 2);
     }
     const stateAsNumber = Number(state);
