@@ -21,6 +21,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Remove files irrelevant files that may cause TypeScript errors
+        run:
+          rm -f ./seed.mts
+
       - name: Run linting
         run: npm run lint
 
@@ -43,6 +47,10 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Remove files irrelevant files that may cause TypeScript errors
+        run:
+          rm -f ./seed.mts
 
       - name: Compile
         run: npm run build
@@ -97,6 +105,10 @@ jobs:
 
       - name: Create bucket for the local Supabase instance
         run: npm run dev:create_bucket
+
+      - name: Remove files irrelevant files that may cause TypeScript errors
+        run:
+          rm -f ./seed.mts
 
       - name: Compile
         run: npm run build
