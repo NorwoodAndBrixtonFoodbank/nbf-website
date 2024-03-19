@@ -47,7 +47,6 @@ type AvailableActionsType = {
         errorCondition: (value: number) => boolean;
         errorMessage: string;
         actionType: ActionType;
-        shouldOpenModal: boolean;
     };
 };
 
@@ -57,21 +56,18 @@ const availableActions: AvailableActionsType = {
         errorCondition: doesNotEqualOne,
         errorMessage: "Please select exactly one parcel.",
         actionType: "pdfDownload",
-        shouldOpenModal: true,
     },
     "Download Shopping Lists": {
         showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
         actionType: "pdfDownload",
-        shouldOpenModal: true,
     },
     "Download Driver Overview": {
         showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
         actionType: "pdfDownload",
-        shouldOpenModal: true,
     },
     "Download Day Overview": {
         showSelectedParcelsInModal: false,
@@ -79,21 +75,18 @@ const availableActions: AvailableActionsType = {
         errorMessage:
             "The day overview will show the parcels for a particular date and location. It will show not the currently selected parcel. Please unselect the parcels.",
         actionType: "pdfDownload",
-        shouldOpenModal: true,
     },
     "Delete Parcel Request": {
         showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
         actionType: "deleteParcel",
-        shouldOpenModal: true,
     },
     "Generate Map": {
         showSelectedParcelsInModal: false,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
         actionType: "generateMap",
-        shouldOpenModal: false,
     },
 };
 
@@ -234,21 +227,26 @@ const Actions: React.FC<Props> = ({
     const onMenuItemClick = (
         key: ActionName,
         errorCondition: (value: number) => boolean,
-        errorMessage: string,
-        shouldOpenModal: boolean
+        errorMessage: string
     ): (() => void) => {
         return () => {
             if (errorCondition(selectedParcels.length)) {
                 setActionAnchorElement(null);
                 setModalError(errorMessage);
             } else {
-                if (!shouldOpenModal) {
-                    const mapsLink = mapsLinkForSelectedParcels();
-                    openInNewTab(mapsLink);
-                } else {
-                    setModalToDisplay(key);
-                    setActionAnchorElement(null);
-                    setModalError(null);
+                switch (key) {
+                    case "Download Shipping Labels":
+                    case "Download Shopping Lists":
+                    case "Download Driver Overview":
+                    case "Download Day Overview":
+                    case "Delete Parcel Request":
+                        setModalToDisplay(key);
+                        setActionAnchorElement(null);
+                        setModalError(null);
+                        break;
+                    case "Generate Map":
+                        openInNewTab(mapsLinkForSelectedParcels());
+                        break;
                 }
             }
         };
@@ -320,8 +318,7 @@ const Actions: React.FC<Props> = ({
                                     onClick={onMenuItemClick(
                                         key as ActionName,
                                         value.errorCondition,
-                                        value.errorMessage,
-                                        value.shouldOpenModal
+                                        value.errorMessage
                                     )}
                                 >
                                     {key}
