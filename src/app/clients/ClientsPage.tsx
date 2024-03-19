@@ -19,6 +19,7 @@ import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { CircularProgress } from "@mui/material";
+import { RequestParams, freshRequest } from "../parcels/fetchParcelTableData";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -58,7 +59,14 @@ const sortableColumns: SortOptions<ClientsTableRow>[] = [
             methodType: PaginationType.Server,
         },
     },
-    //{key: "familyCategory", sortMethod: (query, sortDirection) => query.order("full_name", {ascending: sortDirection === "asc"})},broke
+    {
+        key: "familyCategory",
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("family_count", { ascending: sortDirection === "asc" }),
+            methodType: PaginationType.Server,
+        },
+    },
     {
         key: "addressPostcode",
         sortMethodConfig: {
@@ -84,9 +92,15 @@ const ClientsPage: React.FC<{}> = () => {
     const endPoint = currentPage * perPage - 1;
 
     useEffect(() => {
+        const initialRequestParams: RequestParams<ClientsTableRow> = {
+            allFilters: { ...primaryFilters },
+            sortState: { ...sortState },
+            startPoint: startPoint,
+            endPoint: endPoint,
+        };
         (async () => {
             setIsLoading(true);
-            setTotalRows(await getClientsCount(supabase, primaryFilters));
+            const totalRows = await getClientsCount(supabase, primaryFilters);
             const fetchedData = await getClientsData(
                 supabase,
                 startPoint,
@@ -94,10 +108,19 @@ const ClientsPage: React.FC<{}> = () => {
                 primaryFilters,
                 sortState
             );
-            setClientsDataPortion(fetchedData);
-            setIsLoading(false);
-            setIsLoadingForFirstTime(false);
-        })();
+            const requestParams: RequestParams<ClientsTableRow> = {
+                allFilters: { ...primaryFilters },
+                sortState: { ...sortState },
+                startPoint: startPoint,
+                endPoint: endPoint,
+            };
+            if (freshRequest(requestParams, initialRequestParams)) {
+                setClientsDataPortion(fetchedData);
+                setTotalRows(totalRows);
+        }
+        setIsLoading(false);
+        setIsLoadingForFirstTime(false);
+    })();
     }, [startPoint, endPoint, sortState, primaryFilters]);
 
     //remember to deal with what happens if filters change twice and requests come back out of order. deal with in useeffect that sets data inside Table

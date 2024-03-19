@@ -1,5 +1,7 @@
 import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fetchParcelTableData";
 import { familyCountToFamilyCategory } from "@/app/parcels/getExpandedParcelDetails";
+import { Filter } from "@/components/Tables/Filters";
+import { SortState } from "@/components/Tables/Table";
 import { Schema, ViewSchema } from "@/databaseUtils";
 
 export interface ParcelsTableRow {

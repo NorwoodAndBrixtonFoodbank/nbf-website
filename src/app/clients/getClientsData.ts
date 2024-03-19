@@ -15,8 +15,8 @@ const getClientsData = async (
     const data: ClientsTableRow[] = [];
 
     let query = supabase
-        .from("clients")
-        .select("primary_key, full_name, family_id, address_postcode", { count: "exact" });
+        .from("clients_plus")
+        .select("*");
 
     if (sortState.sort && sortState.column.sortMethodConfig?.methodType === PaginationType.Server) {
         query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
@@ -34,24 +34,17 @@ const getClientsData = async (
     const { data: clients, error: clientError } = await query;
 
     if (clientError) {
+        console.error(clientError);
         throw new DatabaseError("fetch", "clients");
     }
 
     for (const client of clients) {
-        const { count, error: familyError } = await supabase
-            .from("families")
-            .select("*", { count: "exact", head: true })
-            .eq("family_id", client.family_id);
-
-        if (familyError || count === null) {
-            throw new DatabaseError("fetch", "families");
-        }
 
         data.push({
-            clientId: client.primary_key,
-            fullName: client.full_name,
-            familyCategory: familyCountToFamilyCategory(count),
-            addressPostcode: client.address_postcode,
+            clientId: client.client_id ?? "",
+            fullName: client.full_name ?? "",
+            familyCategory: familyCountToFamilyCategory(client.family_count ?? 0),
+            addressPostcode: client.address_postcode ?? "",
         });
     }
 
@@ -62,7 +55,7 @@ export const getClientsCount = async (
     supabase: Supabase,
     filters: Filter<ClientsTableRow, any>[]
 ): Promise<number> => {
-    let query = supabase.from("clients").select("*", { count: "exact", head: true });
+    let query = supabase.from("clients_plus").select("*", { count: "exact", head: true });
 
     filters.forEach((filter) => {
         if (filter.methodConfig.methodType === PaginationType.Server) {

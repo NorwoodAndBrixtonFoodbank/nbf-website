@@ -163,3 +163,34 @@ export interface CollectionCentresOptions {
 export interface StatusResponseRow {
     event_name: string;
 }
+
+export interface RequestParams<Data> {
+    allFilters: Filter<Data, any>[];
+    sortState: SortState<Data>;
+    startPoint: number;
+    endPoint: number;
+}
+
+export const freshRequest = <Data,>(
+    requestParams: RequestParams<Data>,
+    initialRequestParams: RequestParams<Data>
+): boolean => {
+    const filtersSame = Array.from(requestParams.allFilters).every((filter, index) =>
+        filter.areStatesIdentical(
+            filter.state,
+            initialRequestParams.allFilters[index].state
+        )
+    );
+    const sortStateSame =
+        requestParams.sortState.sort === initialRequestParams.sortState.sort &&
+        requestParams.sortState.sort &&
+        initialRequestParams.sortState.sort
+            ? requestParams.sortState.sortDirection ===
+                  initialRequestParams.sortState.sortDirection &&
+              requestParams.sortState.column.sortField ===
+                  requestParams.sortState.column.sortField
+            : true;
+    const startPointSame = requestParams.startPoint === initialRequestParams.startPoint;
+    const endPointSame = requestParams.endPoint === initialRequestParams.endPoint;
+    return filtersSame && sortStateSame && startPointSame && endPointSame;
+};

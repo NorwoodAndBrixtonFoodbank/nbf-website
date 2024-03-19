@@ -25,7 +25,9 @@ import supabase from "@/supabaseClient";
 import {
     CollectionCentresOptions,
     ParcelProcessingData,
+    RequestParams,
     StatusResponseRow,
+    freshRequest,
     getAllValuesForKeys,
     getParcelIds,
     getParcelsCount,
@@ -41,13 +43,6 @@ import { Database } from "@/databaseTypesFile";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { dateFilter } from "@/components/Tables/DateFilter";
 import { CircularProgress } from "@mui/material";
-
-interface RequestParams {
-    allFilters: Filter<ParcelsTableRow, any>[];
-    sortState: SortState<ParcelsTableRow>;
-    startPoint: number;
-    endPoint: number;
-}
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -467,34 +462,11 @@ const ParcelsPage: React.FC<{}> = () => {
     useEffect(() => {
         if (!areFiltersLoadingForFirstTime) {
             const allFilters = [...primaryFilters, ...additionalFilters];
-            const initialRequestParams = {
+            const initialRequestParams: RequestParams<ParcelsTableRow> = {
                 allFilters: { ...allFilters },
                 sortState: { ...sortState },
                 startPoint: startPoint,
                 endPoint: endPoint,
-            };
-            const freshRequest = (
-                requestParams: RequestParams,
-                initialRequestParams: RequestParams
-            ): boolean => {
-                const filtersSame = Array.from(requestParams.allFilters).every((filter, index) =>
-                    filter.areStatesIdentical(
-                        filter.state,
-                        initialRequestParams.allFilters[index].state
-                    )
-                );
-                const sortStateSame =
-                    requestParams.sortState.sort === initialRequestParams.sortState.sort &&
-                    requestParams.sortState.sort &&
-                    initialRequestParams.sortState.sort
-                        ? requestParams.sortState.sortDirection ===
-                              initialRequestParams.sortState.sortDirection &&
-                          requestParams.sortState.column.sortField ===
-                              requestParams.sortState.column.sortField
-                        : true;
-                const startPointSame = requestParams.startPoint === initialRequestParams.startPoint;
-                const endPointSame = requestParams.endPoint === initialRequestParams.endPoint;
-                return filtersSame && sortStateSame && startPointSame && endPointSame;
             };
             (async () => {
                 setIsLoading(true);
@@ -506,7 +478,7 @@ const ParcelsPage: React.FC<{}> = () => {
                     startPoint,
                     endPoint
                 );
-                const requestParams = {
+                const requestParams: RequestParams<ParcelsTableRow> = {
                     allFilters: { ...allFilters },
                     sortState: { ...sortState },
                     startPoint: startPoint,

@@ -372,6 +372,13 @@ export type Database = {
             foreignKeyName: "parcels_client_id_fkey"
             columns: ["client_id"]
             isOneToOne: false
+            referencedRelation: "clients_plus"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "parcels_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
             referencedRelation: "parcels_plus"
             referencedColumns: ["client_id"]
           },
@@ -416,6 +423,16 @@ export type Database = {
       }
     }
     Views: {
+      clients_plus: {
+        Row: {
+          address_postcode: string | null
+          client_id: string | null
+          family_count: number | null
+          full_name: string | null
+          phone_number: string | null
+        }
+        Relationships: []
+      }
       family_count: {
         Row: {
           family_count: number | null
