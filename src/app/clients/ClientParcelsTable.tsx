@@ -32,6 +32,7 @@ const ClientParcelsTable: React.FC<ClientParcelTableProps> = (props) => {
                 pagination
                 onRowClick={(row) => router.push(`/parcels?parcelId=${row.data.parcelId}`)}
                 checkboxConfig={{ displayed: false }}
+                pointerOnHover={true}
             />
         </TableSurface>
     );

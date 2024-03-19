@@ -38,7 +38,8 @@ type ActionName =
     | "Download Shopping Lists"
     | "Download Driver Overview"
     | "Download Day Overview"
-    | "Delete Parcel Request";
+    | "Delete Parcel Request"
+    | "Generate Map";
 
 type AvailableActionsType = {
     [actionKey in ActionName]: {
@@ -80,6 +81,12 @@ const availableActions: AvailableActionsType = {
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
         actionType: "deleteParcel",
+    },
+    "Generate Map": {
+        showSelectedParcelsInModal: false,
+        errorCondition: isNotAtLeastOne,
+        errorMessage: "Please select at least one parcel.",
+        actionType: "generateMap",
     },
 };
 
@@ -188,7 +195,7 @@ const Actions: React.FC<Props> = ({
     modalError,
     setModalError,
 }) => {
-    const [selectedAction, setSelectedAction] = useState<ActionName | null>(null);
+    const [modalToDisplay, setModalToDisplay] = useState<ActionName | null>(null);
     const [labelQuantity, setLabelQuantity] = useState<number>(0);
     const [date, setDate] = useState(dayjs());
     const [driverName, setDriverName] = useState("");
@@ -211,7 +218,7 @@ const Actions: React.FC<Props> = ({
     };
 
     const onModalClose = (): void => {
-        setSelectedAction(null);
+        setModalToDisplay(null);
         setModalError(null);
         setDate(dayjs());
         setDriverName("");
@@ -227,18 +234,41 @@ const Actions: React.FC<Props> = ({
                 setActionAnchorElement(null);
                 setModalError(errorMessage);
             } else {
-                setSelectedAction(key);
-                setActionAnchorElement(null);
-                setModalError(null);
+                switch (key) {
+                    case "Download Shipping Labels":
+                    case "Download Shopping Lists":
+                    case "Download Driver Overview":
+                    case "Download Day Overview":
+                    case "Delete Parcel Request":
+                        setModalToDisplay(key);
+                        setActionAnchorElement(null);
+                        setModalError(null);
+                        break;
+                    case "Generate Map":
+                        openInNewTab(mapsLinkForSelectedParcels());
+                        break;
+                }
             }
         };
+    };
+
+    const mapsLinkForSelectedParcels = (): string => {
+        return (
+            "https://www.google.com/maps/dir/" +
+            selectedParcels.map((parcel) => parcel.addressPostcode.replaceAll(" ", "")).join("/") +
+            "//"
+        );
+    };
+
+    const openInNewTab = (url: string): void => {
+        window.open(url, "_blank", "noopener, noreferrer");
     };
 
     return (
         <>
             {Object.entries(availableActions).map(([key, value]) => {
                 return (
-                    selectedAction === key && (
+                    modalToDisplay === key && (
                         <ActionsModal
                             key={key}
                             showSelectedParcels={value.showSelectedParcelsInModal}
@@ -263,7 +293,7 @@ const Actions: React.FC<Props> = ({
                             }
                         >
                             <ActionsButton
-                                pdfType={selectedAction}
+                                pdfType={modalToDisplay}
                                 selectedParcels={selectedParcels}
                                 date={date}
                                 labelQuantity={labelQuantity}

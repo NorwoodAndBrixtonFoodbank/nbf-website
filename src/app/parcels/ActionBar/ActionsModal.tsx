@@ -14,7 +14,7 @@ import { DatabaseError } from "@/app/errorClasses";
 import { statusType } from "./Statuses";
 import SelectedParcelsOverview from "./SelectedParcelsOverview";
 
-export type ActionType = "pdfDownload" | "deleteParcel";
+export type ActionType = "pdfDownload" | "deleteParcel" | "generateMap";
 
 interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     selectedParcels: ParcelsTableRow[];
@@ -177,6 +177,8 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
         }
     }, [loading, loadPdf]);
 
+    const [numberOfParcelsToDelete] = useState<number>(props.selectedParcels.length);
+
     return (
         <Modal {...props}>
             <ModalInner>
@@ -188,7 +190,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                             <Heading> The PDF is ready to be downloaded. </Heading>
                         ) : (
                             <Heading>
-                                {props.selectedParcels.length === 1 ? "Parcel" : "Parcels"} deleted
+                                {numberOfParcelsToDelete === 1 ? "Parcel" : "Parcels"} deleted
                             </Heading>
                         )}
 
@@ -199,7 +201,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                         {props.actionType === "deleteParcel" && (
                             <Heading>
                                 Are you sure you want to delete the selected parcel{" "}
-                                {props.selectedParcels.length === 1 ? "request" : "requests"}?
+                                {numberOfParcelsToDelete === 1 ? "request" : "requests"}?
                             </Heading>
                         )}
                         {props.showSelectedParcels && (
