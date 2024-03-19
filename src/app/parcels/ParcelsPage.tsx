@@ -27,7 +27,7 @@ import {
     ParcelProcessingData,
     RequestParams,
     StatusResponseRow,
-    freshRequest,
+    isFreshRequest,
     getAllValuesForKeys,
     getParcelIds,
     getParcelsCount,
@@ -124,7 +124,6 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
             methodType: PaginationType.Server,
         },
     },
-    //{key: "packingTimeLabel",sortMethod: (query, sortDirection) => query.order("client(full_name)", {ascending: sortDirection === "asc"})}, broke
     {
         key: "lastStatus",
         sortMethodConfig: {
@@ -299,25 +298,6 @@ const buildDeliveryCollectionFilter = async (): Promise<Filter<ParcelsTableRow, 
     });
 };
 
-// const buildPackingTimeFilter = (): Filter<ParcelsTableRow, string[]> => {
-//     const packingTimeSearch = (
-//         query: PostgrestFilterBuilder<Database["public"], any, any>,
-//         state: string[]
-//     ): PostgrestFilterBuilder<Database["public"], any, any> => {
-//         return query; //.in('packing_datetime', `%${state}%`);
-//     };
-//     const options = Array.from(
-//         new Set(tableData.map((row) => row.packingTimeLabel as string)).values()
-//     ).sort(); //todo same as above
-//     return checklistFilter<ParcelsTableRow>({
-//         key: "packingTimeLabel",
-//         filterLabel: "Packing Time",
-//         itemLabelsAndKeys: options.map((value) => [value, value]),
-//         initialCheckedKeys: options,
-//         methodConfig: { methodType: FilterMethodType.Server, method: packingTimeSearch },
-//     });
-// };
-
 const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]>> => {
     const lastStatusSearch = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
@@ -424,7 +404,6 @@ const ParcelsPage: React.FC<{}> = () => {
                     methodConfig: { methodType: PaginationType.Server, method: postcodeSearch },
                 }),
                 await buildDeliveryCollectionFilter(),
-                //buildPackingTimeFilter(), //broken
             ];
 
             const additionalFilters = [
@@ -484,7 +463,7 @@ const ParcelsPage: React.FC<{}> = () => {
                     startPoint: startPoint,
                     endPoint: endPoint,
                 };
-                if (freshRequest(requestParams, initialRequestParams)) {
+                if (isFreshRequest(requestParams, initialRequestParams)) {
                     setTotalRows(totalRows);
                     setParcelsDataPortion(fetchedData);
                 }
@@ -566,10 +545,6 @@ const ParcelsPage: React.FC<{}> = () => {
         sortState,
         areFiltersLoadingForFirstTime,
     ]);
-
-    // useEffect(() => {
-    //     setCheckedParcelIds([]);
-    // }, [primaryFilters, additionalFilters]);
 
     const selectOrDeselectRow = (parcelId: string): void => {
         setCheckedParcelIds((currentIndices) => {
@@ -686,12 +661,7 @@ const ParcelsPage: React.FC<{}> = () => {
     return (
         <>
             <PreTableControls>
-                <ControlContainer>
-                    {/* NOTE: should probs move date range input back to top of page on UI somehow. <DateRangeInputs
-                        range={packingDateRange}
-                        setRange={setPackingDateRange}
-                    ></DateRangeInputs> */}
-                </ControlContainer>
+                <ControlContainer />
                 <ActionBar
                     fetchSelectedParcels={async (checkedParcelIds: string[]) =>
                         await getCheckedParcelsData(checkedParcelIds)

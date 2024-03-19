@@ -14,9 +14,7 @@ const getClientsData = async (
 ): Promise<ClientsTableRow[]> => {
     const data: ClientsTableRow[] = [];
 
-    let query = supabase
-        .from("clients_plus")
-        .select("*");
+    let query = supabase.from("clients_plus").select("*");
 
     if (sortState.sort && sortState.column.sortMethodConfig?.methodType === PaginationType.Server) {
         query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
@@ -39,7 +37,6 @@ const getClientsData = async (
     }
 
     for (const client of clients) {
-
         data.push({
             clientId: client.client_id ?? "",
             fullName: client.full_name ?? "",

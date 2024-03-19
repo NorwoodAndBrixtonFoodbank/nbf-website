@@ -19,7 +19,7 @@ import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { CircularProgress } from "@mui/material";
-import { RequestParams, freshRequest } from "../parcels/fetchParcelTableData";
+import { RequestParams, isFreshRequest } from "../parcels/fetchParcelTableData";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -114,16 +114,15 @@ const ClientsPage: React.FC<{}> = () => {
                 startPoint: startPoint,
                 endPoint: endPoint,
             };
-            if (freshRequest(requestParams, initialRequestParams)) {
+            if (isFreshRequest(requestParams, initialRequestParams)) {
                 setClientsDataPortion(fetchedData);
                 setTotalRows(totalRows);
-        }
-        setIsLoading(false);
-        setIsLoadingForFirstTime(false);
-    })();
+            }
+            setIsLoading(false);
+            setIsLoadingForFirstTime(false);
+        })();
     }, [startPoint, endPoint, sortState, primaryFilters]);
 
-    //remember to deal with what happens if filters change twice and requests come back out of order. deal with in useeffect that sets data inside Table
     useEffect(() => {
         const loadCountAndData = async (): Promise<void> => {
             setIsLoading(true);

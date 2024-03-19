@@ -171,15 +171,12 @@ export interface RequestParams<Data> {
     endPoint: number;
 }
 
-export const freshRequest = <Data,>(
+export const isFreshRequest = <Data>(
     requestParams: RequestParams<Data>,
     initialRequestParams: RequestParams<Data>
 ): boolean => {
     const filtersSame = Array.from(requestParams.allFilters).every((filter, index) =>
-        filter.areStatesIdentical(
-            filter.state,
-            initialRequestParams.allFilters[index].state
-        )
+        filter.areStatesIdentical(filter.state, initialRequestParams.allFilters[index].state)
     );
     const sortStateSame =
         requestParams.sortState.sort === initialRequestParams.sortState.sort &&
@@ -187,8 +184,7 @@ export const freshRequest = <Data,>(
         initialRequestParams.sortState.sort
             ? requestParams.sortState.sortDirection ===
                   initialRequestParams.sortState.sortDirection &&
-              requestParams.sortState.column.sortField ===
-                  requestParams.sortState.column.sortField
+              requestParams.sortState.column.sortField === requestParams.sortState.column.sortField
             : true;
     const startPointSame = requestParams.startPoint === initialRequestParams.startPoint;
     const endPointSame = requestParams.endPoint === initialRequestParams.endPoint;
