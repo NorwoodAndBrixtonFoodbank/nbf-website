@@ -16,7 +16,7 @@ export interface CalendarProps {
     view?: string;
     editable?: boolean;
     initialDate?: Date;
-    initialLocations: string[];
+    allLocations: string[];
 }
 
 export interface CalendarEvent {
@@ -206,13 +206,13 @@ const Calendar: React.FC<CalendarProps> = ({
     view = "dayGridMonth",
     editable = false,
     initialDate,
-    initialLocations,
+    allLocations,
 }) => {
     const [eventClick, setEventClick] = useState<CalendarEvent | null>(null);
     const calendarRef = useRef<FullCalendar>(null);
     const calendarStartTime = "10:00:00";
     const calendarEndTime = "15:00:00";
-    const [locations, setLocations] = useState<string[]>([]);
+    const [currentSelectedLocations, setLocations] = useState<string[]>([...allLocations]); //rename locations to curently selected
 
     const handleEventClick = (info: EventClickArg): void => {
         const id = info.event.id;
@@ -229,9 +229,9 @@ const Calendar: React.FC<CalendarProps> = ({
             <EventModal eventClick={eventClick} setEventClick={setEventClick} />
             <CalendarStyling>
                 <CalendarFilters
-                    allLocations={initialLocations}
+                    allLocations={allLocations}
                     editLocations={setLocations}
-                    currentLocations={locations}
+                    currentLocations={currentSelectedLocations}
                 />
                 <FullCalendar
                     ref={calendarRef}
@@ -242,7 +242,7 @@ const Calendar: React.FC<CalendarProps> = ({
                         center: "title",
                         right: "dayGridMonth,timeGridWeek,timeGridDay",
                     }}
-                    events={filterEventsByLocation(locations, initialEvents)}
+                    events={filterEventsByLocation(currentSelectedLocations, initialEvents)}
                     initialView={view}
                     editable={editable}
                     selectable={editable}

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import { Checkbox, FormControlLabel } from "@mui/material";
 import styled from "styled-components";
 
@@ -34,7 +34,7 @@ const CheckboxAndTitleDiv = styled.div`
     min-width: 300px;
 `;
 
-const SelectAllCheckboxes = Checkbox;
+const SelectAllCheckboxes = styled(Checkbox)``;
 
 const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
     allLocations,
@@ -47,21 +47,17 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
     ): void => {
         const newLocations = event.target.checked
             ? currentLocations.concat(location)
-            : currentLocations.filter((currentLocation) => currentLocation !== location);
+            : currentLocations.filter((testLocation) => testLocation !== location);
 
         editLocations(newLocations);
     };
 
     const handleSelectAllChange = (): void => {
-        const locationsToEnable =
+        const toggleAllLocations =
             allLocations.length === currentLocations.length ? [] : [...allLocations];
 
-        editLocations(locationsToEnable);
+        editLocations(toggleAllLocations);
     };
-
-    useEffect(() => {
-        editLocations(allLocations);
-    }, [allLocations, editLocations]);
 
     return (
         <ContainerDiv>
