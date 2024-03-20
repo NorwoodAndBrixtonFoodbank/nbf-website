@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import MenuIcon from "@mui/icons-material/Menu";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
@@ -12,6 +12,10 @@ import SignOutButton from "@/components/NavigationBar/SignOutButton";
 import NavBarButton from "@/components/Buttons/NavBarButton";
 import { usePathname } from "next/navigation";
 import { RoleUpdateContext, roleCanAccessPage } from "@/app/roles";
+import Modal from "@/components/Modal/Modal";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { DatabaseAutoType } from "@/databaseUtils";
 
 export const NavBarHeight = "4rem";
 
@@ -130,7 +134,9 @@ const pages = [
 ];
 
 const NavigationBar: React.FC<Props> = ({ children }) => {
-    const [drawer, setDrawer] = React.useState(false);
+    const [drawer, setDrawer] = useState(false);
+    const [logOutModalOpen, setLogOutModalOpen] = useState(false);
+    const supabase = createClientComponentClient<DatabaseAutoType>();
 
     const openDrawer = (): void => {
         setDrawer(true);
@@ -138,6 +144,15 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
 
     const closeDrawer = (): void => {
         setDrawer(false);
+    };
+
+    const handleLogOutClick = (): void => {
+        setLogOutModalOpen(true);
+    };
+
+    const handleLogOutConfirm = async (): Promise<void> => {
+        setLogOutModalOpen(false);
+        await supabase.auth.signOut();
     };
 
     return (
@@ -187,13 +202,56 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
                     <SignOutButtonContainer>
                         <LightDarkSlider />
                         <LoginDependent>
-                            <SignOutButton />
+                            <SignOutButton onClick={handleLogOutClick} />
                         </LoginDependent>
                     </SignOutButtonContainer>
                 </AppBarInner>
             </AppBar>
+            {logOutModalOpen && (
+                <Modal
+                    header={
+                        <>
+                            <LogoutIcon />
+                            Would you like to log out?
+                        </>
+                    }
+                    isOpen={logOutModalOpen}
+                    onClose={() => {
+                        setLogOutModalOpen(false);
+                    }}
+                    headerId="expandedParcelDetailsModal"
+                    maxWidth="sm"
+                >
+                    <CenteredDiv>
+                        <Button
+                            color="primary"
+                            aria-label="Confirm Sign Out Button"
+                            onClick={handleLogOutConfirm}
+                            variant="contained"
+                        >
+                            LogOut
+                        </Button>
+                        <Button
+                            aria-label="Cancel Sign Out"
+                            onClick={() => {
+                                setLogOutModalOpen(false);
+                            }}
+                            variant="outlined"
+                        >
+                            Cancel
+                        </Button>
+                    </CenteredDiv>
+                </Modal>
+            )}
             {children}
         </>
     );
 };
+
+const CenteredDiv = styled.div`
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 2rem 4rem 1rem 4rem;
+`;
 export default NavigationBar;
