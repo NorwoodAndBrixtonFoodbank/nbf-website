@@ -220,7 +220,7 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
                         setLogOutModalOpen(false);
                     }}
                     headerId="expandedParcelDetailsModal"
-                    maxWidth="sm"
+                    maxWidth="xs"
                 >
                     <CenteredDiv>
                         <Button
