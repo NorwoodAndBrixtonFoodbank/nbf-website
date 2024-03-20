@@ -40,6 +40,7 @@ describe("Authentication tests", () => {
         cy.visit("/parcels");
         cy.url().should("include", "/parcels");
         cy.get("button[aria-label='Sign Out Button']").click();
+        cy.get("button[aria-label='Confirm Sign Out Button']").click();
 
         cy.url().should("include", "/login");
     });
