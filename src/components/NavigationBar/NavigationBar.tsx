@@ -224,7 +224,7 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
                 >
                     <CenteredDiv>
                         <Button
-                            color="primary"
+                            color="error"
                             aria-label="Confirm Sign Out Button"
                             onClick={handleLogOutConfirm}
                             variant="contained"
