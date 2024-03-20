@@ -14,6 +14,7 @@ import {
     faBuildingCircleArrowRight,
     faBoxOpen,
     IconDefinition,
+    faServer
 } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -70,7 +71,7 @@ const AdminPage: React.FC<Props> = (props) => {
         },
         {
             panelTitle: "Edit Website Data",
-            panelIcon: faBoxOpen, //change
+            panelIcon: faServer,
             panelContent: <WebsiteDataTable />,
         },
     ];
