@@ -263,7 +263,7 @@ export const submitEditClientForm: SubmitFormHelper = async (
     const ids = await updateClient(clientRecord, primaryKey!);
     try {
         await updateFamily(fields.adults, fields.children, ids.family_id);
-        router.push(`/parcels/add/${ids.primary_key}`);
+        router.push(`/clients?clientId=${primaryKey}`);
     } catch (error) {
         await revertClientUpdate(clientBeforeUpdate, primaryKey!);
         throw new DatabaseError("update", "client data");
