@@ -34,7 +34,6 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
     const [fields, setFields] = useState(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
 
-    const [submitError, setSubmitError] = useState(Errors.none);
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
     const [submitDisabled, setSubmitDisabled] = useState(false);
 
@@ -47,7 +46,6 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
         setSubmitDisabled(true);
 
         if (checkErrorOnSubmit(formErrors, setFormErrors)) {
-            setSubmitError(Errors.submit);
             setSubmitDisabled(false);
             return;
         }
@@ -55,13 +53,17 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
         const { error } = await supabase.from("collection_centres").insert(fields);
 
         if (error) {
-            setSubmitError(Errors.external);
-            setSubmitErrorMessage(error.message);
+            if (error.code === "23505") {
+                setSubmitErrorMessage(
+                    "A Collection Centre with this name/abbreviation has already been added. Please choose a different name/abbreviation"
+                );
+            } else {
+                setSubmitErrorMessage(`${error.message}\n${Errors.external}`);
+            }
             setSubmitDisabled(false);
             return;
         }
 
-        setSubmitError(Errors.none);
         setSubmitErrorMessage("");
         setSubmitDisabled(false);
         setRefreshRequired(true);
@@ -93,7 +95,7 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
                     </Button>
                 )}
 
-                <FormErrorText>{submitErrorMessage + submitError}</FormErrorText>
+                <FormErrorText>{submitErrorMessage}</FormErrorText>
             </StyledForm>
         </CenterComponent>
     );
