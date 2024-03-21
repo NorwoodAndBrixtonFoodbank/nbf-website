@@ -250,6 +250,13 @@ interface Table_public_parcels {
   voucher_number: string | null;
   packing_slot: string | null;
 }
+interface Table_public_profiles {
+  primary_key: string;
+  first_name: string | null;
+  last_name: string | null;
+  role: Enum_public_role;
+  telephone_number: string | null;
+}
 interface Table_auth_refresh_tokens {
   instance_id: string | null;
   id: number;
@@ -421,6 +428,7 @@ interface Schema_public {
   packing_slots: Table_public_packing_slots;
   parcels: Table_public_parcels;
   status_order: Table_public_status_order;
+  profiles: Table_public_profiles;
   website_data: Table_public_website_data;
 }
 interface Schema_realtime {
@@ -582,6 +590,14 @@ interface Tables_relationships {
        events_parcel_id_fkey: "public.events";
     };
   };
+  "public.profiles": {
+    parent: {
+       profiles_primary_key_fkey: "auth.users";
+    };
+    children: {
+
+    };
+  };
   "auth.refresh_tokens": {
     parent: {
        refresh_tokens_session_id_fkey: "auth.sessions";
@@ -650,6 +666,7 @@ interface Tables_relationships {
        identities_user_id_fkey: "auth.identities";
        mfa_factors_user_id_fkey: "auth.mfa_factors";
        sessions_user_id_fkey: "auth.sessions";
+       profiles_primary_key_fkey: "public.profiles";
     };
   };
 }

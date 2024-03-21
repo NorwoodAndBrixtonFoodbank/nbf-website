@@ -345,6 +345,17 @@ type Override = {
       events?: string;
     };
   }
+  profiles?: {
+    name?: string;
+    fields?: {
+      primary_key?: string;
+      first_name?: string;
+      last_name?: string;
+      role?: string;
+      telephone_number?: string;
+      users?: string;
+    };
+  }
   refresh_tokens?: {
     name?: string;
     fields?: {
@@ -507,6 +518,7 @@ type Override = {
       identities?: string;
       mfa_factors?: string;
       sessions?: string;
+      profiles?: string;
     };
   }
   website_data?: {
@@ -653,6 +665,9 @@ export interface Fingerprint {
     packingSlotByPackingSlot?: FingerprintRelationField;
     eventsByParcelId?: FingerprintRelationField;
   }
+  profiles?: {
+    userByPrimaryKey?: FingerprintRelationField;
+  }
   refreshTokens?: {
     id?: FingerprintNumberField;
     createdAt?: FingerprintDateField;
@@ -727,6 +742,7 @@ export interface Fingerprint {
     identities?: FingerprintRelationField;
     mfaFactors?: FingerprintRelationField;
     sessions?: FingerprintRelationField;
+    profilesByPrimaryKey?: FingerprintRelationField;
   }
   websiteData?: {
 
