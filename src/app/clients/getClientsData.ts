@@ -41,8 +41,12 @@ const getClientsData = async (
     }
 
     for (const client of clients) {
-        client.client_id ?? void logError("empty client id");
-        client.full_name ?? void logError("empty client name");
+        if (!client.client_id) {
+            void logError("empty client id");
+        }
+        if (!client.full_name) {
+            void logError("empty client name");
+        }
         data.push({
             clientId: client.client_id ?? "",
             fullName: client.full_name ?? "",
