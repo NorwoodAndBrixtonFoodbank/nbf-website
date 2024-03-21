@@ -84,7 +84,7 @@ const listsColumnStyleOptions: ColumnStyles<ListRow> = {
 
 const ListsDataView: React.FC<ListDataViewProps> = ({
     listOfIngredients,
-    setListOfIngredients: setListOfIngredients,
+    setListOfIngredients,
     comment,
 }) => {
     const [modal, setModal] = useState<EditModalState>();
