@@ -16,7 +16,7 @@ const getCollectionCentres = async (): Promise<Schema["collection_centres"]["nam
         const logId = await logErrorReturnLogId("Error with fetch: Collection centre names", error);
         throw new DatabaseError("fetch", "collection centre names", logId);
     }
-    const mappedValues = data ? data.map((centre) => centre.name) : [];
+    const mappedValues = data.map((centre) => centre.name);
     return mappedValues.filter((centre) => centre !== "Delivery");
 };
 
