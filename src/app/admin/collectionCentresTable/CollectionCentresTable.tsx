@@ -43,6 +43,21 @@ const collectionCentresTableHeaderKeysAndLabels: TableHeaders<Schema["collection
     ["acronym", "Acronym"],
 ];
 
+const filters: Filter<CollectionCentresTableRow, string>[] = [
+    buildTextFilter({
+        key: "name",
+        label: "Name",
+        headers: collectionCentresTableHeaderKeysAndLabels,
+        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
+    }),
+    buildTextFilter({
+        key: "acronym",
+        label: "Acronym",
+        headers: collectionCentresTableHeaderKeysAndLabels,
+        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
+    }),
+];
+
 interface Props {
     collectionCentreData: CollectionCentresTableRow[];
 }
@@ -54,6 +69,8 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
     const [collectionCentreToDelete, setCollectionCentreToDelete] =
         useState<Schema["collection_centres"]>();
     const [refreshRequired, setRefreshRequired] = useState(false);
+    const [primaryFilters, setPrimaryFilters] =
+        useState<Filter<CollectionCentresTableRow, string>[]>(filters);
 
     const collectionCentreOnDelete = (rowIndex: number): void => {
         setCollectionCentreToDelete(props.collectionCentreData[rowIndex]); // TODO VFB-25 Change onDelete in table to return row
@@ -76,23 +93,6 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
     const onCollectionCentreDeleteCancellation = (): void => {
         setCollectionCentreToDelete(undefined);
     };
-
-    const filters: Filter<CollectionCentresTableRow, string>[] = [
-        buildTextFilter({
-            key: "name",
-            label: "Name",
-            headers: collectionCentresTableHeaderKeysAndLabels,
-            methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
-        }),
-        buildTextFilter({
-            key: "acronym",
-            label: "Acronym",
-            headers: collectionCentresTableHeaderKeysAndLabels,
-            methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
-        }),
-    ];
-    const [primaryFilters, setPrimaryFilters] =
-        useState<Filter<CollectionCentresTableRow, string>[]>(filters);
 
     useEffect(() => {
         setCollectionCentres(

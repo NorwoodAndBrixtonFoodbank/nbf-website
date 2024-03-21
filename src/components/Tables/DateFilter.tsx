@@ -10,24 +10,25 @@ interface DateFilterProps<Data> {
     initialState: DateRangeState;
 }
 
+const areDateRangesIdentical = (
+    dateRangeA: DateRangeState,
+    dateRangeB: DateRangeState
+): boolean => {
+    return (
+        areDaysIdentical(dateRangeA.from, dateRangeB.from) &&
+        areDaysIdentical(dateRangeA.to, dateRangeB.to)
+    );
+};
+
+const areDaysIdentical = (dayA: dayjs.Dayjs | null, dayB: dayjs.Dayjs | null): boolean => {
+    return dayA && dayB ? dayA.isSame(dayB) : dayA === dayB;
+};
+
 export const dateFilter = <Data,>({
     key,
     methodConfig,
     initialState,
 }: DateFilterProps<Data>): Filter<Data, DateRangeState> => {
-    const areDateRangesIdentical = (
-        dateRangeA: DateRangeState,
-        dateRangeB: DateRangeState
-    ): boolean => {
-        return (
-            areDaysIdentical(dateRangeA.from, dateRangeB.from) &&
-            areDaysIdentical(dateRangeA.to, dateRangeB.to)
-        );
-    };
-
-    const areDaysIdentical = (dayA: dayjs.Dayjs | null, dayB: dayjs.Dayjs | null): boolean => {
-        return dayA && dayB ? dayA.isSame(dayB) : dayA === dayB;
-    };
     return {
         key: key,
         state: initialState,
