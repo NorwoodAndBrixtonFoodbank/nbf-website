@@ -37,8 +37,8 @@ export const fetchParcel = async (
         const errorMessage = `${
             data.length === 0 ? "No" : "Multiple"
         } records match this parcel ID.`;
-        void logWarningReturnLogId(`${errorMessage} ${parcelID}`);
-        throw new Error(errorMessage);
+        const logId = await logWarningReturnLogId(`${errorMessage} ${parcelID}`);
+        throw new Error(errorMessage + `Log ID: ${logId}`);
     }
     return data[0];
 };
