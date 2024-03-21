@@ -11,7 +11,7 @@ import { ControlContainer } from "@/components/Form/formStyling";
 import { ArrowDropDown } from "@mui/icons-material";
 
 export interface ActionBarProps {
-    fetchSelectedParcels: (checkedParcelIds: string[]) => Promise<ParcelsTableRow[]>;
+    fetchParcelsByIds: (checkedParcelIds: string[]) => Promise<ParcelsTableRow[]>;
     onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
     willSaveParcelStatus: () => void;
     hasSavedParcelStatus: () => void;
@@ -38,7 +38,7 @@ const ActionBar: React.FC<ActionBarProps> = (props) => {
         <>
             <ActionsContainer>
                 <Statuses
-                    fetchSelectedParcels={props.fetchSelectedParcels}
+                    fetchParcelsByIds={props.fetchParcelsByIds}
                     parcelIds={props.parcelIds}
                     statusAnchorElement={statusAnchorElement}
                     setStatusAnchorElement={setStatusAnchorElement}
@@ -49,7 +49,7 @@ const ActionBar: React.FC<ActionBarProps> = (props) => {
                 />
                 <Actions
                     parcelIds={props.parcelIds}
-                    fetchSelectedParcels={props.fetchSelectedParcels}
+                    fetchParcelsByIds={props.fetchParcelsByIds}
                     onDeleteParcels={props.onDeleteParcels}
                     actionAnchorElement={actionAnchorElement}
                     setActionAnchorElement={setActionAnchorElement}

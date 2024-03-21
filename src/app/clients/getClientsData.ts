@@ -36,6 +36,7 @@ const getClientsData = async (
     const { data: clients, error: clientError } = await query;
 
     if (clientError) {
+        void logError("error fetching clients data");
         throw new DatabaseError("fetch", "clients");
     }
 
@@ -67,6 +68,7 @@ export const getClientsCount = async (
     const { count, error: clientError } = await query;
     if (clientError || count === null) {
         void logError("error fetching clients details");
+        throw new DatabaseError("fetch", "clients");
     }
     return count ?? 0;
 };

@@ -663,7 +663,7 @@ const ParcelsPage: React.FC<{}> = () => {
             <PreTableControls>
                 <ControlContainer />
                 <ActionBar
-                    fetchSelectedParcels={getCheckedParcelsData}
+                    fetchParcelsByIds={getCheckedParcelsData}
                     onDeleteParcels={deleteParcels}
                     willSaveParcelStatus={() => setIsLoading(true)}
                     hasSavedParcelStatus={() => setIsLoading(false)}

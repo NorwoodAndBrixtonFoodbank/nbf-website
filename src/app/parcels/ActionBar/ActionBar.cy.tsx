@@ -63,7 +63,7 @@ describe("Parcels - Action Bar", () => {
     ];
 
     const MockActionBar: React.FC<ActionBarProps> = ({
-        fetchSelectedParcels,
+        fetchParcelsByIds: fetchSelectedParcels,
         parcelIds,
         onDeleteParcels,
     }) => {
@@ -71,7 +71,7 @@ describe("Parcels - Action Bar", () => {
             <Localization>
                 <StyleManager>
                     <ActionBar
-                        fetchSelectedParcels={fetchSelectedParcels}
+                        fetchParcelsByIds={fetchSelectedParcels}
                         onDeleteParcels={onDeleteParcels}
                         hasSavedParcelStatus={() => {}}
                         willSaveParcelStatus={() => {}}
@@ -90,7 +90,7 @@ describe("Parcels - Action Bar", () => {
         beforeEach(() => {
             cy.mount(
                 <MockActionBar
-                    fetchSelectedParcels={async (parcelIds: string[]) =>
+                    fetchParcelsByIds={async (parcelIds: string[]) =>
                         await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
                     }
                     onDeleteParcels={onDeleteParcels}
@@ -169,7 +169,7 @@ describe("Parcels - Action Bar", () => {
         beforeEach(() => {
             cy.mount(
                 <MockActionBar
-                    fetchSelectedParcels={async (parcelIds: string[]) =>
+                    fetchParcelsByIds={async (parcelIds: string[]) =>
                         await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
                     }
                     onDeleteParcels={onDeleteParcels}

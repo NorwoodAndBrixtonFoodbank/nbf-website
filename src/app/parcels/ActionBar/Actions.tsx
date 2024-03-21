@@ -179,7 +179,7 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
 };
 
 interface Props {
-    fetchSelectedParcels: (checkedParcelIds: string[]) => Promise<ParcelsTableRow[]>;
+    fetchParcelsByIds: (checkedParcelIds: string[]) => Promise<ParcelsTableRow[]>;
     onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
     actionAnchorElement: HTMLElement | null;
     setActionAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
@@ -189,7 +189,7 @@ interface Props {
 }
 
 const Actions: React.FC<Props> = ({
-    fetchSelectedParcels,
+    fetchParcelsByIds,
     onDeleteParcels,
     actionAnchorElement,
     setActionAnchorElement,
@@ -234,7 +234,7 @@ const Actions: React.FC<Props> = ({
     ): (() => void) => {
         return async () => {
             try {
-                const fetchedParcels = await fetchSelectedParcels(parcelIds);
+                const fetchedParcels = await fetchParcelsByIds(parcelIds);
                 setSelectedParcels(fetchedParcels);
                 if (errorCondition(fetchedParcels.length)) {
                     setActionAnchorElement(null);
