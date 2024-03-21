@@ -7,6 +7,7 @@ import IconButton from "@mui/material/IconButton/IconButton";
 interface Props {
     onClick: () => void;
 }
+
 const SignOutButton: React.FC<Props> = (props: Props) => {
     return (
         <IconButton aria-label="Sign Out Button" onClick={props.onClick}>
