@@ -212,7 +212,7 @@ const Calendar: React.FC<CalendarProps> = ({
     const calendarRef = useRef<FullCalendar>(null);
     const calendarStartTime = "10:00:00";
     const calendarEndTime = "15:00:00";
-    const [currentSelectedLocations, setLocations] = useState<string[]>([...allLocations]); //rename locations to curently selected
+    const [selectedLocations, setSelectedLocations] = useState<string[]>([...allLocations]);
 
     const handleEventClick = (info: EventClickArg): void => {
         const id = info.event.id;
@@ -230,8 +230,8 @@ const Calendar: React.FC<CalendarProps> = ({
             <CalendarStyling>
                 <CalendarFilters
                     allLocations={allLocations}
-                    editLocations={setLocations}
-                    currentLocations={currentSelectedLocations}
+                    editLocations={setSelectedLocations}
+                    currentLocations={selectedLocations}
                 />
                 <FullCalendar
                     ref={calendarRef}
@@ -242,7 +242,7 @@ const Calendar: React.FC<CalendarProps> = ({
                         center: "title",
                         right: "dayGridMonth,timeGridWeek,timeGridDay",
                     }}
-                    events={filterEventsByLocation(currentSelectedLocations, initialEvents)}
+                    events={filterEventsByLocation(selectedLocations, initialEvents)}
                     initialView={view}
                     editable={editable}
                     selectable={editable}
