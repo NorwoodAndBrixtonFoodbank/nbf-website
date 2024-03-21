@@ -189,17 +189,29 @@ const ParcelsPage: React.FC<{}> = () => {
         }
     }, [parcelId]);
 
-    useEffect(() => {
-        if (parcelId && tableData.length > 0) {
-            const selectedRow = tableData.find((rowData) => rowData.parcelId === parcelId);
-            if (selectedRow) {
-                setClientIdForSelectedParcel(selectedRow.primaryKey);
-            }
-        }
-    }, [parcelId, tableData]);
     const clientIdIsValidLink = clientIdForSelectedParcel !== null;
 
     useEffect(() => {
+            const fetchClientId = async () => {
+            const { data, error } = await supabase
+                .from("parcels")
+                .select("client_id")
+                .eq("primary_key", parcelId);
+
+            if (error) {
+                console.error("Error fetching parcel data", error.message);
+                return;
+            }
+
+            if (data && data.length > 0) {
+                const fetchedClientId = data[0].client_id;
+                setClientIdForSelectedParcel(fetchedClientId);
+            }
+        };
+        fetchClientId();
+    }, [parcelId]);
+
+    (useEffect(() => {
         (async () => {
             setIsLoading(true);
             const dateRangeToFetch = { ...packingDateRange };
@@ -211,7 +223,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
             setIsLoading(false);
         })();
-    }, [packingDateRange]);
+    }, [packingDateRange]));
 
     useEffect(() => {
         // This requires that both the DB parcels and events tables have Realtime turned on

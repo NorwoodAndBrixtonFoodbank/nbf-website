@@ -118,10 +118,10 @@ export const formatHouseholdFromFamilyDetails = (
     let childCount = 0;
 
     for (const familyMember of family) {
-        if (familyMember.age === null || familyMember.age < 16) {
-            childCount++;
-        } else {
+        if (familyMember.age === null || familyMember.age >= 16) {
             adultCount++;
+        } else {
+            childCount++;
         }
     }
 
