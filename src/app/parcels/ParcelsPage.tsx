@@ -1,15 +1,12 @@
 "use client";
 
+import Table, { Row, SortOptions, TableHeaders, SortState } from "@/components/Tables/Table";
 import React, { Suspense, useEffect, useRef, useState } from "react";
-import Table, { Row, SortOptions, TableHeaders } from "@/components/Tables/Table";
 import styled, { useTheme } from "styled-components";
-import {
-    ParcelsTableRow,
-    processingDataToParcelsTableData,
-} from "@/app/parcels/getParcelsTableData";
+import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import { formatDatetimeAsDate } from "@/app/parcels/getExpandedParcelDetails";
 import { ControlContainer } from "@/components/Form/formStyling";
-import DateRangeInputs, { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
+import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
@@ -26,15 +23,24 @@ import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
 import {
-    getCongestionChargeDetailsForParcels,
-    getParcelProcessingData,
+    CollectionCentresOptions,
+    RequestParams,
+    areRequestsIdentical,
+    getParcelIds,
+    getParcelsCount,
+    getParcelsData,
 } from "./fetchParcelTableData";
 import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
-import { Filter } from "@/components/Tables/Filters";
-import { saveParcelStatus, statusNamesInWorkflowOrder } from "./ActionBar/Statuses";
-import { CircularProgress } from "@mui/material";
+import { Filter, PaginationType } from "@/components/Tables/Filters";
+import { saveParcelStatus } from "./ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
+import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
+import { Database } from "@/databaseTypesFile";
+import { buildTextFilter } from "@/components/Tables/TextFilter";
+import { dateFilter } from "@/components/Tables/DateFilter";
+import { CircularProgress } from "@mui/material";
+import { logError } from "@/logger/logger";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -59,28 +65,71 @@ const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
     "lastStatus",
 ];
 
-const sortStatusByWorkflowOrder = (
-    statusA: ParcelsTableRow["lastStatus"],
-    statusB: ParcelsTableRow["lastStatus"]
-): number => {
-    const indexA = statusNamesInWorkflowOrder.indexOf(statusA?.name ?? "");
-    const indexB = statusNamesInWorkflowOrder.indexOf(statusB?.name ?? "");
-    if (indexA === indexB) {
-        return 0;
-    }
-    return indexA < indexB ? 1 : -1;
-};
-
-const sortableColumns: (keyof ParcelsTableRow | SortOptions<ParcelsTableRow, "lastStatus">)[] = [
-    "fullName",
-    "familyCategory",
-    "addressPostcode",
-    "phoneNumber",
-    "voucherNumber",
-    "deliveryCollection",
-    "packingDatetime",
-    "packingTimeLabel",
-    { key: "lastStatus", sortFunction: sortStatusByWorkflowOrder },
+const sortableColumns: SortOptions<ParcelsTableRow>[] = [
+    {
+        key: "fullName",
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("client_full_name", { ascending: sortDirection === "asc" }),
+            paginationType: PaginationType.Server,
+        },
+    },
+    {
+        key: "familyCategory",
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("family_count", { ascending: sortDirection === "asc" }),
+            paginationType: PaginationType.Server,
+        },
+    },
+    {
+        key: "addressPostcode",
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("client_address_postcode", { ascending: sortDirection === "asc" }),
+            paginationType: PaginationType.Server,
+        },
+    },
+    {
+        key: "phoneNumber",
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("client_phone_number", { ascending: sortDirection === "asc" }),
+            paginationType: PaginationType.Server,
+        },
+    },
+    {
+        key: "voucherNumber",
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("voucher_number", { ascending: sortDirection === "asc" }),
+            paginationType: PaginationType.Server,
+        },
+    },
+    {
+        key: "deliveryCollection",
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("collection_centre_name", { ascending: sortDirection === "asc" }),
+            paginationType: PaginationType.Server,
+        },
+    },
+    {
+        key: "packingDatetime",
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("packing_datetime", { ascending: sortDirection === "asc" }),
+            paginationType: PaginationType.Server,
+        },
+    },
+    {
+        key: "lastStatus",
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("last_status_workflow_order", { ascending: sortDirection === "asc" }),
+            paginationType: PaginationType.Server,
+        },
+    },
 ];
 
 const toggleableHeaders: (keyof ParcelsTableRow)[] = [
@@ -132,45 +181,164 @@ const PreTableControls = styled.div`
     justify-content: space-between;
 `;
 
-const fetchAndFormatParcelTablesData = async (
-    dateRange: DateRangeState
-): Promise<ParcelsTableRow[]> => {
-    const processingData = await getParcelProcessingData(supabase, dateRange);
-    const congestionCharge = await getCongestionChargeDetailsForParcels(processingData, supabase);
-    const formattedData = processingDataToParcelsTableData(processingData, congestionCharge);
-
-    return formattedData;
-};
-
 const parcelIdParam = "parcelId";
 
-const areDateRangesIdentical = (
-    dateRangeA: DateRangeState,
-    dateRangeB: DateRangeState
-): boolean => {
-    return (
-        areDaysIdentical(dateRangeA.from, dateRangeB.from) &&
-        areDaysIdentical(dateRangeA.to, dateRangeB.to)
-    );
+const fullNameSearch = (
+    query: PostgrestFilterBuilder<Database["public"], any, any>,
+    state: string
+): PostgrestFilterBuilder<Database["public"], any, any> => {
+    return query.ilike("client_full_name", `%${state}%`);
 };
 
-const areDaysIdentical = (dayA: dayjs.Dayjs | null, dayB: dayjs.Dayjs | null): boolean => {
-    return dayA && dayB ? dayA.isSame(dayB) : dayA === dayB;
+const postcodeSearch = (
+    query: PostgrestFilterBuilder<Database["public"], any, any>,
+    state: string
+): PostgrestFilterBuilder<Database["public"], any, any> => {
+    return query.ilike("client_address_postcode", `%${state}%`);
+};
+
+const familySearch = (
+    query: PostgrestFilterBuilder<Database["public"], any, any>,
+    state: string
+): PostgrestFilterBuilder<Database["public"], any, any> => {
+    if (state === "") {
+        return query;
+    }
+    if ("single".includes(state.toLowerCase())) {
+        return query.lte("family_count", 1);
+    }
+    if ("family of".includes(state.toLowerCase())) {
+        return query.gte("family_count", 2);
+    }
+    const stateAsNumber = Number(state);
+    if (Number.isNaN(stateAsNumber) || stateAsNumber === 0) {
+        return query.eq("family_count", -1);
+    }
+    if (stateAsNumber >= 10) {
+        return query.gte("family_count", 10);
+    }
+    if (stateAsNumber === 1) {
+        return query.lte("family_count", 1);
+    }
+    return query.eq("family_count", Number(state));
+};
+
+const phoneSearch = (
+    query: PostgrestFilterBuilder<Database["public"], any, any>,
+    state: string
+): PostgrestFilterBuilder<Database["public"], any, any> => {
+    return query.ilike("client_phone_number", `%${state}%`);
+};
+
+const voucherSearch = (
+    query: PostgrestFilterBuilder<Database["public"], any, any>,
+    state: string
+): PostgrestFilterBuilder<Database["public"], any, any> => {
+    return query.ilike("voucher_number", `%${state}%`);
+};
+
+const buildDateFilter = (initialState: DateRangeState): Filter<ParcelsTableRow, DateRangeState> => {
+    const dateSearch = (
+        query: PostgrestFilterBuilder<Database["public"], any, any>,
+        state: DateRangeState
+    ): PostgrestFilterBuilder<Database["public"], any, any> => {
+        return query.gte("packing_datetime", state.from).lte("packing_datetime", state.to);
+    };
+    return dateFilter<ParcelsTableRow>({
+        key: "packingDatetime",
+        label: "",
+        methodConfig: { paginationType: PaginationType.Server, method: dateSearch },
+        initialState: initialState,
+    });
+};
+
+const buildDeliveryCollectionFilter = async (): Promise<Filter<ParcelsTableRow, string[]>> => {
+    const deliveryCollectionSearch = (
+        query: PostgrestFilterBuilder<Database["public"], any, any>,
+        state: string[]
+    ): PostgrestFilterBuilder<Database["public"], any, any> => {
+        return query.in("collection_centre_acronym", state);
+    };
+
+    const keySet = new Set();
+    const { data, error } = await supabase
+        .from("parcels_plus")
+        .select("collection_centre_name, collection_centre_acronym");
+    if (error) {
+        void logError("error fetching collection centre filter options");
+    }
+    const optionsResponse = data ?? [];
+    const optionsSet: CollectionCentresOptions[] = optionsResponse.reduce<
+        CollectionCentresOptions[]
+    >((filteredOptions, row) => {
+        if (
+            row?.collection_centre_acronym &&
+            row.collection_centre_name &&
+            !keySet.has(row.collection_centre_acronym)
+        ) {
+            keySet.add(row.collection_centre_acronym);
+            filteredOptions.push({
+                name: row.collection_centre_name,
+                acronym: row.collection_centre_acronym,
+            });
+        }
+        return filteredOptions.sort();
+    }, []);
+
+    return checklistFilter<ParcelsTableRow>({
+        key: "deliveryCollection",
+        filterLabel: "Collection",
+        itemLabelsAndKeys: optionsSet.map((option) => [option!.name, option!.acronym]),
+        initialCheckedKeys: optionsSet.map((option) => option!.acronym),
+        methodConfig: { paginationType: PaginationType.Server, method: deliveryCollectionSearch },
+    });
+};
+
+const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]>> => {
+    const lastStatusSearch = (
+        query: PostgrestFilterBuilder<Database["public"], any, any>,
+        state: string[]
+    ): PostgrestFilterBuilder<Database["public"], any, any> => {
+        if (state.includes("None")) {
+            return query.or(
+                `last_status_event_name.is.null,last_status_event_name.in.(${state.join(",")})`
+            );
+        } else {
+            return query.in("last_status_event_name", state);
+        }
+    };
+
+    const keySet = new Set();
+    const { data, error } = await supabase.from("status_order").select("event_name");
+    if (error) {
+        void logError("error fetching last status filter options");
+    }
+    const optionsResponse = data ?? [];
+    const optionsSet: string[] = optionsResponse.reduce<string[]>((filteredOptions, row) => {
+        if (row.event_name && !keySet.has(row.event_name)) {
+            keySet.add(row.event_name);
+            filteredOptions.push(row.event_name);
+        }
+        return filteredOptions.sort();
+    }, []);
+    data && optionsSet.push("None");
+
+    return checklistFilter<ParcelsTableRow>({
+        key: "lastStatus",
+        filterLabel: "Last Status",
+        itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
+        initialCheckedKeys: optionsSet.filter((option) => option !== "Request Deleted"),
+        methodConfig: { paginationType: PaginationType.Server, method: lastStatusSearch },
+    });
 };
 
 const ParcelsPage: React.FC<{}> = () => {
-    const startOfToday = dayjs().startOf("day");
-    const endOfToday = dayjs().endOf("day");
-
     const [isLoading, setIsLoading] = useState(true);
-    const [packingDateRange, setPackingDateRange] = useState<DateRangeState>({
-        from: startOfToday,
-        to: endOfToday,
-    });
-    const [tableData, setTableData] = useState<ParcelsTableRow[]>([]);
+    const [parcelsDataPortion, setParcelsDataPortion] = useState<ParcelsTableRow[]>([]);
+    const [filteredParcelCount, setFilteredParcelCount] = useState<number>(0);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
 
-    const [selectedRowIndices, setSelectedRowIndices] = useState<number[]>([]);
+    const [checkedParcelIds, setCheckedParcelIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
     const fetchParcelsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -181,6 +349,8 @@ const ParcelsPage: React.FC<{}> = () => {
     const searchParams = useSearchParams();
     const parcelId = searchParams.get(parcelIdParam);
 
+    const [sortState, setSortState] = useState<SortState<ParcelsTableRow>>({ sortEnabled: false });
+
     useEffect(() => {
         if (parcelId) {
             setSelectedParcelId(parcelId);
@@ -188,83 +358,212 @@ const ParcelsPage: React.FC<{}> = () => {
         }
     }, [parcelId]);
 
+    const [perPage, setPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
+    const startPoint = (currentPage - 1) * perPage;
+    const endPoint = currentPage * perPage - 1;
+
+    const [primaryFilters, setPrimaryFilters] = useState<Filter<ParcelsTableRow, any>[]>([]);
+    const [additionalFilters, setAdditionalFilters] = useState<Filter<ParcelsTableRow, any>[]>([]);
+
+    const [areFiltersLoadingForFirstTime, setAreFiltersLoadingForFirstTime] =
+        useState<boolean>(true);
+
     useEffect(() => {
+        const buildFilters = async (): Promise<{
+            primaryFilters: Filter<ParcelsTableRow, any>[];
+            additionalFilters: Filter<ParcelsTableRow, any>[];
+        }> => {
+            const startOfToday = dayjs().startOf("day");
+            const endOfToday = dayjs().endOf("day");
+            const dateFilter = buildDateFilter({
+                from: startOfToday,
+                to: endOfToday,
+            });
+            const primaryFilters: Filter<ParcelsTableRow, any>[] = [
+                dateFilter,
+                buildTextFilter({
+                    key: "fullName",
+                    label: "Name",
+                    headers: parcelTableHeaderKeysAndLabels,
+                    methodConfig: { paginationType: PaginationType.Server, method: fullNameSearch },
+                }),
+                buildTextFilter({
+                    key: "addressPostcode",
+                    label: "Postcode",
+                    headers: parcelTableHeaderKeysAndLabels,
+                    methodConfig: { paginationType: PaginationType.Server, method: postcodeSearch },
+                }),
+                await buildDeliveryCollectionFilter(),
+            ];
+
+            const additionalFilters = [
+                buildTextFilter({
+                    key: "familyCategory",
+                    label: "Family",
+                    headers: parcelTableHeaderKeysAndLabels,
+                    methodConfig: { paginationType: PaginationType.Server, method: familySearch },
+                }),
+                buildTextFilter({
+                    key: "phoneNumber",
+                    label: "Phone",
+                    headers: parcelTableHeaderKeysAndLabels,
+                    methodConfig: { paginationType: PaginationType.Server, method: phoneSearch },
+                }),
+                buildTextFilter({
+                    key: "voucherNumber",
+                    label: "Voucher",
+                    headers: parcelTableHeaderKeysAndLabels,
+                    methodConfig: { paginationType: PaginationType.Server, method: voucherSearch },
+                }),
+                await buildLastStatusFilter(),
+            ];
+            return { primaryFilters: primaryFilters, additionalFilters: additionalFilters };
+        };
         (async () => {
-            setIsLoading(true);
-            const dateRangeToFetch = { ...packingDateRange };
-            const tableData = await fetchAndFormatParcelTablesData(dateRangeToFetch);
-
-            if (areDateRangesIdentical(dateRangeToFetch, packingDateRange)) {
-                setTableData(tableData);
-            }
-
-            setIsLoading(false);
+            setAreFiltersLoadingForFirstTime(true);
+            const filtersObject = await buildFilters();
+            setPrimaryFilters(filtersObject.primaryFilters);
+            setAdditionalFilters(filtersObject.additionalFilters);
+            setAreFiltersLoadingForFirstTime(false);
         })();
-    }, [packingDateRange]);
+    }, []);
 
     useEffect(() => {
-        // This requires that both the DB parcels and events tables have Realtime turned on
-        const loadParcelTableData = async (): Promise<void> => {
-            if (fetchParcelsTimer.current) {
-                clearTimeout(fetchParcelsTimer.current);
-                fetchParcelsTimer.current = null;
-            }
-
-            setIsLoading(true);
-            fetchParcelsTimer.current = setTimeout(async () => {
-                setTableData(await fetchAndFormatParcelTablesData(packingDateRange));
+        if (!areFiltersLoadingForFirstTime) {
+            const allFilters = [...primaryFilters, ...additionalFilters];
+            const initialRequestParams: RequestParams<ParcelsTableRow> = {
+                allFilters: { ...allFilters },
+                sortState: { ...sortState },
+                startPoint: startPoint,
+                endPoint: endPoint,
+            };
+            (async () => {
+                setIsLoading(true);
+                const filteredParcelCount = await getParcelsCount(supabase, allFilters);
+                const fetchedData = await getParcelsData(
+                    supabase,
+                    allFilters,
+                    sortState,
+                    startPoint,
+                    endPoint
+                );
+                const requestParams: RequestParams<ParcelsTableRow> = {
+                    allFilters: { ...allFilters },
+                    sortState: { ...sortState },
+                    startPoint: startPoint,
+                    endPoint: endPoint,
+                };
+                if (areRequestsIdentical(requestParams, initialRequestParams)) {
+                    setFilteredParcelCount(filteredParcelCount);
+                    setParcelsDataPortion(fetchedData);
+                }
                 setIsLoading(false);
-            }, 500);
-        };
-
-        const subscriptionChannel = supabase
-            .channel("parcels-table-changes")
-            .on(
-                "postgres_changes",
-                { event: "*", schema: "public", table: "parcels" },
-                loadParcelTableData
-            )
-            .on(
-                "postgres_changes",
-                { event: "*", schema: "public", table: "events" },
-                loadParcelTableData
-            )
-            .subscribe();
-
-        return () => {
-            supabase.removeChannel(subscriptionChannel);
-        };
-    }, [packingDateRange]);
+            })();
+        }
+    }, [
+        startPoint,
+        endPoint,
+        primaryFilters,
+        additionalFilters,
+        sortState,
+        areFiltersLoadingForFirstTime,
+    ]);
 
     useEffect(() => {
-        setSelectedRowIndices([]);
-    }, [tableData]);
+        // This requires that the DB parcels, events, families, clients and collection_centres tables have Realtime turned on
+        if (!areFiltersLoadingForFirstTime) {
+            const allFilters = [...primaryFilters, ...additionalFilters];
+            const loadCountAndDataWithTimer = async (): Promise<void> => {
+                if (fetchParcelsTimer.current) {
+                    clearTimeout(fetchParcelsTimer.current);
+                    fetchParcelsTimer.current = null;
+                }
 
-    const selectOrDeselectRow = (rowIndex: number): void => {
-        setSelectedRowIndices((currentIndices) => {
-            if (currentIndices.includes(rowIndex)) {
-                return currentIndices.filter((index) => index !== rowIndex);
+                setIsLoading(true);
+                fetchParcelsTimer.current = setTimeout(async () => {
+                    setFilteredParcelCount(await getParcelsCount(supabase, allFilters));
+                    const fetchedData = await getParcelsData(
+                        supabase,
+                        allFilters,
+                        sortState,
+                        startPoint,
+                        endPoint
+                    );
+                    setParcelsDataPortion(fetchedData);
+                    setIsLoading(false);
+                }, 500);
+            };
+
+            const subscriptionChannel = supabase
+                .channel("parcels-table-changes")
+                .on(
+                    "postgres_changes",
+                    { event: "*", schema: "public", table: "parcels" },
+                    loadCountAndDataWithTimer
+                )
+                .on(
+                    "postgres_changes",
+                    { event: "*", schema: "public", table: "events" },
+                    loadCountAndDataWithTimer
+                )
+                .on(
+                    "postgres_changes",
+                    { event: "*", schema: "public", table: "families" },
+                    loadCountAndDataWithTimer
+                )
+                .on(
+                    "postgres_changes",
+                    { event: "*", schema: "public", table: "collection_centres" },
+                    loadCountAndDataWithTimer
+                )
+                .on(
+                    "postgres_changes",
+                    { event: "*", schema: "public", table: "clients" },
+                    loadCountAndDataWithTimer
+                )
+                .subscribe();
+
+            return () => {
+                supabase.removeChannel(subscriptionChannel);
+            };
+        }
+    }, [
+        endPoint,
+        startPoint,
+        primaryFilters,
+        additionalFilters,
+        sortState,
+        areFiltersLoadingForFirstTime,
+    ]);
+
+    const selectOrDeselectRow = (parcelId: string): void => {
+        setCheckedParcelIds((currentIndices) => {
+            if (currentIndices.includes(parcelId)) {
+                return currentIndices.filter((dummyParcelId) => dummyParcelId !== parcelId);
             }
-            return currentIndices.concat([rowIndex]);
+            return currentIndices.concat([parcelId]);
         });
     };
 
-    const toggleAllCheckBox = (): void => {
+    const toggleAllCheckBox = async (): Promise<void> => {
         if (isAllCheckBoxSelected) {
-            setSelectedRowIndices([]);
+            setCheckedParcelIds([]);
             setAllCheckBoxSelected(false);
         } else {
-            setSelectedRowIndices(tableData.map((data, index) => index));
+            setCheckedParcelIds(
+                await getParcelIds(supabase, primaryFilters.concat(additionalFilters), sortState)
+            );
             setAllCheckBoxSelected(true);
         }
     };
 
     useEffect(() => {
-        const allChecked = selectedRowIndices.length === tableData.length;
+        const allChecked = checkedParcelIds.length === filteredParcelCount;
         if (allChecked !== isAllCheckBoxSelected) {
             setAllCheckBoxSelected(allChecked);
         }
-    }, [tableData.length, selectedRowIndices, isAllCheckBoxSelected]);
+    }, [filteredParcelCount, checkedParcelIds, isAllCheckBoxSelected]);
 
     const rowToIconsColumn = ({
         flaggedForAttention,
@@ -305,7 +604,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const rowToLastStatusColumn = (data: ParcelsTableRow["lastStatus"] | null): string => {
         if (!data) {
-            return "-";
+            return "None";
         }
         const { name, eventData, timestamp } = data;
         return (
@@ -327,174 +626,120 @@ const ParcelsPage: React.FC<{}> = () => {
         router.push(`/parcels?${parcelIdParam}=${row.data.parcelId}`);
     };
 
-    const buildDeliveryCollectionFilter = (
-        tableData: ParcelsTableRow[]
-    ): Filter<ParcelsTableRow, any> => {
-        const keySet = new Set();
-        const options = tableData
-            .map((row) => {
-                if (!keySet.has(row.deliveryCollection.collectionCentreAcronym)) {
-                    keySet.add(row.deliveryCollection.collectionCentreAcronym);
-                    return row.deliveryCollection;
-                } else {
-                    return null;
-                }
-            })
-            .filter((option) => option != null)
-            .sort();
-
-        return checklistFilter<ParcelsTableRow, any>({
-            key: "deliveryCollection",
-            filterLabel: "Collection",
-            itemLabelsAndKeys: options.map((option) => [
-                option!.collectionCentreName,
-                option!.collectionCentreAcronym,
-            ]),
-            initialCheckedKeys: options.map((option) => option!.collectionCentreAcronym),
-        });
-    };
-
-    const buildPackingTimeFilter = (tableData: ParcelsTableRow[]): Filter<ParcelsTableRow, any> => {
-        const options = Array.from(
-            new Set(tableData.map((row) => row.packingTimeLabel as string)).values()
-        ).sort();
-        return checklistFilter<ParcelsTableRow, any>({
-            key: "packingTimeLabel",
-            filterLabel: "Packing Time",
-            itemLabelsAndKeys: options.map((value) => [value, value]),
-            initialCheckedKeys: options,
-        });
-    };
-
-    const lastStatusCellMatchOverride = (
-        rowData: ParcelsTableRow,
-        selectedKeys: string[]
-    ): boolean => {
-        const cellData = rowData["lastStatus"];
-
-        return (
-            (!cellData && selectedKeys.includes("None")) ||
-            selectedKeys.some((key) => cellData?.name.includes(key))
-        );
-    };
-
-    const buildLastStatusFilter = (tableData: ParcelsTableRow[]): Filter<ParcelsTableRow, any> => {
-        const options = Array.from(
-            new Set(
-                tableData.map((row) => (row.lastStatus ? row.lastStatus.name : "None"))
-            ).values()
-        ).sort();
-
-        return checklistFilter<ParcelsTableRow, any>({
-            key: "lastStatus",
-            filterLabel: "Last Status",
-            itemLabelsAndKeys: options.map((value) => [value, value]),
-            initialCheckedKeys: options.filter((value) => value !== "Request Deleted"),
-            cellMatchOverride: lastStatusCellMatchOverride,
-        });
-    };
-
     const deleteParcels = async (parcels: ParcelsTableRow[]): Promise<void> => {
         setIsLoading(true);
         await saveParcelStatus(
             parcels.map((parcel) => parcel.parcelId),
             "Request Deleted"
         );
-        setSelectedRowIndices([]);
+        setCheckedParcelIds([]);
         setIsLoading(false);
+    };
+
+    const getCheckedParcelsData = async (
+        checkedParcelIds: string[]
+    ): Promise<ParcelsTableRow[]> => {
+        return await getParcelsData(
+            supabase,
+            primaryFilters.concat(additionalFilters),
+            sortState,
+            undefined,
+            undefined,
+            checkedParcelIds
+        );
     };
 
     return (
         <>
             <PreTableControls>
-                <ControlContainer>
-                    <DateRangeInputs
-                        range={packingDateRange}
-                        setRange={setPackingDateRange}
-                    ></DateRangeInputs>
-                </ControlContainer>
+                <ControlContainer />
                 <ActionBar
-                    selectedParcels={selectedRowIndices.map((index) => tableData[index])}
+                    fetchParcelsByIds={getCheckedParcelsData}
                     onDeleteParcels={deleteParcels}
                     willSaveParcelStatus={() => setIsLoading(true)}
                     hasSavedParcelStatus={() => setIsLoading(false)}
+                    parcelIds={checkedParcelIds}
                 />
             </PreTableControls>
-            {isLoading ? (
+            {areFiltersLoadingForFirstTime ? (
                 <Centerer>
-                    <CircularProgress aria-label="table-progress-bar" />
+                    <CircularProgress aria-label="table-initial-progress-bar" />
                 </Centerer>
             ) : (
-                <>
-                    <TableSurface>
-                        <Table
-                            data={tableData}
-                            headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
-                            columnDisplayFunctions={parcelTableColumnDisplayFunctions}
-                            columnStyleOptions={parcelTableColumnStyleOptions}
-                            onRowClick={onParcelTableRowClick}
-                            pagination
-                            sortable={sortableColumns}
-                            defaultShownHeaders={defaultShownHeaders}
-                            toggleableHeaders={toggleableHeaders}
-                            filters={[
-                                "fullName",
-                                "addressPostcode",
-                                buildDeliveryCollectionFilter(tableData),
-                                buildPackingTimeFilter(tableData),
-                            ]}
-                            additionalFilters={[
-                                "familyCategory",
-                                "phoneNumber",
-                                "voucherNumber",
-                                buildLastStatusFilter(tableData),
-                            ]}
-                            checkboxConfig={{
-                                displayed: true,
-                                selectedRowIndices: selectedRowIndices,
-                                isAllCheckboxChecked: isAllCheckBoxSelected,
-                                onCheckboxClicked: (rowIndex: number) =>
-                                    selectOrDeselectRow(rowIndex),
-                                onAllCheckboxClicked: () => toggleAllCheckBox(),
-                            }}
-                            pointerOnHover={true}
-                        />
-                    </TableSurface>
-                    <Modal
-                        header={
-                            <>
-                                <Icon
-                                    icon={faBoxArchive}
-                                    color={theme.primary.largeForeground[2]}
-                                />{" "}
-                                Parcel Details
-                            </>
-                        }
-                        isOpen={modalIsOpen}
-                        onClose={() => {
-                            setModalIsOpen(false);
-                            router.push("/parcels");
+                <TableSurface>
+                    <Table
+                        dataPortion={parcelsDataPortion}
+                        isLoading={isLoading}
+                        paginationConfig={{
+                            enablePagination: true,
+                            filteredCount: filteredParcelCount,
+                            onPageChange: setCurrentPage,
+                            onPerPageChange: setPerPage,
                         }}
-                        headerId="expandedParcelDetailsModal"
-                    >
-                        <OutsideDiv>
-                            <ContentDiv>
-                                <Suspense fallback={<ExpandedParcelDetailsFallback />}>
-                                    <ExpandedParcelDetails parcelId={selectedParcelId} />
-                                </Suspense>
-                            </ContentDiv>
-
-                            <ButtonsDiv>
-                                <Centerer>
-                                    <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
-                                        Edit Parcel
-                                    </LinkButton>
-                                </Centerer>
-                            </ButtonsDiv>
-                        </OutsideDiv>
-                    </Modal>
-                </>
+                        headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
+                        columnDisplayFunctions={parcelTableColumnDisplayFunctions}
+                        columnStyleOptions={parcelTableColumnStyleOptions}
+                        onRowClick={onParcelTableRowClick}
+                        sortConfig={{
+                            sortPossible: true,
+                            sortableColumns: sortableColumns,
+                            setSortState: setSortState,
+                        }}
+                        filterConfig={{
+                            primaryFiltersShown: true,
+                            additionalFiltersShown: true,
+                            primaryFilters: primaryFilters,
+                            additionalFilters: additionalFilters,
+                            setPrimaryFilters: setPrimaryFilters,
+                            setAdditionalFilters: setAdditionalFilters,
+                        }}
+                        defaultShownHeaders={defaultShownHeaders}
+                        toggleableHeaders={toggleableHeaders}
+                        checkboxConfig={{
+                            displayed: true,
+                            selectedRowIds: checkedParcelIds,
+                            isAllCheckboxChecked: isAllCheckBoxSelected,
+                            onCheckboxClicked: (parcelData) =>
+                                selectOrDeselectRow(parcelData.parcelId),
+                            onAllCheckboxClicked: () => toggleAllCheckBox(),
+                            isRowChecked: (parcelData) =>
+                                checkedParcelIds.includes(parcelData.parcelId),
+                        }}
+                        editableConfig={{ editable: false }}
+                        pointerOnHover={true}
+                    />
+                </TableSurface>
             )}
+            <Modal
+                header={
+                    <>
+                        <Icon icon={faBoxArchive} color={theme.primary.largeForeground[2]} />{" "}
+                        Details
+                    </>
+                }
+                isOpen={modalIsOpen}
+                onClose={() => {
+                    setModalIsOpen(false);
+                    router.push("/parcels");
+                }}
+                headerId="expandedParcelDetailsModal"
+            >
+                <OutsideDiv>
+                    <ContentDiv>
+                        <Suspense fallback={<ExpandedParcelDetailsFallback />}>
+                            <ExpandedParcelDetails parcelId={selectedParcelId} />
+                        </Suspense>
+                    </ContentDiv>
+
+                    <ButtonsDiv>
+                        <Centerer>
+                            <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
+                                Edit Parcel
+                            </LinkButton>
+                        </Centerer>
+                    </ButtonsDiv>
+                </OutsideDiv>
+            </Modal>
         </>
     );
 };

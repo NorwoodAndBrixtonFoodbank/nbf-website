@@ -337,6 +337,10 @@ interface Table_auth_sso_providers {
   created_at: string | null;
   updated_at: string | null;
 }
+interface Table_public_status_order {
+  event_name: string;
+  workflow_order: number;
+}
 interface Table_realtime_subscription {
   id: number;
   subscription_id: string;
@@ -455,6 +459,7 @@ interface Schema_public {
   lists_hotel: Table_public_lists_hotel;
   packing_slots: Table_public_packing_slots;
   parcels: Table_public_parcels;
+  status_order: Table_public_status_order;
   website_data: Table_public_website_data;
 }
 interface Schema_realtime {

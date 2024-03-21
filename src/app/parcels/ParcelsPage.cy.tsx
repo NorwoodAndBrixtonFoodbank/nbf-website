@@ -2,7 +2,7 @@ import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fet
 import {
     ParcelsTableRow,
     datetimeToPackingTimeLabel,
-    eventToLastStatus,
+    processLastStatus,
     processingDataToParcelsTableData,
 } from "@/app/parcels/getParcelsTableData";
 import {
@@ -20,36 +20,22 @@ import {
 const sampleProcessingData: ParcelProcessingData = [
     {
         parcel_id: "PRIMARY_KEY",
-        collection_centre: {
-            name: "COLLECTION_CENTRE",
-            acronym: "CC",
-        },
+        collection_centre_name: "COLLECTION_CENTRE",
+        collection_centre_acronym: "CC",
         collection_datetime: "2023-08-04T13:30:00+00:00",
         packing_datetime: "2023-08-04T13:30:00+00:00",
         voucher_number: "VOUCHER_1",
-
-        client: {
-            primary_key: "PRIMARY_KEY2",
-            full_name: "CLIENT_NAME",
-            address_postcode: "SW1A 2AA",
-            phone_number: "08642 123",
-            flagged_for_attention: false,
-            signposting_call_required: true,
-
-            family: [
-                { age: 36, gender: "female" },
-                { age: 5, gender: "male" },
-                { age: 24, gender: "other" },
-            ],
-        },
-
-        events: [
-            {
-                event_name: "LAST_EVENT",
-                event_data: "SOME_RELATED_DATA",
-                timestamp: "2023-08-04T13:30:00+00:00",
-            },
-        ],
+        client_id: "PRIMARY_KEY2",
+        client_full_name: "CLIENT_NAME",
+        client_address_postcode: "SW1A 2AA",
+        client_phone_number: "08642 123",
+        client_flagged_for_attention: false,
+        client_signposting_call_required: true,
+        family_count: 3,
+        last_status_event_name: "LAST_EVENT",
+        last_status_event_data: "SOME_RELATED_DATA",
+        last_status_timestamp: "2023-08-04T13:30:00+00:00",
+        last_status_workflow_order: 1,
     },
 ];
 
@@ -107,7 +93,7 @@ describe("Parcels Page", () => {
             const expected: ParcelsTableRow[] = [
                 {
                     parcelId: "PRIMARY_KEY",
-                    primaryKey: "PRIMARY_KEY2",
+                    clientId: "PRIMARY_KEY2",
                     fullName: "CLIENT_NAME",
                     familyCategory: "Family of 3",
                     addressPostcode: "SW1A 2AA",
@@ -123,6 +109,7 @@ describe("Parcels Page", () => {
                         name: "LAST_EVENT",
                         eventData: "SOME_RELATED_DATA",
                         timestamp: new Date("2023-08-04T13:30:00+00:00"),
+                        workflowOrder: 1,
                     },
                     voucherNumber: "VOUCHER_1",
                     packingDatetime: new Date("2023-08-04T13:30:00+00:00"),
@@ -157,17 +144,19 @@ describe("Parcels Page", () => {
 
         it("eventToStatusMessage()", () => {
             expect(
-                eventToLastStatus({
-                    event_name: "EVENT",
-                    event_data: "SOME_RELATED_DATA",
-                    timestamp: "2023-08-04T13:30:00+00:00",
+                processLastStatus({
+                    last_status_event_name: "EVENT",
+                    last_status_event_data: "SOME_RELATED_DATA",
+                    last_status_timestamp: "2023-08-04T13:30:00+00:00",
+                    last_status_workflow_order: 1,
                 })
             ).to.deep.eq({
                 name: "EVENT",
                 eventData: "SOME_RELATED_DATA",
                 timestamp: new Date("2023-08-04T13:30:00+00:00"),
+                workflowOrder: 1,
             });
-            expect(eventToLastStatus(null)).to.eq(null);
+            expect(processLastStatus(null)).to.eq(null);
         });
     });
 
