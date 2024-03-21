@@ -102,6 +102,13 @@ const SignOutButtonContainer = styled(NavElementContainer)`
     gap: 1rem;
 `;
 
+const CenteredDiv = styled.div`
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 2rem 4rem 1rem 4rem;
+`;
+
 const LoginDependent: React.FC<Props> = (props) => {
     const pathname = usePathname();
     if (pathname === "/login") {
@@ -248,10 +255,4 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
     );
 };
 
-const CenteredDiv = styled.div`
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    margin: 2rem 4rem 1rem 4rem;
-`;
 export default NavigationBar;
