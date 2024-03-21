@@ -1,5 +1,5 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { logError } from "@/logger/logger";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 interface RequestPasswordResetResponse {
     errorMessage: string | null;
@@ -17,7 +17,7 @@ export async function requestPasswordReset({
     const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: redirectUrl });
 
     if (error) {
-        void logError("Password reset request failed", { error });
+        void logErrorReturnLogId("Password reset request failed", { error });
         return { errorMessage: error.message };
     }
 

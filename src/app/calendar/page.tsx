@@ -5,6 +5,7 @@ import { ParcelsWithExtraFields } from "@/app/calendar/parcelCalendarFunctions";
 import { Schema } from "@/databaseUtils";
 import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { DatabaseError } from "@/app/errorClasses";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 export const revalidate = 0;
 
@@ -12,7 +13,8 @@ const getCollectionCentres = async (): Promise<Schema["collection_centres"]["nam
     const supabase = getSupabaseServerComponentClient();
     const { data, error } = await supabase.from("collection_centres").select("name");
     if (error) {
-        throw new Error("Database error");
+        const logId = await logErrorReturnLogId("Error with fetch: Collection centre names", error);
+        throw new DatabaseError("fetch", "collection centre names", logId);
     }
     const mappedValues = data.map((centre) => centre.name);
     return mappedValues.filter((centre) => centre !== "Delivery");
@@ -36,7 +38,11 @@ const getParcelsWithCollectionDate = async (): Promise<ParcelsWithExtraFields[]>
         .not("collection_datetime", "is", null);
 
     if (error) {
-        throw new DatabaseError("fetch", "user information");
+        const logId = await logErrorReturnLogId(
+            "Error with fetch: Parcels with extra fields",
+            error
+        );
+        throw new DatabaseError("fetch", "parcels with user information", logId);
     }
 
     return data;

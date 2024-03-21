@@ -1,5 +1,6 @@
 import { Supabase } from "@/supabaseUtils";
 import { DatabaseError, EdgeFunctionError } from "../errorClasses";
+import { logErrorReturnLogId } from "@/logger/logger";
 import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsTableData";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
@@ -24,9 +25,12 @@ export const getCongestionChargeDetailsForParcels = async (
     });
 
     if (response.error) {
-        throw new EdgeFunctionError("congestion charge check");
+        const logId = await logErrorReturnLogId(
+            "Error with congestion charge check",
+            response.error
+        );
+        throw new EdgeFunctionError("congestion charge check", logId);
     }
-
     return response.data;
 };
 
@@ -69,10 +73,11 @@ const getParcelProcessingData = async (
     const { data, error } = await query;
 
     if (error) {
-        void logError("error fetching parcel data");
-        throw new DatabaseError("fetch", "parcel table data");
+        const logId = await logErrorReturnLogId("Error with fetch: parcel table", error);
+        throw new DatabaseError("fetch", "parcel table", logId);
     }
-    return data ?? [];
+
+    return data;
 };
 
 export const getParcelsData = async (

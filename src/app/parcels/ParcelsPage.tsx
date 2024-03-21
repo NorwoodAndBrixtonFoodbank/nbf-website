@@ -40,7 +40,8 @@ import { Database } from "@/databaseTypesFile";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { dateFilter } from "@/components/Tables/DateFilter";
 import { CircularProgress } from "@mui/material";
-import { logError } from "@/logger/logger";
+import { logErrorReturnLogId } from "@/logger/logger";
+import { DatabaseError } from "@/app/errorClasses";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -265,7 +266,8 @@ const buildDeliveryCollectionFilter = async (): Promise<Filter<ParcelsTableRow, 
         .from("parcels_plus")
         .select("collection_centre_name, collection_centre_acronym");
     if (error) {
-        void logError("error fetching collection centre filter options");
+        const logId = await logErrorReturnLogId("Error with fetch: Collection centre filter options");
+        throw new DatabaseError("fetch", "collection centre filter options", logId);
     }
     const optionsResponse = data ?? [];
     const optionsSet: CollectionCentresOptions[] = optionsResponse.reduce<
@@ -311,7 +313,8 @@ const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]
     const keySet = new Set();
     const { data, error } = await supabase.from("status_order").select("event_name");
     if (error) {
-        void logError("error fetching last status filter options");
+        const logId = await logErrorReturnLogId("Error with fetch: Last status filter options");
+        throw new DatabaseError("fetch", "last status filter options", logId);
     }
     const optionsResponse = data ?? [];
     const optionsSet: string[] = optionsResponse.reduce<string[]>((filteredOptions, row) => {

@@ -1,5 +1,5 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { logError } from "@/logger/logger";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 interface UpdatePasswordResponse {
     errorMessage: string | null;
@@ -11,7 +11,7 @@ export async function updatePassword(newPassword: string): Promise<UpdatePasswor
     const { error } = await supabase.auth.updateUser({ password: newPassword });
 
     if (error) {
-        void logError("Failed to update password ", { error });
+        void logErrorReturnLogId("Failed to update password ", { error });
         return { errorMessage: error.message };
     }
 

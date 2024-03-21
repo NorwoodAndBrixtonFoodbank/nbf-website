@@ -7,6 +7,7 @@ import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { User } from "@supabase/gotrue-js";
 import { DatabaseError } from "@/app/errorClasses";
 import { Schema } from "@/databaseUtils";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 // disables caching
 export const revalidate = 0;
@@ -24,7 +25,8 @@ const getUsers = async (): Promise<UserRow[]> => {
     const { data, error } = await supabase.functions.invoke("admin-get-users");
 
     if (error) {
-        throw new DatabaseError("fetch", "user information");
+        const logId = await logErrorReturnLogId("Error with fetch: Users", error);
+        throw new DatabaseError("fetch", "user information", logId);
     }
 
     const users: User[] = data;
@@ -46,7 +48,8 @@ const getCollectionCentres = async (): Promise<Schema["collection_centres"][]> =
 
     // TODO VFB-23 Move error handling of this request to client side
     if (error) {
-        throw new DatabaseError("fetch", "collection centres");
+        const logId = await logErrorReturnLogId("Error with fetch: Collection Centres", error);
+        throw new DatabaseError("fetch", "collection centres", logId);
     }
 
     return data;

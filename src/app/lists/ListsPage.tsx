@@ -56,8 +56,8 @@ const ListsPage: React.FC<{}> = () => {
         <></>
     ) : (
         <ListsDataView
-            listOfIngridients={listsData}
-            setListOfIngridients={setListsData}
+            listOfIngredients={listsData}
+            setListOfIngredients={setListsData}
             comment={comment}
         />
     );
