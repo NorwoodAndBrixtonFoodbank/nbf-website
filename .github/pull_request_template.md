@@ -8,11 +8,12 @@ REPLACE_THIS_LINE
 
 ## Checklist
 - [ ] The ticket is up-to-date - Please document any deviations from the original approach if there is any.
-- [ ] I have documented the testing steps for QA 
+- [ ] I have documented the testing steps for QA
+- [ ] I have self-reviewed this PR
 - [ ] Make sure you've verified it works via `npm run dev`
 - [ ] Make sure you've verified it works via `npm run build` and `npm run start`
 - [ ] Make sure you've fixed all linting problems with `npm run lint_fix`
-- [ ] Make sure you've tested via `npm run test`
+- [ ] Make sure you've tested via `npm run test:e2e`
 
 If you have made any changes to the database...
   - [ ] The migration files are up-to-date with my final set up (`npx supabase db diff -f <name_of_migration>` should create nothing at this point)
