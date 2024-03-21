@@ -78,7 +78,7 @@ const ParcelCalendar: React.FC<ParcelCalendarProps> = (props) => {
                             colorMap
                         )}
                         editable={false}
-                        initialLocations={props.collectionCentres}
+                        allLocations={props.collectionCentres}
                     />
                 </CalendarWrapper>
             </Centerer>
