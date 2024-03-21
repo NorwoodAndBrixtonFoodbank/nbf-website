@@ -23,7 +23,7 @@ const mmToPixels = (mm: number): number => {
     return mm * pixelsPerMmAt72Dpi;
 };
 
-const labelSizePixels = { width: mmToPixels(200), height: mmToPixels(62) };
+const labelSizePixels = { width: mmToPixels(150), height: mmToPixels(62) };
 
 const styles = StyleSheet.create({
     page: {
@@ -109,7 +109,7 @@ const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
                             <br />
                         </Text>
                     </View>
-                    <View>
+                    <View style={styles.middleCol}>
                         <Text style={styles.headingText}>Delivery Instructions:</Text>
                         <Text>{data.delivery_instructions}</Text>
                     </View>

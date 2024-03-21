@@ -186,6 +186,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         const isDelivery = fields.shippingMethod === "Delivery";
 
         const formToAdd = {
+            primary_key: parcelId!,
             client_id: (clientId || fields.clientId)!,
             packing_datetime: packingDateTime,
             voucher_number: fields.voucherNumber,

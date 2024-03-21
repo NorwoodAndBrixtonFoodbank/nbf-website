@@ -473,6 +473,13 @@ type Override = {
       sso_domains?: string;
     };
   }
+  status_order?: {
+    name?: string;
+    fields?: {
+      event_name?: string;
+      workflow_order?: string;
+    };
+  }
   subscription?: {
     name?: string;
     fields?: {
@@ -727,6 +734,9 @@ export interface Fingerprint {
     samlProviders?: FingerprintRelationField;
     samlRelayStates?: FingerprintRelationField;
     ssoDomains?: FingerprintRelationField;
+  }
+  statusOrders?: {
+    workflowOrder?: FingerprintNumberField;
   }
   subscriptions?: {
     id?: FingerprintNumberField;

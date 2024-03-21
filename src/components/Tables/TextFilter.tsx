@@ -1,13 +1,15 @@
 import React from "react";
 import styled from "styled-components";
 import FreeFormTextInput from "../DataInput/FreeFormTextInput";
-import { KeyedFilter, defaultToString, keyedFilter } from "./Filters";
+import { Filter, MethodConfig, defaultToString } from "./Filters";
+import { TableHeaders } from "./Table";
 
-interface TextFilterProps<Data, Key extends keyof Data> {
-    key: Key;
+interface TextFilterProps<Data> {
+    key: keyof Data;
+    headers: TableHeaders<Data>;
     label: string;
-    caseSensitive?: boolean;
     initialValue?: string;
+    methodConfig: MethodConfig<Data, string>;
 }
 
 const TextFilterStyling = styled.div`
@@ -16,25 +18,17 @@ const TextFilterStyling = styled.div`
     }
 `;
 
-export const textFilter = <Data, Key extends keyof Data>({
+export const buildTextFilter = <Data,>({
     key,
     label,
-    caseSensitive = false,
     initialValue = "",
-}: TextFilterProps<Data, Key>): KeyedFilter<Data, Key, string> => {
-    return keyedFilter(key, label, {
+    methodConfig,
+}: TextFilterProps<Data>): Filter<Data, string> => {
+    return {
         state: initialValue,
         initialState: initialValue,
-        shouldFilter: (data, state) => {
-            let string = defaultToString(data[key]);
-
-            if (!caseSensitive) {
-                string = string.toLowerCase();
-                state = state.toLowerCase();
-            }
-
-            return !string.includes(state);
-        },
+        key: key,
+        methodConfig: methodConfig,
         filterComponent: (state, setState) => {
             return (
                 <TextFilterStyling key={label}>
@@ -49,5 +43,13 @@ export const textFilter = <Data, Key extends keyof Data>({
                 </TextFilterStyling>
             );
         },
-    });
+        areStatesIdentical: (stateA, stateB) => stateA === stateB,
+    };
+};
+
+export const filterRowByText = <Data,>(row: Data, state: string, key: keyof Data): boolean => {
+    let string = defaultToString(row[key]);
+    string = string.toLowerCase();
+    state = state.toLowerCase();
+    return string.includes(state);
 };
