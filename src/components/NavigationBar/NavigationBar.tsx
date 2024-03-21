@@ -229,7 +229,7 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
                             onClick={handleLogOutConfirm}
                             variant="contained"
                         >
-                            LogOut
+                            Log Out
                         </Button>
                         <Button
                             aria-label="Cancel Sign Out"
