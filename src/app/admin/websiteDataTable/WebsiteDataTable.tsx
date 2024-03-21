@@ -8,14 +8,17 @@ import {
     GridColDef,
     GridEventListener,
     GridRowEditStopReasons,
+    GridRowHeightParams,
     GridRowId,
     GridRowModes,
     GridRowModesModel,
+    GridRowSpacing,
+    GridRowSpacingParams,
 } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
-import { LinearProgress } from "@mui/material";
+import { LinearProgress, TextField } from "@mui/material";
 import { logError, logInfo } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { fetchWebsiteData, updateDbWebsiteData } from "./FetchWebsiteData";
@@ -184,7 +187,7 @@ const WebsiteDataTable: React.FC = () => {
                         toolbar: { setRows, setRowModesModel, rows },
                     }}
                     loading={isLoading}
-                    getRowHeight={() => 'auto'}
+                    getRowHeight={() => "auto"}
                 />
             )}
         </>
