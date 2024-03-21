@@ -135,7 +135,7 @@ const pages = [
 
 const NavigationBar: React.FC<Props> = ({ children }) => {
     const [drawer, setDrawer] = useState(false);
-    const [logOutModalOpen, setLogOutModalOpen] = useState(false);
+    const [islogOutModalOpen, setIslogOutModalOpen] = useState(false);
     const supabase = createClientComponentClient<DatabaseAutoType>();
 
     const openDrawer = (): void => {
@@ -147,11 +147,11 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
     };
 
     const handleLogOutClick = (): void => {
-        setLogOutModalOpen(true);
+        setIslogOutModalOpen(true);
     };
 
     const handleLogOutConfirm = async (): Promise<void> => {
-        setLogOutModalOpen(false);
+        setIslogOutModalOpen(false);
         await supabase.auth.signOut();
     };
 
@@ -207,7 +207,7 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
                     </SignOutButtonContainer>
                 </AppBarInner>
             </AppBar>
-            {logOutModalOpen && (
+            {islogOutModalOpen && (
                 <Modal
                     header={
                         <>
@@ -215,9 +215,9 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
                             Would you like to log out?
                         </>
                     }
-                    isOpen={logOutModalOpen}
+                    isOpen={islogOutModalOpen}
                     onClose={() => {
-                        setLogOutModalOpen(false);
+                        setIslogOutModalOpen(false);
                     }}
                     headerId="expandedParcelDetailsModal"
                     maxWidth="xs"
@@ -234,7 +234,7 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
                         <Button
                             aria-label="Cancel Sign Out"
                             onClick={() => {
-                                setLogOutModalOpen(false);
+                                setIslogOutModalOpen(false);
                             }}
                             variant="outlined"
                         >
