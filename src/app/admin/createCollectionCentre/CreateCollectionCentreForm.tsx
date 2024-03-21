@@ -30,6 +30,13 @@ const initialFormErrors: FormErrors = {
 
 const formSections = [NameCard, AcronymCard];
 
+const getCustomErrorMessage = (errorCode: string): string | null => {
+    if (errorCode === "23505") {
+        return "A Collection Centre with this name/abbreviation has already been added. Please choose a different name/abbreviation";
+    }
+    return null;
+};
+
 const CreateCollectionCentreForm: React.FC<{}> = () => {
     const [fields, setFields] = useState(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
@@ -53,13 +60,9 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
         const { error } = await supabase.from("collection_centres").insert(fields);
 
         if (error) {
-            if (error.code === "23505") {
-                setSubmitErrorMessage(
-                    "A Collection Centre with this name/abbreviation has already been added. Please choose a different name/abbreviation"
-                );
-            } else {
-                setSubmitErrorMessage(`${error.message}\n${Errors.external}`);
-            }
+            const errorMessage =
+                getCustomErrorMessage(error.code) ?? `${error.message}\n${Errors.external}`;
+            setSubmitErrorMessage(errorMessage);
             setSubmitDisabled(false);
             return;
         }
