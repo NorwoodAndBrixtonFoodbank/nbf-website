@@ -52,7 +52,7 @@ const getCollectionCentres = async (): Promise<Schema["collection_centres"][]> =
         throw new DatabaseError("fetch", "collection centres", logId);
     }
 
-    return data ? data : [];
+    return data;
 };
 
 const Admin = async (): Promise<ReactElement> => {
