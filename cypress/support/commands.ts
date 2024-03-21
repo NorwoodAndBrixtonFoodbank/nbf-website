@@ -71,12 +71,20 @@ Cypress.Commands.add("login", () => {
 Cypress.Commands.add("checkAccessibility", (options?) => {
     const terminalLog = (violations: Result[]): void => {
         cy.task(
-            "table",
-            violations.map(({ id, impact, description, nodes }) => ({
+            "log",
+            violations.map(({ id, impact, description, nodes, helpUrl }) => ({
                 id,
                 impact,
                 description,
                 length: nodes.length,
+                helpUrl,
+                ...nodes.reduce(
+                    (accumulator, node, index) => ({
+                        ...accumulator,
+                        [`node_${index}`]: node.html,
+                    }),
+                    {}
+                ),
             }))
         );
     };
