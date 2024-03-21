@@ -1,7 +1,7 @@
 "use client";
 
 import supabase from "@/supabaseClient";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
@@ -85,15 +85,8 @@ const Statuses: React.FC<Props> = ({
     parcelIds,
 }) => {
     const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
-
     const [selectedStatus, setSelectedStatus] = useState<statusType | null>(null);
     const [statusModal, setStatusModal] = useState(false);
-
-    useEffect(() => {
-        (async () => {
-            setSelectedParcels(await fetchSelectedParcels(parcelIds));
-        })();
-    }, [parcelIds, fetchSelectedParcels]);
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
         willSaveParcelStatus();
@@ -115,14 +108,21 @@ const Statuses: React.FC<Props> = ({
     };
 
     const onMenuItemClick = (status: statusType): (() => void) => {
-        return () => {
-            if (selectedParcels.length !== 0) {
-                setSelectedStatus(status);
-                setStatusModal(true);
-                setStatusAnchorElement(null);
-                setModalError(null);
-            } else {
-                setModalError("Please select at least 1 row.");
+        return async () => {
+            try {
+                const fetchedParcels = await fetchSelectedParcels(parcelIds);
+                setSelectedParcels(fetchedParcels);
+                if (fetchedParcels.length > 0) {
+                    setSelectedStatus(status);
+                    setStatusModal(true);
+                    setStatusAnchorElement(null);
+                    setModalError(null);
+                } else {
+                    setModalError("Please select at least 1 row.");
+                }
+            } catch {
+                setModalError("Database error when fetching selected parcels");
+                return;
             }
         };
     };

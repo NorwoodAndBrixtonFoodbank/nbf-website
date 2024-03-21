@@ -33,7 +33,7 @@ export interface ListRow {
     "10": QuantityAndNotes;
 }
 
-export interface QuantityAndNotes {
+interface QuantityAndNotes {
     quantity: string;
     notes: string | null;
 }
@@ -58,7 +58,7 @@ export const listsHeaderKeysAndLabels = [
     ["10", "Family of 10"],
 ] satisfies [keyof ListRow, string][];
 
-export const listRowToListDB = (listRow: Partial<ListRow>): Partial<Schema["lists"]> => ({
+export const listRowToListDB = (listRow: ListRow): Schema["lists"] => ({
     item_name: listRow.itemName,
     notes_for_1: listRow[1]?.notes,
     notes_for_2: listRow[2]?.notes,
@@ -109,6 +109,15 @@ const listsColumnStyleOptions: ColumnStyles<ListRow> = {
     ),
 };
 
+const filters: Filter<ListRow, string>[] = [
+    buildTextFilter({
+        key: "itemName",
+        label: "Item",
+        headers: listsHeaderKeysAndLabels,
+        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
+    }),
+];
+
 const ListsDataView: React.FC<ListDataViewProps> = ({
     listOfIngridients,
     setListOfIngridients: setListOfIngridients,
@@ -119,6 +128,8 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
+    const [listData, setListData] = useState<ListRow[]>(listOfIngridients);
+    const [primaryFilters, setPrimaryFilters] = useState<Filter<ListRow, string>[]>(filters);
 
     if (listOfIngridients === null) {
         throw new Error("No data found");
@@ -194,26 +205,14 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         }
     };
 
-    const [listData, setListData] = useState<ListRow[]>(listOfIngridients);
-
-    const filters: Filter<ListRow, string>[] = [
-        buildTextFilter({
-            key: "itemName",
-            label: "Item",
-            headers: listsHeaderKeysAndLabels,
-            methodConfig: { methodType: PaginationType.Client, method: filterRowByText },
-        }),
-    ];
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<ListRow, string>[]>(filters);
-
     useEffect(() => {
         setListData(
             listOfIngridients.filter((row) => {
                 return primaryFilters.every((filter) => {
-                    if (filter.methodConfig.methodType === PaginationType.Client) {
-                        return filter.methodConfig.method(row, filter.state, filter.key);
-                    }
-                    return false;
+                    return (
+                        filter.methodConfig.paginationType === PaginationType.Client &&
+                        filter.methodConfig.method(row, filter.state, filter.key)
+                    );
                 });
             })
         );
@@ -252,7 +251,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                     columnDisplayFunctions={listDataViewColumnDisplayFunctions}
                     columnStyleOptions={listsColumnStyleOptions}
                     checkboxConfig={{ displayed: false }}
-                    paginationConfig={{ pagination: false }}
+                    paginationConfig={{ enablePagination: false }}
                     sortConfig={{ sortPossible: false }}
                     editableConfig={{
                         editable: true,

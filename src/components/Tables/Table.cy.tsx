@@ -124,7 +124,7 @@ const Component: React.FC<TestTableProps> = ({
         key: "full_name",
         headers: headers,
         label: "Name",
-        methodConfig: { methodType: PaginationType.Client, method: filterRowByText },
+        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
     });
 
     const sortByFullName: SortOptions<TestData> = {
@@ -140,7 +140,7 @@ const Component: React.FC<TestTableProps> = ({
                     setTestDataPortion([...ascendingData].reverse());
                 }
             },
-            methodType: PaginationType.Client,
+            paginationType: PaginationType.Client,
         },
     };
 
@@ -164,7 +164,7 @@ const Component: React.FC<TestTableProps> = ({
     const [checkedRowIds, setCheckedRowIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
 
-    const [sortState, setSortState] = useState<SortState<TestData>>({ sort: false });
+    const [sortState, setSortState] = useState<SortState<TestData>>({ sortEnabled: false });
 
     // useEffect(() => {
     //     setCheckedRowIds([]);
@@ -210,14 +210,14 @@ const Component: React.FC<TestTableProps> = ({
     };
 
     const truePaginationConfig: PaginationConfig = {
-        pagination: true,
-        totalRows: tableData.length,
+        enablePagination: true,
+        filteredCount: tableData.length,
         onPageChange: setCurrentPage,
         onPerPageChange: setPerPage,
     };
 
     const falsePaginationConfig: PaginationConfig = {
-        pagination: false,
+        enablePagination: false,
     };
 
     const trueFilterConfig: FilterConfig<TestData> = {
@@ -246,7 +246,7 @@ const Component: React.FC<TestTableProps> = ({
         setTestDataPortion(
             tableData.filter((row) => {
                 return primaryFilters.every((filter) => {
-                    if (filter.methodConfig.methodType === PaginationType.Client) {
+                    if (filter.methodConfig.paginationType === PaginationType.Client) {
                         return filter.methodConfig.method(row, filter.state, filter.key);
                     }
                     return false;
@@ -257,12 +257,12 @@ const Component: React.FC<TestTableProps> = ({
 
     useEffect(() => {
         if (
-            sortState.sort &&
-            sortState.column.sortMethodConfig?.methodType === PaginationType.Client
+            sortState.sortEnabled &&
+            sortState.column.sortMethodConfig?.paginationType === PaginationType.Client
         ) {
             sortState.column.sortMethodConfig.method(sortState.sortDirection);
         }
-        sortState.sort &&
+        sortState.sortEnabled &&
             console.log(
                 `Data set by field ${sortState.column.sortField} in direction ${sortState.sortDirection}. Data is now:\n ${testDataPortion.map((row) => row.full_name)}`
             );

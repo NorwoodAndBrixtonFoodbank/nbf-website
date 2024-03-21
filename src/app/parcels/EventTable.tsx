@@ -40,7 +40,7 @@ const EventTable: React.FC<EventTableProps> = (props) => {
                     checkboxConfig={{ displayed: false }}
                     filterConfig={{ primaryFiltersShown: false, additionalFiltersShown: false }}
                     sortConfig={{ sortPossible: false }}
-                    paginationConfig={{ pagination: false }}
+                    paginationConfig={{ enablePagination: false }}
                     editableConfig={{ editable: false }}
                 />
             </TableSurface>

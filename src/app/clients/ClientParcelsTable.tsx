@@ -29,7 +29,7 @@ const ClientParcelsTable: React.FC<ClientParcelTableProps> = (props) => {
             <Table
                 dataPortion={props.parcelsData}
                 headerKeysAndLabels={headers}
-                paginationConfig={{ pagination: false }}
+                paginationConfig={{ enablePagination: false }}
                 sortConfig={{ sortPossible: false }}
                 filterConfig={{ primaryFiltersShown: false, additionalFiltersShown: false }}
                 onRowClick={(row) => router.push(`/parcels?parcelId=${row.data.parcelId}`)}

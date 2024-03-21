@@ -35,14 +35,30 @@ const userTableColumnDisplayFunctions = {
     },
 };
 
+const filters: Filter<UserRow, string>[] = [
+    buildTextFilter({
+        key: "email",
+        label: "Email",
+        headers: usersTableHeaderKeysAndLabels,
+        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
+    }),
+    buildTextFilter({
+        key: "userRole",
+        label: "Role",
+        headers: usersTableHeaderKeysAndLabels,
+        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
+    }),
+];
+
 interface Props {
     userData: UserRow[];
 }
 
 const UsersTable: React.FC<Props> = (props) => {
-    const [userDataPortion, setUserDataPortion] = useState<UserRow[]>(props.userData);
+    const [users, setUsers] = useState<UserRow[]>(props.userData);
     const [userToDelete, setUserToDelete] = useState<UserRow | null>(null);
     const [userToEdit, setUserToEdit] = useState<UserRow | null>(null);
+    const [primaryFilters, setPrimaryFilters] = useState<Filter<UserRow, string>[]>(filters);
 
     const [tableAlertOptions, setTableAlertOptions] = useState<AlertOptions>({
         success: undefined,
@@ -57,30 +73,14 @@ const UsersTable: React.FC<Props> = (props) => {
         setUserToEdit(props.userData[rowIndex]);
     };
 
-    const filters: Filter<UserRow, string>[] = [
-        buildTextFilter({
-            key: "email",
-            label: "Email",
-            headers: usersTableHeaderKeysAndLabels,
-            methodConfig: { methodType: PaginationType.Client, method: filterRowByText },
-        }),
-        buildTextFilter({
-            key: "userRole",
-            label: "Role",
-            headers: usersTableHeaderKeysAndLabels,
-            methodConfig: { methodType: PaginationType.Client, method: filterRowByText },
-        }),
-    ];
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<UserRow, string>[]>(filters);
-
     useEffect(() => {
-        setUserDataPortion(
+        setUsers(
             props.userData.filter((row) => {
                 return primaryFilters.every((filter) => {
-                    if (filter.methodConfig.methodType === PaginationType.Client) {
-                        return filter.methodConfig.method(row, filter.state, filter.key);
-                    }
-                    return false;
+                    return (
+                        filter.methodConfig.paginationType === PaginationType.Client &&
+                        filter.methodConfig.method(row, filter.state, filter.key)
+                    );
                 });
             })
         );
@@ -89,19 +89,19 @@ const UsersTable: React.FC<Props> = (props) => {
     return (
         <>
             <Table
-                dataPortion={userDataPortion}
+                dataPortion={users}
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
                 toggleableHeaders={["id", "createdAt", "updatedAt"]}
                 defaultShownHeaders={["email", "userRole", "createdAt", "updatedAt"]}
                 checkboxConfig={{ displayed: false }}
-                paginationConfig={{ pagination: false }}
+                paginationConfig={{ enablePagination: false }}
                 sortConfig={{ sortPossible: false }}
                 editableConfig={{
                     editable: true,
                     onDelete: userOnDelete,
                     onEdit: userOnEdit,
-                    setDataPortion: setUserDataPortion,
+                    setDataPortion: setUsers,
                 }}
                 filterConfig={{
                     primaryFiltersShown: true,

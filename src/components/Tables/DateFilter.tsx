@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Filter, MethodConfig } from "./Filters";
 import DateRangeInputs, { DateRangeState } from "../DateRangeInputs/DateRangeInputs";

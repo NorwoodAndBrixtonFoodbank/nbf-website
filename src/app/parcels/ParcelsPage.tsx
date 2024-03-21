@@ -27,7 +27,7 @@ import {
     ParcelProcessingData,
     RequestParams,
     StatusResponseRow,
-    isFreshRequest,
+    areRequestsIdentical,
     getAllValuesForKeys,
     getParcelIds,
     getParcelsCount,
@@ -73,7 +73,7 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("client_full_name", { ascending: sortDirection === "asc" }),
-            methodType: PaginationType.Server,
+            paginationType: PaginationType.Server,
         },
     },
     {
@@ -81,7 +81,7 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("family_count", { ascending: sortDirection === "asc" }),
-            methodType: PaginationType.Server,
+            paginationType: PaginationType.Server,
         },
     },
     {
@@ -89,7 +89,7 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("client_address_postcode", { ascending: sortDirection === "asc" }),
-            methodType: PaginationType.Server,
+            paginationType: PaginationType.Server,
         },
     },
     {
@@ -97,7 +97,7 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("client_phone_number", { ascending: sortDirection === "asc" }),
-            methodType: PaginationType.Server,
+            paginationType: PaginationType.Server,
         },
     },
     {
@@ -105,7 +105,7 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("voucher_number", { ascending: sortDirection === "asc" }),
-            methodType: PaginationType.Server,
+            paginationType: PaginationType.Server,
         },
     },
     {
@@ -113,7 +113,7 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("collection_centre_name", { ascending: sortDirection === "asc" }),
-            methodType: PaginationType.Server,
+            paginationType: PaginationType.Server,
         },
     },
     {
@@ -121,7 +121,7 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("packing_datetime", { ascending: sortDirection === "asc" }),
-            methodType: PaginationType.Server,
+            paginationType: PaginationType.Server,
         },
     },
     {
@@ -129,7 +129,7 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("last_status_workflow_order", { ascending: sortDirection === "asc" }),
-            methodType: PaginationType.Server,
+            paginationType: PaginationType.Server,
         },
     },
 ];
@@ -249,7 +249,7 @@ const buildDateFilter = (initialState: DateRangeState): Filter<ParcelsTableRow, 
     return dateFilter<ParcelsTableRow>({
         key: "packingDatetime",
         label: "",
-        methodConfig: { methodType: PaginationType.Server, method: dateSearch },
+        methodConfig: { paginationType: PaginationType.Server, method: dateSearch },
         initialState: initialState,
     });
 };
@@ -294,7 +294,7 @@ const buildDeliveryCollectionFilter = async (): Promise<Filter<ParcelsTableRow, 
         filterLabel: "Collection",
         itemLabelsAndKeys: optionsSet.map((option) => [option!.name, option!.acronym]),
         initialCheckedKeys: optionsSet.map((option) => option!.acronym),
-        methodConfig: { methodType: PaginationType.Server, method: deliveryCollectionSearch },
+        methodConfig: { paginationType: PaginationType.Server, method: deliveryCollectionSearch },
     });
 };
 
@@ -337,14 +337,14 @@ const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]
         filterLabel: "Last Status",
         itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
         initialCheckedKeys: optionsSet.filter((option) => option !== "Request Deleted"),
-        methodConfig: { methodType: PaginationType.Server, method: lastStatusSearch },
+        methodConfig: { paginationType: PaginationType.Server, method: lastStatusSearch },
     });
 };
 
 const ParcelsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [parcelsDataPortion, setParcelsDataPortion] = useState<ParcelsTableRow[]>([]);
-    const [totalRows, setTotalRows] = useState<number>(0);
+    const [filteredParcelCount, setFilteredParcelCount] = useState<number>(0);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
 
     const [checkedParcelIds, setCheckedParcelIds] = useState<string[]>([]);
@@ -358,7 +358,7 @@ const ParcelsPage: React.FC<{}> = () => {
     const searchParams = useSearchParams();
     const parcelId = searchParams.get(parcelIdParam);
 
-    const [sortState, setSortState] = useState<SortState<ParcelsTableRow>>({ sort: false });
+    const [sortState, setSortState] = useState<SortState<ParcelsTableRow>>({ sortEnabled: false });
 
     useEffect(() => {
         if (parcelId) {
@@ -395,13 +395,13 @@ const ParcelsPage: React.FC<{}> = () => {
                     key: "fullName",
                     label: "Name",
                     headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { methodType: PaginationType.Server, method: fullNameSearch },
+                    methodConfig: { paginationType: PaginationType.Server, method: fullNameSearch },
                 }),
                 buildTextFilter({
                     key: "addressPostcode",
                     label: "Postcode",
                     headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { methodType: PaginationType.Server, method: postcodeSearch },
+                    methodConfig: { paginationType: PaginationType.Server, method: postcodeSearch },
                 }),
                 await buildDeliveryCollectionFilter(),
             ];
@@ -411,19 +411,19 @@ const ParcelsPage: React.FC<{}> = () => {
                     key: "familyCategory",
                     label: "Family",
                     headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { methodType: PaginationType.Server, method: familySearch },
+                    methodConfig: { paginationType: PaginationType.Server, method: familySearch },
                 }),
                 buildTextFilter({
                     key: "phoneNumber",
                     label: "Phone",
                     headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { methodType: PaginationType.Server, method: phoneSearch },
+                    methodConfig: { paginationType: PaginationType.Server, method: phoneSearch },
                 }),
                 buildTextFilter({
                     key: "voucherNumber",
                     label: "Voucher",
                     headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { methodType: PaginationType.Server, method: voucherSearch },
+                    methodConfig: { paginationType: PaginationType.Server, method: voucherSearch },
                 }),
                 await buildLastStatusFilter(),
             ];
@@ -449,7 +449,7 @@ const ParcelsPage: React.FC<{}> = () => {
             };
             (async () => {
                 setIsLoading(true);
-                const totalRows = await getParcelsCount(supabase, allFilters);
+                const filteredParcelCount = await getParcelsCount(supabase, allFilters);
                 const fetchedData = await getParcelsData(
                     supabase,
                     allFilters,
@@ -463,8 +463,8 @@ const ParcelsPage: React.FC<{}> = () => {
                     startPoint: startPoint,
                     endPoint: endPoint,
                 };
-                if (isFreshRequest(requestParams, initialRequestParams)) {
-                    setTotalRows(totalRows);
+                if (areRequestsIdentical(requestParams, initialRequestParams)) {
+                    setFilteredParcelCount(filteredParcelCount);
                     setParcelsDataPortion(fetchedData);
                 }
                 setIsLoading(false);
@@ -491,7 +491,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
                 setIsLoading(true);
                 fetchParcelsTimer.current = setTimeout(async () => {
-                    setTotalRows(await getParcelsCount(supabase, allFilters));
+                    setFilteredParcelCount(await getParcelsCount(supabase, allFilters));
                     const fetchedData = await getParcelsData(
                         supabase,
                         allFilters,
@@ -568,11 +568,11 @@ const ParcelsPage: React.FC<{}> = () => {
     };
 
     useEffect(() => {
-        const allChecked = checkedParcelIds.length === totalRows;
+        const allChecked = checkedParcelIds.length === filteredParcelCount;
         if (allChecked !== isAllCheckBoxSelected) {
             setAllCheckBoxSelected(allChecked);
         }
-    }, [totalRows, checkedParcelIds, isAllCheckBoxSelected]);
+    }, [filteredParcelCount, checkedParcelIds, isAllCheckBoxSelected]);
 
     const rowToIconsColumn = ({
         flaggedForAttention,
@@ -663,9 +663,7 @@ const ParcelsPage: React.FC<{}> = () => {
             <PreTableControls>
                 <ControlContainer />
                 <ActionBar
-                    fetchSelectedParcels={async (checkedParcelIds: string[]) =>
-                        await getCheckedParcelsData(checkedParcelIds)
-                    }
+                    fetchSelectedParcels={getCheckedParcelsData}
                     onDeleteParcels={deleteParcels}
                     willSaveParcelStatus={() => setIsLoading(true)}
                     hasSavedParcelStatus={() => setIsLoading(false)}
@@ -682,8 +680,8 @@ const ParcelsPage: React.FC<{}> = () => {
                         dataPortion={parcelsDataPortion}
                         isLoading={isLoading}
                         paginationConfig={{
-                            pagination: true,
-                            totalRows: totalRows,
+                            enablePagination: true,
+                            filteredCount: filteredParcelCount,
                             onPageChange: setCurrentPage,
                             onPerPageChange: setPerPage,
                         }}

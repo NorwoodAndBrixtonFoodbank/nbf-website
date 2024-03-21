@@ -48,9 +48,9 @@ interface Props {
 }
 
 const CollectionCentresTables: React.FC<Props> = (props) => {
-    const [collectionCentreDataPortion, setCollectionCentreDataPortion] = useState<
-        Schema["collection_centres"][]
-    >(props.collectionCentreData);
+    const [collectionCentres, setCollectionCentres] = useState<Schema["collection_centres"][]>(
+        props.collectionCentreData
+    );
     const [collectionCentreToDelete, setCollectionCentreToDelete] =
         useState<Schema["collection_centres"]>();
     const [refreshRequired, setRefreshRequired] = useState(false);
@@ -82,26 +82,26 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
             key: "name",
             label: "Name",
             headers: collectionCentresTableHeaderKeysAndLabels,
-            methodConfig: { methodType: PaginationType.Client, method: filterRowByText },
+            methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
         }),
         buildTextFilter({
             key: "acronym",
             label: "Acronym",
             headers: collectionCentresTableHeaderKeysAndLabels,
-            methodConfig: { methodType: PaginationType.Client, method: filterRowByText },
+            methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
         }),
     ];
     const [primaryFilters, setPrimaryFilters] =
         useState<Filter<CollectionCentresTableRow, string>[]>(filters);
 
     useEffect(() => {
-        setCollectionCentreDataPortion(
+        setCollectionCentres(
             props.collectionCentreData.filter((row) => {
                 return primaryFilters.every((filter) => {
-                    if (filter.methodConfig.methodType === PaginationType.Client) {
-                        return filter.methodConfig.method(row, filter.state, filter.key);
-                    }
-                    return false;
+                    return (
+                        filter.methodConfig.paginationType === PaginationType.Client &&
+                        filter.methodConfig.method(row, filter.state, filter.key)
+                    );
                 });
             })
         );
@@ -110,17 +110,17 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
     return (
         <>
             <Table
-                dataPortion={collectionCentreDataPortion}
+                dataPortion={collectionCentres}
                 headerKeysAndLabels={collectionCentresTableHeaderKeysAndLabels}
                 defaultShownHeaders={["name", "acronym"]}
                 toggleableHeaders={["primary_key"]}
-                paginationConfig={{ pagination: false }}
+                paginationConfig={{ enablePagination: false }}
                 checkboxConfig={{ displayed: false }}
                 sortConfig={{ sortPossible: false }}
                 editableConfig={{
                     editable: true,
                     onDelete: collectionCentreOnDelete,
-                    setDataPortion: setCollectionCentreDataPortion,
+                    setDataPortion: setCollectionCentres,
                 }}
                 filterConfig={{
                     primaryFiltersShown: true,

@@ -52,24 +52,24 @@ export interface SortOptions<Data> {
 
 type SortMethodConfig =
     | {
-          methodType: PaginationType.Server;
+          paginationType: PaginationType.Server;
           method: (
               query: PostgrestFilterBuilder<Database["public"], any, any>,
               sortDirection: SortOrder
           ) => PostgrestFilterBuilder<Database["public"], any, any>;
       }
     | {
-          methodType: PaginationType.Client;
+          paginationType: PaginationType.Client;
           method: (sortDirection: SortOrder) => void;
       };
 export type SortState<Data> =
     | {
-          sort: true;
+          sortEnabled: true;
           sortDirection: SortOrder;
           column: CustomColumn<Data>;
       }
     | {
-          sort: false;
+          sortEnabled: false;
       };
 
 export type SortConfig<Data> =
@@ -99,13 +99,13 @@ export type CheckboxConfig<Data> =
 
 export type PaginationConfig =
     | {
-          pagination: true;
-          totalRows: number;
+          enablePagination: true;
+          filteredCount: number;
           onPageChange: (newPage: number) => void;
           onPerPageChange: (perPage: number) => void;
       }
     | {
-          pagination: false;
+          enablePagination: false;
       };
 
 export type FilterConfig<Data> =
@@ -230,21 +230,19 @@ const Table = <Data,>({
                     (column) => column.key === headerKey
                 )?.sortMethodConfig;
             }
-            const sortable = sortMethodConfig ? true : false;
+            const sortable = !!sortMethodConfig;
 
             return {
                 name: <>{headerName}</>,
                 selector: (row) => row.data[headerKey] as Primitive, // The type cast here is needed as the type of selector is (row) => Primitive, but as we are using a custom cell, we can have it be anything
                 sortable: sortable,
-                cell(row) {
-                    return (
-                        <CustomCell
-                            row={row}
-                            columnDisplayFunctions={columnDisplayFunctions}
-                            headerKey={headerKey}
-                        />
-                    );
-                },
+                cell: (row) => (
+                    <CustomCell
+                        row={row}
+                        columnDisplayFunctions={columnDisplayFunctions}
+                        headerKey={headerKey}
+                    />
+                ),
                 sortField: headerKey.toString(),
                 sortMethodConfig: sortMethodConfig,
                 ...columnStyles,
@@ -258,7 +256,7 @@ const Table = <Data,>({
     ): Promise<void> => {
         if (sortConfig.sortPossible && Object.keys(column).length) {
             sortConfig.setSortState({
-                sort: true,
+                sortEnabled: true,
                 column: column,
                 sortDirection: sortDirection,
             });
@@ -268,19 +266,19 @@ const Table = <Data,>({
     const [isSwapping, setIsSwapping] = useState(false);
 
     if (editableConfig.editable) {
-        const swapRows = (rowId1: number, upwards: boolean): void => {
+        const swapRows = (rowIndex1: number, upwards: boolean): void => {
             if (isSwapping) {
                 return;
             }
             setIsSwapping(true);
 
-            const rowId2 = rowId1 + (upwards ? -1 : 1);
+            const rowIndex2 = rowIndex1 + (upwards ? -1 : 1);
 
             if (
-                rowId1 < 0 ||
-                rowId2 < 0 ||
-                rowId1 >= dataPortion.length ||
-                rowId2 >= dataPortion.length
+                rowIndex1 < 0 ||
+                rowIndex2 < 0 ||
+                rowIndex1 >= dataPortion.length ||
+                rowIndex2 >= dataPortion.length
             ) {
                 setIsSwapping(false);
                 return;
@@ -289,9 +287,9 @@ const Table = <Data,>({
             const clientSideRefresh = (): void => {
                 // Update viewed table data once specific functions are done (without re-fetch)
                 const newData = [...dataPortion];
-                const temp = newData[rowId1];
-                newData[rowId1] = newData[rowId2];
-                newData[rowId2] = temp;
+                const temp = newData[rowIndex1];
+                newData[rowIndex1] = newData[rowIndex2];
+                newData[rowIndex2] = temp;
 
                 editableConfig.setDataPortion(newData);
                 setIsSwapping(false);
@@ -299,7 +297,7 @@ const Table = <Data,>({
 
             if (editableConfig.onSwapRows) {
                 editableConfig
-                    .onSwapRows(dataPortion[rowId1], dataPortion[rowId2])
+                    .onSwapRows(dataPortion[rowIndex1], dataPortion[rowIndex2])
                     .then(clientSideRefresh);
             } else {
                 clientSideRefresh();
@@ -423,19 +421,23 @@ const Table = <Data,>({
                         data={rows}
                         keyField="rowId"
                         fixedHeader
-                        pagination={paginationConfig.pagination}
+                        pagination={paginationConfig.enablePagination}
                         persistTableHead
                         onRowClicked={onRowClick}
-                        paginationServer={paginationConfig.pagination}
+                        paginationServer={paginationConfig.enablePagination}
                         paginationTotalRows={
-                            paginationConfig.pagination ? paginationConfig.totalRows : undefined
+                            paginationConfig.enablePagination
+                                ? paginationConfig.filteredCount
+                                : undefined
                         }
-                        paginationDefaultPage={paginationConfig.pagination ? 1 : undefined}
+                        paginationDefaultPage={paginationConfig.enablePagination ? 1 : undefined}
                         onChangePage={
-                            paginationConfig.pagination ? paginationConfig.onPageChange : () => {}
+                            paginationConfig.enablePagination
+                                ? paginationConfig.onPageChange
+                                : () => {}
                         }
                         onChangeRowsPerPage={
-                            paginationConfig.pagination
+                            paginationConfig.enablePagination
                                 ? paginationConfig.onPerPageChange
                                 : () => {}
                         }

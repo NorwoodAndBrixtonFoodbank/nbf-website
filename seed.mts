@@ -252,7 +252,7 @@ async function generateSeed(): Promise<void> {
             "Delivery Cancelled",
             "Fulfilled with Trussell Trust",
             "Request Deleted",
-        ].map((event_name, index) => ({ eventName: event_name, workflowOrder: index }))
+        ].map((eventName, index) => ({ eventName, workflowOrder: index }))
     );
 }
 

@@ -14,11 +14,11 @@ export type MethodConfig<Data, State> =
               query: PostgrestFilterBuilder<Database["public"], any, any>,
               state: State
           ) => PostgrestFilterBuilder<Database["public"], any, any>;
-          methodType: PaginationType.Server;
+          paginationType: PaginationType.Server;
       }
     | {
           method: (row: Data, state: State, key: keyof Data) => boolean;
-          methodType: PaginationType.Client;
+          paginationType: PaginationType.Client;
       };
 
 export interface Filter<Data, State> {

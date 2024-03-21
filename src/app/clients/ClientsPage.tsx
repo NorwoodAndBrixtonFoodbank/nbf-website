@@ -19,7 +19,7 @@ import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { CircularProgress } from "@mui/material";
-import { RequestParams, isFreshRequest } from "../parcels/fetchParcelTableData";
+import { RequestParams, areRequestsIdentical } from "../parcels/fetchParcelTableData";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -46,7 +46,7 @@ const filters: Filter<ClientsTableRow, any>[] = [
         key: "fullName",
         label: "Name",
         headers: headers,
-        methodConfig: { methodType: PaginationType.Server, method: fullNameSearch },
+        methodConfig: { paginationType: PaginationType.Server, method: fullNameSearch },
     }),
 ];
 
@@ -56,7 +56,7 @@ const sortableColumns: SortOptions<ClientsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("full_name", { ascending: sortDirection === "asc" }),
-            methodType: PaginationType.Server,
+            paginationType: PaginationType.Server,
         },
     },
     {
@@ -64,7 +64,7 @@ const sortableColumns: SortOptions<ClientsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("family_count", { ascending: sortDirection === "asc" }),
-            methodType: PaginationType.Server,
+            paginationType: PaginationType.Server,
         },
     },
     {
@@ -72,7 +72,7 @@ const sortableColumns: SortOptions<ClientsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("address_postcode", { ascending: sortDirection === "asc" }),
-            methodType: PaginationType.Server,
+            paginationType: PaginationType.Server,
         },
     },
 ];
@@ -82,8 +82,8 @@ const ClientsPage: React.FC<{}> = () => {
     const [isLoadingForFirstTime, setIsLoadingForFirstTime] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [clientsDataPortion, setClientsDataPortion] = useState<ClientsTableRow[]>([]);
-    const [totalRows, setTotalRows] = useState<number>(0);
-    const [sortState, setSortState] = useState<SortState<ClientsTableRow>>({ sort: false });
+    const [filteredClientCount, setFilteredClientCount] = useState<number>(0);
+    const [sortState, setSortState] = useState<SortState<ClientsTableRow>>({ sortEnabled: false });
     const [primaryFilters, setPrimaryFilters] = useState<Filter<ClientsTableRow, any>[]>(filters);
 
     const [perPage, setPerPage] = useState(10);
@@ -100,7 +100,7 @@ const ClientsPage: React.FC<{}> = () => {
         };
         (async () => {
             setIsLoading(true);
-            const totalRows = await getClientsCount(supabase, primaryFilters);
+            const filteredClientCount = await getClientsCount(supabase, primaryFilters);
             const fetchedData = await getClientsData(
                 supabase,
                 startPoint,
@@ -114,9 +114,9 @@ const ClientsPage: React.FC<{}> = () => {
                 startPoint: startPoint,
                 endPoint: endPoint,
             };
-            if (isFreshRequest(requestParams, initialRequestParams)) {
+            if (areRequestsIdentical(requestParams, initialRequestParams)) {
                 setClientsDataPortion(fetchedData);
-                setTotalRows(totalRows);
+                setFilteredClientCount(filteredClientCount);
             }
             setIsLoading(false);
             setIsLoadingForFirstTime(false);
@@ -126,7 +126,7 @@ const ClientsPage: React.FC<{}> = () => {
     useEffect(() => {
         const loadCountAndData = async (): Promise<void> => {
             setIsLoading(true);
-            setTotalRows(await getClientsCount(supabase, primaryFilters));
+            setFilteredClientCount(await getClientsCount(supabase, primaryFilters));
             const fetchedData = await getClientsData(
                 supabase,
                 startPoint,
@@ -180,8 +180,8 @@ const ClientsPage: React.FC<{}> = () => {
                         <Table
                             dataPortion={clientsDataPortion}
                             paginationConfig={{
-                                pagination: true,
-                                totalRows: totalRows,
+                                enablePagination: true,
+                                filteredCount: filteredClientCount,
                                 onPageChange: setCurrentPage,
                                 onPerPageChange: setPerPage,
                             }}

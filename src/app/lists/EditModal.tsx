@@ -17,7 +17,7 @@ interface Props {
 }
 
 // null => add, undefined => modal closed
-export type EditModalState = Partial<Schema["lists"]> | null | undefined;
+export type EditModalState = Schema["lists"] | null | undefined;
 
 const ModalInner = styled.div`
     display: flex;

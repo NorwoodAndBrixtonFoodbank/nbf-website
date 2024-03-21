@@ -4,11 +4,12 @@ import { DatabaseError } from "@/app/errorClasses";
 import { Supabase } from "@/supabaseUtils";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
+import { logError } from "@/logger/logger";
 
 const getClientsData = async (
     supabase: Supabase,
-    start: number,
-    end: number,
+    startIndex: number,
+    endIndex: number,
     filters: Filter<ClientsTableRow, any>[],
     sortState: SortState<ClientsTableRow>
 ): Promise<ClientsTableRow[]> => {
@@ -16,27 +17,31 @@ const getClientsData = async (
 
     let query = supabase.from("clients_plus").select("*");
 
-    if (sortState.sort && sortState.column.sortMethodConfig?.methodType === PaginationType.Server) {
+    if (
+        sortState.sortEnabled &&
+        sortState.column.sortMethodConfig?.paginationType === PaginationType.Server
+    ) {
         query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
     } else {
         query = query.order("full_name");
     }
     filters.forEach((filter) => {
-        if (filter.methodConfig.methodType === PaginationType.Server) {
+        if (filter.methodConfig.paginationType === PaginationType.Server) {
             query = filter.methodConfig.method(query, filter.state);
         }
     });
 
-    query = query.range(start, end);
+    query = query.range(startIndex, endIndex);
 
     const { data: clients, error: clientError } = await query;
 
     if (clientError) {
-        console.error(clientError);
         throw new DatabaseError("fetch", "clients");
     }
 
     for (const client of clients) {
+        client.client_id ?? void logError("empty client id");
+        client.full_name ?? void logError("empty client name");
         data.push({
             clientId: client.client_id ?? "",
             fullName: client.full_name ?? "",
@@ -55,15 +60,15 @@ export const getClientsCount = async (
     let query = supabase.from("clients_plus").select("*", { count: "exact", head: true });
 
     filters.forEach((filter) => {
-        if (filter.methodConfig.methodType === PaginationType.Server) {
+        if (filter.methodConfig.paginationType === PaginationType.Server) {
             query = filter.methodConfig.method(query, filter.state);
         }
     });
     const { count, error: clientError } = await query;
     if (clientError || count === null) {
-        throw new DatabaseError("fetch", "clients");
+        void logError("error fetching clients details");
     }
-    return count;
+    return count ?? 0;
 };
 
 export default getClientsData;

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
@@ -198,13 +198,6 @@ const Actions: React.FC<Props> = ({
     parcelIds,
 }) => {
     const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
-
-    useEffect(() => {
-        (async () => {
-            setSelectedParcels(await fetchSelectedParcels(parcelIds));
-        })();
-    }, [parcelIds, fetchSelectedParcels]);
-
     const [modalToDisplay, setModalToDisplay] = useState<ActionName | null>(null);
     const [labelQuantity, setLabelQuantity] = useState<number>(0);
     const [date, setDate] = useState(dayjs());
@@ -239,25 +232,32 @@ const Actions: React.FC<Props> = ({
         errorCondition: (value: number) => boolean,
         errorMessage: string
     ): (() => void) => {
-        return () => {
-            if (errorCondition(selectedParcels.length)) {
-                setActionAnchorElement(null);
-                setModalError(errorMessage);
-            } else {
-                switch (key) {
-                    case "Download Shipping Labels":
-                    case "Download Shopping Lists":
-                    case "Download Driver Overview":
-                    case "Download Day Overview":
-                    case "Delete Parcel Request":
-                        setModalToDisplay(key);
-                        setActionAnchorElement(null);
-                        setModalError(null);
-                        break;
-                    case "Generate Map":
-                        openInNewTab(mapsLinkForSelectedParcels());
-                        break;
+        return async () => {
+            try {
+                const fetchedParcels = await fetchSelectedParcels(parcelIds);
+                setSelectedParcels(fetchedParcels);
+                if (errorCondition(fetchedParcels.length)) {
+                    setActionAnchorElement(null);
+                    setModalError(errorMessage);
+                } else {
+                    switch (key) {
+                        case "Download Shipping Labels":
+                        case "Download Shopping Lists":
+                        case "Download Driver Overview":
+                        case "Download Day Overview":
+                        case "Delete Parcel Request":
+                            setModalToDisplay(key);
+                            setActionAnchorElement(null);
+                            setModalError(null);
+                            return;
+                        case "Generate Map":
+                            openInNewTab(mapsLinkForSelectedParcels());
+                            return;
+                    }
                 }
+            } catch {
+                setModalError("Database error when fetching selected parcels");
+                return;
             }
         };
     };
