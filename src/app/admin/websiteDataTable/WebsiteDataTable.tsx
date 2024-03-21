@@ -184,6 +184,7 @@ const WebsiteDataTable: React.FC = () => {
                         toolbar: { setRows, setRowModesModel, rows },
                     }}
                     loading={isLoading}
+                    getRowHeight={() => 'auto'}
                 />
             )}
         </>
