@@ -45,7 +45,7 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
     ): void => {
         const newLocations = event.target.checked
             ? currentLocations.concat(location)
-            : currentLocations.filter((testLocation) => testLocation !== location);
+            : currentLocations.filter((currentLocation) => currentLocation !== location);
 
         editLocations(newLocations);
     };
