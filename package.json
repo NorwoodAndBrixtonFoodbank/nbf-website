@@ -66,7 +66,6 @@
     "@types/react-fontawesome": "^1.6.5",
     "@types/react-modal": "^3.16.0",
     "@types/styled-components": "^5.1.26",
-    "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "axe-core": "^4.7.2",
@@ -104,6 +103,7 @@
     "@snaplet/copycat": "^5.0.0",
     "@snaplet/seed": "^0.88.2",
     "@types/seedrandom": "^3.0.8",
+    "@types/uuid": "^9.0.8",
     "seedrandom": "^3.0.5",
     "snaplet": "^0.88.2"
   }

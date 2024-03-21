@@ -5,7 +5,6 @@ import { Supabase } from "@/supabaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
-import { logError } from "@/logger/logger";
 
 const getClientsData = async (
     supabase: Supabase,
@@ -43,14 +42,13 @@ const getClientsData = async (
 
     for (const client of clients) {
         if (!client.client_id) {
-          const logId = await logErrorReturnLogId("Empty client ID");
-          throw new Error("Empty client ID" + `Log ID: ${logId}`;
+            const logId = await logErrorReturnLogId("Empty client ID");
+            throw new Error("Empty client ID" + `Log ID: ${logId}`);
         }
-      
+
         if (!client.full_name) {
             const logId = await logErrorReturnLogId("Empty client name");
-            throw new Error("Empty client ID" + `Log ID: ${logId}`;
-
+            throw new Error("Empty client ID" + `Log ID: ${logId}`);
         }
         data.push({
             clientId: client.client_id ?? "",
@@ -76,8 +74,8 @@ export const getClientsCount = async (
     });
     const { count, error: clientError } = await query;
     if (clientError || count === null) {
-        void logError("error fetching clients details");
-        throw new DatabaseError("fetch", "clients");
+        const logId = await logErrorReturnLogId("error fetching clients details");
+        throw new DatabaseError("fetch", "clients", logId);
     }
     return count ?? 0;
 };
