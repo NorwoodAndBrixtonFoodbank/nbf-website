@@ -15,7 +15,7 @@ export const serverConfig: ServerConfig = {
 
 function getCloudWatchConfig(): CloudWatchConfig {
     const logGroupName = process.env.CLOUDWATCH_LOG_GROUP;
-    const logStreamName = process.env.CLOUD_WATCH_LOG_STREAM;
+    const logStreamName = process.env.CLOUDWATCH_LOG_STREAM;
     const accessKey = process.env.CLOUDWATCH_ACCESS_KEY;
     const secretAccessKey = process.env.CLOUDWATCH_SECRET_ACCESS_KEY;
 

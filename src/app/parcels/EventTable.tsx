@@ -33,12 +33,15 @@ const EventTable: React.FC<EventTableProps> = (props) => {
         <>
             <TableSurface>
                 <Table
-                    data={props.tableData}
+                    dataPortion={props.tableData}
                     headerKeysAndLabels={eventsTableHeaderKeysAndLabels}
                     columnDisplayFunctions={eventsTableColumnDisplayFunctions}
-                    pagination
                     defaultShownHeaders={defaultShownHeaders}
                     checkboxConfig={{ displayed: false }}
+                    filterConfig={{ primaryFiltersShown: false, additionalFiltersShown: false }}
+                    sortConfig={{ sortPossible: false }}
+                    paginationConfig={{ enablePagination: false }}
+                    editableConfig={{ editable: false }}
                 />
             </TableSurface>
         </>

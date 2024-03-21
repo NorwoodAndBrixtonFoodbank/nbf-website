@@ -38,7 +38,8 @@ type ActionName =
     | "Download Shopping Lists"
     | "Download Driver Overview"
     | "Download Day Overview"
-    | "Delete Parcel Request";
+    | "Delete Parcel Request"
+    | "Generate Map";
 
 type AvailableActionsType = {
     [actionKey in ActionName]: {
@@ -80,6 +81,12 @@ const availableActions: AvailableActionsType = {
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
         actionType: "deleteParcel",
+    },
+    "Generate Map": {
+        showSelectedParcelsInModal: false,
+        errorCondition: isNotAtLeastOne,
+        errorMessage: "Please select at least one parcel.",
+        actionType: "generateMap",
     },
 };
 
@@ -172,23 +179,26 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
 };
 
 interface Props {
-    selectedParcels: ParcelsTableRow[];
+    fetchParcelsByIds: (checkedParcelIds: string[]) => Promise<ParcelsTableRow[]>;
     onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
     actionAnchorElement: HTMLElement | null;
     setActionAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     modalError: string | null;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
+    parcelIds: string[];
 }
 
 const Actions: React.FC<Props> = ({
-    selectedParcels,
+    fetchParcelsByIds,
     onDeleteParcels,
     actionAnchorElement,
     setActionAnchorElement,
     modalError,
     setModalError,
+    parcelIds,
 }) => {
-    const [selectedAction, setSelectedAction] = useState<ActionName | null>(null);
+    const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
+    const [modalToDisplay, setModalToDisplay] = useState<ActionName | null>(null);
     const [labelQuantity, setLabelQuantity] = useState<number>(0);
     const [date, setDate] = useState(dayjs());
     const [driverName, setDriverName] = useState("");
@@ -211,7 +221,7 @@ const Actions: React.FC<Props> = ({
     };
 
     const onModalClose = (): void => {
-        setSelectedAction(null);
+        setModalToDisplay(null);
         setModalError(null);
         setDate(dayjs());
         setDriverName("");
@@ -222,23 +232,53 @@ const Actions: React.FC<Props> = ({
         errorCondition: (value: number) => boolean,
         errorMessage: string
     ): (() => void) => {
-        return () => {
-            if (errorCondition(selectedParcels.length)) {
-                setActionAnchorElement(null);
-                setModalError(errorMessage);
-            } else {
-                setSelectedAction(key);
-                setActionAnchorElement(null);
-                setModalError(null);
+        return async () => {
+            try {
+                const fetchedParcels = await fetchParcelsByIds(parcelIds);
+                setSelectedParcels(fetchedParcels);
+                if (errorCondition(fetchedParcels.length)) {
+                    setActionAnchorElement(null);
+                    setModalError(errorMessage);
+                } else {
+                    switch (key) {
+                        case "Download Shipping Labels":
+                        case "Download Shopping Lists":
+                        case "Download Driver Overview":
+                        case "Download Day Overview":
+                        case "Delete Parcel Request":
+                            setModalToDisplay(key);
+                            setActionAnchorElement(null);
+                            setModalError(null);
+                            return;
+                        case "Generate Map":
+                            openInNewTab(mapsLinkForSelectedParcels());
+                            return;
+                    }
+                }
+            } catch {
+                setModalError("Database error when fetching selected parcels");
+                return;
             }
         };
+    };
+
+    const mapsLinkForSelectedParcels = (): string => {
+        return (
+            "https://www.google.com/maps/dir/" +
+            selectedParcels.map((parcel) => parcel.addressPostcode.replaceAll(" ", "")).join("/") +
+            "//"
+        );
+    };
+
+    const openInNewTab = (url: string): void => {
+        window.open(url, "_blank", "noopener, noreferrer");
     };
 
     return (
         <>
             {Object.entries(availableActions).map(([key, value]) => {
                 return (
-                    selectedAction === key && (
+                    modalToDisplay === key && (
                         <ActionsModal
                             key={key}
                             showSelectedParcels={value.showSelectedParcelsInModal}
@@ -263,7 +303,7 @@ const Actions: React.FC<Props> = ({
                             }
                         >
                             <ActionsButton
-                                pdfType={selectedAction}
+                                pdfType={modalToDisplay}
                                 selectedParcels={selectedParcels}
                                 date={date}
                                 labelQuantity={labelQuantity}

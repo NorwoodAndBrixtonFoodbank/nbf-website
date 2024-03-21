@@ -53,7 +53,7 @@ const listQuantityNoteAndLabels: [keyof Schema["lists"], keyof Schema["lists"], 
 ];
 
 const EditModal: React.FC<Props> = ({ data, onClose }) => {
-    const [toSubmit, setToSubmit] = useState<Partial<Schema["lists"]>>(data ? data : {});
+    const [toSubmit, setToSubmit] = useState<Partial<Schema["lists"]>>(data ?? {});
 
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 

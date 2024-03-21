@@ -243,6 +243,12 @@ interface Table_storage_objects {
   version: string | null;
   owner_id: string | null;
 }
+interface Table_public_packing_slots {
+  primary_key: string;
+  name: string;
+  is_shown: boolean;
+  order: number;
+}
 interface Table_public_parcels {
   primary_key: string;
   client_id: string;
@@ -330,6 +336,10 @@ interface Table_auth_sso_providers {
   resource_id: string | null;
   created_at: string | null;
   updated_at: string | null;
+}
+interface Table_public_status_order {
+  event_name: string;
+  workflow_order: number;
 }
 interface Table_realtime_subscription {
   id: number;
@@ -447,7 +457,9 @@ interface Schema_public {
   families: Table_public_families;
   lists: Table_public_lists;
   lists_hotel: Table_public_lists_hotel;
+  packing_slots: Table_public_packing_slots;
   parcels: Table_public_parcels;
+  status_order: Table_public_status_order;
   website_data: Table_public_website_data;
 }
 interface Schema_realtime {

@@ -2,7 +2,7 @@ name: Deploy prod database
 on:
   push:
     branches:
-      main
+      - main
 
 env:
   SUPABASE_PROD_PROJECT_ID: ${{ secrets.SUPABASE_PROD_PROJECT_ID }}

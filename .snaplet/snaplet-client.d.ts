@@ -328,6 +328,15 @@ type Override = {
       buckets?: string;
     };
   }
+  packing_slots?: {
+    name?: string;
+    fields?: {
+      primary_key?: string;
+      name?: string;
+      is_shown?: string;
+      order?: string;
+    };
+  }
   parcels?: {
     name?: string;
     fields?: {
@@ -462,6 +471,13 @@ type Override = {
       saml_providers?: string;
       saml_relay_states?: string;
       sso_domains?: string;
+    };
+  }
+  status_order?: {
+    name?: string;
+    fields?: {
+      event_name?: string;
+      workflow_order?: string;
     };
   }
   subscription?: {
@@ -655,6 +671,9 @@ export interface Fingerprint {
     metadata?: FingerprintJsonField;
     bucket?: FingerprintRelationField;
   }
+  packingSlots?: {
+    order?: FingerprintNumberField;
+  }
   parcels?: {
     packingDatetime?: FingerprintDateField;
     collectionDatetime?: FingerprintDateField;
@@ -715,6 +734,9 @@ export interface Fingerprint {
     samlProviders?: FingerprintRelationField;
     samlRelayStates?: FingerprintRelationField;
     ssoDomains?: FingerprintRelationField;
+  }
+  statusOrders?: {
+    workflowOrder?: FingerprintNumberField;
   }
   subscriptions?: {
     id?: FingerprintNumberField;

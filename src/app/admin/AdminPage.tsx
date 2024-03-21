@@ -12,6 +12,7 @@ import {
     faUserPlus,
     faCity,
     faBuildingCircleArrowRight,
+    faBoxOpen,
     IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
@@ -20,6 +21,7 @@ import { UserRow } from "@/app/admin/page";
 import CollectionCentresTable from "@/app/admin/collectionCentresTable/CollectionCentresTable";
 import { Schema } from "@/databaseUtils";
 import CreateCollectionCentreForm from "@/app/admin/createCollectionCentre/CreateCollectionCentreForm";
+import PackingSlotsTable from "@/app/admin/packingSlotsTable/PackingSlotsTable";
 
 const PanelTitle = styled.h2`
     text-transform: uppercase;
@@ -59,6 +61,11 @@ const AdminPage: React.FC<Props> = (props) => {
             panelTitle: "Create Collection Centre",
             panelIcon: faBuildingCircleArrowRight,
             panelContent: <CreateCollectionCentreForm />,
+        },
+        {
+            panelTitle: "Modify Packing Slots",
+            panelIcon: faBoxOpen,
+            panelContent: <PackingSlotsTable />,
         },
     ];
 

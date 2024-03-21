@@ -17,15 +17,13 @@ describe("Authentication tests", () => {
     it("Redirected to parcels after login", () => {
         cy.visit("/login");
 
-        cy.get("[data-loaded='true']", extendedTimeout).should("exist");
-
         cy.get("input[type='email']").type(email);
         cy.get("input[type='password']").type(password);
 
         cy.get("input[type='email']").should("have.value", email);
         cy.get("input[type='password']").should("have.value", password);
 
-        cy.get("button[type='submit']").click();
+        cy.get("button[type='button']").contains("Sign in").click();
 
         cy.url(extendedTimeout).should("include", "/parcels");
     });

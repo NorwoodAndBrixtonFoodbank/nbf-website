@@ -21,50 +21,61 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Remove files irrelevant files that may cause TypeScript errors
+        run:
+          rm -f ./seed.mts
+
       - name: Run linting
         run: npm run lint
 
-  component_tests:
-    name: Run component tests
-    runs-on: ubuntu-latest
-    env:
-      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{secrets.SUPABASE_LOCAL_ANON_KEY}}
-      CLOUDWATCH_LOG_GROUP: ${{secrets.AWS_CLOUDWATCH_LOG_GROUP}}
-      CLOUD_WATCH_LOG_STREAM: ${{secrets.AWS_CLOUD_WATCH_LOG_STREAM}}
-      CLOUDWATCH_ACCESS_KEY: ${{secrets.AWS_CLOUDWATCH_ACCESS_KEY}}
-      CLOUDWATCH_SECRET_ACCESS_KEY: ${{secrets.AWS_CLOUDWATCH_SECRET_ACCESS_KEY}}
-    steps:
-      - name: Checkout this repo
-        uses: actions/checkout@v4
-
-      - name: Install npm
-        uses: actions/setup-node@v4
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Compile
-        run: npm run build
-
-      - name: Run component tests
-        run: npm run test:component
-
-      - name: Upload Screenshots
-        uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: screenshots
-          path: cypress/screenshots
-          retention-days: 1
-
-      - name: Upload Videos
-        uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: videos
-          path: cypress/videos
-          retention-days: 1
+# Component tests are disabled for now as Cypress component tests don't support server components and actions.
+# See https://github.com/cypress-io/cypress/issues/27890
+#
+#  component_tests:
+#    name: Run component tests
+#    runs-on: ubuntu-latest
+#    env:
+#      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+#      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{secrets.SUPABASE_LOCAL_ANON_KEY}}
+#      CLOUDWATCH_LOG_GROUP: ${{secrets.AWS_CLOUDWATCH_LOG_GROUP}}
+#      CLOUDWATCH_LOG_STREAM: ${{secrets.AWS_CLOUDWATCH_LOG_STREAM}}
+#      CLOUDWATCH_ACCESS_KEY: ${{secrets.AWS_CLOUDWATCH_ACCESS_KEY}}
+#      CLOUDWATCH_SECRET_ACCESS_KEY: ${{secrets.AWS_CLOUDWATCH_SECRET_ACCESS_KEY}}
+#    steps:
+#      - name: Checkout this repo
+#        uses: actions/checkout@v4
+#
+#      - name: Install npm
+#        uses: actions/setup-node@v4
+#
+#      - name: Install dependencies
+#        run: npm ci
+#
+#      - name: Remove files irrelevant files that may cause TypeScript errors
+#        run:
+#          rm -f ./seed.mts
+#
+#      - name: Compile
+#        run: npm run build
+#
+#      - name: Run component tests
+#        run: npm run test:component
+#
+#      - name: Upload Screenshots
+#        uses: actions/upload-artifact@v3
+#        if: failure()
+#        with:
+#          name: screenshots
+#          path: cypress/screenshots
+#          retention-days: 1
+#
+#      - name: Upload Videos
+#        uses: actions/upload-artifact@v3
+#        if: failure()
+#        with:
+#          name: videos
+#          path: cypress/videos
+#          retention-days: 1
 
   e2e_tests:
     name: Run end-to-end tests
@@ -76,7 +87,7 @@ jobs:
       NEXT_PUBLIC_CYPRESS_TEST_USER: admin@example.com
       NEXT_PUBLIC_CYPRESS_TEST_PASS: admin123
       CLOUDWATCH_LOG_GROUP: ${{secrets.AWS_CLOUDWATCH_LOG_GROUP}}
-      CLOUD_WATCH_LOG_STREAM: ${{secrets.AWS_CLOUD_WATCH_LOG_STREAM}}
+      CLOUDWATCH_LOG_STREAM: ${{secrets.AWS_CLOUDWATCH_LOG_STREAM}}
       CLOUDWATCH_ACCESS_KEY: ${{secrets.AWS_CLOUDWATCH_ACCESS_KEY}}
       CLOUDWATCH_SECRET_ACCESS_KEY: ${{secrets.AWS_CLOUDWATCH_SECRET_ACCESS_KEY}}
     steps:
@@ -97,6 +108,10 @@ jobs:
 
       - name: Create bucket for the local Supabase instance
         run: npm run dev:create_bucket
+
+      - name: Remove files irrelevant files that may cause TypeScript errors
+        run:
+          rm -f ./seed.mts
 
       - name: Compile
         run: npm run build
