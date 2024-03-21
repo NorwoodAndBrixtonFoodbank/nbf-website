@@ -40,10 +40,7 @@ describe("<Calendar />", () => {
     ];
     it("calendar renders", () => {
         cy.mount(
-            <StyledCalendar
-                initialEvents={[]}
-                initialLocations={["Brixton Hill - Methodist Church"]}
-            />
+            <StyledCalendar initialEvents={[]} allLocations={["Brixton Hill - Methodist Church"]} />
         );
     });
 
@@ -57,7 +54,7 @@ describe("<Calendar />", () => {
             <StyledCalendar
                 initialEvents={[]}
                 initialDate={testDate}
-                initialLocations={["Brixton Hill - Methodist Church"]}
+                allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
         cy.get(".fc-toolbar-title").should("have.text", currentMonthYear);
@@ -68,7 +65,7 @@ describe("<Calendar />", () => {
             <StyledCalendar
                 initialEvents={sampleEvents}
                 initialDate={testDate}
-                initialLocations={["Brixton Hill - Methodist Church"]}
+                allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
         cy.get("label").contains("Brixton Hill - Methodist Church").click();
@@ -80,7 +77,7 @@ describe("<Calendar />", () => {
             <StyledCalendar
                 initialEvents={[]}
                 initialDate={testDate}
-                initialLocations={["Brixton Hill - Methodist Church"]}
+                allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
         cy.get("button.fc-timeGridDay-button").click();
@@ -92,7 +89,7 @@ describe("<Calendar />", () => {
             <StyledCalendar
                 initialEvents={[]}
                 initialDate={testDate}
-                initialLocations={["Brixton Hill - Methodist Church"]}
+                allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
         cy.get("button.fc-timeGridWeek-button").click();
@@ -111,7 +108,7 @@ describe("<Calendar />", () => {
             <StyledCalendar
                 initialEvents={[]}
                 initialDate={testDate}
-                initialLocations={["Brixton Hill - Methodist Church"]}
+                allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
         cy.get("button.fc-prev-button").click();
@@ -129,7 +126,7 @@ describe("<Calendar />", () => {
                 initialEvents={[]}
                 view="timeGridDay"
                 initialDate={testDate}
-                initialLocations={["Brixton Hill - Methodist Church"]}
+                allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
         cy.get("button.fc-next-button").click();
@@ -145,7 +142,7 @@ describe("<Calendar />", () => {
             <StyledCalendar
                 initialEvents={sampleEvents}
                 initialDate={testDate}
-                initialLocations={["Brixton Hill - Methodist Church"]}
+                allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
         cy.get("label").contains("Brixton Hill - Methodist Church").click();
@@ -158,7 +155,7 @@ describe("<Calendar />", () => {
             <StyledCalendar
                 initialEvents={sampleEvents}
                 initialDate={testDate}
-                initialLocations={["Brixton Hill - Methodist Church"]}
+                allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
         cy.get("label").contains("Brixton Hill - Methodist Church").click();
@@ -171,7 +168,7 @@ describe("<Calendar />", () => {
             <StyledCalendar
                 initialEvents={sampleEvents}
                 initialDate={testDate}
-                initialLocations={["Brixton Hill - Methodist Church"]}
+                allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
         cy.get("label").contains("Brixton Hill - Methodist Church").click();
@@ -215,7 +212,7 @@ describe("<Calendar />", () => {
             <StyledCalendar
                 initialEvents={sampleEvents}
                 initialDate={testDate}
-                initialLocations={["Brixton Hill - Methodist Church"]}
+                allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
         cy.get("label").contains("Brixton Hill - Methodist Church").click();
@@ -245,7 +242,7 @@ describe("<Calendar />", () => {
             <StyledCalendar
                 initialEvents={sampleEvents}
                 initialDate={testDate}
-                initialLocations={["Brixton Hill - Methodist Church"]}
+                allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
         cy.get(`[aria-label="${todayLongDMY[1]} ${todayLongDMY[0]}, ${todayLongDMY[2]}"]`).click();

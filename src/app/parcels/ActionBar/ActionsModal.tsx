@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import { Button, SelectChangeEvent } from "@mui/material";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
@@ -113,7 +113,7 @@ export const DriverOverviewInput: React.FC<DriverOverviewInputProps> = ({
         <>
             <Heading>Delivery Information</Heading>
             <FreeFormTextInput onChange={onDriverNameChange} label="Driver's Name" />
-            <DatePicker onChange={onDateChange} disablePast />
+            <DatePicker defaultValue={dayjs()} onChange={onDateChange} disablePast />
         </>
     );
 };

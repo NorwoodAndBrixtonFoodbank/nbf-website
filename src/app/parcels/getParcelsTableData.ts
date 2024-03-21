@@ -1,11 +1,11 @@
 import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fetchParcelTableData";
 import { familyCountToFamilyCategory } from "@/app/parcels/getExpandedParcelDetails";
-import { Schema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
+import { Schema, ViewSchema } from "@/databaseUtils";
 
 export interface ParcelsTableRow {
     parcelId: Schema["parcels"]["primary_key"];
-    primaryKey: Schema["clients"]["primary_key"];
+    clientId: Schema["clients"]["primary_key"];
     fullName: Schema["clients"]["full_name"];
     familyCategory: string;
     addressPostcode: Schema["clients"]["address_postcode"];
@@ -21,6 +21,7 @@ export interface ParcelsTableRow {
         name: string;
         timestamp: Date;
         eventData: string | null;
+        workflowOrder: number;
     } | null;
     voucherNumber: string | null;
     iconsColumn: {
@@ -47,30 +48,29 @@ export const processingDataToParcelsTableData = async (
 
     for (let index = 0; index < processingData.length; index++) {
         const parcel = processingData[index];
-        const client = parcel.client!;
 
         parcelTableRows.push({
-            parcelId: parcel.parcel_id,
-            primaryKey: client.primary_key,
-            fullName: client.full_name,
-            familyCategory: familyCountToFamilyCategory(client.family.length),
-            addressPostcode: client.address_postcode,
-            phoneNumber: client.phone_number,
+            parcelId: parcel.parcel_id ?? "",
+            clientId: parcel.client_id ?? "",
+            fullName: parcel.client_full_name ?? "",
+            familyCategory: familyCountToFamilyCategory(parcel.family_count ?? 0),
+            addressPostcode: parcel.client_address_postcode ?? "",
+            phoneNumber: parcel.client_phone_number ?? "",
             deliveryCollection: {
-                collectionCentreName: parcel.collection_centre?.name ?? "-",
-                collectionCentreAcronym: parcel.collection_centre?.acronym ?? "-",
+                collectionCentreName: parcel.collection_centre_name ?? "-",
+                collectionCentreAcronym: parcel.collection_centre_acronym ?? "-",
                 congestionChargeApplies: congestionCharge[index].congestionCharge,
             },
             collectionDatetime: parcel.collection_datetime
                 ? new Date(parcel.collection_datetime)
                 : null,
             packingTimeLabel: datetimeToPackingTimeLabel(parcel.packing_datetime),
-            lastStatus: eventToLastStatus(parcel.events[0] ?? null),
+            lastStatus: processLastStatus(parcel),
             voucherNumber: parcel.voucher_number,
             packingDatetime: parcel.packing_datetime ? new Date(parcel.packing_datetime) : null,
             iconsColumn: {
-                flaggedForAttention: client.flagged_for_attention,
-                requiresFollowUpPhoneCall: client.signposting_call_required,
+                flaggedForAttention: parcel.client_flagged_for_attention ?? false,
+                requiresFollowUpPhoneCall: parcel.client_signposting_call_required ?? false,
             },
         });
     }
@@ -88,16 +88,26 @@ export const datetimeToPackingTimeLabel = (datetime: string | null): PackingTime
     return new Date(datetime).getHours() <= 11 ? "AM" : "PM";
 };
 
-export const eventToLastStatus = (
-    event: Pick<Schema["events"], "event_name" | "timestamp" | "event_data"> | undefined | null
+export const processLastStatus = (
+    event:
+        | Pick<
+              ViewSchema["parcels_plus"],
+              | "last_status_event_name"
+              | "last_status_timestamp"
+              | "last_status_event_data"
+              | "last_status_workflow_order"
+          >
+        | undefined
+        | null
 ): ParcelsTableRow["lastStatus"] => {
-    if (!event) {
+    if (!(event?.last_status_event_name && event.last_status_timestamp)) {
         return null;
     }
 
     return {
-        name: event.event_name,
-        eventData: event.event_data,
-        timestamp: new Date(event.timestamp),
+        name: event.last_status_event_name,
+        eventData: event.last_status_event_data ?? "",
+        timestamp: new Date(event.last_status_timestamp),
+        workflowOrder: event.last_status_workflow_order ?? -1, //for now
     };
 };
