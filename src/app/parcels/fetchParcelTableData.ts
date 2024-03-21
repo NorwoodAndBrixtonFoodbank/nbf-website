@@ -3,9 +3,6 @@ import { DatabaseError, EdgeFunctionError } from "../errorClasses";
 import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsTableData";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
-import { PostgrestQueryBuilder, PostgrestFilterBuilder } from "@supabase/postgrest-js";
-import { Database } from "@/databaseTypesFile";
-import { TableNames, ViewNames } from "@/databaseUtils";
 import { logError } from "@/logger/logger";
 
 export type CongestionChargeDetails = {
@@ -149,24 +146,6 @@ export const getParcelIds = async (
     }
 
     return data.map((parcel) => parcel.parcel_id ?? "") ?? [];
-};
-
-export const getAllValuesForKeys = async <Return>(
-    supabase: Supabase,
-    table: TableNames | ViewNames,
-    selectMethod: (
-        query: PostgrestQueryBuilder<Database["public"], any, any>
-    ) => PostgrestFilterBuilder<Database["public"], any, any>
-): Promise<Return> => {
-    const query = selectMethod(supabase.from(table));
-
-    const { data, error } = await query;
-    if (error) {
-        console.error(error);
-        throw new DatabaseError("fetch", table);
-    }
-
-    return data ?? [];
 };
 
 export interface CollectionCentresOptions {

@@ -24,11 +24,8 @@ import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
 import {
     CollectionCentresOptions,
-    ParcelProcessingData,
     RequestParams,
-    StatusResponseRow,
     areRequestsIdentical,
-    getAllValuesForKeys,
     getParcelIds,
     getParcelsCount,
     getParcelsData,
@@ -38,11 +35,12 @@ import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { saveParcelStatus } from "./ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
-import { PostgrestFilterBuilder, PostgrestQueryBuilder } from "@supabase/postgrest-js";
+import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { dateFilter } from "@/components/Tables/DateFilter";
 import { CircularProgress } from "@mui/material";
+import { logError } from "@/logger/logger";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -262,32 +260,30 @@ const buildDeliveryCollectionFilter = async (): Promise<Filter<ParcelsTableRow, 
         return query.in("collection_centre_acronym", state);
     };
 
-    const getAllDeliveryCollectionOptions = (
-        query: PostgrestQueryBuilder<Database["public"], any, any>
-    ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.select("collection_centre_name, collection_centre_acronym");
-    };
     const keySet = new Set();
-    const response: Partial<ParcelProcessingData> = await getAllValuesForKeys<
-        Partial<ParcelProcessingData>
-    >(supabase, "parcels_plus", getAllDeliveryCollectionOptions);
-    const optionsSet: CollectionCentresOptions[] = response.reduce<CollectionCentresOptions[]>(
-        (filteredOptions, row) => {
-            if (
-                row?.collection_centre_acronym &&
-                row.collection_centre_name &&
-                !keySet.has(row.collection_centre_acronym)
-            ) {
-                keySet.add(row.collection_centre_acronym);
-                filteredOptions.push({
-                    name: row.collection_centre_name,
-                    acronym: row.collection_centre_acronym,
-                });
-            }
-            return filteredOptions.sort();
-        },
-        []
-    );
+    const { data, error } = await supabase
+        .from("parcels_plus")
+        .select("collection_centre_name, collection_centre_acronym");
+    if (error) {
+        void logError("error fetching collection centre filter options");
+    }
+    const optionsResponse = data ?? [];
+    const optionsSet: CollectionCentresOptions[] = optionsResponse.reduce<
+        CollectionCentresOptions[]
+    >((filteredOptions, row) => {
+        if (
+            row?.collection_centre_acronym &&
+            row.collection_centre_name &&
+            !keySet.has(row.collection_centre_acronym)
+        ) {
+            keySet.add(row.collection_centre_acronym);
+            filteredOptions.push({
+                name: row.collection_centre_name,
+                acronym: row.collection_centre_acronym,
+            });
+        }
+        return filteredOptions.sort();
+    }, []);
 
     return checklistFilter<ParcelsTableRow>({
         key: "deliveryCollection",
@@ -312,25 +308,20 @@ const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]
         }
     };
 
-    const getAllLastStatusOptions = (
-        query: PostgrestQueryBuilder<Database["public"], any, any>
-    ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.select("event_name");
-    };
     const keySet = new Set();
-    const response: StatusResponseRow[] = await getAllValuesForKeys<StatusResponseRow[]>(
-        supabase,
-        "status_order",
-        getAllLastStatusOptions
-    );
-    const optionsSet: string[] = response.reduce<string[]>((filteredOptions, row) => {
+    const { data, error } = await supabase.from("status_order").select("event_name");
+    if (error) {
+        void logError("error fetching last status filter options");
+    }
+    const optionsResponse = data ?? [];
+    const optionsSet: string[] = optionsResponse.reduce<string[]>((filteredOptions, row) => {
         if (row.event_name && !keySet.has(row.event_name)) {
             keySet.add(row.event_name);
             filteredOptions.push(row.event_name);
         }
         return filteredOptions.sort();
     }, []);
-    optionsSet.push("None");
+    data && optionsSet.push("None");
 
     return checklistFilter<ParcelsTableRow>({
         key: "lastStatus",
