@@ -145,7 +145,10 @@ export const getParcelIds = async (
         throw new DatabaseError("fetch", "parcels");
     }
 
-    return data.map((parcel) => parcel.parcel_id ?? "") ?? [];
+    return data.reduce<string[]>((reducedData, parcel) => {
+        parcel.parcel_id && reducedData.push(parcel.parcel_id);
+        return reducedData;
+    }, []);
 };
 
 export interface CollectionCentresOptions {
