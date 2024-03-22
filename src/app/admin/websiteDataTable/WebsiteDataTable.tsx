@@ -23,7 +23,7 @@ import { fetchWebsiteData, updateDbWebsiteData } from "./FetchWebsiteData";
 import CustomComponent from "./CustomEditComponent";
 
 export interface WebsiteDataRow {
-    name: string;
+    readableName: string;
     id: string;
     value: string;
 }
@@ -125,7 +125,7 @@ const WebsiteDataTable: React.FC = () => {
     };
 
     const websiteDataColumns: GridColDef[] = [
-        { field: "name", headerName: "Field", flex: 1, editable: false },
+        { field: "readableName", headerName: "Field", flex: 1, editable: false },
         {
             field: "value",
             headerName: "Value",
