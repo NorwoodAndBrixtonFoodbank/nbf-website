@@ -266,7 +266,9 @@ const buildDeliveryCollectionFilter = async (): Promise<Filter<ParcelsTableRow, 
         .from("parcels_plus")
         .select("collection_centre_name, collection_centre_acronym");
     if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: Collection centre filter options");
+        const logId = await logErrorReturnLogId(
+            "Error with fetch: Collection centre filter options", error
+        );
         throw new DatabaseError("fetch", "collection centre filter options", logId);
     }
     const optionsResponse = data ?? [];

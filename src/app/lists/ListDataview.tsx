@@ -129,7 +129,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
-    const [listData, setListData] = useState<ListRow[]>(listOfIngridients);
+    const [listData, setListData] = useState<ListRow[]>(listOfIngredients);
     const [primaryFilters, setPrimaryFilters] = useState<Filter<ListRow, string>[]>(filters);
 
     if (listOfIngredients === null) {
@@ -152,10 +152,10 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         const row2Index = primaryKeys.indexOf(row2.primaryKey);
 
         const row1Item = listOfIngredients[row1Index];
-        const row1Order = row1Item.row_order;
+        const row1Order = row1Item.rowOrder;
 
         const row2Item = listOfIngredients[row2Index];
-        const row2Order = row2Item.row_order;
+        const row2Order = row2Item.rowOrder;
 
         row1Item.rowOrder = row2Order;
         row2Item.rowOrder = row1Order;
@@ -205,7 +205,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
 
             if (error) {
                 const logId = await logErrorReturnLogId(
-                    `Error with delete: Ingredient id ${itemToDelete.primary_key}`,
+                    `Error with delete: Ingredient id ${itemToDelete.primaryKey}`,
                     error
                 );
                 setErrorMsg(error.message + `Error ID: ${logId}`);
@@ -217,7 +217,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
 
     useEffect(() => {
         setListData(
-            listOfIngridients.filter((row) => {
+            listOfIngredients.filter((row) => {
                 return primaryFilters.every((filter) => {
                     return (
                         filter.methodConfig.paginationType === PaginationType.Client &&
@@ -226,13 +226,13 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                 });
             })
         );
-    }, [primaryFilters, listOfIngridients]);
+    }, [primaryFilters, listOfIngredients]);
 
     return (
         <>
             <ConfirmDialog
                 message={`Are you sure you want to delete ${
-                    toDelete ? listOfIngredients[toDelete].item_name : ""
+                    toDelete ? listOfIngredients[toDelete].itemName : ""
                 }?`}
                 isOpen={toDeleteModalOpen}
                 onConfirm={onConfirmDeletion}
