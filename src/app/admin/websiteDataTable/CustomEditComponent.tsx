@@ -12,8 +12,6 @@ const CustomComponent: React.FC<CustomCellProps> = (props: CustomCellProps) => {
     const initialValue = useRef(props.value);
     const [value, setValue] = useState<string>(props.value);
 
-    console.log(initialValue, value);
-
     useEffect(() => {
         initialValue.current = props.value;
         setValue(props.value);
