@@ -359,26 +359,25 @@ const ParcelsPage: React.FC<{}> = () => {
         }
     }, [parcelId]);
 
-    const clientIdIsValidLink = clientIdForSelectedParcel !== null;
-
     useEffect(() => {
-        const fetchClientId = async (): Promise<void> => {
+        const fetchAndSetClientIdForSelectedParcel = async (): Promise<void> => {
             const { data, error } = await supabase
                 .from("parcels")
                 .select("client_id")
-                .eq("primary_key", parcelId);
+                .eq("primary_key", parcelId)
+                .single();
 
             if (error) {
-                console.error("Error fetching parcel data", error.message);
+                void logError("...");
                 return;
             }
 
-            if (data && data.length > 0) {
-                const fetchedClientId = data[0].client_id;
+                const fetchedClientId = data.client_id;
                 setClientIdForSelectedParcel(fetchedClientId);
-            }
+
         };
-        fetchClientId();
+        setClientIdForSelectedParcel(null)
+        fetchAndSetClientIdForSelectedParcel();
     }, [parcelId]);
 
     const [perPage, setPerPage] = useState(10);
@@ -761,14 +760,14 @@ const ParcelsPage: React.FC<{}> = () => {
                                     <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
                                         Edit Parcel
                                     </LinkButton>
-                                    {clientIdIsValidLink && (
+                                    {clientIdForSelectedParcel && (
                                         <LinkButton
                                             link={`/clients?clientId=${clientIdForSelectedParcel}`}
                                         >
                                             See Client Details
                                         </LinkButton>
                                     )}
-                                    {clientIdIsValidLink && (
+                                    {clientIdForSelectedParcel && (
                                         <LinkButton
                                             link={`/clients/edit/${clientIdForSelectedParcel}`}
                                         >
@@ -778,10 +777,11 @@ const ParcelsPage: React.FC<{}> = () => {
                                 </Centerer>
                             </ButtonsDiv>
                         </OutsideDiv>
-                    </Modal>
+                        </Modal>
+                </>
+            )}
         </>
     );
 };
-
 
 export default ParcelsPage;
