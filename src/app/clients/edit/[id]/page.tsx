@@ -17,6 +17,7 @@ const EditClients: ({ params }: EditClientsParameters) => React.ReactElement = (
 }: EditClientsParameters) => {
     const [clientData, setClientData] = useState<Schema["clients"]>();
     const [familyData, setFamilyData] = useState<Schema["families"][]>();
+    
     useEffect(() => {
         (async () => {
             if (params.id) {
@@ -32,7 +33,6 @@ const EditClients: ({ params }: EditClientsParameters) => React.ReactElement = (
         })();
     }, [clientData?.family_id]);
 
-    console.log(clientData, familyData);
     const initialFields = clientData && familyData ? autofill(clientData, familyData) : null;
 
     const initialFormErrors: FormErrors = {
