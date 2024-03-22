@@ -15,7 +15,7 @@ const Loading: React.FC<{}> = () => {
     return (
         <main>
             <Centerer>
-                <CircularProgress />
+                <CircularProgress aria-label="waiting for page load" />
             </Centerer>
         </main>
     );
