@@ -178,9 +178,16 @@ export const areRequestsIdentical = <Data>(
     requestParamsA: RequestParams<Data>,
     requestParamsB: RequestParams<Data>
 ): boolean => {
-    const filtersSame = Array.from(requestParamsA.allFilters).every((filter, index) =>
-        filter.areStatesIdentical(filter.state, requestParamsB.allFilters[index].state)
-    );
+    // [...requestParamsA.allFilters].forEach((filter, index) => { console.log("p"); console.log(filter.key, filter.state, requestParamsB.allFilters[index].state, filter.areStatesIdentical(filter.state, requestParamsB.allFilters[index].state));}) 
+    // const filtersSame = [...requestParamsA.allFilters].every((filter, index) =>  (
+        // filter.areStatesIdentical(filter.state, requestParamsB.allFilters[index].state)));
+    let filtersSame = true;
+    console.log("requestParamsA.allfilters: ",requestParamsA.allFilters)
+    console.log("requestParamsA.allfilters.length: ",Object.keys(requestParamsA.allFilters).length);
+    for (var i = 0; i < Object.keys(requestParamsA.allFilters).length; i++){
+        console.log(requestParamsA.allFilters[i].key, requestParamsA.allFilters[i].state, requestParamsB.allFilters[i].state, requestParamsA.allFilters[i].areStatesIdentical(requestParamsA.allFilters[i].state, requestParamsB.allFilters[i].state));
+        if (filtersSame) {filtersSame = requestParamsA.allFilters[i].areStatesIdentical(requestParamsA.allFilters[i].state, requestParamsB.allFilters[i].state)}
+    }
     const sortStateSame =
         requestParamsA.sortState.sortEnabled === requestParamsB.sortState.sortEnabled &&
         requestParamsA.sortState.sortEnabled &&
