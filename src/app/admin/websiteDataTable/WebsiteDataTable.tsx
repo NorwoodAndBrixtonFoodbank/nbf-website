@@ -8,20 +8,19 @@ import {
     GridColDef,
     GridEventListener,
     GridRowEditStopReasons,
-    GridRowHeightParams,
     GridRowId,
     GridRowModes,
     GridRowModesModel,
-    GridRowSpacing,
-    GridRowSpacingParams,
+    useGridApiRef,
 } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
-import { LinearProgress, TextField } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import { logError, logInfo } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { fetchWebsiteData, updateDbWebsiteData } from "./FetchWebsiteData";
+import CustomComponent from "./CustomEditComponent";
 
 export interface WebsiteDataRow {
     name: string;
@@ -33,6 +32,7 @@ const WebsiteDataTable: React.FC = () => {
     const [rows, setRows] = useState<WebsiteDataRow[]>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const apiRef = useGridApiRef();
 
     useEffect(() => {
         fetchWebsiteData()
@@ -96,7 +96,10 @@ const WebsiteDataTable: React.FC = () => {
     };
 
     const handleRowEditStop: GridEventListener<"rowEditStop"> = (params, event) => {
-        if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+        if (
+            params.reason === GridRowEditStopReasons.rowFocusOut ||
+            params.reason === GridRowEditStopReasons.enterKeyDown
+        ) {
             //prevents default behaviour of saving the edited state when clicking away from row being edited, force user to use save or cancel buttons
             event.defaultMuiPrevented = true;
         }
@@ -123,7 +126,16 @@ const WebsiteDataTable: React.FC = () => {
 
     const websiteDataColumns: GridColDef[] = [
         { field: "name", headerName: "Field", flex: 1, editable: false },
-        { field: "value", headerName: "Value", flex: 3, editable: true },
+        {
+            field: "value",
+            headerName: "Value",
+            flex: 3,
+            editable: true,
+            renderCell: (params) => <CustomComponent {...params} editMode={false} />,
+            renderEditCell: (params) => (
+                <CustomComponent {...params} hasFocus={true} editMode={true} />
+            ),
+        },
         {
             field: "actions",
             type: "actions",
@@ -187,7 +199,8 @@ const WebsiteDataTable: React.FC = () => {
                         toolbar: { setRows, setRowModesModel, rows },
                     }}
                     loading={isLoading}
-                    getRowHeight={() => "auto"}
+                    getRowHeight={() => 150}
+                    apiRef={apiRef}
                 />
             )}
         </>

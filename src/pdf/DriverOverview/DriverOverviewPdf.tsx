@@ -22,7 +22,6 @@ export interface DriverOverviewCardDataProps {
     date: Date;
     tableData: DriverOverviewTableData[];
     message: string;
-    
 }
 
 interface DriverOverviewCardProps {
@@ -182,9 +181,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                     <Image src="/logo.png" style={styles.logoStyling}></Image>
                 </View>
                 <View style={styles.warningSection}>
-                    <Text style={styles.h3text}>
-                        {data.message}
-                    </Text>
+                    <Text style={styles.h3text}>{data.message}</Text>
                     <Text style={[styles.h3text, { fontFamily: "Helvetica-Bold" }]}>
                         THIS SHEET MUST BE DESTROYED OR RETURNED TO THE WAREHOUSE IMMEDIATELY ON
                         COMPLETION OF DELIVERIES
