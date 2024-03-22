@@ -45,7 +45,7 @@ serve(async (req: Handler): Promise<Response> => {
 
         return new Response(JSON.stringify(result), generateCorsOptionsForJsonResponse(200));
     } catch (error) {
-        console.error(error)
+        console.error(error);
         return new Response(JSON.stringify(error), generateCorsOptionsForJsonResponse(400));
     }
 });

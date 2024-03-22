@@ -1,5 +1,5 @@
 import { GridRenderEditCellParams, useGridApiContext } from "@mui/x-data-grid";
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 interface CustomCellProps extends GridRenderEditCellParams {
     editMode: boolean;
@@ -11,6 +11,13 @@ const CustomComponent: React.FC<CustomCellProps> = (props: CustomCellProps) => {
     const ref = useRef<HTMLTextAreaElement>(null);
     const initialValue = useRef(props.value);
     const [value, setValue] = useState<string>(props.value);
+
+    console.log(initialValue, value);
+
+    useEffect(() => {
+        initialValue.current = props.value;
+        setValue(props.value);
+    }, [props.value]);
 
     useLayoutEffect(() => {
         if (hasFocus) {

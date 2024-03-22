@@ -113,6 +113,7 @@ const WebsiteDataTable: React.FC = () => {
     };
 
     const handleCancelClick = (id: GridRowId) => () => {
+        console.log(rowModesModel[id]);
         setRowModesModel((currentValue) => ({
             ...currentValue,
             [id]: { mode: GridRowModes.View, ignoreModifications: true },
