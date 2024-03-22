@@ -368,15 +368,14 @@ const ParcelsPage: React.FC<{}> = () => {
                 .single();
 
             if (error) {
-                void logError("...");
+                void logError(`Error fetching clientId from database: ${error.message}`);
                 return;
             }
 
-                const fetchedClientId = data.client_id;
-                setClientIdForSelectedParcel(fetchedClientId);
-
+            const fetchedClientId = data.client_id;
+            setClientIdForSelectedParcel(fetchedClientId);
         };
-        setClientIdForSelectedParcel(null)
+        setClientIdForSelectedParcel(null);
         fetchAndSetClientIdForSelectedParcel();
     }, [parcelId]);
 
@@ -689,49 +688,49 @@ const ParcelsPage: React.FC<{}> = () => {
                 </Centerer>
             ) : (
                 <>
-                <TableSurface>
-                    <Table
-                        dataPortion={parcelsDataPortion}
-                        isLoading={isLoading}
-                        paginationConfig={{
-                            enablePagination: true,
-                            filteredCount: filteredParcelCount,
-                            onPageChange: setCurrentPage,
-                            onPerPageChange: setPerPage,
-                        }}
-                        headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
-                        columnDisplayFunctions={parcelTableColumnDisplayFunctions}
-                        columnStyleOptions={parcelTableColumnStyleOptions}
-                        onRowClick={onParcelTableRowClick}
-                        sortConfig={{
-                            sortPossible: true,
-                            sortableColumns: sortableColumns,
-                            setSortState: setSortState,
-                        }}
-                        filterConfig={{
-                            primaryFiltersShown: true,
-                            additionalFiltersShown: true,
-                            primaryFilters: primaryFilters,
-                            additionalFilters: additionalFilters,
-                            setPrimaryFilters: setPrimaryFilters,
-                            setAdditionalFilters: setAdditionalFilters,
-                        }}
-                        defaultShownHeaders={defaultShownHeaders}
-                        toggleableHeaders={toggleableHeaders}
-                        checkboxConfig={{
-                            displayed: true,
-                            selectedRowIds: checkedParcelIds,
-                            isAllCheckboxChecked: isAllCheckBoxSelected,
-                            onCheckboxClicked: (parcelData) =>
-                                selectOrDeselectRow(parcelData.parcelId),
-                            onAllCheckboxClicked: () => toggleAllCheckBox(),
-                            isRowChecked: (parcelData) =>
-                                checkedParcelIds.includes(parcelData.parcelId),
-                        }}
-                        editableConfig={{ editable: false }}
-                        pointerOnHover={true}
-                    />
-                </TableSurface>
+                    <TableSurface>
+                        <Table
+                            dataPortion={parcelsDataPortion}
+                            isLoading={isLoading}
+                            paginationConfig={{
+                                enablePagination: true,
+                                filteredCount: filteredParcelCount,
+                                onPageChange: setCurrentPage,
+                                onPerPageChange: setPerPage,
+                            }}
+                            headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
+                            columnDisplayFunctions={parcelTableColumnDisplayFunctions}
+                            columnStyleOptions={parcelTableColumnStyleOptions}
+                            onRowClick={onParcelTableRowClick}
+                            sortConfig={{
+                                sortPossible: true,
+                                sortableColumns: sortableColumns,
+                                setSortState: setSortState,
+                            }}
+                            filterConfig={{
+                                primaryFiltersShown: true,
+                                additionalFiltersShown: true,
+                                primaryFilters: primaryFilters,
+                                additionalFilters: additionalFilters,
+                                setPrimaryFilters: setPrimaryFilters,
+                                setAdditionalFilters: setAdditionalFilters,
+                            }}
+                            defaultShownHeaders={defaultShownHeaders}
+                            toggleableHeaders={toggleableHeaders}
+                            checkboxConfig={{
+                                displayed: true,
+                                selectedRowIds: checkedParcelIds,
+                                isAllCheckboxChecked: isAllCheckBoxSelected,
+                                onCheckboxClicked: (parcelData) =>
+                                    selectOrDeselectRow(parcelData.parcelId),
+                                onAllCheckboxClicked: () => toggleAllCheckBox(),
+                                isRowChecked: (parcelData) =>
+                                    checkedParcelIds.includes(parcelData.parcelId),
+                            }}
+                            editableConfig={{ editable: false }}
+                            pointerOnHover={true}
+                        />
+                    </TableSurface>
                     <Modal
                         header={
                             <>
@@ -748,7 +747,7 @@ const ParcelsPage: React.FC<{}> = () => {
                             router.push("/parcels");
                         }}
                         headerId="expandedParcelDetailsModal"
-                        >
+                    >
                         <OutsideDiv>
                             <ContentDiv>
                                 <Suspense fallback={<ExpandedParcelDetailsFallback />}>
@@ -777,7 +776,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                 </Centerer>
                             </ButtonsDiv>
                         </OutsideDiv>
-                        </Modal>
+                    </Modal>
                 </>
             )}
         </>
