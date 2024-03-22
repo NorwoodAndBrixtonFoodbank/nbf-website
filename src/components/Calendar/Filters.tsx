@@ -34,8 +34,6 @@ const CheckboxAndTitleDiv = styled.div`
     min-width: 300px;
 `;
 
-const SelectAllCheckboxes = Checkbox;
-
 const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
     allLocations,
     currentLocations,
@@ -65,7 +63,7 @@ const CalendarFilters: React.FC<CalendarFilterAccordionProps> = ({
             <FormControlLabel
                 label="Select All"
                 control={
-                    <SelectAllCheckboxes
+                    <Checkbox
                         checked={allLocations.length === currentLocations.length}
                         onChange={handleSelectAllChange}
                     />

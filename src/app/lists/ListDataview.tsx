@@ -2,7 +2,7 @@
 
 import { DatabaseError } from "@/app/errorClasses";
 import Table, { ColumnDisplayFunctions, ColumnStyles } from "@/components/Tables/Table";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import EditModal, { EditModalState } from "@/app/lists/EditModal";
 import supabase from "@/supabaseClient";
@@ -14,8 +14,11 @@ import Button from "@mui/material/Button";
 import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
+import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
+import { Filter, PaginationType } from "@/components/Tables/Filters";
 
-interface ListRow {
+export interface ListRow {
     primaryKey: string;
     rowOrder: number;
     itemName: string;
@@ -37,12 +40,12 @@ interface QuantityAndNotes {
 }
 
 interface ListDataViewProps {
-    listOfIngridients: Schema["lists"][];
-    setListOfIngridients: React.Dispatch<React.SetStateAction<Schema["lists"][]>>;
+    listOfIngredients: ListRow[];
+    setListOfIngredients: React.Dispatch<React.SetStateAction<ListRow[]>>;
     comment: string;
 }
 
-export const headerKeysAndLabels = [
+export const listsHeaderKeysAndLabels = [
     ["itemName", "Description"],
     ["1", "Single"],
     ["2", "Family of 2"],
@@ -56,13 +59,39 @@ export const headerKeysAndLabels = [
     ["10", "Family of 10"],
 ] satisfies [keyof ListRow, string][];
 
+export const listRowToListDB = (listRow: ListRow): Schema["lists"] => ({
+    item_name: listRow.itemName,
+    notes_for_1: listRow[1].notes,
+    notes_for_2: listRow[2].notes,
+    notes_for_3: listRow[3].notes,
+    notes_for_4: listRow[4].notes,
+    notes_for_5: listRow[5].notes,
+    notes_for_6: listRow[6].notes,
+    notes_for_7: listRow[7].notes,
+    notes_for_8: listRow[8].notes,
+    notes_for_9: listRow[9].notes,
+    notes_for_10: listRow[10].notes,
+    quantity_for_1: listRow[1].quantity,
+    quantity_for_2: listRow[2].quantity,
+    quantity_for_3: listRow[3].quantity,
+    quantity_for_4: listRow[4].quantity,
+    quantity_for_5: listRow[5].quantity,
+    quantity_for_6: listRow[6].quantity,
+    quantity_for_7: listRow[7].quantity,
+    quantity_for_8: listRow[8].quantity,
+    quantity_for_9: listRow[9].quantity,
+    quantity_for_10: listRow[10].quantity,
+    primary_key: listRow.primaryKey,
+    row_order: listRow.rowOrder,
+});
+
 const displayQuantityAndNotes = (data: QuantityAndNotes): React.ReactElement => {
     return <TooltipCell cellValue={data.quantity} tooltipValue={data.notes ?? ""} />;
 };
 
 const listDataViewColumnDisplayFunctions = {
     ...Object.fromEntries(
-        headerKeysAndLabels.slice(1).map(([key]) => [key, displayQuantityAndNotes])
+        listsHeaderKeysAndLabels.slice(1).map(([key]) => [key, displayQuantityAndNotes])
     ),
 } satisfies ColumnDisplayFunctions<ListRow>;
 
@@ -71,7 +100,7 @@ const listsColumnStyleOptions: ColumnStyles<ListRow> = {
         minWidth: "8rem",
     },
     ...Object.fromEntries(
-        headerKeysAndLabels.slice(1).map(([key]) => [
+        listsHeaderKeysAndLabels.slice(1).map(([key]) => [
             key,
             {
                 minWidth: "10rem",
@@ -81,9 +110,18 @@ const listsColumnStyleOptions: ColumnStyles<ListRow> = {
     ),
 };
 
+const filters: Filter<ListRow, string>[] = [
+    buildTextFilter({
+        key: "itemName",
+        label: "Item",
+        headers: listsHeaderKeysAndLabels,
+        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
+    }),
+];
+
 const ListsDataView: React.FC<ListDataViewProps> = ({
-    listOfIngridients,
-    setListOfIngridients: setListOfIngridients,
+    listOfIngredients,
+    setListOfIngredients,
     comment,
 }) => {
     const [modal, setModal] = useState<EditModalState>();
@@ -91,60 +129,43 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
+    const [listData, setListData] = useState<ListRow[]>(listOfIngredients);
+    const [primaryFilters, setPrimaryFilters] = useState<Filter<ListRow, string>[]>(filters);
 
-    if (listOfIngridients === null) {
+    if (listOfIngredients === null) {
+        void logInfoReturnLogId("No ingredients found @ app/lists/ListDataView.tsx");
         throw new Error("No data found");
     }
 
-    const rows = listOfIngridients.map((row) => {
-        const newRow = {
-            primaryKey: row.primary_key,
-            rowOrder: row.row_order,
-            itemName: row.item_name,
-            ...Object.fromEntries(
-                headerKeysAndLabels
-                    .filter(([key]) => /^\d+$/.test(key))
-                    .map(([key]) => [
-                        key,
-                        {
-                            quantity: row[`quantity_for_${key}` as keyof Schema["lists"]],
-                            notes: row[`notes_for_${key}` as keyof Schema["lists"]],
-                        },
-                    ])
-            ),
-        } as ListRow; // this cast is needed here as the type system can't infer what Object.fromEntries will return
-        return newRow;
-    });
-
-    const toggleableHeaders = headerKeysAndLabels.map(([key]) => key);
+    const toggleableHeaders = listsHeaderKeysAndLabels.map(([key]) => key);
 
     const onEdit = (index: number): void => {
-        setModal(listOfIngridients[index]);
+        setModal(listRowToListDB(listOfIngredients[index]));
     };
 
     const reorderRows = (row1: ListRow, row2: ListRow): void => {
-        const primaryKeys = listOfIngridients.map(
-            (listOfIngridients) => listOfIngridients.primary_key
+        const primaryKeys = listOfIngredients.map(
+            (listOfIngredients) => listOfIngredients.primaryKey
         );
 
         const row1Index = primaryKeys.indexOf(row1.primaryKey);
         const row2Index = primaryKeys.indexOf(row2.primaryKey);
 
-        const row1Item = listOfIngridients[row1Index];
-        const row1Order = row1Item.row_order;
+        const row1Item = listOfIngredients[row1Index];
+        const row1Order = row1Item.rowOrder;
 
-        const row2Item = listOfIngridients[row2Index];
-        const row2Order = row2Item.row_order;
+        const row2Item = listOfIngredients[row2Index];
+        const row2Order = row2Item.rowOrder;
 
-        row1Item.row_order = row2Order;
-        row2Item.row_order = row1Order;
+        row1Item.rowOrder = row2Order;
+        row2Item.rowOrder = row1Order;
 
-        const newListOfIngridients = [...listOfIngridients];
+        const newListOfIngredients = [...listOfIngredients];
 
-        newListOfIngridients[row1Index] = row2Item;
-        newListOfIngridients[row2Index] = row1Item;
+        newListOfIngredients[row1Index] = row2Item;
+        newListOfIngredients[row2Index] = row1Item;
 
-        setListOfIngridients(newListOfIngridients);
+        setListOfIngredients(newListOfIngredients);
     };
     const onSwapRows = async (row1: ListRow, row2: ListRow): Promise<void> => {
         const { error } = await supabase.from("lists").upsert([
@@ -159,7 +180,11 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         ]);
 
         if (error) {
-            throw new DatabaseError("update", "lists items");
+            const logId = await logErrorReturnLogId(
+                "Error with upsert: List row item order",
+                error
+            );
+            throw new DatabaseError("update", "list items", logId);
         }
 
         reorderRows(row1, row2);
@@ -172,25 +197,42 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
 
     const onConfirmDeletion = async (): Promise<void> => {
         if (toDelete !== null) {
-            const itemToDelete = listOfIngridients[toDelete];
+            const itemToDelete = listOfIngredients[toDelete];
             const { error } = await supabase
                 .from("lists")
                 .delete()
-                .eq("primary_key", itemToDelete.primary_key);
+                .eq("primary_key", itemToDelete.primaryKey);
 
             if (error) {
-                setErrorMsg(error.message);
+                const logId = await logErrorReturnLogId(
+                    `Error with delete: Ingredient id ${itemToDelete.primaryKey}`,
+                    error
+                );
+                setErrorMsg(error.message + `Error ID: ${logId}`);
             } else {
                 window.location.reload();
             }
         }
     };
 
+    useEffect(() => {
+        setListData(
+            listOfIngredients.filter((row) => {
+                return primaryFilters.every((filter) => {
+                    return (
+                        filter.methodConfig.paginationType === PaginationType.Client &&
+                        filter.methodConfig.method(row, filter.state, filter.key)
+                    );
+                });
+            })
+        );
+    }, [primaryFilters, listOfIngredients]);
+
     return (
         <>
             <ConfirmDialog
                 message={`Are you sure you want to delete ${
-                    toDelete ? listOfIngridients[toDelete].item_name : ""
+                    toDelete ? listOfIngredients[toDelete].itemName : ""
                 }?`}
                 isOpen={toDeleteModalOpen}
                 onConfirm={onConfirmDeletion}
@@ -213,18 +255,27 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             <TableSurface>
                 <CommentBox originalComment={comment} />
                 <Table<ListRow>
-                    headerKeysAndLabels={headerKeysAndLabels}
+                    headerKeysAndLabels={listsHeaderKeysAndLabels}
                     toggleableHeaders={toggleableHeaders}
-                    data={rows}
-                    filters={["itemName"]}
-                    pagination={false}
-                    onEdit={onEdit}
-                    onDelete={onDeleteButtonClick}
-                    onSwapRows={onSwapRows}
-                    sortable={[]}
+                    dataPortion={listData}
                     columnDisplayFunctions={listDataViewColumnDisplayFunctions}
                     columnStyleOptions={listsColumnStyleOptions}
                     checkboxConfig={{ displayed: false }}
+                    paginationConfig={{ enablePagination: false }}
+                    sortConfig={{ sortPossible: false }}
+                    editableConfig={{
+                        editable: true,
+                        onEdit: onEdit,
+                        onDelete: onDeleteButtonClick,
+                        onSwapRows: onSwapRows,
+                        setDataPortion: setListData,
+                    }}
+                    filterConfig={{
+                        primaryFiltersShown: true,
+                        primaryFilters: primaryFilters,
+                        setPrimaryFilters: setPrimaryFilters,
+                        additionalFiltersShown: false,
+                    }}
                 />
                 <ButtonMargin>
                     <Button variant="contained" onClick={() => setModal(null)}>

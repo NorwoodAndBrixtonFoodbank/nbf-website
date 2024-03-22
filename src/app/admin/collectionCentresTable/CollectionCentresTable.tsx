@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Table, { TableHeaders } from "@/components/Tables/Table";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
@@ -10,6 +10,15 @@ import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
+import { Filter, PaginationType } from "@/components/Tables/Filters";
+import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
+
+interface CollectionCentresTableRow {
+    acronym: Schema["collection_centres"]["acronym"];
+    name: Schema["collection_centres"]["name"];
+    primary_key: Schema["collection_centres"]["primary_key"];
+}
 
 const DangerDialog = styled(Modal)`
     & .header {
@@ -35,14 +44,34 @@ const collectionCentresTableHeaderKeysAndLabels: TableHeaders<Schema["collection
     ["acronym", "Acronym"],
 ];
 
+const filters: Filter<CollectionCentresTableRow, string>[] = [
+    buildTextFilter({
+        key: "name",
+        label: "Name",
+        headers: collectionCentresTableHeaderKeysAndLabels,
+        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
+    }),
+    buildTextFilter({
+        key: "acronym",
+        label: "Acronym",
+        headers: collectionCentresTableHeaderKeysAndLabels,
+        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
+    }),
+];
+
 interface Props {
-    collectionCentreData: Schema["collection_centres"][];
+    collectionCentreData: CollectionCentresTableRow[];
 }
 
 const CollectionCentresTables: React.FC<Props> = (props) => {
+    const [collectionCentres, setCollectionCentres] = useState<Schema["collection_centres"][]>(
+        props.collectionCentreData
+    );
     const [collectionCentreToDelete, setCollectionCentreToDelete] =
         useState<Schema["collection_centres"]>();
     const [refreshRequired, setRefreshRequired] = useState(false);
+    const [primaryFilters, setPrimaryFilters] =
+        useState<Filter<CollectionCentresTableRow, string>[]>(filters);
 
     const collectionCentreOnDelete = (rowIndex: number): void => {
         setCollectionCentreToDelete(props.collectionCentreData[rowIndex]); // TODO VFB-25 Change onDelete in table to return row
@@ -55,27 +84,55 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
             .eq("name", collectionCentreToDelete!.name);
 
         if (error) {
-            throw new DatabaseError("delete", "collection centre data");
+            const logId = await logErrorReturnLogId("Error with delete: Collection Centre", error);
+            throw new DatabaseError("delete", "collection centres", logId);
         }
 
         setCollectionCentreToDelete(undefined);
         setRefreshRequired(true);
+        void logInfoReturnLogId(
+            `Collection centre: ${collectionCentreToDelete?.name} successfully deleted.`
+        );
     };
 
     const onCollectionCentreDeleteCancellation = (): void => {
         setCollectionCentreToDelete(undefined);
     };
 
+    useEffect(() => {
+        setCollectionCentres(
+            props.collectionCentreData.filter((row) => {
+                return primaryFilters.every((filter) => {
+                    return (
+                        filter.methodConfig.paginationType === PaginationType.Client &&
+                        filter.methodConfig.method(row, filter.state, filter.key)
+                    );
+                });
+            })
+        );
+    }, [primaryFilters, props.collectionCentreData]);
+
     return (
         <>
             <Table
-                data={props.collectionCentreData}
+                dataPortion={collectionCentres}
                 headerKeysAndLabels={collectionCentresTableHeaderKeysAndLabels}
-                onDelete={collectionCentreOnDelete}
                 defaultShownHeaders={["name", "acronym"]}
-                filters={["name", "acronym"]}
                 toggleableHeaders={["primary_key"]}
+                paginationConfig={{ enablePagination: false }}
                 checkboxConfig={{ displayed: false }}
+                sortConfig={{ sortPossible: false }}
+                editableConfig={{
+                    editable: true,
+                    onDelete: collectionCentreOnDelete,
+                    setDataPortion: setCollectionCentres,
+                }}
+                filterConfig={{
+                    primaryFiltersShown: true,
+                    primaryFilters: primaryFilters,
+                    setPrimaryFilters: setPrimaryFilters,
+                    additionalFiltersShown: false,
+                }}
             />
 
             {refreshRequired && (

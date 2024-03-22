@@ -7,7 +7,7 @@ import Localization from "@/app/Localization";
 describe("Parcels - Action Bar", () => {
     const mockData: ParcelsTableRow[] = [
         {
-            primaryKey: "primaryKey1",
+            clientId: "primaryKey1",
             addressPostcode: "AB1 2CD",
             phoneNumber: "0987 654321",
             deliveryCollection: {
@@ -22,6 +22,7 @@ describe("Parcels - Action Bar", () => {
                 name: "Delivered",
                 eventData: "Some information",
                 timestamp: new Date(),
+                workflowOrder: 1,
             },
             packingDatetime: new Date(),
             packingTimeLabel: "AM",
@@ -33,7 +34,7 @@ describe("Parcels - Action Bar", () => {
             voucherNumber: "123456789",
         },
         {
-            primaryKey: "primaryKey2",
+            clientId: "primaryKey2",
             addressPostcode: "AB1 aaaa2CD",
             phoneNumber: "+1 234 567",
             deliveryCollection: {
@@ -48,6 +49,7 @@ describe("Parcels - Action Bar", () => {
                 name: "Called and Confirmed",
                 eventData: null,
                 timestamp: new Date(),
+                workflowOrder: 2,
             },
             packingDatetime: new Date(),
             packingTimeLabel: "PM",
@@ -60,33 +62,41 @@ describe("Parcels - Action Bar", () => {
         },
     ];
 
-    const MockActionBar: React.FC<ActionBarProps> = ({ selectedParcels, onDeleteParcels }) => {
+    const MockActionBar: React.FC<ActionBarProps> = ({
+        fetchParcelsByIds: fetchSelectedParcels,
+        parcelIds,
+        onDeleteParcels,
+    }) => {
         return (
             <Localization>
                 <StyleManager>
                     <ActionBar
-                        selectedParcels={selectedParcels}
+                        fetchParcelsByIds={fetchSelectedParcels}
                         onDeleteParcels={onDeleteParcels}
                         hasSavedParcelStatus={() => {}}
                         willSaveParcelStatus={() => {}}
+                        parcelIds={parcelIds}
                     />
                 </StyleManager>
             </Localization>
         );
     };
     describe("Statuses", () => {
-        const selectedParcels = mockData.slice(0, 2);
-        const onDeleteParcels = (parcels: ParcelsTableRow[]): void => {
-            selectedParcels.filter((parcelToDelete) => !parcels.includes(parcelToDelete));
+        let parcelIds: string[] = ["123456789", "123456aaaa789"];
+        const onDeleteParcels = (): void => {
+            parcelIds = [];
         };
 
         beforeEach(() => {
             cy.mount(
                 <MockActionBar
-                    selectedParcels={selectedParcels}
+                    fetchParcelsByIds={async (parcelIds: string[]) =>
+                        await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
+                    }
                     onDeleteParcels={onDeleteParcels}
                     hasSavedParcelStatus={() => {}}
                     willSaveParcelStatus={() => {}}
+                    parcelIds={parcelIds}
                 />
             );
         });
@@ -142,7 +152,7 @@ describe("Parcels - Action Bar", () => {
                 minute: "2-digit",
             });
             cy.get(`input[value="${timeString}"]`).should("exist");
-            selectedParcels.forEach((parcel) => {
+            mockData.forEach((parcel: ParcelsTableRow) => {
                 cy.get(".MuiPaper-root").contains(parcel.addressPostcode);
                 cy.get(".MuiPaper-root").contains(parcel.fullName);
             });
@@ -150,19 +160,22 @@ describe("Parcels - Action Bar", () => {
     });
 
     describe("Actions", () => {
-        const selectedParcels = mockData.slice(0, 2);
-        const onDeleteParcels = (parcels: ParcelsTableRow[]): void => {
-            selectedParcels.filter((parcelToDelete) => !parcels.includes(parcelToDelete));
+        let parcelIds: string[] = ["123456789", "123456aaaa789"];
+        const onDeleteParcels = (): void => {
+            parcelIds = [];
         };
-        const row = selectedParcels[0];
+        const row = mockData[0];
 
         beforeEach(() => {
             cy.mount(
                 <MockActionBar
-                    selectedParcels={selectedParcels}
+                    fetchParcelsByIds={async (parcelIds: string[]) =>
+                        await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
+                    }
                     onDeleteParcels={onDeleteParcels}
                     hasSavedParcelStatus={() => {}}
                     willSaveParcelStatus={() => {}}
+                    parcelIds={parcelIds}
                 />
             );
         });

@@ -2,6 +2,7 @@ import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { Data } from "@/components/DataViewer/DataViewer";
 import { formatDatetimeAsDate } from "@/app/parcels/getExpandedParcelDetails";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 export type RawClientParcelsDetails = Awaited<ReturnType<typeof getRawClientParcelsDetails>>;
 
@@ -39,10 +40,11 @@ const getRawClientParcelsDetails = async (clientId: string): Promise<ParcelsDeta
         .order("packing_datetime", { ascending: false });
 
     if (error) {
-        throw new DatabaseError("fetch", "parcel table data");
+        const logId = await logErrorReturnLogId("Error with fetch: Client parcels", error);
+        throw new DatabaseError("fetch", "client parcels", logId);
     }
 
-    return data ?? [];
+    return data;
 };
 
 export interface ExpandedClientParcelDetails extends Data {

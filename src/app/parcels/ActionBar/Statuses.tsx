@@ -9,8 +9,9 @@ import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import StatusesBarModal from "@/app/parcels/ActionBar/StatusesModal";
 import { DatabaseError } from "@/app/errorClasses";
+import { logErrorReturnLogId } from "@/logger/logger";
 
-export const statusNamesInWorkflowOrder = [
+export const statusNames = [
     "No Status",
     "Request Denied",
     "Pending More Info",
@@ -30,7 +31,7 @@ export const statusNamesInWorkflowOrder = [
     "Request Deleted",
 ];
 
-export type statusType = (typeof statusNamesInWorkflowOrder)[number];
+export type statusType = (typeof statusNames)[number];
 
 const nonMenuStatuses: statusType[] = [
     "Shipping Labels Downloaded",
@@ -59,29 +60,33 @@ export const saveParcelStatus = async (
 
     const { error } = await supabase.from("events").insert(toInsert);
     if (error) {
-        throw new DatabaseError("insert", "status event");
+        const logId = await logErrorReturnLogId("Error with insert: Status event", error);
+        throw new DatabaseError("insert", "status event", logId);
     }
 };
 
 interface Props {
-    selectedParcels: ParcelsTableRow[];
+    fetchParcelsByIds: (checkedParceldIds: string[]) => Promise<ParcelsTableRow[]>;
     statusAnchorElement: HTMLElement | null;
     setStatusAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     modalError: string | null;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
     willSaveParcelStatus: () => void;
     hasSavedParcelStatus: () => void;
+    parcelIds: string[];
 }
 
 const Statuses: React.FC<Props> = ({
-    selectedParcels,
+    fetchParcelsByIds,
     statusAnchorElement,
     setStatusAnchorElement,
     modalError,
     setModalError,
     willSaveParcelStatus,
     hasSavedParcelStatus,
+    parcelIds,
 }) => {
+    const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
     const [selectedStatus, setSelectedStatus] = useState<statusType | null>(null);
     const [statusModal, setStatusModal] = useState(false);
 
@@ -105,14 +110,21 @@ const Statuses: React.FC<Props> = ({
     };
 
     const onMenuItemClick = (status: statusType): (() => void) => {
-        return () => {
-            if (selectedParcels.length !== 0) {
-                setSelectedStatus(status);
-                setStatusModal(true);
-                setStatusAnchorElement(null);
-                setModalError(null);
-            } else {
-                setModalError("Please select at least 1 row.");
+        return async () => {
+            try {
+                const fetchedParcels = await fetchParcelsByIds(parcelIds);
+                setSelectedParcels(fetchedParcels);
+                if (fetchedParcels.length > 0) {
+                    setSelectedStatus(status);
+                    setStatusModal(true);
+                    setStatusAnchorElement(null);
+                    setModalError(null);
+                } else {
+                    setModalError("Please select at least 1 row.");
+                }
+            } catch {
+                setModalError("Database error when fetching selected parcels");
+                return;
             }
         };
     };
@@ -140,7 +152,7 @@ const Statuses: React.FC<Props> = ({
                 anchorEl={statusAnchorElement}
             >
                 <MenuList id="status-menu">
-                    {statusNamesInWorkflowOrder
+                    {statusNames
                         .filter((status) => !nonMenuStatuses.includes(status))
                         .map((status) => {
                             return (

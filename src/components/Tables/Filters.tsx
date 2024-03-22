@@ -1,35 +1,34 @@
 import React from "react";
 import { TableHeaders } from "@/components/Tables/Table";
+import { Database } from "@/databaseTypesFile";
+import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
+
+export enum PaginationType {
+    Server = "SERVER",
+    Client = "CLIENT",
+}
+
+export type MethodConfig<Data, State> =
+    | {
+          method: (
+              query: PostgrestFilterBuilder<Database["public"], any, any>,
+              state: State
+          ) => PostgrestFilterBuilder<Database["public"], any, any>;
+          paginationType: PaginationType.Server;
+      }
+    | {
+          method: (row: Data, state: State, key: keyof Data) => boolean;
+          paginationType: PaginationType.Client;
+      };
 
 export interface Filter<Data, State> {
-    shouldFilter: (data: Data, state: State) => boolean;
+    key: keyof Data;
     filterComponent: (state: State, setState: (state: State) => void) => React.ReactElement;
     state: State;
     initialState: State;
+    methodConfig: MethodConfig<Data, State>;
+    areStatesIdentical: (stateA: State, stateB: State) => boolean;
 }
-
-export interface KeyedFilter<Data, Key extends keyof Data, State> extends Filter<Data, State> {
-    key: Key;
-    label: string;
-}
-
-export const isKeyedFilter = <Data, Key extends keyof Data, State>(
-    filter: Filter<Data, State>
-): filter is KeyedFilter<Data, Key, State> => {
-    return "key" in filter;
-};
-
-export const keyedFilter = <Data, Key extends keyof Data, State>(
-    key: Key,
-    label: string,
-    filter: Filter<Data, State>
-): KeyedFilter<Data, Key, State> => {
-    return {
-        key,
-        label,
-        ...filter,
-    };
-};
 
 export const headerLabelFromKey = <Data, Key extends keyof Data>(
     headers: TableHeaders<Data>,

@@ -179,22 +179,25 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
 };
 
 interface Props {
-    selectedParcels: ParcelsTableRow[];
+    fetchParcelsByIds: (checkedParcelIds: string[]) => Promise<ParcelsTableRow[]>;
     onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
     actionAnchorElement: HTMLElement | null;
     setActionAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     modalError: string | null;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
+    parcelIds: string[];
 }
 
 const Actions: React.FC<Props> = ({
-    selectedParcels,
+    fetchParcelsByIds,
     onDeleteParcels,
     actionAnchorElement,
     setActionAnchorElement,
     modalError,
     setModalError,
+    parcelIds,
 }) => {
+    const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
     const [modalToDisplay, setModalToDisplay] = useState<ActionName | null>(null);
     const [labelQuantity, setLabelQuantity] = useState<number>(0);
     const [date, setDate] = useState(dayjs());
@@ -229,25 +232,32 @@ const Actions: React.FC<Props> = ({
         errorCondition: (value: number) => boolean,
         errorMessage: string
     ): (() => void) => {
-        return () => {
-            if (errorCondition(selectedParcels.length)) {
-                setActionAnchorElement(null);
-                setModalError(errorMessage);
-            } else {
-                switch (key) {
-                    case "Download Shipping Labels":
-                    case "Download Shopping Lists":
-                    case "Download Driver Overview":
-                    case "Download Day Overview":
-                    case "Delete Parcel Request":
-                        setModalToDisplay(key);
-                        setActionAnchorElement(null);
-                        setModalError(null);
-                        break;
-                    case "Generate Map":
-                        openInNewTab(mapsLinkForSelectedParcels());
-                        break;
+        return async () => {
+            try {
+                const fetchedParcels = await fetchParcelsByIds(parcelIds);
+                setSelectedParcels(fetchedParcels);
+                if (errorCondition(fetchedParcels.length)) {
+                    setActionAnchorElement(null);
+                    setModalError(errorMessage);
+                } else {
+                    switch (key) {
+                        case "Download Shipping Labels":
+                        case "Download Shopping Lists":
+                        case "Download Driver Overview":
+                        case "Download Day Overview":
+                        case "Delete Parcel Request":
+                            setModalToDisplay(key);
+                            setActionAnchorElement(null);
+                            setModalError(null);
+                            return;
+                        case "Generate Map":
+                            openInNewTab(mapsLinkForSelectedParcels());
+                            return;
+                    }
                 }
+            } catch {
+                setModalError("Database error when fetching selected parcels");
+                return;
             }
         };
     };

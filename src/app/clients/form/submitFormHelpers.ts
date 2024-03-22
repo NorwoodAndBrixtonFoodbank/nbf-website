@@ -3,6 +3,7 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.share
 import { checkboxGroupToArray, Fields, Person } from "@/components/Form/formFunctions";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 
 type FamilyDatabaseInsertRecord = InsertSchema["families"];
 type FamilyDatabaseUpdateRecord = UpdateSchema["families"];
@@ -37,7 +38,8 @@ const getChildrenInDatabase = async (familyID: string): Promise<string[]> => {
         .not("age", "is", null);
 
     if (error) {
-        throw new DatabaseError("fetch", "children data");
+        const logId = await logErrorReturnLogId("Error with fetch: Children", error);
+        throw new DatabaseError("fetch", "children", logId);
     }
     return data!.map((datum) => datum.primary_key);
 };
@@ -51,7 +53,8 @@ const getNumberAdults = async (familyID: string, gender: string): Promise<number
         .is("age", null);
 
     if (error) {
-        throw new DatabaseError("fetch", "adults data");
+        const logId = await logErrorReturnLogId("Error with fetch: Adults", error);
+        throw new DatabaseError("fetch", "adults", logId);
     }
     return count!;
 };
@@ -71,8 +74,10 @@ const deleteAdultMembers = async (
         .limit(count);
 
     if (error) {
-        throw new DatabaseError("delete", "adult member data");
+        const logId = await logErrorReturnLogId("Error with delete: Adult members", error);
+        throw new DatabaseError("delete", "adult members", logId);
     }
+    void logInfoReturnLogId(`Adult members from familyID ${familyID} removed.`);
 };
 
 const updateChildren = async (children: Person[]): Promise<void> => {
@@ -87,8 +92,15 @@ const updateChildren = async (children: Person[]): Promise<void> => {
             .eq("primary_key", child.primaryKey);
 
         if (error) {
-            throw new DatabaseError("update", "children data");
+            const logId = await logErrorReturnLogId(
+                `Error with update: Child ID ${child.primaryKey}`,
+                error
+            );
+            throw new DatabaseError("update", "child", logId);
         }
+        void logInfoReturnLogId(
+            `Child member of familyID ${record.family_id} with childID ${child.primaryKey} updated.`
+        );
     }
 };
 
@@ -100,8 +112,13 @@ const deleteChildren = async (children: Person[]): Promise<void> => {
             .eq("primary_key", child.primaryKey);
 
         if (error) {
-            throw new DatabaseError("delete", "children data");
+            const logId = await logErrorReturnLogId(
+                `Error with delete: Child ID ${child.primaryKey}`,
+                error
+            );
+            throw new DatabaseError("delete", "child", logId);
         }
+        void logInfoReturnLogId(`Child with childID ${child.primaryKey} successfully deleted.`);
     }
 };
 
@@ -114,8 +131,10 @@ const insertClient = async (
         .select("primary_key, family_id");
 
     if (error) {
-        throw new DatabaseError("insert", "client data");
+        const logId = await logErrorReturnLogId("Error with insert: Client", error);
+        throw new DatabaseError("insert", "client", logId);
     }
+    void logInfoReturnLogId(`Client ${clientRecord.full_name} successfully created.`);
     return ids![0];
 };
 
@@ -131,7 +150,8 @@ const insertFamily = async (peopleArray: Person[], familyID: string): Promise<vo
     const { error } = await supabase.from("families").insert(familyRecords);
 
     if (error) {
-        throw new DatabaseError("insert", "family data");
+        const logId = await logErrorReturnLogId(`Error with insert: Family ID ${familyID}`, error);
+        throw new DatabaseError("insert", "family", logId);
     }
 };
 
@@ -146,7 +166,11 @@ const updateClient = async (
         .select("primary_key, family_id");
 
     if (error) {
-        throw new DatabaseError("update", "client data");
+        const logId = await logErrorReturnLogId(
+            `Error with update: Client ID ${primaryKey}`,
+            error
+        );
+        throw new DatabaseError("update", "client", logId);
     }
     return ids![0];
 };
@@ -191,8 +215,13 @@ const updateFamily = async (
 const revertClientInsert = async (primaryKey: string): Promise<void> => {
     const { error } = await supabase.from("clients").delete().eq("primary_key", primaryKey);
     if (error) {
+        const logId = await logErrorReturnLogId(
+            `Error with delete: Revert incomplete client insert, Client ID ${primaryKey}`,
+            error
+        );
         throw new Error(
-            "We could not revert an incomplete client insert at this time, and there may be faulty data stored. Please contact a developer for assistance."
+            "We could not revert an incomplete client insert at this time, and there may be faulty data stored. Please contact a developer for assistance." +
+                `ErrorID: ${logId}`
         );
     }
 };
@@ -206,8 +235,13 @@ const revertClientUpdate = async (
         .update(initialRecords)
         .eq("primary_key", primaryKey);
     if (error) {
+        const logId = logErrorReturnLogId(
+            `Error with delete: Revert incomplete client update, Client ID ${primaryKey}`,
+            error
+        );
         throw new Error(
-            "We could not revert an incomplete client update at this time, and there may be faulty data stored. Please contact a developer for assistance."
+            "We could not revert an incomplete client update at this time, and there may be faulty data stored. Please contact a developer for assistance." +
+                `ErrorID: ${logId}`
         );
     }
 };
@@ -248,7 +282,8 @@ export const submitAddClientForm: SubmitFormHelper = async (fields, router) => {
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
         await revertClientInsert(ids.primary_key);
-        throw new DatabaseError("insert", "client data");
+        const logId = await logErrorReturnLogId(`Error with insert: Client ID ${ids.primary_key}`);
+        throw new DatabaseError("update", "client", logId);
     }
 };
 
@@ -266,6 +301,7 @@ export const submitEditClientForm: SubmitFormHelper = async (
         router.push(`/clients?clientId=${primaryKey}`);
     } catch (error) {
         await revertClientUpdate(clientBeforeUpdate, primaryKey!);
-        throw new DatabaseError("update", "client data");
+        const logId = await logErrorReturnLogId(`Error with update: Client ID ${ids.primary_key}`);
+        throw new DatabaseError("update", "client", logId);
     }
 };

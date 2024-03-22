@@ -2,7 +2,7 @@ import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { PackingSlotRow } from "@/app/admin/packingSlotsTable/PackingSlotsTable";
 import { Tables } from "@/databaseTypesFile";
-import { logError } from "@/logger/logger";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 type DbPackingSlot = Tables<"packing_slots">;
 type NewDbPackingSlot = Omit<DbPackingSlot, "primary_key">;
@@ -10,7 +10,8 @@ type NewDbPackingSlot = Omit<DbPackingSlot, "primary_key">;
 export const fetchPackingSlots = async (): Promise<PackingSlotRow[]> => {
     const { data, error } = await supabase.from("packing_slots").select().order("order");
     if (error) {
-        throw new DatabaseError("fetch", "packing slots");
+        const logId = await logErrorReturnLogId("Error with fetch: Packing slots", error);
+        throw new DatabaseError("fetch", "packing slots", logId);
     }
 
     return data.map(
@@ -46,7 +47,8 @@ export const insertNewPackingSlot = async (newRow: PackingSlotRow): Promise<void
     const { error } = await supabase.from("packing_slots").insert(data);
 
     if (error) {
-        throw new DatabaseError("insert", "packing slots");
+        const logId = await logErrorReturnLogId("Error with insert: Packing slots", error);
+        throw new DatabaseError("insert", "packing slots", logId);
     }
 };
 
@@ -58,7 +60,8 @@ export const updateDbPackingSlot = async (row: PackingSlotRow): Promise<void> =>
         .eq("primary_key", processedData.primary_key);
 
     if (error) {
-        throw new DatabaseError("update", "packing slots");
+        const logId = await logErrorReturnLogId("Error with update: Packing slots", error);
+        throw new DatabaseError("update", "packing slots", logId);
     }
 };
 
@@ -68,7 +71,7 @@ export const swapRows = async (row1: PackingSlotRow, row2: PackingSlotRow): Prom
         id2: row2.id,
     });
     if (error) {
-        void logError("Error with update: packing slots order", error);
-        throw new DatabaseError("update", "packing slots order");
+        const logId = await logErrorReturnLogId("Error with update: packing slots order", error);
+        throw new DatabaseError("update", "packing slots order", logId);
     }
 };

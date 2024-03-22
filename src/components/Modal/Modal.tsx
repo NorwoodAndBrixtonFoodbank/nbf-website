@@ -2,7 +2,7 @@
 
 import React, { ReactNode } from "react";
 import styled from "styled-components";
-import { Dialog } from "@mui/material";
+import { Breakpoint, Dialog } from "@mui/material";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import Icon from "@/components/Icons/Icon";
 
@@ -87,6 +87,7 @@ export interface ModalProps {
     headerId: string;
     className?: string;
     footer?: ReactNode;
+    maxWidth?: Breakpoint;
 }
 
 const StyledIcon = styled(Icon)`
@@ -102,7 +103,7 @@ const Modal: React.FC<ModalProps> = (props) => {
             aria-labelledby={props.headerId}
             className={props.className}
             fullWidth
-            maxWidth="md"
+            maxWidth={props.maxWidth ? props.maxWidth : "md"}
         >
             <Header id={props.headerId} className="header">
                 {props.header}

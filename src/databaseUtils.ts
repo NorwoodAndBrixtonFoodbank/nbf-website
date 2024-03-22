@@ -3,6 +3,7 @@ import { Database } from "@/databaseTypesFile";
 export type DatabaseAutoType = Database;
 
 type Tables = Database["public"]["Tables"];
+type Views = Database["public"]["Views"];
 
 export type Schema = {
     [key in keyof Tables]: Tables[key]["Row"];
@@ -17,3 +18,11 @@ export type UpdateSchema = {
 };
 
 export type DatabaseEnums = Database["public"]["Enums"];
+
+export type ViewSchema = {
+    [key in keyof Views]: Views[key]["Row"];
+};
+
+export type TableNames = keyof Tables;
+
+export type ViewNames = keyof Views;
