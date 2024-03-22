@@ -17,7 +17,7 @@ const EditClients: ({ params }: EditClientsParameters) => React.ReactElement = (
 }: EditClientsParameters) => {
     const [clientData, setClientData] = useState<Schema["clients"]>();
     const [familyData, setFamilyData] = useState<Schema["families"][]>();
-    
+
     useEffect(() => {
         (async () => {
             if (params.id) {
