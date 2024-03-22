@@ -19,6 +19,7 @@ export enum Errors {
     submit = "Please ensure all fields have been entered correctly. Required fields are labelled with an asterisk.",
     external = "Please try again later.",
     pastDate = "Please enter a date in the future.",
+    invalidPackingSlot = "The previous packing slot is no longer available, please select a new packing slot.",
 }
 
 export const numberRegex = /^\d+$/;
@@ -178,6 +179,17 @@ export const onChangeDate = (
     }
 };
 
+export const onChangePackingSlot = (
+    fieldSetter: FieldSetter,
+    errorSetter: ErrorSetter,
+    key: string
+): SelectChangeEventHandler => {
+    return (event) => {
+        const input = event.target.value;
+        fieldSetter(key, input);
+        errorSetter(key, Errors.none);
+    };
+};
 export const errorExists = (errorType: Errors): boolean => {
     return errorType !== Errors.initial && errorType !== Errors.none;
 };

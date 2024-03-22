@@ -51,8 +51,8 @@ export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["phoneNumber", "Phone"],
     ["voucherNumber", "Voucher"],
     ["deliveryCollection", "Collection"],
-    ["packingDatetime", "Packing Date"],
-    ["packingTimeLabel", "Time"],
+    ["packingDate", "Packing Date"],
+    ["packingSlot", "Packing Slot"],
     ["lastStatus", "Last Status"],
 ];
 
@@ -61,8 +61,8 @@ const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
     "familyCategory",
     "addressPostcode",
     "deliveryCollection",
-    "packingDatetime",
-    "packingTimeLabel",
+    "packingDate",
+    "packingSlot",
     "lastStatus",
 ];
 
@@ -116,10 +116,10 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
         },
     },
     {
-        key: "packingDatetime",
+        key: "packingDate",
         sortMethodConfig: {
             method: (query, sortDirection) =>
-                query.order("packing_datetime", { ascending: sortDirection === "asc" }),
+                query.order("packing_date", { ascending: sortDirection === "asc" }),
             paginationType: PaginationType.Server,
         },
     },
@@ -140,8 +140,8 @@ const toggleableHeaders: (keyof ParcelsTableRow)[] = [
     "phoneNumber",
     "voucherNumber",
     "deliveryCollection",
-    "packingDatetime",
-    "packingTimeLabel",
+    "packingDate",
+    "packingSlot",
     "lastStatus",
 ];
 
@@ -243,10 +243,10 @@ const buildDateFilter = (initialState: DateRangeState): Filter<ParcelsTableRow, 
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: DateRangeState
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.gte("packing_datetime", state.from).lte("packing_datetime", state.to);
+        return query.gte("packing_date", state.from).lte("packing_date", state.to);
     };
     return dateFilter<ParcelsTableRow>({
-        key: "packingDatetime",
+        key: "packingDate",
         label: "",
         methodConfig: { paginationType: PaginationType.Server, method: dateSearch },
         initialState: initialState,
@@ -623,7 +623,7 @@ const ParcelsPage: React.FC<{}> = () => {
     const parcelTableColumnDisplayFunctions = {
         iconsColumn: rowToIconsColumn,
         deliveryCollection: rowToDeliveryCollectionColumn,
-        packingDatetime: formatDatetimeAsDate,
+        packingDate: formatDatetimeAsDate,
         lastStatus: rowToLastStatusColumn,
     };
 

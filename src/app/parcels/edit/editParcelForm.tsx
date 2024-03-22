@@ -4,9 +4,11 @@ import React, { useEffect, useState } from "react";
 import ParcelForm, { ParcelFields, initialParcelFields } from "../form/ParcelForm";
 import {
     CollectionCentresLabelsAndValues,
-    ParcelWithCollectionCentre,
     fetchParcel,
     getCollectionCentresInfo,
+    PackingSlotsLabelsAndValues,
+    fetchPackingSlotsInfo,
+    ParcelWithCollectionCentreAndPackingSlot,
 } from "@/common/fetch";
 import supabase from "@/supabaseClient";
 import { Errors, FormErrors } from "@/components/Form/formFunctions";
@@ -16,14 +18,14 @@ interface EditParcelFormProps {
 }
 
 const prepareParcelDataForForm = (
-    parcelData: ParcelWithCollectionCentre,
+    parcelData: ParcelWithCollectionCentreAndPackingSlot,
     deliveryPrimaryKey: string
 ): ParcelFields => {
     return {
         clientId: parcelData.client_id,
         voucherNumber: parcelData.voucher_number,
-        packingDate: parcelData.packing_datetime,
-        packingTime: parcelData.packing_datetime,
+        packingDate: parcelData.packing_date,
+        packingSlot: parcelData.packing_slot!.primary_key,
         shippingMethod:
             parcelData.collection_centre?.primary_key == deliveryPrimaryKey
                 ? "Delivery"
@@ -41,16 +43,20 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
     const [collectionCentres, setCollectionCentres] = useState<CollectionCentresLabelsAndValues>(
         []
     );
+    const [packingSlots, setPackingSlots] = useState<PackingSlotsLabelsAndValues>([]);
+    const [packingSlotShown, setPackingSlotsShown] = useState<boolean | undefined>(true);
 
     useEffect(() => {
         (async () => {
             const [deliveryPrimaryKey, collectionCentresLabelsAndValues] =
                 await getCollectionCentresInfo(supabase);
+            const packingSlotsLabelsAndValues = await fetchPackingSlotsInfo(supabase);
             const parcelData = await fetchParcel(parcelId, supabase);
-
             setInitialFormFields(prepareParcelDataForForm(parcelData, deliveryPrimaryKey));
             setDeliveryKey(deliveryPrimaryKey);
+            setPackingSlots(packingSlotsLabelsAndValues);
             setCollectionCentres(collectionCentresLabelsAndValues);
+            setPackingSlotsShown(parcelData.packing_slot?.is_shown);
             setIsLoading(false);
         })();
     }, [parcelId]);
@@ -58,7 +64,7 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
     const initialFormErrors: FormErrors = {
         voucherNumber: Errors.none,
         packingDate: Errors.none,
-        packingTime: Errors.none,
+        packingSlots: Errors.none,
         shippingMethod: Errors.none,
         collectionDate: Errors.none,
         collectionTime: Errors.none,
@@ -75,6 +81,8 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
             parcelId={parcelId}
             deliveryPrimaryKey={deliveryKey}
             collectionCentresLabelsAndValues={collectionCentres}
+            packingSlotsLabelsAndValues={packingSlots}
+            packingSlotShown={packingSlotShown}
         />
     );
 };

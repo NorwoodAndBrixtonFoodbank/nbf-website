@@ -30,7 +30,7 @@ export const prepareParcelInfo = async (parcelID: string): Promise<ParcelInfoAnd
     const fetchedData = await fetchParcel(parcelID, supabase);
     const parcelInfo: ParcelInfo = {
         voucherNumber: fetchedData.voucher_number ?? "",
-        packingDate: formatDate(fetchedData.packing_datetime),
+        packingDate: formatDate(fetchedData.packing_date),
         collectionDate: formatDate(fetchedData.collection_datetime),
         collectionSite: fetchedData.collection_centre?.name ?? "",
     };

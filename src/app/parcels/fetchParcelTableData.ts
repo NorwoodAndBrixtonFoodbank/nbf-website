@@ -3,7 +3,6 @@ import { DatabaseError, EdgeFunctionError } from "../errorClasses";
 import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsTableData";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
-import { logErrorReturnLogId } from "@/logger/logger";
 
 export type CongestionChargeDetails = {
     postcode: string;
@@ -58,7 +57,7 @@ const getParcelProcessingData = async (
     ) {
         query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
     } else {
-        query = query.order("packing_datetime", { ascending: false });
+        query = query.order("packing_date", { ascending: false });
     }
 
     if (typeof startIndex === "number" && typeof endIndex === "number") {
@@ -144,7 +143,7 @@ export const getParcelIds = async (
     ) {
         query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
     } else {
-        query = query.order("packing_datetime", { ascending: false });
+        query = query.order("packing_date", { ascending: false });
     }
 
     const { data, error } = await query;

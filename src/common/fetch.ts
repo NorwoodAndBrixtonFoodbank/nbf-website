@@ -4,20 +4,31 @@ import { Supabase } from "@/supabaseUtils";
 import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 
 type CollectionCentre = {
-    collection_centre: {
-        name: Schema["collection_centres"]["name"];
-        acronym: Schema["collection_centres"]["acronym"];
-        primary_key: Schema["collection_centres"]["primary_key"];
-    } | null;
+    name: Schema["collection_centres"]["name"];
+    acronym: Schema["collection_centres"]["acronym"];
+    primary_key: Schema["collection_centres"]["primary_key"];
 };
 
-export type ParcelWithCollectionCentre = Omit<Schema["parcels"], "collection_centre"> &
-    CollectionCentre;
+type PackingSlot = {
+    name: Schema["packing_slots"]["name"];
+    primary_key: Schema["packing_slots"]["primary_key"];
+    is_shown: Schema["packing_slots"]["is_shown"];
+};
+
+export interface ParcelWithCollectionCentreAndPackingSlot {
+    client_id: string;
+    collection_centre: CollectionCentre | null;
+    collection_datetime: string | null;
+    packing_date: string | null;
+    packing_slot: PackingSlot | null;
+    primary_key: string;
+    voucher_number: string | null;
+}
 
 export const fetchParcel = async (
     parcelID: string,
     supabase: Supabase
-): Promise<ParcelWithCollectionCentre> => {
+): Promise<ParcelWithCollectionCentreAndPackingSlot> => {
     const { data, error } = await supabase
         .from("parcels")
         .select(
@@ -26,6 +37,11 @@ export const fetchParcel = async (
                 name,
                 acronym,
                 primary_key
+            ),
+            packing_slot: packing_slots (
+                name,
+                primary_key,
+                is_shown
             )`
         )
         .eq("primary_key", parcelID);
@@ -131,4 +147,28 @@ export const fetchComment = async (supabase: Supabase): Promise<string> => {
     }
 
     return data.value;
+};
+
+export type PackingSlotsLabelsAndValues = [string, Schema["packing_slots"]["primary_key"]][];
+
+export const fetchPackingSlotsInfo = async (
+    supabase: Supabase
+): Promise<PackingSlotsLabelsAndValues> => {
+    const { data, error } = await supabase
+        .from("packing_slots")
+        .select("primary_key, name")
+        .order("order")
+        .eq("is_shown", true);
+
+    if (error) {
+        const logId = await logErrorReturnLogId("Error with fetch: Packing slots data", error);
+        throw new DatabaseError("fetch", "packing slots data", logId);
+    }
+
+    const packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues = data!.map((packingSlot) => [
+        packingSlot.name,
+        packingSlot.primary_key,
+    ]);
+
+    return packingSlotsLabelsAndValues;
 };

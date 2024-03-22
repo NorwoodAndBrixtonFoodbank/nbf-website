@@ -34,7 +34,7 @@ const getRequiredData = async (
     return {
         label_quantity: labelQuantity,
         parcel_id: parcelId,
-        packing_time_of_day: datetimeToPackingTimeLabel(parcel.packing_datetime) ?? "",
+        packing_time_of_day: datetimeToPackingTimeLabel(parcel.packing_date) ?? "",
         collection_centre: parcel.collection_centre?.acronym ?? "",
         collection_datetime: formatDatetime(parcel.collection_datetime, true),
         voucher_number: parcel.voucher_number ?? "",
