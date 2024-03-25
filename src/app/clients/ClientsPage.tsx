@@ -19,7 +19,7 @@ import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { CircularProgress } from "@mui/material";
-import { RequestParams, areRequestsIdentical } from "../parcels/fetchParcelTableData";
+import { RequestParams, areParamsIdentical } from "../parcels/fetchParcelTableData";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -114,7 +114,7 @@ const ClientsPage: React.FC<{}> = () => {
                 startPoint: startPoint,
                 endPoint: endPoint,
             };
-            if (areRequestsIdentical(requestParams, initialRequestParams)) {
+            if (areParamsIdentical(requestParams, initialRequestParams)) {
                 setClientsDataPortion(fetchedData);
                 setFilteredClientCount(filteredClientCount);
             }

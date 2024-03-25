@@ -24,9 +24,8 @@ import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
 import {
     CollectionCentresOptions,
-    RequestParams,
-    areRequestsIdentical,
     getParcelIds,
+    getParcelsByIds,
     getParcelsCount,
     getParcelsData,
 } from "./fetchParcelTableData";
@@ -357,13 +356,6 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const [sortState, setSortState] = useState<SortState<ParcelsTableRow>>({ sortEnabled: false });
 
-    useEffect(() => {
-        if (parcelId) {
-            setSelectedParcelId(parcelId);
-            setModalIsOpen(true);
-        }
-    }, [parcelId]);
-
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const startPoint = (currentPage - 1) * perPage;
@@ -374,6 +366,15 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const [areFiltersLoadingForFirstTime, setAreFiltersLoadingForFirstTime] =
         useState<boolean>(true);
+
+    const abortController = useRef<AbortController | null>();
+
+    useEffect(() => {
+        if (parcelId) {
+            setSelectedParcelId(parcelId);
+            setModalIsOpen(true);
+        }
+    }, [parcelId]);
 
     useEffect(() => {
         const buildFilters = async (): Promise<{
@@ -435,34 +436,78 @@ const ParcelsPage: React.FC<{}> = () => {
         })();
     }, []);
 
+    // useEffect(() => {
+    //     if (!areFiltersLoadingForFirstTime) {
+    //         const allFilters = [...primaryFilters.slice(), ...additionalFilters.slice()];
+    //         const requestParams: RequestParams<ParcelsTableRow> = {
+    //             allFilters: { ...allFilters },
+    //             sortState: { ...sortState },
+    //             startPoint: startPoint,
+    //             endPoint: endPoint,
+    //         };
+    //         console.log("request params ", requestParams.allFilters[0].state);
+    //         (async () => {
+    //             setIsLoading(true);
+    //             const filteredParcelCount = await getParcelsCount(supabase, allFilters);
+    //             const fetchedData = await getParcelsData(
+    //                 supabase,
+    //                 allFilters,
+    //                 sortState,
+    //                 startPoint,
+    //                 endPoint
+    //             );
+    //             console.log("primary filters 0 ", primaryFilters[0].state);
+    //             const currentStateValues: RequestParams<ParcelsTableRow> = {
+    //                 allFilters: [...primaryFilters.slice(), ...additionalFilters.slice()],
+    //                 sortState: { ...sortState },
+    //                 startPoint: startPoint,
+    //                 endPoint: endPoint,
+    //             };
+    //             console.log("current state values ", currentStateValues.allFilters[0].state);
+    //             if (areParamsIdentical(currentStateValues, requestParams)) {
+    //                 setFilteredParcelCount(filteredParcelCount);
+    //                 setParcelsDataPortion(fetchedData);
+    //             }
+    //             setIsLoading(false);
+    //         })();
+    //     }
+    // }, [
+    //     startPoint,
+    //     endPoint,
+    //     primaryFilters,
+    //     additionalFilters,
+    //     sortState,
+    //     areFiltersLoadingForFirstTime,
+    // ]);
+
     useEffect(() => {
         if (!areFiltersLoadingForFirstTime) {
-            const allFilters = [...primaryFilters, ...additionalFilters];
-            const initialRequestParams: RequestParams<ParcelsTableRow> = {
-                allFilters: { ...allFilters },
-                sortState: { ...sortState },
-                startPoint: startPoint,
-                endPoint: endPoint,
-            };
+            const allFilters = [...primaryFilters.slice(), ...additionalFilters.slice()];
             (async () => {
                 setIsLoading(true);
-                const filteredParcelCount = await getParcelsCount(supabase, allFilters);
-                const fetchedData = await getParcelsData(
-                    supabase,
-                    allFilters,
-                    sortState,
-                    startPoint,
-                    endPoint
-                );
-                const requestParams: RequestParams<ParcelsTableRow> = {
-                    allFilters: { ...allFilters },
-                    sortState: { ...sortState },
-                    startPoint: startPoint,
-                    endPoint: endPoint,
-                };
-                if (areRequestsIdentical(requestParams, initialRequestParams)) {
-                    setFilteredParcelCount(filteredParcelCount);
-                    setParcelsDataPortion(fetchedData);
+                if (abortController.current) {
+                    abortController.current.abort("stale request");
+                }
+                abortController.current = new AbortController();
+                if (abortController.current) {
+                    const filteredParcelCount = await getParcelsCount(
+                        supabase,
+                        allFilters,
+                        abortController.current.signal
+                    );
+                    const fetchedData = await getParcelsData(
+                        supabase,
+                        allFilters,
+                        sortState,
+                        abortController.current.signal,
+                        startPoint,
+                        endPoint
+                    );
+                    abortController.current = null;
+                    !filteredParcelCount.abortSignalResponse.aborted &&
+                        setFilteredParcelCount(filteredParcelCount.count);
+                    !fetchedData.abortSignalResponse.aborted &&
+                        setParcelsDataPortion(fetchedData.data);
                 }
                 setIsLoading(false);
             })();
@@ -488,15 +533,30 @@ const ParcelsPage: React.FC<{}> = () => {
 
                 setIsLoading(true);
                 fetchParcelsTimer.current = setTimeout(async () => {
-                    setFilteredParcelCount(await getParcelsCount(supabase, allFilters));
-                    const fetchedData = await getParcelsData(
-                        supabase,
-                        allFilters,
-                        sortState,
-                        startPoint,
-                        endPoint
-                    );
-                    setParcelsDataPortion(fetchedData);
+                    if (abortController.current) {
+                        abortController.current.abort("stale request");
+                    }
+                    abortController.current = new AbortController();
+                    if (abortController.current) {
+                        const filteredParcelCount = await getParcelsCount(
+                            supabase,
+                            allFilters,
+                            abortController.current.signal
+                        );
+                        const fetchedData = await getParcelsData(
+                            supabase,
+                            allFilters,
+                            sortState,
+                            abortController.current.signal,
+                            startPoint,
+                            endPoint
+                        );
+                        abortController.current = null;
+                        !filteredParcelCount.abortSignalResponse.aborted &&
+                            setFilteredParcelCount(filteredParcelCount.count);
+                        !fetchedData.abortSignalResponse.aborted &&
+                            setParcelsDataPortion(fetchedData.data);
+                    }
                     setIsLoading(false);
                 }, 500);
             };
@@ -645,12 +705,10 @@ const ParcelsPage: React.FC<{}> = () => {
     const getCheckedParcelsData = async (
         checkedParcelIds: string[]
     ): Promise<ParcelsTableRow[]> => {
-        return await getParcelsData(
+        return await getParcelsByIds(
             supabase,
             primaryFilters.concat(additionalFilters),
             sortState,
-            undefined,
-            undefined,
             checkedParcelIds
         );
     };
