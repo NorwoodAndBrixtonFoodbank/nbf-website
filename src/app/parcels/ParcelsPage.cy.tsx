@@ -167,11 +167,6 @@ describe("Parcels Page", () => {
                 sampleRawExpandedClientDetails
             );
 
-            const expectedTime = new Date("2023-08-04T13:30:00+00:00").toLocaleTimeString("en-GB", {
-                hour: "2-digit",
-                minute: "2-digit",
-            });
-
             expect(expandedClientDetails).to.deep.equal({
                 voucherNumber: "VOUCHER_1",
                 fullName: "CLIENT NAME",
@@ -181,20 +176,9 @@ describe("Parcels Page", () => {
                 household: "Family of 3 Occupants (2 adults, 1 child)",
                 children: "5-year-old male",
                 packingDate: "04/08/2023",
-                packingTime: expectedTime,
+                packingSlot: "AM",
                 collection: "A COLLECTION CENTRE",
             });
-        });
-
-        it("formatDatetimeAsTime()", () => {
-            expect(formatDatetimeAsTime("2023-08-04T13:30:02+00:00")).to.eq(
-                new Date("2023-08-04T13:30:02+00:00").toLocaleTimeString("en-GB", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                })
-            );
-            expect(formatDatetimeAsTime("Invalid_Time_Format")).to.eq("-");
-            expect(formatDatetimeAsTime(null)).to.eq("-");
         });
 
         it("formatAddressFromClientDetails()", () => {
