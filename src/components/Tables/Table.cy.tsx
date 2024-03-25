@@ -262,10 +262,6 @@ const Component: React.FC<TestTableProps> = ({
         ) {
             sortState.column.sortMethodConfig.method(sortState.sortDirection);
         }
-        sortState.sortEnabled &&
-            console.log(
-                `Data set by field ${sortState.column.sortField} in direction ${sortState.sortDirection}. Data is now:\n ${testDataPortion.map((row) => row.full_name)}`
-            );
     }, [sortState, testDataPortion]);
 
     return (

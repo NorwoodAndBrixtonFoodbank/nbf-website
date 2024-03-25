@@ -119,6 +119,7 @@ export const getParcelsCount = async (
     query = query.abortSignal(abortSignal);
 
     const { count, error } = await query;
+
     if (abortSignal.aborted) {
         return { count: 0, abortSignalResponse: abortSignal };
     }
@@ -212,11 +213,4 @@ export interface CollectionCentresOptions {
 }
 export interface StatusResponseRow {
     event_name: string;
-}
-
-export interface RequestParams<Data> {
-    allFilters: Filter<Data, any>[];
-    sortState: SortState<Data>;
-    startPoint: number;
-    endPoint: number;
 }

@@ -367,7 +367,7 @@ const ParcelsPage: React.FC<{}> = () => {
     const [areFiltersLoadingForFirstTime, setAreFiltersLoadingForFirstTime] =
         useState<boolean>(true);
 
-    const abortController = useRef<AbortController | null>();
+    const abortController = useRef<AbortController>();
 
     useEffect(() => {
         if (parcelId) {
@@ -436,50 +436,6 @@ const ParcelsPage: React.FC<{}> = () => {
         })();
     }, []);
 
-    // useEffect(() => {
-    //     if (!areFiltersLoadingForFirstTime) {
-    //         const allFilters = [...primaryFilters.slice(), ...additionalFilters.slice()];
-    //         const requestParams: RequestParams<ParcelsTableRow> = {
-    //             allFilters: { ...allFilters },
-    //             sortState: { ...sortState },
-    //             startPoint: startPoint,
-    //             endPoint: endPoint,
-    //         };
-    //         console.log("request params ", requestParams.allFilters[0].state);
-    //         (async () => {
-    //             setIsLoading(true);
-    //             const filteredParcelCount = await getParcelsCount(supabase, allFilters);
-    //             const fetchedData = await getParcelsData(
-    //                 supabase,
-    //                 allFilters,
-    //                 sortState,
-    //                 startPoint,
-    //                 endPoint
-    //             );
-    //             console.log("primary filters 0 ", primaryFilters[0].state);
-    //             const currentStateValues: RequestParams<ParcelsTableRow> = {
-    //                 allFilters: [...primaryFilters.slice(), ...additionalFilters.slice()],
-    //                 sortState: { ...sortState },
-    //                 startPoint: startPoint,
-    //                 endPoint: endPoint,
-    //             };
-    //             console.log("current state values ", currentStateValues.allFilters[0].state);
-    //             if (areParamsIdentical(currentStateValues, requestParams)) {
-    //                 setFilteredParcelCount(filteredParcelCount);
-    //                 setParcelsDataPortion(fetchedData);
-    //             }
-    //             setIsLoading(false);
-    //         })();
-    //     }
-    // }, [
-    //     startPoint,
-    //     endPoint,
-    //     primaryFilters,
-    //     additionalFilters,
-    //     sortState,
-    //     areFiltersLoadingForFirstTime,
-    // ]);
-
     useEffect(() => {
         if (!areFiltersLoadingForFirstTime) {
             const allFilters = [...primaryFilters.slice(), ...additionalFilters.slice()];
@@ -503,7 +459,7 @@ const ParcelsPage: React.FC<{}> = () => {
                         startPoint,
                         endPoint
                     );
-                    abortController.current = null;
+                    abortController.current = undefined;
                     !filteredParcelCount.abortSignalResponse.aborted &&
                         setFilteredParcelCount(filteredParcelCount.count);
                     !fetchedData.abortSignalResponse.aborted &&
@@ -551,7 +507,7 @@ const ParcelsPage: React.FC<{}> = () => {
                             startPoint,
                             endPoint
                         );
-                        abortController.current = null;
+                        abortController.current = undefined;
                         !filteredParcelCount.abortSignalResponse.aborted &&
                             setFilteredParcelCount(filteredParcelCount.count);
                         !fetchedData.abortSignalResponse.aborted &&

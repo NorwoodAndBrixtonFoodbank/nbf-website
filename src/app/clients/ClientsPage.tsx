@@ -8,7 +8,7 @@ import Table, { SortOptions, TableHeaders, SortState } from "@/components/Tables
 import TableSurface from "@/components/Tables/TableSurface";
 import supabase from "@/supabaseClient";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, Suspense, useRef } from "react";
 import { useTheme } from "styled-components";
 import getClientsData, { getClientsCount } from "./getClientsData";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -19,7 +19,6 @@ import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { CircularProgress } from "@mui/material";
-import { RequestParams, areParamsIdentical } from "../parcels/fetchParcelTableData";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -85,6 +84,7 @@ const ClientsPage: React.FC<{}> = () => {
     const [filteredClientCount, setFilteredClientCount] = useState<number>(0);
     const [sortState, setSortState] = useState<SortState<ClientsTableRow>>({ sortEnabled: false });
     const [primaryFilters, setPrimaryFilters] = useState<Filter<ClientsTableRow, any>[]>(filters);
+    const abortController = useRef<AbortController>();
 
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
@@ -92,49 +92,62 @@ const ClientsPage: React.FC<{}> = () => {
     const endPoint = currentPage * perPage - 1;
 
     useEffect(() => {
-        const initialRequestParams: RequestParams<ClientsTableRow> = {
-            allFilters: { ...primaryFilters },
-            sortState: { ...sortState },
-            startPoint: startPoint,
-            endPoint: endPoint,
-        };
         (async () => {
             setIsLoading(true);
-            const filteredClientCount = await getClientsCount(supabase, primaryFilters);
-            const fetchedData = await getClientsData(
-                supabase,
-                startPoint,
-                endPoint,
-                primaryFilters,
-                sortState
-            );
-            const requestParams: RequestParams<ClientsTableRow> = {
-                allFilters: { ...primaryFilters },
-                sortState: { ...sortState },
-                startPoint: startPoint,
-                endPoint: endPoint,
-            };
-            if (areParamsIdentical(requestParams, initialRequestParams)) {
-                setClientsDataPortion(fetchedData);
-                setFilteredClientCount(filteredClientCount);
+            if (abortController.current) {
+                abortController.current.abort("stale request");
+            }
+            abortController.current = new AbortController();
+            if (abortController.current) {
+                const filteredClientCount = await getClientsCount(
+                    supabase,
+                    primaryFilters,
+                    abortController.current.signal
+                );
+                const fetchedData = await getClientsData(
+                    supabase,
+                    startPoint,
+                    endPoint,
+                    primaryFilters,
+                    sortState,
+                    abortController.current.signal
+                );
+                abortController.current = undefined;
+                !filteredClientCount.abortSignalResponse.aborted &&
+                    setFilteredClientCount(filteredClientCount.count);
+                !fetchedData.abortSignalResponse.aborted && setClientsDataPortion(fetchedData.data);
             }
             setIsLoading(false);
             setIsLoadingForFirstTime(false);
         })();
-    }, [startPoint, endPoint, sortState, primaryFilters]);
+    }, [startPoint, endPoint, primaryFilters, sortState]);
 
     useEffect(() => {
         const loadCountAndData = async (): Promise<void> => {
             setIsLoading(true);
-            setFilteredClientCount(await getClientsCount(supabase, primaryFilters));
-            const fetchedData = await getClientsData(
-                supabase,
-                startPoint,
-                endPoint,
-                primaryFilters,
-                sortState
-            );
-            setClientsDataPortion(fetchedData);
+            if (abortController.current) {
+                abortController.current.abort("stale request");
+            }
+            abortController.current = new AbortController();
+            if (abortController.current) {
+                const filteredParcelCount = await getClientsCount(
+                    supabase,
+                    primaryFilters,
+                    abortController.current.signal
+                );
+                const fetchedData = await getClientsData(
+                    supabase,
+                    startPoint,
+                    endPoint,
+                    primaryFilters,
+                    sortState,
+                    abortController.current.signal
+                );
+                abortController.current = undefined;
+                !filteredParcelCount.abortSignalResponse.aborted &&
+                    setFilteredClientCount(filteredParcelCount.count);
+                !fetchedData.abortSignalResponse.aborted && setClientsDataPortion(fetchedData.data);
+            }
             setIsLoading(false);
             setIsLoadingForFirstTime(false);
         };

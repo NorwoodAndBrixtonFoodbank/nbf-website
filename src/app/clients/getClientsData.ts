@@ -11,8 +11,9 @@ const getClientsData = async (
     startIndex: number,
     endIndex: number,
     filters: Filter<ClientsTableRow, any>[],
-    sortState: SortState<ClientsTableRow>
-): Promise<ClientsTableRow[]> => {
+    sortState: SortState<ClientsTableRow>,
+    abortSignal: AbortSignal
+): Promise<{ data: ClientsTableRow[]; abortSignalResponse: AbortSignal }> => {
     const data: ClientsTableRow[] = [];
 
     let query = supabase.from("clients_plus").select("*");
@@ -33,7 +34,13 @@ const getClientsData = async (
 
     query = query.range(startIndex, endIndex);
 
+    query = query.abortSignal(abortSignal);
+
     const { data: clients, error: clientError } = await query;
+
+    if (abortSignal.aborted) {
+        return { data: [], abortSignalResponse: abortSignal };
+    }
 
     if (clientError) {
         const logId = await logErrorReturnLogId("Error with fetch: Clients", clientError);
@@ -58,13 +65,14 @@ const getClientsData = async (
         });
     }
 
-    return data;
+    return { data: data, abortSignalResponse: abortSignal };
 };
 
 export const getClientsCount = async (
     supabase: Supabase,
-    filters: Filter<ClientsTableRow, any>[]
-): Promise<number> => {
+    filters: Filter<ClientsTableRow, any>[],
+    abortSignal: AbortSignal
+): Promise<{ count: number; abortSignalResponse: AbortSignal }> => {
     let query = supabase.from("clients_plus").select("*", { count: "exact", head: true });
 
     filters.forEach((filter) => {
@@ -72,12 +80,20 @@ export const getClientsCount = async (
             query = filter.methodConfig.method(query, filter.state);
         }
     });
+
+    query = query.abortSignal(abortSignal);
+
     const { count, error: clientError } = await query;
+
+    if (abortSignal.aborted) {
+        return { count: 0, abortSignalResponse: abortSignal };
+    }
+
     if (clientError || count === null) {
         const logId = await logErrorReturnLogId("error fetching clients details");
         throw new DatabaseError("fetch", "clients", logId);
     }
-    return count ?? 0;
+    return { count, abortSignalResponse: abortSignal };
 };
 
 export default getClientsData;
