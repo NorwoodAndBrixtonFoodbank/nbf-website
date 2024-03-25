@@ -2,6 +2,7 @@ import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { WebsiteDataRow } from "./WebsiteDataTable";
 import { Tables } from "@/databaseTypesFile";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 type DbWebsiteData = Tables<"website_data">;
 
@@ -20,7 +21,8 @@ const getUnreadableName = (name: string): string =>
 export const fetchWebsiteData = async (): Promise<WebsiteDataRow[]> => {
     const { data, error } = await supabase.from("website_data").select().order("name");
     if (error) {
-        throw new DatabaseError("fetch", "website data");
+        const logId = await logErrorReturnLogId("Error with fetch: website data", error);
+        throw new DatabaseError("fetch", "website data table", logId);
     }
 
     return data.map(
@@ -43,6 +45,7 @@ export const updateDbWebsiteData = async (row: WebsiteDataRow): Promise<void> =>
         .eq("name", processedData.name);
 
     if (error) {
-        throw new DatabaseError("update", "website data");
+        const logId = await logErrorReturnLogId("Error with update: website data", error);
+        throw new DatabaseError("update", "website data table", logId);
     }
 };

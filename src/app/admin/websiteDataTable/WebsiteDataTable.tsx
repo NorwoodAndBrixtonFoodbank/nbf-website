@@ -17,10 +17,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import { LinearProgress } from "@mui/material";
-import { logError, logInfo } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { fetchWebsiteData, updateDbWebsiteData } from "./FetchWebsiteData";
 import CustomComponent from "./CustomEditComponent";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 
 export interface WebsiteDataRow {
     readableName: string;
@@ -37,9 +37,9 @@ const WebsiteDataTable: React.FC = () => {
     useEffect(() => {
         fetchWebsiteData()
             .then((response) => setRows(response))
-            .catch((error) => {
-                void logError("Error fetching website data", error);
-                throw new DatabaseError("fetch", "website data");
+            .catch(async (error) => {
+                const logId = await logErrorReturnLogId("Error with fetch: website data", error);
+                throw new DatabaseError("fetch", "website data table", logId);
             })
             .finally(() => setIsLoading(false));
     }, []);
@@ -47,31 +47,43 @@ const WebsiteDataTable: React.FC = () => {
     useEffect(() => {
         // This requires that the DB table has Realtime turned on
         const subscriptionChannel = supabase
-            .channel("packing-slot-table-changes")
+            .channel("website-data-table-changes")
             .on(
                 "postgres_changes",
-                { event: "*", schema: "public", table: "packing_slots" },
+                { event: "*", schema: "public", table: "website_data" },
                 async () => {
                     try {
                         const websiteData = await fetchWebsiteData();
                         setRows(websiteData);
                     } catch (error) {
                         if (error) {
-                            void logError("Error with fetch: Packing slots subscription", error);
+                            const logId = await logErrorReturnLogId(
+                                "Error with fetch: website data subscription",
+                                error
+                            );
                             setRows([]);
+                            throw new DatabaseError("fetch", "website data table", logId);
                         }
                     }
                 }
             )
-            .subscribe((status, err) => {
+            .subscribe(async (status, err) => {
                 if (status === "TIMED_OUT") {
-                    void logError("Channel Timed Out: Subscribe to packing_slot table", err);
+                    const logId = await logErrorReturnLogId(
+                        "Channel Timed Out: Subscribe to website_data table",
+                        err
+                    );
+                    throw new DatabaseError("fetch", "website data table", logId);
                 } else if (status === "CHANNEL_ERROR") {
-                    void logError("Channel Error: Subscribe to packing_slot table", err);
+                    const logId = await logErrorReturnLogId(
+                        "Channel Error: Subscribe to website_data table",
+                        err
+                    );
+                    throw new DatabaseError("fetch", "website data table", logId);
                 } else if (status === "CLOSED") {
-                    void logInfo("Subscription to packing_slot table closed");
+                    logInfoReturnLogId("Subscription to website_data table closed");
                 } else {
-                    void logInfo("Subscribed to packing_slot table");
+                    logInfoReturnLogId("Subscribed to website_data table");
                 }
             });
 
@@ -90,7 +102,10 @@ const WebsiteDataTable: React.FC = () => {
     const processRowUpdate = (newRow: WebsiteDataRow): WebsiteDataRow => {
         setIsLoading(true);
         updateDbWebsiteData(newRow)
-            .catch((error) => void logError("Update error with website data", error))
+            .catch(async (error) => {
+                const logId = await logErrorReturnLogId("Error with update: website data", error);
+                throw new DatabaseError("update", "website data table", logId);
+            })
             .finally(() => setIsLoading(false));
         return newRow;
     };
@@ -112,7 +127,7 @@ const WebsiteDataTable: React.FC = () => {
         }));
     };
 
-    const handleCancelClick = (id: GridRowId) => () => {
+    const handleCancelClick = (id: GridRowId) => async () => {
         console.log(rowModesModel[id]);
         setRowModesModel((currentValue) => ({
             ...currentValue,
@@ -121,7 +136,12 @@ const WebsiteDataTable: React.FC = () => {
 
         const editedRow = rows.find((row) => row.id === id);
         if (editedRow === undefined) {
-            void logError("Edited row in packing slots admin table is undefined onCancelClick");
+            {
+                const logId = await logErrorReturnLogId(
+                    "Edited row in website data admin table is undefined onCancelClick"
+                );
+                throw new DatabaseError("update", "website data table", logId);
+            }
         }
     };
 
