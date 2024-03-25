@@ -3,7 +3,7 @@ import { DatabaseError, EdgeFunctionError } from "../errorClasses";
 import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsTableData";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
-import { logError } from "@/logger/logger";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 export type CongestionChargeDetails = {
     postcode: string;
@@ -24,9 +24,12 @@ export const getCongestionChargeDetailsForParcels = async (
     });
 
     if (response.error) {
-        throw new EdgeFunctionError("congestion charge check");
+        const logId = await logErrorReturnLogId(
+            "Error with congestion charge check",
+            response.error
+        );
+        throw new EdgeFunctionError("congestion charge check", logId);
     }
-
     return response.data;
 };
 
@@ -69,10 +72,11 @@ const getParcelProcessingData = async (
     const { data, error } = await query;
 
     if (error) {
-        void logError("error fetching parcel data");
-        throw new DatabaseError("fetch", "parcel table data");
+        const logId = await logErrorReturnLogId("Error with fetch: parcel table", error);
+        throw new DatabaseError("fetch", "parcel table", logId);
     }
-    return data ?? [];
+
+    return data;
 };
 
 export const getParcelsData = async (
@@ -110,9 +114,13 @@ export const getParcelsCount = async (
     });
 
     const { count, error } = await query;
-    if (error || count === null) {
-        console.error(error);
-        throw new DatabaseError("fetch", "parcels");
+    if (error) {
+        const logId = await logErrorReturnLogId("Error with fetch: Parcels", error);
+        throw new DatabaseError("fetch", "parcels", logId);
+    }
+    if (count === null) {
+        const logId = await logErrorReturnLogId("Error with fetch: Parcels, count is null");
+        throw new DatabaseError("fetch", "parcels", logId);
     }
     return count;
 };
@@ -141,8 +149,8 @@ export const getParcelIds = async (
 
     const { data, error } = await query;
     if (error) {
-        console.error(error);
-        throw new DatabaseError("fetch", "parcels");
+        const logId = await logErrorReturnLogId("Error with fetch", error);
+        throw new DatabaseError("fetch", "parcels", logId);
     }
 
     return data.reduce<string[]>((reducedData, parcel) => {

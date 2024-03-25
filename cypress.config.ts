@@ -13,10 +13,8 @@ export default defineConfig({
             registerCodeCoverageTasks(on, config);
 
             on("task", {
-                table(message: any[]): null {
-                    if (message.length > 0) {
-                        console.table(message);
-                    }
+                log: (message: unknown): null => {
+                    console.log(message);
                     return null;
                 },
             });
@@ -29,8 +27,8 @@ export default defineConfig({
             return config;
         },
         baseUrl: "http://localhost:3200",
-        video: false,
-        screenshotOnRunFailure: false,
+        video: true,
+        screenshotOnRunFailure: true,
     },
     component: {
         setupNodeEvents(on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) {

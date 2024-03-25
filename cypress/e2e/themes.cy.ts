@@ -3,6 +3,9 @@ import { hexToRgb } from "@mui/material";
 describe("Light and dark mode switch works", () => {
     beforeEach(() => {
         cy.visit("/login");
+        // Switching between themes somehow requires time before the test.
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(500);
     });
 
     it("Switching to Dark Mode Works", () => {

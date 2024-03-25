@@ -2,6 +2,7 @@ describe("Accessibility tests in light mode", () => {
     it("Checks clients page", () => {
         cy.login();
         cy.visit("/clients");
+        cy.get("h1", { timeout: 5000 }).should("exist");
 
         cy.checkAccessibility();
     });
@@ -16,6 +17,7 @@ describe("Accessibility tests in light mode", () => {
     it("Checks parcels page", () => {
         cy.login();
         cy.visit("/parcels");
+        cy.get("h1", { timeout: 5000 }).should("exist");
 
         cy.checkAccessibility();
     });
@@ -66,6 +68,7 @@ describe("Accessibility tests in dark mode", () => {
     it("Checks clients page", () => {
         cy.login();
         cy.visit("/clients");
+        cy.get("h1", { timeout: 5000 }).should("exist");
         cy.get("label[aria-label='Theme Switch']").click();
 
         cy.checkAccessibility();
@@ -82,6 +85,7 @@ describe("Accessibility tests in dark mode", () => {
     it("Checks parcels page", () => {
         cy.login();
         cy.visit("/parcels");
+        cy.get("h1", { timeout: 5000 }).should("exist");
         cy.get("label[aria-label='Theme Switch']").click();
 
         cy.checkAccessibility();
@@ -115,7 +119,7 @@ describe("Accessibility tests in dark mode", () => {
     it("Checks admin page", () => {
         cy.login();
         cy.visit("/admin");
-        cy.get("h1").should("exist");
+        cy.get("h1", { timeout: 5000 }).should("exist");
         cy.get("label[aria-label='Theme Switch']").click();
 
         cy.checkAccessibility({

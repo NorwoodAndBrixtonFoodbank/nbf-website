@@ -1,4 +1,4 @@
-import { logError } from "@/logger/logger";
+import { logErrorReturnLogId } from "@/logger/logger";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 interface SignInWithPasswordResponse {
@@ -13,7 +13,7 @@ export async function signInWithPassword(credentials: {
     const { error } = await supabase.auth.signInWithPassword(credentials);
 
     if (error) {
-        void logError("Sign in failed", { error });
+        void logErrorReturnLogId("Sign in failed", { error });
         return { errorMessage: error.message };
     }
 
