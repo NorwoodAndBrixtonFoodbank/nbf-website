@@ -25,9 +25,9 @@ const EditClients: ({ params }: EditClientsParameters) => React.ReactElement = (
 
     useEffect(() => {
         if (params.id) {
+            setError(null);
             fetchClient(params.id, supabase)
                 .then((client) => {
-                    setError(null);
                     setClientData(client);
                 })
                 .catch((error) => {
@@ -36,11 +36,12 @@ const EditClients: ({ params }: EditClientsParameters) => React.ReactElement = (
                 });
         }
     }, [params.id]);
+    
     useEffect(() => {
         if (clientData?.family_id) {
+            setError(null);
             fetchFamily(clientData.family_id, supabase)
                 .then((family) => {
-                    setError(null);
                     setFamilyData(family);
                 })
                 .catch((error) => {
