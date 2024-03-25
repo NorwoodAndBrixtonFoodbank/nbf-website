@@ -84,7 +84,7 @@ const ClientsPage: React.FC<{}> = () => {
     const [filteredClientCount, setFilteredClientCount] = useState<number>(0);
     const [sortState, setSortState] = useState<SortState<ClientsTableRow>>({ sortEnabled: false });
     const [primaryFilters, setPrimaryFilters] = useState<Filter<ClientsTableRow, any>[]>(filters);
-    const abortController = useRef<AbortController>();
+    const clientTableFetchAbortController = useRef<AbortController | null>(null);
 
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
@@ -94,15 +94,15 @@ const ClientsPage: React.FC<{}> = () => {
     useEffect(() => {
         (async () => {
             setIsLoading(true);
-            if (abortController.current) {
-                abortController.current.abort("stale request");
+            if (clientTableFetchAbortController.current) {
+                clientTableFetchAbortController.current.abort("stale request");
             }
-            abortController.current = new AbortController();
-            if (abortController.current) {
+            clientTableFetchAbortController.current = new AbortController();
+            if (clientTableFetchAbortController.current) {
                 const filteredClientCount = await getClientsCount(
                     supabase,
                     primaryFilters,
-                    abortController.current.signal
+                    clientTableFetchAbortController.current.signal
                 );
                 const fetchedData = await getClientsData(
                     supabase,
@@ -110,9 +110,9 @@ const ClientsPage: React.FC<{}> = () => {
                     endPoint,
                     primaryFilters,
                     sortState,
-                    abortController.current.signal
+                    clientTableFetchAbortController.current.signal
                 );
-                abortController.current = undefined;
+                clientTableFetchAbortController.current = null;
                 !filteredClientCount.abortSignalResponse.aborted &&
                     setFilteredClientCount(filteredClientCount.count);
                 !fetchedData.abortSignalResponse.aborted && setClientsDataPortion(fetchedData.data);
@@ -125,15 +125,15 @@ const ClientsPage: React.FC<{}> = () => {
     useEffect(() => {
         const loadCountAndData = async (): Promise<void> => {
             setIsLoading(true);
-            if (abortController.current) {
-                abortController.current.abort("stale request");
+            if (clientTableFetchAbortController.current) {
+                clientTableFetchAbortController.current.abort("stale request");
             }
-            abortController.current = new AbortController();
-            if (abortController.current) {
+            clientTableFetchAbortController.current = new AbortController();
+            if (clientTableFetchAbortController.current) {
                 const filteredParcelCount = await getClientsCount(
                     supabase,
                     primaryFilters,
-                    abortController.current.signal
+                    clientTableFetchAbortController.current.signal
                 );
                 const fetchedData = await getClientsData(
                     supabase,
@@ -141,9 +141,9 @@ const ClientsPage: React.FC<{}> = () => {
                     endPoint,
                     primaryFilters,
                     sortState,
-                    abortController.current.signal
+                    clientTableFetchAbortController.current.signal
                 );
-                abortController.current = undefined;
+                clientTableFetchAbortController.current = null;
                 !filteredParcelCount.abortSignalResponse.aborted &&
                     setFilteredClientCount(filteredParcelCount.count);
                 !fetchedData.abortSignalResponse.aborted && setClientsDataPortion(fetchedData.data);

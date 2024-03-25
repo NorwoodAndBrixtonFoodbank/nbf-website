@@ -39,13 +39,10 @@ export type ParcelProcessingData = Pick<
 >["processingData"];
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const getParcelProcessingData = async (
+const getParcelsQuery = (
     supabase: Supabase,
     filters: Filter<ParcelsTableRow, any>[],
-    sortState: SortState<ParcelsTableRow>,
-    abortSignal: AbortSignal,
-    startIndex: number,
-    endIndex: number
+    sortState: SortState<ParcelsTableRow>
 ) => {
     let query = supabase.from("parcels_plus").select("*");
 
@@ -64,8 +61,20 @@ const getParcelProcessingData = async (
         query = query.order("packing_datetime", { ascending: false });
     }
 
-    query = query.range(startIndex, endIndex);
+    return query;
+};
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const getParcelProcessingData = async (
+    supabase: Supabase,
+    filters: Filter<ParcelsTableRow, any>[],
+    sortState: SortState<ParcelsTableRow>,
+    abortSignal: AbortSignal,
+    startIndex: number,
+    endIndex: number
+) => {
+    let query = getParcelsQuery(supabase, filters, sortState);
+    query = query.range(startIndex, endIndex);
     query = query.abortSignal(abortSignal);
 
     const { data, error } = await query;
@@ -133,28 +142,12 @@ export const getParcelsCount = async (
     }
     return { count, abortSignalResponse: abortSignal };
 };
-
 export const getParcelIds = async (
     supabase: Supabase,
     filters: Filter<ParcelsTableRow, any>[],
     sortState: SortState<ParcelsTableRow>
 ): Promise<string[]> => {
-    let query = supabase.from("parcels_plus").select("*");
-
-    filters.forEach((filter) => {
-        if (filter.methodConfig.paginationType === PaginationType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
-    });
-
-    if (
-        sortState.sortEnabled &&
-        sortState.column.sortMethodConfig?.paginationType === PaginationType.Server
-    ) {
-        query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
-    } else {
-        query = query.order("packing_datetime", { ascending: false });
-    }
+    const query = getParcelsQuery(supabase, filters, sortState);
 
     const { data, error } = await query;
     if (error) {
@@ -174,28 +167,12 @@ export const getParcelsByIds = async (
     sortState: SortState<ParcelsTableRow>,
     parcelIds: string[]
 ): Promise<ParcelsTableRow[]> => {
-    let query = supabase.from("parcels_plus").select("*");
-
-    filters.forEach((filter) => {
-        if (filter.methodConfig.paginationType === PaginationType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
-    });
-
-    if (
-        sortState.sortEnabled &&
-        sortState.column.sortMethodConfig?.paginationType === PaginationType.Server
-    ) {
-        query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
-    } else {
-        query = query.order("packing_datetime", { ascending: false });
-    }
+    let query = getParcelsQuery(supabase, filters, sortState);
     if (parcelIds) {
         query = query.in("parcel_id", parcelIds);
     }
 
     const { data, error } = await query;
-
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: parcel table", error);
         throw new DatabaseError("fetch", "parcel table", logId);

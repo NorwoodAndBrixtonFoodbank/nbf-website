@@ -367,7 +367,7 @@ const ParcelsPage: React.FC<{}> = () => {
     const [areFiltersLoadingForFirstTime, setAreFiltersLoadingForFirstTime] =
         useState<boolean>(true);
 
-    const abortController = useRef<AbortController>();
+    const parcelsTableFetchAbortController = useRef<AbortController | null>(null);
 
     useEffect(() => {
         if (parcelId) {
@@ -441,25 +441,25 @@ const ParcelsPage: React.FC<{}> = () => {
             const allFilters = [...primaryFilters.slice(), ...additionalFilters.slice()];
             (async () => {
                 setIsLoading(true);
-                if (abortController.current) {
-                    abortController.current.abort("stale request");
+                if (parcelsTableFetchAbortController.current) {
+                    parcelsTableFetchAbortController.current.abort("stale request");
                 }
-                abortController.current = new AbortController();
-                if (abortController.current) {
+                parcelsTableFetchAbortController.current = new AbortController();
+                if (parcelsTableFetchAbortController.current) {
                     const filteredParcelCount = await getParcelsCount(
                         supabase,
                         allFilters,
-                        abortController.current.signal
+                        parcelsTableFetchAbortController.current.signal
                     );
                     const fetchedData = await getParcelsData(
                         supabase,
                         allFilters,
                         sortState,
-                        abortController.current.signal,
+                        parcelsTableFetchAbortController.current.signal,
                         startPoint,
                         endPoint
                     );
-                    abortController.current = undefined;
+                    parcelsTableFetchAbortController.current = null;
                     !filteredParcelCount.abortSignalResponse.aborted &&
                         setFilteredParcelCount(filteredParcelCount.count);
                     !fetchedData.abortSignalResponse.aborted &&
@@ -489,25 +489,25 @@ const ParcelsPage: React.FC<{}> = () => {
 
                 setIsLoading(true);
                 fetchParcelsTimer.current = setTimeout(async () => {
-                    if (abortController.current) {
-                        abortController.current.abort("stale request");
+                    if (parcelsTableFetchAbortController.current) {
+                        parcelsTableFetchAbortController.current.abort("stale request");
                     }
-                    abortController.current = new AbortController();
-                    if (abortController.current) {
+                    parcelsTableFetchAbortController.current = new AbortController();
+                    if (parcelsTableFetchAbortController.current) {
                         const filteredParcelCount = await getParcelsCount(
                             supabase,
                             allFilters,
-                            abortController.current.signal
+                            parcelsTableFetchAbortController.current.signal
                         );
                         const fetchedData = await getParcelsData(
                             supabase,
                             allFilters,
                             sortState,
-                            abortController.current.signal,
+                            parcelsTableFetchAbortController.current.signal,
                             startPoint,
                             endPoint
                         );
-                        abortController.current = undefined;
+                        parcelsTableFetchAbortController.current = null;
                         !filteredParcelCount.abortSignalResponse.aborted &&
                             setFilteredParcelCount(filteredParcelCount.count);
                         !fetchedData.abortSignalResponse.aborted &&
