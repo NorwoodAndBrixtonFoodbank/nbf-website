@@ -342,6 +342,7 @@ const ParcelsPage: React.FC<{}> = () => {
     const [parcelsDataPortion, setParcelsDataPortion] = useState<ParcelsTableRow[]>([]);
     const [filteredParcelCount, setFilteredParcelCount] = useState<number>(0);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
+    const [clientIdForSelectedParcel, setClientIdForSelectedParcel] = useState<string | null>(null);
 
     const [checkedParcelIds, setCheckedParcelIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
@@ -686,80 +687,98 @@ const ParcelsPage: React.FC<{}> = () => {
                     <CircularProgress aria-label="table-initial-progress-bar" />
                 </Centerer>
             ) : (
-                <TableSurface>
-                    <Table
-                        dataPortion={parcelsDataPortion}
-                        isLoading={isLoading}
-                        paginationConfig={{
-                            enablePagination: true,
-                            filteredCount: filteredParcelCount,
-                            onPageChange: setCurrentPage,
-                            onPerPageChange: setPerPage,
+                <>
+                    <TableSurface>
+                        <Table
+                            dataPortion={parcelsDataPortion}
+                            isLoading={isLoading}
+                            paginationConfig={{
+                                enablePagination: true,
+                                filteredCount: filteredParcelCount,
+                                onPageChange: setCurrentPage,
+                                onPerPageChange: setPerPage,
+                            }}
+                            headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
+                            columnDisplayFunctions={parcelTableColumnDisplayFunctions}
+                            columnStyleOptions={parcelTableColumnStyleOptions}
+                            onRowClick={onParcelTableRowClick}
+                            sortConfig={{
+                                sortPossible: true,
+                                sortableColumns: sortableColumns,
+                                setSortState: setSortState,
+                            }}
+                            filterConfig={{
+                                primaryFiltersShown: true,
+                                additionalFiltersShown: true,
+                                primaryFilters: primaryFilters,
+                                additionalFilters: additionalFilters,
+                                setPrimaryFilters: setPrimaryFilters,
+                                setAdditionalFilters: setAdditionalFilters,
+                            }}
+                            defaultShownHeaders={defaultShownHeaders}
+                            toggleableHeaders={toggleableHeaders}
+                            checkboxConfig={{
+                                displayed: true,
+                                selectedRowIds: checkedParcelIds,
+                                isAllCheckboxChecked: isAllCheckBoxSelected,
+                                onCheckboxClicked: (parcelData) =>
+                                    selectOrDeselectRow(parcelData.parcelId),
+                                onAllCheckboxClicked: () => toggleAllCheckBox(),
+                                isRowChecked: (parcelData) =>
+                                    checkedParcelIds.includes(parcelData.parcelId),
+                            }}
+                            editableConfig={{ editable: false }}
+                            pointerOnHover={true}
+                        />
+                    </TableSurface>
+                    <Modal
+                        header={
+                            <>
+                                <Icon
+                                    icon={faBoxArchive}
+                                    color={theme.primary.largeForeground[2]}
+                                />{" "}
+                                Parcel Details
+                            </>
+                        }
+                        isOpen={modalIsOpen}
+                        onClose={() => {
+                            setModalIsOpen(false);
+                            router.push("/parcels");
                         }}
-                        headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
-                        columnDisplayFunctions={parcelTableColumnDisplayFunctions}
-                        columnStyleOptions={parcelTableColumnStyleOptions}
-                        onRowClick={onParcelTableRowClick}
-                        sortConfig={{
-                            sortPossible: true,
-                            sortableColumns: sortableColumns,
-                            setSortState: setSortState,
-                        }}
-                        filterConfig={{
-                            primaryFiltersShown: true,
-                            additionalFiltersShown: true,
-                            primaryFilters: primaryFilters,
-                            additionalFilters: additionalFilters,
-                            setPrimaryFilters: setPrimaryFilters,
-                            setAdditionalFilters: setAdditionalFilters,
-                        }}
-                        defaultShownHeaders={defaultShownHeaders}
-                        toggleableHeaders={toggleableHeaders}
-                        checkboxConfig={{
-                            displayed: true,
-                            selectedRowIds: checkedParcelIds,
-                            isAllCheckboxChecked: isAllCheckBoxSelected,
-                            onCheckboxClicked: (parcelData) =>
-                                selectOrDeselectRow(parcelData.parcelId),
-                            onAllCheckboxClicked: () => toggleAllCheckBox(),
-                            isRowChecked: (parcelData) =>
-                                checkedParcelIds.includes(parcelData.parcelId),
-                        }}
-                        editableConfig={{ editable: false }}
-                        pointerOnHover={true}
-                    />
-                </TableSurface>
+                        headerId="expandedParcelDetailsModal"
+                    >
+                        <OutsideDiv>
+                            <ContentDiv>
+                                <Suspense fallback={<ExpandedParcelDetailsFallback />}>
+                                    <ExpandedParcelDetails parcelId={selectedParcelId} />
+                                </Suspense>
+                            </ContentDiv>
+                            <ButtonsDiv>
+                                <Centerer>
+                                    <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
+                                        Edit Parcel
+                                    </LinkButton>
+                                    {clientIdForSelectedParcel && (
+                                        <LinkButton
+                                            link={`/clients?clientId=${clientIdForSelectedParcel}`}
+                                        >
+                                            See Client Details
+                                        </LinkButton>
+                                    )}
+                                    {clientIdForSelectedParcel && (
+                                        <LinkButton
+                                            link={`/clients/edit/${clientIdForSelectedParcel}`}
+                                        >
+                                            Edit Client Details
+                                        </LinkButton>
+                                    )}
+                                </Centerer>
+                            </ButtonsDiv>
+                        </OutsideDiv>
+                    </Modal>
+                </>
             )}
-            <Modal
-                header={
-                    <>
-                        <Icon icon={faBoxArchive} color={theme.primary.largeForeground[2]} />{" "}
-                        Details
-                    </>
-                }
-                isOpen={modalIsOpen}
-                onClose={() => {
-                    setModalIsOpen(false);
-                    router.push("/parcels");
-                }}
-                headerId="expandedParcelDetailsModal"
-            >
-                <OutsideDiv>
-                    <ContentDiv>
-                        <Suspense fallback={<ExpandedParcelDetailsFallback />}>
-                            <ExpandedParcelDetails parcelId={selectedParcelId} />
-                        </Suspense>
-                    </ContentDiv>
-
-                    <ButtonsDiv>
-                        <Centerer>
-                            <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
-                                Edit Parcel
-                            </LinkButton>
-                        </Centerer>
-                    </ButtonsDiv>
-                </OutsideDiv>
-            </Modal>
         </>
     );
 };
