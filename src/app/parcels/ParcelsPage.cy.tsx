@@ -10,7 +10,6 @@ import {
     formatAddressFromClientDetails,
     formatBreakdownOfChildrenFromFamilyDetails,
     formatDatetimeAsDate,
-    formatDatetimeAsTime,
     formatHouseholdFromFamilyDetails,
     processEventsDetails,
     rawDataToExpandedParcelData,
