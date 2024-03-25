@@ -2,9 +2,9 @@ import { ClientsTableRow } from "@/app/clients/ClientsPage";
 import { familyCountToFamilyCategory } from "@/app/parcels/getExpandedParcelDetails";
 import { DatabaseError } from "@/app/errorClasses";
 import { Supabase } from "@/supabaseUtils";
+import { logErrorReturnLogId } from "@/logger/logger";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
-import { logError } from "@/logger/logger";
 
 const getClientsData = async (
     supabase: Supabase,
@@ -36,16 +36,19 @@ const getClientsData = async (
     const { data: clients, error: clientError } = await query;
 
     if (clientError) {
-        void logError("error fetching clients data");
-        throw new DatabaseError("fetch", "clients");
+        const logId = await logErrorReturnLogId("Error with fetch: Clients", clientError);
+        throw new DatabaseError("fetch", "clients", logId);
     }
 
     for (const client of clients) {
         if (!client.client_id) {
-            void logError("empty client id");
+            const logId = await logErrorReturnLogId("Empty client ID");
+            throw new Error("Empty client ID" + `Log ID: ${logId}`);
         }
+
         if (!client.full_name) {
-            void logError("empty client name");
+            const logId = await logErrorReturnLogId("Empty client name");
+            throw new Error("Empty client ID" + `Log ID: ${logId}`);
         }
         data.push({
             clientId: client.client_id ?? "",
@@ -71,8 +74,8 @@ export const getClientsCount = async (
     });
     const { count, error: clientError } = await query;
     if (clientError || count === null) {
-        void logError("error fetching clients details");
-        throw new DatabaseError("fetch", "clients");
+        const logId = await logErrorReturnLogId("error fetching clients details");
+        throw new DatabaseError("fetch", "clients", logId);
     }
     return count ?? 0;
 };

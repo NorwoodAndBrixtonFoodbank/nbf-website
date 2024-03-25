@@ -1,5 +1,6 @@
 import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fetchParcelTableData";
 import { familyCountToFamilyCategory } from "@/app/parcels/getExpandedParcelDetails";
+import { logErrorReturnLogId } from "@/logger/logger";
 import { Schema, ViewSchema } from "@/databaseUtils";
 
 export interface ParcelsTableRow {
@@ -30,15 +31,18 @@ export interface ParcelsTableRow {
     packingDatetime: Date | null;
 }
 
-export const processingDataToParcelsTableData = (
+export const processingDataToParcelsTableData = async (
     processingData: ParcelProcessingData,
     congestionCharge: CongestionChargeDetails[]
-): ParcelsTableRow[] => {
+): Promise<ParcelsTableRow[]> => {
     const parcelTableRows: ParcelsTableRow[] = [];
 
     if (processingData.length !== congestionCharge.length) {
+        const logId = await logErrorReturnLogId(
+            `Error with processing parcels table data. Invalid inputs, got length ${processingData.length} and ${congestionCharge.length}`
+        );
         throw new Error(
-            `Invalid inputs, got length ${processingData.length} and ${congestionCharge.length}`
+            `Invalid inputs, got length ${processingData.length} and ${congestionCharge.length}. Error ID: ${logId}`
         );
     }
 

@@ -17,6 +17,8 @@ import { InsertSchema } from "@/databaseUtils";
 import NameCard from "@/app/admin/createCollectionCentre/NameCard";
 import AcronymCard from "@/app/admin/createCollectionCentre/AcronymCard";
 import supabase from "@/supabaseClient";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
+import { DatabaseError } from "@/app/errorClasses";
 
 const initialFields: InsertSchema["collection_centres"] = {
     name: "",
@@ -58,13 +60,16 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
             setSubmitError(Errors.external);
             setSubmitErrorMessage(error.message);
             setSubmitDisabled(false);
-            return;
+
+            const logId = await logErrorReturnLogId("Error with insert: collection centre", error);
+            throw new DatabaseError("insert", "collection centres", logId);
         }
 
         setSubmitError(Errors.none);
         setSubmitErrorMessage("");
         setSubmitDisabled(false);
         setRefreshRequired(true);
+        void logInfoReturnLogId(`Collection centre: ${fields.name} has been created successfully.`);
     };
 
     return (

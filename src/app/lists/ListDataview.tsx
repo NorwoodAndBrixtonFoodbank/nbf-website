@@ -14,6 +14,7 @@ import Button from "@mui/material/Button";
 import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 
@@ -39,8 +40,8 @@ interface QuantityAndNotes {
 }
 
 interface ListDataViewProps {
-    listOfIngridients: ListRow[];
-    setListOfIngridients: React.Dispatch<React.SetStateAction<ListRow[]>>;
+    listOfIngredients: ListRow[];
+    setListOfIngredients: React.Dispatch<React.SetStateAction<ListRow[]>>;
     comment: string;
 }
 
@@ -119,8 +120,8 @@ const filters: Filter<ListRow, string>[] = [
 ];
 
 const ListsDataView: React.FC<ListDataViewProps> = ({
-    listOfIngridients,
-    setListOfIngridients: setListOfIngridients,
+    listOfIngredients,
+    setListOfIngredients,
     comment,
 }) => {
     const [modal, setModal] = useState<EditModalState>();
@@ -128,42 +129,43 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
-    const [listData, setListData] = useState<ListRow[]>(listOfIngridients);
+    const [listData, setListData] = useState<ListRow[]>(listOfIngredients);
     const [primaryFilters, setPrimaryFilters] = useState<Filter<ListRow, string>[]>(filters);
 
-    if (listOfIngridients === null) {
+    if (listOfIngredients === null) {
+        void logInfoReturnLogId("No ingredients found @ app/lists/ListDataView.tsx");
         throw new Error("No data found");
     }
 
     const toggleableHeaders = listsHeaderKeysAndLabels.map(([key]) => key);
 
     const onEdit = (index: number): void => {
-        setModal(listRowToListDB(listOfIngridients[index]));
+        setModal(listRowToListDB(listOfIngredients[index]));
     };
 
     const reorderRows = (row1: ListRow, row2: ListRow): void => {
-        const primaryKeys = listOfIngridients.map(
-            (listOfIngridients) => listOfIngridients.primaryKey
+        const primaryKeys = listOfIngredients.map(
+            (listOfIngredients) => listOfIngredients.primaryKey
         );
 
         const row1Index = primaryKeys.indexOf(row1.primaryKey);
         const row2Index = primaryKeys.indexOf(row2.primaryKey);
 
-        const row1Item = listOfIngridients[row1Index];
+        const row1Item = listOfIngredients[row1Index];
         const row1Order = row1Item.rowOrder;
 
-        const row2Item = listOfIngridients[row2Index];
+        const row2Item = listOfIngredients[row2Index];
         const row2Order = row2Item.rowOrder;
 
         row1Item.rowOrder = row2Order;
         row2Item.rowOrder = row1Order;
 
-        const newListOfIngridients = [...listOfIngridients];
+        const newListOfIngredients = [...listOfIngredients];
 
-        newListOfIngridients[row1Index] = row2Item;
-        newListOfIngridients[row2Index] = row1Item;
+        newListOfIngredients[row1Index] = row2Item;
+        newListOfIngredients[row2Index] = row1Item;
 
-        setListOfIngridients(newListOfIngridients);
+        setListOfIngredients(newListOfIngredients);
     };
     const onSwapRows = async (row1: ListRow, row2: ListRow): Promise<void> => {
         const { error } = await supabase.from("lists").upsert([
@@ -178,7 +180,11 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         ]);
 
         if (error) {
-            throw new DatabaseError("update", "lists items");
+            const logId = await logErrorReturnLogId(
+                "Error with upsert: List row item order",
+                error
+            );
+            throw new DatabaseError("update", "list items", logId);
         }
 
         reorderRows(row1, row2);
@@ -191,14 +197,18 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
 
     const onConfirmDeletion = async (): Promise<void> => {
         if (toDelete !== null) {
-            const itemToDelete = listOfIngridients[toDelete];
+            const itemToDelete = listOfIngredients[toDelete];
             const { error } = await supabase
                 .from("lists")
                 .delete()
                 .eq("primary_key", itemToDelete.primaryKey);
 
             if (error) {
-                setErrorMsg(error.message);
+                const logId = await logErrorReturnLogId(
+                    `Error with delete: Ingredient id ${itemToDelete.primaryKey}`,
+                    error
+                );
+                setErrorMsg(error.message + `Error ID: ${logId}`);
             } else {
                 window.location.reload();
             }
@@ -207,7 +217,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
 
     useEffect(() => {
         setListData(
-            listOfIngridients.filter((row) => {
+            listOfIngredients.filter((row) => {
                 return primaryFilters.every((filter) => {
                     return (
                         filter.methodConfig.paginationType === PaginationType.Client &&
@@ -216,13 +226,13 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                 });
             })
         );
-    }, [primaryFilters, listOfIngridients]);
+    }, [primaryFilters, listOfIngredients]);
 
     return (
         <>
             <ConfirmDialog
                 message={`Are you sure you want to delete ${
-                    toDelete ? listOfIngridients[toDelete].itemName : ""
+                    toDelete ? listOfIngredients[toDelete].itemName : ""
                 }?`}
                 isOpen={toDeleteModalOpen}
                 onConfirm={onConfirmDeletion}

@@ -195,6 +195,7 @@ async function generateSeed(): Promise<void> {
             generate(10000, {
                 eventName: (ctx) => copycat.oneOfString(ctx.seed, eventNamesWithNoData),
                 eventData: "",
+                timestamp: (ctx) => getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
             }),
         { connect: true }
     );

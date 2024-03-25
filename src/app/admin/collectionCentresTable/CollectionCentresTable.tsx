@@ -10,6 +10,7 @@ import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 
@@ -83,11 +84,15 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
             .eq("name", collectionCentreToDelete!.name);
 
         if (error) {
-            throw new DatabaseError("delete", "collection centre data");
+            const logId = await logErrorReturnLogId("Error with delete: Collection Centre", error);
+            throw new DatabaseError("delete", "collection centres", logId);
         }
 
         setCollectionCentreToDelete(undefined);
         setRefreshRequired(true);
+        void logInfoReturnLogId(
+            `Collection centre: ${collectionCentreToDelete?.name} successfully deleted.`
+        );
     };
 
     const onCollectionCentreDeleteCancellation = (): void => {

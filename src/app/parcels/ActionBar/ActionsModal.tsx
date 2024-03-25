@@ -13,6 +13,7 @@ import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { statusType } from "./Statuses";
 import SelectedParcelsOverview from "./SelectedParcelsOverview";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 export type ActionType = "pdfDownload" | "deleteParcel" | "generateMap";
 
@@ -136,7 +137,11 @@ export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
                 .from("collection_centres")
                 .select("primary_key, name");
             if (error) {
-                throw new DatabaseError("fetch", "collection centres");
+                const logId = await logErrorReturnLogId(
+                    "Error with fetch: Collection centres",
+                    error
+                );
+                throw new DatabaseError("fetch", "collection centres", logId);
             }
 
             const transformedData: [string, string][] = data.map((item) => [
