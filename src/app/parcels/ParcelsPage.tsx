@@ -374,7 +374,7 @@ const ParcelsPage: React.FC<{}> = () => {
                 .single();
 
             if (error) {
-                void logErrorReturnLogId(`Error fetching clientId from database`, { error });
+                void logErrorReturnLogId("Error fetching clientId from database", { error });
                 return;
             }
 
