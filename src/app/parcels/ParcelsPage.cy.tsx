@@ -23,7 +23,8 @@ const sampleProcessingData: ParcelProcessingData = [
         collection_centre_name: "COLLECTION_CENTRE",
         collection_centre_acronym: "CC",
         collection_datetime: "2023-08-04T13:30:00+00:00",
-        packing_datetime: "2023-08-04T13:30:00+00:00",
+        packing_date: "2023-08-04T13:30:00+00:00",
+        packing_slot_name: "AM",
         voucher_number: "VOUCHER_1",
         client_id: "PRIMARY_KEY2",
         client_full_name: "CLIENT_NAME",
@@ -48,8 +49,8 @@ const sampleCongestionChargeData: CongestionChargeDetails[] = [
 
 const sampleRawExpandedClientDetails: RawParcelDetails = {
     voucher_number: "VOUCHER_1",
-    packing_datetime: "2023-08-04T13:30:00+00:00",
-
+    packing_date: "2023-08-04T13:30:00+00:00",
+    packing_slot: { name: "AM" },
     collection_centre: {
         name: "A COLLECTION CENTRE",
     },
@@ -104,7 +105,7 @@ describe("Parcels Page", () => {
                         collectionCentreAcronym: "CC",
                         congestionChargeApplies: true,
                     },
-                    packingTimeLabel: "PM",
+                    packingSlot: "PM",
                     lastStatus: {
                         name: "LAST_EVENT",
                         eventData: "SOME_RELATED_DATA",
@@ -112,7 +113,7 @@ describe("Parcels Page", () => {
                         workflowOrder: 1,
                     },
                     voucherNumber: "VOUCHER_1",
-                    packingDatetime: new Date("2023-08-04T13:30:00+00:00"),
+                    packingDate: new Date("2023-08-04T13:30:00+00:00"),
                     iconsColumn: {
                         flaggedForAttention: false,
                         requiresFollowUpPhoneCall: true,

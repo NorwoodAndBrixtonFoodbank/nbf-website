@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { CardProps, errorText, valueOnChangeDropdownList } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
