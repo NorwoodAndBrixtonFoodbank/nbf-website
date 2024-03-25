@@ -124,6 +124,14 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
         },
     },
     {
+        key: "packingSlot",
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("packing_slot_name", { ascending: sortDirection === "asc" }),
+            paginationType: PaginationType.Server,
+        },
+    },
+    {
         key: "lastStatus",
         sortMethodConfig: {
             method: (query, sortDirection) =>
