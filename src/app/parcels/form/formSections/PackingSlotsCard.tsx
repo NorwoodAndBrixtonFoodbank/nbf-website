@@ -25,9 +25,7 @@ const PackingSlotsCard: React.FC<PackingSlotsCardProps> = ({
                 <DropdownListInput
                     labelsAndValues={packingSlotsLabelsAndValues}
                     listTitle="Packing Slot"
-                    defaultValue={
-                        fields.packingSlot ? fields.packingSlot : packingSlotsLabelsAndValues[0][1]
-                    }
+                    defaultValue={fields.packingSlot}
                     onChange={valueOnChangeDropdownList(fieldSetter, errorSetter, "packingSlot")}
                 />
                 <ErrorText>{errorText(formErrors.packingSlot)}</ErrorText>
