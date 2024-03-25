@@ -169,10 +169,10 @@ const parcelTableColumnStyleOptions = {
     deliveryCollection: {
         minWidth: "6rem",
     },
-    packingDatetipowertome: {
+    packingDate: {
         hide: 800,
     },
-    packingTimeLabel: {
+    packingSlot: {
         hide: 800,
         minWidth: "6rem",
     },
@@ -346,6 +346,47 @@ const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]
     });
 };
 
+const buildPackingSlotFilter = async (): Promise<Filter<ParcelsTableRow, string[]>> => {
+    const packingSlotSearch = (
+        query: PostgrestFilterBuilder<Database["public"], any, any>,
+        state: string[]
+    ): PostgrestFilterBuilder<Database["public"], any, any> => {
+        const newState = state.map((state) => {
+            return state.replace(" (inactive)", "");
+        });
+        return query.in("packing_slot_name", newState);
+    };
+
+    const keySet = new Set();
+    const { data, error } = await supabase.from("packing_slots").select("name, is_shown");
+    if (error) {
+        const logId = await logErrorReturnLogId(
+            "Error with fetch: Packing slot filter options",
+            error
+        );
+        throw new DatabaseError("fetch", "packing slot filter options", logId);
+    }
+    const optionsResponse = data ?? [];
+    const optionsSet: string[] = optionsResponse.reduce<string[]>((filteredOptions, row) => {
+        if (row.name && row.is_shown && !keySet.has(row.name)) {
+            keySet.add(row.name);
+            filteredOptions.push(row.name);
+        } else if (row.name && !row.is_shown && !keySet.has(row.name)) {
+            keySet.add(row.name);
+            filteredOptions.push(`${row.name} (inactive)`);
+        }
+        return filteredOptions.sort();
+    }, []);
+
+    return checklistFilter<ParcelsTableRow>({
+        key: "packingSlot",
+        filterLabel: "Packing Slot",
+        itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
+        initialCheckedKeys: optionsSet.map((option) => option),
+        methodConfig: { paginationType: PaginationType.Server, method: packingSlotSearch },
+    });
+};
+
 const ParcelsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [parcelsDataPortion, setParcelsDataPortion] = useState<ParcelsTableRow[]>([]);
@@ -431,6 +472,7 @@ const ParcelsPage: React.FC<{}> = () => {
                     methodConfig: { paginationType: PaginationType.Server, method: voucherSearch },
                 }),
                 await buildLastStatusFilter(),
+                await buildPackingSlotFilter(),
             ];
             return { primaryFilters: primaryFilters, additionalFilters: additionalFilters };
         };
