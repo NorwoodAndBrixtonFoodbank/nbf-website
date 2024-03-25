@@ -43,7 +43,6 @@ const CheckboxGroupPopup: React.FC<Props> = (props) => {
                 onClick={(event) => setPopoverAnchorElement(event.currentTarget)}
                 disabled={!props.labelsAndKeys.length}
                 type="button"
-                id="checkbox-status-button"
                 endIcon={<ArrowDropDown />}
             >
                 {props.groupLabel}
