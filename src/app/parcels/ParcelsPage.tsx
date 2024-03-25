@@ -374,7 +374,7 @@ const ParcelsPage: React.FC<{}> = () => {
                 .single();
 
             if (error) {
-                void logError(`Error fetching clientId from database: ${error.message}`);
+                void logErrorReturnLogId(`Error fetching clientId from database`, { error });
                 return;
             }
 
@@ -382,7 +382,7 @@ const ParcelsPage: React.FC<{}> = () => {
             setClientIdForSelectedParcel(fetchedClientId);
         };
         setClientIdForSelectedParcel(null);
-        fetchAndSetClientIdForSelectedParcel();
+        void fetchAndSetClientIdForSelectedParcel();
     }, [parcelId]);
 
     const [perPage, setPerPage] = useState(10);
