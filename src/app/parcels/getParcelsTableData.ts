@@ -64,7 +64,7 @@ export const processingDataToParcelsTableData = async (
             collectionDatetime: parcel.collection_datetime
                 ? new Date(parcel.collection_datetime)
                 : null,
-            packingSlot: parcel.packing_slot,
+            packingSlot: parcel.packing_slot_name,
             lastStatus: processLastStatus(parcel),
             voucherNumber: parcel.voucher_number,
             packingDate: parcel.packing_date ? new Date(parcel.packing_date) : null,
