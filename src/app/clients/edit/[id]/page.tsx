@@ -36,7 +36,7 @@ const EditClients: ({ params }: EditClientsParameters) => React.ReactElement = (
                 });
         }
     }, [params.id]);
-    
+
     useEffect(() => {
         if (clientData?.family_id) {
             setError(null);
