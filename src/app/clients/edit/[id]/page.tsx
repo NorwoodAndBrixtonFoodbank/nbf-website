@@ -7,6 +7,9 @@ import { Errors, FormErrors } from "@/components/Form/formFunctions";
 import autofill from "@/app/clients/edit/[id]/autofill";
 import { fetchClient, fetchFamily } from "@/common/fetch";
 import { Schema } from "@/databaseUtils";
+import { logErrorReturnLogId } from "@/logger/logger";
+import { useRouter } from "next/navigation";
+import ErrorPage from "@/app/error";
 
 interface EditClientsParameters {
     params: { id: string };
@@ -15,22 +18,36 @@ interface EditClientsParameters {
 const EditClients: ({ params }: EditClientsParameters) => React.ReactElement = ({
     params,
 }: EditClientsParameters) => {
-    const [clientData, setClientData] = useState<Schema["clients"]>();
-    const [familyData, setFamilyData] = useState<Schema["families"][]>();
+    const [clientData, setClientData] = useState<Schema["clients"] | null>(null);
+    const [familyData, setFamilyData] = useState<Schema["families"][] | null>(null);
+    const [error, setError] = useState<Error | null>();
+    const router = useRouter();
 
     useEffect(() => {
-        (async () => {
-            if (params.id) {
-                setClientData(await fetchClient(params.id, supabase));
-            }
-        })();
+        if (params.id) {
+            fetchClient(params.id, supabase)
+                .then((client) => {
+                    setError(null);
+                    setClientData(client);
+                })
+                .catch((error) => {
+                    setError({ name: error, message: "Unable to fetch client data" });
+                    logErrorReturnLogId("error fetching client data in client edit modal");
+                });
+        }
     }, [params.id]);
     useEffect(() => {
-        (async () => {
-            if (clientData?.family_id) {
-                setFamilyData(await fetchFamily(clientData.family_id, supabase));
-            }
-        })();
+        if (clientData?.family_id) {
+            fetchFamily(clientData.family_id, supabase)
+                .then((family) => {
+                    setError(null);
+                    setFamilyData(family);
+                })
+                .catch((error) => {
+                    setError({ name: error, message: "Unable to fetch family data" });
+                    logErrorReturnLogId("error fetching family data in client edit modal");
+                });
+        }
     }, [clientData?.family_id]);
 
     const initialFields = clientData && familyData ? autofill(clientData, familyData) : null;
@@ -46,13 +63,17 @@ const EditClients: ({ params }: EditClientsParameters) => React.ReactElement = (
     };
     return (
         <main>
-            {initialFields && (
-                <ClientForm
-                    initialFields={initialFields}
-                    initialFormErrors={initialFormErrors}
-                    editMode
-                    clientID={params.id}
-                />
+            {error ? (
+                <ErrorPage error={error} reset={() => router.refresh()} />
+            ) : (
+                initialFields && (
+                    <ClientForm
+                        initialFields={initialFields}
+                        initialFormErrors={initialFormErrors}
+                        editMode
+                        clientID={params.id}
+                    />
+                )
             )}
         </main>
     );
