@@ -1,8 +1,20 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { checkErrorOnSubmit, Errors, Fields, FormErrors, setError, setField } from "@/components/Form/formFunctions";
-import { CenterComponent, FormErrorText, StyledForm, StyledName } from "@/components/Form/formStyling";
+import {
+    checkErrorOnSubmit,
+    Errors,
+    Fields,
+    FormErrors,
+    setError,
+    setField,
+} from "@/components/Form/formFunctions";
+import {
+    CenterComponent,
+    FormErrorText,
+    StyledForm,
+    StyledName,
+} from "@/components/Form/formStyling";
 
 import { useRouter } from "next/navigation";
 
@@ -18,7 +30,9 @@ import Title from "@/components/Title/Title";
 import { Schema } from "@/databaseUtils";
 import dayjs, { Dayjs } from "dayjs";
 import { CollectionCentresLabelsAndValues, PackingSlotsLabelsAndValues } from "@/common/fetch";
-import getExpandedClientDetails, { ExpandedClientData } from "@/app/clients/getExpandedClientDetails";
+import getExpandedClientDetails, {
+    ExpandedClientData,
+} from "@/app/clients/getExpandedClientDetails";
 import Modal from "@/components/Modal/Modal";
 import InfoIcon from "@mui/icons-material/Info";
 import Icon from "@/components/Icons/Icon";
