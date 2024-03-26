@@ -43,6 +43,11 @@ import { CircularProgress } from "@mui/material";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 
+interface packingSlotOptionsSet {
+    key: string;
+    value: string;
+}
+
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
     ["fullName", "Name"],
@@ -351,10 +356,7 @@ const buildPackingSlotFilter = async (): Promise<Filter<ParcelsTableRow, string[
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        const newState = state.map((state) => {
-            return state.replace(" (inactive)", "");
-        });
-        return query.in("packing_slot_name", newState);
+        return query.in("packing_slot_name", state);
     };
 
     const keySet = new Set();
@@ -370,17 +372,17 @@ const buildPackingSlotFilter = async (): Promise<Filter<ParcelsTableRow, string[
 
     const optionsResponse = data ?? [];
 
-    const optionsSet: string[] = optionsResponse.reduce<string[]>((filteredOptions, row) => {
+    const optionsSet = optionsResponse.reduce<packingSlotOptionsSet[]>((filteredOptions, row) => {
         if (!row.name || keySet.has(row.name)) {
             return filteredOptions;
         }
 
         if (row.is_shown) {
             keySet.add(row.name);
-            filteredOptions.push(row.name);
+            filteredOptions.push({ key: row.name, value: row.name });
         } else {
             keySet.add(row.name);
-            filteredOptions.push(`${row.name} (inactive)`);
+            filteredOptions.push({ key: row.name, value: `${row.name} (inactive)` });
         }
 
         return filteredOptions;
@@ -391,8 +393,8 @@ const buildPackingSlotFilter = async (): Promise<Filter<ParcelsTableRow, string[
     return checklistFilter<ParcelsTableRow>({
         key: "packingSlot",
         filterLabel: "Packing Slot",
-        itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
-        initialCheckedKeys: optionsSet,
+        itemLabelsAndKeys: optionsSet.map((option) => [option.value, option.key]),
+        initialCheckedKeys: optionsSet.map((option) => option.key),
         methodConfig: { paginationType: PaginationType.Server, method: packingSlotSearch },
     });
 };
