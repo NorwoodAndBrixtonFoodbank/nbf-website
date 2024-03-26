@@ -87,7 +87,7 @@ const DriverOverview = async ({
         .select("name, value")
         .eq("name", "driver_overview_message")
         .single();
-    const message = error ? "" : data.value;
+    const message = error ? "Error retrieving message for driver" : data.value;
     const driverOverviewData = {
         driverName: driverName,
         date: date,

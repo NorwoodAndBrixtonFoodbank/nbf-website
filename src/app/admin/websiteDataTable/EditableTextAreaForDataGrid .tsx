@@ -1,29 +1,31 @@
 import { GridRenderEditCellParams, useGridApiContext } from "@mui/x-data-grid";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-interface CustomCellProps extends GridRenderEditCellParams {
+interface EditableTextAreaForDataGridProps extends GridRenderEditCellParams {
     editMode: boolean;
 }
 
-const CustomComponent: React.FC<CustomCellProps> = (props: CustomCellProps) => {
-    const { id, field, hasFocus } = props;
+const EditableTextAreaForDataGrid: React.FC<EditableTextAreaForDataGridProps> = ({
+    id,
+    field,
+    hasFocus,
+    value: propsValue,
+    editMode,
+}: EditableTextAreaForDataGridProps) => {
     const apiRef = useGridApiContext();
     const ref = useRef<HTMLTextAreaElement>(null);
-    const initialValue = useRef(props.value);
-    const [value, setValue] = useState<string>(props.value);
+    const initialValue = useRef(propsValue);
+    const [value, setValue] = useState<string>(propsValue);
 
     useEffect(() => {
-        initialValue.current = props.value;
-        setValue(props.value);
-    }, [props.value]);
+        initialValue.current = propsValue;
+        setValue(propsValue);
+    }, [propsValue]);
 
     useLayoutEffect(() => {
-        if (hasFocus) {
-            ref.current?.focus();
-            ref.current?.setSelectionRange(
-                initialValue.current.length,
-                initialValue.current.length
-            );
+        if (hasFocus && ref.current) {
+            ref.current.focus();
+            ref.current.setSelectionRange(initialValue.current.length, initialValue.current.length);
         }
     }, [hasFocus, initialValue]);
 
@@ -49,9 +51,9 @@ const CustomComponent: React.FC<CustomCellProps> = (props: CustomCellProps) => {
             onBlur={() => {
                 ref.current?.setSelectionRange(value.length, value.length);
             }}
-            readOnly={!props.editMode}
+            readOnly={!editMode}
         />
     );
 };
 
-export default CustomComponent;
+export default EditableTextAreaForDataGrid;

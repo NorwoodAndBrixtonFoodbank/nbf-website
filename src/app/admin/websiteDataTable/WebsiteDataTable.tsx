@@ -17,12 +17,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import { LinearProgress } from "@mui/material";
-import { DatabaseError } from "@/app/errorClasses";
-import { fetchWebsiteData, updateDbWebsiteData } from "./FetchWebsiteData";
-import CustomComponent from "./CustomEditComponent";
-import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
+import { fetchWebsiteData, updateDbWebsiteData } from "./fetchWebsiteData";
+import EditableTextAreaForDataGrid from "./EditableTextAreaForDataGrid ";
+import { logErrorReturnLogId } from "@/logger/logger";
+import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import { logSubscriptionStatus } from "@/common/logSubscriptionStatus";
 
 export interface WebsiteDataRow {
+    dbName: string;
     readableName: string;
     id: string;
     value: string;
@@ -32,14 +34,17 @@ const WebsiteDataTable: React.FC = () => {
     const [rows, setRows] = useState<WebsiteDataRow[]>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const apiRef = useGridApiRef();
 
     useEffect(() => {
+        setIsLoading(true);
+        setErrorMessage(null);
         fetchWebsiteData()
             .then((response) => setRows(response))
             .catch(async (error) => {
-                const logId = await logErrorReturnLogId("Error with fetch: website data", error);
-                throw new DatabaseError("fetch", "website data table", logId);
+                await logErrorReturnLogId("Error with fetch: website data", error);
+                setErrorMessage("Error fetching data, please reload");
             })
             .finally(() => setIsLoading(false));
     }, []);
@@ -52,41 +57,26 @@ const WebsiteDataTable: React.FC = () => {
                 "postgres_changes",
                 { event: "*", schema: "public", table: "website_data" },
                 async () => {
+                    setErrorMessage(null);
                     try {
                         const websiteData = await fetchWebsiteData();
                         setRows(websiteData);
                     } catch (error) {
                         if (error) {
-                            const logId = await logErrorReturnLogId(
+                            await logErrorReturnLogId(
                                 "Error with fetch: website data subscription",
                                 error
                             );
                             setRows([]);
-                            throw new DatabaseError("fetch", "website data table", logId);
+                            setErrorMessage("Error fetching data, please reload");
                         }
                     }
                 }
             )
             .subscribe(async (status, err) => {
-                if (status === "TIMED_OUT") {
-                    const logId = await logErrorReturnLogId(
-                        "Channel Timed Out: Subscribe to website_data table",
-                        err
-                    );
-                    throw new DatabaseError("fetch", "website data table", logId);
-                } else if (status === "CHANNEL_ERROR") {
-                    const logId = await logErrorReturnLogId(
-                        "Channel Error: Subscribe to website_data table",
-                        err
-                    );
-                    throw new DatabaseError("fetch", "website data table", logId);
-                } else if (status === "CLOSED") {
-                    logInfoReturnLogId("Subscription to website_data table closed");
-                } else {
-                    logInfoReturnLogId("Subscribed to website_data table");
-                }
+                (await logSubscriptionStatus(status, err, "website_data")) &&
+                    setErrorMessage("Error fetching data, please reload");
             });
-
         return () => {
             void supabase.removeChannel(subscriptionChannel);
         };
@@ -100,11 +90,12 @@ const WebsiteDataTable: React.FC = () => {
     };
 
     const processRowUpdate = (newRow: WebsiteDataRow): WebsiteDataRow => {
+        setErrorMessage(null);
         setIsLoading(true);
         updateDbWebsiteData(newRow)
             .catch(async (error) => {
-                const logId = await logErrorReturnLogId("Error with update: website data", error);
-                throw new DatabaseError("update", "website data table", logId);
+                await logErrorReturnLogId("Error with update: website data", error);
+                setErrorMessage("Error updating data, please reload");
             })
             .finally(() => setIsLoading(false));
         return newRow;
@@ -128,7 +119,6 @@ const WebsiteDataTable: React.FC = () => {
     };
 
     const handleCancelClick = (id: GridRowId) => async () => {
-        console.log(rowModesModel[id]);
         setRowModesModel((currentValue) => ({
             ...currentValue,
             [id]: { mode: GridRowModes.View, ignoreModifications: true },
@@ -137,10 +127,10 @@ const WebsiteDataTable: React.FC = () => {
         const editedRow = rows.find((row) => row.id === id);
         if (editedRow === undefined) {
             {
-                const logId = await logErrorReturnLogId(
+                await logErrorReturnLogId(
                     "Edited row in website data admin table is undefined onCancelClick"
                 );
-                throw new DatabaseError("update", "website data table", logId);
+                setErrorMessage("Table error, please try again");
             }
         }
     };
@@ -152,9 +142,9 @@ const WebsiteDataTable: React.FC = () => {
             headerName: "Value",
             flex: 3,
             editable: true,
-            renderCell: (params) => <CustomComponent {...params} editMode={false} />,
+            renderCell: (params) => <EditableTextAreaForDataGrid {...params} editMode={false} />,
             renderEditCell: (params) => (
-                <CustomComponent {...params} hasFocus={true} editMode={true} />
+                <EditableTextAreaForDataGrid {...params} hasFocus={true} editMode={true} />
             ),
         },
         {
@@ -204,6 +194,7 @@ const WebsiteDataTable: React.FC = () => {
 
     return (
         <>
+            {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
             {rows && (
                 <DataGrid
                     rows={rows}
