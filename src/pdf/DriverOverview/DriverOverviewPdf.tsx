@@ -13,7 +13,7 @@ export interface DriverOverviewTableData {
         postcode: string;
     };
     contact?: string;
-    packingDate: Date | null;
+    packingDate: string | null;
     instructions?: string;
 }
 
@@ -154,11 +154,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                     <Text>{rowData.contact}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
-                    <Text>
-                        {rowData.packingDate
-                            ? rowData.packingDate.toLocaleDateString()
-                            : "No recorded date"}
-                    </Text>
+                    <Text>{rowData.packingDate ? rowData.packingDate : "No recorded date"}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
                     <Text>{rowData.instructions}</Text>

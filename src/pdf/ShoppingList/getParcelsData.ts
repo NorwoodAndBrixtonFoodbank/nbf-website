@@ -1,5 +1,6 @@
 import { fetchParcel } from "@/common/fetch";
 import supabase from "@/supabaseClient";
+import { formatDateToDate } from "@/common/format";
 
 export interface ParcelInfo {
     voucherNumber: string;
@@ -24,17 +25,6 @@ const formatDateToDateTime = (dateString: string | null): string => {
         day: "numeric",
         hour: "numeric",
         minute: "numeric",
-    });
-};
-
-const formatDateToDate = (dateString: string | null): string => {
-    if (dateString === null) {
-        return "";
-    }
-    return new Date(dateString).toLocaleString("en-GB", {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
     });
 };
 
