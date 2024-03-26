@@ -24,11 +24,9 @@ import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
 import {
     CollectionCentresOptions,
-    RequestParams,
-    areRequestsIdentical,
     getParcelIds,
-    getParcelsCount,
-    getParcelsData,
+    getParcelsByIds,
+    getParcelsDataAndCount,
 } from "./fetchParcelTableData";
 import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
@@ -42,6 +40,7 @@ import { dateFilter } from "@/components/Tables/DateFilter";
 import { CircularProgress } from "@mui/material";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
+import { ErrorSecondaryText } from "../errorStylingandMessages";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -358,6 +357,21 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const [sortState, setSortState] = useState<SortState<ParcelsTableRow>>({ sortEnabled: false });
 
+    const [parcelCountPerPage, setParcelCountPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
+    const startPoint = (currentPage - 1) * parcelCountPerPage;
+    const endPoint = currentPage * parcelCountPerPage - 1;
+
+    const [primaryFilters, setPrimaryFilters] = useState<Filter<ParcelsTableRow, any>[]>([]);
+    const [additionalFilters, setAdditionalFilters] = useState<Filter<ParcelsTableRow, any>[]>([]);
+
+    const [areFiltersLoadingForFirstTime, setAreFiltersLoadingForFirstTime] =
+        useState<boolean>(true);
+
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const parcelsTableFetchAbortController = useRef<AbortController | null>(null);
+
     useEffect(() => {
         if (parcelId) {
             setSelectedParcelId(parcelId);
@@ -384,17 +398,6 @@ const ParcelsPage: React.FC<{}> = () => {
         setClientIdForSelectedParcel(null);
         void fetchAndSetClientIdForSelectedParcel();
     }, [parcelId]);
-
-    const [perPage, setPerPage] = useState(10);
-    const [currentPage, setCurrentPage] = useState(1);
-    const startPoint = (currentPage - 1) * perPage;
-    const endPoint = currentPage * perPage - 1;
-
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<ParcelsTableRow, any>[]>([]);
-    const [additionalFilters, setAdditionalFilters] = useState<Filter<ParcelsTableRow, any>[]>([]);
-
-    const [areFiltersLoadingForFirstTime, setAreFiltersLoadingForFirstTime] =
-        useState<boolean>(true);
 
     useEffect(() => {
         const buildFilters = async (): Promise<{
@@ -459,34 +462,37 @@ const ParcelsPage: React.FC<{}> = () => {
     useEffect(() => {
         if (!areFiltersLoadingForFirstTime) {
             const allFilters = [...primaryFilters, ...additionalFilters];
-            const initialRequestParams: RequestParams<ParcelsTableRow> = {
-                allFilters: { ...allFilters },
-                sortState: { ...sortState },
-                startPoint: startPoint,
-                endPoint: endPoint,
-            };
-            (async () => {
-                setIsLoading(true);
-                const filteredParcelCount = await getParcelsCount(supabase, allFilters);
-                const fetchedData = await getParcelsData(
+            setIsLoading(true);
+            if (parcelsTableFetchAbortController.current) {
+                parcelsTableFetchAbortController.current.abort("stale request");
+            }
+
+            parcelsTableFetchAbortController.current = new AbortController();
+
+            if (parcelsTableFetchAbortController.current) {
+                setErrorMessage(null);
+                getParcelsDataAndCount(
                     supabase,
                     allFilters,
                     sortState,
+                    parcelsTableFetchAbortController.current.signal,
                     startPoint,
                     endPoint
-                );
-                const requestParams: RequestParams<ParcelsTableRow> = {
-                    allFilters: { ...allFilters },
-                    sortState: { ...sortState },
-                    startPoint: startPoint,
-                    endPoint: endPoint,
-                };
-                if (areRequestsIdentical(requestParams, initialRequestParams)) {
-                    setFilteredParcelCount(filteredParcelCount);
-                    setParcelsDataPortion(fetchedData);
-                }
-                setIsLoading(false);
-            })();
+                )
+                    .then(({ data, count }) => {
+                        setParcelsDataPortion(data);
+                        setFilteredParcelCount(count);
+                    })
+                    .catch((error) => {
+                        if (error instanceof DatabaseError) {
+                            setErrorMessage(error.message);
+                        }
+                    })
+                    .finally(() => {
+                        parcelsTableFetchAbortController.current = null;
+                        setIsLoading(false);
+                    });
+            }
         }
     }, [
         startPoint,
@@ -501,24 +507,44 @@ const ParcelsPage: React.FC<{}> = () => {
         // This requires that the DB parcels, events, families, clients and collection_centres tables have Realtime turned on
         if (!areFiltersLoadingForFirstTime) {
             const allFilters = [...primaryFilters, ...additionalFilters];
-            const loadCountAndDataWithTimer = async (): Promise<void> => {
+            const loadCountAndDataWithTimer = (): void => {
                 if (fetchParcelsTimer.current) {
                     clearTimeout(fetchParcelsTimer.current);
                     fetchParcelsTimer.current = null;
                 }
 
                 setIsLoading(true);
-                fetchParcelsTimer.current = setTimeout(async () => {
-                    setFilteredParcelCount(await getParcelsCount(supabase, allFilters));
-                    const fetchedData = await getParcelsData(
-                        supabase,
-                        allFilters,
-                        sortState,
-                        startPoint,
-                        endPoint
-                    );
-                    setParcelsDataPortion(fetchedData);
-                    setIsLoading(false);
+                fetchParcelsTimer.current = setTimeout(() => {
+                    if (parcelsTableFetchAbortController.current) {
+                        parcelsTableFetchAbortController.current.abort("stale request");
+                    }
+
+                    parcelsTableFetchAbortController.current = new AbortController();
+
+                    if (parcelsTableFetchAbortController.current) {
+                        setErrorMessage(null);
+                        getParcelsDataAndCount(
+                            supabase,
+                            allFilters,
+                            sortState,
+                            parcelsTableFetchAbortController.current.signal,
+                            startPoint,
+                            endPoint
+                        )
+                            .then(({ data, count }) => {
+                                setParcelsDataPortion(data);
+                                setFilteredParcelCount(count);
+                            })
+                            .catch((error) => {
+                                if (error instanceof DatabaseError) {
+                                    setErrorMessage(error.message);
+                                }
+                            })
+                            .finally(() => {
+                                parcelsTableFetchAbortController.current = null;
+                                setIsLoading(false);
+                            });
+                    }
                 }, 500);
             };
 
@@ -666,12 +692,10 @@ const ParcelsPage: React.FC<{}> = () => {
     const getCheckedParcelsData = async (
         checkedParcelIds: string[]
     ): Promise<ParcelsTableRow[]> => {
-        return await getParcelsData(
+        return await getParcelsByIds(
             supabase,
             primaryFilters.concat(additionalFilters),
             sortState,
-            undefined,
-            undefined,
             checkedParcelIds
         );
     };
@@ -694,6 +718,7 @@ const ParcelsPage: React.FC<{}> = () => {
                 </Centerer>
             ) : (
                 <>
+                    {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
                     <TableSurface>
                         <Table
                             dataPortion={parcelsDataPortion}
@@ -702,7 +727,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                 enablePagination: true,
                                 filteredCount: filteredParcelCount,
                                 onPageChange: setCurrentPage,
-                                onPerPageChange: setPerPage,
+                                onPerPageChange: setParcelCountPerPage,
                             }}
                             headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
                             columnDisplayFunctions={parcelTableColumnDisplayFunctions}
