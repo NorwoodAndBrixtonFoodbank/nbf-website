@@ -11,6 +11,7 @@ import {
     GridRowId,
     GridRowModes,
     GridRowModesModel,
+    GridRowsProp,
     useGridApiRef,
 } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
@@ -31,7 +32,7 @@ export interface WebsiteDataRow {
 }
 
 const WebsiteDataTable: React.FC = () => {
-    const [rows, setRows] = useState<WebsiteDataRow[]>([]);
+    const [rows, setRows] = useState<GridRowsProp<WebsiteDataRow>>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -135,16 +136,33 @@ const WebsiteDataTable: React.FC = () => {
         }
     };
 
-    const websiteDataColumns: GridColDef[] = [
+    const handleValueChange = (value: string, id: GridRowId, field: string): void => {
+        apiRef.current.setEditCellValue({ id, field, value });
+    };
+
+    const websiteDataColumns: GridColDef<WebsiteDataRow>[] = [
         { field: "readableName", headerName: "Field", flex: 1, editable: false },
         {
             field: "value",
             headerName: "Value",
             flex: 3,
             editable: true,
-            renderCell: (params) => <EditableTextAreaForDataGrid {...params} editMode={false} />,
+            renderCell: (params) => (
+                <EditableTextAreaForDataGrid
+                    {...params}
+                    editMode={false}
+                    value={params.row.value}
+                    handleValueChange={handleValueChange}
+                />
+            ),
             renderEditCell: (params) => (
-                <EditableTextAreaForDataGrid {...params} hasFocus={true} editMode={true} />
+                <EditableTextAreaForDataGrid
+                    {...params}
+                    hasFocus={true}
+                    editMode={true}
+                    value={params.row.value}
+                    handleValueChange={handleValueChange}
+                />
             ),
         },
         {

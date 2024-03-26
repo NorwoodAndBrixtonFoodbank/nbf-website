@@ -1,26 +1,25 @@
-import { GridRenderEditCellParams, useGridApiContext } from "@mui/x-data-grid";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { GridRenderEditCellParams, GridRowId } from "@mui/x-data-grid";
+import React, { useEffect, useLayoutEffect, useRef } from "react";
 
 interface EditableTextAreaForDataGridProps extends GridRenderEditCellParams {
     editMode: boolean;
+    handleValueChange: (value: string, id: GridRowId, field: string) => void;
 }
 
 const EditableTextAreaForDataGrid: React.FC<EditableTextAreaForDataGridProps> = ({
     id,
     field,
     hasFocus,
-    value: propsValue,
+    value,
     editMode,
+    handleValueChange,
 }: EditableTextAreaForDataGridProps) => {
-    const apiRef = useGridApiContext();
     const ref = useRef<HTMLTextAreaElement>(null);
-    const initialValue = useRef(propsValue);
-    const [value, setValue] = useState<string>(propsValue);
+    const initialValue = useRef(value);
 
     useEffect(() => {
-        initialValue.current = propsValue;
-        setValue(propsValue);
-    }, [propsValue]);
+        initialValue.current = value;
+    }, [value]);
 
     useLayoutEffect(() => {
         if (hasFocus && ref.current) {
@@ -29,16 +28,10 @@ const EditableTextAreaForDataGrid: React.FC<EditableTextAreaForDataGridProps> = 
         }
     }, [hasFocus, initialValue]);
 
-    const handleValueChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
-        const newValue = event.target.value;
-        setValue(newValue);
-        apiRef.current.setEditCellValue({ id, field, value: newValue });
-    };
-
     return (
         <textarea
             value={value}
-            onChange={handleValueChange}
+            onChange={(event) => handleValueChange(event.target.value, id, field)}
             ref={ref}
             style={{
                 flex: 3,
