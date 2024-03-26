@@ -165,7 +165,7 @@ export const fetchPackingSlotsInfo = async (
         throw new DatabaseError("fetch", "packing slots data", logId);
     }
 
-    const packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues = data!.map((packingSlot) => [
+    const packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues = data.map((packingSlot) => [
         packingSlot.name,
         packingSlot.primary_key,
     ]);
