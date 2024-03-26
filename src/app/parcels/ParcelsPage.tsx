@@ -368,14 +368,19 @@ const buildPackingSlotFilter = async (): Promise<Filter<ParcelsTableRow, string[
     }
     const optionsResponse = data ?? [];
     const optionsSet: string[] = optionsResponse.reduce<string[]>((filteredOptions, row) => {
-        if (row.name && row.is_shown && !keySet.has(row.name)) {
+        if (!row.name || keySet.has(row.name)) {
+            return filteredOptions;
+        }
+
+        if (row.is_shown) {
             keySet.add(row.name);
             filteredOptions.push(row.name);
-        } else if (row.name && !row.is_shown && !keySet.has(row.name)) {
+        } else {
             keySet.add(row.name);
-            filteredOptions.push(`${row.name} (inactive)`);
+            filteredOptions.push(`${row.name} (inactive`);
         }
-        return filteredOptions.sort();
+
+        return filteredOptions;
     }, []);
 
     return checklistFilter<ParcelsTableRow>({
