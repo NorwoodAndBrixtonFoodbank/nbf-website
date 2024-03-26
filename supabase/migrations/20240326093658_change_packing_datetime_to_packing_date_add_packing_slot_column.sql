@@ -4,7 +4,7 @@ alter table "public"."parcels" rename column "packing_datetime" to "packing_date
 
 alter table "public"."parcels" alter column "packing_date" set data type date;
 
-alter table "public"."parcels" add column "packing_slot" uuid not null;
+alter table "public"."parcels" add column "packing_slot" uuid;
 
 alter table "public"."parcels" add constraint "parcels_packing_slot_fkey" FOREIGN KEY (packing_slot) REFERENCES packing_slots(primary_key) not valid;
 

@@ -355,7 +355,7 @@ export type Database = {
           collection_centre: string | null
           collection_datetime: string | null
           packing_date: string | null
-          packing_slot: string
+          packing_slot: string | null
           primary_key: string
           voucher_number: string | null
         }
@@ -364,7 +364,7 @@ export type Database = {
           collection_centre?: string | null
           collection_datetime?: string | null
           packing_date?: string | null
-          packing_slot: string
+          packing_slot?: string | null
           primary_key?: string
           voucher_number?: string | null
         }
@@ -373,7 +373,7 @@ export type Database = {
           collection_centre?: string | null
           collection_datetime?: string | null
           packing_date?: string | null
-          packing_slot?: string
+          packing_slot?: string | null
           primary_key?: string
           voucher_number?: string | null
         }

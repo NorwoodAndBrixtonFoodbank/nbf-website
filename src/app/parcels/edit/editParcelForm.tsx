@@ -25,7 +25,7 @@ const prepareParcelDataForForm = (
         clientId: parcelData.client_id,
         voucherNumber: parcelData.voucher_number,
         packingDate: parcelData.packing_date,
-        packingSlot: parcelData.packing_slot!.primary_key,
+        packingSlot: parcelData.packing_slot?.primary_key,
         shippingMethod:
             parcelData.collection_centre?.primary_key == deliveryPrimaryKey
                 ? "Delivery"

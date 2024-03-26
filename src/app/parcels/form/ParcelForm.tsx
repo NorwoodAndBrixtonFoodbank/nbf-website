@@ -46,7 +46,7 @@ export interface ParcelFields extends Fields {
     clientId: string | null;
     voucherNumber: string | null;
     packingDate: string | null;
-    packingSlot: string;
+    packingSlot: string | undefined;
     shippingMethod: string | null;
     collectionDate: string | null;
     collectionTime: string | null;
@@ -171,6 +171,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             inputError = checkErrorOnSubmit(formErrors, setFormErrors, [
                 "voucherNumber",
                 "packingDate",
+                "packingSlot",
                 "shippingMethod",
             ]);
         }
