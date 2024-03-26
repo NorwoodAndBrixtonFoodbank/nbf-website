@@ -1,7 +1,5 @@
 drop view if exists "public"."parcels_plus";
 
-drop view if exists "public"."last_status";
-
 alter table "public"."parcels" rename column "packing_datetime" to "packing_date";
 
 alter table "public"."parcels" alter column "packing_date" set data type date;
@@ -11,26 +9,6 @@ alter table "public"."parcels" add column "packing_slot" uuid not null;
 alter table "public"."parcels" add constraint "parcels_packing_slot_fkey" FOREIGN KEY (packing_slot) REFERENCES packing_slots(primary_key) not valid;
 
 alter table "public"."parcels" validate constraint "parcels_packing_slot_fkey";
-
-create or replace view "public"."last_status" as  WITH latest_events AS (
-         SELECT e.parcel_id,
-            e.event_name,
-            e."timestamp",
-            e.event_data,
-            o.workflow_order,
-            row_number() OVER (PARTITION BY e.parcel_id ORDER BY e."timestamp" DESC, e.parcel_id) AS row_num
-           FROM (events e
-             LEFT JOIN status_order o ON ((o.event_name = e.event_name)))
-        )
- SELECT p.primary_key AS parcel_id,
-    le.event_name,
-    le."timestamp",
-    le.event_data,
-    le.workflow_order
-   FROM (parcels p
-     LEFT JOIN latest_events le ON (((p.primary_key = le.parcel_id) AND (le.row_num = 1))))
-  ORDER BY COALESCE(le.workflow_order, (9999)::bigint);
-
 
 create or replace view "public"."parcels_plus" as  SELECT parcels.primary_key AS parcel_id,
     parcels.collection_datetime,
