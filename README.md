@@ -160,4 +160,4 @@ You can regenerate the types
     click on buttons to get to the pages you want!)
 
 ## Other docs
-Other detailed documentation is found in `/docs` folder
+Other detailed documentation is found in [/docs](./docs) folder
