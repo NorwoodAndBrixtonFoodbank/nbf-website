@@ -380,7 +380,7 @@ const buildPackingSlotFilter = async (): Promise<Filter<ParcelsTableRow, string[
             filteredOptions.push(row.name);
         } else {
             keySet.add(row.name);
-            filteredOptions.push(`${row.name} (inactive`);
+            filteredOptions.push(`${row.name} (inactive)`);
         }
 
         return filteredOptions;
