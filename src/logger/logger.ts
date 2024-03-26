@@ -11,19 +11,19 @@ type LogEvent = (message: string, meta?: Record<string, any>) => Promise<string>
 
 export const logErrorReturnLogId: LogEvent = (message, meta) => {
     const logId = uuid();
-    logger.error(message, logId, meta);
+    logger.error(message, { ...meta, logId });
     return Promise.resolve(logId);
 };
 
 export const logWarningReturnLogId: LogEvent = (message, meta) => {
     const logId = uuid();
-    logger.warn(message, logId, meta);
+    logger.warn(message, { ...meta, logId });
     return Promise.resolve(logId);
 };
 
 export const logInfoReturnLogId: LogEvent = (message, meta) => {
     const logId = uuid();
-    logger.info(message, logId, meta);
+    logger.info(message, { ...meta, logId });
     return Promise.resolve(logId);
 };
 
