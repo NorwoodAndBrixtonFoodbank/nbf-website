@@ -152,6 +152,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             setFormErrors(initialFormErrors);
         }
     }, []);
+
     const formSections =
         fields.shippingMethod === "Collection"
             ? withCollectionFormSections
