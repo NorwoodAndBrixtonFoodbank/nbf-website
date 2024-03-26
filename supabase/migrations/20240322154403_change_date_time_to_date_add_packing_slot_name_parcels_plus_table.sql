@@ -2,9 +2,9 @@ drop view if exists "public"."parcels_plus";
 
 drop view if exists "public"."last_status";
 
-alter table "public"."parcels" drop column "packing_datetime";
+alter table "public"."parcels" rename column "packing_datetime" to "packing_date";
 
-alter table "public"."parcels" add column "packing_date" date;
+alter table "public"."parcels" alter column "packing_date" set data type date;
 
 alter table "public"."parcels" add column "packing_slot" uuid not null;
 
