@@ -158,3 +158,6 @@ You can regenerate the types
 * Testing with Cypress - for UI, opens a 'browser' and clicks buttons.
   * For both unit tests (mount a component and verify properties) as well as end-to-end tests (open the website and
     click on buttons to get to the pages you want!)
+
+## Other docs
+Other detailed documentation is found in [/docs](./docs) folder
