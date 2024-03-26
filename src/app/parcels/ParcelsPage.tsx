@@ -127,7 +127,7 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
         key: "packingSlot",
         sortMethodConfig: {
             method: (query, sortDirection) =>
-                query.order("packing_slot_name", { ascending: sortDirection === "asc" }),
+                query.order("packing_slot_order", { ascending: sortDirection === "asc" }),
             paginationType: PaginationType.Server,
         },
     },
@@ -358,6 +358,7 @@ const buildPackingSlotFilter = async (): Promise<Filter<ParcelsTableRow, string[
     };
 
     const keySet = new Set();
+
     const { data, error } = await supabase.from("packing_slots").select("name, is_shown");
     if (error) {
         const logId = await logErrorReturnLogId(
@@ -366,7 +367,9 @@ const buildPackingSlotFilter = async (): Promise<Filter<ParcelsTableRow, string[
         );
         throw new DatabaseError("fetch", "packing slot filter options", logId);
     }
+
     const optionsResponse = data ?? [];
+
     const optionsSet: string[] = optionsResponse.reduce<string[]>((filteredOptions, row) => {
         if (!row.name || keySet.has(row.name)) {
             return filteredOptions;
@@ -382,6 +385,8 @@ const buildPackingSlotFilter = async (): Promise<Filter<ParcelsTableRow, string[
 
         return filteredOptions;
     }, []);
+
+    optionsSet.sort();
 
     return checklistFilter<ParcelsTableRow>({
         key: "packingSlot",
