@@ -444,8 +444,12 @@ const Table = <Data,>({
                         sortServer={sortConfig.sortPossible}
                         onSort={handleSort}
                         progressComponent={
-                            <Centerer>
-                                <CircularProgress aria-label="table-progress-bar" />
+                            <Centerer role="rowgroup">
+                                <CircularProgress
+                                    role="row"
+                                    aria-label="table-progress-bar"
+                                    aria-busy={true}
+                                />
                             </Centerer>
                         }
                         progressPending={isLoading}
