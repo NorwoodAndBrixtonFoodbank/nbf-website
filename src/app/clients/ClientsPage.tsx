@@ -92,61 +92,61 @@ const ClientsPage: React.FC<{}> = () => {
     const endPoint = currentPage * perPage - 1;
 
     useEffect(() => {
-        (async () => {
-            setIsLoading(true);
-            if (clientTableFetchAbortController.current) {
-                clientTableFetchAbortController.current.abort("stale request");
-            }
-            clientTableFetchAbortController.current = new AbortController();
-            if (clientTableFetchAbortController.current) {
-                const filteredClientCount = await getClientsCount(
-                    supabase,
-                    primaryFilters,
-                    clientTableFetchAbortController.current.signal
-                );
-                const fetchedData = await getClientsData(
-                    supabase,
-                    startPoint,
-                    endPoint,
-                    primaryFilters,
-                    sortState,
-                    clientTableFetchAbortController.current.signal
-                );
-                clientTableFetchAbortController.current = null;
-                !filteredClientCount.abortSignalResponse.aborted &&
-                    setFilteredClientCount(filteredClientCount.count);
-                !fetchedData.abortSignalResponse.aborted && setClientsDataPortion(fetchedData.data);
-            }
-            setIsLoading(false);
-            setIsLoadingForFirstTime(false);
-        })();
+        setIsLoading(true);
+        if (clientTableFetchAbortController.current) {
+            clientTableFetchAbortController.current.abort("stale request");
+        }
+        clientTableFetchAbortController.current = new AbortController();
+        if (clientTableFetchAbortController.current) {
+            getClientsCount(
+                supabase,
+                primaryFilters,
+                clientTableFetchAbortController.current.signal
+            )
+                .then((count) => setFilteredClientCount(count))
+                .catch();
+            getClientsData(
+                supabase,
+                startPoint,
+                endPoint,
+                primaryFilters,
+                sortState,
+                clientTableFetchAbortController.current.signal
+            )
+                .then((data) => setClientsDataPortion(data))
+                .catch();
+            clientTableFetchAbortController.current = null;
+        }
+        setIsLoading(false);
+        setIsLoadingForFirstTime(false);
     }, [startPoint, endPoint, primaryFilters, sortState]);
 
     useEffect(() => {
-        const loadCountAndData = async (): Promise<void> => {
+        const loadCountAndData = (): void => {
             setIsLoading(true);
             if (clientTableFetchAbortController.current) {
                 clientTableFetchAbortController.current.abort("stale request");
             }
             clientTableFetchAbortController.current = new AbortController();
             if (clientTableFetchAbortController.current) {
-                const filteredParcelCount = await getClientsCount(
+                getClientsCount(
                     supabase,
                     primaryFilters,
                     clientTableFetchAbortController.current.signal
-                );
-                const fetchedData = await getClientsData(
+                )
+                    .then((count) => setFilteredClientCount(count))
+                    .catch();
+                getClientsData(
                     supabase,
                     startPoint,
                     endPoint,
                     primaryFilters,
                     sortState,
                     clientTableFetchAbortController.current.signal
-                );
+                )
+                    .then((data) => setClientsDataPortion(data))
+                    .catch();
                 clientTableFetchAbortController.current = null;
-                !filteredParcelCount.abortSignalResponse.aborted &&
-                    setFilteredClientCount(filteredParcelCount.count);
-                !fetchedData.abortSignalResponse.aborted && setClientsDataPortion(fetchedData.data);
             }
             setIsLoading(false);
             setIsLoadingForFirstTime(false);

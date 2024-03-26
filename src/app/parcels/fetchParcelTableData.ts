@@ -3,7 +3,7 @@ import { DatabaseError, EdgeFunctionError } from "../errorClasses";
 import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsTableData";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
-import { logErrorReturnLogId } from "@/logger/logger";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 
 export type CongestionChargeDetails = {
     postcode: string;
@@ -33,10 +33,7 @@ export const getCongestionChargeDetailsForParcels = async (
     return response.data;
 };
 
-export type ParcelProcessingData = Pick<
-    Awaited<ReturnType<typeof getParcelProcessingData>>,
-    "processingData"
->["processingData"];
+export type ParcelProcessingData = Awaited<ReturnType<typeof getParcelProcessingData>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getParcelsQuery = (
@@ -78,16 +75,18 @@ const getParcelProcessingData = async (
     query = query.abortSignal(abortSignal);
 
     const { data, error } = await query;
-    if (abortSignal.aborted) {
-        return { processingData: [], abortSignalResponse: abortSignal };
-    }
 
     if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: parcel table", error);
+        let logId;
+        if (abortSignal.aborted) {
+            logId = await logInfoReturnLogId("Aborted fetch: parcel table", error);
+        } else {
+            logId = await logErrorReturnLogId("Error with fetch: parcel table", error);
+        }
         throw new DatabaseError("fetch", "parcel table", logId);
     }
 
-    return { processingData: data, abortSignalResponse: abortSignal };
+    return data;
 };
 
 export const getParcelsData = async (
@@ -97,8 +96,8 @@ export const getParcelsData = async (
     abortSignal: AbortSignal,
     startIndex: number,
     endIndex: number
-): Promise<{ data: ParcelsTableRow[]; abortSignalResponse: AbortSignal }> => {
-    const { processingData, abortSignalResponse } = await getParcelProcessingData(
+): Promise<ParcelsTableRow[]> => {
+    const processingData = await getParcelProcessingData(
         supabase,
         filters,
         sortState,
@@ -109,14 +108,14 @@ export const getParcelsData = async (
     const congestionCharge = await getCongestionChargeDetailsForParcels(processingData, supabase);
     const formattedData = await processingDataToParcelsTableData(processingData, congestionCharge);
 
-    return { data: formattedData, abortSignalResponse: abortSignalResponse };
+    return formattedData;
 };
 
 export const getParcelsCount = async (
     supabase: Supabase,
     filters: Filter<ParcelsTableRow, any>[],
     abortSignal: AbortSignal
-): Promise<{ count: number; abortSignalResponse: AbortSignal }> => {
+): Promise<number> => {
     let query = supabase.from("parcels_plus").select("*", { count: "exact", head: true });
 
     filters.forEach((filter) => {
@@ -129,18 +128,21 @@ export const getParcelsCount = async (
 
     const { count, error } = await query;
 
-    if (abortSignal.aborted) {
-        return { count: 0, abortSignalResponse: abortSignal };
-    }
     if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: Parcels", error);
-        throw new DatabaseError("fetch", "parcels", logId);
+        let logId;
+        if (abortSignal.aborted) {
+            logId = await logInfoReturnLogId("Aborted fetch: parcel table count", error);
+        } else {
+            logId = await logErrorReturnLogId("Error with fetch: parcel table count", error);
+        }
+        throw new DatabaseError("fetch", "parcel table", logId);
     }
+
     if (count === null) {
         const logId = await logErrorReturnLogId("Error with fetch: Parcels, count is null");
         throw new DatabaseError("fetch", "parcels", logId);
     }
-    return { count, abortSignalResponse: abortSignal };
+    return count;
 };
 export const getParcelIds = async (
     supabase: Supabase,

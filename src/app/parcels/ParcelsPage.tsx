@@ -378,6 +378,26 @@ const ParcelsPage: React.FC<{}> = () => {
     }, [parcelId]);
 
     useEffect(() => {
+        const fetchAndSetClientIdForSelectedParcel = async (): Promise<void> => {
+            const { data, error } = await supabase
+                .from("parcels")
+                .select("client_id")
+                .eq("primary_key", parcelId)
+                .single();
+
+            if (error) {
+                void logErrorReturnLogId("Error fetching clientId from database", { error });
+                return;
+            }
+
+            const fetchedClientId = data.client_id;
+            setClientIdForSelectedParcel(fetchedClientId);
+        };
+        setClientIdForSelectedParcel(null);
+        void fetchAndSetClientIdForSelectedParcel();
+    }, [parcelId]);
+
+    useEffect(() => {
         const buildFilters = async (): Promise<{
             primaryFilters: Filter<ParcelsTableRow, any>[];
             additionalFilters: Filter<ParcelsTableRow, any>[];
@@ -440,34 +460,32 @@ const ParcelsPage: React.FC<{}> = () => {
     useEffect(() => {
         if (!areFiltersLoadingForFirstTime) {
             const allFilters = [...primaryFilters.slice(), ...additionalFilters.slice()];
-            (async () => {
-                setIsLoading(true);
-                if (parcelsTableFetchAbortController.current) {
-                    parcelsTableFetchAbortController.current.abort("stale request");
-                }
-                parcelsTableFetchAbortController.current = new AbortController();
-                if (parcelsTableFetchAbortController.current) {
-                    const filteredParcelCount = await getParcelsCount(
-                        supabase,
-                        allFilters,
-                        parcelsTableFetchAbortController.current.signal
-                    );
-                    const fetchedData = await getParcelsData(
-                        supabase,
-                        allFilters,
-                        sortState,
-                        parcelsTableFetchAbortController.current.signal,
-                        startPoint,
-                        endPoint
-                    );
-                    parcelsTableFetchAbortController.current = null;
-                    !filteredParcelCount.abortSignalResponse.aborted &&
-                        setFilteredParcelCount(filteredParcelCount.count);
-                    !fetchedData.abortSignalResponse.aborted &&
-                        setParcelsDataPortion(fetchedData.data);
-                }
-                setIsLoading(false);
-            })();
+            setIsLoading(true);
+            if (parcelsTableFetchAbortController.current) {
+                parcelsTableFetchAbortController.current.abort("stale request");
+            }
+            parcelsTableFetchAbortController.current = new AbortController();
+            if (parcelsTableFetchAbortController.current) {
+                getParcelsCount(
+                    supabase,
+                    allFilters,
+                    parcelsTableFetchAbortController.current.signal
+                )
+                    .then((count) => setFilteredParcelCount(count))
+                    .catch();
+                getParcelsData(
+                    supabase,
+                    allFilters,
+                    sortState,
+                    parcelsTableFetchAbortController.current.signal,
+                    startPoint,
+                    endPoint
+                )
+                    .then((data) => setParcelsDataPortion(data))
+                    .catch();
+                parcelsTableFetchAbortController.current = null;
+            }
+            setIsLoading(false);
         }
     }, [
         startPoint,
@@ -482,37 +500,37 @@ const ParcelsPage: React.FC<{}> = () => {
         // This requires that the DB parcels, events, families, clients and collection_centres tables have Realtime turned on
         if (!areFiltersLoadingForFirstTime) {
             const allFilters = [...primaryFilters, ...additionalFilters];
-            const loadCountAndDataWithTimer = async (): Promise<void> => {
+            const loadCountAndDataWithTimer = (): void => {
                 if (fetchParcelsTimer.current) {
                     clearTimeout(fetchParcelsTimer.current);
                     fetchParcelsTimer.current = null;
                 }
 
                 setIsLoading(true);
-                fetchParcelsTimer.current = setTimeout(async () => {
+                fetchParcelsTimer.current = setTimeout(() => {
                     if (parcelsTableFetchAbortController.current) {
                         parcelsTableFetchAbortController.current.abort("stale request");
                     }
                     parcelsTableFetchAbortController.current = new AbortController();
                     if (parcelsTableFetchAbortController.current) {
-                        const filteredParcelCount = await getParcelsCount(
+                        getParcelsCount(
                             supabase,
                             allFilters,
                             parcelsTableFetchAbortController.current.signal
-                        );
-                        const fetchedData = await getParcelsData(
+                        )
+                            .then((count) => setFilteredParcelCount(count))
+                            .catch();
+                        getParcelsData(
                             supabase,
                             allFilters,
                             sortState,
                             parcelsTableFetchAbortController.current.signal,
                             startPoint,
                             endPoint
-                        );
+                        )
+                            .then((data) => setParcelsDataPortion(data))
+                            .catch();
                         parcelsTableFetchAbortController.current = null;
-                        !filteredParcelCount.abortSignalResponse.aborted &&
-                            setFilteredParcelCount(filteredParcelCount.count);
-                        !fetchedData.abortSignalResponse.aborted &&
-                            setParcelsDataPortion(fetchedData.data);
                     }
                     setIsLoading(false);
                 }, 500);

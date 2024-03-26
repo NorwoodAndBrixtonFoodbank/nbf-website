@@ -2,7 +2,7 @@ import { ClientsTableRow } from "@/app/clients/ClientsPage";
 import { familyCountToFamilyCategory } from "@/app/parcels/getExpandedParcelDetails";
 import { DatabaseError } from "@/app/errorClasses";
 import { Supabase } from "@/supabaseUtils";
-import { logErrorReturnLogId } from "@/logger/logger";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 
@@ -13,7 +13,7 @@ const getClientsData = async (
     filters: Filter<ClientsTableRow, any>[],
     sortState: SortState<ClientsTableRow>,
     abortSignal: AbortSignal
-): Promise<{ data: ClientsTableRow[]; abortSignalResponse: AbortSignal }> => {
+): Promise<ClientsTableRow[]> => {
     const data: ClientsTableRow[] = [];
 
     let query = supabase.from("clients_plus").select("*");
@@ -38,13 +38,14 @@ const getClientsData = async (
 
     const { data: clients, error: clientError } = await query;
 
-    if (abortSignal.aborted) {
-        return { data: [], abortSignalResponse: abortSignal };
-    }
-
     if (clientError) {
-        const logId = await logErrorReturnLogId("Error with fetch: Clients", clientError);
-        throw new DatabaseError("fetch", "clients", logId);
+        let logId;
+        if (abortSignal.aborted) {
+            logId = await logInfoReturnLogId("Aborted fetch: client table count", clientError);
+        } else {
+            logId = await logErrorReturnLogId("Error with fetch: client table count", clientError);
+        }
+        throw new DatabaseError("fetch", "client table", logId);
     }
 
     for (const client of clients) {
@@ -65,14 +66,14 @@ const getClientsData = async (
         });
     }
 
-    return { data: data, abortSignalResponse: abortSignal };
+    return data;
 };
 
 export const getClientsCount = async (
     supabase: Supabase,
     filters: Filter<ClientsTableRow, any>[],
     abortSignal: AbortSignal
-): Promise<{ count: number; abortSignalResponse: AbortSignal }> => {
+): Promise<number> => {
     let query = supabase.from("clients_plus").select("*", { count: "exact", head: true });
 
     filters.forEach((filter) => {
@@ -85,15 +86,17 @@ export const getClientsCount = async (
 
     const { count, error: clientError } = await query;
 
-    if (abortSignal.aborted) {
-        return { count: 0, abortSignalResponse: abortSignal };
-    }
-
     if (clientError || count === null) {
-        const logId = await logErrorReturnLogId("error fetching clients details");
+        let logId;
+        if (abortSignal.aborted) {
+            logId = await logInfoReturnLogId("Aborted fetch: client table count");
+        } else {
+            logId = await logErrorReturnLogId("error fetching clients details");
+        }
         throw new DatabaseError("fetch", "clients", logId);
     }
-    return { count, abortSignalResponse: abortSignal };
+
+    return count;
 };
 
 export default getClientsData;
