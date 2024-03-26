@@ -57,7 +57,7 @@ const getRequiredData = async (parcelIds: string[]): Promise<DriverOverviewTable
                 postcode: client?.address_postcode ?? "",
             },
             contact: client?.phone_number ?? "",
-            packingDate: formatDateToDate(parcel.packing_date) ?? "",
+            packingDate: formatDateToDate(parcel.packing_date) ?? null,
             instructions: client?.delivery_instructions ?? "",
         });
     }
