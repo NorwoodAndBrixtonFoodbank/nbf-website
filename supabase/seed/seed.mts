@@ -6,6 +6,7 @@ which only gets generated after running npx snaplet generate with local database
 import { createSeedClient } from "@snaplet/seed";
 import { copycat } from "@snaplet/copycat";
 import seedrandom from "seedrandom";
+import { listsSeedRequired } from "./listsSeed.mjs";
 
 const possibleDietaryRequirements = [
     "Gluten Free",
@@ -124,34 +125,7 @@ async function generateSeed(): Promise<void> {
         { connect: true }
     );
 
-    await seed.lists([
-        {
-            itemName: "Chicken",
-            quantityFor1: "1",
-            quantityFor2: "2",
-            quantityFor3: "3",
-            quantityFor4: "4",
-            quantityFor5: "5",
-            quantityFor6: "6",
-            quantityFor7: "7",
-            quantityFor8: "8",
-            quantityFor9: "9",
-            quantityFor10: "10",
-        },
-        {
-            itemName: "Egg",
-            quantityFor1: "1",
-            quantityFor2: "2",
-            quantityFor3: "3",
-            quantityFor4: "4",
-            quantityFor5: "5",
-            quantityFor6: "6",
-            quantityFor7: "7",
-            quantityFor8: "8",
-            quantityFor9: "9",
-            quantityFor10: "10",
-        },
-    ]);
+    await seed.lists(listsSeedRequired);
 
     await seed.listsHotels([
         {
