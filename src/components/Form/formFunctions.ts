@@ -179,17 +179,6 @@ export const onChangeDate = (
     }
 };
 
-export const onChangePackingSlot = (
-    fieldSetter: FieldSetter,
-    errorSetter: ErrorSetter,
-    key: string
-): SelectChangeEventHandler => {
-    return (event) => {
-        const input = event.target.value;
-        fieldSetter(key, input);
-        errorSetter(key, Errors.none);
-    };
-};
 export const errorExists = (errorType: Errors): boolean => {
     return errorType !== Errors.initial && errorType !== Errors.none;
 };
