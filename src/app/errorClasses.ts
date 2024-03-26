@@ -10,6 +10,17 @@ export class DatabaseError extends Error {
     }
 }
 
+export class AbortError extends Error {
+    constructor(errorCategory: DatabaseOperation, faultyArea = "", logId: string) {
+        super(
+            `The following request was aborted: the ${errorCategory} operation` +
+                (faultyArea !== "" ? ` (${faultyArea})` : "") +
+                `Log ID: ${logId}`
+        );
+        this.name = "AbortError";
+    }
+}
+
 type DatabaseOperation = "fetch" | "insert" | "update" | "delete";
 
 export class EdgeFunctionError extends Error {
