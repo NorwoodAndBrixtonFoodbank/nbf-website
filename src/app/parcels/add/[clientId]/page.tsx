@@ -5,7 +5,7 @@ import ParcelForm, {
     initialParcelFormErrors,
 } from "@/app/parcels/form/ParcelForm";
 import { getSupabaseServerComponentClient } from "@/supabaseServer";
-import { getCollectionCentresInfo } from "@/common/fetch";
+import { fetchPackingSlotsInfo, getCollectionCentresInfo } from "@/common/fetch";
 
 interface AddParcelParameters {
     params: {
@@ -17,6 +17,7 @@ const AddParcels = async ({ params }: AddParcelParameters): Promise<React.ReactE
     const supabase = getSupabaseServerComponentClient();
     const [deliveryPrimaryKey, collectionCentresLabelsAndValues] =
         await getCollectionCentresInfo(supabase);
+    const packingSlotsLabelsAndValues = await fetchPackingSlotsInfo(supabase);
 
     return (
         <main>
@@ -27,6 +28,7 @@ const AddParcels = async ({ params }: AddParcelParameters): Promise<React.ReactE
                 editMode={false}
                 deliveryPrimaryKey={deliveryPrimaryKey}
                 collectionCentresLabelsAndValues={collectionCentresLabelsAndValues}
+                packingSlotsLabelsAndValues={packingSlotsLabelsAndValues}
             />
         </main>
     );

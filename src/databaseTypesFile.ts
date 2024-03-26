@@ -354,7 +354,8 @@ export type Database = {
           client_id: string
           collection_centre: string | null
           collection_datetime: string | null
-          packing_datetime: string | null
+          packing_date: string | null
+          packing_slot: string | null
           primary_key: string
           voucher_number: string | null
         }
@@ -362,7 +363,8 @@ export type Database = {
           client_id: string
           collection_centre?: string | null
           collection_datetime?: string | null
-          packing_datetime?: string | null
+          packing_date?: string | null
+          packing_slot?: string | null
           primary_key?: string
           voucher_number?: string | null
         }
@@ -370,7 +372,8 @@ export type Database = {
           client_id?: string
           collection_centre?: string | null
           collection_datetime?: string | null
-          packing_datetime?: string | null
+          packing_date?: string | null
+          packing_slot?: string | null
           primary_key?: string
           voucher_number?: string | null
         }
@@ -401,6 +404,13 @@ export type Database = {
             columns: ["collection_centre"]
             isOneToOne: false
             referencedRelation: "collection_centres"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "parcels_packing_slot_fkey"
+            columns: ["packing_slot"]
+            isOneToOne: false
+            referencedRelation: "packing_slots"
             referencedColumns: ["primary_key"]
           },
         ]
@@ -480,7 +490,8 @@ export type Database = {
           last_status_event_name: string | null
           last_status_timestamp: string | null
           last_status_workflow_order: number | null
-          packing_datetime: string | null
+          packing_date: string | null
+          packing_slot_name: string | null
           parcel_id: string | null
           voucher_number: string | null
         }

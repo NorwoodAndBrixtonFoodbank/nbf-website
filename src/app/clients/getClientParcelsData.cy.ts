@@ -9,7 +9,7 @@ const sampleParcelData: ParcelsDetail = {
     collection_centre: {
         name: "Clapham - St Stephens Church",
     },
-    packing_datetime: "2024-09-24 17:31:25.437+00",
+    packing_date: "2024-09-24 17:31:25.437+00",
     voucher_number: "Sum et non es etiam.",
 };
 

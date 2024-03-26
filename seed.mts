@@ -116,6 +116,29 @@ async function generateSeed(): Promise<void> {
         },
     ]);
 
+    await seed.packingSlots([
+        {
+            name: "AM",
+            isShown: true,
+            order: 1,
+        },
+        {
+            name: "PM",
+            isShown: true,
+            order: 2,
+        },
+        {
+            name: "Slot 1",
+            isShown: false,
+            order: 3,
+        },
+        {
+            name: "Slot 2",
+            isShown: false,
+            order: 4,
+        },
+    ]);
+
     await seed.families(
         (generate) =>
             generate(1000, {
@@ -172,7 +195,7 @@ async function generateSeed(): Promise<void> {
     await seed.parcels(
         (generate) =>
             generate(5000, {
-                packingDatetime: (ctx) =>
+                packingDate: (ctx) =>
                     getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
                 collectionDatetime: (ctx) =>
                     getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
@@ -208,29 +231,6 @@ async function generateSeed(): Promise<void> {
                 "BOXES MUST BE PACKED FLAT SO THAT THEY CAN BE STACKED. Do not leave items sticking out of the top.\n" +
                 "We do have a selection of 'free from' goods as well as vegan and halal products. " +
                 "If you're uncertain about any additional dietary needs, please speak to one of the team.",
-        },
-    ]);
-
-    await seed.packingSlots([
-        {
-            name: "AM",
-            isShown: true,
-            order: 1,
-        },
-        {
-            name: "PM",
-            isShown: true,
-            order: 2,
-        },
-        {
-            name: "Slot 1",
-            isShown: false,
-            order: 3,
-        },
-        {
-            name: "Slot 2",
-            isShown: false,
-            order: 4,
         },
     ]);
 

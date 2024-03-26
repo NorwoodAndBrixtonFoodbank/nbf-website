@@ -15,7 +15,7 @@ export interface ParcelsTableRow {
         collectionCentreAcronym: string;
         congestionChargeApplies: boolean;
     };
-    packingTimeLabel: PackingTimeLabel | null;
+    packingSlot: string | null;
     collectionDatetime: Date | null;
     lastStatus: {
         name: string;
@@ -28,7 +28,7 @@ export interface ParcelsTableRow {
         flaggedForAttention: boolean;
         requiresFollowUpPhoneCall: boolean;
     };
-    packingDatetime: Date | null;
+    packingDate: Date | null;
 }
 
 export const processingDataToParcelsTableData = async (
@@ -64,10 +64,10 @@ export const processingDataToParcelsTableData = async (
             collectionDatetime: parcel.collection_datetime
                 ? new Date(parcel.collection_datetime)
                 : null,
-            packingTimeLabel: datetimeToPackingTimeLabel(parcel.packing_datetime),
+            packingSlot: parcel.packing_slot_name,
             lastStatus: processLastStatus(parcel),
             voucherNumber: parcel.voucher_number,
-            packingDatetime: parcel.packing_datetime ? new Date(parcel.packing_datetime) : null,
+            packingDate: parcel.packing_date ? new Date(parcel.packing_date) : null,
             iconsColumn: {
                 flaggedForAttention: parcel.client_flagged_for_attention ?? false,
                 requiresFollowUpPhoneCall: parcel.client_signposting_call_required ?? false,

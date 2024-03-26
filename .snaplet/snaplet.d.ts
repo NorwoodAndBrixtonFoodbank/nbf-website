@@ -252,10 +252,11 @@ interface Table_public_packing_slots {
 interface Table_public_parcels {
   primary_key: string;
   client_id: string;
-  packing_datetime: string | null;
   collection_centre: string | null;
   collection_datetime: string | null;
   voucher_number: string | null;
+  packing_date: string | null;
+  packing_slot: string;
 }
 interface Table_auth_refresh_tokens {
   instance_id: string | null;
@@ -605,10 +606,19 @@ interface Tables_relationships {
 
     };
   };
+  "public.packing_slots": {
+    parent: {
+
+    };
+    children: {
+       parcels_packing_slot_fkey: "public.parcels";
+    };
+  };
   "public.parcels": {
     parent: {
        parcels_client_id_fkey: "public.clients";
        parcels_collection_centre_fkey: "public.collection_centres";
+       parcels_packing_slot_fkey: "public.packing_slots";
     };
     children: {
        events_parcel_id_fkey: "public.events";
