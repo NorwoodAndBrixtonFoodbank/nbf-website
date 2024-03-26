@@ -26,8 +26,7 @@ import {
     CollectionCentresOptions,
     getParcelIds,
     getParcelsByIds,
-    getParcelsCount,
-    getParcelsData,
+    getParcelsDataAndCount,
 } from "./fetchParcelTableData";
 import dayjs from "dayjs";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
@@ -41,6 +40,7 @@ import { dateFilter } from "@/components/Tables/DateFilter";
 import { CircularProgress } from "@mui/material";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
+import { ErrorSecondaryText } from "../errorStylingandMessages";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -357,16 +357,18 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const [sortState, setSortState] = useState<SortState<ParcelsTableRow>>({ sortEnabled: false });
 
-    const [perPage, setPerPage] = useState(10);
+    const [parcelCountPerPage, setParcelCountPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
-    const startPoint = (currentPage - 1) * perPage;
-    const endPoint = currentPage * perPage - 1;
+    const startPoint = (currentPage - 1) * parcelCountPerPage;
+    const endPoint = currentPage * parcelCountPerPage - 1;
 
     const [primaryFilters, setPrimaryFilters] = useState<Filter<ParcelsTableRow, any>[]>([]);
     const [additionalFilters, setAdditionalFilters] = useState<Filter<ParcelsTableRow, any>[]>([]);
 
     const [areFiltersLoadingForFirstTime, setAreFiltersLoadingForFirstTime] =
         useState<boolean>(true);
+
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const parcelsTableFetchAbortController = useRef<AbortController | null>(null);
 
@@ -459,21 +461,17 @@ const ParcelsPage: React.FC<{}> = () => {
 
     useEffect(() => {
         if (!areFiltersLoadingForFirstTime) {
-            const allFilters = [...primaryFilters.slice(), ...additionalFilters.slice()];
+            const allFilters = [...primaryFilters, ...additionalFilters];
             setIsLoading(true);
             if (parcelsTableFetchAbortController.current) {
                 parcelsTableFetchAbortController.current.abort("stale request");
             }
+
             parcelsTableFetchAbortController.current = new AbortController();
+
             if (parcelsTableFetchAbortController.current) {
-                getParcelsCount(
-                    supabase,
-                    allFilters,
-                    parcelsTableFetchAbortController.current.signal
-                )
-                    .then((count) => setFilteredParcelCount(count))
-                    .catch();
-                getParcelsData(
+                setErrorMessage(null);
+                getParcelsDataAndCount(
                     supabase,
                     allFilters,
                     sortState,
@@ -481,11 +479,20 @@ const ParcelsPage: React.FC<{}> = () => {
                     startPoint,
                     endPoint
                 )
-                    .then((data) => setParcelsDataPortion(data))
-                    .catch();
-                parcelsTableFetchAbortController.current = null;
+                    .then(({ data, count }) => {
+                        setParcelsDataPortion(data);
+                        setFilteredParcelCount(count);
+                    })
+                    .catch((error) => {
+                        if (error instanceof DatabaseError) {
+                            setErrorMessage(error.message);
+                        }
+                    })
+                    .finally(() => {
+                        parcelsTableFetchAbortController.current = null;
+                        setIsLoading(false);
+                    });
             }
-            setIsLoading(false);
         }
     }, [
         startPoint,
@@ -511,16 +518,12 @@ const ParcelsPage: React.FC<{}> = () => {
                     if (parcelsTableFetchAbortController.current) {
                         parcelsTableFetchAbortController.current.abort("stale request");
                     }
+
                     parcelsTableFetchAbortController.current = new AbortController();
+
                     if (parcelsTableFetchAbortController.current) {
-                        getParcelsCount(
-                            supabase,
-                            allFilters,
-                            parcelsTableFetchAbortController.current.signal
-                        )
-                            .then((count) => setFilteredParcelCount(count))
-                            .catch();
-                        getParcelsData(
+                        setErrorMessage(null);
+                        getParcelsDataAndCount(
                             supabase,
                             allFilters,
                             sortState,
@@ -528,11 +531,20 @@ const ParcelsPage: React.FC<{}> = () => {
                             startPoint,
                             endPoint
                         )
-                            .then((data) => setParcelsDataPortion(data))
-                            .catch();
-                        parcelsTableFetchAbortController.current = null;
+                            .then(({ data, count }) => {
+                                setParcelsDataPortion(data);
+                                setFilteredParcelCount(count);
+                            })
+                            .catch((error) => {
+                                if (error instanceof DatabaseError) {
+                                    setErrorMessage(error.message);
+                                }
+                            })
+                            .finally(() => {
+                                parcelsTableFetchAbortController.current = null;
+                                setIsLoading(false);
+                            });
                     }
-                    setIsLoading(false);
                 }, 500);
             };
 
@@ -706,6 +718,7 @@ const ParcelsPage: React.FC<{}> = () => {
                 </Centerer>
             ) : (
                 <>
+                    {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
                     <TableSurface>
                         <Table
                             dataPortion={parcelsDataPortion}
@@ -714,7 +727,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                 enablePagination: true,
                                 filteredCount: filteredParcelCount,
                                 onPageChange: setCurrentPage,
-                                onPerPageChange: setPerPage,
+                                onPerPageChange: setParcelCountPerPage,
                             }}
                             headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
                             columnDisplayFunctions={parcelTableColumnDisplayFunctions}

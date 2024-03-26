@@ -10,7 +10,7 @@ import supabase from "@/supabaseClient";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState, Suspense, useRef } from "react";
 import { useTheme } from "styled-components";
-import getClientsData, { getClientsCount } from "./getClientsData";
+import getClientsDataAndCount from "./getClientsData";
 import { useSearchParams, useRouter } from "next/navigation";
 import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
@@ -19,6 +19,8 @@ import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { CircularProgress } from "@mui/material";
+import { DatabaseError } from "../errorClasses";
+import { ErrorSecondaryText } from "../errorStylingandMessages";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -84,6 +86,7 @@ const ClientsPage: React.FC<{}> = () => {
     const [filteredClientCount, setFilteredClientCount] = useState<number>(0);
     const [sortState, setSortState] = useState<SortState<ClientsTableRow>>({ sortEnabled: false });
     const [primaryFilters, setPrimaryFilters] = useState<Filter<ClientsTableRow, any>[]>(filters);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const clientTableFetchAbortController = useRef<AbortController | null>(null);
 
     const [perPage, setPerPage] = useState(10);
@@ -98,14 +101,8 @@ const ClientsPage: React.FC<{}> = () => {
         }
         clientTableFetchAbortController.current = new AbortController();
         if (clientTableFetchAbortController.current) {
-            getClientsCount(
-                supabase,
-                primaryFilters,
-                clientTableFetchAbortController.current.signal
-            )
-                .then((count) => setFilteredClientCount(count))
-                .catch();
-            getClientsData(
+            setErrorMessage(null);
+            getClientsDataAndCount(
                 supabase,
                 startPoint,
                 endPoint,
@@ -113,12 +110,21 @@ const ClientsPage: React.FC<{}> = () => {
                 sortState,
                 clientTableFetchAbortController.current.signal
             )
-                .then((data) => setClientsDataPortion(data))
-                .catch();
-            clientTableFetchAbortController.current = null;
+                .then(({ data, count }) => {
+                    setClientsDataPortion(data);
+                    setFilteredClientCount(count);
+                })
+                .catch((error) => {
+                    if (error instanceof DatabaseError) {
+                        setErrorMessage(error.message);
+                    }
+                })
+                .finally(() => {
+                    clientTableFetchAbortController.current = null;
+                    setIsLoading(false);
+                    setIsLoadingForFirstTime(false);
+                });
         }
-        setIsLoading(false);
-        setIsLoadingForFirstTime(false);
     }, [startPoint, endPoint, primaryFilters, sortState]);
 
     useEffect(() => {
@@ -129,14 +135,8 @@ const ClientsPage: React.FC<{}> = () => {
             }
             clientTableFetchAbortController.current = new AbortController();
             if (clientTableFetchAbortController.current) {
-                getClientsCount(
-                    supabase,
-                    primaryFilters,
-                    clientTableFetchAbortController.current.signal
-                )
-                    .then((count) => setFilteredClientCount(count))
-                    .catch();
-                getClientsData(
+                setErrorMessage(null);
+                getClientsDataAndCount(
                     supabase,
                     startPoint,
                     endPoint,
@@ -144,12 +144,21 @@ const ClientsPage: React.FC<{}> = () => {
                     sortState,
                     clientTableFetchAbortController.current.signal
                 )
-                    .then((data) => setClientsDataPortion(data))
-                    .catch();
-                clientTableFetchAbortController.current = null;
+                    .then(async ({ data, count }) => {
+                        setClientsDataPortion(data);
+                        setFilteredClientCount(count);
+                    })
+                    .catch((error) => {
+                        if (error instanceof DatabaseError) {
+                            setErrorMessage(error.message);
+                        }
+                    })
+                    .finally(() => {
+                        clientTableFetchAbortController.current = null;
+                        setIsLoading(false);
+                        setIsLoadingForFirstTime(false);
+                    });
             }
-            setIsLoading(false);
-            setIsLoadingForFirstTime(false);
         };
         // This requires that the DB clients, collection_centres, and families tables have Realtime turned on
         const subscriptionChannel = supabase
@@ -189,6 +198,7 @@ const ClientsPage: React.FC<{}> = () => {
                 </Centerer>
             ) : (
                 <>
+                    {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
                     <TableSurface>
                         <Table
                             dataPortion={clientsDataPortion}

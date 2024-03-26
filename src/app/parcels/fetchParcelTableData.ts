@@ -1,5 +1,5 @@
 import { Supabase } from "@/supabaseUtils";
-import { DatabaseError, EdgeFunctionError } from "../errorClasses";
+import { AbortError, DatabaseError, EdgeFunctionError } from "../errorClasses";
 import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsTableData";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
@@ -77,11 +77,12 @@ const getParcelProcessingData = async (
     const { data, error } = await query;
 
     if (error) {
-        let logId;
+        const logId = abortSignal.aborted
+            ? await logInfoReturnLogId("Aborted fetch: parcel table", error)
+            : await logErrorReturnLogId("Error with fetch: parcel table", error);
+
         if (abortSignal.aborted) {
-            logId = await logInfoReturnLogId("Aborted fetch: parcel table", error);
-        } else {
-            logId = await logErrorReturnLogId("Error with fetch: parcel table", error);
+            throw new AbortError("fetch", "parcel table", "logId");
         }
         throw new DatabaseError("fetch", "parcel table", logId);
     }
@@ -89,14 +90,14 @@ const getParcelProcessingData = async (
     return data;
 };
 
-export const getParcelsData = async (
+export const getParcelsDataAndCount = async (
     supabase: Supabase,
     filters: Filter<ParcelsTableRow, any[]>[],
     sortState: SortState<ParcelsTableRow>,
     abortSignal: AbortSignal,
     startIndex: number,
     endIndex: number
-): Promise<ParcelsTableRow[]> => {
+): Promise<{ data: ParcelsTableRow[]; count: number }> => {
     const processingData = await getParcelProcessingData(
         supabase,
         filters,
@@ -108,10 +109,12 @@ export const getParcelsData = async (
     const congestionCharge = await getCongestionChargeDetailsForParcels(processingData, supabase);
     const formattedData = await processingDataToParcelsTableData(processingData, congestionCharge);
 
-    return formattedData;
+    const count = await getParcelsCount(supabase, filters, abortSignal);
+
+    return { data: formattedData, count };
 };
 
-export const getParcelsCount = async (
+const getParcelsCount = async (
     supabase: Supabase,
     filters: Filter<ParcelsTableRow, any>[],
     abortSignal: AbortSignal
@@ -129,12 +132,13 @@ export const getParcelsCount = async (
     const { count, error } = await query;
 
     if (error) {
-        let logId;
+        const logId = abortSignal.aborted
+            ? await logInfoReturnLogId("Aborted fetch: parcel table count", error)
+            : await logErrorReturnLogId("Error with fetch: parcel table count", error);
         if (abortSignal.aborted) {
-            logId = await logInfoReturnLogId("Aborted fetch: parcel table count", error);
-        } else {
-            logId = await logErrorReturnLogId("Error with fetch: parcel table count", error);
+            throw new AbortError("fetch", "parcel table", "logId");
         }
+
         throw new DatabaseError("fetch", "parcel table", logId);
     }
 
