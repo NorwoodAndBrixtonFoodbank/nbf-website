@@ -382,7 +382,7 @@ const buildPackingSlotFilter = async (): Promise<Filter<ParcelsTableRow, string[
         key: "packingSlot",
         filterLabel: "Packing Slot",
         itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
-        initialCheckedKeys: optionsSet.map((option) => option),
+        initialCheckedKeys: optionsSet,
         methodConfig: { paginationType: PaginationType.Server, method: packingSlotSearch },
     });
 };
