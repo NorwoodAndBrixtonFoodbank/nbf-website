@@ -14,6 +14,7 @@ create or replace view "public"."parcels_plus" as  SELECT parcels.primary_key AS
     parcels.collection_datetime,
     parcels.packing_date,
     packing_slots.name AS packing_slot_name,
+    packing_slots.order AS packing_slot_order,
     parcels.voucher_number,
     collection_centres.name AS collection_centre_name,
     collection_centres.acronym AS collection_centre_acronym,
