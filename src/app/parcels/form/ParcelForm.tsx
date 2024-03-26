@@ -83,7 +83,7 @@ interface ParcelFormProps {
     deliveryPrimaryKey: Schema["collection_centres"]["primary_key"];
     collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues;
     packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues;
-    packingSlotShown?: boolean;
+    packingSlotIsShown?: boolean;
 }
 
 const withCollectionFormSections = [
@@ -121,7 +121,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     deliveryPrimaryKey,
     collectionCentresLabelsAndValues,
     packingSlotsLabelsAndValues,
-    packingSlotShown,
+    packingSlotIsShown,
 }) => {
     const router = useRouter();
     const [fields, setFields] = useState(initialFields);
@@ -147,7 +147,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     }, [clientDetails, clientIdForFetch]);
 
     useEffect(() => {
-        if (editMode && !packingSlotShown) {
+        if (editMode && !packingSlotIsShown) {
             initialFormErrors.packingSlot = Errors.invalidPackingSlot;
             setFormErrors(initialFormErrors);
         }

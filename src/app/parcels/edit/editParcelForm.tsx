@@ -44,7 +44,7 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
         []
     );
     const [packingSlots, setPackingSlots] = useState<PackingSlotsLabelsAndValues>([]);
-    const [packingSlotShown, setPackingSlotsShown] = useState<boolean | undefined>(true);
+    const [packingSlotIsShown, setPackingSlotsIsShown] = useState<boolean | undefined>(true);
 
     useEffect(() => {
         (async () => {
@@ -56,7 +56,7 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
             setDeliveryKey(deliveryPrimaryKey);
             setPackingSlots(packingSlotsLabelsAndValues);
             setCollectionCentres(collectionCentresLabelsAndValues);
-            setPackingSlotsShown(parcelData.packing_slot?.is_shown);
+            setPackingSlotsIsShown(parcelData.packing_slot?.is_shown);
             setIsLoading(false);
         })();
     }, [parcelId]);
@@ -82,7 +82,7 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
             deliveryPrimaryKey={deliveryKey}
             collectionCentresLabelsAndValues={collectionCentres}
             packingSlotsLabelsAndValues={packingSlots}
-            packingSlotShown={packingSlotShown}
+            packingSlotIsShown={packingSlotIsShown}
         />
     );
 };
