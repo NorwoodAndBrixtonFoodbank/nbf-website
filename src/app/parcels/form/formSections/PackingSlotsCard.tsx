@@ -8,6 +8,7 @@ import { PackingSlotsLabelsAndValues } from "@/common/fetch";
 interface PackingSlotsCardProps extends CardProps {
     packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues;
 }
+
 const PackingSlotsCard: React.FC<PackingSlotsCardProps> = ({
     fieldSetter,
     errorSetter,
