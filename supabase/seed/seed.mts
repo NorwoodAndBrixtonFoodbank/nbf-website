@@ -112,5 +112,4 @@ async function generateSeed(): Promise<void> {
             }),
         { connect: true }
     );
-
 }
