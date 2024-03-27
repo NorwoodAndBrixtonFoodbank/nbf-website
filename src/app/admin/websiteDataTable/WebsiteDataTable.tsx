@@ -19,10 +19,10 @@ import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import { LinearProgress } from "@mui/material";
 import { fetchWebsiteData, updateDbWebsiteData } from "./fetchWebsiteData";
-import EditableTextAreaForDataGrid from "./EditableTextAreaForDataGrid ";
+import EditableTextAreaForDataGrid from "./EditableTextAreaForDataGrid";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-import { checkAndLogSubscriptionStatus } from "@/common/logSubscriptionStatus";
+import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 
 export interface WebsiteDataRow {
     dbName: string;
@@ -72,7 +72,7 @@ const WebsiteDataTable: React.FC = () => {
                 }
             )
             .subscribe((status, err) => {
-                checkAndLogSubscriptionStatus(status, err, "website_data") ??
+                subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&
                     setErrorMessage("Error fetching data, please reload");
             });
         return () => {

@@ -29,7 +29,7 @@ import {
 } from "@/app/admin/packingSlotsTable/PackingSlotActions";
 import { LinearProgress } from "@mui/material";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { checkAndLogSubscriptionStatus } from "@/common/logSubscriptionStatus";
+import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 
 interface EditToolbarProps {
@@ -112,7 +112,7 @@ const PackingSlotsTable: React.FC = () => {
                 }
             )
             .subscribe(async (status, error) => {
-                checkAndLogSubscriptionStatus(status, error, "packing_slot") ??
+                subscriptionStatusRequiresErrorMessage(status, error, "packing_slot") &&
                     setErrorMessage("Error fetching data, please reload");
             });
 

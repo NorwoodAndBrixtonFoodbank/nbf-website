@@ -21,6 +21,7 @@ const EditableTextAreaForDataGrid: React.FC<EditableTextAreaForDataGridProps> = 
             ref.current.setSelectionRange(value.length, value.length);
         }
     }, [editMode]); //eslint-disable-line react-hooks/exhaustive-deps
+    //we don't need to pass value in as a dependancy
 
     return (
         <textarea

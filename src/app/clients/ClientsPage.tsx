@@ -21,7 +21,7 @@ import { Database } from "@/databaseTypesFile";
 import { CircularProgress } from "@mui/material";
 import { DatabaseError } from "../errorClasses";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
-import { checkAndLogSubscriptionStatus } from "@/common/logSubscriptionStatus";
+import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -180,7 +180,7 @@ const ClientsPage: React.FC<{}> = () => {
                 loadCountAndData
             )
             .subscribe((status, err) => {
-                checkAndLogSubscriptionStatus(status, err, "website_data") ??
+                subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&
                     setErrorMessage("Error fetching data, please reload");
             });
 

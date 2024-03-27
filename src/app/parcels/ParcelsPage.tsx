@@ -41,7 +41,7 @@ import { CircularProgress } from "@mui/material";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
-import { checkAndLogSubscriptionStatus } from "@/common/logSubscriptionStatus";
+import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 
 interface packingSlotOptionsSet {
     key: string;
@@ -639,7 +639,7 @@ const ParcelsPage: React.FC<{}> = () => {
                     loadCountAndDataWithTimer
                 )
                 .subscribe((status, err) => {
-                    checkAndLogSubscriptionStatus(status, err, "website_data") ??
+                    subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&
                         setErrorMessage("Error fetching data, please reload");
                 });
 
