@@ -30,6 +30,12 @@ async function generateSeed(): Promise<void> {
 
     await seed.$resetDatabase(); // Clears all existing data in the database, but keep the structure
 
+    await seed.websiteData(websiteData);
+
+    await seed.packingSlots(packingSlots);
+
+    await seed.statusOrders(statusOrder);
+
     await seed.clients((generate) =>
         generate(500, {
             fullName: (ctx) => copycat.fullName(ctx.seed),
@@ -107,9 +113,4 @@ async function generateSeed(): Promise<void> {
         { connect: true }
     );
 
-    await seed.websiteData(websiteData);
-
-    await seed.packingSlots(packingSlots);
-
-    await seed.statusOrders(statusOrder);
 }
