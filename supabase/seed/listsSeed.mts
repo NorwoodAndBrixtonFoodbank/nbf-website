@@ -2,6 +2,7 @@ import { UserModels } from "@snaplet/seed";
 
 interface SnapletList {
     itemName: string,
+    rowOrder: number,
     quantityFor1?: string,
     notesFor1?: string,
     quantityFor2?:string,
@@ -26,6 +27,7 @@ interface SnapletList {
 
 interface SnapletListRequired {
     itemName: string,
+    rowOrder: number,
     quantityFor1: string | undefined,
     notesFor1: string | null,
     quantityFor2:string | undefined,
@@ -52,6 +54,7 @@ interface SnapletListRequired {
 const snapletListToRequired = (list: SnapletList): SnapletListRequired => {
     return {
         itemName: list.itemName,
+        rowOrder: list.rowOrder,
         quantityFor1: list.quantityFor1 ?? undefined,
         notesFor1: list.notesFor1 ?? null,
         quantityFor2: list.quantityFor2 ?? undefined,
@@ -77,6 +80,7 @@ const snapletListToRequired = (list: SnapletList): SnapletListRequired => {
 
 const listsSeed: SnapletList[] = [{
     itemName: "Fresh Fruit / Vegetables",
+    rowOrder: 1,
     quantityFor1: "Mixture",
     quantityFor2: "Mixture",
     quantityFor3: "Mixture",
@@ -91,6 +95,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Eggs",
+    rowOrder: 2,
     quantityFor1: "4",
     notesFor1: "Please pack egg box into a packing box and not a bag to avoid potential humpty dumpties during delivery",
     quantityFor2: "6",
@@ -115,6 +120,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Washing Up Liquid",
+    rowOrder: 3,
     quantityFor1: "1 decanted",
     notesFor1: "Please only use decanted rather than full",
     quantityFor2: "1 decanted",
@@ -131,6 +137,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Laundry Pods",
+    rowOrder: 4,
     quantityFor1: "1 bag of 2 pods",
     quantityFor2: "1 bag of 4 pods",
     quantityFor3: "1 bag of 4 pods",
@@ -152,6 +159,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Nappies and Baby Wipes",
+    rowOrder: 5,
     quantityFor2: "As Required",
     notesFor2: "Please ask if unsure",
     quantityFor3: "As Required",
@@ -174,6 +182,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Oats",
+    rowOrder: 6,
     quantityFor2: "1 bag",
     quantityFor3: "1 bag",
     quantityFor4: "1 bag",
@@ -187,6 +196,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Bread",
+    rowOrder: 7,
     quantityFor1: "1",
     notesFor1: "Not always in stock",
     quantityFor2: "1",
@@ -211,6 +221,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Pet Food Box (only if requested)",
+    rowOrder: 8,
     quantityFor1: "pre-made box",
     quantityFor2: "pre-made box",
     quantityFor3: "pre-made box",
@@ -225,6 +236,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Cereal",
+    rowOrder: 9,
     quantityFor1: "3 sachets or small box or 1 sleeve weetabix",
     quantityFor2: "1 small cereal",
     quantityFor3: "1 medium /large cereal",
@@ -239,6 +251,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Tea / Coffee",
+    rowOrder: 10,
     quantityFor1: "40 teabags/small jar",
     notesFor1: "if neither listed, give tea",
     quantityFor2: "80 teabags/small jar",
@@ -263,6 +276,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Milk",
+    rowOrder: 11,
     quantityFor1: "1 Litre",
     notesFor1: "skimmed",
     quantityFor2: "1 Litre",
@@ -287,6 +301,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Drinks (inc Fruit Juice)",
+    rowOrder: 12,
     quantityFor1: "2 small cartons/tins",
     notesFor1: "1 litre fruit juice",
     quantityFor2: "1",
@@ -311,6 +326,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Squash",
+    rowOrder: 13,
     quantityFor5: "1",
     notesFor5: "1 standard bottle (if no squash use fruit juice)",
     quantityFor6: "1",
@@ -327,6 +343,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Soup - extra being added due to cold weather",
+    rowOrder: 14,
     quantityFor1: "2",
     notesFor1: "Please don't divide cuppa soup boxes -- 1 box = 1 tin",
     quantityFor2: "4",
@@ -342,6 +359,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Other Tinned Vegetables - everyone to have carrots",
+    rowOrder: 15,
     quantityFor1: "2",
     notesFor1: "use small tins if possible",
     quantityFor2: "2",
@@ -365,6 +383,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Pulses",
+    rowOrder: 16,
     quantityFor1: "1",
     quantityFor2: "1",
     quantityFor3: "2",
@@ -379,6 +398,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Dried Pulses",
+    rowOrder: 17,
     quantityFor5: "1 bag",
     quantityFor6: "1 bag",
     quantityFor7: "1 bag",
@@ -389,6 +409,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Baked Beans / Tinned Spaghetti for Children",
+    rowOrder: 18,
     quantityFor1: "1",
     quantityFor2: "2",
     quantityFor3: "3",
@@ -403,6 +424,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Tinned Tomatoes",
+    rowOrder: 19,
     quantityFor1: "1",
     quantityFor2: "1",
     quantityFor3: "2",
@@ -417,6 +439,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Meat - If eat pork please include at least 50% pork based.",
+    rowOrder: 20,
     quantityFor1: "3",
     notesFor1: "mix",
     quantityFor2: "3",
@@ -442,6 +465,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Fish",
+    rowOrder: 21,
     quantityFor1: "2",
     quantityFor2: "3",
     quantityFor3: "3",
@@ -456,6 +480,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Vegetarian Meal",
+    rowOrder: 22,
     quantityFor1: "1",
     notesFor1: "If client is veggie",
     quantityFor2: "2",
@@ -480,6 +505,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Cooking Sauce",
+    rowOrder: 23,
     quantityFor1: "1",
     quantityFor2: "1",
     quantityFor3: "1",
@@ -494,6 +520,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Potatoes",
+    rowOrder: 24,
     quantityFor1: "1",
     notesFor1: "Small tin or dried mash",
     quantityFor2: "1",
@@ -512,6 +539,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Savoury Snacks",
+    rowOrder: 25,
     quantityFor1: "1",
     quantityFor2: "2",
     quantityFor3: "2",
@@ -526,6 +554,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Custard",
+    rowOrder: 26,
     quantityFor1: "1",
     quantityFor2: "1",
     quantityFor3: "1",
@@ -540,6 +569,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Oil - Families Only",
+    rowOrder: 27,
     quantityFor4: "1",
     quantityFor5: "1",
     quantityFor6: "1",
@@ -551,6 +581,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Pasta",
+    rowOrder: 28,
     quantityFor1: "1kg",
     quantityFor2: "1.5kg",
     quantityFor3: "2kg",
@@ -565,6 +596,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Rice",
+    rowOrder: 29,
     quantityFor1: "1 Instant Rice Pouch",
     notesFor1: "or 1 small 500g bag",
     quantityFor2: "1kg",
@@ -589,12 +621,14 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Instant Noodles / Pasta for those with no cooking facilities",
+    rowOrder: 30,
     quantityFor1: "2",
     notesFor1: "Only if no cooking facilities",
 },
 
 {
     itemName: "Rice Pudding",
+    rowOrder: 31,
     quantityFor4: "1",
     quantityFor5: "2",
     quantityFor6: "2",
@@ -606,6 +640,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Other Pudding",
+    rowOrder: 32,
     quantityFor1: "1",
     quantityFor2: "1",
     quantityFor3: "1",
@@ -620,6 +655,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Jam / Honey / Peanut Butter (Preserves)",
+    rowOrder: 33,
     quantityFor1: "1",
     quantityFor2: "1",
     quantityFor3: "1",
@@ -634,6 +670,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Tinned Fruit",
+    rowOrder: 34,
     quantityFor1: "1",
     quantityFor2: "1",
     quantityFor3: "2",
@@ -656,6 +693,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Cereal bars",
+    rowOrder: 35,
     quantityFor1: "1",
     quantityFor2: "2",
     quantityFor3: "3",
@@ -670,6 +708,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Chocolate",
+    rowOrder: 36,
     quantityFor1: "1",
     quantityFor2: "1",
     quantityFor3: "1",
@@ -684,6 +723,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Biscuits",
+    rowOrder: 37,
     quantityFor1: "1",
     quantityFor2: "1",
     quantityFor3: "2",
@@ -698,6 +738,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Sanitary Pads",
+    rowOrder: 38,
     quantityFor2: "1 pack per person",
     notesFor2: "as required. Add panty liners as well.",
     quantityFor3: "1 pack per person",
@@ -720,6 +761,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Tampons",
+    rowOrder: 39,
     quantityFor2: "2 packs per person",
     notesFor2: "If required. Add panty liners as well.",
     quantityFor3: "2 packs per person",
@@ -742,6 +784,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Toilet Roll",
+    rowOrder: 40,
     quantityFor1: "1",
     quantityFor2: "1",
     quantityFor3: "2",
@@ -756,6 +799,7 @@ const listsSeed: SnapletList[] = [{
 
 {
     itemName: "Easter choc treat",
+    rowOrder: 41,
     quantityFor1: "1",
     notesFor1: "Find at end of packing tables",
     quantityFor2: "2",
