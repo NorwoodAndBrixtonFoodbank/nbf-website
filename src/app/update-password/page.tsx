@@ -3,21 +3,21 @@
 import React, { ReactElement, useState } from "react";
 import AuthPanel, { AuthMain } from "@/components/AuthPanel";
 import { updatePassword } from "@/authentication/updatePassword";
+import { useRouter } from "next/navigation";
 
 export default function Page(): ReactElement {
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const router = useRouter();
 
     const initiatePasswordUpdate = (): void => {
         setErrorMessage(null);
-        setSuccessMessage(null);
 
         updatePassword(password).then(({ errorMessage }) => {
             if (errorMessage) {
                 setErrorMessage(errorMessage);
             } else {
-                setSuccessMessage("Password has been reset!");
+                router.push("/");
             }
         });
     };
@@ -31,7 +31,7 @@ export default function Page(): ReactElement {
                 submitText="Update password"
                 onSubmit={initiatePasswordUpdate}
                 errorMessage={errorMessage}
-                successMessage={successMessage}
+                successMessage={null}
             />
         </AuthMain>
     );
