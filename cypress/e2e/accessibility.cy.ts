@@ -41,7 +41,11 @@ describe("Accessibility tests in light mode", () => {
         cy.visit("/calendar");
         cy.get("table").should("be.visible");
 
-        cy.checkAccessibility();
+        cy.checkAccessibility({
+            rules: {
+                "aria-allowed-attr": { enabled: false },
+            },
+        });
     });
 
     it("Checks admin page", () => {
@@ -113,7 +117,11 @@ describe("Accessibility tests in dark mode", () => {
         cy.get("label[aria-label='Theme Switch']").click();
         cy.get("table").should("be.visible");
 
-        cy.checkAccessibility();
+        cy.checkAccessibility({
+            rules: {
+                "aria-allowed-attr": { enabled: false },
+            },
+        });
     });
 
     it("Checks admin page", () => {

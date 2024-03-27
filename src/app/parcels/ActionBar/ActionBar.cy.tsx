@@ -24,8 +24,8 @@ describe("Parcels - Action Bar", () => {
                 timestamp: new Date(),
                 workflowOrder: 1,
             },
-            packingDatetime: new Date(),
-            packingTimeLabel: "AM",
+            packingDate: new Date(),
+            packingSlot: "AM",
             parcelId: "123456789",
             iconsColumn: {
                 requiresFollowUpPhoneCall: false,
@@ -51,8 +51,8 @@ describe("Parcels - Action Bar", () => {
                 timestamp: new Date(),
                 workflowOrder: 2,
             },
-            packingDatetime: new Date(),
-            packingTimeLabel: "PM",
+            packingDate: new Date(),
+            packingSlot: "PM",
             parcelId: "123456aaaa789",
             iconsColumn: {
                 requiresFollowUpPhoneCall: false,

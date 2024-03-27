@@ -198,7 +198,6 @@ type Override = {
       comment?: string;
       user_data?: string;
       key?: string;
-      key?: string;
       secrets?: string;
     };
   }
@@ -335,6 +334,7 @@ type Override = {
       name?: string;
       is_shown?: string;
       order?: string;
+      parcels?: string;
     };
   }
   parcels?: {
@@ -342,12 +342,14 @@ type Override = {
     fields?: {
       primary_key?: string;
       client_id?: string;
-      packing_datetime?: string;
       collection_centre?: string;
       collection_datetime?: string;
       voucher_number?: string;
+      packing_date?: string;
+      packing_slot?: string;
       clients?: string;
       collection_centres?: string;
+      packing_slots?: string;
       events?: string;
     };
   }
@@ -673,12 +675,14 @@ export interface Fingerprint {
   }
   packingSlots?: {
     order?: FingerprintNumberField;
+    parcelsByPackingSlot?: FingerprintRelationField;
   }
   parcels?: {
-    packingDatetime?: FingerprintDateField;
     collectionDatetime?: FingerprintDateField;
+    packingDate?: FingerprintDateField;
     clientByClientId?: FingerprintRelationField;
     collectionCentreByCollectionCentre?: FingerprintRelationField;
+    packingSlotByPackingSlot?: FingerprintRelationField;
     eventsByParcelId?: FingerprintRelationField;
   }
   refreshTokens?: {

@@ -55,7 +55,7 @@ const getParcelsQuery = (
     ) {
         query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
     } else {
-        query = query.order("packing_datetime", { ascending: false });
+        query = query.order("packing_date", { ascending: false });
     }
 
     return query;

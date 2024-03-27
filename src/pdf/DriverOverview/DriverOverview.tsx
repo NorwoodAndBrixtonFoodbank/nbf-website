@@ -5,10 +5,7 @@ import PdfButton from "@/components/PdfButton/PdfButton";
 import DriverOverviewPdf, { DriverOverviewTableData } from "@/pdf/DriverOverview/DriverOverviewPdf";
 import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
-
-const formatDatetime = (datetimeString: string | null): Date | null => {
-    return datetimeString ? new Date(datetimeString) : null;
-};
+import { formatDateToDate } from "@/common/format";
 
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<Schema["parcels"][]> => {
     const { data, error } = await supabase.from("parcels").select().in("primary_key", parcelIds);
@@ -60,7 +57,7 @@ const getRequiredData = async (parcelIds: string[]): Promise<DriverOverviewTable
                 postcode: client?.address_postcode ?? "",
             },
             contact: client?.phone_number ?? "",
-            packingDate: formatDatetime(parcel.packing_datetime),
+            packingDate: formatDateToDate(parcel.packing_date) ?? null,
             instructions: client?.delivery_instructions ?? "",
         });
     }

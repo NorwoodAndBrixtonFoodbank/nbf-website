@@ -6,3 +6,14 @@ export const formatCamelCaseKey = (objectKey: string): string => {
 export const displayList = (data: string[]): string => {
     return data.length === 0 ? "None" : data.join(", ");
 };
+
+export const formatDateToDate = (dateString: string | null): string => {
+    if (dateString === null) {
+        return "";
+    }
+    return new Date(dateString).toLocaleString("en-GB", {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+    });
+};

@@ -42,6 +42,11 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
 
+interface packingSlotOptionsSet {
+    key: string;
+    value: string;
+}
+
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
     ["fullName", "Name"],
@@ -50,8 +55,8 @@ export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["phoneNumber", "Phone"],
     ["voucherNumber", "Voucher"],
     ["deliveryCollection", "Collection"],
-    ["packingDatetime", "Packing Date"],
-    ["packingTimeLabel", "Time"],
+    ["packingDate", "Packing Date"],
+    ["packingSlot", "Packing Slot"],
     ["lastStatus", "Last Status"],
 ];
 
@@ -60,8 +65,8 @@ const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
     "familyCategory",
     "addressPostcode",
     "deliveryCollection",
-    "packingDatetime",
-    "packingTimeLabel",
+    "packingDate",
+    "packingSlot",
     "lastStatus",
 ];
 
@@ -115,10 +120,18 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
         },
     },
     {
-        key: "packingDatetime",
+        key: "packingDate",
         sortMethodConfig: {
             method: (query, sortDirection) =>
-                query.order("packing_datetime", { ascending: sortDirection === "asc" }),
+                query.order("packing_date", { ascending: sortDirection === "asc" }),
+            paginationType: PaginationType.Server,
+        },
+    },
+    {
+        key: "packingSlot",
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("packing_slot_order", { ascending: sortDirection === "asc" }),
             paginationType: PaginationType.Server,
         },
     },
@@ -139,8 +152,8 @@ const toggleableHeaders: (keyof ParcelsTableRow)[] = [
     "phoneNumber",
     "voucherNumber",
     "deliveryCollection",
-    "packingDatetime",
-    "packingTimeLabel",
+    "packingDate",
+    "packingSlot",
     "lastStatus",
 ];
 
@@ -160,10 +173,10 @@ const parcelTableColumnStyleOptions = {
     deliveryCollection: {
         minWidth: "6rem",
     },
-    packingDatetipowertome: {
+    packingDate: {
         hide: 800,
     },
-    packingTimeLabel: {
+    packingSlot: {
         hide: 800,
         minWidth: "6rem",
     },
@@ -242,10 +255,10 @@ const buildDateFilter = (initialState: DateRangeState): Filter<ParcelsTableRow, 
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: DateRangeState
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.gte("packing_datetime", state.from).lte("packing_datetime", state.to);
+        return query.gte("packing_date", state.from).lte("packing_date", state.to);
     };
     return dateFilter<ParcelsTableRow>({
-        key: "packingDatetime",
+        key: "packingDate",
         label: "",
         methodConfig: { paginationType: PaginationType.Server, method: dateSearch },
         initialState: initialState,
@@ -334,6 +347,54 @@ const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]
         itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
         initialCheckedKeys: optionsSet.filter((option) => option !== "Request Deleted"),
         methodConfig: { paginationType: PaginationType.Server, method: lastStatusSearch },
+    });
+};
+
+const buildPackingSlotFilter = async (): Promise<Filter<ParcelsTableRow, string[]>> => {
+    const packingSlotSearch = (
+        query: PostgrestFilterBuilder<Database["public"], any, any>,
+        state: string[]
+    ): PostgrestFilterBuilder<Database["public"], any, any> => {
+        return query.in("packing_slot_name", state);
+    };
+
+    const keySet = new Set();
+
+    const { data, error } = await supabase.from("packing_slots").select("name, is_shown");
+    if (error) {
+        const logId = await logErrorReturnLogId(
+            "Error with fetch: Packing slot filter options",
+            error
+        );
+        throw new DatabaseError("fetch", "packing slot filter options", logId);
+    }
+
+    const optionsResponse = data ?? [];
+
+    const optionsSet = optionsResponse.reduce<packingSlotOptionsSet[]>((filteredOptions, row) => {
+        if (!row.name || keySet.has(row.name)) {
+            return filteredOptions;
+        }
+
+        if (row.is_shown) {
+            keySet.add(row.name);
+            filteredOptions.push({ key: row.name, value: row.name });
+        } else {
+            keySet.add(row.name);
+            filteredOptions.push({ key: row.name, value: `${row.name} (inactive)` });
+        }
+
+        return filteredOptions;
+    }, []);
+
+    optionsSet.sort();
+
+    return checklistFilter<ParcelsTableRow>({
+        key: "packingSlot",
+        filterLabel: "Packing Slot",
+        itemLabelsAndKeys: optionsSet.map((option) => [option.value, option.key]),
+        initialCheckedKeys: optionsSet.map((option) => option.key),
+        methodConfig: { paginationType: PaginationType.Server, method: packingSlotSearch },
     });
 };
 
@@ -447,6 +508,7 @@ const ParcelsPage: React.FC<{}> = () => {
                     methodConfig: { paginationType: PaginationType.Server, method: voucherSearch },
                 }),
                 await buildLastStatusFilter(),
+                await buildPackingSlotFilter(),
             ];
             return { primaryFilters: primaryFilters, additionalFilters: additionalFilters };
         };
@@ -670,7 +732,7 @@ const ParcelsPage: React.FC<{}> = () => {
     const parcelTableColumnDisplayFunctions = {
         iconsColumn: rowToIconsColumn,
         deliveryCollection: rowToDeliveryCollectionColumn,
-        packingDatetime: formatDatetimeAsDate,
+        packingDate: formatDatetimeAsDate,
         lastStatus: rowToLastStatusColumn,
     };
 
