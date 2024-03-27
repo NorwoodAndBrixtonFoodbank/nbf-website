@@ -1,13 +1,7 @@
 name: Verify generated database types
 on:
   pull_request:
-    paths:
-      - supabase/migrations/**.sql
-      - src/databaseTypesFile.ts
   push:
-    paths:
-      - supabase/migrations/**.sql
-      - src/databaseTypesFile.ts
     branches:
       - dev
       - main

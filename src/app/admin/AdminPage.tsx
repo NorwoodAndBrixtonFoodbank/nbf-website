@@ -14,6 +14,7 @@ import {
     faBuildingCircleArrowRight,
     faBoxOpen,
     IconDefinition,
+    faServer,
 } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,6 +23,7 @@ import CollectionCentresTable from "@/app/admin/collectionCentresTable/Collectio
 import { Schema } from "@/databaseUtils";
 import CreateCollectionCentreForm from "@/app/admin/createCollectionCentre/CreateCollectionCentreForm";
 import PackingSlotsTable from "@/app/admin/packingSlotsTable/PackingSlotsTable";
+import WebsiteDataTable from "./websiteDataTable/WebsiteDataTable";
 
 const PanelTitle = styled.h2`
     text-transform: uppercase;
@@ -66,6 +68,11 @@ const AdminPage: React.FC<Props> = (props) => {
             panelTitle: "Modify Packing Slots",
             panelIcon: faBoxOpen,
             panelContent: <PackingSlotsTable />,
+        },
+        {
+            panelTitle: "Edit Website Data",
+            panelIcon: faServer,
+            panelContent: <WebsiteDataTable />,
         },
     ];
 

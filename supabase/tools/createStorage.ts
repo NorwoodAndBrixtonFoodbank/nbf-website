@@ -23,7 +23,7 @@ async function createPublicBucket(supabase: SupabaseClient, name: string): Promi
     });
 
     if (error) {
-        throw new Error(`Failed to create bucket called ${name}`);
+        throw new Error(`Failed to create bucket called ${name}, error: ${error}`);
     }
 }
 
@@ -38,6 +38,6 @@ async function uploadCongestionZoneFile(supabase: SupabaseClient): Promise<void>
         });
 
     if (error) {
-        throw new Error("Failed to upload congestion charge file");
+        throw new Error(`Failed to upload congestion charge file, error: ${error}`);
     }
 }
