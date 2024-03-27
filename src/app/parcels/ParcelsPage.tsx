@@ -443,8 +443,11 @@ const ParcelsPage: React.FC<{}> = () => {
                 .single();
 
             if (error) {
-                void logErrorReturnLogId("Error fetching clientId from database", { error });
-                return;
+                const logId = await logErrorReturnLogId(
+                    "Error fetching clientId from database",
+                    error
+                );
+                throw new DatabaseError("fetch", "client id", logId);
             }
 
             const fetchedClientId = data.client_id;
