@@ -434,15 +434,8 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const parcelsTableFetchAbortController = useRef<AbortController | null>(null);
 
-    useEffect(() => {
-        if (parcelId) {
-            setSelectedParcelId(parcelId);
-            setModalIsOpen(true);
-        }
-    }, [parcelId]);
-
-    useEffect(() => {
-        const fetchAndSetClientIdForSelectedParcel = async (): Promise<void> => {
+    const fetchAndSetClientIdForSelectedParcel = async (): Promise<void> => {
+        if (!parcelId) {
             const { data, error } = await supabase
                 .from("parcels")
                 .select("client_id")
@@ -456,9 +449,22 @@ const ParcelsPage: React.FC<{}> = () => {
 
             const fetchedClientId = data.client_id;
             setClientIdForSelectedParcel(fetchedClientId);
-        };
+        }
+        return;
+    };
+
+    useEffect(() => {
+        if (parcelId) {
+            setSelectedParcelId(parcelId);
+            setModalIsOpen(true);
+        }
+    }, [parcelId]);
+
+    useEffect(() => {
+        if (parcelId) {
+            void fetchAndSetClientIdForSelectedParcel();
+        }
         setClientIdForSelectedParcel(null);
-        void fetchAndSetClientIdForSelectedParcel();
     }, [parcelId]);
 
     useEffect(() => {
