@@ -7,59 +7,14 @@ import { createSeedClient } from "@snaplet/seed";
 import { copycat } from "@snaplet/copycat";
 import seedrandom from "seedrandom";
 import { listsSeedRequired } from "./listsSeed.mjs";
-
-const possibleDietaryRequirements = [
-    "Gluten Free",
-    "Dairy Free",
-    "Vegetarian",
-    "Vegan",
-    "Pescatarian",
-    "Halal",
-    "Diabetic",
-    "Nut Allergy",
-    "Seafood Allergy",
-    "No Bread",
-    "No Pasta",
-    "No Rice",
-    "No Pork",
-    "No Beef",
-];
-const possibleFeminineProducts = ["Tampons", "Pads", "Incontinence Pads"];
-const possiblePets = ["Cat", "Dog"];
-const possibleOtherItems = [
-    "Garlic",
-    "Ginger",
-    "Chillies",
-    "Spices",
-    "Hot Water Bottles",
-    "Blankets",
-];
-
-const eventNamesWithNumberData = ["Shipping Labels Downloaded"];
-
-const eventNamesWithNoData = [
-    "No Status",
-    "Request Denied",
-    "Pending More Info",
-    "Called and Confirmed",
-    "Called and No Response",
-    "Ready to Dispatch",
-    "Received by Centre",
-    "Collection Failed",
-    "Parcel Collected",
-    "Delivered",
-    "Delivery Failed",
-    "Delivery Cancelled",
-    "Fulfilled with Trussell Trust",
-    "Shopping List Downloaded",
-    "Out for Delivery",
-    "Request Deleted",
-];
-
-const possibleParcelPostCodes = ["E1 6AA", "E1 6AD", "E1 6AG", "CB2 3JU", "CB24 4RT", "CB8 9LJ"];
-
-const earliestDate = new Date(2024, 0, 1); // 2024/01/01
-const latestDate = new Date(2025, 0, 1); // 2025/01/01
+import { possibleDietaryRequirements, possibleFeminineProducts, possibleOtherItems, possibleParcelPostCodes, possiblePets } from "./clientsSeed.mjs";
+import { eventNamesWithNoData, eventNamesWithNumberData } from "./eventsSeed.mjs";
+import { collectionCentres } from "./collectionCentresSeed.mjs";
+import { listsHotels } from "./listsHotelsSeed.mjs";
+import { websiteData } from "./websiteDataSeed.mjs";
+import { packingSlots } from "./packingSlotsSeed.mjs";
+import { statusOrder } from "./statusOrderSeed.mjs";
+import { earliestDate, getPseudoRandomDateBetween, latestDate } from "./dateData.mjs";
 
 generateSeed();
 
@@ -102,20 +57,7 @@ async function generateSeed(): Promise<void> {
         })
     );
 
-    await seed.collectionCentres([
-        {
-            name: "Brixton Hill - Methodist Church",
-            acronym: "BH-MC",
-        },
-        {
-            name: "Clapham - St Stephens Church",
-            acronym: "CLP-SC",
-        },
-        {
-            name: "Delivery",
-            acronym: "DLVR",
-        },
-    ]);
+    await seed.collectionCentres(collectionCentres);
 
     await seed.families(
         (generate) =>
@@ -127,21 +69,7 @@ async function generateSeed(): Promise<void> {
 
     await seed.lists(listsSeedRequired);
 
-    await seed.listsHotels([
-        {
-            itemName: "Canned Hot Dog",
-            quantityFor1: "1",
-            quantityFor2: "2",
-            quantityFor3: "3",
-            quantityFor4: "4",
-            quantityFor5: "5",
-            quantityFor6: "6",
-            quantityFor7: "7",
-            quantityFor8: "8",
-            quantityFor9: "9",
-            quantityFor10: "10",
-        },
-    ]);
+    await seed.listsHotels(listsHotels);
 
     await seed.parcels(
         (generate) =>
@@ -174,65 +102,12 @@ async function generateSeed(): Promise<void> {
         { connect: true }
     );
 
-    await seed.websiteData([
-        {
-            name: "lists_text",
-            value:
-                "Space is valuable! Please don't leave boxes half empty - pack efficiently!\n" +
-                "BOXES MUST BE PACKED FLAT SO THAT THEY CAN BE STACKED. Do not leave items sticking out of the top.\n" +
-                "We do have a selection of 'free from' goods as well as vegan and halal products. " +
-                "If you're uncertain about any additional dietary needs, please speak to one of the team.",
-        },
-    ]);
+    await seed.websiteData(websiteData);
 
-    await seed.packingSlots([
-        {
-            name: "AM",
-            isShown: true,
-            order: 1,
-        },
-        {
-            name: "PM",
-            isShown: true,
-            order: 2,
-        },
-        {
-            name: "Slot 1",
-            isShown: false,
-            order: 3,
-        },
-        {
-            name: "Slot 2",
-            isShown: false,
-            order: 4,
-        },
-    ]);
+    await seed.packingSlots(packingSlots);
 
     await seed.statusOrders(
-        [
-            "No Status",
-            "Request Denied",
-            "Pending More Info",
-            "Called and Confirmed",
-            "Called and No Response",
-            "Shopping List Downloaded",
-            "Ready to Dispatch",
-            "Received by Centre",
-            "Collection Failed",
-            "Parcel Collected",
-            "Shipping Labels Downloaded",
-            "Out for Delivery",
-            "Delivered",
-            "Delivery Failed",
-            "Delivery Cancelled",
-            "Fulfilled with Trussell Trust",
-            "Request Deleted",
-        ].map((eventName, index) => ({ eventName, workflowOrder: index }))
+        statusOrder
     );
 }
 
-function getPseudoRandomDateBetween(start: Date, end: Date, seed: string): Date {
-    const randomNumberGenerator = seedrandom(seed);
-
-    return new Date(start.getTime() + randomNumberGenerator() * (end.getTime() - start.getTime()));
-}
