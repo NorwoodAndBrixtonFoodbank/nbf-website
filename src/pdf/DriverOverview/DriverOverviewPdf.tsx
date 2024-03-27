@@ -21,6 +21,7 @@ export interface DriverOverviewCardDataProps {
     driverName: string;
     date: Date;
     tableData: DriverOverviewTableData[];
+    message: string;
 }
 
 interface DriverOverviewCardProps {
@@ -176,16 +177,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                     <Image src="/logo.png" style={styles.logoStyling}></Image>
                 </View>
                 <View style={styles.warningSection}>
-                    <Text style={styles.h3text}>
-                        At the end of your shift, please call/text the Dispatch phone to let us know
-                        all deliveries have been completed or to report any issues.
-                    </Text>
-                    <Text style={styles.h3text}>
-                        In an emergency, please ring Elizabeth or Rebekah.
-                    </Text>
-                    <Text style={styles.h3text}>
-                        Dispatch- 07840 821 794 | Elizabeth- 07722 121 108 | Rebekah- 07366 574 794
-                    </Text>
+                    <Text style={styles.h3text}>{data.message}</Text>
                     <Text style={[styles.h3text, { fontFamily: "Helvetica-Bold" }]}>
                         THIS SHEET MUST BE DESTROYED OR RETURNED TO THE WAREHOUSE IMMEDIATELY ON
                         COMPLETION OF DELIVERIES

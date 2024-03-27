@@ -28,8 +28,9 @@ import {
     updateDbPackingSlot,
 } from "@/app/admin/packingSlotsTable/PackingSlotActions";
 import { LinearProgress } from "@mui/material";
-import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
-import { DatabaseError } from "@/app/errorClasses";
+import { logErrorReturnLogId } from "@/logger/logger";
+import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
+import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 
 interface EditToolbarProps {
     setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
@@ -73,13 +74,15 @@ const PackingSlotsTable: React.FC = () => {
     const [rows, setRows] = useState<PackingSlotRow[]>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     useEffect(() => {
+        setErrorMessage(null);
         fetchPackingSlots()
             .then((response) => setRows(response))
-            .catch(async (error) => {
-                const logId = await logErrorReturnLogId("Error with fetch: Packing slots", error);
-                throw new DatabaseError("fetch", "packing slots", logId);
+            .catch((error) => {
+                void logErrorReturnLogId("Error with fetch: Packing slots", error);
+                setErrorMessage("Error fetching data, please reload");
             })
             .finally(() => setIsLoading(false));
     }, []);
@@ -92,47 +95,25 @@ const PackingSlotsTable: React.FC = () => {
                 "postgres_changes",
                 { event: "*", schema: "public", table: "packing_slots" },
                 async () => {
+                    setErrorMessage(null);
                     try {
                         const packingSlots = await fetchPackingSlots();
                         setRows(packingSlots);
                     } catch (error) {
                         if (error) {
                             setRows([]);
-                            const logId = await logErrorReturnLogId(
+                            void logErrorReturnLogId(
                                 "Error with fetch: Packing slots subscription",
                                 error
                             );
-                            throw new DatabaseError(
-                                "fetch",
-                                "packing slots in subscription",
-                                logId
-                            );
+                            setErrorMessage("Error fetching data, please reload");
                         }
                     }
                 }
             )
             .subscribe(async (status, error) => {
-                if (status === "TIMED_OUT") {
-                    const logId = await logErrorReturnLogId(
-                        "Channel Timed Out: Subscribe to packing_slot table",
-                        error
-                    );
-                    throw new Error(
-                        "Channel Timed Out: Subscribe to packing_slot table" + `Log ID: ${logId}`
-                    );
-                } else if (status === "CHANNEL_ERROR") {
-                    const logId = await logErrorReturnLogId(
-                        "Channel Error: Subscribe to packing_slot table",
-                        error
-                    );
-                    throw new Error(
-                        "Channel Timed Out: Subscribe to packing_slot table" + `Log ID: ${logId}`
-                    );
-                } else if (status === "CLOSED") {
-                    void logInfoReturnLogId("Subscription to packing_slot table closed");
-                } else {
-                    void logInfoReturnLogId("Subscribed to packing_slot table");
-                }
+                subscriptionStatusRequiresErrorMessage(status, error, "packing_slot") &&
+                    setErrorMessage("Error fetching data, please reload");
             });
 
         return () => {
@@ -148,25 +129,20 @@ const PackingSlotsTable: React.FC = () => {
     };
 
     const processRowUpdate = (newRow: PackingSlotRow): PackingSlotRow => {
+        setErrorMessage(null);
         setIsLoading(true);
         if (newRow.isNew) {
             insertNewPackingSlot(newRow)
-                .catch(async (error) => {
-                    const logId = await logErrorReturnLogId(
-                        "Insert error with packing slot row",
-                        error
-                    );
-                    throw new DatabaseError("insert", "packing slot row", logId);
+                .catch((error) => {
+                    void logErrorReturnLogId("Insert error with packing slot row", error);
+                    setErrorMessage("Error inserting data, please try again");
                 })
                 .finally(() => setIsLoading(false));
         } else {
             updateDbPackingSlot(newRow)
-                .catch(async (error) => {
-                    const logId = await logErrorReturnLogId(
-                        "Update error with packing slot row",
-                        error
-                    );
-                    throw new DatabaseError("update", "packing slot row", logId);
+                .catch((error) => {
+                    void logErrorReturnLogId("Update error with packing slot row", error);
+                    setErrorMessage("Error updating data, please try again");
                 })
                 .finally(() => setIsLoading(false));
         }
@@ -187,7 +163,7 @@ const PackingSlotsTable: React.FC = () => {
         }));
     };
 
-    const handleCancelClick = (id: GridRowId) => async () => {
+    const handleCancelClick = (id: GridRowId) => () => {
         setRowModesModel((currentValue) => ({
             ...currentValue,
             [id]: { mode: GridRowModes.View, ignoreModifications: true },
@@ -195,13 +171,10 @@ const PackingSlotsTable: React.FC = () => {
 
         const editedRow = rows.find((row) => row.id === id);
         if (editedRow === undefined) {
-            const logId = await logErrorReturnLogId(
+            void logErrorReturnLogId(
                 "Edited row in packing slots admin table is undefined onCancelClick"
             );
-            throw new Error(
-                "Edited row in packing slots admin table is undefined onCancelClick" +
-                    `Log ID: ${logId}`
-            );
+            setErrorMessage("Table error, please try again");
         } else if (editedRow.isNew) {
             setRows((currentValue) => currentValue.filter((row) => row.id !== id));
         }
@@ -351,6 +324,7 @@ const PackingSlotsTable: React.FC = () => {
 
     return (
         <>
+            {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
             {rows && (
                 <DataGrid
                     rows={rows}

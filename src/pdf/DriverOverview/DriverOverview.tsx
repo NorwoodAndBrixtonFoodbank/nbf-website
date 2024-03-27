@@ -79,10 +79,17 @@ const DriverOverview = async ({
     date,
 }: Props): Promise<React.ReactElement> => {
     const requiredData = await getRequiredData(parcelIds);
+    const { data, error } = await supabase
+        .from("website_data")
+        .select("name, value")
+        .eq("name", "driver_overview_message")
+        .single();
+    const message = error ? "Error retrieving message for driver" : data.value;
     const driverOverviewData = {
         driverName: driverName,
         date: date,
         tableData: requiredData,
+        message: message,
     };
     return (
         <PdfButton
