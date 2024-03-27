@@ -159,6 +159,7 @@ export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
             <Heading>Location</Heading>
             {collectionCentres && (
                 <DropdownListInput
+                    selectLabel="collection-centre-select-label"
                     onChange={onCollectionCentreChange}
                     labelsAndValues={collectionCentres}
                     defaultValue={collectionCentres[0][1]}
