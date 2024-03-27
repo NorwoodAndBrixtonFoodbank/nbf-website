@@ -24,6 +24,7 @@ const sampleProcessingData: ParcelProcessingData = [
         collection_datetime: "2023-08-04T13:30:00+00:00",
         packing_date: "2023-08-04T13:30:00+00:00",
         packing_slot_name: "AM",
+        packing_slot_order: 1,
         voucher_number: "VOUCHER_1",
         client_id: "PRIMARY_KEY2",
         client_full_name: "CLIENT_NAME",
