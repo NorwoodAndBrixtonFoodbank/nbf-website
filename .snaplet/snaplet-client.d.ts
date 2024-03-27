@@ -53,15 +53,6 @@ type Override = {
       objects?: string;
     };
   }
-  channels?: {
-    name?: string;
-    fields?: {
-      id?: string;
-      name?: string;
-      inserted_at?: string;
-      updated_at?: string;
-    };
-  }
   clients?: {
     name?: string;
     fields?: {
@@ -343,10 +334,10 @@ type Override = {
     fields?: {
       primary_key?: string;
       client_id?: string;
+      packing_date?: string;
       collection_centre?: string;
       collection_datetime?: string;
       voucher_number?: string;
-      packing_date?: string;
       packing_slot?: string;
       clients?: string;
       collection_centres?: string;
@@ -403,13 +394,6 @@ type Override = {
     name?: string;
     fields?: {
       version?: string;
-    };
-  }
-  realtime_schema_migrations?: {
-    name?: string;
-    fields?: {
-      version?: string;
-      inserted_at?: string;
     };
   }
   supabase_migrations_schema_migrations?: {
@@ -481,18 +465,6 @@ type Override = {
     fields?: {
       event_name?: string;
       workflow_order?: string;
-    };
-  }
-  subscription?: {
-    name?: string;
-    fields?: {
-      id?: string;
-      subscription_id?: string;
-      entity?: string;
-      filters?: string;
-      claims?: string;
-      claims_role?: string;
-      created_at?: string;
     };
   }
   users?: {
@@ -582,11 +554,6 @@ export interface Fingerprint {
     updatedAt?: FingerprintDateField;
     fileSizeLimit?: FingerprintNumberField;
     objects?: FingerprintRelationField;
-  }
-  channels?: {
-    id?: FingerprintNumberField;
-    insertedAt?: FingerprintDateField;
-    updatedAt?: FingerprintDateField;
   }
   clients?: {
     families?: FingerprintRelationField;
@@ -679,8 +646,8 @@ export interface Fingerprint {
     parcelsByPackingSlot?: FingerprintRelationField;
   }
   parcels?: {
-    collectionDatetime?: FingerprintDateField;
     packingDate?: FingerprintDateField;
+    collectionDatetime?: FingerprintDateField;
     clientByClientId?: FingerprintRelationField;
     collectionCentreByCollectionCentre?: FingerprintRelationField;
     packingSlotByPackingSlot?: FingerprintRelationField;
@@ -706,10 +673,6 @@ export interface Fingerprint {
   }
   authSchemaMigrations?: {
 
-  }
-  realtimeSchemaMigrations?: {
-    version?: FingerprintNumberField;
-    insertedAt?: FingerprintDateField;
   }
   supabaseMigrationsSchemaMigrations?: {
 
@@ -742,11 +705,6 @@ export interface Fingerprint {
   }
   statusOrders?: {
     workflowOrder?: FingerprintNumberField;
-  }
-  subscriptions?: {
-    id?: FingerprintNumberField;
-    claims?: FingerprintJsonField;
-    createdAt?: FingerprintDateField;
   }
   users?: {
     emailConfirmedAt?: FingerprintDateField;

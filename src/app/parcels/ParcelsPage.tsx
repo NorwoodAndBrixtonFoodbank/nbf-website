@@ -41,6 +41,7 @@ import { CircularProgress } from "@mui/material";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
+import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 
 interface packingSlotOptionsSet {
     key: string;
@@ -637,7 +638,10 @@ const ParcelsPage: React.FC<{}> = () => {
                     { event: "*", schema: "public", table: "clients" },
                     loadCountAndDataWithTimer
                 )
-                .subscribe();
+                .subscribe((status, err) => {
+                    subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&
+                        setErrorMessage("Error fetching data, please reload");
+                });
 
             return () => {
                 supabase.removeChannel(subscriptionChannel);
