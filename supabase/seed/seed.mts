@@ -5,9 +5,14 @@ which only gets generated after running npx snaplet generate with local database
 
 import { createSeedClient } from "@snaplet/seed";
 import { copycat } from "@snaplet/copycat";
-import seedrandom from "seedrandom";
 import { listsSeedRequired } from "./listsSeed.mjs";
-import { possibleDietaryRequirements, possibleFeminineProducts, possibleOtherItems, possibleParcelPostCodes, possiblePets } from "./clientsSeed.mjs";
+import {
+    possibleDietaryRequirements,
+    possibleFeminineProducts,
+    possibleOtherItems,
+    possibleParcelPostCodes,
+    possiblePets,
+} from "./clientsSeed.mjs";
 import { eventNamesWithNoData, eventNamesWithNumberData } from "./eventsSeed.mjs";
 import { collectionCentres } from "./collectionCentresSeed.mjs";
 import { listsHotels } from "./listsHotelsSeed.mjs";
@@ -106,8 +111,5 @@ async function generateSeed(): Promise<void> {
 
     await seed.packingSlots(packingSlots);
 
-    await seed.statusOrders(
-        statusOrder
-    );
+    await seed.statusOrders(statusOrder);
 }
-

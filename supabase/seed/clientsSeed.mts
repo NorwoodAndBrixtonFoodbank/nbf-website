@@ -28,4 +28,11 @@ export const possibleOtherItems = [
     "Blankets",
 ];
 
-export const possibleParcelPostCodes = ["E1 6AA", "E1 6AD", "E1 6AG", "CB2 3JU", "CB24 4RT", "CB8 9LJ"];
+export const possibleParcelPostCodes = [
+    "E1 6AA",
+    "E1 6AD",
+    "E1 6AG",
+    "CB2 3JU",
+    "CB24 4RT",
+    "CB8 9LJ",
+];
