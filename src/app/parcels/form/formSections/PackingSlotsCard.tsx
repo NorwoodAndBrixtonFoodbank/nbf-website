@@ -23,6 +23,7 @@ const PackingSlotsCard: React.FC<PackingSlotsCardProps> = ({
             text="Which slot does the parcel need to be packed in?"
         >
             <DropdownListInput
+                selectLabel="packing-slot-select-label"
                 labelsAndValues={packingSlotsLabelsAndValues}
                 listTitle="Packing Slot"
                 defaultValue={fields.packingSlot}
