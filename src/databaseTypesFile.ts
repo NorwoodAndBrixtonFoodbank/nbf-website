@@ -492,6 +492,7 @@ export type Database = {
           last_status_workflow_order: number | null
           packing_date: string | null
           packing_slot_name: string | null
+          packing_slot_order: number | null
           parcel_id: string | null
           voucher_number: string | null
         }
