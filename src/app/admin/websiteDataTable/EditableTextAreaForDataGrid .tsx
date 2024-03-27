@@ -1,5 +1,5 @@
 import { GridRenderEditCellParams, GridRowId } from "@mui/x-data-grid";
-import React, { useEffect, useLayoutEffect, useRef } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 
 interface EditableTextAreaForDataGridProps extends GridRenderEditCellParams {
     editMode: boolean;
@@ -9,24 +9,18 @@ interface EditableTextAreaForDataGridProps extends GridRenderEditCellParams {
 const EditableTextAreaForDataGrid: React.FC<EditableTextAreaForDataGridProps> = ({
     id,
     field,
-    hasFocus,
     value,
     editMode,
     handleValueChange,
 }: EditableTextAreaForDataGridProps) => {
     const ref = useRef<HTMLTextAreaElement>(null);
-    const initialValue = useRef(value);
-
-    useEffect(() => {
-        initialValue.current = value;
-    }, [value]);
 
     useLayoutEffect(() => {
-        if (hasFocus && ref.current) {
+        if (editMode && ref.current) {
             ref.current.focus();
-            ref.current.setSelectionRange(initialValue.current.length, initialValue.current.length);
+            ref.current.setSelectionRange(value.length, value.length);
         }
-    }, [hasFocus, initialValue]);
+    }, [editMode]); //eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <textarea

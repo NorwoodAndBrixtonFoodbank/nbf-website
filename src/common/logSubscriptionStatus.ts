@@ -1,20 +1,20 @@
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 
-export const logSubscriptionStatus = async (
+export const checkAndLogSubscriptionStatus = (
     status: "TIMED_OUT" | "CHANNEL_ERROR" | "CLOSED" | "SUBSCRIBED",
     err: Error | undefined,
     tableName: string
-): Promise<boolean> => {
+): boolean => {
     if (status === "TIMED_OUT") {
-        await logErrorReturnLogId(`Channel Timed Out: Subscribe to ${tableName} table`, err);
-        return true;
+        void logErrorReturnLogId(`Channel Timed Out: Subscribe to ${tableName} table`, err);
+        return false;
     } else if (status === "CHANNEL_ERROR") {
-        await logErrorReturnLogId(`Channel Error: Subscribe to ${tableName} table`, err);
-        return true;
+        void logErrorReturnLogId(`Channel Error: Subscribe to ${tableName} table`, err);
+        return false;
     } else if (status === "CLOSED") {
-        logInfoReturnLogId(`Subscription to ${tableName} table closed`);
+        void logInfoReturnLogId(`Subscription to ${tableName} table closed`);
     } else {
-        logInfoReturnLogId(`Subscribed to ${tableName} table`);
+        void logInfoReturnLogId(`Subscribed to ${tableName} table`);
     }
-    return false;
+    return true;
 };

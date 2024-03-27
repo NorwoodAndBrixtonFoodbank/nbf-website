@@ -22,7 +22,7 @@ import { fetchWebsiteData, updateDbWebsiteData } from "./fetchWebsiteData";
 import EditableTextAreaForDataGrid from "./EditableTextAreaForDataGrid ";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-import { logSubscriptionStatus } from "@/common/logSubscriptionStatus";
+import { checkAndLogSubscriptionStatus } from "@/common/logSubscriptionStatus";
 
 export interface WebsiteDataRow {
     dbName: string;
@@ -36,15 +36,15 @@ const WebsiteDataTable: React.FC = () => {
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const apiRef = useGridApiRef();
+    const dataGridRef = useGridApiRef();
 
     useEffect(() => {
         setIsLoading(true);
         setErrorMessage(null);
         fetchWebsiteData()
             .then((response) => setRows(response))
-            .catch(async (error) => {
-                await logErrorReturnLogId("Error with fetch: website data", error);
+            .catch((error) => {
+                void logErrorReturnLogId("Error with fetch: website data", error);
                 setErrorMessage("Error fetching data, please reload");
             })
             .finally(() => setIsLoading(false));
@@ -63,19 +63,16 @@ const WebsiteDataTable: React.FC = () => {
                         const websiteData = await fetchWebsiteData();
                         setRows(websiteData);
                     } catch (error) {
-                        if (error) {
-                            await logErrorReturnLogId(
-                                "Error with fetch: website data subscription",
-                                error
-                            );
-                            setRows([]);
-                            setErrorMessage("Error fetching data, please reload");
-                        }
+                        void logErrorReturnLogId("Error with fetch: website data subscription", {
+                            error,
+                        });
+                        setRows([]);
+                        setErrorMessage("Error fetching data, please reload");
                     }
                 }
             )
-            .subscribe(async (status, err) => {
-                (await logSubscriptionStatus(status, err, "website_data")) &&
+            .subscribe((status, err) => {
+                checkAndLogSubscriptionStatus(status, err, "website_data") ??
                     setErrorMessage("Error fetching data, please reload");
             });
         return () => {
@@ -94,8 +91,8 @@ const WebsiteDataTable: React.FC = () => {
         setErrorMessage(null);
         setIsLoading(true);
         updateDbWebsiteData(newRow)
-            .catch(async (error) => {
-                await logErrorReturnLogId("Error with update: website data", error);
+            .catch((error) => {
+                void logErrorReturnLogId("Error with update: website data", error);
                 setErrorMessage("Error updating data, please reload");
             })
             .finally(() => setIsLoading(false));
@@ -119,7 +116,7 @@ const WebsiteDataTable: React.FC = () => {
         }));
     };
 
-    const handleCancelClick = (id: GridRowId) => async () => {
+    const handleCancelClick = (id: GridRowId) => () => {
         setRowModesModel((currentValue) => ({
             ...currentValue,
             [id]: { mode: GridRowModes.View, ignoreModifications: true },
@@ -128,7 +125,7 @@ const WebsiteDataTable: React.FC = () => {
         const editedRow = rows.find((row) => row.id === id);
         if (editedRow === undefined) {
             {
-                await logErrorReturnLogId(
+                void logErrorReturnLogId(
                     "Edited row in website data admin table is undefined onCancelClick"
                 );
                 setErrorMessage("Table error, please try again");
@@ -137,7 +134,7 @@ const WebsiteDataTable: React.FC = () => {
     };
 
     const handleValueChange = (value: string, id: GridRowId, field: string): void => {
-        apiRef.current.setEditCellValue({ id, field, value });
+        dataGridRef.current.setEditCellValue({ id, field, value });
     };
 
     const websiteDataColumns: GridColDef<WebsiteDataRow>[] = [
@@ -158,7 +155,6 @@ const WebsiteDataTable: React.FC = () => {
             renderEditCell: (params) => (
                 <EditableTextAreaForDataGrid
                     {...params}
-                    hasFocus={true}
                     editMode={true}
                     value={params.row.value}
                     handleValueChange={handleValueChange}
@@ -230,7 +226,7 @@ const WebsiteDataTable: React.FC = () => {
                     }}
                     loading={isLoading}
                     getRowHeight={() => 150}
-                    apiRef={apiRef}
+                    apiRef={dataGridRef}
                 />
             )}
         </>

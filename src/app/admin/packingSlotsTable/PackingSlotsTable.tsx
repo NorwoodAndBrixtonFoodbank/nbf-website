@@ -29,7 +29,7 @@ import {
 } from "@/app/admin/packingSlotsTable/PackingSlotActions";
 import { LinearProgress } from "@mui/material";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { logSubscriptionStatus } from "@/common/logSubscriptionStatus";
+import { checkAndLogSubscriptionStatus } from "@/common/logSubscriptionStatus";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 
 interface EditToolbarProps {
@@ -80,8 +80,8 @@ const PackingSlotsTable: React.FC = () => {
         setErrorMessage(null);
         fetchPackingSlots()
             .then((response) => setRows(response))
-            .catch(async (error) => {
-                await logErrorReturnLogId("Error with fetch: Packing slots", error);
+            .catch((error) => {
+                void logErrorReturnLogId("Error with fetch: Packing slots", error);
                 setErrorMessage("Error fetching data, please reload");
             })
             .finally(() => setIsLoading(false));
@@ -102,7 +102,7 @@ const PackingSlotsTable: React.FC = () => {
                     } catch (error) {
                         if (error) {
                             setRows([]);
-                            await logErrorReturnLogId(
+                            void logErrorReturnLogId(
                                 "Error with fetch: Packing slots subscription",
                                 error
                             );
@@ -112,7 +112,7 @@ const PackingSlotsTable: React.FC = () => {
                 }
             )
             .subscribe(async (status, error) => {
-                (await logSubscriptionStatus(status, error, "packing_slot")) &&
+                checkAndLogSubscriptionStatus(status, error, "packing_slot") ??
                     setErrorMessage("Error fetching data, please reload");
             });
 
@@ -133,15 +133,15 @@ const PackingSlotsTable: React.FC = () => {
         setIsLoading(true);
         if (newRow.isNew) {
             insertNewPackingSlot(newRow)
-                .catch(async (error) => {
-                    await logErrorReturnLogId("Insert error with packing slot row", error);
+                .catch((error) => {
+                    void logErrorReturnLogId("Insert error with packing slot row", error);
                     setErrorMessage("Error inserting data, please try again");
                 })
                 .finally(() => setIsLoading(false));
         } else {
             updateDbPackingSlot(newRow)
-                .catch(async (error) => {
-                    await logErrorReturnLogId("Update error with packing slot row", error);
+                .catch((error) => {
+                    void logErrorReturnLogId("Update error with packing slot row", error);
                     setErrorMessage("Error updating data, please try again");
                 })
                 .finally(() => setIsLoading(false));
@@ -163,7 +163,7 @@ const PackingSlotsTable: React.FC = () => {
         }));
     };
 
-    const handleCancelClick = (id: GridRowId) => async () => {
+    const handleCancelClick = (id: GridRowId) => () => {
         setRowModesModel((currentValue) => ({
             ...currentValue,
             [id]: { mode: GridRowModes.View, ignoreModifications: true },
@@ -171,7 +171,7 @@ const PackingSlotsTable: React.FC = () => {
 
         const editedRow = rows.find((row) => row.id === id);
         if (editedRow === undefined) {
-            await logErrorReturnLogId(
+            void logErrorReturnLogId(
                 "Edited row in packing slots admin table is undefined onCancelClick"
             );
             setErrorMessage("Table error, please try again");
