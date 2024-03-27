@@ -23,7 +23,7 @@ const CollectionCentreCard: React.FC<CollectionCentreCardProps> = ({
         >
             <>
                 <DropdownListInput
-                    selectLabel="collection-centre-select-label"
+                    selectLabelId="collection-centre-select-label"
                     labelsAndValues={collectionCentresLabelsAndValues}
                     listTitle="Collection Centre"
                     defaultValue={fields.collectionCentre || collectionCentresLabelsAndValues[0][0]}
