@@ -3,6 +3,8 @@ on:
   pull_request:
     paths-ignore:
       - .github/**
+      - README.md
+      - docs/**
   push:
     branches:
       - dev

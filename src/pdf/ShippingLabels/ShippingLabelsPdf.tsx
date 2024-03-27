@@ -4,7 +4,7 @@ import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 export interface ShippingLabelData {
     label_quantity: number;
     parcel_id: string;
-    packing_time_of_day: string;
+    packing_slot: string;
     collection_centre: string;
     collection_datetime: string;
     voucher_number: string;
@@ -87,7 +87,7 @@ const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
                     </Text>
                     <Text style={styles.rightCol}>
                         <Text style={styles.headingText}>Packed:</Text>
-                        <Text> {data.packing_time_of_day}</Text>
+                        <Text> {data.packing_slot}</Text>
                     </Text>
                 </View>
                 <View style={styles.middleRow}>
@@ -120,7 +120,7 @@ const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
                     </View>
                     <View style={[styles.middleCol, styles.bottomAlign]}>
                         <Text style={styles.mediumText}>
-                            {data.packing_time_of_day} |
+                            {data.packing_slot} |
                             {data.collection_centre !== "DLVR"
                                 ? data.collection_centre // TODO VFB-56 needs icon
                                 : "Delivery"}

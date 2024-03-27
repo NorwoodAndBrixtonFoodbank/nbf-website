@@ -116,6 +116,29 @@ async function generateSeed(): Promise<void> {
         },
     ]);
 
+    await seed.packingSlots([
+        {
+            name: "AM",
+            isShown: true,
+            order: 1,
+        },
+        {
+            name: "PM",
+            isShown: true,
+            order: 2,
+        },
+        {
+            name: "Slot 1",
+            isShown: false,
+            order: 3,
+        },
+        {
+            name: "Slot 2",
+            isShown: false,
+            order: 4,
+        },
+    ]);
+
     await seed.families(
         (generate) =>
             generate(1000, {
@@ -172,7 +195,7 @@ async function generateSeed(): Promise<void> {
     await seed.parcels(
         (generate) =>
             generate(5000, {
-                packingDatetime: (ctx) =>
+                packingDate: (ctx) =>
                     getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
                 collectionDatetime: (ctx) =>
                     getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
@@ -215,29 +238,6 @@ async function generateSeed(): Promise<void> {
                 "At the end of your shift, please call/text the Dispatch phone to let us know all deliveries have been completed or to report any issues.\n" +
                 "In an emergency, please ring Elizabeth or Rebekah.\n" +
                 "Dispatch- 07840 821 794 | Elizabeth- 07722 121 108 | Rebekah- 07366 574 794",
-        },
-    ]);
-
-    await seed.packingSlots([
-        {
-            name: "AM",
-            isShown: true,
-            order: 1,
-        },
-        {
-            name: "PM",
-            isShown: true,
-            order: 2,
-        },
-        {
-            name: "Slot 1",
-            isShown: false,
-            order: 3,
-        },
-        {
-            name: "Slot 2",
-            isShown: false,
-            order: 4,
         },
     ]);
 

@@ -11,7 +11,7 @@ type ClientParcelDetails = RawClientParcelsDetails[number];
 export interface ParcelsDetail {
     parcel_id: string;
     collection_centre?: { name: string } | null;
-    packing_datetime: string | null;
+    packing_date: string | null;
     voucher_number?: string | null;
 }
 
@@ -32,12 +32,12 @@ const getRawClientParcelsDetails = async (clientId: string): Promise<ParcelsDeta
         collection_centre:collection_centres ( 
             name
          ),
-        packing_datetime,
+        packing_date,
         voucher_number
     `
         )
         .eq("client_id", clientId)
-        .order("packing_datetime", { ascending: false });
+        .order("packing_date", { ascending: false });
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Client parcels", error);
@@ -60,7 +60,7 @@ export const rawDataToClientParcelsDetails = (
     return {
         parcelId: parcel.parcel_id,
         voucherNumber: parcel.voucher_number ?? "-",
-        packingDate: formatDatetimeAsDate(parcel.packing_datetime),
+        packingDate: formatDatetimeAsDate(parcel.packing_date),
         collectionCentre: parcel.collection_centre?.name ?? "-",
     };
 };

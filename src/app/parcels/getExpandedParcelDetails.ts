@@ -13,8 +13,11 @@ export const getRawParcelDetails = async (parcelId: string) => {
         .select(
             `
         voucher_number,
-        packing_datetime,
-
+        packing_date,
+        
+        packing_slot: packing_slots (
+            name
+         ),
         collection_centre:collection_centres (
             name
          ),
@@ -84,7 +87,7 @@ export interface ExpandedParcelData extends Data {
     household: string;
     children: string;
     packingDate: string;
-    packingTime: string;
+    packingSlot: string;
     collection: string;
 }
 
@@ -106,7 +109,7 @@ export const rawDataToExpandedParcelData = (
             household: "",
             children: "",
             packingDate: "",
-            packingTime: "",
+            packingSlot: "",
             collection: "",
         };
     }
@@ -121,8 +124,8 @@ export const rawDataToExpandedParcelData = (
         phoneNumber: client.phone_number,
         household: formatHouseholdFromFamilyDetails(client.family),
         children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
-        packingDate: formatDatetimeAsDate(rawParcelDetails.packing_datetime),
-        packingTime: formatDatetimeAsTime(rawParcelDetails.packing_datetime),
+        packingDate: formatDatetimeAsDate(rawParcelDetails.packing_date),
+        packingSlot: rawParcelDetails.packing_slot?.name ?? "",
         collection: rawParcelDetails.collection_centre?.name ?? "",
     };
 };

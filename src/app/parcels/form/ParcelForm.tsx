@@ -2,17 +2,17 @@
 
 import React, { useEffect, useState } from "react";
 import {
+    checkErrorOnSubmit,
     Errors,
+    Fields,
     FormErrors,
     setError,
     setField,
-    checkErrorOnSubmit,
-    Fields,
 } from "@/components/Form/formFunctions";
 import {
     CenterComponent,
-    StyledForm,
     FormErrorText,
+    StyledForm,
     StyledName,
 } from "@/components/Form/formStyling";
 
@@ -20,17 +20,16 @@ import { useRouter } from "next/navigation";
 
 import VoucherNumberCard from "@/app/parcels/form/formSections/VoucherNumberCard";
 import PackingDateCard from "@/app/parcels/form/formSections/PackingDateCard";
-import PackingTimeCard from "@/app/parcels/form/formSections/PackingTimeCard";
 import ShippingMethodCard from "@/app/parcels/form/formSections/ShippingMethodCard";
 import CollectionDateCard from "@/app/parcels/form/formSections/CollectionDateCard";
 import CollectionTimeCard from "@/app/parcels/form/formSections/CollectionTimeCard";
 import CollectionCentreCard from "@/app/parcels/form/formSections/CollectionCentreCard";
 import { insertParcel, updateParcel } from "@/app/parcels/form/clientDatabaseFunctions";
-import { IconButton, Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import Title from "@/components/Title/Title";
 import { Schema } from "@/databaseUtils";
 import dayjs, { Dayjs } from "dayjs";
-import { CollectionCentresLabelsAndValues } from "@/common/fetch";
+import { CollectionCentresLabelsAndValues, PackingSlotsLabelsAndValues } from "@/common/fetch";
 import getExpandedClientDetails, {
     ExpandedClientData,
 } from "@/app/clients/getExpandedClientDetails";
@@ -41,12 +40,13 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import DataViewer from "@/components/DataViewer/DataViewer";
 import { useTheme } from "styled-components";
+import PackingSlotsCard from "@/app/parcels/form/formSections/PackingSlotsCard";
 
 export interface ParcelFields extends Fields {
     clientId: string | null;
     voucherNumber: string | null;
     packingDate: string | null;
-    packingTime: string | null;
+    packingSlot: string | undefined;
     shippingMethod: string | null;
     collectionDate: string | null;
     collectionTime: string | null;
@@ -57,7 +57,7 @@ export const initialParcelFields: ParcelFields = {
     clientId: null,
     voucherNumber: "",
     packingDate: null,
-    packingTime: null,
+    packingSlot: "",
     shippingMethod: "",
     collectionDate: null,
     collectionTime: null,
@@ -67,7 +67,7 @@ export const initialParcelFields: ParcelFields = {
 export const initialParcelFormErrors: FormErrors = {
     voucherNumber: Errors.none,
     packingDate: Errors.initial,
-    packingTime: Errors.initial,
+    packingSlot: Errors.initial,
     shippingMethod: Errors.initial,
     collectionDate: Errors.initial,
     collectionTime: Errors.initial,
@@ -82,12 +82,14 @@ interface ParcelFormProps {
     parcelId?: string;
     deliveryPrimaryKey: Schema["collection_centres"]["primary_key"];
     collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues;
+    packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues;
+    packingSlotIsShown?: boolean;
 }
 
 const withCollectionFormSections = [
     VoucherNumberCard,
     PackingDateCard,
-    PackingTimeCard,
+    PackingSlotsCard,
     ShippingMethodCard,
     CollectionDateCard,
     CollectionTimeCard,
@@ -97,7 +99,7 @@ const withCollectionFormSections = [
 const noCollectionFormSections = [
     VoucherNumberCard,
     PackingDateCard,
-    PackingTimeCard,
+    PackingSlotsCard,
     ShippingMethodCard,
 ];
 
@@ -118,6 +120,8 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     parcelId,
     deliveryPrimaryKey,
     collectionCentresLabelsAndValues,
+    packingSlotsLabelsAndValues,
+    packingSlotIsShown,
 }) => {
     const router = useRouter();
     const [fields, setFields] = useState(initialFields);
@@ -142,6 +146,15 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         }
     }, [clientDetails, clientIdForFetch]);
 
+    useEffect(() => {
+        if (editMode && !packingSlotIsShown) {
+            setFormErrors((currentState) => ({
+                ...currentState,
+                packingSlot: Errors.invalidPackingSlot,
+            }));
+        }
+    }, []);
+
     const formSections =
         fields.shippingMethod === "Collection"
             ? withCollectionFormSections
@@ -160,7 +173,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             inputError = checkErrorOnSubmit(formErrors, setFormErrors, [
                 "voucherNumber",
                 "packingDate",
-                "packingTime",
+                "packingSlot",
                 "shippingMethod",
             ]);
         }
@@ -170,10 +183,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             return;
         }
 
-        const packingDateTime = mergeDateAndTime(
-            fields.packingDate!,
-            fields.packingTime!
-        ).toISOString();
+        const packingDate = dayjs(fields.packingDate).toISOString();
 
         let collectionDateTime = null;
         if (fields.shippingMethod === "Collection") {
@@ -188,7 +198,8 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         const formToAdd = {
             primary_key: parcelId!,
             client_id: (clientId || fields.clientId)!,
-            packing_datetime: packingDateTime,
+            packing_date: packingDate,
+            packing_slot: fields.packingSlot,
             voucher_number: fields.voucherNumber,
             collection_centre: isDelivery ? deliveryPrimaryKey : fields.collectionCentre,
             collection_datetime: collectionDateTime,
@@ -238,6 +249,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                             fieldSetter={fieldSetter}
                             fields={fields}
                             collectionCentresLabelsAndValues={collectionCentresLabelsAndValues}
+                            packingSlotsLabelsAndValues={packingSlotsLabelsAndValues}
                         />
                     );
                 })}

@@ -1,9 +1,9 @@
 import { Supabase } from "@/supabaseUtils";
-import { DatabaseError, EdgeFunctionError } from "../errorClasses";
+import { AbortError, DatabaseError, EdgeFunctionError } from "../errorClasses";
 import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsTableData";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
-import { logErrorReturnLogId } from "@/logger/logger";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 
 export type CongestionChargeDetails = {
     postcode: string;
@@ -36,13 +36,10 @@ export const getCongestionChargeDetailsForParcels = async (
 export type ParcelProcessingData = Awaited<ReturnType<typeof getParcelProcessingData>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const getParcelProcessingData = async (
+const getParcelsQuery = (
     supabase: Supabase,
     filters: Filter<ParcelsTableRow, any>[],
-    sortState: SortState<ParcelsTableRow>,
-    startIndex?: number,
-    endIndex?: number,
-    parcelIds?: string[]
+    sortState: SortState<ParcelsTableRow>
 ) => {
     let query = supabase.from("parcels_plus").select("*");
 
@@ -58,52 +55,69 @@ const getParcelProcessingData = async (
     ) {
         query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
     } else {
-        query = query.order("packing_datetime", { ascending: false });
+        query = query.order("packing_date", { ascending: false });
     }
 
-    if (typeof startIndex === "number" && typeof endIndex === "number") {
-        query = query.range(startIndex, endIndex);
-    }
+    return query;
+};
 
-    if (parcelIds) {
-        query = query.in("parcel_id", parcelIds);
-    }
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const getParcelProcessingData = async (
+    supabase: Supabase,
+    filters: Filter<ParcelsTableRow, any>[],
+    sortState: SortState<ParcelsTableRow>,
+    abortSignal: AbortSignal,
+    startIndex: number,
+    endIndex: number
+) => {
+    let query = getParcelsQuery(supabase, filters, sortState);
+    query = query.range(startIndex, endIndex);
+    query = query.abortSignal(abortSignal);
 
     const { data, error } = await query;
 
     if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: parcel table", error);
+        const logId = abortSignal.aborted
+            ? await logInfoReturnLogId("Aborted fetch: parcel table", error)
+            : await logErrorReturnLogId("Error with fetch: parcel table", error);
+
+        if (abortSignal.aborted) {
+            throw new AbortError("fetch", "parcel table", "logId");
+        }
         throw new DatabaseError("fetch", "parcel table", logId);
     }
 
     return data;
 };
 
-export const getParcelsData = async (
+export const getParcelsDataAndCount = async (
     supabase: Supabase,
     filters: Filter<ParcelsTableRow, any[]>[],
     sortState: SortState<ParcelsTableRow>,
-    startIndex?: number,
-    endIndex?: number,
-    parcelIds?: string[]
-): Promise<ParcelsTableRow[]> => {
+    abortSignal: AbortSignal,
+    startIndex: number,
+    endIndex: number
+): Promise<{ data: ParcelsTableRow[]; count: number }> => {
     const processingData = await getParcelProcessingData(
         supabase,
         filters,
         sortState,
+        abortSignal,
         startIndex,
-        endIndex,
-        parcelIds
+        endIndex
     );
     const congestionCharge = await getCongestionChargeDetailsForParcels(processingData, supabase);
-    const formattedData = processingDataToParcelsTableData(processingData, congestionCharge);
+    const formattedData = await processingDataToParcelsTableData(processingData, congestionCharge);
 
-    return formattedData;
+    const count = await getParcelsCount(supabase, filters, abortSignal);
+
+    return { data: formattedData, count };
 };
 
-export const getParcelsCount = async (
+const getParcelsCount = async (
     supabase: Supabase,
-    filters: Filter<ParcelsTableRow, any>[]
+    filters: Filter<ParcelsTableRow, any>[],
+    abortSignal: AbortSignal
 ): Promise<number> => {
     let query = supabase.from("parcels_plus").select("*", { count: "exact", head: true });
 
@@ -113,39 +127,33 @@ export const getParcelsCount = async (
         }
     });
 
+    query = query.abortSignal(abortSignal);
+
     const { count, error } = await query;
+
     if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: Parcels", error);
-        throw new DatabaseError("fetch", "parcels", logId);
+        const logId = abortSignal.aborted
+            ? await logInfoReturnLogId("Aborted fetch: parcel table count", error)
+            : await logErrorReturnLogId("Error with fetch: parcel table count", error);
+        if (abortSignal.aborted) {
+            throw new AbortError("fetch", "parcel table", "logId");
+        }
+
+        throw new DatabaseError("fetch", "parcel table", logId);
     }
+
     if (count === null) {
         const logId = await logErrorReturnLogId("Error with fetch: Parcels, count is null");
         throw new DatabaseError("fetch", "parcels", logId);
     }
     return count;
 };
-
 export const getParcelIds = async (
     supabase: Supabase,
     filters: Filter<ParcelsTableRow, any>[],
     sortState: SortState<ParcelsTableRow>
 ): Promise<string[]> => {
-    let query = supabase.from("parcels_plus").select("*");
-
-    filters.forEach((filter) => {
-        if (filter.methodConfig.paginationType === PaginationType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
-    });
-
-    if (
-        sortState.sortEnabled &&
-        sortState.column.sortMethodConfig?.paginationType === PaginationType.Server
-    ) {
-        query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
-    } else {
-        query = query.order("packing_datetime", { ascending: false });
-    }
+    const query = getParcelsQuery(supabase, filters, sortState);
 
     const { data, error } = await query;
     if (error) {
@@ -159,6 +167,29 @@ export const getParcelIds = async (
     }, []);
 };
 
+export const getParcelsByIds = async (
+    supabase: Supabase,
+    filters: Filter<ParcelsTableRow, any>[],
+    sortState: SortState<ParcelsTableRow>,
+    parcelIds: string[]
+): Promise<ParcelsTableRow[]> => {
+    let query = getParcelsQuery(supabase, filters, sortState);
+    if (parcelIds) {
+        query = query.in("parcel_id", parcelIds);
+    }
+
+    const { data, error } = await query;
+    if (error) {
+        const logId = await logErrorReturnLogId("Error with fetch: parcel table", error);
+        throw new DatabaseError("fetch", "parcel table", logId);
+    }
+
+    const congestionCharge = await getCongestionChargeDetailsForParcels(data, supabase);
+    const formattedData = processingDataToParcelsTableData(data, congestionCharge);
+
+    return formattedData;
+};
+
 export interface CollectionCentresOptions {
     name: string;
     acronym: string;
@@ -166,30 +197,3 @@ export interface CollectionCentresOptions {
 export interface StatusResponseRow {
     event_name: string;
 }
-
-export interface RequestParams<Data> {
-    allFilters: Filter<Data, any>[];
-    sortState: SortState<Data>;
-    startPoint: number;
-    endPoint: number;
-}
-
-export const areRequestsIdentical = <Data>(
-    requestParamsA: RequestParams<Data>,
-    requestParamsB: RequestParams<Data>
-): boolean => {
-    const filtersSame = Array.from(requestParamsA.allFilters).every((filter, index) =>
-        filter.areStatesIdentical(filter.state, requestParamsB.allFilters[index].state)
-    );
-    const sortStateSame =
-        requestParamsA.sortState.sortEnabled === requestParamsB.sortState.sortEnabled &&
-        requestParamsA.sortState.sortEnabled &&
-        requestParamsB.sortState.sortEnabled
-            ? requestParamsA.sortState.sortDirection === requestParamsB.sortState.sortDirection &&
-              requestParamsA.sortState.column.sortField ===
-                  requestParamsA.sortState.column.sortField
-            : true;
-    const startPointSame = requestParamsA.startPoint === requestParamsB.startPoint;
-    const endPointSame = requestParamsA.endPoint === requestParamsB.endPoint;
-    return filtersSame && sortStateSame && startPointSame && endPointSame;
-};
