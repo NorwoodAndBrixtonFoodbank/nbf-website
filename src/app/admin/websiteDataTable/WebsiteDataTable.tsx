@@ -13,7 +13,6 @@ import {
     GridRowModesModel,
     GridRowsProp,
     useGridApiRef,
-    gridClasses
 } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
@@ -24,8 +23,8 @@ import EditableTextAreaForDataGrid from "./EditableTextAreaForDataGrid";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
-import { useTheme } from "styled-components";
-import { styled, alpha } from '@mui/material/styles';
+import { styled } from "styled-components";
+import Header from "./Header";
 
 export interface WebsiteDataRow {
     dbName: string;
@@ -34,49 +33,12 @@ export interface WebsiteDataRow {
     value: string;
 }
 
-const ODD_OPACITY = 0.2;
-
-const StripedDataGrid = styled(DataGrid<WebsiteDataRow>)(({ theme }) => ({
-    [`& .${gridClasses.row}.even`]: {
-      backgroundColor: theme.palette.grey[200],
-      '&:hover': {
-        backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY),
-        '@media (hover: none)': {
-          backgroundColor: 'transparent',
-        },
-      },
-      '&.Mui-selected': {
-        backgroundColor: alpha(
-          theme.palette.primary.main,
-          ODD_OPACITY + theme.palette.action.selectedOpacity,
-        ),
-        '&:hover': {
-          backgroundColor: alpha(
-            theme.palette.primary.main,
-            ODD_OPACITY +
-              theme.palette.action.selectedOpacity +
-              theme.palette.action.hoverOpacity,
-          ),
-          // Reset on touch devices, it doesn't add specificity
-          '@media (hover: none)': {
-            backgroundColor: alpha(
-              theme.palette.primary.main,
-              ODD_OPACITY + theme.palette.action.selectedOpacity,
-            ),
-          },
-        },
-      },
-    },
-  }));
-  
-
 const WebsiteDataTable: React.FC = () => {
     const [rows, setRows] = useState<GridRowsProp<WebsiteDataRow>>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const dataGridRef = useGridApiRef();
-    const theme = useTheme();
 
     useEffect(() => {
         setIsLoading(true);
@@ -178,20 +140,27 @@ const WebsiteDataTable: React.FC = () => {
     };
 
     const websiteDataColumns: GridColDef<WebsiteDataRow>[] = [
-        { field: "readableName", headerName: "Field", flex: 1, editable: false },
+        {
+            field: "readableName",
+            headerName: "Field",
+            flex: 1,
+            editable: false,
+            renderHeader: (params) => <Header {...params} />,
+        },
         {
             field: "value",
             headerName: "Value",
             flex: 3,
             editable: true,
-            // renderCell: (params) => (
-            //     <EditableTextAreaForDataGrid
-            //         {...params}
-            //         editMode={false}
-            //         value={params.row.value}
-            //         handleValueChange={handleValueChange}
-            //     />
-            // ),
+            renderHeader: (params) => <Header {...params} />,
+            renderCell: (params) => (
+                <EditableTextAreaForDataGrid
+                    {...params}
+                    editMode={false}
+                    value={params.row.value}
+                    handleValueChange={handleValueChange}
+                />
+            ),
             renderEditCell: (params) => (
                 <EditableTextAreaForDataGrid
                     {...params}
@@ -207,6 +176,7 @@ const WebsiteDataTable: React.FC = () => {
             headerName: "Actions",
             flex: 1,
             cellClassName: "actions",
+            renderHeader: (params) => <Header {...params} />,
             getActions: ({ id }) => {
                 const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
@@ -250,32 +220,61 @@ const WebsiteDataTable: React.FC = () => {
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
             {rows && (
-                <StripedDataGrid
-                    rows={rows}
-                    columns={websiteDataColumns}
-                    editMode="row"
-                    rowModesModel={rowModesModel}
-                    onRowModesModelChange={setRowModesModel}
-                    onRowEditStop={handleRowEditStop}
-                    processRowUpdate={processRowUpdate}
-                    slots={{
-                        loadingOverlay: LinearProgress,
-                    }}
-                    slotProps={{
-                        toolbar: { setRows, setRowModesModel, rows },
-                    }}
-                    loading={isLoading}
-                    getRowHeight={() => 150}
-                    apiRef={dataGridRef}
-                    getRowClassName={(params) =>
-                        params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
-                      }
-                    
-                />
+                <DataGridStyling>
+                    <DataGrid
+                        rows={rows}
+                        columns={websiteDataColumns}
+                        editMode="row"
+                        rowModesModel={rowModesModel}
+                        onRowModesModelChange={setRowModesModel}
+                        onRowEditStop={handleRowEditStop}
+                        processRowUpdate={processRowUpdate}
+                        slots={{
+                            loadingOverlay: LinearProgress,
+                        }}
+                        slotProps={{
+                            toolbar: { setRows, setRowModesModel, rows },
+                        }}
+                        loading={isLoading}
+                        getRowHeight={() => 150}
+                        apiRef={dataGridRef}
+                        getRowClassName={(params) =>
+                            (params.indexRelativeToCurrentPage + 1) % 2 === 0 ? "even" : "odd"
+                        }
+                        hideFooter
+                    />
+                </DataGridStyling>
             )}
         </>
     );
 };
 
-export default WebsiteDataTable;
+const DataGridStyling = styled.div`
+    & > div {
+        border-radius: 1rem;
+        border: 0px;
+    }
 
+    & .MuiDataGrid-columnHeaders {
+        background-color: ${(props) => props.theme.main.background[2]};
+        border-color: ${(props) => props.theme.main.border};
+        text-align: start;
+        font-size: 1rem;
+    }
+
+    & .even {
+        text-align: start;
+        font-size: 1rem;
+        background-color: ${(props) => props.theme.main.background[1]};
+        color: ${(props) => props.theme.main.foreground[2]};
+    }
+
+    & .odd {
+        text-align: start;
+        font-size: 1rem;
+        background-color: ${(props) => props.theme.main.background[0]};
+        color: ${(props) => props.theme.main.foreground[2]};
+    }
+`;
+
+export default WebsiteDataTable;

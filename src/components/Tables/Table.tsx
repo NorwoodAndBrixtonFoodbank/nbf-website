@@ -593,10 +593,9 @@ const TableStyling = styled.div`
         background-color: ${(props) => props.theme.main.background[1]};
     }
 
-    & .rdt_TableRow:nth-child(odd){
+    & .rdt_TableRow:nth-child(odd) {
         background-color: ${(props) => props.theme.main.background[0]};
-     }
-
+    }
 `;
 
 export default Table;
