@@ -7,7 +7,7 @@ frontend:
     build:
       commands:
         - env | grep -e CLOUDWATCH_ >> .env.production
-        - rm -f ./seed.mts
+        - rm -f ./supabase/seed/seed.mts
         - npm run build
   artifacts:
     baseDirectory: .next
