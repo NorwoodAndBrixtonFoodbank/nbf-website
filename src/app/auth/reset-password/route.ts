@@ -30,8 +30,6 @@ export async function GET(request: Request): Promise<Response> {
                 error,
             });
         }
-
-        redirect("/update-password");
     } catch (error) {
         return logErrorAndGetErrorResponse({
             logMessage:
@@ -44,6 +42,8 @@ export async function GET(request: Request): Promise<Response> {
             error,
         });
     }
+
+    return redirect("/update-password");
 }
 
 async function logErrorAndGetErrorResponse({
