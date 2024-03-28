@@ -110,7 +110,7 @@ You can regenerate the types
   npm run db:remote:generate_types -- --project-id <PROJECT_ID>
   ```
 #### Create sample data in tables
-- Create sample data by updating seed.mts
+- Create sample data by updating supabase/seed/seed.mts
 - Login to snaplet
   ```shell
   npx snaplet auth setup
@@ -121,7 +121,7 @@ You can regenerate the types
   npx snaplet generate
   ```
 - If error with createSeedClient, close IDE and restart
-- Then generate `seed.sql` from `seed.mts`
+- Then generate `supabase/seed.sql` from `supabase/seed/seed.mts`
   ```shell
   npm run db:generate_seed
   ```
@@ -138,7 +138,7 @@ You can regenerate the types
     - admin@example.com (admin123)
     - caller@example.com (caller123)
   - upload the congestion charge postcodes to the local Supabase storage
-- `npm run db:generate_seed` to generate `seed.sql` based on `seed.mts`. This does not automatically put the data in the database. You'll need to run `npm run dev:reset_supabase`.
+- `npm run db:generate_seed` to generate `supabase/seed.sql` based on `supabase/seed/seed.mts`. This does not automatically put the data in the database. You'll need to run `npm run dev:reset_supabase`.
 
 #### Useful links
 - [Local Development](https://supabase.com/docs/guides/cli/local-development)
