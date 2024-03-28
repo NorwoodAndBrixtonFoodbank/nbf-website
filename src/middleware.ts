@@ -3,7 +3,7 @@ import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextMiddleware, NextRequest, NextResponse } from "next/server";
 import { roleCanAccessPage } from "@/app/roles";
 import { pathsNotRequiringLogin } from "@/app/auth";
-import { fetchUserRole } from "@/common/fetch";
+import { fetchUserRole } from "@/common/fetchUserRole";
 
 const middleware: NextMiddleware = async (req: NextRequest) => {
     const res = NextResponse.next();
@@ -28,7 +28,7 @@ const middleware: NextMiddleware = async (req: NextRequest) => {
         return NextResponse.redirect(new URL("/", req.url));
     }
 
-    const userRole = await fetchUserRole(user!.id);
+    const userRole = user ? await fetchUserRole(user.id) : null;
 
     if (!roleCanAccessPage(userRole, req.nextUrl.pathname)) {
         const url = req.nextUrl;
