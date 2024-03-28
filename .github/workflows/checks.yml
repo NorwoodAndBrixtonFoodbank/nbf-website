@@ -1,6 +1,7 @@
 name: Checks
 on:
   pull_request:
+  merge_group:
   push:
     branches:
       - dev
