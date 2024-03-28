@@ -34,8 +34,14 @@ export interface CardProps {
 export interface Person {
     gender: Gender;
     age?: number | null;
-    quantity?: number;
     primaryKey?: string;
+}
+
+export interface PersonWithQuantity {
+    gender: Gender;
+    age?: number | null;
+    primaryKey?: string;
+    quantity: number;
 }
 
 export interface Fields {

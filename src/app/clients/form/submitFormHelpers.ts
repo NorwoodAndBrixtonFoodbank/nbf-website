@@ -1,12 +1,16 @@
 import { InsertSchema, Schema, UpdateSchema } from "@/databaseUtils";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { checkboxGroupToArray, Fields, Person } from "@/components/Form/formFunctions";
+import {
+    checkboxGroupToArray,
+    Fields,
+    Person,
+    PersonWithQuantity,
+} from "@/components/Form/formFunctions";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 
 type FamilyDatabaseInsertRecord = InsertSchema["families"];
-type FamilyDatabaseUpdateRecord = UpdateSchema["families"];
 type ClientDatabaseInsertRecord = InsertSchema["clients"];
 type ClientDatabaseUpdateRecord = UpdateSchema["clients"];
 type ClientAndFamilyIds = Pick<Schema["clients"], "primary_key" | "family_id">;
@@ -18,107 +22,36 @@ type SubmitFormHelper = (
     primaryKey?: string
 ) => void;
 
-interface PeopleGroupedByAction {
-    [key: string]: Person[];
-}
-
-const personToFamilyRecord = (person: Person, familyID: string): FamilyDatabaseInsertRecord[] => {
-    return Array(person.quantity ?? 1).fill({
+const personToFamilyRecord = (person: Person, familyID: string): FamilyDatabaseInsertRecord => {
+    return {
         family_id: familyID,
         gender: person.gender,
         age: person.age ?? null,
-    });
+    };
 };
 
-const getChildrenInDatabase = async (familyID: string): Promise<string[]> => {
-    const { data, error } = await supabase
-        .from("families")
-        .select("primary_key")
-        .eq("family_id", familyID)
-        .not("age", "is", null);
+const clearFamily = async (familyId: string): Promise<void> => {
+    const { error } = await supabase.from("families").delete().eq("family_id", familyId);
 
     if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: Children", error);
-        throw new DatabaseError("fetch", "children", logId);
+        const logId = await logErrorReturnLogId(`Error with delete: Family ID ${familyId}`, error);
+        throw new DatabaseError("delete", "person", logId);
     }
-    return data!.map((datum) => datum.primary_key);
+    void logInfoReturnLogId(`Family with familyID ${familyId} cleared.`);
 };
 
-const getNumberAdults = async (familyID: string, gender: string): Promise<number> => {
-    const { count, error } = await supabase
-        .from("families")
-        .select("*", { count: "exact", head: true })
-        .eq("family_id", familyID)
-        .eq("gender", gender)
-        .is("age", null);
+const insertFamilyMembers = async (peopleArray: Person[], familyID: string): Promise<void> => {
+    const familyRecords: FamilyDatabaseInsertRecord[] = [];
+
+    for (const person of peopleArray) {
+        familyRecords.push(personToFamilyRecord(person, familyID));
+    }
+
+    const { error } = await supabase.from("families").insert(familyRecords);
 
     if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: Adults", error);
-        throw new DatabaseError("fetch", "adults", logId);
-    }
-    return count!;
-};
-
-const deleteAdultMembers = async (
-    familyID: string,
-    gender: string,
-    count: number
-): Promise<void> => {
-    const { error } = await supabase
-        .from("families")
-        .delete()
-        .eq("family_id", familyID)
-        .eq("gender", gender)
-        .is("age", null)
-        .order("primary_key")
-        .limit(count);
-
-    if (error) {
-        const logId = await logErrorReturnLogId("Error with delete: Adult members", error);
-        throw new DatabaseError("delete", "adult members", logId);
-    }
-    void logInfoReturnLogId(`Adult members from familyID ${familyID} removed.`);
-};
-
-const updateChildren = async (children: Person[]): Promise<void> => {
-    for (const child of children) {
-        const record: FamilyDatabaseUpdateRecord = {
-            gender: child.gender,
-            age: child.age,
-        };
-        const { error } = await supabase
-            .from("families")
-            .update(record)
-            .eq("primary_key", child.primaryKey);
-
-        if (error) {
-            const logId = await logErrorReturnLogId(
-                `Error with update: Child ID ${child.primaryKey}`,
-                error
-            );
-            throw new DatabaseError("update", "child", logId);
-        }
-        void logInfoReturnLogId(
-            `Child member of familyID ${record.family_id} with childID ${child.primaryKey} updated.`
-        );
-    }
-};
-
-const deleteChildren = async (children: Person[]): Promise<void> => {
-    for (const child of children) {
-        const { error } = await supabase
-            .from("families")
-            .delete()
-            .eq("primary_key", child.primaryKey);
-
-        if (error) {
-            const logId = await logErrorReturnLogId(
-                `Error with delete: Child ID ${child.primaryKey}`,
-                error
-            );
-            throw new DatabaseError("delete", "child", logId);
-        }
-        void logInfoReturnLogId(`Child with childID ${child.primaryKey} successfully deleted.`);
+        const logId = await logErrorReturnLogId(`Error with insert: Family ID ${familyID}`, error);
+        throw new DatabaseError("insert", "family", logId);
     }
 };
 
@@ -136,23 +69,6 @@ const insertClient = async (
     }
     void logInfoReturnLogId(`Client ${clientRecord.full_name} successfully created.`);
     return ids![0];
-};
-
-const insertFamily = async (peopleArray: Person[], familyID: string): Promise<void> => {
-    const familyRecords: FamilyDatabaseInsertRecord[] = [];
-
-    for (const person of peopleArray) {
-        if (person.quantity === undefined || person.quantity > 0) {
-            familyRecords.push(...personToFamilyRecord(person, familyID));
-        }
-    }
-
-    const { error } = await supabase.from("families").insert(familyRecords);
-
-    if (error) {
-        const logId = await logErrorReturnLogId(`Error with insert: Family ID ${familyID}`, error);
-        throw new DatabaseError("insert", "family", logId);
-    }
 };
 
 const updateClient = async (
@@ -176,40 +92,22 @@ const updateClient = async (
 };
 
 const updateFamily = async (
-    adults: Person[],
+    adults: PersonWithQuantity[],
     children: Person[],
-    familyID: string
+    familyId: string
 ): Promise<void> => {
-    const childrenInDatabase = await getChildrenInDatabase(familyID);
-    const people: PeopleGroupedByAction = { toInsert: [], toUpdate: [], toDelete: [] };
+    const peopleToInsert: Person[] = [];
+    await clearFamily(familyId);
 
     for (const child of children) {
-        if (child.primaryKey === undefined) {
-            people.toInsert.push(child);
-            continue;
-        }
-        if (childrenInDatabase.includes(child.primaryKey)) {
-            people.toUpdate.push(child);
-            continue;
-        }
-        people.toDelete.push(child);
+        peopleToInsert.push(child);
     }
 
     for (const adult of adults) {
-        const numberAdultsInDatabase = await getNumberAdults(familyID, adult.gender);
-        const difference = adult.quantity! - numberAdultsInDatabase;
-        if (difference > 0) {
-            const record = { ...adult, quantity: difference };
-            people.toInsert.push(record);
-        }
-        if (difference < 0) {
-            await deleteAdultMembers(familyID, adult.gender, -difference);
-        }
+        peopleToInsert.push(...personWithQuantityToPeople(adult));
     }
 
-    await insertFamily(people.toInsert, familyID);
-    await updateChildren(people.toUpdate);
-    await deleteChildren(people.toDelete);
+    await insertFamilyMembers(peopleToInsert, familyId);
 };
 
 const revertClientInsert = async (primaryKey: string): Promise<void> => {
@@ -278,7 +176,7 @@ export const submitAddClientForm: SubmitFormHelper = async (fields, router) => {
     const clientRecord = formatClientRecord(fields);
     const ids = await insertClient(clientRecord);
     try {
-        await insertFamily([...fields.adults, ...fields.children], ids.family_id);
+        await insertFamilyMembers([...fields.adults, ...fields.children], ids.family_id);
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
         await revertClientInsert(ids.primary_key);
@@ -304,4 +202,12 @@ export const submitEditClientForm: SubmitFormHelper = async (
         const logId = await logErrorReturnLogId(`Error with update: Client ID ${ids.primary_key}`);
         throw new DatabaseError("update", "client", logId);
     }
+};
+
+const personWithQuantityToPeople = (personWithQuantity: PersonWithQuantity): Person[] => {
+    return Array(personWithQuantity.quantity).fill({
+        gender: personWithQuantity.gender,
+        age: personWithQuantity.age ?? undefined,
+        primaryKey: personWithQuantity.primaryKey ?? undefined,
+    });
 };

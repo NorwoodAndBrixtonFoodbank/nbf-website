@@ -8,14 +8,17 @@ import {
     errorText,
     FieldSetter,
     numberRegex,
-    Person,
     Gender,
+    PersonWithQuantity,
 } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 import { GappedDiv } from "@/components/Form/formStyling";
 
-const getNumberAdultsDefault = (adults: Person[], gender: string): string | undefined => {
+const getNumberAdultsDefault = (
+    adults: PersonWithQuantity[],
+    gender: string
+): string | undefined => {
     const personIndex = adults.findIndex((person) => person.gender === gender);
     return adults[personIndex].quantity === 0
         ? undefined
@@ -35,7 +38,7 @@ const getQuantity = (input: string): number => {
 const getNumberAdults = (
     fieldSetter: FieldSetter,
     errorSetter: ErrorSetter,
-    adults: Person[],
+    adults: PersonWithQuantity[],
     gender: Gender
 ): SelectChangeEventHandler => {
     return (event) => {

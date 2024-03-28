@@ -9,6 +9,7 @@ import {
     Fields,
     FormErrors,
     Person,
+    PersonWithQuantity,
     setError,
     setField,
 } from "@/components/Form/formFunctions";
@@ -51,7 +52,7 @@ export interface ClientFields extends Fields {
     addressTown: string;
     addressCounty: string;
     addressPostcode: string;
-    adults: Person[];
+    adults: PersonWithQuantity[];
     numberChildren: number;
     children: Person[];
     dietaryRequirements: BooleanGroup;
