@@ -454,6 +454,7 @@ const Table = <Data,>({
                         }
                         progressPending={isLoading}
                         pointerOnHover={pointerOnHover}
+                        striped
                     />
                 </NoSsr>
             </TableStyling>
@@ -544,7 +545,6 @@ const TableStyling = styled.div`
     & .rdt_TableCell,
     & .rdt_TableCol_Sortable,
     & .rdt_TableHeadRow,
-    & .rdt_TableRow,
     & .rdt_TableCol,
     & .rdt_Table {
         text-align: start;
@@ -564,7 +564,7 @@ const TableStyling = styled.div`
     }
 
     & div.rdt_TableRow:hover {
-        background-color: ${(props) => props.theme.main.background[1]};
+        background-color: ${(props) => props.theme.main.background[2]};
     }
 
     & .rdt_TableHeadRow {
@@ -586,6 +586,17 @@ const TableStyling = styled.div`
         background-color: transparent;
         color: ${(props) => props.theme.main.foreground[2]};
     }
+
+    & .rdt_TableRow {
+        text-align: start;
+        font-size: 1rem;
+        background-color: ${(props) => props.theme.main.background[1]};
+    }
+
+    & .rdt_TableRow:nth-child(odd){
+        background-color: ${(props) => props.theme.main.background[0]};
+     }
+
 `;
 
 export default Table;
