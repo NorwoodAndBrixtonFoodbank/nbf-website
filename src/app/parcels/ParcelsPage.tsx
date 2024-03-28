@@ -18,7 +18,7 @@ import Icon from "@/components/Icons/Icon";
 import { faBoxArchive } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal/Modal";
 import TableSurface from "@/components/Tables/TableSurface";
-import ActionBar from "@/app/parcels/ActionBar/ActionBar";
+import ActionAndStatusButtons from "@/app/parcels/ActionBar/ActionAndStatusButtons";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
@@ -774,7 +774,7 @@ const ParcelsPage: React.FC<{}> = () => {
         <>
             <PreTableControls>
                 <ActionsContainer>
-                    <ActionBar
+                    <ActionAndStatusButtons
                         fetchParcelsByIds={getCheckedParcelsData}
                         onDeleteParcels={deleteParcels}
                         willSaveParcelStatus={() => setIsLoading(true)}

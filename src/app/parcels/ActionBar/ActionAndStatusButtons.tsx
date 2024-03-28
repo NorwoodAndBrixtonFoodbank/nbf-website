@@ -9,7 +9,7 @@ import Statuses from "@/app/parcels/ActionBar/Statuses";
 import Actions from "@/app/parcels/ActionBar/Actions";
 import { ArrowDropDown } from "@mui/icons-material";
 
-export interface ActionBarProps {
+export interface ActionAndStatusButtonsProps {
     fetchParcelsByIds: (checkedParcelIds: string[]) => Promise<ParcelsTableRow[]>;
     onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
     willSaveParcelStatus: () => void;
@@ -23,7 +23,7 @@ const AlertBox = styled.div`
     border-radius: 0.5rem;
 `;
 
-const ActionBar: React.FC<ActionBarProps> = (props) => {
+const ActionAndStatusButtons: React.FC<ActionAndStatusButtonsProps> = (props) => {
     const [statusAnchorElement, setStatusAnchorElement] = useState<HTMLElement | null>(null);
     const [actionAnchorElement, setActionAnchorElement] = useState<HTMLElement | null>(null);
 
@@ -77,4 +77,4 @@ const ActionBar: React.FC<ActionBarProps> = (props) => {
     );
 };
 
-export default ActionBar;
+export default ActionAndStatusButtons;
