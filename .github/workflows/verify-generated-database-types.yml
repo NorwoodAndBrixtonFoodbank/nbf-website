@@ -1,6 +1,7 @@
 name: Verify generated database types
 on:
   pull_request:
+  merge_group:
   push:
     branches:
       - dev
