@@ -22,7 +22,7 @@ import { User } from "@supabase/gotrue-js";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 
-interface CreateUserDetails {
+export interface CreateUserDetails {
     email: string;
     password: string;
     role: Database["public"]["Enums"]["role"];

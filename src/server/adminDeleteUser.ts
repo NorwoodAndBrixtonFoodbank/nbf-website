@@ -1,41 +1,31 @@
 "use server";
 
-import { User } from "@supabase/gotrue-js";
 import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
 import { errorsOnAuthentication } from "@/server/authenticateAdminUser";
 
-type GetUsersDataAndErrorType =
-    | {
-          data: User[];
-          error: null;
-      }
-    | {
-          data: null;
-          error: Record<string, any>;
-      };
+export type DeleteUserErrorType = {
+    error: Record<string, any> | null;
+};
 
-export async function adminGetUsers(): Promise<GetUsersDataAndErrorType> {
+export async function adminDeleteUser(userId: string): Promise<DeleteUserErrorType> {
     const { error: authenticationError } = await errorsOnAuthentication();
 
     if (authenticationError) {
         return {
-            data: null,
             error: { AuthError: authenticationError },
         };
     }
 
     const adminAuthClient = getSupabaseAdminAuthClient();
-    const { data, error } = await adminAuthClient.listUsers();
+    const { error } = await adminAuthClient.deleteUser(userId);
 
     if (error) {
         return {
-            data: null,
-            error: { AuthError: "error fetching list of users" },
+            error: { AuthError: `error deleting user: ${userId}` },
         };
     }
 
     return {
-        data: data.users,
         error: null,
     };
 }

@@ -1,35 +1,29 @@
 "use server";
 
-import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 import { FunctionsResponse } from "@supabase/functions-js/src/types";
 import { AdminUserAttributes } from "@supabase/gotrue-js";
-
-const supabase = createServerActionClient({ cookies });
+import { adminDeleteUser, DeleteUserErrorType } from "@/server/adminDeleteUser";
+import { CreateUserDetails } from "@/app/admin/createUser/CreateUserForm";
+import { adminCreateUser } from "@/server/adminCreateUser";
+import { adminUpdateUser } from "@/server/adminUpdateUser";
 
 // TODO VFB-23 Unpack Supabase Errors and Extract Only Relevant Fields to Return to Client
 
-export const createUser = async (fields: any): Promise<FunctionsResponse<any>> => {
-    return await supabase.functions.invoke("admin-create-user", {
-        body: JSON.stringify(fields),
-    });
+export const createUser = async (fields: CreateUserDetails): Promise<FunctionsResponse<any>> => {
+    return await adminCreateUser(fields);
 };
 
-export const deleteUser = async (userId: string): Promise<FunctionsResponse<any>> => {
-    return await supabase.functions.invoke("admin-delete-user", {
-        body: JSON.stringify({ userId }),
-    });
+export const deleteUser = async (userId: string): Promise<DeleteUserErrorType> => {
+    return await adminDeleteUser(userId);
 };
 
-interface UpdateUserRequestBody {
+export interface UpdateUserDetails {
     userId: string;
     attributes: AdminUserAttributes;
 }
 
 export const updateUser = async (
-    userDetails: UpdateUserRequestBody
+    userDetails: UpdateUserDetails
 ): Promise<FunctionsResponse<any>> => {
-    return await supabase.functions.invoke("admin-update-user", {
-        body: JSON.stringify(userDetails),
-    });
+    return await adminUpdateUser(userDetails);
 };
