@@ -5,7 +5,6 @@ import React, { Suspense, useEffect, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import { formatDatetimeAsDate } from "@/app/parcels/getExpandedParcelDetails";
-import { ControlContainer } from "@/components/Form/formStyling";
 import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
@@ -37,7 +36,7 @@ import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { dateFilter } from "@/components/Tables/DateFilter";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Paper } from "@mui/material";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
@@ -195,9 +194,26 @@ const PreTableControls = styled.div`
     justify-content: space-between;
 `;
 
-const ActionsContainer = styled(ControlContainer)`
+const ActionsContainer = styled(Paper)`
+    flex-grow: 1;
+    display: flex;
+    flex-wrap: wrap;
     justify-content: flex-end;
+    padding: 1rem;
+    gap: 0.5rem;
+    align-items: center;
+    border-radius: 0.5rem;
+    background-color: ${(props) => props.theme.main.background[5]};
 `;
+
+function getSelectedParcelCountMessage(numberOfSelectedParcels: number): string | null {
+    if (numberOfSelectedParcels === 0) {
+        return null;
+    }
+    return numberOfSelectedParcels === 1
+        ? "1 parcel selected"
+        : `${numberOfSelectedParcels} parcels selected`;
+}
 
 const parcelIdParam = "parcelId";
 
@@ -437,6 +453,8 @@ const ParcelsPage: React.FC<{}> = () => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const parcelsTableFetchAbortController = useRef<AbortController | null>(null);
+
+    const selectedParcelMessage = getSelectedParcelCountMessage(checkedParcelIds.length);
 
     useEffect(() => {
         if (parcelId) {
@@ -774,6 +792,8 @@ const ParcelsPage: React.FC<{}> = () => {
         <>
             <PreTableControls>
                 <ActionsContainer>
+                    {selectedParcelMessage && <span>{selectedParcelMessage}</span>}
+
                     <ActionAndStatusButtons
                         fetchParcelsByIds={getCheckedParcelsData}
                         onDeleteParcels={deleteParcels}
