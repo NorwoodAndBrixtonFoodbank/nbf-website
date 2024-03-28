@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import supabase from "@/supabaseClient";
 import {
-    DataGrid,
     GridActionsCellItem,
     GridColDef,
     GridEventListener,
@@ -23,6 +22,8 @@ import EditableTextAreaForDataGrid from "./EditableTextAreaForDataGrid";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
+import Header from "./Header";
+import StyledDataGrid from "../common/StyledDataGrid";
 
 export interface WebsiteDataRow {
     dbName: string;
@@ -138,12 +139,19 @@ const WebsiteDataTable: React.FC = () => {
     };
 
     const websiteDataColumns: GridColDef<WebsiteDataRow>[] = [
-        { field: "readableName", headerName: "Field", flex: 1, editable: false },
+        {
+            field: "readableName",
+            headerName: "Field",
+            flex: 1,
+            editable: false,
+            renderHeader: (params) => <Header {...params} />,
+        },
         {
             field: "value",
             headerName: "Value",
             flex: 3,
             editable: true,
+            renderHeader: (params) => <Header {...params} />,
             renderCell: (params) => (
                 <EditableTextAreaForDataGrid
                     {...params}
@@ -167,6 +175,7 @@ const WebsiteDataTable: React.FC = () => {
             headerName: "Actions",
             flex: 1,
             cellClassName: "actions",
+            renderHeader: (params) => <Header {...params} />,
             getActions: ({ id }) => {
                 const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
@@ -210,7 +219,7 @@ const WebsiteDataTable: React.FC = () => {
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
             {rows && (
-                <DataGrid
+                <StyledDataGrid
                     rows={rows}
                     columns={websiteDataColumns}
                     editMode="row"
@@ -227,6 +236,12 @@ const WebsiteDataTable: React.FC = () => {
                     loading={isLoading}
                     getRowHeight={() => 150}
                     apiRef={dataGridRef}
+                    getRowClassName={(params) =>
+                        (params.indexRelativeToCurrentPage + 1) % 2 === 0
+                            ? "datagrid-row-even"
+                            : "datagrid-row-odd"
+                    }
+                    hideFooter
                 />
             )}
         </>
