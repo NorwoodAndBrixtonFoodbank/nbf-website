@@ -30,13 +30,13 @@ const getUsers = async (): Promise<UserRow[]> => {
         throw new DatabaseError("fetch", "user information", logId);
     }
 
-    const users: User[] = data;
+    const userRows = data.map(async (user: User) => {
+        const userRole = await fetchUserRole(user.id);
 
-    const userRows = users.map(async (user: User) => {
         return {
             id: user.id,
             email: user.email ?? "-",
-            userRole: (await fetchUserRole(user.id)) ?? "-",
+            userRole: userRole ?? "-",
             createdAt: Date.parse(user.created_at),
             updatedAt: Date.parse(user.updated_at ?? ""),
         };

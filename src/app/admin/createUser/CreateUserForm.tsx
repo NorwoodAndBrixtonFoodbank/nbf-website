@@ -21,26 +21,36 @@ import Alert from "@mui/material/Alert/Alert";
 import { User } from "@supabase/gotrue-js";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
+import UserDetailsCard from "@/app/admin/createUser/UserDetailsCard";
 
 export interface CreateUserDetails {
     email: string;
     password: string;
     role: Database["public"]["Enums"]["role"];
+    firstName: string;
+    lastName: string;
+    telephoneNumber: string;
 }
 
 const initialFields: CreateUserDetails = {
     email: "",
     password: "",
     role: "caller",
+    firstName: "",
+    lastName: "",
+    telephoneNumber: "",
 };
 
 const initialFormErrors: FormErrors = {
     email: Errors.initial,
     password: Errors.initial,
     role: Errors.none,
+    firstName: Errors.initial,
+    lastName: Errors.initial,
+    telephoneNumber: Errors.initial,
 };
 
-const formSections = [AccountDetails, UserRole];
+const formSections = [AccountDetails, UserRole, UserDetailsCard];
 
 const CreateUserForm: React.FC<{}> = () => {
     const [fields, setFields] = useState(initialFields);

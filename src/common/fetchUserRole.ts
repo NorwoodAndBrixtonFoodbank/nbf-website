@@ -14,8 +14,6 @@ export const fetchUserRole = async (
         .single();
 
     if (error) {
-        console.log(error);
-        // void logError("Error with fetch: profile for user", error);
         if (logError) {
             const logId = logError(error);
             throw new DatabaseError("fetch", "profile for user", logId);

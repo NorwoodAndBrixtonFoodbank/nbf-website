@@ -2,6 +2,7 @@ import { errorsOnAuthentication } from "@/server/authenticateAdminUser";
 import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
 import { User } from "@supabase/gotrue-js";
 import { CreateUserDetails } from "@/app/admin/createUser/CreateUserForm";
+import supabase from "@/supabaseClient";
 
 type CreateUsersDataAndErrorType =
     | {
@@ -12,6 +13,7 @@ type CreateUsersDataAndErrorType =
           data: null;
           error: Record<string, any>;
       };
+
 export async function adminCreateUser(
     userDetails: CreateUserDetails
 ): Promise<CreateUsersDataAndErrorType> {
@@ -28,9 +30,6 @@ export async function adminCreateUser(
     const { data, error } = await adminAuthClient.createUser({
         email: userDetails.email,
         password: userDetails.password,
-        app_metadata: {
-            role: userDetails.role,
-        },
         email_confirm: true,
     });
 
@@ -39,6 +38,20 @@ export async function adminCreateUser(
             data: null,
             error: { AuthError: `error creating user ${userDetails.email}` },
         };
+    }
+
+    if (data) {
+        const { error: createRoleError } = await supabase.from("profiles").insert({
+            primary_key: data.user?.id,
+            role: userDetails.role,
+            first_name: userDetails.firstName,
+            last_name: userDetails.lastName,
+            telephone_number: userDetails.telephoneNumber,
+        });
+        if (createRoleError) {
+            console.log(createRoleError);
+        }
+        console.log(`Created a profile for ${userDetails.role} user: ${userDetails.email}`);
     }
 
     return {
