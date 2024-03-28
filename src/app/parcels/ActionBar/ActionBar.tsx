@@ -7,7 +7,6 @@ import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import Alert from "@mui/material/Alert";
 import Statuses from "@/app/parcels/ActionBar/Statuses";
 import Actions from "@/app/parcels/ActionBar/Actions";
-import { ControlContainer } from "@/components/Form/formStyling";
 import { ArrowDropDown } from "@mui/icons-material";
 
 export interface ActionBarProps {
@@ -17,10 +16,6 @@ export interface ActionBarProps {
     hasSavedParcelStatus: () => void;
     parcelIds: string[];
 }
-
-const ActionsContainer = styled(ControlContainer)`
-    justify-content: flex-end;
-`;
 
 const AlertBox = styled.div`
     display: block;
@@ -36,50 +31,48 @@ const ActionBar: React.FC<ActionBarProps> = (props) => {
 
     return (
         <>
-            <ActionsContainer>
-                <Statuses
-                    fetchParcelsByIds={props.fetchParcelsByIds}
-                    parcelIds={props.parcelIds}
-                    statusAnchorElement={statusAnchorElement}
-                    setStatusAnchorElement={setStatusAnchorElement}
-                    modalError={modalError}
-                    setModalError={setModalError}
-                    willSaveParcelStatus={props.willSaveParcelStatus}
-                    hasSavedParcelStatus={props.hasSavedParcelStatus}
-                />
-                <Actions
-                    parcelIds={props.parcelIds}
-                    fetchParcelsByIds={props.fetchParcelsByIds}
-                    onDeleteParcels={props.onDeleteParcels}
-                    actionAnchorElement={actionAnchorElement}
-                    setActionAnchorElement={setActionAnchorElement}
-                    modalError={modalError}
-                    setModalError={setModalError}
-                />
-                {modalError && (
-                    <AlertBox>
-                        <Alert severity="error">{modalError}</Alert>
-                    </AlertBox>
-                )}
-                <Button
-                    variant="contained"
-                    onClick={(event) => setStatusAnchorElement(event.currentTarget)}
-                    type="button"
-                    id="status-button"
-                    endIcon={<ArrowDropDown />}
-                >
-                    Statuses
-                </Button>
-                <Button
-                    variant="contained"
-                    onClick={(event) => setActionAnchorElement(event.currentTarget)}
-                    type="button"
-                    id="action-button"
-                    endIcon={<ArrowDropDown />}
-                >
-                    Actions
-                </Button>
-            </ActionsContainer>
+            <Statuses
+                fetchParcelsByIds={props.fetchParcelsByIds}
+                parcelIds={props.parcelIds}
+                statusAnchorElement={statusAnchorElement}
+                setStatusAnchorElement={setStatusAnchorElement}
+                modalError={modalError}
+                setModalError={setModalError}
+                willSaveParcelStatus={props.willSaveParcelStatus}
+                hasSavedParcelStatus={props.hasSavedParcelStatus}
+            />
+            <Actions
+                parcelIds={props.parcelIds}
+                fetchParcelsByIds={props.fetchParcelsByIds}
+                onDeleteParcels={props.onDeleteParcels}
+                actionAnchorElement={actionAnchorElement}
+                setActionAnchorElement={setActionAnchorElement}
+                modalError={modalError}
+                setModalError={setModalError}
+            />
+            {modalError && (
+                <AlertBox>
+                    <Alert severity="error">{modalError}</Alert>
+                </AlertBox>
+            )}
+            <Button
+                variant="contained"
+                onClick={(event) => setStatusAnchorElement(event.currentTarget)}
+                type="button"
+                id="status-button"
+                endIcon={<ArrowDropDown />}
+            >
+                Statuses
+            </Button>
+            <Button
+                variant="contained"
+                onClick={(event) => setActionAnchorElement(event.currentTarget)}
+                type="button"
+                id="action-button"
+                endIcon={<ArrowDropDown />}
+            >
+                Actions
+            </Button>
         </>
     );
 };

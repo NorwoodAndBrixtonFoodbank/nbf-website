@@ -195,6 +195,10 @@ const PreTableControls = styled.div`
     justify-content: space-between;
 `;
 
+const ActionsContainer = styled(ControlContainer)`
+    justify-content: flex-end;
+`;
+
 const parcelIdParam = "parcelId";
 
 const fullNameSearch = (
@@ -769,14 +773,15 @@ const ParcelsPage: React.FC<{}> = () => {
     return (
         <>
             <PreTableControls>
-                <ControlContainer />
-                <ActionBar
-                    fetchParcelsByIds={getCheckedParcelsData}
-                    onDeleteParcels={deleteParcels}
-                    willSaveParcelStatus={() => setIsLoading(true)}
-                    hasSavedParcelStatus={() => setIsLoading(false)}
-                    parcelIds={checkedParcelIds}
-                />
+                <ActionsContainer>
+                    <ActionBar
+                        fetchParcelsByIds={getCheckedParcelsData}
+                        onDeleteParcels={deleteParcels}
+                        willSaveParcelStatus={() => setIsLoading(true)}
+                        hasSavedParcelStatus={() => setIsLoading(false)}
+                        parcelIds={checkedParcelIds}
+                    />
+                </ActionsContainer>
             </PreTableControls>
             {areFiltersLoadingForFirstTime ? (
                 <Centerer>
