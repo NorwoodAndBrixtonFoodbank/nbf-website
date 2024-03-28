@@ -5,9 +5,9 @@ const Header = <Data extends GridValidRowModel>({
     colDef,
 }: GridColumnHeaderParams<Data>): React.ReactElement => {
     return colDef.headerName ? (
-        <p
-            style={{ fontWeight: "bold" }}
-        >{`${colDef.headerName[0].toUpperCase()}${colDef.headerName.slice(1)}`}</p>
+        <p style={{ fontWeight: "bold" }}>
+            {`${colDef.headerName[0].toUpperCase()}${colDef.headerName.slice(1)}`}
+        </p>
     ) : (
         <></>
     );

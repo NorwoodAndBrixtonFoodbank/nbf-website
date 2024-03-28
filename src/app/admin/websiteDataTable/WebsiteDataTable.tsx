@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import supabase from "@/supabaseClient";
 import {
-    DataGrid,
     GridActionsCellItem,
     GridColDef,
     GridEventListener,
@@ -23,8 +22,8 @@ import EditableTextAreaForDataGrid from "./EditableTextAreaForDataGrid";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
-import { styled } from "styled-components";
 import Header from "./Header";
+import StyledDataGrid from "../common/StyledDataGrid";
 
 export interface WebsiteDataRow {
     dbName: string;
@@ -220,61 +219,33 @@ const WebsiteDataTable: React.FC = () => {
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
             {rows && (
-                <DataGridStyling>
-                    <DataGrid
-                        rows={rows}
-                        columns={websiteDataColumns}
-                        editMode="row"
-                        rowModesModel={rowModesModel}
-                        onRowModesModelChange={setRowModesModel}
-                        onRowEditStop={handleRowEditStop}
-                        processRowUpdate={processRowUpdate}
-                        slots={{
-                            loadingOverlay: LinearProgress,
-                        }}
-                        slotProps={{
-                            toolbar: { setRows, setRowModesModel, rows },
-                        }}
-                        loading={isLoading}
-                        getRowHeight={() => 150}
-                        apiRef={dataGridRef}
-                        getRowClassName={(params) =>
-                            (params.indexRelativeToCurrentPage + 1) % 2 === 0 ? "even" : "odd"
-                        }
-                        hideFooter
-                    />
-                </DataGridStyling>
+                <StyledDataGrid
+                    rows={rows}
+                    columns={websiteDataColumns}
+                    editMode="row"
+                    rowModesModel={rowModesModel}
+                    onRowModesModelChange={setRowModesModel}
+                    onRowEditStop={handleRowEditStop}
+                    processRowUpdate={processRowUpdate}
+                    slots={{
+                        loadingOverlay: LinearProgress,
+                    }}
+                    slotProps={{
+                        toolbar: { setRows, setRowModesModel, rows },
+                    }}
+                    loading={isLoading}
+                    getRowHeight={() => 150}
+                    apiRef={dataGridRef}
+                    getRowClassName={(params) =>
+                        (params.indexRelativeToCurrentPage + 1) % 2 === 0
+                            ? "datagrid-row-even"
+                            : "datagrid-row-odd"
+                    }
+                    hideFooter
+                />
             )}
         </>
     );
 };
-
-const DataGridStyling = styled.div`
-    & > div {
-        border-radius: 1rem;
-        border: 0px;
-    }
-
-    & .MuiDataGrid-columnHeaders {
-        background-color: ${(props) => props.theme.main.background[2]};
-        border-color: ${(props) => props.theme.main.border};
-        text-align: start;
-        font-size: 1rem;
-    }
-
-    & .even {
-        text-align: start;
-        font-size: 1rem;
-        background-color: ${(props) => props.theme.main.background[1]};
-        color: ${(props) => props.theme.main.foreground[2]};
-    }
-
-    & .odd {
-        text-align: start;
-        font-size: 1rem;
-        background-color: ${(props) => props.theme.main.background[0]};
-        color: ${(props) => props.theme.main.foreground[2]};
-    }
-`;
 
 export default WebsiteDataTable;
