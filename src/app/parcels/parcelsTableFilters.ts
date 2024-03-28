@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
@@ -84,7 +84,7 @@ export const buildDateFilter = (
         key: "packingDate",
         label: "",
         methodConfig: { paginationType: PaginationType.Server, method: dateSearch },
-        initialState: initialState
+        initialState: initialState,
     });
 };
 
@@ -121,7 +121,7 @@ export const buildDeliveryCollectionFilter = async (): Promise<
             keySet.add(row.collection_centre_acronym);
             filteredOptions.push({
                 name: row.collection_centre_name,
-                acronym: row.collection_centre_acronym
+                acronym: row.collection_centre_acronym,
             });
         }
         return filteredOptions.sort();
@@ -132,7 +132,7 @@ export const buildDeliveryCollectionFilter = async (): Promise<
         filterLabel: "Collection",
         itemLabelsAndKeys: optionsSet.map((option) => [option!.name, option!.acronym]),
         initialCheckedKeys: optionsSet.map((option) => option!.acronym),
-        methodConfig: { paginationType: PaginationType.Server, method: deliveryCollectionSearch }
+        methodConfig: { paginationType: PaginationType.Server, method: deliveryCollectionSearch },
     });
 };
 
@@ -171,7 +171,7 @@ export const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, s
         filterLabel: "Last Status",
         itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
         initialCheckedKeys: optionsSet.filter((option) => option !== "Request Deleted"),
-        methodConfig: { paginationType: PaginationType.Server, method: lastStatusSearch }
+        methodConfig: { paginationType: PaginationType.Server, method: lastStatusSearch },
     });
 };
 
@@ -219,6 +219,6 @@ export const buildPackingSlotFilter = async (): Promise<Filter<ParcelsTableRow, 
         filterLabel: "Packing Slot",
         itemLabelsAndKeys: optionsSet.map((option) => [option.value, option.key]),
         initialCheckedKeys: optionsSet.map((option) => option.key),
-        methodConfig: { paginationType: PaginationType.Server, method: packingSlotSearch }
+        methodConfig: { paginationType: PaginationType.Server, method: packingSlotSearch },
     });
 };

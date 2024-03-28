@@ -40,7 +40,7 @@ import {
     fullNameSearch,
     phoneSearch,
     postcodeSearch,
-    voucherSearch
+    voucherSearch,
 } from "@/app/parcels/parcelsTableFilters";
 import { ActionsContainer } from "@/components/Form/formStyling";
 
@@ -200,6 +200,22 @@ function getSelectedParcelCountMessage(numberOfSelectedParcels: number): string 
         : `${numberOfSelectedParcels} parcels selected`;
 }
 
+async function getClientIdForSelectedParcel(parcelId: string): Promise<string> {
+    const { data, error } = await supabase
+        .from("parcels")
+        .select("client_id")
+        .eq("primary_key", parcelId)
+        .single();
+
+    if (error) {
+        const message = `Failed to fetch client ID for a parcel with ID ${parcelId}`;
+        void logErrorReturnLogId(message, { error });
+        throw new Error(message);
+    }
+
+    return data.client_id;
+}
+
 const parcelIdParam = "parcelId";
 
 const ParcelsPage: React.FC<{}> = () => {
@@ -239,20 +255,14 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const selectedParcelMessage = getSelectedParcelCountMessage(checkedParcelIds.length);
 
-    const fetchAndSetClientIdForSelectedParcel = async (): Promise<void> => {
-        const { data, error } = await supabase
-            .from("parcels")
-            .select("client_id")
-            .eq("primary_key", parcelId)
-            .single();
-
-        if (error) {
-            void logErrorReturnLogId("Error fetching clientId from database", { error });
+    const fetchAndSetClientIdForSelectedParcel = (): void => {
+        if (parcelId === null) {
             return;
         }
 
-        const fetchedClientId = data.client_id;
-        setClientIdForSelectedParcel(fetchedClientId);
+        getClientIdForSelectedParcel(parcelId)
+            .then((clientId) => setClientIdForSelectedParcel(clientId))
+            .catch();
     };
 
     useEffect(() => {
@@ -265,7 +275,7 @@ const ParcelsPage: React.FC<{}> = () => {
     useEffect(() => {
         setClientIdForSelectedParcel(null);
         void fetchAndSetClientIdForSelectedParcel();
-    }, [parcelId]);
+    }, [fetchAndSetClientIdForSelectedParcel]);
 
     useEffect(() => {
         const buildFilters = async (): Promise<{
@@ -364,11 +374,9 @@ const ParcelsPage: React.FC<{}> = () => {
     }, [additionalFilters, endPoint, primaryFilters, sortState, startPoint]);
 
     useEffect(() => {
-        if (areFiltersLoadingForFirstTime) {
-            return;
+        if (!areFiltersLoadingForFirstTime) {
+            void fetchAndDisplayParcelsData();
         }
-
-        void fetchAndDisplayParcelsData();
     }, [areFiltersLoadingForFirstTime, fetchAndDisplayParcelsData]);
 
     const loadCountAndDataWithTimer = (): void => {
