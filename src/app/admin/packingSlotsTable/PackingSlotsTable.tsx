@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import supabase from "@/supabaseClient";
 import {
-    DataGrid,
     GridActionsCellItem,
     GridColDef,
     GridEventListener,
@@ -31,6 +30,8 @@ import { LinearProgress } from "@mui/material";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import Header from "../websiteDataTable/Header";
+import StyledDataGrid from "../common/StyledDataGrid";
 
 interface EditToolbarProps {
     setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
@@ -218,6 +219,7 @@ const PackingSlotsTable: React.FC = () => {
             headerName: "Order",
             width: 100,
             cellClassName: "actions",
+            renderHeader: (params) => <Header {...params} />,
             getActions: ({ id, row }) => {
                 const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
@@ -269,13 +271,20 @@ const PackingSlotsTable: React.FC = () => {
                 ];
             },
         },
-        { field: "name", headerName: "Slot Name", flex: 1, editable: true },
+        {
+            field: "name",
+            headerName: "Slot Name",
+            flex: 1,
+            editable: true,
+            renderHeader: (params) => <Header {...params} />,
+        },
         {
             field: "isShown",
             type: "boolean",
             headerName: "Show",
             flex: 1,
             editable: true,
+            renderHeader: (params) => <Header {...params} />,
         },
         {
             field: "actions",
@@ -283,6 +292,7 @@ const PackingSlotsTable: React.FC = () => {
             headerName: "Actions",
             flex: 1,
             cellClassName: "actions",
+            renderHeader: (params) => <Header {...params} />,
             getActions: ({ id }) => {
                 const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
@@ -326,7 +336,7 @@ const PackingSlotsTable: React.FC = () => {
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
             {rows && (
-                <DataGrid
+                <StyledDataGrid
                     rows={rows}
                     columns={packingSlotsColumns}
                     editMode="row"
@@ -342,6 +352,12 @@ const PackingSlotsTable: React.FC = () => {
                         toolbar: { setRows, setRowModesModel, rows },
                     }}
                     loading={isLoading}
+                    getRowClassName={(params) =>
+                        (params.indexRelativeToCurrentPage + 1) % 2 === 0
+                            ? "datagrid-row-even"
+                            : "datagrid-row-odd"
+                    }
+                    hideFooter
                 />
             )}
         </>

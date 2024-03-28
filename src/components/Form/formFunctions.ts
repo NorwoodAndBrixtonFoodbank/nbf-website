@@ -179,8 +179,8 @@ export const onChangeDate = (
         return;
     }
 
-    const today = dayjs();
-    if (value.isBefore(today)) {
+    const earliestPossibleDateTime = dayjs().startOf("day");
+    if (value.isBefore(earliestPossibleDateTime)) {
         errorSetter(key, Errors.pastDate);
     }
 };
