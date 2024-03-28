@@ -66,3 +66,15 @@ export const GappedDiv = styled.div`
     flex-direction: column;
     gap: 1em;
 `;
+
+export const ActionsContainer = styled(Paper)`
+    flex-grow: 1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    padding: 1rem;
+    gap: 0.5rem;
+    align-items: center;
+    border-radius: 0.5rem;
+    background-color: ${(props) => props.theme.main.background[5]};
+`;

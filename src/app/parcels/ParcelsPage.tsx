@@ -26,7 +26,7 @@ import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { saveParcelStatus } from "./ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
-import { CircularProgress, Paper } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
@@ -40,8 +40,9 @@ import {
     fullNameSearch,
     phoneSearch,
     postcodeSearch,
-    voucherSearch,
+    voucherSearch
 } from "@/app/parcels/parcelsTableFilters";
+import { ActionsContainer } from "@/components/Form/formStyling";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -188,18 +189,6 @@ const PreTableControls = styled.div`
     gap: 0.5rem;
     align-items: stretch;
     justify-content: space-between;
-`;
-
-const ActionsContainer = styled(Paper)`
-    flex-grow: 1;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    padding: 1rem;
-    gap: 0.5rem;
-    align-items: center;
-    border-radius: 0.5rem;
-    background-color: ${(props) => props.theme.main.background[5]};
 `;
 
 function getSelectedParcelCountMessage(numberOfSelectedParcels: number): string | null {
