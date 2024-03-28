@@ -7,37 +7,38 @@ interface Props {
     children: React.ReactNode;
 }
 
-export type Roles = DatabaseEnums["role"] | "";
-
-type RolesInterface = {
-    [key in Roles]: string[];
-};
+export type Roles = DatabaseEnums["role"];
 
 const pathsShownToCaller = ["/calendar", "/clients", "/parcels", "/update-password"];
 
-const roleToShownPages: RolesInterface = {
-    admin: pathsShownToCaller.concat("/admin", "/lists"),
-    caller: pathsShownToCaller,
-    "": ["/login", "/forgot-password", "/auth/reset-password"],
+const getShownPagesByRole = (role: Roles | null): string[] => {
+    switch (role) {
+        case "admin":
+            return pathsShownToCaller.concat("/admin", "/lists");
+        case "caller":
+            return pathsShownToCaller;
+        default:
+            return ["/login", "/forgot-password", "/auth/reset-password"];
+    }
 };
 
-export const roleCanAccessPage = (role: Roles, url: string): boolean => {
-    const accessList = roleToShownPages[role];
+export const roleCanAccessPage = (role: Roles | null, url: string): boolean => {
+    const accessList = getShownPagesByRole(role);
     return accessList.some((page) => url.startsWith(page));
 };
 
 interface RoleUpdateContextType {
-    role: Roles;
+    role: Roles | null;
     setRole: (_role: Roles) => void;
 }
 
 export const RoleUpdateContext = createContext<RoleUpdateContextType>({
-    role: "",
+    role: null,
     setRole: (_role) => {},
 });
 
 export const RoleManager: React.FC<Props> = ({ children }) => {
-    const [role, setRole] = useState<Roles>("");
+    const [role, setRole] = useState<Roles | null>(null);
 
     return (
         <RoleUpdateContext.Provider value={{ role, setRole }}>
