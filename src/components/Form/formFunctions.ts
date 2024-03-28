@@ -173,7 +173,7 @@ export const onChangeDate = (
         return;
     }
 
-    const today = dayjs();
+    const today = dayjs().startOf("day");
     if (value.isBefore(today)) {
         errorSetter(key, Errors.pastDate);
     }
