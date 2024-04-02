@@ -3,6 +3,7 @@ import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
 import { User } from "@supabase/gotrue-js";
 import { CreateUserDetails } from "@/app/admin/createUser/CreateUserForm";
 import supabase from "@/supabaseClient";
+import { logInfoReturnLogId } from "@/logger/logger";
 
 type CreateUsersDataAndErrorType =
     | {
@@ -49,9 +50,14 @@ export async function adminCreateUser(
             telephone_number: userDetails.telephoneNumber,
         });
         if (createRoleError) {
-            console.log(createRoleError);
+            return {
+                data: null,
+                error: { Error: `error creating user profile for user ${userDetails.email}` },
+            };
         }
-        console.log(`Created a profile for ${userDetails.role} user: ${userDetails.email}`);
+        void logInfoReturnLogId(
+            `Created a profile for ${userDetails.role} user: ${userDetails.email}`
+        );
     }
 
     return {

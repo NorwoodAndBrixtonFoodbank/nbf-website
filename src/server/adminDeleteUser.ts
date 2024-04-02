@@ -2,6 +2,7 @@
 
 import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
 import { errorsOnAuthentication } from "@/server/authenticateAdminUser";
+import { logInfoReturnLogId } from "@/logger/logger";
 
 export type DeleteUserErrorType = {
     error: Record<string, any> | null;
@@ -24,6 +25,8 @@ export async function adminDeleteUser(userId: string): Promise<DeleteUserErrorTy
             error: { AuthError: `error deleting user: ${userId}` },
         };
     }
+
+    void logInfoReturnLogId(`Delete successful: user ${userId}`);
 
     return {
         error: null,
