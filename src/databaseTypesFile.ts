@@ -415,21 +415,6 @@ export type Database = {
           },
         ]
       }
-      status_order: {
-        Row: {
-          event_name: string
-          workflow_order: number
-        }
-        Insert: {
-          event_name: string
-          workflow_order: number
-        }
-        Update: {
-          event_name?: string
-          workflow_order?: number
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           first_name: string | null
@@ -461,6 +446,21 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      status_order: {
+        Row: {
+          event_name: string
+          workflow_order: number
+        }
+        Insert: {
+          event_name: string
+          workflow_order: number
+        }
+        Update: {
+          event_name?: string
+          workflow_order?: number
+        }
+        Relationships: []
       }
       website_data: {
         Row: {
