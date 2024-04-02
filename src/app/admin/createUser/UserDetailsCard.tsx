@@ -28,7 +28,13 @@ const UserDetailsCard: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSe
                     label="Telephone Number"
                     error={errorExists(formErrors.telephoneNumber)}
                     helperText={errorText(formErrors.telephoneNumber)}
-                    onChange={onChangeText(fieldSetter, errorSetter, "telephoneNumber", true, telephoneRegex)}
+                    onChange={onChangeText(
+                        fieldSetter,
+                        errorSetter,
+                        "telephoneNumber",
+                        true,
+                        telephoneRegex
+                    )}
                 />
             </>
         </GenericFormCard>
