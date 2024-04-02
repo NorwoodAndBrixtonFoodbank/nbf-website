@@ -443,6 +443,9 @@ const ParcelsPage: React.FC<{}> = () => {
 
     useEffect(() => {
         const fetchAndSetClientIdForSelectedParcel = async (): Promise<void> => {
+            if (!parcelId) {
+                return;
+            }
             const { data, error } = await supabase
                 .from("parcels")
                 .select("client_id")

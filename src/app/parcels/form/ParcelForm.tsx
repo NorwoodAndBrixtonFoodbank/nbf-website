@@ -153,7 +153,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                 packingSlot: Errors.invalidPackingSlot,
             }));
         }
-    }, []);
+    }, [editMode, packingSlotIsShown]);
 
     const formSections =
         fields.shippingMethod === "Collection"
