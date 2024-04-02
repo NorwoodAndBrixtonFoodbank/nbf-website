@@ -3,17 +3,15 @@
 import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { FunctionsResponse } from "@supabase/functions-js/src/types";
-import { AdminUserAttributes } from "@supabase/gotrue-js";
+import { AdminUserAttributes, UserResponse } from "@supabase/gotrue-js";
 
-const supabase = createServerActionClient({ cookies });
+const supabase = createServerActionClient({ cookies }, { supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY});
 
 // TODO VFB-23 Unpack Supabase Errors and Extract Only Relevant Fields to Return to Client
 
-export const createUser = async (fields: any): Promise<FunctionsResponse<any>> => {
-    return await supabase.functions.invoke("admin-create-user", {
-        body: JSON.stringify(fields),
-    });
-};
+export const inviteUser = async (email: string): Promise<UserResponse> => {
+    return await supabase.auth.admin.inviteUserByEmail(email, {data: {role: "caller"}});
+}
 
 export const deleteUser = async (userId: string): Promise<FunctionsResponse<any>> => {
     return await supabase.functions.invoke("admin-delete-user", {
