@@ -1,3 +1,5 @@
+# Password Reset Flow
+
 ```mermaid
 sequenceDiagram
     
