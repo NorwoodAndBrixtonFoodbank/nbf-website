@@ -209,8 +209,8 @@ async function getClientIdForSelectedParcel(parcelId: string): Promise<string> {
 
     if (error) {
         const message = `Failed to fetch client ID for a parcel with ID ${parcelId}`;
-        void logErrorReturnLogId(message, { error });
-        throw new Error(message);
+        const logId = await logErrorReturnLogId(message, { error });
+        throw new Error(message + ` Log ID: ${logId}`);
     }
 
     return data.client_id;
@@ -255,15 +255,19 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const selectedParcelMessage = getSelectedParcelCountMessage(checkedParcelIds.length);
 
-    const fetchAndSetClientIdForSelectedParcel = (): void => {
+    const fetchAndSetClientIdForSelectedParcel = useCallback((): void => {
         if (parcelId === null) {
             return;
         }
 
         getClientIdForSelectedParcel(parcelId)
             .then((clientId) => setClientIdForSelectedParcel(clientId))
-            .catch();
-    };
+            .catch((error) => {
+                if (error instanceof Error) {
+                    setErrorMessage(error.message);
+                }
+            });
+    }, [parcelId]);
 
     useEffect(() => {
         if (parcelId) {
