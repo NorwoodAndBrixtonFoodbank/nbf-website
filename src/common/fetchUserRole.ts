@@ -5,7 +5,7 @@ import { Database } from "@/databaseTypesFile";
 
 export const fetchUserRole = async (
     userId: string,
-    logError?: (error: PostgrestError) => string
+    logError?: (error: PostgrestError) => Promise<string>
 ): Promise<Database["public"]["Enums"]["role"]> => {
     const { data, error } = await supabase
         .from("profiles")
@@ -15,7 +15,7 @@ export const fetchUserRole = async (
 
     if (error) {
         if (logError) {
-            const logId = logError(error);
+            const logId = await logError(error);
             throw new DatabaseError("fetch", "profile for user", logId);
         } else {
             throw new DatabaseError("fetch", "profile for user");

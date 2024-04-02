@@ -31,7 +31,9 @@ const getUsers = async (): Promise<UserRow[]> => {
     }
 
     const userRows = data.map(async (user: User) => {
-        const userRole = await fetchUserRole(user.id);
+        const userRole = await fetchUserRole(user.id, (error) => {
+            return logErrorReturnLogId("Failed to fetch user role", { error });
+        });
 
         return {
             id: user.id,
