@@ -20,7 +20,7 @@ export async function adminGetUsers(): Promise<GetUsersDataAndErrorType> {
     if (!isSuccess) {
         return {
             data: null,
-            error: { AuthError: reason },
+            error: { "Failed to authenticate as admin": reason },
         };
     }
 

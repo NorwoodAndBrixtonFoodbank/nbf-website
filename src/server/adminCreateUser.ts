@@ -25,7 +25,7 @@ export async function adminCreateUser(
     if (!isSuccess) {
         return {
             data: null,
-            error: { AuthError: reason },
+            error: { "Failed to authenticate as admin": reason },
         };
     }
 
@@ -45,7 +45,7 @@ export async function adminCreateUser(
 
     if (data) {
         const { error: createRoleError } = await supabase.from("profiles").insert({
-            primary_key: data.user?.id,
+            primary_key: data.user.id,
             role: userDetails.role,
             first_name: userDetails.firstName,
             last_name: userDetails.lastName,

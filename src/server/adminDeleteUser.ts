@@ -13,7 +13,7 @@ export async function adminDeleteUser(userId: string): Promise<DeleteUserErrorTy
 
     if (!isSuccess) {
         return {
-            error: { AuthError: reason },
+            error: { "Failed to authenticate as admin": reason },
         };
     }
 

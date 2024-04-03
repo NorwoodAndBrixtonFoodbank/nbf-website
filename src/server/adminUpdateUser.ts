@@ -27,7 +27,7 @@ export async function adminUpdateUserEmailAndPassword(
     if (!isSuccess) {
         return {
             data: null,
-            error: { AuthError: reason },
+            error: { "Failed to authenticate as admin": reason },
         };
     }
 
