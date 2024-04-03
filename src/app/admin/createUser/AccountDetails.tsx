@@ -1,10 +1,5 @@
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import {
-    CardProps,
-    errorExists,
-    errorText,
-    onChangeText,
-} from "@/components/Form/formFunctions";
+import { CardProps, errorExists, errorText, onChangeText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import React from "react";
 

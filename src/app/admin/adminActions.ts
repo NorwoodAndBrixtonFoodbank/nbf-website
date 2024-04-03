@@ -7,13 +7,20 @@ import { AdminUserAttributes } from "@supabase/gotrue-js";
 import { UserResponse } from "@supabase/supabase-js";
 import { Database } from "@/databaseTypesFile";
 
-const supabase = createServerActionClient({ cookies }, { supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY});
+const supabase = createServerActionClient(
+    { cookies },
+    { supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY }
+);
 
 // TODO VFB-23 Unpack Supabase Errors and Extract Only Relevant Fields to Return to Client
 
-export const inviteUser = async (email: string, role: Database["public"]["Enums"]["role"], redirectUrl: string): Promise<UserResponse> => {
-    return await supabase.auth.admin.inviteUserByEmail(email, {redirectTo: redirectUrl});
-}
+export const inviteUser = async (
+    email: string,
+    role: Database["public"]["Enums"]["role"],
+    redirectUrl: string
+): Promise<UserResponse> => {
+    return await supabase.auth.admin.inviteUserByEmail(email, { redirectTo: redirectUrl });
+};
 
 export const deleteUser = async (userId: string): Promise<FunctionsResponse<any>> => {
     return await supabase.functions.invoke("admin-delete-user", {

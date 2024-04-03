@@ -76,9 +76,7 @@ const CreateUserForm: React.FC<{}> = () => {
         setSubmitError(Errors.none);
         setSubmitDisabled(false);
         setInvitedUser(data.user);
-        void logInfoReturnLogId(
-            `User ${fields.email} invited successfully.`
-        );
+        void logInfoReturnLogId(`User ${fields.email} invited successfully.`);
     };
 
     return (

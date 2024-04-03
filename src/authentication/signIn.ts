@@ -1,4 +1,4 @@
-import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
+import { logErrorReturnLogId } from "@/logger/logger";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export async function signInWithPassword(credentials: {
@@ -18,8 +18,11 @@ export async function signInWithPassword(credentials: {
 
 export async function signInWithTokens(accessToken: string, refreshToken: string): Promise<void> {
     const supabase = createClientComponentClient();
-    const { data, error } = await supabase.auth.setSession({access_token: accessToken, refresh_token: refreshToken});
-    logInfoReturnLogId(JSON.stringify(data));
+    const { error } = await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+    });
+
     if (error) {
         void logErrorReturnLogId("Sign in with tokens failed", { error });
         throw error;

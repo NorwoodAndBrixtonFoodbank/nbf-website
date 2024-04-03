@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { logErrorAndGetErrorResponse, logErrorReturnLogId } from "@/logger/logger";
+import { logErrorAndGetErrorResponse } from "@/logger/logger";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 

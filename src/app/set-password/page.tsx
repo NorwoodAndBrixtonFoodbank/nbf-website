@@ -10,51 +10,52 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { AuthError } from "@supabase/gotrue-js";
 
 export default function Page(): ReactElement {
-
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const router = useRouter();
     const supabase = createClientComponentClient();
 
-    const hashParams = new URLSearchParams(window.location.hash.substring(1))
-    const accessToken = hashParams.get('access_token')
-    const refreshToken = hashParams.get('refresh_token')
-
     const initiatePasswordUpdate = async (): Promise<void> => {
         setErrorMessage(null);
 
-        const {data} = await supabase.auth.getSession();
+        const { data } = await supabase.auth.getSession();
         if (data.session) {
             void logInfoReturnLogId("User logged out");
             await supabase.auth.signOut();
         }
 
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = hashParams.get("access_token");
+        const refreshToken = hashParams.get("refresh_token");
+
         if (!accessToken) {
             setErrorMessage("No access token");
             return void logErrorReturnLogId("Failed to validate new user: no access token");
-        } if (!refreshToken) {
+        }
+        if (!refreshToken) {
             setErrorMessage("No refresh token");
             return void logErrorReturnLogId("Failed to validate new user: no refresh token");
         }
-        
+
         try {
             await signInWithTokens(accessToken, refreshToken);
-        }
-        catch(error) {
-            setErrorMessage("Failed to validate new user: please try again later")
-            return
+        } catch (error) {
+            if (error instanceof AuthError) {
+                setErrorMessage(error.message);
+            }
+            return;
         }
 
         try {
             await updatePassword(password);
-        }
-        catch(error) {
-            setErrorMessage("Failed to set password: please try again later")
-            return
+        } catch (error) {
+            if (error instanceof AuthError) {
+                setErrorMessage(error.message);
+            }
+            return;
         }
 
         router.push("/");
-
     };
 
     return (
