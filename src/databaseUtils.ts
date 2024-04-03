@@ -4,6 +4,7 @@ export type DatabaseAutoType = Database;
 
 type Tables = Database["public"]["Tables"];
 type Views = Database["public"]["Views"];
+export type DatabaseRoles = Database["public"]["Enums"]["role"];
 
 export type Schema = {
     [key in keyof Tables]: Tables[key]["Row"];
