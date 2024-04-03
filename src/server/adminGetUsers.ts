@@ -2,7 +2,7 @@
 
 import { User } from "@supabase/gotrue-js";
 import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
-import { errorsOnAuthentication } from "@/server/authenticateAdminUser";
+import { authenticateAsAdmin } from "@/server/authenticateAdminUser";
 
 type GetUsersDataAndErrorType =
     | {
@@ -15,12 +15,12 @@ type GetUsersDataAndErrorType =
       };
 
 export async function adminGetUsers(): Promise<GetUsersDataAndErrorType> {
-    const { error: authenticationError } = await errorsOnAuthentication();
+    const { isSuccess, reason } = await authenticateAsAdmin();
 
-    if (authenticationError) {
+    if (!isSuccess) {
         return {
             data: null,
-            error: { AuthError: authenticationError },
+            error: { AuthError: reason },
         };
     }
 

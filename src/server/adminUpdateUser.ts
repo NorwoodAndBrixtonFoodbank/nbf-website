@@ -1,6 +1,6 @@
 "use server";
 
-import { errorsOnAuthentication } from "@/server/authenticateAdminUser";
+import { authenticateAsAdmin } from "@/server/authenticateAdminUser";
 import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
 import { AdminUserAttributes, User } from "@supabase/gotrue-js";
 
@@ -22,12 +22,12 @@ interface UpdateUserEmailAndPassword {
 export async function adminUpdateUserEmailAndPassword(
     userDetails: UpdateUserEmailAndPassword
 ): Promise<UpdateUsersDataAndErrorType> {
-    const { error: authenticationError } = await errorsOnAuthentication();
+    const { isSuccess, reason } = await authenticateAsAdmin();
 
-    if (authenticationError) {
+    if (!isSuccess) {
         return {
             data: null,
-            error: { AuthError: authenticationError },
+            error: { AuthError: reason },
         };
     }
 

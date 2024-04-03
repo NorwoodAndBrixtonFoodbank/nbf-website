@@ -1,6 +1,6 @@
 "use server";
 
-import { errorsOnAuthentication } from "@/server/authenticateAdminUser";
+import { authenticateAsAdmin } from "@/server/authenticateAdminUser";
 import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
 import { User } from "@supabase/gotrue-js";
 import { CreateUserDetails } from "@/app/admin/createUser/CreateUserForm";
@@ -20,12 +20,12 @@ type CreateUsersDataAndErrorType =
 export async function adminCreateUser(
     userDetails: CreateUserDetails
 ): Promise<CreateUsersDataAndErrorType> {
-    const { error: authenticationError } = await errorsOnAuthentication();
+    const { isSuccess, reason } = await authenticateAsAdmin();
 
-    if (authenticationError) {
+    if (!isSuccess) {
         return {
             data: null,
-            error: { AuthError: authenticationError },
+            error: { AuthError: reason },
         };
     }
 

@@ -2,11 +2,19 @@ import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { fetchUserRole } from "@/common/fetchUserRole";
 import { logErrorReturnLogId } from "@/logger/logger";
 
-type AuthenticationError = {
-    error: string | null;
-};
+type Authenticated =
+    | {
+          isSuccess: true;
+          reason: null;
+      }
+    | {
+          isSuccess: false;
+          reason: FailureReason;
+      };
 
-export async function errorsOnAuthentication(): Promise<AuthenticationError> {
+type FailureReason = "unauthorised" | "forbidden" | "fetch user error";
+
+export async function authenticateAsAdmin(): Promise<Authenticated> {
     const serverComponentClient = getSupabaseServerComponentClient();
 
     const {
@@ -16,13 +24,15 @@ export async function errorsOnAuthentication(): Promise<AuthenticationError> {
 
     if (userError) {
         return {
-            error: "error fetching user",
+            isSuccess: false,
+            reason: "fetch user error",
         };
     }
 
     if (user === null) {
         return {
-            error: "unauthorised",
+            isSuccess: false,
+            reason: "unauthorised",
         };
     }
 
@@ -31,9 +41,10 @@ export async function errorsOnAuthentication(): Promise<AuthenticationError> {
     });
     if (userRole !== "admin") {
         return {
-            error: "forbidden",
+            isSuccess: false,
+            reason: "forbidden",
         };
     }
 
-    return { error: null };
+    return { isSuccess: true, reason: null };
 }

@@ -1,7 +1,7 @@
 "use server";
 
 import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
-import { errorsOnAuthentication } from "@/server/authenticateAdminUser";
+import { authenticateAsAdmin } from "@/server/authenticateAdminUser";
 import { logInfoReturnLogId } from "@/logger/logger";
 
 export type DeleteUserErrorType = {
@@ -9,11 +9,11 @@ export type DeleteUserErrorType = {
 };
 
 export async function adminDeleteUser(userId: string): Promise<DeleteUserErrorType> {
-    const { error: authenticationError } = await errorsOnAuthentication();
+    const { isSuccess, reason } = await authenticateAsAdmin();
 
-    if (authenticationError) {
+    if (!isSuccess) {
         return {
-            error: { AuthError: authenticationError },
+            error: { AuthError: reason },
         };
     }
 
