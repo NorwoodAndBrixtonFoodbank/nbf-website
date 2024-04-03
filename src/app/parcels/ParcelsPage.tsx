@@ -464,10 +464,10 @@ const ParcelsPage: React.FC<{}> = () => {
     }, [parcelId]);
 
     useEffect(() => {
+        setClientIdForSelectedParcel(null);
         if (parcelId) {
             void fetchAndSetClientIdForSelectedParcel();
         }
-        setClientIdForSelectedParcel(null);
     }, [parcelId]);
 
     useEffect(() => {
