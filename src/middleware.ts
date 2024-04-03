@@ -28,7 +28,15 @@ const middleware: NextMiddleware = async (req: NextRequest) => {
         return NextResponse.redirect(new URL("/", req.url));
     }
 
-    const userRole = user ? await fetchUserRole(user.id) : null;
+    let userRole = null;
+
+    if (user) {
+        try {
+            userRole = await fetchUserRole(user.id);
+        } catch (error) {
+            userRole = null;
+        }
+    }
 
     if (!roleCanAccessPage(userRole, req.nextUrl.pathname)) {
         const url = req.nextUrl;
