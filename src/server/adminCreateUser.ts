@@ -1,3 +1,5 @@
+"use server";
+
 import { errorsOnAuthentication } from "@/server/authenticateAdminUser";
 import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
 import { User } from "@supabase/gotrue-js";

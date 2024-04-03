@@ -12,7 +12,6 @@ import {
     setError,
     setField,
 } from "@/components/Form/formFunctions";
-import { createUser } from "@/app/admin/adminActions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
@@ -22,6 +21,7 @@ import { User } from "@supabase/gotrue-js";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import UserDetailsCard from "@/app/admin/createUser/UserDetailsCard";
+import { adminCreateUser } from "@/server/adminCreateUser";
 
 export interface CreateUserDetails {
     email: string;
@@ -73,7 +73,7 @@ const CreateUserForm: React.FC<{}> = () => {
             return;
         }
 
-        const { data, error } = await createUser(fields);
+        const { data, error } = await adminCreateUser(fields);
 
         if (error) {
             setSubmitError(Errors.external);

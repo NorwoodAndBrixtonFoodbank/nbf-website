@@ -1,7 +1,8 @@
+"use server";
+
 import { errorsOnAuthentication } from "@/server/authenticateAdminUser";
 import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
-import { User } from "@supabase/gotrue-js";
-import { UpdateUserDetails } from "@/app/admin/adminActions";
+import { AdminUserAttributes, User } from "@supabase/gotrue-js";
 
 type UpdateUsersDataAndErrorType =
     | {
@@ -12,8 +13,14 @@ type UpdateUsersDataAndErrorType =
           data: null;
           error: Record<string, any>;
       };
-export async function adminUpdateUser(
-    userDetails: UpdateUserDetails
+
+interface UpdateUserEmailAndPassword {
+    userId: string;
+    attributes: AdminUserAttributes;
+}
+
+export async function adminUpdateUserEmailAndPassword(
+    userDetails: UpdateUserEmailAndPassword
 ): Promise<UpdateUsersDataAndErrorType> {
     const { error: authenticationError } = await errorsOnAuthentication();
 
