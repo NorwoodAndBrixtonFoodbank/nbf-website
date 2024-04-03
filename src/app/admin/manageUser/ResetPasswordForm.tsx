@@ -18,6 +18,7 @@ import {
     userPasswordRules,
 } from "@/app/admin/common/passwordConfig";
 import { adminUpdateUserEmailAndPassword } from "@/server/adminUpdateUser";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 
 interface Props {
     userToEdit: UserRow;
@@ -44,8 +45,15 @@ const ResetPasswordForm: React.FC<Props> = (props) => {
                     </>
                 ),
             });
+            void logInfoReturnLogId(`Password for ${props.userToEdit.email} updated successfully`);
         } else {
-            props.onConfirm({ success: false, message: <>Reset password operation failed</> });
+            const logId = await logErrorReturnLogId(
+                `Error resetting password userId: ${props.userToEdit.id}`
+            );
+            props.onConfirm({
+                success: false,
+                message: <>Reset password operation failed. Log ID: {logId}</>,
+            });
         }
     };
 

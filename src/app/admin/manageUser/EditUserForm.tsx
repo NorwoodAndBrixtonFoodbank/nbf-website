@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import { faUserPen } from "@fortawesome/free-solid-svg-icons/faUserPen";
 import { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
-import { logInfoReturnLogId } from "@/logger/logger";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { updateUserProfile } from "@/app/admin/manageUser/UpdateUserProfile";
 
 interface Props {
@@ -38,7 +38,11 @@ const EditUserForm: React.FC<Props> = (props) => {
             });
             void logInfoReturnLogId(`User ${props.userToEdit.email} updated successfully`);
         } else {
-            props.onConfirm({ success: false, message: <>Edit User Operation Failed</> });
+            const logId = await logErrorReturnLogId("Error with edit: User profile", error);
+            props.onConfirm({
+                success: false,
+                message: <>Edit User Operation Failed. Log ID: {logId}</>,
+            });
         }
     };
 
