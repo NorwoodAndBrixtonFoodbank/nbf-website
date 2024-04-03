@@ -12,7 +12,7 @@ type Authenticated =
           reason: FailureReason;
       };
 
-type FailureReason = "unauthorised" | "forbidden" | "fetch user error";
+type FailureReason = "unauthenticated" | "unauthorised" | "fetch user error";
 
 export async function authenticateAsAdmin(): Promise<Authenticated> {
     const serverComponentClient = getSupabaseServerComponentClient();
@@ -32,7 +32,7 @@ export async function authenticateAsAdmin(): Promise<Authenticated> {
     if (user === null) {
         return {
             isSuccess: false,
-            reason: "unauthorised",
+            reason: "unauthenticated",
         };
     }
 
@@ -42,7 +42,7 @@ export async function authenticateAsAdmin(): Promise<Authenticated> {
     if (userRole !== "admin") {
         return {
             isSuccess: false,
-            reason: "forbidden",
+            reason: "unauthorised",
         };
     }
 
