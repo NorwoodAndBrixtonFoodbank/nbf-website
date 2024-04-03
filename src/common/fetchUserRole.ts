@@ -5,7 +5,7 @@ import { DatabaseRoles } from "@/databaseUtils";
 
 export const fetchUserRole = async (
     userId: string,
-    logError?: (error: PostgrestError) => Promise<string>
+    logErrorAndReturnLogId?: (error: PostgrestError) => Promise<string>
 ): Promise<DatabaseRoles> => {
     const { data, error } = await supabase
         .from("profiles")
@@ -14,8 +14,8 @@ export const fetchUserRole = async (
         .single();
 
     if (error) {
-        if (logError) {
-            const logId = await logError(error);
+        if (logErrorAndReturnLogId) {
+            const logId = await logErrorAndReturnLogId(error);
             throw new DatabaseError("fetch", "profile for user", logId);
         } else {
             throw new DatabaseError("fetch", "profile for user");
