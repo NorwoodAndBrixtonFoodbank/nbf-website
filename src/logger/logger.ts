@@ -53,3 +53,16 @@ function getLogger(): Logger {
         ],
     });
 }
+
+export async function logErrorAndGetErrorResponse({
+    logMessage,
+    responseMessage,
+    error,
+}: {
+    logMessage: string;
+    responseMessage: (logId: string) => string;
+    error?: unknown;
+}): Promise<Response> {
+    const logId = await logErrorReturnLogId(logMessage, { error });
+    return Response.json(responseMessage(logId));
+}

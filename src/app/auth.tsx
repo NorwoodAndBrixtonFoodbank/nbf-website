@@ -14,6 +14,7 @@ export const pathsNotRequiringLogin: readonly string[] = [
     "/login",
     "/forgot-password",
     "/auth/reset-password",
+    "/set-password"
 ] as const;
 
 export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
@@ -88,3 +89,4 @@ export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
 
     return <>{children}</>;
 };
+

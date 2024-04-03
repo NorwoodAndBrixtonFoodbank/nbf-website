@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { logErrorReturnLogId } from "@/logger/logger";
+import { logErrorAndGetErrorResponse, logErrorReturnLogId } from "@/logger/logger";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 
@@ -44,17 +44,4 @@ export async function GET(request: Request): Promise<Response> {
     }
 
     return redirect("/update-password");
-}
-
-async function logErrorAndGetErrorResponse({
-    logMessage,
-    responseMessage,
-    error,
-}: {
-    logMessage: string;
-    responseMessage: (logId: string) => string;
-    error?: unknown;
-}): Promise<Response> {
-    const logId = await logErrorReturnLogId(logMessage, { error });
-    return Response.json(responseMessage(logId));
 }

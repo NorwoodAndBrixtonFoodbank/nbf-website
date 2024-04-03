@@ -60,7 +60,9 @@ const CreateUserForm: React.FC<{}> = () => {
             return;
         }
 
-        const { data, error } = await inviteUser(fields.email);
+        const redirectUrl = `${window.location.origin}/set-password`;
+
+        const { data, error } = await inviteUser(fields.email, fields.role, redirectUrl);
 
         if (error) {
             setSubmitError(Errors.external);

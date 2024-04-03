@@ -13,12 +13,12 @@ type RolesInterface = {
     [key in Roles]: string[];
 };
 
-const pathsShownToCaller = ["/calendar", "/clients", "/parcels", "/update-password"];
+const pathsShownToCaller = ["/calendar", "/clients", "/parcels", "/update-password", "/set-password"];
 
 const roleToShownPages: RolesInterface = {
     admin: pathsShownToCaller.concat("/admin", "/lists"),
     caller: pathsShownToCaller,
-    "": ["/login", "/forgot-password", "/auth/reset-password"],
+    "": ["/login", "/forgot-password", "/auth/reset-password", "/set-password"],
 };
 
 export const roleCanAccessPage = (role: Roles, url: string): boolean => {
