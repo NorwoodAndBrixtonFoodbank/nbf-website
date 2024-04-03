@@ -8,61 +8,64 @@ createAdminAndCallerUsers();
 
 type Role = "admin" | "caller";
 
+interface userProfile {
+    email: string;
+    password: string;
+    role: Role;
+    firstName: string;
+    lastName: string;
+    telephoneNumber: string;
+}
+
 async function createAdminAndCallerUsers(): Promise<void> {
     const supabase = getLocalSupabaseClient();
 
-    await createUser(
-        supabase,
-        "admin@example.com",
-        "admin123",
-        "admin",
-        "admin",
-        "person",
-        "0777777777777"
-    );
-    await createUser(
-        supabase,
-        "caller@example.com",
-        "caller123",
-        "caller",
-        "caller",
-        "person",
-        "078888888888"
-    );
+    await createUser(supabase, {
+        email: "admin@example.com",
+        password: "admin123",
+        role: "admin",
+        firstName: "admin",
+        lastName: "person",
+        telephoneNumber: "0777777777777",
+    });
+    await createUser(supabase, {
+        email: "caller@example.com",
+        password: "caller123",
+        role: "caller",
+        firstName: "caller",
+        lastName: "person",
+        telephoneNumber: "078888888888",
+    });
 }
 
-async function createUser(
-    supabase: SupabaseClient,
-    email: string,
-    password: string,
-    role: Role,
-    firstName: string,
-    lastName: string,
-    telephoneNumber: string
-): Promise<void> {
+async function createUser(supabase: SupabaseClient, userProfile: userProfile): Promise<void> {
     const { data, error } = await supabase.auth.admin.createUser({
-        email: email,
-        password: password,
+        email: userProfile.email,
+        password: userProfile.password,
         email_confirm: true,
     });
 
     if (error) {
         console.log(error);
-        throw new Error(`Failed to create ${role} user: ${email}. ${error}`);
+        throw new Error(
+            `Failed to create ${userProfile.role} user: ${userProfile.email}. ${error}`
+        );
     }
 
     if (data) {
         const { error } = await supabase.from("profiles").insert({
             primary_key: data.user?.id,
-            role: role,
-            first_name: firstName,
-            last_name: lastName,
-            telephone_number: telephoneNumber,
+            role: userProfile.role,
+            first_name: userProfile.firstName,
+            last_name: userProfile.lastName,
+            telephone_number: userProfile.telephoneNumber,
         });
         if (error) {
             console.log(error);
         }
     }
 
-    console.log(`Created a ${role} user: ${email} (${password})`);
+    console.log(
+        `Created a ${userProfile.role} user: ${userProfile.email} (${userProfile.password})`
+    );
 }
