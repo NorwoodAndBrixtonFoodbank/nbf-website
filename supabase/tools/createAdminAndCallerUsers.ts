@@ -44,10 +44,6 @@ async function createUser(
         email: email,
         password: password,
         email_confirm: true,
-        phone_confirm: true,
-        app_metadata: {
-            role: role,
-        },
     });
 
     if (error) {
