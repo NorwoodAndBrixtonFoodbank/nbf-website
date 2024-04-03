@@ -67,10 +67,11 @@ export const GappedDiv = styled.div`
     gap: 1em;
 `;
 
-export const ControlContainer = styled(Paper)`
+export const ActionsContainer = styled(Paper)`
     flex-grow: 1;
     display: flex;
     flex-wrap: wrap;
+    justify-content: flex-end;
     padding: 1rem;
     gap: 0.5rem;
     align-items: center;

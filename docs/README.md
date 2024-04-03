@@ -1,2 +1,3 @@
 ## Contents
-- [Password reset flow](./password-reset-flow.md)
+- [Password Reset Flow](./password-reset-flow.md)
+- [Release Instructions](./release.md)

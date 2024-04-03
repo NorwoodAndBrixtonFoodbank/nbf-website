@@ -1,12 +1,10 @@
 "use client";
 
-import Table, { Row, SortOptions, TableHeaders, SortState } from "@/components/Tables/Table";
-import React, { Suspense, useEffect, useRef, useState } from "react";
+import Table, { Row, SortOptions, SortState, TableHeaders } from "@/components/Tables/Table";
+import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import { formatDatetimeAsDate } from "@/app/parcels/getExpandedParcelDetails";
-import { ControlContainer } from "@/components/Form/formStyling";
-import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
@@ -18,35 +16,33 @@ import Icon from "@/components/Icons/Icon";
 import { faBoxArchive } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal/Modal";
 import TableSurface from "@/components/Tables/TableSurface";
-import ActionBar from "@/app/parcels/ActionBar/ActionBar";
+import ActionAndStatusButtons from "@/app/parcels/ActionBar/ActionAndStatusButtons";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
-import {
-    CollectionCentresOptions,
-    getParcelIds,
-    getParcelsByIds,
-    getParcelsDataAndCount,
-} from "./fetchParcelTableData";
+import { getParcelIds, getParcelsByIds, getParcelsDataAndCount } from "./fetchParcelTableData";
 import dayjs from "dayjs";
-import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { saveParcelStatus } from "./ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
-import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
-import { Database } from "@/databaseTypesFile";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
-import { dateFilter } from "@/components/Tables/DateFilter";
 import { CircularProgress } from "@mui/material";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
-
-interface packingSlotOptionsSet {
-    key: string;
-    value: string;
-}
+import {
+    buildDateFilter,
+    buildDeliveryCollectionFilter,
+    buildLastStatusFilter,
+    buildPackingSlotFilter,
+    familySearch,
+    fullNameSearch,
+    phoneSearch,
+    postcodeSearch,
+    voucherSearch,
+} from "@/app/parcels/parcelsTableFilters";
+import { ActionsContainer } from "@/components/Form/formStyling";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -195,209 +191,32 @@ const PreTableControls = styled.div`
     justify-content: space-between;
 `;
 
-const parcelIdParam = "parcelId";
-
-const fullNameSearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
-    return query.ilike("client_full_name", `%${state}%`);
-};
-
-const postcodeSearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
-    return query.ilike("client_address_postcode", `%${state}%`);
-};
-
-const familySearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
-    if (state === "") {
-        return query;
+function getSelectedParcelCountMessage(numberOfSelectedParcels: number): string | null {
+    if (numberOfSelectedParcels === 0) {
+        return null;
     }
-    if ("single".includes(state.toLowerCase())) {
-        return query.lte("family_count", 1);
-    }
-    if ("family of".includes(state.toLowerCase())) {
-        return query.gte("family_count", 2);
-    }
-    const stateAsNumber = Number(state);
-    if (Number.isNaN(stateAsNumber) || stateAsNumber === 0) {
-        return query.eq("family_count", -1);
-    }
-    if (stateAsNumber >= 10) {
-        return query.gte("family_count", 10);
-    }
-    if (stateAsNumber === 1) {
-        return query.lte("family_count", 1);
-    }
-    return query.eq("family_count", Number(state));
-};
+    return numberOfSelectedParcels === 1
+        ? "1 parcel selected"
+        : `${numberOfSelectedParcels} parcels selected`;
+}
 
-const phoneSearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
-    return query.ilike("client_phone_number", `%${state}%`);
-};
-
-const voucherSearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
-    return query.ilike("voucher_number", `%${state}%`);
-};
-
-const buildDateFilter = (initialState: DateRangeState): Filter<ParcelsTableRow, DateRangeState> => {
-    const dateSearch = (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: DateRangeState
-    ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.gte("packing_date", state.from).lte("packing_date", state.to);
-    };
-    return dateFilter<ParcelsTableRow>({
-        key: "packingDate",
-        label: "",
-        methodConfig: { paginationType: PaginationType.Server, method: dateSearch },
-        initialState: initialState,
-    });
-};
-
-const buildDeliveryCollectionFilter = async (): Promise<Filter<ParcelsTableRow, string[]>> => {
-    const deliveryCollectionSearch = (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: string[]
-    ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.in("collection_centre_acronym", state);
-    };
-
-    const keySet = new Set();
+async function getClientIdForSelectedParcel(parcelId: string): Promise<string> {
     const { data, error } = await supabase
-        .from("parcels_plus")
-        .select("collection_centre_name, collection_centre_acronym");
+        .from("parcels")
+        .select("client_id")
+        .eq("primary_key", parcelId)
+        .single();
+
     if (error) {
-        const logId = await logErrorReturnLogId(
-            "Error with fetch: Collection centre filter options",
-            error
-        );
-        throw new DatabaseError("fetch", "collection centre filter options", logId);
-    }
-    const optionsResponse = data ?? [];
-    const optionsSet: CollectionCentresOptions[] = optionsResponse.reduce<
-        CollectionCentresOptions[]
-    >((filteredOptions, row) => {
-        if (
-            row?.collection_centre_acronym &&
-            row.collection_centre_name &&
-            !keySet.has(row.collection_centre_acronym)
-        ) {
-            keySet.add(row.collection_centre_acronym);
-            filteredOptions.push({
-                name: row.collection_centre_name,
-                acronym: row.collection_centre_acronym,
-            });
-        }
-        return filteredOptions.sort();
-    }, []);
-
-    return checklistFilter<ParcelsTableRow>({
-        key: "deliveryCollection",
-        filterLabel: "Collection",
-        itemLabelsAndKeys: optionsSet.map((option) => [option!.name, option!.acronym]),
-        initialCheckedKeys: optionsSet.map((option) => option!.acronym),
-        methodConfig: { paginationType: PaginationType.Server, method: deliveryCollectionSearch },
-    });
-};
-
-const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]>> => {
-    const lastStatusSearch = (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: string[]
-    ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        if (state.includes("None")) {
-            return query.or(
-                `last_status_event_name.is.null,last_status_event_name.in.(${state.join(",")})`
-            );
-        } else {
-            return query.in("last_status_event_name", state);
-        }
-    };
-
-    const keySet = new Set();
-    const { data, error } = await supabase.from("status_order").select("event_name");
-    if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: Last status filter options");
-        throw new DatabaseError("fetch", "last status filter options", logId);
-    }
-    const optionsResponse = data ?? [];
-    const optionsSet: string[] = optionsResponse.reduce<string[]>((filteredOptions, row) => {
-        if (row.event_name && !keySet.has(row.event_name)) {
-            keySet.add(row.event_name);
-            filteredOptions.push(row.event_name);
-        }
-        return filteredOptions.sort();
-    }, []);
-    data && optionsSet.push("None");
-
-    return checklistFilter<ParcelsTableRow>({
-        key: "lastStatus",
-        filterLabel: "Last Status",
-        itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
-        initialCheckedKeys: optionsSet.filter((option) => option !== "Request Deleted"),
-        methodConfig: { paginationType: PaginationType.Server, method: lastStatusSearch },
-    });
-};
-
-const buildPackingSlotFilter = async (): Promise<Filter<ParcelsTableRow, string[]>> => {
-    const packingSlotSearch = (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: string[]
-    ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.in("packing_slot_name", state);
-    };
-
-    const keySet = new Set();
-
-    const { data, error } = await supabase.from("packing_slots").select("name, is_shown");
-    if (error) {
-        const logId = await logErrorReturnLogId(
-            "Error with fetch: Packing slot filter options",
-            error
-        );
-        throw new DatabaseError("fetch", "packing slot filter options", logId);
+        const message = `Failed to fetch client ID for a parcel with ID ${parcelId}`;
+        const logId = await logErrorReturnLogId(message, { error });
+        throw new Error(message + ` Log ID: ${logId}`);
     }
 
-    const optionsResponse = data ?? [];
+    return data.client_id;
+}
 
-    const optionsSet = optionsResponse.reduce<packingSlotOptionsSet[]>((filteredOptions, row) => {
-        if (!row.name || keySet.has(row.name)) {
-            return filteredOptions;
-        }
-
-        if (row.is_shown) {
-            keySet.add(row.name);
-            filteredOptions.push({ key: row.name, value: row.name });
-        } else {
-            keySet.add(row.name);
-            filteredOptions.push({ key: row.name, value: `${row.name} (inactive)` });
-        }
-
-        return filteredOptions;
-    }, []);
-
-    optionsSet.sort();
-
-    return checklistFilter<ParcelsTableRow>({
-        key: "packingSlot",
-        filterLabel: "Packing Slot",
-        itemLabelsAndKeys: optionsSet.map((option) => [option.value, option.key]),
-        initialCheckedKeys: optionsSet.map((option) => option.key),
-        methodConfig: { paginationType: PaginationType.Server, method: packingSlotSearch },
-    });
-};
+const parcelIdParam = "parcelId";
 
 const ParcelsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -434,27 +253,21 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const parcelsTableFetchAbortController = useRef<AbortController | null>(null);
 
-    const fetchAndSetClientIdForSelectedParcel = async (): Promise<void> => {
-        if (!parcelId) {
-            const { data, error } = await supabase
-                .from("parcels")
-                .select("client_id")
-                .eq("primary_key", parcelId)
-                .single();
+    const selectedParcelMessage = getSelectedParcelCountMessage(checkedParcelIds.length);
 
-            if (error) {
-                const logId = await logErrorReturnLogId(
-                    "Error fetching clientId from database",
-                    error
-                );
-                throw new DatabaseError("fetch", "client id", logId);
-            }
-
-            const fetchedClientId = data.client_id;
-            setClientIdForSelectedParcel(fetchedClientId);
+    const fetchAndSetClientIdForSelectedParcel = useCallback((): void => {
+        if (parcelId === null) {
+            return;
         }
-        return;
-    };
+
+        getClientIdForSelectedParcel(parcelId)
+            .then((clientId) => setClientIdForSelectedParcel(clientId))
+            .catch((error) => {
+                if (error instanceof Error) {
+                    setErrorMessage(error.message);
+                }
+            });
+    }, [parcelId]);
 
     useEffect(() => {
         if (parcelId) {
@@ -465,10 +278,8 @@ const ParcelsPage: React.FC<{}> = () => {
 
     useEffect(() => {
         setClientIdForSelectedParcel(null);
-        if (parcelId) {
-            void fetchAndSetClientIdForSelectedParcel();
-        }
-    }, [parcelId]);
+        void fetchAndSetClientIdForSelectedParcel();
+    }, [fetchAndSetClientIdForSelectedParcel]);
 
     useEffect(() => {
         const buildFilters = async (): Promise<{
@@ -531,139 +342,96 @@ const ParcelsPage: React.FC<{}> = () => {
         })();
     }, []);
 
-    useEffect(() => {
-        if (!areFiltersLoadingForFirstTime) {
-            const allFilters = [...primaryFilters, ...additionalFilters];
+    const fetchAndDisplayParcelsData = useCallback(async (): Promise<void> => {
+        const allFilters = [...primaryFilters, ...additionalFilters];
+
+        if (parcelsTableFetchAbortController.current) {
+            parcelsTableFetchAbortController.current.abort("stale request");
+        }
+
+        parcelsTableFetchAbortController.current = new AbortController();
+
+        if (parcelsTableFetchAbortController.current) {
+            setErrorMessage(null);
             setIsLoading(true);
-            if (parcelsTableFetchAbortController.current) {
-                parcelsTableFetchAbortController.current.abort("stale request");
-            }
 
-            parcelsTableFetchAbortController.current = new AbortController();
-
-            if (parcelsTableFetchAbortController.current) {
-                setErrorMessage(null);
-                getParcelsDataAndCount(
+            try {
+                const { data, count } = await getParcelsDataAndCount(
                     supabase,
                     allFilters,
                     sortState,
                     parcelsTableFetchAbortController.current.signal,
                     startPoint,
                     endPoint
-                )
-                    .then(({ data, count }) => {
-                        setParcelsDataPortion(data);
-                        setFilteredParcelCount(count);
-                    })
-                    .catch((error) => {
-                        if (error instanceof DatabaseError) {
-                            setErrorMessage(error.message);
-                        }
-                    })
-                    .finally(() => {
-                        parcelsTableFetchAbortController.current = null;
-                        setIsLoading(false);
-                    });
+                );
+                setParcelsDataPortion(data);
+                setFilteredParcelCount(count);
+            } catch (error) {
+                if (error instanceof DatabaseError) {
+                    setErrorMessage(error.message);
+                }
+            } finally {
+                parcelsTableFetchAbortController.current = null;
+                setIsLoading(false);
             }
         }
-    }, [
-        startPoint,
-        endPoint,
-        primaryFilters,
-        additionalFilters,
-        sortState,
-        areFiltersLoadingForFirstTime,
-    ]);
+    }, [additionalFilters, endPoint, primaryFilters, sortState, startPoint]);
 
     useEffect(() => {
-        // This requires that the DB parcels, events, families, clients and collection_centres tables have Realtime turned on
         if (!areFiltersLoadingForFirstTime) {
-            const allFilters = [...primaryFilters, ...additionalFilters];
-            const loadCountAndDataWithTimer = (): void => {
-                if (fetchParcelsTimer.current) {
-                    clearTimeout(fetchParcelsTimer.current);
-                    fetchParcelsTimer.current = null;
-                }
-
-                setIsLoading(true);
-                fetchParcelsTimer.current = setTimeout(() => {
-                    if (parcelsTableFetchAbortController.current) {
-                        parcelsTableFetchAbortController.current.abort("stale request");
-                    }
-
-                    parcelsTableFetchAbortController.current = new AbortController();
-
-                    if (parcelsTableFetchAbortController.current) {
-                        setErrorMessage(null);
-                        getParcelsDataAndCount(
-                            supabase,
-                            allFilters,
-                            sortState,
-                            parcelsTableFetchAbortController.current.signal,
-                            startPoint,
-                            endPoint
-                        )
-                            .then(({ data, count }) => {
-                                setParcelsDataPortion(data);
-                                setFilteredParcelCount(count);
-                            })
-                            .catch((error) => {
-                                if (error instanceof DatabaseError) {
-                                    setErrorMessage(error.message);
-                                }
-                            })
-                            .finally(() => {
-                                parcelsTableFetchAbortController.current = null;
-                                setIsLoading(false);
-                            });
-                    }
-                }, 500);
-            };
-
-            const subscriptionChannel = supabase
-                .channel("parcels-table-changes")
-                .on(
-                    "postgres_changes",
-                    { event: "*", schema: "public", table: "parcels" },
-                    loadCountAndDataWithTimer
-                )
-                .on(
-                    "postgres_changes",
-                    { event: "*", schema: "public", table: "events" },
-                    loadCountAndDataWithTimer
-                )
-                .on(
-                    "postgres_changes",
-                    { event: "*", schema: "public", table: "families" },
-                    loadCountAndDataWithTimer
-                )
-                .on(
-                    "postgres_changes",
-                    { event: "*", schema: "public", table: "collection_centres" },
-                    loadCountAndDataWithTimer
-                )
-                .on(
-                    "postgres_changes",
-                    { event: "*", schema: "public", table: "clients" },
-                    loadCountAndDataWithTimer
-                )
-                .subscribe((status, err) => {
-                    subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&
-                        setErrorMessage("Error fetching data, please reload");
-                });
-
-            return () => {
-                supabase.removeChannel(subscriptionChannel);
-            };
+            void fetchAndDisplayParcelsData();
         }
-    }, [
-        endPoint,
-        startPoint,
-        primaryFilters,
-        additionalFilters,
-        sortState,
-        areFiltersLoadingForFirstTime,
-    ]);
+    }, [areFiltersLoadingForFirstTime, fetchAndDisplayParcelsData]);
+
+    const loadCountAndDataWithTimer = (): void => {
+        if (fetchParcelsTimer.current) {
+            clearTimeout(fetchParcelsTimer.current);
+            fetchParcelsTimer.current = null;
+        }
+
+        setIsLoading(true);
+        fetchParcelsTimer.current = setTimeout(() => {
+            void fetchAndDisplayParcelsData();
+        }, 500);
+    };
+
+    useEffect(() => {
+        const subscriptionChannel = supabase
+            .channel("parcels-table-changes")
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "parcels" },
+                loadCountAndDataWithTimer
+            )
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "events" },
+                loadCountAndDataWithTimer
+            )
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "families" },
+                loadCountAndDataWithTimer
+            )
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "collection_centres" },
+                loadCountAndDataWithTimer
+            )
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "clients" },
+                loadCountAndDataWithTimer
+            )
+            .subscribe((status, err) => {
+                subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&
+                    setErrorMessage("Error fetching data, please reload");
+            });
+
+        return () => {
+            void supabase.removeChannel(subscriptionChannel);
+        };
+    });
 
     const selectOrDeselectRow = (parcelId: string): void => {
         setCheckedParcelIds((currentIndices) => {
@@ -778,14 +546,17 @@ const ParcelsPage: React.FC<{}> = () => {
     return (
         <>
             <PreTableControls>
-                <ControlContainer />
-                <ActionBar
-                    fetchParcelsByIds={getCheckedParcelsData}
-                    onDeleteParcels={deleteParcels}
-                    willSaveParcelStatus={() => setIsLoading(true)}
-                    hasSavedParcelStatus={() => setIsLoading(false)}
-                    parcelIds={checkedParcelIds}
-                />
+                <ActionsContainer>
+                    {selectedParcelMessage && <span>{selectedParcelMessage}</span>}
+
+                    <ActionAndStatusButtons
+                        fetchParcelsByIds={getCheckedParcelsData}
+                        onDeleteParcels={deleteParcels}
+                        willSaveParcelStatus={() => setIsLoading(true)}
+                        hasSavedParcelStatus={() => setIsLoading(false)}
+                        parcelIds={checkedParcelIds}
+                    />
+                </ActionsContainer>
             </PreTableControls>
             {areFiltersLoadingForFirstTime ? (
                 <Centerer>
