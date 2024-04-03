@@ -17,7 +17,7 @@ const getShownPagesByRole = (role: Roles | null): string[] => {
             return pathsShownToCaller.concat("/admin", "/lists");
         case "caller":
             return pathsShownToCaller;
-        default:
+        case null:
             return ["/login", "/forgot-password", "/auth/reset-password"];
     }
 };
