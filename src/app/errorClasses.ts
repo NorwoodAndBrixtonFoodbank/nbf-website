@@ -5,7 +5,7 @@ export class DatabaseError extends Error {
                 (faultyArea !== "" ? ` (${faultyArea})` : "") +
                 ". Please try again." +
                 logId
-                ? `Log ID: ${logId}`
+                ? ` Log ID: ${logId}`
                 : ""
         );
         this.name = "DatabaseError";
@@ -18,7 +18,7 @@ export class AbortError extends Error {
             `The following request was aborted: the ${errorCategory} operation` +
                 (faultyArea !== "" ? ` (${faultyArea})` : "") +
                 logId
-                ? `Log ID: ${logId}`
+                ? ` Log ID: ${logId}`
                 : ""
         );
         this.name = "AbortError";
@@ -31,7 +31,7 @@ export class EdgeFunctionError extends Error {
     constructor(functionDescriptor = "", logId?: string) {
         super(
             "An error occurred executing an internal operation (" + functionDescriptor + ")" + logId
-                ? `Log ID: ${logId}`
+                ? ` Log ID: ${logId}`
                 : ""
         );
         this.name = "EdgeFunctionError";

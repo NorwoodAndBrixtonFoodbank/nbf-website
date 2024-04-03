@@ -38,7 +38,7 @@ const getUsers = async (): Promise<UserRow[]> => {
         return {
             id: user.id,
             email: user.email ?? "-",
-            userRole: userRole ?? "-",
+            userRole: userRole,
             createdAt: Date.parse(user.created_at),
             updatedAt: Date.parse(user.updated_at ?? ""),
         };
