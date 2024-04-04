@@ -20,8 +20,8 @@ import Alert from "@mui/material/Alert/Alert";
 import { User } from "@supabase/gotrue-js";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
-import { inviteUser } from "../adminActions";
 import UserDetailsCard from "@/app/admin/createUser/UserDetailsCard";
+import { adminInviteUser } from "@/server/adminInviteUser";
 
 export interface InviteUserDetails {
     email: string;
@@ -72,7 +72,7 @@ const CreateUserForm: React.FC<{}> = () => {
 
         const redirectUrl = `${window.location.origin}/set-password`;
 
-        const { data, error } = await inviteUser(fields.email, fields.role, redirectUrl);
+        const { data, error } = await adminInviteUser(fields, redirectUrl);
 
         if (error) {
             setSubmitError(Errors.external);
@@ -85,7 +85,7 @@ const CreateUserForm: React.FC<{}> = () => {
 
         setSubmitError(Errors.none);
         setSubmitDisabled(false);
-        setInvitedUser(data.user);
+        setInvitedUser(data);
         void logInfoReturnLogId(
             `User ${fields.email} with role ${fields.role} invited successfully.`
         );
