@@ -24,11 +24,11 @@ export default function Page(): ReactElement {
             refreshToken.current = hashParams.get("refresh_token");
 
             if (!accessToken.current) {
-                logErrorReturnLogId("Failed to validate new user: no access token");
+                void logErrorReturnLogId("Failed to validate new user: no access token");
                 router.push("/");
             }
             if (!refreshToken.current) {
-                logErrorReturnLogId("Failed to validate new user: no refresh token");
+                void logErrorReturnLogId("Failed to validate new user: no refresh token");
                 router.push("/");
             }
 
