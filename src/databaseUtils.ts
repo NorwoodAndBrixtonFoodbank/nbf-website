@@ -18,6 +18,7 @@ export type UpdateSchema = {
 };
 
 export type DatabaseEnums = Database["public"]["Enums"];
+export type UserRole = DatabaseEnums["role"];
 
 export type ViewSchema = {
     [key in keyof Views]: Views[key]["Row"];
