@@ -2,12 +2,14 @@ import React, { ReactElement } from "react";
 import Title from "@/components/Title/Title";
 import { Metadata } from "next";
 import AdminPage from "@/app/admin/AdminPage";
-import { Database } from "@/databaseTypesFile";
 import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { User } from "@supabase/gotrue-js";
 import { DatabaseError } from "@/app/errorClasses";
 import { Schema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
+import { Database } from "@/databaseTypesFile";
+import { adminGetUsers } from "@/server/adminGetUsers";
+import { fetchUserRole } from "@/common/fetchUserRole";
 
 // disables caching
 export const revalidate = 0;
@@ -21,25 +23,27 @@ export interface UserRow {
 }
 
 const getUsers = async (): Promise<UserRow[]> => {
-    const supabase = getSupabaseServerComponentClient();
-    const { data, error } = await supabase.functions.invoke("admin-get-users");
+    const { data, error } = await adminGetUsers();
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Users", error);
-        throw new DatabaseError("fetch", "user information", logId);
+        throw new DatabaseError("fetch", "users information", logId);
     }
 
-    const users: User[] = data;
+    const userRows = data.map(async (user: User) => {
+        const userRole = await fetchUserRole(user.id, (error) => {
+            return logErrorReturnLogId("Failed to fetch user role", { error });
+        });
 
-    return users.map((user: User) => {
         return {
             id: user.id,
             email: user.email ?? "-",
-            userRole: user.app_metadata.role ?? "-",
+            userRole: userRole,
             createdAt: Date.parse(user.created_at),
             updatedAt: Date.parse(user.updated_at ?? ""),
         };
     });
+    return await Promise.all(userRows);
 };
 
 const getCollectionCentres = async (): Promise<Schema["collection_centres"][]> => {

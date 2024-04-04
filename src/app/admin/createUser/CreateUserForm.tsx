@@ -12,7 +12,6 @@ import {
     setError,
     setField,
 } from "@/components/Form/formFunctions";
-import { createUser } from "@/app/admin/adminActions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
@@ -21,26 +20,37 @@ import Alert from "@mui/material/Alert/Alert";
 import { User } from "@supabase/gotrue-js";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
+import UserDetailsCard from "@/app/admin/createUser/UserDetailsCard";
+import { adminCreateUser } from "@/server/adminCreateUser";
 
-interface CreateUserDetails {
+export interface CreateUserDetails {
     email: string;
     password: string;
     role: Database["public"]["Enums"]["role"];
+    firstName: string;
+    lastName: string;
+    telephoneNumber: string;
 }
 
 const initialFields: CreateUserDetails = {
     email: "",
     password: "",
     role: "caller",
+    firstName: "",
+    lastName: "",
+    telephoneNumber: "",
 };
 
 const initialFormErrors: FormErrors = {
     email: Errors.initial,
     password: Errors.initial,
     role: Errors.none,
+    firstName: Errors.initial,
+    lastName: Errors.initial,
+    telephoneNumber: Errors.initial,
 };
 
-const formSections = [AccountDetails, UserRole];
+const formSections = [AccountDetails, UserRole, UserDetailsCard];
 
 const CreateUserForm: React.FC<{}> = () => {
     const [fields, setFields] = useState(initialFields);
@@ -63,14 +73,17 @@ const CreateUserForm: React.FC<{}> = () => {
             return;
         }
 
-        const { data, error } = await createUser(fields);
+        const { data, error } = await adminCreateUser(fields);
 
         if (error) {
             setSubmitError(Errors.external);
             setSubmitDisabled(false);
             setCreatedUser(null);
 
-            const logId = await logErrorReturnLogId("Error with insert: User", error);
+            const logId = await logErrorReturnLogId(
+                `Error with insert: User ${fields.firstName} ${fields.lastName}`,
+                { error }
+            );
             throw new DatabaseError("insert", "user", logId);
         }
 
