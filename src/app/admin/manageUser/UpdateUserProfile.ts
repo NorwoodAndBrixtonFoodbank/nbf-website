@@ -12,7 +12,7 @@ interface UpdateUserProfile {
 
 export async function updateUserProfile(
     userDetails: UpdateUserProfile
-): Promise<null | PostgrestError> {
+): Promise<PostgrestError | null> {
     const { error } = await supabase
         .from("profiles")
         .update({
