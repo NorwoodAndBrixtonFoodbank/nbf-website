@@ -2,8 +2,6 @@
 
 import { DatabaseEnums } from "@/databaseUtils";
 import React, { useState, createContext } from "react";
-import { pathsNotRequiringLogin } from "./auth";
-
 interface Props {
     children: React.ReactNode;
 }
@@ -13,6 +11,13 @@ type Roles = DatabaseEnums["role"] | "";
 type RolesInterface = {
     [key in Roles]: readonly string[];
 };
+
+export const pathsNotRequiringLogin: readonly string[] = [
+    "/login",
+    "/forgot-password",
+    "/auth/reset-password",
+    "/set-password",
+] as const;
 
 const pathsShownToCaller = [
     "/calendar",

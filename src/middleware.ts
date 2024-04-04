@@ -2,7 +2,7 @@ import { DatabaseAutoType } from "@/databaseUtils";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextMiddleware, NextRequest, NextResponse } from "next/server";
 import { roleCanAccessPage } from "@/app/roles";
-import { pathsNotRequiringLogin } from "@/app/auth";
+import { pathsNotRequiringLogin } from "@/app/roles";
 
 const middleware: NextMiddleware = async (req: NextRequest) => {
     const res = NextResponse.next();

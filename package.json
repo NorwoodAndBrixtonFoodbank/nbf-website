@@ -70,7 +70,6 @@
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "axe-core": "^4.7.2",
-    "bufferutil": "^4.0.8",
     "cypress": "^13.1.0",
     "cypress-axe": "^1.5.0",
     "dayjs": "^1.11.9",
@@ -97,7 +96,6 @@
     "styled-components": "^6.0.4",
     "supabase": "^1.142.2",
     "typescript": "^5.2.2",
-    "utf-8-validate": "^6.0.3",
     "uuid": "^9.0.1",
     "winston": "^3.12.0",
     "winston-cloudwatch": "^6.2.0"
