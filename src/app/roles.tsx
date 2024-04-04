@@ -2,6 +2,7 @@
 
 import { DatabaseEnums } from "@/databaseUtils";
 import React, { useState, createContext } from "react";
+import { pathsNotRequiringLogin } from "./auth";
 
 interface Props {
     children: React.ReactNode;
@@ -10,7 +11,7 @@ interface Props {
 type Roles = DatabaseEnums["role"] | "";
 
 type RolesInterface = {
-    [key in Roles]: string[];
+    [key in Roles]: readonly string[];
 };
 
 const pathsShownToCaller = [
@@ -24,7 +25,7 @@ const pathsShownToCaller = [
 const roleToShownPages: RolesInterface = {
     admin: pathsShownToCaller.concat("/admin", "/lists"),
     caller: pathsShownToCaller,
-    "": ["/login", "/forgot-password", "/auth/reset-password", "/set-password"],
+    "": pathsNotRequiringLogin,
 };
 
 export const roleCanAccessPage = (role: Roles, url: string): boolean => {

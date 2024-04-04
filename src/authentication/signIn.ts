@@ -12,8 +12,6 @@ export async function signInWithPassword(credentials: {
         void logErrorReturnLogId("Sign in with password failed", { error });
         throw error;
     }
-
-    return;
 }
 
 export async function signInWithTokens(accessToken: string, refreshToken: string): Promise<void> {
@@ -27,6 +25,4 @@ export async function signInWithTokens(accessToken: string, refreshToken: string
         void logErrorReturnLogId("Sign in with tokens failed", { error });
         throw error;
     }
-
-    return;
 }
