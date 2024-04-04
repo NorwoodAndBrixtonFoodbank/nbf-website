@@ -22,7 +22,7 @@ export async function adminDeleteUser(userId: string): Promise<DeleteUserErrorTy
 
     if (error) {
         return {
-            error: { AuthError: `error deleting user: ${userId}` },
+            error: { "Failed to delete user": error.message },
         };
     }
 

@@ -30,7 +30,7 @@ export async function adminGetUsers(): Promise<GetUsersDataAndErrorType> {
     if (error) {
         return {
             data: null,
-            error: { AuthError: "error fetching list of users" },
+            error: { "Failed to fetch list of users": error.message },
         };
     }
 

@@ -27,7 +27,7 @@ const getUsers = async (): Promise<UserRow[]> => {
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Users", error);
-        throw new DatabaseError("fetch", "user information", logId);
+        throw new DatabaseError("fetch", "users information", logId);
     }
 
     const userRows = data.map(async (user: User) => {

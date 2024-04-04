@@ -41,7 +41,7 @@ export async function adminUpdateUserEmailAndPassword(
     if (error) {
         return {
             data: null,
-            error: { AuthError: `error updating user ${userDetails.attributes.email}` },
+            error: { "Failed to update user": error.message },
         };
     }
 

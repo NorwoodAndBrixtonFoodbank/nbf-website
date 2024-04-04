@@ -39,7 +39,7 @@ export async function adminCreateUser(
     if (error) {
         return {
             data: null,
-            error: { AuthError: `error creating user ${userDetails.email}` },
+            error: { "Failed to create user": error.message },
         };
     }
 
@@ -54,7 +54,7 @@ export async function adminCreateUser(
         if (createRoleError) {
             return {
                 data: null,
-                error: { Error: `error creating user profile for user ${userDetails.email}` },
+                error: { "Failed to create user profile": createRoleError.message },
             };
         }
         void logInfoReturnLogId(

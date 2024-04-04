@@ -80,7 +80,10 @@ const CreateUserForm: React.FC<{}> = () => {
             setSubmitDisabled(false);
             setCreatedUser(null);
 
-            const logId = await logErrorReturnLogId("Error with insert: User", error);
+            const logId = await logErrorReturnLogId(
+                `Error with insert: User ${fields.firstName} ${fields.lastName}`,
+                error
+            );
             throw new DatabaseError("insert", "user", logId);
         }
 
