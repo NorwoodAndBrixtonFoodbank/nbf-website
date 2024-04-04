@@ -90,6 +90,7 @@ interface Table_auth_flow_state {
   created_at: string | null;
   updated_at: string | null;
   authentication_method: string;
+  auth_code_issued_at: string | null;
 }
 interface Table_supabase_functions_hooks {
   id: number;
@@ -249,6 +250,7 @@ interface Table_public_parcels {
   collection_datetime: string | null;
   voucher_number: string | null;
   packing_slot: string | null;
+}
 interface Table_public_profiles {
   primary_key: string;
   first_name: string | null;
@@ -427,8 +429,8 @@ interface Schema_public {
   lists_hotel: Table_public_lists_hotel;
   packing_slots: Table_public_packing_slots;
   parcels: Table_public_parcels;
-  status_order: Table_public_status_order;
   profiles: Table_public_profiles;
+  status_order: Table_public_status_order;
   website_data: Table_public_website_data;
 }
 interface Schema_realtime {
