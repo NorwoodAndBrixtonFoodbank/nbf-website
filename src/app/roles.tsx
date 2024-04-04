@@ -1,13 +1,13 @@
 "use client";
 
-import { DatabaseEnums } from "@/databaseUtils";
+import { DatabaseRoles } from "@/databaseUtils";
 import React, { useState, createContext } from "react";
 
 interface Props {
     children: React.ReactNode;
 }
 
-export type Roles = DatabaseEnums["role"];
+export type Roles = DatabaseRoles;
 
 const pathsShownToCaller = ["/calendar", "/clients", "/parcels", "/update-password"];
 
