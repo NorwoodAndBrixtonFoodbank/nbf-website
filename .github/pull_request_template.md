@@ -22,3 +22,10 @@ If you have made any changes to the database...
   - [ ] If I have modified the seed, I have also generated the seed with `npm run db:generate_seed` 
   - [ ] With my final set up, I can run `npm run dev:reset_supabase` without any errors.
   - Does this require resetting the deployed database? - YES / NO (remove as appropriate)
+  - [ ] I have checked that migration can happen successfully without resetting the database, doing the following.
+    - Make sure you have rebased your branch onto dev or merged dev into your branch.
+    - Checkout the dev branch
+    - Run `npm run post_checkout` to reset the database, including the seed data.
+    - Checkout your branch
+    - Run `npx supabase migrations up --include-all --local` to run all outstanding migration files
+    - Check that the resulting database is what you expect.
