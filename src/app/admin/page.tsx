@@ -36,11 +36,7 @@ const getUsers = async (): Promise<UserRow[]> => {
 
         if (error) {
             userRole = "UNKNOWN";
-            const logId = await logErrorReturnLogId(
-                `failed to fetch user role. User ID: ${user.id}`,
-                error
-            );
-            throw new DatabaseError("fetch", "user role for users table", logId);
+            void logErrorReturnLogId(`failed to fetch user role. User ID: ${user.id}`, error);
         } else {
             userRole = role;
         }
