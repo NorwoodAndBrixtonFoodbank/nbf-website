@@ -33,27 +33,29 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
     }
 
     const onDeleteConfirm = async (): Promise<void> => {
-        if (props.userToDelete) {
-            const { error } = await adminDeleteUser(props.userToDelete.id);
+        if (props.userToDelete === null) {
+            return;
+        }
 
-            if (!error) {
-                props.setAlertOptions({
-                    success: true,
-                    message: (
-                        <>
-                            User <b>{props.userToDelete!.email}</b> deleted successfully.
-                        </>
-                    ),
-                });
-                void logInfoReturnLogId(`${props.userToDelete?.email} deleted successfully.`);
-            } else {
-                props.setAlertOptions({
-                    success: false,
-                    message: <>Delete User Operation Failed</>,
-                });
-                const logId = await logErrorReturnLogId("Error with delete: User", error);
-                throw new DatabaseError("delete", "user", logId);
-            }
+        const { error } = await adminDeleteUser(props.userToDelete.id);
+
+        if (!error) {
+            props.setAlertOptions({
+                success: true,
+                message: (
+                    <>
+                        User <b>{props.userToDelete!.email}</b> deleted successfully.
+                    </>
+                ),
+            });
+            void logInfoReturnLogId(`${props.userToDelete?.email} deleted successfully.`);
+        } else {
+            props.setAlertOptions({
+                success: false,
+                message: <>Delete User Operation Failed</>,
+            });
+            const logId = await logErrorReturnLogId("Error with delete: User", error);
+            throw new DatabaseError("delete", "user", logId);
         }
 
         props.setUserToDelete(null);
