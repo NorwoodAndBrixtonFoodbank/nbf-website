@@ -27,7 +27,7 @@ export const roleCanAccessPage = (role: UserRole | null, url: string): boolean =
 
 interface RoleUpdateContextType {
     role: UserRole | null;
-    setRole: (_role: UserRole) => void;
+    setRole: (_role: UserRole | null) => void;
 }
 
 export const RoleUpdateContext = createContext<RoleUpdateContextType>({

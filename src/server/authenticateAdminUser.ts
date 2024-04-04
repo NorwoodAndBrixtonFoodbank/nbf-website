@@ -1,6 +1,7 @@
 import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { fetchUserRole } from "@/common/fetchUserRole";
 import { logErrorReturnLogId } from "@/logger/logger";
+import { DatabaseError } from "@/app/errorClasses";
 
 type Authenticated =
     | {
@@ -36,9 +37,16 @@ export async function authenticateAsAdmin(): Promise<Authenticated> {
         };
     }
 
-    const userRole = await fetchUserRole(user.id, (error) => {
-        return logErrorReturnLogId("Failed to fetch user role", error);
-    });
+    const { role: userRole, error } = await fetchUserRole(user.id);
+
+    if (error) {
+        const logId = await logErrorReturnLogId(
+            `Failed to fetch user role to authenticate as admin ${user.id}`,
+            error
+        );
+        throw new DatabaseError("fetch", "user role for admin authorisation", logId);
+    }
+
     if (userRole !== "admin") {
         return {
             isSuccess: false,
