@@ -19,7 +19,7 @@ type InviteUsersDataAndErrorType =
 
 export async function adminInviteUser(
     userDetails: InviteUserDetails,
-    redirectUrl: string,
+    redirectUrl: string
 ): Promise<InviteUsersDataAndErrorType> {
     const { isSuccess, failureReason } = await authenticateAsAdmin();
 
@@ -31,7 +31,9 @@ export async function adminInviteUser(
     }
 
     const adminAuthClient = getSupabaseAdminAuthClient();
-    const { data, error } = await adminAuthClient.inviteUserByEmail(userDetails.email, {redirectTo: redirectUrl});
+    const { data, error } = await adminAuthClient.inviteUserByEmail(userDetails.email, {
+        redirectTo: redirectUrl,
+    });
 
     if (error) {
         return {

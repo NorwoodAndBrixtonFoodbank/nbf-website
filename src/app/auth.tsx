@@ -4,8 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { DatabaseAutoType } from "@/databaseUtils";
-import { RoleUpdateContext } from "@/app/roles";
-import { pathsNotRequiringLogin } from "@/app/roles";
+import { RoleUpdateContext, pathsNotRequiringLogin } from "@/app/roles";
 import { fetchUserRole } from "@/common/fetchUserRole";
 
 interface Props {

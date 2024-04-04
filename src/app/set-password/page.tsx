@@ -1,6 +1,6 @@
 "use client";
 
-import React, { MutableRefObject, ReactElement, useEffect, useRef, useState } from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import AuthPanel, { AuthMain } from "@/components/AuthPanel";
 import { updatePassword } from "@/authentication/updatePassword";
 import { useRouter } from "next/navigation";
@@ -35,7 +35,9 @@ export default function Page(): ReactElement {
             const supabase = createClientComponentClient();
             const { data } = await supabase.auth.getSession();
             if (data.session) {
-                void logInfoReturnLogId("Session already exists when the invite link is visited. Logging the user out.");
+                void logInfoReturnLogId(
+                    "Session already exists when the invite link is visited. Logging the user out."
+                );
                 await supabase.auth.signOut();
             }
         })();
@@ -43,16 +45,20 @@ export default function Page(): ReactElement {
 
     const initiatePasswordUpdate = async (): Promise<void> => {
         setErrorMessage(null);
-        
+
         if (!accessToken.current) {
-            void logErrorReturnLogId("Tried to set password without access token. The user should have been redirected.");
-            setErrorMessage("Something went wrong. Please contact the admin.")
-            return
+            void logErrorReturnLogId(
+                "Tried to set password without access token. The user should have been redirected."
+            );
+            setErrorMessage("Something went wrong. Please contact the admin.");
+            return;
         }
         if (!refreshToken.current) {
-            void logErrorReturnLogId("Tried to set password without refresh token. The user should have been redirected.");
-            setErrorMessage("Something went wrong. Please contact the admin.")
-            return
+            void logErrorReturnLogId(
+                "Tried to set password without refresh token. The user should have been redirected."
+            );
+            setErrorMessage("Something went wrong. Please contact the admin.");
+            return;
         }
         try {
             await signInWithTokens(accessToken.current, refreshToken.current);

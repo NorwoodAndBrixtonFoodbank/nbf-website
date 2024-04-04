@@ -1,18 +1,13 @@
 "use client";
 
-import { DatabaseEnums, UserRole } from "@/databaseUtils";
+import { UserRole } from "@/databaseUtils";
 import React, { useState, createContext } from "react";
+
 interface Props {
     children: React.ReactNode;
 }
 
-type Roles = DatabaseEnums["role"] | "";
-
-type RolesInterface = {
-    [key in Roles]: readonly string[];
-};
-
-export const pathsNotRequiringLogin: string[] = [
+export const pathsNotRequiringLogin = [
     "/login",
     "/forgot-password",
     "/auth/reset-password",
@@ -25,12 +20,14 @@ const pathsShownToCaller = [
     "/parcels",
     "/update-password",
     "/set-password",
-];
+] as const;
 
-const getShownPagesByRole = (role: UserRole | null): string[] => {
+const pathsOnlyShownToAdmin = ["/admin", "/lists"] as const;
+
+const getShownPagesByRole = (role: UserRole | null): readonly string[] => {
     switch (role) {
         case "admin":
-            return pathsShownToCaller.concat("/admin", "/lists");
+            return [...pathsShownToCaller, ...pathsOnlyShownToAdmin];
         case "caller":
             return pathsShownToCaller;
         case null:
