@@ -61,7 +61,9 @@ async function createUser(supabase: SupabaseClient, userProfile: userProfile): P
             telephone_number: userProfile.telephoneNumber,
         });
         if (error) {
-            console.log(error);
+            console.log(
+                `Failed to create a profile for ${userProfile.firstName} ${userProfile.lastName}. ${error}`
+            );
         }
     }
 
