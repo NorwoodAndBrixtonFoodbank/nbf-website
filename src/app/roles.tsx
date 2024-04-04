@@ -1,17 +1,15 @@
 "use client";
 
-import { DatabaseRoles } from "@/databaseUtils";
+import { UserRole } from "@/databaseUtils";
 import React, { useState, createContext } from "react";
 
 interface Props {
     children: React.ReactNode;
 }
 
-export type Roles = DatabaseRoles;
-
 const pathsShownToCaller = ["/calendar", "/clients", "/parcels", "/update-password"];
 
-const getShownPagesByRole = (role: Roles | null): string[] => {
+const getShownPagesByRole = (role: UserRole | null): string[] => {
     switch (role) {
         case "admin":
             return pathsShownToCaller.concat("/admin", "/lists");
@@ -22,14 +20,14 @@ const getShownPagesByRole = (role: Roles | null): string[] => {
     }
 };
 
-export const roleCanAccessPage = (role: Roles | null, url: string): boolean => {
+export const roleCanAccessPage = (role: UserRole | null, url: string): boolean => {
     const accessList = getShownPagesByRole(role);
     return accessList.some((page) => url.startsWith(page));
 };
 
 interface RoleUpdateContextType {
-    role: Roles | null;
-    setRole: (_role: Roles) => void;
+    role: UserRole | null;
+    setRole: (_role: UserRole) => void;
 }
 
 export const RoleUpdateContext = createContext<RoleUpdateContextType>({
@@ -38,7 +36,7 @@ export const RoleUpdateContext = createContext<RoleUpdateContextType>({
 });
 
 export const RoleManager: React.FC<Props> = ({ children }) => {
-    const [role, setRole] = useState<Roles | null>(null);
+    const [role, setRole] = useState<UserRole | null>(null);
 
     return (
         <RoleUpdateContext.Provider value={{ role, setRole }}>

@@ -1,12 +1,12 @@
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { PostgrestError } from "@supabase/supabase-js";
-import { DatabaseRoles } from "@/databaseUtils";
+import { UserRole } from "@/databaseUtils";
 
 export const fetchUserRole = async (
     userId: string,
     logErrorAndReturnLogId?: (error: PostgrestError) => Promise<string>
-): Promise<DatabaseRoles> => {
+): Promise<UserRole> => {
     const { data, error } = await supabase
         .from("profiles")
         .select("role")

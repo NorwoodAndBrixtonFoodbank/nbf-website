@@ -82,7 +82,7 @@ const CreateUserForm: React.FC<{}> = () => {
 
             const logId = await logErrorReturnLogId(
                 `Error with insert: User ${fields.firstName} ${fields.lastName}`,
-                error
+                { error }
             );
             throw new DatabaseError("insert", "user", logId);
         }

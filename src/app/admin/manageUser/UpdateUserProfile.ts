@@ -1,10 +1,10 @@
 import supabase from "@/supabaseClient";
-import { Roles } from "@/app/roles";
 import { PostgrestError } from "@supabase/supabase-js";
+import { UserRole } from "@/databaseUtils";
 
 interface UpdateUserProfile {
     userId: string;
-    role: Roles;
+    role: UserRole;
     firstName?: string;
     lastName?: string;
     phoneNumber?: string;
@@ -22,8 +22,5 @@ export async function updateUserProfile(
         .select()
         .single();
 
-    if (error) {
-        console.log(error);
-    }
     return error;
 }

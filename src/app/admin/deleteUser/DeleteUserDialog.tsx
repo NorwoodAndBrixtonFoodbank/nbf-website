@@ -56,7 +56,7 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
             });
             const logId = await logErrorReturnLogId(
                 `Error with delete: User ${props.userToDelete.email}`,
-                error
+                { error }
             );
             throw new DatabaseError("delete", "user", logId);
         }
