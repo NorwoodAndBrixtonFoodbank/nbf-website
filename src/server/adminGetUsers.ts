@@ -15,12 +15,12 @@ type GetUsersDataAndErrorType =
       };
 
 export async function adminGetUsers(): Promise<GetUsersDataAndErrorType> {
-    const { isSuccess, reason } = await authenticateAsAdmin();
+    const { isSuccess, failureReason } = await authenticateAsAdmin();
 
     if (!isSuccess) {
         return {
             data: null,
-            error: { "Failed to authenticate as admin": reason },
+            error: { "Failed to authenticate as admin": failureReason },
         };
     }
 

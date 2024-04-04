@@ -22,12 +22,12 @@ interface UpdateUserEmailAndPassword {
 export async function adminUpdateUserEmailAndPassword(
     userDetails: UpdateUserEmailAndPassword
 ): Promise<UpdateUsersDataAndErrorType> {
-    const { isSuccess, reason } = await authenticateAsAdmin();
+    const { isSuccess, failureReason } = await authenticateAsAdmin();
 
     if (!isSuccess) {
         return {
             data: null,
-            error: { "Failed to authenticate as admin": reason },
+            error: { "Failed to authenticate as admin": failureReason },
         };
     }
 

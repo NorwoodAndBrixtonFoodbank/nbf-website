@@ -5,11 +5,11 @@ import { logErrorReturnLogId } from "@/logger/logger";
 type Authenticated =
     | {
           isSuccess: true;
-          reason: null;
+          failureReason: null;
       }
     | {
           isSuccess: false;
-          reason: FailureReason;
+          failureReason: FailureReason;
       };
 
 type FailureReason = "unauthenticated" | "unauthorised" | "fetch user error";
@@ -25,14 +25,14 @@ export async function authenticateAsAdmin(): Promise<Authenticated> {
     if (userError) {
         return {
             isSuccess: false,
-            reason: "fetch user error",
+            failureReason: "fetch user error",
         };
     }
 
     if (user === null) {
         return {
             isSuccess: false,
-            reason: "unauthenticated",
+            failureReason: "unauthenticated",
         };
     }
 
@@ -42,9 +42,9 @@ export async function authenticateAsAdmin(): Promise<Authenticated> {
     if (userRole !== "admin") {
         return {
             isSuccess: false,
-            reason: "unauthorised",
+            failureReason: "unauthorised",
         };
     }
 
-    return { isSuccess: true, reason: null };
+    return { isSuccess: true, failureReason: null };
 }

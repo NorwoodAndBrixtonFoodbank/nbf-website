@@ -20,12 +20,12 @@ type CreateUsersDataAndErrorType =
 export async function adminCreateUser(
     userDetails: CreateUserDetails
 ): Promise<CreateUsersDataAndErrorType> {
-    const { isSuccess, reason } = await authenticateAsAdmin();
+    const { isSuccess, failureReason } = await authenticateAsAdmin();
 
     if (!isSuccess) {
         return {
             data: null,
-            error: { "Failed to authenticate as admin": reason },
+            error: { "Failed to authenticate as admin": failureReason },
         };
     }
 

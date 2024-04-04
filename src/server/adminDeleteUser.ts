@@ -9,11 +9,11 @@ export type DeleteUserErrorType = {
 };
 
 export async function adminDeleteUser(userId: string): Promise<DeleteUserErrorType> {
-    const { isSuccess, reason } = await authenticateAsAdmin();
+    const { isSuccess, failureReason } = await authenticateAsAdmin();
 
     if (!isSuccess) {
         return {
-            error: { "Failed to authenticate as admin": reason },
+            error: { "Failed to authenticate as admin": failureReason },
         };
     }
 
