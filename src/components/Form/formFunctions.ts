@@ -37,11 +37,10 @@ export interface Person {
     primaryKey?: string;
 }
 
-export interface PersonWithQuantity {
-    gender: Gender;
-    age?: number | null;
-    primaryKey?: string;
-    quantity: number;
+export interface NumberAdultsByGender {
+    numberFemales: number;
+    numberMales: number;
+    numberUnknownGender: number;
 }
 
 export interface Fields {

@@ -3,8 +3,8 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.share
 import {
     checkboxGroupToArray,
     Fields,
+    NumberAdultsByGender,
     Person,
-    PersonWithQuantity,
 } from "@/components/Form/formFunctions";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
@@ -92,7 +92,7 @@ const updateClient = async (
 };
 
 const updateFamily = async (
-    adults: PersonWithQuantity[],
+    adults: NumberAdultsByGender,
     children: Person[],
     familyId: string
 ): Promise<void> => {
@@ -103,8 +103,14 @@ const updateFamily = async (
         peopleToInsert.push(child);
     }
 
-    for (const adult of adults) {
-        peopleToInsert.push(...personWithQuantityToPeople(adult));
+    for (let index = 0; index < adults.numberFemales; index++) {
+        peopleToInsert.push({ gender: "female", age: undefined });
+    }
+    for (let index = 0; index < adults.numberMales; index++) {
+        peopleToInsert.push({ gender: "male", age: undefined });
+    }
+    for (let index = 0; index < adults.numberUnknownGender; index++) {
+        peopleToInsert.push({ gender: "other", age: undefined });
     }
 
     await insertFamilyMembers(peopleToInsert, familyId);
@@ -202,12 +208,4 @@ export const submitEditClientForm: SubmitFormHelper = async (
         const logId = await logErrorReturnLogId(`Error with update: Client ID ${ids.primary_key}`);
         throw new DatabaseError("update", "client", logId);
     }
-};
-
-const personWithQuantityToPeople = (personWithQuantity: PersonWithQuantity): Person[] => {
-    return Array(personWithQuantity.quantity).fill({
-        gender: personWithQuantity.gender,
-        age: personWithQuantity.age ?? undefined,
-        primaryKey: personWithQuantity.primaryKey ?? undefined,
-    });
 };

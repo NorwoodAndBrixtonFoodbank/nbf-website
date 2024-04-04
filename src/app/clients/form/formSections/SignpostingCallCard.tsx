@@ -1,9 +1,10 @@
 import React from "react";
-import { CardProps, onChangeRadioGroup } from "@/components/Form/formFunctions";
+import { onChangeRadioGroup } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import RadioGroupInput from "@/components/DataInput/RadioGroupInput";
+import { ClientCardProps } from "../ClientForm";
 
-const SignpostingCallCard: React.FC<CardProps> = ({ fieldSetter, fields }) => {
+const SignpostingCallCard: React.FC<ClientCardProps> = ({ fieldSetter, fields }) => {
     return (
         <GenericFormCard
             title="Signposting Call"

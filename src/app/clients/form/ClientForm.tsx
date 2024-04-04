@@ -4,12 +4,13 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import {
+    CardProps,
     checkErrorOnSubmit,
     Errors,
     Fields,
     FormErrors,
+    NumberAdultsByGender,
     Person,
-    PersonWithQuantity,
     setError,
     setField,
 } from "@/components/Form/formFunctions";
@@ -38,7 +39,7 @@ import { submitAddClientForm, submitEditClientForm } from "@/app/clients/form/su
 import Title from "@/components/Title/Title";
 
 interface Props {
-    initialFields: Fields;
+    initialFields: ClientFields;
     initialFormErrors: FormErrors;
     editMode: boolean;
     clientID?: string;
@@ -52,7 +53,7 @@ export interface ClientFields extends Fields {
     addressTown: string;
     addressCounty: string;
     addressPostcode: string;
-    adults: PersonWithQuantity[];
+    adults: NumberAdultsByGender;
     numberChildren: number;
     children: Person[];
     dietaryRequirements: BooleanGroup;
@@ -65,6 +66,10 @@ export interface ClientFields extends Fields {
     extraInformation: string;
     attentionFlag: boolean;
     signpostingCall: boolean;
+}
+
+export interface ClientCardProps extends CardProps {
+    fields: ClientFields;
 }
 
 const formSections = [
@@ -86,7 +91,7 @@ const formSections = [
 
 const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editMode, clientID }) => {
     const router = useRouter();
-    const [fields, setFields] = useState(initialFields);
+    const [fields, setFields] = useState<ClientFields>(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
     const [submitError, setSubmitError] = useState(Errors.none);
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");

@@ -1,13 +1,13 @@
 import React from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import {
-    CardProps,
     errorExists,
     errorText,
     getDefaultTextValue,
     onChangeText,
 } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
+import { ClientCardProps } from "../ClientForm";
 
 const phoneNumberRegex = /^([+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6})?$/;
 // Regex source: https://ihateregex.io/expr/phone/
@@ -17,7 +17,12 @@ const formatPhoneNumber = (value: string): string => {
     return numericInput[0] === "0" ? "+44" + numericInput.slice(1) : "+" + numericInput;
 };
 
-const PhoneNumberCard: React.FC<CardProps> = ({ formErrors, errorSetter, fieldSetter, fields }) => {
+const PhoneNumberCard: React.FC<ClientCardProps> = ({
+    formErrors,
+    errorSetter,
+    fieldSetter,
+    fields,
+}) => {
     return (
         <GenericFormCard title="Phone Number" required={false}>
             <FreeFormTextInput

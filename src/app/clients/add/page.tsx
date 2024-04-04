@@ -13,11 +13,11 @@ const AddClients: () => React.ReactElement = () => {
         addressTown: "",
         addressCounty: "",
         addressPostcode: "",
-        adults: [
-            { gender: "other", quantity: 0 },
-            { gender: "male", quantity: 0 },
-            { gender: "female", quantity: 0 },
-        ],
+        adults: {
+            numberFemales: 0,
+            numberMales: 0,
+            numberUnknownGender: 0,
+        },
         numberChildren: 0,
         children: [],
         dietaryRequirements: {},

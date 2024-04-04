@@ -1,7 +1,6 @@
 import React from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import {
-    CardProps,
     errorExists,
     errorText,
     getDefaultTextValue,
@@ -9,6 +8,7 @@ import {
 } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { GappedDiv } from "@/components/Form/formStyling";
+import { ClientCardProps } from "../ClientForm";
 
 const postcodeRegex =
     /^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})$/;
@@ -18,7 +18,12 @@ const formatPostcode = (value: string): string => {
     return value.toUpperCase();
 };
 
-const AddressCard: React.FC<CardProps> = ({ formErrors, errorSetter, fieldSetter, fields }) => {
+const AddressCard: React.FC<ClientCardProps> = ({
+    formErrors,
+    errorSetter,
+    fieldSetter,
+    fields,
+}) => {
     return (
         <GenericFormCard
             title="Address"
