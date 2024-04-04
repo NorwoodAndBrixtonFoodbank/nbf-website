@@ -21,4 +21,4 @@ jobs:
       - name: Link to the project
         run: npx supabase link --project-ref $SUPABASE_PROD_PROJECT_ID
       - name: Apply the migration
-        run: npx supabase db push
+        run: npx supabase db push --include-all

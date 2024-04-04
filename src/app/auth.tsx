@@ -6,6 +6,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { DatabaseAutoType } from "@/databaseUtils";
 import { RoleUpdateContext } from "@/app/roles";
 import { pathsNotRequiringLogin } from "@/app/roles";
+import { fetchUserRole } from "@/common/fetchUserRole";
 
 interface Props {
     children: React.ReactNode;
@@ -61,8 +62,11 @@ export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
         const {
             data: { user },
         } = await supabase.auth.getUser();
-        const userRole = user?.app_metadata.role ?? "";
-        setRole(userRole);
+
+        const userRole = user ? await fetchUserRole(user.id) : null;
+        if (userRole) {
+            setRole(userRole);
+        }
     };
 
     useEffect(() => {
@@ -77,7 +81,7 @@ export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
 
     useEffect(() => {
         onRouteChange();
-        findUserRole();
+        void findUserRole();
         // eslint-disable-next-line react-hooks/exhaustive-deps -- We don't need onRouteChange in the dependency array
     }, [loggedIn, pathname, router]);
 

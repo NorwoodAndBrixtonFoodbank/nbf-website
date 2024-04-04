@@ -21,23 +21,33 @@ import { User } from "@supabase/gotrue-js";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { inviteUser } from "../adminActions";
+import UserDetailsCard from "@/app/admin/createUser/UserDetailsCard";
 
-interface InviteUserDetails {
+export interface InviteUserDetails {
     email: string;
     role: Database["public"]["Enums"]["role"];
+    firstName: string;
+    lastName: string;
+    telephoneNumber: string;
 }
 
 const initialFields: InviteUserDetails = {
     email: "",
     role: "caller",
+    firstName: "",
+    lastName: "",
+    telephoneNumber: "",
 };
 
 const initialFormErrors: FormErrors = {
     email: Errors.initial,
     role: Errors.none,
+    firstName: Errors.initial,
+    lastName: Errors.initial,
+    telephoneNumber: Errors.initial,
 };
 
-const formSections = [AccountDetails, UserRole];
+const formSections = [AccountDetails, UserRole, UserDetailsCard];
 
 const CreateUserForm: React.FC<{}> = () => {
     const [fields, setFields] = useState(initialFields);

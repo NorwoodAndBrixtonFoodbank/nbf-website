@@ -8,9 +8,9 @@ import Button from "@mui/material/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import { faUserPen } from "@fortawesome/free-solid-svg-icons/faUserPen";
-import { updateUser } from "@/app/admin/adminActions";
 import { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
-import { logInfoReturnLogId } from "@/logger/logger";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
+import { updateUserProfile } from "@/app/admin/manageUser/UpdateUserProfile";
 
 interface Props {
     userToEdit: UserRow;
@@ -22,9 +22,9 @@ const EditUserForm: React.FC<Props> = (props) => {
     const [role, setRole] = useState(props.userToEdit.userRole);
 
     const onEditConfirm = async (): Promise<void> => {
-        const { error } = await updateUser({
+        const error = await updateUserProfile({
             userId: props.userToEdit.id,
-            attributes: { app_metadata: { role } },
+            role: role,
         });
 
         if (!error) {
@@ -38,7 +38,11 @@ const EditUserForm: React.FC<Props> = (props) => {
             });
             void logInfoReturnLogId(`User ${props.userToEdit.email} updated successfully`);
         } else {
-            props.onConfirm({ success: false, message: <>Edit User Operation Failed</> });
+            const logId = await logErrorReturnLogId("Error with edit: User profile", error);
+            props.onConfirm({
+                success: false,
+                message: <>Edit User Operation Failed. Log ID: {logId}</>,
+            });
         }
     };
 

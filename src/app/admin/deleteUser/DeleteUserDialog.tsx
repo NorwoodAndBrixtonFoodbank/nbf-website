@@ -4,11 +4,11 @@ import React from "react";
 import { UserRow } from "@/app/admin/page";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
-import { deleteUser } from "@/app/admin/adminActions";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import { SetAlertOptions } from "@/app/admin/common/SuccessFailureAlert";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
+import { adminDeleteUser } from "@/server/adminDeleteUser";
 
 const DangerDialog = styled(Modal)`
     .MuiPaper-root > div:first-child {
@@ -33,7 +33,11 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
     }
 
     const onDeleteConfirm = async (): Promise<void> => {
-        const { error } = await deleteUser(props.userToDelete!.id);
+        if (props.userToDelete === null) {
+            return;
+        }
+
+        const { error } = await adminDeleteUser(props.userToDelete.id);
 
         if (!error) {
             props.setAlertOptions({
@@ -50,7 +54,10 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
                 success: false,
                 message: <>Delete User Operation Failed</>,
             });
-            const logId = await logErrorReturnLogId("Error with delete: User", error);
+            const logId = await logErrorReturnLogId(
+                `Error with delete: User ${props.userToDelete.email}`,
+                { error }
+            );
             throw new DatabaseError("delete", "user", logId);
         }
 
