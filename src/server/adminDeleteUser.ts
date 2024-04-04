@@ -5,7 +5,7 @@ import { authenticateAsAdmin } from "@/server/authenticateAdminUser";
 import { logInfoReturnLogId } from "@/logger/logger";
 
 export type DeleteUserErrorType = {
-    error: Record<string, any> | null;
+    error: Record<string, string> | null;
 };
 
 export async function adminDeleteUser(userId: string): Promise<DeleteUserErrorType> {

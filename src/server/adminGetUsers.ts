@@ -11,7 +11,7 @@ type GetUsersDataAndErrorType =
       }
     | {
           data: null;
-          error: Record<string, any>;
+          error: Record<string, string>;
       };
 
 export async function adminGetUsers(): Promise<GetUsersDataAndErrorType> {

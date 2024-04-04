@@ -11,7 +11,7 @@ type UpdateUsersDataAndErrorType =
       }
     | {
           data: null;
-          error: Record<string, any>;
+          error: Record<string, string>;
       };
 
 interface UpdateUserEmailAndPassword {

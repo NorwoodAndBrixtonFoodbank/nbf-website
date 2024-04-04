@@ -14,7 +14,7 @@ type CreateUsersDataAndErrorType =
       }
     | {
           data: null;
-          error: Record<string, any>;
+          error: Record<string, string>;
       };
 
 export async function adminCreateUser(
