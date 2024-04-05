@@ -16,7 +16,7 @@ export const insertParcel = async (parcelRecord: ParcelDatabaseInsertRecord): Pr
 
     const auditLog: AuditLogProps = {
         action: "add a parcel",
-        content: { parcel: parcelRecord },
+        content: { parcelDetails: parcelRecord },
         wasSuccess: false,
         clientId: parcelRecord.client_id,
         collectionCentreId: parcelRecord.collection_centre
@@ -50,7 +50,7 @@ export const updateParcel = async (
 
     const auditLog: AuditLogProps = {
         action: "edit a parcel",
-        content: { parcel: parcelRecord },
+        content: { parcelDetails: parcelRecord },
         wasSuccess: false,
         clientId: parcelRecord.client_id,
         collectionCentreId: parcelRecord.collection_centre
