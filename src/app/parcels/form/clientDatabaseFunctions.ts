@@ -14,27 +14,23 @@ export const insertParcel = async (parcelRecord: ParcelDatabaseInsertRecord): Pr
         .select("primary_key, client_id")
         .single();
 
-    const auditLog: AuditLogProps = {
+    const auditLog = {
         action: "add a parcel",
         content: { parcelDetails: parcelRecord },
-        wasSuccess: false,
         clientId: parcelRecord.client_id,
         collectionCentreId: parcelRecord.collection_centre
             ? parcelRecord.collection_centre
             : undefined,
         packingSlotId: parcelRecord.packing_slot ? parcelRecord.packing_slot : undefined,
-    };
+    } as const satisfies Partial<AuditLogProps>;
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with insert: parcel data", error);
-        auditLog.logId = logId;
-        await sendAuditLog(auditLog);
+        await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
         throw new DatabaseError("insert", "parcel data", logId);
     }
 
-    auditLog.parcelId = data.primary_key;
-    auditLog.wasSuccess = true;
-    await sendAuditLog(auditLog);
+    await sendAuditLog({ ...auditLog, wasSuccess: true, parcelId: data.primary_key });
 };
 
 export const updateParcel = async (
@@ -48,25 +44,21 @@ export const updateParcel = async (
         .select("primary_key, client_id")
         .single();
 
-    const auditLog: AuditLogProps = {
+    const auditLog = {
         action: "edit a parcel",
         content: { parcelDetails: parcelRecord },
-        wasSuccess: false,
         clientId: parcelRecord.client_id,
         collectionCentreId: parcelRecord.collection_centre
             ? parcelRecord.collection_centre
             : undefined,
         packingSlotId: parcelRecord.packing_slot ? parcelRecord.packing_slot : undefined,
-    };
+    } as const satisfies Partial<AuditLogProps>;
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with update: parcel data", error);
-        auditLog.logId = logId;
-        await sendAuditLog(auditLog);
+        await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
         throw new DatabaseError("update", "parcel data", logId);
     }
 
-    auditLog.parcelId = data.primary_key;
-    auditLog.wasSuccess = true;
-    await sendAuditLog(auditLog);
+    await sendAuditLog({ ...auditLog, wasSuccess: true, parcelId: data.primary_key });
 };
