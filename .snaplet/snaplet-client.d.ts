@@ -53,6 +53,15 @@ type Override = {
       objects?: string;
     };
   }
+  channels?: {
+    name?: string;
+    fields?: {
+      id?: string;
+      name?: string;
+      inserted_at?: string;
+      updated_at?: string;
+    };
+  }
   clients?: {
     name?: string;
     fields?: {
@@ -407,6 +416,13 @@ type Override = {
       version?: string;
     };
   }
+  realtime_schema_migrations?: {
+    name?: string;
+    fields?: {
+      version?: string;
+      inserted_at?: string;
+    };
+  }
   supabase_migrations_schema_migrations?: {
     name?: string;
     fields?: {
@@ -476,6 +492,18 @@ type Override = {
     fields?: {
       event_name?: string;
       workflow_order?: string;
+    };
+  }
+  subscription?: {
+    name?: string;
+    fields?: {
+      id?: string;
+      subscription_id?: string;
+      entity?: string;
+      filters?: string;
+      claims?: string;
+      claims_role?: string;
+      created_at?: string;
     };
   }
   users?: {
@@ -566,6 +594,11 @@ export interface Fingerprint {
     updatedAt?: FingerprintDateField;
     fileSizeLimit?: FingerprintNumberField;
     objects?: FingerprintRelationField;
+  }
+  channels?: {
+    id?: FingerprintNumberField;
+    insertedAt?: FingerprintDateField;
+    updatedAt?: FingerprintDateField;
   }
   clients?: {
     families?: FingerprintRelationField;
@@ -689,6 +722,10 @@ export interface Fingerprint {
   authSchemaMigrations?: {
 
   }
+  realtimeSchemaMigrations?: {
+    version?: FingerprintNumberField;
+    insertedAt?: FingerprintDateField;
+  }
   supabaseMigrationsSchemaMigrations?: {
 
   }
@@ -720,6 +757,11 @@ export interface Fingerprint {
   }
   statusOrders?: {
     workflowOrder?: FingerprintNumberField;
+  }
+  subscriptions?: {
+    id?: FingerprintNumberField;
+    claims?: FingerprintJsonField;
+    createdAt?: FingerprintDateField;
   }
   users?: {
     emailConfirmedAt?: FingerprintDateField;
