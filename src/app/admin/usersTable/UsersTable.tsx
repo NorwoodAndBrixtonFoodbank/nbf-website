@@ -12,8 +12,11 @@ import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter
 
 const usersTableHeaderKeysAndLabels = [
     ["id", "User ID"],
-    ["email", "Email"],
+    ["firstName", "First Name"],
+    ["lastName", "Last Name"],
     ["userRole", "Role"],
+    ["email", "Email"],
+    ["telephoneNumber", "Telephone Number"],
     ["createdAt", "Created At"],
     ["updatedAt", "Updated At"],
 ] as const;
@@ -36,6 +39,18 @@ const userTableColumnDisplayFunctions = {
 };
 
 const filters: Filter<UserRow, string>[] = [
+    buildTextFilter({
+        key: "firstName",
+        label: "First Name",
+        headers: usersTableHeaderKeysAndLabels,
+        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
+    }),
+    buildTextFilter({
+        key: "lastName",
+        label: "Last Name",
+        headers: usersTableHeaderKeysAndLabels,
+        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
+    }),
     buildTextFilter({
         key: "email",
         label: "Email",
@@ -93,7 +108,15 @@ const UsersTable: React.FC<Props> = (props) => {
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
                 toggleableHeaders={["id", "createdAt", "updatedAt"]}
-                defaultShownHeaders={["email", "userRole", "createdAt", "updatedAt"]}
+                defaultShownHeaders={[
+                    "firstName",
+                    "lastName",
+                    "userRole",
+                    "email",
+                    "telephoneNumber",
+                    "createdAt",
+                    "updatedAt",
+                ]}
                 checkboxConfig={{ displayed: false }}
                 paginationConfig={{ enablePagination: false }}
                 sortConfig={{ sortPossible: false }}
