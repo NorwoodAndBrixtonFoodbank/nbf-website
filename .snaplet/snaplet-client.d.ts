@@ -122,6 +122,7 @@ type Override = {
       created_at?: string;
       updated_at?: string;
       authentication_method?: string;
+      auth_code_issued_at?: string;
       saml_relay_states?: string;
     };
   }
@@ -586,6 +587,7 @@ export interface Fingerprint {
   flowStates?: {
     createdAt?: FingerprintDateField;
     updatedAt?: FingerprintDateField;
+    authCodeIssuedAt?: FingerprintDateField;
     samlRelayStates?: FingerprintRelationField;
   }
   hooks?: {
