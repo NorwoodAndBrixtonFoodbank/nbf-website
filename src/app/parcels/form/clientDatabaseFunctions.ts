@@ -35,6 +35,7 @@ export const insertParcel = async (parcelRecord: ParcelDatabaseInsertRecord): Pr
     }
 
     auditLog.parcelId = data.primary_key;
+    auditLog.wasSuccess = true;
     await sendAuditLog(auditLog);
 };
 
