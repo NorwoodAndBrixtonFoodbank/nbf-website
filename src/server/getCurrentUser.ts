@@ -2,7 +2,7 @@ import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { User } from "@supabase/gotrue-js";
 
-export async function getCurrentUser(): Promise<{ user: User } | { user: null }> {
+export async function getCurrentUser(): Promise<User | null> {
     const serverComponentClient = getSupabaseServerComponentClient();
 
     const { data, error } = await serverComponentClient.auth.getUser();
@@ -12,5 +12,5 @@ export async function getCurrentUser(): Promise<{ user: User } | { user: null }>
         throw new Error(`Error getting current user. Log ID: ${logId}`);
     }
 
-    return data;
+    return data.user;
 }
