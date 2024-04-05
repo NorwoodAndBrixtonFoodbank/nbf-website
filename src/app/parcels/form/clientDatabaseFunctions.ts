@@ -2,43 +2,40 @@ import supabase from "@/supabaseClient";
 import { InsertSchema, UpdateSchema } from "@/databaseUtils";
 import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { getCurrentUser } from "@/server/getCurrentUser";
+import { AuditLogProps, sendAuditLog } from "@/server/auditLog";
 
 type ParcelDatabaseInsertRecord = InsertSchema["parcels"];
 type ParcelDatabaseUpdateRecord = UpdateSchema["parcels"];
 
-interface auditLog {
-    user_id: string;
-    action: string;
-    foreign_keys: foreignKeys;
-    content: {};
-    wasSuccess: boolean;
-    log_id: string;
-}
-
-interface foreignKeys {
-    client_id?: string;
-    collection_centre_id?: string;
-    event_id?: string;
-    family_member_id?: string;
-    list_id?: string;
-    list_hotel_id?: string;
-    packing_slot_id?: string;
-    parcel_id?: string;
-    status_order_id?: string;
-    website_data_id?: string;
-}
 export const insertParcel = async (parcelRecord: ParcelDatabaseInsertRecord): Promise<void> => {
-    const currentUser = getCurrentUser();
-    const { error } = await supabase
+    const { data, error } = await supabase
         .from("parcels")
         .insert(parcelRecord)
-        .select("primary_key, client_id");
+        .select("primary_key, client_id")
+        .single();
+
+    let logId: string;
+
+    const auditLog: AuditLogProps = {
+        action: "add a parcel",
+        content: { parcel: parcelRecord },
+        wasSuccess: false,
+        clientId: parcelRecord.client_id,
+        collectionCentreId: parcelRecord.collection_centre
+            ? parcelRecord.collection_centre
+            : undefined,
+        packingSlotId: parcelRecord.packing_slot ? parcelRecord.packing_slot : undefined,
+    };
 
     if (error) {
-        const logId = await logErrorReturnLogId("Error with insert: parcel data", error);
+        logId = await logErrorReturnLogId("Error with insert: parcel data", error);
+        auditLog.logId = logId;
+        await sendAuditLog(auditLog);
         throw new DatabaseError("insert", "parcel data", logId);
     }
+
+    auditLog.parcelId = data.primary_key;
+    await sendAuditLog(auditLog);
 };
 
 export const updateParcel = async (
