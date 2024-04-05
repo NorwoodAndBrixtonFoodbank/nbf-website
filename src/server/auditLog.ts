@@ -3,11 +3,12 @@ import supabase from "@/supabaseClient";
 import { InsertSchema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
+import { Json } from "@/databaseTypesFile";
 
 type AuditLogInsertRecord = InsertSchema["audit_log"];
 export interface AuditLogProps {
     action?: string;
-    content: Record<string, any>;
+    content: Json | null;
     wasSuccess: boolean;
     logId?: string;
     clientId?: string;
