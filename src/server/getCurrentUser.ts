@@ -10,8 +10,7 @@ export async function getCurrentUser(): Promise<User | null> {
     const { data, error } = await serverComponentClient.auth.getUser();
 
     if (error) {
-        const logId = await logErrorReturnLogId("error with auth getUser", error);
-        throw new Error(`Error getting current user. Log ID: ${logId}`);
+        void logErrorReturnLogId("error with auth getUser", error);
     }
 
     return data.user;

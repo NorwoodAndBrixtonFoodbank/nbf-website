@@ -27,6 +27,7 @@ export async function sendAuditLog(auditLogProps: AuditLogProps): Promise<void> 
         const logId = await logErrorReturnLogId("failed to fetch current user for audit log");
         throw new DatabaseError("fetch", "current user for audit log", logId);
     }
+
     const auditLog: AuditLogInsertRecord = {
         user_id: currentUser.id,
         action: auditLogProps.action,
