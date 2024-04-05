@@ -32,7 +32,7 @@ const setNumberAdults = (
     fieldSetter: FieldSetter,
     errorSetter: ErrorSetter,
     adults: NumberAdultsByGender,
-    fieldKey: string
+    fieldKey: keyof NumberAdultsByGender
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
@@ -40,9 +40,9 @@ const setNumberAdults = (
         fieldSetter("adults", newAdults);
 
         const invalidAdultEntry =
-            newAdults.numberFemales === -1 ||
-            newAdults.numberMales === -1 ||
-            newAdults.numberUnknownGender === -1;
+            newAdults.numberFemales < 0 ||
+            newAdults.numberMales < 0 ||
+            newAdults.numberUnknownGender < 0;
         const nonZeroAdultEntry =
             newAdults.numberFemales > 0 ||
             newAdults.numberMales > 0 ||

@@ -249,6 +249,7 @@ interface Table_public_parcels {
   collection_datetime: string | null;
   voucher_number: string | null;
   packing_slot: string | null;
+}
 interface Table_public_profiles {
   primary_key: string;
   first_name: string | null;
@@ -276,7 +277,6 @@ interface Table_auth_saml_providers {
   attribute_mapping: Json | null;
   created_at: string | null;
   updated_at: string | null;
-  name_id_format: string | null;
 }
 interface Table_auth_saml_relay_states {
   id: string;
@@ -284,6 +284,7 @@ interface Table_auth_saml_relay_states {
   request_id: string;
   for_email: string | null;
   redirect_to: string | null;
+  from_ip_address: string | null;
   created_at: string | null;
   updated_at: string | null;
   flow_state_id: string | null;
@@ -370,7 +371,6 @@ interface Table_auth_users {
   reauthentication_sent_at: string | null;
   is_sso_user: boolean;
   deleted_at: string | null;
-  is_anonymous: boolean;
 }
 interface Table_public_website_data {
   name: string;
@@ -427,8 +427,8 @@ interface Schema_public {
   lists_hotel: Table_public_lists_hotel;
   packing_slots: Table_public_packing_slots;
   parcels: Table_public_parcels;
-  status_order: Table_public_status_order;
   profiles: Table_public_profiles;
+  status_order: Table_public_status_order;
   website_data: Table_public_website_data;
 }
 interface Schema_realtime {

@@ -20,7 +20,7 @@ type SubmitFormHelper = (
     router: AppRouterInstance,
     initialFields?: Fields,
     primaryKey?: string
-) => void;
+) => Promise<void>;
 
 const personToFamilyRecord = (person: Person, familyID: string): FamilyDatabaseInsertRecord => {
     return {
@@ -34,7 +34,9 @@ const clearFamily = async (familyId: string): Promise<void> => {
     const { error } = await supabase.from("families").delete().eq("family_id", familyId);
 
     if (error) {
-        const logId = await logErrorReturnLogId(`Error with delete: Family ID ${familyId}`, error);
+        const logId = await logErrorReturnLogId(`Error with delete: Family ID ${familyId}`, {
+            error,
+        });
         throw new DatabaseError("delete", "person", logId);
     }
     void logInfoReturnLogId(`Family with familyID ${familyId} cleared.`);
@@ -50,7 +52,9 @@ const insertFamilyMembers = async (peopleArray: Person[], familyID: string): Pro
     const { error } = await supabase.from("families").insert(familyRecords);
 
     if (error) {
-        const logId = await logErrorReturnLogId(`Error with insert: Family ID ${familyID}`, error);
+        const logId = await logErrorReturnLogId(`Error with insert: Family ID ${familyID}`, {
+            error,
+        });
         throw new DatabaseError("insert", "family", logId);
     }
 };
@@ -64,7 +68,7 @@ const insertClient = async (
         .select("primary_key, family_id");
 
     if (error) {
-        const logId = await logErrorReturnLogId("Error with insert: Client", error);
+        const logId = await logErrorReturnLogId("Error with insert: Client", { error });
         throw new DatabaseError("insert", "client", logId);
     }
     void logInfoReturnLogId(`Client ${clientRecord.full_name} successfully created.`);
@@ -82,10 +86,9 @@ const updateClient = async (
         .select("primary_key, family_id");
 
     if (error) {
-        const logId = await logErrorReturnLogId(
-            `Error with update: Client ID ${primaryKey}`,
-            error
-        );
+        const logId = await logErrorReturnLogId(`Error with update: Client ID ${primaryKey}`, {
+            error,
+        });
         throw new DatabaseError("update", "client", logId);
     }
     return ids![0];
@@ -121,7 +124,7 @@ const revertClientInsert = async (primaryKey: string): Promise<void> => {
     if (error) {
         const logId = await logErrorReturnLogId(
             `Error with delete: Revert incomplete client insert, Client ID ${primaryKey}`,
-            error
+            { error }
         );
         throw new Error(
             "We could not revert an incomplete client insert at this time, and there may be faulty data stored. Please contact a developer for assistance." +
@@ -141,7 +144,7 @@ const revertClientUpdate = async (
     if (error) {
         const logId = logErrorReturnLogId(
             `Error with delete: Revert incomplete client update, Client ID ${primaryKey}`,
-            error
+            { error }
         );
         throw new Error(
             "We could not revert an incomplete client update at this time, and there may be faulty data stored. Please contact a developer for assistance." +
@@ -186,7 +189,9 @@ export const submitAddClientForm: SubmitFormHelper = async (fields, router) => {
         router.push(`/parcels/add/${ids.primary_key}`);
     } catch (error) {
         await revertClientInsert(ids.primary_key);
-        const logId = await logErrorReturnLogId(`Error with insert: Client ID ${ids.primary_key}`);
+        const logId = await logErrorReturnLogId(`Error with insert: Client ID ${ids.primary_key}`, {
+            error,
+        });
         throw new DatabaseError("update", "client", logId);
     }
 };
@@ -205,7 +210,9 @@ export const submitEditClientForm: SubmitFormHelper = async (
         router.push(`/clients?clientId=${primaryKey}`);
     } catch (error) {
         await revertClientUpdate(clientBeforeUpdate, primaryKey!);
-        const logId = await logErrorReturnLogId(`Error with update: Client ID ${ids.primary_key}`);
+        const logId = await logErrorReturnLogId(`Error with update: Client ID ${ids.primary_key}`, {
+            error,
+        });
         throw new DatabaseError("update", "client", logId);
     }
 };

@@ -1,13 +1,18 @@
-import { Schema } from "@/databaseUtils";
+import { DatabaseEnums, Schema } from "@/databaseUtils";
 import { ClientFields } from "@/app/clients/form/ClientForm";
 import { Person } from "@/components/Form/formFunctions";
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { processExtraInformation } from "@/common/formatClientsData";
 
-const getNumberAdultsByGender = (family: Schema["families"][], gender: string): number => {
-    return family.filter(
-        (member) => (member.age === null || member.age >= 16) && member.gender === gender
-    ).length;
+const isAdult = (member: Schema["families"]): boolean => {
+    return member.age === null || member.age >= 16;
+};
+
+const getNumberAdultsByGender = (
+    family: Schema["families"][],
+    gender: DatabaseEnums["gender"]
+): number => {
+    return family.filter((member) => isAdult(member) && member.gender === gender).length;
 };
 
 const arrayToBooleanGroup = (data: string[]): BooleanGroup => {
@@ -21,7 +26,7 @@ const autofill = (
     familyData: Schema["families"][]
 ): ClientFields => {
     const children = familyData
-        .filter((member) => member.age !== null && member.age < 16)
+        .filter((member) => !isAdult(member))
         .map((child): Person => {
             return {
                 gender: child.gender,
