@@ -5,9 +5,9 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { User } from "@supabase/gotrue-js";
 
 export async function getCurrentUser(): Promise<User | null> {
-    const serverComponentClient = getSupabaseServerComponentClient();
+    const supabase = getSupabaseServerComponentClient();
 
-    const { data, error } = await serverComponentClient.auth.getUser();
+    const { data, error } = await supabase.auth.getUser();
 
     if (error) {
         void logErrorReturnLogId("error with auth getUser", error);
