@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { CenterComponent, StyledForm } from "@/components/Form/formStyling";
 import Button from "@mui/material/Button";
 import AccountDetails from "@/app/admin/createUser/AccountDetails";
-import UserRole from "@/app/admin/createUser/UserRole";
+import UserRoleCard from "@/app/admin/createUser/UserRoleCard";
 import {
     checkErrorOnSubmit,
     Errors,
@@ -47,7 +47,7 @@ const initialFormErrors: FormErrors = {
     telephoneNumber: Errors.initial,
 };
 
-const formSections = [AccountDetails, UserRole, UserDetailsCard];
+const formSections = [AccountDetails, UserRoleCard, UserDetailsCard];
 
 const CreateUserForm: React.FC<{}> = () => {
     const [fields, setFields] = useState(initialFields);

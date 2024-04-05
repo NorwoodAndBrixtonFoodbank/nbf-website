@@ -3,8 +3,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { DatabaseAutoType } from "@/databaseUtils";
 import { RoleUpdateContext, pathsNotRequiringLogin } from "@/app/roles";
+import { DatabaseAutoType, UserRole } from "@/databaseUtils";
 import { fetchUserRole } from "@/common/fetchUserRole";
 
 interface Props {
@@ -62,10 +62,20 @@ export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
             data: { user },
         } = await supabase.auth.getUser();
 
-        const userRole = user ? await fetchUserRole(user.id) : null;
-        if (userRole) {
-            setRole(userRole);
+        let userRole: UserRole | null;
+
+        if (user === null) {
+            userRole = null;
+        } else {
+            const { role, error } = await fetchUserRole(user.id);
+
+            if (error) {
+                userRole = null;
+            } else {
+                userRole = role;
+            }
         }
+        setRole(userRole);
     };
 
     useEffect(() => {

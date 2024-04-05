@@ -1,12 +1,17 @@
 import supabase from "@/supabaseClient";
-import { DatabaseError } from "@/app/errorClasses";
 import { PostgrestError } from "@supabase/supabase-js";
 import { UserRole } from "@/databaseUtils";
 
-export const fetchUserRole = async (
-    userId: string,
-    logErrorAndReturnLogId?: (error: PostgrestError) => Promise<string>
-): Promise<UserRole> => {
+type fetchRoleResult =
+    | {
+          role: UserRole;
+          error: null;
+      }
+    | {
+          role: null;
+          error: PostgrestError;
+      };
+export const fetchUserRole = async (userId: string): Promise<fetchRoleResult> => {
     const { data, error } = await supabase
         .from("profiles")
         .select("role")
@@ -14,13 +19,11 @@ export const fetchUserRole = async (
         .single();
 
     if (error) {
-        if (logErrorAndReturnLogId) {
-            const logId = await logErrorAndReturnLogId(error);
-            throw new DatabaseError("fetch", "profile for user", logId);
-        } else {
-            throw new DatabaseError("fetch", "profile for user");
-        }
+        return {
+            role: null,
+            error: error,
+        };
     }
 
-    return data.role;
+    return { role: data.role, error: null };
 };
