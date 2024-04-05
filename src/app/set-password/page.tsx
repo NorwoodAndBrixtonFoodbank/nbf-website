@@ -61,7 +61,7 @@ export default function Page(): ReactElement {
             setErrorMessage("Something went wrong. Please contact the admin.");
             return;
         }
-        
+
         try {
             await signInWithTokens(accessToken.current, refreshToken.current);
         } catch (error) {

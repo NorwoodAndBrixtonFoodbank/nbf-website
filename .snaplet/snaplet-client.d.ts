@@ -122,7 +122,6 @@ type Override = {
       created_at?: string;
       updated_at?: string;
       authentication_method?: string;
-      auth_code_issued_at?: string;
       saml_relay_states?: string;
     };
   }
@@ -383,7 +382,6 @@ type Override = {
       attribute_mapping?: string;
       created_at?: string;
       updated_at?: string;
-      name_id_format?: string;
       sso_providers?: string;
     };
   }
@@ -395,6 +393,7 @@ type Override = {
       request_id?: string;
       for_email?: string;
       redirect_to?: string;
+      from_ip_address?: string;
       created_at?: string;
       updated_at?: string;
       flow_state_id?: string;
@@ -516,7 +515,6 @@ type Override = {
       reauthentication_sent_at?: string;
       is_sso_user?: string;
       deleted_at?: string;
-      is_anonymous?: string;
       identities?: string;
       mfa_factors?: string;
       sessions?: string;
@@ -587,7 +585,6 @@ export interface Fingerprint {
   flowStates?: {
     createdAt?: FingerprintDateField;
     updatedAt?: FingerprintDateField;
-    authCodeIssuedAt?: FingerprintDateField;
     samlRelayStates?: FingerprintRelationField;
   }
   hooks?: {
