@@ -5,19 +5,19 @@ import AdminPage from "@/app/admin/AdminPage";
 import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { User } from "@supabase/gotrue-js";
 import { DatabaseError } from "@/app/errorClasses";
-import { Schema } from "@/databaseUtils";
+import { Schema, UserRole } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { Database } from "@/databaseTypesFile";
 import { adminGetUsers } from "@/server/adminGetUsers";
 import { fetchUserRole } from "@/common/fetchUserRole";
 
 // disables caching
 export const revalidate = 0;
 
+export type DisplayedUserRole = UserRole | "UNKNOWN";
 export interface UserRow {
     id: string;
     email: string;
-    userRole: Database["public"]["Enums"]["role"];
+    userRole: DisplayedUserRole;
     createdAt: number;
     updatedAt: number;
 }
@@ -31,9 +31,16 @@ const getUsers = async (): Promise<UserRow[]> => {
     }
 
     const userRows = data.map(async (user: User) => {
-        const userRole = await fetchUserRole(user.id, (error) => {
-            return logErrorReturnLogId("Failed to fetch user role", { error });
-        });
+        let userRole: DisplayedUserRole;
+
+        const { role, error } = await fetchUserRole(user.id);
+
+        if (error) {
+            userRole = "UNKNOWN";
+            void logErrorReturnLogId(`failed to fetch user role. User ID: ${user.id}`, error);
+        } else {
+            userRole = role;
+        }
 
         return {
             id: user.id,
