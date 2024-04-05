@@ -1,9 +1,11 @@
+"use server";
+
 import { getCurrentUser } from "@/server/getCurrentUser";
-import supabase from "@/supabaseClient";
 import { InsertSchema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { Json } from "@/databaseTypesFile";
+import { getSupabaseServerComponentClient } from "@/supabaseServer";
 
 type AuditLogInsertRecord = InsertSchema["audit_log"];
 export interface AuditLogProps {
@@ -44,6 +46,8 @@ export async function sendAuditLog(auditLogProps: AuditLogProps): Promise<void> 
         wasSuccess: auditLogProps.wasSuccess,
         log_id: auditLogProps.logId,
     };
+
+    const supabase = getSupabaseServerComponentClient();
 
     const { error } = await supabase
         .from("audit_log")
