@@ -1,3 +1,5 @@
+"use server";
+
 import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { User } from "@supabase/gotrue-js";
