@@ -8,7 +8,7 @@ import { Json } from "@/databaseTypesFile";
 import { getSupabaseServerComponentClient } from "@/supabaseServer";
 
 type AuditLogInsertRecord = InsertSchema["audit_log"];
-export interface AuditLogProps {
+export interface AuditLog {
     action?: string;
     content: Json | null;
     wasSuccess: boolean;
@@ -23,7 +23,7 @@ export interface AuditLogProps {
     parcelId?: string;
 }
 
-export async function sendAuditLog(auditLogProps: AuditLogProps): Promise<void> {
+export async function sendAuditLog(auditLogProps: AuditLog): Promise<void> {
     const currentUser = await getCurrentUser();
 
     if (currentUser === null) {

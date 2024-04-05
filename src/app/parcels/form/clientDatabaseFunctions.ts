@@ -2,7 +2,7 @@ import supabase from "@/supabaseClient";
 import { InsertSchema, UpdateSchema } from "@/databaseUtils";
 import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { AuditLogProps, sendAuditLog } from "@/server/auditLog";
+import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 type ParcelDatabaseInsertRecord = InsertSchema["parcels"];
 type ParcelDatabaseUpdateRecord = UpdateSchema["parcels"];
@@ -22,7 +22,7 @@ export const insertParcel = async (parcelRecord: ParcelDatabaseInsertRecord): Pr
             ? parcelRecord.collection_centre
             : undefined,
         packingSlotId: parcelRecord.packing_slot ? parcelRecord.packing_slot : undefined,
-    } as const satisfies Partial<AuditLogProps>;
+    } as const satisfies Partial<AuditLog>;
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with insert: parcel data", error);
@@ -52,7 +52,7 @@ export const updateParcel = async (
             ? parcelRecord.collection_centre
             : undefined,
         packingSlotId: parcelRecord.packing_slot ? parcelRecord.packing_slot : undefined,
-    } as const satisfies Partial<AuditLogProps>;
+    } as const satisfies Partial<AuditLog>;
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with update: parcel data", error);
