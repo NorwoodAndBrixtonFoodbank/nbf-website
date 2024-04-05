@@ -110,15 +110,9 @@ grant truncate on table "public"."audit_log" to "service_role";
 
 grant update on table "public"."audit_log" to "service_role";
 
-create policy "Enable read access for all users and edit for admins"
+create policy "Enable access for all users"
 on "public"."audit_log"
 as permissive
 for all
 to authenticated
-using (true)
-with check ((EXISTS ( SELECT 1
-   FROM profiles
-  WHERE ((profiles.primary_key = auth.uid()) AND (profiles.role = 'admin'::role)))));
-
-
-
+using (true);
