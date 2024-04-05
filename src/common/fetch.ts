@@ -2,6 +2,7 @@ import { DatabaseError } from "@/app/errorClasses";
 import { Schema } from "@/databaseUtils";
 import { Supabase } from "@/supabaseUtils";
 import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
+import { PostgrestError } from "@supabase/supabase-js";
 
 type CollectionCentre = {
     name: Schema["collection_centres"]["name"];
@@ -14,6 +15,23 @@ type PackingSlot = {
     primary_key: Schema["packing_slots"]["primary_key"];
     is_shown: Schema["packing_slots"]["is_shown"];
 };
+
+type DatabaseProfile = {
+    role: Schema["profiles"]["role"];
+    first_name: Schema["profiles"]["first_name"];
+    last_name: Schema["profiles"]["last_name"];
+    telephone_number: Schema["profiles"]["telephone_number"];
+};
+
+type UserProfileDataAndError =
+    | {
+          data: DatabaseProfile;
+          error: null;
+      }
+    | {
+          data: null;
+          error: PostgrestError;
+      };
 
 export interface ParcelWithCollectionCentreAndPackingSlot {
     client_id: string;
@@ -171,4 +189,22 @@ export const fetchPackingSlotsInfo = async (
     ]);
 
     return packingSlotsLabelsAndValues;
+};
+
+export const fetchUserProfile = async (
+    userId: string,
+    supabase: Supabase
+): Promise<UserProfileDataAndError> => {
+    const { data, error } = await supabase
+        .from("profiles")
+        .select("role, first_name, last_name, telephone_number")
+        .eq("primary_key", userId)
+        .single();
+
+    if (error) {
+        void logErrorReturnLogId("Failed to fetch: user profile", error);
+        return { data: null, error: error };
+    }
+
+    return { data: data, error: null };
 };
