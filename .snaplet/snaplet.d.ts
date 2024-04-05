@@ -21,6 +21,24 @@ interface Table_net_http_response {
   error_msg: string | null;
   created: string;
 }
+interface Table_public_audit_log {
+  primary_key: string;
+  user_id: string;
+  action: string | null;
+  client_id: string | null;
+  collection_centre_id: string | null;
+  event_id: string | null;
+  family_member_id: string | null;
+  list_id: string | null;
+  list_hotel_id: string | null;
+  packing_slot_id: string | null;
+  parcel_id: string | null;
+  status_order: string | null;
+  website_data: string | null;
+  content: Json | null;
+  wasSuccess: boolean;
+  log_id: string | null;
+}
 interface Table_auth_audit_log_entries {
   instance_id: string | null;
   id: string;
@@ -90,7 +108,6 @@ interface Table_auth_flow_state {
   created_at: string | null;
   updated_at: string | null;
   authentication_method: string;
-  auth_code_issued_at: string | null;
 }
 interface Table_supabase_functions_hooks {
   id: number;
@@ -278,7 +295,6 @@ interface Table_auth_saml_providers {
   attribute_mapping: Json | null;
   created_at: string | null;
   updated_at: string | null;
-  name_id_format: string | null;
 }
 interface Table_auth_saml_relay_states {
   id: string;
@@ -286,6 +302,7 @@ interface Table_auth_saml_relay_states {
   request_id: string;
   for_email: string | null;
   redirect_to: string | null;
+  from_ip_address: string | null;
   created_at: string | null;
   updated_at: string | null;
   flow_state_id: string | null;
@@ -372,7 +389,6 @@ interface Table_auth_users {
   reauthentication_sent_at: string | null;
   is_sso_user: boolean;
   deleted_at: string | null;
-  is_anonymous: boolean;
 }
 interface Table_public_website_data {
   name: string;
@@ -421,6 +437,7 @@ interface Schema_pgsodium_masks {
 
 }
 interface Schema_public {
+  audit_log: Table_public_audit_log;
   clients: Table_public_clients;
   collection_centres: Table_public_collection_centres;
   events: Table_public_events;
@@ -476,6 +493,24 @@ interface Extension {
   vault: "supabase_vault";
 }
 interface Tables_relationships {
+  "public.audit_log": {
+    parent: {
+       audit_log_user_id_fkey: "auth.users";
+       audit_log_client_id_fkey: "public.clients";
+       audit_log_collection_centre_id_fkey: "public.collection_centres";
+       audit_log_event_id_fkey: "public.events";
+       audit_log_family_member_id_fkey: "public.families";
+       audit_log_list_id_fkey: "public.lists";
+       audit_log_list_hotel_id_fkey: "public.lists_hotel";
+       audit_log_packing_slot_id_fkey: "public.packing_slots";
+       audit_log_parcel_id_fkey: "public.parcels";
+       audit_log_status_order_fkey: "public.status_order";
+       audit_log_website_data_fkey: "public.website_data";
+    };
+    children: {
+
+    };
+  };
   "storage.buckets": {
     parent: {
 
@@ -489,6 +524,7 @@ interface Tables_relationships {
 
     };
     children: {
+       audit_log_client_id_fkey: "public.audit_log";
        families_family_id_fkey: "public.families";
        parcels_client_id_fkey: "public.parcels";
     };
@@ -498,6 +534,7 @@ interface Tables_relationships {
 
     };
     children: {
+       audit_log_collection_centre_id_fkey: "public.audit_log";
        parcels_collection_centre_fkey: "public.parcels";
     };
   };
@@ -506,7 +543,7 @@ interface Tables_relationships {
        events_parcel_id_fkey: "public.parcels";
     };
     children: {
-
+       audit_log_event_id_fkey: "public.audit_log";
     };
   };
   "public.families": {
@@ -514,7 +551,7 @@ interface Tables_relationships {
        families_family_id_fkey: "public.clients";
     };
     children: {
-
+       audit_log_family_member_id_fkey: "public.audit_log";
     };
   };
   "auth.flow_state": {
@@ -540,6 +577,22 @@ interface Tables_relationships {
     children: {
        key_parent_key_fkey: "pgsodium.key";
        secrets_key_id_fkey: "vault.secrets";
+    };
+  };
+  "public.lists": {
+    parent: {
+
+    };
+    children: {
+       audit_log_list_id_fkey: "public.audit_log";
+    };
+  };
+  "public.lists_hotel": {
+    parent: {
+
+    };
+    children: {
+       audit_log_list_hotel_id_fkey: "public.audit_log";
     };
   };
   "auth.mfa_amr_claims": {
@@ -579,6 +632,7 @@ interface Tables_relationships {
 
     };
     children: {
+       audit_log_packing_slot_id_fkey: "public.audit_log";
        parcels_packing_slot_fkey: "public.parcels";
     };
   };
@@ -589,6 +643,7 @@ interface Tables_relationships {
        parcels_packing_slot_fkey: "public.packing_slots";
     };
     children: {
+       audit_log_parcel_id_fkey: "public.audit_log";
        events_parcel_id_fkey: "public.events";
     };
   };
@@ -660,6 +715,14 @@ interface Tables_relationships {
        sso_domains_sso_provider_id_fkey: "auth.sso_domains";
     };
   };
+  "public.status_order": {
+    parent: {
+
+    };
+    children: {
+       audit_log_status_order_fkey: "public.audit_log";
+    };
+  };
   "auth.users": {
     parent: {
 
@@ -668,7 +731,16 @@ interface Tables_relationships {
        identities_user_id_fkey: "auth.identities";
        mfa_factors_user_id_fkey: "auth.mfa_factors";
        sessions_user_id_fkey: "auth.sessions";
+       audit_log_user_id_fkey: "public.audit_log";
        profiles_primary_key_fkey: "public.profiles";
+    };
+  };
+  "public.website_data": {
+    parent: {
+
+    };
+    children: {
+       audit_log_website_data_fkey: "public.audit_log";
     };
   };
 }
