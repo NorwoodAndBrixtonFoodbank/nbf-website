@@ -47,7 +47,7 @@ const AddClients: () => React.ReactElement = () => {
             <ClientForm
                 initialFields={initialFields}
                 initialFormErrors={initialFormErrors}
-                editMode={false}
+                editConfig={{ editMode: false }}
             />
         </main>
     );

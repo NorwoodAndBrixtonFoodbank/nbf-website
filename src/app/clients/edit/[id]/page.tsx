@@ -71,8 +71,7 @@ const EditClients: ({ params }: EditClientsParameters) => React.ReactElement = (
                     <ClientForm
                         initialFields={initialFields}
                         initialFormErrors={initialFormErrors}
-                        editMode
-                        clientID={params.id}
+                        editConfig={{ clientID: params.id, editMode: true }}
                     />
                 )
             )}

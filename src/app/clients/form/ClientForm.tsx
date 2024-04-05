@@ -41,9 +41,10 @@ import Title from "@/components/Title/Title";
 interface Props {
     initialFields: ClientFields;
     initialFormErrors: FormErrors;
-    editMode: boolean;
-    clientID?: string;
+    editConfig: EditConfig;
 }
+
+type EditConfig = { editMode: true; clientID: string } | { editMode: false };
 
 export interface ClientFields extends Fields {
     fullName: string;
@@ -89,7 +90,7 @@ const formSections = [
     ExtraInformationCard,
 ];
 
-const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editMode, clientID }) => {
+const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editConfig }) => {
     const router = useRouter();
     const [fields, setFields] = useState<ClientFields>(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
@@ -128,8 +129,8 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editMod
         }
 
         try {
-            if (editMode) {
-                await submitEditClientForm(fields, router, initialFields, clientID);
+            if (editConfig.editMode) {
+                await submitEditClientForm(fields, router, editConfig.clientID);
             } else {
                 await submitAddClientForm(fields, router);
             }
