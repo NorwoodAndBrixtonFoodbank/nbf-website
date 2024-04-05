@@ -14,8 +14,6 @@ export const insertParcel = async (parcelRecord: ParcelDatabaseInsertRecord): Pr
         .select("primary_key, client_id")
         .single();
 
-    let logId: string;
-
     const auditLog: AuditLogProps = {
         action: "add a parcel",
         content: { parcel: parcelRecord },
@@ -28,7 +26,7 @@ export const insertParcel = async (parcelRecord: ParcelDatabaseInsertRecord): Pr
     };
 
     if (error) {
-        logId = await logErrorReturnLogId("Error with insert: parcel data", error);
+        const logId = await logErrorReturnLogId("Error with insert: parcel data", error);
         auditLog.logId = logId;
         await sendAuditLog(auditLog);
         throw new DatabaseError("insert", "parcel data", logId);
@@ -43,14 +41,32 @@ export const updateParcel = async (
     parcelRecord: ParcelDatabaseUpdateRecord,
     primaryKey: string
 ): Promise<void> => {
-    const { error } = await supabase
+    const { data, error } = await supabase
         .from("parcels")
         .update(parcelRecord)
         .eq("primary_key", primaryKey)
-        .select("primary_key, client_id");
+        .select("primary_key, client_id")
+        .single();
+
+    const auditLog: AuditLogProps = {
+        action: "edit a parcel",
+        content: { parcel: parcelRecord },
+        wasSuccess: false,
+        clientId: parcelRecord.client_id,
+        collectionCentreId: parcelRecord.collection_centre
+            ? parcelRecord.collection_centre
+            : undefined,
+        packingSlotId: parcelRecord.packing_slot ? parcelRecord.packing_slot : undefined,
+    };
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with update: parcel data", error);
+        auditLog.logId = logId;
+        await sendAuditLog(auditLog);
         throw new DatabaseError("update", "parcel data", logId);
     }
+
+    auditLog.parcelId = data.primary_key;
+    auditLog.wasSuccess = true;
+    await sendAuditLog(auditLog);
 };
