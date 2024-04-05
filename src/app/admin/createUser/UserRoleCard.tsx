@@ -4,7 +4,7 @@ import { CardProps } from "@/components/Form/formFunctions";
 import { getDropdownListHandler } from "@/components/DataInput/inputHandlerFactories";
 import UserRoleDropdownInput from "@/app/admin/common/UserRoleDropdownInput";
 
-const UserRole: React.FC<CardProps> = ({ fieldSetter }) => {
+const UserRoleCard: React.FC<CardProps> = ({ fieldSetter }) => {
     return (
         <GenericFormCard title="User Role" required>
             <UserRoleDropdownInput
@@ -15,4 +15,4 @@ const UserRole: React.FC<CardProps> = ({ fieldSetter }) => {
     );
 };
 
-export default UserRole;
+export default UserRoleCard;

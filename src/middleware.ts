@@ -1,4 +1,4 @@
-import { DatabaseAutoType } from "@/databaseUtils";
+import { DatabaseAutoType, UserRole } from "@/databaseUtils";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextMiddleware, NextRequest, NextResponse } from "next/server";
 import { roleCanAccessPage } from "@/app/roles";
@@ -24,17 +24,21 @@ const middleware: NextMiddleware = async (req: NextRequest) => {
     if (!user && currentPathRequiresLogin) {
         return NextResponse.redirect(new URL("/login", req.url));
     }
+
     if (user && req.nextUrl.pathname === "/login") {
         return NextResponse.redirect(new URL("/", req.url));
     }
 
-    let userRole = null;
+    let userRole: UserRole | null;
 
-    if (user) {
-        try {
-            userRole = await fetchUserRole(user.id);
-        } catch (error) {
+    if (user === null) {
+        userRole = null;
+    } else {
+        const { role, error } = await fetchUserRole(user.id);
+        if (error) {
             userRole = null;
+        } else {
+            userRole = role;
         }
     }
 
