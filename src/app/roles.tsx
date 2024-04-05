@@ -14,7 +14,7 @@ export const pathsNotRequiringLogin = [
     "/set-password",
 ] as const;
 
-const pathsShownToCaller = [
+const pathsShownToAllAuthenticatedUsers = [
     "/calendar",
     "/clients",
     "/parcels",
@@ -27,9 +27,9 @@ const pathsOnlyShownToAdmin = ["/admin", "/lists"] as const;
 const getShownPagesByRole = (role: UserRole | null): readonly string[] => {
     switch (role) {
         case "admin":
-            return [...pathsShownToCaller, ...pathsOnlyShownToAdmin];
+            return [...pathsShownToAllAuthenticatedUsers, ...pathsOnlyShownToAdmin];
         case "caller":
-            return pathsShownToCaller;
+            return pathsShownToAllAuthenticatedUsers;
         case null:
             return pathsNotRequiringLogin;
     }
