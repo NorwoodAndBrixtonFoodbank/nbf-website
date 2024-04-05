@@ -1,9 +1,9 @@
-import { DatabaseEnums } from "@/databaseUtils";
+import { DatabaseEnums, UserRole } from "@/databaseUtils";
 import React, { useState } from "react";
 import { EditHeader, EditOption } from "@/app/admin/manageUser/ManageUserModal";
 import UserRoleDropdownInput from "@/app/admin/common/UserRoleDropdownInput";
 import { getDropdownListHandler } from "@/components/DataInput/inputHandlerFactories";
-import { UserRow } from "@/app/admin/page";
+import { DisplayedUserRole, UserRow } from "@/app/admin/page";
 import Button from "@mui/material/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
@@ -18,8 +18,16 @@ interface Props {
     onConfirm: (alertOptions: AlertOptions) => void;
 }
 
+function isValidUserRole(userRole: DisplayedUserRole): userRole is UserRole {
+    return userRole !== "UNKNOWN";
+}
+
 const EditUserForm: React.FC<Props> = (props) => {
-    const [role, setRole] = useState(props.userToEdit.userRole);
+    const initialRole: UserRole = isValidUserRole(props.userToEdit.userRole)
+        ? props.userToEdit.userRole
+        : "caller";
+
+    const [role, setRole] = useState<UserRole>(initialRole);
 
     const onEditConfirm = async (): Promise<void> => {
         const error = await updateUserProfile({
@@ -51,7 +59,7 @@ const EditUserForm: React.FC<Props> = (props) => {
             <EditOption>
                 <EditHeader>Role</EditHeader>
                 <UserRoleDropdownInput
-                    defaultValue={props.userToEdit.userRole}
+                    defaultValue={initialRole}
                     onChange={getDropdownListHandler((role: string) =>
                         setRole(role as DatabaseEnums["role"])
                     )}

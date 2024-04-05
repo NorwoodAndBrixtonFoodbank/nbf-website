@@ -574,6 +574,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                 filteredCount: filteredParcelCount,
                                 onPageChange: setCurrentPage,
                                 onPerPageChange: setParcelCountPerPage,
+                                rowsPerPageOptions: [10, 25, 50, 100],
                             }}
                             headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
                             columnDisplayFunctions={parcelTableColumnDisplayFunctions}
