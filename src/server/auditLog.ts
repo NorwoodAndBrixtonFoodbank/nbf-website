@@ -1,7 +1,6 @@
 import { getCurrentUser } from "@/server/getCurrentUser";
 import supabase from "@/supabaseClient";
 import { InsertSchema } from "@/databaseUtils";
-import { PostgrestError } from "@supabase/supabase-js";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 
