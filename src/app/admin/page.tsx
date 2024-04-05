@@ -8,7 +8,7 @@ import { DatabaseError } from "@/app/errorClasses";
 import { Schema, UserRole } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { adminGetUsers } from "@/server/adminGetUsers";
-import { fetchUserRole } from "@/common/fetchUserRole";
+import { fetchUserProfile } from "@/common/fetch";
 
 // disables caching
 export const revalidate = 0;
@@ -16,8 +16,11 @@ export const revalidate = 0;
 export type DisplayedUserRole = UserRole | "UNKNOWN";
 export interface UserRow {
     id: string;
-    email: string;
+    firstName: string;
+    lastName: string;
     userRole: DisplayedUserRole;
+    email: string;
+    telephoneNumber: string;
     createdAt: number;
     updatedAt: number;
 }
@@ -30,22 +33,22 @@ const getUsers = async (): Promise<UserRow[]> => {
         throw new DatabaseError("fetch", "users information", logId);
     }
 
-    const userRows = data.map(async (user: User) => {
-        let userRole: DisplayedUserRole;
+    const supabase = getSupabaseServerComponentClient();
 
-        const { role, error } = await fetchUserRole(user.id);
+    const userRows = data.map(async (user: User) => {
+        const { data: userProfile, error } = await fetchUserProfile(user.id, supabase);
 
         if (error) {
-            userRole = "UNKNOWN";
-            void logErrorReturnLogId(`failed to fetch user role. User ID: ${user.id}`, error);
-        } else {
-            userRole = role;
+            void logErrorReturnLogId(`failed to fetch user profile. User ID: ${user.id}`, error);
         }
 
         return {
             id: user.id,
+            firstName: userProfile?.first_name ?? "-",
+            lastName: userProfile?.last_name ?? "-",
+            userRole: userProfile?.role ?? ("UNKNOWN" as DisplayedUserRole),
             email: user.email ?? "-",
-            userRole: userRole,
+            telephoneNumber: userProfile?.telephone_number ?? "-",
             createdAt: Date.parse(user.created_at),
             updatedAt: Date.parse(user.updated_at ?? ""),
         };
