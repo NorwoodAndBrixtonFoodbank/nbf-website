@@ -1,11 +1,18 @@
-import { Schema } from "@/databaseUtils";
+import { DatabaseEnums, Schema } from "@/databaseUtils";
 import { ClientFields } from "@/app/clients/form/ClientForm";
 import { Person } from "@/components/Form/formFunctions";
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { processExtraInformation } from "@/common/formatClientsData";
 
-const getNumberAdultsByGender = (family: Schema["families"][], gender: string): number => {
-    return family.filter((member) => member.age === null && member.gender === gender).length;
+const isAdult = (member: Schema["families"]): boolean => {
+    return member.age === null || member.age >= 16;
+};
+
+const getNumberAdultsByGender = (
+    family: Schema["families"][],
+    gender: DatabaseEnums["gender"]
+): number => {
+    return family.filter((member) => isAdult(member) && member.gender === gender).length;
 };
 
 const arrayToBooleanGroup = (data: string[]): BooleanGroup => {
@@ -19,7 +26,7 @@ const autofill = (
     familyData: Schema["families"][]
 ): ClientFields => {
     const children = familyData
-        .filter((member) => member.age !== null)
+        .filter((member) => !isAdult(member))
         .map((child): Person => {
             return {
                 gender: child.gender,
@@ -38,11 +45,11 @@ const autofill = (
         addressTown: clientData.address_town,
         addressCounty: clientData.address_county,
         addressPostcode: clientData.address_postcode,
-        adults: [
-            { gender: "other", quantity: getNumberAdultsByGender(familyData, "other") },
-            { gender: "male", quantity: getNumberAdultsByGender(familyData, "male") },
-            { gender: "female", quantity: getNumberAdultsByGender(familyData, "female") },
-        ],
+        adults: {
+            numberFemales: getNumberAdultsByGender(familyData, "female"),
+            numberMales: getNumberAdultsByGender(familyData, "male"),
+            numberUnknownGender: getNumberAdultsByGender(familyData, "other"),
+        },
         numberChildren: children.length,
         children: children,
         dietaryRequirements: arrayToBooleanGroup(clientData.dietary_requirements),

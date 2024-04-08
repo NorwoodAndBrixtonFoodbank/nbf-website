@@ -1,15 +1,20 @@
 import React from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import {
-    CardProps,
     errorExists,
     errorText,
     getDefaultTextValue,
     onChangeText,
 } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
+import { ClientCardProps } from "../ClientForm";
 
-const FullNameCard: React.FC<CardProps> = ({ formErrors, errorSetter, fieldSetter, fields }) => {
+const FullNameCard: React.FC<ClientCardProps> = ({
+    formErrors,
+    errorSetter,
+    fieldSetter,
+    fields,
+}) => {
     return (
         <GenericFormCard title="Client Full Name" required={true} text="First and last name">
             <FreeFormTextInput

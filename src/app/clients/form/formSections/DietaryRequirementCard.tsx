@@ -1,9 +1,10 @@
 import React from "react";
 import CheckboxGroupInput from "@/components/DataInput/CheckboxGroupInput";
-import { CardProps, checkboxGroupToArray, onChangeCheckbox } from "@/components/Form/formFunctions";
+import { checkboxGroupToArray, onChangeCheckbox } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
+import { ClientCardProps } from "../ClientForm";
 
-const DietaryRequirementCard: React.FC<CardProps> = ({ fieldSetter, fields }) => {
+const DietaryRequirementCard: React.FC<ClientCardProps> = ({ fieldSetter, fields }) => {
     return (
         <GenericFormCard title="Dietary Requirements" required={false} text="Tick all that apply">
             <CheckboxGroupInput

@@ -1,25 +1,21 @@
 import React from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import {
-    CardProps,
     Errors,
     errorExists,
     ErrorSetter,
     errorText,
     FieldSetter,
     numberRegex,
-    Person,
-    Gender,
+    NumberAdultsByGender,
 } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 import { GappedDiv } from "@/components/Form/formStyling";
+import { ClientCardProps } from "../ClientForm";
 
-const getNumberAdultsDefault = (adults: Person[], gender: string): string | undefined => {
-    const personIndex = adults.findIndex((person) => person.gender === gender);
-    return adults[personIndex].quantity === 0
-        ? undefined
-        : adults[personIndex].quantity!.toString();
+const getNumberAdultsOfGenderDefault = (numberAdultsOfGender: number): string | undefined => {
+    return numberAdultsOfGender === 0 ? undefined : numberAdultsOfGender.toString();
 };
 
 const getQuantity = (input: string): number => {
@@ -32,27 +28,30 @@ const getQuantity = (input: string): number => {
     return -1;
 };
 
-const getNumberAdults = (
+const setNumberAdults = (
     fieldSetter: FieldSetter,
     errorSetter: ErrorSetter,
-    adults: Person[],
-    gender: Gender
+    adults: NumberAdultsByGender,
+    fieldKey: keyof NumberAdultsByGender
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
-        const newValue = adults;
-        const personIndex = newValue.findIndex((person) => person.gender === gender);
+        const newAdults = { ...adults, [fieldKey]: getQuantity(input) };
+        fieldSetter("adults", newAdults);
 
-        newValue[personIndex].quantity = getQuantity(input);
-        fieldSetter("adults", newValue);
-
-        const invalidAdultEntry = newValue.filter((value) => value.quantity === -1);
-        const nonZeroAdultEntry = newValue.filter((value) => value.quantity! > 0);
+        const invalidAdultEntry =
+            newAdults.numberFemales < 0 ||
+            newAdults.numberMales < 0 ||
+            newAdults.numberUnknownGender < 0;
+        const allAdultEntriesZero =
+            newAdults.numberFemales === 0 &&
+            newAdults.numberMales === 0 &&
+            newAdults.numberUnknownGender === 0;
 
         let errorType: Errors = Errors.none;
-        if (invalidAdultEntry.length > 0) {
+        if (invalidAdultEntry) {
             errorType = Errors.invalid;
-        } else if (nonZeroAdultEntry.length === 0) {
+        } else if (allAdultEntriesZero) {
             errorType = Errors.required;
         }
 
@@ -60,7 +59,7 @@ const getNumberAdults = (
     };
 };
 
-const NumberAdultsCard: React.FC<CardProps> = ({
+const NumberAdultsCard: React.FC<ClientCardProps> = ({
     formErrors,
     errorSetter,
     fieldSetter,
@@ -76,21 +75,36 @@ const NumberAdultsCard: React.FC<CardProps> = ({
                 <FreeFormTextInput
                     error={errorExists(formErrors.adults)}
                     label="Female"
-                    defaultValue={getNumberAdultsDefault(fields.adults, "female")}
-                    onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "female")}
+                    defaultValue={getNumberAdultsOfGenderDefault(fields.adults.numberFemales)}
+                    onChange={setNumberAdults(
+                        fieldSetter,
+                        errorSetter,
+                        fields.adults,
+                        "numberFemales"
+                    )}
                 />
                 <FreeFormTextInput
                     error={errorExists(formErrors.adults)}
                     label="Male"
-                    defaultValue={getNumberAdultsDefault(fields.adults, "male")}
-                    onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "male")}
+                    defaultValue={getNumberAdultsOfGenderDefault(fields.adults.numberMales)}
+                    onChange={setNumberAdults(
+                        fieldSetter,
+                        errorSetter,
+                        fields.adults,
+                        "numberMales"
+                    )}
                 />
                 <FreeFormTextInput
                     error={errorExists(formErrors.adults)}
                     helperText={errorText(formErrors.adults)}
                     label="Prefer Not To Say"
-                    defaultValue={getNumberAdultsDefault(fields.adults, "other")}
-                    onChange={getNumberAdults(fieldSetter, errorSetter, fields.adults, "other")}
+                    defaultValue={getNumberAdultsOfGenderDefault(fields.adults.numberUnknownGender)}
+                    onChange={setNumberAdults(
+                        fieldSetter,
+                        errorSetter,
+                        fields.adults,
+                        "numberUnknownGender"
+                    )}
                 />
             </GappedDiv>
         </GenericFormCard>

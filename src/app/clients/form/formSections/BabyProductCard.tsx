@@ -1,7 +1,6 @@
 import React from "react";
 import RadioGroupInput from "@/components/DataInput/RadioGroupInput";
 import {
-    CardProps,
     Errors,
     errorExists,
     ErrorSetter,
@@ -13,6 +12,7 @@ import {
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
+import { ClientCardProps } from "../ClientForm";
 
 const getBaby = (fieldSetter: FieldSetter, errorSetter: ErrorSetter): SelectChangeEventHandler => {
     return (event) => {
@@ -35,7 +35,12 @@ const getBabyDefaultValue = (value: boolean | null): string => {
     return value === null ? "Don't Know" : "No";
 };
 
-const BabyProductCard: React.FC<CardProps> = ({ formErrors, errorSetter, fieldSetter, fields }) => {
+const BabyProductCard: React.FC<ClientCardProps> = ({
+    formErrors,
+    errorSetter,
+    fieldSetter,
+    fields,
+}) => {
     return (
         <GenericFormCard
             title="Baby Products"

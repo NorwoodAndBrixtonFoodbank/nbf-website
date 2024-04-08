@@ -4,10 +4,12 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import {
+    CardProps,
     checkErrorOnSubmit,
     Errors,
     Fields,
     FormErrors,
+    NumberAdultsByGender,
     Person,
     setError,
     setField,
@@ -37,11 +39,12 @@ import { submitAddClientForm, submitEditClientForm } from "@/app/clients/form/su
 import Title from "@/components/Title/Title";
 
 interface Props {
-    initialFields: Fields;
+    initialFields: ClientFields;
     initialFormErrors: FormErrors;
-    editMode: boolean;
-    clientID?: string;
+    editConfig: EditConfig;
 }
+
+type EditConfig = { editMode: true; clientID: string } | { editMode: false };
 
 export interface ClientFields extends Fields {
     fullName: string;
@@ -51,7 +54,7 @@ export interface ClientFields extends Fields {
     addressTown: string;
     addressCounty: string;
     addressPostcode: string;
-    adults: Person[];
+    adults: NumberAdultsByGender;
     numberChildren: number;
     children: Person[];
     dietaryRequirements: BooleanGroup;
@@ -64,6 +67,10 @@ export interface ClientFields extends Fields {
     extraInformation: string;
     attentionFlag: boolean;
     signpostingCall: boolean;
+}
+
+export interface ClientCardProps extends CardProps {
+    fields: ClientFields;
 }
 
 const formSections = [
@@ -83,9 +90,9 @@ const formSections = [
     ExtraInformationCard,
 ];
 
-const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editMode, clientID }) => {
+const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editConfig }) => {
     const router = useRouter();
-    const [fields, setFields] = useState(initialFields);
+    const [fields, setFields] = useState<ClientFields>(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
     const [submitError, setSubmitError] = useState(Errors.none);
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
@@ -122,8 +129,8 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editMod
         }
 
         try {
-            if (editMode) {
-                await submitEditClientForm(fields, router, initialFields, clientID);
+            if (editConfig.editMode) {
+                await submitEditClientForm(fields, router, editConfig.clientID);
             } else {
                 await submitAddClientForm(fields, router);
             }

@@ -8,12 +8,12 @@ import {
     numberRegex,
     Person,
     Gender,
-    CardProps,
 } from "@/components/Form/formFunctions";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { StyledCard, FormText } from "@/components/Form/formStyling";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
+import { ClientCardProps } from "../ClientForm";
 
 const maxNumberChildren = (value: string): boolean => {
     return parseInt(value) <= 20;
@@ -36,7 +36,7 @@ const getChild = (
     };
 };
 
-const NumberChildrenCard: React.FC<CardProps> = ({
+const NumberChildrenCard: React.FC<ClientCardProps> = ({
     formErrors,
     errorSetter,
     fieldSetter,
@@ -51,7 +51,9 @@ const NumberChildrenCard: React.FC<CardProps> = ({
             <>
                 <FreeFormTextInput
                     label="Number of Children"
-                    defaultValue={fields.numberChildren !== 0 ? fields.numberChildren : undefined}
+                    defaultValue={
+                        fields.numberChildren !== 0 ? fields.numberChildren.toString() : undefined
+                    }
                     error={errorExists(formErrors.numberChildren)}
                     helperText={errorText(formErrors.numberChildren)}
                     onChange={onChangeText(

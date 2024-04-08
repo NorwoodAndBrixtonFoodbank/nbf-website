@@ -1,253 +1,41 @@
-import { InsertSchema, Schema, UpdateSchema } from "@/databaseUtils";
+import { InsertSchema, UpdateSchema } from "@/databaseUtils";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { checkboxGroupToArray, Fields, Person } from "@/components/Form/formFunctions";
+import {
+    checkboxGroupToArray,
+    NumberAdultsByGender,
+    Person,
+} from "@/components/Form/formFunctions";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
-import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
+import { logErrorReturnLogId } from "@/logger/logger";
+import { ClientFields } from "./ClientForm";
 
-type FamilyDatabaseInsertRecord = InsertSchema["families"];
-type FamilyDatabaseUpdateRecord = UpdateSchema["families"];
+type FamilyDatabaseInsertRecord = Omit<InsertSchema["families"], "family_id">;
 type ClientDatabaseInsertRecord = InsertSchema["clients"];
 type ClientDatabaseUpdateRecord = UpdateSchema["clients"];
-type ClientAndFamilyIds = Pick<Schema["clients"], "primary_key" | "family_id">;
 
-type SubmitFormHelper = (
-    fields: Fields,
-    router: AppRouterInstance,
-    initialFields?: Fields,
-    primaryKey?: string
-) => void;
-
-interface PeopleGroupedByAction {
-    [key: string]: Person[];
-}
-
-const personToFamilyRecord = (person: Person, familyID: string): FamilyDatabaseInsertRecord[] => {
-    return Array(person.quantity ?? 1).fill({
-        family_id: familyID,
+const personToFamilyRecordWithoutFamilyId = (person: Person): FamilyDatabaseInsertRecord => {
+    return {
         gender: person.gender,
         age: person.age ?? null,
-    });
+    };
 };
 
-const getChildrenInDatabase = async (familyID: string): Promise<string[]> => {
-    const { data, error } = await supabase
-        .from("families")
-        .select("primary_key")
-        .eq("family_id", familyID)
-        .not("age", "is", null);
+const getFamilyMembers = (
+    adults: NumberAdultsByGender,
+    children: Person[]
+): FamilyDatabaseInsertRecord[] => {
+    const peopleToInsert = children.concat(
+        Array<Person>(adults.numberFemales).fill({ gender: "female", age: undefined }),
+        Array<Person>(adults.numberMales).fill({ gender: "male", age: undefined }),
+        Array<Person>(adults.numberUnknownGender).fill({ gender: "other", age: undefined })
+    );
 
-    if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: Children", error);
-        throw new DatabaseError("fetch", "children", logId);
-    }
-    return data!.map((datum) => datum.primary_key);
-};
-
-const getNumberAdults = async (familyID: string, gender: string): Promise<number> => {
-    const { count, error } = await supabase
-        .from("families")
-        .select("*", { count: "exact", head: true })
-        .eq("family_id", familyID)
-        .eq("gender", gender)
-        .is("age", null);
-
-    if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: Adults", error);
-        throw new DatabaseError("fetch", "adults", logId);
-    }
-    return count!;
-};
-
-const deleteAdultMembers = async (
-    familyID: string,
-    gender: string,
-    count: number
-): Promise<void> => {
-    const { error } = await supabase
-        .from("families")
-        .delete()
-        .eq("family_id", familyID)
-        .eq("gender", gender)
-        .is("age", null)
-        .order("primary_key")
-        .limit(count);
-
-    if (error) {
-        const logId = await logErrorReturnLogId("Error with delete: Adult members", error);
-        throw new DatabaseError("delete", "adult members", logId);
-    }
-    void logInfoReturnLogId(`Adult members from familyID ${familyID} removed.`);
-};
-
-const updateChildren = async (children: Person[]): Promise<void> => {
-    for (const child of children) {
-        const record: FamilyDatabaseUpdateRecord = {
-            gender: child.gender,
-            age: child.age,
-        };
-        const { error } = await supabase
-            .from("families")
-            .update(record)
-            .eq("primary_key", child.primaryKey);
-
-        if (error) {
-            const logId = await logErrorReturnLogId(
-                `Error with update: Child ID ${child.primaryKey}`,
-                error
-            );
-            throw new DatabaseError("update", "child", logId);
-        }
-        void logInfoReturnLogId(
-            `Child member of familyID ${record.family_id} with childID ${child.primaryKey} updated.`
-        );
-    }
-};
-
-const deleteChildren = async (children: Person[]): Promise<void> => {
-    for (const child of children) {
-        const { error } = await supabase
-            .from("families")
-            .delete()
-            .eq("primary_key", child.primaryKey);
-
-        if (error) {
-            const logId = await logErrorReturnLogId(
-                `Error with delete: Child ID ${child.primaryKey}`,
-                error
-            );
-            throw new DatabaseError("delete", "child", logId);
-        }
-        void logInfoReturnLogId(`Child with childID ${child.primaryKey} successfully deleted.`);
-    }
-};
-
-const insertClient = async (
-    clientRecord: ClientDatabaseInsertRecord
-): Promise<ClientAndFamilyIds> => {
-    const { data: ids, error } = await supabase
-        .from("clients")
-        .insert(clientRecord)
-        .select("primary_key, family_id");
-
-    if (error) {
-        const logId = await logErrorReturnLogId("Error with insert: Client", error);
-        throw new DatabaseError("insert", "client", logId);
-    }
-    void logInfoReturnLogId(`Client ${clientRecord.full_name} successfully created.`);
-    return ids![0];
-};
-
-const insertFamily = async (peopleArray: Person[], familyID: string): Promise<void> => {
-    const familyRecords: FamilyDatabaseInsertRecord[] = [];
-
-    for (const person of peopleArray) {
-        if (person.quantity === undefined || person.quantity > 0) {
-            familyRecords.push(...personToFamilyRecord(person, familyID));
-        }
-    }
-
-    const { error } = await supabase.from("families").insert(familyRecords);
-
-    if (error) {
-        const logId = await logErrorReturnLogId(`Error with insert: Family ID ${familyID}`, error);
-        throw new DatabaseError("insert", "family", logId);
-    }
-};
-
-const updateClient = async (
-    clientRecord: ClientDatabaseUpdateRecord,
-    primaryKey: string
-): Promise<ClientAndFamilyIds> => {
-    const { data: ids, error } = await supabase
-        .from("clients")
-        .update(clientRecord)
-        .eq("primary_key", primaryKey)
-        .select("primary_key, family_id");
-
-    if (error) {
-        const logId = await logErrorReturnLogId(
-            `Error with update: Client ID ${primaryKey}`,
-            error
-        );
-        throw new DatabaseError("update", "client", logId);
-    }
-    return ids![0];
-};
-
-const updateFamily = async (
-    adults: Person[],
-    children: Person[],
-    familyID: string
-): Promise<void> => {
-    const childrenInDatabase = await getChildrenInDatabase(familyID);
-    const people: PeopleGroupedByAction = { toInsert: [], toUpdate: [], toDelete: [] };
-
-    for (const child of children) {
-        if (child.primaryKey === undefined) {
-            people.toInsert.push(child);
-            continue;
-        }
-        if (childrenInDatabase.includes(child.primaryKey)) {
-            people.toUpdate.push(child);
-            continue;
-        }
-        people.toDelete.push(child);
-    }
-
-    for (const adult of adults) {
-        const numberAdultsInDatabase = await getNumberAdults(familyID, adult.gender);
-        const difference = adult.quantity! - numberAdultsInDatabase;
-        if (difference > 0) {
-            const record = { ...adult, quantity: difference };
-            people.toInsert.push(record);
-        }
-        if (difference < 0) {
-            await deleteAdultMembers(familyID, adult.gender, -difference);
-        }
-    }
-
-    await insertFamily(people.toInsert, familyID);
-    await updateChildren(people.toUpdate);
-    await deleteChildren(people.toDelete);
-};
-
-const revertClientInsert = async (primaryKey: string): Promise<void> => {
-    const { error } = await supabase.from("clients").delete().eq("primary_key", primaryKey);
-    if (error) {
-        const logId = await logErrorReturnLogId(
-            `Error with delete: Revert incomplete client insert, Client ID ${primaryKey}`,
-            error
-        );
-        throw new Error(
-            "We could not revert an incomplete client insert at this time, and there may be faulty data stored. Please contact a developer for assistance." +
-                `ErrorID: ${logId}`
-        );
-    }
-};
-
-const revertClientUpdate = async (
-    initialRecords: ClientDatabaseUpdateRecord,
-    primaryKey: string
-): Promise<void> => {
-    const { error } = await supabase
-        .from("clients")
-        .update(initialRecords)
-        .eq("primary_key", primaryKey);
-    if (error) {
-        const logId = logErrorReturnLogId(
-            `Error with delete: Revert incomplete client update, Client ID ${primaryKey}`,
-            error
-        );
-        throw new Error(
-            "We could not revert an incomplete client update at this time, and there may be faulty data stored. Please contact a developer for assistance." +
-                `ErrorID: ${logId}`
-        );
-    }
+    return peopleToInsert.map((person) => personToFamilyRecordWithoutFamilyId(person));
 };
 
 const formatClientRecord = (
-    fields: Fields
+    fields: ClientFields
 ): ClientDatabaseInsertRecord | ClientDatabaseUpdateRecord => {
     const extraInformationWithNappy =
         fields.nappySize === ""
@@ -274,34 +62,50 @@ const formatClientRecord = (
     };
 };
 
-export const submitAddClientForm: SubmitFormHelper = async (fields, router) => {
+export const submitAddClientForm = async (
+    fields: ClientFields,
+    router: AppRouterInstance
+): Promise<void> => {
     const clientRecord = formatClientRecord(fields);
-    const ids = await insertClient(clientRecord);
-    try {
-        await insertFamily([...fields.adults, ...fields.children], ids.family_id);
-        router.push(`/parcels/add/${ids.primary_key}`);
-    } catch (error) {
-        await revertClientInsert(ids.primary_key);
-        const logId = await logErrorReturnLogId(`Error with insert: Client ID ${ids.primary_key}`);
-        throw new DatabaseError("update", "client", logId);
+    const familyMembers = getFamilyMembers(fields.adults, fields.children);
+    const { data: clientId, error } = await supabase.rpc("insertClientAndTheirFamily", {
+        clientrecord: clientRecord,
+        familymembers: familyMembers,
+    });
+    if (error) {
+        const logId = await logErrorReturnLogId(
+            "Error with inserting new client and their family",
+            {
+                error,
+            }
+        );
+
+        throw new DatabaseError("insert", "client", logId);
     }
+    router.push(`/parcels/add/${clientId}`);
 };
 
-export const submitEditClientForm: SubmitFormHelper = async (
-    fields,
-    router,
-    initialFields,
-    primaryKey
-) => {
+export const submitEditClientForm = async (
+    fields: ClientFields,
+    router: AppRouterInstance,
+    primaryKey: string
+): Promise<void> => {
     const clientRecord = formatClientRecord(fields);
-    const clientBeforeUpdate = formatClientRecord(initialFields!);
-    const ids = await updateClient(clientRecord, primaryKey!);
-    try {
-        await updateFamily(fields.adults, fields.children, ids.family_id);
-        router.push(`/clients?clientId=${primaryKey}`);
-    } catch (error) {
-        await revertClientUpdate(clientBeforeUpdate, primaryKey!);
-        const logId = await logErrorReturnLogId(`Error with update: Client ID ${ids.primary_key}`);
+    const familyMembers = getFamilyMembers(fields.adults, fields.children);
+    const { data: clientId, error } = await supabase.rpc("updateClientAndTheirFamily", {
+        clientrecord: clientRecord,
+        familymembers: familyMembers,
+        clientid: primaryKey,
+    });
+    if (error) {
+        const logId = await logErrorReturnLogId(
+            `Error with updating client and their family: Client id ${primaryKey}`,
+            {
+                error,
+            }
+        );
+
         throw new DatabaseError("update", "client", logId);
     }
+    router.push(`/clients?clientId=${clientId}`);
 };

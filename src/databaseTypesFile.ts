@@ -695,12 +695,27 @@ export type Database = {
       }
     }
     Functions: {
+      insertClientAndTheirFamily: {
+        Args: {
+          clientrecord: Json
+          familymembers: Json
+        }
+        Returns: string
+      }
       packing_slot_order_swap: {
         Args: {
           id1: string
           id2: string
         }
         Returns: undefined
+      }
+      updateClientAndTheirFamily: {
+        Args: {
+          clientrecord: Json
+          familymembers: Json
+          clientid: string
+        }
+        Returns: string
       }
     }
     Enums: {
