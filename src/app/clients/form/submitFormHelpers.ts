@@ -2,7 +2,6 @@ import { InsertSchema, UpdateSchema } from "@/databaseUtils";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {
     checkboxGroupToArray,
-    Fields,
     NumberAdultsByGender,
     Person,
 } from "@/components/Form/formFunctions";
@@ -69,31 +68,21 @@ export const submitAddClientForm = async (
 ): Promise<void> => {
     const clientRecord = formatClientRecord(fields);
     const familyMembers = getFamilyMembers(fields.adults, fields.children);
-    try {
-        const { data: clientId, error } = await supabase.rpc("insertClientAndTheirFamily", {
-            clientrecord: clientRecord,
-            familymembers: familyMembers,
-        });
-        if (error) {
-            const logId = await logErrorReturnLogId(
-                "Error with inserting new client and their family",
-                {
-                    error,
-                }
-            );
-
-            throw new DatabaseError("insert", "client", logId);
-        }
-        router.push(`/parcels/add/${clientId}`);
-    } catch (error) {
+    const { data: clientId, error } = await supabase.rpc("insertClientAndTheirFamily", {
+        clientrecord: clientRecord,
+        familymembers: familyMembers,
+    });
+    if (error) {
         const logId = await logErrorReturnLogId(
             "Error with inserting new client and their family",
             {
                 error,
             }
         );
+
         throw new DatabaseError("insert", "client", logId);
     }
+    router.push(`/parcels/add/${clientId}`);
 };
 
 export const submitEditClientForm = async (
@@ -103,30 +92,20 @@ export const submitEditClientForm = async (
 ): Promise<void> => {
     const clientRecord = formatClientRecord(fields);
     const familyMembers = getFamilyMembers(fields.adults, fields.children);
-    try {
-        const { data: clientId, error } = await supabase.rpc("updateClientAndTheirFamily", {
-            clientrecord: clientRecord,
-            familymembers: familyMembers,
-            clientid: primaryKey,
-        });
-        if (error) {
-            const logId = await logErrorReturnLogId(
-                `Error with updating client and their family: Client id ${primaryKey}`,
-                {
-                    error,
-                }
-            );
-
-            throw new DatabaseError("update", "client", logId);
-        }
-        router.push(`/parcels/add/${clientId}`);
-    } catch (error) {
+    const { data: clientId, error } = await supabase.rpc("updateClientAndTheirFamily", {
+        clientrecord: clientRecord,
+        familymembers: familyMembers,
+        clientid: primaryKey,
+    });
+    if (error) {
         const logId = await logErrorReturnLogId(
             `Error with updating client and their family: Client id ${primaryKey}`,
             {
                 error,
             }
         );
+
         throw new DatabaseError("update", "client", logId);
     }
+    router.push(`/parcels/add/${clientId}`);
 };
