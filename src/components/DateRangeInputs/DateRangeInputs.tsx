@@ -9,28 +9,22 @@ const reasonableMinDate = dayjs("2020-01-01").utc();
 dayjs.extend(utc);
 
 export interface DateRangeState {
-    from: Dayjs | null;
-    to: Dayjs | null;
+    from: Dayjs;
+    to: Dayjs;
 }
 
 interface Props {
     range: DateRangeState;
-    setRange?: (range: DateRangeState) => void;
+    setRange: (range: DateRangeState) => void;
 }
 
 const DateRangeInputs: React.FC<Props> = (props) => {
-    const isRangeValid = (from: Dayjs | null, to: Dayjs | null): boolean => {
-        return (
-            from !== null &&
-            to !== null &&
-            from >= reasonableMinDate &&
-            to >= reasonableMinDate &&
-            from <= to
-        );
+    const isRangeValid = (from: Dayjs, to: Dayjs): boolean => {
+        return from >= reasonableMinDate && to >= reasonableMinDate && from <= to;
     };
 
     const setRangeIfPossible = (from: Dayjs | null, to: Dayjs | null): void => {
-        if (props.setRange && isRangeValid(from, to)) {
+        if (from && to && isRangeValid(from, to)) {
             props.setRange({
                 from: from,
                 to: to,
