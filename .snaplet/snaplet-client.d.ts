@@ -27,6 +27,38 @@ type Override = {
       created?: string;
     };
   }
+  audit_log?: {
+    name?: string;
+    fields?: {
+      primary_key?: string;
+      user_id?: string;
+      action?: string;
+      client_id?: string;
+      collection_centre_id?: string;
+      event_id?: string;
+      family_member_id?: string;
+      list_id?: string;
+      list_hotel_id?: string;
+      packing_slot_id?: string;
+      parcel_id?: string;
+      status_order?: string;
+      website_data?: string;
+      content?: string;
+      wasSuccess?: string;
+      log_id?: string;
+      users?: string;
+      clients?: string;
+      collection_centres?: string;
+      events?: string;
+      families?: string;
+      lists?: string;
+      lists_hotel?: string;
+      packing_slots?: string;
+      parcels?: string;
+      status_order?: string;
+      website_data?: string;
+    };
+  }
   audit_log_entries?: {
     name?: string;
     fields?: {
@@ -74,6 +106,7 @@ type Override = {
       extra_information?: string;
       flagged_for_attention?: string;
       signposting_call_required?: string;
+      audit_log?: string;
       families?: string;
       parcels?: string;
     };
@@ -84,6 +117,7 @@ type Override = {
       name?: string;
       acronym?: string;
       primary_key?: string;
+      audit_log?: string;
       parcels?: string;
     };
   }
@@ -96,6 +130,7 @@ type Override = {
       parcel_id?: string;
       event_data?: string;
       parcels?: string;
+      audit_log?: string;
     };
   }
   families?: {
@@ -106,6 +141,7 @@ type Override = {
       gender?: string;
       age?: string;
       clients?: string;
+      audit_log?: string;
     };
   }
   flow_state?: {
@@ -219,6 +255,7 @@ type Override = {
       quantity_for_8?: string;
       quantity_for_9?: string;
       quantity_for_10?: string;
+      audit_log?: string;
     };
   }
   lists_hotel?: {
@@ -247,6 +284,7 @@ type Override = {
       quantity_for_8?: string;
       quantity_for_9?: string;
       quantity_for_10?: string;
+      audit_log?: string;
     };
   }
   mfa_amr_claims?: {
@@ -326,6 +364,7 @@ type Override = {
       name?: string;
       is_shown?: string;
       order?: string;
+      audit_log?: string;
       parcels?: string;
     };
   }
@@ -342,6 +381,7 @@ type Override = {
       clients?: string;
       collection_centres?: string;
       packing_slots?: string;
+      audit_log?: string;
       events?: string;
     };
   }
@@ -393,6 +433,7 @@ type Override = {
       request_id?: string;
       for_email?: string;
       redirect_to?: string;
+      from_ip_address?: string;
       from_ip_address?: string;
       created_at?: string;
       updated_at?: string;
@@ -476,6 +517,7 @@ type Override = {
     fields?: {
       event_name?: string;
       workflow_order?: string;
+      audit_log?: string;
     };
   }
   users?: {
@@ -518,6 +560,7 @@ type Override = {
       identities?: string;
       mfa_factors?: string;
       sessions?: string;
+      audit_log?: string;
       profiles?: string;
     };
   }
@@ -526,6 +569,7 @@ type Override = {
     fields?: {
       name?: string;
       value?: string;
+      audit_log?: string;
     };
   }}
 export type Alias = {
@@ -557,6 +601,20 @@ export interface Fingerprint {
     headers?: FingerprintJsonField;
     created?: FingerprintDateField;
   }
+  auditLogs?: {
+    content?: FingerprintJsonField;
+    user?: FingerprintRelationField;
+    clientByClientId?: FingerprintRelationField;
+    collectionCentreByCollectionCentreId?: FingerprintRelationField;
+    eventByEventId?: FingerprintRelationField;
+    familyByFamilyMemberId?: FingerprintRelationField;
+    listByListId?: FingerprintRelationField;
+    listsHotelByListHotelId?: FingerprintRelationField;
+    packingSlotByPackingSlotId?: FingerprintRelationField;
+    parcelByParcelId?: FingerprintRelationField;
+    statusOrderByStatusOrder?: FingerprintRelationField;
+    websiteDatumByWebsiteData?: FingerprintRelationField;
+  }
   auditLogEntries?: {
     payload?: FingerprintJsonField;
     createdAt?: FingerprintDateField;
@@ -568,19 +626,23 @@ export interface Fingerprint {
     objects?: FingerprintRelationField;
   }
   clients?: {
+    auditLogsByClientId?: FingerprintRelationField;
     families?: FingerprintRelationField;
     parcelsByClientId?: FingerprintRelationField;
   }
   collectionCentres?: {
+    auditLogsByCollectionCentreId?: FingerprintRelationField;
     parcelsByCollectionCentre?: FingerprintRelationField;
   }
   events?: {
     timestamp?: FingerprintDateField;
     parcelByParcelId?: FingerprintRelationField;
+    auditLogsByEventId?: FingerprintRelationField;
   }
   families?: {
     age?: FingerprintNumberField;
     family?: FingerprintRelationField;
+    auditLogsByFamilyMemberId?: FingerprintRelationField;
   }
   flowStates?: {
     createdAt?: FingerprintDateField;
@@ -619,9 +681,11 @@ export interface Fingerprint {
   }
   lists?: {
     rowOrder?: FingerprintNumberField;
+    auditLogsByListId?: FingerprintRelationField;
   }
   listsHotels?: {
     rowOrder?: FingerprintNumberField;
+    auditLogsByListHotelId?: FingerprintRelationField;
   }
   mfaAmrClaims?: {
     createdAt?: FingerprintDateField;
@@ -655,6 +719,7 @@ export interface Fingerprint {
   }
   packingSlots?: {
     order?: FingerprintNumberField;
+    auditLogsByPackingSlotId?: FingerprintRelationField;
     parcelsByPackingSlot?: FingerprintRelationField;
   }
   parcels?: {
@@ -663,6 +728,7 @@ export interface Fingerprint {
     clientByClientId?: FingerprintRelationField;
     collectionCentreByCollectionCentre?: FingerprintRelationField;
     packingSlotByPackingSlot?: FingerprintRelationField;
+    auditLogsByParcelId?: FingerprintRelationField;
     eventsByParcelId?: FingerprintRelationField;
   }
   profiles?: {
@@ -720,6 +786,7 @@ export interface Fingerprint {
   }
   statusOrders?: {
     workflowOrder?: FingerprintNumberField;
+    auditLogsByStatusOrder?: FingerprintRelationField;
   }
   users?: {
     emailConfirmedAt?: FingerprintDateField;
@@ -742,8 +809,9 @@ export interface Fingerprint {
     identities?: FingerprintRelationField;
     mfaFactors?: FingerprintRelationField;
     sessions?: FingerprintRelationField;
+    auditLogs?: FingerprintRelationField;
     profilesByPrimaryKey?: FingerprintRelationField;
   }
   websiteData?: {
-
+    auditLogsByWebsiteData?: FingerprintRelationField;
   }}
