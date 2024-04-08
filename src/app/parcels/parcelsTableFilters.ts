@@ -11,11 +11,14 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { CollectionCentresOptions } from "@/app/parcels/fetchParcelTableData";
+import { Dayjs } from "dayjs";
 
 interface packingSlotOptionsSet {
     key: string;
     value: string;
 }
+
+const getDbDate = (dateTime: Dayjs): string => dateTime.format("YYYY-MM-DD");
 
 export const fullNameSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
@@ -78,7 +81,9 @@ export const buildDateFilter = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: DateRangeState
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.gte("packing_date", state.from).lte("packing_date", state.to);
+        return query
+            .gte("packing_date", getDbDate(state.from))
+            .lte("packing_date", getDbDate(state.to));
     };
     return dateFilter<ParcelsTableRow>({
         key: "packingDate",
