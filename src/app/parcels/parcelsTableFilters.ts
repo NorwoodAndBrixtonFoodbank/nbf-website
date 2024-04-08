@@ -78,7 +78,7 @@ export const buildDateFilter = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: DateRangeState
     ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.gt("packing_date", state.from).lte("packing_date", state.to);
+        return query.gte("packing_date", state.from).lte("packing_date", state.to);
     };
     return dateFilter<ParcelsTableRow>({
         key: "packingDate",

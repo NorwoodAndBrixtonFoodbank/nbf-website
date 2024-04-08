@@ -43,6 +43,9 @@ import {
     voucherSearch,
 } from "@/app/parcels/parcelsTableFilters";
 import { ActionsContainer } from "@/components/Form/formStyling";
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -289,11 +292,10 @@ const ParcelsPage: React.FC<{}> = () => {
             primaryFilters: Filter<ParcelsTableRow, any>[];
             additionalFilters: Filter<ParcelsTableRow, any>[];
         }> => {
-            const startOfToday = dayjs().startOf("day");
-            const endOfToday = dayjs().endOf("day");
+            const today = dayjs().utc();
             const dateFilter = buildDateFilter({
-                from: startOfToday,
-                to: endOfToday,
+                from: today,
+                to: today,
             });
             const primaryFilters: Filter<ParcelsTableRow, any>[] = [
                 dateFilter,

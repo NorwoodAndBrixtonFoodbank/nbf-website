@@ -3,8 +3,10 @@
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import React from "react";
+import utc from 'dayjs/plugin/utc';
 
-const reasonableMinDate = dayjs("2020-01-01");
+const reasonableMinDate = dayjs("2020-01-01").utc();
+dayjs.extend(utc);
 
 export interface DateRangeState {
     from: Dayjs | null;
