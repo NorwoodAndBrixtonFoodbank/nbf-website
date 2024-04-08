@@ -10,6 +10,7 @@ import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import StatusesBarModal from "@/app/parcels/ActionBar/StatusesModal";
 import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
+import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 export const statusNames = [
     "No Status",
@@ -29,11 +30,11 @@ export const statusNames = [
     "Delivery Cancelled",
     "Fulfilled with Trussell Trust",
     "Request Deleted",
-];
+] as const;
 
-export type statusType = (typeof statusNames)[number];
+export type StatusType = (typeof statusNames)[number];
 
-const nonMenuStatuses: statusType[] = [
+const nonMenuStatuses: StatusType[] = [
     "Shipping Labels Downloaded",
     "Shopping List Downloaded",
     "Out for Delivery",
@@ -42,7 +43,7 @@ const nonMenuStatuses: statusType[] = [
 
 export const saveParcelStatus = async (
     parcelIds: string[],
-    statusName: statusType,
+    statusName: StatusType,
     statusEventData?: string | null,
     date?: Dayjs | null
 ): Promise<void> => {
@@ -58,11 +59,28 @@ export const saveParcelStatus = async (
         })
         .flat();
 
-    const { error } = await supabase.from("events").insert(toInsert);
-    if (error) {
+    const auditLogs = toInsert.map((eventToInsert) => ({
+            action: statusName === "Request Deleted" ? "delete parcel" : "change parcel status",
+            content: { eventToInsert },
+            parcelId: eventToInsert.parcel_id,
+        } satisfies Partial<AuditLog>)); 
+
+    const { data, error } = await supabase.from("events").insert(toInsert).select("event_id:primary_key, parcel_id");
+
+    if (error ?? !data) {
         const logId = await logErrorReturnLogId("Error with insert: Status event", error);
+        auditLogs.forEach(async (auditLog) => await sendAuditLog({ ...auditLog, wasSuccess: false, logId }));
         throw new DatabaseError("insert", "status event", logId);
     }
+
+    auditLogs.map((auditLog, index) => ({
+        ...auditLog,
+        eventId: data[index].event_id,
+    } satisfies Partial<AuditLog>));
+
+    auditLogs.forEach(async (auditLog) => await sendAuditLog({ ...auditLog, wasSuccess: true }));
+
+
 };
 
 interface Props {
@@ -87,7 +105,7 @@ const Statuses: React.FC<Props> = ({
     parcelIds,
 }) => {
     const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
-    const [selectedStatus, setSelectedStatus] = useState<statusType | null>(null);
+    const [selectedStatus, setSelectedStatus] = useState<StatusType | null>(null);
     const [statusModal, setStatusModal] = useState(false);
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
@@ -109,7 +127,7 @@ const Statuses: React.FC<Props> = ({
         hasSavedParcelStatus();
     };
 
-    const onMenuItemClick = (status: statusType): (() => void) => {
+    const onMenuItemClick = (status: StatusType): (() => void) => {
         return async () => {
             try {
                 const fetchedParcels = await fetchParcelsByIds(parcelIds);

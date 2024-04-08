@@ -11,7 +11,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
-import { statusType } from "./Statuses";
+import { StatusType } from "./Statuses";
 import SelectedParcelsOverview from "./SelectedParcelsOverview";
 import { logErrorReturnLogId } from "@/logger/logger";
 
@@ -78,7 +78,7 @@ export const ShoppingListsConfirmation: React.FC<ShoppingListsConfirmationProps>
     parcels,
 }) => {
     const maxPostcodesToShow = 4;
-    const statusToFind: statusType = "Shopping List Downloaded";
+    const statusToFind: StatusType = "Shopping List Downloaded";
 
     const printedListPostcodes = parcels
         .filter((parcel) => parcel.lastStatus?.name.startsWith(statusToFind))
