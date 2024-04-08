@@ -53,11 +53,14 @@ const getParcelsQuery = (
         sortState.sortEnabled &&
         sortState.column.sortMethodConfig?.paginationType === PaginationType.Server
     ) {
-        console.log("boop")
+        console.log("boop");
         query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
     } else {
-        console.log("beep")
-        query = query.order("packing_date", { ascending: false }).order("packing_slot_order").order("client_full_name");
+        console.log("beep");
+        query = query
+            .order("packing_date", { ascending: false })
+            .order("packing_slot_order")
+            .order("client_full_name");
     }
 
     query.order("parcel_id");
