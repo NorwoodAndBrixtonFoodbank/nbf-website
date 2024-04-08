@@ -43,7 +43,7 @@ import {
     voucherSearch,
 } from "@/app/parcels/parcelsTableFilters";
 import { ActionsContainer } from "@/components/Form/formStyling";
-import utc from 'dayjs/plugin/utc';
+import utc from "dayjs/plugin/utc";
 
 dayjs.extend(utc);
 
