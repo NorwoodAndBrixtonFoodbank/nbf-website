@@ -3,11 +3,11 @@
 import { authenticateAsAdmin } from "@/server/authenticateAdminUser";
 import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
 import { User } from "@supabase/gotrue-js";
-import { CreateUserDetails } from "@/app/admin/createUser/CreateUserForm";
+import { InviteUserDetails } from "@/app/admin/createUser/CreateUserForm";
 import supabase from "@/supabaseClient";
 import { logInfoReturnLogId } from "@/logger/logger";
 
-type CreateUsersDataAndErrorType =
+type InviteUsersDataAndErrorType =
     | {
           data: User;
           error: null;
@@ -17,9 +17,10 @@ type CreateUsersDataAndErrorType =
           error: Record<string, string>;
       };
 
-export async function adminCreateUser(
-    userDetails: CreateUserDetails
-): Promise<CreateUsersDataAndErrorType> {
+export async function adminInviteUser(
+    userDetails: InviteUserDetails,
+    redirectUrl: string
+): Promise<InviteUsersDataAndErrorType> {
     const { isSuccess, failureReason } = await authenticateAsAdmin();
 
     if (!isSuccess) {
@@ -30,10 +31,8 @@ export async function adminCreateUser(
     }
 
     const adminAuthClient = getSupabaseAdminAuthClient();
-    const { data, error } = await adminAuthClient.createUser({
-        email: userDetails.email,
-        password: userDetails.password,
-        email_confirm: true,
+    const { data, error } = await adminAuthClient.inviteUserByEmail(userDetails.email, {
+        redirectTo: redirectUrl,
     });
 
     if (error) {
