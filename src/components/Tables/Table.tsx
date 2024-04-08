@@ -570,7 +570,7 @@ const TableStyling = styled.div`
     }
 
     & div.rdt_TableRow:hover {
-        background-color: ${(props) => props.theme.main.background[2]};
+        background-color: ${(props) => props.theme.primary.background[1]};
     }
 
     & .rdt_TableHeadRow {
