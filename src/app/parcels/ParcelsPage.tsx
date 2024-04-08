@@ -43,6 +43,7 @@ import {
     voucherSearch,
 } from "@/app/parcels/parcelsTableFilters";
 import { ActionsContainer } from "@/components/Form/formStyling";
+import { dateFilter } from "@/components/Tables/DateFilter";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -120,7 +121,7 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
         key: "packingDate",
         sortMethodConfig: {
             method: (query, sortDirection) =>
-                query.order("packing_date", { ascending: sortDirection === "asc" }),
+                query.order("packing_date", { ascending: sortDirection === "asc" }).order("packing_slot_order").order("client_full_name"),
             paginationType: PaginationType.Server,
         },
     },
@@ -280,6 +281,8 @@ const ParcelsPage: React.FC<{}> = () => {
         setClientIdForSelectedParcel(null);
         void fetchAndSetClientIdForSelectedParcel();
     }, [fetchAndSetClientIdForSelectedParcel]);
+    
+    
 
     useEffect(() => {
         const buildFilters = async (): Promise<{
@@ -341,6 +344,8 @@ const ParcelsPage: React.FC<{}> = () => {
             setAreFiltersLoadingForFirstTime(false);
         })();
     }, []);
+
+    useEffect(() => {primaryFilters[0] && console.log(primaryFilters[0].state)}, [primaryFilters[0]]);
 
     const fetchAndDisplayParcelsData = useCallback(async (): Promise<void> => {
         const allFilters = [...primaryFilters, ...additionalFilters];
