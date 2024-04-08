@@ -7,16 +7,31 @@ interface Props {
     children: React.ReactNode;
 }
 
-const pathsShownToCaller = ["/calendar", "/clients", "/parcels", "/update-password"];
+export const pathsNotRequiringLogin = [
+    "/login",
+    "/forgot-password",
+    "/auth/reset-password",
+    "/set-password",
+] as const;
 
-const getShownPagesByRole = (role: UserRole | null): string[] => {
+const pathsShownToAllAuthenticatedUsers = [
+    "/calendar",
+    "/clients",
+    "/parcels",
+    "/update-password",
+    "/set-password",
+] as const;
+
+const pathsOnlyShownToAdmin = ["/admin", "/lists"] as const;
+
+const getShownPagesByRole = (role: UserRole | null): readonly string[] => {
     switch (role) {
         case "admin":
-            return pathsShownToCaller.concat("/admin", "/lists");
+            return [...pathsShownToAllAuthenticatedUsers, ...pathsOnlyShownToAdmin];
         case "caller":
-            return pathsShownToCaller;
+            return pathsShownToAllAuthenticatedUsers;
         case null:
-            return ["/login", "/forgot-password", "/auth/reset-password"];
+            return pathsNotRequiringLogin;
     }
 };
 

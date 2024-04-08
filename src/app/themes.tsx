@@ -125,7 +125,7 @@ export const lightTheme: DefaultTheme = {
 export const darkTheme: DefaultTheme = {
     light: false,
     main: {
-        background: ["#111111", "#161616", "#212121", "#2d2d2d"],
+        background: ["#111111", "#212121", "#2d2d2d", "#313131"],
         foreground: ["#d9d9d9", "#d9d9d9", "#d9d9d9", "#d9d9d9"],
         largeForeground: ["#d9d9d9", "#d9d9d9", "#d9d9d9", "#d9d9d9"],
         lighterForeground: ["#969696", "#969696", "#969696", "#bbbbbb"],

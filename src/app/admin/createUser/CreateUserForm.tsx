@@ -21,20 +21,18 @@ import { User } from "@supabase/gotrue-js";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import UserDetailsCard from "@/app/admin/createUser/UserDetailsCard";
-import { adminCreateUser } from "@/server/adminCreateUser";
+import { adminInviteUser } from "@/server/adminInviteUser";
 
-export interface CreateUserDetails {
+export interface InviteUserDetails {
     email: string;
-    password: string;
     role: Database["public"]["Enums"]["role"];
     firstName: string;
     lastName: string;
     telephoneNumber: string;
 }
 
-const initialFields: CreateUserDetails = {
+const initialFields: InviteUserDetails = {
     email: "",
-    password: "",
     role: "caller",
     firstName: "",
     lastName: "",
@@ -43,7 +41,6 @@ const initialFields: CreateUserDetails = {
 
 const initialFormErrors: FormErrors = {
     email: Errors.initial,
-    password: Errors.initial,
     role: Errors.none,
     firstName: Errors.initial,
     lastName: Errors.initial,
@@ -62,7 +59,7 @@ const CreateUserForm: React.FC<{}> = () => {
     const [submitError, setSubmitError] = useState(Errors.none);
     const [submitDisabled, setSubmitDisabled] = useState(false);
 
-    const [createdUser, setCreatedUser] = useState<User | null>(null);
+    const [invitedUser, setInvitedUser] = useState<User | null>(null);
 
     const submitForm = async (): Promise<void> => {
         setSubmitDisabled(true);
@@ -73,25 +70,24 @@ const CreateUserForm: React.FC<{}> = () => {
             return;
         }
 
-        const { data, error } = await adminCreateUser(fields);
+        const redirectUrl = `${window.location.origin}/set-password`;
+
+        const { data, error } = await adminInviteUser(fields, redirectUrl);
 
         if (error) {
             setSubmitError(Errors.external);
             setSubmitDisabled(false);
-            setCreatedUser(null);
+            setInvitedUser(null);
 
-            const logId = await logErrorReturnLogId(
-                `Error with insert: User ${fields.firstName} ${fields.lastName}`,
-                { error }
-            );
-            throw new DatabaseError("insert", "user", logId);
+            const logId = await logErrorReturnLogId("Error with auth: Invite user", error);
+            throw new DatabaseError("insert", "invite user", logId);
         }
 
         setSubmitError(Errors.none);
         setSubmitDisabled(false);
-        setCreatedUser(data);
+        setInvitedUser(data);
         void logInfoReturnLogId(
-            `User ${fields.email} with role ${fields.role} created successfully.`
+            `User ${fields.email} with role ${fields.role} invited successfully.`
         );
     };
 
@@ -110,9 +106,9 @@ const CreateUserForm: React.FC<{}> = () => {
                     );
                 })}
 
-                {createdUser ? (
+                {invitedUser ? (
                     <Alert severity="success" action={<RefreshPageButton />}>
-                        User <b>{createdUser.email}</b> created successfully.
+                        User <b>{invitedUser.email}</b> invited successfully.
                     </Alert>
                 ) : (
                     <Button
@@ -121,7 +117,7 @@ const CreateUserForm: React.FC<{}> = () => {
                         onClick={submitForm}
                         disabled={submitDisabled}
                     >
-                        Create User
+                        Invite User
                     </Button>
                 )}
 

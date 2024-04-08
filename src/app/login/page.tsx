@@ -3,6 +3,7 @@
 import AuthPanel, { AuthLink, AuthMain } from "@/components/AuthPanel";
 import React, { ReactElement, useState } from "react";
 import { signInWithPassword } from "@/authentication/signIn";
+import { AuthError } from "@supabase/gotrue-js";
 
 const linksToDisplay: AuthLink[] = [
     {
@@ -16,11 +17,15 @@ export default function Login(): ReactElement {
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const initiateSignIn = (): void => {
+    const initiateSignIn = async (): Promise<void> => {
         setErrorMessage(null);
-        signInWithPassword({ email, password }).then(({ errorMessage }) => {
-            setErrorMessage(errorMessage);
-        });
+        try {
+            await signInWithPassword({ email, password });
+        } catch (error) {
+            if (error instanceof AuthError) {
+                setErrorMessage(error.message);
+            }
+        }
     };
 
     return (

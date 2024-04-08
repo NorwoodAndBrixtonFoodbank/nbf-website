@@ -3,19 +3,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { RoleUpdateContext, pathsNotRequiringLogin } from "@/app/roles";
 import { DatabaseAutoType, UserRole } from "@/databaseUtils";
-import { RoleUpdateContext } from "@/app/roles";
 import { fetchUserRole } from "@/common/fetchUserRole";
 
 interface Props {
     children: React.ReactNode;
 }
-
-export const pathsNotRequiringLogin: readonly string[] = [
-    "/login",
-    "/forgot-password",
-    "/auth/reset-password",
-] as const;
 
 export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
     const supabase = createClientComponentClient<DatabaseAutoType>();
