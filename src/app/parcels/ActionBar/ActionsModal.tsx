@@ -23,7 +23,13 @@ interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     inputComponent?: React.ReactElement;
     showSelectedParcels: boolean;
     actionType: ActionType;
-    onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
+    newStatus: StatusType;
+    auditLogActionMessage: string;
+    onActionCompleted: (
+        parcels: ParcelsTableRow[],
+        newStatus: StatusType,
+        auditLogActionMessage: string
+    ) => void;
 }
 
 const Centerer = styled.div`
@@ -221,7 +227,14 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                 <Button
                                     disabled={loading}
                                     variant="contained"
-                                    onClick={() => setLoadPdf(true)}
+                                    onClick={() => {
+                                        setLoadPdf(true);
+                                        props.onActionCompleted(
+                                            props.selectedParcels,
+                                            props.newStatus,
+                                            props.auditLogActionMessage
+                                        );
+                                    }}
                                 >
                                     {loading ? "Loading..." : "Create PDF"}
                                 </Button>
@@ -241,7 +254,11 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                         variant="contained"
                                         onClick={() => {
                                             setLoading(true);
-                                            props.onDeleteParcels(props.selectedParcels);
+                                            props.onActionCompleted(
+                                                props.selectedParcels,
+                                                props.newStatus,
+                                                props.auditLogActionMessage
+                                            );
                                         }}
                                     >
                                         Delete

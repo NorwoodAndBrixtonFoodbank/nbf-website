@@ -5,13 +5,17 @@ import styled from "styled-components";
 import Button from "@mui/material/Button";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import Alert from "@mui/material/Alert";
-import Statuses from "@/app/parcels/ActionBar/Statuses";
+import Statuses, { StatusType } from "@/app/parcels/ActionBar/Statuses";
 import Actions from "@/app/parcels/ActionBar/Actions";
 import { ArrowDropDown } from "@mui/icons-material";
 
 export interface ActionAndStatusButtonsProps {
     fetchParcelsByIds: (checkedParcelIds: string[]) => Promise<ParcelsTableRow[]>;
-    onDeleteParcels: (parcels: ParcelsTableRow[]) => void;
+    onActionCompleted: (
+        parcels: ParcelsTableRow[],
+        newStatus: StatusType,
+        auditLogActionMessage: string
+    ) => void;
     willSaveParcelStatus: () => void;
     hasSavedParcelStatus: () => void;
     parcelIds: string[];
@@ -44,7 +48,7 @@ const ActionAndStatusButtons: React.FC<ActionAndStatusButtonsProps> = (props) =>
             <Actions
                 parcelIds={props.parcelIds}
                 fetchParcelsByIds={props.fetchParcelsByIds}
-                onDeleteParcels={props.onDeleteParcels}
+                onActionCompleted={props.onActionCompleted}
                 actionAnchorElement={actionAnchorElement}
                 setActionAnchorElement={setActionAnchorElement}
                 modalError={modalError}

@@ -23,7 +23,7 @@ import supabase from "@/supabaseClient";
 import { getParcelIds, getParcelsByIds, getParcelsDataAndCount } from "./fetchParcelTableData";
 import dayjs from "dayjs";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { saveParcelStatus } from "./ActionBar/Statuses";
+import { StatusType, saveParcelStatus } from "./ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { CircularProgress } from "@mui/material";
@@ -522,11 +522,16 @@ const ParcelsPage: React.FC<{}> = () => {
         router.push(`/parcels?${parcelIdParam}=${row.data.parcelId}`);
     };
 
-    const deleteParcels = async (parcels: ParcelsTableRow[]): Promise<void> => {
+    const onActionCompleted = async (
+        parcels: ParcelsTableRow[],
+        newStatus: StatusType,
+        auditLogActionMessage: string
+    ): Promise<void> => {
         setIsLoading(true);
         await saveParcelStatus(
             parcels.map((parcel) => parcel.parcelId),
-            "Request Deleted"
+            newStatus,
+            auditLogActionMessage
         );
         setCheckedParcelIds([]);
         setIsLoading(false);
@@ -551,7 +556,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
                     <ActionAndStatusButtons
                         fetchParcelsByIds={getCheckedParcelsData}
-                        onDeleteParcels={deleteParcels}
+                        onActionCompleted={onActionCompleted}
                         willSaveParcelStatus={() => setIsLoading(true)}
                         hasSavedParcelStatus={() => setIsLoading(false)}
                         parcelIds={checkedParcelIds}

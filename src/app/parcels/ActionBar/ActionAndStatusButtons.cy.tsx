@@ -67,14 +67,14 @@ describe("Parcels - Action Bar", () => {
     const MockActionBar: React.FC<ActionAndStatusButtonsProps> = ({
         fetchParcelsByIds: fetchSelectedParcels,
         parcelIds,
-        onDeleteParcels,
+        onActionCompleted: onDeleteParcels,
     }) => {
         return (
             <Localization>
                 <StyleManager>
                     <ActionAndStatusButtons
                         fetchParcelsByIds={fetchSelectedParcels}
-                        onDeleteParcels={onDeleteParcels}
+                        onActionCompleted={onDeleteParcels}
                         hasSavedParcelStatus={() => {}}
                         willSaveParcelStatus={() => {}}
                         parcelIds={parcelIds}
@@ -95,7 +95,7 @@ describe("Parcels - Action Bar", () => {
                     fetchParcelsByIds={async (parcelIds: string[]) =>
                         await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
                     }
-                    onDeleteParcels={onDeleteParcels}
+                    onActionCompleted={onDeleteParcels}
                     hasSavedParcelStatus={() => {}}
                     willSaveParcelStatus={() => {}}
                     parcelIds={parcelIds}
@@ -174,7 +174,7 @@ describe("Parcels - Action Bar", () => {
                     fetchParcelsByIds={async (parcelIds: string[]) =>
                         await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
                     }
-                    onDeleteParcels={onDeleteParcels}
+                    onActionCompleted={onDeleteParcels}
                     hasSavedParcelStatus={() => {}}
                     willSaveParcelStatus={() => {}}
                     parcelIds={parcelIds}
