@@ -403,7 +403,6 @@ type Override = {
       for_email?: string;
       redirect_to?: string;
       from_ip_address?: string;
-      from_ip_address?: string;
       created_at?: string;
       updated_at?: string;
       flow_state_id?: string;

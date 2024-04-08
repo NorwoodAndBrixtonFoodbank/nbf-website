@@ -293,7 +293,6 @@ interface Table_auth_saml_relay_states {
   for_email: string | null;
   redirect_to: string | null;
   from_ip_address: string | null;
-  from_ip_address: string | null;
   created_at: string | null;
   updated_at: string | null;
   flow_state_id: string | null;
