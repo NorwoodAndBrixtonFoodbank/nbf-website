@@ -107,5 +107,5 @@ export const submitEditClientForm = async (
 
         throw new DatabaseError("update", "client", logId);
     }
-    router.push(`/parcels/add/${clientId}`);
+    router.push(`/clients?clientId=${clientId}`);
 };
