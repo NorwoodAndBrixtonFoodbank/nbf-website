@@ -26,27 +26,17 @@ const getFamilyMembers = (
     adults: NumberAdultsByGender,
     children: Person[]
 ): FamilyDatabaseInsertRecord[] => {
-    const peopleToInsert: Person[] = [];
-
-    for (const child of children) {
-        peopleToInsert.push(child);
-    }
-
-    for (let index = 0; index < adults.numberFemales; index++) {
-        peopleToInsert.push({ gender: "female", age: undefined });
-    }
-    for (let index = 0; index < adults.numberMales; index++) {
-        peopleToInsert.push({ gender: "male", age: undefined });
-    }
-    for (let index = 0; index < adults.numberUnknownGender; index++) {
-        peopleToInsert.push({ gender: "other", age: undefined });
-    }
+    const peopleToInsert = children.concat(
+        Array<Person>(adults.numberFemales).fill({ gender: "female", age: undefined }),
+        Array<Person>(adults.numberMales).fill({ gender: "male", age: undefined }),
+        Array<Person>(adults.numberUnknownGender).fill({ gender: "other", age: undefined })
+    );
 
     return peopleToInsert.map((person) => personToFamilyRecordWithoutFamilyId(person));
 };
 
 const formatClientRecord = (
-    fields: Fields
+    fields: ClientFields
 ): ClientDatabaseInsertRecord | ClientDatabaseUpdateRecord => {
     const extraInformationWithNappy =
         fields.nappySize === ""
@@ -85,7 +75,6 @@ export const submitAddClientForm = async (
             familymembers: familyMembers,
         });
         if (error) {
-            console.log(error);
             const logId = await logErrorReturnLogId(
                 "Error with inserting new client and their family",
                 {
@@ -121,7 +110,6 @@ export const submitEditClientForm = async (
             clientid: primaryKey,
         });
         if (error) {
-            console.log(error);
             const logId = await logErrorReturnLogId(
                 `Error with updating client and their family: Client id ${primaryKey}`,
                 {

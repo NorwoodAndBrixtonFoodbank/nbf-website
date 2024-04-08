@@ -43,15 +43,15 @@ const setNumberAdults = (
             newAdults.numberFemales < 0 ||
             newAdults.numberMales < 0 ||
             newAdults.numberUnknownGender < 0;
-        const nonZeroAdultEntry =
-            newAdults.numberFemales > 0 ||
-            newAdults.numberMales > 0 ||
-            newAdults.numberUnknownGender > 0;
+        const allAdultEntriesZero =
+            newAdults.numberFemales === 0 &&
+            newAdults.numberMales === 0 &&
+            newAdults.numberUnknownGender === 0;
 
         let errorType: Errors = Errors.none;
         if (invalidAdultEntry) {
             errorType = Errors.invalid;
-        } else if (!nonZeroAdultEntry) {
+        } else if (allAdultEntriesZero) {
             errorType = Errors.required;
         }
 
