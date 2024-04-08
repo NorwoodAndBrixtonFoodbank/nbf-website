@@ -60,6 +60,8 @@ const getParcelsQuery = (
         query = query.order("packing_date", { ascending: false }).order("packing_slot_order").order("client_full_name");
     }
 
+    query.order("parcel_id");
+
     return query;
 };
 
