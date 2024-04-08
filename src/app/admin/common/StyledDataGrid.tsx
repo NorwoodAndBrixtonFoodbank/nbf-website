@@ -28,6 +28,12 @@ const DataGridStyling = styled(DataGrid)`
         background-color: ${(props) => props.theme.main.background[0]};
         color: ${(props) => props.theme.main.foreground[2]};
     }
+
+    & .MuiDataGrid-virtualScrollerRenderZone {
+        & :hover {
+            background-color: ${(props) => props.theme.primary.background[1]};
+        }
+    }
 `;
 
 const StyledDataGrid: React.FC<DataGridProps> = (props) => <DataGridStyling {...props} />;
