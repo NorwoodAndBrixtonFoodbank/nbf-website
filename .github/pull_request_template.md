@@ -28,4 +28,4 @@ If you have made any changes to the database...
     - Run `npm run post_checkout` to reset the database, including the seed data.
     - Checkout your branch
     - Run `npx supabase migrations up --include-all --local` to run all outstanding migration files
-    - Check that the resulting database is what you expect.
+    - Check that the resulting database is what you expect, bar any seed data changes.
