@@ -9,6 +9,7 @@ import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { ClientFields } from "./ClientForm";
+import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 type FamilyDatabaseInsertRecord = Omit<InsertSchema["families"], "family_id">;
 type ClientDatabaseInsertRecord = InsertSchema["clients"];
@@ -72,6 +73,15 @@ export const submitAddClientForm = async (
         clientrecord: clientRecord,
         familymembers: familyMembers,
     });
+
+    const auditLog = {
+        action: "add a client",
+        content: {
+            clientDetails: clientRecord,
+            familyMembers: familyMembers,
+        },
+    } as const satisfies Partial<AuditLog>;
+
     if (error) {
         const logId = await logErrorReturnLogId(
             "Error with inserting new client and their family",
@@ -79,9 +89,16 @@ export const submitAddClientForm = async (
                 error,
             }
         );
-
+        await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
         throw new DatabaseError("insert", "client", logId);
     }
+
+    await sendAuditLog({
+        ...auditLog,
+        wasSuccess: true,
+        clientId: clientId,
+    });
+
     router.push(`/parcels/add/${clientId}`);
 };
 
@@ -97,6 +114,16 @@ export const submitEditClientForm = async (
         familymembers: familyMembers,
         clientid: primaryKey,
     });
+
+    const auditLog = {
+        action: "edit a client",
+        content: {
+            clientDetails: clientRecord,
+            familyMembers: familyMembers,
+        },
+        clientId: primaryKey,
+    } as const satisfies Partial<AuditLog>;
+
     if (error) {
         const logId = await logErrorReturnLogId(
             `Error with updating client and their family: Client id ${primaryKey}`,
@@ -104,8 +131,15 @@ export const submitEditClientForm = async (
                 error,
             }
         );
-
+        await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
         throw new DatabaseError("update", "client", logId);
     }
+
+    await sendAuditLog({
+        ...auditLog,
+        wasSuccess: true,
+        clientId: clientId,
+    });
+
     router.push(`/clients?clientId=${clientId}`);
 };
