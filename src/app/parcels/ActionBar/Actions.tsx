@@ -198,7 +198,8 @@ interface Props {
     onActionCompleted: (
         parcels: ParcelsTableRow[],
         newStatus: StatusType,
-        auditLogActionMessage: string
+        auditLogActionMessage: string,
+        statusEventData?: string
     ) => void;
     actionAnchorElement: HTMLElement | null;
     setActionAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
@@ -316,6 +317,7 @@ const Actions: React.FC<Props> = ({
                             onActionCompleted={onActionCompleted}
                             newStatus={value.newStatus}
                             auditLogActionMessage={value.auditLogActionMessage}
+                            labelQuantity={labelQuantity}
                             inputComponent={
                                 <ActionsInputComponent
                                     actionName={key}

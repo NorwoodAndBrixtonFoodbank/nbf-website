@@ -69,7 +69,7 @@ export const saveParcelStatus = async (
                 action: auditLogActionMessage ?? "change parcel status",
                 content: { eventToInsert },
                 parcelId: eventToInsert.parcel_id,
-            }) satisfies Partial<AuditLog>
+            })
     );
 
     const { data, error } = await supabase
@@ -85,15 +85,7 @@ export const saveParcelStatus = async (
         throw new DatabaseError("insert", "status event", logId);
     }
 
-    auditLogs.map(
-        (auditLog, index) =>
-            ({
-                ...auditLog,
-                eventId: data[index].event_id,
-            }) satisfies Partial<AuditLog>
-    );
-
-    auditLogs.forEach(async (auditLog) => await sendAuditLog({ ...auditLog, wasSuccess: true }));
+    auditLogs.forEach(async (auditLog, index) => await sendAuditLog({ ...auditLog, eventId: data[index].event_id, wasSuccess: true }));
 };
 
 interface Props {

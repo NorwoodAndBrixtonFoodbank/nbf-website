@@ -24,11 +24,13 @@ interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     showSelectedParcels: boolean;
     actionType: ActionType;
     newStatus: StatusType;
+    labelQuantity: number;
     auditLogActionMessage: string;
     onActionCompleted: (
         parcels: ParcelsTableRow[],
         newStatus: StatusType,
-        auditLogActionMessage: string
+        auditLogActionMessage: string,
+        statusEventData?: string
     ) => void;
 }
 
@@ -232,7 +234,8 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                         props.onActionCompleted(
                                             props.selectedParcels,
                                             props.newStatus,
-                                            props.auditLogActionMessage
+                                            props.auditLogActionMessage,
+                                            props.labelQuantity ? props.labelQuantity.toString() : undefined,
                                         );
                                     }}
                                 >
@@ -257,7 +260,8 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                             props.onActionCompleted(
                                                 props.selectedParcels,
                                                 props.newStatus,
-                                                props.auditLogActionMessage
+                                                props.auditLogActionMessage,
+                                                props.labelQuantity ? props.labelQuantity.toString() : undefined,
                                             );
                                         }}
                                     >
