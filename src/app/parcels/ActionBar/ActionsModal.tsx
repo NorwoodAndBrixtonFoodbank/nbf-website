@@ -235,7 +235,9 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                             props.selectedParcels,
                                             props.newStatus,
                                             props.auditLogActionMessage,
-                                            props.labelQuantity ? props.labelQuantity.toString() : undefined,
+                                            props.labelQuantity
+                                                ? props.labelQuantity.toString()
+                                                : undefined
                                         );
                                     }}
                                 >
@@ -261,7 +263,9 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                                 props.selectedParcels,
                                                 props.newStatus,
                                                 props.auditLogActionMessage,
-                                                props.labelQuantity ? props.labelQuantity.toString() : undefined,
+                                                props.labelQuantity
+                                                    ? props.labelQuantity.toString()
+                                                    : undefined
                                             );
                                         }}
                                     >

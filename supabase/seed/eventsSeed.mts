@@ -20,4 +20,4 @@ export const eventNamesWithNoData = [
     "Delivery Cancelled",
     "Fulfilled with Trussell Trust",
     "Request Deleted",
-] as const;
+];

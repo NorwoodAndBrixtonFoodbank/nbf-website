@@ -10,7 +10,7 @@ import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import StatusesBarModal from "@/app/parcels/ActionBar/StatusesModal";
 import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { AuditLog, sendAuditLog } from "@/server/auditLog";
+import { sendAuditLog } from "@/server/auditLog";
 
 export const statusNames = [
     "No Status",
@@ -63,14 +63,11 @@ export const saveParcelStatus = async (
         })
         .flat();
 
-    const auditLogs = toInsert.map(
-        (eventToInsert) =>
-            ({
-                action: auditLogActionMessage ?? "change parcel status",
-                content: { eventToInsert },
-                parcelId: eventToInsert.parcel_id,
-            })
-    );
+    const auditLogs = toInsert.map((eventToInsert) => ({
+        action: auditLogActionMessage ?? "change parcel status",
+        content: { eventToInsert },
+        parcelId: eventToInsert.parcel_id,
+    }));
 
     const { data, error } = await supabase
         .from("events")
@@ -85,7 +82,10 @@ export const saveParcelStatus = async (
         throw new DatabaseError("insert", "status event", logId);
     }
 
-    auditLogs.forEach(async (auditLog, index) => await sendAuditLog({ ...auditLog, eventId: data[index].event_id, wasSuccess: true }));
+    auditLogs.forEach(
+        async (auditLog, index) =>
+            await sendAuditLog({ ...auditLog, eventId: data[index].event_id, wasSuccess: true })
+    );
 };
 
 interface Props {

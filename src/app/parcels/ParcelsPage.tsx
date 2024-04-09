@@ -534,7 +534,7 @@ const ParcelsPage: React.FC<{}> = () => {
             newStatus,
             auditLogActionMessage,
             statusEventData
-        )
+        );
         setCheckedParcelIds([]);
         setIsLoading(false);
     };

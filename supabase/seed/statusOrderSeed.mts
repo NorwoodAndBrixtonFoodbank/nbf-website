@@ -18,5 +18,5 @@ export const statusOrder = [
     "Delivery Failed",
     "Delivery Cancelled",
     "Fulfilled with Trussell Trust",
-    "Request Deleted"
+    "Request Deleted",
 ].map((eventName, index) => ({ eventName, workflowOrder: index }));
