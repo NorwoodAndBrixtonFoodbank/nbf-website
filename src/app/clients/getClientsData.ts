@@ -43,7 +43,7 @@ const getClientsDataAndCount = async (
             ? await logInfoReturnLogId("Aborted fetch: client table", clientError)
             : await logErrorReturnLogId("Error with fetch: client table", clientError);
         if (abortSignal.aborted) {
-            throw new AbortError("fetch", "client table", "logId");
+            throw new AbortError("fetch", "client table", logId);
         }
 
         throw new DatabaseError("fetch", "client table", logId);
