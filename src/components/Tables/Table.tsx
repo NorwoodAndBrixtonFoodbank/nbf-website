@@ -104,6 +104,7 @@ export type PaginationConfig =
           onPageChange: (newPage: number) => void;
           onPerPageChange: (perPage: number) => void;
           rowsPerPageOptions?: number[];
+          defaultRowsPerPage?: number;
       }
     | {
           enablePagination: false;
@@ -429,6 +430,11 @@ const Table = <Data,>({
                         paginationTotalRows={
                             paginationConfig.enablePagination
                                 ? paginationConfig.filteredCount
+                                : undefined
+                        }
+                        paginationPerPage={
+                            paginationConfig.enablePagination
+                                ? paginationConfig.defaultRowsPerPage
                                 : undefined
                         }
                         paginationRowsPerPageOptions={

@@ -221,6 +221,9 @@ async function getClientIdForSelectedParcel(parcelId: string): Promise<string> {
 
 const parcelIdParam = "parcelId";
 
+const defaultNumberOfParcelsPerPage = 100;
+const numberOfParcelsPerPageOptions = [10, 25, 50, 100];
+
 const ParcelsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [parcelsDataPortion, setParcelsDataPortion] = useState<ParcelsTableRow[]>([]);
@@ -241,7 +244,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const [sortState, setSortState] = useState<SortState<ParcelsTableRow>>({ sortEnabled: false });
 
-    const [parcelCountPerPage, setParcelCountPerPage] = useState(10);
+    const [parcelCountPerPage, setParcelCountPerPage] = useState(defaultNumberOfParcelsPerPage);
     const [currentPage, setCurrentPage] = useState(1);
     const startPoint = (currentPage - 1) * parcelCountPerPage;
     const endPoint = currentPage * parcelCountPerPage - 1;
@@ -576,7 +579,8 @@ const ParcelsPage: React.FC<{}> = () => {
                                 filteredCount: filteredParcelCount,
                                 onPageChange: setCurrentPage,
                                 onPerPageChange: setParcelCountPerPage,
-                                rowsPerPageOptions: [10, 25, 50, 100],
+                                defaultRowsPerPage: defaultNumberOfParcelsPerPage,
+                                rowsPerPageOptions: numberOfParcelsPerPageOptions,
                             }}
                             headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
                             columnDisplayFunctions={parcelTableColumnDisplayFunctions}
