@@ -40,15 +40,21 @@ export async function adminInviteUser(
             data: null,
             error: { "Failed to create user": error.message },
         };
-    }
+    };
 
-    if (data) {
+    if (!data.user) {
+        return {
+            data: null,
+            error: { "Failed to create user": "Email may be in use already." },
+        };
+    };
+
         const { error: createRoleError } = await supabase.from("profiles").insert({
-            primary_key: data.user.id,
             role: userDetails.role,
             first_name: userDetails.firstName,
             last_name: userDetails.lastName,
             telephone_number: userDetails.telephoneNumber,
+            user_id: data.user.id
         });
         if (createRoleError) {
             return {
@@ -59,7 +65,6 @@ export async function adminInviteUser(
         void logInfoReturnLogId(
             `Created a profile for ${userDetails.role} user: ${userDetails.email}`
         );
-    }
 
     return {
         data: data.user,
