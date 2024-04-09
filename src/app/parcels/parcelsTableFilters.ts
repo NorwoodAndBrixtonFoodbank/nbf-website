@@ -11,7 +11,6 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { CollectionCentresOptions } from "@/app/parcels/fetchParcelTableData";
-import { Dayjs } from "dayjs";
 import { getDbDate } from "@/common/format";
 
 interface packingSlotOptionsSet {
