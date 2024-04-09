@@ -129,6 +129,7 @@ export const buildUserRoleFilter = async (): Promise<Filter<UserRow, string[]>> 
     const keySet = new Set();
 
     const { data, error } = await supabase.from("profiles").select("role");
+
     if (error) {
         const logId = await logErrorReturnLogId(
             "Error with fetch: User role filter options",
@@ -243,6 +244,8 @@ const UsersTable: React.FC<Props> = (props) => {
         usersTableFetchAbortController.current = new AbortController();
         if (usersTableFetchAbortController.current) {
             setErrorMessage(null);
+            setIsLoading(true);
+
             getUsersDataAndCount(
                 supabase,
                 startPoint,
@@ -257,10 +260,11 @@ const UsersTable: React.FC<Props> = (props) => {
                 })
                 .catch((error) => {
                     if (error instanceof DatabaseError) {
-                        console.log(error);
+                        setErrorMessage(error.message);
                     }
                 })
                 .finally(() => {
+                    usersTableFetchAbortController.current = null;
                     setIsLoading(false);
                 });
         }
