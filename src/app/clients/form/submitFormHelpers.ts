@@ -109,7 +109,7 @@ export const submitEditClientForm = async (
 ): Promise<void> => {
     const clientRecord = formatClientRecord(fields);
     const familyMembers = getFamilyMembers(fields.adults, fields.children);
-    const { error } = await supabase.rpc("updateClientAndTheirFamily", {
+    const { data: clientId, error } = await supabase.rpc("updateClientAndTheirFamily", {
         clientrecord: clientRecord,
         familymembers: familyMembers,
         clientid: primaryKey,
@@ -140,5 +140,5 @@ export const submitEditClientForm = async (
         wasSuccess: true,
     });
 
-    router.push(`/clients?clientId=${primaryKey}`);
+    router.push(`/clients?clientId=${clientId}`);
 };
