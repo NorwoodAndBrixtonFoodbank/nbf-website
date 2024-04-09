@@ -10,7 +10,8 @@
 5. If necessary, reset the production database from the local machine
    1. This should never be done once the website actually goes live
    2. Make sure the local machine is at the latest `main` commit at this point
-6. Follow the Admin Actions outlined below.
+6. If there have been any changes in email templates, update them on production Supabase.
+7. Follow the Admin Actions outlined below.
 
 
 ## Admin Actions
@@ -20,5 +21,6 @@
 4. Create a milestone on GitHub matching the name of the release.
 5. Mark relevant issues on GitHub with the milestone, and move them to UAT. 
 6. Create a fix version on Jira matching the name of the release.
-7. Mark relevant tickets on Jira with the fix version, and move them to UAT. 
+7. Mark relevant tickets on Jira with the fix version, and move them to UAT.
+8. Release the fix version on Jira once all issues for that version are moved to Done.
 
