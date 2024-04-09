@@ -12,13 +12,12 @@ import { DatabaseError } from "@/app/errorClasses";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { CollectionCentresOptions } from "@/app/parcels/fetchParcelTableData";
 import { Dayjs } from "dayjs";
+import { getDbDate } from "@/common/format";
 
 interface packingSlotOptionsSet {
     key: string;
     value: string;
 }
-
-const getDbDate = (dateTime: Dayjs): string => dateTime.format("YYYY-MM-DD");
 
 export const fullNameSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,

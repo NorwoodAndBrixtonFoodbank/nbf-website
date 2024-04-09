@@ -1,3 +1,5 @@
+import { Dayjs } from "dayjs";
+
 export const formatCamelCaseKey = (objectKey: string): string => {
     const withSpace = objectKey.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
     return withSpace.toUpperCase();
@@ -17,3 +19,5 @@ export const formatDateToDate = (dateString: string | null): string => {
         day: "numeric",
     });
 };
+
+export const getDbDate = (dateTime: Dayjs): string => dateTime.format("YYYY-MM-DD");
