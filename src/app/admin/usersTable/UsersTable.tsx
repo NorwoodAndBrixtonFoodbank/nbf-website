@@ -27,6 +27,9 @@ interface userRoleOptionsSet {
     key: string;
     value: string;
 }
+interface Props {
+    userData: UserRow[];
+}
 
 const usersTableHeaderKeysAndLabels: TableHeaders<UserRow> = [
     ["id", "User ID"],
@@ -158,9 +161,8 @@ export const buildUserRoleFilter = async (): Promise<Filter<UserRow, string[]>> 
     });
 };
 
-interface Props {
-    userData: UserRow[];
-}
+const defaultNumberOfParcelsPerPage = 10;
+const numberOfParcelsPerPageOptions = [10, 25, 50, 100];
 
 const UsersTable: React.FC<Props> = (props) => {
     const [userToDelete, setUserToDelete] = useState<UserRow | null>(null);
@@ -170,11 +172,11 @@ const UsersTable: React.FC<Props> = (props) => {
     const [filteredUsersCount, setFilteredUsersCount] = useState<number>(0);
     const [sortState, setSortState] = useState<SortState<UserRow>>({ sortEnabled: false });
     const [isLoading, setIsLoading] = useState(true);
-    const [perPage, setPerPage] = useState(10);
+    const [userCountPerPage, setUserCountPerPage] = useState(defaultNumberOfParcelsPerPage);
     const [currentPage, setCurrentPage] = useState(1);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const startPoint = (currentPage - 1) * perPage;
-    const endPoint = currentPage * perPage - 1;
+    const startPoint = (currentPage - 1) * userCountPerPage;
+    const endPoint = currentPage * userCountPerPage - 1;
 
     const usersTableFetchAbortController = useRef<AbortController | null>(null);
 
@@ -286,7 +288,9 @@ const UsersTable: React.FC<Props> = (props) => {
                     enablePagination: true,
                     filteredCount: filteredUsersCount,
                     onPageChange: setCurrentPage,
-                    onPerPageChange: setPerPage,
+                    onPerPageChange: setUserCountPerPage,
+                    defaultRowsPerPage: defaultNumberOfParcelsPerPage,
+                    rowsPerPageOptions: numberOfParcelsPerPageOptions,
                 }}
                 sortConfig={{
                     sortPossible: true,
