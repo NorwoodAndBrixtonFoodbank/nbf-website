@@ -693,6 +693,27 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles_plus: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          first_name: string | null
+          last_name: string | null
+          role: Database["public"]["Enums"]["role"] | null
+          telephone_number: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_primary_key_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       insertClientAndTheirFamily: {
