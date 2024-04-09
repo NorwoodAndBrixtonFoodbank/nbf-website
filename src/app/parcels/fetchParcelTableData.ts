@@ -55,8 +55,13 @@ const getParcelsQuery = (
     ) {
         query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
     } else {
-        query = query.order("packing_date", { ascending: false });
+        query = query
+            .order("packing_date", { ascending: false })
+            .order("packing_slot_order")
+            .order("client_full_name");
     }
+
+    query.order("parcel_id");
 
     return query;
 };
