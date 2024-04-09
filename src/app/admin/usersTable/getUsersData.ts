@@ -83,15 +83,14 @@ const getUsersCount = async (
     const { count, error: userError } = await query;
 
     if (userError || count === null) {
-        const logId = abortSignal.aborted
-            ? await logInfoReturnLogId("Aborted fetch: profile table count")
-            : await logErrorReturnLogId("Error with fetch: profile table count", {
-                  error: userError,
-              });
         if (abortSignal.aborted) {
-            throw new AbortError("fetch", "profile table", "logId");
+            const logId = await logInfoReturnLogId("Aborted fetch: profile table count");
+            throw new AbortError("fetch", "profile table", logId);
         }
 
+        const logId = await logErrorReturnLogId("Error with fetch: profile table count", {
+            error: userError,
+        });
         throw new DatabaseError("fetch", "profile table", logId);
     }
 
