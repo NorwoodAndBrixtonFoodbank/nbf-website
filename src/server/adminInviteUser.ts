@@ -74,7 +74,7 @@ export async function adminInviteUser(
         wasSuccess: true,
         content: {
             ...auditLog.content,
-            userId: data.user.id,
+            newUserId: data.user.id,
             invitedAt: data.user.invited_at,
             createdAt: data.user.created_at,
         },
