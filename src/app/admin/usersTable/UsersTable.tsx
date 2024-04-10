@@ -187,9 +187,7 @@ const UsersTable: React.FC<Props> = (props) => {
     });
 
     useEffect(() => {
-        const buildFilters = async (): Promise<{
-            primaryFilters: Filter<UserRow, any>[];
-        }> => {
+        const buildFilters = async (): Promise<Filter<UserRow, any>[]> => {
             const filters: Filter<UserRow, any>[] = [
                 buildTextFilter({
                     key: "firstName",
@@ -220,11 +218,11 @@ const UsersTable: React.FC<Props> = (props) => {
                 }),
                 await buildUserRoleFilter(),
             ];
-            return { primaryFilters: filters };
+            return filters;
         };
         (async () => {
             const filters = await buildFilters();
-            setPrimaryFilters(filters.primaryFilters);
+            setPrimaryFilters(filters);
         })();
     }, []);
 
