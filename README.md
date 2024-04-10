@@ -160,4 +160,6 @@ You can regenerate the types
     click on buttons to get to the pages you want!)
 
 ## Other docs
-Other detailed documentation is found in [/docs](./docs) folder
+- [Password Reset Flow](./docs/password-reset-flow.md)
+- [Release Instructions](./docs/release.md)
+- [Common Problems](./docs/common-problems.md)
