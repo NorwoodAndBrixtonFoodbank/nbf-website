@@ -21,7 +21,7 @@ import { User } from "@supabase/gotrue-js";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import UserDetailsCard from "@/app/admin/createUser/UserDetailsCard";
-import { adminInviteUser } from "@/server/adminInviteUser";
+import { InviteUserErrorType, adminInviteUser } from "@/server/adminInviteUser";
 
 export interface InviteUserDetails {
     email: string;
@@ -56,16 +56,20 @@ const CreateUserForm: React.FC<{}> = () => {
     const fieldSetter = setField(setFields, fields);
     const errorSetter = setError(setFormErrors, formErrors);
 
-    const [submitError, setSubmitError] = useState(Errors.none);
+    const [formError, setFormError] = useState(Errors.none);
     const [submitDisabled, setSubmitDisabled] = useState(false);
+
+    const [serverError, setServerError] = useState<InviteUserErrorType | null>(null);
 
     const [invitedUser, setInvitedUser] = useState<User | null>(null);
 
     const submitForm = async (): Promise<void> => {
         setSubmitDisabled(true);
+        setFormError(Errors.none);
+        setServerError(null);
 
         if (checkErrorOnSubmit(formErrors, setFormErrors)) {
-            setSubmitError(Errors.submit);
+            setFormError(Errors.submit);
             setSubmitDisabled(false);
             return;
         }
@@ -75,15 +79,13 @@ const CreateUserForm: React.FC<{}> = () => {
         const { data, error } = await adminInviteUser(fields, redirectUrl);
 
         if (error) {
-            setSubmitError(Errors.external);
+            setServerError(error.type);
             setSubmitDisabled(false);
             setInvitedUser(null);
-
-            const logId = await logErrorReturnLogId("Error with auth: Invite user", error);
-            throw new DatabaseError("insert", "invite user", logId);
+            throw new DatabaseError("insert", "invite user", error.logId);
         }
 
-        setSubmitError(Errors.none);
+        setFormError(Errors.none);
         setSubmitDisabled(false);
         setInvitedUser(data);
         void logInfoReturnLogId(
@@ -120,8 +122,8 @@ const CreateUserForm: React.FC<{}> = () => {
                         Invite User
                     </Button>
                 )}
-
-                {submitError && <Alert severity="error">{submitError}</Alert>}
+                {serverError && <Alert severity="error">{serverError}</Alert>}
+                {formError && <Alert severity="error">{formError}</Alert>}
             </StyledForm>
         </CenterComponent>
     );

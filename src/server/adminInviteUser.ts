@@ -5,7 +5,9 @@ import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
 import { User } from "@supabase/gotrue-js";
 import { InviteUserDetails } from "@/app/admin/createUser/CreateUserForm";
 import supabase from "@/supabaseClient";
-import { logInfoReturnLogId } from "@/logger/logger";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
+
+export type InviteUserErrorType = "Admin Authentication Failure" | "Invite User Failure" | "Create Profile Failure"
 
 type InviteUsersDataAndErrorType =
     | {
@@ -14,8 +16,12 @@ type InviteUsersDataAndErrorType =
       }
     | {
           data: null;
-          error: Record<string, string>;
+          error: {
+            type: InviteUserErrorType;
+            logId: string;
+          }
       };
+
 
 export async function adminInviteUser(
     userDetails: InviteUserDetails,
@@ -24,9 +30,10 @@ export async function adminInviteUser(
     const { isSuccess, failureReason } = await authenticateAsAdmin();
 
     if (!isSuccess) {
+        const logId = await logErrorReturnLogId(`Error with authenticating admin: ${failureReason}`);
         return {
             data: null,
-            error: { "Failed to authenticate as admin": failureReason },
+            error: {type: "Admin Authentication Failure", logId: logId},
         };
     }
 
@@ -36,9 +43,10 @@ export async function adminInviteUser(
     });
 
     if (error) {
+        const logId = await logErrorReturnLogId(`Error with inviting user: ${error.message}`);
         return {
             data: null,
-            error: { "Failed to create user": error.message },
+            error: {type: "Invite User Failure", logId: logId},
         };
     }
 
@@ -51,9 +59,10 @@ export async function adminInviteUser(
     });
 
     if (createRoleError) {
+        const logId = await logErrorReturnLogId(`Error with insert profile: ${createRoleError.message}`);
         return {
             data: null,
-            error: { "Failed to create user profile": createRoleError.message },
+            error: {type: "Create Profile Failure", logId: logId},
         };
     }
     void logInfoReturnLogId(`Created a profile for ${userDetails.role} user: ${userDetails.email}`);
