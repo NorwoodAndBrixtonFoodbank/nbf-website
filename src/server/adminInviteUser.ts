@@ -5,7 +5,7 @@ import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
 import { User } from "@supabase/gotrue-js";
 import { InviteUserDetails } from "@/app/admin/createUser/CreateUserForm";
 import supabase from "@/supabaseClient";
-import { logInfoReturnLogId } from "@/logger/logger";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 
 type InviteUsersDataAndErrorType =
     | {
@@ -42,13 +42,6 @@ export async function adminInviteUser(
         };
     }
 
-    if (!data.user) {
-        return {
-            data: null,
-            error: { "Failed to create user": "Email may be in use already." },
-        };
-    }
-
     const { error: createRoleError } = await supabase.from("profiles").insert({
         role: userDetails.role,
         first_name: userDetails.firstName,
@@ -56,6 +49,7 @@ export async function adminInviteUser(
         telephone_number: userDetails.telephoneNumber,
         user_id: data.user.id,
     });
+    
     if (createRoleError) {
         return {
             data: null,
