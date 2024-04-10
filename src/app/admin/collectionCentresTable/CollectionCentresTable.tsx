@@ -3,34 +3,15 @@
 import React, { useEffect, useState } from "react";
 import Table, { TableHeaders } from "@/components/Tables/Table";
 import styled from "styled-components";
-import Modal from "@/components/Modal/Modal";
-import Button from "@mui/material/Button";
-import DeleteIcon from "@mui/icons-material/Delete";
-import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 import { Schema } from "@/databaseUtils";
-import supabase from "@/supabaseClient";
-import { DatabaseError } from "@/app/errorClasses";
-import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
-import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 interface CollectionCentresTableRow {
     acronym: Schema["collection_centres"]["acronym"];
     name: Schema["collection_centres"]["name"];
     primary_key: Schema["collection_centres"]["primary_key"];
 }
-
-const DangerDialog = styled(Modal)`
-    & .header {
-        background-color: ${(props) => props.theme.error};
-        text-transform: uppercase;
-    }
-
-    button {
-        text-transform: uppercase;
-    }
-`;
 
 export const OptionButtonDiv = styled.div`
     display: flex;
@@ -68,49 +49,8 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
     const [collectionCentres, setCollectionCentres] = useState<Schema["collection_centres"][]>(
         props.collectionCentreData
     );
-    const [collectionCentreToDelete, setCollectionCentreToDelete] =
-        useState<Schema["collection_centres"]>();
-    const [refreshRequired, setRefreshRequired] = useState(false);
     const [primaryFilters, setPrimaryFilters] =
         useState<Filter<CollectionCentresTableRow, string>[]>(filters);
-
-    const collectionCentreOnDelete = (rowIndex: number): void => {
-        setCollectionCentreToDelete(props.collectionCentreData[rowIndex]); // TODO VFB-25 Change onDelete in table to return row
-    };
-
-    const onCollectionCentreDeleteConfirmation = async (): Promise<void> => {
-        if (collectionCentreToDelete === undefined) {
-            return;
-        }
-
-        const { error } = await supabase
-            .from("collection_centres")
-            .delete()
-            .eq("name", collectionCentreToDelete.name);
-
-        const auditLog = {
-            action: "delete a collection centre",
-            content: { collectionCentre: collectionCentreToDelete.name },
-        } as const satisfies Partial<AuditLog>;
-
-        if (error) {
-            const logId = await logErrorReturnLogId("Error with delete: Collection Centre", error);
-            await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
-            throw new DatabaseError("delete", "collection centres", logId);
-        }
-
-        await sendAuditLog({ ...auditLog, wasSuccess: true });
-
-        setCollectionCentreToDelete(undefined);
-        setRefreshRequired(true);
-        void logInfoReturnLogId(
-            `Collection centre: ${collectionCentreToDelete?.name} successfully deleted.`
-        );
-    };
-
-    const onCollectionCentreDeleteCancellation = (): void => {
-        setCollectionCentreToDelete(undefined);
-    };
 
     useEffect(() => {
         setCollectionCentres(
@@ -126,57 +66,25 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
     }, [primaryFilters, props.collectionCentreData]);
 
     return (
-        <>
-            <Table
-                dataPortion={collectionCentres}
-                headerKeysAndLabels={collectionCentresTableHeaderKeysAndLabels}
-                defaultShownHeaders={["name", "acronym"]}
-                toggleableHeaders={["primary_key"]}
-                paginationConfig={{ enablePagination: false }}
-                checkboxConfig={{ displayed: false }}
-                sortConfig={{ sortPossible: false }}
-                editableConfig={{
-                    editable: true,
-                    onDelete: collectionCentreOnDelete,
-                    setDataPortion: setCollectionCentres,
-                }}
-                filterConfig={{
-                    primaryFiltersShown: true,
-                    primaryFilters: primaryFilters,
-                    setPrimaryFilters: setPrimaryFilters,
-                    additionalFiltersShown: false,
-                }}
-            />
-
-            {refreshRequired && (
-                <OptionButtonDiv>
-                    <RefreshPageButton />
-                </OptionButtonDiv>
-            )}
-
-            <DangerDialog
-                header="Delete Collection Centre"
-                headerId="deleteCollectionCentreDialog"
-                isOpen={collectionCentreToDelete !== undefined}
-                onClose={onCollectionCentreDeleteCancellation}
-            >
-                Are you sure you want to delete collection centre
-                <b>{collectionCentreToDelete ? ` ${collectionCentreToDelete.name}` : ""}</b>?
-                <OptionButtonDiv>
-                    <Button
-                        color="error"
-                        variant="outlined"
-                        startIcon={<DeleteIcon />}
-                        onClick={onCollectionCentreDeleteConfirmation}
-                    >
-                        Confirm
-                    </Button>
-                    <Button color="secondary" onClick={onCollectionCentreDeleteCancellation}>
-                        Cancel
-                    </Button>
-                </OptionButtonDiv>
-            </DangerDialog>
-        </>
+        <Table
+            dataPortion={collectionCentres}
+            headerKeysAndLabels={collectionCentresTableHeaderKeysAndLabels}
+            defaultShownHeaders={["name", "acronym"]}
+            toggleableHeaders={["primary_key"]}
+            paginationConfig={{ enablePagination: false }}
+            checkboxConfig={{ displayed: false }}
+            sortConfig={{ sortPossible: false }}
+            editableConfig={{
+                editable: true,
+                setDataPortion: setCollectionCentres,
+            }}
+            filterConfig={{
+                primaryFiltersShown: true,
+                primaryFilters: primaryFilters,
+                setPrimaryFilters: setPrimaryFilters,
+                additionalFiltersShown: false,
+            }}
+        />
     );
 };
 
