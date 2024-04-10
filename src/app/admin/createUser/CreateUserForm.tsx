@@ -70,7 +70,7 @@ const CreateUserForm: React.FC<{}> = () => {
     const [submitDisabled, setSubmitDisabled] = useState(false);
 
     const [serverError, setServerError] = useState<InviteUserError | null>(null);
-    
+
     const [invitedUser, setInvitedUser] = useState<User | null>(null);
 
     const submitForm = async (): Promise<void> => {
