@@ -35,7 +35,7 @@ const getUsers = async (): Promise<UserRow[]> => {
 
     const supabase = getSupabaseServerComponentClient();
 
-    const userRows = data.map(async (user: User) => {
+    const userRows = data.map(async (user: User): Promise<UserRow> => {
         const { data: userProfile, error } = await fetchUserProfile(user.id, supabase);
 
         if (error) {
@@ -46,7 +46,7 @@ const getUsers = async (): Promise<UserRow[]> => {
             id: user.id,
             firstName: userProfile?.first_name ?? "-",
             lastName: userProfile?.last_name ?? "-",
-            userRole: userProfile?.role ?? ("UNKNOWN" as DisplayedUserRole),
+            userRole: userProfile?.role ?? "UNKNOWN",
             email: user.email ?? "-",
             telephoneNumber: userProfile?.telephone_number ?? "-",
             createdAt: Date.parse(user.created_at),
