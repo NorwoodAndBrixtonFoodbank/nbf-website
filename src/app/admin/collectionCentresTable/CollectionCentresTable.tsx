@@ -13,6 +13,7 @@ import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
+import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 interface CollectionCentresTableRow {
     acronym: Schema["collection_centres"]["acronym"];
@@ -78,15 +79,27 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
     };
 
     const onCollectionCentreDeleteConfirmation = async (): Promise<void> => {
+        if (collectionCentreToDelete === undefined) {
+            return;
+        }
+
         const { error } = await supabase
             .from("collection_centres")
             .delete()
-            .eq("name", collectionCentreToDelete!.name);
+            .eq("name", collectionCentreToDelete.name);
+
+        const auditLog = {
+            action: "delete a collection centre",
+            content: { collectionCentre: collectionCentreToDelete.name },
+        } as const satisfies Partial<AuditLog>;
 
         if (error) {
             const logId = await logErrorReturnLogId("Error with delete: Collection Centre", error);
+            await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
             throw new DatabaseError("delete", "collection centres", logId);
         }
+
+        await sendAuditLog({ ...auditLog, wasSuccess: true });
 
         setCollectionCentreToDelete(undefined);
         setRefreshRequired(true);

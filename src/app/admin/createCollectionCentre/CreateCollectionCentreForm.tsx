@@ -19,6 +19,7 @@ import AcronymCard from "@/app/admin/createCollectionCentre/AcronymCard";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
+import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 const initialFields: InsertSchema["collection_centres"] = {
     name: "",
@@ -59,7 +60,16 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
             return;
         }
 
-        const { error } = await supabase.from("collection_centres").insert(fields);
+        const { data, error } = await supabase
+            .from("collection_centres")
+            .insert(fields)
+            .select()
+            .single();
+
+        const auditLog = {
+            action: "add a collection centre",
+            content: { collectionCentreDetails: fields },
+        } as const satisfies Partial<AuditLog>;
 
         if (error) {
             const errorMessage =
@@ -68,12 +78,14 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
             setSubmitDisabled(false);
 
             const logId = await logErrorReturnLogId("Error with insert: collection centre", error);
+            await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
             throw new DatabaseError("insert", "collection centres", logId);
         }
 
         setSubmitErrorMessage("");
         setSubmitDisabled(false);
         setRefreshRequired(true);
+        await sendAuditLog({ ...auditLog, wasSuccess: true, collectionCentreId: data.primary_key });
         void logInfoReturnLogId(`Collection centre: ${fields.name} has been created successfully.`);
     };
 
