@@ -29,7 +29,7 @@ const getUsers = async (): Promise<UserRow[]> => {
     const { data, error } = await adminGetUsers();
 
     if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: Users", error);
+        const logId = await logErrorReturnLogId("Error with fetch: Users", { error: error });
         throw new DatabaseError("fetch", "users information", logId);
     }
 
@@ -39,7 +39,9 @@ const getUsers = async (): Promise<UserRow[]> => {
         const { data: userProfile, error } = await fetchUserProfile(user.id, supabase);
 
         if (error) {
-            void logErrorReturnLogId(`failed to fetch user profile. User ID: ${user.id}`, error);
+            void logErrorReturnLogId(`failed to fetch user profile. User ID: ${user.id}`, {
+                error: error,
+            });
         }
 
         return {
@@ -62,7 +64,9 @@ const getCollectionCentres = async (): Promise<Schema["collection_centres"][]> =
 
     // TODO VFB-23 Move error handling of this request to client side
     if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: Collection Centres", error);
+        const logId = await logErrorReturnLogId("Error with fetch: Collection Centres", {
+            error: error,
+        });
         throw new DatabaseError("fetch", "collection centres", logId);
     }
 
