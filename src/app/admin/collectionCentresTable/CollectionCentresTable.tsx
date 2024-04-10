@@ -75,8 +75,7 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
             checkboxConfig={{ displayed: false }}
             sortConfig={{ sortPossible: false }}
             editableConfig={{
-                editable: true,
-                setDataPortion: setCollectionCentres,
+                editable: false,
             }}
             filterConfig={{
                 primaryFiltersShown: true,
