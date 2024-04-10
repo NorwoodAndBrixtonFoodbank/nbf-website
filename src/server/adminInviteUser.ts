@@ -49,7 +49,7 @@ export async function adminInviteUser(
         redirectTo: redirectUrl,
     });
 
-    const auditLog = {
+    const auditLogInviteUser = {
         action: "send invite link to user by email",
         content: {
             email: userDetails.email,
@@ -59,7 +59,7 @@ export async function adminInviteUser(
     if (error) {
         const logId = await logErrorReturnLogId("failed to invite user", { error: error });
         await sendAuditLog({
-            ...auditLog,
+            ...auditLogInviteUser,
             wasSuccess: false,
             logId,
         });
@@ -70,10 +70,10 @@ export async function adminInviteUser(
     }
 
     await sendAuditLog({
-        ...auditLog,
+        ...auditLogInviteUser,
         wasSuccess: true,
         content: {
-            ...auditLog.content,
+            ...auditLogInviteUser.content,
             newUserId: data.user.id,
             invitedAt: data.user.invited_at,
             createdAt: data.user.created_at,
@@ -93,7 +93,7 @@ export async function adminInviteUser(
             .select()
             .single();
 
-        const auditLog = {
+        const auditLogAddProfile = {
             action: "add a profile for user",
             content: {
                 email: userDetails.email,
@@ -105,7 +105,7 @@ export async function adminInviteUser(
                 error: error,
             });
             await sendAuditLog({
-                ...auditLog,
+                ...auditLogAddProfile,
                 wasSuccess: false,
                 logId,
             });
@@ -116,9 +116,9 @@ export async function adminInviteUser(
         }
 
         await sendAuditLog({
-            ...auditLog,
+            ...auditLogAddProfile,
             wasSuccess: true,
-            content: { ...auditLog.content, profile: profileData },
+            content: { ...auditLogAddProfile.content, profile: profileData },
             profileId: data.user.id,
         });
 
