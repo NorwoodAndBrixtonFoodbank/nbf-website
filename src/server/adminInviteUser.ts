@@ -104,9 +104,12 @@ export async function adminInviteUser(
         } as const satisfies Partial<AuditLog>;
 
         if (createRoleError) {
-            const logId = await logErrorReturnLogId("failed to create profile for user", {
-                error: error,
-            });
+            const logId = await logErrorReturnLogId(
+                `failed to create profile for user with id ${newUserData.user.id}`,
+                {
+                    error: error,
+                }
+            );
             await sendAuditLog({
                 ...auditLogAddProfile,
                 wasSuccess: false,
