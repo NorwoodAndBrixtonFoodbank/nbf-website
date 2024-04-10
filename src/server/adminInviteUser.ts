@@ -50,7 +50,7 @@ export async function adminInviteUser(
     });
 
     const auditLog = {
-        action: "add a client",
+        action: "send invite link to user by email",
         content: {
             email: userDetails.email,
         },
