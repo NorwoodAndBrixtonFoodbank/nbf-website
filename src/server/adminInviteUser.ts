@@ -111,7 +111,7 @@ export async function adminInviteUser(
             });
             return {
                 data: null,
-                error: { "Failed to create user profile": createRoleError.message },
+                error: { type: "createProfileFailure", logId: logId },
             };
         }
 
