@@ -16,7 +16,6 @@ export interface AuditLog {
     clientId?: string;
     collectionCentreId?: string;
     eventId?: string;
-    familyMemberId?: string;
     listId?: string;
     listHotelId?: string;
     packingSlotId?: string;
@@ -37,7 +36,6 @@ export async function sendAuditLog(auditLogProps: AuditLog): Promise<void> {
         client_id: auditLogProps.clientId,
         collection_centre_id: auditLogProps.collectionCentreId,
         event_id: auditLogProps.eventId,
-        family_member_id: auditLogProps.familyMemberId,
         list_id: auditLogProps.listId,
         list_hotel_id: auditLogProps.listHotelId,
         packing_slot_id: auditLogProps.packingSlotId,

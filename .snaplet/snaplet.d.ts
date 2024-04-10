@@ -11,8 +11,6 @@ type Enum_pgsodium_key_status = 'default' | 'expired' | 'invalid' | 'valid';
 type Enum_pgsodium_key_type = 'aead-det' | 'aead-ietf' | 'auth' | 'generichash' | 'hmacsha256' | 'hmacsha512' | 'kdf' | 'secretbox' | 'secretstream' | 'shorthash' | 'stream_xchacha20';
 type Enum_public_gender = 'female' | 'male' | 'other';
 type Enum_public_role = 'admin' | 'caller';
-type Enum_realtime_action = 'DELETE' | 'ERROR' | 'INSERT' | 'TRUNCATE' | 'UPDATE';
-type Enum_realtime_equality_op = 'eq' | 'gt' | 'gte' | 'in' | 'lt' | 'lte' | 'neq';
 interface Table_net_http_response {
   id: number | null;
   status_code: number | null;
@@ -30,7 +28,6 @@ interface Table_public_audit_log {
   client_id: string | null;
   collection_centre_id: string | null;
   event_id: string | null;
-  family_member_id: string | null;
   list_id: string | null;
   list_hotel_id: string | null;
   packing_slot_id: string | null;
@@ -59,12 +56,6 @@ interface Table_storage_buckets {
   file_size_limit: number | null;
   allowed_mime_types: string[] | null;
   owner_id: string | null;
-}
-interface Table_realtime_channels {
-  id: number;
-  name: string;
-  inserted_at: string;
-  updated_at: string;
 }
 interface Table_public_clients {
   primary_key: string;
@@ -116,6 +107,7 @@ interface Table_auth_flow_state {
   created_at: string | null;
   updated_at: string | null;
   authentication_method: string;
+  auth_code_issued_at: string | null;
 }
 interface Table_supabase_functions_hooks {
   id: number;
@@ -304,6 +296,7 @@ interface Table_auth_saml_providers {
   attribute_mapping: Json | null;
   created_at: string | null;
   updated_at: string | null;
+  name_id_format: string | null;
 }
 interface Table_auth_saml_relay_states {
   id: string;
@@ -311,17 +304,12 @@ interface Table_auth_saml_relay_states {
   request_id: string;
   for_email: string | null;
   redirect_to: string | null;
-  from_ip_address: string | null;
   created_at: string | null;
   updated_at: string | null;
   flow_state_id: string | null;
 }
 interface Table_auth_schema_migrations {
   version: string;
-}
-interface Table_realtime_schema_migrations {
-  version: number;
-  inserted_at: string | null;
 }
 interface Table_supabase_migrations_schema_migrations {
   version: string;
@@ -368,34 +356,6 @@ interface Table_public_status_order {
   event_name: string;
   workflow_order: number;
 }
-interface Table_realtime_subscription {
-  id: number;
-  subscription_id: string;
-  /**
-  * We couldn't determine the type of this column. The type might be coming from an unknown extension
-  * or be specific to your database. Please if it's a common used type report this issue so we can fix it!
-  * Otherwise, please manually type this column by casting it to the correct type.
-  * @example
-  * Here is a cast example for copycat use:
-  * ```
-  * copycat.scramble(row.unknownColumn as string)
-  * ```
-  */
-  entity: unknown;
-  /**
-  * We couldn't determine the type of this column. The type might be coming from an unknown extension
-  * or be specific to your database. Please if it's a common used type report this issue so we can fix it!
-  * Otherwise, please manually type this column by casting it to the correct type.
-  * @example
-  * Here is a cast example for copycat use:
-  * ```
-  * copycat.scramble(row.unknownColumn as string)
-  * ```
-  */
-  filters: unknown[];
-  claims: Json;
-  created_at: string;
-}
 interface Table_auth_users {
   instance_id: string | null;
   id: string;
@@ -430,6 +390,7 @@ interface Table_auth_users {
   reauthentication_sent_at: string | null;
   is_sso_user: boolean;
   deleted_at: string | null;
+  is_anonymous: boolean;
 }
 interface Table_public_website_data {
   name: string;
@@ -492,9 +453,7 @@ interface Schema_public {
   website_data: Table_public_website_data;
 }
 interface Schema_realtime {
-  channels: Table_realtime_channels;
-  schema_migrations: Table_realtime_schema_migrations;
-  subscription: Table_realtime_subscription;
+
 }
 interface Schema_storage {
   buckets: Table_storage_buckets;
@@ -542,7 +501,6 @@ interface Tables_relationships {
        audit_log_client_id_fkey: "public.clients";
        audit_log_collection_centre_id_fkey: "public.collection_centres";
        audit_log_event_id_fkey: "public.events";
-       audit_log_family_member_id_fkey: "public.families";
        audit_log_list_id_fkey: "public.lists";
        audit_log_list_hotel_id_fkey: "public.lists_hotel";
        audit_log_packing_slot_id_fkey: "public.packing_slots";

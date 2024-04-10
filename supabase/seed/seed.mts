@@ -16,9 +16,7 @@ import {
 import { eventNamesWithNoData, eventNamesWithNumberData } from "./eventsSeed.mjs";
 import { collectionCentres } from "./collectionCentresSeed.mjs";
 import { listsHotels } from "./listsHotelsSeed.mjs";
-import { websiteData } from "./websiteDataSeed.mjs";
 import { packingSlots } from "./packingSlotsSeed.mjs";
-import { statusOrder } from "./statusOrderSeed.mjs";
 import { earliestDate, getPseudoRandomDateBetween, latestDate } from "./dateData.mjs";
 
 generateSeed();
@@ -30,11 +28,7 @@ async function generateSeed(): Promise<void> {
 
     await seed.$resetDatabase(); // Clears all existing data in the database, but keep the structure
 
-    await seed.websiteData(websiteData);
-
     await seed.packingSlots(packingSlots);
-
-    await seed.statusOrders(statusOrder);
 
     await seed.clients((generate) =>
         generate(500, {
