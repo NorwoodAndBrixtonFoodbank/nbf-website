@@ -4,6 +4,8 @@ import { SortState } from "@/components/Tables/Table";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { AbortError, DatabaseError } from "@/app/errorClasses";
 import { DisplayedUserRole, UserRow } from "@/app/admin/page";
+import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
+import { Database } from "@/databaseTypesFile";
 
 export const getUsersDataAndCount = async (
     supabase: Supabase,
@@ -67,6 +69,21 @@ export const getUsersDataAndCount = async (
     return { userData, count };
 };
 
+function getQueryWithFiltersApplied(
+    originalQuery: PostgrestFilterBuilder<Database["public"], any, any>,
+    filters: Filter<UserRow, any>[]
+): PostgrestFilterBuilder<Database["public"], any, any> {
+    let query = originalQuery;
+
+    filters.forEach((filter) => {
+        if (filter.methodConfig.paginationType === PaginationType.Server) {
+            query = filter.methodConfig.method(query, filter.state);
+        }
+    });
+
+    return query;
+}
+
 const getUsersCount = async (
     supabase: Supabase,
     filters: Filter<UserRow, any>[],
@@ -74,6 +91,7 @@ const getUsersCount = async (
 ): Promise<number> => {
     let query = supabase.from("profiles_plus").select("*", { count: "exact", head: true });
 
+    query = getQueryWithFiltersApplied(query, filters);
     filters.forEach((filter) => {
         if (filter.methodConfig.paginationType === PaginationType.Server) {
             query = filter.methodConfig.method(query, filter.state);
