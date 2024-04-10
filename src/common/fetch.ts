@@ -6,7 +6,7 @@ import { PostgrestError } from "@supabase/supabase-js";
 
 type CollectionCentre = Pick<Schema["collection_centres"], "name" | "acronym" | "primary_key">;
 
-type PackingSlot = Pick<Schema["packing_slots"], "primary_key" | "is_shown">;
+type PackingSlot = Pick<Schema["packing_slots"], "primary_key" | "is_shown" | "name">;
 
 type DatabaseProfile = Pick<
     Schema["profiles"],
