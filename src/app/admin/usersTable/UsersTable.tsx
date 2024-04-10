@@ -9,24 +9,17 @@ import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import SuccessFailureAlert, { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
-import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
-import { Database } from "@/databaseTypesFile";
 import supabase from "@/supabaseClient";
-import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
-import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { getUsersDataAndCount } from "@/app/admin/usersTable/getUsersData";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import {
+    buildUserRoleFilter,
     emailSearch,
     firstNameSearch,
     lastNameSearch,
 } from "@/app/admin/usersTable/usersTableFilters";
 
-interface userRoleOptionsSet {
-    key: string;
-    value: string;
-}
 interface Props {
     userData: UserRow[];
 }
@@ -118,66 +111,22 @@ const userTableColumnDisplayFunctions = {
     },
 };
 
-export const buildUserRoleFilter = async (): Promise<Filter<UserRow, string[]>> => {
-    const userRoleSearch = (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: string[]
-    ): PostgrestFilterBuilder<Database["public"], any, any> => {
-        return query.in("role", state);
-    };
-
-    const keySet = new Set();
-
-    const { data, error } = await supabase.from("profiles").select("role");
-
-    if (error) {
-        const logId = await logErrorReturnLogId(
-            "Error with fetch: User role filter options",
-            error
-        );
-        throw new DatabaseError("fetch", "user role filter options", logId);
-    }
-
-    const optionsResponse = data ?? [];
-
-    const optionsSet = optionsResponse.reduce<userRoleOptionsSet[]>((filteredOptions, row) => {
-        if (!row.role || keySet.has(row.role)) {
-            return filteredOptions;
-        }
-
-        keySet.add(row.role);
-        filteredOptions.push({ key: row.role, value: row.role });
-
-        return filteredOptions;
-    }, []);
-
-    optionsSet.sort();
-
-    return checklistFilter<UserRow>({
-        key: "userRole",
-        filterLabel: "User Role",
-        itemLabelsAndKeys: optionsSet.map((option) => [option.value, option.key]),
-        initialCheckedKeys: optionsSet.map((option) => option.key),
-        methodConfig: { paginationType: PaginationType.Server, method: userRoleSearch },
-    });
-};
-
-const defaultNumberOfParcelsPerPage = 10;
-const numberOfParcelsPerPageOptions = [10, 25, 50, 100];
+const defaultNumberOfUsersPerPage = 10;
+const numberOfUsersPerPageOptions = [10, 25, 50, 100];
 
 const UsersTable: React.FC<Props> = (props) => {
     const [userToDelete, setUserToDelete] = useState<UserRow | null>(null);
     const [userToEdit, setUserToEdit] = useState<UserRow | null>(null);
     const [primaryFilters, setPrimaryFilters] = useState<Filter<UserRow, any>[]>([]);
-    const [usersDataPortion, setUsersDataPortion] = useState<UserRow[]>([]);
+    const [users, setUsers] = useState<UserRow[]>([]);
     const [filteredUsersCount, setFilteredUsersCount] = useState<number>(0);
     const [sortState, setSortState] = useState<SortState<UserRow>>({ sortEnabled: false });
     const [isLoading, setIsLoading] = useState(true);
-    const [userCountPerPage, setUserCountPerPage] = useState(defaultNumberOfParcelsPerPage);
+    const [userCountPerPage, setUserCountPerPage] = useState(defaultNumberOfUsersPerPage);
     const [currentPage, setCurrentPage] = useState(1);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const startPoint = (currentPage - 1) * userCountPerPage;
-    const endPoint = currentPage * userCountPerPage - 1;
+    const startIndex = (currentPage - 1) * userCountPerPage;
+    const endIndex = currentPage * userCountPerPage - 1;
 
     const usersTableFetchAbortController = useRef<AbortController | null>(null);
 
@@ -239,21 +188,22 @@ const UsersTable: React.FC<Props> = (props) => {
         if (usersTableFetchAbortController.current) {
             usersTableFetchAbortController.current.abort("stale request");
         }
+
         usersTableFetchAbortController.current = new AbortController();
+
         if (usersTableFetchAbortController.current) {
             setErrorMessage(null);
-            setIsLoading(true);
 
             getUsersDataAndCount(
                 supabase,
-                startPoint,
-                endPoint,
+                startIndex,
+                endIndex,
                 primaryFilters,
                 sortState,
                 usersTableFetchAbortController.current.signal
             )
                 .then(async ({ userData, count }) => {
-                    setUsersDataPortion(userData);
+                    setUsers(userData);
                     setFilteredUsersCount(count);
                 })
                 .catch((error) => {
@@ -266,13 +216,13 @@ const UsersTable: React.FC<Props> = (props) => {
                     setIsLoading(false);
                 });
         }
-    }, [startPoint, endPoint, primaryFilters, sortState]);
+    }, [startIndex, endIndex, primaryFilters, sortState]);
 
     return (
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
             <Table
-                dataPortion={usersDataPortion}
+                dataPortion={users}
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
                 toggleableHeaders={["id", "createdAt", "updatedAt"]}
@@ -291,8 +241,8 @@ const UsersTable: React.FC<Props> = (props) => {
                     filteredCount: filteredUsersCount,
                     onPageChange: setCurrentPage,
                     onPerPageChange: setUserCountPerPage,
-                    defaultRowsPerPage: defaultNumberOfParcelsPerPage,
-                    rowsPerPageOptions: numberOfParcelsPerPageOptions,
+                    defaultRowsPerPage: defaultNumberOfUsersPerPage,
+                    rowsPerPageOptions: numberOfUsersPerPageOptions,
                 }}
                 sortConfig={{
                     sortPossible: true,
@@ -303,7 +253,7 @@ const UsersTable: React.FC<Props> = (props) => {
                     editable: true,
                     onDelete: userOnDelete,
                     onEdit: userOnEdit,
-                    setDataPortion: setUsersDataPortion,
+                    setDataPortion: setUsers,
                 }}
                 filterConfig={{
                     primaryFiltersShown: true,
