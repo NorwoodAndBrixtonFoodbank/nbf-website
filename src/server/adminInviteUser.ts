@@ -7,7 +7,10 @@ import { InviteUserDetails } from "@/app/admin/createUser/CreateUserForm";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 
-export type InviteUserErrorType = "Admin Authentication Failure" | "Invite User Failure" | "Create Profile Failure"
+export type InviteUserErrorType =
+    | "Admin Authentication Failure"
+    | "Invite User Failure"
+    | "Create Profile Failure";
 
 type InviteUsersDataAndErrorType =
     | {
@@ -17,11 +20,10 @@ type InviteUsersDataAndErrorType =
     | {
           data: null;
           error: {
-            type: InviteUserErrorType;
-            logId: string;
-          }
+              type: InviteUserErrorType;
+              logId: string;
+          };
       };
-
 
 export async function adminInviteUser(
     userDetails: InviteUserDetails,
@@ -30,10 +32,12 @@ export async function adminInviteUser(
     const { isSuccess, failureReason } = await authenticateAsAdmin();
 
     if (!isSuccess) {
-        const logId = await logErrorReturnLogId(`Error with authenticating admin: ${failureReason}`);
+        const logId = await logErrorReturnLogId(
+            `Error with authenticating admin: ${failureReason}`
+        );
         return {
             data: null,
-            error: {type: "Admin Authentication Failure", logId: logId},
+            error: { type: "Admin Authentication Failure", logId: logId },
         };
     }
 
@@ -46,7 +50,7 @@ export async function adminInviteUser(
         const logId = await logErrorReturnLogId(`Error with inviting user: ${error.message}`);
         return {
             data: null,
-            error: {type: "Invite User Failure", logId: logId},
+            error: { type: "Invite User Failure", logId: logId },
         };
     }
 
@@ -59,10 +63,12 @@ export async function adminInviteUser(
     });
 
     if (createRoleError) {
-        const logId = await logErrorReturnLogId(`Error with insert profile: ${createRoleError.message}`);
+        const logId = await logErrorReturnLogId(
+            `Error with insert profile: ${createRoleError.message}`
+        );
         return {
             data: null,
-            error: {type: "Create Profile Failure", logId: logId},
+            error: { type: "Create Profile Failure", logId: logId },
         };
     }
     void logInfoReturnLogId(`Created a profile for ${userDetails.role} user: ${userDetails.email}`);

@@ -18,7 +18,7 @@ import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 import { Database } from "@/databaseTypesFile";
 import Alert from "@mui/material/Alert/Alert";
 import { User } from "@supabase/gotrue-js";
-import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
+import { logInfoReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import UserDetailsCard from "@/app/admin/createUser/UserDetailsCard";
 import { InviteUserErrorType, adminInviteUser } from "@/server/adminInviteUser";
