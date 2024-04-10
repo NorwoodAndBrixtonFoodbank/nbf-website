@@ -36,7 +36,6 @@ type Override = {
       client_id?: string;
       collection_centre_id?: string;
       event_id?: string;
-      family_member_id?: string;
       list_id?: string;
       list_hotel_id?: string;
       packing_slot_id?: string;
@@ -50,7 +49,6 @@ type Override = {
       clients?: string;
       collection_centres?: string;
       events?: string;
-      families?: string;
       lists?: string;
       lists_hotel?: string;
       packing_slots?: string;
@@ -150,7 +148,6 @@ type Override = {
       gender?: string;
       age?: string;
       clients?: string;
-      audit_log?: string;
     };
   }
   flow_state?: {
@@ -635,7 +632,6 @@ export interface Fingerprint {
     clientByClientId?: FingerprintRelationField;
     collectionCentreByCollectionCentreId?: FingerprintRelationField;
     eventByEventId?: FingerprintRelationField;
-    familyByFamilyMemberId?: FingerprintRelationField;
     listByListId?: FingerprintRelationField;
     listsHotelByListHotelId?: FingerprintRelationField;
     packingSlotByPackingSlotId?: FingerprintRelationField;
@@ -675,7 +671,6 @@ export interface Fingerprint {
   families?: {
     age?: FingerprintNumberField;
     family?: FingerprintRelationField;
-    auditLogsByFamilyMemberId?: FingerprintRelationField;
   }
   flowStates?: {
     createdAt?: FingerprintDateField;
