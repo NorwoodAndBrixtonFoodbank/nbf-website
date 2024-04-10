@@ -40,6 +40,7 @@ interface Table_public_audit_log {
   wasSuccess: boolean;
   log_id: string | null;
 }
+  profile_id: string | null;
 interface Table_auth_audit_log_entries {
   instance_id: string | null;
   id: string;
@@ -546,6 +547,7 @@ interface Tables_relationships {
        audit_log_packing_slot_id_fkey: "public.packing_slots";
        audit_log_parcel_id_fkey: "public.parcels";
        audit_log_status_order_fkey: "public.status_order";
+       audit_log_profile_id_fkey: "public.profiles";
        audit_log_website_data_fkey: "public.website_data";
     };
     children: {
@@ -693,7 +695,7 @@ interface Tables_relationships {
        profiles_user_id_fkey: "auth.users";
     };
     children: {
-
+       audit_log_profile_id_fkey: "public.audit_log";
     };
   };
   "auth.refresh_tokens": {

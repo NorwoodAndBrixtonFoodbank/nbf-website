@@ -16,12 +16,14 @@ export type Database = {
           collection_centre_id: string | null
           content: Json | null
           event_id: string | null
+          family_member_id: string | null
           list_hotel_id: string | null
           list_id: string | null
           log_id: string | null
           packing_slot_id: string | null
           parcel_id: string | null
           primary_key: string
+          profile_id: string | null
           status_order: string | null
           user_id: string
           wasSuccess: boolean
@@ -33,12 +35,14 @@ export type Database = {
           collection_centre_id?: string | null
           content?: Json | null
           event_id?: string | null
+          family_member_id?: string | null
           list_hotel_id?: string | null
           list_id?: string | null
           log_id?: string | null
           packing_slot_id?: string | null
           parcel_id?: string | null
           primary_key?: string
+          profile_id?: string | null
           status_order?: string | null
           user_id: string
           wasSuccess: boolean
@@ -50,12 +54,14 @@ export type Database = {
           collection_centre_id?: string | null
           content?: Json | null
           event_id?: string | null
+          family_member_id?: string | null
           list_hotel_id?: string | null
           list_id?: string | null
           log_id?: string | null
           packing_slot_id?: string | null
           parcel_id?: string | null
           primary_key?: string
+          profile_id?: string | null
           status_order?: string | null
           user_id?: string
           wasSuccess?: boolean
@@ -95,6 +101,13 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "audit_log_family_member_id_fkey"
+            columns: ["family_member_id"]
+            isOneToOne: false
+            referencedRelation: "families"
             referencedColumns: ["primary_key"]
           },
           {
@@ -140,11 +153,25 @@ export type Database = {
             referencedColumns: ["parcel_id"]
           },
           {
+            foreignKeyName: "audit_log_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["primary_key"]
+          },
+          {
             foreignKeyName: "audit_log_status_order_fkey"
             columns: ["status_order"]
             isOneToOne: false
             referencedRelation: "status_order"
             referencedColumns: ["event_name"]
+          },
+          {
+            foreignKeyName: "audit_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_plus"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "audit_log_user_id_fkey"
@@ -598,6 +625,13 @@ export type Database = {
             foreignKeyName: "profiles_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
+            referencedRelation: "profiles_plus"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "profiles_primary_key_fkey"
+            columns: ["primary_key"]
+            isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -683,6 +717,19 @@ export type Database = {
           packing_slot_order: number | null
           parcel_id: string | null
           voucher_number: string | null
+        }
+        Relationships: []
+      }
+      profiles_plus: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          first_name: string | null
+          last_name: string | null
+          role: Database["public"]["Enums"]["role"] | null
+          telephone_number: string | null
+          updated_at: string | null
+          user_id: string | null
         }
         Relationships: []
       }

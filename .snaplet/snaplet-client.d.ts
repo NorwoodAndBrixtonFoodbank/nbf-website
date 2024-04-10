@@ -148,6 +148,7 @@ type Override = {
       gender?: string;
       age?: string;
       clients?: string;
+      audit_log?: string;
     };
   }
   flow_state?: {
@@ -401,6 +402,7 @@ type Override = {
       telephone_number?: string;
       user_id?: string;
       users?: string;
+      audit_log?: string;
     };
   }
   refresh_tokens?: {
@@ -760,7 +762,8 @@ export interface Fingerprint {
     eventsByParcelId?: FingerprintRelationField;
   }
   profiles?: {
-    user?: FingerprintRelationField;
+    userByPrimaryKey?: FingerprintRelationField;
+    auditLogsByProfileId?: FingerprintRelationField;
   }
   refreshTokens?: {
     id?: FingerprintNumberField;
@@ -847,7 +850,7 @@ export interface Fingerprint {
     mfaFactors?: FingerprintRelationField;
     sessions?: FingerprintRelationField;
     auditLogs?: FingerprintRelationField;
-    profiles?: FingerprintRelationField;
+    profilesByPrimaryKey?: FingerprintRelationField;
   }
   websiteData?: {
     auditLogsByWebsiteData?: FingerprintRelationField;
