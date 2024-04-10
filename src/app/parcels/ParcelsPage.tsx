@@ -120,7 +120,10 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
         key: "packingDate",
         sortMethodConfig: {
             method: (query, sortDirection) =>
-                query.order("packing_date", { ascending: sortDirection === "asc" }),
+                query
+                    .order("packing_date", { ascending: sortDirection === "asc" })
+                    .order("packing_slot_order")
+                    .order("client_full_name"),
             paginationType: PaginationType.Server,
         },
     },
@@ -289,11 +292,10 @@ const ParcelsPage: React.FC<{}> = () => {
             primaryFilters: Filter<ParcelsTableRow, any>[];
             additionalFilters: Filter<ParcelsTableRow, any>[];
         }> => {
-            const startOfToday = dayjs().startOf("day");
-            const endOfToday = dayjs().endOf("day");
+            const today = dayjs();
             const dateFilter = buildDateFilter({
-                from: startOfToday,
-                to: endOfToday,
+                from: today,
+                to: today,
             });
             const primaryFilters: Filter<ParcelsTableRow, any>[] = [
                 dateFilter,
