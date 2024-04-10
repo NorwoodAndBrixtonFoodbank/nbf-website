@@ -49,7 +49,6 @@ type AvailableActionsType = {
         errorMessage: string;
         actionType: ActionType;
         newStatus: StatusType;
-        auditLogActionMessage: string;
     };
 };
 
@@ -60,7 +59,6 @@ const availableActions: AvailableActionsType = {
         errorMessage: "Please select exactly one parcel.",
         actionType: "pdfDownload",
         newStatus: "Shipping Labels Downloaded",
-        auditLogActionMessage: "shipping labels downloaded",
     },
     "Download Shopping Lists": {
         showSelectedParcelsInModal: true,
@@ -68,7 +66,6 @@ const availableActions: AvailableActionsType = {
         errorMessage: "Please select at least one parcel.",
         actionType: "pdfDownload",
         newStatus: "Shopping List Downloaded",
-        auditLogActionMessage: "shopping list downloaded",
     },
     "Download Driver Overview": {
         showSelectedParcelsInModal: true,
@@ -76,7 +73,6 @@ const availableActions: AvailableActionsType = {
         errorMessage: "Please select at least one parcel.",
         actionType: "pdfDownload",
         newStatus: "Driver Overview Downloaded",
-        auditLogActionMessage: "driver overview downloaded",
     },
     "Download Day Overview": {
         showSelectedParcelsInModal: false,
@@ -85,7 +81,6 @@ const availableActions: AvailableActionsType = {
             "The day overview will show the parcels for a particular date and location. It will show not the currently selected parcel. Please unselect the parcels.",
         actionType: "pdfDownload",
         newStatus: "Day Overview Downloaded",
-        auditLogActionMessage: "day overview downloaded",
     },
     "Delete Parcel Request": {
         showSelectedParcelsInModal: true,
@@ -93,7 +88,6 @@ const availableActions: AvailableActionsType = {
         errorMessage: "Please select at least one parcel.",
         actionType: "deleteParcel",
         newStatus: "Request Deleted",
-        auditLogActionMessage: "parcel deleted",
     },
     "Generate Map": {
         showSelectedParcelsInModal: false,
@@ -101,7 +95,6 @@ const availableActions: AvailableActionsType = {
         errorMessage: "Please select at least one parcel.",
         actionType: "generateMap",
         newStatus: "Map Generated",
-        auditLogActionMessage: "map generated",
     },
 };
 
@@ -198,7 +191,6 @@ interface Props {
     onActionCompleted: (
         parcels: ParcelsTableRow[],
         newStatus: StatusType,
-        auditLogActionMessage: string,
         statusEventData?: string
     ) => void;
     actionAnchorElement: HTMLElement | null;
@@ -274,8 +266,7 @@ const Actions: React.FC<Props> = ({
                             openInNewTab(mapsLinkForSelectedParcels());
                             onActionCompleted(
                                 selectedParcels,
-                                availableActions["Generate Map"].newStatus,
-                                availableActions["Generate Map"].auditLogActionMessage
+                                availableActions["Generate Map"].newStatus
                             );
                             return;
                     }
@@ -318,7 +309,6 @@ const Actions: React.FC<Props> = ({
                                 onActionCompleted(
                                     selectedParcels,
                                     value.newStatus,
-                                    value.auditLogActionMessage,
                                     labelQuantity ? labelQuantity.toString() : undefined
                                 )
                             }

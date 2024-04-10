@@ -530,14 +530,12 @@ const ParcelsPage: React.FC<{}> = () => {
     const onActionCompleted = async (
         parcels: ParcelsTableRow[],
         newStatus: StatusType,
-        auditLogActionMessage: string,
         statusEventData?: string
     ): Promise<void> => {
         setIsLoading(true);
         await saveParcelStatus(
             parcels.map((parcel) => parcel.parcelId),
             newStatus,
-            auditLogActionMessage,
             statusEventData
         );
         setCheckedParcelIds([]);

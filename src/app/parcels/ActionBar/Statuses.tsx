@@ -47,7 +47,6 @@ const nonMenuStatuses: StatusType[] = [
 export const saveParcelStatus = async (
     parcelIds: string[],
     statusName: StatusType,
-    auditLogActionMessage?: string,
     statusEventData?: string | null,
     date?: Dayjs | null
 ): Promise<void> => {
@@ -64,7 +63,7 @@ export const saveParcelStatus = async (
         .flat();
 
     const auditLogs = toInsert.map((eventToInsert) => ({
-        action: auditLogActionMessage ?? "change parcel status",
+        action: "change parcel status",
         content: { eventToInsert },
         parcelId: eventToInsert.parcel_id,
     }));
@@ -125,7 +124,6 @@ const Statuses: React.FC<Props> = ({
                     return parcel.parcelId;
                 }),
                 selectedStatus!,
-                undefined,
                 null,
                 date
             );
