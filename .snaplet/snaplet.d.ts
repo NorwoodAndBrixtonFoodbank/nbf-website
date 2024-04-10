@@ -30,6 +30,7 @@ interface Table_public_audit_log {
   client_id: string | null;
   collection_centre_id: string | null;
   event_id: string | null;
+  family_member_id: string | null;
   list_id: string | null;
   list_hotel_id: string | null;
   packing_slot_id: string | null;
@@ -540,6 +541,7 @@ interface Tables_relationships {
        audit_log_client_id_fkey: "public.clients";
        audit_log_collection_centre_id_fkey: "public.collection_centres";
        audit_log_event_id_fkey: "public.events";
+       audit_log_family_member_id_fkey: "public.families";
        audit_log_list_id_fkey: "public.lists";
        audit_log_list_hotel_id_fkey: "public.lists_hotel";
        audit_log_packing_slot_id_fkey: "public.packing_slots";

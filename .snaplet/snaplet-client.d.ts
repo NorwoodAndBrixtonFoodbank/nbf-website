@@ -36,6 +36,7 @@ type Override = {
       client_id?: string;
       collection_centre_id?: string;
       event_id?: string;
+      family_member_id?: string;
       list_id?: string;
       list_hotel_id?: string;
       packing_slot_id?: string;
@@ -49,6 +50,7 @@ type Override = {
       clients?: string;
       collection_centres?: string;
       events?: string;
+      families?: string;
       lists?: string;
       lists_hotel?: string;
       packing_slots?: string;
@@ -632,6 +634,7 @@ export interface Fingerprint {
     clientByClientId?: FingerprintRelationField;
     collectionCentreByCollectionCentreId?: FingerprintRelationField;
     eventByEventId?: FingerprintRelationField;
+    familyByFamilyMemberId?: FingerprintRelationField;
     listByListId?: FingerprintRelationField;
     listsHotelByListHotelId?: FingerprintRelationField;
     packingSlotByPackingSlotId?: FingerprintRelationField;
