@@ -45,9 +45,12 @@ export async function adminInviteUser(
     }
 
     const adminAuthClient = getSupabaseAdminAuthClient();
-    const { data, error } = await adminAuthClient.inviteUserByEmail(userDetails.email, {
-        redirectTo: redirectUrl,
-    });
+    const { data: newUserData, error } = await adminAuthClient.inviteUserByEmail(
+        userDetails.email,
+        {
+            redirectTo: redirectUrl,
+        }
+    );
 
     const auditLogInviteUser = {
         action: "send invite link to user by email",
@@ -74,17 +77,17 @@ export async function adminInviteUser(
         wasSuccess: true,
         content: {
             ...auditLogInviteUser.content,
-            newUserId: data.user.id,
-            invitedAt: data.user.invited_at,
-            createdAt: data.user.created_at,
+            newUserId: newUserData.user.id,
+            invitedAt: newUserData.user.invited_at,
+            createdAt: newUserData.user.created_at,
         },
     });
 
-    if (data) {
+    if (newUserData) {
         const { data: profileData, error: createRoleError } = await supabase
             .from("profiles")
             .insert({
-                primary_key: data.user.id,
+                primary_key: newUserData.user.id,
                 role: userDetails.role,
                 first_name: userDetails.firstName,
                 last_name: userDetails.lastName,
@@ -119,7 +122,7 @@ export async function adminInviteUser(
             ...auditLogAddProfile,
             wasSuccess: true,
             content: { ...auditLogAddProfile.content, profile: profileData },
-            profileId: data.user.id,
+            profileId: profileData.primary_key,
         });
 
         void logInfoReturnLogId(
@@ -129,7 +132,7 @@ export async function adminInviteUser(
     void logInfoReturnLogId(`Created a profile for ${userDetails.role} user: ${userDetails.email}`);
 
     return {
-        data: data.user,
+        data: newUserData.user,
         error: null,
     };
 }
