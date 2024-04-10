@@ -13,7 +13,7 @@ participant Supabase
 User->>Website:Enter email address on forgot password page
 Website->>Supabase:Request password reset<br/>(supabase.auth.resetPasswordForEmail)
 Supabase->>User: Send an email
-User->>Supabase: Visit the one-time password reset link (supabase.co/...&redirect_url=...)
+User->>Supabase: Visit the one-time password reset link (<project_id>.supabase.co/...&redirect_to=...)
 Supabase->>Website: Redirect with authentication code<br/>(/auth/reset-password?code=<auth_code>)
 Website->>Supabase:Exchange auth code for session<br/>(supabase.auth.exchangeCodeForSession)
 Supabase->>Website:Session
