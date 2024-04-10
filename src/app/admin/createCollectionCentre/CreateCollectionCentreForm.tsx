@@ -77,7 +77,9 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
             setSubmitErrorMessage(errorMessage);
             setSubmitDisabled(false);
 
-            const logId = await logErrorReturnLogId("Error with insert: collection centre", error);
+            const logId = await logErrorReturnLogId("Error with insert: collection centre", {
+                error: error,
+            });
             await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
             throw new DatabaseError("insert", "collection centres", logId);
         }
