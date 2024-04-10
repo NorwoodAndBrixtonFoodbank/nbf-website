@@ -12,6 +12,11 @@ export type InviteUserErrorType =
     | "inviteUserFailure"
     | "createProfileFailure";
 
+export interface InviteUserError {
+    type: InviteUserErrorType;
+    logId: string;
+}
+
 type InviteUsersDataAndErrorType =
     | {
           data: User;
@@ -19,10 +24,7 @@ type InviteUsersDataAndErrorType =
       }
     | {
           data: null;
-          error: {
-              type: InviteUserErrorType;
-              logId: string;
-          };
+          error: InviteUserError;
       };
 
 export async function adminInviteUser(
@@ -33,7 +35,7 @@ export async function adminInviteUser(
 
     if (!isSuccess) {
         const logId = await logErrorReturnLogId(
-            `Error with authenticating admin: ${failureReason}`
+            "Error with authenticating admin", {error: failureReason}
         );
         return {
             data: null,
@@ -47,7 +49,7 @@ export async function adminInviteUser(
     });
 
     if (error) {
-        const logId = await logErrorReturnLogId(`Error with inviting user: ${error}`);
+        const logId = await logErrorReturnLogId("Error with inviting user", {error: error});
         return {
             data: null,
             error: { type: "inviteUserFailure", logId: logId },
@@ -63,7 +65,7 @@ export async function adminInviteUser(
     });
 
     if (createRoleError) {
-        const logId = await logErrorReturnLogId(`Error with insert profile: ${createRoleError}`);
+        const logId = await logErrorReturnLogId("Error with insert profile", {error: createRoleError});
         return {
             data: null,
             error: { type: "createProfileFailure", logId: logId },

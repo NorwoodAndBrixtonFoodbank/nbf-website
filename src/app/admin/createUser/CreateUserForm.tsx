@@ -19,9 +19,8 @@ import { Database } from "@/databaseTypesFile";
 import Alert from "@mui/material/Alert/Alert";
 import { User } from "@supabase/gotrue-js";
 import { logInfoReturnLogId } from "@/logger/logger";
-import { DatabaseError } from "@/app/errorClasses";
 import UserDetailsCard from "@/app/admin/createUser/UserDetailsCard";
-import { InviteUserErrorType, adminInviteUser } from "@/server/adminInviteUser";
+import { InviteUserError, adminInviteUser } from "@/server/adminInviteUser";
 
 export interface InviteUserDetails {
     email: string;
@@ -47,14 +46,14 @@ const initialFormErrors: FormErrors = {
     telephoneNumber: Errors.initial,
 };
 
-const getServerErrorMessage = (serverError: InviteUserErrorType): string => {
-    switch (serverError) {
+const getServerErrorMessage = (serverError: InviteUserError): string => {
+    switch (serverError.type) {
         case "adminAuthenticationFailure":
-            return "Failed to authenticate user as an admin. Please try again later";
+            return "Failed to authenticate user as an admin. Please try again later.";
         case "inviteUserFailure":
-            return "Failed to invite the new user. Please try again later";
+            return "Failed to invite the new user. Please try again later.";
         case "createProfileFailure":
-            return "Failed to create a profile for the new user. Please try again later";
+            return "Failed to create a profile for the new user. Please try again later.";
     }
 };
 
@@ -70,8 +69,8 @@ const CreateUserForm: React.FC<{}> = () => {
     const [formError, setFormError] = useState(Errors.none);
     const [submitDisabled, setSubmitDisabled] = useState(false);
 
-    const [serverError, setServerError] = useState<InviteUserErrorType | null>(null);
-
+    const [serverError, setServerError] = useState<InviteUserError | null>(null);
+    
     const [invitedUser, setInvitedUser] = useState<User | null>(null);
 
     const submitForm = async (): Promise<void> => {
@@ -90,10 +89,9 @@ const CreateUserForm: React.FC<{}> = () => {
         const { data, error } = await adminInviteUser(fields, redirectUrl);
 
         if (error) {
-            setServerError(error.type);
+            setServerError(error);
             setSubmitDisabled(false);
             setInvitedUser(null);
-            throw new DatabaseError("insert", "invite user", error.logId);
         }
 
         setFormError(Errors.none);
@@ -134,7 +132,7 @@ const CreateUserForm: React.FC<{}> = () => {
                     </Button>
                 )}
                 {serverError && (
-                    <Alert severity="error">{getServerErrorMessage(serverError)}</Alert>
+                    <Alert severity="error">{`${getServerErrorMessage(serverError)} Log ID: ${serverError.logId}`}</Alert>
                 )}
                 {formError && <Alert severity="error">{formError}</Alert>}
             </StyledForm>
