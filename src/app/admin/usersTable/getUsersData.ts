@@ -37,13 +37,16 @@ export const getUsersDataAndCount = async (
     const { data: users, error: userError } = await query;
 
     if (userError) {
-        const logId = abortSignal.aborted
-            ? await logInfoReturnLogId("Aborted fetch: profiles table", userError)
-            : await logErrorReturnLogId("Error with fetch: profiles table", userError);
         if (abortSignal.aborted) {
+            const logId = await logInfoReturnLogId("Aborted fetch: profiles table", {
+                error: userError,
+            });
             throw new AbortError("fetch", "profiles table", logId);
         }
 
+        const logId = await logErrorReturnLogId("Error with fetch: profiles table", {
+            error: userError,
+        });
         throw new DatabaseError("fetch", "profiles table", logId);
     }
 
