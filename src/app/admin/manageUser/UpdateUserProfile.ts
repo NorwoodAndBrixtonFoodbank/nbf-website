@@ -18,7 +18,7 @@ export async function updateUserProfile(
         .update({
             role: userDetails.role,
         })
-        .eq("primary_key", userDetails.userId)
+        .eq("user_id", userDetails.userId)
         .select()
         .single();
 

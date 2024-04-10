@@ -94,6 +94,15 @@ type Override = {
       updated_at?: string;
     };
   }
+  channels?: {
+    name?: string;
+    fields?: {
+      id?: string;
+      name?: string;
+      inserted_at?: string;
+      updated_at?: string;
+    };
+  }
   clients?: {
     name?: string;
     fields?: {
@@ -150,7 +159,6 @@ type Override = {
       gender?: string;
       age?: string;
       clients?: string;
-      audit_log?: string;
     };
   }
   flow_state?: {
@@ -402,6 +410,7 @@ type Override = {
       last_name?: string;
       role?: string;
       telephone_number?: string;
+      user_id?: string;
       users?: string;
     };
   }
@@ -443,6 +452,7 @@ type Override = {
       for_email?: string;
       redirect_to?: string;
       from_ip_address?: string;
+      from_ip_address?: string;
       created_at?: string;
       updated_at?: string;
       flow_state_id?: string;
@@ -454,6 +464,13 @@ type Override = {
     name?: string;
     fields?: {
       version?: string;
+    };
+  }
+  realtime_schema_migrations?: {
+    name?: string;
+    fields?: {
+      version?: string;
+      inserted_at?: string;
     };
   }
   realtime_schema_migrations?: {
@@ -533,6 +550,18 @@ type Override = {
       event_name?: string;
       workflow_order?: string;
       audit_log?: string;
+    };
+  }
+  subscription?: {
+    name?: string;
+    fields?: {
+      id?: string;
+      subscription_id?: string;
+      entity?: string;
+      filters?: string;
+      claims?: string;
+      claims_role?: string;
+      created_at?: string;
     };
   }
   subscription?: {
@@ -657,6 +686,11 @@ export interface Fingerprint {
     insertedAt?: FingerprintDateField;
     updatedAt?: FingerprintDateField;
   }
+  channels?: {
+    id?: FingerprintNumberField;
+    insertedAt?: FingerprintDateField;
+    updatedAt?: FingerprintDateField;
+  }
   clients?: {
     auditLogsByClientId?: FingerprintRelationField;
     families?: FingerprintRelationField;
@@ -674,7 +708,6 @@ export interface Fingerprint {
   families?: {
     age?: FingerprintNumberField;
     family?: FingerprintRelationField;
-    auditLogsByFamilyMemberId?: FingerprintRelationField;
   }
   flowStates?: {
     createdAt?: FingerprintDateField;
@@ -764,7 +797,7 @@ export interface Fingerprint {
     eventsByParcelId?: FingerprintRelationField;
   }
   profiles?: {
-    userByPrimaryKey?: FingerprintRelationField;
+    user?: FingerprintRelationField;
   }
   refreshTokens?: {
     id?: FingerprintNumberField;
@@ -786,6 +819,10 @@ export interface Fingerprint {
   }
   authSchemaMigrations?: {
 
+  }
+  realtimeSchemaMigrations?: {
+    version?: FingerprintNumberField;
+    insertedAt?: FingerprintDateField;
   }
   realtimeSchemaMigrations?: {
     version?: FingerprintNumberField;
@@ -829,6 +866,11 @@ export interface Fingerprint {
     claims?: FingerprintJsonField;
     createdAt?: FingerprintDateField;
   }
+  subscriptions?: {
+    id?: FingerprintNumberField;
+    claims?: FingerprintJsonField;
+    createdAt?: FingerprintDateField;
+  }
   users?: {
     emailConfirmedAt?: FingerprintDateField;
     invitedAt?: FingerprintDateField;
@@ -851,7 +893,7 @@ export interface Fingerprint {
     mfaFactors?: FingerprintRelationField;
     sessions?: FingerprintRelationField;
     auditLogs?: FingerprintRelationField;
-    profilesByPrimaryKey?: FingerprintRelationField;
+    profiles?: FingerprintRelationField;
   }
   websiteData?: {
     auditLogsByWebsiteData?: FingerprintRelationField;
