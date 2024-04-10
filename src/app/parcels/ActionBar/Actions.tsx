@@ -20,7 +20,7 @@ import {
     ShoppingListModalButton,
 } from "@/app/parcels/ActionBar/ActionsModalButton";
 import { SelectChangeEvent } from "@mui/material";
-import { StatusType } from "./Statuses";
+import { StatusType, SaveParcelStatusReturnType, getStatusErrorMessageWithLogId } from "./Statuses";
 
 const isNotAtLeastOne = (value: number): boolean => {
     return value < 1;
@@ -188,24 +188,22 @@ const ActionsButton: React.FC<ActionsButtonProps> = ({
 
 interface Props {
     fetchParcelsByIds: (checkedParcelIds: string[]) => Promise<ParcelsTableRow[]>;
-    onActionCompleted: (
+    updateParcelStatuses: (
         parcels: ParcelsTableRow[],
         newStatus: StatusType,
         statusEventData?: string
-    ) => void;
+    ) => Promise<SaveParcelStatusReturnType>;
     actionAnchorElement: HTMLElement | null;
     setActionAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
-    modalError: string | null;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
     parcelIds: string[];
 }
 
 const Actions: React.FC<Props> = ({
     fetchParcelsByIds,
-    onActionCompleted,
+    updateParcelStatuses,
     actionAnchorElement,
     setActionAnchorElement,
-    modalError,
     setModalError,
     parcelIds,
 }) => {
@@ -215,6 +213,7 @@ const Actions: React.FC<Props> = ({
     const [date, setDate] = useState(dayjs());
     const [driverName, setDriverName] = useState("");
     const [collectionCentre, setCollectionCentre] = useState("");
+    const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(null);
 
     const onLabelQuantityChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setLabelQuantity(parseInt(event.target.value, 10) ?? 0);
@@ -262,13 +261,17 @@ const Actions: React.FC<Props> = ({
                             setActionAnchorElement(null);
                             setModalError(null);
                             return;
-                        case "Generate Map":
+                        case "Generate Map": {
                             openInNewTab(mapsLinkForSelectedParcels());
-                            onActionCompleted(
+                            const { error } = await updateParcelStatuses(
                                 selectedParcels,
                                 availableActions["Generate Map"].newStatus
                             );
+                            if (error) {
+                                setServerErrorMessage(getStatusErrorMessageWithLogId(error)); //this currently won't display anywhere. need to fix somehow
+                            }
                             return;
+                        }
                     }
                 }
             } catch {
@@ -303,15 +306,18 @@ const Actions: React.FC<Props> = ({
                             selectedParcels={selectedParcels}
                             header={key}
                             headerId="action-modal-header"
-                            errorText={modalError}
+                            errorText={serverErrorMessage}
                             actionType={value.actionType}
-                            onActionCompleted={() =>
-                                onActionCompleted(
+                            updateParcelsStatuses={async () => {
+                                const { error } = await updateParcelStatuses(
                                     selectedParcels,
                                     value.newStatus,
                                     labelQuantity ? labelQuantity.toString() : undefined
-                                )
-                            }
+                                );
+                                if (error) {
+                                    setServerErrorMessage(getStatusErrorMessageWithLogId(error));
+                                }
+                            }}
                             inputComponent={
                                 <ActionsInputComponent
                                     actionName={key}

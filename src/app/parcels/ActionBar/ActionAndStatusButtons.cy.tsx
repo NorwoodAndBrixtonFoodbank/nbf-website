@@ -5,6 +5,7 @@ import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import React from "react";
 import StyleManager from "@/app/themes";
 import Localization from "@/app/Localization";
+import { SaveParcelStatusReturnType } from "./Statuses";
 
 describe("Parcels - Action Bar", () => {
     const mockData: ParcelsTableRow[] = [
@@ -67,14 +68,14 @@ describe("Parcels - Action Bar", () => {
     const MockActionBar: React.FC<ActionAndStatusButtonsProps> = ({
         fetchParcelsByIds: fetchSelectedParcels,
         parcelIds,
-        onActionCompleted: onDeleteParcels,
+        updateParcelStatuses: onDeleteParcels,
     }) => {
         return (
             <Localization>
                 <StyleManager>
                     <ActionAndStatusButtons
                         fetchParcelsByIds={fetchSelectedParcels}
-                        onActionCompleted={onDeleteParcels}
+                        updateParcelStatuses={onDeleteParcels}
                         hasSavedParcelStatus={() => {}}
                         willSaveParcelStatus={() => {}}
                         parcelIds={parcelIds}
@@ -85,8 +86,9 @@ describe("Parcels - Action Bar", () => {
     };
     describe("Statuses", () => {
         let parcelIds: string[] = ["123456789", "123456aaaa789"];
-        const onDeleteParcels = (): void => {
+        const onDeleteParcels = async (): Promise<SaveParcelStatusReturnType> => {
             parcelIds = [];
+            return { error: null };
         };
 
         beforeEach(() => {
@@ -95,7 +97,7 @@ describe("Parcels - Action Bar", () => {
                     fetchParcelsByIds={async (parcelIds: string[]) =>
                         await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
                     }
-                    onActionCompleted={onDeleteParcels}
+                    updateParcelStatuses={onDeleteParcels}
                     hasSavedParcelStatus={() => {}}
                     willSaveParcelStatus={() => {}}
                     parcelIds={parcelIds}
@@ -163,8 +165,9 @@ describe("Parcels - Action Bar", () => {
 
     describe("Actions", () => {
         let parcelIds: string[] = ["123456789", "123456aaaa789"];
-        const onDeleteParcels = (): void => {
+        const onDeleteParcels = async (): Promise<SaveParcelStatusReturnType> => {
             parcelIds = [];
+            return { error: null };
         };
         const row = mockData[0];
 
@@ -174,7 +177,7 @@ describe("Parcels - Action Bar", () => {
                     fetchParcelsByIds={async (parcelIds: string[]) =>
                         await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
                     }
-                    onActionCompleted={onDeleteParcels}
+                    updateParcelStatuses={onDeleteParcels}
                     hasSavedParcelStatus={() => {}}
                     willSaveParcelStatus={() => {}}
                     parcelIds={parcelIds}

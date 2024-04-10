@@ -3,7 +3,6 @@ import supabase from "@/supabaseClient";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import ShippingLabelsPdf, { ShippingLabelData } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
 import { fetchClient, fetchParcel } from "@/common/fetch";
-import { saveParcelStatus } from "@/app/parcels/ActionBar/Statuses";
 
 const formatDatetime = (datetimeString: string | null, isDatetime: boolean): string => {
     if (datetimeString === null) {
@@ -68,17 +67,6 @@ const ShippingLabels = async ({
             fileName="ShippingLabels.pdf"
             data={requiredData}
             pdfComponent={ShippingLabelsPdf}
-            clickHandler={() => {
-                try {
-                    saveParcelStatus(
-                        [requiredData.parcel_id],
-                        "Shipping Labels Downloaded",
-                        String(labelQuantity)
-                    );
-                } catch (error: any) {
-                    // TODO: VFB-61: this needs to be reported to the user. Can we hook into the ActionBar.tsx setModalError()?
-                }
-            }}
         />
     );
 };

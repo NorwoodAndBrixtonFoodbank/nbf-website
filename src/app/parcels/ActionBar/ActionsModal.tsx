@@ -14,6 +14,7 @@ import { DatabaseError } from "@/app/errorClasses";
 import { StatusType } from "./Statuses";
 import SelectedParcelsOverview from "./SelectedParcelsOverview";
 import { logErrorReturnLogId } from "@/logger/logger";
+import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 
 export type ActionType = "pdfDownload" | "deleteParcel" | "generateMap";
 
@@ -23,7 +24,7 @@ interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     inputComponent?: React.ReactElement;
     showSelectedParcels: boolean;
     actionType: ActionType;
-    onActionCompleted: () => void;
+    updateParcelsStatuses: () => void;
 }
 
 const Centerer = styled.div`
@@ -189,7 +190,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
         <Modal {...props}>
             <ModalInner>
                 {!loadPdf && props.inputComponent}
-                {props.errorText && <small>{props.errorText}</small>}
+                {props.errorText && <ErrorSecondaryText>{props.errorText}</ErrorSecondaryText>}
                 {loadPdf ? (
                     <>
                         {props.actionType === "pdfDownload" ? (
@@ -223,7 +224,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                     variant="contained"
                                     onClick={() => {
                                         setLoadPdf(true);
-                                        props.onActionCompleted();
+                                        props.updateParcelsStatuses();
                                     }}
                                 >
                                     {loading ? "Loading..." : "Create PDF"}
@@ -244,7 +245,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                         variant="contained"
                                         onClick={() => {
                                             setLoading(true);
-                                            props.onActionCompleted();
+                                            props.updateParcelsStatuses();
                                         }}
                                     >
                                         Delete

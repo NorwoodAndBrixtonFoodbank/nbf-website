@@ -23,7 +23,7 @@ import supabase from "@/supabaseClient";
 import { getParcelIds, getParcelsByIds, getParcelsDataAndCount } from "./fetchParcelTableData";
 import dayjs from "dayjs";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { StatusType, saveParcelStatus } from "./ActionBar/Statuses";
+import { StatusType, saveParcelStatus, SaveParcelStatusReturnType } from "./ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { CircularProgress } from "@mui/material";
@@ -527,19 +527,20 @@ const ParcelsPage: React.FC<{}> = () => {
         router.push(`/parcels?${parcelIdParam}=${row.data.parcelId}`);
     };
 
-    const onActionCompleted = async (
+    const updateParcelStatuses = async (
         parcels: ParcelsTableRow[],
         newStatus: StatusType,
         statusEventData?: string
-    ): Promise<void> => {
+    ): Promise<SaveParcelStatusReturnType> => {
         setIsLoading(true);
-        await saveParcelStatus(
+        const { error } = await saveParcelStatus(
             parcels.map((parcel) => parcel.parcelId),
             newStatus,
             statusEventData
         );
         setCheckedParcelIds([]);
         setIsLoading(false);
+        return { error: error };
     };
 
     const getCheckedParcelsData = async (
@@ -561,7 +562,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
                     <ActionAndStatusButtons
                         fetchParcelsByIds={getCheckedParcelsData}
-                        onActionCompleted={onActionCompleted}
+                        updateParcelStatuses={updateParcelStatuses}
                         willSaveParcelStatus={() => setIsLoading(true)}
                         hasSavedParcelStatus={() => setIsLoading(false)}
                         parcelIds={checkedParcelIds}

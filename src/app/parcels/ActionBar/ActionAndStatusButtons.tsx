@@ -5,17 +5,17 @@ import styled from "styled-components";
 import Button from "@mui/material/Button";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import Alert from "@mui/material/Alert";
-import Statuses, { StatusType } from "@/app/parcels/ActionBar/Statuses";
+import Statuses, { StatusType, SaveParcelStatusReturnType } from "@/app/parcels/ActionBar/Statuses";
 import Actions from "@/app/parcels/ActionBar/Actions";
 import { ArrowDropDown } from "@mui/icons-material";
 
 export interface ActionAndStatusButtonsProps {
     fetchParcelsByIds: (checkedParcelIds: string[]) => Promise<ParcelsTableRow[]>;
-    onActionCompleted: (
+    updateParcelStatuses: (
         parcels: ParcelsTableRow[],
         newStatus: StatusType,
         statusEventData?: string
-    ) => void;
+    ) => Promise<SaveParcelStatusReturnType>;
     willSaveParcelStatus: () => void;
     hasSavedParcelStatus: () => void;
     parcelIds: string[];
@@ -40,7 +40,6 @@ const ActionAndStatusButtons: React.FC<ActionAndStatusButtonsProps> = (props) =>
                 parcelIds={props.parcelIds}
                 statusAnchorElement={statusAnchorElement}
                 setStatusAnchorElement={setStatusAnchorElement}
-                modalError={modalError}
                 setModalError={setModalError}
                 willSaveParcelStatus={props.willSaveParcelStatus}
                 hasSavedParcelStatus={props.hasSavedParcelStatus}
@@ -48,10 +47,9 @@ const ActionAndStatusButtons: React.FC<ActionAndStatusButtonsProps> = (props) =>
             <Actions
                 parcelIds={props.parcelIds}
                 fetchParcelsByIds={props.fetchParcelsByIds}
-                onActionCompleted={props.onActionCompleted}
+                updateParcelStatuses={props.updateParcelStatuses}
                 actionAnchorElement={actionAnchorElement}
                 setActionAnchorElement={setActionAnchorElement}
-                modalError={modalError}
                 setModalError={setModalError}
             />
             {modalError && (

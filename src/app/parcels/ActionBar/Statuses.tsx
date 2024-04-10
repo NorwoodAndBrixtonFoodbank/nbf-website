@@ -8,7 +8,6 @@ import MenuItem from "@mui/material/MenuItem/MenuItem";
 import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import StatusesBarModal from "@/app/parcels/ActionBar/StatusesModal";
-import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { sendAuditLog } from "@/server/auditLog";
 
@@ -44,12 +43,21 @@ const nonMenuStatuses: StatusType[] = [
     "Request Deleted",
 ];
 
+type SaveParcelStatusErrorType = "eventInsertionFailed";
+
+export interface SaveParcelStatusError {
+    type: SaveParcelStatusErrorType;
+    logId: string;
+}
+
+export type SaveParcelStatusReturnType = { error: null | SaveParcelStatusError };
+
 export const saveParcelStatus = async (
     parcelIds: string[],
     statusName: StatusType,
     statusEventData?: string | null,
     date?: Dayjs | null
-): Promise<void> => {
+): Promise<SaveParcelStatusReturnType> => {
     const timestamp = (date ?? dayjs()).set("second", 0).toISOString();
     const toInsert = parcelIds
         .map((parcelId: string) => {
@@ -69,7 +77,7 @@ export const saveParcelStatus = async (
     }));
 
     const { data, error } = await supabase
-        .from("events")
+        .from("event")
         .insert(toInsert)
         .select("event_id:primary_key, parcel_id");
 
@@ -78,7 +86,7 @@ export const saveParcelStatus = async (
         auditLogs.forEach(
             async (auditLog) => await sendAuditLog({ ...auditLog, wasSuccess: false, logId })
         );
-        throw new DatabaseError("insert", "status event", logId);
+        return { error: { type: "eventInsertionFailed", logId: logId } };
     }
 
     auditLogs.forEach(
@@ -89,24 +97,34 @@ export const saveParcelStatus = async (
                 wasSuccess: true,
             })
     );
+
+    return { error: null };
 };
 
 interface Props {
     fetchParcelsByIds: (checkedParceldIds: string[]) => Promise<ParcelsTableRow[]>;
     statusAnchorElement: HTMLElement | null;
     setStatusAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
-    modalError: string | null;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
     willSaveParcelStatus: () => void;
     hasSavedParcelStatus: () => void;
     parcelIds: string[];
 }
 
+const getStatusErrorMessage = (statusError: SaveParcelStatusError): string => {
+    switch (statusError.type) {
+        case "eventInsertionFailed":
+            return "Failed to save new parcel status.";
+    }
+};
+
+export const getStatusErrorMessageWithLogId = (statusError: SaveParcelStatusError): string =>
+    `${getStatusErrorMessage(statusError)} Log ID: ${statusError.logId}`;
+
 const Statuses: React.FC<Props> = ({
     fetchParcelsByIds,
     statusAnchorElement,
     setStatusAnchorElement,
-    modalError,
     setModalError,
     willSaveParcelStatus,
     hasSavedParcelStatus,
@@ -115,22 +133,21 @@ const Statuses: React.FC<Props> = ({
     const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
     const [selectedStatus, setSelectedStatus] = useState<StatusType | null>(null);
     const [statusModal, setStatusModal] = useState(false);
+    const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(null);
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
         willSaveParcelStatus();
-        try {
-            await saveParcelStatus(
-                selectedParcels.map((parcel: ParcelsTableRow) => {
-                    return parcel.parcelId;
-                }),
-                selectedStatus!,
-                null,
-                date
-            );
-            setStatusModal(false);
-            setModalError(null);
-        } catch (error: any) {
-            setModalError(error.message);
+        setServerErrorMessage(null);
+        const { error } = await saveParcelStatus(
+            selectedParcels.map((parcel: ParcelsTableRow) => {
+                return parcel.parcelId;
+            }),
+            selectedStatus!,
+            null,
+            date
+        );
+        if (error) {
+            setServerErrorMessage(`${getStatusErrorMessage(error)} Log ID: ${error.logId}`);
         }
         hasSavedParcelStatus();
     };
@@ -167,7 +184,7 @@ const Statuses: React.FC<Props> = ({
                 header={selectedStatus ?? "Apply Status"}
                 headerId="status-modal-header"
                 onSubmit={submitStatus}
-                errorText={modalError}
+                errorText={serverErrorMessage}
             >
                 <></>
             </StatusesBarModal>
