@@ -20,6 +20,7 @@ export interface AuditLog {
     listHotelId?: string;
     packingSlotId?: string;
     parcelId?: string;
+    profileId?: string;
 }
 
 export async function sendAuditLog(auditLogProps: AuditLog): Promise<void> {
@@ -40,6 +41,7 @@ export async function sendAuditLog(auditLogProps: AuditLog): Promise<void> {
         list_hotel_id: auditLogProps.listHotelId,
         packing_slot_id: auditLogProps.packingSlotId,
         parcel_id: auditLogProps.parcelId,
+        profile_id: auditLogProps.profileId,
         content: auditLogProps.content,
         wasSuccess: auditLogProps.wasSuccess,
         log_id: auditLogProps.logId,
