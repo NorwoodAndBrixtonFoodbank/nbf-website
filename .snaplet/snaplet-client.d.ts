@@ -83,6 +83,15 @@ type Override = {
       objects?: string;
     };
   }
+  channels?: {
+    name?: string;
+    fields?: {
+      id?: string;
+      name?: string;
+      inserted_at?: string;
+      updated_at?: string;
+    };
+  }
   clients?: {
     name?: string;
     fields?: {
@@ -139,7 +148,6 @@ type Override = {
       gender?: string;
       age?: string;
       clients?: string;
-      audit_log?: string;
     };
   }
   flow_state?: {
@@ -156,7 +164,6 @@ type Override = {
       created_at?: string;
       updated_at?: string;
       authentication_method?: string;
-      auth_code_issued_at?: string;
       saml_relay_states?: string;
     };
   }
@@ -392,6 +399,7 @@ type Override = {
       last_name?: string;
       role?: string;
       telephone_number?: string;
+      user_id?: string;
       users?: string;
     };
   }
@@ -421,7 +429,6 @@ type Override = {
       attribute_mapping?: string;
       created_at?: string;
       updated_at?: string;
-      name_id_format?: string;
       sso_providers?: string;
     };
   }
@@ -433,6 +440,7 @@ type Override = {
       request_id?: string;
       for_email?: string;
       redirect_to?: string;
+      from_ip_address?: string;
       created_at?: string;
       updated_at?: string;
       flow_state_id?: string;
@@ -444,6 +452,13 @@ type Override = {
     name?: string;
     fields?: {
       version?: string;
+    };
+  }
+  realtime_schema_migrations?: {
+    name?: string;
+    fields?: {
+      version?: string;
+      inserted_at?: string;
     };
   }
   supabase_migrations_schema_migrations?: {
@@ -518,6 +533,18 @@ type Override = {
       audit_log?: string;
     };
   }
+  subscription?: {
+    name?: string;
+    fields?: {
+      id?: string;
+      subscription_id?: string;
+      entity?: string;
+      filters?: string;
+      claims?: string;
+      claims_role?: string;
+      created_at?: string;
+    };
+  }
   users?: {
     name?: string;
     fields?: {
@@ -555,7 +582,6 @@ type Override = {
       reauthentication_sent_at?: string;
       is_sso_user?: string;
       deleted_at?: string;
-      is_anonymous?: string;
       identities?: string;
       mfa_factors?: string;
       sessions?: string;
@@ -623,6 +649,11 @@ export interface Fingerprint {
     fileSizeLimit?: FingerprintNumberField;
     objects?: FingerprintRelationField;
   }
+  channels?: {
+    id?: FingerprintNumberField;
+    insertedAt?: FingerprintDateField;
+    updatedAt?: FingerprintDateField;
+  }
   clients?: {
     auditLogsByClientId?: FingerprintRelationField;
     families?: FingerprintRelationField;
@@ -640,12 +671,10 @@ export interface Fingerprint {
   families?: {
     age?: FingerprintNumberField;
     family?: FingerprintRelationField;
-    auditLogsByFamilyMemberId?: FingerprintRelationField;
   }
   flowStates?: {
     createdAt?: FingerprintDateField;
     updatedAt?: FingerprintDateField;
-    authCodeIssuedAt?: FingerprintDateField;
     samlRelayStates?: FingerprintRelationField;
   }
   hooks?: {
@@ -731,7 +760,7 @@ export interface Fingerprint {
     eventsByParcelId?: FingerprintRelationField;
   }
   profiles?: {
-    userByPrimaryKey?: FingerprintRelationField;
+    user?: FingerprintRelationField;
   }
   refreshTokens?: {
     id?: FingerprintNumberField;
@@ -753,6 +782,10 @@ export interface Fingerprint {
   }
   authSchemaMigrations?: {
 
+  }
+  realtimeSchemaMigrations?: {
+    version?: FingerprintNumberField;
+    insertedAt?: FingerprintDateField;
   }
   supabaseMigrationsSchemaMigrations?: {
 
@@ -787,6 +820,11 @@ export interface Fingerprint {
     workflowOrder?: FingerprintNumberField;
     auditLogsByStatusOrder?: FingerprintRelationField;
   }
+  subscriptions?: {
+    id?: FingerprintNumberField;
+    claims?: FingerprintJsonField;
+    createdAt?: FingerprintDateField;
+  }
   users?: {
     emailConfirmedAt?: FingerprintDateField;
     invitedAt?: FingerprintDateField;
@@ -809,7 +847,7 @@ export interface Fingerprint {
     mfaFactors?: FingerprintRelationField;
     sessions?: FingerprintRelationField;
     auditLogs?: FingerprintRelationField;
-    profilesByPrimaryKey?: FingerprintRelationField;
+    profiles?: FingerprintRelationField;
   }
   websiteData?: {
     auditLogsByWebsiteData?: FingerprintRelationField;
