@@ -13,7 +13,6 @@ export const getUsersDataAndCount = async (
     sortState: SortState<UserRow>,
     abortSignal: AbortSignal
 ): Promise<{ userData: UserRow[]; count: number }> => {
-    const userData: UserRow[] = [];
     let query = supabase.from("profiles_plus").select("*");
 
     if (
@@ -50,8 +49,8 @@ export const getUsersDataAndCount = async (
         throw new DatabaseError("fetch", "profiles table", logId);
     }
 
-    for (const user of users) {
-        userData.push({
+    const userData: UserRow[] = users.map((user) => {
+        return {
             id: user.user_id ?? "",
             firstName: user.first_name ?? "",
             lastName: user.last_name ?? "",
@@ -60,8 +59,8 @@ export const getUsersDataAndCount = async (
             telephoneNumber: user.telephone_number ?? "",
             createdAt: Date.parse(user.created_at ?? ""),
             updatedAt: Date.parse(user.updated_at ?? ""),
-        });
-    }
+        };
+    });
 
     const count = await getUsersCount(supabase, filters, abortSignal);
 
