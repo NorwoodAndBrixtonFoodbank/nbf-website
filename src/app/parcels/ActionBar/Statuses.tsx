@@ -83,8 +83,12 @@ export const saveParcelStatus = async (
     }
 
     auditLogs.forEach(
-        async (auditLog, index) =>
-            await sendAuditLog({ ...auditLog, eventId: data[index].event_id, wasSuccess: true })
+        async (auditLog) =>
+            await sendAuditLog({
+                ...auditLog,
+                eventId: data.find((event) => auditLog.parcelId === event.parcel_id)?.event_id,
+                wasSuccess: true,
+            })
     );
 };
 

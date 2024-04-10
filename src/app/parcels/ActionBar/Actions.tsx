@@ -314,10 +314,14 @@ const Actions: React.FC<Props> = ({
                             headerId="action-modal-header"
                             errorText={modalError}
                             actionType={value.actionType}
-                            onActionCompleted={onActionCompleted}
-                            newStatus={value.newStatus}
-                            auditLogActionMessage={value.auditLogActionMessage}
-                            labelQuantity={labelQuantity}
+                            onActionCompleted={() =>
+                                onActionCompleted(
+                                    selectedParcels,
+                                    value.newStatus,
+                                    value.auditLogActionMessage,
+                                    labelQuantity ? labelQuantity.toString() : undefined
+                                )
+                            }
                             inputComponent={
                                 <ActionsInputComponent
                                     actionName={key}

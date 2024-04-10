@@ -14,7 +14,8 @@ export interface ActionAndStatusButtonsProps {
     onActionCompleted: (
         parcels: ParcelsTableRow[],
         newStatus: StatusType,
-        auditLogActionMessage: string
+        auditLogActionMessage: string,
+        statusEventData?: string
     ) => void;
     willSaveParcelStatus: () => void;
     hasSavedParcelStatus: () => void;

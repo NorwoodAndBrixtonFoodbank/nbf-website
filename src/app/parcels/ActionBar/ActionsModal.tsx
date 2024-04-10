@@ -23,15 +23,7 @@ interface ActionsModalProps extends React.ComponentProps<typeof Modal> {
     inputComponent?: React.ReactElement;
     showSelectedParcels: boolean;
     actionType: ActionType;
-    newStatus: StatusType;
-    labelQuantity: number;
-    auditLogActionMessage: string;
-    onActionCompleted: (
-        parcels: ParcelsTableRow[],
-        newStatus: StatusType,
-        auditLogActionMessage: string,
-        statusEventData?: string
-    ) => void;
+    onActionCompleted: () => void;
 }
 
 const Centerer = styled.div`
@@ -231,14 +223,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                     variant="contained"
                                     onClick={() => {
                                         setLoadPdf(true);
-                                        props.onActionCompleted(
-                                            props.selectedParcels,
-                                            props.newStatus,
-                                            props.auditLogActionMessage,
-                                            props.labelQuantity
-                                                ? props.labelQuantity.toString()
-                                                : undefined
-                                        );
+                                        props.onActionCompleted();
                                     }}
                                 >
                                     {loading ? "Loading..." : "Create PDF"}
@@ -259,14 +244,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                         variant="contained"
                                         onClick={() => {
                                             setLoading(true);
-                                            props.onActionCompleted(
-                                                props.selectedParcels,
-                                                props.newStatus,
-                                                props.auditLogActionMessage,
-                                                props.labelQuantity
-                                                    ? props.labelQuantity.toString()
-                                                    : undefined
-                                            );
+                                            props.onActionCompleted();
                                         }}
                                     >
                                         Delete
