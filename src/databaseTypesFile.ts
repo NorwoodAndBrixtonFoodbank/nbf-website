@@ -609,8 +609,8 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
           {
-            foreignKeyName: "profiles_primary_key_fkey"
-            columns: ["primary_key"]
+            foreignKeyName: "profiles_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
