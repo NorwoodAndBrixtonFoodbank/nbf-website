@@ -15,7 +15,7 @@ export const fetchUserRole = async (userId: string): Promise<fetchRoleResult> =>
     const { data, error } = await supabase
         .from("profiles")
         .select("role")
-        .eq("primary_key", userId)
+        .eq("user_id", userId)
         .single();
 
     if (error) {

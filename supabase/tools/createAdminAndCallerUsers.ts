@@ -54,7 +54,7 @@ async function createUser(supabase: SupabaseClient, userProfile: userProfile): P
 
     if (data) {
         const { error } = await supabase.from("profiles").insert({
-            primary_key: data.user.id,
+            user_id: data.user.id,
             role: userProfile.role,
             first_name: userProfile.firstName,
             last_name: userProfile.lastName,
