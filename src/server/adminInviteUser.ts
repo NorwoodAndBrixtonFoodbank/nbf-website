@@ -5,7 +5,7 @@ import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
 import { User } from "@supabase/gotrue-js";
 import { InviteUserDetails } from "@/app/admin/createUser/CreateUserForm";
 import supabase from "@/supabaseClient";
-import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
+import { logInfoReturnLogId } from "@/logger/logger";
 
 type InviteUsersDataAndErrorType =
     | {
@@ -49,7 +49,7 @@ export async function adminInviteUser(
         telephone_number: userDetails.telephoneNumber,
         user_id: data.user.id,
     });
-    
+
     if (createRoleError) {
         return {
             data: null,
