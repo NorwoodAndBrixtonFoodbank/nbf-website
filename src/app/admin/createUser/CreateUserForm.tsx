@@ -50,13 +50,13 @@ const initialFormErrors: FormErrors = {
 const getServerErrorMessage = (serverError: InviteUserErrorType): string => {
     switch (serverError) {
         case "adminAuthenticationFailure":
-            return "Failed to authenticate user as an admin. Please try again later"
+            return "Failed to authenticate user as an admin. Please try again later";
         case "inviteUserFailure":
-            return "Failed to invite the new user. Please try again later"
+            return "Failed to invite the new user. Please try again later";
         case "createProfileFailure":
-            return "Failed to create a profile for the new user. Please try again later"
+            return "Failed to create a profile for the new user. Please try again later";
     }
-}
+};
 
 const formSections = [AccountDetails, UserRoleCard, UserDetailsCard];
 
@@ -133,7 +133,9 @@ const CreateUserForm: React.FC<{}> = () => {
                         Invite User
                     </Button>
                 )}
-                {serverError && <Alert severity="error">{getServerErrorMessage(serverError)}</Alert>}
+                {serverError && (
+                    <Alert severity="error">{getServerErrorMessage(serverError)}</Alert>
+                )}
                 {formError && <Alert severity="error">{formError}</Alert>}
             </StyledForm>
         </CenterComponent>

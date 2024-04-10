@@ -63,9 +63,7 @@ export async function adminInviteUser(
     });
 
     if (createRoleError) {
-        const logId = await logErrorReturnLogId(
-            `Error with insert profile: ${createRoleError}`
-        );
+        const logId = await logErrorReturnLogId(`Error with insert profile: ${createRoleError}`);
         return {
             data: null,
             error: { type: "createProfileFailure", logId: logId },
