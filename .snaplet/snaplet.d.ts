@@ -28,7 +28,6 @@ interface Table_public_audit_log {
   client_id: string | null;
   collection_centre_id: string | null;
   event_id: string | null;
-  family_member_id: string | null;
   list_id: string | null;
   list_hotel_id: string | null;
   packing_slot_id: string | null;
@@ -108,6 +107,7 @@ interface Table_auth_flow_state {
   created_at: string | null;
   updated_at: string | null;
   authentication_method: string;
+  auth_code_issued_at: string | null;
 }
 interface Table_supabase_functions_hooks {
   id: number;
@@ -295,6 +295,7 @@ interface Table_auth_saml_providers {
   attribute_mapping: Json | null;
   created_at: string | null;
   updated_at: string | null;
+  name_id_format: string | null;
 }
 interface Table_auth_saml_relay_states {
   id: string;
@@ -302,7 +303,6 @@ interface Table_auth_saml_relay_states {
   request_id: string;
   for_email: string | null;
   redirect_to: string | null;
-  from_ip_address: string | null;
   created_at: string | null;
   updated_at: string | null;
   flow_state_id: string | null;
@@ -389,6 +389,7 @@ interface Table_auth_users {
   reauthentication_sent_at: string | null;
   is_sso_user: boolean;
   deleted_at: string | null;
+  is_anonymous: boolean;
 }
 interface Table_public_website_data {
   name: string;
@@ -499,7 +500,6 @@ interface Tables_relationships {
        audit_log_client_id_fkey: "public.clients";
        audit_log_collection_centre_id_fkey: "public.collection_centres";
        audit_log_event_id_fkey: "public.events";
-       audit_log_family_member_id_fkey: "public.families";
        audit_log_list_id_fkey: "public.lists";
        audit_log_list_hotel_id_fkey: "public.lists_hotel";
        audit_log_packing_slot_id_fkey: "public.packing_slots";

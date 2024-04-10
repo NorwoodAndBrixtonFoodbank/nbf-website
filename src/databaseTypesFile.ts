@@ -16,7 +16,6 @@ export type Database = {
           collection_centre_id: string | null
           content: Json | null
           event_id: string | null
-          family_member_id: string | null
           list_hotel_id: string | null
           list_id: string | null
           log_id: string | null
@@ -34,7 +33,6 @@ export type Database = {
           collection_centre_id?: string | null
           content?: Json | null
           event_id?: string | null
-          family_member_id?: string | null
           list_hotel_id?: string | null
           list_id?: string | null
           log_id?: string | null
@@ -52,7 +50,6 @@ export type Database = {
           collection_centre_id?: string | null
           content?: Json | null
           event_id?: string | null
-          family_member_id?: string | null
           list_hotel_id?: string | null
           list_id?: string | null
           log_id?: string | null
@@ -98,13 +95,6 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
-            referencedColumns: ["primary_key"]
-          },
-          {
-            foreignKeyName: "audit_log_family_member_id_fkey"
-            columns: ["family_member_id"]
-            isOneToOne: false
-            referencedRelation: "families"
             referencedColumns: ["primary_key"]
           },
           {

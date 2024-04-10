@@ -32,6 +32,8 @@ const getClientsDataAndCount = async (
         }
     });
 
+    query.order("client_id");
+
     query = query.range(startIndex, endIndex);
 
     query = query.abortSignal(abortSignal);
