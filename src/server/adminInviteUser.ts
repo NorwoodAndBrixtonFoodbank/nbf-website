@@ -8,9 +8,9 @@ import supabase from "@/supabaseClient";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 
 export type InviteUserErrorType =
-    | "Admin Authentication Failure"
-    | "Invite User Failure"
-    | "Create Profile Failure";
+    | "adminAuthenticationFailure"
+    | "inviteUserFailure"
+    | "createProfileFailure";
 
 type InviteUsersDataAndErrorType =
     | {
@@ -37,7 +37,7 @@ export async function adminInviteUser(
         );
         return {
             data: null,
-            error: { type: "Admin Authentication Failure", logId: logId },
+            error: { type: "adminAuthenticationFailure", logId: logId },
         };
     }
 
@@ -47,10 +47,10 @@ export async function adminInviteUser(
     });
 
     if (error) {
-        const logId = await logErrorReturnLogId(`Error with inviting user: ${error.message}`);
+        const logId = await logErrorReturnLogId(`Error with inviting user: ${error}`);
         return {
             data: null,
-            error: { type: "Invite User Failure", logId: logId },
+            error: { type: "inviteUserFailure", logId: logId },
         };
     }
 
@@ -64,11 +64,11 @@ export async function adminInviteUser(
 
     if (createRoleError) {
         const logId = await logErrorReturnLogId(
-            `Error with insert profile: ${createRoleError.message}`
+            `Error with insert profile: ${createRoleError}`
         );
         return {
             data: null,
-            error: { type: "Create Profile Failure", logId: logId },
+            error: { type: "createProfileFailure", logId: logId },
         };
     }
     void logInfoReturnLogId(`Created a profile for ${userDetails.role} user: ${userDetails.email}`);
