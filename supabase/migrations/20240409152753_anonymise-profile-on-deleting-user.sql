@@ -33,4 +33,6 @@ END;$function$
 
 CREATE TRIGGER anonymise_profile_trigger AFTER UPDATE OF user_id ON public.profiles FOR EACH ROW EXECUTE FUNCTION anonymise_profile();
 
-
+UPDATE profiles
+SET user_id = primary_key
+WHERE user_id IS NULL;
