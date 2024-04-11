@@ -3,12 +3,9 @@ import Title from "@/components/Title/Title";
 import { Metadata } from "next";
 import AdminPage from "@/app/admin/AdminPage";
 import { getSupabaseServerComponentClient } from "@/supabaseServer";
-import { User } from "@supabase/gotrue-js";
 import { DatabaseError } from "@/app/errorClasses";
 import { Schema, UserRole } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { adminGetUsers } from "@/server/adminGetUsers";
-import { fetchUserProfile } from "@/common/fetch";
 
 // disables caching
 export const revalidate = 0;
@@ -21,42 +18,9 @@ export interface UserRow {
     userRole: DisplayedUserRole;
     email: string;
     telephoneNumber: string;
-    createdAt: number;
-    updatedAt: number;
+    createdAt: number | null;
+    updatedAt: number | null;
 }
-
-const getUsers = async (): Promise<UserRow[]> => {
-    const { data, error } = await adminGetUsers();
-
-    if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: Users", { error: error });
-        throw new DatabaseError("fetch", "users information", logId);
-    }
-
-    const supabase = getSupabaseServerComponentClient();
-
-    const userRows = data.map(async (user: User): Promise<UserRow> => {
-        const { data: userProfile, error } = await fetchUserProfile(user.id, supabase);
-
-        if (error) {
-            void logErrorReturnLogId(`failed to fetch user profile. User ID: ${user.id}`, {
-                error: error,
-            });
-        }
-
-        return {
-            id: user.id,
-            firstName: userProfile?.first_name ?? "-",
-            lastName: userProfile?.last_name ?? "-",
-            userRole: userProfile?.role ?? "UNKNOWN",
-            email: user.email ?? "-",
-            telephoneNumber: userProfile?.telephone_number ?? "-",
-            createdAt: Date.parse(user.created_at),
-            updatedAt: Date.parse(user.updated_at ?? ""),
-        };
-    });
-    return await Promise.all(userRows);
-};
 
 const getCollectionCentres = async (): Promise<Schema["collection_centres"][]> => {
     const supabase = getSupabaseServerComponentClient();
@@ -74,15 +38,12 @@ const getCollectionCentres = async (): Promise<Schema["collection_centres"][]> =
 };
 
 const Admin = async (): Promise<ReactElement> => {
-    const [userData, collectionCentreData] = await Promise.all([
-        getUsers(),
-        getCollectionCentres(),
-    ]);
+    const collectionCentreData = await getCollectionCentres();
 
     return (
         <main>
             <Title>Admin Panel</Title>
-            <AdminPage userData={userData} collectionCentreData={collectionCentreData} />
+            <AdminPage collectionCentreData={collectionCentreData} />
         </main>
     );
 };
