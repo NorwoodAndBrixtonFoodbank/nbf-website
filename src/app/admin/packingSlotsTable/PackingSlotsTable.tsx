@@ -72,17 +72,21 @@ function EditToolbar(props: EditToolbarProps): React.JSX.Element {
     );
 }
 
-function getBaseAuditLogForPackingSlotSwap(
-    packingSlotRow: PackingSlotRow
+function getBaseAuditLogForPackingSlotAction(
+    action: string,
+    packingSlotRow: PackingSlotRow,
+    options?: {
+        excludePackingSlotId?: boolean;
+    }
 ): Pick<AuditLog, "action" | "content" | "packingSlotId"> {
     return {
-        action: "Move a packing slot down",
+        action,
         content: {
             originalOrder: packingSlotRow.order,
             packingSlotName: packingSlotRow.name,
             packingSlotIsShown: packingSlotRow.isShown,
         },
-        packingSlotId: packingSlotRow.id,
+        packingSlotId: options?.excludePackingSlotId ? undefined : packingSlotRow.id,
     };
 }
 
@@ -150,19 +154,42 @@ const PackingSlotsTable: React.FC = () => {
 
         if (newRow.isNew) {
             const { error: insertPackingSlotError } = await insertNewPackingSlot(newRow);
+            const baseAuditLog = getBaseAuditLogForPackingSlotAction(
+                "add a new packing slot",
+                newRow,
+                { excludePackingSlotId: true }
+            );
 
             if (insertPackingSlotError) {
                 setErrorMessage(
                     `Failed to add the packing slot. Log ID: ${insertPackingSlotError.logId}`
                 );
+                await sendAuditLog({
+                    ...baseAuditLog,
+                    wasSuccess: false,
+                    logId: insertPackingSlotError.logId,
+                });
+            } else {
+                await sendAuditLog({ ...baseAuditLog, wasSuccess: true });
             }
         } else {
             const { error: updatePackingSlotError } = await updateDbPackingSlot(newRow);
+            const baseAuditLog = getBaseAuditLogForPackingSlotAction(
+                "update a packing slot",
+                newRow
+            );
 
             if (updatePackingSlotError) {
                 setErrorMessage(
                     `Failed to update the packing slot. Log ID: ${updatePackingSlotError.logId}`
                 );
+                await sendAuditLog({
+                    ...baseAuditLog,
+                    wasSuccess: false,
+                    logId: updatePackingSlotError.logId,
+                });
+            } else {
+                await sendAuditLog({ ...baseAuditLog, wasSuccess: true });
             }
         }
 
@@ -210,13 +237,17 @@ const PackingSlotsTable: React.FC = () => {
             const rowTwo = rows[rowIndex - 1];
             const { error: swapRowsError } = await swapRows(rowOne, rowTwo);
 
-            const baseAuditLog = getBaseAuditLogForPackingSlotSwap(row);
+            const baseAuditLog = getBaseAuditLogForPackingSlotAction("move a packing slot up", row);
 
             if (swapRowsError) {
                 setErrorMessage(
                     `Failed to move packing slot (${row.name}) up. Log ID: ${swapRowsError.logId}`
                 );
-                void sendAuditLog({ ...baseAuditLog, wasSuccess: false });
+                void sendAuditLog({
+                    ...baseAuditLog,
+                    wasSuccess: false,
+                    logId: swapRowsError.logId,
+                });
             } else {
                 void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
             }
@@ -234,7 +265,10 @@ const PackingSlotsTable: React.FC = () => {
             const rowBelow = rows[rowIndex + 1];
             const { error: swapRowsError } = await swapRows(clickedRow, rowBelow);
 
-            const baseAuditLog = getBaseAuditLogForPackingSlotSwap(row);
+            const baseAuditLog = getBaseAuditLogForPackingSlotAction(
+                "move a packing slot down",
+                row
+            );
 
             if (swapRowsError) {
                 setErrorMessage(
