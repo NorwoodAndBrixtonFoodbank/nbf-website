@@ -153,7 +153,8 @@ const PackingSlotsTable: React.FC = () => {
         setIsLoading(true);
 
         if (newRow.isNew) {
-            const { error: insertPackingSlotError } = await insertNewPackingSlot(newRow);
+            const { data: createdPackingSlot, error: insertPackingSlotError } =
+                await insertNewPackingSlot(newRow);
             const baseAuditLog = getBaseAuditLogForPackingSlotAction(
                 "add a new packing slot",
                 newRow,
@@ -170,7 +171,11 @@ const PackingSlotsTable: React.FC = () => {
                     logId: insertPackingSlotError.logId,
                 });
             } else {
-                await sendAuditLog({ ...baseAuditLog, wasSuccess: true });
+                await sendAuditLog({
+                    ...baseAuditLog,
+                    packingSlotId: createdPackingSlot.packingSlotId,
+                    wasSuccess: true,
+                });
             }
         } else {
             const { error: updatePackingSlotError } = await updateDbPackingSlot(newRow);
