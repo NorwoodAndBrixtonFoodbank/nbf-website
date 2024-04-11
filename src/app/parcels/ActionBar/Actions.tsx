@@ -232,6 +232,7 @@ const Actions: React.FC<Props> = ({
     };
 
     const onModalClose = (): void => {
+        setServerErrorMessage(null);
         setModalToDisplay(null);
         setModalError(null);
         setDate(dayjs());
@@ -251,46 +252,16 @@ const Actions: React.FC<Props> = ({
                     setActionAnchorElement(null);
                     setModalError(errorMessage);
                 } else {
-                    switch (key) {
-                        case "Download Shipping Labels":
-                        case "Download Shopping Lists":
-                        case "Download Driver Overview":
-                        case "Download Day Overview":
-                        case "Delete Parcel Request":
                             setModalToDisplay(key);
                             setActionAnchorElement(null);
                             setModalError(null);
                             return;
-                        case "Generate Map": {
-                            openInNewTab(mapsLinkForSelectedParcels());
-                            const { error } = await updateParcelStatuses(
-                                selectedParcels,
-                                availableActions["Generate Map"].newStatus
-                            );
-                            if (error) {
-                                setServerErrorMessage(getStatusErrorMessageWithLogId(error)); //this currently won't display anywhere. need to fix somehow
-                            }
-                            return;
-                        }
                     }
-                }
             } catch {
                 setModalError("Database error when fetching selected parcels");
                 return;
             }
         };
-    };
-
-    const mapsLinkForSelectedParcels = (): string => {
-        return (
-            "https://www.google.com/maps/dir/" +
-            selectedParcels.map((parcel) => parcel.addressPostcode.replaceAll(" ", "")).join("/") +
-            "//"
-        );
-    };
-
-    const openInNewTab = (url: string): void => {
-        window.open(url, "_blank", "noopener, noreferrer");
     };
 
     return (

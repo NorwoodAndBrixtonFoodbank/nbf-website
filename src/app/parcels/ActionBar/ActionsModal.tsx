@@ -174,24 +174,24 @@ export const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
 
 const ActionsModal: React.FC<ActionsModalProps> = (props) => {
     const [loading, setLoading] = useState(false);
-    const [loadPdf, setLoadPdf] = useState(false);
+    const [pdfLoaded, setPdfLoaded] = useState(false);
     const maxParcelsToShow = 5;
 
     useEffect(() => {
-        if (loading && !loadPdf) {
-            setLoadPdf(true);
+        if (loading && !pdfLoaded) {
+            setPdfLoaded(true);
             setLoading(false);
         }
-    }, [loading, loadPdf]);
+    }, [loading, pdfLoaded]);
 
     const [numberOfParcelsToDelete] = useState<number>(props.selectedParcels.length);
 
     return (
         <Modal {...props}>
             <ModalInner>
-                {!loadPdf && props.inputComponent}
+                {!pdfLoaded && props.inputComponent}
                 {props.errorText && <ErrorSecondaryText>{props.errorText}</ErrorSecondaryText>}
-                {loadPdf ? (
+                {pdfLoaded ? (
                     <>
                         {props.actionType === "pdfDownload" ? (
                             <Heading> The PDF is ready to be downloaded. </Heading>
@@ -223,14 +223,36 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                     disabled={loading}
                                     variant="contained"
                                     onClick={() => {
-                                        setLoadPdf(true);
+                                        setPdfLoaded(true);
                                         props.updateParcelsStatuses();
                                     }}
                                 >
                                     {loading ? "Loading..." : "Create PDF"}
                                 </Button>
                             </Centerer>
-                        ) : (
+                        ) : (props.actionType === "generateMap" ?
+                        (
+                            <Centerer>
+                            <Button
+                                variant="contained"
+                                onClick={() => {
+                                    const mapsLinkForSelectedParcels = 
+                                            "https://www.google.com/maps/dir/" +
+                                            props.selectedParcels.map((parcel) => parcel.addressPostcode.replaceAll(" ", "")).join("/") +
+                                            "//"
+                                    const openInNewTab = (url: string): void => {
+                                                window.open(url, "_blank", "noopener, noreferrer");
+                                            };
+                                    openInNewTab(mapsLinkForSelectedParcels);
+                                    props.updateParcelsStatuses();
+                                }}
+                            >
+                                Generate Map
+                            </Button>
+                        </Centerer>
+                        )
+                        :
+                        (
                             <Centerer>
                                 <ConfirmButtons>
                                     <Button
@@ -252,7 +274,7 @@ const ActionsModal: React.FC<ActionsModalProps> = (props) => {
                                     </Button>
                                 </ConfirmButtons>
                             </Centerer>
-                        )}
+                        ))}
                     </>
                 )}
             </ModalInner>
