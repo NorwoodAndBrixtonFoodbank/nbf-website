@@ -165,13 +165,13 @@ const PackingSlotsTable: React.FC = () => {
                 setErrorMessage(
                     `Failed to add the packing slot. Log ID: ${insertPackingSlotError.logId}`
                 );
-                await sendAuditLog({
+                void sendAuditLog({
                     ...baseAuditLog,
                     wasSuccess: false,
                     logId: insertPackingSlotError.logId,
                 });
             } else {
-                await sendAuditLog({
+                void sendAuditLog({
                     ...baseAuditLog,
                     packingSlotId: createdPackingSlot.packingSlotId,
                     wasSuccess: true,
@@ -188,17 +188,18 @@ const PackingSlotsTable: React.FC = () => {
                 setErrorMessage(
                     `Failed to update the packing slot. Log ID: ${updatePackingSlotError.logId}`
                 );
-                await sendAuditLog({
+                void sendAuditLog({
                     ...baseAuditLog,
                     wasSuccess: false,
                     logId: updatePackingSlotError.logId,
                 });
             } else {
-                await sendAuditLog({ ...baseAuditLog, wasSuccess: true });
+                void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
             }
         }
 
         setIsLoading(false);
+
         return newRow;
     };
 
