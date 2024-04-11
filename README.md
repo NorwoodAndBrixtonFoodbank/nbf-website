@@ -151,3 +151,4 @@ You can regenerate the types
 - [Release Instructions](./docs/release.md)
 - [Common Problems](./docs/common-problems.md)
 - [Design Choices](./docs/design-choices.md)
+- [E2E Testing](./docs/e2e-testing.md)
