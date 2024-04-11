@@ -18,7 +18,6 @@ import NameCard from "@/app/admin/createCollectionCentre/NameCard";
 import AcronymCard from "@/app/admin/createCollectionCentre/AcronymCard";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
-import { DatabaseError } from "@/app/errorClasses";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 const initialFields: InsertSchema["collection_centres"] = {
