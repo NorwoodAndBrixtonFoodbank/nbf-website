@@ -144,24 +144,29 @@ const PackingSlotsTable: React.FC = () => {
         }));
     };
 
-    const processRowUpdate = (newRow: PackingSlotRow): PackingSlotRow => {
+    const processRowUpdate = async (newRow: PackingSlotRow): Promise<PackingSlotRow> => {
         setErrorMessage(null);
         setIsLoading(true);
+
         if (newRow.isNew) {
-            insertNewPackingSlot(newRow)
-                .catch((error) => {
-                    void logErrorReturnLogId("Insert error with packing slot row", error);
-                    setErrorMessage("Error inserting data, please try again");
-                })
-                .finally(() => setIsLoading(false));
+            const { error: insertPackingSlotError } = await insertNewPackingSlot(newRow);
+
+            if (insertPackingSlotError) {
+                setErrorMessage(
+                    `Failed to add the packing slot. Log ID: ${insertPackingSlotError.logId}`
+                );
+            }
         } else {
-            updateDbPackingSlot(newRow)
-                .catch((error) => {
-                    void logErrorReturnLogId("Update error with packing slot row", error);
-                    setErrorMessage("Error updating data, please try again");
-                })
-                .finally(() => setIsLoading(false));
+            const { error: updatePackingSlotError } = await updateDbPackingSlot(newRow);
+
+            if (updatePackingSlotError) {
+                setErrorMessage(
+                    `Failed to update the packing slot. Log ID: ${updatePackingSlotError.logId}`
+                );
+            }
         }
+
+        setIsLoading(false);
         return newRow;
     };
 
