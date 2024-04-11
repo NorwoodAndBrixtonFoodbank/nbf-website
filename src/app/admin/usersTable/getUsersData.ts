@@ -2,10 +2,38 @@ import { Supabase } from "@/supabaseUtils";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
-import { AbortError, DatabaseError } from "@/app/errorClasses";
-import { DisplayedUserRole, UserRow } from "@/app/admin/page";
+import { UserRow } from "@/app/admin/page";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
+
+type GetUserDataAndCountErrorType =
+    | "abortedFetchingProfilesTable"
+    | "abortedFetchingProfilesTableCount"
+    | "failedToFetchProfilesTable"
+    | "failedToFetchProfilesTableCount";
+
+type GetUsersReturnType =
+    | {
+          error: null;
+          data: {
+              userData: UserRow[];
+              count: number;
+          };
+      }
+    | {
+          error: { type: GetUserDataAndCountErrorType; logId: string };
+          data: null;
+      };
+
+type GetUserCountReturnType =
+    | {
+          error: { type: GetUserDataAndCountErrorType; logId: string };
+          data: null;
+      }
+    | {
+          error: null;
+          data: number;
+      };
 
 export const getUsersDataAndCount = async (
     supabase: Supabase,
@@ -14,7 +42,7 @@ export const getUsersDataAndCount = async (
     filters: Filter<UserRow, any>[],
     sortState: SortState<UserRow>,
     abortSignal: AbortSignal
-): Promise<{ userData: UserRow[]; count: number }> => {
+): Promise<GetUsersReturnType> => {
     let query = supabase.from("profiles_plus").select("*");
 
     if (
@@ -42,13 +70,13 @@ export const getUsersDataAndCount = async (
             const logId = await logInfoReturnLogId("Aborted fetch: profiles table", {
                 error: userError,
             });
-            throw new AbortError("fetch", "profiles table", logId);
+            return { error: { type: "abortedFetchingProfilesTable", logId }, data: null };
         }
 
         const logId = await logErrorReturnLogId("Error with fetch: profiles table", {
             error: userError,
         });
-        throw new DatabaseError("fetch", "profiles table", logId);
+        return { error: { type: "failedToFetchProfilesTable", logId }, data: null };
     }
 
     const userData: UserRow[] = users.map((user) => {
@@ -56,17 +84,20 @@ export const getUsersDataAndCount = async (
             id: user.user_id ?? "",
             firstName: user.first_name ?? "",
             lastName: user.last_name ?? "",
-            userRole: user.role ?? ("UNKNOWN" as DisplayedUserRole),
+            userRole: user.role ?? "UNKNOWN",
             email: user.email ?? "",
-            telephoneNumber: user.telephone_number ?? "",
-            createdAt: Date.parse(user.created_at ?? ""),
-            updatedAt: Date.parse(user.updated_at ?? ""),
+            telephoneNumber: user.telephone_number ?? "-",
+            createdAt: user.created_at ? Date.parse(user.created_at) : null,
+            updatedAt: user.updated_at ? Date.parse(user.updated_at) : null,
         };
     });
 
-    const count = await getUsersCount(supabase, filters, abortSignal);
+    const countData = await getUsersCount(supabase, filters, abortSignal);
+    if (countData.data === null) {
+        return countData;
+    }
 
-    return { userData, count };
+    return { error: null, data: { userData, count: countData.data } };
 };
 
 function getQueryWithFiltersApplied(
@@ -88,7 +119,7 @@ const getUsersCount = async (
     supabase: Supabase,
     filters: Filter<UserRow, any>[],
     abortSignal: AbortSignal
-): Promise<number> => {
+): Promise<GetUserCountReturnType> => {
     let query = supabase.from("profiles_plus").select("*", { count: "exact", head: true });
 
     query = getQueryWithFiltersApplied(query, filters);
@@ -105,14 +136,14 @@ const getUsersCount = async (
     if (userError || count === null) {
         if (abortSignal.aborted) {
             const logId = await logInfoReturnLogId("Aborted fetch: profile table count");
-            throw new AbortError("fetch", "profile table", logId);
+            return { error: { type: "abortedFetchingProfilesTableCount", logId }, data: null };
         }
 
         const logId = await logErrorReturnLogId("Error with fetch: profile table count", {
             error: userError,
         });
-        throw new DatabaseError("fetch", "profile table", logId);
+        return { error: { type: "failedToFetchProfilesTableCount", logId }, data: null };
     }
 
-    return count;
+    return { error: null, data: count };
 };

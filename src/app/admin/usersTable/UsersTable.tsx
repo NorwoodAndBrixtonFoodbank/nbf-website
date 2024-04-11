@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Table, { SortOptions, SortState, TableHeaders } from "@/components/Tables/Table";
 import { UserRow } from "@/app/admin/page";
 import ManageUserModal from "@/app/admin/manageUser/ManageUserModal";
@@ -10,7 +10,6 @@ import SuccessFailureAlert, { AlertOptions } from "@/app/admin/common/SuccessFai
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import supabase from "@/supabaseClient";
-import { DatabaseError } from "@/app/errorClasses";
 import { getUsersDataAndCount } from "@/app/admin/usersTable/getUsersData";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import {
@@ -19,10 +18,6 @@ import {
     firstNameSearch,
     lastNameSearch,
 } from "@/app/admin/usersTable/usersTableFilters";
-
-interface Props {
-    userData: UserRow[];
-}
 
 const usersTableHeaderKeysAndLabels: TableHeaders<UserRow> = [
     ["id", "User ID"],
@@ -103,18 +98,18 @@ const formatTimestamp = (timestamp: number): string => {
 };
 
 const userTableColumnDisplayFunctions = {
-    createdAt: (createdAt: number) => {
-        return formatTimestamp(createdAt);
+    createdAt: (createdAt: number | null) => {
+        return createdAt === null ? "-" : formatTimestamp(createdAt);
     },
-    updatedAt: (updatedAt: number) => {
-        return formatTimestamp(updatedAt);
+    updatedAt: (updatedAt: number | null) => {
+        return updatedAt === null ? "-" : formatTimestamp(updatedAt);
     },
 };
 
 const defaultNumberOfUsersPerPage = 10;
 const numberOfUsersPerPageOptions = [10, 25, 50, 100];
 
-const UsersTable: React.FC<Props> = (props) => {
+const UsersTable: React.FC = () => {
     const [userToDelete, setUserToDelete] = useState<UserRow | null>(null);
     const [userToEdit, setUserToEdit] = useState<UserRow | null>(null);
     const [primaryFilters, setPrimaryFilters] = useState<Filter<UserRow, any>[]>([]);
@@ -176,14 +171,14 @@ const UsersTable: React.FC<Props> = (props) => {
     }, []);
 
     const userOnDelete = (rowIndex: number): void => {
-        setUserToDelete(props.userData[rowIndex]);
+        setUserToDelete(users[rowIndex]);
     };
 
     const userOnEdit = (rowIndex: number): void => {
-        setUserToEdit(props.userData[rowIndex]);
+        setUserToEdit(users[rowIndex]);
     };
 
-    useEffect(() => {
+    const fetchAndDisplayUserData = useCallback(async () => {
         setIsLoading(true);
         if (usersTableFetchAbortController.current) {
             usersTableFetchAbortController.current.abort("stale request");
@@ -194,29 +189,29 @@ const UsersTable: React.FC<Props> = (props) => {
         if (usersTableFetchAbortController.current) {
             setErrorMessage(null);
 
-            getUsersDataAndCount(
+            const userDataAndCountErrorAndData = await getUsersDataAndCount(
                 supabase,
                 startIndex,
                 endIndex,
                 primaryFilters,
                 sortState,
                 usersTableFetchAbortController.current.signal
-            )
-                .then(async ({ userData, count }) => {
-                    setUsers(userData);
-                    setFilteredUsersCount(count);
-                })
-                .catch((error) => {
-                    if (error instanceof DatabaseError) {
-                        setErrorMessage(error.message);
-                    }
-                })
-                .finally(() => {
-                    usersTableFetchAbortController.current = null;
-                    setIsLoading(false);
-                });
+            );
+
+            if (userDataAndCountErrorAndData.data === null) {
+                setErrorMessage(userDataAndCountErrorAndData.error.type);
+            } else {
+                setUsers(userDataAndCountErrorAndData.data.userData);
+                setFilteredUsersCount(userDataAndCountErrorAndData.data.count);
+            }
         }
+        usersTableFetchAbortController.current = null;
+        setIsLoading(false);
     }, [startIndex, endIndex, primaryFilters, sortState]);
+
+    useEffect(() => {
+        void fetchAndDisplayUserData();
+    }, [fetchAndDisplayUserData]);
 
     return (
         <>
