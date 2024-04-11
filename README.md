@@ -161,5 +161,6 @@ You can regenerate the types
 
 ## Other docs
 - [Password Reset Flow](./docs/password-reset-flow.md)
+- [Invite User Flow](./docs/invite-user-flow.md)
 - [Release Instructions](./docs/release.md)
 - [Common Problems](./docs/common-problems.md)
