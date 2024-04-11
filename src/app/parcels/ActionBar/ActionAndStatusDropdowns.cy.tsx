@@ -1,6 +1,6 @@
-import ActionAndStatusButtons, {
-    ActionAndStatusButtonsProps,
-} from "@/app/parcels/ActionBar/ActionAndStatusButtons";
+import ActionAndStatusDropdowns, {
+    ActionAndStatusDropdownsProps,
+} from "@/app/parcels/ActionBar/ActionAndStatusDropdowns";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import React from "react";
 import StyleManager from "@/app/themes";
@@ -65,7 +65,7 @@ describe("Parcels - Action Bar", () => {
         },
     ];
 
-    const MockActionBar: React.FC<ActionAndStatusButtonsProps> = ({
+    const MockActionBar: React.FC<ActionAndStatusDropdownsProps> = ({
         fetchParcelsByIds: fetchSelectedParcels,
         parcelIds,
         updateParcelStatuses: onDeleteParcels,
@@ -73,7 +73,7 @@ describe("Parcels - Action Bar", () => {
         return (
             <Localization>
                 <StyleManager>
-                    <ActionAndStatusButtons
+                    <ActionAndStatusDropdowns
                         fetchParcelsByIds={fetchSelectedParcels}
                         updateParcelStatuses={onDeleteParcels}
                         hasSavedParcelStatus={() => {}}

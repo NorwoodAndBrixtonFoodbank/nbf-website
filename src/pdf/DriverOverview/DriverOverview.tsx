@@ -70,6 +70,7 @@ interface Props {
     parcelIds: string[];
     driverName: string;
     date: Date;
+    onClick: () => void;
 }
 
 const DriverOverview = async ({
@@ -77,6 +78,7 @@ const DriverOverview = async ({
     parcelIds,
     driverName,
     date,
+    onClick,
 }: Props): Promise<React.ReactElement> => {
     const requiredData = await getRequiredData(parcelIds);
     const { data, error } = await supabase
@@ -97,6 +99,7 @@ const DriverOverview = async ({
             fileName="DriverOverview.pdf"
             data={driverOverviewData}
             pdfComponent={DriverOverviewPdf}
+            clickHandler={onClick}
         />
     );
 };

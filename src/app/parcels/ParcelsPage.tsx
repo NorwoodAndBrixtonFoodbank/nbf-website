@@ -16,7 +16,7 @@ import Icon from "@/components/Icons/Icon";
 import { faBoxArchive } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal/Modal";
 import TableSurface from "@/components/Tables/TableSurface";
-import ActionAndStatusButtons from "@/app/parcels/ActionBar/ActionAndStatusButtons";
+import ActionAndStatusDropdowns from "@/app/parcels/ActionBar/ActionAndStatusDropdowns";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
@@ -560,7 +560,7 @@ const ParcelsPage: React.FC<{}> = () => {
                 <ActionsContainer>
                     {selectedParcelMessage && <span>{selectedParcelMessage}</span>}
 
-                    <ActionAndStatusButtons
+                    <ActionAndStatusDropdowns
                         fetchParcelsByIds={getCheckedParcelsData}
                         updateParcelStatuses={updateParcelStatuses}
                         willSaveParcelStatus={() => setIsLoading(true)}

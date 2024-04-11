@@ -4,23 +4,15 @@ import React, { useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
-import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import ActionsModal, {
-    ActionType,
-    DayOverviewInput,
-    DriverOverviewInput,
-    ShippingLabelsInput,
-    ShoppingListsConfirmation,
-} from "@/app/parcels/ActionBar/ActionsModal";
-import {
-    DayOverviewModalButton,
-    DriverOverviewModalButton,
-    ShippingLabelsModalButton,
-    ShoppingListModalButton,
-} from "@/app/parcels/ActionBar/ActionsModalButton";
-import { SelectChangeEvent } from "@mui/material";
-import { StatusType, SaveParcelStatusReturnType, getStatusErrorMessageWithLogId } from "./Statuses";
+import { StatusType, SaveParcelStatusReturnType } from "./Statuses";
+import { ActionModalProps } from "./ActionModals/common";
+import DayOverviewModal from "./ActionModals/DayOverviewModal";
+import DeleteParcelModal from "./ActionModals/DeleteParcelModal";
+import DriverOverviewModal from "./ActionModals/DriverOverviewModal";
+import GenerateMapModal from "./ActionModals/GenerateMapModal";
+import ShippingLabelModal from "./ActionModals/ShippingLabelModal";
+import ShoppingListModal from "./ActionModals/ShoppingListModal";
 
 const isNotAtLeastOne = (value: number): boolean => {
     return value < 1;
@@ -34,7 +26,7 @@ const doesNotEqualZero = (value: number): boolean => {
     return value !== 0;
 };
 
-type ActionName =
+export type ActionName =
     | "Download Shipping Labels"
     | "Download Shopping Lists"
     | "Download Driver Overview"
@@ -44,146 +36,44 @@ type ActionName =
 
 type AvailableActionsType = {
     [actionKey in ActionName]: {
-        showSelectedParcelsInModal: boolean;
         errorCondition: (value: number) => boolean;
         errorMessage: string;
-        actionType: ActionType;
         newStatus: StatusType;
     };
 };
 
-const availableActions: AvailableActionsType = {
+export const availableActions: AvailableActionsType = {
     "Download Shipping Labels": {
-        showSelectedParcelsInModal: true,
         errorCondition: doesNotEqualOne,
         errorMessage: "Please select exactly one parcel.",
-        actionType: "pdfDownload",
         newStatus: "Shipping Labels Downloaded",
     },
     "Download Shopping Lists": {
-        showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
-        actionType: "pdfDownload",
         newStatus: "Shopping List Downloaded",
     },
     "Download Driver Overview": {
-        showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
-        actionType: "pdfDownload",
         newStatus: "Driver Overview Downloaded",
     },
     "Download Day Overview": {
-        showSelectedParcelsInModal: false,
         errorCondition: doesNotEqualZero,
         errorMessage:
             "The day overview will show the parcels for a particular date and location. It will show not the currently selected parcel. Please unselect the parcels.",
-        actionType: "pdfDownload",
         newStatus: "Day Overview Downloaded",
     },
     "Delete Parcel Request": {
-        showSelectedParcelsInModal: true,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
-        actionType: "deleteParcel",
         newStatus: "Request Deleted",
     },
     "Generate Map": {
-        showSelectedParcelsInModal: false,
         errorCondition: isNotAtLeastOne,
         errorMessage: "Please select at least one parcel.",
-        actionType: "generateMap",
         newStatus: "Map Generated",
     },
-};
-
-interface ActionsInputComponentProps {
-    actionName: ActionName;
-    selectedParcels: ParcelsTableRow[];
-    onDateChange: (newDate: Dayjs | null) => void;
-    onLabelQuantityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    onDriverNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    onCollectionCentreChange: (event: SelectChangeEvent) => void;
-    setCollectionCentre: React.Dispatch<React.SetStateAction<string>>;
-}
-
-const ActionsInputComponent: React.FC<ActionsInputComponentProps> = ({
-    actionName,
-    selectedParcels,
-    onDateChange,
-    onLabelQuantityChange,
-    onDriverNameChange,
-    onCollectionCentreChange,
-    setCollectionCentre,
-}) => {
-    switch (actionName) {
-        case "Download Shipping Labels":
-            return <ShippingLabelsInput onLabelQuantityChange={onLabelQuantityChange} />;
-        case "Download Shopping Lists":
-            return <ShoppingListsConfirmation parcels={selectedParcels} />;
-        case "Download Driver Overview":
-            return (
-                <DriverOverviewInput
-                    onDateChange={onDateChange}
-                    onDriverNameChange={onDriverNameChange}
-                />
-            );
-        case "Download Day Overview":
-            return (
-                <DayOverviewInput
-                    onDateChange={onDateChange}
-                    onCollectionCentreChange={onCollectionCentreChange}
-                    setCollectionCentre={setCollectionCentre}
-                />
-            );
-        default:
-            <></>;
-    }
-};
-
-interface ActionsButtonProps {
-    pdfType: ActionName;
-    selectedParcels: ParcelsTableRow[];
-    date: Dayjs;
-    labelQuantity: number;
-    driverName: string;
-    collectionCentre: string;
-}
-
-const ActionsButton: React.FC<ActionsButtonProps> = ({
-    pdfType,
-    selectedParcels,
-    date,
-    labelQuantity,
-    driverName,
-    collectionCentre,
-}) => {
-    switch (pdfType) {
-        case "Download Shipping Labels":
-            return (
-                <ShippingLabelsModalButton
-                    parcels={selectedParcels}
-                    labelQuantity={labelQuantity}
-                />
-            );
-        case "Download Shopping Lists":
-            return <ShoppingListModalButton parcels={selectedParcels} />;
-        case "Download Driver Overview":
-            return (
-                <DriverOverviewModalButton
-                    parcels={selectedParcels}
-                    date={date}
-                    driverName={driverName}
-                />
-            );
-        case "Download Day Overview":
-            return (
-                <DayOverviewModalButton collectionCentre={collectionCentre} date={date.toDate()} />
-            );
-        default:
-            <></>;
-    }
 };
 
 interface Props {
@@ -199,6 +89,26 @@ interface Props {
     parcelIds: string[];
 }
 
+const getActionModal = (
+    actionName: ActionName,
+    actionModalProps: ActionModalProps
+): React.ReactElement => {
+    switch (actionName) {
+        case "Download Shipping Labels":
+            return <ShippingLabelModal {...actionModalProps} />;
+        case "Download Shopping Lists":
+            return <ShoppingListModal {...actionModalProps} />;
+        case "Download Driver Overview":
+            return <DriverOverviewModal {...actionModalProps} />;
+        case "Download Day Overview":
+            return <DayOverviewModal {...actionModalProps} />;
+        case "Delete Parcel Request":
+            return <DeleteParcelModal {...actionModalProps} />;
+        case "Generate Map":
+            return <GenerateMapModal {...actionModalProps} />;
+    }
+};
+
 const Actions: React.FC<Props> = ({
     fetchParcelsByIds,
     updateParcelStatuses,
@@ -209,34 +119,10 @@ const Actions: React.FC<Props> = ({
 }) => {
     const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
     const [modalToDisplay, setModalToDisplay] = useState<ActionName | null>(null);
-    const [labelQuantity, setLabelQuantity] = useState<number>(0);
-    const [date, setDate] = useState(dayjs());
-    const [driverName, setDriverName] = useState("");
-    const [collectionCentre, setCollectionCentre] = useState("");
-    const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(null);
-
-    const onLabelQuantityChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setLabelQuantity(parseInt(event.target.value, 10) ?? 0);
-    };
-
-    const onDriverNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setDriverName(event.target.value);
-    };
-
-    const onCollectionCentreChange = (event: SelectChangeEvent): void => {
-        setCollectionCentre(event.target.value);
-    };
-
-    const onDateChange = (newDate: Dayjs | null): void => {
-        setDate(newDate!);
-    };
 
     const onModalClose = (): void => {
-        setServerErrorMessage(null);
         setModalToDisplay(null);
         setModalError(null);
-        setDate(dayjs());
-        setDriverName("");
     };
 
     const onMenuItemClick = (
@@ -252,11 +138,11 @@ const Actions: React.FC<Props> = ({
                     setActionAnchorElement(null);
                     setModalError(errorMessage);
                 } else {
-                            setModalToDisplay(key);
-                            setActionAnchorElement(null);
-                            setModalError(null);
-                            return;
-                    }
+                    setModalToDisplay(key);
+                    setActionAnchorElement(null);
+                    setModalError(null);
+                    return;
+                }
             } catch {
                 setModalError("Database error when fetching selected parcels");
                 return;
@@ -268,49 +154,17 @@ const Actions: React.FC<Props> = ({
         <>
             {Object.entries(availableActions).map(([key, value]) => {
                 return (
-                    modalToDisplay === key && (
-                        <ActionsModal
-                            key={key}
-                            showSelectedParcels={value.showSelectedParcelsInModal}
-                            isOpen
-                            onClose={onModalClose}
-                            selectedParcels={selectedParcels}
-                            header={key}
-                            headerId="action-modal-header"
-                            errorText={serverErrorMessage}
-                            actionType={value.actionType}
-                            updateParcelsStatuses={async () => {
-                                const { error } = await updateParcelStatuses(
-                                    selectedParcels,
-                                    value.newStatus,
-                                    labelQuantity ? labelQuantity.toString() : undefined
-                                );
-                                if (error) {
-                                    setServerErrorMessage(getStatusErrorMessageWithLogId(error));
-                                }
-                            }}
-                            inputComponent={
-                                <ActionsInputComponent
-                                    actionName={key}
-                                    selectedParcels={selectedParcels}
-                                    onDateChange={onDateChange}
-                                    onLabelQuantityChange={onLabelQuantityChange}
-                                    onDriverNameChange={onDriverNameChange}
-                                    onCollectionCentreChange={onCollectionCentreChange}
-                                    setCollectionCentre={setCollectionCentre}
-                                />
-                            }
-                        >
-                            <ActionsButton
-                                pdfType={modalToDisplay}
-                                selectedParcels={selectedParcels}
-                                date={date}
-                                labelQuantity={labelQuantity}
-                                driverName={driverName}
-                                collectionCentre={collectionCentre}
-                            />
-                        </ActionsModal>
-                    )
+                    modalToDisplay === key &&
+                    getActionModal(key, {
+                        isOpen: true,
+                        onClose: onModalClose,
+                        selectedParcels: selectedParcels,
+                        header: modalToDisplay,
+                        headerId: "action-modal-header",
+                        actionName: modalToDisplay,
+                        updateParcelStatuses: updateParcelStatuses,
+                        newStatus: value.newStatus,
+                    })
                 );
             })}
             {actionAnchorElement && (

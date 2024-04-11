@@ -51,12 +51,14 @@ interface Props {
     text: string;
     parcelId: string;
     labelQuantity: number;
+    onClick: () => void;
 }
 
 const ShippingLabels = async ({
     text,
     parcelId,
     labelQuantity,
+    onClick,
 }: Props): Promise<React.ReactElement> => {
     const requiredData = await getRequiredData(parcelId, labelQuantity);
     requiredData.label_quantity = labelQuantity;
@@ -67,6 +69,7 @@ const ShippingLabels = async ({
             fileName="ShippingLabels.pdf"
             data={requiredData}
             pdfComponent={ShippingLabelsPdf}
+            clickHandler={onClick}
         />
     );
 };

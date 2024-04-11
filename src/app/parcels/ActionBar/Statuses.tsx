@@ -59,7 +59,7 @@ export const saveParcelStatus = async (
     date?: Dayjs | null
 ): Promise<SaveParcelStatusReturnType> => {
     const timestamp = (date ?? dayjs()).set("second", 0).toISOString();
-    const toInsert = parcelIds
+    const eventsToInsert = parcelIds
         .map((parcelId: string) => {
             return {
                 event_name: statusName,
@@ -70,7 +70,7 @@ export const saveParcelStatus = async (
         })
         .flat();
 
-    const auditLogs = toInsert.map((eventToInsert) => ({
+    const auditLogs = eventsToInsert.map((eventToInsert) => ({
         action: "change parcel status",
         content: { eventToInsert },
         parcelId: eventToInsert.parcel_id,
@@ -78,10 +78,10 @@ export const saveParcelStatus = async (
 
     const { data, error } = await supabase
         .from("event")
-        .insert(toInsert)
+        .insert(eventsToInsert)
         .select("event_id:primary_key, parcel_id");
 
-    if (error ?? !data) {
+    if (error || !data) {
         const logId = await logErrorReturnLogId("Error with insert: Status event", error);
         auditLogs.forEach(
             async (auditLog) => await sendAuditLog({ ...auditLog, wasSuccess: false, logId })

@@ -6,9 +6,10 @@ import ShoppingListPdf from "@/pdf/ShoppingList/ShoppingListPdf";
 interface Props {
     text: string;
     parcelIds: string[];
+    onClick: () => void;
 }
 
-const ShoppingList = async ({ text, parcelIds }: Props): Promise<React.ReactElement> => {
+const ShoppingList = async ({ text, parcelIds, onClick }: Props): Promise<React.ReactElement> => {
     const data = await getShoppingListData(parcelIds);
     return (
         <PdfButton
@@ -16,6 +17,7 @@ const ShoppingList = async ({ text, parcelIds }: Props): Promise<React.ReactElem
             fileName="ShoppingList.pdf"
             data={data}
             pdfComponent={ShoppingListPdf}
+            clickHandler={onClick}
         />
     );
 };

@@ -10,6 +10,7 @@ interface Props {
     text: string;
     date: Date;
     collectionCentreKey: string;
+    onClick: () => void;
 }
 
 export type ParcelOfSpecificDateAndLocation = Pick<Schema["parcels"], "collection_datetime"> & {
@@ -91,6 +92,7 @@ const DayOverview = async ({
     text,
     date,
     collectionCentreKey,
+    onClick,
 }: Props): Promise<React.ReactElement> => {
     const [collectionCentreNameAndAbbreviation, parcelsOfSpecificDate] = await Promise.all([
         fetchCollectionCentreNameAndAbbreviation(collectionCentreKey),
@@ -109,7 +111,15 @@ const DayOverview = async ({
         data: parcelsOfSpecificDate,
     };
 
-    return <PdfButton text={text} fileName={fileName} data={data} pdfComponent={DayOverviewPdf} />;
+    return (
+        <PdfButton
+            text={text}
+            fileName={fileName}
+            data={data}
+            pdfComponent={DayOverviewPdf}
+            clickHandler={onClick}
+        />
+    );
 };
 
 export default DayOverview;
