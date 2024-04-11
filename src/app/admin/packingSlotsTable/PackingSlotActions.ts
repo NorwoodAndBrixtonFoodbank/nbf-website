@@ -57,7 +57,7 @@ export const insertNewPackingSlot = async (
     const { error } = await supabase.from("packing_slots").insert(data);
 
     if (error) {
-        const logId = await logErrorReturnLogId("Error with insert: Packing slots", {
+        const logId = await logErrorReturnLogId("Failed to add a packing slot", {
             error,
             newPackingSlotData: data,
         });
@@ -100,6 +100,8 @@ export const swapRows = async (
     if (error) {
         const logId = await logErrorReturnLogId("Failed to update packing slot order", {
             error,
+            packingSlot1: row1,
+            packingSlot2: row2,
         });
         return { error: { dbError: error, logId } };
     }

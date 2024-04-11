@@ -1,12 +1,11 @@
-const modifyPackingSlotsText = "modify packing slots";
-
 describe("Packing slots on admins page", () => {
-    it("Move the first packing slot down and then up", () => {
+    beforeEach(() => {
         cy.login();
-
         cy.visit("/admin");
+    });
 
-        cy.contains(modifyPackingSlotsText, { matchCase: false }).click();
+    it("Move the first packing slot down and then up", () => {
+        togglePackingSlotsSection();
 
         assertPackingSlotName({ rowIndex: 0, packingSlotName: "AM" });
         assertPackingSlotName({ rowIndex: 1, packingSlotName: "PM" });
@@ -22,6 +21,12 @@ describe("Packing slots on admins page", () => {
         assertPackingSlotName({ rowIndex: 1, packingSlotName: "PM" });
     });
 });
+
+const modifyPackingSlotsText = "modify packing slots";
+
+function togglePackingSlotsSection(): void {
+    cy.contains(modifyPackingSlotsText, { matchCase: false }).click();
+}
 
 function movePackingSlot({
     rowIndex,
