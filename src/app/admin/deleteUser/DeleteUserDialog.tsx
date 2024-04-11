@@ -7,7 +7,6 @@ import Modal from "@/components/Modal/Modal";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import { SetAlertOptions } from "@/app/admin/common/SuccessFailureAlert";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
-import { DatabaseError } from "@/app/errorClasses";
 import { adminDeleteUser } from "@/server/adminDeleteUser";
 
 const DangerDialog = styled(Modal)`
@@ -50,17 +49,16 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
             });
             void logInfoReturnLogId(`${props.userToDelete?.email} deleted successfully.`);
         } else {
-            props.setAlertOptions({
-                success: false,
-                message: <>Delete User Operation Failed</>,
-            });
             const logId = await logErrorReturnLogId(
                 `Error with delete: User ${props.userToDelete.email}`,
                 { error }
             );
-            throw new DatabaseError("delete", "user", logId);
+            props.setAlertOptions({
+                success: false,
+                message: <>{`Delete User Operation Failed. Log ID: ${logId}`}</>,
+            });
+            props.setUserToDelete(null);
         }
-
         props.setUserToDelete(null);
     };
 

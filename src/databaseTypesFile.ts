@@ -575,6 +575,7 @@ export type Database = {
           primary_key: string
           role: Database["public"]["Enums"]["role"]
           telephone_number: string | null
+          user_id: string | null
         }
         Insert: {
           first_name?: string | null
@@ -582,6 +583,7 @@ export type Database = {
           primary_key?: string
           role: Database["public"]["Enums"]["role"]
           telephone_number?: string | null
+          user_id?: string | null
         }
         Update: {
           first_name?: string | null
@@ -589,11 +591,12 @@ export type Database = {
           primary_key?: string
           role?: Database["public"]["Enums"]["role"]
           telephone_number?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "profiles_primary_key_fkey"
-            columns: ["primary_key"]
+            foreignKeyName: "profiles_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]

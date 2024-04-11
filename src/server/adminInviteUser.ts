@@ -5,7 +5,17 @@ import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
 import { User } from "@supabase/gotrue-js";
 import { InviteUserDetails } from "@/app/admin/createUser/CreateUserForm";
 import supabase from "@/supabaseClient";
-import { logInfoReturnLogId } from "@/logger/logger";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
+
+export type InviteUserErrorType =
+    | "adminAuthenticationFailure"
+    | "inviteUserFailure"
+    | "createProfileFailure";
+
+export interface InviteUserError {
+    type: InviteUserErrorType;
+    logId: string;
+}
 
 type InviteUsersDataAndErrorType =
     | {
@@ -14,7 +24,7 @@ type InviteUsersDataAndErrorType =
       }
     | {
           data: null;
-          error: Record<string, string>;
+          error: InviteUserError;
       };
 
 export async function adminInviteUser(
@@ -24,9 +34,12 @@ export async function adminInviteUser(
     const { isSuccess, failureReason } = await authenticateAsAdmin();
 
     if (!isSuccess) {
+        const logId = await logErrorReturnLogId("Error with authenticating admin", {
+            error: failureReason,
+        });
         return {
             data: null,
-            error: { "Failed to authenticate as admin": failureReason },
+            error: { type: "adminAuthenticationFailure", logId: logId },
         };
     }
 
@@ -36,30 +49,31 @@ export async function adminInviteUser(
     });
 
     if (error) {
+        const logId = await logErrorReturnLogId("Error with inviting user", { error: error });
         return {
             data: null,
-            error: { "Failed to create user": error.message },
+            error: { type: "inviteUserFailure", logId: logId },
         };
     }
 
-    if (data) {
-        const { error: createRoleError } = await supabase.from("profiles").insert({
-            primary_key: data.user.id,
-            role: userDetails.role,
-            first_name: userDetails.firstName,
-            last_name: userDetails.lastName,
-            telephone_number: userDetails.telephoneNumber,
+    const { error: createRoleError } = await supabase.from("profiles").insert({
+        role: userDetails.role,
+        first_name: userDetails.firstName,
+        last_name: userDetails.lastName,
+        telephone_number: userDetails.telephoneNumber,
+        user_id: data.user.id,
+    });
+
+    if (createRoleError) {
+        const logId = await logErrorReturnLogId("Error with insert profile", {
+            error: createRoleError,
         });
-        if (createRoleError) {
-            return {
-                data: null,
-                error: { "Failed to create user profile": createRoleError.message },
-            };
-        }
-        void logInfoReturnLogId(
-            `Created a profile for ${userDetails.role} user: ${userDetails.email}`
-        );
+        return {
+            data: null,
+            error: { type: "createProfileFailure", logId: logId },
+        };
     }
+    void logInfoReturnLogId(`Created a profile for ${userDetails.role} user: ${userDetails.email}`);
 
     return {
         data: data.user,
