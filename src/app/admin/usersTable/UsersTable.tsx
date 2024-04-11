@@ -189,7 +189,7 @@ const UsersTable: React.FC = () => {
         if (usersTableFetchAbortController.current) {
             setErrorMessage(null);
 
-            const userDataAndCountErrorAndData = await getUsersDataAndCount(
+            const { data, error } = await getUsersDataAndCount(
                 supabase,
                 startIndex,
                 endIndex,
@@ -198,11 +198,19 @@ const UsersTable: React.FC = () => {
                 usersTableFetchAbortController.current.signal
             );
 
-            if (userDataAndCountErrorAndData.data === null) {
-                setErrorMessage(userDataAndCountErrorAndData.error.type);
+            if (error) {
+                switch (error.type) {
+                    case "abortedFetchingProfilesTable":
+                    case "abortedFetchingProfilesTableCount":
+                        return;
+                    case "failedToFetchProfilesTable":
+                    case "failedToFetchProfilesTableCount":
+                        setErrorMessage(`Error occurred: ${error.type}, Log ID: 
+                    ${error.logId}`);
+                }
             } else {
-                setUsers(userDataAndCountErrorAndData.data.userData);
-                setFilteredUsersCount(userDataAndCountErrorAndData.data.count);
+                setUsers(data.userData);
+                setFilteredUsersCount(data.count);
             }
         }
         usersTableFetchAbortController.current = null;
