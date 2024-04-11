@@ -32,6 +32,7 @@ import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionSta
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import Header from "../websiteDataTable/Header";
 import StyledDataGrid from "../common/StyledDataGrid";
+import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 interface EditToolbarProps {
     setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
@@ -69,6 +70,20 @@ function EditToolbar(props: EditToolbarProps): React.JSX.Element {
             </Button>
         </GridToolbarContainer>
     );
+}
+
+function getBaseAuditLogForPackingSlotSwap(
+    packingSlotRow: PackingSlotRow
+): Pick<AuditLog, "action" | "content" | "packingSlotId"> {
+    return {
+        action: "Move a packing slot down",
+        content: {
+            originalOrder: packingSlotRow.order,
+            packingSlotName: packingSlotRow.name,
+            packingSlotIsShown: packingSlotRow.isShown,
+        },
+        packingSlotId: packingSlotRow.id,
+    };
 }
 
 const PackingSlotsTable: React.FC = () => {
@@ -181,34 +196,51 @@ const PackingSlotsTable: React.FC = () => {
         }
     };
 
-    const handleUpClick = (id: GridRowId, row: PackingSlotRow) => () => {
+    const handleUpClick = (id: GridRowId, row: PackingSlotRow) => async () => {
         const rowIndex = row.order - 1;
         if (rowIndex > 0) {
             setIsLoading(true);
+
             const rowOne = rows[rowIndex];
             const rowTwo = rows[rowIndex - 1];
-            swapRows(rowOne, rowTwo)
-                .catch(
-                    (error) =>
-                        void logErrorReturnLogId("Update error with packing slot row order", error)
-                )
-                .finally(() => setIsLoading(false));
+            const { error: swapRowsError } = await swapRows(rowOne, rowTwo);
+
+            const baseAuditLog = getBaseAuditLogForPackingSlotSwap(row);
+
+            if (swapRowsError) {
+                setErrorMessage(
+                    `Failed to move packing slot (${row.name}) up. Log ID: ${swapRowsError.logId}`
+                );
+                void sendAuditLog({ ...baseAuditLog, wasSuccess: false });
+            } else {
+                void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
+            }
+
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
-    const handleDownClick = (id: GridRowId, row: PackingSlotRow) => () => {
+    const handleDownClick = (id: GridRowId, row: PackingSlotRow) => async () => {
         const rowIndex = row.order - 1;
         if (rowIndex < rows.length - 1) {
             setIsLoading(true);
+
             const clickedRow = rows[rowIndex];
             const rowBelow = rows[rowIndex + 1];
-            swapRows(clickedRow, rowBelow)
-                .catch(
-                    (error) =>
-                        void logErrorReturnLogId("Update error with packing slot row order", error)
-                )
-                .finally(() => setIsLoading(false));
+            const { error: swapRowsError } = await swapRows(clickedRow, rowBelow);
+
+            const baseAuditLog = getBaseAuditLogForPackingSlotSwap(row);
+
+            if (swapRowsError) {
+                setErrorMessage(
+                    `Failed to move packing slot (${row.name}) up. Log ID: ${swapRowsError.logId}`
+                );
+                void sendAuditLog({ ...baseAuditLog, wasSuccess: false });
+            } else {
+                void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
+            }
+
+            setIsLoading(false);
         }
     };
 

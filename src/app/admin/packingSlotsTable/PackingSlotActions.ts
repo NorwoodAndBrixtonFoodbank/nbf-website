@@ -3,6 +3,7 @@ import { DatabaseError } from "@/app/errorClasses";
 import { PackingSlotRow } from "@/app/admin/packingSlotsTable/PackingSlotsTable";
 import { Tables } from "@/databaseTypesFile";
 import { logErrorReturnLogId } from "@/logger/logger";
+import { PostgrestError } from "@supabase/supabase-js";
 
 type DbPackingSlot = Tables<"packing_slots">;
 type NewDbPackingSlot = Omit<DbPackingSlot, "primary_key">;
@@ -65,13 +66,28 @@ export const updateDbPackingSlot = async (row: PackingSlotRow): Promise<void> =>
     }
 };
 
-export const swapRows = async (row1: PackingSlotRow, row2: PackingSlotRow): Promise<void> => {
+type SwapRowsResult = {
+    error: {
+        dbError: PostgrestError;
+        logId: string;
+    } | null;
+};
+
+export const swapRows = async (
+    row1: PackingSlotRow,
+    row2: PackingSlotRow
+): Promise<SwapRowsResult> => {
     const { error } = await supabase.rpc("packing_slot_order_swap", {
         id1: row1.id,
         id2: row2.id,
     });
+
     if (error) {
-        const logId = await logErrorReturnLogId("Error with update: packing slots order", error);
-        throw new DatabaseError("update", "packing slots order", logId);
+        const logId = await logErrorReturnLogId("Error with update: packing slots order", {
+            error,
+        });
+        return { error: { dbError: error, logId } };
     }
+
+    return { error: null };
 };
