@@ -1,5 +1,3 @@
-import Chainable = Cypress.Chainable;
-
 const modifyPackingSlotsText = "modify packing slots";
 
 describe("Packing slots on admins page", () => {
