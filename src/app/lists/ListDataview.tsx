@@ -17,6 +17,7 @@ import CommentBox from "@/app/lists/CommentBox";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
+import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 export interface ListRow {
     primaryKey: string;
@@ -43,6 +44,7 @@ interface ListDataViewProps {
     listOfIngredients: ListRow[];
     setListOfIngredients: React.Dispatch<React.SetStateAction<ListRow[]>>;
     comment: string;
+    error: string | null;
 }
 
 export const listsHeaderKeysAndLabels = [
@@ -123,12 +125,13 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     listOfIngredients,
     setListOfIngredients,
     comment,
+    error,
 }) => {
     const [modal, setModal] = useState<EditModalState>();
     const [toDelete, setToDelete] = useState<number | null>(null);
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
-    const [errorMsg, setErrorMsg] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(error);
     const [listData, setListData] = useState<ListRow[]>(listOfIngredients);
     const [primaryFilters, setPrimaryFilters] = useState<Filter<ListRow, string>[]>(filters);
 
@@ -203,15 +206,27 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                 .delete()
                 .eq("primary_key", itemToDelete.primaryKey);
 
+            const auditLog = {
+                action: "delete a list item",
+                content: {
+                    itemName: itemToDelete.itemName,
+                    itemPrimaryKey: itemToDelete.primaryKey,
+                },
+            } as const satisfies Partial<AuditLog>;
+
             if (error) {
                 const logId = await logErrorReturnLogId(
                     `Error with delete: Ingredient id ${itemToDelete.primaryKey}`,
                     error
                 );
-                setErrorMsg(error.message + `Error ID: ${logId}`);
-            } else {
-                window.location.reload();
+                await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
+                setErrorMessage(error.message + `Error ID: ${logId}`);
+                return;
             }
+
+            await sendAuditLog({ ...auditLog, wasSuccess: true });
+            setToDelete(null);
+            setToDeleteModalOpen(false);
         }
     };
 
@@ -242,13 +257,13 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             />
 
             <Snackbar
-                message={errorMsg}
+                message={errorMessage}
                 autoHideDuration={3000}
-                onClose={() => setErrorMsg(null)}
-                open={errorMsg !== null}
+                onClose={() => setErrorMessage(null)}
+                open={errorMessage !== null}
             >
                 <SnackBarDiv>
-                    <Alert severity="error">{errorMsg}</Alert>
+                    <Alert severity="error">{errorMessage}</Alert>
                 </SnackBarDiv>
             </Snackbar>
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
