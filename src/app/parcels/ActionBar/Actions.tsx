@@ -133,18 +133,15 @@ const Actions: React.FC<Props> = ({
                 const fetchedParcels = await fetchParcelsByIds();
                 setSelectedParcels(fetchedParcels);
                 if (errorCondition(fetchedParcels.length)) {
-                    console.log(1);
                     setActionAnchorElement(null);
                     setModalError(errorMessage);
                 } else {
-                    console.log(2);
                     setModalToDisplay(key);
                     setActionAnchorElement(null);
                     setModalError(null);
                     return;
                 }
             } catch {
-                console.log(3);
                 setModalError("Database error when fetching selected parcels");
                 return;
             }

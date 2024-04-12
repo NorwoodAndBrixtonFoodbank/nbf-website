@@ -2,7 +2,7 @@
 
 import { NoSsr, Button } from "@mui/material";
 import { pdf } from "@react-pdf/renderer";
-import React, { useEffect } from "react";
+import React from "react";
 import { saveAs } from "file-saver";
 
 interface Props<T> {
@@ -50,9 +50,6 @@ const PdfButton = <T,>({
         const blob = await pdf(<PdfComponent data={data} />).toBlob();
         saveAs(blob, formatName ? formatFileName(fileName) : fileName);
     };
-    useEffect(() => {
-        console.log(disabled);
-    }, [disabled]);
     return (
         <NoSsr>
             <Button variant="contained" onClick={onClick} disabled={disabled}>
