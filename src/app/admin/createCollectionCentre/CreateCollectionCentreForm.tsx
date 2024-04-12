@@ -18,7 +18,6 @@ import NameCard from "@/app/admin/createCollectionCentre/NameCard";
 import AcronymCard from "@/app/admin/createCollectionCentre/AcronymCard";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
-import { DatabaseError } from "@/app/errorClasses";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 const initialFields: InsertSchema["collection_centres"] = {
@@ -72,16 +71,15 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
         } as const satisfies Partial<AuditLog>;
 
         if (error) {
-            const errorMessage =
-                getCustomErrorMessage(error.code) ?? `${error.message}\n${Errors.external}`;
-            setSubmitErrorMessage(errorMessage);
-            setSubmitDisabled(false);
-
             const logId = await logErrorReturnLogId("Error with insert: collection centre", {
                 error: error,
             });
             await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
-            throw new DatabaseError("insert", "collection centres", logId);
+            const errorMessage =
+                getCustomErrorMessage(error.code) ?? `${error.message}\n${Errors.external}`;
+            setSubmitErrorMessage(`Error: ${errorMessage} Log ID ${logId}`);
+            setSubmitDisabled(false);
+            return;
         }
 
         setSubmitErrorMessage("");
