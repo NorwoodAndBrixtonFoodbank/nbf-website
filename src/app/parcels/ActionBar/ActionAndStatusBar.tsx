@@ -9,7 +9,7 @@ import Statuses, { StatusType, SaveParcelStatusReturnType } from "@/app/parcels/
 import Actions from "@/app/parcels/ActionBar/Actions";
 import { ArrowDropDown } from "@mui/icons-material";
 
-export interface ActionAndStatusDropdownsProps {
+export interface ActionAndStatusBarProps {
     fetchParcelsByIds: () => Promise<ParcelsTableRow[]>;
     updateParcelStatuses: (
         parcels: ParcelsTableRow[],
@@ -26,7 +26,7 @@ const AlertBox = styled.div`
     border-radius: 0.5rem;
 `;
 
-const ActionAndStatusDropdowns: React.FC<ActionAndStatusDropdownsProps> = (props) => {
+const ActionAndStatusDropdowns: React.FC<ActionAndStatusBarProps> = (props) => {
     const [statusAnchorElement, setStatusAnchorElement] = useState<HTMLElement | null>(null);
     const [actionAnchorElement, setActionAnchorElement] = useState<HTMLElement | null>(null);
 

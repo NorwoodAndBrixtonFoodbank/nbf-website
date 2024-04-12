@@ -1,12 +1,12 @@
 "use client";
 
 import { NoSsr, Button } from "@mui/material";
-import { PDFDownloadLink, pdf } from "@react-pdf/renderer";
+import { pdf } from "@react-pdf/renderer";
 import React, { useEffect } from "react";
-import { saveAs } from 'file-saver';
+import { saveAs } from "file-saver";
 
 interface Props<T> {
-    fetchDataAndFileName: () => Promise<{data: T, fileName: string}>;
+    fetchDataAndFileName: () => Promise<{ data: T; fileName: string }>;
     text: string;
     pdfComponent: React.FC<{ data: T }>;
     clickHandler?: () => void;
@@ -44,19 +44,20 @@ const PdfButton = <T,>({
     formatName = true,
     disabled = false,
 }: Props<T>): React.ReactElement => {
-    const onClick = async () => {clickHandler();
-        const {data, fileName} = await fetchDataAndFileName();
+    const onClick = async (): Promise<void> => {
+        clickHandler();
+        const { data, fileName } = await fetchDataAndFileName();
         const blob = await pdf(<PdfComponent data={data} />).toBlob();
         saveAs(blob, formatName ? formatFileName(fileName) : fileName);
-    }
-    useEffect(()=>{
-        console.log(disabled)
-    }, [disabled])
+    };
+    useEffect(() => {
+        console.log(disabled);
+    }, [disabled]);
     return (
         <NoSsr>
-                <Button variant="contained" onClick={onClick} disabled={disabled}>
-                    {text}
-                </Button>
+            <Button variant="contained" onClick={onClick} disabled={disabled}>
+                {text}
+            </Button>
         </NoSsr>
     );
 };

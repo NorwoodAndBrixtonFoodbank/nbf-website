@@ -11,7 +11,6 @@ import {
 } from "./common";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { ParcelsTableRow } from "../../getParcelsTableData";
 import ShippingLabelsPdfButton from "@/pdf/ShippingLabels/ShippingLabelsPdfButton";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import Modal from "@/components/Modal/Modal";
@@ -80,13 +79,13 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
                             maxParcelsToShow={maxParcelsToShow}
                         />
                         <Centerer>
-                        <ShippingLabelsPdfButton
-                        disabled={!isInputValid}
-            text="Download"
-            parcel={props.selectedParcels[0]}
-            labelQuantity={labelQuantity}
-            onClick={onDoAction}
-        />
+                            <ShippingLabelsPdfButton
+                                disabled={!isInputValid}
+                                text="Download"
+                                parcel={props.selectedParcels[0]}
+                                labelQuantity={labelQuantity}
+                                onClick={onDoAction}
+                            />
                         </Centerer>
                     </>
                 )}

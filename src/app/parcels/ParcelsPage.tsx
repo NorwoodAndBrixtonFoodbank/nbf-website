@@ -543,15 +543,15 @@ const ParcelsPage: React.FC<{}> = () => {
         return { error: error };
     };
 
-    const getCheckedParcelsData = async (
-    ): Promise<ParcelsTableRow[]> => {
+    const getCheckedParcelsData = async (): Promise<ParcelsTableRow[]> => {
         if (checkedParcelIds.length) {
-        return await getParcelsByIds(
-            supabase,
-            primaryFilters.concat(additionalFilters),
-            sortState,
-            checkedParcelIds
-        );}
+            return await getParcelsByIds(
+                supabase,
+                primaryFilters.concat(additionalFilters),
+                sortState,
+                checkedParcelIds
+            );
+        }
         return [];
     };
 

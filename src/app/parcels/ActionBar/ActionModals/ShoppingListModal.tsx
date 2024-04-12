@@ -82,11 +82,11 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
                             maxParcelsToShow={maxParcelsToShow}
                         />
                         <Centerer>
-                        <ShoppingListPdfButton
-            text="Download"
-            parcels={props.selectedParcels}
-            onClick={onDoAction}
-        />
+                            <ShoppingListPdfButton
+                                text="Download"
+                                parcels={props.selectedParcels}
+                                onClick={onDoAction}
+                            />
                         </Centerer>
                     </>
                 )}

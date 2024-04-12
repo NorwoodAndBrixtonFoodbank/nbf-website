@@ -91,9 +91,12 @@ const DriverOverviewDownloadButton = ({
     driverName,
     date,
     onClick,
-    disabled
+    disabled,
 }: Props): React.ReactElement => {
-    const fetchDataAndFileName = async(): Promise<{data: DriverOverviewData, fileName: string}> => {
+    const fetchDataAndFileName = async (): Promise<{
+        data: DriverOverviewData;
+        fileName: string;
+    }> => {
         const parcelIds = parcels.map((parcel) => {
             return parcel.parcelId;
         });
@@ -104,13 +107,16 @@ const DriverOverviewDownloadButton = ({
             .eq("name", "driver_overview_message")
             .single();
         const message = error ? "Error retrieving message for driver" : data.value;
-        return {data: {
-            driverName: driverName,
-            date: date.toDate(),
-            tableData: requiredData,
-            message: message,
-        }, fileName: "DriverOverview.pdf"}
-}
+        return {
+            data: {
+                driverName: driverName,
+                date: date.toDate(),
+                tableData: requiredData,
+                message: message,
+            },
+            fileName: "DriverOverview.pdf",
+        };
+    };
     return (
         <PdfButton
             text={text}

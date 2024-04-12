@@ -106,7 +106,7 @@ const getActionModal = (
         case "Generate Map":
             return <GenerateMapModal {...actionModalProps} />;
     }
-};   
+};
 
 const Actions: React.FC<Props> = ({
     fetchParcelsByIds,
@@ -154,9 +154,9 @@ const Actions: React.FC<Props> = ({
     return (
         <>
             {Object.entries(availableActions).map(([key, value]) => {
-                return (modalToDisplay === key && (
-                    getActionModal(key,
-                        {
+                return (
+                    modalToDisplay === key &&
+                    getActionModal(key, {
                         isOpen: true,
                         onClose: onModalClose,
                         selectedParcels: selectedParcels,
@@ -166,7 +166,7 @@ const Actions: React.FC<Props> = ({
                         updateParcelStatuses: updateParcelStatuses,
                         newStatus: value.newStatus,
                     })
-                ))
+                );
             })}
             {actionAnchorElement && (
                 <Menu

@@ -1,22 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-    Centerer,
-    Heading,
-    Paragraph,
-    maxParcelsToShow,
-    ActionModalProps,
-    ModalInner,
-} from "./common";
+import { Centerer, Heading, Paragraph, ActionModalProps, ModalInner } from "./common";
 import { SelectChangeEvent } from "@mui/material";
-import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
-import { DatabaseError } from "@/app/errorClasses";
 import DayOverviewPdfButton from "@/pdf/DayOverview/DayOverviewPdfButton";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import Modal from "@/components/Modal/Modal";
@@ -51,8 +42,9 @@ const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
                     "Error with fetch: Collection centres",
                     error
                 );
-                setFetchErrorMessage("Unable to fetch collection centres. Please try again later");
-                console.log("0");
+                setFetchErrorMessage(
+                    `Unable to fetch collection centres. Please try again later. Log ID: ${logId}`
+                );
                 return;
             }
 
@@ -78,7 +70,16 @@ const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
                 />
             )}
             <Heading>Date</Heading>
-            <DatePicker onChange={onDateChange} onError={(error)=>{if (error) {setDateInvalid()} else {setDateValid()}}}/>
+            <DatePicker
+                onChange={onDateChange}
+                onError={(error) => {
+                    if (error) {
+                        setDateInvalid();
+                    } else {
+                        setDateValid();
+                    }
+                }}
+            />
         </>
     );
 };
@@ -131,17 +132,19 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
                     )
                 ) : (
                     <>
-                    {fetchErrorMessage && <ErrorSecondaryText>{fetchErrorMessage}</ErrorSecondaryText>}
+                        {fetchErrorMessage && (
+                            <ErrorSecondaryText>{fetchErrorMessage}</ErrorSecondaryText>
+                        )}
                         <DayOverviewInput
                             onDateChange={onDateChange}
                             onCollectionCentreChange={onCollectionCentreChange}
                             setCollectionCentre={setCollectionCentre}
                             setFetchErrorMessage={setFetchErrorMessage}
-                            setDateInvalid={()=>setIsDateValid(false)}
-                            setDateValid={()=>setIsDateValid(true)}
+                            setDateInvalid={() => setIsDateValid(false)}
+                            setDateValid={() => setIsDateValid(true)}
                         />
                         <Centerer>
-                        <DayOverviewPdfButton
+                            <DayOverviewPdfButton
                                 text="Download"
                                 date={date}
                                 collectionCentreKey={collectionCentre}

@@ -1,5 +1,5 @@
 import ActionAndStatusDropdowns, {
-    ActionAndStatusDropdownsProps,
+    ActionAndStatusBarProps,
 } from "@/app/parcels/ActionBar/ActionAndStatusBar";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import React from "react";
@@ -65,9 +65,8 @@ describe("Parcels - Action Bar", () => {
         },
     ];
 
-    const MockActionBar: React.FC<ActionAndStatusDropdownsProps> = ({
+    const MockActionBar: React.FC<ActionAndStatusBarProps> = ({
         fetchParcelsByIds: fetchSelectedParcels,
-        parcelIds,
         updateParcelStatuses: onDeleteParcels,
     }) => {
         return (
@@ -78,7 +77,6 @@ describe("Parcels - Action Bar", () => {
                         updateParcelStatuses={onDeleteParcels}
                         hasSavedParcelStatus={() => {}}
                         willSaveParcelStatus={() => {}}
-                        parcelIds={parcelIds}
                     />
                 </StyleManager>
             </Localization>
@@ -94,13 +92,12 @@ describe("Parcels - Action Bar", () => {
         beforeEach(() => {
             cy.mount(
                 <MockActionBar
-                    fetchParcelsByIds={async (parcelIds: string[]) =>
+                    fetchParcelsByIds={async () =>
                         await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
                     }
                     updateParcelStatuses={onDeleteParcels}
                     hasSavedParcelStatus={() => {}}
                     willSaveParcelStatus={() => {}}
-                    parcelIds={parcelIds}
                 />
             );
         });
@@ -174,13 +171,12 @@ describe("Parcels - Action Bar", () => {
         beforeEach(() => {
             cy.mount(
                 <MockActionBar
-                    fetchParcelsByIds={async (parcelIds: string[]) =>
+                    fetchParcelsByIds={async () =>
                         await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
                     }
                     updateParcelStatuses={onDeleteParcels}
                     hasSavedParcelStatus={() => {}}
                     willSaveParcelStatus={() => {}}
-                    parcelIds={parcelIds}
                 />
             );
         });

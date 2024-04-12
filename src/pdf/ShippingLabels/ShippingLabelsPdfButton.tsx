@@ -65,12 +65,15 @@ const ShippingLabelsPdfButton = ({
     onClick,
     disabled,
 }: Props): React.ReactElement => {
-    const fetchDataAndFileName = async (): Promise<{data: ShippingLabelData, fileName: string}> => {
-    const parcelId = parcel.parcelId;
-    const requiredData = await getRequiredData(parcelId, labelQuantity);
-    requiredData.label_quantity = labelQuantity;
-    return {data: requiredData, fileName: "ShippingLabels.pdf"}
-}
+    const fetchDataAndFileName = async (): Promise<{
+        data: ShippingLabelData;
+        fileName: string;
+    }> => {
+        const parcelId = parcel.parcelId;
+        const requiredData = await getRequiredData(parcelId, labelQuantity);
+        requiredData.label_quantity = labelQuantity;
+        return { data: requiredData, fileName: "ShippingLabels.pdf" };
+    };
 
     return (
         <PdfButton

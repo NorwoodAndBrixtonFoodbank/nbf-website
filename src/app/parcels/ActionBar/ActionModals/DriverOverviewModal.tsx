@@ -11,10 +11,8 @@ import {
 } from "./common";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { ParcelsTableRow } from "../../getParcelsTableData";
 import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
-import DriverOverview from "@/pdf/DriverOverview/DriverOverviewPdfButton";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import Modal from "@/components/Modal/Modal";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
@@ -31,13 +29,24 @@ const DriverOverviewInput: React.FC<DriverOverviewInputProps> = ({
     onDateChange,
     onDriverNameChange,
     setDateValid,
-    setDateInvalid
+    setDateInvalid,
 }) => {
     return (
         <>
             <Heading>Delivery Information</Heading>
             <FreeFormTextInput onChange={onDriverNameChange} label="Driver's Name" />
-            <DatePicker defaultValue={dayjs()} onChange={onDateChange} onError={(error)=>{if (error) {setDateInvalid()} else {setDateValid()}}} disablePast />
+            <DatePicker
+                defaultValue={dayjs()}
+                onChange={onDateChange}
+                onError={(error) => {
+                    if (error) {
+                        setDateInvalid();
+                    } else {
+                        setDateValid();
+                    }
+                }}
+                disablePast
+            />
         </>
     );
 };
@@ -90,8 +99,8 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
                         <DriverOverviewInput
                             onDateChange={onDateChange}
                             onDriverNameChange={onDriverNameChange}
-                            setDateValid={()=>setIsDateValid(true)}
-                            setDateInvalid={()=>setIsDateValid(false)}
+                            setDateValid={() => setIsDateValid(true)}
+                            setDateInvalid={() => setIsDateValid(false)}
                         />
                         <SelectedParcelsOverview
                             parcels={props.selectedParcels}

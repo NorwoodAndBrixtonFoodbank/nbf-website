@@ -5,6 +5,7 @@ import getShoppingListData from "@/pdf/ShoppingList/getShoppingListData";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import ShoppingListPdf from "@/pdf/ShoppingList/ShoppingListPdf";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
+import { ShoppingListPdfDataList } from "./shoppingListPdfDataProps";
 
 interface Props {
     text: string;
@@ -13,11 +14,14 @@ interface Props {
 }
 
 const ShoppingListPdfButton = ({ text, parcels, onClick }: Props): React.ReactElement => {
-    const fetchDataAndFileName = async () => {
+    const fetchDataAndFileName = async (): Promise<{
+        data: ShoppingListPdfDataList;
+        fileName: string;
+    }> => {
         const parcelIds = parcels.map((parcel) => parcel.parcelId);
-       const data = await getShoppingListData(parcelIds);
-    return {data: data, fileName: "ShoppingList.pdf" }
-    }
+        const data = await getShoppingListData(parcelIds);
+        return { data: data, fileName: "ShoppingList.pdf" };
+    };
     return (
         <PdfButton
             text={text}
