@@ -192,7 +192,7 @@ export const fetchUserProfile = async (
         .single();
 
     if (error) {
-        void logErrorReturnLogId("Failed to fetch: user profile", error);
+        void logErrorReturnLogId("Failed to fetch: user profile", { error: error });
         return { data: null, error: error };
     }
 
