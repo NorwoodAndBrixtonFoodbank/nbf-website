@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
@@ -6,6 +8,15 @@ import DriverOverviewPdf, { DriverOverviewTableData } from "@/pdf/DriverOverview
 import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { formatDateToDate } from "@/common/format";
+import { Dayjs } from "dayjs";
+import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
+
+interface DriverOverviewData {
+    driverName: string;
+    date: Date;
+    tableData: DriverOverviewTableData[];
+    message: string;
+}
 
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<Schema["parcels"][]> => {
     const { data, error } = await supabase.from("parcels").select().in("primary_key", parcelIds);
@@ -67,41 +78,48 @@ const getRequiredData = async (parcelIds: string[]): Promise<DriverOverviewTable
 
 interface Props {
     text: string;
-    parcelIds: string[];
+    parcels: ParcelsTableRow[];
     driverName: string;
-    date: Date;
+    date: Dayjs;
     onClick: () => void;
+    disabled: boolean;
 }
 
-const DriverOverview = async ({
+const DriverOverviewDownloadButton = ({
     text,
-    parcelIds,
+    parcels,
     driverName,
     date,
     onClick,
-}: Props): Promise<React.ReactElement> => {
-    const requiredData = await getRequiredData(parcelIds);
-    const { data, error } = await supabase
-        .from("website_data")
-        .select("name, value")
-        .eq("name", "driver_overview_message")
-        .single();
-    const message = error ? "Error retrieving message for driver" : data.value;
-    const driverOverviewData = {
-        driverName: driverName,
-        date: date,
-        tableData: requiredData,
-        message: message,
-    };
+    disabled
+}: Props): React.ReactElement => {
+    const fetchDataAndFileName = async(): Promise<{data: DriverOverviewData, fileName: string}> => {
+        const parcelIds = parcels.map((parcel) => {
+            return parcel.parcelId;
+        });
+        const requiredData = await getRequiredData(parcelIds);
+        const { data, error } = await supabase
+            .from("website_data")
+            .select("name, value")
+            .eq("name", "driver_overview_message")
+            .single();
+        const message = error ? "Error retrieving message for driver" : data.value;
+        return {data: {
+            driverName: driverName,
+            date: date.toDate(),
+            tableData: requiredData,
+            message: message,
+        }, fileName: "DriverOverview.pdf"}
+}
     return (
         <PdfButton
             text={text}
-            fileName="DriverOverview.pdf"
-            data={driverOverviewData}
+            fetchDataAndFileName={fetchDataAndFileName}
             pdfComponent={DriverOverviewPdf}
             clickHandler={onClick}
+            disabled={disabled}
         />
     );
 };
 
-export default DriverOverview;
+export default DriverOverviewDownloadButton;

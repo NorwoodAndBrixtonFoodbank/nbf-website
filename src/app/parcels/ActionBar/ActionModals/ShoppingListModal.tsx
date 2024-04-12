@@ -12,7 +12,7 @@ import {
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import { ParcelsTableRow } from "../../getParcelsTableData";
 import { StatusType, getStatusErrorMessageWithLogId } from "../Statuses";
-import ShoppingList from "@/pdf/ShoppingList/ShoppingList";
+import ShoppingListPdfButton from "@/pdf/ShoppingList/ShoppingListPdfButton";
 import Modal from "@/components/Modal/Modal";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 
@@ -43,26 +43,6 @@ const ShoppingListsConfirmation: React.FC<ShoppingListsConfirmationProps> = ({
         </>
     ) : (
         <></>
-    );
-};
-
-interface ShoppingListButtonProps {
-    selectedParcels: ParcelsTableRow[];
-    onDoAction: () => void;
-}
-
-const ShoppingListModalButton: React.FC<ShoppingListButtonProps> = ({
-    selectedParcels,
-    onDoAction,
-}) => {
-    return (
-        <ShoppingList
-            text="Download"
-            parcelIds={selectedParcels.map((parcel: ParcelsTableRow) => {
-                return parcel.parcelId;
-            })}
-            onClick={onDoAction}
-        />
     );
 };
 
@@ -102,10 +82,11 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
                             maxParcelsToShow={maxParcelsToShow}
                         />
                         <Centerer>
-                            <ShoppingListModalButton
-                                selectedParcels={props.selectedParcels}
-                                onDoAction={onDoAction}
-                            />
+                        <ShoppingListPdfButton
+            text="Download"
+            parcels={props.selectedParcels}
+            onClick={onDoAction}
+        />
                         </Centerer>
                     </>
                 )}

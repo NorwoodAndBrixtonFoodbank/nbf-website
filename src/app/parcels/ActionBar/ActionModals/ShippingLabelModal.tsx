@@ -12,7 +12,7 @@ import {
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import { ParcelsTableRow } from "../../getParcelsTableData";
-import ShippingLabels from "@/pdf/ShippingLabels/ShippingLabels";
+import ShippingLabelsPdfButton from "@/pdf/ShippingLabels/ShippingLabelsPdfButton";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import Modal from "@/components/Modal/Modal";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
@@ -27,27 +27,6 @@ const ShippingLabelsInput: React.FC<ShippingLabelsInputProps> = ({ onLabelQuanti
             <Heading>Shipping Labels</Heading>
             <FreeFormTextInput type="number" onChange={onLabelQuantityChange} label="Quantity" />
         </>
-    );
-};
-
-interface ShippingLabelsButtonProps {
-    selectedParcels: ParcelsTableRow[];
-    labelQuantity: number;
-    onDoAction: (labelQuantity: number) => void;
-}
-
-const ShippingLabelsModalButton: React.FC<ShippingLabelsButtonProps> = ({
-    selectedParcels,
-    labelQuantity,
-    onDoAction,
-}) => {
-    return (
-        <ShippingLabels
-            text="Download"
-            parcelId={selectedParcels[0].parcelId}
-            labelQuantity={labelQuantity}
-            onClick={() => onDoAction(labelQuantity)}
-        />
     );
 };
 
@@ -70,6 +49,8 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
     const onLabelQuantityChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setLabelQuantity(parseInt(event.target.value, 10) ?? 0);
     };
+
+    const isInputValid = labelQuantity > 0;
 
     const onClose = (): void => {
         props.onClose();
@@ -99,11 +80,13 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
                             maxParcelsToShow={maxParcelsToShow}
                         />
                         <Centerer>
-                            <ShippingLabelsModalButton
-                                selectedParcels={props.selectedParcels}
-                                labelQuantity={labelQuantity}
-                                onDoAction={onDoAction}
-                            />
+                        <ShippingLabelsPdfButton
+                        disabled={!isInputValid}
+            text="Download"
+            parcel={props.selectedParcels[0]}
+            labelQuantity={labelQuantity}
+            onClick={onDoAction}
+        />
                         </Centerer>
                     </>
                 )}

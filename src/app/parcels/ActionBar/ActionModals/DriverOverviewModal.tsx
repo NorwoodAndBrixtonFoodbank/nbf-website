@@ -14,53 +14,31 @@ import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import { ParcelsTableRow } from "../../getParcelsTableData";
 import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
-import DriverOverview from "@/pdf/DriverOverview/DriverOverview";
+import DriverOverview from "@/pdf/DriverOverview/DriverOverviewPdfButton";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import Modal from "@/components/Modal/Modal";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-
-interface DriverOverviewModalButtonProps {
-    selectedParcels: ParcelsTableRow[];
-    date: Dayjs;
-    driverName: string;
-    onDoAction: () => void;
-}
+import DriverOverviewDownloadButton from "@/pdf/DriverOverview/DriverOverviewPdfButton";
 
 interface DriverOverviewInputProps {
     onDateChange: (newDate: Dayjs | null) => void;
     onDriverNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    setDateValid: () => void;
+    setDateInvalid: () => void;
 }
 
 const DriverOverviewInput: React.FC<DriverOverviewInputProps> = ({
     onDateChange,
     onDriverNameChange,
+    setDateValid,
+    setDateInvalid
 }) => {
     return (
         <>
             <Heading>Delivery Information</Heading>
             <FreeFormTextInput onChange={onDriverNameChange} label="Driver's Name" />
-            <DatePicker defaultValue={dayjs()} onChange={onDateChange} disablePast />
+            <DatePicker defaultValue={dayjs()} onChange={onDateChange} onError={(error)=>{if (error) {setDateInvalid()} else {setDateValid()}}} disablePast />
         </>
-    );
-};
-
-const DriverOverviewModalButton: React.FC<DriverOverviewModalButtonProps> = ({
-    selectedParcels,
-    date,
-    driverName,
-    onDoAction,
-}) => {
-    const parcelIds = selectedParcels.map((parcel) => {
-        return parcel.parcelId;
-    });
-    return (
-        <DriverOverview
-            driverName={driverName}
-            date={date.toDate()}
-            text="Download"
-            parcelIds={parcelIds}
-            onClick={onDoAction}
-        />
     );
 };
 
@@ -76,6 +54,8 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
 
     const [driverName, setDriverName] = useState("");
     const [date, setDate] = useState(dayjs());
+
+    const [isDateValid, setIsDateValid] = useState(true);
 
     const onDriverNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setDriverName(event.target.value);
@@ -110,17 +90,21 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
                         <DriverOverviewInput
                             onDateChange={onDateChange}
                             onDriverNameChange={onDriverNameChange}
+                            setDateValid={()=>setIsDateValid(true)}
+                            setDateInvalid={()=>setIsDateValid(false)}
                         />
                         <SelectedParcelsOverview
                             parcels={props.selectedParcels}
                             maxParcelsToShow={maxParcelsToShow}
                         />
                         <Centerer>
-                            <DriverOverviewModalButton
-                                selectedParcels={props.selectedParcels}
+                            <DriverOverviewDownloadButton
+                                parcels={props.selectedParcels}
                                 date={date}
                                 driverName={driverName}
-                                onDoAction={onDoAction}
+                                onClick={onDoAction}
+                                disabled={!isDateValid}
+                                text="Download"
                             />
                         </Centerer>
                     </>

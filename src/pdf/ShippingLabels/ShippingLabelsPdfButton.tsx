@@ -1,8 +1,11 @@
+"use client";
+
 import React from "react";
 import supabase from "@/supabaseClient";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import ShippingLabelsPdf, { ShippingLabelData } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
 import { fetchClient, fetchParcel } from "@/common/fetch";
+import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 
 const formatDatetime = (datetimeString: string | null, isDatetime: boolean): string => {
     if (datetimeString === null) {
@@ -49,29 +52,35 @@ const getRequiredData = async (
 
 interface Props {
     text: string;
-    parcelId: string;
+    parcel: ParcelsTableRow;
     labelQuantity: number;
     onClick: () => void;
+    disabled: boolean;
 }
 
-const ShippingLabels = async ({
+const ShippingLabelsPdfButton = ({
     text,
-    parcelId,
+    parcel,
     labelQuantity,
     onClick,
-}: Props): Promise<React.ReactElement> => {
+    disabled,
+}: Props): React.ReactElement => {
+    const fetchDataAndFileName = async (): Promise<{data: ShippingLabelData, fileName: string}> => {
+    const parcelId = parcel.parcelId;
     const requiredData = await getRequiredData(parcelId, labelQuantity);
     requiredData.label_quantity = labelQuantity;
+    return {data: requiredData, fileName: "ShippingLabels.pdf"}
+}
 
     return (
         <PdfButton
             text={text}
-            fileName="ShippingLabels.pdf"
-            data={requiredData}
+            fetchDataAndFileName={fetchDataAndFileName}
             pdfComponent={ShippingLabelsPdf}
             clickHandler={onClick}
+            disabled={disabled}
         />
     );
 };
 
-export default ShippingLabels;
+export default ShippingLabelsPdfButton;

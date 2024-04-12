@@ -7,10 +7,11 @@ import PdfButton from "@/components/PdfButton/PdfButton";
 import DayOverviewPdf from "./DayOverviewPdf";
 import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
+import { Dayjs } from "dayjs";
 
 interface Props {
     text: string;
-    date: Date;
+    date: Dayjs;
     collectionCentreKey: string | null;
     onClick: () => void;
     disabled: boolean;
@@ -92,14 +93,15 @@ const fetchCollectionCentreNameAndAbbreviation = async (
 };
 
 
-const DayOverview = ({
+const DayOverviewPdfButton = ({
     text,
-    date,
+    date: dayjsDate,
     collectionCentreKey,
     onClick,
     disabled,
 }: Props): React.ReactElement => {
     const fetchDataAndFileName = async(): Promise<{data: DayOverviewData, fileName: string}> => {
+        const date = dayjsDate.toDate();
         const collectionCentreNameAndAbbreviation = await fetchCollectionCentreNameAndAbbreviation(collectionCentreKey!)
         const parcelsOfSpecificDate = await getParcelsOfSpecificDateAndLocation(date, collectionCentreKey!);
         const dateString = getCurrentDate(date);
@@ -126,4 +128,4 @@ const DayOverview = ({
     );
 };
 
-export default DayOverview;
+export default DayOverviewPdfButton;

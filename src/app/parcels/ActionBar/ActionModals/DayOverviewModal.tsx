@@ -17,7 +17,7 @@ import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { DatabaseError } from "@/app/errorClasses";
-import DayOverview from "@/pdf/DayOverview/DayOverview";
+import DayOverviewPdfButton from "@/pdf/DayOverview/DayOverviewPdfButton";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import Modal from "@/components/Modal/Modal";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
@@ -83,30 +83,6 @@ const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
     );
 };
 
-interface DayOverviewModalButtonProps {
-    collectionCentre: string | null;
-    date: Dayjs;
-    onDoAction: () => void;
-    disabled: boolean
-}
-
-const DayOverviewModalButton: React.FC<DayOverviewModalButtonProps> = ({
-    collectionCentre,
-    date,
-    onDoAction,
-    disabled
-}) => {
-    return (
-        <DayOverview
-            text="Download"
-            date={date.toDate()}
-            collectionCentreKey={collectionCentre}
-            onClick={onDoAction}
-            disabled={disabled}
-        />
-    );
-};
-
 const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
     const [fetchErrorMessage, setFetchErrorMessage] = useState<string | null>(null);
@@ -165,10 +141,11 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
                             setDateValid={()=>setIsDateValid(true)}
                         />
                         <Centerer>
-                            <DayOverviewModalButton
-                                collectionCentre={collectionCentre}
+                        <DayOverviewPdfButton
+                                text="Download"
                                 date={date}
-                                onDoAction={onDoAction}
+                                collectionCentreKey={collectionCentre}
+                                onClick={onDoAction}
                                 disabled={!isInputValid}
                             />
                         </Centerer>
