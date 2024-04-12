@@ -67,11 +67,11 @@ const ListsPage: React.FC<{}> = () => {
                     const listData = await fetchListData();
                     setListData(formatListData(listData));
                 } catch (error) {
-                    void logErrorReturnLogId("Error with fetch: list data subscription", {
+                    const logId = logErrorReturnLogId("Error with fetch: list data subscription", {
                         error,
                     });
                     setListData([]);
-                    setErrorMessage("Error fetching data, please reload");
+                    setErrorMessage(`Error fetching data, please reload. Log ID: ${logId}`);
                 }
             })
             .subscribe((status, err) => {
