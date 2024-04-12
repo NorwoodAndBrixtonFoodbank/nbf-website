@@ -4,4 +4,5 @@ alter table "public"."audit_log" add constraint "audit_log_list_id_fkey" FOREIGN
 
 alter table "public"."audit_log" validate constraint "audit_log_list_id_fkey";
 
+alter publication supabase_realtime add table lists
 
