@@ -82,7 +82,7 @@ function getBaseAuditLogForPackingSlotAction(
     return {
         action,
         content: {
-            originalOrder: packingSlotRow.order,
+            currentPackingSlotOrder: packingSlotRow.order,
             packingSlotName: packingSlotRow.name,
             packingSlotIsShown: packingSlotRow.isShown,
         },
