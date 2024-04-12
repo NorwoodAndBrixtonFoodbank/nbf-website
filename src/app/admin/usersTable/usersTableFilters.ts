@@ -4,9 +4,20 @@ import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { UserRow } from "@/app/admin/page";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { DatabaseError } from "@/app/errorClasses";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { UserRole } from "@/databaseUtils";
+
+type BuildUserRoleFilterErrors = "failedToFetchUserRoleFilterOptions";
+
+type BuildUserRoleFilterAndError =
+    | {
+          data: Filter<UserRow, string[]>;
+          error: null;
+      }
+    | {
+          data: null;
+          error: { type: BuildUserRoleFilterErrors; logId: string };
+      };
 
 export const firstNameSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
@@ -29,7 +40,7 @@ export const emailSearch = (
     return query.ilike("email", `%${state}%`);
 };
 
-export const buildUserRoleFilter = async (): Promise<Filter<UserRow, string[]>> => {
+export const buildUserRoleFilter = async (): Promise<BuildUserRoleFilterAndError> => {
     const userRoleSearch = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
@@ -43,7 +54,7 @@ export const buildUserRoleFilter = async (): Promise<Filter<UserRow, string[]>> 
         const logId = await logErrorReturnLogId("Error with fetch: User role filter options", {
             error: error,
         });
-        throw new DatabaseError("fetch", "user role filter options", logId);
+        return { data: null, error: { type: "failedToFetchUserRoleFilterOptions", logId: logId } };
     }
 
     const userRolesFromDb: UserRole[] = data.map((row) => row.role) ?? [];
@@ -57,11 +68,13 @@ export const buildUserRoleFilter = async (): Promise<Filter<UserRow, string[]>> 
 
     uniqueUserRoles.sort();
 
-    return checklistFilter<UserRow>({
+    const userRoleFilter = checklistFilter<UserRow>({
         key: "userRole",
         filterLabel: "User Role",
         itemLabelsAndKeys: uniqueUserRoles.map((userRole) => [userRole, userRole]),
         initialCheckedKeys: uniqueUserRoles,
         methodConfig: { paginationType: PaginationType.Server, method: userRoleSearch },
     });
+
+    return { data: userRoleFilter, error: null };
 };

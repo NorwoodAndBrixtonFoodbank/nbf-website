@@ -159,8 +159,15 @@ const UsersTable: React.FC = () => {
                     method: emailSearch,
                 },
             }),
-            await buildUserRoleFilter(),
         ];
+
+        const { data: userRoleFilter, error } = await buildUserRoleFilter();
+        if (error) {
+            setErrorMessage(`Error occurred: ${error.type}, Log ID: 
+                    ${error.logId}`);
+        } else {
+            filters.push(userRoleFilter);
+        }
         return filters;
     };
 
