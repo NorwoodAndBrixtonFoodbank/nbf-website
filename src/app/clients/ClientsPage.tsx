@@ -120,6 +120,7 @@ const ClientsPage: React.FC<{}> = () => {
                     case "failedToFetchClientsTableCount":
                         setErrorMessage(`Error occurred: ${error.type}, Log ID: 
                     ${error.logId}`);
+                        break;
                 }
             } else {
                 setClientsDataPortion(data.clientData);
