@@ -130,40 +130,41 @@ const UsersTable: React.FC = () => {
         message: <></>,
     });
 
+    const buildFilters = async (): Promise<Filter<UserRow, any>[]> => {
+        const filters: Filter<UserRow, any>[] = [
+            buildTextFilter({
+                key: "firstName",
+                label: "First Name",
+                headers: usersTableHeaderKeysAndLabels,
+                methodConfig: {
+                    paginationType: PaginationType.Server,
+                    method: firstNameSearch,
+                },
+            }),
+            buildTextFilter({
+                key: "lastName",
+                label: "Last Name",
+                headers: usersTableHeaderKeysAndLabels,
+                methodConfig: {
+                    paginationType: PaginationType.Server,
+                    method: lastNameSearch,
+                },
+            }),
+            buildTextFilter({
+                key: "email",
+                label: "Email",
+                headers: usersTableHeaderKeysAndLabels,
+                methodConfig: {
+                    paginationType: PaginationType.Server,
+                    method: emailSearch,
+                },
+            }),
+            await buildUserRoleFilter(),
+        ];
+        return filters;
+    };
+
     useEffect(() => {
-        const buildFilters = async (): Promise<Filter<UserRow, any>[]> => {
-            const filters: Filter<UserRow, any>[] = [
-                buildTextFilter({
-                    key: "firstName",
-                    label: "First Name",
-                    headers: usersTableHeaderKeysAndLabels,
-                    methodConfig: {
-                        paginationType: PaginationType.Server,
-                        method: firstNameSearch,
-                    },
-                }),
-                buildTextFilter({
-                    key: "lastName",
-                    label: "Last Name",
-                    headers: usersTableHeaderKeysAndLabels,
-                    methodConfig: {
-                        paginationType: PaginationType.Server,
-                        method: lastNameSearch,
-                    },
-                }),
-                buildTextFilter({
-                    key: "email",
-                    label: "Email",
-                    headers: usersTableHeaderKeysAndLabels,
-                    methodConfig: {
-                        paginationType: PaginationType.Server,
-                        method: emailSearch,
-                    },
-                }),
-                await buildUserRoleFilter(),
-            ];
-            return filters;
-        };
         (async () => {
             const filters = await buildFilters();
             setPrimaryFilters(filters);
@@ -207,6 +208,7 @@ const UsersTable: React.FC = () => {
                     case "failedToFetchProfilesTableCount":
                         setErrorMessage(`Error occurred: ${error.type}, Log ID: 
                     ${error.logId}`);
+                        break;
                 }
             } else {
                 setUsers(data.userData);
