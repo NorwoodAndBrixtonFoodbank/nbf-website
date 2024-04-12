@@ -10,7 +10,7 @@ import Actions from "@/app/parcels/ActionBar/Actions";
 import { ArrowDropDown } from "@mui/icons-material";
 
 export interface ActionAndStatusDropdownsProps {
-    fetchParcelsByIds: (checkedParcelIds: string[]) => Promise<ParcelsTableRow[]>;
+    fetchParcelsByIds: () => Promise<ParcelsTableRow[]>;
     updateParcelStatuses: (
         parcels: ParcelsTableRow[],
         newStatus: StatusType,
@@ -18,7 +18,6 @@ export interface ActionAndStatusDropdownsProps {
     ) => Promise<SaveParcelStatusReturnType>;
     willSaveParcelStatus: () => void;
     hasSavedParcelStatus: () => void;
-    parcelIds: string[];
 }
 
 const AlertBox = styled.div`
@@ -37,7 +36,6 @@ const ActionAndStatusDropdowns: React.FC<ActionAndStatusDropdownsProps> = (props
         <>
             <Statuses
                 fetchParcelsByIds={props.fetchParcelsByIds}
-                parcelIds={props.parcelIds}
                 statusAnchorElement={statusAnchorElement}
                 setStatusAnchorElement={setStatusAnchorElement}
                 setModalError={setModalError}
@@ -45,7 +43,6 @@ const ActionAndStatusDropdowns: React.FC<ActionAndStatusDropdownsProps> = (props
                 hasSavedParcelStatus={props.hasSavedParcelStatus}
             />
             <Actions
-                parcelIds={props.parcelIds}
                 fetchParcelsByIds={props.fetchParcelsByIds}
                 updateParcelStatuses={props.updateParcelStatuses}
                 actionAnchorElement={actionAnchorElement}

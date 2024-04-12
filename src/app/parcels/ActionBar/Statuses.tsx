@@ -102,13 +102,12 @@ export const saveParcelStatus = async (
 };
 
 interface Props {
-    fetchParcelsByIds: (checkedParceldIds: string[]) => Promise<ParcelsTableRow[]>;
+    fetchParcelsByIds: () => Promise<ParcelsTableRow[]>;
     statusAnchorElement: HTMLElement | null;
     setStatusAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
     willSaveParcelStatus: () => void;
     hasSavedParcelStatus: () => void;
-    parcelIds: string[];
 }
 
 const getStatusErrorMessage = (statusError: SaveParcelStatusError): string => {
@@ -128,7 +127,6 @@ const Statuses: React.FC<Props> = ({
     setModalError,
     willSaveParcelStatus,
     hasSavedParcelStatus,
-    parcelIds,
 }) => {
     const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
     const [selectedStatus, setSelectedStatus] = useState<StatusType | null>(null);
@@ -155,7 +153,7 @@ const Statuses: React.FC<Props> = ({
     const onMenuItemClick = (status: StatusType): (() => void) => {
         return async () => {
             try {
-                const fetchedParcels = await fetchParcelsByIds(parcelIds);
+                const fetchedParcels = await fetchParcelsByIds();
                 setSelectedParcels(fetchedParcels);
                 if (fetchedParcels.length > 0) {
                     setSelectedStatus(status);

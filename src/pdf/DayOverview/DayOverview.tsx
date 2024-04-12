@@ -1,4 +1,6 @@
-import React from "react";
+"use client"
+
+import React, { useEffect, useState } from "react";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
 import PdfButton from "@/components/PdfButton/PdfButton";
@@ -9,8 +11,9 @@ import { logErrorReturnLogId } from "@/logger/logger";
 interface Props {
     text: string;
     date: Date;
-    collectionCentreKey: string;
+    collectionCentreKey: string | null;
     onClick: () => void;
+    disabled: boolean;
 }
 
 export type ParcelOfSpecificDateAndLocation = Pick<Schema["parcels"], "collection_datetime"> & {
@@ -88,36 +91,37 @@ const fetchCollectionCentreNameAndAbbreviation = async (
     return data!;
 };
 
-const DayOverview = async ({
+
+const DayOverview = ({
     text,
     date,
     collectionCentreKey,
     onClick,
-}: Props): Promise<React.ReactElement> => {
-    const [collectionCentreNameAndAbbreviation, parcelsOfSpecificDate] = await Promise.all([
-        fetchCollectionCentreNameAndAbbreviation(collectionCentreKey),
-        getParcelsOfSpecificDateAndLocation(date, collectionCentreKey),
-    ]);
+    disabled,
+}: Props): React.ReactElement => {
+    const fetchDataAndFileName = async(): Promise<{data: DayOverviewData, fileName: string}> => {
+        const collectionCentreNameAndAbbreviation = await fetchCollectionCentreNameAndAbbreviation(collectionCentreKey!)
+        const parcelsOfSpecificDate = await getParcelsOfSpecificDateAndLocation(date, collectionCentreKey!);
+        const dateString = getCurrentDate(date);
+    
+        const acronym = `_${collectionCentreNameAndAbbreviation?.acronym}` ?? "";
+        const location = collectionCentreNameAndAbbreviation?.name ?? "";
 
-    const dateString = getCurrentDate(date);
-
-    const acronym = `_${collectionCentreNameAndAbbreviation?.acronym}` ?? "";
-    const location = collectionCentreNameAndAbbreviation?.name ?? "";
-
-    const fileName = `DayOverview_${dateString}${acronym}.pdf`;
-    const data: DayOverviewData = {
-        date: date,
-        location: location,
-        data: parcelsOfSpecificDate,
-    };
+        const fileName = `DayOverview_${dateString}${acronym}.pdf`;
+        return {data: {
+            date: date,
+            location: location,
+            data: parcelsOfSpecificDate,
+        }, fileName: fileName};
+    }
 
     return (
         <PdfButton
             text={text}
-            fileName={fileName}
-            data={data}
+            fetchDataAndFileName={fetchDataAndFileName}
             pdfComponent={DayOverviewPdf}
             clickHandler={onClick}
+            disabled={disabled}
         />
     );
 };

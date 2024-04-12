@@ -16,7 +16,7 @@ import Icon from "@/components/Icons/Icon";
 import { faBoxArchive } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal/Modal";
 import TableSurface from "@/components/Tables/TableSurface";
-import ActionAndStatusDropdowns from "@/app/parcels/ActionBar/ActionAndStatusDropdowns";
+import ActionAndStatusDropdowns from "@/app/parcels/ActionBar/ActionAndStatusBar";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
@@ -544,14 +544,15 @@ const ParcelsPage: React.FC<{}> = () => {
     };
 
     const getCheckedParcelsData = async (
-        checkedParcelIds: string[]
     ): Promise<ParcelsTableRow[]> => {
+        if (checkedParcelIds.length) {
         return await getParcelsByIds(
             supabase,
             primaryFilters.concat(additionalFilters),
             sortState,
             checkedParcelIds
-        );
+        );}
+        return [];
     };
 
     return (
@@ -565,7 +566,6 @@ const ParcelsPage: React.FC<{}> = () => {
                         updateParcelStatuses={updateParcelStatuses}
                         willSaveParcelStatus={() => setIsLoading(true)}
                         hasSavedParcelStatus={() => setIsLoading(false)}
-                        parcelIds={checkedParcelIds}
                     />
                 </ActionsContainer>
             </PreTableControls>

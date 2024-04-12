@@ -1,16 +1,17 @@
 "use client";
 
 import { NoSsr, Button } from "@mui/material";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import React from "react";
+import { PDFDownloadLink, pdf } from "@react-pdf/renderer";
+import React, { useEffect } from "react";
+import { saveAs } from 'file-saver';
 
 interface Props<T> {
-    data: T;
+    fetchDataAndFileName: () => Promise<{data: T, fileName: string}>;
     text: string;
     pdfComponent: React.FC<{ data: T }>;
-    fileName: string;
     clickHandler?: () => void;
     formatName?: boolean;
+    disabled?: boolean;
 }
 
 const makePaddedString = (inputNumber: number): string => {
@@ -36,23 +37,26 @@ const formatFileName = (fileName: string): string => {
 };
 
 const PdfButton = <T,>({
-    data,
+    fetchDataAndFileName,
     text,
     pdfComponent: PdfComponent,
-    fileName,
     clickHandler = () => {},
     formatName = true,
+    disabled = false,
 }: Props<T>): React.ReactElement => {
+    const onClick = async () => {clickHandler();
+        const {data, fileName} = await fetchDataAndFileName();
+        const blob = await pdf(<PdfComponent data={data} />).toBlob();
+        saveAs(blob, formatName ? formatFileName(fileName) : fileName);
+    }
+    useEffect(()=>{
+        console.log(disabled)
+    }, [disabled])
     return (
         <NoSsr>
-            <PDFDownloadLink
-                document={<PdfComponent data={data} />}
-                fileName={formatName ? formatFileName(fileName) : fileName}
-            >
-                <Button variant="contained" onClick={clickHandler}>
+                <Button variant="contained" onClick={onClick} disabled={disabled}>
                     {text}
                 </Button>
-            </PDFDownloadLink>
         </NoSsr>
     );
 };

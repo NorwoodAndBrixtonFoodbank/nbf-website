@@ -25,13 +25,19 @@ import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 interface DayOverviewInputProps {
     onDateChange: (newDate: Dayjs | null) => void;
     onCollectionCentreChange: (event: SelectChangeEvent) => void;
-    setCollectionCentre: React.Dispatch<React.SetStateAction<string>>;
+    setCollectionCentre: (collectionCentreName: string) => void;
+    setFetchErrorMessage: (fetchErrorMessage: string) => void;
+    setDateValid: () => void;
+    setDateInvalid: () => void;
 }
 
 const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
     onDateChange,
     onCollectionCentreChange,
     setCollectionCentre,
+    setFetchErrorMessage,
+    setDateValid,
+    setDateInvalid,
 }) => {
     const [collectionCentres, setCollectionCentres] = useState<[string, string][] | null>(null);
 
@@ -45,7 +51,9 @@ const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
                     "Error with fetch: Collection centres",
                     error
                 );
-                throw new DatabaseError("fetch", "collection centres", logId); //to do: return not throw
+                setFetchErrorMessage("Unable to fetch collection centres. Please try again later");
+                console.log("0");
+                return;
             }
 
             const transformedData: [string, string][] = data.map((item) => [
@@ -70,21 +78,23 @@ const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
                 />
             )}
             <Heading>Date</Heading>
-            <DatePicker onChange={onDateChange} />
+            <DatePicker onChange={onDateChange} onError={(error)=>{if (error) {setDateInvalid()} else {setDateValid()}}}/>
         </>
     );
 };
 
 interface DayOverviewModalButtonProps {
-    collectionCentre: string;
+    collectionCentre: string | null;
     date: Dayjs;
     onDoAction: () => void;
+    disabled: boolean
 }
 
 const DayOverviewModalButton: React.FC<DayOverviewModalButtonProps> = ({
     collectionCentre,
     date,
     onDoAction,
+    disabled
 }) => {
     return (
         <DayOverview
@@ -92,12 +102,14 @@ const DayOverviewModalButton: React.FC<DayOverviewModalButtonProps> = ({
             date={date.toDate()}
             collectionCentreKey={collectionCentre}
             onClick={onDoAction}
+            disabled={disabled}
         />
     );
 };
 
 const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
+    const [fetchErrorMessage, setFetchErrorMessage] = useState<string | null>(null);
     const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(null);
     const updateParcelsStatuses = async (): Promise<void> => {
         const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
@@ -107,7 +119,10 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
     };
 
     const [date, setDate] = useState(dayjs());
-    const [collectionCentre, setCollectionCentre] = useState("");
+    const [collectionCentre, setCollectionCentre] = useState<string | null>(null);
+    const [isDateValid, setIsDateValid] = useState(false);
+
+    const isInputValid = collectionCentre !== null && isDateValid;
 
     const onCollectionCentreChange = (event: SelectChangeEvent): void => {
         setCollectionCentre(event.target.value);
@@ -140,20 +155,21 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
                     )
                 ) : (
                     <>
+                    {fetchErrorMessage && <ErrorSecondaryText>{fetchErrorMessage}</ErrorSecondaryText>}
                         <DayOverviewInput
                             onDateChange={onDateChange}
                             onCollectionCentreChange={onCollectionCentreChange}
                             setCollectionCentre={setCollectionCentre}
-                        />
-                        <SelectedParcelsOverview
-                            parcels={props.selectedParcels}
-                            maxParcelsToShow={maxParcelsToShow}
+                            setFetchErrorMessage={setFetchErrorMessage}
+                            setDateInvalid={()=>setIsDateValid(false)}
+                            setDateValid={()=>setIsDateValid(true)}
                         />
                         <Centerer>
                             <DayOverviewModalButton
                                 collectionCentre={collectionCentre}
                                 date={date}
                                 onDoAction={onDoAction}
+                                disabled={!isInputValid}
                             />
                         </Centerer>
                     </>

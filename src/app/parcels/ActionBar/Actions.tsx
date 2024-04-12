@@ -77,7 +77,7 @@ export const availableActions: AvailableActionsType = {
 };
 
 interface Props {
-    fetchParcelsByIds: (checkedParcelIds: string[]) => Promise<ParcelsTableRow[]>;
+    fetchParcelsByIds: () => Promise<ParcelsTableRow[]>;
     updateParcelStatuses: (
         parcels: ParcelsTableRow[],
         newStatus: StatusType,
@@ -86,7 +86,6 @@ interface Props {
     actionAnchorElement: HTMLElement | null;
     setActionAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
-    parcelIds: string[];
 }
 
 const getActionModal = (
@@ -107,7 +106,7 @@ const getActionModal = (
         case "Generate Map":
             return <GenerateMapModal {...actionModalProps} />;
     }
-};
+};   
 
 const Actions: React.FC<Props> = ({
     fetchParcelsByIds,
@@ -115,7 +114,6 @@ const Actions: React.FC<Props> = ({
     actionAnchorElement,
     setActionAnchorElement,
     setModalError,
-    parcelIds,
 }) => {
     const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
     const [modalToDisplay, setModalToDisplay] = useState<ActionName | null>(null);
@@ -132,18 +130,21 @@ const Actions: React.FC<Props> = ({
     ): (() => void) => {
         return async () => {
             try {
-                const fetchedParcels = await fetchParcelsByIds(parcelIds);
+                const fetchedParcels = await fetchParcelsByIds();
                 setSelectedParcels(fetchedParcels);
                 if (errorCondition(fetchedParcels.length)) {
+                    console.log(1);
                     setActionAnchorElement(null);
                     setModalError(errorMessage);
                 } else {
+                    console.log(2);
                     setModalToDisplay(key);
                     setActionAnchorElement(null);
                     setModalError(null);
                     return;
                 }
             } catch {
+                console.log(3);
                 setModalError("Database error when fetching selected parcels");
                 return;
             }
@@ -153,9 +154,9 @@ const Actions: React.FC<Props> = ({
     return (
         <>
             {Object.entries(availableActions).map(([key, value]) => {
-                return (
-                    modalToDisplay === key &&
-                    getActionModal(key, {
+                return (modalToDisplay === key && (
+                    getActionModal(key,
+                        {
                         isOpen: true,
                         onClose: onModalClose,
                         selectedParcels: selectedParcels,
@@ -165,7 +166,7 @@ const Actions: React.FC<Props> = ({
                         updateParcelStatuses: updateParcelStatuses,
                         newStatus: value.newStatus,
                     })
-                );
+                ))
             })}
             {actionAnchorElement && (
                 <Menu
