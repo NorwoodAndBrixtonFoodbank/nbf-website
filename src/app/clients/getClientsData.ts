@@ -68,11 +68,15 @@ const getClientsDataAndCount = async (
 
     if (clientError) {
         if (abortSignal.aborted) {
-            const logId = await logInfoReturnLogId("Aborted fetch: client table", clientError);
+            const logId = await logInfoReturnLogId("Aborted fetch: client table", {
+                error: clientError,
+            });
             return { error: { type: "abortedFetchingClientsTable", logId }, data: null };
         }
 
-        const logId = await logErrorReturnLogId("Error with fetch: client table", clientError);
+        const logId = await logErrorReturnLogId("Error with fetch: client table", {
+            error: clientError,
+        });
         return { error: { type: "failedToFetchClientsTable", logId }, data: null };
     }
 
@@ -89,7 +93,6 @@ const getClientsDataAndCount = async (
     if (countData.data === null) {
         return countData;
     }
-    console.log("here");
 
     return { error: null, data: { clientData, count: countData.data } };
 };
