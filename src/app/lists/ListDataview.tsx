@@ -219,7 +219,12 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                     `Error with delete: Ingredient id ${itemToDelete.primaryKey}`,
                     error
                 );
-                await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
+                await sendAuditLog({
+                    ...auditLog,
+                    wasSuccess: false,
+                    logId,
+                    listId: itemToDelete.primaryKey,
+                });
                 setErrorMessage(error.message + `Error ID: ${logId}`);
                 return;
             }
