@@ -6,6 +6,7 @@ import { User } from "@supabase/gotrue-js";
 import { InviteUserDetails } from "@/app/admin/createUser/CreateUserForm";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
+import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 export type InviteUserErrorType =
     | "adminAuthenticationFailure"
@@ -44,39 +45,95 @@ export async function adminInviteUser(
     }
 
     const adminAuthClient = getSupabaseAdminAuthClient();
-    const { data, error } = await adminAuthClient.inviteUserByEmail(userDetails.email, {
-        redirectTo: redirectUrl,
-    });
+    const { data: newUserData, error: inviteUserError } = await adminAuthClient.inviteUserByEmail(
+        userDetails.email,
+        {
+            redirectTo: redirectUrl,
+        }
+    );
 
-    if (error) {
-        const logId = await logErrorReturnLogId("Error with inviting user", { error: error });
+    const auditLogInviteUser = {
+        action: "send invite link to user by email",
+        content: {
+            email: userDetails.email,
+        },
+    } as const satisfies Partial<AuditLog>;
+
+    if (inviteUserError) {
+        const logId = await logErrorReturnLogId("failed to invite user", {
+            error: inviteUserError,
+        });
+        await sendAuditLog({
+            ...auditLogInviteUser,
+            wasSuccess: false,
+            logId,
+        });
         return {
             data: null,
             error: { type: "inviteUserFailure", logId: logId },
         };
     }
 
-    const { error: createRoleError } = await supabase.from("profiles").insert({
-        role: userDetails.role,
-        first_name: userDetails.firstName,
-        last_name: userDetails.lastName,
-        telephone_number: userDetails.telephoneNumber,
-        user_id: data.user.id,
+    await sendAuditLog({
+        ...auditLogInviteUser,
+        wasSuccess: true,
+        content: {
+            ...auditLogInviteUser.content,
+            newUserId: newUserData.user.id,
+            invitedAt: newUserData.user.invited_at,
+            createdAt: newUserData.user.created_at,
+        },
     });
 
-    if (createRoleError) {
-        const logId = await logErrorReturnLogId("Error with insert profile", {
-            error: createRoleError,
+    const { data: profileData, error: createProfileError } = await supabase
+        .from("profiles")
+        .insert({
+            primary_key: newUserData.user.id,
+            role: userDetails.role,
+            first_name: userDetails.firstName,
+            last_name: userDetails.lastName,
+            telephone_number: userDetails.telephoneNumber,
+        })
+        .select()
+        .single();
+
+    const auditLogAddProfile = {
+        action: "add a profile for user",
+        content: {
+            email: userDetails.email,
+            newUserId: newUserData.user.id,
+        },
+    } as const satisfies Partial<AuditLog>;
+
+    if (createProfileError) {
+        const logId = await logErrorReturnLogId(
+            `failed to create profile for user with id ${newUserData.user.id}`,
+            {
+                error: createProfileError,
+            }
+        );
+        await sendAuditLog({
+            ...auditLogAddProfile,
+            wasSuccess: false,
+            logId,
         });
         return {
             data: null,
             error: { type: "createProfileFailure", logId: logId },
         };
     }
+
+    await sendAuditLog({
+        ...auditLogAddProfile,
+        wasSuccess: true,
+        content: { ...auditLogAddProfile.content, profile: profileData },
+        profileId: profileData.primary_key,
+    });
+
     void logInfoReturnLogId(`Created a profile for ${userDetails.role} user: ${userDetails.email}`);
 
     return {
-        data: data.user,
+        data: newUserData.user,
         error: null,
     };
 }
