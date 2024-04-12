@@ -60,7 +60,11 @@ export const insertNewPackingSlot = async (
     newRow: PackingSlotRow
 ): Promise<InsertPackingSlotResult> => {
     const data = formatNewRowToDBPackingSlot(newRow);
-    const { data: packingSlot, error } = await supabase.from("packing_slots").insert(data).select().single();
+    const { data: packingSlot, error } = await supabase
+        .from("packing_slots")
+        .insert(data)
+        .select()
+        .single();
 
     if (error) {
         const logId = await logErrorReturnLogId("Failed to add a packing slot", {
