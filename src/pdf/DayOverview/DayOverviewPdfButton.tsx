@@ -129,7 +129,7 @@ const DayOverviewPdfButton = ({
             text={text}
             fetchDataAndFileName={fetchDataAndFileName}
             pdfComponent={DayOverviewPdf}
-            clickHandler={onClick}
+            onPdfCreationCompleted={onClick}
             disabled={disabled}
         />
     );

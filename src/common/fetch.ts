@@ -25,12 +25,16 @@ export interface ParcelWithCollectionCentreAndPackingSlot {
     voucher_number: string | null;
 }
 
+export type FetchParcelResponse = {data: ParcelWithCollectionCentreAndPackingSlot, error: null} | {data: null, error: {type: FetchParcelErrorType, logId: string}}
+
+export type FetchParcelErrorType = "failedToFetchParcel" | "noMatchingParcels"
+
 export const fetchParcel = async (
     parcelID: string,
     supabase: Supabase
-): Promise<ParcelWithCollectionCentreAndPackingSlot> => {
+): Promise<FetchParcelResponse> => {
     const { data, error } = await supabase
-        .from("parcels")
+        .from("parcel")
         .select(
             `*, 
             collection_centre:collection_centres ( 
@@ -47,16 +51,16 @@ export const fetchParcel = async (
         .eq("primary_key", parcelID);
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Parcel", error);
-        throw new DatabaseError("fetch", "parcel data", logId);
+        return{data: null, error: {type: "failedToFetchParcel", logId: logId}};
     }
     if (data.length !== 1) {
         const errorMessage = `${
             data.length === 0 ? "No" : "Multiple"
         } records match this parcel ID.`;
         const logId = await logWarningReturnLogId(`${errorMessage} ${parcelID}`);
-        throw new Error(errorMessage + `Log ID: ${logId}`);
+        return {data: null, error: {type: "noMatchingParcels", logId: logId}}
     }
-    return data[0];
+    return {data: data[0], error: null}
 };
 
 export type CollectionCentresLabelsAndValues = [
@@ -69,14 +73,23 @@ type CollectionCentresInfo = [
     CollectionCentresLabelsAndValues,
 ];
 
+type FetchCollectionCentresResponse = {
+    data: CollectionCentresInfo,
+    error: null
+} | {
+    data: null,
+    error: {type: FetchCollectionCentresErrorType, logId: string}}
+
+type FetchCollectionCentresErrorType = "collectionCentresFetchFailed"
+
 export const getCollectionCentresInfo = async (
     supabase: Supabase
-): Promise<CollectionCentresInfo> => {
+): Promise<FetchCollectionCentresResponse> => {
     const { data, error } = await supabase.from("collection_centres").select("primary_key, name");
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Collection centres data", error);
-        throw new DatabaseError("fetch", "collection centre data", logId);
+        return {data: null, error: {type: "collectionCentresFetchFailed", logId: logId}}
     }
 
     const collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues = data!
@@ -87,17 +100,26 @@ export const getCollectionCentresInfo = async (
         (collectionCentre) => collectionCentre.name === "Delivery"
     )[0].primary_key;
 
-    return [deliveryPrimaryKey, collectionCentresLabelsAndValues];
+    return {data: [deliveryPrimaryKey, collectionCentresLabelsAndValues], error: null};
 };
+
+type FetchClientResponse = {
+    data: Schema["clients"],
+    error: null
+} | {
+    data: null,
+    error: {type: FetchClientErrorType, logId: string}}
+
+export type FetchClientErrorType = "clientFetchFailed" | "noMatchingClients"
 
 export const fetchClient = async (
     primaryKey: string,
     supabase: Supabase
-): Promise<Schema["clients"]> => {
+): Promise<FetchClientResponse> => {
     const { data, error } = await supabase.from("clients").select().eq("primary_key", primaryKey);
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Client data", error);
-        throw new DatabaseError("fetch", "client data", logId);
+        return {data: null, error: {type: "clientFetchFailed", logId: logId}}
     }
     if (data.length !== 1) {
         const errorMessage = `${
@@ -107,9 +129,9 @@ export const fetchClient = async (
         const logId = await logErrorReturnLogId(
             "Error with client ID" + `${errorMessage} ${primaryKey}`
         );
-        throw new Error(errorMessage + `Log ID: ${logId}`);
+        return {data: null, error: {type: "noMatchingClients", logId: logId}}
     }
-    return data[0];
+    return {data: data[0], error: null};
 };
 
 export const fetchFamily = async (

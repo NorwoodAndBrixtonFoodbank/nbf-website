@@ -27,7 +27,7 @@ const ShoppingListPdfButton = ({ text, parcels, onClick }: Props): React.ReactEl
             text={text}
             fetchDataAndFileName={fetchDataAndFileName}
             pdfComponent={ShoppingListPdf}
-            clickHandler={onClick}
+            onPdfCreationCompleted={onClick}
         />
     );
 };

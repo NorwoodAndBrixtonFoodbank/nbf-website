@@ -122,7 +122,7 @@ const DriverOverviewDownloadButton = ({
             text={text}
             fetchDataAndFileName={fetchDataAndFileName}
             pdfComponent={DriverOverviewPdf}
-            clickHandler={onClick}
+            onPdfCreationCompleted={onClick}
             disabled={disabled}
         />
     );

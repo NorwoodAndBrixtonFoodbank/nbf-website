@@ -4,8 +4,9 @@ import React from "react";
 import supabase from "@/supabaseClient";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import ShippingLabelsPdf, { ShippingLabelData } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
-import { fetchClient, fetchParcel } from "@/common/fetch";
+import { FetchClientErrorType, FetchParcelErrorType, fetchClient, fetchParcel } from "@/common/fetch";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
+import { PdfDataFetchResponse } from "../common";
 
 const formatDatetime = (datetimeString: string | null, isDatetime: boolean): string => {
     if (datetimeString === null) {
@@ -25,14 +26,30 @@ const formatDatetime = (datetimeString: string | null, isDatetime: boolean): str
         : new Date(datetimeString).toLocaleDateString();
 };
 
+type FetchDataResponse = {
+    data: ShippingLabelData,
+    error: null
+} | {
+    data: null,
+    error: {type: FetchShippingLabelDataErrorType, logId: string}
+}
+
+export type FetchShippingLabelDataErrorType = FetchParcelErrorType | FetchClientErrorType;
+
 const getRequiredData = async (
     parcelId: string,
     labelQuantity: number
-): Promise<ShippingLabelData> => {
-    const parcel = await fetchParcel(parcelId, supabase);
-    const client = await fetchClient(parcel.client_id, supabase);
+): Promise<FetchDataResponse> => {
+    const {data: parcel, error: parcelError} = await fetchParcel(parcelId, supabase);
+    if (parcelError) {
+        return {data: null, error: parcelError}
+    }
+    const {data: client, error: clientError} = await fetchClient(parcel.client_id, supabase);
+    if (clientError) {
+        return {data: null, error: clientError}
+    }
 
-    return {
+    return {data: {
         label_quantity: labelQuantity,
         parcel_id: parcelId,
         packing_slot: parcel.packing_slot?.name ?? "",
@@ -47,32 +64,35 @@ const getRequiredData = async (
         address_county: client?.address_county,
         address_postcode: client?.address_postcode,
         delivery_instructions: client?.delivery_instructions,
-    };
+    }, error: null
 };
+}
 
 interface Props {
     text: string;
     parcel: ParcelsTableRow;
     labelQuantity: number;
-    onClick: () => void;
+    onPdfCreationCompleted: () => void;
     disabled: boolean;
+    onPdfCreationFailed: (error: {type: FetchShippingLabelDataErrorType, logId: string}) => void;
 }
 
 const ShippingLabelsPdfButton = ({
     text,
     parcel,
     labelQuantity,
-    onClick,
+    onPdfCreationCompleted,
     disabled,
+    onPdfCreationFailed
 }: Props): React.ReactElement => {
-    const fetchDataAndFileName = async (): Promise<{
-        data: ShippingLabelData;
-        fileName: string;
-    }> => {
+    const fetchDataAndFileName = async (): Promise<PdfDataFetchResponse<ShippingLabelData, FetchShippingLabelDataErrorType>> => {
         const parcelId = parcel.parcelId;
-        const requiredData = await getRequiredData(parcelId, labelQuantity);
+        const {data: requiredData, error} = await getRequiredData(parcelId, labelQuantity);
+        if (error) {
+            return {data: null, error}
+        }
         requiredData.label_quantity = labelQuantity;
-        return { data: requiredData, fileName: "ShippingLabels.pdf" };
+        return {data: { data: requiredData, fileName: "ShippingLabels.pdf" }, error: null};
     };
 
     return (
@@ -80,8 +100,9 @@ const ShippingLabelsPdfButton = ({
             text={text}
             fetchDataAndFileName={fetchDataAndFileName}
             pdfComponent={ShippingLabelsPdf}
-            clickHandler={onClick}
+            onPdfCreationCompleted={onPdfCreationCompleted}
             disabled={disabled}
+            onPdfCreationFailed={onPdfCreationFailed}
         />
     );
 };

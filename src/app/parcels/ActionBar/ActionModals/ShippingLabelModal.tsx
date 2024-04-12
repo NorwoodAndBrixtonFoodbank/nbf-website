@@ -11,7 +11,7 @@ import {
 } from "./common";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import ShippingLabelsPdfButton from "@/pdf/ShippingLabels/ShippingLabelsPdfButton";
+import ShippingLabelsPdfButton, { FetchShippingLabelDataErrorType } from "@/pdf/ShippingLabels/ShippingLabelsPdfButton";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import Modal from "@/components/Modal/Modal";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
@@ -29,9 +29,26 @@ const ShippingLabelsInput: React.FC<ShippingLabelsInputProps> = ({ onLabelQuanti
     );
 };
 
+const getPdfErrorMessage = (error: {type: FetchShippingLabelDataErrorType, logId: string}): string => {
+    let errorMessage = "";
+    switch (error.type) {
+        case "failedToFetchParcel":
+            errorMessage = "Failed to fetch selected parcel data."
+        case "noMatchingParcels":
+            errorMessage = "No parcel in the database matches the one selected."
+        case "clientFetchFailed":
+            errorMessage = "Failed to fetch client data for the selected parcel."
+        case "noMatchingClients":
+            errorMessage = "No client in the database matches the client of the selected parcel."
+    }
+    return `${errorMessage} LogId: ${error.logId}`;
+    
+}
+
 const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
     const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(null);
+    const [pdfError, setPdfError] = useState<{type: FetchShippingLabelDataErrorType, logId: string} | null>(null);
     const updateParcelsStatuses = async (labelQuantity: number): Promise<void> => {
         const { error } = await props.updateParcelStatuses(
             props.selectedParcels,
@@ -51,27 +68,37 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
 
     const isInputValid = labelQuantity > 0;
 
+    const actionCompletedSuccessfully = actionCompleted && !serverErrorMessage && !pdfError;
+
     const onClose = (): void => {
         props.onClose();
         setLabelQuantity(0);
         setServerErrorMessage(null);
     };
 
-    const onDoAction = (): void => {
+    const onPdfCreationCompleted = (): void => {
         updateParcelsStatuses(labelQuantity);
         setActionCompleted(true);
     };
 
+    const onPdfCreationFailed = (pdfError: {type: FetchShippingLabelDataErrorType, logId: string}): void => {
+        setPdfError(pdfError);
+        setActionCompleted(true);
+    }
+
     return (
         <Modal {...props} onClose={onClose}>
             <ModalInner>
-                {actionCompleted ? (
-                    serverErrorMessage ? (
+                    {pdfError && 
+                        <ErrorSecondaryText>{getPdfErrorMessage(pdfError)}</ErrorSecondaryText>
+                    }
+                    {serverErrorMessage && 
                         <ErrorSecondaryText>{serverErrorMessage}</ErrorSecondaryText>
-                    ) : (
+                    } 
+                    {actionCompletedSuccessfully && 
                         <Paragraph>Shipping Labels Created</Paragraph>
-                    )
-                ) : (
+                    }
+                    {!actionCompleted &&
                     <>
                         <ShippingLabelsInput onLabelQuantityChange={onLabelQuantityChange} />
                         <SelectedParcelsOverview
@@ -84,11 +111,12 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
                                 text="Download"
                                 parcel={props.selectedParcels[0]}
                                 labelQuantity={labelQuantity}
-                                onClick={onDoAction}
+                                onPdfCreationCompleted={onPdfCreationCompleted}
+                                onPdfCreationFailed={onPdfCreationFailed}
                             />
                         </Centerer>
                     </>
-                )}
+                }
             </ModalInner>
         </Modal>
     );
