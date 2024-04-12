@@ -8,7 +8,7 @@ import Table, { SortOptions, TableHeaders, SortState } from "@/components/Tables
 import TableSurface from "@/components/Tables/TableSurface";
 import supabase from "@/supabaseClient";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import React, { useEffect, useState, Suspense, useRef } from "react";
+import React, { useEffect, useState, Suspense, useRef, useCallback } from "react";
 import { useTheme } from "styled-components";
 import getClientsDataAndCount from "./getClientsData";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -19,7 +19,6 @@ import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { CircularProgress } from "@mui/material";
-import { DatabaseError } from "../errorClasses";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 
@@ -95,7 +94,7 @@ const ClientsPage: React.FC<{}> = () => {
     const startPoint = (currentPage - 1) * perPage;
     const endPoint = currentPage * perPage - 1;
 
-    useEffect(() => {
+    const fetchAndDisplayClientsData = useCallback(async () => {
         setIsLoading(true);
         if (clientTableFetchAbortController.current) {
             clientTableFetchAbortController.current.abort("stale request");
@@ -103,81 +102,59 @@ const ClientsPage: React.FC<{}> = () => {
         clientTableFetchAbortController.current = new AbortController();
         if (clientTableFetchAbortController.current) {
             setErrorMessage(null);
-            getClientsDataAndCount(
+            const { data, error } = await getClientsDataAndCount(
                 supabase,
                 startPoint,
                 endPoint,
                 primaryFilters,
                 sortState,
                 clientTableFetchAbortController.current.signal
-            )
-                .then(({ data, count }) => {
-                    setClientsDataPortion(data);
-                    setFilteredClientCount(count);
-                })
-                .catch((error) => {
-                    if (error instanceof DatabaseError) {
-                        setErrorMessage(error.message);
-                    }
-                })
-                .finally(() => {
-                    clientTableFetchAbortController.current = null;
-                    setIsLoading(false);
-                    setIsLoadingForFirstTime(false);
-                });
+            );
+
+            if (error) {
+                switch (error.type) {
+                    case "abortedFetchingClientsTable":
+                    case "abortedFetchingClientsTableCount":
+                        return;
+                    case "failedToFetchClientsTable":
+                    case "failedToFetchClientsTableCount":
+                        setErrorMessage(`Error occurred: ${error.type}, Log ID: 
+                    ${error.logId}`);
+                        break;
+                }
+            } else {
+                setClientsDataPortion(data.clientData);
+                setFilteredClientCount(data.count);
+            }
+            clientTableFetchAbortController.current = null;
+            setIsLoading(false);
+            setIsLoadingForFirstTime(false);
         }
     }, [startPoint, endPoint, primaryFilters, sortState]);
 
     useEffect(() => {
-        const loadCountAndData = (): void => {
-            setIsLoading(true);
-            if (clientTableFetchAbortController.current) {
-                clientTableFetchAbortController.current.abort("stale request");
-            }
-            clientTableFetchAbortController.current = new AbortController();
-            if (clientTableFetchAbortController.current) {
-                setErrorMessage(null);
-                getClientsDataAndCount(
-                    supabase,
-                    startPoint,
-                    endPoint,
-                    primaryFilters,
-                    sortState,
-                    clientTableFetchAbortController.current.signal
-                )
-                    .then(async ({ data, count }) => {
-                        setClientsDataPortion(data);
-                        setFilteredClientCount(count);
-                    })
-                    .catch((error) => {
-                        if (error instanceof DatabaseError) {
-                            setErrorMessage(error.message);
-                        }
-                    })
-                    .finally(() => {
-                        clientTableFetchAbortController.current = null;
-                        setIsLoading(false);
-                        setIsLoadingForFirstTime(false);
-                    });
-            }
-        };
+        void fetchAndDisplayClientsData();
+    }, [fetchAndDisplayClientsData]);
+
+    useEffect(() => {
+        void fetchAndDisplayClientsData();
         // This requires that the DB clients, collection_centres, and families tables have Realtime turned on
         const subscriptionChannel = supabase
             .channel("parcels-table-changes")
             .on(
                 "postgres_changes",
                 { event: "*", schema: "public", table: "clients" },
-                loadCountAndData
+                fetchAndDisplayClientsData
             )
             .on(
                 "postgres_changes",
                 { event: "*", schema: "public", table: "collection_centres" },
-                loadCountAndData
+                fetchAndDisplayClientsData
             )
             .on(
                 "postgres_changes",
                 { event: "*", schema: "public", table: "families" },
-                loadCountAndData
+                fetchAndDisplayClientsData
             )
             .subscribe((status, err) => {
                 subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&

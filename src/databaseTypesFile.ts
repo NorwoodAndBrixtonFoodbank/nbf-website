@@ -160,6 +160,13 @@ export type Database = {
             foreignKeyName: "audit_log_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "profiles_plus"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "audit_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -608,6 +615,13 @@ export type Database = {
             foreignKeyName: "profiles_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
+            referencedRelation: "profiles_plus"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -693,6 +707,19 @@ export type Database = {
           packing_slot_order: number | null
           parcel_id: string | null
           voucher_number: string | null
+        }
+        Relationships: []
+      }
+      profiles_plus: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          first_name: string | null
+          last_name: string | null
+          role: Database["public"]["Enums"]["role"] | null
+          telephone_number: string | null
+          updated_at: string | null
+          user_id: string | null
         }
         Relationships: []
       }
