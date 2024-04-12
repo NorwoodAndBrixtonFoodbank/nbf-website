@@ -278,7 +278,7 @@ const PackingSlotsTable: React.FC = () => {
 
             if (swapRowsError) {
                 setErrorMessage(
-                    `Failed to move packing slot (${row.name}) up. Log ID: ${swapRowsError.logId}`
+                    `Failed to move packing slot (${row.name}) down. Log ID: ${swapRowsError.logId}`
                 );
                 void sendAuditLog({ ...baseAuditLog, wasSuccess: false });
             } else {
