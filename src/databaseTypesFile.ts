@@ -22,6 +22,7 @@ export type Database = {
           packing_slot_id: string | null
           parcel_id: string | null
           primary_key: string
+          profile_id: string | null
           status_order: string | null
           user_id: string
           wasSuccess: boolean
@@ -39,6 +40,7 @@ export type Database = {
           packing_slot_id?: string | null
           parcel_id?: string | null
           primary_key?: string
+          profile_id?: string | null
           status_order?: string | null
           user_id: string
           wasSuccess: boolean
@@ -56,6 +58,7 @@ export type Database = {
           packing_slot_id?: string | null
           parcel_id?: string | null
           primary_key?: string
+          profile_id?: string | null
           status_order?: string | null
           user_id?: string
           wasSuccess?: boolean
@@ -138,6 +141,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "parcels_plus"
             referencedColumns: ["parcel_id"]
+          },
+          {
+            foreignKeyName: "audit_log_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["primary_key"]
           },
           {
             foreignKeyName: "audit_log_status_order_fkey"

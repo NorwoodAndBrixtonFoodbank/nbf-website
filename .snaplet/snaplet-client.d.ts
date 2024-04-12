@@ -83,15 +83,6 @@ type Override = {
       objects?: string;
     };
   }
-  channels?: {
-    name?: string;
-    fields?: {
-      id?: string;
-      name?: string;
-      inserted_at?: string;
-      updated_at?: string;
-    };
-  }
   clients?: {
     name?: string;
     fields?: {
@@ -401,6 +392,7 @@ type Override = {
       telephone_number?: string;
       user_id?: string;
       users?: string;
+      audit_log?: string;
     };
   }
   refresh_tokens?: {
@@ -452,13 +444,6 @@ type Override = {
     name?: string;
     fields?: {
       version?: string;
-    };
-  }
-  realtime_schema_migrations?: {
-    name?: string;
-    fields?: {
-      version?: string;
-      inserted_at?: string;
     };
   }
   supabase_migrations_schema_migrations?: {
@@ -531,18 +516,6 @@ type Override = {
       event_name?: string;
       workflow_order?: string;
       audit_log?: string;
-    };
-  }
-  subscription?: {
-    name?: string;
-    fields?: {
-      id?: string;
-      subscription_id?: string;
-      entity?: string;
-      filters?: string;
-      claims?: string;
-      claims_role?: string;
-      created_at?: string;
     };
   }
   users?: {
@@ -648,11 +621,6 @@ export interface Fingerprint {
     updatedAt?: FingerprintDateField;
     fileSizeLimit?: FingerprintNumberField;
     objects?: FingerprintRelationField;
-  }
-  channels?: {
-    id?: FingerprintNumberField;
-    insertedAt?: FingerprintDateField;
-    updatedAt?: FingerprintDateField;
   }
   clients?: {
     auditLogsByClientId?: FingerprintRelationField;
@@ -760,7 +728,8 @@ export interface Fingerprint {
     eventsByParcelId?: FingerprintRelationField;
   }
   profiles?: {
-    user?: FingerprintRelationField;
+    userByPrimaryKey?: FingerprintRelationField;
+    auditLogsByProfileId?: FingerprintRelationField;
   }
   refreshTokens?: {
     id?: FingerprintNumberField;
@@ -782,10 +751,6 @@ export interface Fingerprint {
   }
   authSchemaMigrations?: {
 
-  }
-  realtimeSchemaMigrations?: {
-    version?: FingerprintNumberField;
-    insertedAt?: FingerprintDateField;
   }
   supabaseMigrationsSchemaMigrations?: {
 
@@ -820,11 +785,6 @@ export interface Fingerprint {
     workflowOrder?: FingerprintNumberField;
     auditLogsByStatusOrder?: FingerprintRelationField;
   }
-  subscriptions?: {
-    id?: FingerprintNumberField;
-    claims?: FingerprintJsonField;
-    createdAt?: FingerprintDateField;
-  }
   users?: {
     emailConfirmedAt?: FingerprintDateField;
     invitedAt?: FingerprintDateField;
@@ -847,7 +807,7 @@ export interface Fingerprint {
     mfaFactors?: FingerprintRelationField;
     sessions?: FingerprintRelationField;
     auditLogs?: FingerprintRelationField;
-    profiles?: FingerprintRelationField;
+    profilesByPrimaryKey?: FingerprintRelationField;
   }
   websiteData?: {
     auditLogsByWebsiteData?: FingerprintRelationField;

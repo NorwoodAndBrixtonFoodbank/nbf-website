@@ -11,8 +11,6 @@ type Enum_pgsodium_key_status = 'default' | 'expired' | 'invalid' | 'valid';
 type Enum_pgsodium_key_type = 'aead-det' | 'aead-ietf' | 'auth' | 'generichash' | 'hmacsha256' | 'hmacsha512' | 'kdf' | 'secretbox' | 'secretstream' | 'shorthash' | 'stream_xchacha20';
 type Enum_public_gender = 'female' | 'male' | 'other';
 type Enum_public_role = 'admin' | 'caller';
-type Enum_realtime_action = 'DELETE' | 'ERROR' | 'INSERT' | 'TRUNCATE' | 'UPDATE';
-type Enum_realtime_equality_op = 'eq' | 'gt' | 'gte' | 'in' | 'lt' | 'lte' | 'neq';
 interface Table_net_http_response {
   id: number | null;
   status_code: number | null;
@@ -40,6 +38,7 @@ interface Table_public_audit_log {
   wasSuccess: boolean;
   log_id: string | null;
 }
+  profile_id: string | null;
 interface Table_auth_audit_log_entries {
   instance_id: string | null;
   id: string;
@@ -58,12 +57,6 @@ interface Table_storage_buckets {
   file_size_limit: number | null;
   allowed_mime_types: string[] | null;
   owner_id: string | null;
-}
-interface Table_realtime_channels {
-  id: number;
-  name: string;
-  inserted_at: string;
-  updated_at: string;
 }
 interface Table_public_clients {
   primary_key: string;
@@ -318,10 +311,6 @@ interface Table_auth_saml_relay_states {
 interface Table_auth_schema_migrations {
   version: string;
 }
-interface Table_realtime_schema_migrations {
-  version: number;
-  inserted_at: string | null;
-}
 interface Table_supabase_migrations_schema_migrations {
   version: string;
   statements: string[] | null;
@@ -366,34 +355,6 @@ interface Table_auth_sso_providers {
 interface Table_public_status_order {
   event_name: string;
   workflow_order: number;
-}
-interface Table_realtime_subscription {
-  id: number;
-  subscription_id: string;
-  /**
-  * We couldn't determine the type of this column. The type might be coming from an unknown extension
-  * or be specific to your database. Please if it's a common used type report this issue so we can fix it!
-  * Otherwise, please manually type this column by casting it to the correct type.
-  * @example
-  * Here is a cast example for copycat use:
-  * ```
-  * copycat.scramble(row.unknownColumn as string)
-  * ```
-  */
-  entity: unknown;
-  /**
-  * We couldn't determine the type of this column. The type might be coming from an unknown extension
-  * or be specific to your database. Please if it's a common used type report this issue so we can fix it!
-  * Otherwise, please manually type this column by casting it to the correct type.
-  * @example
-  * Here is a cast example for copycat use:
-  * ```
-  * copycat.scramble(row.unknownColumn as string)
-  * ```
-  */
-  filters: unknown[];
-  claims: Json;
-  created_at: string;
 }
 interface Table_auth_users {
   instance_id: string | null;
@@ -491,9 +452,7 @@ interface Schema_public {
   website_data: Table_public_website_data;
 }
 interface Schema_realtime {
-  channels: Table_realtime_channels;
-  schema_migrations: Table_realtime_schema_migrations;
-  subscription: Table_realtime_subscription;
+
 }
 interface Schema_storage {
   buckets: Table_storage_buckets;
@@ -546,6 +505,7 @@ interface Tables_relationships {
        audit_log_packing_slot_id_fkey: "public.packing_slots";
        audit_log_parcel_id_fkey: "public.parcels";
        audit_log_status_order_fkey: "public.status_order";
+       audit_log_profile_id_fkey: "public.profiles";
        audit_log_website_data_fkey: "public.website_data";
     };
     children: {
@@ -693,7 +653,7 @@ interface Tables_relationships {
        profiles_user_id_fkey: "auth.users";
     };
     children: {
-
+       audit_log_profile_id_fkey: "public.audit_log";
     };
   };
   "auth.refresh_tokens": {
