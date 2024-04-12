@@ -119,6 +119,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
             });
         }
 
+        setToSubmit({});
         onClose();
     };
 
