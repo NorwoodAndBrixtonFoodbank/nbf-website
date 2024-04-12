@@ -1,6 +1,5 @@
 "use client";
 
-import { DatabaseError } from "@/app/errorClasses";
 import Table, { ColumnDisplayFunctions, ColumnStyles } from "@/components/Tables/Table";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
@@ -184,11 +183,11 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         ]);
 
         if (error) {
-            const logId = await logErrorReturnLogId(
-                "Error with upsert: List row item order",
-                error
-            );
-            throw new DatabaseError("update", "list items", logId);
+            const logId = await logErrorReturnLogId("Error with upsert: List row item order", {
+                error: error,
+            });
+            setErrorMessage(`Failed to swap rows. Log ID: ${logId}`);
+            return;
         }
 
         reorderRows(row1, row2);
@@ -218,7 +217,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             if (error) {
                 const logId = await logErrorReturnLogId(
                     `Error with delete: Ingredient id ${itemToDelete.primaryKey}`,
-                    error
+                    { error: error }
                 );
                 await sendAuditLog({
                     ...auditLog,
