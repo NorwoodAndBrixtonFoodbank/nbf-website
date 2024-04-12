@@ -89,12 +89,16 @@ const getClientsDataAndCount = async (
         };
     });
 
-    const countData = await getClientsCount(supabase, filters, abortSignal);
-    if (countData.data === null) {
-        return countData;
+    const { data: clientCount, error: clientCountError } = await getClientsCount(
+        supabase,
+        filters,
+        abortSignal
+    );
+    if (clientCountError) {
+        return { data: null, error: clientCountError };
     }
 
-    return { error: null, data: { clientData, count: countData.data } };
+    return { error: null, data: { clientData, count: clientCount } };
 };
 
 const getClientsCount = async (
