@@ -53,11 +53,7 @@ export const getUsersDataAndCount = async (
     } else {
         query = query.order("first_name");
     }
-    filters.forEach((filter) => {
-        if (filter.methodConfig.paginationType === PaginationType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
-    });
+    query = getQueryWithFiltersApplied(query, filters);
 
     query = query.range(startIndex, endIndex);
 
@@ -104,21 +100,6 @@ export const getUsersDataAndCount = async (
     return { error: null, data: { userData, count: userCount } };
 };
 
-function getQueryWithFiltersApplied(
-    originalQuery: PostgrestFilterBuilder<Database["public"], any, any>,
-    filters: Filter<UserRow, any>[]
-): PostgrestFilterBuilder<Database["public"], any, any> {
-    let query = originalQuery;
-
-    filters.forEach((filter) => {
-        if (filter.methodConfig.paginationType === PaginationType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
-    });
-
-    return query;
-}
-
 const getUsersCount = async (
     supabase: Supabase,
     filters: Filter<UserRow, any>[],
@@ -127,11 +108,6 @@ const getUsersCount = async (
     let query = supabase.from("profiles_plus").select("*", { count: "exact", head: true });
 
     query = getQueryWithFiltersApplied(query, filters);
-    filters.forEach((filter) => {
-        if (filter.methodConfig.paginationType === PaginationType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
-    });
 
     query = query.abortSignal(abortSignal);
 
@@ -151,3 +127,18 @@ const getUsersCount = async (
 
     return { error: null, data: count };
 };
+
+function getQueryWithFiltersApplied(
+    originalQuery: PostgrestFilterBuilder<Database["public"], any, any>,
+    filters: Filter<UserRow, any>[]
+): PostgrestFilterBuilder<Database["public"], any, any> {
+    let query = originalQuery;
+
+    filters.forEach((filter) => {
+        if (filter.methodConfig.paginationType === PaginationType.Server) {
+            query = filter.methodConfig.method(query, filter.state);
+        }
+    });
+
+    return query;
+}
