@@ -133,7 +133,6 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     const [errorMessage, setErrorMessage] = useState<string | null>(error);
     const [listData, setListData] = useState<ListRow[]>(listOfIngredients);
     const [primaryFilters, setPrimaryFilters] = useState<Filter<ListRow, string>[]>(filters);
-    const [errorMessageForDelete, setErrorMessageForDelete] = useState<string | null>(error);
 
     if (listOfIngredients === null) {
         void logInfoReturnLogId("No ingredients found @ app/lists/ListDataView.tsx");
@@ -225,7 +224,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                     logId,
                     listId: itemToDelete.primaryKey,
                 });
-                setErrorMessageForDelete(error.message + `Error ID: ${logId}`);
+                setErrorMessage(error.message + `Error ID: ${logId}`);
                 return;
             }
 
@@ -259,12 +258,10 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                 onCancel={() => {
                     setToDeleteModalOpen(false);
                 }}
-                errorMessage={errorMessageForDelete}
             />
 
             <Snackbar
                 message={errorMessage}
-                autoHideDuration={3000}
                 onClose={() => setErrorMessage(null)}
                 open={errorMessage !== null}
             >

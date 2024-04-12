@@ -10,7 +10,6 @@ interface Props {
     message: string;
     onConfirm: () => void;
     onCancel: () => void;
-    errorMessage: string | null;
 }
 
 const ModalInner = styled.div`
@@ -26,11 +25,7 @@ const Text = styled.p`
     font-size: 1.2rem;
 `;
 
-const ErrorText = styled.p`
-    color: red;
-`;
-
-const ConfirmDialog: React.FC<Props> = ({ isOpen, message, onCancel, onConfirm, errorMessage }) => {
+const ConfirmDialog: React.FC<Props> = ({ isOpen, message, onCancel, onConfirm }) => {
     return (
         <Modal isOpen={isOpen} onClose={onCancel} header="Confirm" headerId="confirmDialog">
             <ModalInner>
@@ -38,7 +33,6 @@ const ConfirmDialog: React.FC<Props> = ({ isOpen, message, onCancel, onConfirm, 
                 <Button onClick={onConfirm} variant="contained" color="primary">
                     <p>Confirm</p>
                 </Button>
-                {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
             </ModalInner>
         </Modal>
     );
