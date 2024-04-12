@@ -92,12 +92,16 @@ export const getUsersDataAndCount = async (
         };
     });
 
-    const countData = await getUsersCount(supabase, filters, abortSignal);
-    if (countData.data === null) {
-        return countData;
+    const { data: userCount, error: userCountError } = await getUsersCount(
+        supabase,
+        filters,
+        abortSignal
+    );
+    if (userCountError) {
+        return { data: null, error: userCountError };
     }
 
-    return { error: null, data: { userData, count: countData.data } };
+    return { error: null, data: { userData, count: userCount } };
 };
 
 function getQueryWithFiltersApplied(
