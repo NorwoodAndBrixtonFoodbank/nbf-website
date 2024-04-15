@@ -37,8 +37,8 @@ interface Table_public_audit_log {
   content: Json | null;
   wasSuccess: boolean;
   log_id: string | null;
-}
   profile_id: string | null;
+}
 interface Table_auth_audit_log_entries {
   instance_id: string | null;
   id: string;
@@ -108,6 +108,7 @@ interface Table_auth_flow_state {
   created_at: string | null;
   updated_at: string | null;
   authentication_method: string;
+  auth_code_issued_at: string | null;
 }
 interface Table_supabase_functions_hooks {
   id: number;
@@ -296,6 +297,7 @@ interface Table_auth_saml_providers {
   attribute_mapping: Json | null;
   created_at: string | null;
   updated_at: string | null;
+  name_id_format: string | null;
 }
 interface Table_auth_saml_relay_states {
   id: string;
@@ -303,7 +305,6 @@ interface Table_auth_saml_relay_states {
   request_id: string;
   for_email: string | null;
   redirect_to: string | null;
-  from_ip_address: string | null;
   created_at: string | null;
   updated_at: string | null;
   flow_state_id: string | null;
@@ -390,6 +391,7 @@ interface Table_auth_users {
   reauthentication_sent_at: string | null;
   is_sso_user: boolean;
   deleted_at: string | null;
+  is_anonymous: boolean;
 }
 interface Table_public_website_data {
   name: string;
@@ -504,8 +506,8 @@ interface Tables_relationships {
        audit_log_list_hotel_id_fkey: "public.lists_hotel";
        audit_log_packing_slot_id_fkey: "public.packing_slots";
        audit_log_parcel_id_fkey: "public.parcels";
-       audit_log_status_order_fkey: "public.status_order";
        audit_log_profile_id_fkey: "public.profiles";
+       audit_log_status_order_fkey: "public.status_order";
        audit_log_website_data_fkey: "public.website_data";
     };
     children: {

@@ -3,6 +3,7 @@ import { DatabaseError } from "@/app/errorClasses";
 import { PackingSlotRow } from "@/app/admin/packingSlotsTable/PackingSlotsTable";
 import { Tables } from "@/databaseTypesFile";
 import { logErrorReturnLogId } from "@/logger/logger";
+import { PostgrestError } from "@supabase/supabase-js";
 
 type DbPackingSlot = Tables<"packing_slots">;
 type NewDbPackingSlot = Omit<DbPackingSlot, "primary_key">;
@@ -42,17 +43,50 @@ const formatNewRowToDBPackingSlot = (newRow: PackingSlotRow): NewDbPackingSlot =
     };
 };
 
-export const insertNewPackingSlot = async (newRow: PackingSlotRow): Promise<void> => {
+type InsertPackingSlotResult =
+    | {
+          data: { packingSlotId: string };
+          error: null;
+      }
+    | {
+          data: null;
+          error: {
+              dbError: PostgrestError;
+              logId: string;
+          };
+      };
+
+export const insertNewPackingSlot = async (
+    newRow: PackingSlotRow
+): Promise<InsertPackingSlotResult> => {
     const data = formatNewRowToDBPackingSlot(newRow);
-    const { error } = await supabase.from("packing_slots").insert(data);
+    const { data: packingSlot, error } = await supabase
+        .from("packing_slots")
+        .insert(data)
+        .select()
+        .single();
 
     if (error) {
-        const logId = await logErrorReturnLogId("Error with insert: Packing slots", error);
-        throw new DatabaseError("insert", "packing slots", logId);
+        const logId = await logErrorReturnLogId("Failed to add a packing slot", {
+            error,
+            newPackingSlotData: data,
+        });
+        return { data: null, error: { dbError: error, logId } };
     }
+
+    return { data: { packingSlotId: packingSlot.primary_key }, error: null };
 };
 
-export const updateDbPackingSlot = async (row: PackingSlotRow): Promise<void> => {
+type UpdatePackingSlotResult = {
+    error: {
+        dbError: PostgrestError;
+        logId: string;
+    } | null;
+};
+
+export const updateDbPackingSlot = async (
+    row: PackingSlotRow
+): Promise<UpdatePackingSlotResult> => {
     const processedData = formatExistingRowToDBPackingSlot(row);
     const { error } = await supabase
         .from("packing_slots")
@@ -60,18 +94,41 @@ export const updateDbPackingSlot = async (row: PackingSlotRow): Promise<void> =>
         .eq("primary_key", processedData.primary_key);
 
     if (error) {
-        const logId = await logErrorReturnLogId("Error with update: Packing slots", error);
-        throw new DatabaseError("update", "packing slots", logId);
+        const logId = await logErrorReturnLogId("Failed to update packing slot", {
+            error,
+            newPackingSlotData: processedData,
+        });
+
+        return { error: { dbError: error, logId } };
     }
+
+    return { error: null };
 };
 
-export const swapRows = async (row1: PackingSlotRow, row2: PackingSlotRow): Promise<void> => {
+type SwapRowsResult = {
+    error: {
+        dbError: PostgrestError;
+        logId: string;
+    } | null;
+};
+
+export const swapRows = async (
+    row1: PackingSlotRow,
+    row2: PackingSlotRow
+): Promise<SwapRowsResult> => {
     const { error } = await supabase.rpc("packing_slot_order_swap", {
         id1: row1.id,
         id2: row2.id,
     });
+
     if (error) {
-        const logId = await logErrorReturnLogId("Error with update: packing slots order", error);
-        throw new DatabaseError("update", "packing slots order", logId);
+        const logId = await logErrorReturnLogId("Failed to update packing slot order", {
+            error,
+            packingSlot1: row1,
+            packingSlot2: row2,
+        });
+        return { error: { dbError: error, logId } };
     }
+
+    return { error: null };
 };
