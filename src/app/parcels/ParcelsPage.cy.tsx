@@ -5,16 +5,13 @@ import {
     processLastStatus,
     processingDataToParcelsTableData,
 } from "@/app/parcels/getParcelsTableData";
+import { formatDatetimeAsDate, processEventsDetails } from "@/app/parcels/getExpandedParcelDetails";
 import {
     familyCountToFamilyCategory,
     formatAddressFromClientDetails,
     formatBreakdownOfChildrenFromFamilyDetails,
-    formatDatetimeAsDate,
     formatHouseholdFromFamilyDetails,
-    processEventsDetails,
-    rawDataToExpandedParcelData,
-    RawParcelDetails,
-} from "@/app/parcels/getExpandedParcelDetails";
+} from "@/app/clients/getExpandedClientDetails";
 
 const sampleProcessingData: ParcelProcessingData = [
     {
@@ -37,6 +34,7 @@ const sampleProcessingData: ParcelProcessingData = [
         last_status_event_data: "SOME_RELATED_DATA",
         last_status_timestamp: "2023-08-04T13:30:00+00:00",
         last_status_workflow_order: 1,
+        created_at: "2023-12-31T12:00:00+00:00",
     },
 ];
 
@@ -46,42 +44,6 @@ const sampleCongestionChargeData: CongestionChargeDetails[] = [
         congestionCharge: true,
     },
 ];
-
-const sampleRawExpandedClientDetails: RawParcelDetails = {
-    voucher_number: "VOUCHER_1",
-    packing_date: "2023-08-04T13:30:00+00:00",
-    packing_slot: { name: "AM" },
-    collection_centre: {
-        name: "A COLLECTION CENTRE",
-    },
-
-    client: {
-        primary_key: "PRIMARY_KEY_1",
-        full_name: "CLIENT NAME",
-        phone_number: "PHONE NUMBER",
-        delivery_instructions: "INSTRUCTIONS FOR DELIVERY",
-        address_1: "Address Line 1",
-        address_2: "Address Line 2",
-        address_town: "TOWN",
-        address_county: "",
-        address_postcode: "SW1A 2AA",
-
-        family: [
-            { age: 36, gender: "female" },
-            { age: 5, gender: "male" },
-            { age: 24, gender: "other" },
-        ],
-    },
-
-    events: [
-        { event_name: "Event 1", timestamp: "2023-06-04T13:30:00+00:00", event_data: "" },
-        {
-            event_name: "Event 2",
-            timestamp: "2023-06-04T13:30:00+00:00",
-            event_data: "Something happened",
-        },
-    ],
-};
 
 describe("Parcels Page", () => {
     describe("Backend Processing for Table Data", () => {
@@ -118,6 +80,7 @@ describe("Parcels Page", () => {
                         flaggedForAttention: false,
                         requiresFollowUpPhoneCall: true,
                     },
+                    createdAt: new Date("2023-12-31T12:00:00+00:00"),
                 },
             ];
             expect(result).to.deep.equal(expected);
@@ -162,25 +125,6 @@ describe("Parcels Page", () => {
     });
 
     describe("Backend Processing for Expanded Parcel Details", () => {
-        it("Fields are set correctly", () => {
-            const expandedClientDetails = rawDataToExpandedParcelData(
-                sampleRawExpandedClientDetails
-            );
-
-            expect(expandedClientDetails).to.deep.equal({
-                voucherNumber: "VOUCHER_1",
-                fullName: "CLIENT NAME",
-                address: "Address Line 1, Address Line 2, TOWN, SW1A 2AA",
-                deliveryInstructions: "INSTRUCTIONS FOR DELIVERY",
-                phoneNumber: "PHONE NUMBER",
-                household: "Family of 3 Occupants (2 adults, 1 child)",
-                children: "5-year-old male",
-                packingDate: "04/08/2023",
-                packingSlot: "AM",
-                collection: "A COLLECTION CENTRE",
-            });
-        });
-
         it("formatAddressFromClientDetails()", () => {
             expect(
                 formatAddressFromClientDetails({

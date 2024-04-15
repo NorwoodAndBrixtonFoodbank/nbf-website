@@ -34,6 +34,7 @@ describe("Parcels - Action Bar", () => {
                 flaggedForAttention: false,
             },
             voucherNumber: "123456789",
+            createdAt: new Date("2023-12-31T12:00:00+00:00"),
         },
         {
             clientId: "primaryKey2",
@@ -61,6 +62,7 @@ describe("Parcels - Action Bar", () => {
                 flaggedForAttention: false,
             },
             voucherNumber: "123456aaaa789",
+            createdAt: new Date("2023-12-31T12:00:00+00:00"),
         },
     ];
 

@@ -55,7 +55,7 @@ export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["packingDate", "Packing Date"],
     ["packingSlot", "Packing Slot"],
     ["lastStatus", "Last Status"],
-    ["createdAt", "Created At"]
+    ["createdAt", "Created At"],
 ];
 
 const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
@@ -530,7 +530,7 @@ const ParcelsPage: React.FC<{}> = () => {
         deliveryCollection: rowToDeliveryCollectionColumn,
         packingDate: formatDatetimeAsDate,
         lastStatus: rowToLastStatusColumn,
-        createdAt: formatDateTime
+        createdAt: formatDateTime,
     };
 
     const onParcelTableRowClick = (row: Row<ParcelsTableRow>): void => {
