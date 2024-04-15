@@ -524,6 +524,7 @@ export type Database = {
           client_id: string
           collection_centre: string | null
           collection_datetime: string | null
+          created_at: string
           packing_date: string | null
           packing_slot: string | null
           primary_key: string
@@ -533,6 +534,7 @@ export type Database = {
           client_id: string
           collection_centre?: string | null
           collection_datetime?: string | null
+          created_at?: string
           packing_date?: string | null
           packing_slot?: string | null
           primary_key?: string
@@ -542,6 +544,7 @@ export type Database = {
           client_id?: string
           collection_centre?: string | null
           collection_datetime?: string | null
+          created_at?: string
           packing_date?: string | null
           packing_slot?: string | null
           primary_key?: string
@@ -697,6 +700,7 @@ export type Database = {
           collection_centre_acronym: string | null
           collection_centre_name: string | null
           collection_datetime: string | null
+          created_at: string | null
           family_count: number | null
           last_status_event_data: string | null
           last_status_event_name: string | null

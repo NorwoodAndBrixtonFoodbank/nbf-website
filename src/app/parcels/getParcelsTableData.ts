@@ -29,6 +29,7 @@ export interface ParcelsTableRow {
         requiresFollowUpPhoneCall: boolean;
     };
     packingDate: Date | null;
+    createdAt: Date | null;
 }
 
 export const processingDataToParcelsTableData = async (
@@ -72,6 +73,7 @@ export const processingDataToParcelsTableData = async (
                 flaggedForAttention: parcel.client_flagged_for_attention ?? false,
                 requiresFollowUpPhoneCall: parcel.client_signposting_call_required ?? false,
             },
+            createdAt: parcel.created_at ? new Date(parcel.created_at) : null,
         });
     }
 

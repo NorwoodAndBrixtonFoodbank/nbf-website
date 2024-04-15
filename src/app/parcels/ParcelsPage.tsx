@@ -4,7 +4,7 @@ import Table, { Row, SortOptions, SortState, TableHeaders } from "@/components/T
 import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import { formatDatetimeAsDate } from "@/app/parcels/getExpandedParcelDetails";
+import { formatDateTime, formatDatetimeAsDate } from "@/app/parcels/getExpandedParcelDetails";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
@@ -55,6 +55,7 @@ export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["packingDate", "Packing Date"],
     ["packingSlot", "Packing Slot"],
     ["lastStatus", "Last Status"],
+    ["createdAt", "Created At"]
 ];
 
 const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
@@ -143,6 +144,14 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
             paginationType: PaginationType.Server,
         },
     },
+    {
+        key: "createdAt",
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("created_at", { ascending: sortDirection === "asc" }),
+            paginationType: PaginationType.Server,
+        },
+    },
 ];
 
 const toggleableHeaders: (keyof ParcelsTableRow)[] = [
@@ -155,6 +164,7 @@ const toggleableHeaders: (keyof ParcelsTableRow)[] = [
     "packingDate",
     "packingSlot",
     "lastStatus",
+    "createdAt",
 ];
 
 const parcelTableColumnStyleOptions = {
@@ -520,6 +530,7 @@ const ParcelsPage: React.FC<{}> = () => {
         deliveryCollection: rowToDeliveryCollectionColumn,
         packingDate: formatDatetimeAsDate,
         lastStatus: rowToLastStatusColumn,
+        createdAt: formatDateTime
     };
 
     const onParcelTableRowClick = (row: Row<ParcelsTableRow>): void => {

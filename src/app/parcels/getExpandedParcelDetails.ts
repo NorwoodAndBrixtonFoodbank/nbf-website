@@ -78,6 +78,14 @@ export const formatDatetimeAsDate = (datetime: Date | string | null): string => 
     return new Date(datetime).toLocaleDateString("en-GB");
 };
 
+export const formatDateTime = (datetime: Date | null): string => {
+    if (datetime === null) {
+        return "-";
+    }
+
+    return datetime.toLocaleString("en-GB");
+};
+
 export interface ExpandedParcelData extends Data {
     voucherNumber: string;
     fullName: string;
