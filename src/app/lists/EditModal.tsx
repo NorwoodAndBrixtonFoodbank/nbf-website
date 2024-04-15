@@ -81,12 +81,12 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                 const logId = await logErrorReturnLogId("failed to insert list item", {
                     error: insertListItemError,
                 });
-                await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
+                void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
                 setErrorMessage(`Error: failedToInsertListItem. Log ID: ${logId}`);
                 return;
             }
 
-            await sendAuditLog({
+            void sendAuditLog({
                 ...auditLog,
                 wasSuccess: true,
                 listId: returnedListData.primary_key,
@@ -108,11 +108,11 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                 const logId = await logErrorReturnLogId("failed to update list item", {
                     error: updateListItemError,
                 });
-                await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
+                void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
                 setErrorMessage(`Error: failedToUpdateListItem. Log ID: ${logId}`);
                 return;
             }
-            await sendAuditLog({
+            void sendAuditLog({
                 ...auditLog,
                 wasSuccess: true,
                 listId: returnedListData.primary_key,
