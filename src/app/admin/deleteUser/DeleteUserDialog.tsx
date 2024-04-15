@@ -8,6 +8,8 @@ import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import { SetAlertOptions } from "@/app/admin/common/SuccessFailureAlert";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { adminDeleteUser } from "@/server/adminDeleteUser";
+import { AuditLog, sendAuditLog } from "@/server/auditLog";
+import supabase from "@/supabaseClient";
 
 const DangerDialog = styled(Modal)`
     .MuiPaper-root > div:first-child {
@@ -36,9 +38,47 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
             return;
         }
 
-        const { error } = await adminDeleteUser(props.userToDelete.id);
+        const { data: profileUserId, error: profileUserIdError } = await supabase
+            .from("profiles")
+            .select("primary_key")
+            .eq("user_id", props.userToDelete.id)
+            .single();
 
-        if (!error) {
+        if (profileUserIdError) {
+            const logId = await logErrorReturnLogId(
+                `Failed to fetch user id from profiles. ${props.userToDelete.id}`,
+                { error: profileUserIdError }
+            );
+            props.setAlertOptions({
+                success: false,
+                message: <>{`Failed to get profile user id. Log ID: ${logId}`}</>,
+            });
+            props.setUserToDelete(null);
+            return;
+        }
+
+        const { error: deleteUserError } = await adminDeleteUser(props.userToDelete.id);
+
+        const auditLog = {
+            action: "delete a user",
+            content: {
+                userId: props.userToDelete.id,
+                role: props.userToDelete.userRole,
+            },
+            profileId: profileUserId.primary_key ?? "",
+        } as const satisfies Partial<AuditLog>;
+
+        if (deleteUserError) {
+            const logId = await logErrorReturnLogId(
+                `Error with delete: User ${props.userToDelete.email}`,
+                { error: deleteUserError }
+            );
+            void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
+            props.setAlertOptions({
+                success: false,
+                message: <>{`Delete User Operation Failed. Log ID: ${logId}`}</>,
+            });
+        } else {
             props.setAlertOptions({
                 success: true,
                 message: (
@@ -47,18 +87,10 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
                     </>
                 ),
             });
+            void sendAuditLog({ ...auditLog, wasSuccess: true });
             void logInfoReturnLogId(`${props.userToDelete?.email} deleted successfully.`);
-        } else {
-            const logId = await logErrorReturnLogId(
-                `Error with delete: User ${props.userToDelete.email}`,
-                { error }
-            );
-            props.setAlertOptions({
-                success: false,
-                message: <>{`Delete User Operation Failed. Log ID: ${logId}`}</>,
-            });
-            props.setUserToDelete(null);
         }
+
         props.setUserToDelete(null);
     };
 
