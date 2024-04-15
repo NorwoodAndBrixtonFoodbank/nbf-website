@@ -45,6 +45,9 @@ const ListsPage: React.FC<{}> = () => {
     const [comment, setComment] = useState("");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+    function handleSetError(error: string | null): void {
+        error ? setErrorMessage(error) : setErrorMessage(null);
+    }
     useEffect(() => {
         (async () => {
             setIsLoading(true);
@@ -90,6 +93,7 @@ const ListsPage: React.FC<{}> = () => {
             setListOfIngredients={setListData}
             comment={comment}
             error={errorMessage}
+            handleSetError={handleSetError}
         />
     );
 };

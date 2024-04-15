@@ -44,6 +44,7 @@ interface ListDataViewProps {
     setListOfIngredients: React.Dispatch<React.SetStateAction<ListRow[]>>;
     comment: string;
     error: string | null;
+    handleSetError: (error: string | null) => void;
 }
 
 export const listsHeaderKeysAndLabels = [
@@ -125,12 +126,12 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     setListOfIngredients,
     comment,
     error,
+    handleSetError,
 }) => {
     const [modal, setModal] = useState<EditModalState>();
     const [toDelete, setToDelete] = useState<number | null>(null);
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
-    const [errorMessage, setErrorMessage] = useState<string | null>(error);
     const [listData, setListData] = useState<ListRow[]>(listOfIngredients);
     const [primaryFilters, setPrimaryFilters] = useState<Filter<ListRow, string>[]>(filters);
 
@@ -185,7 +186,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             const logId = await logErrorReturnLogId("Error with upsert: List row item order", {
                 error: error,
             });
-            setErrorMessage(`Failed to swap rows. Log ID: ${logId}`);
+            handleSetError(`Failed to swap rows. Log ID: ${logId}`);
             return;
         }
 
@@ -224,7 +225,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                     logId,
                     listId: itemToDelete.primaryKey,
                 });
-                setErrorMessage(error.message + `Error ID: ${logId}`);
+                handleSetError(error.message + `Error ID: ${logId}`);
                 return;
             }
 
@@ -260,13 +261,9 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                 }}
             />
 
-            <Snackbar
-                message={errorMessage}
-                onClose={() => setErrorMessage(null)}
-                open={errorMessage !== null}
-            >
+            <Snackbar message={error} onClose={() => handleSetError(null)} open={error !== null}>
                 <SnackBarDiv>
-                    <Alert severity="error">{errorMessage}</Alert>
+                    <Alert severity="error">{error}</Alert>
                 </SnackBarDiv>
             </Snackbar>
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
