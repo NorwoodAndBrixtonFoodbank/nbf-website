@@ -18,26 +18,26 @@ const fetchListData = async (): Promise<FetchedListsData> => {
     return { data, comment };
 };
 
-const formatListData = (listData: FetchedListsData): ListRow[] =>
-    listData.data.map(
-        (row): ListRow =>
-            ({
-                primaryKey: row.primary_key,
-                rowOrder: row.row_order,
-                itemName: row.item_name,
-                ...Object.fromEntries(
-                    listsHeaderKeysAndLabels
-                        // .filter(([key]) => /^\d+$/.test(key))
-                        .map(([key]) => [
-                            key,
-                            {
-                                quantity: row[`quantity_for_${key}` as keyof Schema["lists"]],
-                                notes: row[`notes_for_${key}` as keyof Schema["lists"]],
-                            },
-                        ])
-                ),
-            }) as ListRow // this cast is needed here as the type system can't infer what Object.fromEntries will return
-    );
+const formatListData = (listData: FetchedListsData): ListRow[] => {
+    return listData.data.map((row) => {
+        return {
+            primaryKey: row.primary_key,
+            rowOrder: row.row_order,
+            itemName: row.item_name,
+            ...Object.fromEntries(
+                listsHeaderKeysAndLabels
+                    .filter(([key]) => /^\d+$/.test(key))
+                    .map(([key]) => [
+                        key,
+                        {
+                            quantity: row[`quantity_for_${key}` as keyof Schema["lists"]],
+                            notes: row[`notes_for_${key}` as keyof Schema["lists"]],
+                        },
+                    ])
+            ),
+        } as ListRow; // this cast is needed here as the type system can't infer what Object.fromEntries will return
+    });
+};
 
 const ListsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
