@@ -64,59 +64,67 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
         setToSubmit({ ...toSubmit, [key]: newValue });
     };
 
+    const addListItem = async (listItem: Partial<Schema["lists"]>): Promise<void> => {
+        const { data: returnedListData, error: insertListItemError } = await supabase
+            .from("lists")
+            .insert(listItem)
+            .select()
+            .single();
+
+        const auditLog = {
+            content: { itemDetails: listItem },
+            action: "add a list item",
+        } as const satisfies Partial<AuditLog>;
+
+        if (insertListItemError) {
+            const logId = await logErrorReturnLogId("failed to insert list item", {
+                error: insertListItemError,
+            });
+            void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
+            setErrorMessage(`Failed to add list item. Log ID: ${logId}`);
+            return;
+        }
+
+        void sendAuditLog({
+            ...auditLog,
+            wasSuccess: true,
+            listId: returnedListData.primary_key,
+        });
+    };
+
+    const editListItem = async (listItem: Partial<Schema["lists"]>): Promise<void> => {
+        const { data: returnedListData, error: updateListItemError } = await supabase
+            .from("lists")
+            .update(listItem)
+            .eq("primary_key", listItem.primary_key)
+            .select()
+            .single();
+
+        const auditLog = {
+            content: listItem ?? {},
+            action: "edit a list item",
+        } as const satisfies Partial<AuditLog>;
+
+        if (updateListItemError) {
+            const logId = await logErrorReturnLogId("failed to update list item", {
+                error: updateListItemError,
+            });
+            void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
+            setErrorMessage(`Failed to update a list item. Log ID: ${logId}`);
+            return;
+        }
+        void sendAuditLog({
+            ...auditLog,
+            wasSuccess: true,
+            listId: returnedListData.primary_key,
+        });
+    };
+
     const onSubmit = async (): Promise<void> => {
         if (data === null) {
-            const { data: returnedListData, error: insertListItemError } = await supabase
-                .from("lists")
-                .insert(toSubmit)
-                .select()
-                .single();
-
-            const auditLog = {
-                content: { itemDetails: toSubmit },
-                action: "add a list item",
-            } as const satisfies Partial<AuditLog>;
-
-            if (insertListItemError) {
-                const logId = await logErrorReturnLogId("failed to insert list item", {
-                    error: insertListItemError,
-                });
-                void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
-                setErrorMessage(`Failed to add list item. Log ID: ${logId}`);
-                return;
-            }
-
-            void sendAuditLog({
-                ...auditLog,
-                wasSuccess: true,
-                listId: returnedListData.primary_key,
-            });
+            void addListItem(toSubmit);
         } else {
-            const { data: returnedListData, error: updateListItemError } = await supabase
-                .from("lists")
-                .update(toSubmit)
-                .eq("primary_key", toSubmit.primary_key)
-                .select()
-                .single();
-
-            const auditLog = {
-                content: toSubmit ?? {},
-                action: "edit a list item",
-            } as const satisfies Partial<AuditLog>;
-
-            if (updateListItemError) {
-                const logId = await logErrorReturnLogId("failed to update list item", {
-                    error: updateListItemError,
-                });
-                void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
-                setErrorMessage(`Failed to update a list item. Log ID: ${logId}`);
-                return;
-            }
-            void sendAuditLog({
-                ...auditLog,
-                wasSuccess: true,
-                listId: returnedListData.primary_key,
-            });
+            void editListItem(toSubmit);
         }
 
         setToSubmit({});
