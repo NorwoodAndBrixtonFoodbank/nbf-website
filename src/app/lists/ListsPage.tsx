@@ -73,8 +73,9 @@ const ListsPage: React.FC<{}> = () => {
                 }
             })
             .subscribe((status, err) => {
-                subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&
-                    setErrorMessage("Error fetching data, please reload");
+                if (subscriptionStatusRequiresErrorMessage(status, err, "website_data")) {
+                    setErrorMessage("Failed to fetch lists data, please reload");
+                }
             });
         return () => {
             void supabase.removeChannel(subscriptionChannel);
