@@ -82,7 +82,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                     error: insertListItemError,
                 });
                 void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
-                setErrorMessage(`Error: failedToInsertListItem. Log ID: ${logId}`);
+                setErrorMessage(`Failed to add list item. Log ID: ${logId}`);
                 return;
             }
 
@@ -109,7 +109,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                     error: updateListItemError,
                 });
                 void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
-                setErrorMessage(`Error: failedToUpdateListItem. Log ID: ${logId}`);
+                setErrorMessage(`Failed to update a list item. Log ID: ${logId}`);
                 return;
             }
             void sendAuditLog({
