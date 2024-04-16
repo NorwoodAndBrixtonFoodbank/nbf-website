@@ -8,6 +8,7 @@ import {
     formatBreakdownOfChildrenFromFamilyDetails,
     formatHouseholdFromFamilyDetails,
 } from "@/app/clients/getExpandedClientDetails";
+import { formatDateTime, formatDatetimeAsDate } from "@/common/format";
 
 type FetchExpandedParcelDetailsResult =
     | {
@@ -121,28 +122,6 @@ const getExpandedParcelDetails = async (
         },
         error: null,
     };
-};
-
-export const formatDatetimeAsDate = (datetime: Date | string | null): string => {
-    if (datetime instanceof Date) {
-        return datetime.toLocaleDateString("en-GB");
-    }
-
-    if (datetime === null || isNaN(Date.parse(datetime))) {
-        return "-";
-    }
-
-    return new Date(datetime).toLocaleDateString("en-GB");
-};
-
-export const formatDateTime = (datetime: Date | string | null): string => {
-    if (datetime === null) {
-        return "-";
-    }
-
-    const datetimeToFormat = datetime instanceof Date ? datetime : new Date(datetime);
-
-    return datetimeToFormat.toLocaleString("en-GB");
 };
 
 export interface ExpandedParcelData extends Data {

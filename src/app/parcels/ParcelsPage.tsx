@@ -4,7 +4,6 @@ import Table, { Row, SortOptions, SortState, TableHeaders } from "@/components/T
 import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import { formatDateTime, formatDatetimeAsDate } from "@/app/parcels/getExpandedParcelDetails";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
@@ -43,6 +42,7 @@ import {
     voucherSearch,
 } from "@/app/parcels/parcelsTableFilters";
 import { ActionsContainer } from "@/components/Form/formStyling";
+import { formatDateTime, formatDatetimeAsDate } from "@/common/format";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],

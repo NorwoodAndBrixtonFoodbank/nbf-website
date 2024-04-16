@@ -5,13 +5,14 @@ import {
     processLastStatus,
     processingDataToParcelsTableData,
 } from "@/app/parcels/getParcelsTableData";
-import { formatDatetimeAsDate, processEventsDetails } from "@/app/parcels/getExpandedParcelDetails";
+import { processEventsDetails } from "@/app/parcels/getExpandedParcelDetails";
 import {
     familyCountToFamilyCategory,
     formatAddressFromClientDetails,
     formatBreakdownOfChildrenFromFamilyDetails,
     formatHouseholdFromFamilyDetails,
 } from "@/app/clients/getExpandedClientDetails";
+import { formatDatetimeAsDate } from "@/common/format";
 
 const sampleProcessingData: ParcelProcessingData = [
     {

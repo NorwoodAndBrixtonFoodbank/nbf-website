@@ -1,8 +1,8 @@
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { Data } from "@/components/DataViewer/DataViewer";
-import { formatDatetimeAsDate } from "@/app/parcels/getExpandedParcelDetails";
 import { logErrorReturnLogId } from "@/logger/logger";
+import { formatDatetimeAsDate } from "@/common/format";
 
 export type RawClientParcelsDetails = Awaited<ReturnType<typeof getRawClientParcelsDetails>>;
 
