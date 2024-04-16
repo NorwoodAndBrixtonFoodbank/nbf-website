@@ -21,6 +21,7 @@ export interface AuditLog {
     packingSlotId?: string;
     parcelId?: string;
     profileId?: string;
+    websiteData?: string;
 }
 
 export async function sendAuditLog(auditLogProps: AuditLog): Promise<void> {
@@ -45,6 +46,7 @@ export async function sendAuditLog(auditLogProps: AuditLog): Promise<void> {
         content: auditLogProps.content,
         wasSuccess: auditLogProps.wasSuccess,
         log_id: auditLogProps.logId,
+        website_data: auditLogProps.websiteData,
     };
 
     const supabase = getSupabaseServerComponentClient();
