@@ -6,7 +6,6 @@ import styled from "styled-components";
 import { Schema } from "@/databaseUtils";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
-import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { logErrorReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
@@ -46,11 +45,7 @@ const filters: Filter<CollectionCentresTableRow, string>[] = [
     }),
 ];
 
-interface Props {
-    collectionCentreData: CollectionCentresTableRow[];
-}
-
-const CollectionCentresTables: React.FC<Props> = (props) => {
+const CollectionCentresTables: React.FC = () => {
     const [collectionCentres, setCollectionCentres] = useState<Schema["collection_centres"][]>([]);
     const [primaryFilters, setPrimaryFilters] =
         useState<Filter<CollectionCentresTableRow, string>[]>(filters);
@@ -69,19 +64,6 @@ const CollectionCentresTables: React.FC<Props> = (props) => {
 
         setCollectionCentres(data);
     }, []);
-
-    useEffect(() => {
-        setCollectionCentres(
-            props.collectionCentreData.filter((row) => {
-                return primaryFilters.every((filter) => {
-                    return (
-                        filter.methodConfig.paginationType === PaginationType.Client &&
-                        filter.methodConfig.method(row, filter.state, filter.key)
-                    );
-                });
-            })
-        );
-    }, [primaryFilters, props.collectionCentreData]);
 
     useEffect(() => {
         void fetchAndDisplayCollectionCentres();
