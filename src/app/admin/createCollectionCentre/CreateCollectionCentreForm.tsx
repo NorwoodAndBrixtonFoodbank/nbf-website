@@ -19,6 +19,7 @@ import AcronymCard from "@/app/admin/createCollectionCentre/AcronymCard";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
+import Alert from "@mui/material/Alert/Alert";
 
 const initialFields: InsertSchema["collection_centres"] = {
     name: "",
@@ -46,13 +47,14 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
     const [submitDisabled, setSubmitDisabled] = useState(false);
 
-    const [refreshRequired, setRefreshRequired] = useState(false);
+    const [addCollectionCentreIsSuccess, setAddCollectionCentreIsSuccess] = useState(false);
 
     const fieldSetter = setField(setFields, fields);
     const errorSetter = setError(setFormErrors, formErrors);
 
     const submitForm = async (): Promise<void> => {
         setSubmitDisabled(true);
+        setAddCollectionCentreIsSuccess(false);
 
         if (checkErrorOnSubmit(formErrors, setFormErrors)) {
             setSubmitDisabled(false);
@@ -84,9 +86,9 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
 
         setSubmitErrorMessage("");
         setSubmitDisabled(false);
-        setRefreshRequired(true);
         await sendAuditLog({ ...auditLog, wasSuccess: true, collectionCentreId: data.primary_key });
         void logInfoReturnLogId(`Collection centre: ${fields.name} has been created successfully.`);
+        setAddCollectionCentreIsSuccess(true);
     };
 
     return (
@@ -102,8 +104,10 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
                     />
                 ))}
 
-                {refreshRequired ? (
-                    <RefreshPageButton />
+                {addCollectionCentreIsSuccess ? (
+                    <Alert severity="success" action={<RefreshPageButton />}>
+                        Collection centre <b>{fields.name}</b> added successfully.
+                    </Alert>
                 ) : (
                     <Button
                         startIcon={<FontAwesomeIcon icon={faBuildingCircleArrowRight} />}
