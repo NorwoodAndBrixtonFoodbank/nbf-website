@@ -55,7 +55,7 @@ const listQuantityNoteAndLabels: [keyof Schema["lists"], keyof Schema["lists"], 
 ];
 
 const EditModal: React.FC<Props> = ({ data, onClose }) => {
-    const [toSubmit, setToSubmit] = useState<Partial<Schema["lists"]>>(data ?? {});
+    const [toSubmit, setToSubmit] = useState<Partial<Schema["lists"]> | null>(data ?? null);
 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -121,13 +121,17 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
     };
 
     const onSubmit = async (): Promise<void> => {
+        if (toSubmit === null) {
+            return;
+        }
+
         if (data === null) {
             void addListItem(toSubmit);
         } else {
             void editListItem(toSubmit);
         }
 
-        setToSubmit({});
+        setToSubmit(null);
         onClose();
     };
 
@@ -150,7 +154,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
 
     return (
         <Modal
-            header={"Edit List Item - " + toSubmit.item_name}
+            header={toSubmit ? `Edit List Item - ${toSubmit.item_name}` : "Edit List Item -"}
             headerId="editList"
             isOpen={data !== undefined}
             onClose={onClose}
@@ -159,7 +163,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
             <ModalInner>
                 <h3>Description</h3>
                 <TextInput
-                    defaultValue={toSubmit.item_name ?? ""}
+                    defaultValue={toSubmit ? toSubmit.item_name : ""}
                     onChange={(event) => setKey(event, "item_name")}
                     label="Item Description"
                 />
@@ -169,12 +173,12 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                             <h3>{label}</h3>
                             <DataWithTooltipDiv>
                                 <TextInput
-                                    defaultValue={toSubmit[quantityKey]?.toString() ?? ""}
+                                    defaultValue={toSubmit ? toSubmit[quantityKey]?.toString() : ""}
                                     label="Quantity"
                                     onChange={(event) => setKey(event, quantityKey)}
                                 />
                                 <TextInput
-                                    defaultValue={toSubmit[noteKey]?.toString() ?? ""}
+                                    defaultValue={toSubmit ? toSubmit[noteKey]?.toString() : ""}
                                     label="Notes"
                                     onChange={(event) => setKey(event, noteKey)}
                                     fullWidth
