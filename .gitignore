@@ -51,3 +51,7 @@ cypress/downloads
 
 # Supabase tools
 supabase/tools/**/*.js
+
+# Snaplet generated files
+.snaplet/snaplet-client.d.ts
+.snaplet/snaplet.d.ts

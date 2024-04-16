@@ -145,21 +145,10 @@ You can regenerate the types
 - [Managing Environments](https://supabase.com/docs/guides/cli/managing-environments)
 - [Deploy a migration](https://supabase.com/docs/guides/cli/managing-environments?environment=ci#deploy-a-migration)
 
-## NextJS design choices
-
-* Functional arrow components
-
-* Pages are server-side
-  * Any state/styled-components should be placed in the components/ folder and have a "use client" directive at the top
-  * Note that the `loading.tsx` at root will be displayed if async until unblocked
-  * `const metadata` should be exported with a `title:` attribute
-  * Colours should be loaded from the `props.theme` in styled_components - the theme can be set in `src/app/themes.tsx`
-
-* Testing with Cypress - for UI, opens a 'browser' and clicks buttons.
-  * For both unit tests (mount a component and verify properties) as well as end-to-end tests (open the website and
-    click on buttons to get to the pages you want!)
-
 ## Other docs
 - [Password Reset Flow](./docs/password-reset-flow.md)
+- [Invite User Flow](./docs/invite-user-flow.md)
 - [Release Instructions](./docs/release.md)
 - [Common Problems](./docs/common-problems.md)
+- [Design Choices](./docs/design-choices.md)
+- [E2E Testing](./docs/e2e-testing.md)

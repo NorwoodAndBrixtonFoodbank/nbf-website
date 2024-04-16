@@ -32,6 +32,7 @@ import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionSta
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import Header from "../websiteDataTable/Header";
 import StyledDataGrid from "../common/StyledDataGrid";
+import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 interface EditToolbarProps {
     setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
@@ -69,6 +70,24 @@ function EditToolbar(props: EditToolbarProps): React.JSX.Element {
             </Button>
         </GridToolbarContainer>
     );
+}
+
+function getBaseAuditLogForPackingSlotAction(
+    action: string,
+    packingSlotRow: PackingSlotRow,
+    options?: {
+        excludePackingSlotId?: boolean;
+    }
+): Pick<AuditLog, "action" | "content" | "packingSlotId"> {
+    return {
+        action,
+        content: {
+            currentPackingSlotOrder: packingSlotRow.order,
+            packingSlotName: packingSlotRow.name,
+            packingSlotIsShown: packingSlotRow.isShown,
+        },
+        packingSlotId: options?.excludePackingSlotId ? undefined : packingSlotRow.id,
+    };
 }
 
 const PackingSlotsTable: React.FC = () => {
@@ -129,24 +148,58 @@ const PackingSlotsTable: React.FC = () => {
         }));
     };
 
-    const processRowUpdate = (newRow: PackingSlotRow): PackingSlotRow => {
+    const processRowUpdate = async (newRow: PackingSlotRow): Promise<PackingSlotRow> => {
         setErrorMessage(null);
         setIsLoading(true);
+
         if (newRow.isNew) {
-            insertNewPackingSlot(newRow)
-                .catch((error) => {
-                    void logErrorReturnLogId("Insert error with packing slot row", error);
-                    setErrorMessage("Error inserting data, please try again");
-                })
-                .finally(() => setIsLoading(false));
+            const { data: createdPackingSlot, error: insertPackingSlotError } =
+                await insertNewPackingSlot(newRow);
+            const baseAuditLog = getBaseAuditLogForPackingSlotAction(
+                "add a new packing slot",
+                newRow,
+                { excludePackingSlotId: true }
+            );
+
+            if (insertPackingSlotError) {
+                setErrorMessage(
+                    `Failed to add the packing slot. Log ID: ${insertPackingSlotError.logId}`
+                );
+                void sendAuditLog({
+                    ...baseAuditLog,
+                    wasSuccess: false,
+                    logId: insertPackingSlotError.logId,
+                });
+            } else {
+                void sendAuditLog({
+                    ...baseAuditLog,
+                    packingSlotId: createdPackingSlot.packingSlotId,
+                    wasSuccess: true,
+                });
+            }
         } else {
-            updateDbPackingSlot(newRow)
-                .catch((error) => {
-                    void logErrorReturnLogId("Update error with packing slot row", error);
-                    setErrorMessage("Error updating data, please try again");
-                })
-                .finally(() => setIsLoading(false));
+            const { error: updatePackingSlotError } = await updateDbPackingSlot(newRow);
+            const baseAuditLog = getBaseAuditLogForPackingSlotAction(
+                "update a packing slot",
+                newRow
+            );
+
+            if (updatePackingSlotError) {
+                setErrorMessage(
+                    `Failed to update the packing slot. Log ID: ${updatePackingSlotError.logId}`
+                );
+                void sendAuditLog({
+                    ...baseAuditLog,
+                    wasSuccess: false,
+                    logId: updatePackingSlotError.logId,
+                });
+            } else {
+                void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
+            }
         }
+
+        setIsLoading(false);
+
         return newRow;
     };
 
@@ -181,34 +234,62 @@ const PackingSlotsTable: React.FC = () => {
         }
     };
 
-    const handleUpClick = (id: GridRowId, row: PackingSlotRow) => () => {
+    const handleUpClick = (id: GridRowId, row: PackingSlotRow) => async () => {
         const rowIndex = row.order - 1;
         if (rowIndex > 0) {
             setIsLoading(true);
+
             const rowOne = rows[rowIndex];
             const rowTwo = rows[rowIndex - 1];
-            swapRows(rowOne, rowTwo)
-                .catch(
-                    (error) =>
-                        void logErrorReturnLogId("Update error with packing slot row order", error)
-                )
-                .finally(() => setIsLoading(false));
+            const { error: swapRowsError } = await swapRows(rowOne, rowTwo);
+
+            const baseAuditLog = getBaseAuditLogForPackingSlotAction("move a packing slot up", row);
+
+            if (swapRowsError) {
+                setErrorMessage(
+                    `Failed to move packing slot (${row.name}) up. Log ID: ${swapRowsError.logId}`
+                );
+                void sendAuditLog({
+                    ...baseAuditLog,
+                    wasSuccess: false,
+                    logId: swapRowsError.logId,
+                });
+            } else {
+                void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
+            }
+
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
-    const handleDownClick = (id: GridRowId, row: PackingSlotRow) => () => {
+    const handleDownClick = (id: GridRowId, row: PackingSlotRow) => async () => {
         const rowIndex = row.order - 1;
         if (rowIndex < rows.length - 1) {
             setIsLoading(true);
+
             const clickedRow = rows[rowIndex];
             const rowBelow = rows[rowIndex + 1];
-            swapRows(clickedRow, rowBelow)
-                .catch(
-                    (error) =>
-                        void logErrorReturnLogId("Update error with packing slot row order", error)
-                )
-                .finally(() => setIsLoading(false));
+            const { error: swapRowsError } = await swapRows(clickedRow, rowBelow);
+
+            const baseAuditLog = getBaseAuditLogForPackingSlotAction(
+                "move a packing slot down",
+                row
+            );
+
+            if (swapRowsError) {
+                setErrorMessage(
+                    `Failed to move packing slot (${row.name}) down. Log ID: ${swapRowsError.logId}`
+                );
+                void sendAuditLog({
+                    ...baseAuditLog,
+                    wasSuccess: false,
+                    logId: swapRowsError.logId,
+                });
+            } else {
+                void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
+            }
+
+            setIsLoading(false);
         }
     };
 

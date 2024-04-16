@@ -18,7 +18,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { UserRow } from "@/app/admin/page";
 import CollectionCentresTable from "@/app/admin/collectionCentresTable/CollectionCentresTable";
 import { Schema } from "@/databaseUtils";
 import CreateCollectionCentreForm from "@/app/admin/createCollectionCentre/CreateCollectionCentreForm";
@@ -36,7 +35,6 @@ interface Panel {
 }
 
 interface Props {
-    userData: UserRow[];
     collectionCentreData: Schema["collection_centres"][];
 }
 
@@ -49,7 +47,7 @@ const AdminPage: React.FC<Props> = (props) => {
         {
             panelTitle: "Users Table",
             panelIcon: faUsers,
-            panelContent: <UsersTable userData={props.userData} />,
+            panelContent: <UsersTable />,
         },
         { panelTitle: "Create User", panelIcon: faUserPlus, panelContent: <CreateUserForm /> },
         {

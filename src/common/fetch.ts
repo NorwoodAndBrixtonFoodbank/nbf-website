@@ -1,18 +1,26 @@
 import { Schema } from "@/databaseUtils";
 import { Supabase } from "@/supabaseUtils";
 import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
+import { PostgrestError } from "@supabase/supabase-js";
 
-type CollectionCentre = {
-    name: Schema["collection_centres"]["name"];
-    acronym: Schema["collection_centres"]["acronym"];
-    primary_key: Schema["collection_centres"]["primary_key"];
-};
+type CollectionCentre = Pick<Schema["collection_centres"], "name" | "acronym" | "primary_key">;
 
-type PackingSlot = {
-    name: Schema["packing_slots"]["name"];
-    primary_key: Schema["packing_slots"]["primary_key"];
-    is_shown: Schema["packing_slots"]["is_shown"];
-};
+type PackingSlot = Pick<Schema["packing_slots"], "primary_key" | "is_shown" | "name">;
+
+type DatabaseProfile = Pick<
+    Schema["profiles"],
+    "role" | "first_name" | "last_name" | "telephone_number"
+>;
+
+type UserProfileDataAndError =
+    | {
+          data: DatabaseProfile;
+          error: null;
+      }
+    | {
+          data: null;
+          error: PostgrestError;
+      };
 
 export interface ParcelWithCollectionCentreAndPackingSlot {
     client_id: string;
@@ -269,4 +277,22 @@ export const fetchPackingSlotsInfo = async (supabase: Supabase): Promise<Packing
     ]);
 
     return { data: packingSlotsLabelsAndValues, error: null };
+};
+
+export const fetchUserProfile = async (
+    userId: string,
+    supabase: Supabase
+): Promise<UserProfileDataAndError> => {
+    const { data, error } = await supabase
+        .from("profiles")
+        .select("role, first_name, last_name, telephone_number")
+        .eq("user_id", userId)
+        .single();
+
+    if (error) {
+        void logErrorReturnLogId("Failed to fetch: user profile", { error: error });
+        return { data: null, error: error };
+    }
+
+    return { data: data, error: null };
 };
