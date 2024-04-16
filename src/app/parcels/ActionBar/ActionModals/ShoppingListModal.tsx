@@ -55,7 +55,7 @@ const getPdfErrorMessage = (error: ShoppingListPdfError): string => {
             errorMessage = "Failed to fetch client data for the selected parcel(s).";
             break;
         case "noMatchingClients":
-            errorMessage = "No client in the database matches the client of the selected parcel.";
+            errorMessage = "No client in the database matches the client of the selected parcel(s).";
             break;
         case "familyFetchFailed":
             errorMessage = "Failed to fetch client's family data for the selected parcel(s).";
