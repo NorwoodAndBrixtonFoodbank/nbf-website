@@ -1,5 +1,6 @@
 import React from "react";
 import Alert from "@mui/material/Alert/Alert";
+import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 
 export type AlertOptions = {
     success: boolean | undefined;
@@ -18,7 +19,11 @@ const SuccessFailureAlert: React.FC<Props> = ({ alertOptions, onClose }) => {
     }
 
     return (
-        <Alert severity={alertOptions.success ? "success" : "error"} onClose={onClose}>
+        <Alert
+            severity={alertOptions.success ? "success" : "error"}
+            action={alertOptions.success ? <RefreshPageButton /> : undefined}
+            onClose={onClose}
+        >
             {alertOptions.message}
         </Alert>
     );

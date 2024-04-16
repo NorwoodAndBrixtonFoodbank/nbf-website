@@ -20,6 +20,7 @@ import { User } from "@supabase/gotrue-js";
 import { logInfoReturnLogId } from "@/logger/logger";
 import UserDetailsCard from "@/app/admin/createUser/UserDetailsCard";
 import { InviteUserError, adminInviteUser } from "@/server/adminInviteUser";
+import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 
 export interface InviteUserDetails {
     email: string;
@@ -117,7 +118,7 @@ const CreateUserForm: React.FC<{}> = () => {
                 })}
 
                 {invitedUser ? (
-                    <Alert severity="success">
+                    <Alert severity="success" action={<RefreshPageButton />}>
                         User <b>{invitedUser.email}</b> invited successfully.
                     </Alert>
                 ) : (
