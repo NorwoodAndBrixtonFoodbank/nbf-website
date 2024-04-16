@@ -140,7 +140,9 @@ export const formatDateTime = (datetime: Date | string | null): string => {
         return "-";
     }
 
-    return datetime.toLocaleString("en-GB");
+    const datetimeToFormat = datetime instanceof Date ? datetime : new Date(datetime);
+
+    return datetimeToFormat.toLocaleString("en-GB");
 };
 
 export interface ExpandedParcelData extends Data {

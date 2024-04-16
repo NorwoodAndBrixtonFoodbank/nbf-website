@@ -37,7 +37,7 @@ const ExpandedParcelDetailsView = ({ parcelId }: Props): ReactElement => {
             return;
         }
 
-        const { parcelDetails, error } = await getExpandedParcelDetails(parcelId);
+        const { parcelDetails: expandedParcelDetails, error } = await getExpandedParcelDetails(parcelId);
 
         if (error) {
             const newErrorMessage = getErrorMessageForExpandedParcelDetailsError(error);
@@ -45,7 +45,7 @@ const ExpandedParcelDetailsView = ({ parcelId }: Props): ReactElement => {
             return;
         }
 
-        setParcelDetails(parcelDetails);
+        setParcelDetails(expandedParcelDetails);
     }, [parcelId]);
 
     useEffect(() => {
