@@ -56,10 +56,12 @@ export const updateDbWebsiteData = async (
         value: row.value,
     };
 
-    const { error } = await supabase
+    const { data: updateWebsiteData, error } = await supabase
         .from("website_data")
         .update(processedData)
-        .eq("name", processedData.name);
+        .eq("name", processedData.name)
+        .select()
+        .single();
 
     const auditLog = {
         action: "update website data",
@@ -72,6 +74,6 @@ export const updateDbWebsiteData = async (
         void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
         return { error: { type: "Failed to update website data", logId } };
     }
-    void sendAuditLog({ ...auditLog, wasSuccess: true });
+    void sendAuditLog({ ...auditLog, wasSuccess: true, content: updateWebsiteData });
     return { error: null };
 };
