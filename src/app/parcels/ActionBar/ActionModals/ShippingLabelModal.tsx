@@ -11,10 +11,13 @@ import {
 } from "./common";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import ShippingLabelsPdfButton, { FetchShippingLabelDataErrorType } from "@/pdf/ShippingLabels/ShippingLabelsPdfButton";
+import ShippingLabelsPdfButton, {
+    ShippingLabelError,
+} from "@/pdf/ShippingLabels/ShippingLabelsPdfButton";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import Modal from "@/components/Modal/Modal";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import { sendAuditLog } from "@/server/auditLog";
 
 interface ShippingLabelsInputProps {
     onLabelQuantityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -29,26 +32,29 @@ const ShippingLabelsInput: React.FC<ShippingLabelsInputProps> = ({ onLabelQuanti
     );
 };
 
-const getPdfErrorMessage = (error: {type: FetchShippingLabelDataErrorType, logId: string}): string => {
+const getPdfErrorMessage = (error: ShippingLabelError): string => {
     let errorMessage = "";
     switch (error.type) {
         case "failedToFetchParcel":
-            errorMessage = "Failed to fetch selected parcel data."
+            errorMessage = "Failed to fetch selected parcel data.";
+            break;
         case "noMatchingParcels":
-            errorMessage = "No parcel in the database matches the one selected."
+            errorMessage = "No parcel in the database matches the one selected.";
+            break;
         case "clientFetchFailed":
-            errorMessage = "Failed to fetch client data for the selected parcel."
+            errorMessage = "Failed to fetch client data for the selected parcel.";
+            break;
         case "noMatchingClients":
-            errorMessage = "No client in the database matches the client of the selected parcel."
+            errorMessage = "No client in the database matches the client of the selected parcel.";
+            break;
     }
     return `${errorMessage} LogId: ${error.logId}`;
-    
-}
+};
 
 const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
     const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(null);
-    const [pdfError, setPdfError] = useState<{type: FetchShippingLabelDataErrorType, logId: string} | null>(null);
+    const [pdfError, setPdfError] = useState<ShippingLabelError | null>(null);
     const updateParcelsStatuses = async (labelQuantity: number): Promise<void> => {
         const { error } = await props.updateParcelStatuses(
             props.selectedParcels,
@@ -79,26 +85,35 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
     const onPdfCreationCompleted = (): void => {
         updateParcelsStatuses(labelQuantity);
         setActionCompleted(true);
+        void sendAuditLog({
+            action: "create shipping label pdf",
+            wasSuccess: true,
+            content: { parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId) },
+        });
     };
 
-    const onPdfCreationFailed = (pdfError: {type: FetchShippingLabelDataErrorType, logId: string}): void => {
+    const onPdfCreationFailed = (pdfError: ShippingLabelError): void => {
         setPdfError(pdfError);
         setActionCompleted(true);
-    }
+        void sendAuditLog({
+            action: "create shipping label pdf",
+            wasSuccess: false,
+            content: { parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId) },
+            logId: pdfError.logId,
+        });
+    };
 
     return (
         <Modal {...props} onClose={onClose}>
             <ModalInner>
-                    {pdfError && 
-                        <ErrorSecondaryText>{getPdfErrorMessage(pdfError)}</ErrorSecondaryText>
-                    }
-                    {serverErrorMessage && 
-                        <ErrorSecondaryText>{serverErrorMessage}</ErrorSecondaryText>
-                    } 
-                    {actionCompletedSuccessfully && 
-                        <Paragraph>Shipping Labels Created</Paragraph>
-                    }
-                    {!actionCompleted &&
+                {pdfError && (
+                    <ErrorSecondaryText>{getPdfErrorMessage(pdfError)}</ErrorSecondaryText>
+                )}
+                {serverErrorMessage && (
+                    <ErrorSecondaryText>{serverErrorMessage}</ErrorSecondaryText>
+                )}
+                {actionCompletedSuccessfully && <Paragraph>Shipping Labels Created</Paragraph>}
+                {!actionCompleted && (
                     <>
                         <ShippingLabelsInput onLabelQuantityChange={onLabelQuantityChange} />
                         <SelectedParcelsOverview
@@ -116,7 +131,7 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
                             />
                         </Centerer>
                     </>
-                }
+                )}
             </ModalInner>
         </Modal>
     );

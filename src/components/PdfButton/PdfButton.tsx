@@ -6,14 +6,14 @@ import React from "react";
 import { saveAs } from "file-saver";
 import { PdfDataFetchResponse } from "@/pdf/common";
 
-interface Props<DataType, ErrorType> {
-    fetchDataAndFileName: () => Promise<PdfDataFetchResponse<DataType, ErrorType>>;
+interface Props<Data, ErrorType> {
+    fetchDataAndFileName: () => Promise<PdfDataFetchResponse<Data, ErrorType>>;
     text: string;
-    pdfComponent: React.FC<{ data: DataType }>;
+    pdfComponent: React.FC<{ data: Data }>;
     onPdfCreationCompleted: () => void;
     formatName?: boolean;
     disabled?: boolean;
-    onPdfCreationFailed: (error: {type: ErrorType, logId: string}) => void;
+    onPdfCreationFailed: (error: { type: ErrorType; logId: string }) => void;
 }
 
 const makePaddedString = (inputNumber: number): string => {
@@ -38,22 +38,23 @@ const formatFileName = (fileName: string): string => {
     return `${newFileName}_${filenameTimestampNow()}.pdf`;
 };
 
-const PdfButton = <DataType,ErrorType>({
+const PdfButton = <Data, ErrorType>({
     fetchDataAndFileName,
     text,
     pdfComponent: PdfComponent,
     onPdfCreationCompleted = () => {},
     formatName = true,
     disabled = false,
-    onPdfCreationFailed
-}: Props<DataType, ErrorType>): React.ReactElement => {
+    onPdfCreationFailed,
+}: Props<Data, ErrorType>): React.ReactElement => {
     const onClick = async (): Promise<void> => {
-        const {data, error} = await fetchDataAndFileName();
+        const { data, error } = await fetchDataAndFileName();
         if (error) {
             onPdfCreationFailed(error);
             return;
         }
         const blob = await pdf(<PdfComponent data={data.data} />).toBlob();
+        error;
         saveAs(blob, formatName ? formatFileName(data.fileName) : data.fileName);
         onPdfCreationCompleted();
     };

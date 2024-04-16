@@ -25,16 +25,22 @@ export interface ParcelWithCollectionCentreAndPackingSlot {
     voucher_number: string | null;
 }
 
-export type FetchParcelResponse = {data: ParcelWithCollectionCentreAndPackingSlot, error: null} | {data: null, error: {type: FetchParcelErrorType, logId: string}}
+export type FetchParcelResponse =
+    | { data: ParcelWithCollectionCentreAndPackingSlot; error: null }
+    | { data: null; error: { type: FetchParcelErrorType; logId: string } };
 
-export type FetchParcelErrorType = "failedToFetchParcel" | "noMatchingParcels"
+export type FetchParcelErrorType = "failedToFetchParcel" | "noMatchingParcels";
+export interface FetchParcelError {
+    type: FetchParcelErrorType;
+    logId: string;
+}
 
 export const fetchParcel = async (
     parcelID: string,
     supabase: Supabase
 ): Promise<FetchParcelResponse> => {
     const { data, error } = await supabase
-        .from("parcel")
+        .from("parcels")
         .select(
             `*, 
             collection_centre:collection_centres ( 
@@ -51,16 +57,16 @@ export const fetchParcel = async (
         .eq("primary_key", parcelID);
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Parcel", error);
-        return{data: null, error: {type: "failedToFetchParcel", logId: logId}};
+        return { data: null, error: { type: "failedToFetchParcel", logId: logId } };
     }
     if (data.length !== 1) {
         const errorMessage = `${
             data.length === 0 ? "No" : "Multiple"
         } records match this parcel ID.`;
         const logId = await logWarningReturnLogId(`${errorMessage} ${parcelID}`);
-        return {data: null, error: {type: "noMatchingParcels", logId: logId}}
+        return { data: null, error: { type: "noMatchingParcels", logId: logId } };
     }
-    return {data: data[0], error: null}
+    return { data: data[0], error: null };
 };
 
 export type CollectionCentresLabelsAndValues = [
@@ -73,14 +79,17 @@ type CollectionCentresInfo = [
     CollectionCentresLabelsAndValues,
 ];
 
-type FetchCollectionCentresResponse = {
-    data: CollectionCentresInfo,
-    error: null
-} | {
-    data: null,
-    error: {type: FetchCollectionCentresErrorType, logId: string}}
+type FetchCollectionCentresResponse =
+    | {
+          data: CollectionCentresInfo;
+          error: null;
+      }
+    | {
+          data: null;
+          error: { type: FetchCollectionCentresErrorType; logId: string };
+      };
 
-type FetchCollectionCentresErrorType = "collectionCentresFetchFailed"
+type FetchCollectionCentresErrorType = "collectionCentresFetchFailed";
 
 export const getCollectionCentresInfo = async (
     supabase: Supabase
@@ -89,7 +98,7 @@ export const getCollectionCentresInfo = async (
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Collection centres data", error);
-        return {data: null, error: {type: "collectionCentresFetchFailed", logId: logId}}
+        return { data: null, error: { type: "collectionCentresFetchFailed", logId: logId } };
     }
 
     const collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues = data!
@@ -100,17 +109,20 @@ export const getCollectionCentresInfo = async (
         (collectionCentre) => collectionCentre.name === "Delivery"
     )[0].primary_key;
 
-    return {data: [deliveryPrimaryKey, collectionCentresLabelsAndValues], error: null};
+    return { data: [deliveryPrimaryKey, collectionCentresLabelsAndValues], error: null };
 };
 
-type FetchClientResponse = {
-    data: Schema["clients"],
-    error: null
-} | {
-    data: null,
-    error: {type: FetchClientErrorType, logId: string}}
+type FetchClientResponse =
+    | {
+          data: Schema["clients"];
+          error: null;
+      }
+    | {
+          data: null;
+          error: { type: FetchClientErrorType; logId: string };
+      };
 
-export type FetchClientErrorType = "clientFetchFailed" | "noMatchingClients"
+export type FetchClientErrorType = "clientFetchFailed" | "noMatchingClients";
 
 export const fetchClient = async (
     primaryKey: string,
@@ -119,7 +131,7 @@ export const fetchClient = async (
     const { data, error } = await supabase.from("clients").select().eq("primary_key", primaryKey);
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Client data", error);
-        return {data: null, error: {type: "clientFetchFailed", logId: logId}}
+        return { data: null, error: { type: "clientFetchFailed", logId: logId } };
     }
     if (data.length !== 1) {
         const errorMessage = `${
@@ -129,33 +141,79 @@ export const fetchClient = async (
         const logId = await logErrorReturnLogId(
             "Error with client ID" + `${errorMessage} ${primaryKey}`
         );
-        return {data: null, error: {type: "noMatchingClients", logId: logId}}
+        return { data: null, error: { type: "noMatchingClients", logId: logId } };
     }
-    return {data: data[0], error: null};
+    return { data: data[0], error: null };
 };
+
+type FetchFamilyResponse =
+    | {
+          data: Schema["families"][];
+          error: null;
+      }
+    | {
+          data: null;
+          error: { type: FetchFamilyErrorType; logId: string };
+      };
+
+export type FetchFamilyErrorType = "familyFetchFailed";
 
 export const fetchFamily = async (
     familyID: string,
     supabase: Supabase
-): Promise<Schema["families"][]> => {
+): Promise<FetchFamilyResponse> => {
     const { data, error } = await supabase.from("families").select().eq("family_id", familyID);
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Family data", error);
-        throw new DatabaseError("fetch", "family data", logId);
+        return { data: null, error: { type: "familyFetchFailed", logId: logId } };
     }
-    return data;
+    return { data: data, error: null };
 };
 
-export const fetchLists = async (supabase: Supabase): Promise<Schema["lists"][]> => {
+type FetchListsReponse =
+    | {
+          data: Schema["lists"][];
+          error: null;
+      }
+    | {
+          data: null;
+          error: FetchListsError;
+      };
+
+export type FetchListsErrorType = "listsFetchFailed";
+
+export interface FetchListsError {
+    type: FetchListsErrorType;
+    logId: string;
+}
+
+export const fetchLists = async (supabase: Supabase): Promise<FetchListsReponse> => {
     const { data, error } = await supabase.from("lists").select().order("row_order");
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Lists data", error);
-        throw new DatabaseError("fetch", "lists data", logId);
+        return { data: null, error: { type: "listsFetchFailed", logId: logId } };
     }
-    return data;
+    return { data: data, error: null };
 };
 
-export const fetchComment = async (supabase: Supabase): Promise<string> => {
+type FetchListsCommentResponse =
+    | {
+          data: string;
+          error: null;
+      }
+    | {
+          data: null;
+          error: FetchListsCommentError;
+      };
+
+export type FetchListsCommentErrorType = "listsCommentFetchFailed";
+
+export interface FetchListsCommentError {
+    type: FetchListsCommentErrorType;
+    logId: string;
+}
+
+export const fetchComment = async (supabase: Supabase): Promise<FetchListsCommentResponse> => {
     const { data, error } = await supabase
         .from("website_data")
         .select()
@@ -165,10 +223,10 @@ export const fetchComment = async (supabase: Supabase): Promise<string> => {
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Lists comment", error);
-        throw new DatabaseError("fetch", "lists comment", logId);
+        return { data: null, error: { type: "listsCommentFetchFailed", logId: logId } };
     }
 
-    return data.value;
+    return { data: data.value, error: null };
 };
 
 export type PackingSlotsLabelsAndValues = [string, Schema["packing_slots"]["primary_key"]][];

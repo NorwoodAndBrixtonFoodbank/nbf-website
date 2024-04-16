@@ -5,11 +5,11 @@ import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import DriverOverviewPdf, { DriverOverviewTableData } from "@/pdf/DriverOverview/DriverOverviewPdf";
-import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { formatDateToDate } from "@/common/format";
 import { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
+import { PdfDataFetchResponse } from "../common";
 
 interface DriverOverviewData {
     driverName: string;
@@ -18,16 +18,40 @@ interface DriverOverviewData {
     message: string;
 }
 
-const getParcelsForDelivery = async (parcelIds: string[]): Promise<Schema["parcels"][]> => {
+type ParcelsForDeliveryResponse =
+    | {
+          data: Schema["parcels"][];
+          error: null;
+      }
+    | {
+          data: null;
+          error: { type: ParcelsForDeliveryErrorType; logId: string };
+      };
+
+type ParcelsForDeliveryErrorType = "parcelFetchFailed";
+
+const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDeliveryResponse> => {
     const { data, error } = await supabase.from("parcels").select().in("primary_key", parcelIds);
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Parcels", error);
-        throw new DatabaseError("fetch", "parcels", logId);
+        return { data: null, error: { type: "parcelFetchFailed", logId: logId } };
     }
-    return data;
+    return { data: data, error: null };
 };
 
-const getClientById = async (clientId: string): Promise<Schema["clients"] | null> => {
+type ClientByIdResponse =
+    | {
+          data: Schema["clients"];
+          error: null;
+      }
+    | {
+          data: null;
+          error: { type: ClientByIdErrorType; logId: string };
+      };
+
+type ClientByIdErrorType = "clientFetchFailed";
+
+const getClientById = async (clientId: string): Promise<ClientByIdResponse> => {
     const { data, error } = await supabase
         .from("clients")
         .select()
@@ -38,9 +62,9 @@ const getClientById = async (clientId: string): Promise<Schema["clients"] | null
             `Error with fetch: Client with id ${clientId}`,
             error
         );
-        throw new DatabaseError("fetch", "client", logId);
+        return { data: null, error: { type: "clientFetchFailed", logId: logId } };
     }
-    return data;
+    return { data: data, error: null };
 };
 
 const compare = (first: DriverOverviewTableData, second: DriverOverviewTableData): number => {
@@ -53,11 +77,29 @@ const compare = (first: DriverOverviewTableData, second: DriverOverviewTableData
     return 0;
 };
 
-const getRequiredData = async (parcelIds: string[]): Promise<DriverOverviewTableData[]> => {
+type DriverPdfResponse =
+    | {
+          data: DriverOverviewTableData[];
+          error: null;
+      }
+    | {
+          data: null;
+          error: { type: DriverPdfErrorType; logId: string };
+      };
+
+type DriverPdfErrorType = ParcelsForDeliveryErrorType | ClientByIdErrorType;
+
+const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse> => {
     const clientInformation = [];
-    const parcels = await getParcelsForDelivery(parcelIds);
+    const { data: parcels, error: parcelsError } = await getParcelsForDelivery(parcelIds);
+    if (parcelsError) {
+        return { data: null, error: parcelsError };
+    }
     for (const parcel of parcels) {
-        const client = await getClientById(parcel.client_id);
+        const { data: client, error: clientError } = await getClientById(parcel.client_id);
+        if (clientError) {
+            return { data: null, error: clientError };
+        }
         clientInformation.push({
             name: client?.full_name ?? "",
             address: {
@@ -73,7 +115,7 @@ const getRequiredData = async (parcelIds: string[]): Promise<DriverOverviewTable
         });
     }
     clientInformation.sort(compare);
-    return clientInformation;
+    return { data: clientInformation, error: null };
 };
 
 interface Props {
@@ -81,40 +123,56 @@ interface Props {
     parcels: ParcelsTableRow[];
     driverName: string;
     date: Dayjs;
-    onClick: () => void;
+    onPdfCreationCompleted: () => void;
+    onPdfCreationFailed: (error: DriverOverviewError) => void;
     disabled: boolean;
 }
+
+export type DriverOverviewErrorType = DriverPdfErrorType | "driverMessageFetchFailed";
+export type DriverOverviewError = { type: DriverOverviewErrorType; logId: string };
 
 const DriverOverviewDownloadButton = ({
     text,
     parcels,
     driverName,
     date,
-    onClick,
+    onPdfCreationCompleted,
+    onPdfCreationFailed,
     disabled,
 }: Props): React.ReactElement => {
-    const fetchDataAndFileName = async (): Promise<{
-        data: DriverOverviewData;
-        fileName: string;
-    }> => {
+    const fetchDataAndFileName = async (): Promise<
+        PdfDataFetchResponse<DriverOverviewData, DriverOverviewErrorType>
+    > => {
         const parcelIds = parcels.map((parcel) => {
             return parcel.parcelId;
         });
-        const requiredData = await getRequiredData(parcelIds);
-        const { data, error } = await supabase
+        const { data: driverPdfData, error: driverPdfError } = await getDriverPdfData(parcelIds);
+        if (driverPdfError) {
+            return { data: null, error: driverPdfError };
+        }
+        const { data: driverMessageData, error: driverMessageError } = await supabase
             .from("website_data")
             .select("name, value")
             .eq("name", "driver_overview_message")
             .single();
-        const message = error ? "Error retrieving message for driver" : data.value;
+        if (driverMessageError) {
+            const logId = await logErrorReturnLogId(
+                "Error with fetch: Driver overview message",
+                driverMessageError
+            );
+            return { data: null, error: { type: "driverMessageFetchFailed", logId: logId } };
+        }
         return {
             data: {
-                driverName: driverName,
-                date: date.toDate(),
-                tableData: requiredData,
-                message: message,
+                data: {
+                    driverName: driverName,
+                    date: date.toDate(),
+                    tableData: driverPdfData,
+                    message: driverMessageData.value,
+                },
+                fileName: "DriverOverview.pdf",
             },
-            fileName: "DriverOverview.pdf",
+            error: null,
         };
     };
     return (
@@ -122,7 +180,8 @@ const DriverOverviewDownloadButton = ({
             text={text}
             fetchDataAndFileName={fetchDataAndFileName}
             pdfComponent={DriverOverviewPdf}
-            onPdfCreationCompleted={onClick}
+            onPdfCreationCompleted={onPdfCreationCompleted}
+            onPdfCreationFailed={onPdfCreationFailed}
             disabled={disabled}
         />
     );

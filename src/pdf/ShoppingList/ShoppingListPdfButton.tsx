@@ -1,33 +1,45 @@
 "use client";
 
 import React from "react";
-import getShoppingListData from "@/pdf/ShoppingList/getShoppingListData";
+import getShoppingListData, {
+    ShoppingListPdfErrorType,
+} from "@/pdf/ShoppingList/getShoppingListData";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import ShoppingListPdf from "@/pdf/ShoppingList/ShoppingListPdf";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import { ShoppingListPdfDataList } from "./shoppingListPdfDataProps";
+import { ShoppingListPdfData } from "./shoppingListPdfDataProps";
+import { PdfDataFetchResponse } from "../common";
 
 interface Props {
     text: string;
     parcels: ParcelsTableRow[];
-    onClick: () => void;
+    onPdfCreationCompleted: () => void;
+    onPdfCreationFailed: (error: { type: ShoppingListPdfErrorType; logId: string }) => void;
 }
 
-const ShoppingListPdfButton = ({ text, parcels, onClick }: Props): React.ReactElement => {
-    const fetchDataAndFileName = async (): Promise<{
-        data: ShoppingListPdfDataList;
-        fileName: string;
-    }> => {
+const ShoppingListPdfButton = ({
+    text,
+    parcels,
+    onPdfCreationCompleted,
+    onPdfCreationFailed,
+}: Props): React.ReactElement => {
+    const fetchDataAndFileName = async (): Promise<
+        PdfDataFetchResponse<ShoppingListPdfData[], ShoppingListPdfErrorType>
+    > => {
         const parcelIds = parcels.map((parcel) => parcel.parcelId);
-        const data = await getShoppingListData(parcelIds);
-        return { data: data, fileName: "ShoppingList.pdf" };
+        const { data, error } = await getShoppingListData(parcelIds);
+        if (error) {
+            return { data: null, error: error };
+        }
+        return { data: { data: data, fileName: "ShoppingList.pdf" }, error: null };
     };
     return (
         <PdfButton
             text={text}
             fetchDataAndFileName={fetchDataAndFileName}
             pdfComponent={ShoppingListPdf}
-            onPdfCreationCompleted={onClick}
+            onPdfCreationCompleted={onPdfCreationCompleted}
+            onPdfCreationFailed={onPdfCreationFailed}
         />
     );
 };

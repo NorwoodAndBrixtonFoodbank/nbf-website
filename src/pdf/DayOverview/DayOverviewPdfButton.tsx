@@ -5,15 +5,16 @@ import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import DayOverviewPdf from "./DayOverviewPdf";
-import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { Dayjs } from "dayjs";
+import { PdfDataFetchResponse } from "../common";
 
 interface Props {
     text: string;
     date: Dayjs;
     collectionCentreKey: string | null;
-    onClick: () => void;
+    onPdfCreationCompleted: () => void;
+    onPdfCreationFailed: (error: DayOverviewPdfError) => void;
     disabled: boolean;
 }
 
@@ -42,10 +43,22 @@ export const getCurrentDate = (date: Date, hyphen: boolean = false): string => {
     return hyphen ? formattedDate : formattedDate.replaceAll("-", "");
 };
 
+type ParcelsOfSpecificDateAndLocationResponse =
+    | {
+          data: ParcelOfSpecificDateAndLocation[];
+          error: null;
+      }
+    | {
+          data: null;
+          error: { type: ParcelsOfSpecificDateAndLocationErrorType; logId: string };
+      };
+
+type ParcelsOfSpecificDateAndLocationErrorType = "parcelFetchFailed";
+
 const getParcelsOfSpecificDateAndLocation = async (
     date: Date,
     collectionCentreKey: string
-): Promise<ParcelOfSpecificDateAndLocation[]> => {
+): Promise<ParcelsOfSpecificDateAndLocationResponse> => {
     const startDateString = date.toISOString();
     const endDate = new Date(date);
     endDate.setDate(date.getDate() + 1);
@@ -69,15 +82,29 @@ const getParcelsOfSpecificDateAndLocation = async (
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Parcel", error);
-        throw new DatabaseError("fetch", "parcel", logId);
+        return { data: null, error: { type: "parcelFetchFailed", logId: logId } };
     }
 
-    return data;
+    return { data: data, error: null };
 };
+
+type CollectionCentreNameAndAbbreviationResponse =
+    | {
+          data: CollectionCentreNameAndAbbreviation;
+          error: null;
+      }
+    | {
+          data: null;
+          error: { type: CollectionCentreNameAndAbbreviationErrorType; logId: string };
+      };
+
+type CollectionCentreNameAndAbbreviationErrorType =
+    | "collectionCentreFetchFailed"
+    | "noMatchingCollectionCentre";
 
 const fetchCollectionCentreNameAndAbbreviation = async (
     collectionCentreKey: string
-): Promise<CollectionCentreNameAndAbbreviation> => {
+): Promise<CollectionCentreNameAndAbbreviationResponse> => {
     const { data, error } = await supabase
         .from("collection_centres")
         .select()
@@ -86,28 +113,54 @@ const fetchCollectionCentreNameAndAbbreviation = async (
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Collection centre", error);
-        throw new DatabaseError("fetch", "collection centre", logId);
+        return { data: null, error: { type: "collectionCentreFetchFailed", logId: logId } };
     }
 
-    return data!;
+    if (!data) {
+        const logId = await logErrorReturnLogId("Error with fetch: Collection centre");
+        return { data: null, error: { type: "noMatchingCollectionCentre", logId: logId } };
+    }
+
+    return { data: data, error: null };
 };
+
+interface DayOverviewPdfData {
+    date: Date;
+    location: string;
+    data: ParcelOfSpecificDateAndLocation[];
+}
+
+type DayOverviewPdfErrorType =
+    | CollectionCentreNameAndAbbreviationErrorType
+    | ParcelsOfSpecificDateAndLocationErrorType;
+export type DayOverviewPdfError = { type: DayOverviewPdfErrorType; logId: string };
 
 const DayOverviewPdfButton = ({
     text,
     date: dayjsDate,
     collectionCentreKey,
-    onClick,
+    onPdfCreationCompleted,
+    onPdfCreationFailed,
     disabled,
 }: Props): React.ReactElement => {
-    const fetchDataAndFileName = async (): Promise<{ data: DayOverviewData; fileName: string }> => {
+    const fetchDataAndFileName = async (): Promise<
+        PdfDataFetchResponse<DayOverviewPdfData, DayOverviewPdfErrorType>
+    > => {
         const date = dayjsDate.toDate();
-        const collectionCentreNameAndAbbreviation = await fetchCollectionCentreNameAndAbbreviation(
-            collectionCentreKey!
-        );
-        const parcelsOfSpecificDate = await getParcelsOfSpecificDateAndLocation(
-            date,
-            collectionCentreKey!
-        );
+        const {
+            data: collectionCentreNameAndAbbreviation,
+            error: collectionCentreNameAndAbbreviationError,
+        } = await fetchCollectionCentreNameAndAbbreviation(collectionCentreKey!);
+        if (collectionCentreNameAndAbbreviationError) {
+            return { data: null, error: collectionCentreNameAndAbbreviationError };
+        }
+
+        const { data: parcelsOfSpecificDate, error: parcelsOfSpecificDateError } =
+            await getParcelsOfSpecificDateAndLocation(date, collectionCentreKey!);
+        if (parcelsOfSpecificDateError) {
+            return { data: null, error: parcelsOfSpecificDateError };
+        }
+
         const dateString = getCurrentDate(date);
 
         const acronym = `_${collectionCentreNameAndAbbreviation?.acronym}` ?? "";
@@ -116,11 +169,14 @@ const DayOverviewPdfButton = ({
         const fileName = `DayOverview_${dateString}${acronym}.pdf`;
         return {
             data: {
-                date: date,
-                location: location,
-                data: parcelsOfSpecificDate,
+                data: {
+                    date: date,
+                    location: location,
+                    data: parcelsOfSpecificDate,
+                },
+                fileName: fileName,
             },
-            fileName: fileName,
+            error: null,
         };
     };
 
@@ -129,7 +185,8 @@ const DayOverviewPdfButton = ({
             text={text}
             fetchDataAndFileName={fetchDataAndFileName}
             pdfComponent={DayOverviewPdf}
-            onPdfCreationCompleted={onClick}
+            onPdfCreationCompleted={onPdfCreationCompleted}
+            onPdfCreationFailed={onPdfCreationFailed}
             disabled={disabled}
         />
     );

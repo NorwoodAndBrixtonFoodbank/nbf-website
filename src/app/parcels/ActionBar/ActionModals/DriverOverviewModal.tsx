@@ -16,7 +16,10 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import Modal from "@/components/Modal/Modal";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-import DriverOverviewDownloadButton from "@/pdf/DriverOverview/DriverOverviewPdfButton";
+import DriverOverviewDownloadButton, {
+    DriverOverviewError,
+} from "@/pdf/DriverOverview/DriverOverviewPdfButton";
+import { sendAuditLog } from "@/server/auditLog";
 
 interface DriverOverviewInputProps {
     onDateChange: (newDate: Dayjs | null) => void;
@@ -51,9 +54,27 @@ const DriverOverviewInput: React.FC<DriverOverviewInputProps> = ({
     );
 };
 
+const getPdfErrorMessage = (error: DriverOverviewError): string => {
+    let errorMessage = "";
+    switch (error.type) {
+        case "parcelFetchFailed":
+            errorMessage = "Failed to fetch parcel data.";
+            break;
+        case "clientFetchFailed":
+            errorMessage = "Failed to fetch client data.";
+            break;
+        case "driverMessageFetchFailed":
+            errorMessage = "Failed to fetch driver overview message.";
+            break;
+    }
+    return `${errorMessage} LogId: ${error.logId}`;
+};
+
 const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
     const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(null);
+    const [pdfError, setPdfError] = useState<DriverOverviewError | null>(null);
+
     const updateParcelsStatuses = async (): Promise<void> => {
         const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
         if (error) {
@@ -80,21 +101,40 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
         setServerErrorMessage(null);
     };
 
-    const onDoAction = (): void => {
+    const onPdfCreationCompleted = (): void => {
         updateParcelsStatuses();
         setActionCompleted(true);
+        void sendAuditLog({
+            action: "create driver overview pdf",
+            wasSuccess: true,
+            content: { parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId) },
+        });
     };
+
+    const onPdfCreationFailed = (pdfError: DriverOverviewError): void => {
+        setPdfError(pdfError);
+        setActionCompleted(true);
+        void sendAuditLog({
+            action: "create driver overview pdf",
+            wasSuccess: false,
+            content: { parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId) },
+            logId: pdfError.logId,
+        });
+    };
+
+    const actionCompletedSuccessfully = actionCompleted && !serverErrorMessage && !pdfError;
 
     return (
         <Modal {...props} onClose={onClose}>
             <ModalInner>
-                {actionCompleted ? (
-                    serverErrorMessage ? (
-                        <ErrorSecondaryText>{serverErrorMessage}</ErrorSecondaryText>
-                    ) : (
-                        <Paragraph>Driver Overview Created</Paragraph>
-                    )
-                ) : (
+                {pdfError && (
+                    <ErrorSecondaryText>{getPdfErrorMessage(pdfError)}</ErrorSecondaryText>
+                )}
+                {serverErrorMessage && (
+                    <ErrorSecondaryText>{serverErrorMessage}</ErrorSecondaryText>
+                )}
+                {actionCompletedSuccessfully && <Paragraph>Driver Overview Created</Paragraph>}
+                {!actionCompleted && (
                     <>
                         <DriverOverviewInput
                             onDateChange={onDateChange}
@@ -111,7 +151,8 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
                                 parcels={props.selectedParcels}
                                 date={date}
                                 driverName={driverName}
-                                onClick={onDoAction}
+                                onPdfCreationCompleted={onPdfCreationCompleted}
+                                onPdfCreationFailed={onPdfCreationFailed}
                                 disabled={!isDateValid}
                                 text="Download"
                             />

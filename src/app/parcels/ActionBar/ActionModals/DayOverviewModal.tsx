@@ -8,10 +8,11 @@ import { DatePicker } from "@mui/x-date-pickers";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
-import DayOverviewPdfButton from "@/pdf/DayOverview/DayOverviewPdfButton";
+import DayOverviewPdfButton, { DayOverviewPdfError } from "@/pdf/DayOverview/DayOverviewPdfButton";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import Modal from "@/components/Modal/Modal";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import { sendAuditLog } from "@/server/auditLog";
 
 interface DayOverviewInputProps {
     onDateChange: (newDate: Dayjs | null) => void;
@@ -84,10 +85,27 @@ const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
     );
 };
 
+const getPdfErrorMessage = (error: DayOverviewPdfError): string => {
+    let errorMessage = "";
+    switch (error.type) {
+        case "collectionCentreFetchFailed":
+            errorMessage = "Failed to fetch collection centre.";
+            break;
+        case "noMatchingCollectionCentre":
+            errorMessage = "No matching collection centre found.";
+            break;
+        case "parcelFetchFailed":
+            errorMessage = "Failed to fetch parcels for this day and collection centre.";
+            break;
+    }
+    return `${errorMessage} LogId: ${error.logId}`;
+};
+
 const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
-    const [fetchErrorMessage, setFetchErrorMessage] = useState<string | null>(null);
+    const [inputFetchErrorMessage, setInputFetchErrorMessage] = useState<string | null>(null);
     const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(null);
+    const [pdfError, setPdfError] = useState<DayOverviewPdfError | null>(null);
     const updateParcelsStatuses = async (): Promise<void> => {
         const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
         if (error) {
@@ -99,7 +117,7 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
     const [collectionCentre, setCollectionCentre] = useState<string | null>(null);
     const [isDateValid, setIsDateValid] = useState(false);
 
-    const isInputValid = collectionCentre !== null && isDateValid;
+    const isInputValid = !inputFetchErrorMessage && collectionCentre !== null && isDateValid;
 
     const onCollectionCentreChange = (event: SelectChangeEvent): void => {
         setCollectionCentre(event.target.value);
@@ -116,30 +134,49 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
         setServerErrorMessage(null);
     };
 
-    const onDoAction = (): void => {
+    const onPdfCreationCompleted = (): void => {
         updateParcelsStatuses();
         setActionCompleted(true);
+        void sendAuditLog({
+            action: "create day overview pdf",
+            wasSuccess: true,
+            content: { parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId) },
+        });
     };
+
+    const onPdfCreationFailed = (pdfError: DayOverviewPdfError): void => {
+        setPdfError(pdfError);
+        setActionCompleted(true);
+        void sendAuditLog({
+            action: "create day overview pdf",
+            wasSuccess: false,
+            content: { parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId) },
+            logId: pdfError.logId,
+        });
+    };
+
+    const actionCompletedSuccessfully = actionCompleted && !serverErrorMessage && !pdfError;
 
     return (
         <Modal {...props} onClose={onClose}>
             <ModalInner>
-                {actionCompleted ? (
-                    serverErrorMessage ? (
-                        <ErrorSecondaryText>{serverErrorMessage}</ErrorSecondaryText>
-                    ) : (
-                        <Paragraph>Day Overview Created</Paragraph>
-                    )
-                ) : (
+                {pdfError && (
+                    <ErrorSecondaryText>{getPdfErrorMessage(pdfError)}</ErrorSecondaryText>
+                )}
+                {inputFetchErrorMessage && (
+                    <ErrorSecondaryText>{inputFetchErrorMessage}</ErrorSecondaryText>
+                )}
+                {serverErrorMessage && (
+                    <ErrorSecondaryText>{serverErrorMessage}</ErrorSecondaryText>
+                )}
+                {actionCompletedSuccessfully && <Paragraph>Day Overview Created</Paragraph>}
+                {!actionCompleted && (
                     <>
-                        {fetchErrorMessage && (
-                            <ErrorSecondaryText>{fetchErrorMessage}</ErrorSecondaryText>
-                        )}
                         <DayOverviewInput
                             onDateChange={onDateChange}
                             onCollectionCentreChange={onCollectionCentreChange}
                             setCollectionCentre={setCollectionCentre}
-                            setFetchErrorMessage={setFetchErrorMessage}
+                            setFetchErrorMessage={setInputFetchErrorMessage}
                             setDateInvalid={() => setIsDateValid(false)}
                             setDateValid={() => setIsDateValid(true)}
                         />
@@ -148,7 +185,8 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
                                 text="Download"
                                 date={date}
                                 collectionCentreKey={collectionCentre}
-                                onClick={onDoAction}
+                                onPdfCreationCompleted={onPdfCreationCompleted}
+                                onPdfCreationFailed={onPdfCreationFailed}
                                 disabled={!isInputValid}
                             />
                         </Centerer>
