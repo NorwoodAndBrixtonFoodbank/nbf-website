@@ -41,6 +41,7 @@ import { ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import DataViewer from "@/components/DataViewer/DataViewer";
 import { useTheme } from "styled-components";
 import PackingSlotsCard from "@/app/parcels/form/formSections/PackingSlotsCard";
+import { getDbDate } from "@/common/format";
 
 export interface ParcelFields extends Fields {
     clientId: string | null;
@@ -183,14 +184,13 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             return;
         }
 
-        const packingDate = dayjs(fields.packingDate).toISOString();
+        const packingDate = getDbDate(dayjs(fields.packingDate));
 
         let collectionDateTime = null;
         if (fields.shippingMethod === "Collection") {
-            collectionDateTime = mergeDateAndTime(
-                fields.collectionDate!,
-                fields.collectionTime!
-            ).toISOString();
+            collectionDateTime = getDbDate(
+                mergeDateAndTime(fields.collectionDate!, fields.collectionTime!)
+            );
         }
 
         const isDelivery = fields.shippingMethod === "Delivery";
