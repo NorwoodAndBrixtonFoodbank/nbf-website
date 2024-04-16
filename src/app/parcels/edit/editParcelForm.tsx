@@ -16,6 +16,7 @@ import {
 import supabase from "@/supabaseClient";
 import { Errors, FormErrors } from "@/components/Form/formFunctions";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import Title from "@/components/Title/Title";
 
 interface EditParcelFormProps {
     parcelId: string;
@@ -122,21 +123,26 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
         collectionCentre: Errors.none,
     };
 
-    return isLoading ? (
-        <></>
-    ) : error ? (
-        <ErrorSecondaryText>{getErrorMessage(error)}</ErrorSecondaryText>
-    ) : (
-        <ParcelForm
-            initialFields={initialFormFields}
-            initialFormErrors={initialFormErrors}
-            editMode={true}
-            parcelId={parcelId}
-            deliveryPrimaryKey={deliveryKey}
-            collectionCentresLabelsAndValues={collectionCentres}
-            packingSlotsLabelsAndValues={packingSlots}
-            packingSlotIsShown={packingSlotIsShown}
-        />
+    return (
+        <>
+            <Title>Parcel Form</Title>
+            {isLoading ? (
+                <></>
+            ) : error ? (
+                <ErrorSecondaryText>{getErrorMessage(error)}</ErrorSecondaryText>
+            ) : (
+                <ParcelForm
+                    initialFields={initialFormFields}
+                    initialFormErrors={initialFormErrors}
+                    editMode={true}
+                    parcelId={parcelId}
+                    deliveryPrimaryKey={deliveryKey}
+                    collectionCentresLabelsAndValues={collectionCentres}
+                    packingSlotsLabelsAndValues={packingSlots}
+                    packingSlotIsShown={packingSlotIsShown}
+                />
+            )}
+        </>
     );
 };
 

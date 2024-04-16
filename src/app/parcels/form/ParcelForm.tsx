@@ -26,7 +26,6 @@ import CollectionTimeCard from "@/app/parcels/form/formSections/CollectionTimeCa
 import CollectionCentreCard from "@/app/parcels/form/formSections/CollectionCentreCard";
 import { insertParcel, updateParcel } from "@/app/parcels/form/clientDatabaseFunctions";
 import { Button, IconButton } from "@mui/material";
-import Title from "@/components/Title/Title";
 import { Schema } from "@/databaseUtils";
 import dayjs, { Dayjs } from "dayjs";
 import { CollectionCentresLabelsAndValues, PackingSlotsLabelsAndValues } from "@/common/fetch";
@@ -224,7 +223,6 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     return (
         <CenterComponent>
             <StyledForm>
-                <Title>Parcel Form</Title>
                 {clientDetails && (
                     <StyledName>
                         <h2>{clientDetails.fullName}</h2>

@@ -15,6 +15,7 @@ import {
 } from "@/common/fetch";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import { getLocalSupabaseClient } from "../../../../../supabase/tools/getLocalSupabaseClient";
+import Title from "@/components/Title/Title";
 
 interface AddParcelParameters {
     params: {
@@ -77,6 +78,7 @@ const AddParcels = ({ params }: AddParcelParameters): React.ReactElement => {
 
     return (
         <main>
+            <Title>Parcel Form</Title>
             {isLoading ? (
                 <></>
             ) : error ? (
