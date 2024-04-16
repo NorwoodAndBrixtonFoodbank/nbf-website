@@ -76,7 +76,7 @@ const ListsPage: React.FC<{}> = () => {
                 }
             })
             .subscribe((status, err) => {
-                if (subscriptionStatusRequiresErrorMessage(status, err, "website_data")) {
+                if (subscriptionStatusRequiresErrorMessage(status, err, "lists")) {
                     setErrorMessage("Failed to fetch lists data, please reload");
                 }
             });
