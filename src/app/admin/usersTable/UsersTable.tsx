@@ -18,6 +18,7 @@ import {
     firstNameSearch,
     lastNameSearch,
 } from "@/app/admin/usersTable/usersTableFilters";
+import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 
 const usersTableHeaderKeysAndLabels: TableHeaders<UserRow> = [
     ["id", "User ID"],
@@ -229,6 +230,26 @@ const UsersTable: React.FC = () => {
     useEffect(() => {
         void fetchAndDisplayUserData();
     }, [fetchAndDisplayUserData]);
+
+    useEffect(() => {
+        void fetchAndDisplayUserData();
+        // This requires that the profiles tables have Realtime turned on
+        const subscriptionChannel = supabase
+            .channel("users-table-changes")
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "profiles" },
+                fetchAndDisplayUserData
+            )
+            .subscribe((status, err) => {
+                subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&
+                    setErrorMessage("Error fetching users data, please reload");
+            });
+
+        return () => {
+            supabase.removeChannel(subscriptionChannel);
+        };
+    }, [startIndex, endIndex, primaryFilters, sortState]);
 
     return (
         <>

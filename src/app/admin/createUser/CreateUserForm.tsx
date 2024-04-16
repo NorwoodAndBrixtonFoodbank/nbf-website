@@ -14,7 +14,6 @@ import {
 } from "@/components/Form/formFunctions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
-import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 import { Database } from "@/databaseTypesFile";
 import Alert from "@mui/material/Alert/Alert";
 import { User } from "@supabase/gotrue-js";
@@ -118,7 +117,7 @@ const CreateUserForm: React.FC<{}> = () => {
                 })}
 
                 {invitedUser ? (
-                    <Alert severity="success" action={<RefreshPageButton />}>
+                    <Alert severity="success">
                         User <b>{invitedUser.email}</b> invited successfully.
                     </Alert>
                 ) : (
