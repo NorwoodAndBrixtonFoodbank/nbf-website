@@ -26,7 +26,7 @@ const AlertBox = styled.div`
     border-radius: 0.5rem;
 `;
 
-const ActionAndStatusDropdowns: React.FC<ActionAndStatusBarProps> = (props) => {
+const ActionAndStatusBar: React.FC<ActionAndStatusBarProps> = (props) => {
     const [statusAnchorElement, setStatusAnchorElement] = useState<HTMLElement | null>(null);
     const [actionAnchorElement, setActionAnchorElement] = useState<HTMLElement | null>(null);
 
@@ -76,4 +76,4 @@ const ActionAndStatusDropdowns: React.FC<ActionAndStatusBarProps> = (props) => {
     );
 };
 
-export default ActionAndStatusDropdowns;
+export default ActionAndStatusBar;

@@ -1,4 +1,4 @@
-import ActionAndStatusDropdowns, {
+import ActionAndStatusBar, {
     ActionAndStatusBarProps,
 } from "@/app/parcels/ActionBar/ActionAndStatusBar";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
@@ -72,7 +72,7 @@ describe("Parcels - Action Bar", () => {
         return (
             <Localization>
                 <StyleManager>
-                    <ActionAndStatusDropdowns
+                    <ActionAndStatusBar
                         fetchParcelsByIds={fetchSelectedParcels}
                         updateParcelStatuses={onDeleteParcels}
                         hasSavedParcelStatus={() => {}}
