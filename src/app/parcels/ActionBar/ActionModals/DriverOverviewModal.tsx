@@ -16,7 +16,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import Modal from "@/components/Modal/Modal";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-import DriverOverviewDownloadButton, {
+import DriverOverviewPdfButton, {
     DriverOverviewError,
 } from "@/pdf/DriverOverview/DriverOverviewPdfButton";
 import { sendAuditLog } from "@/server/auditLog";
@@ -155,7 +155,7 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
                             maxParcelsToShow={maxParcelsToShow}
                         />
                         <Centerer>
-                            <DriverOverviewDownloadButton
+                            <DriverOverviewPdfButton
                                 parcels={props.selectedParcels}
                                 date={date}
                                 driverName={driverName}

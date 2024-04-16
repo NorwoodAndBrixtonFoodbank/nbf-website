@@ -155,6 +155,7 @@ const Statuses: React.FC<Props> = ({
             try {
                 const fetchedParcels = await fetchParcelsByIds();
                 setSelectedParcels(fetchedParcels);
+                setServerErrorMessage(null);
                 if (fetchedParcels.length > 0) {
                     setSelectedStatus(status);
                     setStatusModal(true);

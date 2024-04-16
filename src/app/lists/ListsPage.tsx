@@ -3,7 +3,12 @@
 import React, { useEffect, useState } from "react";
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
-import { FetchListsCommentError, FetchListsError, fetchComment, fetchLists } from "@/common/fetch";
+import {
+    FetchListsCommentError,
+    FetchListsError,
+    fetchListsComment,
+    fetchLists,
+} from "@/common/fetch";
 import ListsDataView, { ListRow, listsHeaderKeysAndLabels } from "@/app/lists/ListDataview";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
 
@@ -27,7 +32,7 @@ const fetchData = async (): Promise<FetchListsDataResponse> => {
     if (listsError) {
         return { data: null, error: listsError };
     }
-    const { data: listsCommentData, error: listsCommentError } = await fetchComment(supabase);
+    const { data: listsCommentData, error: listsCommentError } = await fetchListsComment(supabase);
     if (listsCommentError) {
         return { data: null, error: listsCommentError };
     }

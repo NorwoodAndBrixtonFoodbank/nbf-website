@@ -131,7 +131,7 @@ interface Props {
 export type DriverOverviewErrorType = DriverPdfErrorType | "driverMessageFetchFailed";
 export type DriverOverviewError = { type: DriverOverviewErrorType; logId: string };
 
-const DriverOverviewDownloadButton = ({
+const DriverOverviewPdfButton = ({
     text,
     parcels,
     driverName,
@@ -187,4 +187,4 @@ const DriverOverviewDownloadButton = ({
     );
 };
 
-export default DriverOverviewDownloadButton;
+export default DriverOverviewPdfButton;

@@ -10,7 +10,7 @@ import {
     FetchParcelError,
     FetchParcelErrorType,
     fetchClient,
-    fetchComment,
+    fetchListsComment,
     fetchFamily,
 } from "@/common/fetch";
 import {
@@ -119,7 +119,7 @@ const getShoppingListDataForSingleParcel = async (
     const { nappySize } = processExtraInformation(clientData.extra_information);
     requirementSummary.babyProductsRequired += ` (${nappySize})`;
 
-    const { data: endNotes, error: listsCommentError } = await fetchComment(supabase);
+    const { data: endNotes, error: listsCommentError } = await fetchListsComment(supabase);
     if (listsCommentError) {
         return { data: null, error: listsCommentError };
     }

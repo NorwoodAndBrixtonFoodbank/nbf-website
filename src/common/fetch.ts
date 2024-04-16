@@ -219,7 +219,7 @@ export interface FetchListsCommentError {
     logId: string;
 }
 
-export const fetchComment = async (supabase: Supabase): Promise<FetchListsCommentResponse> => {
+export const fetchListsComment = async (supabase: Supabase): Promise<FetchListsCommentResponse> => {
     const { data, error } = await supabase
         .from("website_data")
         .select()
