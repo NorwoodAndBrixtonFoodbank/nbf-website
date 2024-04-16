@@ -15,9 +15,7 @@ import { StatusType, getStatusErrorMessageWithLogId } from "../Statuses";
 import ShoppingListPdfButton from "@/pdf/ShoppingList/ShoppingListPdfButton";
 import Modal from "@/components/Modal/Modal";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-import {
-    ShoppingListPdfError,
-} from "@/pdf/ShoppingList/getShoppingListData";
+import { ShoppingListPdfError } from "@/pdf/ShoppingList/getShoppingListData";
 import { sendAuditLog } from "@/server/auditLog";
 
 interface ShoppingListsConfirmationProps {

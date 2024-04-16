@@ -88,7 +88,10 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
         void sendAuditLog({
             action: "create shipping label pdf",
             wasSuccess: true,
-            content: { parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId) },
+            content: {
+                parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId),
+                labelQuantity: labelQuantity,
+            },
         });
     };
 
@@ -98,7 +101,10 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
         void sendAuditLog({
             action: "create shipping label pdf",
             wasSuccess: false,
-            content: { parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId) },
+            content: {
+                parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId),
+                labelQuantity: labelQuantity,
+            },
             logId: pdfError.logId,
         });
     };

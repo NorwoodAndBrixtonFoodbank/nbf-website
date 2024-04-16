@@ -140,7 +140,8 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
         void sendAuditLog({
             action: "create day overview pdf",
             wasSuccess: true,
-            content: { parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId) },
+            collectionCentreId: collectionCentre ?? undefined,
+            content: { date: date.toString() },
         });
     };
 
@@ -150,7 +151,8 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
         void sendAuditLog({
             action: "create day overview pdf",
             wasSuccess: false,
-            content: { parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId) },
+            collectionCentreId: collectionCentre ?? undefined,
+            content: { date: date.toString() },
             logId: pdfError.logId,
         });
     };

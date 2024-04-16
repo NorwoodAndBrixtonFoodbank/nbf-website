@@ -9,9 +9,13 @@ import {
     PackingSlotsLabelsAndValues,
     fetchPackingSlotsInfo,
     ParcelWithCollectionCentreAndPackingSlot,
+    FetchCollectionCentresError,
+    PackingSlotsError,
+    FetchParcelError,
 } from "@/common/fetch";
 import supabase from "@/supabaseClient";
 import { Errors, FormErrors } from "@/components/Form/formFunctions";
+import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 
 interface EditParcelFormProps {
     parcelId: string;
@@ -36,6 +40,27 @@ const prepareParcelDataForForm = (
     };
 };
 
+const getErrorMessage = (
+    error: FetchCollectionCentresError | PackingSlotsError | FetchParcelError
+): string => {
+    let errorMessage = "";
+    switch (error.type) {
+        case "collectionCentresFetchFailed":
+            errorMessage = "Failed to fetch collection centres data.";
+            break;
+        case "packingSlotsFetchFailed":
+            errorMessage = "Failed to fetch packing slots data.";
+            break;
+        case "failedToFetchParcel":
+            errorMessage = "Failed to fetch parcel data.";
+            break;
+        case "noMatchingParcels":
+            errorMessage = "No parcel in the database matches the selected parcel.";
+            break;
+    }
+    return `${errorMessage} Log Id: ${error.logId}`;
+};
+
 const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement => {
     const [isLoading, setIsLoading] = useState(true);
     const [initialFormFields, setInitialFormFields] = useState<ParcelFields>(initialParcelFields);
@@ -45,18 +70,44 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
     );
     const [packingSlots, setPackingSlots] = useState<PackingSlotsLabelsAndValues>([]);
     const [packingSlotIsShown, setPackingSlotsIsShown] = useState<boolean | undefined>(true);
+    const [error, setError] = useState<
+        FetchCollectionCentresError | PackingSlotsError | FetchParcelError | null
+    >(null);
 
     useEffect(() => {
         (async () => {
-            const [deliveryPrimaryKey, collectionCentresLabelsAndValues] =
+            setIsLoading(true);
+
+            const { data: collectionCentresData, error: collectionCentresError } =
                 await getCollectionCentresInfo(supabase);
-            const packingSlotsLabelsAndValues = await fetchPackingSlotsInfo(supabase);
-            const parcelData = await fetchParcel(parcelId, supabase);
-            setInitialFormFields(prepareParcelDataForForm(parcelData, deliveryPrimaryKey));
-            setDeliveryKey(deliveryPrimaryKey);
-            setPackingSlots(packingSlotsLabelsAndValues);
-            setCollectionCentres(collectionCentresLabelsAndValues);
+            if (collectionCentresError) {
+                setError(collectionCentresError);
+                setIsLoading(false);
+                return;
+            }
+            setDeliveryKey(collectionCentresData.deliveryPrimaryKey);
+            setCollectionCentres(collectionCentresData.collectionCentresLabelsAndValues);
+
+            const { data: packingSlotsData, error: packingSlotsError } =
+                await fetchPackingSlotsInfo(supabase);
+            if (packingSlotsError) {
+                setError(packingSlotsError);
+                setIsLoading(false);
+                return;
+            }
+            setPackingSlots(packingSlotsData);
+
+            const { data: parcelData, error: parcelError } = await fetchParcel(parcelId, supabase);
+            if (parcelError) {
+                setError(parcelError);
+                setIsLoading(false);
+                return;
+            }
+            setInitialFormFields(
+                prepareParcelDataForForm(parcelData, collectionCentresData.deliveryPrimaryKey)
+            );
             setPackingSlotsIsShown(parcelData.packing_slot?.is_shown);
+
             setIsLoading(false);
         })();
     }, [parcelId]);
@@ -73,6 +124,8 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
 
     return isLoading ? (
         <></>
+    ) : error ? (
+        <ErrorSecondaryText>{getErrorMessage(error)}</ErrorSecondaryText>
     ) : (
         <ParcelForm
             initialFields={initialFormFields}

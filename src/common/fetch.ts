@@ -1,4 +1,3 @@
-import { DatabaseError } from "@/app/errorClasses";
 import { Schema } from "@/databaseUtils";
 import { Supabase } from "@/supabaseUtils";
 import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
@@ -27,7 +26,7 @@ export interface ParcelWithCollectionCentreAndPackingSlot {
 
 export type FetchParcelResponse =
     | { data: ParcelWithCollectionCentreAndPackingSlot; error: null }
-    | { data: null; error: { type: FetchParcelErrorType; logId: string } };
+    | { data: null; error: FetchParcelError };
 
 export type FetchParcelErrorType = "failedToFetchParcel" | "noMatchingParcels";
 export interface FetchParcelError {
@@ -74,10 +73,10 @@ export type CollectionCentresLabelsAndValues = [
     Schema["collection_centres"]["primary_key"],
 ][];
 
-type CollectionCentresInfo = [
-    Schema["collection_centres"]["primary_key"],
-    CollectionCentresLabelsAndValues,
-];
+interface CollectionCentresInfo {
+    deliveryPrimaryKey: Schema["collection_centres"]["primary_key"];
+    collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues;
+}
 
 type FetchCollectionCentresResponse =
     | {
@@ -86,10 +85,11 @@ type FetchCollectionCentresResponse =
       }
     | {
           data: null;
-          error: { type: FetchCollectionCentresErrorType; logId: string };
+          error: FetchCollectionCentresError;
       };
 
 type FetchCollectionCentresErrorType = "collectionCentresFetchFailed";
+export type FetchCollectionCentresError = { type: FetchCollectionCentresErrorType; logId: string };
 
 export const getCollectionCentresInfo = async (
     supabase: Supabase
@@ -109,7 +109,13 @@ export const getCollectionCentresInfo = async (
         (collectionCentre) => collectionCentre.name === "Delivery"
     )[0].primary_key;
 
-    return { data: [deliveryPrimaryKey, collectionCentresLabelsAndValues], error: null };
+    return {
+        data: {
+            deliveryPrimaryKey: deliveryPrimaryKey,
+            collectionCentresLabelsAndValues: collectionCentresLabelsAndValues,
+        },
+        error: null,
+    };
 };
 
 type FetchClientResponse =
@@ -230,10 +236,22 @@ export const fetchComment = async (supabase: Supabase): Promise<FetchListsCommen
 };
 
 export type PackingSlotsLabelsAndValues = [string, Schema["packing_slots"]["primary_key"]][];
+type PackingSlotsResponse =
+    | {
+          data: PackingSlotsLabelsAndValues;
+          error: null;
+      }
+    | {
+          data: null;
+          error: PackingSlotsError;
+      };
+type PackingSlotsErrorType = "packingSlotsFetchFailed";
+export interface PackingSlotsError {
+    type: PackingSlotsErrorType;
+    logId: string;
+}
 
-export const fetchPackingSlotsInfo = async (
-    supabase: Supabase
-): Promise<PackingSlotsLabelsAndValues> => {
+export const fetchPackingSlotsInfo = async (supabase: Supabase): Promise<PackingSlotsResponse> => {
     const { data, error } = await supabase
         .from("packing_slots")
         .select("primary_key, name")
@@ -242,7 +260,7 @@ export const fetchPackingSlotsInfo = async (
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Packing slots data", error);
-        throw new DatabaseError("fetch", "packing slots data", logId);
+        return { data: null, error: { type: "packingSlotsFetchFailed", logId: logId } };
     }
 
     const packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues = data.map((packingSlot) => [
@@ -250,5 +268,5 @@ export const fetchPackingSlotsInfo = async (
         packingSlot.primary_key,
     ]);
 
-    return packingSlotsLabelsAndValues;
+    return { data: packingSlotsLabelsAndValues, error: null };
 };
