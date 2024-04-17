@@ -16,6 +16,7 @@ import {
 import supabase from "@/supabaseClient";
 import { Errors, FormErrors } from "@/components/Form/formFunctions";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import Title from "@/components/Title/Title";
 
 interface EditParcelFormProps {
     parcelId: string;
@@ -124,6 +125,7 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
 
     return (
         <>
+            <Title>Edit Parcel</Title>
             {isLoading ? (
                 <></>
             ) : error ? (

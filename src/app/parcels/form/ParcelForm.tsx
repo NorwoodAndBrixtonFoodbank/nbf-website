@@ -40,7 +40,6 @@ import { ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import DataViewer from "@/components/DataViewer/DataViewer";
 import { useTheme } from "styled-components";
 import PackingSlotsCard from "@/app/parcels/form/formSections/PackingSlotsCard";
-import Title from "@/components/Title/Title";
 
 export interface ParcelFields extends Fields {
     clientId: string | null;
@@ -224,7 +223,6 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     return (
         <CenterComponent>
             <StyledForm>
-                <Title>Parcel Form</Title>
                 {clientDetails && (
                     <StyledName>
                         <h2>{clientDetails.fullName}</h2>

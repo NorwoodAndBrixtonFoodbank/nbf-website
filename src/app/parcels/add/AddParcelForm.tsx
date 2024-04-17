@@ -13,8 +13,9 @@ import {
     fetchPackingSlotsInfo,
     getCollectionCentresInfo,
 } from "@/common/fetch";
-import { ErrorLargeText, ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import supabase from "@/supabaseClient";
+import Title from "@/components/Title/Title";
 
 interface AddParcelProps {
     clientId: string;
@@ -74,10 +75,11 @@ const AddParcels = ({ clientId }: AddParcelProps): React.ReactElement => {
 
     return (
         <>
+            <Title>Add Parcel</Title>
             {isLoading ? (
                 <></>
             ) : error ? (
-                <ErrorLargeText>{getErrorMessage(error)}</ErrorLargeText>
+                <ErrorSecondaryText>{getErrorMessage(error)}</ErrorSecondaryText>
             ) : (
                 <ParcelForm
                     initialFields={initialParcelFields}
