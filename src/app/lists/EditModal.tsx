@@ -163,7 +163,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
             <ModalInner>
                 <h3>Description</h3>
                 <TextInput
-                    defaultValue={toSubmit ? toSubmit.item_name : ""}
+                    defaultValue={toSubmit?.item_name ?? ""}
                     onChange={(event) => setKey(event, "item_name")}
                     label="Item Description"
                 />
@@ -173,7 +173,9 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                             <h3>{label}</h3>
                             <DataWithTooltipDiv>
                                 <TextInput
-                                    defaultValue={toSubmit ? toSubmit[quantityKey]?.toString() : ""}
+                                    defaultValue={
+                                        toSubmit ? toSubmit[quantityKey]?.toString() ?? "" : ""
+                                    }
                                     label="Quantity"
                                     onChange={(event) => setKey(event, quantityKey)}
                                 />
