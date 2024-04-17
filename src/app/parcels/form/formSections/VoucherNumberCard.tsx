@@ -4,6 +4,8 @@ import { CardProps, errorText, onChangeText } from "@/components/Form/formFuncti
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
 
+const voucherNumberIsRequired = false;
+
 const VoucherNumberCard: React.FC<CardProps> = ({
     errorSetter,
     fieldSetter,
@@ -13,12 +15,17 @@ const VoucherNumberCard: React.FC<CardProps> = ({
     return (
         <GenericFormCard
             title="Voucher Number"
-            required={false}
+            required={voucherNumberIsRequired}
             text="This is usually found in the following format: H-00001-00001. If you don't know the voucher number, leave this section blank."
         >
             <FreeFormTextInput
                 label="Voucher Number"
-                onChange={onChangeText(fieldSetter, errorSetter, "voucherNumber", true)}
+                onChange={onChangeText(
+                    fieldSetter,
+                    errorSetter,
+                    "voucherNumber",
+                    voucherNumberIsRequired
+                )}
                 value={fields.voucherNumber}
             />
             <ErrorText>{errorText(formErrors.voucherNumber)}</ErrorText>

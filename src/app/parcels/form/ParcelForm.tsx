@@ -200,7 +200,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             client_id: (clientId || fields.clientId)!,
             packing_date: packingDate,
             packing_slot: fields.packingSlot,
-            voucher_number: fields.voucherNumber,
+            voucher_number: fields.voucherNumber ?? null,
             collection_centre: isDelivery ? deliveryPrimaryKey : fields.collectionCentre,
             collection_datetime: collectionDateTime,
         };
