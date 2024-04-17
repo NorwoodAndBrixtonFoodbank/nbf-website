@@ -87,7 +87,7 @@ const CollectionCentresTables: React.FC = () => {
         return () => {
             void supabase.removeChannel(subscriptionChannel);
         };
-    }, [fetchAndDisplayCollectionCentres, primaryFilters]);
+    }, [fetchAndDisplayCollectionCentres]);
 
     return (
         <>
