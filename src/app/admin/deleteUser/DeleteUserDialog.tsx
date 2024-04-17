@@ -26,6 +26,19 @@ interface Props {
     setAlertOptions: SetAlertOptions;
 }
 
+const getErrorMessage = (errorType: string): string | null => {
+    switch (errorType) {
+        case "failedToAuthenticateAsAdmin":
+            return "Unable to authenticate current user";
+        case "failedToFetchUserIdFromProfiles":
+            return "Unable to retrieve user id";
+        case "failedToDeleteUser":
+            return "Unable to delete user";
+        default:
+            return "Unknown Error";
+    }
+};
+
 const DeleteUserDialog: React.FC<Props> = (props) => {
     if (props.userToDelete === null) {
         return <></>;
@@ -39,18 +52,7 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
         const { error: deleteUserError } = await adminDeleteUser(props.userToDelete.id);
 
         if (deleteUserError) {
-            let errorMessage = "";
-            switch (deleteUserError.type) {
-                case "failedToAuthenticateAsAdmin":
-                    errorMessage = "Unable to authenticate current user";
-                    break;
-                case "failedToFetchUserIdFromProfiles":
-                    errorMessage = "Unable to retrieve user id";
-                    break;
-                case "failedToDeleteUser":
-                    errorMessage = "Unable to delete user";
-                    break;
-            }
+            const errorMessage = getErrorMessage(deleteUserError.type);
             props.setAlertOptions({
                 success: false,
                 message: <>{`${errorMessage}. Log ID: ${deleteUserError.logId}`}</>,
