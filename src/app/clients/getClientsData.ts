@@ -82,7 +82,7 @@ const getClientsDataAndCount = async (
 
     const clientData: ClientsTableRow[] = clients.map((client) => {
         return {
-            clientId: client.client_id ?? "",
+            id: client.client_id ?? "",
             fullName: client.full_name ?? "",
             familyCategory: familyCountToFamilyCategory(client.family_count ?? 0),
             addressPostcode: client.address_postcode ?? "",

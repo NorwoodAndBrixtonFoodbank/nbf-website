@@ -23,7 +23,7 @@ import { ErrorSecondaryText } from "../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 
 export interface ClientsTableRow {
-    clientId: string;
+    id: string;
     fullName: string;
     familyCategory: string;
     addressPostcode: string;
@@ -196,7 +196,7 @@ const ClientsPage: React.FC<{}> = () => {
                             }}
                             headerKeysAndLabels={headers}
                             onRowClick={(row) => {
-                                router.push(`/clients?${clientIdParam}=${row.data.clientId}`);
+                                router.push(`/clients?${clientIdParam}=${row.data.id}`);
                             }}
                             filterConfig={{
                                 primaryFiltersShown: true,

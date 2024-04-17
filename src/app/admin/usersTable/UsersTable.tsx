@@ -18,6 +18,7 @@ import {
     firstNameSearch,
     lastNameSearch,
 } from "@/app/admin/usersTable/usersTableFilters";
+import { getCurrentUser } from "@/server/getCurrentUser";
 
 const usersTableHeaderKeysAndLabels: TableHeaders<UserRow> = [
     ["id", "User ID"],
@@ -120,6 +121,7 @@ const UsersTable: React.FC = () => {
     const [userCountPerPage, setUserCountPerPage] = useState(defaultNumberOfUsersPerPage);
     const [currentPage, setCurrentPage] = useState(1);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
     const startIndex = (currentPage - 1) * userCountPerPage;
     const endIndex = currentPage * userCountPerPage - 1;
 
@@ -217,10 +219,20 @@ const UsersTable: React.FC = () => {
                     ${error.logId}`);
                         break;
                 }
-            } else {
-                setUsers(data.userData);
-                setFilteredUsersCount(data.count);
+                return;
             }
+            setUsers(data.userData);
+            setFilteredUsersCount(data.count);
+
+            const { data: currentUser, error: currentUserError } = await getCurrentUser();
+            if (currentUserError) {
+                setErrorMessage(
+                    `Error occured when fetching current user: ${currentUserError.type}, Log ID: ${currentUserError.logId}`
+                );
+                return;
+            }
+
+            setCurrentUserId(currentUser.id);
         }
         usersTableFetchAbortController.current = null;
         setIsLoading(false);
@@ -266,6 +278,7 @@ const UsersTable: React.FC = () => {
                     onDelete: userOnDelete,
                     onEdit: userOnEdit,
                     setDataPortion: setUsers,
+                    undeletableIds: currentUserId ? [currentUserId] : [],
                 }}
                 filterConfig={{
                     primaryFiltersShown: true,
