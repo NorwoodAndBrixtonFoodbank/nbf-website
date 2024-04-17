@@ -71,7 +71,6 @@ const CollectionCentresTables: React.FC = () => {
 
     useEffect(() => {
         void fetchAndDisplayCollectionCentres();
-        // This requires that the DB clients, collection_centres, and families tables have Realtime turned on
         const subscriptionChannel = supabase
             .channel("collection-centres-table-changes")
             .on(
