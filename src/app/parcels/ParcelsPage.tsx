@@ -19,7 +19,12 @@ import ActionAndStatusButtons from "@/app/parcels/ActionBar/ActionAndStatusButto
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
-import { getParcelIds, getParcelsByIds, getParcelsDataAndCount } from "./fetchParcelTableData";
+import {
+    GetParcelDataAndCountErrorType,
+    getParcelIds,
+    getParcelsByIds,
+    getParcelsDataAndCount,
+} from "./fetchParcelTableData";
 import dayjs from "dayjs";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { saveParcelStatus } from "./ActionBar/Statuses";
@@ -27,7 +32,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { CircularProgress } from "@mui/material";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { DatabaseError } from "@/app/errorClasses";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import {
@@ -229,6 +233,13 @@ async function getClientIdForSelectedParcel(parcelId: string): Promise<string> {
     return data.client_id;
 }
 
+function getParcelDataErrorMessage(errorType: GetParcelDataAndCountErrorType): string {
+    switch (errorType) {
+        case "unknownError":
+            return "Unknown error has occurred. Please reload.";
+    }
+}
+
 const parcelIdParam = "parcelId";
 
 const defaultNumberOfParcelsPerPage = 100;
@@ -370,25 +381,25 @@ const ParcelsPage: React.FC<{}> = () => {
             setErrorMessage(null);
             setIsLoading(true);
 
-            try {
-                const { data, count } = await getParcelsDataAndCount(
-                    supabase,
-                    allFilters,
-                    sortState,
-                    parcelsTableFetchAbortController.current.signal,
-                    startPoint,
-                    endPoint
-                );
-                setParcelsDataPortion(data);
-                setFilteredParcelCount(count);
-            } catch (error) {
-                if (error instanceof DatabaseError) {
-                    setErrorMessage(error.message);
-                }
-            } finally {
-                parcelsTableFetchAbortController.current = null;
-                setIsLoading(false);
+            const { data, error } = await getParcelsDataAndCount(
+                supabase,
+                allFilters,
+                sortState,
+                parcelsTableFetchAbortController.current.signal,
+                startPoint,
+                endPoint
+            );
+
+            if (error) {
+                const newErrorMessage = getParcelDataErrorMessage(error.type);
+                setErrorMessage(`${newErrorMessage} Log ID: ${error.logId}`);
+            } else {
+                setParcelsDataPortion(data.parcelTableRows);
+                setFilteredParcelCount(data.count);
             }
+
+            parcelsTableFetchAbortController.current = null;
+            setIsLoading(false);
         }
     }, [additionalFilters, endPoint, primaryFilters, sortState, startPoint]);
 

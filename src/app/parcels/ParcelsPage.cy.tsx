@@ -48,8 +48,8 @@ const sampleCongestionChargeData: CongestionChargeDetails[] = [
 
 describe("Parcels Page", () => {
     describe("Backend Processing for Table Data", () => {
-        it("Fields are set correctly", () => {
-            const result = processingDataToParcelsTableData(
+        it("Fields are set correctly", async () => {
+            const { parcelTableRows } = await processingDataToParcelsTableData(
                 sampleProcessingData,
                 sampleCongestionChargeData
             );
@@ -84,7 +84,7 @@ describe("Parcels Page", () => {
                     createdAt: new Date("2023-12-31T12:00:00+00:00"),
                 },
             ];
-            expect(result).to.deep.equal(expected);
+            expect(parcelTableRows).to.deep.equal(expected);
         });
 
         it("familyCountToFamilyCategory()", () => {

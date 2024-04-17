@@ -95,6 +95,24 @@ const getParcelProcessingData = async (
     return data;
 };
 
+type GetParcelDataAndCountResult =
+    | {
+          data: {
+              parcelTableRows: ParcelsTableRow[];
+              count: number;
+          };
+          error: null;
+      }
+    | {
+          data: null;
+          error: {
+              type: GetParcelDataAndCountErrorType;
+              logId: string;
+          };
+      };
+
+export type GetParcelDataAndCountErrorType = "unknownError";
+
 export const getParcelsDataAndCount = async (
     supabase: Supabase,
     filters: Filter<ParcelsTableRow, any[]>[],
@@ -102,7 +120,7 @@ export const getParcelsDataAndCount = async (
     abortSignal: AbortSignal,
     startIndex: number,
     endIndex: number
-): Promise<{ data: ParcelsTableRow[]; count: number }> => {
+): Promise<GetParcelDataAndCountResult> => {
     const processingData = await getParcelProcessingData(
         supabase,
         filters,
@@ -112,11 +130,33 @@ export const getParcelsDataAndCount = async (
         endIndex
     );
     const congestionCharge = await getCongestionChargeDetailsForParcels(processingData, supabase);
-    const formattedData = await processingDataToParcelsTableData(processingData, congestionCharge);
+    const { parcelTableRows, error } = await processingDataToParcelsTableData(
+        processingData,
+        congestionCharge
+    );
+
+    if (error) {
+        switch (error.type) {
+            case "invalidInputLengths":
+                return {
+                    data: null,
+                    error: {
+                        type: "unknownError",
+                        logId: error.logId,
+                    },
+                };
+        }
+    }
 
     const count = await getParcelsCount(supabase, filters, abortSignal);
 
-    return { data: formattedData, count };
+    return {
+        data: {
+            parcelTableRows,
+            count,
+        },
+        error: null,
+    };
 };
 
 const getParcelsCount = async (
@@ -190,9 +230,14 @@ export const getParcelsByIds = async (
     }
 
     const congestionCharge = await getCongestionChargeDetailsForParcels(data, supabase);
-    const formattedData = processingDataToParcelsTableData(data, congestionCharge);
+    const { parcelTableRows, error: processParcelDataError } =
+        await processingDataToParcelsTableData(data, congestionCharge);
 
-    return formattedData;
+    if (processParcelDataError) {
+        throw new Error("Failed to process parcels.", { cause: processParcelDataError });
+    }
+
+    return parcelTableRows;
 };
 
 export interface CollectionCentresOptions {

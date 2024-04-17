@@ -32,44 +32,65 @@ export interface ParcelsTableRow {
     createdAt: Date | null;
 }
 
+type ProcessParcelDataResult =
+    | {
+          parcelTableRows: ParcelsTableRow[];
+          error: null;
+      }
+    | {
+          parcelTableRows: null;
+          error: {
+              type: "invalidInputLengths";
+              logId: string;
+          };
+      };
+
 export const processingDataToParcelsTableData = async (
     processingData: ParcelProcessingData,
     congestionCharge: CongestionChargeDetails[]
-): Promise<ParcelsTableRow[]> => {
+): Promise<ProcessParcelDataResult> => {
     if (processingData.length !== congestionCharge.length) {
         const logId = await logErrorReturnLogId(
-            `Error with processing parcels table data. Invalid inputs, got length ${processingData.length} and ${congestionCharge.length}`
+            `Failed to process parcel data due to invalid input lengths, got ${processingData.length} parcels and ${congestionCharge.length} congestion charges`
         );
-        throw new Error(
-            `Invalid inputs, got length ${processingData.length} and ${congestionCharge.length}. Error ID: ${logId}`
-        );
+
+        return {
+            parcelTableRows: null,
+            error: {
+                type: "invalidInputLengths",
+                logId,
+            },
+        };
     }
 
-    return processingData.map((parcel, index) => ({
-        parcelId: parcel.parcel_id ?? "",
-        clientId: parcel.client_id ?? "",
-        fullName: parcel.client_full_name ?? "",
-        familyCategory: familyCountToFamilyCategory(parcel.family_count ?? 0),
-        addressPostcode: parcel.client_address_postcode ?? "",
-        phoneNumber: parcel.client_phone_number ?? "",
-        deliveryCollection: {
-            collectionCentreName: parcel.collection_centre_name ?? "-",
-            collectionCentreAcronym: parcel.collection_centre_acronym ?? "-",
-            congestionChargeApplies: congestionCharge[index].congestionCharge,
-        },
-        collectionDatetime: parcel.collection_datetime
-            ? new Date(parcel.collection_datetime)
-            : null,
-        packingSlot: parcel.packing_slot_name,
-        lastStatus: processLastStatus(parcel),
-        voucherNumber: parcel.voucher_number,
-        packingDate: parcel.packing_date ? new Date(parcel.packing_date) : null,
-        iconsColumn: {
-            flaggedForAttention: parcel.client_flagged_for_attention ?? false,
-            requiresFollowUpPhoneCall: parcel.client_signposting_call_required ?? false,
-        },
-        createdAt: parcel.created_at ? new Date(parcel.created_at) : null,
-    }));
+    return {
+        parcelTableRows: processingData.map((parcel, index) => ({
+            parcelId: parcel.parcel_id ?? "",
+            clientId: parcel.client_id ?? "",
+            fullName: parcel.client_full_name ?? "",
+            familyCategory: familyCountToFamilyCategory(parcel.family_count ?? 0),
+            addressPostcode: parcel.client_address_postcode ?? "",
+            phoneNumber: parcel.client_phone_number ?? "",
+            deliveryCollection: {
+                collectionCentreName: parcel.collection_centre_name ?? "-",
+                collectionCentreAcronym: parcel.collection_centre_acronym ?? "-",
+                congestionChargeApplies: congestionCharge[index].congestionCharge,
+            },
+            collectionDatetime: parcel.collection_datetime
+                ? new Date(parcel.collection_datetime)
+                : null,
+            packingSlot: parcel.packing_slot_name,
+            lastStatus: processLastStatus(parcel),
+            voucherNumber: parcel.voucher_number,
+            packingDate: parcel.packing_date ? new Date(parcel.packing_date) : null,
+            iconsColumn: {
+                flaggedForAttention: parcel.client_flagged_for_attention ?? false,
+                requiresFollowUpPhoneCall: parcel.client_signposting_call_required ?? false,
+            },
+            createdAt: parcel.created_at ? new Date(parcel.created_at) : null,
+        })),
+        error: null,
+    };
 };
 
 export type PackingTimeLabel = "AM" | "PM";
