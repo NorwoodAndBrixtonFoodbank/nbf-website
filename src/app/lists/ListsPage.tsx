@@ -46,8 +46,9 @@ const ListsPage: React.FC<{}> = () => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     function handleSetError(error: string | null): void {
-        error ? setErrorMessage(error) : setErrorMessage(null);
+        setErrorMessage(error);
     }
+
     useEffect(() => {
         (async () => {
             setIsLoading(true);
@@ -59,11 +60,9 @@ const ListsPage: React.FC<{}> = () => {
     }, []);
 
     useEffect(() => {
-        // This requires that the DB table has Realtime turned on
         const subscriptionChannel = supabase
             .channel("lists-table-changes")
             .on("postgres_changes", { event: "*", schema: "public", table: "lists" }, async () => {
-                setErrorMessage(null);
                 try {
                     const listData = await fetchListData();
                     setListData(formatListData(listData));
