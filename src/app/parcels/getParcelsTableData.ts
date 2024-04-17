@@ -1,7 +1,7 @@
-import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fetchParcelTableData";
+import { CongestionChargeDetails } from "@/app/parcels/fetchParcelTableData";
 import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { Schema, ViewSchema } from "@/databaseUtils";
+import { ParcelsPlusRow, Schema, ViewSchema } from "@/databaseUtils";
 
 export interface ParcelsTableRow {
     parcelId: Schema["parcels"]["primary_key"];
@@ -46,7 +46,7 @@ type ProcessParcelDataResult =
       };
 
 export const processingDataToParcelsTableData = async (
-    processingData: ParcelProcessingData,
+    processingData: ParcelsPlusRow[],
     congestionCharge: CongestionChargeDetails[]
 ): Promise<ProcessParcelDataResult> => {
     if (processingData.length !== congestionCharge.length) {

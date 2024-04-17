@@ -1,4 +1,4 @@
-import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fetchParcelTableData";
+import { CongestionChargeDetails } from "@/app/parcels/fetchParcelTableData";
 import {
     ParcelsTableRow,
     datetimeToPackingTimeLabel,
@@ -13,8 +13,9 @@ import {
     formatHouseholdFromFamilyDetails,
 } from "@/app/clients/getExpandedClientDetails";
 import { formatDatetimeAsDate } from "@/common/format";
+import { ParcelsPlusRow } from "@/databaseUtils";
 
-const sampleProcessingData: ParcelProcessingData = [
+const sampleProcessingData: ParcelsPlusRow[] = [
     {
         parcel_id: "PRIMARY_KEY",
         collection_centre_name: "COLLECTION_CENTRE",

@@ -233,10 +233,14 @@ async function getClientIdForSelectedParcel(parcelId: string): Promise<string> {
     return data.client_id;
 }
 
-function getParcelDataErrorMessage(errorType: GetParcelDataAndCountErrorType): string {
+function getParcelDataErrorMessage(errorType: GetParcelDataAndCountErrorType): string | null {
     switch (errorType) {
         case "unknownError":
             return "Unknown error has occurred. Please reload.";
+        case "failedToFetchParcels":
+            return "Failed to fetch parcels. Please reload.";
+        case "abortedFetch":
+            return null;
     }
 }
 
@@ -392,7 +396,9 @@ const ParcelsPage: React.FC<{}> = () => {
 
             if (error) {
                 const newErrorMessage = getParcelDataErrorMessage(error.type);
-                setErrorMessage(`${newErrorMessage} Log ID: ${error.logId}`);
+                if (newErrorMessage !== null) {
+                    setErrorMessage(`${newErrorMessage} Log ID: ${error.logId}`);
+                }
             } else {
                 setParcelsDataPortion(data.parcelTableRows);
                 setFilteredParcelCount(data.count);

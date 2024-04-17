@@ -4,6 +4,7 @@ import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsT
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
+import { ParcelsPlusRow } from "@/databaseUtils";
 
 export type CongestionChargeDetails = {
     postcode: string;
@@ -11,7 +12,7 @@ export type CongestionChargeDetails = {
 };
 
 export const getCongestionChargeDetailsForParcels = async (
-    processingData: ParcelProcessingData,
+    processingData: ParcelsPlusRow[],
     supabase: Supabase
 ): Promise<CongestionChargeDetails[]> => {
     const postcodes = [];
@@ -32,8 +33,6 @@ export const getCongestionChargeDetailsForParcels = async (
     }
     return response.data;
 };
-
-export type ParcelProcessingData = Awaited<ReturnType<typeof getParcelProcessingData>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getParcelsQuery = (
@@ -61,12 +60,26 @@ const getParcelsQuery = (
             .order("client_full_name");
     }
 
-    query.order("parcel_id");
+    query = query.order("parcel_id");
 
     return query;
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+type GetDbParcelDataResult =
+    | {
+          parcels: ParcelsPlusRow[];
+          error: null;
+      }
+    | {
+          parcels: null;
+          error: {
+              type: GetDbParcelDataErrorType;
+              logId: string;
+          };
+      };
+
+type GetDbParcelDataErrorType = "abortedFetch" | "failedToFetchParcelTable";
+
 const getParcelProcessingData = async (
     supabase: Supabase,
     filters: Filter<ParcelsTableRow, any>[],
@@ -74,7 +87,7 @@ const getParcelProcessingData = async (
     abortSignal: AbortSignal,
     startIndex: number,
     endIndex: number
-) => {
+): Promise<GetDbParcelDataResult> => {
     let query = getParcelsQuery(supabase, filters, sortState);
     query = query.range(startIndex, endIndex);
     query = query.abortSignal(abortSignal);
@@ -86,13 +99,19 @@ const getParcelProcessingData = async (
             ? await logInfoReturnLogId("Aborted fetch: parcel table", error)
             : await logErrorReturnLogId("Error with fetch: parcel table", error);
 
-        if (abortSignal.aborted) {
-            throw new AbortError("fetch", "parcel table", "logId");
-        }
-        throw new DatabaseError("fetch", "parcel table", logId);
+        return {
+            parcels: null,
+            error: {
+                type: abortSignal.aborted ? "abortedFetch" : "failedToFetchParcelTable",
+                logId,
+            },
+        };
     }
 
-    return data;
+    return {
+        parcels: data,
+        error: null,
+    };
 };
 
 type GetParcelDataAndCountResult =
@@ -111,7 +130,10 @@ type GetParcelDataAndCountResult =
           };
       };
 
-export type GetParcelDataAndCountErrorType = "unknownError";
+export type GetParcelDataAndCountErrorType =
+    | "unknownError"
+    | "failedToFetchParcels"
+    | "abortedFetch";
 
 export const getParcelsDataAndCount = async (
     supabase: Supabase,
@@ -121,7 +143,7 @@ export const getParcelsDataAndCount = async (
     startIndex: number,
     endIndex: number
 ): Promise<GetParcelDataAndCountResult> => {
-    const processingData = await getParcelProcessingData(
+    const { parcels, error: getDbParcelsError } = await getParcelProcessingData(
         supabase,
         filters,
         sortState,
@@ -129,9 +151,30 @@ export const getParcelsDataAndCount = async (
         startIndex,
         endIndex
     );
-    const congestionCharge = await getCongestionChargeDetailsForParcels(processingData, supabase);
+
+    if (getDbParcelsError) {
+        let errorType: GetParcelDataAndCountErrorType;
+        switch (getDbParcelsError.type) {
+            case "abortedFetch":
+                errorType = "abortedFetch";
+                break;
+            case "failedToFetchParcelTable":
+                errorType = "failedToFetchParcels";
+                break;
+        }
+
+        return {
+            data: null,
+            error: {
+                type: errorType,
+                logId: getDbParcelsError.logId,
+            },
+        };
+    }
+
+    const congestionCharge = await getCongestionChargeDetailsForParcels(parcels, supabase);
     const { parcelTableRows, error } = await processingDataToParcelsTableData(
-        processingData,
+        parcels,
         congestionCharge
     );
 

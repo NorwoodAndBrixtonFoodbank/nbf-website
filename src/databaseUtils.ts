@@ -27,3 +27,5 @@ export type ViewSchema = {
 export type TableNames = keyof Tables;
 
 export type ViewNames = keyof Views;
+
+export type ParcelsPlusRow = Views["parcels_plus"]["Row"];
