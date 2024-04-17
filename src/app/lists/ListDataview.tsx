@@ -43,8 +43,8 @@ interface ListDataViewProps {
     listOfIngredients: ListRow[];
     setListOfIngredients: React.Dispatch<React.SetStateAction<ListRow[]>>;
     comment: string;
-    error: string | null;
-    handleSetError: (error: string | null) => void;
+    errorMessage: string | null;
+    setErrorMessage: (error: string | null) => void;
 }
 
 export const listsHeaderKeysAndLabels = [
@@ -125,8 +125,8 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     listOfIngredients,
     setListOfIngredients,
     comment,
-    error,
-    handleSetError,
+    errorMessage,
+    setErrorMessage,
 }) => {
     const [modal, setModal] = useState<EditModalState>();
     const [toDelete, setToDelete] = useState<number | null>(null);
@@ -186,7 +186,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             const logId = await logErrorReturnLogId("Error with upsert: List row item order", {
                 error: error,
             });
-            handleSetError(`Failed to swap rows. Log ID: ${logId}`);
+            setErrorMessage(`Failed to swap rows. Log ID: ${logId}`);
             return;
         }
 
@@ -225,7 +225,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                     logId,
                     listId: itemToDelete.primaryKey,
                 });
-                handleSetError(error.message + `Error ID: ${logId}`);
+                setErrorMessage(error.message + `Error ID: ${logId}`);
                 return;
             }
 
@@ -261,9 +261,9 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                 }}
             />
 
-            <Snackbar message={error} onClose={() => handleSetError(null)} open={error !== null}>
+            <Snackbar message={errorMessage} onClose={() => setErrorMessage(null)} open={errorMessage !== null}>
                 <SnackBarDiv>
-                    <Alert severity="error">{error}</Alert>
+                    <Alert severity="error">{errorMessage}</Alert>
                 </SnackBarDiv>
             </Snackbar>
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />

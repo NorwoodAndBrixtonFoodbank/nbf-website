@@ -92,8 +92,8 @@ const ListsPage: React.FC<{}> = () => {
             listOfIngredients={listData}
             setListOfIngredients={setListData}
             comment={comment}
-            error={errorMessage}
-            handleSetError={handleSetError}
+            errorMessage={errorMessage}
+            setErrorMessage={handleSetError}
         />
     );
 };
