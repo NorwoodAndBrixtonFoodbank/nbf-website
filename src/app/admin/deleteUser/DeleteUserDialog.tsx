@@ -39,9 +39,21 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
         const { error: deleteUserError } = await adminDeleteUser(props.userToDelete.id);
 
         if (deleteUserError) {
+            let errorMessage = "";
+            switch (deleteUserError.type) {
+                case "failedToAuthenticateAsAdmin":
+                    errorMessage = "Unable to authenticate current user";
+                    break;
+                case "failedToFetchUserIdFromProfiles":
+                    errorMessage = "Unable to retrieve user id";
+                    break;
+                case "failedToDeleteUser":
+                    errorMessage = "Unable to delete user";
+                    break;
+            }
             props.setAlertOptions({
                 success: false,
-                message: <>{`${deleteUserError.type}. Log ID: ${deleteUserError.logId}`}</>,
+                message: <>{`${errorMessage}. Log ID: ${deleteUserError.logId}`}</>,
             });
         } else {
             props.setAlertOptions({

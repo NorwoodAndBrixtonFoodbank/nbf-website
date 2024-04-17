@@ -7,9 +7,9 @@ import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { getSupabaseServerComponentClient } from "@/supabaseServer";
 
 type DeleteUserErrorType =
-    | "Failed to authenticate as admin"
-    | "Failed to get user id from profiles"
-    | "Failed to delete user";
+    | "failedToAuthenticateAsAdmin"
+    | "failedToFetchUserIdFromProfiles"
+    | "failedToDeleteUser";
 
 type DeleteUserError =
     | {
@@ -28,7 +28,7 @@ export async function adminDeleteUser(userId: string): Promise<DeleteUserError> 
             error: failureReason,
         });
         return {
-            error: { type: "Failed to authenticate as admin", logId },
+            error: { type: "failedToAuthenticateAsAdmin", logId },
         };
     }
 
@@ -45,7 +45,7 @@ export async function adminDeleteUser(userId: string): Promise<DeleteUserError> 
         });
         return {
             error: {
-                type: "Failed to get user id from profiles",
+                type: "failedToFetchUserIdFromProfiles",
                 logId,
             },
         };
@@ -69,7 +69,7 @@ export async function adminDeleteUser(userId: string): Promise<DeleteUserError> 
         });
         void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
         return {
-            error: { type: "Failed to delete user", logId },
+            error: { type: "failedToDeleteUser", logId },
         };
     }
 
