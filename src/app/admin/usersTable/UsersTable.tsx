@@ -164,8 +164,11 @@ const UsersTable: React.FC = () => {
 
         const { data: userRoleFilter, error } = await buildUserRoleFilter();
         if (error) {
-            setErrorMessage(`Error occurred: ${error.type}, Log ID: 
-                    ${error.logId}`);
+            switch (error.type) {
+                case "failedToFetchUserRoleFilterOptions":
+                    setErrorMessage(`Failed to retrieve user role filters. Log ID: ${error.logId}`);
+                    break;
+            }
         } else {
             filters.push(userRoleFilter);
         }
@@ -213,8 +216,11 @@ const UsersTable: React.FC = () => {
                     case "abortedFetchingProfilesTableCount":
                         return;
                     case "failedToFetchProfilesTable":
+                        setErrorMessage(`Failed to retrieve user profiles. Log ID: 
+                    ${error.logId}`);
+                        break;
                     case "failedToFetchProfilesTableCount":
-                        setErrorMessage(`Error occurred: ${error.type}, Log ID: 
+                        setErrorMessage(`Failed to retrieve number of user profiles. Log ID: 
                     ${error.logId}`);
                         break;
                 }
