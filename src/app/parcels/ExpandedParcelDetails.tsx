@@ -7,7 +7,7 @@ import getExpandedParcelDetails, {
     FetchExpandedParcelDetailsError,
 } from "@/app/parcels/getExpandedParcelDetails";
 import EventTable, { EventTableRow } from "./EventTable";
-import { ErrorLargeText } from "@/app/errorStylingandMessages";
+import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 
 interface Props {
     parcelId: string | null;
@@ -55,7 +55,7 @@ const ExpandedParcelDetailsView = ({ parcelId }: Props): ReactElement => {
 
     return (
         <>
-            {errorMessage && <ErrorLargeText>{errorMessage}</ErrorLargeText>}
+            {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
 
             {parcelDetails && (
                 <>
