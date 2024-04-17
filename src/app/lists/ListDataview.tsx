@@ -225,7 +225,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                     logId,
                     listId: itemToDelete.primaryKey,
                 });
-                setErrorMessage(error.message + `Error ID: ${logId}`);
+                setErrorMessage(`Failed to delete a list item. Log ID: ${logId}`);
                 return;
             }
 
@@ -261,7 +261,11 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                 }}
             />
 
-            <Snackbar message={errorMessage} onClose={() => setErrorMessage(null)} open={errorMessage !== null}>
+            <Snackbar
+                message={errorMessage}
+                onClose={() => setErrorMessage(null)}
+                open={errorMessage !== null}
+            >
                 <SnackBarDiv>
                     <Alert severity="error">{errorMessage}</Alert>
                 </SnackBarDiv>
