@@ -230,8 +230,8 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             }
 
             await sendAuditLog({ ...auditLog, wasSuccess: true });
-            setToDelete(null);
             setToDeleteModalOpen(false);
+            setToDelete(null);
         }
     };
 
