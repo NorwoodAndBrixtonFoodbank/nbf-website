@@ -6,7 +6,7 @@ import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { getSupabaseServerComponentClient } from "@/supabaseServer";
 
-type DeleteUserErrorType =
+export type DeleteUserErrorType =
     | "failedToAuthenticateAsAdmin"
     | "failedToFetchUserIdFromProfiles"
     | "failedToDeleteUser";

@@ -7,7 +7,7 @@ import Modal from "@/components/Modal/Modal";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import { SetAlertOptions } from "@/app/admin/common/SuccessFailureAlert";
 import { logInfoReturnLogId } from "@/logger/logger";
-import { adminDeleteUser } from "@/server/adminDeleteUser";
+import { adminDeleteUser, DeleteUserErrorType } from "@/server/adminDeleteUser";
 
 const DangerDialog = styled(Modal)`
     .MuiPaper-root > div:first-child {
@@ -26,7 +26,7 @@ interface Props {
     setAlertOptions: SetAlertOptions;
 }
 
-const getErrorMessage = (errorType: string): string | null => {
+const getErrorMessage = (errorType: DeleteUserErrorType): string => {
     switch (errorType) {
         case "failedToAuthenticateAsAdmin":
             return "Unable to authenticate current user";
@@ -34,8 +34,6 @@ const getErrorMessage = (errorType: string): string | null => {
             return "Unable to retrieve user id";
         case "failedToDeleteUser":
             return "Unable to delete user";
-        default:
-            return "Unknown Error";
     }
 };
 
