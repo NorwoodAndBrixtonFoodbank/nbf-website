@@ -11,7 +11,7 @@ type DeleteUserErrorType =
     | "failedToFetchUserIdFromProfiles"
     | "failedToDeleteUser";
 
-type DeleteUserError =
+type DeleteUserResult =
     | {
           error: {
               type: DeleteUserErrorType;
@@ -20,7 +20,7 @@ type DeleteUserError =
       }
     | { error: null };
 
-export async function adminDeleteUser(userId: string): Promise<DeleteUserError> {
+export async function adminDeleteUser(userId: string): Promise<DeleteUserResult> {
     const { isSuccess, failureReason } = await authenticateAsAdmin();
 
     if (!isSuccess) {
