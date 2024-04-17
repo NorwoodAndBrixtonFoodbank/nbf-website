@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 import React from "react";
-import EditParcelForm from "../EditParcelForm";
+import EditParcelForm from "../editParcelForm";
 
 interface EditParcelsParameters {
     params: { id: string };
