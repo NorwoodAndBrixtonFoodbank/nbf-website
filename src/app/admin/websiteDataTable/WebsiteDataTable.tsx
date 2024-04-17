@@ -40,6 +40,7 @@ const WebsiteDataTable: React.FC = () => {
     const dataGridRef = useGridApiRef();
 
     const fetchAndSetWebsiteData = useCallback(async () => {
+        setIsLoading(true);
         setErrorMessage(null);
         const { data: websiteData, error: websiteDataError } = await fetchWebsiteData();
         if (websiteDataError) {
@@ -52,7 +53,6 @@ const WebsiteDataTable: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        setIsLoading(true);
         void fetchAndSetWebsiteData();
     }, [fetchAndSetWebsiteData]);
 
