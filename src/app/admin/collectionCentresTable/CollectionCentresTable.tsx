@@ -70,7 +70,6 @@ const CollectionCentresTables: React.FC = () => {
     }, [fetchAndDisplayCollectionCentres]);
 
     useEffect(() => {
-        void fetchAndDisplayCollectionCentres();
         const subscriptionChannel = supabase
             .channel("collection-centres-table-changes")
             .on(
