@@ -5,7 +5,7 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 type DbWebsiteData = Tables<"website_data">;
-type FetchWebsiteDataErrors = "Failed to fetch website data";
+type FetchWebsiteDataErrors = "failedToFetchWebsiteData";
 type FetchWebsiteDataErrorReturn =
     | {
           data: null;
@@ -15,7 +15,7 @@ type FetchWebsiteDataErrorReturn =
           data: WebsiteDataRow[];
           error: null;
       };
-type UpdateWebsiteDataErrors = "Failed to update website data";
+type UpdateWebsiteDataErrors = "failedToUpdateWebsiteData";
 type UpdateWebsiteDataErrorReturn =
     | {
           error: { type: UpdateWebsiteDataErrors; logId: string };
@@ -33,7 +33,7 @@ export const fetchWebsiteData = async (): Promise<FetchWebsiteDataErrorReturn> =
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: website data", error);
-        return { error: { type: "Failed to fetch website data", logId }, data: null };
+        return { error: { type: "failedToFetchWebsiteData", logId }, data: null };
     }
 
     const websiteData = data.map(
@@ -56,7 +56,7 @@ export const updateDbWebsiteData = async (
         value: row.value,
     };
 
-    const { data: updateWebsiteData, error } = await supabase
+    const { data: updatedWebsiteData, error } = await supabase
         .from("website_data")
         .update(processedData)
         .eq("name", processedData.name)
@@ -72,8 +72,8 @@ export const updateDbWebsiteData = async (
     if (error) {
         const logId = await logErrorReturnLogId("Error with update: website data", error);
         void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
-        return { error: { type: "Failed to update website data", logId } };
+        return { error: { type: "failedToUpdateWebsiteData", logId } };
     }
-    void sendAuditLog({ ...auditLog, wasSuccess: true, content: updateWebsiteData });
+    void sendAuditLog({ ...auditLog, wasSuccess: true, content: updatedWebsiteData });
     return { error: null };
 };

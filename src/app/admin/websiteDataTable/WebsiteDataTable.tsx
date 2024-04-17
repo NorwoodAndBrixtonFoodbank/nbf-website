@@ -45,7 +45,13 @@ const WebsiteDataTable: React.FC = () => {
         const { data: websiteData, error: websiteDataError } = await fetchWebsiteData();
         if (websiteDataError) {
             setRows([]);
-            setErrorMessage(`${websiteDataError.type}. Log ID: ${websiteDataError.logId}`);
+            switch (websiteDataError.type) {
+                case "failedToFetchWebsiteData":
+                    setErrorMessage(
+                        `Failed to retrieve website data. Log ID ${websiteDataError.logId}`
+                    );
+                    break;
+            }
         } else {
             setRows(websiteData);
         }
@@ -88,7 +94,11 @@ const WebsiteDataTable: React.FC = () => {
         const { error } = await updateDbWebsiteData(newRow);
 
         if (error) {
-            setErrorMessage(`${error.type}. Log ID: ${error.logId}`);
+            switch (error.type) {
+                case "failedToUpdateWebsiteData":
+                    setErrorMessage(`Failed to update website data. Log ID ${error.logId}`);
+                    break;
+            }
         }
 
         setIsLoading(false);
