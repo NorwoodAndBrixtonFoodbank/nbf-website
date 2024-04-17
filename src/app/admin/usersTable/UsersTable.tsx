@@ -247,7 +247,7 @@ const UsersTable: React.FC = () => {
         return () => {
             supabase.removeChannel(subscriptionChannel);
         };
-    }, [startIndex, endIndex, primaryFilters, sortState]);
+    }, [fetchAndDisplayUserData]);
 
     return (
         <>
