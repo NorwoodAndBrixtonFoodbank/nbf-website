@@ -26,8 +26,8 @@ const DeleteParcelModal: React.FC<ActionModalProps> = (props) => {
         }
     };
 
-    const onDeleteParcels = (): void => {
-        updateParcelsStatuses();
+    const onDeleteParcels = async (): Promise<void> => {
+        await updateParcelsStatuses();
         setActionCompleted(true);
     };
 

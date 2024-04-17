@@ -50,14 +50,14 @@ export interface SaveParcelStatusError {
     logId: string;
 }
 
-export type SaveParcelStatusReturnType = { error: null | SaveParcelStatusError };
+export type SaveParcelStatusResult = { error: null | SaveParcelStatusError };
 
 export const saveParcelStatus = async (
     parcelIds: string[],
     statusName: StatusType,
     statusEventData?: string | null,
     date?: Dayjs | null
-): Promise<SaveParcelStatusReturnType> => {
+): Promise<SaveParcelStatusResult> => {
     const timestamp = (date ?? dayjs()).set("second", 0).toISOString();
     const eventsToInsert = parcelIds
         .map((parcelId: string) => {
@@ -84,30 +84,29 @@ export const saveParcelStatus = async (
     if (error || !data) {
         const logId = await logErrorReturnLogId("Error with insert: Status event", error);
         auditLogs.forEach(
-            async (auditLog) => await sendAuditLog({ ...auditLog, wasSuccess: false, logId })
+            (auditLog) => void sendAuditLog({ ...auditLog, wasSuccess: false, logId })
         );
         return { error: { type: "eventInsertionFailed", logId: logId } };
     }
 
-    auditLogs.forEach(
-        async (auditLog) =>
-            await sendAuditLog({
-                ...auditLog,
-                eventId: data.find((event) => auditLog.parcelId === event.parcel_id)?.event_id,
-                wasSuccess: true,
-            })
+    auditLogs.forEach((auditLog) =>
+        sendAuditLog({
+            ...auditLog,
+            eventId: data.find((event) => auditLog.parcelId === event.parcel_id)?.event_id,
+            wasSuccess: true,
+        })
     );
 
     return { error: null };
 };
 
 interface Props {
-    fetchParcelsByIds: () => Promise<ParcelsTableRow[]>;
+    fetchSelectedParcels: () => Promise<ParcelsTableRow[]>;
     statusAnchorElement: HTMLElement | null;
     setStatusAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
     willSaveParcelStatus: () => void;
-    hasSavedParcelStatus: () => void;
+    hasAttemptedToSaveParcelStatus: () => void;
 }
 
 const getStatusErrorMessage = (statusError: SaveParcelStatusError): string => {
@@ -121,12 +120,12 @@ export const getStatusErrorMessageWithLogId = (statusError: SaveParcelStatusErro
     `${getStatusErrorMessage(statusError)} Log ID: ${statusError.logId}`;
 
 const Statuses: React.FC<Props> = ({
-    fetchParcelsByIds,
+    fetchSelectedParcels,
     statusAnchorElement,
     setStatusAnchorElement,
     setModalError,
     willSaveParcelStatus,
-    hasSavedParcelStatus,
+    hasAttemptedToSaveParcelStatus,
 }) => {
     const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
     const [selectedStatus, setSelectedStatus] = useState<StatusType | null>(null);
@@ -136,24 +135,29 @@ const Statuses: React.FC<Props> = ({
     const submitStatus = async (date: Dayjs): Promise<void> => {
         willSaveParcelStatus();
         setServerErrorMessage(null);
+        if (selectedStatus === null) {
+            setServerErrorMessage("Chosen status was not found.");
+            hasAttemptedToSaveParcelStatus();
+            return;
+        }
         const { error } = await saveParcelStatus(
             selectedParcels.map((parcel: ParcelsTableRow) => {
                 return parcel.parcelId;
             }),
-            selectedStatus!,
+            selectedStatus,
             null,
             date
         );
         if (error) {
             setServerErrorMessage(`${getStatusErrorMessage(error)} Log ID: ${error.logId}`);
         }
-        hasSavedParcelStatus();
+        hasAttemptedToSaveParcelStatus();
     };
 
     const onMenuItemClick = (status: StatusType): (() => void) => {
         return async () => {
             try {
-                const fetchedParcels = await fetchParcelsByIds();
+                const fetchedParcels = await fetchSelectedParcels();
                 setSelectedParcels(fetchedParcels);
                 setServerErrorMessage(null);
                 if (fetchedParcels.length > 0) {

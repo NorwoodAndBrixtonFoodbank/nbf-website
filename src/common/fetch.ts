@@ -61,19 +61,19 @@ export const fetchParcel = async (
                 is_shown
             )`
         )
-        .eq("primary_key", parcelID);
+        .eq("primary_key", parcelID)
+        .single();
     if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: Parcel", error);
+        const logId = await logErrorReturnLogId("Error with fetch: Parcel", { error });
         return { data: null, error: { type: "failedToFetchParcel", logId: logId } };
     }
-    if (data.length !== 1) {
-        const errorMessage = `${
-            data.length === 0 ? "No" : "Multiple"
-        } records match this parcel ID.`;
-        const logId = await logWarningReturnLogId(`${errorMessage} ${parcelID}`);
+    if (!data) {
+        const logId = await logWarningReturnLogId(
+            `Error with fetch: Parcel. No parcel records match this parcel ID: ${parcelID}`
+        );
         return { data: null, error: { type: "noMatchingParcels", logId: logId } };
     }
-    return { data: data[0], error: null };
+    return { data: data, error: null };
 };
 
 export type CollectionCentresLabelsAndValues = [
@@ -142,22 +142,22 @@ export const fetchClient = async (
     primaryKey: string,
     supabase: Supabase
 ): Promise<FetchClientResponse> => {
-    const { data, error } = await supabase.from("clients").select().eq("primary_key", primaryKey);
+    const { data, error } = await supabase
+        .from("clients")
+        .select()
+        .eq("primary_key", primaryKey)
+        .single();
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Client data", error);
         return { data: null, error: { type: "clientFetchFailed", logId: logId } };
     }
-    if (data.length !== 1) {
-        const errorMessage = `${
-            data.length === 0 ? "No" : "Multiple"
-        } records match this client ID.`;
-
+    if (!data) {
         const logId = await logErrorReturnLogId(
-            "Error with client ID" + `${errorMessage} ${primaryKey}`
+            `Error with fetch: Client data. No client records match this client ID: ${primaryKey}`
         );
         return { data: null, error: { type: "noMatchingClients", logId: logId } };
     }
-    return { data: data[0], error: null };
+    return { data: data, error: null };
 };
 
 type FetchFamilyResponse =

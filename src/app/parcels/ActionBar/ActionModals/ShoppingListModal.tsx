@@ -49,7 +49,7 @@ const ShoppingListsConfirmation: React.FC<ShoppingListsConfirmationProps> = ({
 };
 
 const getPdfErrorMessage = (error: ShoppingListPdfError): string => {
-    let errorMessage = "";
+    let errorMessage: string;
     switch (error.type) {
         case "clientFetchFailed":
             errorMessage = "Failed to fetch client data for the selected parcel(s).";
@@ -94,8 +94,8 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
         setServerErrorMessage(null);
     };
 
-    const onPdfCreationCompleted = (): void => {
-        updateParcelsStatuses();
+    const onPdfCreationCompleted = async (): Promise<void> => {
+        await updateParcelsStatuses();
         setActionCompleted(true);
         void sendAuditLog({
             action: "create shopping list pdf",

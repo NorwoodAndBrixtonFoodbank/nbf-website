@@ -22,8 +22,8 @@ const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
         setServerErrorMessage(null);
     };
 
-    const onDoAction = (): void => {
-        updateParcelsStatuses();
+    const onDoAction = async (): Promise<void> => {
+        await updateParcelsStatuses();
         setActionCompleted(true);
     };
     return (

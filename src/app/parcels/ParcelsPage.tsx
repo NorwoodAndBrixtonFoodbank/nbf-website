@@ -23,7 +23,7 @@ import supabase from "@/supabaseClient";
 import { getParcelIds, getParcelsByIds, getParcelsDataAndCount } from "./fetchParcelTableData";
 import dayjs from "dayjs";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { StatusType, saveParcelStatus, SaveParcelStatusReturnType } from "./ActionBar/Statuses";
+import { StatusType, saveParcelStatus, SaveParcelStatusResult } from "./ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { CircularProgress } from "@mui/material";
@@ -531,7 +531,7 @@ const ParcelsPage: React.FC<{}> = () => {
         parcels: ParcelsTableRow[],
         newStatus: StatusType,
         statusEventData?: string
-    ): Promise<SaveParcelStatusReturnType> => {
+    ): Promise<SaveParcelStatusResult> => {
         setIsLoading(true);
         const { error } = await saveParcelStatus(
             parcels.map((parcel) => parcel.parcelId),
@@ -544,15 +544,16 @@ const ParcelsPage: React.FC<{}> = () => {
     };
 
     const getCheckedParcelsData = async (): Promise<ParcelsTableRow[]> => {
-        if (checkedParcelIds.length) {
-            return await getParcelsByIds(
-                supabase,
-                primaryFilters.concat(additionalFilters),
-                sortState,
-                checkedParcelIds
-            );
+        if (checkedParcelIds.length === 0) {
+            return [];
         }
-        return [];
+
+        return await getParcelsByIds(
+            supabase,
+            primaryFilters.concat(additionalFilters),
+            sortState,
+            checkedParcelIds
+        );
     };
 
     return (
@@ -562,7 +563,7 @@ const ParcelsPage: React.FC<{}> = () => {
                     {selectedParcelMessage && <span>{selectedParcelMessage}</span>}
 
                     <ActionAndStatusBar
-                        fetchParcelsByIds={getCheckedParcelsData}
+                        fetchSelectedParcels={getCheckedParcelsData}
                         updateParcelStatuses={updateParcelStatuses}
                         willSaveParcelStatus={() => setIsLoading(true)}
                         hasSavedParcelStatus={() => setIsLoading(false)}

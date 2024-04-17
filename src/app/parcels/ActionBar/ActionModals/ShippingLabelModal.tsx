@@ -33,7 +33,7 @@ const ShippingLabelsInput: React.FC<ShippingLabelsInputProps> = ({ onLabelQuanti
 };
 
 const getPdfErrorMessage = (error: ShippingLabelError): string => {
-    let errorMessage = "";
+    let errorMessage: string;
     switch (error.type) {
         case "failedToFetchParcel":
             errorMessage = "Failed to fetch selected parcel data.";
@@ -82,8 +82,8 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
         setServerErrorMessage(null);
     };
 
-    const onPdfCreationCompleted = (): void => {
-        updateParcelsStatuses(labelQuantity);
+    const onPdfCreationCompleted = async (): Promise<void> => {
+        await updateParcelsStatuses(labelQuantity);
         setActionCompleted(true);
         void sendAuditLog({
             action: "create shipping label pdf",

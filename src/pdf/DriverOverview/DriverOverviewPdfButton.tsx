@@ -58,16 +58,18 @@ const getClientById = async (clientId: string): Promise<ClientByIdResponse> => {
         .eq("primary_key", clientId)
         .single();
     if (error) {
-        const logId = await logErrorReturnLogId(
-            `Error with fetch: Client with id ${clientId}`,
-            error
-        );
+        const logId = await logErrorReturnLogId(`Error with fetch: Client with id ${clientId}`, {
+            error,
+        });
         return { data: null, error: { type: "clientFetchFailed", logId: logId } };
     }
     return { data: data, error: null };
 };
 
-const compare = (first: DriverOverviewTableData, second: DriverOverviewTableData): number => {
+const compareDriverOverviewTableData = (
+    first: DriverOverviewTableData,
+    second: DriverOverviewTableData
+): number => {
     if (first.name < second.name) {
         return -1;
     }
@@ -114,7 +116,7 @@ const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse>
             instructions: client?.delivery_instructions ?? "",
         });
     }
-    clientInformation.sort(compare);
+    clientInformation.sort(compareDriverOverviewTableData);
     return { data: clientInformation, error: null };
 };
 
@@ -156,15 +158,14 @@ const DriverOverviewPdfButton = ({
             .eq("name", "driver_overview_message")
             .single();
         if (driverMessageError) {
-            const logId = await logErrorReturnLogId(
-                "Error with fetch: Driver overview message",
-                driverMessageError
-            );
+            const logId = await logErrorReturnLogId("Error with fetch: Driver overview message", {
+                driverMessageError,
+            });
             return { data: null, error: { type: "driverMessageFetchFailed", logId: logId } };
         }
         return {
             data: {
-                data: {
+                pdfData: {
                     driverName: driverName,
                     date: date.toDate(),
                     tableData: driverPdfData,

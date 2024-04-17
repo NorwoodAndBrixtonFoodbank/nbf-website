@@ -55,7 +55,7 @@ const DriverOverviewInput: React.FC<DriverOverviewInputProps> = ({
 };
 
 const getPdfErrorMessage = (error: DriverOverviewError): string => {
-    let errorMessage = "";
+    let errorMessage: string;
     switch (error.type) {
         case "parcelFetchFailed":
             errorMessage = "Failed to fetch parcel data.";
@@ -101,8 +101,8 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
         setServerErrorMessage(null);
     };
 
-    const onPdfCreationCompleted = (): void => {
-        updateParcelsStatuses();
+    const onPdfCreationCompleted = async (): Promise<void> => {
+        await updateParcelsStatuses();
         setActionCompleted(true);
         void sendAuditLog({
             action: "create driver overview pdf",

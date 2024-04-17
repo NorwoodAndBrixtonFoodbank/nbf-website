@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Centerer, Heading, Paragraph, ActionModalProps, ModalInner } from "./common";
 import { SelectChangeEvent } from "@mui/material";
-import dayjs, { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
@@ -86,7 +86,7 @@ const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
 };
 
 const getPdfErrorMessage = (error: DayOverviewPdfError): string => {
-    let errorMessage = "";
+    let errorMessage: string;
     switch (error.type) {
         case "collectionCentreFetchFailed":
             errorMessage = "Failed to fetch collection centre.";
@@ -113,7 +113,7 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
         }
     };
 
-    const [date, setDate] = useState(dayjs());
+    const [date, setDate] = useState<Date>(new Date());
     const [collectionCentre, setCollectionCentre] = useState<string | null>(null);
     const [isDateValid, setIsDateValid] = useState(false);
 
@@ -124,18 +124,18 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
     };
 
     const onDateChange = (newDate: Dayjs | null): void => {
-        setDate(newDate!);
+        setDate(newDate!.toDate());
     };
 
     const onClose = (): void => {
         props.onClose();
-        setDate(dayjs());
+        setDate(new Date());
         setCollectionCentre("");
         setServerErrorMessage(null);
     };
 
-    const onPdfCreationCompleted = (): void => {
-        updateParcelsStatuses();
+    const onPdfCreationCompleted = async (): Promise<void> => {
+        await updateParcelsStatuses();
         setActionCompleted(true);
         void sendAuditLog({
             action: "create day overview pdf",

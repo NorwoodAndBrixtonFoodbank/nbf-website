@@ -6,12 +6,11 @@ import { Schema } from "@/databaseUtils";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import DayOverviewPdf from "./DayOverviewPdf";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { Dayjs } from "dayjs";
 import { PdfDataFetchResponse } from "../common";
 
 interface Props {
     text: string;
-    date: Dayjs;
+    date: Date;
     collectionCentreKey: string | null;
     onPdfCreationCompleted: () => void;
     onPdfCreationFailed: (error: DayOverviewPdfError) => void;
@@ -88,28 +87,26 @@ const getParcelsOfSpecificDateAndLocation = async (
     return { data: data, error: null };
 };
 
-type CollectionCentreNameAndAbbreviationResponse =
+type CollectionCentreResponse =
     | {
           data: CollectionCentreNameAndAbbreviation;
           error: null;
       }
     | {
           data: null;
-          error: { type: CollectionCentreNameAndAbbreviationErrorType; logId: string };
+          error: { type: CollectionCentreErrorType; logId: string };
       };
 
-type CollectionCentreNameAndAbbreviationErrorType =
-    | "collectionCentreFetchFailed"
-    | "noMatchingCollectionCentre";
+type CollectionCentreErrorType = "collectionCentreFetchFailed" | "noMatchingCollectionCentre";
 
 const fetchCollectionCentreNameAndAbbreviation = async (
     collectionCentreKey: string
-): Promise<CollectionCentreNameAndAbbreviationResponse> => {
+): Promise<CollectionCentreResponse> => {
     const { data, error } = await supabase
         .from("collection_centres")
         .select()
         .eq("primary_key", collectionCentreKey)
-        .maybeSingle();
+        .single();
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Collection centre", error);
@@ -131,13 +128,13 @@ interface DayOverviewPdfData {
 }
 
 type DayOverviewPdfErrorType =
-    | CollectionCentreNameAndAbbreviationErrorType
+    | CollectionCentreErrorType
     | ParcelsOfSpecificDateAndLocationErrorType;
 export type DayOverviewPdfError = { type: DayOverviewPdfErrorType; logId: string };
 
 const DayOverviewPdfButton = ({
     text,
-    date: dayjsDate,
+    date,
     collectionCentreKey,
     onPdfCreationCompleted,
     onPdfCreationFailed,
@@ -146,7 +143,6 @@ const DayOverviewPdfButton = ({
     const fetchDataAndFileName = async (): Promise<
         PdfDataFetchResponse<DayOverviewPdfData, DayOverviewPdfErrorType>
     > => {
-        const date = dayjsDate.toDate();
         const {
             data: collectionCentreNameAndAbbreviation,
             error: collectionCentreNameAndAbbreviationError,
@@ -169,7 +165,7 @@ const DayOverviewPdfButton = ({
         const fileName = `DayOverview_${dateString}${acronym}.pdf`;
         return {
             data: {
-                data: {
+                pdfData: {
                     date: date,
                     location: location,
                     data: parcelsOfSpecificDate,

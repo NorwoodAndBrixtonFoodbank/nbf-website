@@ -31,7 +31,7 @@ const ShoppingListPdfButton = ({
         if (error) {
             return { data: null, error: error };
         }
-        return { data: { data: data, fileName: "ShoppingList.pdf" }, error: null };
+        return { data: { pdfData: data, fileName: "ShoppingList.pdf" }, error: null };
     };
     return (
         <PdfButton

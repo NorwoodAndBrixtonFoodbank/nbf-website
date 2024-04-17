@@ -5,7 +5,7 @@ import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import React from "react";
 import StyleManager from "@/app/themes";
 import Localization from "@/app/Localization";
-import { SaveParcelStatusReturnType } from "./Statuses";
+import { SaveParcelStatusResult } from "./Statuses";
 
 describe("Parcels - Action Bar", () => {
     const mockData: ParcelsTableRow[] = [
@@ -66,14 +66,14 @@ describe("Parcels - Action Bar", () => {
     ];
 
     const MockActionBar: React.FC<ActionAndStatusBarProps> = ({
-        fetchParcelsByIds: fetchSelectedParcels,
+        fetchSelectedParcels: fetchSelectedParcels,
         updateParcelStatuses: onDeleteParcels,
     }) => {
         return (
             <Localization>
                 <StyleManager>
                     <ActionAndStatusBar
-                        fetchParcelsByIds={fetchSelectedParcels}
+                        fetchSelectedParcels={fetchSelectedParcels}
                         updateParcelStatuses={onDeleteParcels}
                         hasSavedParcelStatus={() => {}}
                         willSaveParcelStatus={() => {}}
@@ -84,7 +84,7 @@ describe("Parcels - Action Bar", () => {
     };
     describe("Statuses", () => {
         let parcelIds: string[] = ["123456789", "123456aaaa789"];
-        const onDeleteParcels = async (): Promise<SaveParcelStatusReturnType> => {
+        const onDeleteParcels = async (): Promise<SaveParcelStatusResult> => {
             parcelIds = [];
             return { error: null };
         };
@@ -92,7 +92,7 @@ describe("Parcels - Action Bar", () => {
         beforeEach(() => {
             cy.mount(
                 <MockActionBar
-                    fetchParcelsByIds={async () =>
+                    fetchSelectedParcels={async () =>
                         await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
                     }
                     updateParcelStatuses={onDeleteParcels}
@@ -162,7 +162,7 @@ describe("Parcels - Action Bar", () => {
 
     describe("Actions", () => {
         let parcelIds: string[] = ["123456789", "123456aaaa789"];
-        const onDeleteParcels = async (): Promise<SaveParcelStatusReturnType> => {
+        const onDeleteParcels = async (): Promise<SaveParcelStatusResult> => {
             parcelIds = [];
             return { error: null };
         };
@@ -171,7 +171,7 @@ describe("Parcels - Action Bar", () => {
         beforeEach(() => {
             cy.mount(
                 <MockActionBar
-                    fetchParcelsByIds={async () =>
+                    fetchSelectedParcels={async () =>
                         await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
                     }
                     updateParcelStatuses={onDeleteParcels}

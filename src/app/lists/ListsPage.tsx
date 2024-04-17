@@ -13,7 +13,7 @@ import ListsDataView, { ListRow, listsHeaderKeysAndLabels } from "@/app/lists/Li
 import { ErrorSecondaryText } from "../errorStylingandMessages";
 
 interface FetchedListsData {
-    data: Schema["lists"][];
+    listsData: Schema["lists"][];
     comment: string;
 }
 
@@ -36,11 +36,11 @@ const fetchData = async (): Promise<FetchListsDataResponse> => {
     if (listsCommentError) {
         return { data: null, error: listsCommentError };
     }
-    return { data: { data: listsData, comment: listsCommentData }, error: null };
+    return { data: { listsData: listsData, comment: listsCommentData }, error: null };
 };
 
 const getErrorMessage = (error: FetchListsError | FetchListsCommentError): string => {
-    let errorMessage = "";
+    let errorMessage: string;
     switch (error.type) {
         case "listsFetchFailed":
             errorMessage = "Failed to fetch lists data.";
@@ -69,7 +69,7 @@ const ListsPage: React.FC<{}> = () => {
                 return;
             }
             setListsData(
-                data.data.map((row) => {
+                data.listsData.map((row) => {
                     const newRow = {
                         primaryKey: row.primary_key,
                         rowOrder: row.row_order,

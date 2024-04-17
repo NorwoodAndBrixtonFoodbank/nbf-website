@@ -5,7 +5,7 @@ import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import { StatusType, SaveParcelStatusReturnType } from "./Statuses";
+import { StatusType } from "./Statuses";
 import { ActionModalProps } from "./ActionModals/common";
 import DayOverviewModal from "./ActionModals/DayOverviewModal";
 import DeleteParcelModal from "./ActionModals/DeleteParcelModal";
@@ -13,6 +13,7 @@ import DriverOverviewModal from "./ActionModals/DriverOverviewModal";
 import GenerateMapModal from "./ActionModals/GenerateMapModal";
 import ShippingLabelModal from "./ActionModals/ShippingLabelModal";
 import ShoppingListModal from "./ActionModals/ShoppingListModal";
+import { UpdateParcelStatuses } from "./ActionAndStatusBar";
 
 const isNotAtLeastOne = (value: number): boolean => {
     return value < 1;
@@ -77,12 +78,8 @@ export const availableActions: AvailableActionsType = {
 };
 
 interface Props {
-    fetchParcelsByIds: () => Promise<ParcelsTableRow[]>;
-    updateParcelStatuses: (
-        parcels: ParcelsTableRow[],
-        newStatus: StatusType,
-        statusEventData?: string
-    ) => Promise<SaveParcelStatusReturnType>;
+    fetchSelectedParcels: () => Promise<ParcelsTableRow[]>;
+    updateParcelStatuses: UpdateParcelStatuses;
     actionAnchorElement: HTMLElement | null;
     setActionAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
@@ -109,7 +106,7 @@ const getActionModal = (
 };
 
 const Actions: React.FC<Props> = ({
-    fetchParcelsByIds,
+    fetchSelectedParcels,
     updateParcelStatuses,
     actionAnchorElement,
     setActionAnchorElement,
@@ -130,7 +127,7 @@ const Actions: React.FC<Props> = ({
     ): (() => void) => {
         return async () => {
             try {
-                const fetchedParcels = await fetchParcelsByIds();
+                const fetchedParcels = await fetchSelectedParcels();
                 setSelectedParcels(fetchedParcels);
                 if (errorCondition(fetchedParcels.length)) {
                     setActionAnchorElement(null);

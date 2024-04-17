@@ -13,7 +13,7 @@ import {
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import { PdfDataFetchResponse } from "../common";
 
-const formatDatetime = (datetimeString: string | null, isDatetime: boolean): string => {
+const formatDatetime = (datetimeString: string | null): string => {
     if (datetimeString === null) {
         return "No recorded date";
     }
@@ -26,9 +26,7 @@ const formatDatetime = (datetimeString: string | null, isDatetime: boolean): str
         minute: "2-digit",
     };
 
-    return isDatetime
-        ? new Date(datetimeString).toLocaleString([], dateOptions)
-        : new Date(datetimeString).toLocaleDateString();
+    return new Date(datetimeString).toLocaleString([], dateOptions);
 };
 
 type ShippingLabelResponse =
@@ -67,16 +65,16 @@ const getRequiredData = async (
             parcel_id: parcelId,
             packing_slot: parcel.packing_slot?.name ?? "",
             collection_centre: parcel.collection_centre?.acronym ?? "",
-            collection_datetime: formatDatetime(parcel.collection_datetime, true),
+            collection_datetime: formatDatetime(parcel.collection_datetime),
             voucher_number: parcel.voucher_number ?? "",
-            full_name: client?.full_name,
-            phone_number: client?.phone_number,
-            address_1: client?.address_1,
-            address_2: client?.address_2,
-            address_town: client?.address_town,
-            address_county: client?.address_county,
-            address_postcode: client?.address_postcode,
-            delivery_instructions: client?.delivery_instructions,
+            full_name: client.full_name,
+            phone_number: client.phone_number,
+            address_1: client.address_1,
+            address_2: client.address_2,
+            address_town: client.address_town,
+            address_county: client.address_county,
+            address_postcode: client.address_postcode,
+            delivery_instructions: client.delivery_instructions,
         },
         error: null,
     };
@@ -107,8 +105,7 @@ const ShippingLabelsPdfButton = ({
         if (error) {
             return { data: null, error };
         }
-        requiredData.label_quantity = labelQuantity;
-        return { data: { data: requiredData, fileName: "ShippingLabels.pdf" }, error: null };
+        return { data: { pdfData: requiredData, fileName: "ShippingLabels.pdf" }, error: null };
     };
 
     return (

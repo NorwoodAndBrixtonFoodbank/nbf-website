@@ -5,20 +5,22 @@ import styled from "styled-components";
 import Button from "@mui/material/Button";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import Alert from "@mui/material/Alert";
-import Statuses, { StatusType, SaveParcelStatusReturnType } from "@/app/parcels/ActionBar/Statuses";
+import Statuses, { StatusType, SaveParcelStatusResult } from "@/app/parcels/ActionBar/Statuses";
 import Actions from "@/app/parcels/ActionBar/Actions";
 import { ArrowDropDown } from "@mui/icons-material";
 
 export interface ActionAndStatusBarProps {
-    fetchParcelsByIds: () => Promise<ParcelsTableRow[]>;
-    updateParcelStatuses: (
-        parcels: ParcelsTableRow[],
-        newStatus: StatusType,
-        statusEventData?: string
-    ) => Promise<SaveParcelStatusReturnType>;
+    fetchSelectedParcels: () => Promise<ParcelsTableRow[]>;
+    updateParcelStatuses: UpdateParcelStatuses;
     willSaveParcelStatus: () => void;
     hasSavedParcelStatus: () => void;
 }
+
+export type UpdateParcelStatuses = (
+    parcels: ParcelsTableRow[],
+    newStatus: StatusType,
+    statusEventData?: string
+) => Promise<SaveParcelStatusResult>;
 
 const AlertBox = styled.div`
     display: block;
@@ -35,15 +37,15 @@ const ActionAndStatusBar: React.FC<ActionAndStatusBarProps> = (props) => {
     return (
         <>
             <Statuses
-                fetchParcelsByIds={props.fetchParcelsByIds}
+                fetchSelectedParcels={props.fetchSelectedParcels}
                 statusAnchorElement={statusAnchorElement}
                 setStatusAnchorElement={setStatusAnchorElement}
                 setModalError={setModalError}
                 willSaveParcelStatus={props.willSaveParcelStatus}
-                hasSavedParcelStatus={props.hasSavedParcelStatus}
+                hasAttemptedToSaveParcelStatus={props.hasSavedParcelStatus}
             />
             <Actions
-                fetchParcelsByIds={props.fetchParcelsByIds}
+                fetchSelectedParcels={props.fetchSelectedParcels}
                 updateParcelStatuses={props.updateParcelStatuses}
                 actionAnchorElement={actionAnchorElement}
                 setActionAnchorElement={setActionAnchorElement}

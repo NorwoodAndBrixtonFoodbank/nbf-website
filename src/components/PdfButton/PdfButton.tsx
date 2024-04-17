@@ -6,7 +6,7 @@ import React from "react";
 import { saveAs } from "file-saver";
 import { PdfDataFetchResponse } from "@/pdf/common";
 
-interface Props<Data, ErrorType> {
+interface Props<Data, ErrorType extends string> {
     fetchDataAndFileName: () => Promise<PdfDataFetchResponse<Data, ErrorType>>;
     text: string;
     pdfComponent: React.FC<{ data: Data }>;
@@ -38,7 +38,7 @@ const formatFileName = (fileName: string): string => {
     return `${newFileName}_${filenameTimestampNow()}.pdf`;
 };
 
-const PdfButton = <Data, ErrorType>({
+const PdfButton = <Data, ErrorType extends string>({
     fetchDataAndFileName,
     text,
     pdfComponent: PdfComponent,
@@ -53,8 +53,7 @@ const PdfButton = <Data, ErrorType>({
             onPdfCreationFailed(error);
             return;
         }
-        const blob = await pdf(<PdfComponent data={data.data} />).toBlob();
-        error;
+        const blob = await pdf(<PdfComponent data={data.pdfData} />).toBlob();
         saveAs(blob, formatName ? formatFileName(data.fileName) : data.fileName);
         onPdfCreationCompleted();
     };

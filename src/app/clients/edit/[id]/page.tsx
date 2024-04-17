@@ -25,29 +25,27 @@ const EditClients: ({ params }: EditClientsParameters) => React.ReactElement = (
 
     useEffect(() => {
         (async () => {
-            if (params.id) {
-                setError(null);
-                const { data: clientData, error: clientError } = await fetchClient(
-                    params.id,
-                    supabase
-                );
-                if (clientError) {
-                    setError({ name: clientError.type, message: "Unable to fetch client data" });
-                    logErrorReturnLogId("error fetching client data in client edit modal");
-                    return;
-                }
-                setClientData(clientData);
-                const { data: familyData, error: familyError } = await fetchFamily(
-                    clientData.family_id,
-                    supabase
-                );
-                if (familyError) {
-                    setError({ name: familyError.type, message: "Unable to fetch family data" });
-                    logErrorReturnLogId("error fetching family data in client edit modal");
-                    return;
-                }
-                setFamilyData(familyData);
+            if (!params.id) {
+                return;
             }
+            setError(null);
+            const { data: clientData, error: clientError } = await fetchClient(params.id, supabase);
+            if (clientError) {
+                setError({ name: clientError.type, message: "Unable to fetch client data" });
+                logErrorReturnLogId("error fetching client data in client edit modal");
+                return;
+            }
+            setClientData(clientData);
+            const { data: familyData, error: familyError } = await fetchFamily(
+                clientData.family_id,
+                supabase
+            );
+            if (familyError) {
+                setError({ name: familyError.type, message: "Unable to fetch family data" });
+                logErrorReturnLogId("error fetching family data in client edit modal");
+                return;
+            }
+            setFamilyData(familyData);
         })();
     }, [params.id]);
 

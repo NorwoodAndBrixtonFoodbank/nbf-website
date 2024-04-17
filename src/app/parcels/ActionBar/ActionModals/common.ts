@@ -2,16 +2,13 @@ import styled from "styled-components";
 import { ParcelsTableRow } from "../../getParcelsTableData";
 import Modal from "@/components/Modal/Modal";
 import { ActionName } from "../Actions";
-import { StatusType, SaveParcelStatusReturnType } from "../Statuses";
+import { StatusType } from "../Statuses";
 import React from "react";
+import { UpdateParcelStatuses } from "../ActionAndStatusBar";
 
 export interface ActionModalProps extends Omit<React.ComponentProps<typeof Modal>, "children"> {
     selectedParcels: ParcelsTableRow[];
-    updateParcelStatuses: (
-        parcels: ParcelsTableRow[],
-        newStatus: StatusType,
-        statusEventData?: string
-    ) => Promise<SaveParcelStatusReturnType>;
+    updateParcelStatuses: UpdateParcelStatuses;
     newStatus: StatusType;
     actionName: ActionName;
 }

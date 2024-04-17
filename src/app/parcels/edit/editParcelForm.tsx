@@ -16,7 +16,6 @@ import {
 import supabase from "@/supabaseClient";
 import { Errors, FormErrors } from "@/components/Form/formFunctions";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-import Title from "@/components/Title/Title";
 
 interface EditParcelFormProps {
     parcelId: string;
@@ -44,7 +43,7 @@ const prepareParcelDataForForm = (
 const getErrorMessage = (
     error: FetchCollectionCentresError | PackingSlotsError | FetchParcelError
 ): string => {
-    let errorMessage = "";
+    let errorMessage: string;
     switch (error.type) {
         case "collectionCentresFetchFailed":
             errorMessage = "Failed to fetch collection centres data.";
@@ -125,7 +124,6 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
 
     return (
         <>
-            <Title>Parcel Form</Title>
             {isLoading ? (
                 <></>
             ) : error ? (
