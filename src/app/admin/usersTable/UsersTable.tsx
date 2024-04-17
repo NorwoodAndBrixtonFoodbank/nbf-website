@@ -232,8 +232,6 @@ const UsersTable: React.FC = () => {
     }, [fetchAndDisplayUserData]);
 
     useEffect(() => {
-        void fetchAndDisplayUserData();
-        // This requires that the profiles tables have Realtime turned on
         const subscriptionChannel = supabase
             .channel("users-table-changes")
             .on(
