@@ -25,7 +25,7 @@ export interface FetchExpandedParcelDetailsError {
     logId: string;
 }
 
-export type FetchExpandedParcelDetailsErrorType =
+type FetchExpandedParcelDetailsErrorType =
     | "failedToFetchParcelDetails"
     | "clientDetailDoesNotExist";
 
