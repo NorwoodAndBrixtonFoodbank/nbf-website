@@ -48,6 +48,7 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
     const [submitDisabled, setSubmitDisabled] = useState(false);
 
     const [addCollectionCentreIsSuccess, setAddCollectionCentreIsSuccess] = useState(false);
+    const [newCollectionCentre, setNewCollectionCentre] = useState<string | null>(null);
 
     const fieldSetter = setField(setFields, fields);
     const errorSetter = setError(setFormErrors, formErrors);
@@ -87,7 +88,8 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
         setSubmitErrorMessage("");
         setSubmitDisabled(false);
         await sendAuditLog({ ...auditLog, wasSuccess: true, collectionCentreId: data.primary_key });
-        void logInfoReturnLogId(`Collection centre: ${fields.name} has been created successfully.`);
+        void logInfoReturnLogId(`Collection centre: ${data.name} has been created successfully.`);
+        setNewCollectionCentre(data.name);
         setAddCollectionCentreIsSuccess(true);
     };
 
@@ -106,7 +108,7 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
 
                 {addCollectionCentreIsSuccess ? (
                     <Alert severity="success" action={<RefreshPageButton />}>
-                        Collection centre <b>{fields.name}</b> added successfully.
+                        Collection centre <b>{newCollectionCentre}</b> added successfully.
                     </Alert>
                 ) : (
                     <Button
