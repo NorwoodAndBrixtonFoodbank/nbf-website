@@ -1,0 +1,1970 @@
+[
+  {
+    "schemaName": "net",
+    "tableName": "_http_response",
+    "predictions": [
+      {
+        "input": "net http_response content",
+        "column": "content",
+        "shape": "INTERNET_HTTP_STATUS_CODE",
+        "confidence": 0.5648147463798523,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "net http_response content_type",
+        "column": "content_type",
+        "shape": "SYSTEM_MIME_TYPE",
+        "confidence": 0.6386346817016602,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "net http_response created",
+        "column": "created",
+        "shape": "INTERNET_HTTP_STATUS_CODE",
+        "confidence": 0.1836751699447632,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "net http_response error_msg",
+        "column": "error_msg",
+        "shape": "INTERNET_HTTP_STATUS_CODE",
+        "confidence": 0.7,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "public",
+    "tableName": "audit_log",
+    "predictions": [
+      {
+        "input": "public audit_log action",
+        "column": "action",
+        "shape": "DATABASE_COLUMN",
+        "confidence": 0.2603521645069122,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public audit_log log_id",
+        "column": "log_id",
+        "shape": "UUID",
+        "confidence": 0.8480979204177856,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public audit_log status_order",
+        "column": "status_order",
+        "shape": "STATUS",
+        "confidence": 0.9584847688674927,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public audit_log website_data",
+        "column": "website_data",
+        "shape": "INTERNET_DOMAIN_NAME",
+        "confidence": 0.7369948625564575,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "audit_log_entries",
+    "predictions": [
+      {
+        "input": "auth audit_log_entries created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9884172081947327,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth audit_log_entries ip_address",
+        "column": "ip_address",
+        "shape": "INTERNET_IPV4",
+        "confidence": 0.9948225021362305,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "storage",
+    "tableName": "buckets",
+    "predictions": [
+      {
+        "input": "storage buckets allowed_mime_types",
+        "column": "allowed_mime_types",
+        "shape": "SYSTEM_FILE_TYPE",
+        "confidence": 0.5756442546844482,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage buckets created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9896994233131409,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage buckets id",
+        "column": "id",
+        "shape": "UUID",
+        "confidence": 0.9959561228752136,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage buckets name",
+        "column": "name",
+        "shape": "SYSTEM_DIRECTORY_PATH",
+        "confidence": 0.6744478940963745,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage buckets owner_id",
+        "column": "owner_id",
+        "shape": "UUID",
+        "confidence": 0.9927984476089478,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage buckets updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9926562905311584,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "public",
+    "tableName": "clients",
+    "predictions": [
+      {
+        "input": "public clients address_1",
+        "column": "address_1",
+        "shape": "STREET_ADDRESS",
+        "confidence": 0.9750261306762695,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public clients address_2",
+        "column": "address_2",
+        "shape": "STREET_ADDRESS",
+        "confidence": 0.973478376865387,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public clients address_county",
+        "column": "address_county",
+        "shape": "STREET_ADDRESS",
+        "confidence": 0.9131066203117371,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public clients address_postcode",
+        "column": "address_postcode",
+        "shape": "STREET_ADDRESS",
+        "confidence": 0.9612151384353638,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public clients address_town",
+        "column": "address_town",
+        "shape": "CITY",
+        "confidence": 0.8900983333587646,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public clients delivery_instructions",
+        "column": "delivery_instructions",
+        "shape": "COMPANY_NAME",
+        "confidence": 0.3572882115840912,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public clients dietary_requirements",
+        "column": "dietary_requirements",
+        "shape": "CUSTOM_INPUTS_DATA",
+        "confidence": 0.2331774681806564,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public clients extra_information",
+        "column": "extra_information",
+        "shape": "COMPANY_SUFFIXES",
+        "confidence": 0.2289945036172867,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public clients feminine_products",
+        "column": "feminine_products",
+        "shape": "COMMERCE_PRODUCT",
+        "confidence": 0.7775400876998901,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public clients full_name",
+        "column": "full_name",
+        "shape": "PERSON_FULL_NAME",
+        "confidence": 0.9154987335205078,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public clients other_items",
+        "column": "other_items",
+        "shape": "COMMERCE_PRODUCT",
+        "confidence": 0.7926779389381409,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public clients pet_food",
+        "column": "pet_food",
+        "shape": "FOOD",
+        "confidence": 0.9933280944824219,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public clients phone_number",
+        "column": "phone_number",
+        "shape": "PHONE_NUMBER",
+        "confidence": 0.9721289873123169,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "public",
+    "tableName": "collection_centres",
+    "predictions": [
+      {
+        "input": "public collection_centres acronym",
+        "column": "acronym",
+        "shape": "COMPANY_SUFFIXES",
+        "confidence": 0.8248512744903564,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public collection_centres name",
+        "column": "name",
+        "shape": "COMPANY_NAME",
+        "confidence": 0.6372532248497009,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "public",
+    "tableName": "events",
+    "predictions": [
+      {
+        "input": "public events event_data",
+        "column": "event_data",
+        "shape": "META_DATA",
+        "confidence": 0.9166030287742615,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public events event_name",
+        "column": "event_name",
+        "shape": "COMMERCE_PRODUCT_NAME",
+        "confidence": 0.8933917284011841,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public events timestamp",
+        "column": "timestamp",
+        "shape": "LOGS",
+        "confidence": 0.3801525235176086,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "flow_state",
+    "predictions": [
+      {
+        "input": "auth flow_state auth_code",
+        "column": "auth_code",
+        "shape": "TOKEN",
+        "confidence": 1,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth flow_state auth_code_issued_at",
+        "column": "auth_code_issued_at",
+        "shape": "DATE",
+        "confidence": 0.9138723611831665,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth flow_state authentication_method",
+        "column": "authentication_method",
+        "shape": "TOKEN",
+        "confidence": 0.8245275616645813,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth flow_state code_challenge",
+        "column": "code_challenge",
+        "shape": "TAX_CODE",
+        "confidence": 0.6225445866584778,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth flow_state created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9679608345031738,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth flow_state provider_access_token",
+        "column": "provider_access_token",
+        "shape": "TOKEN",
+        "confidence": 0.9929266571998596,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth flow_state provider_refresh_token",
+        "column": "provider_refresh_token",
+        "shape": "TOKEN",
+        "confidence": 0.9932703375816345,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth flow_state provider_type",
+        "column": "provider_type",
+        "shape": "AUTHENTICATION_PROVIDER",
+        "confidence": 1,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth flow_state updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9701045155525208,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "supabase_functions",
+    "tableName": "hooks",
+    "predictions": [
+      {
+        "input": "supabase_functions hooks created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9864562749862671,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "supabase_functions hooks hook_name",
+        "column": "hook_name",
+        "shape": "SYSTEM_FILE_NAME",
+        "confidence": 0.6265440583229065,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "net",
+    "tableName": "http_request_queue",
+    "predictions": [
+      {
+        "input": "net http_request_queue body",
+        "column": "body",
+        "shape": "POST_BODY",
+        "confidence": 0.7675930261611938,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "net http_request_queue method",
+        "column": "method",
+        "shape": "INTERNET_HTTP_METHOD",
+        "confidence": 0.9809377789497375,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "net http_request_queue url",
+        "column": "url",
+        "shape": "IMAGE_URL",
+        "confidence": 0.9554980397224426,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "identities",
+    "predictions": [
+      {
+        "input": "auth identities created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9903193712234497,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth identities last_sign_in_at",
+        "column": "last_sign_in_at",
+        "shape": "DATE",
+        "confidence": 0.9880092740058899,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth identities provider",
+        "column": "provider",
+        "shape": "INTERNET_DOMAIN_NAME",
+        "confidence": 0.9332965016365051,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth identities provider_id",
+        "column": "provider_id",
+        "shape": "UUID",
+        "confidence": 0.9941206574440002,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth identities updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9938418865203857,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "instances",
+    "predictions": [
+      {
+        "input": "auth instances created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9906517267227173,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth instances raw_base_config",
+        "column": "raw_base_config",
+        "shape": "SYSTEM_FILE_TYPE",
+        "confidence": 0.9731855988502502,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth instances updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9933153986930847,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "pgsodium",
+    "tableName": "key",
+    "predictions": [
+      {
+        "input": "pgsodium key associated_data",
+        "column": "associated_data",
+        "shape": "SYSTEM_FILE_TYPE",
+        "confidence": 0.8552938103675842,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "pgsodium key comment",
+        "column": "comment",
+        "shape": "POST_COMMENT",
+        "confidence": 1,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "pgsodium key created",
+        "column": "created",
+        "shape": "DATE",
+        "confidence": 0.8072464466094971,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "pgsodium key expires",
+        "column": "expires",
+        "shape": "DATE",
+        "confidence": 0.9917279481887817,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "pgsodium key key_context",
+        "column": "key_context",
+        "shape": "PASSWORD",
+        "confidence": 0.5809592604637146,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "pgsodium key name",
+        "column": "name",
+        "shape": "PASSWORD",
+        "confidence": 0.8643802404403687,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "pgsodium key raw_key",
+        "column": "raw_key",
+        "shape": "IMAGE_RAW",
+        "confidence": 0.6021417379379272,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "pgsodium key raw_key_nonce",
+        "column": "raw_key_nonce",
+        "shape": "HASH",
+        "confidence": 1,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "pgsodium key user_data",
+        "column": "user_data",
+        "shape": "META_DATA",
+        "confidence": 0.8757388591766357,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "public",
+    "tableName": "lists",
+    "predictions": [
+      {
+        "input": "public lists item_name",
+        "column": "item_name",
+        "shape": "COMMERCE_PRODUCT_NAME",
+        "confidence": 0.8960846066474915,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists notes_for_1",
+        "column": "notes_for_1",
+        "shape": "DATABASE_COLUMN",
+        "confidence": 0.4650430679321289,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists notes_for_10",
+        "column": "notes_for_10",
+        "shape": "DATABASE_PROVIDER",
+        "confidence": 0.4139549434185028,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists notes_for_2",
+        "column": "notes_for_2",
+        "shape": "SSN_LAST4",
+        "confidence": 0.7353849411010742,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists notes_for_3",
+        "column": "notes_for_3",
+        "shape": "DATABASE_COLUMN",
+        "confidence": 0.3478450775146484,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists notes_for_4",
+        "column": "notes_for_4",
+        "shape": "SSN_LAST4",
+        "confidence": 0.5787076950073242,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists notes_for_5",
+        "column": "notes_for_5",
+        "shape": "DATABASE_COLUMN",
+        "confidence": 0.7,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists notes_for_6",
+        "column": "notes_for_6",
+        "shape": "DATABASE_COLUMN",
+        "confidence": 0.7,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists notes_for_7",
+        "column": "notes_for_7",
+        "shape": "DATABASE_COLUMN",
+        "confidence": 0.7,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists notes_for_8",
+        "column": "notes_for_8",
+        "shape": "DATABASE_COLUMN",
+        "confidence": 0.7,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists notes_for_9",
+        "column": "notes_for_9",
+        "shape": "COMPANY_NAME",
+        "confidence": 0.3575970232486725,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists quantity_for_1",
+        "column": "quantity_for_1",
+        "shape": "DATABASE_COLUMN",
+        "confidence": 0.4110638499259949,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists quantity_for_10",
+        "column": "quantity_for_10",
+        "shape": "COMPANY_NAME",
+        "confidence": 0.4640045166015625,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists quantity_for_2",
+        "column": "quantity_for_2",
+        "shape": "DATABASE_PROVIDER",
+        "confidence": 0.3010692298412323,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists quantity_for_3",
+        "column": "quantity_for_3",
+        "shape": "COMPANY_NAME",
+        "confidence": 0.170208677649498,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists quantity_for_4",
+        "column": "quantity_for_4",
+        "shape": "COMPANY_NAME",
+        "confidence": 0.2881869673728943,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists quantity_for_5",
+        "column": "quantity_for_5",
+        "shape": "DATABASE_COLUMN",
+        "confidence": 0.7,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists quantity_for_6",
+        "column": "quantity_for_6",
+        "shape": "DATABASE_COLUMN",
+        "confidence": 0.7,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists quantity_for_7",
+        "column": "quantity_for_7",
+        "shape": "COMPANY_NAME",
+        "confidence": 0.4196009635925293,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists quantity_for_8",
+        "column": "quantity_for_8",
+        "shape": "COMPANY_NAME",
+        "confidence": 0.3762444853782654,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists quantity_for_9",
+        "column": "quantity_for_9",
+        "shape": "COMPANY_NAME",
+        "confidence": 0.3498012125492096,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "public",
+    "tableName": "lists_hotel",
+    "predictions": [
+      {
+        "input": "public lists_hotel item_name",
+        "column": "item_name",
+        "shape": "COMMERCE_PRODUCT_NAME",
+        "confidence": 0.9141864776611328,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel notes_for_1",
+        "column": "notes_for_1",
+        "shape": "COMPANY_NAME",
+        "confidence": 0.4468791484832764,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel notes_for_10",
+        "column": "notes_for_10",
+        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
+        "confidence": 0.5610069036483765,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel notes_for_2",
+        "column": "notes_for_2",
+        "shape": "SSN_LAST4",
+        "confidence": 0.6642664670944214,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel notes_for_3",
+        "column": "notes_for_3",
+        "shape": "COMPANY_NAME",
+        "confidence": 0.2684966325759888,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel notes_for_4",
+        "column": "notes_for_4",
+        "shape": "COMPANY_NAME",
+        "confidence": 0.4228290617465973,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel notes_for_5",
+        "column": "notes_for_5",
+        "shape": "COMPANY_NAME",
+        "confidence": 0.39741450548172,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel notes_for_6",
+        "column": "notes_for_6",
+        "shape": "COMPANY_NAME",
+        "confidence": 0.4843818247318268,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel notes_for_7",
+        "column": "notes_for_7",
+        "shape": "COMPANY_NAME",
+        "confidence": 0.489195317029953,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel notes_for_8",
+        "column": "notes_for_8",
+        "shape": "LOCATION_BUILDING_NUMBER",
+        "confidence": 0.7,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel notes_for_9",
+        "column": "notes_for_9",
+        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
+        "confidence": 0.5136892199516296,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel quantity_for_1",
+        "column": "quantity_for_1",
+        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
+        "confidence": 0.6141021251678467,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel quantity_for_2",
+        "column": "quantity_for_2",
+        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
+        "confidence": 0.5322772264480591,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel quantity_for_3",
+        "column": "quantity_for_3",
+        "shape": "COMPANY_NAME",
+        "confidence": 0.351044237613678,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "public",
+    "tableName": "lists_hotel",
+    "predictions": [
+      {
+        "input": "public lists_hotel quantity_for_10",
+        "column": "quantity_for_10",
+        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
+        "confidence": 0.5681412816047668,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel quantity_for_4",
+        "column": "quantity_for_4",
+        "shape": "COMMERCE_PRODUCT_NAME",
+        "confidence": 0.456644207239151,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel quantity_for_5",
+        "column": "quantity_for_5",
+        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
+        "confidence": 0.561814546585083,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel quantity_for_6",
+        "column": "quantity_for_6",
+        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
+        "confidence": 0.5009786486625671,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel quantity_for_7",
+        "column": "quantity_for_7",
+        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
+        "confidence": 0.6604167819023132,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel quantity_for_8",
+        "column": "quantity_for_8",
+        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
+        "confidence": 0.5643593668937683,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel quantity_for_9",
+        "column": "quantity_for_9",
+        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
+        "confidence": 0.5818474888801575,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "mfa_amr_claims",
+    "predictions": [
+      {
+        "input": "auth mfa_amr_claims authentication_method",
+        "column": "authentication_method",
+        "shape": "TOKEN",
+        "confidence": 0.9601773023605347,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth mfa_amr_claims created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9912334084510803,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth mfa_amr_claims updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9900246858596802,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "mfa_challenges",
+    "predictions": [
+      {
+        "input": "auth mfa_challenges created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9905349612236023,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth mfa_challenges verified_at",
+        "column": "verified_at",
+        "shape": "DATE",
+        "confidence": 0.98301100730896,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "mfa_factors",
+    "predictions": [
+      {
+        "input": "auth mfa_factors created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9908937215805054,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth mfa_factors friendly_name",
+        "column": "friendly_name",
+        "shape": "PERSON_FULL_NAME",
+        "confidence": 0.959611177444458,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth mfa_factors secret",
+        "column": "secret",
+        "shape": "PASSWORD",
+        "confidence": 0.9392874240875244,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth mfa_factors updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9921668767929077,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "storage",
+    "tableName": "migrations",
+    "predictions": [
+      {
+        "input": "storage migrations executed_at",
+        "column": "executed_at",
+        "shape": "DATE",
+        "confidence": 0.9913293123245239,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage migrations hash",
+        "column": "hash",
+        "shape": "HASH",
+        "confidence": 0.915229082107544,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage migrations name",
+        "column": "name",
+        "shape": "SYSTEM_FILE_NAME",
+        "confidence": 0.9778550863265991,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "supabase_functions",
+    "tableName": "migrations",
+    "predictions": [
+      {
+        "input": "supabase_functions migrations inserted_at",
+        "column": "inserted_at",
+        "shape": "DATE",
+        "confidence": 0.9655312895774841,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "supabase_functions migrations version",
+        "column": "version",
+        "shape": "SYSTEM_SEMVER",
+        "confidence": 0.9810158610343933,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "storage",
+    "tableName": "objects",
+    "predictions": [
+      {
+        "input": "storage objects bucket_id",
+        "column": "bucket_id",
+        "shape": "UUID",
+        "confidence": 0.9609889388084412,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage objects created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9871898293495178,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage objects last_accessed_at",
+        "column": "last_accessed_at",
+        "shape": "DATE",
+        "confidence": 0.9830952286720276,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage objects name",
+        "column": "name",
+        "shape": "DATABASE_COLUMN",
+        "confidence": 0.7,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage objects owner_id",
+        "column": "owner_id",
+        "shape": "UUID",
+        "confidence": 0.9949594736099243,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage objects updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.988044798374176,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage objects version",
+        "column": "version",
+        "shape": "SYSTEM_SEMVER",
+        "confidence": 0.9876784682273865,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "public",
+    "tableName": "packing_slots",
+    "predictions": [
+      {
+        "input": "public packing_slots name",
+        "column": "name",
+        "shape": "COMPANY_NAME",
+        "confidence": 0.5675556063652039,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "public",
+    "tableName": "parcels",
+    "predictions": [
+      {
+        "input": "public parcels collection_datetime",
+        "column": "collection_datetime",
+        "shape": "DATE",
+        "confidence": 0.9893274307250977,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public parcels packing_date",
+        "column": "packing_date",
+        "shape": "DATE",
+        "confidence": 0.9889822602272034,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public parcels voucher_number",
+        "column": "voucher_number",
+        "shape": "FINANCE_TRANSACTION_DESCRIPTION",
+        "confidence": 0.3678252398967743,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "public",
+    "tableName": "profiles",
+    "predictions": [
+      {
+        "input": "public profiles first_name",
+        "column": "first_name",
+        "shape": "PERSON_FIRST_NAME",
+        "confidence": 0.9526280164718628,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public profiles last_name",
+        "column": "last_name",
+        "shape": "PERSON_LAST_NAME",
+        "confidence": 0.9607326984405518,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public profiles telephone_number",
+        "column": "telephone_number",
+        "shape": "PHONE_NUMBER",
+        "confidence": 0.9855214953422546,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "refresh_tokens",
+    "predictions": [
+      {
+        "input": "auth refresh_tokens created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.991413950920105,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth refresh_tokens parent",
+        "column": "parent",
+        "shape": "DATABASE_COLUMN",
+        "confidence": 0.9276586771011353,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth refresh_tokens token",
+        "column": "token",
+        "shape": "TOKEN",
+        "confidence": 0.9929530024528503,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth refresh_tokens updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9928916692733765,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth refresh_tokens user_id",
+        "column": "user_id",
+        "shape": "UUID",
+        "confidence": 0.9917271137237549,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "storage",
+    "tableName": "s3_multipart_uploads",
+    "predictions": [
+      {
+        "input": "storage s_3_multipart_uploads bucket_id",
+        "column": "bucket_id",
+        "shape": "UUID",
+        "confidence": 0.2733745574951172,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage s_3_multipart_uploads created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9690561294555664,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage s_3_multipart_uploads id",
+        "column": "id",
+        "shape": "UUID",
+        "confidence": 0.8652965426445007,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage s_3_multipart_uploads key",
+        "column": "key",
+        "shape": "SYSTEM_FILE_NAME",
+        "confidence": 0.7,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage s_3_multipart_uploads owner_id",
+        "column": "owner_id",
+        "shape": "UUID",
+        "confidence": 0.7541124820709229,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage s_3_multipart_uploads upload_signature",
+        "column": "upload_signature",
+        "shape": "SYSTEM_FILE_NAME",
+        "confidence": 0.204882800579071,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage s_3_multipart_uploads version",
+        "column": "version",
+        "shape": "SYSTEM_SEMVER",
+        "confidence": 0.9020141363143921,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "storage",
+    "tableName": "s3_multipart_uploads_parts",
+    "predictions": [
+      {
+        "input": "storage s_3_multipart_uploads_parts bucket_id",
+        "column": "bucket_id",
+        "shape": "SYSTEM_DIRECTORY_PATH",
+        "confidence": 0.1530635505914688,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage s_3_multipart_uploads_parts created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.5953836441040039,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage s_3_multipart_uploads_parts etag",
+        "column": "etag",
+        "shape": "SYSTEM_FILE_NAME",
+        "confidence": 0.3147349059581757,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage s_3_multipart_uploads_parts key",
+        "column": "key",
+        "shape": "SYSTEM_FILE_PATH",
+        "confidence": 0.1395908743143082,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage s_3_multipart_uploads_parts owner_id",
+        "column": "owner_id",
+        "shape": "SYSTEM_FILE_NAME",
+        "confidence": 0.2599887549877167,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage s_3_multipart_uploads_parts upload_id",
+        "column": "upload_id",
+        "shape": "UUID",
+        "confidence": 0.4390925168991089,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "storage s_3_multipart_uploads_parts version",
+        "column": "version",
+        "shape": "SYSTEM_SEMVER",
+        "confidence": 0.862582266330719,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "saml_providers",
+    "predictions": [
+      {
+        "input": "auth saml_providers created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9931049942970276,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth saml_providers entity_id",
+        "column": "entity_id",
+        "shape": "UUID",
+        "confidence": 0.9951319694519043,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth saml_providers metadata_url",
+        "column": "metadata_url",
+        "shape": "IMAGE_URL",
+        "confidence": 0.9846875071525574,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth saml_providers metadata_xml",
+        "column": "metadata_xml",
+        "shape": "SYSTEM_FILE_TYPE",
+        "confidence": 0.8458219170570374,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth saml_providers name_id_format",
+        "column": "name_id_format",
+        "shape": "UUID",
+        "confidence": 0.6650523543357849,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth saml_providers updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9943860769271851,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "saml_relay_states",
+    "predictions": [
+      {
+        "input": "auth saml_relay_states created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9928701519966125,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth saml_relay_states for_email",
+        "column": "for_email",
+        "shape": "EMAIL",
+        "confidence": 0.9856274127960205,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth saml_relay_states redirect_to",
+        "column": "redirect_to",
+        "shape": "URL",
+        "confidence": 1,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth saml_relay_states request_id",
+        "column": "request_id",
+        "shape": "UUID",
+        "confidence": 0.9707423448562622,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth saml_relay_states updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9933282136917114,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "schema_migrations",
+    "predictions": [
+      {
+        "input": "auth schema_migrations version",
+        "column": "version",
+        "shape": "SYSTEM_SEMVER",
+        "confidence": 0.9860692024230957,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "supabase_migrations",
+    "tableName": "schema_migrations",
+    "predictions": [
+      {
+        "input": "supabase_migrations schema_migrations name",
+        "column": "name",
+        "shape": "SYSTEM_FILE_NAME",
+        "confidence": 0.9641029834747314,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "supabase_migrations schema_migrations statements",
+        "column": "statements",
+        "shape": "SYSTEM_FILE_PATH",
+        "confidence": 0.9192330241203308,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "supabase_migrations schema_migrations version",
+        "column": "version",
+        "shape": "SYSTEM_SEMVER",
+        "confidence": 0.9852260947227478,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "vault",
+    "tableName": "secrets",
+    "predictions": [
+      {
+        "input": "vault secrets created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9851037859916687,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "vault secrets description",
+        "column": "description",
+        "shape": "FINANCE_TRANSACTION_DESCRIPTION",
+        "confidence": 0.924828290939331,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "vault secrets name",
+        "column": "name",
+        "shape": "DATABASE_SCHEMA",
+        "confidence": 0,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "vault secrets nonce",
+        "column": "nonce",
+        "shape": "PASSWORD",
+        "confidence": 0.8945999145507812,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "vault secrets secret",
+        "column": "secret",
+        "shape": "PASSWORD",
+        "confidence": 0.9757916927337646,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "vault secrets updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9849373698234558,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "sessions",
+    "predictions": [
+      {
+        "input": "auth sessions created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9902378916740417,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth sessions not_after",
+        "column": "not_after",
+        "shape": "TOKEN",
+        "confidence": 0.575812578201294,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth sessions refreshed_at",
+        "column": "refreshed_at",
+        "shape": "DATE",
+        "confidence": 0.9730045795440674,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth sessions tag",
+        "column": "tag",
+        "shape": "PASSWORD",
+        "confidence": 0.5701985955238342,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth sessions updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9928327798843384,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth sessions user_agent",
+        "column": "user_agent",
+        "shape": "USER_AGENT",
+        "confidence": 0.9931508302688599,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "sso_domains",
+    "predictions": [
+      {
+        "input": "auth sso_domains created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9913731217384338,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth sso_domains domain",
+        "column": "domain",
+        "shape": "INTERNET_DOMAIN_NAME",
+        "confidence": 0.8652669191360474,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth sso_domains updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9928399324417114,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "sso_providers",
+    "predictions": [
+      {
+        "input": "auth sso_providers created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9921221137046814,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth sso_providers resource_id",
+        "column": "resource_id",
+        "shape": "UUID",
+        "confidence": 0.9908947944641113,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth sso_providers updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9932394027709961,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "public",
+    "tableName": "status_order",
+    "predictions": [
+      {
+        "input": "public status_order event_name",
+        "column": "event_name",
+        "shape": "STATUS",
+        "confidence": 1,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "users",
+    "predictions": [
+      {
+        "input": "auth users aud",
+        "column": "aud",
+        "shape": "AUTHENTICATION_PROVIDER",
+        "confidence": 0,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users confirmation_sent_at",
+        "column": "confirmation_sent_at",
+        "shape": "DATE",
+        "confidence": 0.9838545918464661,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users confirmation_token",
+        "column": "confirmation_token",
+        "shape": "TOKEN",
+        "confidence": 0.9940432906150818,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users email",
+        "column": "email",
+        "shape": "EMAIL",
+        "confidence": 0.994260311126709,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users email_change",
+        "column": "email_change",
+        "shape": "EMAIL",
+        "confidence": 0.9721580743789673,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users email_change_token_new",
+        "column": "email_change_token_new",
+        "shape": "TOKEN",
+        "confidence": 0.9904540777206421,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users email_confirmed_at",
+        "column": "email_confirmed_at",
+        "shape": "DATE",
+        "confidence": 0.9721287488937378,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users encrypted_password",
+        "column": "encrypted_password",
+        "shape": "PASSWORD",
+        "confidence": 0.9887174367904663,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users invited_at",
+        "column": "invited_at",
+        "shape": "DATE",
+        "confidence": 0.985194981098175,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users recovery_sent_at",
+        "column": "recovery_sent_at",
+        "shape": "DATE",
+        "confidence": 0.9812063574790955,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users recovery_token",
+        "column": "recovery_token",
+        "shape": "TOKEN",
+        "confidence": 0.9935053586959839,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users role",
+        "column": "role",
+        "shape": "ROLE",
+        "confidence": 0.9707857370376587,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "users",
+    "predictions": [
+      {
+        "input": "auth users banned_until",
+        "column": "banned_until",
+        "shape": "PASSWORD",
+        "confidence": 0.7942231297492981,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9878057241439819,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users deleted_at",
+        "column": "deleted_at",
+        "shape": "DATE",
+        "confidence": 0.9908251166343689,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users email_change_sent_at",
+        "column": "email_change_sent_at",
+        "shape": "DATE",
+        "confidence": 0.9879693984985352,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users email_change_token_current",
+        "column": "email_change_token_current",
+        "shape": "TOKEN",
+        "confidence": 0.9396399855613708,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users last_sign_in_at",
+        "column": "last_sign_in_at",
+        "shape": "DATE",
+        "confidence": 0.9863344430923462,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users phone",
+        "column": "phone",
+        "shape": "PHONE_NUMBER",
+        "confidence": 0.9784653782844543,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users phone_change",
+        "column": "phone_change",
+        "shape": "PHONE_NUMBER",
+        "confidence": 0.9347289204597473,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users phone_change_sent_at",
+        "column": "phone_change_sent_at",
+        "shape": "DATE",
+        "confidence": 0.9834369421005249,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users phone_change_token",
+        "column": "phone_change_token",
+        "shape": "TOKEN",
+        "confidence": 0.9925726652145386,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users phone_confirmed_at",
+        "column": "phone_confirmed_at",
+        "shape": "DATE",
+        "confidence": 0.9743674397468567,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users reauthentication_sent_at",
+        "column": "reauthentication_sent_at",
+        "shape": "DATE",
+        "confidence": 0.987545907497406,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users reauthentication_token",
+        "column": "reauthentication_token",
+        "shape": "TOKEN",
+        "confidence": 0.991940975189209,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9914711117744446,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "public",
+    "tableName": "website_data",
+    "predictions": [
+      {
+        "input": "public website_data name",
+        "column": "name",
+        "shape": "INTERNET_DOMAIN_NAME",
+        "confidence": 0.56278395652771,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public website_data value",
+        "column": "value",
+        "shape": "SYSTEM_FILE_TYPE",
+        "confidence": 0.7589213252067566,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  }
+]
