@@ -9,7 +9,6 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { PdfDataFetchResponse } from "../common";
 
 interface Props {
-    text: string;
     date: Date;
     collectionCentreKey: string | null;
     onPdfCreationCompleted: () => void;
@@ -133,7 +132,6 @@ type DayOverviewPdfErrorType =
 export type DayOverviewPdfError = { type: DayOverviewPdfErrorType; logId: string };
 
 const DayOverviewPdfButton = ({
-    text,
     date,
     collectionCentreKey,
     onPdfCreationCompleted,
@@ -178,7 +176,6 @@ const DayOverviewPdfButton = ({
 
     return (
         <PdfButton
-            text={text}
             fetchDataAndFileName={fetchDataAndFileName}
             pdfComponent={DayOverviewPdf}
             onPdfCreationCompleted={onPdfCreationCompleted}

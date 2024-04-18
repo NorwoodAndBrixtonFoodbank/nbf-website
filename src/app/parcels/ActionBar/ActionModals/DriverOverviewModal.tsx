@@ -1,21 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-    Centerer,
+import GeneralActionModal, {
     Heading,
     maxParcelsToShow,
     ActionModalProps,
-    ModalInner,
-    Paragraph,
-} from "./common";
+} from "./GeneralActionModal";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
-import Modal from "@/components/Modal/Modal";
-import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import DriverOverviewPdfButton, {
     DriverOverviewError,
 } from "@/pdf/DriverOverview/DriverOverviewPdfButton";
@@ -72,15 +67,7 @@ const getPdfErrorMessage = (error: DriverOverviewError): string => {
 
 const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
-    const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(null);
-    const [pdfError, setPdfError] = useState<DriverOverviewError | null>(null);
-
-    const updateParcelsStatuses = async (): Promise<void> => {
-        const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
-        if (error) {
-            setServerErrorMessage(getStatusErrorMessageWithLogId(error));
-        }
-    };
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const [driverName, setDriverName] = useState("");
     const [date, setDate] = useState(dayjs());
@@ -98,11 +85,14 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
         props.onClose();
         setDate(dayjs());
         setDriverName("");
-        setServerErrorMessage(null);
+        setErrorMessage(null);
     };
 
     const onPdfCreationCompleted = async (): Promise<void> => {
-        await updateParcelsStatuses();
+        const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
+        if (error) {
+            setErrorMessage(getStatusErrorMessageWithLogId(error));
+        }
         setActionCompleted(true);
         void sendAuditLog({
             action: "create driver overview pdf",
@@ -116,7 +106,7 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
     };
 
     const onPdfCreationFailed = (pdfError: DriverOverviewError): void => {
-        setPdfError(pdfError);
+        setErrorMessage(getPdfErrorMessage(pdfError));
         setActionCompleted(true);
         void sendAuditLog({
             action: "create driver overview pdf",
@@ -130,45 +120,38 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
         });
     };
 
-    const actionCompletedSuccessfully = actionCompleted && !serverErrorMessage && !pdfError;
-
     return (
-        <Modal {...props} onClose={onClose}>
-            <ModalInner>
-                {pdfError && (
-                    <ErrorSecondaryText>{getPdfErrorMessage(pdfError)}</ErrorSecondaryText>
-                )}
-                {serverErrorMessage && (
-                    <ErrorSecondaryText>{serverErrorMessage}</ErrorSecondaryText>
-                )}
-                {actionCompletedSuccessfully && <Paragraph>Driver Overview Created</Paragraph>}
-                {!actionCompleted && (
-                    <>
-                        <DriverOverviewInput
-                            onDateChange={onDateChange}
-                            onDriverNameChange={onDriverNameChange}
-                            setDateValid={() => setIsDateValid(true)}
-                            setDateInvalid={() => setIsDateValid(false)}
-                        />
-                        <SelectedParcelsOverview
-                            parcels={props.selectedParcels}
-                            maxParcelsToShow={maxParcelsToShow}
-                        />
-                        <Centerer>
-                            <DriverOverviewPdfButton
-                                parcels={props.selectedParcels}
-                                date={date}
-                                driverName={driverName}
-                                onPdfCreationCompleted={onPdfCreationCompleted}
-                                onPdfCreationFailed={onPdfCreationFailed}
-                                disabled={!isDateValid}
-                                text="Download"
-                            />
-                        </Centerer>
-                    </>
-                )}
-            </ModalInner>
-        </Modal>
+        <GeneralActionModal
+            {...props}
+            onClose={onClose}
+            errorMessage={errorMessage}
+            successMessage="Driver Overview Created"
+            actionCompleted={actionCompleted}
+            actionButton={
+                <DriverOverviewPdfButton
+                    parcels={props.selectedParcels}
+                    date={date}
+                    driverName={driverName}
+                    onPdfCreationCompleted={onPdfCreationCompleted}
+                    onPdfCreationFailed={onPdfCreationFailed}
+                    disabled={!isDateValid}
+                />
+            }
+            contentAboveButton={
+                <>
+                    <DriverOverviewInput
+                        onDateChange={onDateChange}
+                        onDriverNameChange={onDriverNameChange}
+                        setDateValid={() => setIsDateValid(true)}
+                        setDateInvalid={() => setIsDateValid(false)}
+                    />
+                    <SelectedParcelsOverview
+                        parcels={props.selectedParcels}
+                        maxParcelsToShow={maxParcelsToShow}
+                    />
+                </>
+            }
+        />
     );
 };
 

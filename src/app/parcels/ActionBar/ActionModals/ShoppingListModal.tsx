@@ -1,20 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-    Centerer,
+import GeneralActionModal, {
     Heading,
     Paragraph,
     maxParcelsToShow,
     ActionModalProps,
-    ModalInner,
-} from "./common";
+} from "./GeneralActionModal";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import { ParcelsTableRow } from "../../getParcelsTableData";
 import { StatusType, getStatusErrorMessageWithLogId } from "../Statuses";
 import ShoppingListPdfButton from "@/pdf/ShoppingList/ShoppingListPdfButton";
-import Modal from "@/components/Modal/Modal";
-import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import { ShoppingListPdfError } from "@/pdf/ShoppingList/getShoppingListData";
 import { sendAuditLog } from "@/server/auditLog";
 
@@ -79,19 +75,18 @@ const getPdfErrorMessage = (error: ShoppingListPdfError): string => {
 
 const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
-    const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(null);
-    const [pdfError, setPdfError] = useState<ShoppingListPdfError | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const updateParcelsStatuses = async (): Promise<void> => {
         const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
         if (error) {
-            setServerErrorMessage(getStatusErrorMessageWithLogId(error));
+            setErrorMessage(getStatusErrorMessageWithLogId(error));
         }
     };
 
     const onClose = (): void => {
         props.onClose();
-        setServerErrorMessage(null);
+        setErrorMessage(null);
     };
 
     const onPdfCreationCompleted = async (): Promise<void> => {
@@ -105,7 +100,7 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
     };
 
     const onPdfCreationFailed = (pdfError: ShoppingListPdfError): void => {
-        setPdfError(pdfError);
+        setErrorMessage(getPdfErrorMessage(pdfError));
         setActionCompleted(true);
         void sendAuditLog({
             action: "create shopping list pdf",
@@ -115,37 +110,30 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
         });
     };
 
-    const actionCompletedSuccessfully = actionCompleted && !serverErrorMessage && !pdfError;
-
     return (
-        <Modal {...props} onClose={onClose}>
-            <ModalInner>
-                {pdfError && (
-                    <ErrorSecondaryText>{getPdfErrorMessage(pdfError)}</ErrorSecondaryText>
-                )}
-                {serverErrorMessage && (
-                    <ErrorSecondaryText>{serverErrorMessage}</ErrorSecondaryText>
-                )}
-                {actionCompletedSuccessfully && <Paragraph>Shopping List Created</Paragraph>}
-                {!actionCompleted && (
-                    <>
-                        <ShoppingListsConfirmation selectedParcels={props.selectedParcels} />
-                        <SelectedParcelsOverview
-                            parcels={props.selectedParcels}
-                            maxParcelsToShow={maxParcelsToShow}
-                        />
-                        <Centerer>
-                            <ShoppingListPdfButton
-                                text="Download"
-                                parcels={props.selectedParcels}
-                                onPdfCreationCompleted={onPdfCreationCompleted}
-                                onPdfCreationFailed={onPdfCreationFailed}
-                            />
-                        </Centerer>
-                    </>
-                )}
-            </ModalInner>
-        </Modal>
+        <GeneralActionModal
+            {...props}
+            onClose={onClose}
+            errorMessage={errorMessage}
+            successMessage="Shopping List Created"
+            actionCompleted={actionCompleted}
+            actionButton={
+                <ShoppingListPdfButton
+                    parcels={props.selectedParcels}
+                    onPdfCreationCompleted={onPdfCreationCompleted}
+                    onPdfCreationFailed={onPdfCreationFailed}
+                />
+            }
+            contentAboveButton={
+                <>
+                    <ShoppingListsConfirmation selectedParcels={props.selectedParcels} />
+                    <SelectedParcelsOverview
+                        parcels={props.selectedParcels}
+                        maxParcelsToShow={maxParcelsToShow}
+                    />
+                </>
+            }
+        />
     );
 };
 

@@ -1,80 +1,66 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-    Centerer,
+import GeneralActionModal, {
     ConfirmButtons,
     Heading,
     maxParcelsToShow,
     ActionModalProps,
-    ModalInner,
-    Paragraph,
-} from "./common";
+} from "./GeneralActionModal";
 import { Button } from "@mui/material";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
-import Modal from "@/components/Modal/Modal";
-import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 
 const DeleteParcelModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
-    const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(null);
-    const updateParcelsStatuses = async (): Promise<void> => {
-        const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
-        if (error) {
-            setServerErrorMessage(getStatusErrorMessageWithLogId(error));
-        }
-    };
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const onDeleteParcels = async (): Promise<void> => {
-        await updateParcelsStatuses();
+        const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
+        if (error) {
+            setErrorMessage(getStatusErrorMessageWithLogId(error));
+        }
         setActionCompleted(true);
     };
 
     const onClose = (): void => {
         props.onClose();
-        setServerErrorMessage(null);
+        setErrorMessage(null);
     };
 
     const numberOfParcelsToDelete = props.selectedParcels.length;
+    const successMessage = `${numberOfParcelsToDelete > 1 ? "Parcels" : "Parcel"} Deleted`;
+
     return (
-        <>
-            (
-            <Modal {...props} onClose={onClose}>
-                <ModalInner>
-                    {actionCompleted ? (
-                        serverErrorMessage ? (
-                            <ErrorSecondaryText>{serverErrorMessage}</ErrorSecondaryText>
-                        ) : (
-                            <Paragraph>{`${numberOfParcelsToDelete > 1 ? "Parcels" : "Parcel"} Deleted`}</Paragraph>
-                        )
-                    ) : (
-                        <>
-                            <Heading>
-                                Are you sure you want to delete the selected parcel{" "}
-                                {numberOfParcelsToDelete === 1 ? "request" : "requests"}?
-                            </Heading>
-                            <SelectedParcelsOverview
-                                parcels={props.selectedParcels}
-                                maxParcelsToShow={maxParcelsToShow}
-                            />
-                            <Centerer>
-                                <ConfirmButtons>
-                                    <Button variant="contained" onClick={onClose}>
-                                        Cancel
-                                    </Button>
-                                    <Button variant="contained" onClick={() => onDeleteParcels()}>
-                                        Delete
-                                    </Button>
-                                </ConfirmButtons>
-                            </Centerer>
-                        </>
-                    )}
-                </ModalInner>
-            </Modal>
-            )
-        </>
+        <GeneralActionModal
+            {...props}
+            onClose={onClose}
+            errorMessage={errorMessage}
+            successMessage={successMessage}
+            actionCompleted={actionCompleted}
+            actionButton={
+                <ConfirmButtons>
+                    <Button variant="contained" onClick={onClose}>
+                        Cancel
+                    </Button>
+                    <Button variant="contained" onClick={() => onDeleteParcels()}>
+                        Delete
+                    </Button>
+                </ConfirmButtons>
+            }
+            contentAboveButton={
+                <>
+                    <Heading>
+                        Are you sure you want to delete the selected parcel{" "}
+                        {numberOfParcelsToDelete === 1 ? "request" : "requests"}?
+                    </Heading>
+                    <SelectedParcelsOverview
+                        parcels={props.selectedParcels}
+                        maxParcelsToShow={maxParcelsToShow}
+                    />
+                </>
+            }
+        />
     );
 };
-
 export default DeleteParcelModal;

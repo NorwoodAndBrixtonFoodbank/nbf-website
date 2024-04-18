@@ -109,7 +109,6 @@ const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse>
 };
 
 interface Props {
-    text: string;
     parcels: ParcelsTableRow[];
     driverName: string;
     date: Dayjs;
@@ -122,7 +121,6 @@ export type DriverOverviewErrorType = DriverPdfErrorType | "driverMessageFetchFa
 export type DriverOverviewError = { type: DriverOverviewErrorType; logId: string };
 
 const DriverOverviewPdfButton = ({
-    text,
     parcels,
     driverName,
     date,
@@ -166,7 +164,6 @@ const DriverOverviewPdfButton = ({
     };
     return (
         <PdfButton
-            text={text}
             fetchDataAndFileName={fetchDataAndFileName}
             pdfComponent={DriverOverviewPdf}
             onPdfCreationCompleted={onPdfCreationCompleted}

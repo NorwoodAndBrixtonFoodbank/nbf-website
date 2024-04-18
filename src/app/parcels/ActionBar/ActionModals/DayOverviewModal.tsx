@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Centerer, Heading, Paragraph, ActionModalProps, ModalInner } from "./common";
+import GeneralActionModal, { Heading, ActionModalProps } from "./GeneralActionModal";
 import { SelectChangeEvent } from "@mui/material";
 import { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -10,8 +10,6 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import DayOverviewPdfButton, { DayOverviewPdfError } from "@/pdf/DayOverview/DayOverviewPdfButton";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
-import Modal from "@/components/Modal/Modal";
-import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import { sendAuditLog } from "@/server/auditLog";
 
 interface DayOverviewInputProps {
@@ -103,21 +101,13 @@ const getPdfErrorMessage = (error: DayOverviewPdfError): string => {
 
 const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
-    const [inputFetchErrorMessage, setInputFetchErrorMessage] = useState<string | null>(null);
-    const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(null);
-    const [pdfError, setPdfError] = useState<DayOverviewPdfError | null>(null);
-    const updateParcelsStatuses = async (): Promise<void> => {
-        const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
-        if (error) {
-            setServerErrorMessage(getStatusErrorMessageWithLogId(error));
-        }
-    };
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const [date, setDate] = useState<Date>(new Date());
     const [collectionCentre, setCollectionCentre] = useState<string | null>(null);
     const [isDateValid, setIsDateValid] = useState(false);
 
-    const isInputValid = !inputFetchErrorMessage && collectionCentre !== null && isDateValid;
+    const isInputValid = !errorMessage && collectionCentre !== null && isDateValid;
 
     const onCollectionCentreChange = (event: SelectChangeEvent): void => {
         setCollectionCentre(event.target.value);
@@ -131,11 +121,14 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
         props.onClose();
         setDate(new Date());
         setCollectionCentre("");
-        setServerErrorMessage(null);
+        setErrorMessage(null);
     };
 
     const onPdfCreationCompleted = async (): Promise<void> => {
-        await updateParcelsStatuses();
+        const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
+        if (error) {
+            setErrorMessage(getStatusErrorMessageWithLogId(error));
+        }
         setActionCompleted(true);
         void sendAuditLog({
             action: "create day overview pdf",
@@ -146,7 +139,7 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
     };
 
     const onPdfCreationFailed = (pdfError: DayOverviewPdfError): void => {
-        setPdfError(pdfError);
+        setErrorMessage(getPdfErrorMessage(pdfError));
         setActionCompleted(true);
         void sendAuditLog({
             action: "create day overview pdf",
@@ -157,45 +150,33 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
         });
     };
 
-    const actionCompletedSuccessfully = actionCompleted && !serverErrorMessage && !pdfError;
-
     return (
-        <Modal {...props} onClose={onClose}>
-            <ModalInner>
-                {pdfError && (
-                    <ErrorSecondaryText>{getPdfErrorMessage(pdfError)}</ErrorSecondaryText>
-                )}
-                {inputFetchErrorMessage && (
-                    <ErrorSecondaryText>{inputFetchErrorMessage}</ErrorSecondaryText>
-                )}
-                {serverErrorMessage && (
-                    <ErrorSecondaryText>{serverErrorMessage}</ErrorSecondaryText>
-                )}
-                {actionCompletedSuccessfully && <Paragraph>Day Overview Created</Paragraph>}
-                {!actionCompleted && (
-                    <>
-                        <DayOverviewInput
-                            onDateChange={onDateChange}
-                            onCollectionCentreChange={onCollectionCentreChange}
-                            setCollectionCentre={setCollectionCentre}
-                            setFetchErrorMessage={setInputFetchErrorMessage}
-                            setDateInvalid={() => setIsDateValid(false)}
-                            setDateValid={() => setIsDateValid(true)}
-                        />
-                        <Centerer>
-                            <DayOverviewPdfButton
-                                text="Download"
-                                date={date}
-                                collectionCentreKey={collectionCentre}
-                                onPdfCreationCompleted={onPdfCreationCompleted}
-                                onPdfCreationFailed={onPdfCreationFailed}
-                                disabled={!isInputValid}
-                            />
-                        </Centerer>
-                    </>
-                )}
-            </ModalInner>
-        </Modal>
+        <GeneralActionModal
+            {...props}
+            onClose={onClose}
+            errorMessage={errorMessage}
+            successMessage="Day Overview Created"
+            actionCompleted={actionCompleted}
+            actionButton={
+                <DayOverviewPdfButton
+                    date={date}
+                    collectionCentreKey={collectionCentre}
+                    onPdfCreationCompleted={onPdfCreationCompleted}
+                    onPdfCreationFailed={onPdfCreationFailed}
+                    disabled={!isInputValid}
+                />
+            }
+            contentAboveButton={
+                <DayOverviewInput
+                    onDateChange={onDateChange}
+                    onCollectionCentreChange={onCollectionCentreChange}
+                    setCollectionCentre={setCollectionCentre}
+                    setFetchErrorMessage={setErrorMessage}
+                    setDateInvalid={() => setIsDateValid(false)}
+                    setDateValid={() => setIsDateValid(true)}
+                />
+            }
+        />
     );
 };
 

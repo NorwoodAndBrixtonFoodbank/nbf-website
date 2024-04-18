@@ -6,7 +6,7 @@ import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import { StatusType } from "./Statuses";
-import { ActionModalProps } from "./ActionModals/common";
+import { ActionModalProps } from "./ActionModals/GeneralActionModal";
 import DayOverviewModal from "./ActionModals/DayOverviewModal";
 import DeleteParcelModal from "./ActionModals/DeleteParcelModal";
 import DriverOverviewModal from "./ActionModals/DriverOverviewModal";

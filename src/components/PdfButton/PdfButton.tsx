@@ -8,7 +8,6 @@ import { PdfDataFetchResponse } from "@/pdf/common";
 
 interface Props<Data, ErrorType extends string> {
     fetchDataAndFileName: () => Promise<PdfDataFetchResponse<Data, ErrorType>>;
-    text: string;
     pdfComponent: React.FC<{ data: Data }>;
     onPdfCreationCompleted: () => void;
     formatName?: boolean;
@@ -40,7 +39,6 @@ const formatFileName = (fileName: string): string => {
 
 const PdfButton = <Data, ErrorType extends string>({
     fetchDataAndFileName,
-    text,
     pdfComponent: PdfComponent,
     onPdfCreationCompleted = () => {},
     formatName = true,
@@ -60,7 +58,7 @@ const PdfButton = <Data, ErrorType extends string>({
     return (
         <NoSsr>
             <Button variant="contained" onClick={onClick} disabled={disabled}>
-                {text}
+                Download PDF
             </Button>
         </NoSsr>
     );

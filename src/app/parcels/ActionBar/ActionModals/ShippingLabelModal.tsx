@@ -1,22 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-    Centerer,
+import GeneralActionModal, {
     Heading,
     maxParcelsToShow,
     ActionModalProps,
-    ModalInner,
-    Paragraph,
-} from "./common";
+} from "./GeneralActionModal";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import ShippingLabelsPdfButton, {
     ShippingLabelError,
 } from "@/pdf/ShippingLabels/ShippingLabelsPdfButton";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
-import Modal from "@/components/Modal/Modal";
-import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import { sendAuditLog } from "@/server/auditLog";
 
 interface ShippingLabelsInputProps {
@@ -54,19 +49,7 @@ const getPdfErrorMessage = (error: ShippingLabelError): string => {
 
 const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
-    const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(null);
-    const [pdfError, setPdfError] = useState<ShippingLabelError | null>(null);
-    const updateParcelsStatuses = async (labelQuantity: number): Promise<void> => {
-        const { error } = await props.updateParcelStatuses(
-            props.selectedParcels,
-            props.newStatus,
-            labelQuantity.toString()
-        );
-        if (error) {
-            setServerErrorMessage(getStatusErrorMessageWithLogId(error));
-        }
-    };
-
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [labelQuantity, setLabelQuantity] = useState<number>(0);
 
     const onLabelQuantityChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -75,16 +58,21 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
 
     const isInputValid = labelQuantity > 0;
 
-    const actionCompletedSuccessfully = actionCompleted && !serverErrorMessage && !pdfError;
-
     const onClose = (): void => {
         props.onClose();
         setLabelQuantity(0);
-        setServerErrorMessage(null);
+        setErrorMessage(null);
     };
 
     const onPdfCreationCompleted = async (): Promise<void> => {
-        await updateParcelsStatuses(labelQuantity);
+        const { error } = await props.updateParcelStatuses(
+            props.selectedParcels,
+            props.newStatus,
+            labelQuantity.toString()
+        );
+        if (error) {
+            setErrorMessage(getStatusErrorMessageWithLogId(error));
+        }
         setActionCompleted(true);
         void sendAuditLog({
             action: "create shipping label pdf",
@@ -97,7 +85,7 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
     };
 
     const onPdfCreationFailed = (pdfError: ShippingLabelError): void => {
-        setPdfError(pdfError);
+        setErrorMessage(getPdfErrorMessage(pdfError));
         setActionCompleted(true);
         void sendAuditLog({
             action: "create shipping label pdf",
@@ -111,36 +99,31 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
     };
 
     return (
-        <Modal {...props} onClose={onClose}>
-            <ModalInner>
-                {pdfError && (
-                    <ErrorSecondaryText>{getPdfErrorMessage(pdfError)}</ErrorSecondaryText>
-                )}
-                {serverErrorMessage && (
-                    <ErrorSecondaryText>{serverErrorMessage}</ErrorSecondaryText>
-                )}
-                {actionCompletedSuccessfully && <Paragraph>Shipping Labels Created</Paragraph>}
-                {!actionCompleted && (
-                    <>
-                        <ShippingLabelsInput onLabelQuantityChange={onLabelQuantityChange} />
-                        <SelectedParcelsOverview
-                            parcels={props.selectedParcels}
-                            maxParcelsToShow={maxParcelsToShow}
-                        />
-                        <Centerer>
-                            <ShippingLabelsPdfButton
-                                disabled={!isInputValid}
-                                text="Download"
-                                parcel={props.selectedParcels[0]}
-                                labelQuantity={labelQuantity}
-                                onPdfCreationCompleted={onPdfCreationCompleted}
-                                onPdfCreationFailed={onPdfCreationFailed}
-                            />
-                        </Centerer>
-                    </>
-                )}
-            </ModalInner>
-        </Modal>
+        <GeneralActionModal
+            {...props}
+            onClose={onClose}
+            errorMessage={errorMessage}
+            successMessage="Shipping Labels Created"
+            actionCompleted={actionCompleted}
+            actionButton={
+                <ShippingLabelsPdfButton
+                    disabled={!isInputValid}
+                    parcel={props.selectedParcels[0]}
+                    labelQuantity={labelQuantity}
+                    onPdfCreationCompleted={onPdfCreationCompleted}
+                    onPdfCreationFailed={onPdfCreationFailed}
+                />
+            }
+            contentAboveButton={
+                <>
+                    <ShippingLabelsInput onLabelQuantityChange={onLabelQuantityChange} />
+                    <SelectedParcelsOverview
+                        parcels={props.selectedParcels}
+                        maxParcelsToShow={maxParcelsToShow}
+                    />
+                </>
+            }
+        />
     );
 };
 

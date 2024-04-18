@@ -11,14 +11,12 @@ import { ShoppingListPdfData } from "./shoppingListPdfDataProps";
 import { PdfDataFetchResponse } from "../common";
 
 interface Props {
-    text: string;
     parcels: ParcelsTableRow[];
     onPdfCreationCompleted: () => void;
     onPdfCreationFailed: (error: { type: ShoppingListPdfErrorType; logId: string }) => void;
 }
 
 const ShoppingListPdfButton = ({
-    text,
     parcels,
     onPdfCreationCompleted,
     onPdfCreationFailed,
@@ -35,7 +33,6 @@ const ShoppingListPdfButton = ({
     };
     return (
         <PdfButton
-            text={text}
             fetchDataAndFileName={fetchDataAndFileName}
             pdfComponent={ShoppingListPdf}
             onPdfCreationCompleted={onPdfCreationCompleted}

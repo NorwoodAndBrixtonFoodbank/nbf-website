@@ -141,7 +141,6 @@ const getRequiredData = async (
 };
 
 interface Props {
-    text: string;
     parcel: ParcelsTableRow;
     labelQuantity: number;
     onPdfCreationCompleted: () => void;
@@ -150,7 +149,6 @@ interface Props {
 }
 
 const ShippingLabelsPdfButton = ({
-    text,
     parcel,
     labelQuantity,
     onPdfCreationCompleted,
@@ -170,7 +168,6 @@ const ShippingLabelsPdfButton = ({
 
     return (
         <PdfButton
-            text={text}
             fetchDataAndFileName={fetchDataAndFileName}
             pdfComponent={ShippingLabelsPdf}
             onPdfCreationCompleted={onPdfCreationCompleted}
