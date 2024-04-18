@@ -106,7 +106,6 @@
     "@types/seedrandom": "^3.0.8",
     "@types/uuid": "^9.0.8",
     "postgres": "^3.4.4",
-    "seedrandom": "^3.0.5",
-    "snaplet": "^0.91.1"
+    "seedrandom": "^3.0.5"
   }
 }
