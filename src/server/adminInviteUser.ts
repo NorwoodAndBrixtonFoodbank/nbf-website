@@ -88,11 +88,11 @@ export async function adminInviteUser(
     const { data: profileData, error: createProfileError } = await supabase
         .from("profiles")
         .insert({
-            primary_key: newUserData.user.id,
             role: userDetails.role,
             first_name: userDetails.firstName,
             last_name: userDetails.lastName,
             telephone_number: userDetails.telephoneNumber,
+            user_id: newUserData.user.id,
         })
         .select()
         .single();

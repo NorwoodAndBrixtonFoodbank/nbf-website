@@ -2,30 +2,78 @@
 
 import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
 import { authenticateAsAdmin } from "@/server/authenticateAdminUser";
-import { logInfoReturnLogId } from "@/logger/logger";
+import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
+import { AuditLog, sendAuditLog } from "@/server/auditLog";
+import { getSupabaseServerComponentClient } from "@/supabaseServer";
 
-export type DeleteUserErrorType = {
-    error: Record<string, string> | null;
-};
+export type DeleteUserErrorType =
+    | "failedToAuthenticateAsAdmin"
+    | "failedToFetchUserIdFromProfiles"
+    | "failedToDeleteUser";
 
-export async function adminDeleteUser(userId: string): Promise<DeleteUserErrorType> {
+type DeleteUserResult =
+    | {
+          error: {
+              type: DeleteUserErrorType;
+              logId: string;
+          };
+      }
+    | { error: null };
+
+export async function adminDeleteUser(userId: string): Promise<DeleteUserResult> {
     const { isSuccess, failureReason } = await authenticateAsAdmin();
 
     if (!isSuccess) {
+        const logId = await logErrorReturnLogId("failed to authenticate as admin", {
+            error: failureReason,
+        });
         return {
-            error: { "Failed to authenticate as admin": failureReason },
+            error: { type: "failedToAuthenticateAsAdmin", logId },
+        };
+    }
+
+    const supabase = getSupabaseServerComponentClient();
+    const { data: userProfile, error: userProfileError } = await supabase
+        .from("profiles")
+        .select("primary_key, role")
+        .eq("user_id", userId)
+        .single();
+
+    if (userProfileError) {
+        const logId = await logErrorReturnLogId("failed to fetch user id from profiles table", {
+            error: userProfileError,
+        });
+        return {
+            error: {
+                type: "failedToFetchUserIdFromProfiles",
+                logId,
+            },
         };
     }
 
     const adminAuthClient = getSupabaseAdminAuthClient();
-    const { error } = await adminAuthClient.deleteUser(userId);
+    const { error: deleteUserError } = await adminAuthClient.deleteUser(userId);
 
-    if (error) {
+    const auditLog = {
+        action: "delete a user",
+        content: {
+            userId: userId,
+            role: userProfile.role,
+        },
+        profileId: userProfile.primary_key ?? "",
+    } as const satisfies Partial<AuditLog>;
+
+    if (deleteUserError) {
+        const logId = await logErrorReturnLogId("Failed to fetch userid from profile", {
+            error: deleteUserError,
+        });
+        void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
         return {
-            error: { "Failed to delete user": error.message },
+            error: { type: "failedToDeleteUser", logId },
         };
     }
 
+    void sendAuditLog({ ...auditLog, wasSuccess: true });
     void logInfoReturnLogId(`Delete successful: user ${userId}`);
 
     return {
