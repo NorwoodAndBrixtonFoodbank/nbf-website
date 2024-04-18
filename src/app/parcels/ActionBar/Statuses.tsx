@@ -41,7 +41,7 @@ export const saveParcelStatus = async (
     const eventsToInsert = parcelIds
         .map((parcelId: string) => {
             return {
-                event_name: statusName,
+                new_parcel_status: statusName,
                 parcel_id: parcelId,
                 event_data: statusEventData,
                 timestamp,
