@@ -31,7 +31,7 @@ const getPdfErrorMessage = (error: ShippingLabelError): string => {
     let errorMessage: string;
     switch (error.type) {
         case "parcelFetchFailed":
-            errorMessage = "Failed to fetch parcel data.";
+            errorMessage = "Failed to fetch selected parcel data.";
             break;
         case "noMatchingClient":
             errorMessage = "No client in the database matches that of the selected parcel.";
