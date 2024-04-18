@@ -11,88 +11,83 @@ import {
 } from "@/common/fetch";
 import ListsDataView, { ListRow, listsHeaderKeysAndLabels } from "@/app/lists/ListDataview";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
+import { logErrorReturnLogId } from "@/logger/logger";
+import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 
 interface FetchedListsData {
     listsData: Schema["lists"][];
     comment: string;
 }
 
-type FetchListsDataResponse =
-    | {
-          data: FetchedListsData;
-          error: null;
-      }
-    | {
-          data: null;
-          error: FetchListsError | FetchListsCommentError;
-      };
-
-const fetchData = async (): Promise<FetchListsDataResponse> => {
-    const { data: listsData, error: listsError } = await fetchLists(supabase);
-    if (listsError) {
-        return { data: null, error: listsError };
-    }
-    const { data: listsCommentData, error: listsCommentError } = await fetchListsComment(supabase);
-    if (listsCommentError) {
-        return { data: null, error: listsCommentError };
-    }
-    return { data: { listsData: listsData, comment: listsCommentData }, error: null };
+const fetchListData = async (): Promise<FetchedListsData> => {
+    const [data, comment] = await Promise.all([fetchLists(supabase), fetchComment(supabase)]);
+    return { data, comment };
 };
 
-const getErrorMessage = (error: FetchListsError | FetchListsCommentError): string => {
-    let errorMessage: string;
-    switch (error.type) {
-        case "listsFetchFailed":
-            errorMessage = "Failed to fetch lists data.";
-            break;
-        case "listsCommentFetchFailed":
-            errorMessage = "Failed to fetch lists comment.";
-            break;
-    }
-    return `${errorMessage} Log ID: ${error.logId}`;
+const formatListData = (listData: FetchedListsData): ListRow[] => {
+    return listData.data.map((row) => {
+        return {
+            primaryKey: row.primary_key,
+            rowOrder: row.row_order,
+            itemName: row.item_name,
+            ...Object.fromEntries(
+                listsHeaderKeysAndLabels
+                    .filter(([key]) => /^\d+$/.test(key))
+                    .map(([key]) => [
+                        key,
+                        {
+                            quantity: row[`quantity_for_${key}` as keyof Schema["lists"]],
+                            notes: row[`notes_for_${key}` as keyof Schema["lists"]],
+                        },
+                    ])
+            ),
+        } as ListRow; // this cast is needed here as the type system can't infer what Object.fromEntries will return
+    });
 };
 
 const ListsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
-    const [listsData, setListsData] = useState<ListRow[]>([]);
+    const [listData, setListData] = useState<ListRow[]>([]);
     const [comment, setComment] = useState("");
-    const [error, setError] = useState<FetchListsError | FetchListsCommentError | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    function handleSetError(error: string | null): void {
+        setErrorMessage(error);
+    }
 
     useEffect(() => {
         (async () => {
             setIsLoading(true);
-            setError(null);
-            const { data, error } = await fetchData();
-            if (error) {
-                setIsLoading(false);
-                setError(error);
-                return;
-            }
-            setListsData(
-                data.listsData.map((row) => {
-                    const newRow = {
-                        primaryKey: row.primary_key,
-                        rowOrder: row.row_order,
-                        itemName: row.item_name,
-                        ...Object.fromEntries(
-                            listsHeaderKeysAndLabels
-                                .filter(([key]) => /^\d+$/.test(key))
-                                .map(([key]) => [
-                                    key,
-                                    {
-                                        quantity:
-                                            row[`quantity_for_${key}` as keyof Schema["lists"]],
-                                        notes: row[`notes_for_${key}` as keyof Schema["lists"]],
-                                    },
-                                ])
-                        ),
-                    } as ListRow; // this cast is needed here as the type system can't infer what Object.fromEntries will return
-                    return newRow;
-                })
-            );
-            setComment(data.comment);
+            const listData = await fetchListData();
+            setListData(formatListData(listData));
+            setComment(listData.comment);
             setIsLoading(false);
         })();
+    }, []);
+
+    useEffect(() => {
+        const subscriptionChannel = supabase
+            .channel("lists-table-changes")
+            .on("postgres_changes", { event: "*", schema: "public", table: "lists" }, async () => {
+                try {
+                    const listData = await fetchListData();
+                    setListData(formatListData(listData));
+                } catch (error) {
+                    const logId = logErrorReturnLogId("Error with fetch: list data subscription", {
+                        error: error,
+                    });
+                    setListData([]);
+                    setErrorMessage(`Error fetching data, please reload. Log ID: ${logId}`);
+                }
+            })
+            .subscribe((status, err) => {
+                if (subscriptionStatusRequiresErrorMessage(status, err, "lists")) {
+                    setErrorMessage("Failed to fetch lists data, please reload");
+                }
+            });
+        return () => {
+            void supabase.removeChannel(subscriptionChannel);
+        };
     }, []);
 
     return isLoading ? (
@@ -101,9 +96,11 @@ const ListsPage: React.FC<{}> = () => {
         <ErrorSecondaryText>{getErrorMessage(error)}</ErrorSecondaryText>
     ) : (
         <ListsDataView
-            listOfIngredients={listsData}
-            setListOfIngredients={setListsData}
+            listOfIngredients={listData}
+            setListOfIngredients={setListData}
             comment={comment}
+            errorMessage={errorMessage}
+            setErrorMessage={handleSetError}
         />
     );
 };
