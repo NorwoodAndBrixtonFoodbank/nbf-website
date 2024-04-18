@@ -141,7 +141,7 @@ export type EditableConfig<Data> =
       }
     | { editable: false };
 
-interface Props<Data> {
+interface Props<Data extends object> {
     dataPortion: Data[];
     headerKeysAndLabels: TableHeaders<Data>;
     isLoading?: boolean;
@@ -199,7 +199,7 @@ const defaultColumnStyleOptions = {
     maxWidth: "20rem",
 } as const;
 
-const Table = <Data,>({
+const Table = <Data extends object>({
     dataPortion,
     headerKeysAndLabels,
     isLoading = false,
@@ -311,7 +311,9 @@ const Table = <Data,>({
             cell: (row: Row<Data>) => {
                 const isRowDeletable =
                     editableConfig.onDelete &&
-                    ("id" in row.data && !editableConfig.undeletableIds?.includes(row.data.id));
+                    ("id" in row.data && typeof row.data.id === "string"
+                        ? !editableConfig.undeletableIds?.includes(row.data.id)
+                        : true);
                 return (
                     <EditAndReorderArrowDiv>
                         {editableConfig.onSwapRows && (
