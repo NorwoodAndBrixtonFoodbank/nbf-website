@@ -106,6 +106,6 @@
     "@types/seedrandom": "^3.0.8",
     "@types/uuid": "^9.0.8",
     "seedrandom": "^3.0.5",
-    "snaplet": "^0.88.2"
+    "snaplet": "^0.91.1"
   }
 }
