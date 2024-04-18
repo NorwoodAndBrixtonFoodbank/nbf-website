@@ -12,6 +12,8 @@ import {
 } from "@/common/fetch";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import { PdfDataFetchResponse } from "../common";
+import { Schema } from "@/databaseUtils";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 const formatDatetime = (datetimeString: string | null): string => {
     if (datetimeString === null) {
@@ -39,26 +41,64 @@ type ShippingLabelResponse =
           error: ShippingLabelError;
       };
 
-type ShippingLabelErrorType = FetchParcelErrorType | FetchClientErrorType;
+type ShippingLabelErrorType = ParcelToShipErrorType;
 
 export interface ShippingLabelError {
     type: ShippingLabelErrorType;
     logId: string;
 }
 
+
+type ParcelToShip = ((Schema["parcels"] & {client: Schema["clients"]} & {packing_slot: Schema["packing_slots"]} & {collection_centre: Schema["collection_centres"]}))
+
+type ParcelToShipResponse =
+    | {
+          data: ParcelToShip;
+          error: null;
+      }
+    | {
+          data: null;
+          error: { type: ParcelToShipErrorType; logId: string };
+      };
+
+type ParcelToShipErrorType = "parcelFetchFailed" | "noMatchingClient" | "noMatchingPackingSlot" | "noMatchingCollectionCentre";
+
+const getParcelToShip= async (parcelId: string): Promise<ParcelToShipResponse> => {
+    const {data, error} = await supabase.from("parcels").select("*, client:clients(*), packing_slot:packing_slots(*), collection_centre:collection_centres(*)").eq("primary_key", parcelId).limit(1).limit(1, {foreignTable: "clients"}).limit(1, {foreignTable: "collection_centres"}).limit(1, {foreignTable: "packing_slot"}).single();
+
+    if (error) {
+        const logId = await logErrorReturnLogId("Error with fetch: Parcels", error);
+        return { data: null, error: { type: "parcelFetchFailed", logId: logId } };
+    }
+
+    if (data.client === null) {
+        const logId = await logErrorReturnLogId("Error with fetch: Parcels. No matching client found.",);
+        return { data: null, error: { type: "noMatchingClient", logId: logId } };
+    }
+
+    if (data.packing_slot === null) {
+        const logId = await logErrorReturnLogId("Error with fetch: Parcels. No matching packing slot found.",);
+        return { data: null, error: { type: "noMatchingPackingSlot", logId: logId } };
+    }
+
+    if (data.collection_centre === null) {
+        const logId = await logErrorReturnLogId("Error with fetch: Parcels. No matching collection centre found.",);
+        return { data: null, error: { type: "noMatchingCollectionCentre", logId: logId } };
+    }
+    
+    const parcelWithNonNullForeignFields: ParcelToShip = {...data, client: data.client, packing_slot: data.packing_slot, collection_centre: data.collection_centre};
+    return { data: parcelWithNonNullForeignFields, error: null };
+};
+
 const getRequiredData = async (
     parcelId: string,
     labelQuantity: number
 ): Promise<ShippingLabelResponse> => {
-    const { data: parcel, error: parcelError } = await fetchParcel(parcelId, supabase);
-    if (parcelError) {
-        return { data: null, error: parcelError };
+    const { data: parcel, error: error } = await getParcelToShip(parcelId);
+    if (error) {
+        return {data: null, error}
     }
-    const { data: client, error: clientError } = await fetchClient(parcel.client_id, supabase);
-    if (clientError) {
-        return { data: null, error: clientError };
-    }
-
+    const client = parcel.client;
     return {
         data: {
             label_quantity: labelQuantity,

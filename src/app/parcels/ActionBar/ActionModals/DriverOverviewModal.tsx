@@ -60,8 +60,8 @@ const getPdfErrorMessage = (error: DriverOverviewError): string => {
         case "parcelFetchFailed":
             errorMessage = "Failed to fetch parcel data.";
             break;
-        case "clientFetchFailed":
-            errorMessage = "Failed to fetch client data.";
+        case "noMatchingClient":
+            errorMessage = "Failed to find a client for one or more of the parcels.";
             break;
         case "driverMessageFetchFailed":
             errorMessage = "Failed to fetch driver overview message.";

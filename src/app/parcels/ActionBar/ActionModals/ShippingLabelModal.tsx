@@ -35,18 +35,14 @@ const ShippingLabelsInput: React.FC<ShippingLabelsInputProps> = ({ onLabelQuanti
 const getPdfErrorMessage = (error: ShippingLabelError): string => {
     let errorMessage: string;
     switch (error.type) {
-        case "failedToFetchParcel":
-            errorMessage = "Failed to fetch selected parcel data.";
-            break;
-        case "noMatchingParcels":
-            errorMessage = "No parcel in the database matches the one selected.";
-            break;
-        case "clientFetchFailed":
-            errorMessage = "Failed to fetch client data for the selected parcel.";
-            break;
-        case "noMatchingClients":
-            errorMessage = "No client in the database matches the client of the selected parcel.";
-            break;
+        case "parcelFetchFailed":
+            errorMessage = "Failed to fetch parcel data."
+        case "noMatchingClient":
+            errorMessage = "No client in the database matches that of the selected parcel."
+        case "noMatchingPackingSlot":
+            errorMessage = "No packing slot in the database matches that of the selected parcel."
+        case "noMatchingCollectionCentre":
+            errorMessage = "No collection centre in the database matches that of the selected parcel."
     }
     return `${errorMessage} LogId: ${error.logId}`;
 };

@@ -18,54 +18,6 @@ interface DriverOverviewData {
     message: string;
 }
 
-type ParcelsForDeliveryResponse =
-    | {
-          data: Schema["parcels"][];
-          error: null;
-      }
-    | {
-          data: null;
-          error: { type: ParcelsForDeliveryErrorType; logId: string };
-      };
-
-type ParcelsForDeliveryErrorType = "parcelFetchFailed";
-
-const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDeliveryResponse> => {
-    const { data, error } = await supabase.from("parcels").select().in("primary_key", parcelIds);
-    if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: Parcels", error);
-        return { data: null, error: { type: "parcelFetchFailed", logId: logId } };
-    }
-    return { data: data, error: null };
-};
-
-type ClientByIdResponse =
-    | {
-          data: Schema["clients"];
-          error: null;
-      }
-    | {
-          data: null;
-          error: { type: ClientByIdErrorType; logId: string };
-      };
-
-type ClientByIdErrorType = "clientFetchFailed";
-
-const getClientById = async (clientId: string): Promise<ClientByIdResponse> => {
-    const { data, error } = await supabase
-        .from("clients")
-        .select()
-        .eq("primary_key", clientId)
-        .single();
-    if (error) {
-        const logId = await logErrorReturnLogId(`Error with fetch: Client with id ${clientId}`, {
-            error,
-        });
-        return { data: null, error: { type: "clientFetchFailed", logId: logId } };
-    }
-    return { data: data, error: null };
-};
-
 const compareDriverOverviewTableData = (
     first: DriverOverviewTableData,
     second: DriverOverviewTableData
@@ -79,6 +31,39 @@ const compareDriverOverviewTableData = (
     return 0;
 };
 
+type ParcelsForDelivery = ((Schema["parcels"] & {client: Schema["clients"]}))[]
+
+type ParcelsForDeliveryResponse =
+    | {
+          data: ParcelsForDelivery;
+          error: null;
+      }
+    | {
+          data: null;
+          error: { type: ParcelsForDeliveryErrorType; logId: string };
+      };
+
+type ParcelsForDeliveryErrorType = "parcelFetchFailed" | "noMatchingClient";
+
+const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDeliveryResponse> => {
+    const {data, error} = await supabase.from("parcels").select("*, client:clients(*)").in("primary_key", parcelIds).limit(1, {foreignTable: "clients"});
+    if (error) {
+        const logId = await logErrorReturnLogId("Error with fetch: Parcels", error);
+        return { data: null, error: { type: "parcelFetchFailed", logId: logId } };
+    }
+
+    const dataWithNonNullClients: ParcelsForDelivery = []
+    for (const parcel of data) {
+        if (parcel.client === null) {
+            const logId = await logErrorReturnLogId("Error with fetch: Parcels. No matching client found",);
+            return { data: null, error: { type: "noMatchingClient", logId: logId } };
+        }
+        dataWithNonNullClients.push ({...parcel, client: parcel.client})
+    }
+
+    return { data: dataWithNonNullClients, error: null };
+};
+
 type DriverPdfResponse =
     | {
           data: DriverOverviewTableData[];
@@ -89,7 +74,7 @@ type DriverPdfResponse =
           error: { type: DriverPdfErrorType; logId: string };
       };
 
-type DriverPdfErrorType = ParcelsForDeliveryErrorType | ClientByIdErrorType;
+type DriverPdfErrorType = ParcelsForDeliveryErrorType;
 
 const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse> => {
     const clientInformation = [];
@@ -98,10 +83,7 @@ const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse>
         return { data: null, error: parcelsError };
     }
     for (const parcel of parcels) {
-        const { data: client, error: clientError } = await getClientById(parcel.client_id);
-        if (clientError) {
-            return { data: null, error: clientError };
-        }
+        const client = parcel.client;
         clientInformation.push({
             name: client?.full_name ?? "",
             address: {
