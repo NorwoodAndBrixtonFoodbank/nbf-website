@@ -102,7 +102,7 @@
   },
   "devDependencies": {
     "@snaplet/copycat": "^5.0.0",
-    "@snaplet/seed": "^0.88.2",
+    "@snaplet/seed": "^0.94.1",
     "@types/seedrandom": "^3.0.8",
     "@types/uuid": "^9.0.8",
     "seedrandom": "^3.0.5",
