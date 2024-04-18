@@ -19,6 +19,7 @@ import AcronymCard from "@/app/admin/createCollectionCentre/AcronymCard";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
+import Alert from "@mui/material/Alert/Alert";
 
 const initialFields: InsertSchema["collection_centres"] = {
     name: "",
@@ -46,7 +47,7 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
     const [submitDisabled, setSubmitDisabled] = useState(false);
 
-    const [refreshRequired, setRefreshRequired] = useState(false);
+    const [newCollectionCentre, setNewCollectionCentre] = useState<string | null>(null);
 
     const fieldSetter = setField(setFields, fields);
     const errorSetter = setError(setFormErrors, formErrors);
@@ -84,9 +85,9 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
 
         setSubmitErrorMessage("");
         setSubmitDisabled(false);
-        setRefreshRequired(true);
         await sendAuditLog({ ...auditLog, wasSuccess: true, collectionCentreId: data.primary_key });
-        void logInfoReturnLogId(`Collection centre: ${fields.name} has been created successfully.`);
+        void logInfoReturnLogId(`Collection centre: ${data.name} has been created successfully.`);
+        setNewCollectionCentre(data.name);
     };
 
     return (
@@ -102,8 +103,10 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
                     />
                 ))}
 
-                {refreshRequired ? (
-                    <RefreshPageButton />
+                {newCollectionCentre ? (
+                    <Alert severity="success" action={<RefreshPageButton />}>
+                        Collection centre <b>{newCollectionCentre}</b> added successfully.
+                    </Alert>
                 ) : (
                     <Button
                         startIcon={<FontAwesomeIcon icon={faBuildingCircleArrowRight} />}
