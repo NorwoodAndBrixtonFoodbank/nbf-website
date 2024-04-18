@@ -31,7 +31,7 @@ const compareDriverOverviewTableData = (
     return 0;
 };
 
-type ParcelsForDelivery = ((Schema["parcels"] & {client: Schema["clients"]}))[]
+type ParcelsForDelivery = (Schema["parcels"] & { client: Schema["clients"] })[];
 
 type ParcelsForDeliveryResponse =
     | {
@@ -46,19 +46,25 @@ type ParcelsForDeliveryResponse =
 type ParcelsForDeliveryErrorType = "parcelFetchFailed" | "noMatchingClient";
 
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDeliveryResponse> => {
-    const {data, error} = await supabase.from("parcels").select("*, client:clients(*)").in("primary_key", parcelIds).limit(1, {foreignTable: "clients"});
+    const { data, error } = await supabase
+        .from("parcels")
+        .select("*, client:clients(*)")
+        .in("primary_key", parcelIds)
+        .limit(1, { foreignTable: "clients" });
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Parcels", error);
         return { data: null, error: { type: "parcelFetchFailed", logId: logId } };
     }
 
-    const dataWithNonNullClients: ParcelsForDelivery = []
+    const dataWithNonNullClients: ParcelsForDelivery = [];
     for (const parcel of data) {
         if (parcel.client === null) {
-            const logId = await logErrorReturnLogId("Error with fetch: Parcels. No matching client found",);
+            const logId = await logErrorReturnLogId(
+                "Error with fetch: Parcels. No matching client found"
+            );
             return { data: null, error: { type: "noMatchingClient", logId: logId } };
         }
-        dataWithNonNullClients.push ({...parcel, client: parcel.client})
+        dataWithNonNullClients.push({ ...parcel, client: parcel.client });
     }
 
     return { data: dataWithNonNullClients, error: null };

@@ -36,13 +36,18 @@ const getPdfErrorMessage = (error: ShippingLabelError): string => {
     let errorMessage: string;
     switch (error.type) {
         case "parcelFetchFailed":
-            errorMessage = "Failed to fetch parcel data."
+            errorMessage = "Failed to fetch parcel data.";
+            break;
         case "noMatchingClient":
-            errorMessage = "No client in the database matches that of the selected parcel."
+            errorMessage = "No client in the database matches that of the selected parcel.";
+            break;
         case "noMatchingPackingSlot":
-            errorMessage = "No packing slot in the database matches that of the selected parcel."
+            errorMessage = "No packing slot in the database matches that of the selected parcel.";
+            break;
         case "noMatchingCollectionCentre":
-            errorMessage = "No collection centre in the database matches that of the selected parcel."
+            errorMessage =
+                "No collection centre in the database matches that of the selected parcel.";
+            break;
     }
     return `${errorMessage} LogId: ${error.logId}`;
 };
