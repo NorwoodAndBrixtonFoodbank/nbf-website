@@ -10,6 +10,8 @@ import { Schema } from "@/databaseUtils";
 import Snackbar from "@mui/material/Snackbar/Snackbar";
 import Alert from "@mui/material/Alert/Alert";
 import Button from "@mui/material/Button/Button";
+import { AuditLog, sendAuditLog } from "@/server/auditLog";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 interface Props {
     onClose: () => void;
@@ -53,27 +55,84 @@ const listQuantityNoteAndLabels: [keyof Schema["lists"], keyof Schema["lists"], 
 ];
 
 const EditModal: React.FC<Props> = ({ data, onClose }) => {
-    const [toSubmit, setToSubmit] = useState<Partial<Schema["lists"]>>(data ?? {});
+    const [toSubmit, setToSubmit] = useState<Partial<Schema["lists"]> | null>(data ?? null);
 
-    const [errorMsg, setErrorMsg] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const setKey = (event: React.ChangeEvent<HTMLInputElement>, key: string): void => {
         const newValue = event.target.value;
         setToSubmit({ ...toSubmit, [key]: newValue });
     };
 
-    const onSubmit = async (): Promise<void> => {
-        const table = supabase.from("lists");
-        const { error } =
-            data === null
-                ? await table.insert(toSubmit)
-                : await table.update(toSubmit).eq("primary_key", toSubmit.primary_key);
+    const addListItem = async (listItem: Partial<Schema["lists"]>): Promise<void> => {
+        const { data: returnedListData, error: insertListItemError } = await supabase
+            .from("lists")
+            .insert(listItem)
+            .select()
+            .single();
 
-        if (error) {
-            setErrorMsg(error.message);
-        } else {
-            window.location.reload();
+        const auditLog = {
+            content: { itemDetails: listItem },
+            action: "add a list item",
+        } as const satisfies Partial<AuditLog>;
+
+        if (insertListItemError) {
+            const logId = await logErrorReturnLogId("failed to insert list item", {
+                error: insertListItemError,
+            });
+            void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
+            setErrorMessage(`Failed to add list item. Log ID: ${logId}`);
+            return;
         }
+
+        void sendAuditLog({
+            ...auditLog,
+            wasSuccess: true,
+            listId: returnedListData.primary_key,
+        });
+    };
+
+    const editListItem = async (listItem: Partial<Schema["lists"]>): Promise<void> => {
+        const { data: returnedListData, error: updateListItemError } = await supabase
+            .from("lists")
+            .update(listItem)
+            .eq("primary_key", listItem.primary_key)
+            .select()
+            .single();
+
+        const auditLog = {
+            content: listItem ?? {},
+            action: "edit a list item",
+        } as const satisfies Partial<AuditLog>;
+
+        if (updateListItemError) {
+            const logId = await logErrorReturnLogId("failed to update list item", {
+                error: updateListItemError,
+            });
+            void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
+            setErrorMessage(`Failed to update a list item. Log ID: ${logId}`);
+            return;
+        }
+        void sendAuditLog({
+            ...auditLog,
+            wasSuccess: true,
+            listId: returnedListData.primary_key,
+        });
+    };
+
+    const onSubmit = async (): Promise<void> => {
+        if (toSubmit === null) {
+            return;
+        }
+
+        if (data === null) {
+            void addListItem(toSubmit);
+        } else {
+            void editListItem(toSubmit);
+        }
+
+        setToSubmit(null);
+        onClose();
     };
 
     const Footer = (
@@ -82,13 +141,12 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                 Submit
             </Button>
             <Snackbar
-                message={errorMsg}
-                autoHideDuration={3000}
-                onClose={() => setErrorMsg(null)}
-                open={errorMsg !== null}
+                message={errorMessage}
+                onClose={() => setErrorMessage(null)}
+                open={errorMessage !== null}
             >
                 <SnackBarDiv>
-                    <Alert severity="error">{errorMsg}</Alert>
+                    <Alert severity="error">{errorMessage}</Alert>
                 </SnackBarDiv>
             </Snackbar>
         </>
@@ -96,7 +154,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
 
     return (
         <Modal
-            header={"Edit List Item - " + toSubmit.item_name}
+            header={toSubmit ? `Edit List Item - ${toSubmit.item_name}` : "Edit List Item -"}
             headerId="editList"
             isOpen={data !== undefined}
             onClose={onClose}
@@ -105,7 +163,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
             <ModalInner>
                 <h3>Description</h3>
                 <TextInput
-                    defaultValue={toSubmit.item_name ?? ""}
+                    defaultValue={toSubmit?.item_name ?? ""}
                     onChange={(event) => setKey(event, "item_name")}
                     label="Item Description"
                 />
@@ -115,12 +173,14 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                             <h3>{label}</h3>
                             <DataWithTooltipDiv>
                                 <TextInput
-                                    defaultValue={toSubmit[quantityKey]?.toString() ?? ""}
+                                    defaultValue={
+                                        toSubmit ? toSubmit[quantityKey]?.toString() ?? "" : ""
+                                    }
                                     label="Quantity"
                                     onChange={(event) => setKey(event, quantityKey)}
                                 />
                                 <TextInput
-                                    defaultValue={toSubmit[noteKey]?.toString() ?? ""}
+                                    defaultValue={toSubmit ? toSubmit[noteKey]?.toString() : ""}
                                     label="Notes"
                                     onChange={(event) => setKey(event, noteKey)}
                                     fullWidth

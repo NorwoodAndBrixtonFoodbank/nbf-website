@@ -6,8 +6,8 @@ import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import { SetAlertOptions } from "@/app/admin/common/SuccessFailureAlert";
-import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
-import { adminDeleteUser } from "@/server/adminDeleteUser";
+import { logInfoReturnLogId } from "@/logger/logger";
+import { adminDeleteUser, DeleteUserErrorType } from "@/server/adminDeleteUser";
 
 const DangerDialog = styled(Modal)`
     .MuiPaper-root > div:first-child {
@@ -26,6 +26,17 @@ interface Props {
     setAlertOptions: SetAlertOptions;
 }
 
+const getErrorMessage = (errorType: DeleteUserErrorType): string => {
+    switch (errorType) {
+        case "failedToAuthenticateAsAdmin":
+            return "Unable to authenticate current user";
+        case "failedToFetchUserIdFromProfiles":
+            return "Unable to retrieve user id";
+        case "failedToDeleteUser":
+            return "Unable to delete user";
+    }
+};
+
 const DeleteUserDialog: React.FC<Props> = (props) => {
     if (props.userToDelete === null) {
         return <></>;
@@ -36,9 +47,15 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
             return;
         }
 
-        const { error } = await adminDeleteUser(props.userToDelete.id);
+        const { error: deleteUserError } = await adminDeleteUser(props.userToDelete.id);
 
-        if (!error) {
+        if (deleteUserError) {
+            const errorMessage = getErrorMessage(deleteUserError.type);
+            props.setAlertOptions({
+                success: false,
+                message: <>{`${errorMessage}. Log ID: ${deleteUserError.logId}`}</>,
+            });
+        } else {
             props.setAlertOptions({
                 success: true,
                 message: (
@@ -48,17 +65,8 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
                 ),
             });
             void logInfoReturnLogId(`${props.userToDelete?.email} deleted successfully.`);
-        } else {
-            const logId = await logErrorReturnLogId(
-                `Error with delete: User ${props.userToDelete.email}`,
-                { error }
-            );
-            props.setAlertOptions({
-                success: false,
-                message: <>{`Delete User Operation Failed. Log ID: ${logId}`}</>,
-            });
-            props.setUserToDelete(null);
         }
+
         props.setUserToDelete(null);
     };
 

@@ -1,10 +1,26 @@
 import supabase from "@/supabaseClient";
-import { DatabaseError } from "@/app/errorClasses";
 import { WebsiteDataRow } from "./WebsiteDataTable";
 import { Tables } from "@/databaseTypesFile";
 import { logErrorReturnLogId } from "@/logger/logger";
+import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 type DbWebsiteData = Tables<"website_data">;
+type FetchWebsiteDataErrors = "failedToFetchWebsiteData";
+type FetchWebsiteDataErrorReturn =
+    | {
+          data: null;
+          error: { type: FetchWebsiteDataErrors; logId: string };
+      }
+    | {
+          data: WebsiteDataRow[];
+          error: null;
+      };
+type UpdateWebsiteDataErrors = "failedToUpdateWebsiteData";
+type UpdateWebsiteDataErrorReturn =
+    | {
+          error: { type: UpdateWebsiteDataErrors; logId: string };
+      }
+    | { error: null };
 
 const getReadableName = (name: string): string =>
     name
@@ -12,14 +28,15 @@ const getReadableName = (name: string): string =>
         .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
         .join(" ");
 
-export const fetchWebsiteData = async (): Promise<WebsiteDataRow[]> => {
+export const fetchWebsiteData = async (): Promise<FetchWebsiteDataErrorReturn> => {
     const { data, error } = await supabase.from("website_data").select().order("name");
+
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: website data", error);
-        throw new DatabaseError("fetch", "website data table", logId);
+        return { error: { type: "failedToFetchWebsiteData", logId }, data: null };
     }
 
-    return data.map(
+    const websiteData = data.map(
         (row): WebsiteDataRow => ({
             dbName: row.name,
             readableName: getReadableName(row.name),
@@ -27,20 +44,36 @@ export const fetchWebsiteData = async (): Promise<WebsiteDataRow[]> => {
             id: row.name,
         })
     );
+
+    return { data: websiteData, error: null };
 };
 
-export const updateDbWebsiteData = async (row: WebsiteDataRow): Promise<void> => {
+export const updateDbWebsiteData = async (
+    row: WebsiteDataRow
+): Promise<UpdateWebsiteDataErrorReturn> => {
     const processedData: DbWebsiteData = {
         name: row.dbName,
         value: row.value,
     };
-    const { error } = await supabase
+
+    const { data: updatedWebsiteData, error } = await supabase
         .from("website_data")
         .update(processedData)
-        .eq("name", processedData.name);
+        .eq("name", processedData.name)
+        .select()
+        .single();
+
+    const auditLog = {
+        action: "update website data",
+        content: processedData,
+        websiteData: processedData.name,
+    } as const satisfies Partial<AuditLog>;
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with update: website data", error);
-        throw new DatabaseError("update", "website data table", logId);
+        void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
+        return { error: { type: "failedToUpdateWebsiteData", logId } };
     }
+    void sendAuditLog({ ...auditLog, wasSuccess: true, content: updatedWebsiteData });
+    return { error: null };
 };

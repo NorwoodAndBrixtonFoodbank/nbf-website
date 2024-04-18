@@ -19,6 +19,7 @@ import {
     lastNameSearch,
 } from "@/app/admin/usersTable/usersTableFilters";
 import { getCurrentUser } from "@/server/getCurrentUser";
+import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 
 const usersTableHeaderKeysAndLabels: TableHeaders<UserRow> = [
     ["id", "User ID"],
@@ -165,8 +166,11 @@ const UsersTable: React.FC = () => {
 
         const { data: userRoleFilter, error } = await buildUserRoleFilter();
         if (error) {
-            setErrorMessage(`Error occurred: ${error.type}, Log ID: 
-                    ${error.logId}`);
+            switch (error.type) {
+                case "failedToFetchUserRoleFilterOptions":
+                    setErrorMessage(`Failed to retrieve user role filters. Log ID: ${error.logId}`);
+                    break;
+            }
         } else {
             filters.push(userRoleFilter);
         }
@@ -214,8 +218,11 @@ const UsersTable: React.FC = () => {
                     case "abortedFetchingProfilesTableCount":
                         return;
                     case "failedToFetchProfilesTable":
+                        setErrorMessage(`Failed to retrieve user profiles. Log ID: 
+                    ${error.logId}`);
+                        break;
                     case "failedToFetchProfilesTableCount":
-                        setErrorMessage(`Error occurred: ${error.type}, Log ID: 
+                        setErrorMessage(`Failed to retrieve number of user profiles. Log ID: 
                     ${error.logId}`);
                         break;
                 }
@@ -240,6 +247,24 @@ const UsersTable: React.FC = () => {
 
     useEffect(() => {
         void fetchAndDisplayUserData();
+    }, [fetchAndDisplayUserData]);
+
+    useEffect(() => {
+        const subscriptionChannel = supabase
+            .channel("users-table-changes")
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "profiles" },
+                fetchAndDisplayUserData
+            )
+            .subscribe((status, err) => {
+                subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&
+                    setErrorMessage("Error fetching users data, please reload");
+            });
+
+        return () => {
+            supabase.removeChannel(subscriptionChannel);
+        };
     }, [fetchAndDisplayUserData]);
 
     return (
