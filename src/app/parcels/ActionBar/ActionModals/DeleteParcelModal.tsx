@@ -37,7 +37,7 @@ const DeleteParcelModal: React.FC<ActionModalProps> = (props) => {
             onClose={onClose}
             errorMessage={errorMessage}
             successMessage={successMessage}
-            actionCompleted={actionCompleted}
+            actionHidden={actionCompleted}
             actionButton={
                 <ConfirmButtons>
                     <Button variant="contained" onClick={onClose}>

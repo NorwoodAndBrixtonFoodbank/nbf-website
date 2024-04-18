@@ -28,7 +28,7 @@ const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
             onClose={onClose}
             errorMessage={errorMessage}
             successMessage="Map Generated"
-            actionCompleted={actionCompleted}
+            actionHidden={actionCompleted}
             actionButton={
                 <Button
                     variant="contained"

@@ -126,7 +126,7 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
             onClose={onClose}
             errorMessage={errorMessage}
             successMessage="Driver Overview Created"
-            actionCompleted={actionCompleted}
+            actionHidden={actionCompleted}
             actionButton={
                 <DriverOverviewPdfButton
                     parcels={props.selectedParcels}

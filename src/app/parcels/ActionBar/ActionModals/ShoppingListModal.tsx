@@ -116,7 +116,7 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
             onClose={onClose}
             errorMessage={errorMessage}
             successMessage="Shopping List Created"
-            actionCompleted={actionCompleted}
+            actionHidden={actionCompleted}
             actionButton={
                 <ShoppingListPdfButton
                     parcels={props.selectedParcels}

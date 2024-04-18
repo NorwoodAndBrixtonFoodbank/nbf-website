@@ -104,7 +104,7 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
             onClose={onClose}
             errorMessage={errorMessage}
             successMessage="Shipping Labels Created"
-            actionCompleted={actionCompleted}
+            actionHidden={actionCompleted}
             actionButton={
                 <ShippingLabelsPdfButton
                     disabled={!isInputValid}

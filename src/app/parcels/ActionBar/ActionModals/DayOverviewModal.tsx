@@ -19,6 +19,7 @@ interface DayOverviewInputProps {
     setFetchErrorMessage: (fetchErrorMessage: string) => void;
     setDateValid: () => void;
     setDateInvalid: () => void;
+    setActionHidden: () => void;
 }
 
 const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
@@ -28,6 +29,7 @@ const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
     setFetchErrorMessage,
     setDateValid,
     setDateInvalid,
+    setActionHidden,
 }) => {
     const [collectionCentres, setCollectionCentres] = useState<[string, string][] | null>(null);
 
@@ -44,6 +46,7 @@ const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
                 setFetchErrorMessage(
                     `Unable to fetch collection centres. Please try again later. Log ID: ${logId}`
                 );
+                setActionHidden();
                 return;
             }
 
@@ -100,7 +103,7 @@ const getPdfErrorMessage = (error: DayOverviewPdfError): string => {
 };
 
 const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
-    const [actionCompleted, setActionCompleted] = useState(false);
+    const [actionHidden, setActionHidden] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const [date, setDate] = useState<Date>(new Date());
@@ -129,7 +132,7 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
         if (error) {
             setErrorMessage(getStatusErrorMessageWithLogId(error));
         }
-        setActionCompleted(true);
+        setActionHidden(true);
         void sendAuditLog({
             action: "create day overview pdf",
             wasSuccess: true,
@@ -140,7 +143,7 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
 
     const onPdfCreationFailed = (pdfError: DayOverviewPdfError): void => {
         setErrorMessage(getPdfErrorMessage(pdfError));
-        setActionCompleted(true);
+        setActionHidden(true);
         void sendAuditLog({
             action: "create day overview pdf",
             wasSuccess: false,
@@ -156,7 +159,7 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
             onClose={onClose}
             errorMessage={errorMessage}
             successMessage="Day Overview Created"
-            actionCompleted={actionCompleted}
+            actionHidden={actionHidden}
             actionButton={
                 <DayOverviewPdfButton
                     date={date}
@@ -174,6 +177,7 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
                     setFetchErrorMessage={setErrorMessage}
                     setDateInvalid={() => setIsDateValid(false)}
                     setDateValid={() => setIsDateValid(true)}
+                    setActionHidden={() => setActionHidden(true)}
                 />
             }
         />
