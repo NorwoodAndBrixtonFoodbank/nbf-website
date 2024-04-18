@@ -19,7 +19,6 @@ import {
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CollectionCentresTable from "@/app/admin/collectionCentresTable/CollectionCentresTable";
-import { Schema } from "@/databaseUtils";
 import CreateCollectionCentreForm from "@/app/admin/createCollectionCentre/CreateCollectionCentreForm";
 import PackingSlotsTable from "@/app/admin/packingSlotsTable/PackingSlotsTable";
 import WebsiteDataTable from "./websiteDataTable/WebsiteDataTable";
@@ -34,15 +33,11 @@ interface Panel {
     panelContent: ReactElement;
 }
 
-interface Props {
-    collectionCentreData: Schema["collection_centres"][];
-}
-
 const PanelIcon = styled(FontAwesomeIcon)`
     padding-right: 0.9rem;
 `;
 
-const AdminPage: React.FC<Props> = (props) => {
+const AdminPage: React.FC = () => {
     const adminPanels: Panel[] = [
         {
             panelTitle: "Users Table",
@@ -53,9 +48,7 @@ const AdminPage: React.FC<Props> = (props) => {
         {
             panelTitle: "Collection Centres Table",
             panelIcon: faCity,
-            panelContent: (
-                <CollectionCentresTable collectionCentreData={props.collectionCentreData} />
-            ),
+            panelContent: <CollectionCentresTable />,
         },
         {
             panelTitle: "Create Collection Centre",
