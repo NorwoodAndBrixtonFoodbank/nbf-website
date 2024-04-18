@@ -188,9 +188,10 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
 
         let collectionDateTime = null;
         if (fields.shippingMethod === "Collection") {
-            collectionDateTime = getDbDate(
-                mergeDateAndTime(fields.collectionDate!, fields.collectionTime!)
-            );
+            collectionDateTime = mergeDateAndTime(
+                fields.collectionDate!,
+                fields.collectionTime!
+            ).toISOString();
         }
 
         const isDelivery = fields.shippingMethod === "Delivery";
