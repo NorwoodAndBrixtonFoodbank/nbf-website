@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+
 describe("User invite on admins page", () => {
     beforeEach(() => {
         cy.login();
@@ -5,18 +7,20 @@ describe("User invite on admins page", () => {
     });
 
     it("Invite a user without a phone number", () => {
-        const email = "new-user-without-phone-number@emxaple.com";
+        const email = generateRandomEmailAddress();
+        
         toggleCreateUserSection();
         fillEmail(email);
         fillFirstName("First");
         fillLastName("Last");
         clickInviteUser();
-        cy.contains("Failed to create a profile for the new user.").should("be.visible");
+
+        assertUserInvitedSuccessfully(email);
     });
 
     it("Invite a user without a phone number after typing a number first", () => {
-        // open the invite user section
-        const email = "new-user-without-phone-number-after-filling-in@emxaple.com";
+        const email = generateRandomEmailAddress();
+
         toggleCreateUserSection();
         fillEmail(email);
         fillFirstName("First");
@@ -24,11 +28,13 @@ describe("User invite on admins page", () => {
         fillPhoneNumber("00000000000");
         clearPhoneNumber();
         clickInviteUser();
+
+        assertUserInvitedSuccessfully(email);
     });
 
     it("Invite a user with a phone number", () => {
-        // open the invite user section
-        const email = "new-user-with-phone-number@emxaple.com";
+        const email = generateRandomEmailAddress();
+
         toggleCreateUserSection();
         fillEmail(email);
         fillFirstName("First");
@@ -36,7 +42,7 @@ describe("User invite on admins page", () => {
         fillPhoneNumber("00000000000");
         clickInviteUser();
 
-        cy.contains(`User ${email} invited successfully.`).should("be.visible");
+        assertUserInvitedSuccessfully(email);
     });
 
     const createUserText = "create user";
@@ -71,5 +77,13 @@ describe("User invite on admins page", () => {
 
     function clickInviteUser(): void {
         cy.contains("Invite User").click();
+    }
+
+    function assertUserInvitedSuccessfully(email: string): void {
+        cy.contains(`User ${email} invited successfully.`).should("be.visible");
+    }
+
+    function generateRandomEmailAddress(): string {
+        return `${uuidv4()}@example.com`;
     }
 });
