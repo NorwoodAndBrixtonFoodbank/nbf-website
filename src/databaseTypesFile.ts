@@ -197,6 +197,7 @@ export type Database = {
           feminine_products: string[]
           flagged_for_attention: boolean
           full_name: string
+          last_updated: string
           other_items: string[]
           pet_food: string[]
           phone_number: string
@@ -217,6 +218,7 @@ export type Database = {
           feminine_products?: string[]
           flagged_for_attention?: boolean
           full_name?: string
+          last_updated?: string
           other_items?: string[]
           pet_food?: string[]
           phone_number?: string
@@ -237,6 +239,7 @@ export type Database = {
           feminine_products?: string[]
           flagged_for_attention?: boolean
           full_name?: string
+          last_updated?: string
           other_items?: string[]
           pet_food?: string[]
           phone_number?: string
@@ -535,6 +538,7 @@ export type Database = {
           collection_centre: string | null
           collection_datetime: string | null
           created_at: string
+          last_updated: string
           packing_date: string | null
           packing_slot: string | null
           primary_key: string
@@ -545,6 +549,7 @@ export type Database = {
           collection_centre?: string | null
           collection_datetime?: string | null
           created_at?: string
+          last_updated?: string
           packing_date?: string | null
           packing_slot?: string | null
           primary_key?: string
@@ -555,6 +560,7 @@ export type Database = {
           collection_centre?: string | null
           collection_datetime?: string | null
           created_at?: string
+          last_updated?: string
           packing_date?: string | null
           packing_slot?: string | null
           primary_key?: string
