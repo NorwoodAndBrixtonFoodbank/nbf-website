@@ -342,7 +342,11 @@ const Table = <Data,>({
                         )}
                         {editableConfig.onDelete && isRowDeletable && (
                             <StyledIconButton
-                                onClick={() => editableConfig.onDelete!(row.rowId)}
+                                onClick={() => {
+                                    if (editableConfig.onDelete) {
+                                        editableConfig.onDelete(row.rowId);
+                                    }
+                                }}
                                 aria-label="delete"
                             >
                                 <StyledIcon icon={faTrashAlt} />
