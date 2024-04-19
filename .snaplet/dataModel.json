@@ -645,6 +645,106 @@
         }
       ]
     },
+    "broadcasts": {
+      "id": "realtime.broadcasts",
+      "schemaName": "realtime",
+      "tableName": "broadcasts",
+      "fields": [
+        {
+          "id": "realtime.broadcasts.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "int8",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": {
+            "identifier": "\"realtime\".\"broadcasts_id_seq\"",
+            "increment": 1,
+            "start": 1
+          },
+          "hasDefaultValue": true,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.broadcasts.channel_id",
+          "name": "channel_id",
+          "columnName": "channel_id",
+          "type": "int8",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.broadcasts.check",
+          "name": "check",
+          "columnName": "check",
+          "type": "bool",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.broadcasts.inserted_at",
+          "name": "inserted_at",
+          "columnName": "inserted_at",
+          "type": "timestamp",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.broadcasts.updated_at",
+          "name": "updated_at",
+          "columnName": "updated_at",
+          "type": "timestamp",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "channels",
+          "type": "channels",
+          "isRequired": true,
+          "kind": "object",
+          "relationName": "broadcastsTochannels",
+          "relationFromFields": [
+            "channel_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        }
+      ],
+      "uniqueConstraints": []
+    },
     "buckets": {
       "id": "storage.buckets",
       "schemaName": "storage",
@@ -814,6 +914,116 @@
           "nullNotDistinct": false
         }
       ]
+    },
+    "channels": {
+      "id": "realtime.channels",
+      "schemaName": "realtime",
+      "tableName": "channels",
+      "fields": [
+        {
+          "id": "realtime.channels.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "int8",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": {
+            "identifier": "\"realtime\".\"channels_id_seq\"",
+            "increment": 1,
+            "start": 1
+          },
+          "hasDefaultValue": true,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.channels.name",
+          "name": "name",
+          "columnName": "name",
+          "type": "varchar",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": 255
+        },
+        {
+          "id": "realtime.channels.inserted_at",
+          "name": "inserted_at",
+          "columnName": "inserted_at",
+          "type": "timestamp",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.channels.updated_at",
+          "name": "updated_at",
+          "columnName": "updated_at",
+          "type": "timestamp",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.channels.check",
+          "name": "check",
+          "columnName": "check",
+          "type": "bool",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "broadcasts",
+          "type": "broadcasts",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "broadcastsTochannels",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "presences",
+          "type": "presences",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "presencesTochannels",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        }
+      ],
+      "uniqueConstraints": []
     },
     "clients": {
       "id": "public.clients",
@@ -4041,6 +4251,106 @@
         }
       ]
     },
+    "presences": {
+      "id": "realtime.presences",
+      "schemaName": "realtime",
+      "tableName": "presences",
+      "fields": [
+        {
+          "id": "realtime.presences.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "int8",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": {
+            "identifier": "\"realtime\".\"presences_id_seq\"",
+            "increment": 1,
+            "start": 1
+          },
+          "hasDefaultValue": true,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.presences.channel_id",
+          "name": "channel_id",
+          "columnName": "channel_id",
+          "type": "int8",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.presences.check",
+          "name": "check",
+          "columnName": "check",
+          "type": "bool",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.presences.inserted_at",
+          "name": "inserted_at",
+          "columnName": "inserted_at",
+          "type": "timestamp",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.presences.updated_at",
+          "name": "updated_at",
+          "columnName": "updated_at",
+          "type": "timestamp",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "channels",
+          "type": "channels",
+          "isRequired": true,
+          "kind": "object",
+          "relationName": "presencesTochannels",
+          "relationFromFields": [
+            "channel_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        }
+      ],
+      "uniqueConstraints": []
+    },
     "profiles": {
       "id": "public.profiles",
       "schemaName": "public",
@@ -4711,6 +5021,42 @@
           "nullNotDistinct": false
         }
       ]
+    },
+    "realtime_schema_migrations": {
+      "id": "realtime.schema_migrations",
+      "schemaName": "realtime",
+      "tableName": "schema_migrations",
+      "fields": [
+        {
+          "id": "realtime.schema_migrations.version",
+          "name": "version",
+          "columnName": "version",
+          "type": "int8",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.schema_migrations.inserted_at",
+          "name": "inserted_at",
+          "columnName": "inserted_at",
+          "type": "timestamp",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        }
+      ],
+      "uniqueConstraints": []
     },
     "supabase_migrations_schema_migrations": {
       "id": "supabase_migrations.schema_migrations",
@@ -5406,6 +5752,116 @@
           "nullNotDistinct": false
         }
       ]
+    },
+    "subscription": {
+      "id": "realtime.subscription",
+      "schemaName": "realtime",
+      "tableName": "subscription",
+      "fields": [
+        {
+          "id": "realtime.subscription.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "int8",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": true,
+          "sequence": {
+            "identifier": "\"realtime\".\"realtime.subscription_id_seq\"",
+            "increment": 1,
+            "start": 1
+          },
+          "hasDefaultValue": false,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.subscription.subscription_id",
+          "name": "subscription_id",
+          "columnName": "subscription_id",
+          "type": "uuid",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.subscription.entity",
+          "name": "entity",
+          "columnName": "entity",
+          "type": "regclass",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.subscription.filters",
+          "name": "filters",
+          "columnName": "filters",
+          "type": "user_defined_filter[]",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.subscription.claims",
+          "name": "claims",
+          "columnName": "claims",
+          "type": "jsonb",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.subscription.claims_role",
+          "name": "claims_role",
+          "columnName": "claims_role",
+          "type": "regrole",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": true,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "realtime.subscription.created_at",
+          "name": "created_at",
+          "columnName": "created_at",
+          "type": "timestamp",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        }
+      ],
+      "uniqueConstraints": []
     },
     "users": {
       "id": "auth.users",
@@ -6174,6 +6630,52 @@
         },
         {
           "name": "caller"
+        }
+      ]
+    },
+    "action": {
+      "schemaName": "realtime",
+      "values": [
+        {
+          "name": "DELETE"
+        },
+        {
+          "name": "ERROR"
+        },
+        {
+          "name": "INSERT"
+        },
+        {
+          "name": "TRUNCATE"
+        },
+        {
+          "name": "UPDATE"
+        }
+      ]
+    },
+    "equality_op": {
+      "schemaName": "realtime",
+      "values": [
+        {
+          "name": "eq"
+        },
+        {
+          "name": "gt"
+        },
+        {
+          "name": "gte"
+        },
+        {
+          "name": "in"
+        },
+        {
+          "name": "lt"
+        },
+        {
+          "name": "lte"
+        },
+        {
+          "name": "neq"
         }
       ]
     }

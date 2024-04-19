@@ -98,6 +98,28 @@
     ]
   },
   {
+    "schemaName": "realtime",
+    "tableName": "broadcasts",
+    "predictions": [
+      {
+        "input": "realtime broadcasts inserted_at",
+        "column": "inserted_at",
+        "shape": "DATE",
+        "confidence": 0.9963454604148865,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "realtime broadcasts updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9969859719276428,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
     "schemaName": "storage",
     "tableName": "buckets",
     "predictions": [
@@ -146,6 +168,36 @@
         "column": "updated_at",
         "shape": "DATE",
         "confidence": 0.9926562905311584,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "realtime",
+    "tableName": "channels",
+    "predictions": [
+      {
+        "input": "realtime channels inserted_at",
+        "column": "inserted_at",
+        "shape": "DATE",
+        "confidence": 0.9959784746170044,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "realtime channels name",
+        "column": "name",
+        "shape": "SYSTEM_CRON",
+        "confidence": 0.3024794459342957,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "realtime channels updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9968760013580322,
         "context": "GENERAL",
         "confidenceContext": 0
       }
@@ -784,14 +836,6 @@
         "confidenceContext": 0
       },
       {
-        "input": "public lists_hotel notes_for_10",
-        "column": "notes_for_10",
-        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
-        "confidence": 0.5610069036483765,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
         "input": "public lists_hotel notes_for_2",
         "column": "notes_for_2",
         "shape": "SSN_LAST4",
@@ -854,12 +898,34 @@
         "confidence": 0.5136892199516296,
         "context": "GENERAL",
         "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "public",
+    "tableName": "lists_hotel",
+    "predictions": [
+      {
+        "input": "public lists_hotel notes_for_10",
+        "column": "notes_for_10",
+        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
+        "confidence": 0.5610069036483765,
+        "context": "GENERAL",
+        "confidenceContext": 0
       },
       {
         "input": "public lists_hotel quantity_for_1",
         "column": "quantity_for_1",
         "shape": "BANK_ACCOUNT_NUMBER_LAST4",
         "confidence": 0.6141021251678467,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel quantity_for_10",
+        "column": "quantity_for_10",
+        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
+        "confidence": 0.5681412816047668,
         "context": "GENERAL",
         "confidenceContext": 0
       },
@@ -884,20 +950,6 @@
         "column": "quantity_for_4",
         "shape": "COMMERCE_PRODUCT_NAME",
         "confidence": 0.456644207239151,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      }
-    ]
-  },
-  {
-    "schemaName": "public",
-    "tableName": "lists_hotel",
-    "predictions": [
-      {
-        "input": "public lists_hotel quantity_for_10",
-        "column": "quantity_for_10",
-        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
-        "confidence": 0.5681412816047668,
         "context": "GENERAL",
         "confidenceContext": 0
       },
@@ -1192,6 +1244,28 @@
     ]
   },
   {
+    "schemaName": "realtime",
+    "tableName": "presences",
+    "predictions": [
+      {
+        "input": "realtime presences inserted_at",
+        "column": "inserted_at",
+        "shape": "DATE",
+        "confidence": 0.9953981041908264,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "realtime presences updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9965379238128662,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
     "schemaName": "public",
     "tableName": "profiles",
     "predictions": [
@@ -1368,6 +1442,20 @@
         "column": "version",
         "shape": "SYSTEM_SEMVER",
         "confidence": 0.9860692024230957,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "realtime",
+    "tableName": "schema_migrations",
+    "predictions": [
+      {
+        "input": "realtime schema_migrations inserted_at",
+        "column": "inserted_at",
+        "shape": "DATE",
+        "confidence": 0.9948114156723022,
         "context": "GENERAL",
         "confidenceContext": 0
       }
@@ -1586,6 +1674,20 @@
     ]
   },
   {
+    "schemaName": "realtime",
+    "tableName": "subscription",
+    "predictions": [
+      {
+        "input": "realtime subscription created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9956409931182861,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
     "schemaName": "auth",
     "tableName": "users",
     "predictions": [
@@ -1594,14 +1696,6 @@
         "column": "aud",
         "shape": "AUTHENTICATION_PROVIDER",
         "confidence": 0,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users banned_until",
-        "column": "banned_until",
-        "shape": "PASSWORD",
-        "confidence": 0.7942231297492981,
         "context": "GENERAL",
         "confidenceContext": 0
       },
@@ -1630,14 +1724,6 @@
         "confidenceContext": 0
       },
       {
-        "input": "auth users deleted_at",
-        "column": "deleted_at",
-        "shape": "DATE",
-        "confidence": 0.9908251166343689,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
         "input": "auth users email",
         "column": "email",
         "shape": "EMAIL",
@@ -1658,14 +1744,6 @@
         "column": "email_change_sent_at",
         "shape": "DATE",
         "confidence": 0.9879693984985352,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users email_change_token_current",
-        "column": "email_change_token_current",
-        "shape": "TOKEN",
-        "confidence": 0.9396399855613708,
         "context": "GENERAL",
         "confidenceContext": 0
       },
@@ -1726,42 +1804,10 @@
         "confidenceContext": 0
       },
       {
-        "input": "auth users phone_change_sent_at",
-        "column": "phone_change_sent_at",
-        "shape": "DATE",
-        "confidence": 0.9834369421005249,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users phone_change_token",
-        "column": "phone_change_token",
-        "shape": "TOKEN",
-        "confidence": 0.9925726652145386,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
         "input": "auth users phone_confirmed_at",
         "column": "phone_confirmed_at",
         "shape": "DATE",
         "confidence": 0.9743674397468567,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users reauthentication_sent_at",
-        "column": "reauthentication_sent_at",
-        "shape": "DATE",
-        "confidence": 0.987545907497406,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users reauthentication_token",
-        "column": "reauthentication_token",
-        "shape": "TOKEN",
-        "confidence": 0.991940975189209,
         "context": "GENERAL",
         "confidenceContext": 0
       },
@@ -1794,6 +1840,68 @@
         "column": "updated_at",
         "shape": "DATE",
         "confidence": 0.9914711117744446,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "users",
+    "predictions": [
+      {
+        "input": "auth users banned_until",
+        "column": "banned_until",
+        "shape": "PASSWORD",
+        "confidence": 0.7942231297492981,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users deleted_at",
+        "column": "deleted_at",
+        "shape": "DATE",
+        "confidence": 0.9908251166343689,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users email_change_token_current",
+        "column": "email_change_token_current",
+        "shape": "TOKEN",
+        "confidence": 0.9396399855613708,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users phone_change_sent_at",
+        "column": "phone_change_sent_at",
+        "shape": "DATE",
+        "confidence": 0.9834369421005249,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users phone_change_token",
+        "column": "phone_change_token",
+        "shape": "TOKEN",
+        "confidence": 0.9925726652145386,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users reauthentication_sent_at",
+        "column": "reauthentication_sent_at",
+        "shape": "DATE",
+        "confidence": 0.987545907497406,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users reauthentication_token",
+        "column": "reauthentication_token",
+        "shape": "TOKEN",
+        "confidence": 0.991940975189209,
         "context": "GENERAL",
         "confidenceContext": 0
       }
