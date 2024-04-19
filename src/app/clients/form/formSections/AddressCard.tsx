@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import {
     Errors,
@@ -28,6 +28,11 @@ const AddressCard: React.FC<ClientCardProps> = ({
     fields,
 }) => {
     const [clientHasNoAddress, setClientHasNoAddress] = useState(false);
+    const defaultAddressLine1 = useRef(fields["addressLine1"])
+    const defaultAddressLine2 = useRef(fields["addressLine2"])
+    const defaultAddressTown = useRef(fields["addressTown"])
+    const defaultAddressCounty = useRef(fields["addressCounty"])
+    const defaultAddressPostcode = useRef(fields["addressPostcode"])
     const handleCheckCheckbox = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setClientHasNoAddress(event.target.checked)
         if (event.target.checked) {
@@ -38,7 +43,12 @@ const AddressCard: React.FC<ClientCardProps> = ({
             fieldSetter("addressLine2", "");
             fieldSetter("addressTown", "");
             fieldSetter("addressCounty", "");
-        }
+            defaultAddressLine1.current = "";
+            defaultAddressLine2.current = "";
+            defaultAddressTown.current = "";
+            defaultAddressCounty.current = "";
+            defaultAddressPostcode.current = "";
+          }
         else {
             errorSetter("addressPostcode", Errors.initial);
             errorSetter("addressLine1", Errors.initial);
@@ -59,18 +69,22 @@ const AddressCard: React.FC<ClientCardProps> = ({
                     error={errorExists(formErrors.addressLine1)}
                     helperText={errorText(formErrors.addressLine1)}
                     onChange={onChangeText(fieldSetter, errorSetter, "addressLine1", true)}
+                    defaultValue={defaultAddressLine1.current}
                 />
                 <FreeFormTextInput
                     label="Address Line 2"
                     onChange={onChangeText(fieldSetter, errorSetter, "addressLine2", false)}
+                    defaultValue={defaultAddressLine2.current}
                 />
                 <FreeFormTextInput
                     label="Town"
                     onChange={onChangeText(fieldSetter, errorSetter, "addressTown", false)}
+                    defaultValue={defaultAddressTown.current}
                 />
                 <FreeFormTextInput
                     label="County"
                     onChange={onChangeText(fieldSetter, errorSetter, "addressCounty", false)}
+                    defaultValue={defaultAddressCounty.current}
                 />
                 <FreeFormTextInput
                     label="Postcode* (For example, SE11 5QY)"
@@ -84,6 +98,7 @@ const AddressCard: React.FC<ClientCardProps> = ({
                         postcodeRegex,
                         formatPostcode
                     )}
+                    defaultValue={defaultAddressPostcode.current}
                 /></>}
                 <FormControlLabel control={<Checkbox checked={clientHasNoAddress} onChange={handleCheckCheckbox}/>} label="No address"/>
             </GappedDiv>
