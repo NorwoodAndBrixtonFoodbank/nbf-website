@@ -226,20 +226,19 @@ const UsersTable: React.FC = () => {
                     ${error.logId}`);
                         break;
                 }
-                return;
+            } else {
+                setUsers(data.userData);
+                setFilteredUsersCount(data.count);
             }
-            setUsers(data.userData);
-            setFilteredUsersCount(data.count);
 
             const { data: currentUser, error: currentUserError } = await getCurrentUser();
             if (currentUserError) {
                 setErrorMessage(
                     `Error occured when fetching current user: ${currentUserError.type}, Log ID: ${currentUserError.logId}`
                 );
-                return;
+            } else {
+                setCurrentUserId(currentUser.id);
             }
-
-            setCurrentUserId(currentUser.id);
         }
         usersTableFetchAbortController.current = null;
         setIsLoading(false);
@@ -303,7 +302,7 @@ const UsersTable: React.FC = () => {
                     onDelete: userOnDelete,
                     onEdit: userOnEdit,
                     setDataPortion: setUsers,
-                    undeletableIds: currentUserId ? [currentUserId] : [],
+                    isDeletable: (row: UserRow) => row.id !== currentUserId,
                 }}
                 filterConfig={{
                     primaryFiltersShown: true,

@@ -13,7 +13,7 @@ type CurrentUserResponse =
           data: null;
           error: CurrentUserError;
       };
-type CurrentUserErrorType = "userFetchFailed" | "noMatchingUsers";
+type CurrentUserErrorType = "userFetchFailed";
 interface CurrentUserError {
     type: CurrentUserErrorType;
     logId: string;
@@ -27,11 +27,6 @@ export async function getCurrentUser(): Promise<CurrentUserResponse> {
     if (error) {
         const logId = await logErrorReturnLogId("error with auth getUser", error);
         return { data: null, error: { type: "userFetchFailed", logId: logId } };
-    }
-
-    if (data === null) {
-        const logId = await logErrorReturnLogId("error with auth getUser: no matching users");
-        return { data: null, error: { type: "noMatchingUsers", logId: logId } };
     }
 
     return { data: data.user, error: null };

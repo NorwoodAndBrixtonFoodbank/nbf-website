@@ -137,7 +137,7 @@ export type EditableConfig<Data> =
           onEdit?: (data: number) => void;
           onDelete?: (data: number) => void;
           onSwapRows?: (row1: Data, row2: Data) => Promise<void>;
-          undeletableIds?: string[];
+          isDeletable?: (row: Data) => boolean;
       }
     | { editable: false };
 
@@ -311,9 +311,7 @@ const Table = <Data extends object>({
             cell: (row: Row<Data>) => {
                 const isRowDeletable =
                     editableConfig.onDelete &&
-                    ("id" in row.data && typeof row.data.id === "string"
-                        ? !editableConfig.undeletableIds?.includes(row.data.id)
-                        : true);
+                    (editableConfig.isDeletable ? editableConfig.isDeletable(row.data) : true);
                 return (
                     <EditAndReorderArrowDiv>
                         {editableConfig.onSwapRows && (
