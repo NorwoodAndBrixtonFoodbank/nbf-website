@@ -3,6 +3,7 @@
 import React from "react";
 import { TextField } from "@mui/material";
 interface Props {
+    id?: string;
     label?: string;
     defaultValue?: string;
     type?: string;
