@@ -29,7 +29,7 @@
     "db:local:generate_types": "supabase gen types typescript --local --schema public > src/databaseTypesFile.ts",
     "db:remote:generate_types": "supabase gen types typescript --schema public > src/databaseTypesFile.ts",
     "db:generate_seed": "npx tsx supabase/seed/seed.mts > supabase/seed.sql",
-    "post_checkout": "npm install && npx supabase stop && npx supabase start && npm run dev:reset_supabase && npx @snaplet/seed sync"
+    "post_checkout": "npm run dev:reset_supabase && npx snaplet generate"
   },
   "nyc": {
     "all": true,
@@ -104,10 +104,10 @@
   "devDependencies": {
     "@snaplet/copycat": "^5.0.0",
     "@types/file-saver": "^2.0.7",
-    "@snaplet/seed": "^0.94.1",
+    "@snaplet/seed": "^0.88.2",
     "@types/seedrandom": "^3.0.8",
     "@types/uuid": "^9.0.8",
-    "postgres": "^3.4.4",
-    "seedrandom": "^3.0.5"
+    "seedrandom": "^3.0.5",
+    "snaplet": "^0.88.2"
   }
 }
