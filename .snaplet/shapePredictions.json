@@ -326,14 +326,6 @@
         "confidenceContext": 0
       },
       {
-        "input": "auth flow_state auth_code_issued_at",
-        "column": "auth_code_issued_at",
-        "shape": "DATE",
-        "confidence": 0.9138723611831665,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
         "input": "auth flow_state authentication_method",
         "column": "authentication_method",
         "shape": "TOKEN",
@@ -886,6 +878,14 @@
         "confidence": 0.351044237613678,
         "context": "GENERAL",
         "confidenceContext": 0
+      },
+      {
+        "input": "public lists_hotel quantity_for_4",
+        "column": "quantity_for_4",
+        "shape": "COMMERCE_PRODUCT_NAME",
+        "confidence": 0.456644207239151,
+        "context": "GENERAL",
+        "confidenceContext": 0
       }
     ]
   },
@@ -898,14 +898,6 @@
         "column": "quantity_for_10",
         "shape": "BANK_ACCOUNT_NUMBER_LAST4",
         "confidence": 0.5681412816047668,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "public lists_hotel quantity_for_4",
-        "column": "quantity_for_4",
-        "shape": "COMMERCE_PRODUCT_NAME",
-        "confidence": 0.456644207239151,
         "context": "GENERAL",
         "confidenceContext": 0
       },
@@ -1276,130 +1268,6 @@
     ]
   },
   {
-    "schemaName": "storage",
-    "tableName": "s3_multipart_uploads",
-    "predictions": [
-      {
-        "input": "storage s_3_multipart_uploads bucket_id",
-        "column": "bucket_id",
-        "shape": "UUID",
-        "confidence": 0.2733745574951172,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "storage s_3_multipart_uploads created_at",
-        "column": "created_at",
-        "shape": "DATE",
-        "confidence": 0.9690561294555664,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "storage s_3_multipart_uploads id",
-        "column": "id",
-        "shape": "UUID",
-        "confidence": 0.8652965426445007,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "storage s_3_multipart_uploads key",
-        "column": "key",
-        "shape": "SYSTEM_FILE_NAME",
-        "confidence": 0.7,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "storage s_3_multipart_uploads owner_id",
-        "column": "owner_id",
-        "shape": "UUID",
-        "confidence": 0.7541124820709229,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "storage s_3_multipart_uploads upload_signature",
-        "column": "upload_signature",
-        "shape": "SYSTEM_FILE_NAME",
-        "confidence": 0.204882800579071,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "storage s_3_multipart_uploads version",
-        "column": "version",
-        "shape": "SYSTEM_SEMVER",
-        "confidence": 0.9020141363143921,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      }
-    ]
-  },
-  {
-    "schemaName": "storage",
-    "tableName": "s3_multipart_uploads_parts",
-    "predictions": [
-      {
-        "input": "storage s_3_multipart_uploads_parts bucket_id",
-        "column": "bucket_id",
-        "shape": "SYSTEM_DIRECTORY_PATH",
-        "confidence": 0.1530635505914688,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "storage s_3_multipart_uploads_parts created_at",
-        "column": "created_at",
-        "shape": "DATE",
-        "confidence": 0.5953836441040039,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "storage s_3_multipart_uploads_parts etag",
-        "column": "etag",
-        "shape": "SYSTEM_FILE_NAME",
-        "confidence": 0.3147349059581757,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "storage s_3_multipart_uploads_parts key",
-        "column": "key",
-        "shape": "SYSTEM_FILE_PATH",
-        "confidence": 0.1395908743143082,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "storage s_3_multipart_uploads_parts owner_id",
-        "column": "owner_id",
-        "shape": "SYSTEM_FILE_NAME",
-        "confidence": 0.2599887549877167,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "storage s_3_multipart_uploads_parts upload_id",
-        "column": "upload_id",
-        "shape": "UUID",
-        "confidence": 0.4390925168991089,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "storage s_3_multipart_uploads_parts version",
-        "column": "version",
-        "shape": "SYSTEM_SEMVER",
-        "confidence": 0.862582266330719,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      }
-    ]
-  },
-  {
     "schemaName": "auth",
     "tableName": "saml_providers",
     "predictions": [
@@ -1432,14 +1300,6 @@
         "column": "metadata_xml",
         "shape": "SYSTEM_FILE_TYPE",
         "confidence": 0.8458219170570374,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth saml_providers name_id_format",
-        "column": "name_id_format",
-        "shape": "UUID",
-        "confidence": 0.6650523543357849,
         "context": "GENERAL",
         "confidenceContext": 0
       },
@@ -1738,6 +1598,14 @@
         "confidenceContext": 0
       },
       {
+        "input": "auth users banned_until",
+        "column": "banned_until",
+        "shape": "PASSWORD",
+        "confidence": 0.7942231297492981,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
         "input": "auth users confirmation_sent_at",
         "column": "confirmation_sent_at",
         "shape": "DATE",
@@ -1754,6 +1622,22 @@
         "confidenceContext": 0
       },
       {
+        "input": "auth users created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9878057241439819,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users deleted_at",
+        "column": "deleted_at",
+        "shape": "DATE",
+        "confidence": 0.9908251166343689,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
         "input": "auth users email",
         "column": "email",
         "shape": "EMAIL",
@@ -1766,6 +1650,22 @@
         "column": "email_change",
         "shape": "EMAIL",
         "confidence": 0.9721580743789673,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users email_change_sent_at",
+        "column": "email_change_sent_at",
+        "shape": "DATE",
+        "confidence": 0.9879693984985352,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users email_change_token_current",
+        "column": "email_change_token_current",
+        "shape": "TOKEN",
+        "confidence": 0.9396399855613708,
         "context": "GENERAL",
         "confidenceContext": 0
       },
@@ -1798,76 +1698,6 @@
         "column": "invited_at",
         "shape": "DATE",
         "confidence": 0.985194981098175,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users recovery_sent_at",
-        "column": "recovery_sent_at",
-        "shape": "DATE",
-        "confidence": 0.9812063574790955,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users recovery_token",
-        "column": "recovery_token",
-        "shape": "TOKEN",
-        "confidence": 0.9935053586959839,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users role",
-        "column": "role",
-        "shape": "ROLE",
-        "confidence": 0.9707857370376587,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      }
-    ]
-  },
-  {
-    "schemaName": "auth",
-    "tableName": "users",
-    "predictions": [
-      {
-        "input": "auth users banned_until",
-        "column": "banned_until",
-        "shape": "PASSWORD",
-        "confidence": 0.7942231297492981,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users created_at",
-        "column": "created_at",
-        "shape": "DATE",
-        "confidence": 0.9878057241439819,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users deleted_at",
-        "column": "deleted_at",
-        "shape": "DATE",
-        "confidence": 0.9908251166343689,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users email_change_sent_at",
-        "column": "email_change_sent_at",
-        "shape": "DATE",
-        "confidence": 0.9879693984985352,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users email_change_token_current",
-        "column": "email_change_token_current",
-        "shape": "TOKEN",
-        "confidence": 0.9396399855613708,
         "context": "GENERAL",
         "confidenceContext": 0
       },
@@ -1932,6 +1762,30 @@
         "column": "reauthentication_token",
         "shape": "TOKEN",
         "confidence": 0.991940975189209,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users recovery_sent_at",
+        "column": "recovery_sent_at",
+        "shape": "DATE",
+        "confidence": 0.9812063574790955,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users recovery_token",
+        "column": "recovery_token",
+        "shape": "TOKEN",
+        "confidence": 0.9935053586959839,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users role",
+        "column": "role",
+        "shape": "ROLE",
+        "confidence": 0.9707857370376587,
         "context": "GENERAL",
         "confidenceContext": 0
       },
