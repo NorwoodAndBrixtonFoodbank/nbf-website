@@ -82,7 +82,6 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
         } as const satisfies Partial<AuditLog>;
 
         if (insertListItemError) {
-            console.log(insertListItemError);
             const logId = await logErrorReturnLogId("failed to insert list item", {
                 error: insertListItemError,
             });
@@ -115,7 +114,6 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
         } as const satisfies Partial<AuditLog>;
 
         if (updateListItemError) {
-            console.log(updateListItemError);
             const logId = await logErrorReturnLogId("failed to update list item", {
                 error: updateListItemError,
             });
