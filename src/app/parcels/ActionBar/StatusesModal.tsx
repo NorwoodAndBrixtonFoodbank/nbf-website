@@ -6,6 +6,7 @@ import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import SelectedParcelsOverview from "./SelectedParcelsOverview";
+import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 
 interface StatusesBarModalProps extends React.ComponentProps<typeof Modal> {
     selectedParcels: ParcelsTableRow[];
@@ -53,6 +54,7 @@ const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
     return (
         <Modal {...props}>
             <ModalInner>
+                {props.errorText && <ErrorSecondaryText>{props.errorText}</ErrorSecondaryText>}
                 <Row>
                     Date:
                     <DatePicker
@@ -70,7 +72,6 @@ const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
                     parcels={props.selectedParcels}
                     maxParcelsToShow={maxParcelsToShow}
                 />
-                {props.errorText && <small>{props.errorText}</small>}
                 <Button type="button" variant="contained" onClick={() => props.onSubmit(date)}>
                     Submit
                 </Button>
