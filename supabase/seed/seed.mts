@@ -90,7 +90,7 @@ async function generateSeed(): Promise<void> {
     for (const status of eventNamesWithNumberData) {
         await seed.events(
             (generate) =>
-                generate(4000, {
+                generate(1000, {
                     newParcelStatus: status,
                     eventData: (ctx) => copycat.int(ctx.seed, { min: 1, max: 10 }).toString(),
                     timestamp: (ctx) => getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
@@ -102,7 +102,7 @@ async function generateSeed(): Promise<void> {
     for (const status of eventNamesWithNoData) {
         await seed.events(
             (generate) =>
-                generate(10000, {
+                generate(1000, {
                     newParcelStatus: status,
                     eventData: (ctx) => copycat.int(ctx.seed, { min: 1, max: 10 }).toString(),
                     timestamp: (ctx) => getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
