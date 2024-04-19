@@ -141,7 +141,7 @@ export type EditableConfig<Data> =
       }
     | { editable: false };
 
-interface Props<Data extends object> {
+interface Props<Data> {
     dataPortion: Data[];
     headerKeysAndLabels: TableHeaders<Data>;
     isLoading?: boolean;
@@ -199,7 +199,7 @@ const defaultColumnStyleOptions = {
     maxWidth: "20rem",
 } as const;
 
-const Table = <Data extends object>({
+const Table = <Data,>({
     dataPortion,
     headerKeysAndLabels,
     isLoading = false,
