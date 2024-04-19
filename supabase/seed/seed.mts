@@ -87,23 +87,27 @@ async function generateSeed(): Promise<void> {
         { connect: true }
     );
 
-    await seed.events(
-        (generate) =>
-            generate(4000, {
-                newParcelStatus: (ctx) => copycat.oneOfString(ctx.seed, eventNamesWithNumberData),
-                eventData: (ctx) => copycat.int(ctx.seed, { min: 1, max: 10 }).toString(),
-                timestamp: (ctx) => getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
-            }),
-        { connect: true }
-    );
+    for (const status of eventNamesWithNumberData) {
+        await seed.events(
+            (generate) =>
+                generate(4000, {
+                    newParcelStatus: status,
+                    eventData: (ctx) => copycat.int(ctx.seed, { min: 1, max: 10 }).toString(),
+                    timestamp: (ctx) => getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
+                }),
+            { connect: true }
+        );
+    }
 
-    await seed.events(
-        (generate) =>
-            generate(10000, {
-                newParcelStatus: (ctx) => copycat.oneOfString(ctx.seed, eventNamesWithNoData),
-                eventData: "",
-                timestamp: (ctx) => getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
-            }),
-        { connect: true }
-    );
+    for (const status of eventNamesWithNoData) {
+        await seed.events(
+            (generate) =>
+                generate(10000, {
+                    newParcelStatus: status,
+                    eventData: (ctx) => copycat.int(ctx.seed, { min: 1, max: 10 }).toString(),
+                    timestamp: (ctx) => getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
+                }),
+            { connect: true }
+        );
+    }
 }
