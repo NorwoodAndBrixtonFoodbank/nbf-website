@@ -309,9 +309,9 @@ const Table = <Data,>({
         columns.unshift({
             name: "",
             cell: (row: Row<Data>) => {
-                const isRowDeletable =
-                    editableConfig.onDelete &&
-                    (editableConfig.isDeletable ? editableConfig.isDeletable(row.data) : true);
+                const isRowDeletable = editableConfig.isDeletable
+                    ? editableConfig.isDeletable(row.data)
+                    : true;
                 return (
                     <EditAndReorderArrowDiv>
                         {editableConfig.onSwapRows && (
@@ -340,7 +340,7 @@ const Table = <Data,>({
                                 <StyledIcon icon={faAnglesDown} />
                             </StyledIconButton>
                         )}
-                        {isRowDeletable && (
+                        {editableConfig.onDelete && isRowDeletable && (
                             <StyledIconButton
                                 onClick={() => editableConfig.onDelete!(row.rowId)}
                                 aria-label="delete"
