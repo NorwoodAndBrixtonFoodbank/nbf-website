@@ -31,7 +31,7 @@ const UserDetailsCard: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSe
                     fieldSetter,
                     errorSetter,
                     "telephoneNumber",
-                    true,
+                    false,
                     telephoneRegex
                 )}
             />
