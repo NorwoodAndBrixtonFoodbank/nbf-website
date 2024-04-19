@@ -25,54 +25,54 @@ interface SnapletList {
 }
 
 interface SnapletListRequired {
-    itemName: string;
-    rowOrder: number;
-    quantityFor1: string | undefined;
-    notesFor1: string | null;
-    quantityFor2: string | undefined;
-    notesFor2: string | null;
-    quantityFor3: string | undefined;
-    notesFor3: string | null;
-    quantityFor4: string | undefined;
-    notesFor4: string | null;
-    quantityFor5: string | undefined;
-    notesFor5: string | null;
-    quantityFor6: string | undefined;
-    notesFor6: string | null;
-    quantityFor7: string | undefined;
-    notesFor7: string | null;
-    quantityFor8: string | undefined;
-    notesFor8: string | null;
-    quantityFor9: string | undefined;
-    notesFor9: string | null;
-    quantityFor10: string | undefined;
-    notesFor10: string | null;
+    item_name: string;
+    row_order: number;
+    quantity_for_1: string | undefined;
+    notes_for_1: string | null;
+    quantity_for_2: string | undefined;
+    notes_for_2: string | null;
+    quantity_for_3: string | undefined;
+    notes_for_3: string | null;
+    quantity_for_4: string | undefined;
+    notes_for_4: string | null;
+    quantity_for_5: string | undefined;
+    notes_for_5: string | null;
+    quantity_for_6: string | undefined;
+    notes_for_6: string | null;
+    quantity_for_7: string | undefined;
+    notes_for_7: string | null;
+    quantity_for_8: string | undefined;
+    notes_for_8: string | null;
+    quantity_for_9: string | undefined;
+    notes_for_9: string | null;
+    quantity_for_10: string | undefined;
+    notes_for_10: string | null;
 }
 
 const snapletListToRequired = (list: SnapletList): SnapletListRequired => {
     return {
-        itemName: list.itemName,
-        rowOrder: list.rowOrder,
-        quantityFor1: list.quantityFor1 ?? undefined,
-        notesFor1: list.notesFor1 ?? null,
-        quantityFor2: list.quantityFor2 ?? undefined,
-        notesFor2: list.notesFor2 ?? null,
-        quantityFor3: list.quantityFor3 ?? undefined,
-        notesFor3: list.notesFor3 ?? null,
-        quantityFor4: list.quantityFor4 ?? undefined,
-        notesFor4: list.notesFor4 ?? null,
-        quantityFor5: list.quantityFor5 ?? undefined,
-        notesFor5: list.notesFor5 ?? null,
-        quantityFor6: list.quantityFor6 ?? undefined,
-        notesFor6: list.notesFor6 ?? null,
-        quantityFor7: list.quantityFor7 ?? undefined,
-        notesFor7: list.notesFor7 ?? null,
-        quantityFor8: list.quantityFor8 ?? undefined,
-        notesFor8: list.notesFor8 ?? null,
-        quantityFor9: list.quantityFor9 ?? undefined,
-        notesFor9: list.notesFor9 ?? null,
-        quantityFor10: list.quantityFor10 ?? undefined,
-        notesFor10: list.notesFor10 ?? null,
+        item_name: list.itemName,
+        row_order: list.rowOrder,
+        quantity_for_1: list.quantityFor1 ?? undefined,
+        notes_for_1: list.notesFor1 ?? null,
+        quantity_for_2: list.quantityFor2 ?? undefined,
+        notes_for_2: list.notesFor2 ?? null,
+        quantity_for_3: list.quantityFor3 ?? undefined,
+        notes_for_3: list.notesFor3 ?? null,
+        quantity_for_4: list.quantityFor4 ?? undefined,
+        notes_for_4: list.notesFor4 ?? null,
+        quantity_for_5: list.quantityFor5 ?? undefined,
+        notes_for_5: list.notesFor5 ?? null,
+        quantity_for_6: list.quantityFor6 ?? undefined,
+        notes_for_6: list.notesFor6 ?? null,
+        quantity_for_7: list.quantityFor7 ?? undefined,
+        notes_for_7: list.notesFor7 ?? null,
+        quantity_for_8: list.quantityFor8 ?? undefined,
+        notes_for_8: list.notesFor8 ?? null,
+        quantity_for_9: list.quantityFor9 ?? undefined,
+        notes_for_9: list.notesFor9 ?? null,
+        quantity_for_10: list.quantityFor10 ?? undefined,
+        notes_for_10: list.notesFor10 ?? null,
     };
 };
 
