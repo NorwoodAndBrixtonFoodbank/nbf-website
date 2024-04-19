@@ -76,13 +76,7 @@ const getPdfErrorMessage = (error: ShoppingListPdfError): string => {
 const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-    const updateParcelsStatuses = async (): Promise<void> => {
-        const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
-        if (error) {
-            setErrorMessage(getStatusErrorMessageWithLogId(error));
-        }
-    };
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const onClose = (): void => {
         props.onClose();
@@ -90,7 +84,11 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
     };
 
     const onPdfCreationCompleted = async (): Promise<void> => {
-        await updateParcelsStatuses();
+        const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
+        if (error) {
+            setErrorMessage(getStatusErrorMessageWithLogId(error));
+        }
+        setSuccessMessage("Shopping List Created");
         setActionCompleted(true);
         void sendAuditLog({
             action: "create shopping list pdf",
@@ -115,8 +113,8 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
             {...props}
             onClose={onClose}
             errorMessage={errorMessage}
-            successMessage="Shopping List Created"
-            actionHidden={actionCompleted}
+            successMessage={successMessage}
+            actionShown={!actionCompleted}
             actionButton={
                 <ShoppingListPdfButton
                     parcels={props.selectedParcels}

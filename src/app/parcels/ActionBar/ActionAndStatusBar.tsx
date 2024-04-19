@@ -13,7 +13,7 @@ export interface ActionAndStatusBarProps {
     fetchSelectedParcels: () => Promise<ParcelsTableRow[]>;
     updateParcelStatuses: UpdateParcelStatuses;
     willSaveParcelStatus: () => void;
-    hasSavedParcelStatus: () => void;
+    hasAttemptedToSaveParcelStatus: () => void;
 }
 
 export type UpdateParcelStatuses = (
@@ -42,7 +42,7 @@ const ActionAndStatusBar: React.FC<ActionAndStatusBarProps> = (props) => {
                 setStatusAnchorElement={setStatusAnchorElement}
                 setModalError={setModalError}
                 willSaveParcelStatus={props.willSaveParcelStatus}
-                hasAttemptedToSaveParcelStatus={props.hasSavedParcelStatus}
+                hasAttemptedToSaveParcelStatus={props.hasAttemptedToSaveParcelStatus}
             />
             <Actions
                 fetchSelectedParcels={props.fetchSelectedParcels}

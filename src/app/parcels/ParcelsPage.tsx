@@ -566,7 +566,7 @@ const ParcelsPage: React.FC<{}> = () => {
                         fetchSelectedParcels={getCheckedParcelsData}
                         updateParcelStatuses={updateParcelStatuses}
                         willSaveParcelStatus={() => setIsLoading(true)}
-                        hasSavedParcelStatus={() => setIsLoading(false)}
+                        hasAttemptedToSaveParcelStatus={() => setIsLoading(false)}
                     />
                 </ActionsContainer>
             </PreTableControls>

@@ -145,7 +145,7 @@ const DriverOverviewPdfButton = ({
             .single();
         if (driverMessageError) {
             const logId = await logErrorReturnLogId("Error with fetch: Driver overview message", {
-                driverMessageError,
+                error: driverMessageError,
             });
             return { data: null, error: { type: "driverMessageFetchFailed", logId: logId } };
         }

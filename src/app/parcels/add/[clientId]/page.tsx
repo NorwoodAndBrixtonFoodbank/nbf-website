@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-
 import React from "react";
 import AddParcelForm from "../AddParcelForm";
 
@@ -18,7 +17,7 @@ const AddParcel = async ({ params }: AddParcelParameters): Promise<React.ReactEl
 };
 
 export const metadata: Metadata = {
-    title: "Edit Parcels",
+    title: "Add Parcel",
 };
 
 export default AddParcel;

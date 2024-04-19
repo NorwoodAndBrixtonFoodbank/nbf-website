@@ -17,8 +17,8 @@ export interface ActionModalProps extends Omit<React.ComponentProps<typeof Modal
 interface GeneralActionModalProps extends Omit<React.ComponentProps<typeof Modal>, "children"> {
     onClose: () => void;
     errorMessage: string | null;
-    actionHidden: boolean;
-    successMessage: string;
+    actionShown: boolean;
+    successMessage: string | null;
     actionButton: React.ReactNode;
     contentAboveButton?: React.ReactNode;
 }
@@ -58,17 +58,17 @@ const GeneralActionModal: React.FC<GeneralActionModalProps> = (props) => {
     return (
         <Modal {...props} onClose={props.onClose}>
             <ModalInner>
-                {props.actionHidden ? (
-                    props.errorMessage ? (
-                        <Centerer>
-                            <ErrorSecondaryText>{props.errorMessage}</ErrorSecondaryText>
-                        </Centerer>
-                    ) : (
-                        <Centerer>
-                            <Heading>{props.successMessage}</Heading>
-                        </Centerer>
-                    )
-                ) : (
+                {props.successMessage && (
+                    <Centerer>
+                        <Heading>{props.successMessage}</Heading>
+                    </Centerer>
+                )}
+                {props.errorMessage && (
+                    <Centerer>
+                        <ErrorSecondaryText>{props.errorMessage}</ErrorSecondaryText>
+                    </Centerer>
+                )}
+                {props.actionShown && (
                     <>
                         {props.contentAboveButton}
                         <Centerer>{props.actionButton}</Centerer>

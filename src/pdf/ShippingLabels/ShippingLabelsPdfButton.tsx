@@ -42,9 +42,11 @@ export interface ShippingLabelError {
     logId: string;
 }
 
-type ParcelToShip = Schema["parcels"] & { client: Schema["clients"] } & {
+type ParcelToShip = Schema["parcels"] & {
+    client: Schema["clients"];
     packing_slot: Schema["packing_slots"];
-} & { collection_centre: Schema["collection_centres"] };
+    collection_centre: Schema["collection_centres"];
+};
 
 type ParcelToShipResponse =
     | {

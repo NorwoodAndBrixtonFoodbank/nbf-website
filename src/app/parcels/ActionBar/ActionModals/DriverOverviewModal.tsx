@@ -68,6 +68,7 @@ const getPdfErrorMessage = (error: DriverOverviewError): string => {
 const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const [driverName, setDriverName] = useState("");
     const [date, setDate] = useState(dayjs());
@@ -93,6 +94,7 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
         if (error) {
             setErrorMessage(getStatusErrorMessageWithLogId(error));
         }
+        setSuccessMessage("Driver Overview Created");
         setActionCompleted(true);
         void sendAuditLog({
             action: "create driver overview pdf",
@@ -125,8 +127,8 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
             {...props}
             onClose={onClose}
             errorMessage={errorMessage}
-            successMessage="Driver Overview Created"
-            actionHidden={actionCompleted}
+            successMessage={successMessage}
+            actionShown={!actionCompleted}
             actionButton={
                 <DriverOverviewPdfButton
                     parcels={props.selectedParcels}

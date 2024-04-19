@@ -8,6 +8,7 @@ import { getStatusErrorMessageWithLogId } from "../Statuses";
 const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const onClose = (): void => {
         props.onClose();
@@ -18,6 +19,8 @@ const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
         const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
         if (error) {
             setErrorMessage(getStatusErrorMessageWithLogId(error));
+        } else {
+            setSuccessMessage("Map Generated");
         }
         setActionCompleted(true);
     };
@@ -27,8 +30,8 @@ const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
             {...props}
             onClose={onClose}
             errorMessage={errorMessage}
-            successMessage="Map Generated"
-            actionHidden={actionCompleted}
+            successMessage={successMessage}
+            actionShown={!actionCompleted}
             actionButton={
                 <Button
                     variant="contained"

@@ -50,6 +50,7 @@ const getPdfErrorMessage = (error: ShippingLabelError): string => {
 const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [labelQuantity, setLabelQuantity] = useState<number>(0);
 
     const onLabelQuantityChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -73,6 +74,7 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
         if (error) {
             setErrorMessage(getStatusErrorMessageWithLogId(error));
         }
+        setSuccessMessage("Shipping Labels Created");
         setActionCompleted(true);
         void sendAuditLog({
             action: "create shipping label pdf",
@@ -103,8 +105,8 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
             {...props}
             onClose={onClose}
             errorMessage={errorMessage}
-            successMessage="Shipping Labels Created"
-            actionHidden={actionCompleted}
+            successMessage={successMessage}
+            actionShown={!actionCompleted}
             actionButton={
                 <ShippingLabelsPdfButton
                     disabled={!isInputValid}

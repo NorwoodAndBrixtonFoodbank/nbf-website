@@ -14,11 +14,16 @@ import { getStatusErrorMessageWithLogId } from "../Statuses";
 const DeleteParcelModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+    const numberOfParcelsToDelete = props.selectedParcels.length;
 
     const onDeleteParcels = async (): Promise<void> => {
         const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
         if (error) {
             setErrorMessage(getStatusErrorMessageWithLogId(error));
+        } else {
+            setSuccessMessage(`${numberOfParcelsToDelete > 1 ? "Parcels" : "Parcel"} Deleted`);
         }
         setActionCompleted(true);
     };
@@ -28,16 +33,13 @@ const DeleteParcelModal: React.FC<ActionModalProps> = (props) => {
         setErrorMessage(null);
     };
 
-    const numberOfParcelsToDelete = props.selectedParcels.length;
-    const successMessage = `${numberOfParcelsToDelete > 1 ? "Parcels" : "Parcel"} Deleted`;
-
     return (
         <GeneralActionModal
             {...props}
             onClose={onClose}
             errorMessage={errorMessage}
             successMessage={successMessage}
-            actionHidden={actionCompleted}
+            actionShown={!actionCompleted}
             actionButton={
                 <ConfirmButtons>
                     <Button variant="contained" onClick={onClose}>

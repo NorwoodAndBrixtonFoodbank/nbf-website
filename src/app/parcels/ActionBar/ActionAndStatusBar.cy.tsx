@@ -75,7 +75,7 @@ describe("Parcels - Action Bar", () => {
                     <ActionAndStatusBar
                         fetchSelectedParcels={fetchSelectedParcels}
                         updateParcelStatuses={onDeleteParcels}
-                        hasSavedParcelStatus={() => {}}
+                        hasAttemptedToSaveParcelStatus={() => {}}
                         willSaveParcelStatus={() => {}}
                     />
                 </StyleManager>
@@ -96,7 +96,7 @@ describe("Parcels - Action Bar", () => {
                         await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
                     }
                     updateParcelStatuses={onDeleteParcels}
-                    hasSavedParcelStatus={() => {}}
+                    hasAttemptedToSaveParcelStatus={() => {}}
                     willSaveParcelStatus={() => {}}
                 />
             );
@@ -175,7 +175,7 @@ describe("Parcels - Action Bar", () => {
                         await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
                     }
                     updateParcelStatuses={onDeleteParcels}
-                    hasSavedParcelStatus={() => {}}
+                    hasAttemptedToSaveParcelStatus={() => {}}
                     willSaveParcelStatus={() => {}}
                 />
             );

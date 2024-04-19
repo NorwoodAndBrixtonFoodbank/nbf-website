@@ -11,7 +11,6 @@ import {
 } from "@/common/fetch";
 import ListsDataView, { ListRow, listsHeaderKeysAndLabels } from "@/app/lists/ListDataview";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
-import { logErrorReturnLogId } from "@/logger/logger";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 
 interface FetchedListsData {
@@ -108,15 +107,7 @@ const ListsPage: React.FC<{}> = () => {
         const subscriptionChannel = supabase
             .channel("lists-table-changes")
             .on("postgres_changes", { event: "*", schema: "public", table: "lists" }, async () => {
-                try {
-                    await fetchAndSetData();
-                } catch (error) {
-                    const logId = logErrorReturnLogId("Error with fetch: list data subscription", {
-                        error: error,
-                    });
-                    setListData([]);
-                    setErrorMessage(`Error fetching data, please reload. Log ID: ${logId}`);
-                }
+                await fetchAndSetData();
             })
             .subscribe((status, err) => {
                 if (subscriptionStatusRequiresErrorMessage(status, err, "lists")) {

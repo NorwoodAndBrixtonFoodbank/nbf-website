@@ -12,7 +12,6 @@ serve(async (req: Handler): Promise<Response> => {
     }
 
     try {
-        console.log("trying");
         const request = await req.json();
 
         const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
@@ -42,7 +41,6 @@ serve(async (req: Handler): Promise<Response> => {
             postcode,
             congestionCharge: chargedPostcodes.has(postcode),
         }));
-        console.log(result);
 
         return new Response(JSON.stringify(result), generateCorsOptionsForJsonResponse(200));
     } catch (error) {

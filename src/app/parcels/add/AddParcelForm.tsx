@@ -81,15 +81,19 @@ const AddParcels = ({ clientId }: AddParcelProps): React.ReactElement => {
             ) : error ? (
                 <ErrorSecondaryText>{getErrorMessage(error)}</ErrorSecondaryText>
             ) : (
-                <ParcelForm
-                    initialFields={initialParcelFields}
-                    initialFormErrors={initialParcelFormErrors}
-                    clientId={clientId}
-                    editMode={false}
-                    deliveryPrimaryKey={deliveryPrimaryKey!}
-                    collectionCentresLabelsAndValues={collectionCentresLabelsAndValues!}
-                    packingSlotsLabelsAndValues={packingSlotsLabelsAndValues!}
-                />
+                deliveryPrimaryKey &&
+                collectionCentresLabelsAndValues &&
+                packingSlotsLabelsAndValues && (
+                    <ParcelForm
+                        initialFields={initialParcelFields}
+                        initialFormErrors={initialParcelFormErrors}
+                        clientId={clientId}
+                        editMode={false}
+                        deliveryPrimaryKey={deliveryPrimaryKey}
+                        collectionCentresLabelsAndValues={collectionCentresLabelsAndValues}
+                        packingSlotsLabelsAndValues={packingSlotsLabelsAndValues}
+                    />
+                )
             )}
         </>
     );

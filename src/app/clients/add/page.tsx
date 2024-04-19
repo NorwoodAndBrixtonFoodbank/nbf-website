@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-
 import React from "react";
 import ClientForm, { ClientFields } from "@/app/clients/form/ClientForm";
 import { Errors, FormErrors } from "@/components/Form/formFunctions";
