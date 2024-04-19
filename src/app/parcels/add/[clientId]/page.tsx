@@ -1,41 +1,23 @@
 import { Metadata } from "next";
 import React from "react";
-import ParcelForm, {
-    initialParcelFields,
-    initialParcelFormErrors,
-} from "@/app/parcels/form/ParcelForm";
-import { getSupabaseServerComponentClient } from "@/supabaseServer";
-import { fetchPackingSlotsInfo, getCollectionCentresInfo } from "@/common/fetch";
+import AddParcelForm from "../AddParcelForm";
 
-interface AddParcelParameters {
+export interface AddParcelParameters {
     params: {
         clientId: string;
     };
 }
 
-const AddParcels = async ({ params }: AddParcelParameters): Promise<React.ReactElement> => {
-    const supabase = getSupabaseServerComponentClient();
-    const [deliveryPrimaryKey, collectionCentresLabelsAndValues] =
-        await getCollectionCentresInfo(supabase);
-    const packingSlotsLabelsAndValues = await fetchPackingSlotsInfo(supabase);
-
+const AddParcel = async ({ params }: AddParcelParameters): Promise<React.ReactElement> => {
     return (
         <main>
-            <ParcelForm
-                initialFields={initialParcelFields}
-                initialFormErrors={initialParcelFormErrors}
-                clientId={params.clientId}
-                editMode={false}
-                deliveryPrimaryKey={deliveryPrimaryKey}
-                collectionCentresLabelsAndValues={collectionCentresLabelsAndValues}
-                packingSlotsLabelsAndValues={packingSlotsLabelsAndValues}
-            />
+            <AddParcelForm clientId={params.clientId} />
         </main>
     );
 };
 
 export const metadata: Metadata = {
-    title: "Add Parcels",
+    title: "Add Parcel",
 };
 
-export default AddParcels;
+export default AddParcel;

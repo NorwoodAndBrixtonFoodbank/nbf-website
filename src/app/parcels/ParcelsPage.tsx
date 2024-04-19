@@ -16,14 +16,14 @@ import Icon from "@/components/Icons/Icon";
 import { faBoxArchive } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal/Modal";
 import TableSurface from "@/components/Tables/TableSurface";
-import ActionAndStatusButtons from "@/app/parcels/ActionBar/ActionAndStatusButtons";
+import ActionAndStatusBar from "@/app/parcels/ActionBar/ActionAndStatusBar";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
 import { getParcelIds, getParcelsByIds, getParcelsDataAndCount } from "./fetchParcelTableData";
 import dayjs from "dayjs";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { saveParcelStatus } from "./ActionBar/Statuses";
+import { StatusType, saveParcelStatus, SaveParcelStatusResult } from "./ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { CircularProgress } from "@mui/material";
@@ -527,19 +527,27 @@ const ParcelsPage: React.FC<{}> = () => {
         router.push(`/parcels?${parcelIdParam}=${row.data.parcelId}`);
     };
 
-    const deleteParcels = async (parcels: ParcelsTableRow[]): Promise<void> => {
+    const updateParcelStatuses = async (
+        parcels: ParcelsTableRow[],
+        newStatus: StatusType,
+        statusEventData?: string
+    ): Promise<SaveParcelStatusResult> => {
         setIsLoading(true);
-        await saveParcelStatus(
+        const { error } = await saveParcelStatus(
             parcels.map((parcel) => parcel.parcelId),
-            "Request Deleted"
+            newStatus,
+            statusEventData
         );
         setCheckedParcelIds([]);
         setIsLoading(false);
+        return { error: error };
     };
 
-    const getCheckedParcelsData = async (
-        checkedParcelIds: string[]
-    ): Promise<ParcelsTableRow[]> => {
+    const getCheckedParcelsData = async (): Promise<ParcelsTableRow[]> => {
+        if (checkedParcelIds.length === 0) {
+            return [];
+        }
+
         return await getParcelsByIds(
             supabase,
             primaryFilters.concat(additionalFilters),
@@ -554,12 +562,11 @@ const ParcelsPage: React.FC<{}> = () => {
                 <ActionsContainer>
                     {selectedParcelMessage && <span>{selectedParcelMessage}</span>}
 
-                    <ActionAndStatusButtons
-                        fetchParcelsByIds={getCheckedParcelsData}
-                        onDeleteParcels={deleteParcels}
+                    <ActionAndStatusBar
+                        fetchSelectedParcels={getCheckedParcelsData}
+                        updateParcelStatuses={updateParcelStatuses}
                         willSaveParcelStatus={() => setIsLoading(true)}
-                        hasSavedParcelStatus={() => setIsLoading(false)}
-                        parcelIds={checkedParcelIds}
+                        hasAttemptedToSaveParcelStatus={() => setIsLoading(false)}
                     />
                 </ActionsContainer>
             </PreTableControls>
