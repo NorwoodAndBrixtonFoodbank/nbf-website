@@ -7,8 +7,8 @@ import {
     checkErrorOnSubmit,
     Errors,
     FormErrors,
-    setError,
-    setField,
+    createErrorSetter,
+    createFieldSetter,
 } from "@/components/Form/formFunctions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBuildingCircleArrowRight } from "@fortawesome/free-solid-svg-icons";
@@ -49,8 +49,8 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
 
     const [newCollectionCentre, setNewCollectionCentre] = useState<string | null>(null);
 
-    const fieldSetter = setField(setFields, fields);
-    const errorSetter = setError(setFormErrors, formErrors);
+    const fieldSetter = createFieldSetter(setFields, fields);
+    const errorSetter = createErrorSetter(setFormErrors, formErrors);
 
     const submitForm = async (): Promise<void> => {
         setSubmitDisabled(true);

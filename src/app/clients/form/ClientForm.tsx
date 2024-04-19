@@ -11,8 +11,8 @@ import {
     FormErrors,
     NumberAdultsByGender,
     Person,
-    setError,
-    setField,
+    createErrorSetter,
+    createFieldSetter,
 } from "@/components/Form/formFunctions";
 import {
     CenterComponent,
@@ -100,7 +100,7 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
 
     useEffect(() => {
         if (fields.numberChildren <= fields.children.length) {
-            fieldSetter("children", fields.children.slice(0, fields.numberChildren));
+            fieldSetter([["children", fields.children.slice(0, fields.numberChildren)]]);
             return;
         }
 
@@ -112,11 +112,11 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
                     age: -1,
                 };
             });
-        fieldSetter("children", [...fields.children, ...extraChildren]);
+        fieldSetter([["children", [...fields.children, ...extraChildren]]]);
     }, [fields.numberChildren]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const fieldSetter = setField(setFields, fields);
-    const errorSetter = setError(setFormErrors, formErrors);
+    const fieldSetter = createFieldSetter(setFields, fields);
+    const errorSetter = createErrorSetter(setFormErrors, formErrors);
 
     const submitForm = async (): Promise<void> => {
         setSubmitDisabled(true);

@@ -38,11 +38,7 @@ const AddressCard: React.FC<ClientCardProps> = ({
         if (event.target.checked) {
             errorSetter("addressPostcode", Errors.none);
             errorSetter("addressLine1", Errors.none);
-            fieldSetter("addressPostcode", "");
-            fieldSetter("addressLine1", "");
-            fieldSetter("addressLine2", "");
-            fieldSetter("addressTown", "");
-            fieldSetter("addressCounty", "");
+            fieldSetter([["addressPostcode", ""], ["addressLine1", ""], ["addressLine2", ""], ["addressTown", ""], ["addressCounty", ""]]);
             defaultAddressLine1.current = "";
             defaultAddressLine2.current = "";
             defaultAddressTown.current = "";
@@ -53,8 +49,8 @@ const AddressCard: React.FC<ClientCardProps> = ({
             errorSetter("addressPostcode", Errors.initial);
             errorSetter("addressLine1", Errors.initial);
         }
-        setTimeout(() => {console.log(fields);
-        console.log(formErrors)},1000)
+        setTimeout(() => {console.log("fields", fields);
+        console.log("errors", formErrors)},1000)
     }
     return (
         <GenericFormCard

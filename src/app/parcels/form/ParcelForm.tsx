@@ -6,8 +6,8 @@ import {
     Errors,
     Fields,
     FormErrors,
-    setError,
-    setField,
+    createErrorSetter,
+    createFieldSetter,
 } from "@/components/Form/formFunctions";
 import {
     CenterComponent,
@@ -161,8 +161,8 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             ? withCollectionFormSections
             : noCollectionFormSections;
 
-    const fieldSetter = setField(setFields, fields);
-    const errorSetter = setError(setFormErrors, formErrors);
+    const fieldSetter = createFieldSetter(setFields, fields);
+    const errorSetter = createErrorSetter(setFormErrors, formErrors);
 
     const submitForm = async (): Promise<void> => {
         setSubmitErrorMessage("");

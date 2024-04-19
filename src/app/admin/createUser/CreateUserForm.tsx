@@ -9,8 +9,8 @@ import {
     checkErrorOnSubmit,
     Errors,
     FormErrors,
-    setError,
-    setField,
+    createErrorSetter,
+    createFieldSetter,
 } from "@/components/Form/formFunctions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
@@ -63,8 +63,8 @@ const CreateUserForm: React.FC<{}> = () => {
     const [fields, setFields] = useState(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
 
-    const fieldSetter = setField(setFields, fields);
-    const errorSetter = setError(setFormErrors, formErrors);
+    const fieldSetter = createFieldSetter(setFields, fields);
+    const errorSetter = createErrorSetter(setFormErrors, formErrors);
 
     const [formError, setFormError] = useState(Errors.none);
     const [submitDisabled, setSubmitDisabled] = useState(false);

@@ -8,7 +8,7 @@ import dayjs, { Dayjs } from "dayjs";
 
 type Field = Fields[keyof Fields];
 export type ErrorSetter = (errorKey: string, errorType: Errors) => void;
-export type FieldSetter = (fieldKey: string, newFieldValue: Field) => void;
+export type FieldSetter = (keyValuePairs: [string, Field][]) => void;
 export type Gender = Database["public"]["Enums"]["gender"];
 
 export enum Errors {
@@ -51,21 +51,23 @@ export interface FormErrors {
     [errorKey: string]: Errors;
 }
 
-export const setError = (
-    errorSetter: (errors: FormErrors) => void,
+export const createErrorSetter = (
+    setErrors: (errors: FormErrors) => void,
     errorValues: FormErrors
 ): ErrorSetter => {
     return (errorKey, errorType) => {
-        errorSetter({ ...errorValues, [errorKey]: errorType });
+        setErrors({ ...errorValues, [errorKey]: errorType });
     };
 };
 
-export const setField = <SpecificFields extends Fields>(
-    fieldSetter: (fieldValues: SpecificFields) => void,
-    fieldValues: SpecificFields
+export const createFieldSetter = <  Fields>(
+    setFields: (fieldValues: Fields) => void,
+    fieldValues: Fields
 ): FieldSetter => {
-    return (fieldKey, newFieldValue) => {
-        fieldSetter({ ...fieldValues, [fieldKey]: newFieldValue });
+    return (keyValuePairs: [string, any][]) => {
+        let newFieldValues: Fields = {...fieldValues};
+        keyValuePairs.forEach((keyValuePair) => {newFieldValues[keyValuePair[0]] = keyValuePairs[1]});
+        setFields(newFieldValues);
     };
 };
 
@@ -102,7 +104,7 @@ export const onChangeText = (
         errorSetter(key, errorType);
         if (errorType === Errors.none) {
             const newValue = formattingFunction ? formattingFunction(input) : input;
-            fieldSetter(key, newValue);
+            fieldSetter([[key, newValue]]);
         }
     };
 };
@@ -114,7 +116,7 @@ export const onChangeCheckbox = (
 ): ChangeEventHandler => {
     return (event) => {
         const newObject = { ...currentObject, [event.target.name]: event.target.checked };
-        fieldSetter(key, newObject);
+        fieldSetter([[key, newObject]]);
     };
 };
 
@@ -124,7 +126,7 @@ export const onChangeRadioGroup = (
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
-        fieldSetter(key, input === "Yes");
+        fieldSetter([[key, input === "Yes"]]);
     };
 };
 
@@ -135,7 +137,7 @@ export const valueOnChangeRadioGroup = (
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
-        fieldSetter(key, input);
+        fieldSetter([[key, input]]);
         errorSetter(key, Errors.none);
     };
 };
@@ -147,7 +149,7 @@ export const valueOnChangeDropdownList = (
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
-        fieldSetter(key, input);
+        fieldSetter([[key, input]]);
         errorSetter(key, Errors.none);
     };
 };
@@ -159,12 +161,12 @@ export const onChangeDateOrTime = (
     value: Dayjs | null
 ): void => {
     if (value === null || isNaN(Date.parse(value.toString()))) {
-        fieldSetter(key, null);
+        fieldSetter([[key, null]]);
         errorSetter(key, Errors.invalid);
         return;
     }
     errorSetter(key, Errors.none);
-    fieldSetter(key, value);
+    fieldSetter([[key, value]]);
 };
 
 export const onChangeDate = (
