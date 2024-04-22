@@ -107,7 +107,7 @@ export const formatAddressFromClientDetails = (
         client.address_2,
         client.address_town,
         client.address_county,
-        client.address_postcode,
+        client.address_postcode ?? "NFA",
     ]
         .filter((field) => field)
         .join(", ");

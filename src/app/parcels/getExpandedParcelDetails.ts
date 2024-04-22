@@ -4,6 +4,7 @@ import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { EventTableRow } from "./EventTable";
 import { logErrorReturnLogId } from "@/logger/logger";
+import { formatAddressFromClientDetails } from "../clients/getExpandedClientDetails";
 export type RawParcelDetails = Awaited<ReturnType<typeof getRawParcelDetails>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -136,23 +137,6 @@ export const formatDatetimeAsTime = (datetime: string | null): string => {
     }
 
     return new Date(datetime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
-};
-
-export const formatAddressFromClientDetails = (
-    client: Pick<
-        Schema["clients"],
-        "address_1" | "address_2" | "address_town" | "address_county" | "address_postcode"
-    >
-): string => {
-    return [
-        client.address_1,
-        client.address_2,
-        client.address_town,
-        client.address_county,
-        client.address_postcode,
-    ]
-        .filter((field) => field)
-        .join(", ");
 };
 
 export const formatHouseholdFromFamilyDetails = (
