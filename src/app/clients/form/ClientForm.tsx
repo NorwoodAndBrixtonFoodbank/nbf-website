@@ -11,8 +11,7 @@ import {
     FormErrors,
     NumberAdultsByGender,
     Person,
-    createErrorSetter,
-    createFieldSetter,
+    createSetter,
 } from "@/components/Form/formFunctions";
 import {
     CenterComponent,
@@ -40,7 +39,7 @@ import Title from "@/components/Title/Title";
 
 interface Props {
     initialFields: ClientFields;
-    initialFormErrors: FormErrors;
+    initialFormErrors: ClientErrors;
     editConfig: EditConfig;
 }
 
@@ -69,7 +68,17 @@ export interface ClientFields extends Fields {
     signpostingCall: boolean;
 }
 
-export interface ClientCardProps extends CardProps {
+export interface ClientErrors extends FormErrors<ClientFields> {
+    fullName: Errors.initial;
+    phoneNumber: Errors.none;
+    addressLine1: Errors.initial;
+    addressPostcode: Errors.initial;
+    adults: Errors.initial;
+    numberChildren: Errors.initial;
+    nappySize: Errors.none;
+}
+
+export interface ClientCardProps extends CardProps<ClientFields, ClientErrors> {
     fields: ClientFields;
 }
 
@@ -93,7 +102,7 @@ const formSections = [
 const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editConfig }) => {
     const router = useRouter();
     const [fields, setFields] = useState<ClientFields>(initialFields);
-    const [formErrors, setFormErrors] = useState(initialFormErrors);
+    const [formErrors, setFormErrors] = useState<ClientErrors>(initialFormErrors);
     const [submitError, setSubmitError] = useState(Errors.none);
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
     const [submitDisabled, setSubmitDisabled] = useState(false);
@@ -115,8 +124,8 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
         fieldSetter([["children", [...fields.children, ...extraChildren]]]);
     }, [fields.numberChildren]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const fieldSetter = createFieldSetter(setFields, fields);
-    const errorSetter = createErrorSetter(setFormErrors, formErrors);
+    const fieldSetter = createSetter(setFields, fields);
+    const errorSetter = createSetter(setFormErrors, formErrors);
 
     const submitForm = async (): Promise<void> => {
         setSubmitDisabled(true);

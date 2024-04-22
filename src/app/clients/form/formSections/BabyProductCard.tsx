@@ -5,7 +5,7 @@ import {
     errorExists,
     ErrorSetter,
     errorText,
-    FieldSetter,
+    Setter,
     onChangeText,
     getDefaultTextValue,
 } from "@/components/Form/formFunctions";
@@ -14,7 +14,7 @@ import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 import { ClientCardProps } from "../ClientForm";
 
-const getBaby = (fieldSetter: FieldSetter, errorSetter: ErrorSetter): SelectChangeEventHandler => {
+const getBaby = (fieldSetter: Setter, errorSetter: ErrorSetter): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
         if (input === "Yes") {

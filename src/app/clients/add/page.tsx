@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 import React from "react";
-import ClientForm, { ClientFields } from "@/app/clients/form/ClientForm";
+import ClientForm, { ClientErrors, ClientFields } from "@/app/clients/form/ClientForm";
 import { Errors, FormErrors } from "@/components/Form/formFunctions";
 
 const AddClients: () => React.ReactElement = () => {
@@ -32,7 +32,7 @@ const AddClients: () => React.ReactElement = () => {
         signpostingCall: false,
     };
 
-    const initialFormErrors: FormErrors = {
+    const initialFormErrors: ClientErrors = {
         fullName: Errors.initial,
         phoneNumber: Errors.none,
         addressLine1: Errors.initial,

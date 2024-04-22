@@ -3,7 +3,7 @@ import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import {
     errorExists,
     errorText,
-    FieldSetter,
+    Setter,
     onChangeText,
     numberRegex,
     Person,
@@ -20,7 +20,7 @@ const maxNumberChildren = (value: string): boolean => {
 };
 
 const getChild = (
-    fieldSetter: FieldSetter,
+    fieldSetter: Setter,
     children: Person[],
     index: number,
     subFieldName: "gender" | "age"
