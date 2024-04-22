@@ -152,6 +152,7 @@ const Statuses: React.FC<Props> = ({
             setServerErrorMessage(`${getStatusErrorMessage(error)} Log ID: ${error.logId}`);
         }
         hasAttemptedToSaveParcelStatus();
+        setStatusModal(false);
     };
 
     const onMenuItemClick = (status: StatusType): (() => void) => {
