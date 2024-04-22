@@ -16,10 +16,12 @@ import { fetchParcelStatuses } from "@/app/parcels/fetchParcelTableData";
 export type StatusType = ParcelStatus[][number];
 
 const nonMenuStatuses: StatusType[] = [
-    "Shipping Labels Downloaded",
-    "Shopping List Downloaded",
+    "Driver Overview Downloaded", //Generated when driver overview pdf downloaded
+    "Map Generated", //Generated when maps generated
     "Out for Delivery",
-    "Request Deleted",
+    "Request Deleted", //Generated when parcel deleted
+    "Shipping Labels Downloaded", //Generated when shipping labels pdf downloaded
+    "Shopping List Downloaded", //Generated when shopping list pdf downloaded
 ];
 
 type SaveParcelStatusErrorType = "eventInsertionFailed";
@@ -150,6 +152,7 @@ const Statuses: React.FC<Props> = ({
             setServerErrorMessage(`${getStatusErrorMessage(error)} Log ID: ${error.logId}`);
         }
         hasAttemptedToSaveParcelStatus();
+        setStatusModal(false);
     };
 
     const onMenuItemClick = (status: StatusType): (() => void) => {
