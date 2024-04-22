@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import supabase from "@/supabaseClient";
-import ClientForm from "@/app/clients/form/ClientForm";
-import { Errors, FormErrors } from "@/components/Form/formFunctions";
+import ClientForm, { ClientErrors } from "@/app/clients/form/ClientForm";
+import { Errors } from "@/components/Form/formFunctions";
 import autofill from "@/app/clients/edit/[id]/autofill";
 import { fetchClient, fetchFamily } from "@/common/fetch";
 import { Schema } from "@/databaseUtils";
@@ -53,7 +53,7 @@ const EditClients: ({ params }: EditClientsParameters) => React.ReactElement = (
 
     const initialFields = clientData && familyData ? autofill(clientData, familyData) : null;
 
-    const initialFormErrors: FormErrors = {
+    const initialFormErrors: ClientErrors = {
         fullName: Errors.none,
         phoneNumber: Errors.none,
         addressLine1: Errors.none,

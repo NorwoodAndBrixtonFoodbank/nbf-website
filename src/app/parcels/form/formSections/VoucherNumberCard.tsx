@@ -1,12 +1,13 @@
 import React from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { CardProps, errorText, onChangeText } from "@/components/Form/formFunctions";
+import { errorText, onChangeText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
+import { ParcelCardProps } from "../ParcelForm";
 
 const voucherNumberIsRequired = false;
 
-const VoucherNumberCard: React.FC<CardProps> = ({
+const VoucherNumberCard: React.FC<ParcelCardProps> = ({
     errorSetter,
     fieldSetter,
     formErrors,
@@ -26,7 +27,7 @@ const VoucherNumberCard: React.FC<CardProps> = ({
                     "voucherNumber",
                     voucherNumberIsRequired
                 )}
-                value={fields.voucherNumber}
+                value={fields.voucherNumber ?? undefined}
             />
             <ErrorText>{errorText(formErrors.voucherNumber)}</ErrorText>
         </GenericFormCard>

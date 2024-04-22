@@ -6,8 +6,8 @@ import {
     Errors,
     Fields,
     FormErrors,
-    createErrorSetter,
     createSetter,
+    CardProps,
 } from "@/components/Form/formFunctions";
 import {
     CenterComponent,
@@ -54,18 +54,30 @@ export interface ParcelFields extends Fields {
     collectionCentre: string | null;
 }
 
+export interface ParcelErrors extends FormErrors<ParcelFields> {
+    voucherNumber: Errors;
+    packingDate: Errors;
+    packingSlot: Errors;
+    shippingMethod: Errors;
+    collectionDate: Errors;
+    collectionTime: Errors;
+    collectionCentre: Errors;
+}
+
+export type ParcelCardProps = CardProps<ParcelFields, ParcelErrors>;
+
 export const initialParcelFields: ParcelFields = {
     clientId: null,
     voucherNumber: "",
     packingDate: null,
     packingSlot: "",
-    shippingMethod: "",
+    shippingMethod: null,
     collectionDate: null,
     collectionTime: null,
     collectionCentre: null,
 };
 
-export const initialParcelFormErrors: FormErrors = {
+export const initialParcelFormErrors: ParcelErrors = {
     voucherNumber: Errors.none,
     packingDate: Errors.initial,
     packingSlot: Errors.initial,
@@ -77,7 +89,7 @@ export const initialParcelFormErrors: FormErrors = {
 
 interface ParcelFormProps {
     initialFields: ParcelFields;
-    initialFormErrors: FormErrors;
+    initialFormErrors: ParcelErrors;
     clientId?: string;
     editMode: boolean;
     parcelId?: string;
@@ -162,7 +174,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             : noCollectionFormSections;
 
     const fieldSetter = createSetter(setFields, fields);
-    const errorSetter = createErrorSetter(setFormErrors, formErrors);
+    const errorSetter = createSetter(setFormErrors, formErrors);
 
     const submitForm = async (): Promise<void> => {
         setSubmitErrorMessage("");

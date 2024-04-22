@@ -52,7 +52,7 @@ export interface ClientFields extends Fields {
     addressLine2: string;
     addressTown: string;
     addressCounty: string;
-    addressPostcode: string;
+    addressPostcode: string | null;
     adults: NumberAdultsByGender;
     numberChildren: number;
     children: Person[];
@@ -69,18 +69,16 @@ export interface ClientFields extends Fields {
 }
 
 export interface ClientErrors extends FormErrors<ClientFields> {
-    fullName: Errors.initial;
-    phoneNumber: Errors.none;
-    addressLine1: Errors.initial;
-    addressPostcode: Errors.initial;
-    adults: Errors.initial;
-    numberChildren: Errors.initial;
-    nappySize: Errors.none;
+    fullName: Errors;
+    phoneNumber: Errors;
+    addressLine1: Errors;
+    addressPostcode: Errors;
+    adults: Errors;
+    numberChildren: Errors;
+    nappySize: Errors;
 }
 
-export interface ClientCardProps extends CardProps<ClientFields, ClientErrors> {
-    fields: ClientFields;
-}
+export type ClientCardProps = CardProps<ClientFields, ClientErrors>;
 
 const formSections = [
     FullNameCard,

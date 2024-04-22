@@ -31,7 +31,7 @@ export interface CardProps<
     formErrors: SpecificErrors;
     errorSetter: Setter<SpecificErrors>;
     fieldSetter: Setter<SpecificFields>;
-    fields: Fields;
+    fields: SpecificFields;
 }
 
 export interface Person {

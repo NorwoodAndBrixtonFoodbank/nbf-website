@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 import React from "react";
 import ClientForm, { ClientErrors, ClientFields } from "@/app/clients/form/ClientForm";
-import { Errors, FormErrors } from "@/components/Form/formFunctions";
+import { Errors } from "@/components/Form/formFunctions";
 
 const AddClients: () => React.ReactElement = () => {
     const initialFields: ClientFields = {

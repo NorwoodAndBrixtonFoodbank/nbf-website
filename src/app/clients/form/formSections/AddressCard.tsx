@@ -1,16 +1,9 @@
 import React, { useRef, useState } from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import {
-    Errors,
-    errorExists,
-    errorText,
-    getDefaultTextValue,
-    onChangeText,
-} from "@/components/Form/formFunctions";
+import { Errors, errorExists, errorText, onChangeText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
-import { FormText, GappedDiv } from "@/components/Form/formStyling";
+import { GappedDiv } from "@/components/Form/formStyling";
 import { ClientCardProps } from "../ClientForm";
-import { CheckBox, Label } from "@mui/icons-material";
 import { Checkbox, FormControlLabel } from "@mui/material";
 
 const postcodeRegex =
@@ -41,7 +34,7 @@ const AddressCard: React.FC<ClientCardProps> = ({
                 ["addressLine1", Errors.none],
             ]);
             fieldSetter([
-                ["addressPostcode", ""],
+                ["addressPostcode", null],
                 ["addressLine1", ""],
                 ["addressLine2", ""],
                 ["addressTown", ""],
@@ -51,7 +44,7 @@ const AddressCard: React.FC<ClientCardProps> = ({
             defaultAddressLine2.current = "";
             defaultAddressTown.current = "";
             defaultAddressCounty.current = "";
-            defaultAddressPostcode.current = "";
+            defaultAddressPostcode.current = null;
         } else {
             errorSetter([
                 ["addressPostcode", Errors.initial],
@@ -111,7 +104,7 @@ const AddressCard: React.FC<ClientCardProps> = ({
                                 postcodeRegex,
                                 formatPostcode
                             )}
-                            defaultValue={defaultAddressPostcode.current}
+                            defaultValue={defaultAddressPostcode.current ?? ""}
                         />
                     </>
                 )}
