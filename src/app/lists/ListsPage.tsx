@@ -3,40 +3,76 @@
 import React, { useEffect, useState } from "react";
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
-import { fetchComment, fetchLists } from "@/common/fetch";
+import {
+    FetchListsCommentError,
+    FetchListsError,
+    fetchListsComment,
+    fetchLists,
+} from "@/common/fetch";
 import ListsDataView, { ListRow, listsHeaderKeysAndLabels } from "@/app/lists/ListDataview";
-import { logErrorReturnLogId } from "@/logger/logger";
+import { ErrorSecondaryText } from "../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 
 interface FetchedListsData {
-    data: Schema["lists"][];
+    listsData: Schema["lists"][];
     comment: string;
 }
 
-const fetchListData = async (): Promise<FetchedListsData> => {
-    const [data, comment] = await Promise.all([fetchLists(supabase), fetchComment(supabase)]);
-    return { data, comment };
+type FetchListsDataResponse =
+    | {
+          data: FetchedListsData;
+          error: null;
+      }
+    | {
+          data: null;
+          error: FetchListsError | FetchListsCommentError;
+      };
+
+const fetchListsData = async (): Promise<FetchListsDataResponse> => {
+    const { data: listsData, error: listsError } = await fetchLists(supabase);
+    if (listsError) {
+        return { data: null, error: listsError };
+    }
+    const { data: listsCommentData, error: listsCommentError } = await fetchListsComment(supabase);
+    if (listsCommentError) {
+        return { data: null, error: listsCommentError };
+    }
+    return { data: { listsData: listsData, comment: listsCommentData }, error: null };
 };
 
-const formatListData = (listData: FetchedListsData): ListRow[] => {
-    return listData.data.map((row) => {
-        return {
-            primaryKey: row.primary_key,
-            rowOrder: row.row_order,
-            itemName: row.item_name,
-            ...Object.fromEntries(
-                listsHeaderKeysAndLabels
-                    .filter(([key]) => /^\d+$/.test(key))
-                    .map(([key]) => [
-                        key,
-                        {
-                            quantity: row[`quantity_for_${key}` as keyof Schema["lists"]],
-                            notes: row[`notes_for_${key}` as keyof Schema["lists"]],
-                        },
-                    ])
-            ),
-        } as ListRow; // this cast is needed here as the type system can't infer what Object.fromEntries will return
-    });
+const getErrorMessage = (error: FetchListsError | FetchListsCommentError): string => {
+    let errorMessage: string;
+    switch (error.type) {
+        case "listsFetchFailed":
+            errorMessage = "Failed to fetch lists data.";
+            break;
+        case "listsCommentFetchFailed":
+            errorMessage = "Failed to fetch lists comment.";
+            break;
+    }
+    return `${errorMessage} Log ID: ${error.logId}`;
+};
+
+const formatListData = (listsData: Schema["lists"][]): ListRow[] => {
+    return listsData.map(
+        (row) =>
+            ({
+                primaryKey: row.primary_key,
+                rowOrder: row.row_order,
+                itemName: row.item_name,
+                ...Object.fromEntries(
+                    listsHeaderKeysAndLabels
+                        .filter(([key]) => /^\d+$/.test(key))
+                        .map(([key]) => [
+                            key,
+                            {
+                                quantity: row[`quantity_for_${key}` as keyof Schema["lists"]],
+                                notes: row[`notes_for_${key}` as keyof Schema["lists"]],
+                            },
+                        ])
+                ),
+            }) as ListRow // this cast is needed here as the type system can't infer what Object.fromEntries will return
+    );
 };
 
 const ListsPage: React.FC<{}> = () => {
@@ -49,30 +85,29 @@ const ListsPage: React.FC<{}> = () => {
         setErrorMessage(error);
     }
 
-    useEffect(() => {
-        (async () => {
-            setIsLoading(true);
-            const listData = await fetchListData();
-            setListData(formatListData(listData));
-            setComment(listData.comment);
+    const fetchAndSetData = async (): Promise<void> => {
+        setIsLoading(true);
+        setErrorMessage(null);
+        const { data, error } = await fetchListsData();
+        if (error) {
             setIsLoading(false);
-        })();
+            setErrorMessage(getErrorMessage(error));
+            return;
+        }
+        setListData(formatListData(data.listsData));
+        setComment(data.comment);
+        setIsLoading(false);
+    };
+
+    useEffect(() => {
+        fetchAndSetData();
     }, []);
 
     useEffect(() => {
         const subscriptionChannel = supabase
             .channel("lists-table-changes")
             .on("postgres_changes", { event: "*", schema: "public", table: "lists" }, async () => {
-                try {
-                    const listData = await fetchListData();
-                    setListData(formatListData(listData));
-                } catch (error) {
-                    const logId = logErrorReturnLogId("Error with fetch: list data subscription", {
-                        error: error,
-                    });
-                    setListData([]);
-                    setErrorMessage(`Error fetching data, please reload. Log ID: ${logId}`);
-                }
+                await fetchAndSetData();
             })
             .subscribe((status, err) => {
                 if (subscriptionStatusRequiresErrorMessage(status, err, "lists")) {
@@ -86,6 +121,8 @@ const ListsPage: React.FC<{}> = () => {
 
     return isLoading ? (
         <></>
+    ) : errorMessage ? (
+        <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>
     ) : (
         <ListsDataView
             listOfIngredients={listData}

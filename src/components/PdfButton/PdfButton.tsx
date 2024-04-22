@@ -1,16 +1,18 @@
 "use client";
 
 import { NoSsr, Button } from "@mui/material";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import { pdf } from "@react-pdf/renderer";
 import React from "react";
+import { saveAs } from "file-saver";
+import { PdfDataFetchResponse } from "@/pdf/common";
 
-interface Props<T> {
-    data: T;
-    text: string;
-    pdfComponent: React.FC<{ data: T }>;
-    fileName: string;
-    clickHandler?: () => void;
+interface Props<Data, ErrorType extends string> {
+    fetchDataAndFileName: () => Promise<PdfDataFetchResponse<Data, ErrorType>>;
+    pdfComponent: React.FC<{ data: Data }>;
+    onPdfCreationCompleted: () => void;
     formatName?: boolean;
+    disabled?: boolean;
+    onPdfCreationFailed: (error: { type: ErrorType; logId: string }) => void;
 }
 
 const makePaddedString = (inputNumber: number): string => {
@@ -35,24 +37,29 @@ const formatFileName = (fileName: string): string => {
     return `${newFileName}_${filenameTimestampNow()}.pdf`;
 };
 
-const PdfButton = <T,>({
-    data,
-    text,
+const PdfButton = <Data, ErrorType extends string>({
+    fetchDataAndFileName,
     pdfComponent: PdfComponent,
-    fileName,
-    clickHandler = () => {},
+    onPdfCreationCompleted = () => {},
     formatName = true,
-}: Props<T>): React.ReactElement => {
+    disabled = false,
+    onPdfCreationFailed,
+}: Props<Data, ErrorType>): React.ReactElement => {
+    const onClick = async (): Promise<void> => {
+        const { data, error } = await fetchDataAndFileName();
+        if (error) {
+            onPdfCreationFailed(error);
+            return;
+        }
+        const blob = await pdf(<PdfComponent data={data.pdfData} />).toBlob();
+        saveAs(blob, formatName ? formatFileName(data.fileName) : data.fileName);
+        onPdfCreationCompleted();
+    };
     return (
         <NoSsr>
-            <PDFDownloadLink
-                document={<PdfComponent data={data} />}
-                fileName={formatName ? formatFileName(fileName) : fileName}
-            >
-                <Button variant="contained" onClick={clickHandler}>
-                    {text}
-                </Button>
-            </PDFDownloadLink>
+            <Button variant="contained" onClick={onClick} disabled={disabled}>
+                Download PDF
+            </Button>
         </NoSsr>
     );
 };

@@ -4,11 +4,7 @@ import { ClientSummary, RequirementSummary } from "@/common/formatClientsData";
 import { HouseholdSummary } from "@/common/formatFamiliesData";
 import { formatCamelCaseKey } from "@/common/format";
 import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
-import {
-    Item,
-    ShoppingListPdfData,
-    ShoppingListPdfDataList,
-} from "@/pdf/ShoppingList/shoppingListPdfDataProps";
+import { Item, ShoppingListPdfData } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
 
 export type BlockProps = ParcelInfo | HouseholdSummary | RequirementSummary;
 
@@ -238,13 +234,13 @@ const SingleShoppingList: React.FC<SingleShoppingListProps> = ({ parcelData }) =
 };
 
 interface ShoppingListPDFProps {
-    data: ShoppingListPdfDataList;
+    data: ShoppingListPdfData[];
 }
 
 const ShoppingListPdf: React.FC<ShoppingListPDFProps> = ({ data }) => {
     return (
         <Document>
-            {data.lists.map((parcelData: ShoppingListPdfData, index: number) => {
+            {data.map((parcelData: ShoppingListPdfData, index: number) => {
                 return <SingleShoppingList key={index} parcelData={parcelData} />; // eslint-disable-line react/no-array-index-key
             })}
         </Document>

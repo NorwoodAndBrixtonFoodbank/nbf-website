@@ -25,7 +25,12 @@ export interface AuditLog {
 }
 
 export async function sendAuditLog(auditLogProps: AuditLog): Promise<void> {
-    const currentUser = await getCurrentUser();
+    const { data: currentUser, error: currentUserError } = await getCurrentUser();
+
+    if (currentUserError) {
+        const logId = await logErrorReturnLogId("failed to fetch current user for audit log");
+        throw new DatabaseError("fetch", "current user for audit log", logId);
+    }
 
     if (currentUser === null) {
         const logId = await logErrorReturnLogId("failed to fetch current user for audit log");
