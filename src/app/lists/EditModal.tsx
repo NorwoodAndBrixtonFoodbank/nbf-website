@@ -21,6 +21,16 @@ interface Props {
 // null => add, undefined => modal closed
 export type EditModalState = Schema["lists"] | null | undefined;
 
+type AddListErrorTypes = "failedToAddListItem";
+type AddListReturn = {
+    error: { type: AddListErrorTypes; logId: string } | null;
+};
+
+type EditListErrorTypes = "failedToEditListItem";
+type EditListReturn = {
+    error: { type: EditListErrorTypes; logId: string } | null;
+};
+
 const ModalInner = styled.div`
     display: flex;
     flex-direction: column;
@@ -64,7 +74,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
         setToSubmit({ ...toSubmit, [key]: newValue });
     };
 
-    const addListItem = async (listItem: Partial<Schema["lists"]>): Promise<void> => {
+    const addListItem = async (listItem: Partial<Schema["lists"]>): Promise<AddListReturn> => {
         const { data: returnedListData, error: insertListItemError } = await supabase
             .from("lists")
             .insert(listItem)
@@ -82,7 +92,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
             });
             void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
             setErrorMessage(`Failed to add list item. Log ID: ${logId}`);
-            return;
+            return { error: { type: "failedToAddListItem", logId } };
         }
 
         void sendAuditLog({
@@ -90,9 +100,11 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
             wasSuccess: true,
             listId: returnedListData.primary_key,
         });
+
+        return { error: null };
     };
 
-    const editListItem = async (listItem: Partial<Schema["lists"]>): Promise<void> => {
+    const editListItem = async (listItem: Partial<Schema["lists"]>): Promise<EditListReturn> => {
         const { data: returnedListData, error: updateListItemError } = await supabase
             .from("lists")
             .update(listItem)
@@ -103,6 +115,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
         const auditLog = {
             content: listItem ?? {},
             action: "edit a list item",
+            listId: listItem.primary_key,
         } as const satisfies Partial<AuditLog>;
 
         if (updateListItemError) {
@@ -111,13 +124,14 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
             });
             void sendAuditLog({ ...auditLog, wasSuccess: false, logId });
             setErrorMessage(`Failed to update a list item. Log ID: ${logId}`);
-            return;
+            return { error: { type: "failedToEditListItem", logId } };
         }
         void sendAuditLog({
             ...auditLog,
             wasSuccess: true,
             listId: returnedListData.primary_key,
         });
+        return { error: null };
     };
 
     const onSubmit = async (): Promise<void> => {
@@ -126,11 +140,24 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
         }
 
         if (data === null) {
-            void addListItem(toSubmit);
+            const { error } = await addListItem(toSubmit);
+            if (error) {
+                switch (error.type) {
+                    case "failedToAddListItem":
+                        setErrorMessage(`Failed to add list item. Log ID: ${error.logId}`);
+                }
+                return;
+            }
         } else {
-            void editListItem(toSubmit);
+            const { error } = await editListItem(toSubmit);
+            if (error) {
+                switch (error.type) {
+                    case "failedToEditListItem":
+                        setErrorMessage(`Failed to edit list item. Log ID: ${error.logId}`);
+                }
+                return;
+            }
         }
-
         setToSubmit(null);
         onClose();
     };
