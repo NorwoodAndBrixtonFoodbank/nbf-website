@@ -74,9 +74,9 @@ const sampleRawExpandedClientDetails: RawParcelDetails = {
     },
 
     events: [
-        { event_name: "Event 1", timestamp: "2023-06-04T13:30:00+00:00", event_data: "" },
+        { new_parcel_status: "Event 1", timestamp: "2023-06-04T13:30:00+00:00", event_data: "" },
         {
-            event_name: "Event 2",
+            new_parcel_status: "Event 2",
             timestamp: "2023-06-04T13:30:00+00:00",
             event_data: "Something happened",
         },
@@ -259,12 +259,12 @@ describe("Parcels Page", () => {
             expect(
                 processEventsDetails([
                     {
-                        event_name: "Event 1",
+                        new_parcel_status: "Event 1",
                         timestamp: "2023-08-04T13:30:00+00:00",
                         event_data: "",
                     },
                     {
-                        event_name: "Event 2",
+                        new_parcel_status: "Event 2",
                         timestamp: "2023-06-04T15:30:00+00:00",
                         event_data: "Message",
                     },
