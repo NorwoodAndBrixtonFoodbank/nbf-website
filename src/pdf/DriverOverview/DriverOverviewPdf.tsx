@@ -146,13 +146,17 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                     <Text>{rowData.name}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.addressColumnWidth]}>
-                    {rowData.address.postcode ? <>
-                    <Text>{rowData.address.line1}</Text>
-                    <Text>{rowData.address.line2}</Text>
-                    <Text>{rowData.address.town}</Text>
-                    <Text>{rowData.address.county}</Text>
-                    <Text>{rowData.address.postcode}</Text></>
-                    : <Text>{nullPostcodeDisplay}</Text>}
+                    {rowData.address.postcode ? (
+                        <>
+                            <Text>{rowData.address.line1}</Text>
+                            <Text>{rowData.address.line2}</Text>
+                            <Text>{rowData.address.town}</Text>
+                            <Text>{rowData.address.county}</Text>
+                            <Text>{rowData.address.postcode}</Text>
+                        </>
+                    ) : (
+                        <Text>{nullPostcodeDisplay}</Text>
+                    )}
                 </View>
                 <View style={[styles.tableColumn, styles.contactColumnWidth]}>
                     <Text>{rowData.contact}</Text>

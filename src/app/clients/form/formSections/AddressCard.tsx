@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import {
     Errors,
@@ -26,7 +26,29 @@ const AddressCard: React.FC<ClientCardProps> = ({
     fieldSetter,
     fields,
 }) => {
-    const [clientHasNoAddress, setClientHasNoAddress] = useState(false);
+    const setFieldsAndErrorsInitially = useCallback(() => {
+        if (fields["addressPostcode"] === null) {
+            errorSetter([
+                ["addressPostcode", Errors.none],
+                ["addressLine1", Errors.none],
+            ]);
+            fieldSetter([
+                ["addressPostcode", null],
+                ["addressLine1", ""],
+                ["addressLine2", ""],
+                ["addressTown", ""],
+                ["addressCounty", ""],
+            ]);
+        }
+    }, [errorSetter, fieldSetter, fields]);
+
+    useEffect(() => {
+        setFieldsAndErrorsInitially();
+    }, [setFieldsAndErrorsInitially]);
+
+    const [clientHasNoAddress, setClientHasNoAddress] = useState(
+        fields["addressPostcode"] === null
+    );
     const handleCheckCheckbox = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setClientHasNoAddress(event.target.checked);
         if (event.target.checked) {

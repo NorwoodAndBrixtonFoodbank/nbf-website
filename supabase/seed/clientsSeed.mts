@@ -35,5 +35,5 @@ export const possibleParcelPostCodes = [
     "CB2 3JU",
     "CB24 4RT",
     "CB8 9LJ",
-    null
+    null,
 ];

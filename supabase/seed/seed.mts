@@ -31,14 +31,14 @@ async function generateSeed(): Promise<void> {
     await seed.packingSlots(packingSlots);
 
     await seed.clients((generate) =>
-        generate(500, { const postcode = copycat.oneOf(ctx.seed, possibleParcelPostCodes);
+        generate(500, {
             fullName: (ctx) => copycat.fullName(ctx.seed),
             phoneNumber: (ctx) => copycat.phoneNumber(ctx.seed),
-            address1: (ctx) => postcode ? copycat.streetAddress(ctx.seed) : null,
-            address2: (ctx) => postcode ? copycat.streetAddress(ctx.seed) : null,
-            addressTown: (ctx) => postcode? copycat.city(ctx.seed) : null,
-            addressCounty: (ctx) => postcode ? copycat.state(ctx.seed) : null,
-            addressPostcode: (ctx) => postcode,
+            address1: (ctx) => copycat.streetAddress(ctx.seed),
+            address2: (ctx) => copycat.streetAddress(ctx.seed),
+            addressTown: (ctx) => copycat.city(ctx.seed),
+            addressCounty: (ctx) => copycat.state(ctx.seed),
+            addressPostcode: (ctx) => copycat.oneOf(ctx.seed, possibleParcelPostCodes),
             deliveryInstructions: (ctx) => copycat.sentence(ctx.seed, { maxWords: 20 }),
             familyId: (ctx) => copycat.uuid(ctx.seed),
             dietaryRequirements: (ctx) =>

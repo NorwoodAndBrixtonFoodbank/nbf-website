@@ -3,7 +3,6 @@ import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import {
     errorExists,
     errorText,
-    Setter,
     onChangeText,
     numberRegex,
     Person,

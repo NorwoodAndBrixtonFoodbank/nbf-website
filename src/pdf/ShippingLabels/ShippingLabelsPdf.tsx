@@ -94,24 +94,26 @@ const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
                 </View>
                 <View style={styles.middleRow}>
                     <View style={styles.leftCol}>
-                    {data.address_postcode &&
-                        <><Text>
-                            {data.address_1}
-                            <br />
-                        </Text>
-                        <Text>
-                            {data.address_2}
-                            <br />
-                        </Text>
-                        <Text>
-                            {data.address_town}
-                            <br />
-                        </Text>
-                        <Text>
-                            {data.address_county}
-                            <br />
-                        </Text></>
-                        }
+                        {data.address_postcode && (
+                            <>
+                                <Text>
+                                    {data.address_1}
+                                    <br />
+                                </Text>
+                                <Text>
+                                    {data.address_2}
+                                    <br />
+                                </Text>
+                                <Text>
+                                    {data.address_town}
+                                    <br />
+                                </Text>
+                                <Text>
+                                    {data.address_county}
+                                    <br />
+                                </Text>
+                            </>
+                        )}
                     </View>
                     <View style={styles.middleCol}>
                         <Text style={styles.headingText}>Delivery Instructions:</Text>
