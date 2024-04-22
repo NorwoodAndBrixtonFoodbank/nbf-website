@@ -128,7 +128,7 @@ const Statuses: React.FC<Props> = ({
             setParcelStatuses(parcelStatusesData);
         };
         void getParcelStatuses();
-    }, []);
+    }, [setModalError]);
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
         willSaveParcelStatus();
