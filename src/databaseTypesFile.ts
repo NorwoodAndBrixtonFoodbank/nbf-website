@@ -15,6 +15,7 @@ export type Database = {
           client_id: string | null
           collection_centre_id: string | null
           content: Json | null
+          created_at: string
           event_id: string | null
           list_hotel_id: string | null
           list_id: string | null
@@ -33,6 +34,7 @@ export type Database = {
           client_id?: string | null
           collection_centre_id?: string | null
           content?: Json | null
+          created_at?: string
           event_id?: string | null
           list_hotel_id?: string | null
           list_id?: string | null
@@ -51,6 +53,7 @@ export type Database = {
           client_id?: string | null
           collection_centre_id?: string | null
           content?: Json | null
+          created_at?: string
           event_id?: string | null
           list_hotel_id?: string | null
           list_id?: string | null
@@ -184,7 +187,7 @@ export type Database = {
           address_1: string
           address_2: string
           address_county: string
-          address_postcode: string
+          address_postcode: string | null
           address_town: string
           baby_food: boolean | null
           delivery_instructions: string
@@ -204,7 +207,7 @@ export type Database = {
           address_1?: string
           address_2?: string
           address_county?: string
-          address_postcode?: string
+          address_postcode?: string | null
           address_town?: string
           baby_food?: boolean | null
           delivery_instructions?: string
@@ -224,7 +227,7 @@ export type Database = {
           address_1?: string
           address_2?: string
           address_county?: string
-          address_postcode?: string
+          address_postcode?: string | null
           address_town?: string
           baby_food?: boolean | null
           delivery_instructions?: string
