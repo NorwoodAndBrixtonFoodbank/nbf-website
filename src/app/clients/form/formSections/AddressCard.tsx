@@ -1,6 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { Errors, errorExists, errorText, onChangeText } from "@/components/Form/formFunctions";
+import { Errors, errorExists, errorText, getDefaultTextValue, onChangeText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { GappedDiv } from "@/components/Form/formStyling";
 import { ClientCardProps } from "../ClientForm";
@@ -21,11 +21,6 @@ const AddressCard: React.FC<ClientCardProps> = ({
     fields,
 }) => {
     const [clientHasNoAddress, setClientHasNoAddress] = useState(false);
-    const defaultAddressLine1 = useRef(fields["addressLine1"]);
-    const defaultAddressLine2 = useRef(fields["addressLine2"]);
-    const defaultAddressTown = useRef(fields["addressTown"]);
-    const defaultAddressCounty = useRef(fields["addressCounty"]);
-    const defaultAddressPostcode = useRef(fields["addressPostcode"]);
     const handleCheckCheckbox = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setClientHasNoAddress(event.target.checked);
         if (event.target.checked) {
@@ -40,21 +35,12 @@ const AddressCard: React.FC<ClientCardProps> = ({
                 ["addressTown", ""],
                 ["addressCounty", ""],
             ]);
-            defaultAddressLine1.current = "";
-            defaultAddressLine2.current = "";
-            defaultAddressTown.current = "";
-            defaultAddressCounty.current = "";
-            defaultAddressPostcode.current = null;
         } else {
             errorSetter([
                 ["addressPostcode", Errors.initial],
                 ["addressLine1", Errors.initial],
             ]);
         }
-        setTimeout(() => {
-            console.log("fields", fields);
-            console.log("errors", formErrors);
-        }, 1000);
     };
     return (
         <GenericFormCard
@@ -70,17 +56,17 @@ const AddressCard: React.FC<ClientCardProps> = ({
                             error={errorExists(formErrors.addressLine1)}
                             helperText={errorText(formErrors.addressLine1)}
                             onChange={onChangeText(fieldSetter, errorSetter, "addressLine1", true)}
-                            defaultValue={defaultAddressLine1.current}
+                            defaultValue={getDefaultTextValue(fields, "addressLine1")}
                         />
                         <FreeFormTextInput
                             label="Address Line 2"
                             onChange={onChangeText(fieldSetter, errorSetter, "addressLine2", false)}
-                            defaultValue={defaultAddressLine2.current}
+                            defaultValue={getDefaultTextValue(fields, "addressLine2")}
                         />
                         <FreeFormTextInput
                             label="Town"
                             onChange={onChangeText(fieldSetter, errorSetter, "addressTown", false)}
-                            defaultValue={defaultAddressTown.current}
+                            defaultValue={getDefaultTextValue(fields, "addressTown")}
                         />
                         <FreeFormTextInput
                             label="County"
@@ -90,7 +76,7 @@ const AddressCard: React.FC<ClientCardProps> = ({
                                 "addressCounty",
                                 false
                             )}
-                            defaultValue={defaultAddressCounty.current}
+                            defaultValue={getDefaultTextValue(fields, "addressCounty")}
                         />
                         <FreeFormTextInput
                             label="Postcode* (For example, SE11 5QY)"
@@ -104,7 +90,7 @@ const AddressCard: React.FC<ClientCardProps> = ({
                                 postcodeRegex,
                                 formatPostcode
                             )}
-                            defaultValue={defaultAddressPostcode.current ?? ""}
+                            defaultValue={getDefaultTextValue(fields, "addressPostcode")}
                         />
                     </>
                 )}

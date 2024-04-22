@@ -239,5 +239,5 @@ export const checkErrorOnSubmit = <
 };
 
 export const getDefaultTextValue = (fields: Fields, fieldKey: keyof Fields): string | undefined => {
-    return fields[fieldKey].length === 0 ? undefined : fields[fieldKey];
+    return fields[fieldKey] ?? undefined;
 };
