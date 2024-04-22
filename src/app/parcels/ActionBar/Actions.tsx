@@ -265,7 +265,7 @@ const Actions: React.FC<Props> = ({
     const mapsLinkForSelectedParcels = (): string => {
         return (
             "https://www.google.com/maps/dir/" +
-            selectedParcels.map((parcel) => parcel.addressPostcode.replaceAll(" ", "")).join("/") +
+            selectedParcels.map((parcel) => parcel.addressPostcode?.replaceAll(" ", "")).join("/") +
             "//"
         );
     };

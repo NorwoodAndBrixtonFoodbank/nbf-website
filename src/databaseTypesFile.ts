@@ -15,7 +15,6 @@ export type Database = {
           client_id: string | null
           collection_centre_id: string | null
           content: Json | null
-          created_at: string
           event_id: string | null
           list_hotel_id: string | null
           list_id: string | null
@@ -34,7 +33,6 @@ export type Database = {
           client_id?: string | null
           collection_centre_id?: string | null
           content?: Json | null
-          created_at?: string
           event_id?: string | null
           list_hotel_id?: string | null
           list_id?: string | null
@@ -53,7 +51,6 @@ export type Database = {
           client_id?: string | null
           collection_centre_id?: string | null
           content?: Json | null
-          created_at?: string
           event_id?: string | null
           list_hotel_id?: string | null
           list_id?: string | null

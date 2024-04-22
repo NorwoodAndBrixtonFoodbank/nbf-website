@@ -22,7 +22,7 @@ import UserDetailsCard from "@/app/admin/createUser/UserDetailsCard";
 import { InviteUserError, adminInviteUser } from "@/server/adminInviteUser";
 import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 
-interface InviteUserFields {
+export interface InviteUserFields {
     email: string;
     role: Database["public"]["Enums"]["role"];
     firstName: string;

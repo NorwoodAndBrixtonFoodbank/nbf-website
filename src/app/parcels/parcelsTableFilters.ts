@@ -29,6 +29,12 @@ export const postcodeSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
     state: string
 ): PostgrestFilterBuilder<Database["public"], any, any> => {
+    if (state === "") {
+        return query;
+    }
+    if ("nfa".includes(state.toLowerCase())) {
+        return query.or(`client_address_postcode.ilike.%${state}%, client_address_postcode.is.null`);
+    }
     return query.ilike("client_address_postcode", `%${state}%`);
 };
 

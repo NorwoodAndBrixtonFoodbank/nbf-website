@@ -3,10 +3,10 @@
 import { authenticateAsAdmin } from "@/server/authenticateAdminUser";
 import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
 import { User } from "@supabase/gotrue-js";
-import { InviteUserFields } from "@/app/admin/createUser/CreateUserForm";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
+import { InviteUserFields } from "@/app/admin/createUser/CreateUserForm";
 
 export type InviteUserErrorType =
     | "adminAuthenticationFailure"

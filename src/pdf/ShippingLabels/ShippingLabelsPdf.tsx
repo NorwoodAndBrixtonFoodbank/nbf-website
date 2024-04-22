@@ -14,7 +14,7 @@ export interface ShippingLabelData {
     address_2?: string;
     address_town?: string;
     address_county?: string;
-    address_postcode?: string;
+    address_postcode?: string | null;
     delivery_instructions?: string;
 }
 

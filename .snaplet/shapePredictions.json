@@ -98,6 +98,28 @@
     ]
   },
   {
+    "schemaName": "realtime",
+    "tableName": "broadcasts",
+    "predictions": [
+      {
+        "input": "realtime broadcasts inserted_at",
+        "column": "inserted_at",
+        "shape": "DATE",
+        "confidence": 0.9963454604148865,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "realtime broadcasts updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9969859719276428,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
     "schemaName": "storage",
     "tableName": "buckets",
     "predictions": [
@@ -146,6 +168,36 @@
         "column": "updated_at",
         "shape": "DATE",
         "confidence": 0.9926562905311584,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "realtime",
+    "tableName": "channels",
+    "predictions": [
+      {
+        "input": "realtime channels inserted_at",
+        "column": "inserted_at",
+        "shape": "DATE",
+        "confidence": 0.9959784746170044,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "realtime channels name",
+        "column": "name",
+        "shape": "SYSTEM_CRON",
+        "confidence": 0.3024794459342957,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "realtime channels updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9968760013580322,
         "context": "GENERAL",
         "confidenceContext": 0
       }
@@ -792,14 +844,6 @@
         "confidenceContext": 0
       },
       {
-        "input": "public lists_hotel notes_for_10",
-        "column": "notes_for_10",
-        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
-        "confidence": 0.5610069036483765,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
         "input": "public lists_hotel notes_for_2",
         "column": "notes_for_2",
         "shape": "SSN_LAST4",
@@ -854,6 +898,20 @@
         "confidence": 0.7,
         "context": "GENERAL",
         "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "public",
+    "tableName": "lists_hotel",
+    "predictions": [
+      {
+        "input": "public lists_hotel notes_for_10",
+        "column": "notes_for_10",
+        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
+        "confidence": 0.5610069036483765,
+        "context": "GENERAL",
+        "confidenceContext": 0
       },
       {
         "input": "public lists_hotel notes_for_9",
@@ -872,6 +930,14 @@
         "confidenceContext": 0
       },
       {
+        "input": "public lists_hotel quantity_for_10",
+        "column": "quantity_for_10",
+        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
+        "confidence": 0.5681412816047668,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
         "input": "public lists_hotel quantity_for_2",
         "column": "quantity_for_2",
         "shape": "BANK_ACCOUNT_NUMBER_LAST4",
@@ -884,20 +950,6 @@
         "column": "quantity_for_3",
         "shape": "COMPANY_NAME",
         "confidence": 0.351044237613678,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      }
-    ]
-  },
-  {
-    "schemaName": "public",
-    "tableName": "lists_hotel",
-    "predictions": [
-      {
-        "input": "public lists_hotel quantity_for_10",
-        "column": "quantity_for_10",
-        "shape": "BANK_ACCOUNT_NUMBER_LAST4",
-        "confidence": 0.5681412816047668,
         "context": "GENERAL",
         "confidenceContext": 0
       },
@@ -1194,6 +1246,28 @@
         "column": "voucher_number",
         "shape": "FINANCE_TRANSACTION_DESCRIPTION",
         "confidence": 0.3678252398967743,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "realtime",
+    "tableName": "presences",
+    "predictions": [
+      {
+        "input": "realtime presences inserted_at",
+        "column": "inserted_at",
+        "shape": "DATE",
+        "confidence": 0.9953981041908264,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "realtime presences updated_at",
+        "column": "updated_at",
+        "shape": "DATE",
+        "confidence": 0.9965379238128662,
         "context": "GENERAL",
         "confidenceContext": 0
       }
@@ -1514,6 +1588,20 @@
     ]
   },
   {
+    "schemaName": "realtime",
+    "tableName": "schema_migrations",
+    "predictions": [
+      {
+        "input": "realtime schema_migrations inserted_at",
+        "column": "inserted_at",
+        "shape": "DATE",
+        "confidence": 0.9948114156723022,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
     "schemaName": "supabase_migrations",
     "tableName": "schema_migrations",
     "predictions": [
@@ -1726,6 +1814,20 @@
     ]
   },
   {
+    "schemaName": "realtime",
+    "tableName": "subscription",
+    "predictions": [
+      {
+        "input": "realtime subscription created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9956409931182861,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
     "schemaName": "auth",
     "tableName": "users",
     "predictions": [
@@ -1734,6 +1836,36 @@
         "column": "aud",
         "shape": "AUTHENTICATION_PROVIDER",
         "confidence": 0,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users email",
+        "column": "email",
+        "shape": "EMAIL",
+        "confidence": 0.994260311126709,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users role",
+        "column": "role",
+        "shape": "ROLE",
+        "confidence": 0.9707857370376587,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "auth",
+    "tableName": "users",
+    "predictions": [
+      {
+        "input": "auth users banned_until",
+        "column": "banned_until",
+        "shape": "PASSWORD",
+        "confidence": 0.7942231297492981,
         "context": "GENERAL",
         "confidenceContext": 0
       },
@@ -1754,10 +1886,18 @@
         "confidenceContext": 0
       },
       {
-        "input": "auth users email",
-        "column": "email",
-        "shape": "EMAIL",
-        "confidence": 0.994260311126709,
+        "input": "auth users created_at",
+        "column": "created_at",
+        "shape": "DATE",
+        "confidence": 0.9878057241439819,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users deleted_at",
+        "column": "deleted_at",
+        "shape": "DATE",
+        "confidence": 0.9908251166343689,
         "context": "GENERAL",
         "confidenceContext": 0
       },
@@ -1766,6 +1906,22 @@
         "column": "email_change",
         "shape": "EMAIL",
         "confidence": 0.9721580743789673,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users email_change_sent_at",
+        "column": "email_change_sent_at",
+        "shape": "DATE",
+        "confidence": 0.9879693984985352,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users email_change_token_current",
+        "column": "email_change_token_current",
+        "shape": "TOKEN",
+        "confidence": 0.9396399855613708,
         "context": "GENERAL",
         "confidenceContext": 0
       },
@@ -1798,76 +1954,6 @@
         "column": "invited_at",
         "shape": "DATE",
         "confidence": 0.985194981098175,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users recovery_sent_at",
-        "column": "recovery_sent_at",
-        "shape": "DATE",
-        "confidence": 0.9812063574790955,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users recovery_token",
-        "column": "recovery_token",
-        "shape": "TOKEN",
-        "confidence": 0.9935053586959839,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users role",
-        "column": "role",
-        "shape": "ROLE",
-        "confidence": 0.9707857370376587,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      }
-    ]
-  },
-  {
-    "schemaName": "auth",
-    "tableName": "users",
-    "predictions": [
-      {
-        "input": "auth users banned_until",
-        "column": "banned_until",
-        "shape": "PASSWORD",
-        "confidence": 0.7942231297492981,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users created_at",
-        "column": "created_at",
-        "shape": "DATE",
-        "confidence": 0.9878057241439819,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users deleted_at",
-        "column": "deleted_at",
-        "shape": "DATE",
-        "confidence": 0.9908251166343689,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users email_change_sent_at",
-        "column": "email_change_sent_at",
-        "shape": "DATE",
-        "confidence": 0.9879693984985352,
-        "context": "GENERAL",
-        "confidenceContext": 0
-      },
-      {
-        "input": "auth users email_change_token_current",
-        "column": "email_change_token_current",
-        "shape": "TOKEN",
-        "confidence": 0.9396399855613708,
         "context": "GENERAL",
         "confidenceContext": 0
       },
@@ -1932,6 +2018,22 @@
         "column": "reauthentication_token",
         "shape": "TOKEN",
         "confidence": 0.991940975189209,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users recovery_sent_at",
+        "column": "recovery_sent_at",
+        "shape": "DATE",
+        "confidence": 0.9812063574790955,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "auth users recovery_token",
+        "column": "recovery_token",
+        "shape": "TOKEN",
+        "confidence": 0.9935053586959839,
         "context": "GENERAL",
         "confidenceContext": 0
       },
