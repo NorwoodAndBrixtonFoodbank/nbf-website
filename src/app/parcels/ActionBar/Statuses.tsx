@@ -16,12 +16,12 @@ import { fetchParcelStatuses } from "@/app/parcels/fetchParcelTableData";
 export type StatusType = ParcelStatus[][number];
 
 const nonMenuStatuses: StatusType[] = [
-    "Driver Overview Downloaded",
-    "Map Generated",
+    "Driver Overview Downloaded", //Generated when driver overview pdf downloaded
+    "Map Generated", //Generated when maps generated
     "Out for Delivery",
-    "Request Deleted",
-    "Shipping Labels Downloaded",
-    "Shopping List Downloaded",
+    "Request Deleted", //Generated when parcel deleted
+    "Shipping Labels Downloaded", //Generated when shipping labels pdf downloaded
+    "Shopping List Downloaded", //Generated when shopping list pdf downloaded
 ];
 
 type SaveParcelStatusErrorType = "eventInsertionFailed";
