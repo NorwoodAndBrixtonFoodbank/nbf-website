@@ -24,32 +24,30 @@ const EditClients: ({ params }: EditClientsParameters) => React.ReactElement = (
     const router = useRouter();
 
     useEffect(() => {
-        if (params.id) {
+        (async () => {
+            if (!params.id) {
+                return;
+            }
             setError(null);
-            fetchClient(params.id, supabase)
-                .then((client) => {
-                    setClientData(client);
-                })
-                .catch((error) => {
-                    setError({ name: error, message: "Unable to fetch client data" });
-                    logErrorReturnLogId("error fetching client data in client edit modal");
-                });
-        }
+            const { data: clientData, error: clientError } = await fetchClient(params.id, supabase);
+            if (clientError) {
+                setError({ name: clientError.type, message: "Unable to fetch client data" });
+                logErrorReturnLogId("error fetching client data in client edit modal");
+                return;
+            }
+            setClientData(clientData);
+            const { data: familyData, error: familyError } = await fetchFamily(
+                clientData.family_id,
+                supabase
+            );
+            if (familyError) {
+                setError({ name: familyError.type, message: "Unable to fetch family data" });
+                logErrorReturnLogId("error fetching family data in client edit modal");
+                return;
+            }
+            setFamilyData(familyData);
+        })();
     }, [params.id]);
-
-    useEffect(() => {
-        if (clientData?.family_id) {
-            setError(null);
-            fetchFamily(clientData.family_id, supabase)
-                .then((family) => {
-                    setFamilyData(family);
-                })
-                .catch((error) => {
-                    setError({ name: error, message: "Unable to fetch family data" });
-                    logErrorReturnLogId("error fetching family data in client edit modal");
-                });
-        }
-    }, [clientData?.family_id]);
 
     const initialFields = clientData && familyData ? autofill(clientData, familyData) : null;
 

@@ -113,12 +113,12 @@ You can regenerate the types
 - Create sample data by updating supabase/seed/seed.mts
 - Login to snaplet
   ```shell
-  npx @snaplet/seed login
+  npx snaplet auth setup
   ```
 - Follow link and log in using credentials in keeper
 - Regenerate assets in sync with your new database 
   ```shell
-  npx @snaplet/seed sync
+  npx snaplet generate
   ```
 - If error with createSeedClient, close IDE and restart
 - Then generate `supabase/seed.sql` from `supabase/seed/seed.mts`

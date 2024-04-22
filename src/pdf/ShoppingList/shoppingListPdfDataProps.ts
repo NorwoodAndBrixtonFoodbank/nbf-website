@@ -1,7 +1,7 @@
 import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import { ClientSummary, RequirementSummary } from "@/common/formatClientsData";
 import { HouseholdSummary } from "@/common/formatFamiliesData";
-import { fetchLists } from "@/common/fetch";
+import { FetchListsError, fetchLists } from "@/common/fetch";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
 
@@ -21,9 +21,17 @@ export interface ShoppingListPdfData {
     endNotes: string;
 }
 
-export interface ShoppingListPdfDataList {
-    lists: ShoppingListPdfData[];
-}
+type PrepareItemsListResponse =
+    | {
+          data: Item[];
+          error: null;
+      }
+    | {
+          data: null;
+          error: PrepareItemsListError;
+      };
+
+type PrepareItemsListError = FetchListsError;
 
 const getQuantityAndNotes = (
     row: Schema["lists"],
@@ -40,12 +48,18 @@ const getQuantityAndNotes = (
     };
 };
 
-export const prepareItemsListForHousehold = async (householdSize: number): Promise<Item[]> => {
-    const listData = await fetchLists(supabase);
-    return listData.map((row): Item => {
+export const prepareItemsListForHousehold = async (
+    householdSize: number
+): Promise<PrepareItemsListResponse> => {
+    const { data: listData, error } = await fetchLists(supabase);
+    if (error) {
+        return { data: null, error: error };
+    }
+    const itemsList = listData.map((row): Item => {
         return {
             description: row.item_name,
             ...getQuantityAndNotes(row, householdSize),
         };
     });
+    return { data: itemsList, error: null };
 };

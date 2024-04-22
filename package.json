@@ -29,7 +29,7 @@
     "db:local:generate_types": "supabase gen types typescript --local --schema public > src/databaseTypesFile.ts",
     "db:remote:generate_types": "supabase gen types typescript --schema public > src/databaseTypesFile.ts",
     "db:generate_seed": "npx tsx supabase/seed/seed.mts > supabase/seed.sql",
-    "post_checkout": "npm install && npx supabase stop && npx supabase start && npm run dev:reset_supabase && npx @snaplet/seed sync"
+    "post_checkout": "npm run dev:reset_supabase && npx snaplet generate"
   },
   "nyc": {
     "all": true,
@@ -85,6 +85,7 @@
     "eslint-plugin-prettier": "^5.1.3",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "file-saver": "^2.0.5",
     "next": "^13.4.19",
     "nyc": "^15.1.0",
     "pdf-parse": "^1.1.1",
@@ -102,10 +103,11 @@
   },
   "devDependencies": {
     "@snaplet/copycat": "^5.0.0",
-    "@snaplet/seed": "^0.94.1",
+    "@types/file-saver": "^2.0.7",
+    "@snaplet/seed": "^0.88.2",
     "@types/seedrandom": "^3.0.8",
     "@types/uuid": "^9.0.8",
-    "postgres": "^3.4.4",
-    "seedrandom": "^3.0.5"
+    "seedrandom": "^3.0.5",
+    "snaplet": "^0.88.2"
   }
 }
