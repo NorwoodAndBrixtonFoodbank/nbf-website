@@ -93,7 +93,8 @@ async function generateSeed(): Promise<void> {
                 generate(1000, {
                     newParcelStatus: status,
                     eventData: (ctx) => copycat.int(ctx.seed, { min: 1, max: 10 }).toString(),
-                    timestamp: (ctx) => getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
+                    timestamp: (ctx) =>
+                        getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
                 }),
             { connect: true }
         );
@@ -104,8 +105,9 @@ async function generateSeed(): Promise<void> {
             (generate) =>
                 generate(1000, {
                     newParcelStatus: status,
-                    eventData: (ctx) => "",
-                    timestamp: (ctx) => getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
+                    eventData: () => "",
+                    timestamp: (ctx) =>
+                        getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
                 }),
             { connect: true }
         );

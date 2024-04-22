@@ -13,9 +13,9 @@ import { sendAuditLog } from "@/server/auditLog";
 import { ParcelStatus } from "@/databaseUtils";
 import { fetchParcelStatuses } from "@/app/parcels/fetchParcelTableData";
 
-export type statusType = ParcelStatus[][number];
+export type StatusType = ParcelStatus[][number];
 
-const nonMenuStatuses: statusType[] = [
+const nonMenuStatuses: StatusType[] = [
     "Shipping Labels Downloaded",
     "Shopping List Downloaded",
     "Out for Delivery",
