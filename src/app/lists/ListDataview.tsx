@@ -201,10 +201,6 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     const onConfirmDeletion = async (): Promise<void> => {
         if (toDelete !== null) {
             const itemToDelete = listOfIngredients[toDelete];
-            const { error } = await supabase
-                .from("lists")
-                .delete()
-                .eq("primary_key", itemToDelete.primaryKey);
 
             const auditLog = {
                 action: "delete a list item",
@@ -213,6 +209,11 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                     itemPrimaryKey: itemToDelete.primaryKey,
                 },
             } as const satisfies Partial<AuditLog>;
+
+            const { error } = await supabase
+                .from("lists")
+                .delete()
+                .eq("primary_key", itemToDelete.primaryKey);
 
             if (error) {
                 const logId = await logErrorReturnLogId(
