@@ -1,5 +1,6 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { nullPostcodeDisplay } from "@/app/parcels/ParcelsPage";
 
 export interface ShippingLabelData {
     label_quantity: number;
@@ -8,13 +9,13 @@ export interface ShippingLabelData {
     collection_centre: string;
     collection_datetime: string;
     voucher_number: string;
-    full_name?: string;
-    phone_number?: string;
-    address_1?: string;
-    address_2?: string;
-    address_town?: string;
-    address_county?: string;
-    address_postcode?: string | null;
+    full_name: string;
+    phone_number: string;
+    address_1: string;
+    address_2: string;
+    address_town: string;
+    address_county: string;
+    address_postcode: string | null;
     delivery_instructions?: string;
 }
 
@@ -73,6 +74,7 @@ interface LabelCardProps {
 }
 
 const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
+    console.log(data.address_postcode);
     return (
         <Page size={labelSizePixels} style={styles.page}>
             <View style={styles.cardWrapper} wrap={false}>
@@ -116,7 +118,9 @@ const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
                 </View>
                 <View style={styles.bottomRow}>
                     <View style={[styles.leftCol, styles.bottomAlign]}>
-                        <Text style={styles.largeText}>{data.address_postcode}</Text>
+                        <Text style={styles.largeText}>
+                            {data.address_postcode ?? nullPostcodeDisplay}
+                        </Text>
                     </View>
                     <View style={[styles.middleCol, styles.bottomAlign]}>
                         <Text style={styles.mediumText}>

@@ -4,16 +4,18 @@ import {
     Errors,
     errorExists,
     errorText,
-    Setter,
     onChangeText,
     getDefaultTextValue,
 } from "@/components/Form/formFunctions";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
-import { ClientCardProps, ClientFields, ClientSetter } from "../ClientForm";
+import { ClientCardProps, ClientSetter } from "../ClientForm";
 
-const getBaby = (fieldSetter: ClientSetter, errorSetter: ClientSetter): SelectChangeEventHandler => {
+const getBaby = (
+    fieldSetter: ClientSetter,
+    errorSetter: ClientSetter
+): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
         if (input === "Yes") {

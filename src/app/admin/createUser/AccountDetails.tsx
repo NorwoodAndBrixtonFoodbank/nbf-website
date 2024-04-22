@@ -6,7 +6,11 @@ import { InviteUserCardProps } from "./CreateUserForm";
 
 const emailRegex = /^\S+@\S+$/;
 
-const AccountDetails: React.FC<InviteUserCardProps> = ({ fieldSetter, formErrors, errorSetter }) => {
+const AccountDetails: React.FC<InviteUserCardProps> = ({
+    fieldSetter,
+    formErrors,
+    errorSetter,
+}) => {
     return (
         <GenericFormCard
             title="Account Details"

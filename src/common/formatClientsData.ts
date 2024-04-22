@@ -1,5 +1,6 @@
 import { Schema } from "@/databaseUtils";
 import { displayList } from "@/common/format";
+import { nullPostcodeDisplay } from "@/app/parcels/ParcelsPage";
 
 interface NappySizeAndExtraInformation {
     nappySize: string;
@@ -42,7 +43,13 @@ export const prepareClientSummary = (clientData: Schema["clients"]): ClientSumma
         extra_information,
     } = clientData;
 
-    const address = [address_1, address_2, address_town, address_county, address_postcode]
+    const address = [
+        address_1,
+        address_2,
+        address_town,
+        address_county,
+        address_postcode ?? nullPostcodeDisplay,
+    ]
         .filter((value) => value !== "")
         .join("\n");
 

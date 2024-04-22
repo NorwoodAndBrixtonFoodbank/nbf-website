@@ -9,6 +9,7 @@ import {
     getCurrentDate,
     ParcelOfSpecificDateAndLocation,
 } from "@/pdf/DayOverview/DayOverviewPdfButton";
+import { nullPostcodeDisplay } from "@/app/parcels/ParcelsPage";
 
 interface DayOverviewSubtitleProps {
     subtitleKey: string;
@@ -128,7 +129,9 @@ const DayOverviewRow: React.FC<DayOverviewRowProps> = ({ row }) => {
                 )}
             </View>
             <Text style={[styles.cellName, styles.cell]}>{row.clients!.full_name}</Text>
-            <Text style={[styles.cellPostcode, styles.cell]}>{row.clients!.address_postcode}</Text>
+            <Text style={[styles.cellPostcode, styles.cell]}>
+                {row.clients!.address_postcode ?? nullPostcodeDisplay}
+            </Text>
             <Text style={[styles.cellTime, styles.cell]}>
                 {dateTimeToAMPM(row.collection_datetime!)}
             </Text>

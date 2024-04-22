@@ -223,6 +223,7 @@ const parcelIdParam = "parcelId";
 
 const defaultNumberOfParcelsPerPage = 100;
 const numberOfParcelsPerPageOptions = [10, 25, 50, 100];
+export const nullPostcodeDisplay = "NFA";
 
 const ParcelsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -515,11 +516,16 @@ const ParcelsPage: React.FC<{}> = () => {
         );
     };
 
+    const formatNullPostcode = (postcodeData: ParcelsTableRow["addressPostcode"]): string => {
+        return postcodeData ?? nullPostcodeDisplay;
+    };
+
     const parcelTableColumnDisplayFunctions = {
         iconsColumn: rowToIconsColumn,
         deliveryCollection: rowToDeliveryCollectionColumn,
         packingDate: formatDatetimeAsDate,
         lastStatus: rowToLastStatusColumn,
+        addressPostcode: formatNullPostcode,
     };
 
     const onParcelTableRowClick = (row: Row<ParcelsTableRow>): void => {

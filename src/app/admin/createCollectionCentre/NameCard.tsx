@@ -4,7 +4,11 @@ import GenericFormCard from "@/components/Form/GenericFormCard";
 import { errorExists, errorText, onChangeText } from "@/components/Form/formFunctions";
 import { CollectionCentreCardProps } from "./CreateCollectionCentreForm";
 
-const NameCard: React.FC<CollectionCentreCardProps> = ({ fieldSetter, formErrors, errorSetter }) => {
+const NameCard: React.FC<CollectionCentreCardProps> = ({
+    fieldSetter,
+    formErrors,
+    errorSetter,
+}) => {
     return (
         <GenericFormCard
             title="Name"

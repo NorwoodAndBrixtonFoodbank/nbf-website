@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Text, Document, Page, View, StyleSheet, Image } from "@react-pdf/renderer";
+import { nullPostcodeDisplay } from "@/app/parcels/ParcelsPage";
 
 export interface DriverOverviewTableData {
     name: string;
@@ -10,7 +11,7 @@ export interface DriverOverviewTableData {
         line2: string | null;
         town: string | null;
         county: string | null;
-        postcode: string;
+        postcode: string | null;
     };
     contact?: string;
     packingDate: string | null;
@@ -149,7 +150,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                     <Text>{rowData.address.line2}</Text>
                     <Text>{rowData.address.town}</Text>
                     <Text>{rowData.address.county}</Text>
-                    <Text>{rowData.address.postcode}</Text>
+                    <Text>{rowData.address.postcode ?? nullPostcodeDisplay}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.contactColumnWidth]}>
                     <Text>{rowData.contact}</Text>

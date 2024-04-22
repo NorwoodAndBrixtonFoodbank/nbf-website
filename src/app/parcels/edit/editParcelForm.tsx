@@ -14,7 +14,7 @@ import {
     FetchParcelError,
 } from "@/common/fetch";
 import supabase from "@/supabaseClient";
-import { Errors, FormErrors } from "@/components/Form/formFunctions";
+import { Errors } from "@/components/Form/formFunctions";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import Title from "@/components/Title/Title";
 

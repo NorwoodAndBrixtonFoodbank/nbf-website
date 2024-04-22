@@ -5,6 +5,7 @@ import { HouseholdSummary } from "@/common/formatFamiliesData";
 import { formatCamelCaseKey } from "@/common/format";
 import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import { Item, ShoppingListPdfData } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
+import { nullPostcodeDisplay } from "@/app/parcels/ParcelsPage";
 
 export type BlockProps = ParcelInfo | HouseholdSummary | RequirementSummary;
 
@@ -203,7 +204,9 @@ const SingleShoppingList: React.FC<SingleShoppingListProps> = ({ parcelData }) =
                 <View style={[styles.flexRow, styles.pdfHeader]}>
                     <View style={styles.flexColumn}>
                         <Text style={styles.title}>Shopping List</Text>
-                        <Text style={styles.subtitle}>POSTCODE: {parcelData.postcode}</Text>
+                        <Text style={styles.subtitle}>
+                            POSTCODE: {parcelData.postcode ?? nullPostcodeDisplay}
+                        </Text>
                     </View>
                     {/* eslint-disable-next-line jsx-a11y/alt-text -- React-PDF Image doesn't  have alt text property*/}
                     <Image src="/logo.png" style={[styles.flexRow, styles.logoStyling]} />

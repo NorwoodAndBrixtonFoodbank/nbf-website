@@ -25,6 +25,19 @@ const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
         setActionCompleted(true);
     };
 
+    const formattedPostcodes = props.selectedParcels.reduce<string[]>(
+        (formattedPostcodes, parcel) => {
+            if (parcel.addressPostcode) {
+                formattedPostcodes.push(parcel.addressPostcode.replaceAll(" ", ""));
+            }
+            return formattedPostcodes;
+        },
+        []
+    );
+    const mapsLinkForSelectedParcels =
+        "https://www.google.com/maps/dir/" + formattedPostcodes.join("/");
+    ("//");
+
     return (
         <GeneralActionModal
             {...props}
@@ -36,12 +49,6 @@ const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
                 <Button
                     variant="contained"
                     onClick={() => {
-                        const mapsLinkForSelectedParcels =
-                            "https://www.google.com/maps/dir/" +
-                            props.selectedParcels
-                                .map((parcel) => parcel.addressPostcode.replaceAll(" ", ""))
-                                .join("/") +
-                            "//";
                         const openInNewTab = (url: string): void => {
                             window.open(url, "_blank", "noopener, noreferrer");
                         };

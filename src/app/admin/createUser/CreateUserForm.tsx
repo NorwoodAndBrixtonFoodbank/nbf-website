@@ -30,14 +30,14 @@ export interface InviteUserFields {
     telephoneNumber: string;
 }
 interface InviteUserErrors extends FormErrors<InviteUserFields> {
-    email: Errors,
-    role: Errors,
-    firstName: Errors,
-    lastName: Errors,
-    telephoneNumber: Errors,
+    email: Errors;
+    role: Errors;
+    firstName: Errors;
+    lastName: Errors;
+    telephoneNumber: Errors;
 }
 
-export type InviteUserCardProps = CardProps<InviteUserFields, InviteUserErrors>
+export type InviteUserCardProps = CardProps<InviteUserFields, InviteUserErrors>;
 
 const initialFields: InviteUserFields = {
     email: "",
@@ -87,7 +87,7 @@ const CreateUserForm: React.FC<{}> = () => {
         setFormError(Errors.none);
         setServerError(null);
 
-        if (checkErrorOnSubmit<InviteUserFields,InviteUserErrors>(formErrors, setFormErrors)) {
+        if (checkErrorOnSubmit<InviteUserFields, InviteUserErrors>(formErrors, setFormErrors)) {
             setFormError(Errors.submit);
             setSubmitDisabled(false);
             return;

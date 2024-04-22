@@ -12,6 +12,7 @@ import { DatabaseError } from "@/app/errorClasses";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { CollectionCentresOptions } from "@/app/parcels/fetchParcelTableData";
 import { getDbDate } from "@/common/format";
+import { nullPostcodeDisplay } from "./ParcelsPage";
 
 interface packingSlotOptionsSet {
     key: string;
@@ -32,8 +33,10 @@ export const postcodeSearch = (
     if (state === "") {
         return query;
     }
-    if ("nfa".includes(state.toLowerCase())) {
-        return query.or(`client_address_postcode.ilike.%${state}%, client_address_postcode.is.null`);
+    if (nullPostcodeDisplay.toLowerCase().includes(state.toLowerCase())) {
+        return query.or(
+            `client_address_postcode.ilike.%${state}%, client_address_postcode.is.null`
+        );
     }
     return query.ilike("client_address_postcode", `%${state}%`);
 };

@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { Errors, errorExists, errorText, getDefaultTextValue, onChangeText } from "@/components/Form/formFunctions";
+import {
+    Errors,
+    errorExists,
+    errorText,
+    getDefaultTextValue,
+    onChangeText,
+} from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { GappedDiv } from "@/components/Form/formStyling";
 import { ClientCardProps } from "../ClientForm";

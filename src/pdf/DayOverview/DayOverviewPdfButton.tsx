@@ -61,6 +61,7 @@ const getParcelsOfSpecificDateAndLocation = async (
     const endDate = new Date(date);
     endDate.setDate(date.getDate() + 1);
     const endDateString = endDate.toISOString();
+    console.log(startDateString, endDateString);
 
     const { data, error } = await supabase
         .from("parcels")

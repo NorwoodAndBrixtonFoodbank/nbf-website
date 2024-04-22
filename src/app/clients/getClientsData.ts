@@ -4,6 +4,7 @@ import { Supabase } from "@/supabaseUtils";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
+import { nullPostcodeDisplay } from "../parcels/ParcelsPage";
 
 type GetClientsDataAndCountErrorType =
     | "abortedFetchingClientsTable"
@@ -85,7 +86,7 @@ const getClientsDataAndCount = async (
             clientId: client.client_id ?? "",
             fullName: client.full_name ?? "",
             familyCategory: familyCountToFamilyCategory(client.family_count ?? 0),
-            addressPostcode: client.address_postcode ?? "NFA",
+            addressPostcode: client.address_postcode ?? nullPostcodeDisplay,
         };
     });
 

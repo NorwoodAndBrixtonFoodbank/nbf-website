@@ -13,13 +13,12 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBuildingCircleArrowRight } from "@fortawesome/free-solid-svg-icons";
 import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
-import { InsertSchema } from "@/databaseUtils";
-import NameCard from "@/app/admin/createCollectionCentre/NameCard";
 import AcronymCard from "@/app/admin/createCollectionCentre/AcronymCard";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import Alert from "@mui/material/Alert/Alert";
+import NameCard from "./NameCard";
 
 interface CollectionCentreFields {
     name: string;
@@ -31,7 +30,7 @@ interface CollectionCentreErrors extends FormErrors<CollectionCentreFields> {
     acronym: Errors;
 }
 
-export type CollectionCentreCardProps = CardProps<CollectionCentreFields, CollectionCentreErrors>
+export type CollectionCentreCardProps = CardProps<CollectionCentreFields, CollectionCentreErrors>;
 
 const initialFields: CollectionCentreFields = {
     name: "",
@@ -67,7 +66,12 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
     const submitForm = async (): Promise<void> => {
         setSubmitDisabled(true);
 
-        if (checkErrorOnSubmit<CollectionCentreFields, CollectionCentreErrors>(formErrors, setFormErrors)) {
+        if (
+            checkErrorOnSubmit<CollectionCentreFields, CollectionCentreErrors>(
+                formErrors,
+                setFormErrors
+            )
+        ) {
             setSubmitDisabled(false);
             return;
         }
@@ -80,7 +84,7 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
 
         const auditLog = {
             action: "add a collection centre",
-            content: { collectionCentreDetails: {acronym: fields.acronym, name: fields.name} },
+            content: { collectionCentreDetails: { acronym: fields.acronym, name: fields.name } },
         } as const satisfies Partial<AuditLog>;
 
         if (error) {
