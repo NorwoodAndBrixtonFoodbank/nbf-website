@@ -127,7 +127,6 @@ const Statuses: React.FC<Props> = ({
                         return;
                 }
             }
-            console.log(parcelStatusesData);
             setParcelStatuses(parcelStatusesData);
         };
         void getParcelStatuses();
