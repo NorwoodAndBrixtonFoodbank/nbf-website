@@ -51,6 +51,7 @@ export interface ParcelFields extends Fields {
     collectionDate: string | null;
     collectionTime: string | null;
     collectionCentre: string | null;
+    lastUpdated: string | undefined;
 }
 
 export const initialParcelFields: ParcelFields = {
@@ -62,6 +63,7 @@ export const initialParcelFields: ParcelFields = {
     collectionDate: null,
     collectionTime: null,
     collectionCentre: null,
+    lastUpdated: undefined,
 };
 
 export const initialParcelFormErrors: FormErrors = {
@@ -203,21 +205,27 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             voucher_number: fields.voucherNumber,
             collection_centre: isDelivery ? deliveryPrimaryKey : fields.collectionCentre,
             collection_datetime: collectionDateTime,
+            last_updated: fields.lastUpdated,
         };
 
-        try {
-            if (editMode) {
-                await updateParcel(formToAdd, parcelId!);
-            } else {
-                await insertParcel(formToAdd);
+        if (editMode) {
+            const { error: updateParcelError } = await updateParcel(formToAdd, parcelId!);
+            if (updateParcelError) {
+                let errorMessage: string;
+                switch (updateParcelError.type) {
+                    case "failedToUpdateParcel":
+                        errorMessage = `Failed to update parcel. Log ID: ${updateParcelError.logId}`;
+                        break;
+                    case "concurrentUpdateConflict":
+                        errorMessage = `Record has been edited recently - please refresh the page. LogID: ${updateParcelError.logId}`;
+                }
+                setSubmitErrorMessage(errorMessage);
+                return;
             }
-            router.push("/parcels/");
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                setSubmitError(Errors.external);
-                setSubmitErrorMessage(error.message);
-            }
+        } else {
+            await insertParcel(formToAdd);
         }
+        router.push("/parcels/");
         setSubmitDisabled(false);
     };
 
