@@ -21,9 +21,14 @@ interface Props {
 // null => add, undefined => modal closed
 export type EditModalState = Schema["lists"] | null | undefined;
 
-type AddEditListErrorTypes = "failedToAddListItem" | "failedToEditListItem";
-type AddEditListReturn = {
-    error: { type: AddEditListErrorTypes; logId: string } | null;
+type AddListErrorTypes = "failedToAddListItem";
+type AddListReturn = {
+    error: { type: AddListErrorTypes; logId: string } | null;
+};
+
+type EditListErrorTypes = "failedToEditListItem";
+type EditListReturn = {
+    error: { type: EditListErrorTypes; logId: string } | null;
 };
 
 const ModalInner = styled.div`
@@ -69,7 +74,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
         setToSubmit({ ...toSubmit, [key]: newValue });
     };
 
-    const addListItem = async (listItem: Partial<Schema["lists"]>): Promise<AddEditListReturn> => {
+    const addListItem = async (listItem: Partial<Schema["lists"]>): Promise<AddListReturn> => {
         const { data: returnedListData, error: insertListItemError } = await supabase
             .from("lists")
             .insert(listItem)
@@ -99,7 +104,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
         return { error: null };
     };
 
-    const editListItem = async (listItem: Partial<Schema["lists"]>): Promise<AddEditListReturn> => {
+    const editListItem = async (listItem: Partial<Schema["lists"]>): Promise<EditListReturn> => {
         const { data: returnedListData, error: updateListItemError } = await supabase
             .from("lists")
             .update(listItem)
