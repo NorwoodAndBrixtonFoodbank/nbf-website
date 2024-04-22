@@ -7,8 +7,8 @@ import {
     checkErrorOnSubmit,
     Errors,
     FormErrors,
-    createErrorSetter,
     createSetter,
+    CardProps,
 } from "@/components/Form/formFunctions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBuildingCircleArrowRight } from "@fortawesome/free-solid-svg-icons";
@@ -21,12 +21,24 @@ import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import Alert from "@mui/material/Alert/Alert";
 
-const initialFields: InsertSchema["collection_centres"] = {
+interface CollectionCentreFields {
+    name: string;
+    acronym: string;
+}
+
+interface CollectionCentreErrors extends FormErrors<CollectionCentreFields> {
+    name: Errors;
+    acronym: Errors;
+}
+
+export type CollectionCentreCardProps = CardProps<CollectionCentreFields, CollectionCentreErrors>
+
+const initialFields: CollectionCentreFields = {
     name: "",
     acronym: "",
 };
 
-const initialFormErrors: FormErrors = {
+const initialFormErrors: CollectionCentreErrors = {
     name: Errors.initial,
     acronym: Errors.initial,
 };
@@ -50,12 +62,12 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
     const [newCollectionCentre, setNewCollectionCentre] = useState<string | null>(null);
 
     const fieldSetter = createSetter(setFields, fields);
-    const errorSetter = createErrorSetter(setFormErrors, formErrors);
+    const errorSetter = createSetter(setFormErrors, formErrors);
 
     const submitForm = async (): Promise<void> => {
         setSubmitDisabled(true);
 
-        if (checkErrorOnSubmit(formErrors, setFormErrors)) {
+        if (checkErrorOnSubmit<CollectionCentreFields, CollectionCentreErrors>(formErrors, setFormErrors)) {
             setSubmitDisabled(false);
             return;
         }
@@ -68,7 +80,7 @@ const CreateCollectionCentreForm: React.FC<{}> = () => {
 
         const auditLog = {
             action: "add a collection centre",
-            content: { collectionCentreDetails: fields },
+            content: { collectionCentreDetails: {acronym: fields.acronym, name: fields.name} },
         } as const satisfies Partial<AuditLog>;
 
         if (error) {

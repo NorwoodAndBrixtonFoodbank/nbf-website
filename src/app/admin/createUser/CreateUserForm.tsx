@@ -9,8 +9,8 @@ import {
     checkErrorOnSubmit,
     Errors,
     FormErrors,
-    createErrorSetter,
     createSetter,
+    CardProps,
 } from "@/components/Form/formFunctions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
@@ -22,15 +22,24 @@ import UserDetailsCard from "@/app/admin/createUser/UserDetailsCard";
 import { InviteUserError, adminInviteUser } from "@/server/adminInviteUser";
 import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 
-export interface InviteUserDetails {
+interface InviteUserFields {
     email: string;
     role: Database["public"]["Enums"]["role"];
     firstName: string;
     lastName: string;
     telephoneNumber: string;
 }
+interface InviteUserErrors extends FormErrors<InviteUserFields> {
+    email: Errors,
+    role: Errors,
+    firstName: Errors,
+    lastName: Errors,
+    telephoneNumber: Errors,
+}
 
-const initialFields: InviteUserDetails = {
+export type InviteUserCardProps = CardProps<InviteUserFields, InviteUserErrors>
+
+const initialFields: InviteUserFields = {
     email: "",
     role: "caller",
     firstName: "",
@@ -38,7 +47,7 @@ const initialFields: InviteUserDetails = {
     telephoneNumber: "",
 };
 
-const initialFormErrors: FormErrors = {
+const initialFormErrors: InviteUserErrors = {
     email: Errors.initial,
     role: Errors.none,
     firstName: Errors.initial,
@@ -64,7 +73,7 @@ const CreateUserForm: React.FC<{}> = () => {
     const [formErrors, setFormErrors] = useState(initialFormErrors);
 
     const fieldSetter = createSetter(setFields, fields);
-    const errorSetter = createErrorSetter(setFormErrors, formErrors);
+    const errorSetter = createSetter(setFormErrors, formErrors);
 
     const [formError, setFormError] = useState(Errors.none);
     const [submitDisabled, setSubmitDisabled] = useState(false);
@@ -78,7 +87,7 @@ const CreateUserForm: React.FC<{}> = () => {
         setFormError(Errors.none);
         setServerError(null);
 
-        if (checkErrorOnSubmit(formErrors, setFormErrors)) {
+        if (checkErrorOnSubmit<InviteUserFields,InviteUserErrors>(formErrors, setFormErrors)) {
             setFormError(Errors.submit);
             setSubmitDisabled(false);
             return;

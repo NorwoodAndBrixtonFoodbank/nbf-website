@@ -3,7 +3,7 @@
 import { authenticateAsAdmin } from "@/server/authenticateAdminUser";
 import { getSupabaseAdminAuthClient } from "@/supabaseAdminAuthClient";
 import { User } from "@supabase/gotrue-js";
-import { InviteUserDetails } from "@/app/admin/createUser/CreateUserForm";
+import { InviteUserFields } from "@/app/admin/createUser/CreateUserForm";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
@@ -29,7 +29,7 @@ type InviteUsersDataAndErrorType =
       };
 
 export async function adminInviteUser(
-    userDetails: InviteUserDetails,
+    userDetails: InviteUserFields,
     redirectUrl: string
 ): Promise<InviteUsersDataAndErrorType> {
     const { isSuccess, failureReason } = await authenticateAsAdmin();
