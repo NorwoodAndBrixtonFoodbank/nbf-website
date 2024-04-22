@@ -3,7 +3,6 @@ import RadioGroupInput from "@/components/DataInput/RadioGroupInput";
 import {
     Errors,
     errorExists,
-    ErrorSetter,
     errorText,
     Setter,
     onChangeText,
@@ -12,19 +11,19 @@ import {
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
-import { ClientCardProps } from "../ClientForm";
+import { ClientCardProps, ClientFields, ClientSetter } from "../ClientForm";
 
-const getBaby = (fieldSetter: Setter, errorSetter: ErrorSetter): SelectChangeEventHandler => {
+const getBaby = (fieldSetter: ClientSetter, errorSetter: ClientSetter): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
         if (input === "Yes") {
-            errorSetter("nappySize", Errors.initial);
-            fieldSetter("babyProducts", true);
+            errorSetter([["nappySize", Errors.initial]]);
+            fieldSetter([["babyProducts", true]]);
             return;
         }
-        errorSetter("nappySize", Errors.none);
+        errorSetter([["nappySize", Errors.none]]);
         const babyProduct = input === "No" ? false : null;
-        fieldSetter("babyProducts", babyProduct);
+        fieldSetter([["babyProducts", babyProduct]]);
     };
 };
 

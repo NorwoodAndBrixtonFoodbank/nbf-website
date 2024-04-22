@@ -13,14 +13,14 @@ import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { StyledCard, FormText } from "@/components/Form/formStyling";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
-import { ClientCardProps } from "../ClientForm";
+import { ClientCardProps, ClientSetter } from "../ClientForm";
 
 const maxNumberChildren = (value: string): boolean => {
     return parseInt(value) <= 20;
 };
 
 const getChild = (
-    fieldSetter: Setter,
+    fieldSetter: ClientSetter,
     children: Person[],
     index: number,
     subFieldName: "gender" | "age"
@@ -32,7 +32,7 @@ const getChild = (
         } else {
             children[index][subFieldName] = parseInt(input);
         }
-        fieldSetter("children", [...children]);
+        fieldSetter([["children", [...children]]]);
     };
 };
 

@@ -12,6 +12,7 @@ import {
     NumberAdultsByGender,
     Person,
     createSetter,
+    Setter,
 } from "@/components/Form/formFunctions";
 import {
     CenterComponent,
@@ -78,6 +79,7 @@ export interface ClientErrors extends FormErrors<ClientFields> {
     nappySize: Errors;
 }
 
+export type ClientSetter = Setter<ClientFields>;
 export type ClientCardProps = CardProps<ClientFields, ClientErrors>;
 
 const formSections = [
