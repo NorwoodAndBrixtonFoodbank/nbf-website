@@ -43,15 +43,15 @@ export const prepareClientSummary = (clientData: Schema["clients"]): ClientSumma
         extra_information,
     } = clientData;
 
-    const address = [
+    const address = address_postcode ? [
         address_1,
         address_2,
         address_town,
         address_county,
-        address_postcode ?? nullPostcodeDisplay,
+        address_postcode
     ]
         .filter((value) => value !== "")
-        .join("\n");
+        .join("\n") : nullPostcodeDisplay;
 
     const { extraInformation } = processExtraInformation(extra_information);
 

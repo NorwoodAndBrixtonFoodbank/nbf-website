@@ -94,7 +94,8 @@ const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
                 </View>
                 <View style={styles.middleRow}>
                     <View style={styles.leftCol}>
-                        <Text>
+                    {data.address_postcode &&
+                        <><Text>
                             {data.address_1}
                             <br />
                         </Text>
@@ -109,7 +110,8 @@ const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
                         <Text>
                             {data.address_county}
                             <br />
-                        </Text>
+                        </Text></>
+                        }
                     </View>
                     <View style={styles.middleCol}>
                         <Text style={styles.headingText}>Delivery Instructions:</Text>

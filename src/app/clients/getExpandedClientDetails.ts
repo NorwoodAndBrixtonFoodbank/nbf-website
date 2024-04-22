@@ -103,12 +103,13 @@ export const formatAddressFromClientDetails = (
         "address_1" | "address_2" | "address_town" | "address_county" | "address_postcode"
     >
 ): string => {
+    if (!client.address_postcode) {return nullPostcodeDisplay};
     return [
         client.address_1,
         client.address_2,
         client.address_town,
         client.address_county,
-        client.address_postcode ?? nullPostcodeDisplay,
+        client.address_postcode
     ]
         .filter((field) => field)
         .join(", ");
