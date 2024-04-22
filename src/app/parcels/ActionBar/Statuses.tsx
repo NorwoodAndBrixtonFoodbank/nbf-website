@@ -16,10 +16,12 @@ import { fetchParcelStatuses } from "@/app/parcels/fetchParcelTableData";
 export type StatusType = ParcelStatus[][number];
 
 const nonMenuStatuses: StatusType[] = [
-    "Shipping Labels Downloaded",
-    "Shopping List Downloaded",
+    "Driver Overview Downloaded",
+    "Map Generated",
     "Out for Delivery",
     "Request Deleted",
+    "Shipping Labels Downloaded",
+    "Shopping List Downloaded",
 ];
 
 type SaveParcelStatusErrorType = "eventInsertionFailed";
@@ -125,6 +127,7 @@ const Statuses: React.FC<Props> = ({
                         return;
                 }
             }
+            console.log(parcelStatusesData);
             setParcelStatuses(parcelStatusesData);
         };
         void getParcelStatuses();
