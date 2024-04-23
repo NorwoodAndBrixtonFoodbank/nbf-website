@@ -67,7 +67,7 @@ export interface ClientFields extends Fields {
     extraInformation: string;
     attentionFlag: boolean;
     signpostingCall: boolean;
-    lastUpdated: string;
+    lastUpdated: string | undefined;
 }
 
 export interface ClientCardProps extends CardProps {
