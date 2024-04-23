@@ -2,7 +2,7 @@ name: Dump dev database every hour
 
 on:
   schedule:
-    - cron: '43 * * * *' # Runs every hour
+    - cron: '54 * * * *' # Runs every hour
 
 env:
   SUPABASE_DEV_PROJECT_ID: ${{ secrets.SUPABASE_DEV_PROJECT_ID }}
@@ -21,6 +21,9 @@ jobs:
 
       - name: Link to the project
         run: npx supabase link --project-ref $SUPABASE_DEV_PROJECT_ID
+
+      - name: Create db-backup folder
+        run: mkdir db-backup
 
       - name: Dump schema
         run: npx supabase db dump -f db-backup/schema.sql
