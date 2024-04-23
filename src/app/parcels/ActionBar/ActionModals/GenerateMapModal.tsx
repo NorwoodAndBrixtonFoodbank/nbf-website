@@ -49,6 +49,11 @@ const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
                 <Button
                     variant="contained"
                     onClick={() => {
+                        if (formattedPostcodes.length === 0) {
+                            setErrorMessage("No selected parcels have addresses.");
+                            setActionCompleted(true);
+                            return;
+                        }
                         const openInNewTab = (url: string): void => {
                             window.open(url, "_blank", "noopener, noreferrer");
                         };
