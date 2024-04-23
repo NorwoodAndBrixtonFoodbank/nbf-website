@@ -218,12 +218,23 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                         break;
                     case "concurrentUpdateConflict":
                         errorMessage = `Record has been edited recently - please refresh the page. LogID: ${updateParcelError.logId}`;
+                        break;
                 }
                 setSubmitErrorMessage(errorMessage);
                 return;
             }
         } else {
-            await insertParcel(formToAdd);
+            const { error: insertParcelError } = await insertParcel(formToAdd);
+            if (insertParcelError) {
+                let errorMessage: string;
+                switch (insertParcelError.type) {
+                    case "failedToInsertParcel":
+                        errorMessage = `Failed to insert parcel. Log ID: ${insertParcelError.logId}`;
+                        break;
+                }
+                setSubmitErrorMessage(errorMessage);
+                return;
+            }
         }
         router.push("/parcels/");
         setSubmitDisabled(false);

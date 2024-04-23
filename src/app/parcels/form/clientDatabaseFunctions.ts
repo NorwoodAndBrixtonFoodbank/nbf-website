@@ -7,7 +7,12 @@ import { AuditLog, sendAuditLog } from "@/server/auditLog";
 type ParcelDatabaseInsertRecord = InsertSchema["parcels"];
 type ParcelDatabaseUpdateRecord = UpdateSchema["parcels"];
 
-export const insertParcel = async (parcelRecord: ParcelDatabaseInsertRecord): Promise<void> => {
+type InsertParcelErrors = "failedToInsertParcel";
+type InsertParcelReturnType = { error: { type: InsertParcelErrors; logId: string } | null };
+
+export const insertParcel = async (
+    parcelRecord: ParcelDatabaseInsertRecord
+): Promise<InsertParcelReturnType> => {
     const { data, error } = await supabase
         .from("parcels")
         .insert(parcelRecord)
@@ -27,10 +32,11 @@ export const insertParcel = async (parcelRecord: ParcelDatabaseInsertRecord): Pr
     if (error) {
         const logId = await logErrorReturnLogId("Error with insert: parcel data", error);
         await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
-        throw new DatabaseError("insert", "parcel data", logId);
+        return { error: { type: "failedToInsertParcel", logId } };
     }
 
     await sendAuditLog({ ...auditLog, wasSuccess: true, parcelId: data.primary_key });
+    return { error: null };
 };
 
 type UpdateParcelErrors = "failedToUpdateParcel" | "concurrentUpdateConflict";

@@ -69,6 +69,7 @@ type addClientReturnType =
           clientId: null;
           error: { type: addClientErrors; logId: string };
       };
+
 export const submitAddClientForm = async (fields: ClientFields): Promise<addClientReturnType> => {
     const clientRecord = formatClientRecord(fields);
     const familyMembers = getFamilyMembers(fields.adults, fields.children);
