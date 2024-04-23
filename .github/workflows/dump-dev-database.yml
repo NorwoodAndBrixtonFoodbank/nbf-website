@@ -2,7 +2,7 @@ name: Dump dev database every hour
 
 on:
   schedule:
-    - cron: '54 * * * *' # Runs every hour
+    - cron: '22 * * * *' # Runs every hour
 
 env:
   SUPABASE_DEV_PROJECT_ID: ${{ secrets.SUPABASE_DEV_PROJECT_ID }}
