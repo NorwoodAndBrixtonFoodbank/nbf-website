@@ -1,6 +1,9 @@
-## Prerequisite
-  
-## Make a backup (Supabase way)
+# Disaster Recovery Plan
+
+## Overview
+A backup of the dev database is taken every hour using a GitHub workflow. When a disaster strikes where the dev database needs to be restored, follow this guide.
+
+## Making a backup manually
 - Link to the project you want a backup for
   ```bash
   npx supabase link
@@ -20,40 +23,30 @@
     ```
 
 ## Restoring Supabase with a backup
-
-### On a brand new Supabase project
 - Create a new supabase project in the same organisation 
-  - choose db password and store in keeper 
-  - choose london  
+  - generate a DB password and add it to Keeper 
+  - choose London
 - Go to Project Settings > Database (under Configuration) and find the connection string under the "PSQL" tab for the newly created project
 - Restore database using the backup files, in the following order.
   ```bash
-  psql -h <host> -p <port> -d <database_name> -U <user> -f supabase/role.sql
+  psql -h <host> -p <port> -d <database_name> -U <user> -f <role_backup_file>
   ```
   ```bash
-  psql -h <host> -p <port> -d <database_name> -U <user> -1 -f supabase/schema.sql
+  psql -h <host> -p <port> -d <database_name> -U <user> -1 -f <schema_backup_file>
   ```
   ```bash
-  psql -h <host> -p <port> -d <database_name> -U <user> -1 -f supabase/data.sql
+  psql -h <host> -p <port> -d <database_name> -U <user> -1 -f <data_backup_file>
   ```
-- Deploy edge functions (see github workflow for commands)
+- Deploy edge functions (see GitHub workflow for commands)
 - Upload the congestion charge text file to bucket manually
-
-email provider set up?
-email tempaltes
-update env variables and update keeper
-change env variables and deploy frontend
-
-
-### On an existing Supabase project
-- Go to Project Settings > Database (under Configuration) and find the connection string under the "PSQL" tab for the project
-- Restore database using the backup
-  ```bash
-  psql -h <host> -p <port> -d <database_name> -U <user> -f <path_to_your_file>.sql
-  ```
+- Update the email provider settings to match the original Supabase instance
+- Update the email templates to match the original Supabase instance
+- Update .env.local and add this to Keeper
+- Change the environment variables on Amplify and redeploy the code.
 
 
-## Back up (using Postgres)
+## Other useful info
+### Back up manually using Postgres
 - You need PostgreSQL installed - this needs to be a version that is compatible with the Supabase instance (See Project Settings > Infrastructure on the Supabase project)
 - Dump the DB into a file
   ```bash
