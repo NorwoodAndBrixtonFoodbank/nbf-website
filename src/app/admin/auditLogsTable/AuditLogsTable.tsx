@@ -8,44 +8,42 @@ import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 
-const collectionCentresTableHeaderKeysAndLabels: TableHeaders<Schema["collection_centres"]> = [
-    ["primary_key", "Centre ID"],
-    ["name", "Name"],
-    ["acronym", "Acronym"],
+const collectionCentresTableHeaderKeysAndLabels: TableHeaders<Schema["audit_log"]> = [
+["primary_key", "Primary Key"]
 ];
 
 const AuditLogsTable: React.FC = () => {
-    const [collectionCentres, setCollectionCentres] = useState<Schema["collection_centres"][]>([]);
+    const [auditLog, setAuditLog] = useState<Schema["audit_log"][]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const fetchAndDisplayCollectionCentres = useCallback(async () => {
-        const { data, error } = await supabase.from("collection_centres").select();
+    const fetchAndDisplayAuditLog = useCallback(async () => {
+        const { data, error } = await supabase.from("audit_log").select();
 
         if (error) {
-            const logId = await logErrorReturnLogId("Error with fetch: Collection Centres", {
+            const logId = await logErrorReturnLogId("Error with fetch: Audit Log", {
                 error: error,
             });
-            setErrorMessage(`Failed to fetch collection centres. Log ID: ${logId}`);
+            setErrorMessage(`Failed to fetch audit log. Log ID: ${logId}`);
             return;
         }
 
-        setCollectionCentres(data);
+        setAuditLog(data);
     }, []);
 
     useEffect(() => {
-        void fetchAndDisplayCollectionCentres();
-    }, [fetchAndDisplayCollectionCentres]);
+        void fetchAndDisplayAuditLog();
+    }, [fetchAndDisplayAuditLog]);
 
     useEffect(() => {
         const subscriptionChannel = supabase
-            .channel("collection-centres-table-changes")
+            .channel("audit-logs-table-changes")
             .on(
                 "postgres_changes",
-                { event: "*", schema: "public", table: "collection_centres" },
-                fetchAndDisplayCollectionCentres
+                { event: "*", schema: "public", table: "audit_log" },
+                fetchAndDisplayAuditLog
             )
             .subscribe((status, err) => {
-                if (subscriptionStatusRequiresErrorMessage(status, err, "collection_centres")) {
+                if (subscriptionStatusRequiresErrorMessage(status, err, "audit_log")) {
                     setErrorMessage("Error fetching data, please reload");
                 }
             });
@@ -53,16 +51,15 @@ const AuditLogsTable: React.FC = () => {
         return () => {
             void supabase.removeChannel(subscriptionChannel);
         };
-    }, [fetchAndDisplayCollectionCentres]);
+    }, [fetchAndDisplayAuditLog]);
 
     return (
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
             <Table
-                dataPortion={collectionCentres}
+                dataPortion={auditLog}
                 headerKeysAndLabels={collectionCentresTableHeaderKeysAndLabels}
-                defaultShownHeaders={["name", "acronym"]}
-                toggleableHeaders={["primary_key"]}
+                defaultShownHeaders={["primary_key"]}
                 paginationConfig={{ enablePagination: false }}
                 checkboxConfig={{ displayed: false }}
                 sortConfig={{ sortPossible: false }}
