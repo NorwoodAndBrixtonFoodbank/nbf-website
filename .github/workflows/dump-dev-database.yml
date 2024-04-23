@@ -1,0 +1,37 @@
+name: Dump dev database every hour
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Runs every hour
+
+env:
+  SUPABASE_DEV_PROJECT_ID: ${{ secrets.SUPABASE_DEV_PROJECT_ID }}
+  SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DEV_DATABASE_PASSWORD }}
+
+jobs:
+  dump-dev-database:
+    name: Dump dev database
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Link to the project
+        run: npx supabase link --project-ref $SUPABASE_PROD_PROJECT_ID
+
+      - name: Dump schema
+        run: npx supabase db dump -f db-backup/schema.sql
+
+      - name: Dump roles
+        run: npx supabase db dump --role-only -f db-backup/role.sql
+
+      - name: Dump data
+        run: npx supabase db dump --data-only -f db-backup/data.sql
+
+      - name: Save files as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-backup
+          path: db-backup
