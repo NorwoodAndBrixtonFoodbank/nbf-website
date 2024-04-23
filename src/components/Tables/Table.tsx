@@ -407,27 +407,25 @@ const Table = <Data,>({
 
     return (
         <>
-            {(filterConfig.primaryFiltersShown || filterConfig.additionalFiltersShown) && (
-                <TableFilterBar<Data>
-                    handleClear={handleClear}
-                    setFilters={
-                        filterConfig.primaryFiltersShown ? filterConfig.setPrimaryFilters : () => {}
-                    }
-                    toggleableHeaders={toggleableHeaders}
-                    filters={filterConfig.primaryFiltersShown ? filterConfig.primaryFilters : []}
-                    additionalFilters={
-                        filterConfig.additionalFiltersShown ? filterConfig.additionalFilters : []
-                    }
-                    setAdditionalFilters={
-                        filterConfig.additionalFiltersShown
-                            ? filterConfig.setAdditionalFilters
-                            : () => {}
-                    }
-                    headers={headerKeysAndLabels}
-                    setShownHeaderKeys={setShownHeaderKeys}
-                    shownHeaderKeys={shownHeaderKeys}
-                />
-            )}
+            <TableFilterBar<Data>
+                handleClear={handleClear}
+                setFilters={
+                    filterConfig.primaryFiltersShown ? filterConfig.setPrimaryFilters : () => {}
+                }
+                toggleableHeaders={toggleableHeaders}
+                filters={filterConfig.primaryFiltersShown ? filterConfig.primaryFilters : []}
+                additionalFilters={
+                    filterConfig.additionalFiltersShown ? filterConfig.additionalFilters : []
+                }
+                setAdditionalFilters={
+                    filterConfig.additionalFiltersShown
+                        ? filterConfig.setAdditionalFilters
+                        : () => {}
+                }
+                headers={headerKeysAndLabels}
+                setShownHeaderKeys={setShownHeaderKeys}
+                shownHeaderKeys={shownHeaderKeys}
+            />
             <TableStyling>
                 <NoSsr>
                     <DataTable

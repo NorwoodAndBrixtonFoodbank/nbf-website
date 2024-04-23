@@ -2,18 +2,52 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import Table, { TableHeaders } from "@/components/Tables/Table";
-import { Schema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import { Json } from "@/databaseTypesFile";
 
-const collectionCentresTableHeaderKeysAndLabels: TableHeaders<Schema["audit_log"]> = [
-["primary_key", "Primary Key"]
+interface AuditLogRow {
+    action: string;
+    clientId: string;
+    collectionCentreId: string;
+    content: Json;
+    createdAt: string;
+    eventId: string;
+    listHotelId: string;
+    listId: string;
+    logId: string;
+    packingSlotId: string;
+    parcelId: string;
+    profileId: string;
+    statusOrder: string;
+    userId: string;
+    wasSuccess: boolean;
+    websiteData: string;
+}
+
+const collectionCentresTableHeaderKeysAndLabels: TableHeaders<AuditLogRow> = [
+    ["action", "Action"],
+    ["createdAt", "Time"],
+    ["userId", "User ID"],
+    ["content", "Content"],
+    ["wasSuccess", "Success"],
+    ["logId", "Log ID"],
+    ["parcelId", "Parcel ID"],
+    ["clientId", "Client ID"],
+    ["eventId", "Event ID"],
+    ["listId", "List ID"],
+    ["collectionCentreId", "Collection Centre ID"],
+    ["profileId", "Profile ID"],
+    ["packingSlotId", "Packing Slot ID"],
+    ["listHotelId", "List Hotel ID"],
+    ["statusOrder", "Status Order"],
+    ["websiteData", "Website Data"],
 ];
 
 const AuditLogsTable: React.FC = () => {
-    const [auditLog, setAuditLog] = useState<Schema["audit_log"][]>([]);
+    const [auditLog, setAuditLog] = useState<AuditLogRow[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const fetchAndDisplayAuditLog = useCallback(async () => {
@@ -27,7 +61,26 @@ const AuditLogsTable: React.FC = () => {
             return;
         }
 
-        setAuditLog(data);
+        const convertedData: AuditLogRow[] = data.map((datum) => ({
+            action: datum.action ?? "",
+            clientId: datum.client_id ?? "",
+            collectionCentreId: datum.collection_centre_id ?? "",
+            content: datum.content ?? "",
+            createdAt: datum.created_at ?? "",
+            eventId: datum.event_id ?? "",
+            listHotelId: datum.list_hotel_id ?? "",
+            listId: datum.list_id ?? "",
+            logId: datum.log_id ?? "",
+            packingSlotId: datum.packing_slot_id ?? "",
+            parcelId: datum.parcel_id ?? "",
+            profileId: datum.profile_id ?? "",
+            statusOrder: datum.status_order ?? "",
+            userId: datum.user_id ?? "",
+            wasSuccess: datum.wasSuccess ?? "",
+            websiteData: datum.website_data ?? "",
+        }));
+
+        setAuditLog(convertedData);
     }, []);
 
     useEffect(() => {
@@ -59,7 +112,25 @@ const AuditLogsTable: React.FC = () => {
             <Table
                 dataPortion={auditLog}
                 headerKeysAndLabels={collectionCentresTableHeaderKeysAndLabels}
-                defaultShownHeaders={["primary_key"]}
+                defaultShownHeaders={[
+                    "action",
+                    "createdAt",
+                    "userId",
+                    "wasSuccess",
+                    "logId",
+                ]}
+                toggleableHeaders={[
+                    "parcelId",
+                    "clientId",
+                    "eventId",
+                    "listId",
+                    "collectionCentreId",
+                    "profileId",
+                    "packingSlotId",
+                    "listHotelId",
+                    "statusOrder",
+                    "websiteData",
+                ]}
                 paginationConfig={{ enablePagination: false }}
                 checkboxConfig={{ displayed: false }}
                 sortConfig={{ sortPossible: false }}

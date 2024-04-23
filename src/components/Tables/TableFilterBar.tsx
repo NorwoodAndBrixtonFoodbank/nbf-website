@@ -65,54 +65,56 @@ export const filtersToComponents = <Data,>(
 };
 
 const TableFilterBar = <Data,>(props: Props<Data>): React.ReactElement => {
-    const [showAdditional, setShowAdditional] = useState(false);
+    const [showMoreFiltersAndHeaders, setShowMoreFiltersAndHeaders] = useState(false);
 
-    const hasAdditional =
-        props.additionalFilters.length !== 0 || props.toggleableHeaders.length !== 0;
+    const hasPrimaryFilters = props.filters.length !== 0;
+
+    const hasAdditionalFilters =
+        props.additionalFilters.length !== 0;
+        
+    const hasToggleableHeaders = props.toggleableHeaders.length !== 0;
 
     const handleToggleAdditional = (): void => {
-        setShowAdditional(!showAdditional);
+        setShowMoreFiltersAndHeaders(!showMoreFiltersAndHeaders);
     };
 
-    if (props.filters.length === 0 && !hasAdditional) {
+    if (!(hasPrimaryFilters || hasAdditionalFilters || hasToggleableHeaders)) {
         return <></>;
     }
 
     return (
         <>
             <FiltersAndIconContainer>
-                <FilterAltOutlined />
+                {hasPrimaryFilters && <FilterAltOutlined />}
                 <FilterContainer>
-                    {props.filters.length > 0 && (
                         <>
                             {filtersToComponents(props.filters, props.setFilters)}
                             <Grow />
-                            {hasAdditional && (
+                            {(hasAdditionalFilters || hasToggleableHeaders) && (
                                 <StyledButton
                                     variant="outlined"
                                     onClick={handleToggleAdditional}
                                     color="inherit"
                                     startIcon={<FilterAltOutlined />}
                                 >
-                                    {showAdditional ? "Less" : "More"}
+                                    {showMoreFiltersAndHeaders ? "Less" : "More"}
                                 </StyledButton>
                             )}
-                            <StyledButton
+                            {(hasPrimaryFilters || hasAdditionalFilters) && <StyledButton
                                 variant="outlined"
                                 onClick={props.handleClear}
                                 color="inherit"
                                 startIcon={<FilterAltOffOutlined />}
                             >
                                 Clear
-                            </StyledButton>
+                            </StyledButton>}
                         </>
-                    )}
                 </FilterContainer>
             </FiltersAndIconContainer>
-            {hasAdditional && showAdditional && (
+            {(hasAdditionalFilters || hasToggleableHeaders) && showMoreFiltersAndHeaders && (
                 <>
                     <FiltersAndIconContainer>
-                        <FilterAltOutlined />
+                    {hasAdditionalFilters && <FilterAltOutlined />}
                         <FilterContainer>
                             {props.additionalFilters.length > 0 && (
                                 <>
