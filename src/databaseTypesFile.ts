@@ -783,14 +783,6 @@ export type Database = {
         }
         Returns: Database["public"]["CompositeTypes"]["updateclientreturntype"]
       }
-      updateClientAndTheirFamily: {
-        Args: {
-          clientrecord: Json
-          familymembers: Json
-          clientid: string
-        }
-        Returns: string
-      }
       user_is_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
