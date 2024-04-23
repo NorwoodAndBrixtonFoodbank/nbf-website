@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import supabase from "@/supabaseClient";
 import ClientForm from "@/app/clients/form/ClientForm";
 import { Errors, FormErrors } from "@/components/Form/formFunctions";
