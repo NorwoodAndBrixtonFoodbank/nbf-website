@@ -5,7 +5,7 @@ import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
-import { ParcelStatus } from "@/databaseUtils";
+import { ParcelStatus, ParcelsPlusRow } from "@/databaseUtils";
 
 export type CongestionChargeDetails = {
     postcode: string;
@@ -13,7 +13,7 @@ export type CongestionChargeDetails = {
 };
 
 export const getCongestionChargeDetailsForParcels = async (
-    processingData: ParcelProcessingData,
+    processingData: ParcelsPlusRow[],
     supabase: Supabase
 ): Promise<CongestionChargeDetails[]> => {
     const postcodes = [];
@@ -34,8 +34,6 @@ export const getCongestionChargeDetailsForParcels = async (
     }
     return response.data;
 };
-
-export type ParcelProcessingData = Awaited<ReturnType<typeof getParcelProcessingData>>;
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getParcelsQuery = (
@@ -63,12 +61,26 @@ const getParcelsQuery = (
             .order("client_full_name");
     }
 
-    query.order("parcel_id");
+    query = query.order("parcel_id");
 
     return query;
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+type GetDbParcelDataResult =
+    | {
+          parcels: ParcelsPlusRow[];
+          error: null;
+      }
+    | {
+          parcels: null;
+          error: {
+              type: GetDbParcelDataErrorType;
+              logId: string;
+          };
+      };
+
+type GetDbParcelDataErrorType = "abortedFetch" | "failedToFetchParcelTable";
+
 const getParcelProcessingData = async (
     supabase: Supabase,
     filters: Filter<ParcelsTableRow, any>[],
@@ -76,7 +88,7 @@ const getParcelProcessingData = async (
     abortSignal: AbortSignal,
     startIndex: number,
     endIndex: number
-) => {
+): Promise<GetDbParcelDataResult> => {
     let query = getParcelsQuery(supabase, filters, sortState);
     query = query.range(startIndex, endIndex);
     query = query.abortSignal(abortSignal);
@@ -88,14 +100,41 @@ const getParcelProcessingData = async (
             ? await logInfoReturnLogId("Aborted fetch: parcel table", error)
             : await logErrorReturnLogId("Error with fetch: parcel table", error);
 
-        if (abortSignal.aborted) {
-            throw new AbortError("fetch", "parcel table", "logId");
-        }
-        throw new DatabaseError("fetch", "parcel table", logId);
+        return {
+            parcels: null,
+            error: {
+                type: abortSignal.aborted ? "abortedFetch" : "failedToFetchParcelTable",
+                logId,
+            },
+        };
     }
 
-    return data;
+    return {
+        parcels: data,
+        error: null,
+    };
 };
+
+type GetParcelDataAndCountResult =
+    | {
+          data: {
+              parcelTableRows: ParcelsTableRow[];
+              count: number;
+          };
+          error: null;
+      }
+    | {
+          data: null;
+          error: {
+              type: GetParcelDataAndCountErrorType;
+              logId: string;
+          };
+      };
+
+export type GetParcelDataAndCountErrorType =
+    | "unknownError"
+    | "failedToFetchParcels"
+    | "abortedFetch";
 
 export const getParcelsDataAndCount = async (
     supabase: Supabase,
@@ -104,8 +143,8 @@ export const getParcelsDataAndCount = async (
     abortSignal: AbortSignal,
     startIndex: number,
     endIndex: number
-): Promise<{ data: ParcelsTableRow[]; count: number }> => {
-    const processingData = await getParcelProcessingData(
+): Promise<GetParcelDataAndCountResult> => {
+    const { parcels, error: getDbParcelsError } = await getParcelProcessingData(
         supabase,
         filters,
         sortState,
@@ -113,12 +152,55 @@ export const getParcelsDataAndCount = async (
         startIndex,
         endIndex
     );
-    const congestionCharge = await getCongestionChargeDetailsForParcels(processingData, supabase);
-    const formattedData = await processingDataToParcelsTableData(processingData, congestionCharge);
+
+    if (getDbParcelsError) {
+        let errorType: GetParcelDataAndCountErrorType;
+        switch (getDbParcelsError.type) {
+            case "abortedFetch":
+                errorType = "abortedFetch";
+                break;
+            case "failedToFetchParcelTable":
+                errorType = "failedToFetchParcels";
+                break;
+        }
+
+        return {
+            data: null,
+            error: {
+                type: errorType,
+                logId: getDbParcelsError.logId,
+            },
+        };
+    }
+
+    const congestionCharge = await getCongestionChargeDetailsForParcels(parcels, supabase);
+    const { parcelTableRows, error } = await processingDataToParcelsTableData(
+        parcels,
+        congestionCharge
+    );
+
+    if (error) {
+        switch (error.type) {
+            case "invalidInputLengths":
+                return {
+                    data: null,
+                    error: {
+                        type: "unknownError",
+                        logId: error.logId,
+                    },
+                };
+        }
+    }
 
     const count = await getParcelsCount(supabase, filters, abortSignal);
 
-    return { data: formattedData, count };
+    return {
+        data: {
+            parcelTableRows,
+            count,
+        },
+        error: null,
+    };
 };
 
 const getParcelsCount = async (
@@ -192,9 +274,14 @@ export const getParcelsByIds = async (
     }
 
     const congestionCharge = await getCongestionChargeDetailsForParcels(data, supabase);
-    const formattedData = processingDataToParcelsTableData(data, congestionCharge);
+    const { parcelTableRows, error: processParcelDataError } =
+        await processingDataToParcelsTableData(data, congestionCharge);
 
-    return formattedData;
+    if (processParcelDataError) {
+        throw new Error("Failed to process parcels.", { cause: processParcelDataError });
+    }
+
+    return parcelTableRows;
 };
 
 export interface CollectionCentresOptions {

@@ -20,4 +20,28 @@ export const formatDateToDate = (dateString: string | null): string => {
     });
 };
 
+export const formatDatetimeAsDate = (datetime: Date | string | null): string => {
+    if (datetime instanceof Date) {
+        return datetime.toLocaleDateString("en-GB");
+    }
+
+    if (datetime === null || isNaN(Date.parse(datetime))) {
+        return "-";
+    }
+
+    return new Date(datetime).toLocaleDateString("en-GB");
+};
+
+export const formatDateTime = (datetime: Date | string | null): string => {
+    if (datetime instanceof Date) {
+        return datetime.toLocaleString("en-GB");
+    }
+
+    if (datetime === null || isNaN(Date.parse(datetime))) {
+        return "-";
+    }
+
+    return new Date(datetime).toLocaleString("en-GB");
+};
+
 export const getDbDate = (dateTime: Dayjs): string => dateTime.format("YYYY-MM-DD");

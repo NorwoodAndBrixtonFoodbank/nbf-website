@@ -1,5 +1,5 @@
 import { ClientsTableRow } from "@/app/clients/ClientsPage";
-import { familyCountToFamilyCategory } from "@/app/parcels/getExpandedParcelDetails";
+import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
 import { Supabase } from "@/supabaseUtils";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { Filter, PaginationType } from "@/components/Tables/Filters";

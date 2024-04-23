@@ -4,7 +4,6 @@ import Table, { Row, SortOptions, SortState, TableHeaders } from "@/components/T
 import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import { formatDatetimeAsDate } from "@/app/parcels/getExpandedParcelDetails";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
@@ -20,7 +19,12 @@ import ActionAndStatusBar from "@/app/parcels/ActionBar/ActionAndStatusBar";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
-import { getParcelIds, getParcelsByIds, getParcelsDataAndCount } from "./fetchParcelTableData";
+import {
+    GetParcelDataAndCountErrorType,
+    getParcelIds,
+    getParcelsByIds,
+    getParcelsDataAndCount,
+} from "./fetchParcelTableData";
 import dayjs from "dayjs";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { StatusType, saveParcelStatus, SaveParcelStatusResult } from "./ActionBar/Statuses";
@@ -28,7 +32,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { CircularProgress } from "@mui/material";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { DatabaseError } from "@/app/errorClasses";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import {
@@ -43,6 +46,7 @@ import {
     voucherSearch,
 } from "@/app/parcels/parcelsTableFilters";
 import { ActionsContainer } from "@/components/Form/formStyling";
+import { formatDateTime, formatDatetimeAsDate } from "@/common/format";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -55,6 +59,7 @@ export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["packingDate", "Packing Date"],
     ["packingSlot", "Packing Slot"],
     ["lastStatus", "Last Status"],
+    ["createdAt", "Created At"],
 ];
 
 const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
@@ -143,6 +148,14 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
             paginationType: PaginationType.Server,
         },
     },
+    {
+        key: "createdAt",
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("created_at", { ascending: sortDirection === "asc" }),
+            paginationType: PaginationType.Server,
+        },
+    },
 ];
 
 const toggleableHeaders: (keyof ParcelsTableRow)[] = [
@@ -155,6 +168,7 @@ const toggleableHeaders: (keyof ParcelsTableRow)[] = [
     "packingDate",
     "packingSlot",
     "lastStatus",
+    "createdAt",
 ];
 
 const parcelTableColumnStyleOptions = {
@@ -217,6 +231,17 @@ async function getClientIdForSelectedParcel(parcelId: string): Promise<string> {
     }
 
     return data.client_id;
+}
+
+function getParcelDataErrorMessage(errorType: GetParcelDataAndCountErrorType): string | null {
+    switch (errorType) {
+        case "unknownError":
+            return "Unknown error has occurred. Please reload.";
+        case "failedToFetchParcels":
+            return "Failed to fetch parcels. Please reload.";
+        case "abortedFetch":
+            return null;
+    }
 }
 
 const parcelIdParam = "parcelId";
@@ -361,25 +386,27 @@ const ParcelsPage: React.FC<{}> = () => {
             setErrorMessage(null);
             setIsLoading(true);
 
-            try {
-                const { data, count } = await getParcelsDataAndCount(
-                    supabase,
-                    allFilters,
-                    sortState,
-                    parcelsTableFetchAbortController.current.signal,
-                    startPoint,
-                    endPoint
-                );
-                setParcelsDataPortion(data);
-                setFilteredParcelCount(count);
-            } catch (error) {
-                if (error instanceof DatabaseError) {
-                    setErrorMessage(error.message);
+            const { data, error } = await getParcelsDataAndCount(
+                supabase,
+                allFilters,
+                sortState,
+                parcelsTableFetchAbortController.current.signal,
+                startPoint,
+                endPoint
+            );
+
+            if (error) {
+                const newErrorMessage = getParcelDataErrorMessage(error.type);
+                if (newErrorMessage !== null) {
+                    setErrorMessage(`${newErrorMessage} Log ID: ${error.logId}`);
                 }
-            } finally {
-                parcelsTableFetchAbortController.current = null;
-                setIsLoading(false);
+            } else {
+                setParcelsDataPortion(data.parcelTableRows);
+                setFilteredParcelCount(data.count);
             }
+
+            parcelsTableFetchAbortController.current = null;
+            setIsLoading(false);
         }
     }, [additionalFilters, endPoint, primaryFilters, sortState, startPoint]);
 
@@ -526,6 +553,7 @@ const ParcelsPage: React.FC<{}> = () => {
         packingDate: formatDatetimeAsDate,
         lastStatus: rowToLastStatusColumn,
         addressPostcode: formatNullPostcode,
+        createdAt: formatDateTime,
     };
 
     const onParcelTableRowClick = (row: Row<ParcelsTableRow>): void => {

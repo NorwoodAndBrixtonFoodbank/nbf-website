@@ -1,7 +1,7 @@
-import { CongestionChargeDetails, ParcelProcessingData } from "@/app/parcels/fetchParcelTableData";
-import { familyCountToFamilyCategory } from "@/app/parcels/getExpandedParcelDetails";
+import { CongestionChargeDetails } from "@/app/parcels/fetchParcelTableData";
+import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { Schema, ViewSchema } from "@/databaseUtils";
+import { ParcelsPlusRow, Schema, ViewSchema } from "@/databaseUtils";
 
 export interface ParcelsTableRow {
     parcelId: Schema["parcels"]["primary_key"];
@@ -29,27 +29,42 @@ export interface ParcelsTableRow {
         requiresFollowUpPhoneCall: boolean;
     };
     packingDate: Date | null;
+    createdAt: Date | null;
 }
 
-export const processingDataToParcelsTableData = async (
-    processingData: ParcelProcessingData,
-    congestionCharge: CongestionChargeDetails[]
-): Promise<ParcelsTableRow[]> => {
-    const parcelTableRows: ParcelsTableRow[] = [];
+type ProcessParcelDataResult =
+    | {
+          parcelTableRows: ParcelsTableRow[];
+          error: null;
+      }
+    | {
+          parcelTableRows: null;
+          error: {
+              type: "invalidInputLengths";
+              logId: string;
+          };
+      };
 
+export const processingDataToParcelsTableData = async (
+    processingData: ParcelsPlusRow[],
+    congestionCharge: CongestionChargeDetails[]
+): Promise<ProcessParcelDataResult> => {
     if (processingData.length !== congestionCharge.length) {
         const logId = await logErrorReturnLogId(
-            `Error with processing parcels table data. Invalid inputs, got length ${processingData.length} and ${congestionCharge.length}`
+            `Failed to process parcel data due to invalid input lengths, got ${processingData.length} parcels and ${congestionCharge.length} congestion charges`
         );
-        throw new Error(
-            `Invalid inputs, got length ${processingData.length} and ${congestionCharge.length}. Error ID: ${logId}`
-        );
+
+        return {
+            parcelTableRows: null,
+            error: {
+                type: "invalidInputLengths",
+                logId,
+            },
+        };
     }
 
-    for (let index = 0; index < processingData.length; index++) {
-        const parcel = processingData[index];
-
-        parcelTableRows.push({
+    return {
+        parcelTableRows: processingData.map((parcel, index) => ({
             parcelId: parcel.parcel_id ?? "",
             clientId: parcel.client_id ?? "",
             fullName: parcel.client_full_name ?? "",
@@ -72,10 +87,10 @@ export const processingDataToParcelsTableData = async (
                 flaggedForAttention: parcel.client_flagged_for_attention ?? false,
                 requiresFollowUpPhoneCall: parcel.client_signposting_call_required ?? false,
             },
-        });
-    }
-
-    return parcelTableRows;
+            createdAt: parcel.created_at ? new Date(parcel.created_at) : null,
+        })),
+        error: null,
+    };
 };
 
 export type PackingTimeLabel = "AM" | "PM";
