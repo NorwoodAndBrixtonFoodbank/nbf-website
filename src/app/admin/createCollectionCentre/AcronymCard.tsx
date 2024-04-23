@@ -3,7 +3,7 @@ import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { CardProps, errorExists, errorText, onChangeText } from "@/components/Form/formFunctions";
 
-const AcronymCard: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSetter }) => {
+const Acronymcard: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSetter }) => {
     return (
         <GenericFormCard
             title="Acronym"
@@ -20,4 +20,4 @@ const AcronymCard: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSetter
     );
 };
 
-export default AcronymCard;
+export default Acronymcard;
