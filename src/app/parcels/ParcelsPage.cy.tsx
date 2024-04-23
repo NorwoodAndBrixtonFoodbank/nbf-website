@@ -7,7 +7,6 @@ import {
 } from "@/app/parcels/getParcelsTableData";
 import {
     familyCountToFamilyCategory,
-    formatAddressFromClientDetails,
     formatBreakdownOfChildrenFromFamilyDetails,
     formatDatetimeAsDate,
     formatHouseholdFromFamilyDetails,
@@ -15,6 +14,7 @@ import {
     rawDataToExpandedParcelData,
     RawParcelDetails,
 } from "@/app/parcels/getExpandedParcelDetails";
+import { formatAddressFromClientDetails } from "../clients/getExpandedClientDetails";
 
 const sampleProcessingData: ParcelProcessingData = [
     {

@@ -89,14 +89,14 @@ export const onChangeText = <
     SpecificFields extends Fields,
     SpecificErrors extends FormErrors<SpecificFields>,
 >(
-        fieldSetter: Setter<SpecificFields>,
-        errorSetter: Setter<SpecificErrors>,
-        key: string,
-        required?: boolean,
-        regex?: RegExp,
-        formattingFunction?: (value: string) => SpecificFields[keyof SpecificFields],
-        additionalCondition?: (value: string) => boolean
-    ): SelectChangeEventHandler => {
+    fieldSetter: Setter<SpecificFields>,
+    errorSetter: Setter<SpecificErrors>,
+    key: string,
+    required?: boolean,
+    regex?: RegExp,
+    formattingFunction?: (value: string) => SpecificFields[keyof SpecificFields],
+    additionalCondition?: (value: string) => boolean
+): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
         const errorType = getErrorType(input, required, regex, additionalCondition);
@@ -133,10 +133,10 @@ export const valueOnChangeRadioGroup = <
     SpecificFields extends Fields,
     SpecificErrors extends FormErrors<SpecificFields>,
 >(
-        fieldSetter: Setter<SpecificFields>,
-        errorSetter: Setter<SpecificErrors>,
-        key: string
-    ): SelectChangeEventHandler => {
+    fieldSetter: Setter<SpecificFields>,
+    errorSetter: Setter<SpecificErrors>,
+    key: string
+): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
         fieldSetter([[key, input]]);
@@ -148,10 +148,10 @@ export const valueOnChangeDropdownList = <
     SpecificFields extends Fields,
     SpecificErrors extends FormErrors<SpecificFields>,
 >(
-        fieldSetter: Setter<SpecificFields>,
-        errorSetter: Setter<SpecificErrors>,
-        key: string
-    ): SelectChangeEventHandler => {
+    fieldSetter: Setter<SpecificFields>,
+    errorSetter: Setter<SpecificErrors>,
+    key: string
+): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
         fieldSetter([[key, input]]);
@@ -163,11 +163,11 @@ export const onChangeDateOrTime = <
     SpecificFields extends Fields,
     SpecificErrors extends FormErrors<SpecificFields>,
 >(
-        fieldSetter: Setter<SpecificFields>,
-        errorSetter: Setter<SpecificErrors>,
-        key: string,
-        value: Dayjs | null
-    ): void => {
+    fieldSetter: Setter<SpecificFields>,
+    errorSetter: Setter<SpecificErrors>,
+    key: string,
+    value: Dayjs | null
+): void => {
     if (value === null || isNaN(Date.parse(value.toString()))) {
         fieldSetter([[key, null]]);
         errorSetter([[key, Errors.invalid]]);
@@ -181,11 +181,11 @@ export const onChangeDate = <
     SpecificFields extends Fields,
     SpecificErrors extends FormErrors<SpecificFields>,
 >(
-        fieldSetter: Setter<SpecificFields>,
-        errorSetter: Setter<SpecificErrors>,
-        key: string,
-        value: Dayjs | null
-    ): void => {
+    fieldSetter: Setter<SpecificFields>,
+    errorSetter: Setter<SpecificErrors>,
+    key: string,
+    value: Dayjs | null
+): void => {
     onChangeDateOrTime(fieldSetter, errorSetter, key, value);
     if (value === null || isNaN(Date.parse(value.toString()))) {
         return;
@@ -213,10 +213,10 @@ export const checkErrorOnSubmit = <
     SpecificFields extends Fields,
     SpecificErrors extends FormErrors<SpecificFields>,
 >(
-        errorType: SpecificErrors,
-        errorSetter: (errors: SpecificErrors) => void,
-        keysToCheck?: string[]
-    ): boolean => {
+    errorType: SpecificErrors,
+    errorSetter: (errors: SpecificErrors) => void,
+    keysToCheck?: string[]
+): boolean => {
     let errorExists = false;
     let amendedErrorTypes = { ...errorType };
     for (const [errorKey, error] of Object.entries(errorType)) {
