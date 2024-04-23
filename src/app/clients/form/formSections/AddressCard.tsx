@@ -50,7 +50,6 @@ const AddressCard: React.FC<ClientCardProps> = ({
                 ["addressLine1", Errors.initial],
             ]);
         }
-        setTimeout(() => console.log(formErrors), 500);
     };
 
     return (
