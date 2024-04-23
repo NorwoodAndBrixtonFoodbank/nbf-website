@@ -775,6 +775,14 @@ export type Database = {
         }
         Returns: undefined
       }
+      update_client_and_family: {
+        Args: {
+          clientrecord: Json
+          clientid: string
+          familymembers: Json
+        }
+        Returns: Database["public"]["CompositeTypes"]["updateclientreturntype"]
+      }
       updateClientAndTheirFamily: {
         Args: {
           clientrecord: Json
@@ -793,7 +801,10 @@ export type Database = {
       role: "caller" | "admin"
     }
     CompositeTypes: {
-      [_ in never]: never
+      updateclientreturntype: {
+        clientid: string | null
+        updatedrows: number | null
+      }
     }
   }
 }
