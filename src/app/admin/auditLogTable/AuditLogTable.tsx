@@ -7,6 +7,7 @@ import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import { Json } from "@/databaseTypesFile";
+import { formatDateTime, formatBoolean, formatJson } from "@/common/format";
 
 interface AuditLogRow {
     action: string;
@@ -45,6 +46,12 @@ const auditLogTableHeaderKeysAndLabels: TableHeaders<AuditLogRow> = [
     ["statusOrder", "Status Order"],
     ["websiteData", "Website Data"],
 ];
+
+const auditLogTableColumnDisplayFunctions = {
+    createdAt: formatDateTime,
+    wasSuccess: formatBoolean,
+    content: formatJson
+};
 
 const AuditLogTable: React.FC = () => {
     const [auditLog, setAuditLog] = useState<AuditLogRow[]>([]);
@@ -112,7 +119,7 @@ const AuditLogTable: React.FC = () => {
             <Table
                 dataPortion={auditLog}
                 headerKeysAndLabels={auditLogTableHeaderKeysAndLabels}
-                defaultShownHeaders={["action", "createdAt", "userId", "wasSuccess", "logId"]}
+                defaultShownHeaders={["action", "createdAt", "userId", "content", "wasSuccess", "logId"]}
                 toggleableHeaders={[
                     "parcelId",
                     "clientId",
@@ -125,6 +132,7 @@ const AuditLogTable: React.FC = () => {
                     "statusOrder",
                     "websiteData",
                 ]}
+                columnDisplayFunctions={auditLogTableColumnDisplayFunctions}
                 paginationConfig={{ enablePagination: false }}
                 checkboxConfig={{ displayed: false }}
                 sortConfig={{ sortPossible: false }}

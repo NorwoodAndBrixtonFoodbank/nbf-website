@@ -1,4 +1,6 @@
+import { Json } from "@/databaseTypesFile";
 import { Dayjs } from "dayjs";
+import { stringify } from "querystring";
 
 export const formatCamelCaseKey = (objectKey: string): string => {
     const withSpace = objectKey.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
@@ -45,3 +47,7 @@ export const formatDateTime = (datetime: Date | string | null): string => {
 };
 
 export const getDbDate = (dateTime: Dayjs): string => dateTime.format("YYYY-MM-DD");
+
+export const formatBoolean = (boolean: boolean): string => (boolean ? "True" : "False");
+
+export const formatJson = (json: Json): string => (JSON.stringify(json));

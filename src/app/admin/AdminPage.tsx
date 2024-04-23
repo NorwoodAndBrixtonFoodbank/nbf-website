@@ -23,7 +23,7 @@ import CollectionCentresTable from "@/app/admin/collectionCentresTable/Collectio
 import CreateCollectionCentreForm from "@/app/admin/createCollectionCentre/CreateCollectionCentreForm";
 import PackingSlotsTable from "@/app/admin/packingSlotsTable/PackingSlotsTable";
 import WebsiteDataTable from "./websiteDataTable/WebsiteDataTable";
-import AuditLogTable from "./auditLogsTable/AuditLogsTable";
+import AuditLogTable from "./auditLogTable/AuditLogTable";
 
 const PanelTitle = styled.h2`
     text-transform: uppercase;
