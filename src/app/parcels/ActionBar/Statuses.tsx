@@ -58,7 +58,7 @@ export const saveParcelStatus = async (
     }));
 
     const { data, error } = await supabase
-        .from("events")
+        .from("ss")
         .insert(eventsToInsert)
         .select("event_id:primary_key, parcel_id");
 
@@ -152,7 +152,7 @@ const Statuses: React.FC<Props> = ({
             setServerErrorMessage(`${getStatusErrorMessage(error)} Log ID: ${error.logId}`);
         }
         hasAttemptedToSaveParcelStatus();
-        setStatusModal(false);
+        error ?? setStatusModal(false);
     };
 
     const onMenuItemClick = (status: StatusType): (() => void) => {
