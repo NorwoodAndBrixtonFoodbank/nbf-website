@@ -69,9 +69,8 @@ const TableFilterBar = <Data,>(props: Props<Data>): React.ReactElement => {
 
     const hasPrimaryFilters = props.filters.length !== 0;
 
-    const hasAdditionalFilters =
-        props.additionalFilters.length !== 0;
-        
+    const hasAdditionalFilters = props.additionalFilters.length !== 0;
+
     const hasToggleableHeaders = props.toggleableHeaders.length !== 0;
 
     const handleToggleAdditional = (): void => {
@@ -87,34 +86,36 @@ const TableFilterBar = <Data,>(props: Props<Data>): React.ReactElement => {
             <FiltersAndIconContainer>
                 {hasPrimaryFilters && <FilterAltOutlined />}
                 <FilterContainer>
-                        <>
-                            {filtersToComponents(props.filters, props.setFilters)}
-                            <Grow />
-                            {(hasAdditionalFilters || hasToggleableHeaders) && (
-                                <StyledButton
-                                    variant="outlined"
-                                    onClick={handleToggleAdditional}
-                                    color="inherit"
-                                    startIcon={<FilterAltOutlined />}
-                                >
-                                    {showMoreFiltersAndHeaders ? "Less" : "More"}
-                                </StyledButton>
-                            )}
-                            {(hasPrimaryFilters || hasAdditionalFilters) && <StyledButton
+                    <>
+                        {filtersToComponents(props.filters, props.setFilters)}
+                        <Grow />
+                        {(hasAdditionalFilters || hasToggleableHeaders) && (
+                            <StyledButton
+                                variant="outlined"
+                                onClick={handleToggleAdditional}
+                                color="inherit"
+                                startIcon={<FilterAltOutlined />}
+                            >
+                                {showMoreFiltersAndHeaders ? "Less" : "More"}
+                            </StyledButton>
+                        )}
+                        {(hasPrimaryFilters || hasAdditionalFilters) && (
+                            <StyledButton
                                 variant="outlined"
                                 onClick={props.handleClear}
                                 color="inherit"
                                 startIcon={<FilterAltOffOutlined />}
                             >
                                 Clear
-                            </StyledButton>}
-                        </>
+                            </StyledButton>
+                        )}
+                    </>
                 </FilterContainer>
             </FiltersAndIconContainer>
             {(hasAdditionalFilters || hasToggleableHeaders) && showMoreFiltersAndHeaders && (
                 <>
                     <FiltersAndIconContainer>
-                    {hasAdditionalFilters && <FilterAltOutlined />}
+                        {hasAdditionalFilters && <FilterAltOutlined />}
                         <FilterContainer>
                             {props.additionalFilters.length > 0 && (
                                 <>

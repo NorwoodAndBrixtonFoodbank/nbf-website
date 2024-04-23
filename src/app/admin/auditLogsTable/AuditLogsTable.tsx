@@ -112,13 +112,7 @@ const AuditLogsTable: React.FC = () => {
             <Table
                 dataPortion={auditLog}
                 headerKeysAndLabels={collectionCentresTableHeaderKeysAndLabels}
-                defaultShownHeaders={[
-                    "action",
-                    "createdAt",
-                    "userId",
-                    "wasSuccess",
-                    "logId",
-                ]}
+                defaultShownHeaders={["action", "createdAt", "userId", "wasSuccess", "logId"]}
                 toggleableHeaders={[
                     "parcelId",
                     "clientId",
