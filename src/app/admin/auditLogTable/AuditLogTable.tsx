@@ -8,8 +8,9 @@ import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionSta
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import { Json } from "@/databaseTypesFile";
 import { formatDateTime, formatBoolean, formatJson } from "@/common/format";
+import { AuditLogCountError, AuditLogError, fetchAuditLog, fetchAuditLogCount } from "./fetchAuditLogData";
 
-interface AuditLogRow {
+export interface AuditLogRow {
     action: string;
     clientId: string;
     collectionCentreId: string;
@@ -53,42 +54,53 @@ const auditLogTableColumnDisplayFunctions = {
     content: formatJson
 };
 
+const getErrorMessage = (error: AuditLogError | AuditLogCountError): string => {
+    let errorMessage: string = "";
+    switch (error.type) {
+        case "failedAuditLogFetch":
+            errorMessage = "Failed to fetch audit log."
+            break
+        case "failedAuditLogCountFetch":
+            errorMessage = "Failed to fetch audit log count."
+            break
+        case "nullCount":
+            errorMessage = "Audit log table empty."
+            
+    }
+    return (`${errorMessage} Log ID: ${error.logId}`);
+}
+
+const defaultNumberOfAuditLogRowsPerPage = 10;
+const numberOfAuditLogRowsPerPageOption = [10, 25, 50, 100];
+
 const AuditLogTable: React.FC = () => {
-    const [auditLog, setAuditLog] = useState<AuditLogRow[]>([]);
+    const [auditLogDataPortion, setAuditLogDataPortion] = useState<AuditLogRow[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [auditLogCount, setAuditLogCount] = useState<number>(0);
+
+    const [auditLogCountPerPage, setAuditLogCountPerPage] = useState(defaultNumberOfAuditLogRowsPerPage);
+    const [currentPage, setCurrentPage] = useState(1);
+    const startPoint = (currentPage - 1) * auditLogCountPerPage;
+    const endPoint = currentPage * auditLogCountPerPage - 1;
 
     const fetchAndDisplayAuditLog = useCallback(async () => {
-        const { data, error } = await supabase.from("audit_log").select();
+        setErrorMessage(null);
 
-        if (error) {
-            const logId = await logErrorReturnLogId("Error with fetch: Audit Log", {
-                error: error,
-            });
-            setErrorMessage(`Failed to fetch audit log. Log ID: ${logId}`);
+        const { count, error: countError } = await fetchAuditLogCount(supabase);
+        if (countError) {
+            setErrorMessage(getErrorMessage(countError))
             return;
         }
+        setAuditLogCount(count);
 
-        const convertedData: AuditLogRow[] = data.map((datum) => ({
-            action: datum.action ?? "",
-            clientId: datum.client_id ?? "",
-            collectionCentreId: datum.collection_centre_id ?? "",
-            content: datum.content ?? "",
-            createdAt: datum.created_at ?? "",
-            eventId: datum.event_id ?? "",
-            listHotelId: datum.list_hotel_id ?? "",
-            listId: datum.list_id ?? "",
-            logId: datum.log_id ?? "",
-            packingSlotId: datum.packing_slot_id ?? "",
-            parcelId: datum.parcel_id ?? "",
-            profileId: datum.profile_id ?? "",
-            statusOrder: datum.status_order ?? "",
-            userId: datum.user_id ?? "",
-            wasSuccess: datum.wasSuccess ?? "",
-            websiteData: datum.website_data ?? "",
-        }));
+        const { data, error } = await fetchAuditLog(supabase, startPoint, endPoint);
+        if (error) {
+            setErrorMessage(getErrorMessage(error))
+            return;
+        }
+        setAuditLogDataPortion(data);
 
-        setAuditLog(convertedData);
-    }, []);
+    }, [startPoint, endPoint]);
 
     useEffect(() => {
         void fetchAndDisplayAuditLog();
@@ -117,7 +129,7 @@ const AuditLogTable: React.FC = () => {
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
             <Table
-                dataPortion={auditLog}
+                dataPortion={auditLogDataPortion}
                 headerKeysAndLabels={auditLogTableHeaderKeysAndLabels}
                 defaultShownHeaders={["action", "createdAt", "userId", "content", "wasSuccess", "logId"]}
                 toggleableHeaders={[
@@ -133,7 +145,14 @@ const AuditLogTable: React.FC = () => {
                     "websiteData",
                 ]}
                 columnDisplayFunctions={auditLogTableColumnDisplayFunctions}
-                paginationConfig={{ enablePagination: false }}
+                paginationConfig={{
+                    enablePagination: true,
+                    filteredCount: auditLogCount,
+                    onPageChange: setCurrentPage,
+                    onPerPageChange: setAuditLogCountPerPage,
+                    defaultRowsPerPage: defaultNumberOfAuditLogRowsPerPage,
+                    rowsPerPageOptions: numberOfAuditLogRowsPerPageOption,
+                }}
                 checkboxConfig={{ displayed: false }}
                 sortConfig={{ sortPossible: false }}
                 editableConfig={{
