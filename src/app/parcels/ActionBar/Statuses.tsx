@@ -58,7 +58,7 @@ export const saveParcelStatus = async (
     }));
 
     const { data, error } = await supabase
-        .from("ss")
+        .from("events")
         .insert(eventsToInsert)
         .select("event_id:primary_key, parcel_id");
 
