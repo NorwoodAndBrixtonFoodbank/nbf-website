@@ -137,6 +137,7 @@ export type EditableConfig<Data> =
           onEdit?: (data: number) => void;
           onDelete?: (data: number) => void;
           onSwapRows?: (row1: Data, row2: Data) => Promise<void>;
+          isDeletable?: (row: Data) => boolean;
       }
     | { editable: false };
 
@@ -307,44 +308,53 @@ const Table = <Data,>({
         };
         columns.unshift({
             name: "",
-            cell: (row: Row<Data>) => (
-                <EditAndReorderArrowDiv>
-                    {editableConfig.onSwapRows && (
-                        <StyledIconButton
-                            onClick={() => swapRows(row.rowId, true)}
-                            aria-label="reorder row upwards"
-                            disabled={isSwapping}
-                        >
-                            <StyledIcon icon={faAnglesUp} />
-                        </StyledIconButton>
-                    )}
-                    {editableConfig.onEdit && (
-                        <StyledIconButton
-                            onClick={() => editableConfig.onEdit!(row.rowId)}
-                            aria-label="edit"
-                        >
-                            <StyledIcon icon={faPenToSquare} />
-                        </StyledIconButton>
-                    )}
-                    {editableConfig.onSwapRows && (
-                        <StyledIconButton
-                            onClick={() => swapRows(row.rowId, false)}
-                            aria-label="reorder row downwards"
-                            disabled={isSwapping}
-                        >
-                            <StyledIcon icon={faAnglesDown} />
-                        </StyledIconButton>
-                    )}
-                    {editableConfig.onDelete && (
-                        <StyledIconButton
-                            onClick={() => editableConfig.onDelete!(row.rowId)}
-                            aria-label="delete"
-                        >
-                            <StyledIcon icon={faTrashAlt} />
-                        </StyledIconButton>
-                    )}
-                </EditAndReorderArrowDiv>
-            ),
+            cell: (row: Row<Data>) => {
+                const isRowDeletable = editableConfig.isDeletable
+                    ? editableConfig.isDeletable(row.data)
+                    : true;
+                return (
+                    <EditAndReorderArrowDiv>
+                        {editableConfig.onSwapRows && (
+                            <StyledIconButton
+                                onClick={() => swapRows(row.rowId, true)}
+                                aria-label="reorder row upwards"
+                                disabled={isSwapping}
+                            >
+                                <StyledIcon icon={faAnglesUp} />
+                            </StyledIconButton>
+                        )}
+                        {editableConfig.onEdit && (
+                            <StyledIconButton
+                                onClick={() => editableConfig.onEdit!(row.rowId)}
+                                aria-label="edit"
+                            >
+                                <StyledIcon icon={faPenToSquare} />
+                            </StyledIconButton>
+                        )}
+                        {editableConfig.onSwapRows && (
+                            <StyledIconButton
+                                onClick={() => swapRows(row.rowId, false)}
+                                aria-label="reorder row downwards"
+                                disabled={isSwapping}
+                            >
+                                <StyledIcon icon={faAnglesDown} />
+                            </StyledIconButton>
+                        )}
+                        {editableConfig.onDelete && isRowDeletable && (
+                            <StyledIconButton
+                                onClick={() => {
+                                    if (editableConfig.onDelete) {
+                                        editableConfig.onDelete(row.rowId);
+                                    }
+                                }}
+                                aria-label="delete"
+                            >
+                                <StyledIcon icon={faTrashAlt} />
+                            </StyledIconButton>
+                        )}
+                    </EditAndReorderArrowDiv>
+                );
+            },
             width: "5rem",
         });
     }

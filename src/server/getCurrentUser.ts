@@ -4,14 +4,30 @@ import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { User } from "@supabase/gotrue-js";
 
-export async function getCurrentUser(): Promise<User | null> {
+type CurrentUserResponse =
+    | {
+          data: User;
+          error: null;
+      }
+    | {
+          data: null;
+          error: CurrentUserError;
+      };
+type CurrentUserErrorType = "userFetchFailed";
+interface CurrentUserError {
+    type: CurrentUserErrorType;
+    logId: string;
+}
+
+export async function getCurrentUser(): Promise<CurrentUserResponse> {
     const supabase = getSupabaseServerComponentClient();
 
     const { data, error } = await supabase.auth.getUser();
 
     if (error) {
-        void logErrorReturnLogId("error with auth getUser", error);
+        const logId = await logErrorReturnLogId("error with auth getUser", error);
+        return { data: null, error: { type: "userFetchFailed", logId: logId } };
     }
 
-    return data.user;
+    return { data: data.user, error: null };
 }

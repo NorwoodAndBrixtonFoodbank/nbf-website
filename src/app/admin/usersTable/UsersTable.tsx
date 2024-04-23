@@ -18,6 +18,8 @@ import {
     firstNameSearch,
     lastNameSearch,
 } from "@/app/admin/usersTable/usersTableFilters";
+import { getCurrentUser } from "@/server/getCurrentUser";
+import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 
 const usersTableHeaderKeysAndLabels: TableHeaders<UserRow> = [
     ["id", "User ID"],
@@ -120,6 +122,7 @@ const UsersTable: React.FC = () => {
     const [userCountPerPage, setUserCountPerPage] = useState(defaultNumberOfUsersPerPage);
     const [currentPage, setCurrentPage] = useState(1);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
     const startIndex = (currentPage - 1) * userCountPerPage;
     const endIndex = currentPage * userCountPerPage - 1;
 
@@ -163,8 +166,11 @@ const UsersTable: React.FC = () => {
 
         const { data: userRoleFilter, error } = await buildUserRoleFilter();
         if (error) {
-            setErrorMessage(`Error occurred: ${error.type}, Log ID: 
-                    ${error.logId}`);
+            switch (error.type) {
+                case "failedToFetchUserRoleFilterOptions":
+                    setErrorMessage(`Failed to retrieve user role filters. Log ID: ${error.logId}`);
+                    break;
+            }
         } else {
             filters.push(userRoleFilter);
         }
@@ -212,14 +218,26 @@ const UsersTable: React.FC = () => {
                     case "abortedFetchingProfilesTableCount":
                         return;
                     case "failedToFetchProfilesTable":
+                        setErrorMessage(`Failed to retrieve user profiles. Log ID: 
+                    ${error.logId}`);
+                        break;
                     case "failedToFetchProfilesTableCount":
-                        setErrorMessage(`Error occurred: ${error.type}, Log ID: 
+                        setErrorMessage(`Failed to retrieve number of user profiles. Log ID: 
                     ${error.logId}`);
                         break;
                 }
             } else {
                 setUsers(data.userData);
                 setFilteredUsersCount(data.count);
+            }
+
+            const { data: currentUser, error: currentUserError } = await getCurrentUser();
+            if (currentUserError) {
+                setErrorMessage(
+                    `Error occured when fetching current user: ${currentUserError.type}, Log ID: ${currentUserError.logId}`
+                );
+            } else {
+                setCurrentUserId(currentUser.id);
             }
         }
         usersTableFetchAbortController.current = null;
@@ -228,6 +246,24 @@ const UsersTable: React.FC = () => {
 
     useEffect(() => {
         void fetchAndDisplayUserData();
+    }, [fetchAndDisplayUserData]);
+
+    useEffect(() => {
+        const subscriptionChannel = supabase
+            .channel("users-table-changes")
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "profiles" },
+                fetchAndDisplayUserData
+            )
+            .subscribe((status, err) => {
+                subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&
+                    setErrorMessage("Error fetching users data, please reload");
+            });
+
+        return () => {
+            supabase.removeChannel(subscriptionChannel);
+        };
     }, [fetchAndDisplayUserData]);
 
     return (
@@ -266,6 +302,7 @@ const UsersTable: React.FC = () => {
                     onDelete: userOnDelete,
                     onEdit: userOnEdit,
                     setDataPortion: setUsers,
+                    isDeletable: (row: UserRow) => row.id !== currentUserId,
                 }}
                 filterConfig={{
                     primaryFiltersShown: true,

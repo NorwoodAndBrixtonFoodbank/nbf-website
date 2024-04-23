@@ -4,7 +4,8 @@ import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsT
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
-import { ParcelsPlusRow } from "@/databaseUtils";
+import supabase from "@/supabaseClient";
+import { ParcelStatus, ParcelsPlusRow } from "@/databaseUtils";
 
 export type CongestionChargeDetails = {
     postcode: string;
@@ -290,3 +291,34 @@ export interface CollectionCentresOptions {
 export interface StatusResponseRow {
     event_name: string;
 }
+
+type ParcelStatusesError = "failedToFetchStatuses";
+type ParcelStatusesReturnType =
+    | {
+          data: ParcelStatus[];
+          error: null;
+      }
+    | {
+          data: null;
+          error: { type: ParcelStatusesError; logId: string };
+      };
+
+export const fetchParcelStatuses = async (): Promise<ParcelStatusesReturnType> => {
+    const { data: parcelStatusesListData, error: statusOrderError } = await supabase
+        .from("status_order")
+        .select("event_name")
+        .order("workflow_order");
+
+    if (statusOrderError) {
+        const logId = await logErrorReturnLogId("failed to fetch statuses", {
+            error: statusOrderError,
+        });
+        return { data: null, error: { type: "failedToFetchStatuses", logId } };
+    }
+
+    const parcelStatusesList = parcelStatusesListData.map((status) => {
+        return status.event_name;
+    });
+
+    return { data: parcelStatusesList, error: null };
+};

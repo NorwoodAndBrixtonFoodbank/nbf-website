@@ -26,7 +26,6 @@ import CollectionTimeCard from "@/app/parcels/form/formSections/CollectionTimeCa
 import CollectionCentreCard from "@/app/parcels/form/formSections/CollectionCentreCard";
 import { insertParcel, updateParcel } from "@/app/parcels/form/clientDatabaseFunctions";
 import { Button, IconButton } from "@mui/material";
-import Title from "@/components/Title/Title";
 import { Schema } from "@/databaseUtils";
 import dayjs, { Dayjs } from "dayjs";
 import { CollectionCentresLabelsAndValues, PackingSlotsLabelsAndValues } from "@/common/fetch";
@@ -41,6 +40,7 @@ import { ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import DataViewer from "@/components/DataViewer/DataViewer";
 import { useTheme } from "styled-components";
 import PackingSlotsCard from "@/app/parcels/form/formSections/PackingSlotsCard";
+import { getDbDate } from "@/common/format";
 
 export interface ParcelFields extends Fields {
     clientId: string | null;
@@ -183,7 +183,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             return;
         }
 
-        const packingDate = dayjs(fields.packingDate).toISOString();
+        const packingDate = getDbDate(dayjs(fields.packingDate));
 
         let collectionDateTime = null;
         if (fields.shippingMethod === "Collection") {
@@ -224,7 +224,6 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     return (
         <CenterComponent>
             <StyledForm>
-                <Title>Parcel Form</Title>
                 {clientDetails && (
                     <StyledName>
                         <h2>{clientDetails.fullName}</h2>

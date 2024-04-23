@@ -29,3 +29,5 @@ export type TableNames = keyof Tables;
 export type ViewNames = keyof Views;
 
 export type ParcelsPlusRow = Views["parcels_plus"]["Row"];
+
+export type ParcelStatus = Schema["status_order"]["event_name"];

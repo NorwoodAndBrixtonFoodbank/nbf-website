@@ -1,4 +1,4 @@
-import { fetchParcel } from "@/common/fetch";
+import { FetchParcelError, fetchParcel } from "@/common/fetch";
 import supabase from "@/supabaseClient";
 import { formatDateToDate } from "@/common/format";
 
@@ -10,10 +10,20 @@ export interface ParcelInfo {
     collectionSite: string;
 }
 
-interface ParcelInfoAndClientID {
+interface ParcelInfoAndClientId {
     parcelInfo: ParcelInfo;
-    clientID: string;
+    clientId: string;
 }
+
+type ParcelInfoAndClientIdResponse =
+    | {
+          data: ParcelInfoAndClientId;
+          error: null;
+      }
+    | {
+          data: null;
+          error: FetchParcelError;
+      };
 
 const formatDateToDateTime = (dateString: string | null): string => {
     if (dateString === null) {
@@ -28,18 +38,23 @@ const formatDateToDateTime = (dateString: string | null): string => {
     });
 };
 
-export const prepareParcelInfo = async (parcelID: string): Promise<ParcelInfoAndClientID> => {
-    const fetchedData = await fetchParcel(parcelID, supabase);
+export const prepareParcelInfo = async (
+    parcelID: string
+): Promise<ParcelInfoAndClientIdResponse> => {
+    const { data, error } = await fetchParcel(parcelID, supabase);
+    if (error) {
+        return { data: null, error: error };
+    }
     const parcelInfo: ParcelInfo = {
-        voucherNumber: fetchedData.voucher_number ?? "",
-        packingDate: formatDateToDate(fetchedData.packing_date) ?? "",
-        packingSlot: fetchedData.packing_slot?.name ?? "",
-        collectionDate: formatDateToDateTime(fetchedData.collection_datetime),
-        collectionSite: fetchedData.collection_centre?.name ?? "",
+        voucherNumber: data.voucher_number ?? "",
+        packingDate: formatDateToDate(data.packing_date) ?? "",
+        packingSlot: data.packing_slot?.name ?? "",
+        collectionDate: formatDateToDateTime(data.collection_datetime),
+        collectionSite: data.collection_centre?.name ?? "",
     };
     if (parcelInfo.collectionSite === "Delivery") {
         parcelInfo.collectionSite = "N/A - Delivery";
     }
 
-    return { parcelInfo: parcelInfo, clientID: fetchedData.client_id };
+    return { data: { parcelInfo: parcelInfo, clientId: data.client_id }, error: null };
 };

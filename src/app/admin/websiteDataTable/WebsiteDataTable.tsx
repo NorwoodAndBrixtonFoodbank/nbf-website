@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import supabase from "@/supabaseClient";
 import {
     GridActionsCellItem,
@@ -39,17 +39,28 @@ const WebsiteDataTable: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const dataGridRef = useGridApiRef();
 
-    useEffect(() => {
+    const fetchAndSetWebsiteData = useCallback(async () => {
         setIsLoading(true);
         setErrorMessage(null);
-        fetchWebsiteData()
-            .then((response) => setRows(response))
-            .catch((error) => {
-                void logErrorReturnLogId("Error with fetch: website data", error);
-                setErrorMessage("Error fetching data, please reload");
-            })
-            .finally(() => setIsLoading(false));
+        const { data: websiteData, error: websiteDataError } = await fetchWebsiteData();
+        if (websiteDataError) {
+            setRows([]);
+            switch (websiteDataError.type) {
+                case "failedToFetchWebsiteData":
+                    setErrorMessage(
+                        `Failed to retrieve website data. Log ID ${websiteDataError.logId}`
+                    );
+                    break;
+            }
+        } else {
+            setRows(websiteData);
+        }
+        setIsLoading(false);
     }, []);
+
+    useEffect(() => {
+        void fetchAndSetWebsiteData();
+    }, [fetchAndSetWebsiteData]);
 
     useEffect(() => {
         // This requires that the DB table has Realtime turned on
@@ -58,19 +69,7 @@ const WebsiteDataTable: React.FC = () => {
             .on(
                 "postgres_changes",
                 { event: "*", schema: "public", table: "website_data" },
-                async () => {
-                    setErrorMessage(null);
-                    try {
-                        const websiteData = await fetchWebsiteData();
-                        setRows(websiteData);
-                    } catch (error) {
-                        void logErrorReturnLogId("Error with fetch: website data subscription", {
-                            error,
-                        });
-                        setRows([]);
-                        setErrorMessage("Error fetching data, please reload");
-                    }
-                }
+                fetchAndSetWebsiteData
             )
             .subscribe((status, err) => {
                 subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&
@@ -79,7 +78,7 @@ const WebsiteDataTable: React.FC = () => {
         return () => {
             void supabase.removeChannel(subscriptionChannel);
         };
-    }, []);
+    }, [fetchAndSetWebsiteData]);
 
     const handleSaveClick = (id: GridRowId) => () => {
         setRowModesModel((currentValue) => ({
@@ -88,15 +87,21 @@ const WebsiteDataTable: React.FC = () => {
         }));
     };
 
-    const processRowUpdate = (newRow: WebsiteDataRow): WebsiteDataRow => {
+    const processRowUpdate = async (newRow: WebsiteDataRow): Promise<WebsiteDataRow> => {
         setErrorMessage(null);
         setIsLoading(true);
-        updateDbWebsiteData(newRow)
-            .catch((error) => {
-                void logErrorReturnLogId("Error with update: website data", error);
-                setErrorMessage("Error updating data, please reload");
-            })
-            .finally(() => setIsLoading(false));
+
+        const { error } = await updateDbWebsiteData(newRow);
+
+        if (error) {
+            switch (error.type) {
+                case "failedToUpdateWebsiteData":
+                    setErrorMessage(`Failed to update website data. Log ID ${error.logId}`);
+                    break;
+            }
+        }
+
+        setIsLoading(false);
         return newRow;
     };
 

@@ -64,7 +64,7 @@ const getExpandedParcelDetails = async (
             )
         ),
         events:events (
-            event_name,
+            new_parcel_status,
             timestamp,
             event_data
         )
@@ -152,10 +152,10 @@ export const formatDatetimeAsTime = (datetime: string | null): string => {
 };
 
 export const processEventsDetails = (
-    events: Pick<Schema["events"], "event_data" | "event_name" | "timestamp">[]
+    events: Pick<Schema["events"], "event_data" | "new_parcel_status" | "timestamp">[]
 ): EventTableRow[] => {
     return events.map((event) => ({
-        eventInfo: event.event_name + (event.event_data ? ` (${event.event_data})` : ""),
+        eventInfo: event.new_parcel_status + (event.event_data ? ` (${event.event_data})` : ""),
         timestamp: new Date(event.timestamp),
     }));
 };

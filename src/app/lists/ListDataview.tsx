@@ -1,6 +1,5 @@
 "use client";
 
-import { DatabaseError } from "@/app/errorClasses";
 import Table, { ColumnDisplayFunctions, ColumnStyles } from "@/components/Tables/Table";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
@@ -17,6 +16,7 @@ import CommentBox from "@/app/lists/CommentBox";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
+import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 export interface ListRow {
     primaryKey: string;
@@ -43,6 +43,8 @@ interface ListDataViewProps {
     listOfIngredients: ListRow[];
     setListOfIngredients: React.Dispatch<React.SetStateAction<ListRow[]>>;
     comment: string;
+    errorMessage: string | null;
+    setErrorMessage: (error: string | null) => void;
 }
 
 export const listsHeaderKeysAndLabels = [
@@ -123,12 +125,13 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     listOfIngredients,
     setListOfIngredients,
     comment,
+    errorMessage,
+    setErrorMessage,
 }) => {
     const [modal, setModal] = useState<EditModalState>();
     const [toDelete, setToDelete] = useState<number | null>(null);
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
-    const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const [listData, setListData] = useState<ListRow[]>(listOfIngredients);
     const [primaryFilters, setPrimaryFilters] = useState<Filter<ListRow, string>[]>(filters);
 
@@ -180,11 +183,11 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         ]);
 
         if (error) {
-            const logId = await logErrorReturnLogId(
-                "Error with upsert: List row item order",
-                error
-            );
-            throw new DatabaseError("update", "list items", logId);
+            const logId = await logErrorReturnLogId("Error with upsert: List row item order", {
+                error: error,
+            });
+            setErrorMessage(`Failed to swap rows. Log ID: ${logId}`);
+            return;
         }
 
         reorderRows(row1, row2);
@@ -198,6 +201,15 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     const onConfirmDeletion = async (): Promise<void> => {
         if (toDelete !== null) {
             const itemToDelete = listOfIngredients[toDelete];
+
+            const auditLog = {
+                action: "delete a list item",
+                content: {
+                    itemName: itemToDelete.itemName,
+                    itemPrimaryKey: itemToDelete.primaryKey,
+                },
+            } as const satisfies Partial<AuditLog>;
+
             const { error } = await supabase
                 .from("lists")
                 .delete()
@@ -206,12 +218,21 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             if (error) {
                 const logId = await logErrorReturnLogId(
                     `Error with delete: Ingredient id ${itemToDelete.primaryKey}`,
-                    error
+                    { error: error }
                 );
-                setErrorMsg(error.message + `Error ID: ${logId}`);
-            } else {
-                window.location.reload();
+                await sendAuditLog({
+                    ...auditLog,
+                    wasSuccess: false,
+                    logId,
+                    listId: itemToDelete.primaryKey,
+                });
+                setErrorMessage(`Failed to delete a list item. Log ID: ${logId}`);
+                return;
             }
+
+            await sendAuditLog({ ...auditLog, wasSuccess: true });
+            setToDeleteModalOpen(false);
+            setToDelete(null);
         }
     };
 
@@ -242,13 +263,12 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             />
 
             <Snackbar
-                message={errorMsg}
-                autoHideDuration={3000}
-                onClose={() => setErrorMsg(null)}
-                open={errorMsg !== null}
+                message={errorMessage}
+                onClose={() => setErrorMessage(null)}
+                open={errorMessage !== null}
             >
                 <SnackBarDiv>
-                    <Alert severity="error">{errorMsg}</Alert>
+                    <Alert severity="error">{errorMessage}</Alert>
                 </SnackBarDiv>
             </Snackbar>
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
