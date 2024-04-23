@@ -2,19 +2,11 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import Table, { TableHeaders } from "@/components/Tables/Table";
-import styled from "styled-components";
 import { Schema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-
-export const OptionButtonDiv = styled.div`
-    display: flex;
-    padding-top: 1rem;
-    gap: 1rem;
-    justify-content: center;
-`;
 
 const collectionCentresTableHeaderKeysAndLabels: TableHeaders<Schema["collection_centres"]> = [
     ["primary_key", "Centre ID"],
