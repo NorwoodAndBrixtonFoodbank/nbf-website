@@ -27,7 +27,7 @@ interface AuditLogRow {
     websiteData: string;
 }
 
-const collectionCentresTableHeaderKeysAndLabels: TableHeaders<AuditLogRow> = [
+const auditLogTableHeaderKeysAndLabels: TableHeaders<AuditLogRow> = [
     ["action", "Action"],
     ["createdAt", "Time"],
     ["userId", "User ID"],
@@ -46,7 +46,7 @@ const collectionCentresTableHeaderKeysAndLabels: TableHeaders<AuditLogRow> = [
     ["websiteData", "Website Data"],
 ];
 
-const AuditLogsTable: React.FC = () => {
+const AuditLogTable: React.FC = () => {
     const [auditLog, setAuditLog] = useState<AuditLogRow[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -111,7 +111,7 @@ const AuditLogsTable: React.FC = () => {
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
             <Table
                 dataPortion={auditLog}
-                headerKeysAndLabels={collectionCentresTableHeaderKeysAndLabels}
+                headerKeysAndLabels={auditLogTableHeaderKeysAndLabels}
                 defaultShownHeaders={["action", "createdAt", "userId", "wasSuccess", "logId"]}
                 toggleableHeaders={[
                     "parcelId",
@@ -140,4 +140,4 @@ const AuditLogsTable: React.FC = () => {
     );
 };
 
-export default AuditLogsTable;
+export default AuditLogTable;

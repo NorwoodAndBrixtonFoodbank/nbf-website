@@ -23,7 +23,7 @@ import CollectionCentresTable from "@/app/admin/collectionCentresTable/Collectio
 import CreateCollectionCentreForm from "@/app/admin/createCollectionCentre/CreateCollectionCentreForm";
 import PackingSlotsTable from "@/app/admin/packingSlotsTable/PackingSlotsTable";
 import WebsiteDataTable from "./websiteDataTable/WebsiteDataTable";
-import AuditLogsTable from "./auditLogsTable/AuditLogsTable";
+import AuditLogTable from "./auditLogsTable/AuditLogsTable";
 
 const PanelTitle = styled.h2`
     text-transform: uppercase;
@@ -70,7 +70,7 @@ const AdminPage: React.FC = () => {
         {
             panelTitle: "View Audit Logs",
             panelIcon: faRectangleList,
-            panelContent: <AuditLogsTable />,
+            panelContent: <AuditLogTable />,
         },
     ];
 
