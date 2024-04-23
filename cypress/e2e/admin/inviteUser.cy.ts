@@ -8,7 +8,7 @@ describe("User invite on admins page", () => {
 
     it("Invite a user without a phone number", () => {
         const email = generateRandomEmailAddress();
-        
+
         toggleCreateUserSection();
         fillEmail(email);
         fillFirstName("First");
