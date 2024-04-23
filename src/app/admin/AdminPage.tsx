@@ -15,7 +15,7 @@ import {
     faBoxOpen,
     IconDefinition,
     faServer,
-    faRectangleList
+    faRectangleList,
 } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

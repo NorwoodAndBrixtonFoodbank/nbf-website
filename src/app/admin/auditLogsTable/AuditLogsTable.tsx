@@ -4,18 +4,10 @@ import React, { useCallback, useEffect, useState } from "react";
 import Table, { TableHeaders } from "@/components/Tables/Table";
 import styled from "styled-components";
 import { Schema } from "@/databaseUtils";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 import { logErrorReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-
-interface CollectionCentresTableRow {
-    acronym: Schema["collection_centres"]["acronym"];
-    name: Schema["collection_centres"]["name"];
-    primary_key: Schema["collection_centres"]["primary_key"];
-}
 
 export const OptionButtonDiv = styled.div`
     display: flex;
@@ -30,25 +22,8 @@ const collectionCentresTableHeaderKeysAndLabels: TableHeaders<Schema["collection
     ["acronym", "Acronym"],
 ];
 
-const filters: Filter<CollectionCentresTableRow, string>[] = [
-    buildTextFilter({
-        key: "name",
-        label: "Name",
-        headers: collectionCentresTableHeaderKeysAndLabels,
-        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
-    }),
-    buildTextFilter({
-        key: "acronym",
-        label: "Acronym",
-        headers: collectionCentresTableHeaderKeysAndLabels,
-        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
-    }),
-];
-
 const AuditLogsTable: React.FC = () => {
     const [collectionCentres, setCollectionCentres] = useState<Schema["collection_centres"][]>([]);
-    const [primaryFilters, setPrimaryFilters] =
-        useState<Filter<CollectionCentresTableRow, string>[]>(filters);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const fetchAndDisplayCollectionCentres = useCallback(async () => {
@@ -103,9 +78,7 @@ const AuditLogsTable: React.FC = () => {
                     editable: false,
                 }}
                 filterConfig={{
-                    primaryFiltersShown: true,
-                    primaryFilters: primaryFilters,
-                    setPrimaryFilters: setPrimaryFilters,
+                    primaryFiltersShown: false,
                     additionalFiltersShown: false,
                 }}
             />
