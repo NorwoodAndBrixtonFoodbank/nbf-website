@@ -1,15 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import supabase from "@/supabaseClient";
 import ClientForm from "@/app/clients/form/ClientForm";
 import { Errors, FormErrors } from "@/components/Form/formFunctions";
 import autofill from "@/app/clients/edit/[id]/autofill";
 import { fetchClient, fetchFamily } from "@/common/fetch";
 import { Schema } from "@/databaseUtils";
-import { logErrorReturnLogId } from "@/logger/logger";
-import { useRouter } from "next/navigation";
-import ErrorPage from "@/app/error";
+import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 
 interface EditClientsParameters {
     params: { id: string };
@@ -20,8 +18,7 @@ const EditClients: ({ params }: EditClientsParameters) => React.ReactElement = (
 }: EditClientsParameters) => {
     const [clientData, setClientData] = useState<Schema["clients"] | null>(null);
     const [familyData, setFamilyData] = useState<Schema["families"][] | null>(null);
-    const [error, setError] = useState<Error | null>();
-    const router = useRouter();
+    const [error, setError] = useState<string | null>();
 
     useEffect(() => {
         (async () => {
@@ -60,10 +57,11 @@ const EditClients: ({ params }: EditClientsParameters) => React.ReactElement = (
         numberChildren: Errors.none,
         nappySize: Errors.none,
     };
+
     return (
         <main>
             {error ? (
-                <ErrorPage error={error} reset={() => router.refresh()} />
+                <ErrorSecondaryText>{error}</ErrorSecondaryText>
             ) : (
                 initialFields && (
                     <ClientForm
