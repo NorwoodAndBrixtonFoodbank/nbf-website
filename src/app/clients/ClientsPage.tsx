@@ -21,12 +21,13 @@ import { Database } from "@/databaseTypesFile";
 import { CircularProgress } from "@mui/material";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
+import { nullPostcodeDisplay } from "../parcels/ParcelsPage";
 
 export interface ClientsTableRow {
     clientId: string;
     fullName: string;
     familyCategory: string;
-    addressPostcode: string;
+    addressPostcode: string | null;
 }
 
 const headers: TableHeaders<ClientsTableRow> = [
@@ -171,6 +172,10 @@ const ClientsPage: React.FC<{}> = () => {
     const searchParams = useSearchParams();
     const clientId = searchParams.get(clientIdParam);
 
+    const formatNullPostcode = (postcodeData: ClientsTableRow["addressPostcode"]): string => {
+        return postcodeData ?? nullPostcodeDisplay;
+    };
+
     return (
         <>
             {isLoadingForFirstTime ? (
@@ -208,6 +213,7 @@ const ClientsPage: React.FC<{}> = () => {
                             editableConfig={{ editable: false }}
                             isLoading={isLoading}
                             pointerOnHover={true}
+                            columnDisplayFunctions={{ addressPostcode: formatNullPostcode }}
                         />
                     </TableSurface>
                     <Centerer>

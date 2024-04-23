@@ -108,7 +108,6 @@ export const submitEditClientForm = async (
     primaryKey: string
 ): Promise<void> => {
     const clientRecord = formatClientRecord(fields);
-    console.log(clientRecord);
     const familyMembers = getFamilyMembers(fields.adults, fields.children);
     const { data: clientId, error } = await supabase.rpc("updateClientAndTheirFamily", {
         clientrecord: clientRecord,

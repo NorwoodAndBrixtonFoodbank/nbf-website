@@ -37,13 +37,15 @@ const autofill = (
 
     const { nappySize, extraInformation } = processExtraInformation(clientData.extra_information);
 
+    const noPostcode = clientData.address_postcode === null;
+
     return {
         fullName: clientData.full_name,
         phoneNumber: clientData.phone_number,
-        addressLine1: clientData.address_1,
-        addressLine2: clientData.address_2,
-        addressTown: clientData.address_town,
-        addressCounty: clientData.address_county,
+        addressLine1: noPostcode ? "" : clientData.address_1,
+        addressLine2: noPostcode ? "" : clientData.address_2,
+        addressTown: noPostcode ? "" : clientData.address_town,
+        addressCounty: noPostcode ? "" : clientData.address_county,
         addressPostcode: clientData.address_postcode,
         adults: {
             numberFemales: getNumberAdultsByGender(familyData, "female"),
