@@ -83,6 +83,7 @@ async function generateSeed(): Promise<void> {
                     getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
                 collectionDatetime: (ctx) =>
                     getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
+                createdAt: new Date("2023-12-31T12:00:00"),
             }),
         { connect: true }
     );
