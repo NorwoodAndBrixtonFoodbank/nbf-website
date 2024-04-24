@@ -4,6 +4,8 @@ alter type "public"."role" rename to "role__old_version_to_be_dropped";
 
 create type "public"."role" as enum ('volunteer', 'admin', 'manager', 'staff');
 
+update "public"."profiles" set role = 'volunteer' where role = 'caller';
+
 alter table "public"."profiles" alter column role type "public"."role" using role::text::"public"."role";
 
 drop type "public"."role__old_version_to_be_dropped";
