@@ -81,6 +81,7 @@ const DayOverviewInput: React.FC<DayOverviewInputProps> = ({
                         setDateValid();
                     }
                 }}
+                onAccept={setDateValid}
             />
         </>
     );
