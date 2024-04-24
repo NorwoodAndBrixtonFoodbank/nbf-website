@@ -103,7 +103,7 @@ jobs:
         run: npx supabase start
 
       - name: Create users for the local Supabase instance
-        run: npm run dev:create_admin_and_volunteer_users
+        run: npm run dev:create_user_for_each_role
 
       - name: Create bucket for the local Supabase instance
         run: npm run dev:create_bucket

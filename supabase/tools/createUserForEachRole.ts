@@ -4,9 +4,9 @@ import { getLocalSupabaseClient } from "./getLocalSupabaseClient";
 
 dotenv.config({ path: "./.env.local" });
 
-type Role = "admin" | "volunteer" | "manager" | "staff";
-
 createAdminAndCallerUsers();
+
+type Role = "admin" | "volunteer" | "manager" | "staff";
 
 interface userProfile {
     email: string;
