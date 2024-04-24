@@ -32,7 +32,7 @@ export interface InviteUserDetails {
 
 const initialFields: InviteUserDetails = {
     email: "",
-    role: "caller",
+    role: "volunteer",
     firstName: "",
     lastName: "",
     telephoneNumber: "",

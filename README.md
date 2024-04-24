@@ -134,9 +134,9 @@ You can regenerate the types
 - `npx supabase migration list` to compare what migrations are applied locally and on remote
 - `npm run dev:reset_supabase` to
   - reset the Supabase database based on the migration files and the seed data
-  - create an admin user and a caller user with the following credentials:
+  - create an admin user and a volunteer user with the following credentials:
     - admin@example.com (admin123)
-    - caller@example.com (caller123)
+    - volunteer@example.com (volunteer123)
   - upload the congestion charge postcodes to the local Supabase storage
 - `npm run db:generate_seed` to generate `supabase/seed.sql` based on `supabase/seed/seed.mts`. This does not automatically put the data in the database. You'll need to run `npm run dev:reset_supabase`.
 

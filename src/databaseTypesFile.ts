@@ -784,7 +784,7 @@ export type Database = {
     }
     Enums: {
       gender: "male" | "female" | "other"
-      role: "caller" | "admin"
+      role: "volunteer" | "admin" | "manager" | "staff"
     }
     CompositeTypes: {
       [_ in never]: never

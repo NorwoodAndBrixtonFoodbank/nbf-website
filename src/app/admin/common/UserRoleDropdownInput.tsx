@@ -4,7 +4,9 @@ import { Database } from "@/databaseTypesFile";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 
 const roleLabelsAndValues: [string, string][] = [
-    ["Caller", "caller"],
+    ["Volunteer", "volunteer"],
+    ["Manager", "manager"],
+    ["Staff", "staff"],
     ["Admin", "admin"],
 ];
 
