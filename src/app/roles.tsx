@@ -22,7 +22,7 @@ const pathsShownToAllAuthenticatedUsers = [
     "/set-password",
 ] as const;
 
-const pathsOnlyShownToManager = ["/lists"] as const
+const pathsOnlyShownToManager = ["/lists"] as const;
 
 const pathsOnlyShownToAdmin = ["/admin", "/lists"] as const;
 
