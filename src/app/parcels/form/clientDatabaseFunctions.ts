@@ -1,6 +1,5 @@
 import supabase from "@/supabaseClient";
 import { InsertSchema, UpdateSchema } from "@/databaseUtils";
-import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 

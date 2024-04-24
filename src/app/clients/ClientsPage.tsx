@@ -164,7 +164,8 @@ const ClientsPage: React.FC<{}> = () => {
         return () => {
             supabase.removeChannel(subscriptionChannel);
         };
-    }, [startPoint, endPoint, primaryFilters, sortState]);
+    }, [startPoint, endPoint, primaryFilters, sortState, fetchAndDisplayClientsData]);
+
     const theme = useTheme();
     const router = useRouter();
 
