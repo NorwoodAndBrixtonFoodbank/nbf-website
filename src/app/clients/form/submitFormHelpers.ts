@@ -63,14 +63,14 @@ const formatClientRecord = (
 };
 
 type addClientErrors = "failedToInsertClientAndFamily";
-type addClientReturnType =
+type addClientResult =
     | { clientId: string; error: null }
     | {
           clientId: null;
           error: { type: addClientErrors; logId: string };
       };
 
-export const submitAddClientForm = async (fields: ClientFields): Promise<addClientReturnType> => {
+export const submitAddClientForm = async (fields: ClientFields): Promise<addClientResult> => {
     const clientRecord = formatClientRecord(fields);
     const familyMembers = getFamilyMembers(fields.adults, fields.children);
     const { data: clientId, error } = await supabase.rpc("insertClientAndTheirFamily", {
@@ -107,7 +107,7 @@ export const submitAddClientForm = async (fields: ClientFields): Promise<addClie
 };
 
 type editClientErrors = "failedToUpdateClientAndFamily" | "concurrentUpdateConflict";
-type editClientReturnType =
+type editClientResult =
     | { clientId: string; error: null }
     | {
           clientId: null;
@@ -117,7 +117,7 @@ type editClientReturnType =
 export const submitEditClientForm = async (
     fields: ClientFields,
     primaryKey: string
-): Promise<editClientReturnType> => {
+): Promise<editClientResult> => {
     const clientRecord = formatClientRecord(fields);
     const familyMembers = getFamilyMembers(fields.adults, fields.children);
 
