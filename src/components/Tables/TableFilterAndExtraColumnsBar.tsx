@@ -64,7 +64,7 @@ export const filtersToComponents = <Data,>(
     });
 };
 
-const TableFilterBar = <Data,>(props: Props<Data>): React.ReactElement => {
+const TableFilterAndExtraColumnsBar = <Data,>(props: Props<Data>): React.ReactElement => {
     const [showMoreFiltersAndHeaders, setShowMoreFiltersAndHeaders] = useState(false);
 
     const hasPrimaryFilters = props.filters.length !== 0;
@@ -142,4 +142,4 @@ const TableFilterBar = <Data,>(props: Props<Data>): React.ReactElement => {
     );
 };
 
-export default TableFilterBar;
+export default TableFilterAndExtraColumnsBar;

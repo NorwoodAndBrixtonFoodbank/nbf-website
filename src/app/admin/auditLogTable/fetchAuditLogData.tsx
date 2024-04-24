@@ -59,23 +59,23 @@ export const fetchAuditLog = async (
         return { data: null, error: { type: "failedAuditLogFetch", logId: logId } };
     }
 
-    const convertedData: AuditLogRow[] = data.map((datum) => ({
-        action: datum.action ?? "",
-        clientId: datum.client_id ?? "",
-        collectionCentreId: datum.collection_centre_id ?? "",
-        content: datum.content ?? "",
-        createdAt: datum.created_at ?? "",
-        eventId: datum.event_id ?? "",
-        listHotelId: datum.list_hotel_id ?? "",
-        listId: datum.list_id ?? "",
-        logId: datum.log_id ?? "",
-        packingSlotId: datum.packing_slot_id ?? "",
-        parcelId: datum.parcel_id ?? "",
-        profileId: datum.profile_id ?? "",
-        statusOrder: datum.status_order ?? "",
-        userId: datum.user_id ?? "",
-        wasSuccess: datum.wasSuccess ?? "",
-        websiteData: datum.website_data ?? "",
+    const convertedData: AuditLogRow[] = data.map((row) => ({
+        action: row.action ?? "",
+        clientId: row.client_id ?? "",
+        collectionCentreId: row.collection_centre_id ?? "",
+        content: row.content ?? "",
+        createdAt: row.created_at ?? "",
+        eventId: row.event_id ?? "",
+        listHotelId: row.list_hotel_id ?? "",
+        listId: row.list_id ?? "",
+        logId: row.log_id ?? "",
+        packingSlotId: row.packing_slot_id ?? "",
+        parcelId: row.parcel_id ?? "",
+        profileId: row.profile_id ?? "",
+        statusOrder: row.status_order ?? "",
+        userId: row.user_id ?? "",
+        wasSuccess: row.wasSuccess ?? "",
+        websiteData: row.website_data ?? "",
     }));
 
     return { data: convertedData, error: null };
