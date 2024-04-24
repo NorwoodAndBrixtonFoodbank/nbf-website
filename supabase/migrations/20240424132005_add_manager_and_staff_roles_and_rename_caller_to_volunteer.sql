@@ -20,5 +20,41 @@ create or replace view "public"."profiles_plus" as  SELECT users.id AS user_id,
      LEFT JOIN profiles ON ((users.id = profiles.user_id)))
   ORDER BY profiles.first_name;
 
+drop policy "Enable access for admin user, select for authenticated" on "public"."lists";
 
+drop policy "Enable access for admin user, select for authenticated" on "public"."lists_hotel";
+
+set check_function_bodies = off;
+
+CREATE OR REPLACE FUNCTION public.user_is_admin_or_manager_or_staff()
+ RETURNS boolean
+ LANGUAGE plpgsql
+AS $function$BEGIN
+RETURN EXISTS ( 
+  SELECT 1
+  FROM profiles
+  WHERE (
+    (profiles.user_id = auth.uid()) AND 
+    ((profiles.role = 'admin'::role) OR (profiles.role = 'manager'::role) OR (profiles.role = 'staff'::role))
+  )
+);
+END;$function$
+;
+
+create policy "Enable access for admin/manager/staff, select for authenticated"
+on "public"."lists"
+as permissive
+for all
+to authenticated
+using (true)
+with check (user_is_admin_or_manager_or_staff());
+
+
+create policy "Enable access for admin/manager/staff, select for authenticated"
+on "public"."lists_hotel"
+as permissive
+for all
+to authenticated
+using (true)
+with check (user_is_admin_or_manager_or_staff());
 
