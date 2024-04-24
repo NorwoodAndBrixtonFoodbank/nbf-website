@@ -26,8 +26,3 @@ export const ErrorSecondaryText = styled.h2`
     font-size: 1rem;
     text-align: center;
 `;
-
-export const ErrorRetryText = styled.p`
-    font-size: 0.75rem;
-    color: ${(props) => props.theme.error};
-`;
