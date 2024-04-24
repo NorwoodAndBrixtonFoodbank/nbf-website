@@ -128,7 +128,6 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     const router = useRouter();
     const [fields, setFields] = useState(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
-    const [submitError, setSubmitError] = useState(Errors.none);
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
     const [submitDisabled, setSubmitDisabled] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
@@ -180,7 +179,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             ]);
         }
         if (inputError) {
-            setSubmitError(Errors.submit);
+            setSubmitErrorMessage(Errors.submit);
             setSubmitDisabled(false);
             return;
         }
@@ -276,7 +275,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                         Submit
                     </Button>
                 </CenterComponent>
-                <FormErrorText>{submitErrorMessage || submitError}</FormErrorText>
+                <FormErrorText>{submitErrorMessage}</FormErrorText>
             </StyledForm>
             {clientDetails && (
                 <Modal
