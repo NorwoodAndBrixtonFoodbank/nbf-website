@@ -781,7 +781,7 @@ export type Database = {
           clientid: string
           familymembers: Json
         }
-        Returns: Database["public"]["CompositeTypes"]["updateclientreturntype"]
+        Returns: Database["public"]["CompositeTypes"]["update_client_result"]
       }
       user_is_admin: {
         Args: Record<PropertyKey, never>
@@ -793,7 +793,7 @@ export type Database = {
       role: "caller" | "admin"
     }
     CompositeTypes: {
-      updateclientreturntype: {
+      update_client_result: {
         clientid: string | null
         updatedrows: number | null
       }

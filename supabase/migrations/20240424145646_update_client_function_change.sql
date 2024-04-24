@@ -1,18 +1,18 @@
 drop function if exists "public"."updateClientAndTheirFamily"(clientrecord jsonb, familymembers jsonb, clientid uuid);
 
+create type "public"."update_client_result" as ("clientid" uuid, "updatedrows" integer);
+
 set check_function_bodies = off;
 
-create type "public"."updateclientreturntype" as ("clientid" uuid, "updatedrows" integer);
-
 CREATE OR REPLACE FUNCTION public.update_client_and_family(clientrecord jsonb, clientid uuid, familymembers jsonb)
- RETURNS updateclientreturntype
+ RETURNS update_client_result
  LANGUAGE plpgsql
 AS $function$
 DECLARE
     updated_family_id UUID;
     member JSONB;
     rows_updated INTEGER;
-    return_values updateClientReturnType;
+    return_values update_client_result;
 BEGIN  
     UPDATE clients 
     SET 
@@ -62,6 +62,5 @@ BEGIN
 END;
 $function$
 ;
-
 
 
