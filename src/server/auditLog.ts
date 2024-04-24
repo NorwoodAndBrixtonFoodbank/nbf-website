@@ -9,7 +9,7 @@ import { getSupabaseServerComponentClient } from "@/supabaseServer";
 
 type AuditLogInsertRecord = InsertSchema["audit_log"];
 export interface AuditLog {
-    action?: string;
+    action: string;
     content: Json | null;
     wasSuccess: boolean;
     logId?: string;
