@@ -156,7 +156,9 @@ describe("Parcels - Action Bar", () => {
             });
             cy.get(`input[value="${timeString}"]`).should("exist");
             mockData.forEach((parcel: ParcelsTableRow) => {
-                parcel.addressPostcode && cy.get(".MuiPaper-root").contains(parcel.addressPostcode);
+                if (parcel.addressPostcode) {
+                    cy.get(".MuiPaper-root").contains(parcel.addressPostcode);
+                }
                 cy.get(".MuiPaper-root").contains(parcel.fullName);
             });
         });
@@ -209,7 +211,9 @@ describe("Parcels - Action Bar", () => {
             cy.get("#action-menu").should("exist");
             cy.get("#action-menu").contains("Download Shopping List").click();
             cy.get("#action-modal-header").should("exist");
-            row.addressPostcode && cy.get(".MuiPaper-root").contains(row.addressPostcode);
+            if (row.addressPostcode) {
+                cy.get(".MuiPaper-root").contains(row.addressPostcode);
+            }
             cy.get(".MuiPaper-root").contains(row.fullName);
         });
     });

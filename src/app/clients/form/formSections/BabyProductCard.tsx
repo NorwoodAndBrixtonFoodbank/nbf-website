@@ -19,13 +19,13 @@ const getBaby = (
     return (event) => {
         const input = event.target.value;
         if (input === "Yes") {
-            errorSetter([["nappySize", Errors.initial]]);
-            fieldSetter([["babyProducts", true]]);
+            errorSetter([{ key: "nappySize", value: Errors.initial }]);
+            fieldSetter([{ key: "babyProducts", value: true }]);
             return;
         }
-        errorSetter([["nappySize", Errors.none]]);
+        errorSetter([{ key: "nappySize", value: Errors.none }]);
         const babyProduct = input === "No" ? false : null;
-        fieldSetter([["babyProducts", babyProduct]]);
+        fieldSetter([{ key: "babyProducts", value: babyProduct }]);
     };
 };
 

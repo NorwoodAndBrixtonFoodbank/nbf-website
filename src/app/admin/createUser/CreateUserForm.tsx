@@ -29,13 +29,7 @@ export interface InviteUserFields {
     lastName: string;
     telephoneNumber: string;
 }
-interface InviteUserErrors extends FormErrors<InviteUserFields> {
-    email: Errors;
-    role: Errors;
-    firstName: Errors;
-    lastName: Errors;
-    telephoneNumber: Errors;
-}
+type InviteUserErrors = Required<FormErrors<InviteUserFields>>;
 
 export type InviteUserCardProps = CardProps<InviteUserFields, InviteUserErrors>;
 

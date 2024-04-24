@@ -31,7 +31,7 @@ const getChild = (
         } else {
             children[index][subFieldName] = parseInt(input);
         }
-        fieldSetter([["children", [...children]]]);
+        fieldSetter([{ key: "children", value: [...children] }]);
     };
 };
 

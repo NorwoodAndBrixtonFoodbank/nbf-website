@@ -2,10 +2,9 @@ import React from "react";
 import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
 import { ClientSummary, RequirementSummary } from "@/common/formatClientsData";
 import { HouseholdSummary } from "@/common/formatFamiliesData";
-import { formatCamelCaseKey } from "@/common/format";
+import { formatCamelCaseKey, nullPostcodeDisplay } from "@/common/format";
 import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import { Item, ShoppingListPdfData } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
-import { nullPostcodeDisplay } from "@/app/parcels/ParcelsPage";
 
 export type BlockProps = ParcelInfo | HouseholdSummary | RequirementSummary;
 

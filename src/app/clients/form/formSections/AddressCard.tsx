@@ -34,20 +34,20 @@ const AddressCard: React.FC<ClientCardProps> = ({
         setClientHasNoAddress(event.target.checked);
         if (event.target.checked) {
             errorSetter([
-                ["addressPostcode", Errors.none],
-                ["addressLine1", Errors.none],
+                { key: "addressPostcode", value: Errors.none },
+                { key: "addressLine1", value: Errors.none },
             ]);
             fieldSetter([
-                ["addressPostcode", null],
-                ["addressLine1", ""],
-                ["addressLine2", ""],
-                ["addressTown", ""],
-                ["addressCounty", ""],
+                { key: "addressPostcode", value: null },
+                { key: "addressLine1", value: "" },
+                { key: "addressLine2", value: "" },
+                { key: "addressTown", value: "" },
+                { key: "addressCounty", value: "" },
             ]);
         } else {
             errorSetter([
-                ["addressPostcode", Errors.initial],
-                ["addressLine1", Errors.initial],
+                { key: "addressPostcode", value: Errors.initial },
+                { key: "addressLine1", value: Errors.initial },
             ]);
         }
     };

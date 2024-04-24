@@ -21,7 +21,7 @@ import { Database } from "@/databaseTypesFile";
 import { CircularProgress } from "@mui/material";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
-import { nullPostcodeDisplay } from "../parcels/ParcelsPage";
+import { nullPostcodeDisplay } from "@/common/format";
 
 export interface ClientsTableRow {
     clientId: string;

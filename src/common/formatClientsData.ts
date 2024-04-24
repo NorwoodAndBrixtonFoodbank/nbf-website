@@ -1,7 +1,5 @@
 import { Schema } from "@/databaseUtils";
-import { displayList } from "@/common/format";
-import { nullPostcodeDisplay } from "@/app/parcels/ParcelsPage";
-
+import { displayList, nullPostcodeDisplay } from "@/common/format";
 interface NappySizeAndExtraInformation {
     nappySize: string;
     extraInformation: string;

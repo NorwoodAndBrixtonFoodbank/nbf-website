@@ -1,6 +1,6 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
-import { nullPostcodeDisplay } from "@/app/parcels/ParcelsPage";
+import { nullPostcodeDisplay } from "@/common/format";
 
 export interface ShippingLabelData {
     label_quantity: number;

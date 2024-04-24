@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Text, Document, Page, View, StyleSheet, Image } from "@react-pdf/renderer";
-import { nullPostcodeDisplay } from "@/app/parcels/ParcelsPage";
+import { nullPostcodeDisplay } from "@/common/format";
 
 export interface DriverOverviewTableData {
     name: string;

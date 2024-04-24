@@ -13,7 +13,7 @@ import { StatusType, getStatusErrorMessageWithLogId } from "../Statuses";
 import ShoppingListPdfButton from "@/pdf/ShoppingList/ShoppingListPdfButton";
 import { ShoppingListPdfError } from "@/pdf/ShoppingList/getShoppingListData";
 import { sendAuditLog } from "@/server/auditLog";
-import { nullPostcodeDisplay } from "../../ParcelsPage";
+import { nullPostcodeDisplay } from "@/common/format";
 
 interface ShoppingListsConfirmationProps {
     selectedParcels: ParcelsTableRow[];

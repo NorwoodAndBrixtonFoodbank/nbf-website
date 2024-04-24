@@ -11,8 +11,7 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { CollectionCentresOptions } from "@/app/parcels/fetchParcelTableData";
-import { getDbDate } from "@/common/format";
-import { nullPostcodeDisplay } from "./ParcelsPage";
+import { getDbDate, nullPostcodeDisplay } from "@/common/format";
 
 interface packingSlotOptionsSet {
     key: string;

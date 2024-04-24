@@ -25,10 +25,7 @@ interface CollectionCentreFields {
     acronym: string;
 }
 
-interface CollectionCentreErrors extends FormErrors<CollectionCentreFields> {
-    name: Errors;
-    acronym: Errors;
-}
+type CollectionCentreErrors = Required<FormErrors<CollectionCentreFields>>;
 
 export type CollectionCentreCardProps = CardProps<CollectionCentreFields, CollectionCentreErrors>;
 

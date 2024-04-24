@@ -46,7 +46,7 @@ import {
     voucherSearch,
 } from "@/app/parcels/parcelsTableFilters";
 import { ActionsContainer } from "@/components/Form/formStyling";
-import { formatDateTime, formatDatetimeAsDate } from "@/common/format";
+import { formatDateTime, formatDatetimeAsDate, nullPostcodeDisplay } from "@/common/format";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", "Flags"],
@@ -248,7 +248,6 @@ const parcelIdParam = "parcelId";
 
 const defaultNumberOfParcelsPerPage = 100;
 const numberOfParcelsPerPageOptions = [10, 25, 50, 100];
-export const nullPostcodeDisplay = "NFA";
 
 const ParcelsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);

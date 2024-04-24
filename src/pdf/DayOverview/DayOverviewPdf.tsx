@@ -9,7 +9,7 @@ import {
     getCurrentDate,
     ParcelOfSpecificDateAndLocation,
 } from "@/pdf/DayOverview/DayOverviewPdfButton";
-import { nullPostcodeDisplay } from "@/app/parcels/ParcelsPage";
+import { nullPostcodeDisplay } from "@/common/format";
 
 interface DayOverviewSubtitleProps {
     subtitleKey: string;
