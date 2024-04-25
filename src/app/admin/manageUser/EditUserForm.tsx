@@ -25,7 +25,7 @@ function isValidUserRole(userRole: DisplayedUserRole): userRole is UserRole {
 const EditUserForm: React.FC<Props> = (props) => {
     const initialRole: UserRole = isValidUserRole(props.userToEdit.userRole)
         ? props.userToEdit.userRole
-        : "caller";
+        : "volunteer";
 
     const [role, setRole] = useState<UserRole>(initialRole);
 
