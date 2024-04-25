@@ -6,8 +6,8 @@ import {
 import { Database } from "@/databaseTypesFile";
 import dayjs, { Dayjs } from "dayjs";
 
-export type Setter<SpecificFields extends Fields> = <Key extends keyof SpecificFields>(
-    keyValuePairs: { key: Key; value: any }[]
+export type Setter<SpecificFields extends Fields> = (
+    fieldValuesToUpdate: { [key in keyof SpecificFields]: any}
 ) => void;
 export type Gender = Database["public"]["Enums"]["gender"];
 
@@ -58,12 +58,8 @@ export const createSetter = <SpecificFields extends Fields>(
     setFields: (SpecificFields: SpecificFields) => void,
     fieldValues: SpecificFields
 ): Setter<SpecificFields> => {
-    return <Key extends keyof SpecificFields>(keyValuePairs: { key: Key; value: any }[]): void => {
-        const newFieldValues: SpecificFields = { ...fieldValues };
-        keyValuePairs.forEach((keyValuePair) => {
-            newFieldValues[keyValuePair.key] = keyValuePair.value;
-        });
-        setFields(newFieldValues);
+    return (fieldValuesToUpdate: { [key in keyof SpecificFields]: any}): void => {
+        setFields({...fieldValues, ...fieldValuesToUpdate});
     };
 };
 
@@ -88,7 +84,7 @@ const getErrorType = (
 export const onChangeText = <SpecificFields extends Fields>(
     fieldSetter: Setter<SpecificFields>,
     errorSetter: Setter<FormErrors<SpecificFields>>,
-    key: string,
+    key: keyof SpecificFields,
     required?: boolean,
     regex?: RegExp,
     formattingFunction?: (value: string) => SpecificFields[keyof SpecificFields],
@@ -97,7 +93,7 @@ export const onChangeText = <SpecificFields extends Fields>(
     return (event) => {
         const input = event.target.value;
         const errorType = getErrorType(input, required, regex, additionalCondition);
-        errorSetter([{ key: key, value: errorType }]);
+        errorSetter({ key: errorType });
         if (errorType === Errors.none) {
             const newValue = formattingFunction ? formattingFunction(input) : input;
             fieldSetter([{ key: key, value: newValue }]);
