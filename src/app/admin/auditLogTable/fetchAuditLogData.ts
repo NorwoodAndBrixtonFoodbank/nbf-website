@@ -3,10 +3,11 @@ import { Supabase } from "@/supabaseUtils";
 import { AuditLogRow } from "./AuditLogTable";
 import { SortState } from "@/components/Tables/Table";
 import { PaginationType } from "@/components/Tables/Filters";
+import { Schema } from "@/databaseUtils";
 
 type AuditLogResponse =
     | {
-          data: AuditLogRow[];
+          data: Schema["audit_log"][];
           error: null;
       }
     | {
@@ -50,7 +51,7 @@ export const fetchAuditLog = async (
         query = query.order("created_at", { ascending: false });
     }
 
-    const { data, error } = await query;
+    const { data: auditLogs, error } = await query;
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Audit Log", {
@@ -59,26 +60,7 @@ export const fetchAuditLog = async (
         return { data: null, error: { type: "failedAuditLogFetch", logId: logId } };
     }
 
-    const convertedData: AuditLogRow[] = data.map((row) => ({
-        action: row.action ?? "",
-        clientId: row.client_id ?? "",
-        collectionCentreId: row.collection_centre_id ?? "",
-        content: row.content ?? "",
-        createdAt: row.created_at ?? "",
-        eventId: row.event_id ?? "",
-        listHotelId: row.list_hotel_id ?? "",
-        listId: row.list_id ?? "",
-        logId: row.log_id ?? "",
-        packingSlotId: row.packing_slot_id ?? "",
-        parcelId: row.parcel_id ?? "",
-        profileId: row.profile_id ?? "",
-        statusOrder: row.status_order ?? "",
-        userId: row.user_id ?? "",
-        wasSuccess: row.wasSuccess ?? "",
-        websiteData: row.website_data ?? "",
-    }));
-
-    return { data: convertedData, error: null };
+    return { data: auditLogs, error: null };
 };
 
 export const fetchAuditLogCount = async (supabase: Supabase): Promise<AuditLogCountResponse> => {
