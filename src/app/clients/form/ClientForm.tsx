@@ -111,9 +111,7 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
 
     useEffect(() => {
         if (fields.numberChildren <= fields.children.length) {
-            fieldSetter([
-                { key: "children", value: fields.children.slice(0, fields.numberChildren) },
-            ]);
+            fieldSetter({children: fields.children.slice(0, fields.numberChildren) })
             return;
         }
 
@@ -125,7 +123,7 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
                     age: -1,
                 };
             });
-        fieldSetter([{ key: "children", value: [...fields.children, ...extraChildren] }]);
+        fieldSetter({children : [...fields.children, ...extraChildren] });
     }, [fields.numberChildren]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const fieldSetter = createSetter(setFields, fields);

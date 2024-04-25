@@ -35,7 +35,7 @@ const setNumberAdults = (
     return (event) => {
         const input = event.target.value;
         const newAdults = { ...adults, [fieldKey]: getQuantity(input) };
-        fieldSetter([{ key: "adults", value: newAdults }]);
+        fieldSetter({ adults: newAdults });
 
         const invalidAdultEntry =
             newAdults.numberFemales < 0 ||

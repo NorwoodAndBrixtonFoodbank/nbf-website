@@ -29,9 +29,7 @@ describe("Add client form", () => {
     it("Type in postcode, check no address, uncheck no address", () => {
 
         fillPostcode(postcode);
-
         toggleNoAddress();
-
         toggleNoAddress();
 
         assertPostcodeContentNotDisplayed();
@@ -64,14 +62,6 @@ function fillPostcode(value: string): void {
 
 function clickSubmitForm(): void {
     cy.contains("Submit").click();
-}
-
-function checkIfPostcodeFieldVisible(): void {
-    cy.get("client-address-postcode").should("be.visible");
-}
-
-function checkIfPostcodeFieldHidden(): void {
-    cy.get("client-address-postcode").should("not.be.visible");
 }
 
 function assertAddClientFormSubmittedSuccessfully(): void {
