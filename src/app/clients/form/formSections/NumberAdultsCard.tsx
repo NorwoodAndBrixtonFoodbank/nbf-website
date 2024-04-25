@@ -71,6 +71,7 @@ const NumberAdultsCard: React.FC<ClientCardProps> = ({
         >
             <GappedDiv>
                 <FreeFormTextInput
+                    id="client-number-females"
                     error={errorExists(formErrors.adults)}
                     label="Female"
                     defaultValue={getNumberAdultsOfGenderDefault(fields.adults.numberFemales)}

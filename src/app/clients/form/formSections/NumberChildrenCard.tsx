@@ -49,6 +49,7 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
         >
             <>
                 <FreeFormTextInput
+                    id="client-number-children"
                     label="Number of Children"
                     defaultValue={
                         fields.numberChildren !== 0 ? fields.numberChildren.toString() : undefined
