@@ -29,7 +29,11 @@ const pathsOnlyShownToAdmin = ["/admin", "/lists"] as const;
 const getShownPagesByRole = (role: UserRole | null): readonly string[] => {
     switch (role) {
         case "admin":
-            return [...pathsShownToAllAuthenticatedUsers, ...pathsOnlyShownToStaffAndAbove, ...pathsOnlyShownToAdmin];
+            return [
+                ...pathsShownToAllAuthenticatedUsers,
+                ...pathsOnlyShownToStaffAndAbove,
+                ...pathsOnlyShownToAdmin,
+            ];
         case "manager":
             return [...pathsShownToAllAuthenticatedUsers, ...pathsOnlyShownToStaffAndAbove];
         case "staff":
