@@ -11,8 +11,8 @@ export type Database = {
     Tables: {
       audit_log: {
         Row: {
-          actor_profile_id: string
           action: string
+          actor_profile_id: string | null
           client_id: string | null
           collection_centre_id: string | null
           content: Json | null
@@ -30,8 +30,8 @@ export type Database = {
           website_data: string | null
         }
         Insert: {
-          actor_profile_id: string
           action: string
+          actor_profile_id?: string | null
           client_id?: string | null
           collection_centre_id?: string | null
           content?: Json | null
@@ -49,8 +49,8 @@ export type Database = {
           website_data?: string | null
         }
         Update: {
-          actor_profile_id?: string
           action?: string
+          actor_profile_id?: string | null
           client_id?: string | null
           collection_centre_id?: string | null
           content?: Json | null
