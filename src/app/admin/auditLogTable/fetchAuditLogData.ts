@@ -1,6 +1,6 @@
 import { logErrorReturnLogId } from "@/logger/logger";
 import { Supabase } from "@/supabaseUtils";
-import { AuditLogRow } from "./auditLogTableConstants";
+import { AuditLogRow } from "./types";
 import { SortState } from "@/components/Tables/Table";
 import { PaginationType } from "@/components/Tables/Filters";
 import { Schema } from "@/databaseUtils";

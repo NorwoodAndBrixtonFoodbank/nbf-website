@@ -6,16 +6,14 @@ import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import { fetchAuditLog, fetchAuditLogCount } from "./fetchAuditLogData";
+import { auditLogTableHeaderKeysAndLabels } from "./columns";
+import { getAuditLogErrorMessage, auditLogTableColumnDisplayFunctions } from "./format";
 import {
-    AuditLogRow,
-    auditLogTableColumnDisplayFunctions,
-    auditLogTableHeaderKeysAndLabels,
-    convertAuditLogResponseToAuditLogRow,
     defaultNumberOfAuditLogRowsPerPage,
-    getAuditLogErrorMessage,
     numberOfAuditLogRowsPerPageOption,
-    sortableColumns,
-} from "./auditLogTableConstants";
+} from "./rowsPerPageConstants";
+import { AuditLogRow, convertAuditLogResponseToAuditLogRow } from "./types";
+import { auditLogTableSortableColumns } from "./sortFunctions";
 
 const AuditLogTable: React.FC = () => {
     const [auditLogDataPortion, setAuditLogDataPortion] = useState<AuditLogRow[]>([]);
@@ -109,7 +107,7 @@ const AuditLogTable: React.FC = () => {
                 checkboxConfig={{ displayed: false }}
                 sortConfig={{
                     sortPossible: true,
-                    sortableColumns: sortableColumns,
+                    sortableColumns: auditLogTableSortableColumns,
                     setSortState: setSortState,
                 }}
                 editableConfig={{
