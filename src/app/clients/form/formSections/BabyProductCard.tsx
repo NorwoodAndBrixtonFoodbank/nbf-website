@@ -10,22 +10,22 @@ import {
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
-import { ClientCardProps, ClientSetter } from "../ClientForm";
+import { ClientCardProps, ClientErrorSetter, ClientSetter } from "../ClientForm";
 
 const getBaby = (
     fieldSetter: ClientSetter,
-    errorSetter: ClientSetter
+    errorSetter: ClientErrorSetter
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
         if (input === "Yes") {
-            errorSetter([{ key: "nappySize", value: Errors.initial }]);
-            fieldSetter([{ key: "babyProducts", value: true }]);
+            errorSetter({ nappySize: Errors.initial });
+            fieldSetter({ babyProducts: true });
             return;
         }
-        errorSetter([{ key: "nappySize", value: Errors.none }]);
+        errorSetter({ nappySize: Errors.none });
         const babyProduct = input === "No" ? false : null;
-        fieldSetter([{ key: "babyProducts", value: babyProduct }]);
+        fieldSetter({ babyProducts: babyProduct });
     };
 };
 

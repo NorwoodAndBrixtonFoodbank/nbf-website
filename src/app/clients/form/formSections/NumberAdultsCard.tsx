@@ -10,7 +10,7 @@ import {
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 import { GappedDiv } from "@/components/Form/formStyling";
-import { ClientCardProps, ClientSetter } from "../ClientForm";
+import { ClientCardProps, ClientErrorSetter, ClientSetter } from "../ClientForm";
 
 const getNumberAdultsOfGenderDefault = (numberAdultsOfGender: number): string | undefined => {
     return numberAdultsOfGender === 0 ? undefined : numberAdultsOfGender.toString();
@@ -28,7 +28,7 @@ const getQuantity = (input: string): number => {
 
 const setNumberAdults = (
     fieldSetter: ClientSetter,
-    errorSetter: ClientSetter,
+    errorSetter: ClientErrorSetter,
     adults: NumberAdultsByGender,
     fieldKey: keyof NumberAdultsByGender
 ): SelectChangeEventHandler => {
@@ -53,7 +53,7 @@ const setNumberAdults = (
             errorType = Errors.required;
         }
 
-        errorSetter([{ key: "adults", value: errorType }]);
+        errorSetter({ adults: errorType });
     };
 };
 

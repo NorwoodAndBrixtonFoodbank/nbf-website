@@ -81,6 +81,7 @@ export interface ClientErrors extends FormErrors<ClientFields> {
 }
 
 export type ClientSetter = Setter<ClientFields>;
+export type ClientErrorSetter = Setter<ClientErrors>;
 export type ClientCardProps = CardProps<ClientFields, ClientErrors>;
 
 const formSections = [

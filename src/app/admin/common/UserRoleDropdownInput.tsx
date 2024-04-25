@@ -1,9 +1,9 @@
 import React from "react";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
-import { Database } from "@/databaseTypesFile";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
+import { UserRole } from "@/databaseUtils";
 
-const roleLabelsAndValues: [string, string][] = [
+const roleLabelsAndValues: [string, UserRole][] = [
     ["Volunteer", "volunteer"],
     ["Manager", "manager"],
     ["Staff", "staff"],
@@ -11,7 +11,7 @@ const roleLabelsAndValues: [string, string][] = [
 ];
 
 interface Props {
-    defaultValue: Database["public"]["Enums"]["role"];
+    defaultValue: UserRole;
     onChange: SelectChangeEventHandler;
 }
 

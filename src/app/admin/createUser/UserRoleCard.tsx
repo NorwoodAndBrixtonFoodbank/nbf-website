@@ -3,6 +3,7 @@ import React from "react";
 import { getDropdownListHandler } from "@/components/DataInput/inputHandlerFactories";
 import UserRoleDropdownInput from "@/app/admin/common/UserRoleDropdownInput";
 import { InviteUserCardProps } from "./CreateUserForm";
+import { UserRole } from "@/databaseUtils";
 
 const UserRoleCard: React.FC<InviteUserCardProps> = ({ fieldSetter }) => {
     return (
@@ -10,7 +11,7 @@ const UserRoleCard: React.FC<InviteUserCardProps> = ({ fieldSetter }) => {
             <UserRoleDropdownInput
                 defaultValue="volunteer"
                 onChange={getDropdownListHandler((role: string) =>
-                    fieldSetter([{ key: "role", value: role }])
+                    fieldSetter({ ["role"]: role as UserRole })
                 )}
             />
         </GenericFormCard>
