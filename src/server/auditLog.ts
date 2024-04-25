@@ -1,6 +1,5 @@
 "use server";
 
-import { getCurrentUser } from "@/server/getCurrentUser";
 import { InsertSchema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";

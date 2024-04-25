@@ -2,7 +2,6 @@
 
 import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { User } from "@supabase/gotrue-js";
 import { CurrentUserError, getCurrentUser } from "./getCurrentUser";
 import { Schema } from "@/databaseUtils";
 
@@ -16,7 +15,7 @@ type CurrentProfileResponse =
           error: CurrentProfileError;
       };
 type CurrentProfileErrorType = "profileFetchFailed";
-type CurrentProfileError = { type: CurrentProfileErrorType, logId: string } | CurrentUserError
+type CurrentProfileError = { type: CurrentProfileErrorType; logId: string } | CurrentUserError;
 
 export async function getCurrentProfile(): Promise<CurrentProfileResponse> {
     const { data: userData, error: userError } = await getCurrentUser();
@@ -27,7 +26,11 @@ export async function getCurrentProfile(): Promise<CurrentProfileResponse> {
 
     const supabase = getSupabaseServerComponentClient();
 
-    const {data: profileData, error: profileError} = await supabase.from("profiles").select("*").eq("user_id", userData.id).single();
+    const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("user_id", userData.id)
+        .single();
 
     if (profileError) {
         const logId = await logErrorReturnLogId("error with fetch: profiles", profileError);
