@@ -1,20 +1,24 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import Table, { SortOptions, SortState, TableHeaders } from "@/components/Tables/Table";
+import Table, { SortState } from "@/components/Tables/Table";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import { Json } from "@/databaseTypesFile";
-import { formatDateTime, formatBoolean, formatJson } from "@/common/format";
 import {
-    AuditLogCountError,
-    AuditLogError,
     fetchAuditLog,
     fetchAuditLogCount,
 } from "./fetchAuditLogData";
-import { PaginationType } from "@/components/Tables/Filters";
-import { auditLogTableColumnDisplayFunctions, auditLogTableHeaderKeysAndLabels, convertAuditLogResponseToAuditLogRow, defaultNumberOfAuditLogRowsPerPage, getAuditLogErrorMessage, numberOfAuditLogRowsPerPageOption, sortableColumns } from "./auditLogConfig";
+import {
+    auditLogTableColumnDisplayFunctions,
+    auditLogTableHeaderKeysAndLabels,
+    convertAuditLogResponseToAuditLogRow,
+    defaultNumberOfAuditLogRowsPerPage,
+    getAuditLogErrorMessage,
+    numberOfAuditLogRowsPerPageOption,
+    sortableColumns,
+} from "./auditLogConfig";
 
 export interface AuditLogRow {
     action: string;
@@ -34,7 +38,6 @@ export interface AuditLogRow {
     wasSuccess: boolean;
     websiteData: string;
 }
-
 
 const AuditLogTable: React.FC = () => {
     const [auditLogDataPortion, setAuditLogDataPortion] = useState<AuditLogRow[]>([]);

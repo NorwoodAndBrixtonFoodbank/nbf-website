@@ -74,7 +74,7 @@ const TableFilterAndExtraColumnsBar = <Data,>(props: Props<Data>): React.ReactEl
     const hasToggleableHeaders = props.toggleableHeaders.length !== 0;
 
     const handleToggleAdditional = (): void => {
-        setShowMoreFiltersAndHeaders(prev => !prev);
+        setShowMoreFiltersAndHeaders((prev) => !prev);
     };
 
     if (!hasPrimaryFilters && !hasAdditionalFilters && !hasToggleableHeaders) {

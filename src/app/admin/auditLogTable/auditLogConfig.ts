@@ -179,7 +179,9 @@ export const getAuditLogErrorMessage = (error: AuditLogError | AuditLogCountErro
 export const defaultNumberOfAuditLogRowsPerPage = 10;
 export const numberOfAuditLogRowsPerPageOption = [10, 25, 50, 100];
 
-export const convertAuditLogResponseToAuditLogRow = (auditLogResponse: Schema["audit_log"][]): AuditLogRow[] => (
+export const convertAuditLogResponseToAuditLogRow = (
+    auditLogResponse: Schema["audit_log"][]
+): AuditLogRow[] =>
     auditLogResponse.map((auditLogResponseRow) => ({
         action: auditLogResponseRow.action ?? "",
         clientId: auditLogResponseRow.client_id ?? "",
@@ -197,4 +199,4 @@ export const convertAuditLogResponseToAuditLogRow = (auditLogResponse: Schema["a
         userId: auditLogResponseRow.user_id ?? "",
         wasSuccess: auditLogResponseRow.wasSuccess ?? "",
         websiteData: auditLogResponseRow.website_data ?? "",
-    })));
+    }));
