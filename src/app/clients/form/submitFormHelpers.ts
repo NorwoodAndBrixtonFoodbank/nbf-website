@@ -1,13 +1,11 @@
 import { InsertSchema, UpdateSchema } from "@/databaseUtils";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {
     checkboxGroupToArray,
     NumberAdultsByGender,
     Person,
 } from "@/components/Form/formFunctions";
 import supabase from "@/supabaseClient";
-import { DatabaseError } from "@/app/errorClasses";
-import { logErrorReturnLogId } from "@/logger/logger";
+import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 import { ClientFields } from "./ClientForm";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
@@ -60,13 +58,19 @@ const formatClientRecord = (
         extra_information: extraInformationWithNappy,
         signposting_call_required: fields.signpostingCall,
         flagged_for_attention: fields.attentionFlag,
+        last_updated: fields.lastUpdated,
     };
 };
 
-export const submitAddClientForm = async (
-    fields: ClientFields,
-    router: AppRouterInstance
-): Promise<void> => {
+type addClientErrors = "failedToInsertClientAndFamily";
+type addClientResult =
+    | { clientId: string; error: null }
+    | {
+          clientId: null;
+          error: { type: addClientErrors; logId: string };
+      };
+
+export const submitAddClientForm = async (fields: ClientFields): Promise<addClientResult> => {
     const clientRecord = formatClientRecord(fields);
     const familyMembers = getFamilyMembers(fields.adults, fields.children);
     const { data: clientId, error } = await supabase.rpc("insertClientAndTheirFamily", {
@@ -90,7 +94,7 @@ export const submitAddClientForm = async (
             }
         );
         await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
-        throw new DatabaseError("insert", "client", logId);
+        return { clientId: null, error: { type: "failedToInsertClientAndFamily", logId } };
     }
 
     await sendAuditLog({
@@ -99,21 +103,32 @@ export const submitAddClientForm = async (
         clientId: clientId,
     });
 
-    router.push(`/parcels/add/${clientId}`);
+    return { clientId: clientId, error: null };
 };
+
+type editClientErrors = "failedToUpdateClientAndFamily" | "concurrentUpdateConflict";
+type editClientResult =
+    | { clientId: string; error: null }
+    | {
+          clientId: null;
+          error: { type: editClientErrors; logId: string } | null;
+      };
 
 export const submitEditClientForm = async (
     fields: ClientFields,
-    router: AppRouterInstance,
     primaryKey: string
-): Promise<void> => {
+): Promise<editClientResult> => {
     const clientRecord = formatClientRecord(fields);
     const familyMembers = getFamilyMembers(fields.adults, fields.children);
-    const { data: clientId, error } = await supabase.rpc("updateClientAndTheirFamily", {
-        clientrecord: clientRecord,
-        familymembers: familyMembers,
-        clientid: primaryKey,
-    });
+
+    const { data: clientDataAndCount, error: updateClientError } = await supabase.rpc(
+        "update_client_and_family",
+        {
+            clientrecord: clientRecord,
+            familymembers: familyMembers,
+            clientid: primaryKey,
+        }
+    );
 
     const auditLog = {
         action: "edit a client",
@@ -124,15 +139,21 @@ export const submitEditClientForm = async (
         clientId: primaryKey,
     } as const satisfies Partial<AuditLog>;
 
-    if (error) {
+    if (updateClientError) {
         const logId = await logErrorReturnLogId(
             `Error with updating client and their family: Client id ${primaryKey}`,
             {
-                error,
+                error: updateClientError,
             }
         );
         await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
-        throw new DatabaseError("update", "client", logId);
+        return { clientId: null, error: { type: "failedToUpdateClientAndFamily", logId } };
+    }
+
+    if (clientDataAndCount.updatedrows === 0) {
+        const logId = await logWarningReturnLogId("Concurrent editing of client");
+        await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
+        return { clientId: null, error: { type: "concurrentUpdateConflict", logId } };
     }
 
     await sendAuditLog({
@@ -140,5 +161,5 @@ export const submitEditClientForm = async (
         wasSuccess: true,
     });
 
-    router.push(`/clients?clientId=${clientId}`);
+    return { clientId: clientDataAndCount.clientid, error: null };
 };
