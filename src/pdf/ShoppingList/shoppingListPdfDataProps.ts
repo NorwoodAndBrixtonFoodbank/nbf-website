@@ -40,8 +40,8 @@ const getQuantityAndNotes = (
     if (size >= 10) {
         size = 10;
     }
-    const sizeQuantity = `${size}_quantity` as keyof Schema["lists"];
-    const sizeNotes = `${size}_notes` as keyof Schema["lists"];
+    const sizeQuantity = `quantity_for_${size}` as keyof Schema["lists"];
+    const sizeNotes = `notes_for_${size}` as keyof Schema["lists"];
     return {
         quantity: row[sizeQuantity]?.toString() ?? "",
         notes: row[sizeNotes]?.toString() ?? "",
