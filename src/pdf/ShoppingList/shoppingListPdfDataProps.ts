@@ -1,9 +1,10 @@
 import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import { ClientSummary, RequirementSummary } from "@/common/formatClientsData";
 import { HouseholdSummary } from "@/common/formatFamiliesData";
-import { FetchListsError, fetchLists } from "@/common/fetch";
+import { fetchLists, FetchListsErrorType } from "@/common/fetch";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 export interface Item {
     description: string;
@@ -21,45 +22,77 @@ export interface ShoppingListPdfData {
     endNotes: string;
 }
 
-type PrepareItemsListResponse =
+type PrepareItemsListResult =
     | {
           data: Item[];
           error: null;
       }
     | {
           data: null;
-          error: PrepareItemsListError;
+          error: { type: FetchListsErrorType | GetQuantityAndNotesErrorType; logId: string };
       };
 
-type PrepareItemsListError = FetchListsError;
+const allowedFamilySizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
+type FamilySize = (typeof allowedFamilySizes)[number];
 
-const getQuantityAndNotes = (
+function numberIsValidFamilySize(value: number): value is FamilySize {
+    for (const allowedFamilySize of allowedFamilySizes) {
+        if (allowedFamilySize === value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+export type GetQuantityAndNotesErrorType = "invalidFamilySize";
+export type GetQuantityAndNotesError = { type: GetQuantityAndNotesErrorType; logId: string };
+type GetQuantityAndNotesResult =
+    | { data: Pick<Item, "quantity" | "notes">; error: null }
+    | { data: null; error: GetQuantityAndNotesError };
+
+const getQuantityAndNotes = async (
     row: Schema["lists"],
     size: number
-): Pick<Item, "quantity" | "notes"> => {
+): Promise<GetQuantityAndNotesResult> => {
     if (size >= 10) {
         size = 10;
     }
-    const sizeQuantity = `quantity_for_${size}` as keyof Schema["lists"];
-    const sizeNotes = `notes_for_${size}` as keyof Schema["lists"];
+
+    if (!numberIsValidFamilySize(size)) {
+        const logId = await logErrorReturnLogId("Invalid family size for shopping list pdf");
+        return { data: null, error: { type: "invalidFamilySize", logId } };
+    }
+    const sizeQuantity: keyof Schema["lists"] = `quantity_for_${size}`;
+    const sizeNotes: keyof Schema["lists"] = `notes_for_${size}`;
     return {
-        quantity: row[sizeQuantity]?.toString() ?? "",
-        notes: row[sizeNotes]?.toString() ?? "",
+        data: {
+            quantity: row[sizeQuantity]?.toString() ?? "",
+            notes: row[sizeNotes]?.toString() ?? "",
+        },
+        error: null,
     };
 };
 
 export const prepareItemsListForHousehold = async (
     householdSize: number
-): Promise<PrepareItemsListResponse> => {
+): Promise<PrepareItemsListResult> => {
     const { data: listData, error } = await fetchLists(supabase);
     if (error) {
         return { data: null, error: error };
     }
-    const itemsList = listData.map((row): Item => {
-        return {
+    const itemsList: Item[] = [];
+    for (const row of listData) {
+        const { data: listItemData, error: listItemError } = await getQuantityAndNotes(
+            row,
+            householdSize
+        );
+        if (listItemError) {
+            return { data: null, error: { type: listItemError.type, logId: listItemError.logId } };
+        }
+        itemsList.push({
             description: row.item_name,
-            ...getQuantityAndNotes(row, householdSize),
-        };
-    });
+            ...listItemData,
+        });
+    }
     return { data: itemsList, error: null };
 };

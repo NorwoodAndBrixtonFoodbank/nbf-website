@@ -21,6 +21,8 @@ import {
 import { prepareHouseholdSummary } from "@/common/formatFamiliesData";
 import { prepareParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import {
+    GetQuantityAndNotesError,
+    GetQuantityAndNotesErrorType,
     prepareItemsListForHousehold,
     ShoppingListPdfData,
 } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
@@ -78,12 +80,15 @@ export type ShoppingListPdfError =
     | FetchShoppingListError
     | FetchListsError
     | FetchListsCommentError
-    | FetchParcelError;
+    | FetchParcelError
+    | GetQuantityAndNotesError;
+
 export type ShoppingListPdfErrorType =
     | FetchShoppingListErrorType
     | FetchListsErrorType
     | FetchListsCommentErrorType
-    | FetchParcelErrorType;
+    | FetchParcelErrorType
+    | GetQuantityAndNotesErrorType;
 
 const getShoppingListDataForSingleParcel = async (
     parcelId: string
