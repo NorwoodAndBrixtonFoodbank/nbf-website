@@ -19,6 +19,7 @@ const AccountDetails: React.FC<InviteUserCardProps> = ({
         >
             <>
                 <FreeFormTextInput
+                    id="new-user-email-address"
                     label="Email"
                     error={errorExists(formErrors.email)}
                     helperText={errorText(formErrors.email)}

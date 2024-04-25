@@ -67,6 +67,7 @@ export interface ClientFields extends Fields {
     extraInformation: string;
     attentionFlag: boolean;
     signpostingCall: boolean;
+    lastUpdated: string | undefined;
 }
 
 export interface ClientErrors extends FormErrors<ClientFields> {
@@ -139,18 +140,40 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
             return;
         }
 
-        try {
-            if (editConfig.editMode) {
-                await submitEditClientForm(fields, router, editConfig.clientID);
-            } else {
-                await submitAddClientForm(fields, router);
+        if (editConfig.editMode) {
+            const { clientId, error: editClientError } = await submitEditClientForm(
+                fields,
+                editConfig.clientID
+            );
+            if (editClientError) {
+                switch (editClientError.type) {
+                    case "failedToUpdateClientAndFamily":
+                        setSubmitErrorMessage(
+                            `Failed to update client and family. Log ID: ${editClientError.logId}`
+                        );
+                        break;
+                    case "concurrentUpdateConflict":
+                        setSubmitErrorMessage(
+                            `Record has been updated recently - please refresh. Log ID: ${editClientError.logId}`
+                        );
+                        break;
+                }
+                return;
             }
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                setSubmitError(Errors.external);
-                setSubmitErrorMessage(error.message);
-                setSubmitDisabled(false);
+            router.push(`/clients?clientId=${clientId}`);
+        } else {
+            const { clientId, error: addClientError } = await submitAddClientForm(fields);
+            if (addClientError) {
+                switch (addClientError.type) {
+                    case "failedToInsertClientAndFamily":
+                        setSubmitErrorMessage(
+                            `Failed to add client and family. Log ID: ${addClientError.logId}`
+                        );
+                        break;
+                }
+                return;
             }
+            router.push(`/parcels/add/${clientId}`);
         }
     };
 

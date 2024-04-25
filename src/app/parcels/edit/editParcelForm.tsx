@@ -38,6 +38,7 @@ const prepareParcelDataForForm = (
         collectionDate: parcelData.collection_datetime,
         collectionTime: parcelData.collection_datetime,
         collectionCentre: parcelData.collection_centre?.primary_key ?? null,
+        lastUpdated: parcelData.last_updated,
     };
 };
 

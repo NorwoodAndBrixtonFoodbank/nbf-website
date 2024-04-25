@@ -11,7 +11,7 @@ export type Database = {
     Tables: {
       audit_log: {
         Row: {
-          action: string | null
+          action: string
           client_id: string | null
           collection_centre_id: string | null
           content: Json | null
@@ -30,7 +30,7 @@ export type Database = {
           website_data: string | null
         }
         Insert: {
-          action?: string | null
+          action: string
           client_id?: string | null
           collection_centre_id?: string | null
           content?: Json | null
@@ -49,7 +49,7 @@ export type Database = {
           website_data?: string | null
         }
         Update: {
-          action?: string | null
+          action?: string
           client_id?: string | null
           collection_centre_id?: string | null
           content?: Json | null
@@ -197,6 +197,7 @@ export type Database = {
           feminine_products: string[]
           flagged_for_attention: boolean
           full_name: string
+          last_updated: string
           other_items: string[]
           pet_food: string[]
           phone_number: string
@@ -217,6 +218,7 @@ export type Database = {
           feminine_products?: string[]
           flagged_for_attention?: boolean
           full_name?: string
+          last_updated?: string
           other_items?: string[]
           pet_food?: string[]
           phone_number?: string
@@ -237,6 +239,7 @@ export type Database = {
           feminine_products?: string[]
           flagged_for_attention?: boolean
           full_name?: string
+          last_updated?: string
           other_items?: string[]
           pet_food?: string[]
           phone_number?: string
@@ -535,6 +538,7 @@ export type Database = {
           collection_centre: string | null
           collection_datetime: string | null
           created_at: string
+          last_updated: string
           packing_date: string | null
           packing_slot: string | null
           primary_key: string
@@ -545,6 +549,7 @@ export type Database = {
           collection_centre?: string | null
           collection_datetime?: string | null
           created_at?: string
+          last_updated?: string
           packing_date?: string | null
           packing_slot?: string | null
           primary_key?: string
@@ -555,6 +560,7 @@ export type Database = {
           collection_centre?: string | null
           collection_datetime?: string | null
           created_at?: string
+          last_updated?: string
           packing_date?: string | null
           packing_slot?: string | null
           primary_key?: string
@@ -769,25 +775,32 @@ export type Database = {
         }
         Returns: undefined
       }
-      updateClientAndTheirFamily: {
+      update_client_and_family: {
         Args: {
           clientrecord: Json
-          familymembers: Json
           clientid: string
+          familymembers: Json
         }
-        Returns: string
+        Returns: Database["public"]["CompositeTypes"]["update_client_result"]
       }
       user_is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      user_is_admin_or_manager_or_staff: {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
     }
     Enums: {
       gender: "male" | "female" | "other"
-      role: "caller" | "admin"
+      role: "volunteer" | "admin" | "manager" | "staff"
     }
     CompositeTypes: {
-      [_ in never]: never
+      update_client_result: {
+        clientid: string | null
+        updatedrows: number | null
+      }
     }
   }
 }

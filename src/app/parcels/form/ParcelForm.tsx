@@ -51,6 +51,7 @@ export interface ParcelFields extends Fields {
     collectionDate: string | null;
     collectionTime: string | null;
     collectionCentre: string | null;
+    lastUpdated: string | undefined;
 }
 
 export interface ParcelErrors extends FormErrors<ParcelFields> {
@@ -74,6 +75,7 @@ export const initialParcelFields: ParcelFields = {
     collectionDate: null,
     collectionTime: null,
     collectionCentre: null,
+    lastUpdated: undefined,
 };
 
 export const initialParcelFormErrors: ParcelErrors = {
@@ -138,7 +140,6 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     const router = useRouter();
     const [fields, setFields] = useState(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
-    const [submitError, setSubmitError] = useState(Errors.none);
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
     const [submitDisabled, setSubmitDisabled] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
@@ -165,7 +166,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                 packingSlot: Errors.invalidPackingSlot,
             }));
         }
-    }, []);
+    }, [editMode, packingSlotIsShown]);
 
     const formSections =
         fields.shippingMethod === "Collection"
@@ -190,7 +191,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             ]);
         }
         if (inputError) {
-            setSubmitError(Errors.submit);
+            setSubmitErrorMessage(Errors.submit);
             setSubmitDisabled(false);
             return;
         }
@@ -215,21 +216,38 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             voucher_number: fields.voucherNumber,
             collection_centre: isDelivery ? deliveryPrimaryKey : fields.collectionCentre,
             collection_datetime: collectionDateTime,
+            last_updated: fields.lastUpdated,
         };
 
-        try {
-            if (editMode) {
-                await updateParcel(formToAdd, parcelId!);
-            } else {
-                await insertParcel(formToAdd);
+        if (editMode) {
+            const { error: updateParcelError } = await updateParcel(formToAdd, parcelId!);
+            if (updateParcelError) {
+                let errorMessage: string;
+                switch (updateParcelError.type) {
+                    case "failedToUpdateParcel":
+                        errorMessage = `Failed to update parcel. Log ID: ${updateParcelError.logId}`;
+                        break;
+                    case "concurrentUpdateConflict":
+                        errorMessage = `Record has been edited recently - please refresh the page. LogID: ${updateParcelError.logId}`;
+                        break;
+                }
+                setSubmitErrorMessage(errorMessage);
+                return;
             }
-            router.push("/parcels/");
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                setSubmitError(Errors.external);
-                setSubmitErrorMessage(error.message);
+        } else {
+            const { error: insertParcelError } = await insertParcel(formToAdd);
+            if (insertParcelError) {
+                let errorMessage: string;
+                switch (insertParcelError.type) {
+                    case "failedToInsertParcel":
+                        errorMessage = `Failed to insert parcel. Log ID: ${insertParcelError.logId}`;
+                        break;
+                }
+                setSubmitErrorMessage(errorMessage);
+                return;
             }
         }
+        router.push("/parcels/");
         setSubmitDisabled(false);
     };
 
@@ -269,7 +287,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                         Submit
                     </Button>
                 </CenterComponent>
-                <FormErrorText>{submitErrorMessage || submitError}</FormErrorText>
+                <FormErrorText>{submitErrorMessage}</FormErrorText>
             </StyledForm>
             {clientDetails && (
                 <Modal

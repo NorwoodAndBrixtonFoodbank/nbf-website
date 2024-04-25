@@ -35,7 +35,7 @@ export type InviteUserCardProps = CardProps<InviteUserFields, InviteUserErrors>;
 
 const initialFields: InviteUserFields = {
     email: "",
-    role: "caller",
+    role: "volunteer",
     firstName: "",
     lastName: "",
     telephoneNumber: "",
@@ -46,7 +46,7 @@ const initialFormErrors: InviteUserErrors = {
     role: Errors.none,
     firstName: Errors.initial,
     lastName: Errors.initial,
-    telephoneNumber: Errors.initial,
+    telephoneNumber: Errors.none,
 };
 
 const getServerErrorMessage = (serverError: InviteUserError): string => {

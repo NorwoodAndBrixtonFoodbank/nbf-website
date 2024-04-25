@@ -1,31 +1,12 @@
 # Disaster Recovery Plan
 
 ## Overview
-A backup of the dev database is taken every hour using a GitHub workflow. When a disaster strikes where the dev database needs to be restored, follow this guide.
-
-## Making a backup manually
-- Link to the project you want a backup for
-  ```bash
-  npx supabase link
-  ```
-- Dump the database into backup files using the following three commands
-  - Schema
-    ```bash
-    npx supabase db dump -f supabase/schema.sql
-    ```
-  - Database roles
-    ```bash
-    npx supabase db dump --role-only -f supabase/role.sql
-    ```
-  - Data
-    ```bash
-    npx supabase db dump --data-only -f supabase/data.sql
-    ```
+A backup of the dev database is taken every hour using a GitHub workflow. See the workflow definition for the commands to generate backup files. When a disaster strikes where the dev database needs to be restored, follow this guide.
 
 ## Restoring Supabase with a backup
-- Create a new supabase project in the same organisation 
+- Create a new Supabase project in the same organisation as the original Supabase project 
   - generate a DB password and add it to Keeper 
-  - choose London
+  - choose London as its location
 - Go to Project Settings > Database (under Configuration) and find the connection string under the "PSQL" tab for the newly created project
 - Restore database using the backup files, in the following order.
   ```bash
