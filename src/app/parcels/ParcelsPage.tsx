@@ -49,7 +49,7 @@ import { ActionsContainer } from "@/components/Form/formStyling";
 import { formatDateTime, formatDatetimeAsDate } from "@/common/format";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
-    ["iconsColumn", "Flags"],
+    ["iconsColumn", ""],
     ["fullName", "Name"],
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],
@@ -63,6 +63,7 @@ export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
 ];
 
 const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
+    "iconsColumn",
     "fullName",
     "familyCategory",
     "addressPostcode",
@@ -173,7 +174,7 @@ const toggleableHeaders: (keyof ParcelsTableRow)[] = [
 
 const parcelTableColumnStyleOptions = {
     iconsColumn: {
-        width: "3rem",
+        width: "4rem",
     },
     fullName: {
         minWidth: "8rem",
