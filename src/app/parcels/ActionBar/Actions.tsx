@@ -19,10 +19,6 @@ const isNotAtLeastOne = (value: number): boolean => {
     return value < 1;
 };
 
-const doesNotEqualOne = (value: number): boolean => {
-    return value !== 1;
-};
-
 const doesNotEqualZero = (value: number): boolean => {
     return value !== 0;
 };
@@ -45,8 +41,8 @@ type AvailableActionsType = {
 
 export const availableActions: AvailableActionsType = {
     "Download Shipping Labels": {
-        errorCondition: doesNotEqualOne,
-        errorMessage: "Please select exactly one parcel.",
+        errorCondition: isNotAtLeastOne,
+        errorMessage: "Please select at least one parcel.",
         newStatus: "Shipping Labels Downloaded",
     },
     "Download Shopping Lists": {
