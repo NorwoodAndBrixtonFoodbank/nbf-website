@@ -75,15 +75,17 @@ const getErrorType = (
     regex?: RegExp,
     additionalCondition?: (value: string) => boolean
 ): Errors => {
-    if (required && input === "") {
-        return Errors.required;
+    if (input == "") {
+        return required ? Errors.required : Errors.none;
     }
+
     if (
         (regex !== undefined && !input.match(regex)) ||
         (additionalCondition !== undefined && !additionalCondition(input))
     ) {
         return Errors.invalid;
     }
+
     return Errors.none;
 };
 

@@ -62,6 +62,7 @@ const autofill = (
         extraInformation: extraInformation,
         attentionFlag: clientData.flagged_for_attention,
         signpostingCall: clientData.signposting_call_required,
+        lastUpdated: clientData.last_updated,
     };
 };
 
