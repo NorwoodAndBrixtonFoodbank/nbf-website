@@ -33,7 +33,7 @@ const AddressCard: React.FC<ClientCardProps> = ({
     const handleCheckCheckbox = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setClientHasNoAddress(event.target.checked);
         if (event.target.checked) {
-            errorSetter({ ["addressPostcode"]: Errors.none, ["addressLine1"]: Errors.none });
+            errorSetter({ addressPostcode: Errors.none, addressLine1: Errors.none });
             fieldSetter({
                 addressPostcode: null,
                 addressLine1: "",
