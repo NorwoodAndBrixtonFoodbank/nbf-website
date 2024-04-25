@@ -120,7 +120,7 @@ const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
                     <View style={[styles.leftCol, styles.bottomAlign]}>
                         <Text style={styles.largeText}>{data.address_postcode}</Text>
                     </View>
-                    <View style={[styles.middleCol, styles.bottomAlign, {flexDirection: "row"}]}>
+                    <View style={[styles.middleCol, styles.bottomAlign, { flexDirection: "row" }]}>
                         <Text style={styles.mediumText}>
                             {data.packing_slot} |
                             {data.collection_centre !== "DLVR"
@@ -133,7 +133,6 @@ const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
                                     ? faBuildingCircleArrowRight
                                     : faTruck
                             }
-                            style={{ width: "5px" }}
                         ></FontAwesomeIconPdfComponent>
                     </View>
                     <View style={[styles.rightCol, styles.bottomAlign]}>

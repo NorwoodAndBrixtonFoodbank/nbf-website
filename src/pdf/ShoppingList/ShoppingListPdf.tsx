@@ -233,7 +233,6 @@ const SingleShoppingList: React.FC<SingleShoppingListProps> = ({ parcelData }) =
                                         ? faTruck
                                         : faBuildingCircleArrowRight
                                 }
-                                style={{ width: "5px" }}
                             ></FontAwesomeIconPdfComponent>
                         </View>
                         <Text style={styles.subtitle}>POSTCODE: {parcelData.postcode}</Text>
