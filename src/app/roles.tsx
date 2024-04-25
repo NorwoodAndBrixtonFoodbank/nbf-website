@@ -22,20 +22,20 @@ const pathsShownToAllAuthenticatedUsers = [
     "/set-password",
 ] as const;
 
-const pathsOnlyShownToManager = ["/lists"] as const;
+const pathsOnlyShownToStaffAndAbove = ["/lists"] as const;
 
 const pathsOnlyShownToAdmin = ["/admin", "/lists"] as const;
 
 const getShownPagesByRole = (role: UserRole | null): readonly string[] => {
     switch (role) {
         case "admin":
-            return [...pathsShownToAllAuthenticatedUsers, ...pathsOnlyShownToAdmin];
+            return [...pathsShownToAllAuthenticatedUsers, ...pathsOnlyShownToStaffAndAbove, ...pathsOnlyShownToAdmin];
+        case "manager":
+            return [...pathsShownToAllAuthenticatedUsers, ...pathsOnlyShownToStaffAndAbove];
+        case "staff":
+            return [...pathsShownToAllAuthenticatedUsers, ...pathsOnlyShownToStaffAndAbove];
         case "volunteer":
             return pathsShownToAllAuthenticatedUsers;
-        case "manager":
-            return [...pathsShownToAllAuthenticatedUsers, ...pathsOnlyShownToManager];
-        case "staff":
-            return [...pathsShownToAllAuthenticatedUsers, ...pathsOnlyShownToManager];
         case null:
             return pathsNotRequiringLogin;
     }

@@ -20,7 +20,7 @@ BEGIN
     WHILE index <= total_count LOOP
         SELECT user_id INTO profile_id FROM user_id_array WHERE array_index = index;
         SELECT "role" INTO profile_role FROM user_id_array WHERE array_index = index;
-        INSERT INTO profiles (primary_key, "role") VALUES (profile_id, COALESCE(profile_role, 'volunteer'));
+        INSERT INTO profiles (primary_key, "role") VALUES (profile_id, COALESCE(profile_role, 'caller'));
         index := index + 1;
     END LOOP;
 END;
