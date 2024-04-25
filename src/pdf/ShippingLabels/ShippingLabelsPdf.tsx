@@ -123,15 +123,15 @@ const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
                     <View style={[styles.middleCol, styles.bottomAlign, { flexDirection: "row" }]}>
                         <Text style={styles.mediumText}>
                             {data.packing_slot} |
-                            {data.collection_centre !== "DLVR"
-                                ? data.collection_centre + " "
-                                : "Delivery "}
+                            {data.collection_centre === "DLVR"
+                                ? "Delivery "
+                                : data.collection_centre + " "}
                         </Text>
                         <FontAwesomeIconPdfComponent
                             faIcon={
-                                data.collection_centre !== "DLVR"
-                                    ? faBuildingCircleArrowRight
-                                    : faTruck
+                                data.collection_centre === "DLVR"
+                                    ? faTruck
+                                    : faBuildingCircleArrowRight
                             }
                         ></FontAwesomeIconPdfComponent>
                     </View>
