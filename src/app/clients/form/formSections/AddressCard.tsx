@@ -83,6 +83,7 @@ const AddressCard: React.FC<ClientCardProps> = ({
                             )}
                         />
                         <FreeFormTextInput
+                            id="client-address-postcode"
                             label="Postcode* (For example, SE11 5QY)"
                             defaultValue={getDefaultTextValue(fields, "addressPostcode")}
                             error={errorExists(formErrors.addressPostcode)}

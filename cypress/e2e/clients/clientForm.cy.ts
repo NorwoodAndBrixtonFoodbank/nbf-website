@@ -5,44 +5,88 @@ describe("Add client form", () => {
     });
 
     it("Add a client with no address", () => {
-        toggleNoAddress();
         fillName(fullName);
         fillNumberAdults("1");
         fillNumberChildren("0");
+
+        toggleNoAddress();
+
         clickSubmitForm();
 
         assertAddClientFormSubmittedSuccessfully();
     });
 
-    const fullName = "First Last";
-    const noAddressText = "No Address";
+    it("Submit a client with empty address fields but No Address unchecked", () => {
+        fillName(fullName);
+        fillNumberAdults("1");
+        fillNumberChildren("0");
 
-    function toggleNoAddress(): void {
-        cy.contains(noAddressText, { matchCase: false }).click();
-    }
+        clickSubmitForm();
 
-    function fillName(value: string): void {
-        fillTextboxWithId("client-full-name", value);
-    }
+        assertSubmitErrorShown();
+    });
 
-    function fillNumberAdults(value: string): void {
-        fillTextboxWithId("client-number-females", value);
-    }
+    it("Type in postcode, check no address, uncheck no address", () => {
 
-    function fillNumberChildren(value: string): void {
-        fillTextboxWithId("client-number-children", value);
-    }
+        fillPostcode(postcode);
 
-    function clickSubmitForm(): void {
-        cy.contains("Submit").click();
-    }
+        toggleNoAddress();
 
-    function assertAddClientFormSubmittedSuccessfully(): void {
-        cy.contains("Add Parcel").should("be.visible");
-        cy.contains(fullName).should("be.visible");
-    }
+        toggleNoAddress();
 
-    function fillTextboxWithId(id: string, value: string): void {
-        cy.get(`#${id}`).type(value);
-    }
+        assertPostcodeContentNotDisplayed();
+    });
 });
+
+const fullName = "First Last";
+const noAddressText = "No Address";
+const postcode = "N11AA";
+
+function toggleNoAddress(): void {
+    cy.contains(noAddressText, { matchCase: false }).click();
+}
+
+function fillName(value: string): void {
+    fillTextboxWithId("client-full-name", value);
+}
+
+function fillNumberAdults(value: string): void {
+    fillTextboxWithId("client-number-females", value);
+}
+
+function fillNumberChildren(value: string): void {
+    fillTextboxWithId("client-number-children", value);
+}
+
+function fillPostcode(value: string): void {
+    fillTextboxWithId("client-address-postcode", value);
+}
+
+function clickSubmitForm(): void {
+    cy.contains("Submit").click();
+}
+
+function checkIfPostcodeFieldVisible(): void {
+    cy.get("client-address-postcode").should("be.visible");
+}
+
+function checkIfPostcodeFieldHidden(): void {
+    cy.get("client-address-postcode").should("not.be.visible");
+}
+
+function assertAddClientFormSubmittedSuccessfully(): void {
+    cy.contains("Add Parcel").should("be.visible");
+    cy.contains(fullName).should("be.visible");
+}
+
+function assertSubmitErrorShown(): void {
+    cy.contains("Please ensure all fields have been entered correctly. Required fields are labelled with an asterisk.").should("be.visible");
+}
+
+function assertPostcodeContentNotDisplayed(): void {
+    cy.contains(postcode).should("not.exist");
+}
+
+function fillTextboxWithId(id: string, value: string): void {
+    cy.get(`#${id}`).type(value);
+}
