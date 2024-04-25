@@ -5,6 +5,8 @@ import { HouseholdSummary } from "@/common/formatFamiliesData";
 import { formatCamelCaseKey } from "@/common/format";
 import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import { Item, ShoppingListPdfData } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
+import { faBuildingCircleArrowRight, faTruck } from "@fortawesome/free-solid-svg-icons";
+import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
 
 export type BlockProps = ParcelInfo | HouseholdSummary | RequirementSummary;
 
@@ -92,13 +94,6 @@ const styles = StyleSheet.create({
     inputText: {
         paddingTop: "10pt",
     },
-    checkBox: {
-        alignSelf: "center",
-        width: "18pt",
-        height: "18pt",
-        borderStyle: "solid",
-        border: "1pt",
-    },
     tableCell: {
         borderStyle: "solid",
         border: "1pt",
@@ -121,6 +116,9 @@ const OneLine: React.FC<OneLineProps> = ({ header, value }) => {
 const TableHeadings: React.FC<{}> = () => {
     return (
         <View style={[styles.flexRow, styles.tableRow]}>
+            <View style={styles.tableDone}>
+                <Text style={styles.keyText}>Done</Text>
+            </View>
             <View style={styles.tableItemDescription}>
                 <Text style={styles.keyText}>Item Description</Text>
             </View>
@@ -130,9 +128,6 @@ const TableHeadings: React.FC<{}> = () => {
             <View style={styles.tableNotes}>
                 <Text style={styles.keyText}>Notes</Text>
             </View>
-            <View style={styles.tableDone}>
-                <Text style={styles.keyText}>Done</Text>
-            </View>
         </View>
     );
 };
@@ -140,6 +135,7 @@ const TableHeadings: React.FC<{}> = () => {
 const ItemToRow: React.FC<Item> = (item) => {
     return (
         <View style={[styles.flexRow, styles.tableRow]} wrap={false}>
+            <View style={styles.tableDone} />
             <View style={styles.tableItemDescription}>
                 <Text style={styles.normalText}>{item.description}</Text>
             </View>
@@ -148,9 +144,6 @@ const ItemToRow: React.FC<Item> = (item) => {
             </View>
             <View style={styles.tableNotes}>
                 <Text style={styles.normalText}>{item.notes}</Text>
-            </View>
-            <View style={styles.tableDone}>
-                <View style={styles.checkBox} />
             </View>
         </View>
     );
@@ -231,7 +224,18 @@ const SingleShoppingList: React.FC<SingleShoppingListProps> = ({ parcelData }) =
             <View style={styles.page}>
                 <View style={[styles.flexRow, styles.pdfHeader]}>
                     <View style={styles.flexColumn}>
-                        <Text style={styles.title}>Shopping List</Text>
+                        <View style={styles.flexRow}>
+                            <Text style={styles.title}>Shopping List</Text>
+                            <Text style={styles.title}> |</Text>
+                            <FontAwesomeIconPdfComponent
+                                faIcon={
+                                    parcelData.parcelInfo.collectionSite === "N/A - Delivery"
+                                        ? faTruck
+                                        : faBuildingCircleArrowRight
+                                }
+                                style={{ width: "5px" }}
+                            ></FontAwesomeIconPdfComponent>
+                        </View>
                         <Text style={styles.subtitle}>POSTCODE: {parcelData.postcode}</Text>
                     </View>
                     {/* eslint-disable-next-line jsx-a11y/alt-text -- React-PDF Image doesn't  have alt text property*/}
@@ -248,13 +252,23 @@ const SingleShoppingList: React.FC<SingleShoppingListProps> = ({ parcelData }) =
                     <DisplayItemsList itemsList={parcelData.itemsList} />
                 </View>
                 <View style={styles.flexColumn} wrap={false}>
-                    <Text style={[styles.keyText, { paddingTop: "5pt" }]}>
-                        Warehouse Manager Notes
-                    </Text>
-                    <Text style={styles.normalText}>{parcelData.endNotes}</Text>
-                    <Text style={[styles.keyText, styles.inputText]}>Date Packed:</Text>
-                    <Text style={[styles.keyText, styles.inputText]}>Packer Name:</Text>
-                    <Text style={[styles.keyText, styles.inputText]}>Packer Signature:</Text>
+                    <View style={[styles.flexRow, styles.infoCell]}>
+                        <Text style={[styles.keyText, { paddingTop: "5pt" }]}>
+                            Warehouse Manager Notes
+                        </Text>
+                    </View>
+                    <View style={[styles.flexRow, styles.infoCell]}>
+                        <Text style={styles.normalText}>{parcelData.endNotes}</Text>
+                    </View>
+                    <View style={[styles.flexRow, styles.infoCell]}>
+                        <Text style={[styles.keyText, styles.inputText]}>Date Packed:</Text>
+                    </View>
+                    <View style={[styles.flexRow, styles.infoCell]}>
+                        <Text style={[styles.keyText, styles.inputText]}>Packer Name:</Text>
+                    </View>
+                    <View style={[styles.flexRow, styles.infoCell]}>
+                        <Text style={[styles.keyText, styles.inputText]}>Packer Signature:</Text>
+                    </View>
                 </View>
             </View>
         </Page>
