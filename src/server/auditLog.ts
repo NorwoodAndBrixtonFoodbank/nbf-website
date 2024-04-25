@@ -1,11 +1,11 @@
 "use server";
 
-import { getCurrentUser } from "@/server/getCurrentUser";
 import { InsertSchema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { Json } from "@/databaseTypesFile";
 import { getSupabaseServerComponentClient } from "@/supabaseServer";
+import { getCurrentProfile } from "./getCurrentProfile";
 
 type AuditLogInsertRecord = InsertSchema["audit_log"];
 export interface AuditLog {
@@ -25,20 +25,15 @@ export interface AuditLog {
 }
 
 export async function sendAuditLog(auditLogProps: AuditLog): Promise<void> {
-    const { data: currentUser, error: currentUserError } = await getCurrentUser();
+    const { data: currentProfile, error: currentProfileError } = await getCurrentProfile();
 
-    if (currentUserError) {
-        const logId = await logErrorReturnLogId("failed to fetch current user for audit log");
-        throw new DatabaseError("fetch", "current user for audit log", logId);
-    }
-
-    if (currentUser === null) {
-        const logId = await logErrorReturnLogId("failed to fetch current user for audit log");
-        throw new DatabaseError("fetch", "current user for audit log", logId);
+    if (currentProfileError) {
+        const logId = await logErrorReturnLogId("failed to fetch current profile for audit log");
+        throw new DatabaseError("fetch", "current profile error for audit log", logId);
     }
 
     const auditLog: AuditLogInsertRecord = {
-        user_id: currentUser.id,
+        actor_profile_id: currentProfile.primary_key,
         action: auditLogProps.action,
         client_id: auditLogProps.clientId,
         collection_centre_id: auditLogProps.collectionCentreId,

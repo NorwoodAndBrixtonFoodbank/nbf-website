@@ -14,7 +14,7 @@ type CurrentUserResponse =
           error: CurrentUserError;
       };
 type CurrentUserErrorType = "userFetchFailed";
-interface CurrentUserError {
+export interface CurrentUserError {
     type: CurrentUserErrorType;
     logId: string;
 }
