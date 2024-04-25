@@ -147,7 +147,7 @@ const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
 };
 
 export interface ShippingLabelsPdfProps {
-    data: ShippingLabelData;
+    data: ShippingLabelData[];
 }
 
 const ShippingLabelsPdf: React.FC<ShippingLabelsPdfProps> = ({ data }) => {

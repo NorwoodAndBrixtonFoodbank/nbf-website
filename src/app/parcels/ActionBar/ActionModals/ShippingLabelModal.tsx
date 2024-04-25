@@ -110,7 +110,7 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
             actionButton={
                 <ShippingLabelsPdfButton
                     disabled={!isInputValid}
-                    parcel={props.selectedParcels[0]}
+                    parcel={props.selectedParcels}
                     labelQuantity={labelQuantity}
                     onPdfCreationCompleted={onPdfCreationCompleted}
                     onPdfCreationFailed={onPdfCreationFailed}
