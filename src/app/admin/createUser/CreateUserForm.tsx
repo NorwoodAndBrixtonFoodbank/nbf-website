@@ -43,7 +43,7 @@ const initialFormErrors: FormErrors = {
     role: Errors.none,
     firstName: Errors.initial,
     lastName: Errors.initial,
-    telephoneNumber: Errors.initial,
+    telephoneNumber: Errors.none,
 };
 
 const getServerErrorMessage = (serverError: InviteUserError): string => {
