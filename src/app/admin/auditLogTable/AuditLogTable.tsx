@@ -5,12 +5,9 @@ import Table, { SortState } from "@/components/Tables/Table";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-import { Json } from "@/databaseTypesFile";
+import { fetchAuditLog, fetchAuditLogCount } from "./fetchAuditLogData";
 import {
-    fetchAuditLog,
-    fetchAuditLogCount,
-} from "./fetchAuditLogData";
-import {
+    AuditLogRow,
     auditLogTableColumnDisplayFunctions,
     auditLogTableHeaderKeysAndLabels,
     convertAuditLogResponseToAuditLogRow,
@@ -18,26 +15,7 @@ import {
     getAuditLogErrorMessage,
     numberOfAuditLogRowsPerPageOption,
     sortableColumns,
-} from "./auditLogConfig";
-
-export interface AuditLogRow {
-    action: string;
-    clientId: string;
-    collectionCentreId: string;
-    content: Json;
-    createdAt: string;
-    eventId: string;
-    listHotelId: string;
-    listId: string;
-    logId: string;
-    packingSlotId: string;
-    parcelId: string;
-    profileId: string;
-    statusOrder: string;
-    userId: string;
-    wasSuccess: boolean;
-    websiteData: string;
-}
+} from "./auditLogTableConstants";
 
 const AuditLogTable: React.FC = () => {
     const [auditLogDataPortion, setAuditLogDataPortion] = useState<AuditLogRow[]>([]);

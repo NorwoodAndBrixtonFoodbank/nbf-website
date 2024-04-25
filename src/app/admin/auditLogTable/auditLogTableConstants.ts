@@ -1,9 +1,28 @@
 import { formatDateTime, formatBoolean, formatJson } from "@/common/format";
 import { PaginationType } from "@/components/Tables/Filters";
 import { TableHeaders, SortOptions } from "@/components/Tables/Table";
-import { AuditLogRow } from "./AuditLogTable";
 import { AuditLogError, AuditLogCountError } from "./fetchAuditLogData";
 import { Schema } from "@/databaseUtils";
+import { Json } from "@/databaseTypesFile";
+
+export interface AuditLogRow {
+    action: string;
+    clientId: string;
+    collectionCentreId: string;
+    content: Json;
+    createdAt: string;
+    eventId: string;
+    listHotelId: string;
+    listId: string;
+    logId: string;
+    packingSlotId: string;
+    parcelId: string;
+    profileId: string;
+    statusOrder: string;
+    userId: string;
+    wasSuccess: boolean;
+    websiteData: string;
+}
 
 export const auditLogTableHeaderKeysAndLabels: TableHeaders<AuditLogRow> = [
     ["action", "Action"],
