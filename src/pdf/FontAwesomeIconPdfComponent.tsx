@@ -7,10 +7,11 @@ interface FontAwesomeIconProps {
 }
 
 const FontAwesomeIconPdfComponent = ({ faIcon: { icon } }: FontAwesomeIconProps): ReactElement => {
-    const isDuoTone = Array.isArray(icon[4]);
     const width = icon[0];
     const height = icon[1];
-    const paths = Array.isArray(icon[4]) ? icon[4] : [icon[4]];
+    const unicode = icon[4];
+    const isDuoTone = Array.isArray(unicode);
+    const paths = isDuoTone ? unicode : [unicode];
     const color = "black";
     return (
         <Svg viewBox={`0 0 ${width} ${height}`} style={{ width: "20px" }}>
