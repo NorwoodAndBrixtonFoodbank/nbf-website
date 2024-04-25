@@ -64,39 +64,42 @@ export const filtersToComponents = <Data,>(
     });
 };
 
-const TableFilterBar = <Data,>(props: Props<Data>): React.ReactElement => {
-    const [showAdditional, setShowAdditional] = useState(false);
+const TableFilterAndExtraColumnsBar = <Data,>(props: Props<Data>): React.ReactElement => {
+    const [showMoreFiltersAndHeaders, setShowMoreFiltersAndHeaders] = useState(false);
 
-    const hasAdditional =
-        props.additionalFilters.length !== 0 || props.toggleableHeaders.length !== 0;
+    const hasPrimaryFilters = props.filters.length !== 0;
+
+    const hasAdditionalFilters = props.additionalFilters.length !== 0;
+
+    const hasToggleableHeaders = props.toggleableHeaders.length !== 0;
 
     const handleToggleAdditional = (): void => {
-        setShowAdditional(!showAdditional);
+        setShowMoreFiltersAndHeaders((prev) => !prev);
     };
 
-    if (props.filters.length === 0 && !hasAdditional) {
+    if (!hasPrimaryFilters && !hasAdditionalFilters && !hasToggleableHeaders) {
         return <></>;
     }
 
     return (
         <>
             <FiltersAndIconContainer>
-                <FilterAltOutlined />
+                {hasPrimaryFilters && <FilterAltOutlined />}
                 <FilterContainer>
-                    {props.filters.length > 0 && (
-                        <>
-                            {filtersToComponents(props.filters, props.setFilters)}
-                            <Grow />
-                            {hasAdditional && (
-                                <StyledButton
-                                    variant="outlined"
-                                    onClick={handleToggleAdditional}
-                                    color="inherit"
-                                    startIcon={<FilterAltOutlined />}
-                                >
-                                    {showAdditional ? "Less" : "More"}
-                                </StyledButton>
-                            )}
+                    <>
+                        {filtersToComponents(props.filters, props.setFilters)}
+                        <Grow />
+                        {(hasAdditionalFilters || hasToggleableHeaders) && (
+                            <StyledButton
+                                variant="outlined"
+                                onClick={handleToggleAdditional}
+                                color="inherit"
+                                startIcon={<FilterAltOutlined />}
+                            >
+                                {showMoreFiltersAndHeaders ? "Less" : "More"}
+                            </StyledButton>
+                        )}
+                        {(hasPrimaryFilters || hasAdditionalFilters) && (
                             <StyledButton
                                 variant="outlined"
                                 onClick={props.handleClear}
@@ -105,14 +108,14 @@ const TableFilterBar = <Data,>(props: Props<Data>): React.ReactElement => {
                             >
                                 Clear
                             </StyledButton>
-                        </>
-                    )}
+                        )}
+                    </>
                 </FilterContainer>
             </FiltersAndIconContainer>
-            {hasAdditional && showAdditional && (
+            {(hasAdditionalFilters || hasToggleableHeaders) && showMoreFiltersAndHeaders && (
                 <>
                     <FiltersAndIconContainer>
-                        <FilterAltOutlined />
+                        {hasAdditionalFilters && <FilterAltOutlined />}
                         <FilterContainer>
                             {props.additionalFilters.length > 0 && (
                                 <>
@@ -139,4 +142,4 @@ const TableFilterBar = <Data,>(props: Props<Data>): React.ReactElement => {
     );
 };
 
-export default TableFilterBar;
+export default TableFilterAndExtraColumnsBar;
