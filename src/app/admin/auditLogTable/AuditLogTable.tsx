@@ -78,7 +78,7 @@ const AuditLogTable: React.FC = () => {
                 defaultShownHeaders={[
                     "action",
                     "createdAt",
-                    "userId",
+                    "actorProfileId",
                     "content",
                     "wasSuccess",
                     "logId",

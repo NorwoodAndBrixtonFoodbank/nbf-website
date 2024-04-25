@@ -4,7 +4,7 @@ import { AuditLogRow } from "./types";
 export const auditLogTableHeaderKeysAndLabels: TableHeaders<AuditLogRow> = [
     ["action", "Action"],
     ["createdAt", "Time"],
-    ["userId", "User ID"],
+    ["actorProfileId", "Actor Profile ID"],
     ["content", "Content"],
     ["wasSuccess", "Success"],
     ["logId", "Log ID"],

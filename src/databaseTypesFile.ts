@@ -12,6 +12,7 @@ export type Database = {
       audit_log: {
         Row: {
           action: string
+          actor_profile_id: string | null
           client_id: string | null
           collection_centre_id: string | null
           content: Json | null
@@ -25,12 +26,12 @@ export type Database = {
           primary_key: string
           profile_id: string | null
           status_order: string | null
-          user_id: string
           wasSuccess: boolean
           website_data: string | null
         }
         Insert: {
           action: string
+          actor_profile_id?: string | null
           client_id?: string | null
           collection_centre_id?: string | null
           content?: Json | null
@@ -44,12 +45,12 @@ export type Database = {
           primary_key?: string
           profile_id?: string | null
           status_order?: string | null
-          user_id: string
           wasSuccess: boolean
           website_data?: string | null
         }
         Update: {
           action?: string
+          actor_profile_id?: string | null
           client_id?: string | null
           collection_centre_id?: string | null
           content?: Json | null
@@ -63,11 +64,17 @@ export type Database = {
           primary_key?: string
           profile_id?: string | null
           status_order?: string | null
-          user_id?: string
           wasSuccess?: boolean
           website_data?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "audit_log_actor_profile_id_fkey"
+            columns: ["actor_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["primary_key"]
+          },
           {
             foreignKeyName: "audit_log_client_id_fkey"
             columns: ["client_id"]
@@ -146,32 +153,11 @@ export type Database = {
             referencedColumns: ["parcel_id"]
           },
           {
-            foreignKeyName: "audit_log_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["primary_key"]
-          },
-          {
             foreignKeyName: "audit_log_status_order_fkey"
             columns: ["status_order"]
             isOneToOne: false
             referencedRelation: "status_order"
             referencedColumns: ["event_name"]
-          },
-          {
-            foreignKeyName: "audit_log_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_plus"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "audit_log_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "audit_log_website_data_fkey"

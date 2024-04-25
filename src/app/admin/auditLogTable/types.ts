@@ -3,6 +3,7 @@ import { Schema } from "@/databaseUtils";
 
 export interface AuditLogRow {
     action: string;
+    actorProfileId: string;
     clientId: string;
     collectionCentreId: string;
     content: Json;
@@ -15,7 +16,6 @@ export interface AuditLogRow {
     parcelId: string;
     profileId: string;
     statusOrder: string;
-    userId: string;
     wasSuccess: boolean;
     websiteData: string;
 }
@@ -25,6 +25,7 @@ export const convertAuditLogResponseToAuditLogRow = (
 ): AuditLogRow[] =>
     auditLogResponse.map((auditLogResponseRow) => ({
         action: auditLogResponseRow.action ?? "",
+        actorProfileId: auditLogResponseRow.actor_profile_id ?? "",
         clientId: auditLogResponseRow.client_id ?? "",
         collectionCentreId: auditLogResponseRow.collection_centre_id ?? "",
         content: auditLogResponseRow.content ?? "",
@@ -37,7 +38,6 @@ export const convertAuditLogResponseToAuditLogRow = (
         parcelId: auditLogResponseRow.parcel_id ?? "",
         profileId: auditLogResponseRow.profile_id ?? "",
         statusOrder: auditLogResponseRow.status_order ?? "",
-        userId: auditLogResponseRow.user_id ?? "",
         wasSuccess: auditLogResponseRow.wasSuccess ?? "",
         websiteData: auditLogResponseRow.website_data ?? "",
     }));
