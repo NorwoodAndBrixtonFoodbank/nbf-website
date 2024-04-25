@@ -15,7 +15,7 @@ export interface ClientParcelTableRow {
 const headers: TableHeaders<ClientParcelTableRow> = [
     ["voucherNumber", "Voucher Number"],
     ["packingDate", "Packing Date"],
-    ["collectionCentre", "Collection"],
+    ["collectionCentre", "Method"],
 ];
 
 export interface ClientParcelTableProps {

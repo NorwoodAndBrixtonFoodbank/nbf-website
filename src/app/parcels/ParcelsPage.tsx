@@ -55,7 +55,7 @@ export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["addressPostcode", "Postcode"],
     ["phoneNumber", "Phone"],
     ["voucherNumber", "Voucher"],
-    ["deliveryCollection", "Collection"],
+    ["deliveryCollection", "Method"],
     ["packingDate", "Packing Date"],
     ["packingSlot", "Packing Slot"],
     ["lastStatus", "Last Status"],
