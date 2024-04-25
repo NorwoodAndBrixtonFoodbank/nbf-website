@@ -93,10 +93,10 @@ export const onChangeText = <SpecificFields extends Fields>(
     return (event) => {
         const input = event.target.value;
         const errorType = getErrorType(input, required, regex, additionalCondition);
-        errorSetter({ key: errorType });
+        errorSetter({ [key]: errorType });
         if (errorType === Errors.none) {
             const newValue = formattingFunction ? formattingFunction(input) : input;
-            fieldSetter([{ key: key, value: newValue }]);
+            fieldSetter({ [key]: newValue });
         }
     };
 };
