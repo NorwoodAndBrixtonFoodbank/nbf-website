@@ -74,7 +74,7 @@ interface LabelCardProps {
     quantity: number;
 }
 
-const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
+const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
     return (
         <Page size={labelSizePixels} style={styles.page}>
             <View style={styles.cardWrapper} wrap={false}>
@@ -137,7 +137,7 @@ const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
                     </View>
                     <View style={[styles.rightCol, styles.bottomAlign]}>
                         <Text style={styles.mediumText}>
-                            Item {index + 1} of {quantity}
+                            Label {index + 1} of {quantity}
                         </Text>
                     </View>
                 </View>
@@ -150,20 +150,33 @@ export interface ShippingLabelsPdfProps {
     data: ShippingLabelData[];
 }
 
+interface ShippingLabelsForSingleParcelProps {
+    data: ShippingLabelData;
+}
+
+const ShippingLabelsForSingleParcel: React.FC<ShippingLabelsForSingleParcelProps> = ({ data }) => {
+    return (
+        data.label_quantity > 0 &&
+        [...Array(data.label_quantity)].map((value: undefined, index: number) => {
+            return (
+                <SingleLabelCard
+                    key={index} // eslint-disable-line react/no-array-index-key
+                    data={data}
+                    index={index}
+                    quantity={data.label_quantity}
+                />
+            );
+        })
+    );
+};
+
 const ShippingLabelsPdf: React.FC<ShippingLabelsPdfProps> = ({ data }) => {
     return (
         <Document>
-            {data.label_quantity > 0 &&
-                [...Array(data.label_quantity)].map((value: undefined, index: number) => {
-                    return (
-                        <LabelCard
-                            key={index} // eslint-disable-line react/no-array-index-key
-                            data={data}
-                            index={index}
-                            quantity={data.label_quantity}
-                        />
-                    );
-                })}
+            {data.map((parcelData: ShippingLabelData, index) => {
+                // eslint-disable-next-line react/no-array-index-key
+                return <ShippingLabelsForSingleParcel data={parcelData} key={index} />;
+            })}
         </Document>
     );
 };
