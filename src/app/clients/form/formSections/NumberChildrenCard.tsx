@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import {
     errorExists,
@@ -31,7 +31,7 @@ const getChild = (
         } else {
             children[index][subFieldName] = parseInt(input);
         }
-        fieldSetter({children: [...children] });
+        fieldSetter({ children: [...children] });
     };
 };
 

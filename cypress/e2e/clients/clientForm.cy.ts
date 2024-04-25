@@ -27,7 +27,6 @@ describe("Add client form", () => {
     });
 
     it("Type in postcode, check no address, uncheck no address", () => {
-
         fillPostcode(postcode);
         toggleNoAddress();
         toggleNoAddress();
@@ -70,7 +69,9 @@ function assertAddClientFormSubmittedSuccessfully(): void {
 }
 
 function assertSubmitErrorShown(): void {
-    cy.contains("Please ensure all fields have been entered correctly. Required fields are labelled with an asterisk.").should("be.visible");
+    cy.contains(
+        "Please ensure all fields have been entered correctly. Required fields are labelled with an asterisk."
+    ).should("be.visible");
 }
 
 function assertPostcodeContentNotDisplayed(): void {
