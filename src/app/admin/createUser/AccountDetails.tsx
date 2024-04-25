@@ -14,6 +14,7 @@ const AccountDetails: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSet
         >
             <>
                 <FreeFormTextInput
+                    id="new-user-email-address"
                     label="Email"
                     error={errorExists(formErrors.email)}
                     helperText={errorText(formErrors.email)}

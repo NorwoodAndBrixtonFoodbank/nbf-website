@@ -137,8 +137,6 @@ const ClientsPage: React.FC<{}> = () => {
     }, [fetchAndDisplayClientsData]);
 
     useEffect(() => {
-        void fetchAndDisplayClientsData();
-        // This requires that the DB clients, collection_centres, and families tables have Realtime turned on
         const subscriptionChannel = supabase
             .channel("parcels-table-changes")
             .on(
@@ -162,9 +160,10 @@ const ClientsPage: React.FC<{}> = () => {
             });
 
         return () => {
-            supabase.removeChannel(subscriptionChannel);
+            void supabase.removeChannel(subscriptionChannel);
         };
-    }, [startPoint, endPoint, primaryFilters, sortState]);
+    }, [startPoint, endPoint, primaryFilters, sortState, fetchAndDisplayClientsData]);
+
     const theme = useTheme();
     const router = useRouter();
 
