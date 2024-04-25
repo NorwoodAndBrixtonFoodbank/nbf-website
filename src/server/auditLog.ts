@@ -9,7 +9,7 @@ import { getCurrentProfile } from "./getCurrentProfile";
 
 type AuditLogInsertRecord = InsertSchema["audit_log"];
 export interface AuditLog {
-    action?: string;
+    action: string;
     content: Json | null;
     wasSuccess: boolean;
     logId?: string;

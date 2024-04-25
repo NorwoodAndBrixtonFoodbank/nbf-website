@@ -4,9 +4,9 @@ import { getLocalSupabaseClient } from "./getLocalSupabaseClient";
 
 dotenv.config({ path: "./.env.local" });
 
-createAdminAndCallerUsers();
+createUserForEachRole();
 
-type Role = "admin" | "caller";
+type Role = "admin" | "volunteer" | "manager" | "staff";
 
 interface userProfile {
     email: string;
@@ -17,7 +17,7 @@ interface userProfile {
     telephoneNumber: string;
 }
 
-async function createAdminAndCallerUsers(): Promise<void> {
+async function createUserForEachRole(): Promise<void> {
     const supabase = getLocalSupabaseClient();
 
     await createUser(supabase, {
@@ -29,10 +29,26 @@ async function createAdminAndCallerUsers(): Promise<void> {
         telephoneNumber: "0777777777777",
     });
     await createUser(supabase, {
-        email: "caller@example.com",
-        password: "caller123",
-        role: "caller",
-        firstName: "caller",
+        email: "volunteer@example.com",
+        password: "volunteer123",
+        role: "volunteer",
+        firstName: "volunteer",
+        lastName: "person",
+        telephoneNumber: "078888888888",
+    });
+    await createUser(supabase, {
+        email: "manager@example.com",
+        password: "manager123",
+        role: "manager",
+        firstName: "manager",
+        lastName: "person",
+        telephoneNumber: "078888888888",
+    });
+    await createUser(supabase, {
+        email: "staff@example.com",
+        password: "staff123",
+        role: "staff",
+        firstName: "staff",
         lastName: "person",
         telephoneNumber: "078888888888",
     });

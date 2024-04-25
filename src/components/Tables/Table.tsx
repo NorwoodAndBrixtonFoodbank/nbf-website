@@ -2,7 +2,7 @@
 
 import Icon from "@/components/Icons/Icon";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
-import TableFilterBar from "@/components/Tables/TableFilterBar";
+import TableFilterAndExtraColumnsBar from "@/components/Tables/TableFilterAndExtraColumnsBar";
 import {
     faAnglesDown,
     faAnglesUp,
@@ -407,7 +407,7 @@ const Table = <Data,>({
 
     return (
         <>
-            <TableFilterBar<Data>
+            <TableFilterAndExtraColumnsBar<Data>
                 handleClear={handleClear}
                 setFilters={
                     filterConfig.primaryFiltersShown ? filterConfig.setPrimaryFilters : () => {}

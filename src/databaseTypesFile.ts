@@ -11,8 +11,8 @@ export type Database = {
     Tables: {
       audit_log: {
         Row: {
-          action: string | null
           actor_profile_id: string
+          action: string
           client_id: string | null
           collection_centre_id: string | null
           content: Json | null
@@ -30,8 +30,8 @@ export type Database = {
           website_data: string | null
         }
         Insert: {
-          action?: string | null
           actor_profile_id: string
+          action: string
           client_id?: string | null
           collection_centre_id?: string | null
           content?: Json | null
@@ -49,8 +49,8 @@ export type Database = {
           website_data?: string | null
         }
         Update: {
-          action?: string | null
           actor_profile_id?: string
+          action?: string
           client_id?: string | null
           collection_centre_id?: string | null
           content?: Json | null
@@ -773,10 +773,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      user_is_admin_or_manager_or_staff: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       gender: "male" | "female" | "other"
-      role: "caller" | "admin"
+      role: "volunteer" | "admin" | "manager" | "staff"
     }
     CompositeTypes: {
       update_client_result: {
