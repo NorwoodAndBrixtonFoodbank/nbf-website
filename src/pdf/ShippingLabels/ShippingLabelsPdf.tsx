@@ -147,7 +147,7 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
 };
 
 export interface ShippingLabelsPdfProps {
-    parcelsDataForShippingLabels: ShippingLabelData[];
+    data: ShippingLabelData[];
 }
 
 interface ShippingLabelsForSingleParcelProps {
@@ -172,14 +172,14 @@ const ShippingLabelsForSingleParcel: React.FC<ShippingLabelsForSingleParcelProps
     );
 };
 
-const ShippingLabelsPdf: React.FC<ShippingLabelsPdfProps> = ({ parcelsDataForShippingLabels }) => {
+const ShippingLabelsPdf: React.FC<ShippingLabelsPdfProps> = ({ data }) => {
     return (
         <Document>
-            {parcelsDataForShippingLabels.map((parcelData: ShippingLabelData, index) => {
-                // eslint-disable-next-line react/no-array-index-key
+            {data.map((parcelData: ShippingLabelData, index) => {
                 return (
                     <ShippingLabelsForSingleParcel
                         parcelDataForShippingLabel={parcelData}
+                        // eslint-disable-next-line react/no-array-index-key
                         key={index}
                     />
                 );
