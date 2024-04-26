@@ -15,49 +15,28 @@ interface Props {
     parcels: ParcelsTableRow[];
 }
 
-export type ParcelOfSpecificDateAndLocation = Pick<Schema["parcels"], "collection_datetime"> & {
+export type ParcelForDayOverview =  Pick<Schema["parcels"], "collection_datetime"> & {
     clients: Pick<
         Schema["clients"],
         "flagged_for_attention" | "full_name" | "address_postcode" | "delivery_instructions"
     > | null;
 };
 
-export interface DayOverviewData {
-    parcels: ParcelsTableRow[];
-}
-
-type CollectionCentreNameAndAbbreviation = Pick<Schema["collection_centres"], "name" | "acronym">;
-
-export const getCurrentDate = (date: Date, hyphen: boolean = false): string => {
-    const formattedDate = date.toLocaleString("en-CA", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-    });
-
-    return hyphen ? formattedDate : formattedDate.replaceAll("-", "");
-};
-
-type ParcelsOfSpecificDateAndLocationResponse =
+type ParcelsForDayOverviewResponse =
     | {
-          data: ParcelOfSpecificDateAndLocation[];
+          data: ParcelForDayOverview[];
           error: null;
       }
     | {
           data: null;
-          error: { type: ParcelsOfSpecificDateAndLocationErrorType; logId: string };
+          error: { type: ParcelsForDayOverviewErrorType; logId: string };
       };
 
-type ParcelsOfSpecificDateAndLocationErrorType = "parcelFetchFailed";
+type ParcelsForDayOverviewErrorType = "parcelFetchFailed";
 
-const getParcelsOfSpecificDateAndLocation = async (
-    date: Date,
-    collectionCentreKey: string
-): Promise<ParcelsOfSpecificDateAndLocationResponse> => {
-    const startDateString = date.toISOString();
-    const endDate = new Date(date);
-    endDate.setDate(date.getDate() + 1);
-    const endDateString = endDate.toISOString();
+const getParcelsForDayOverview = async (
+    parcelIds: string[]
+): Promise<ParcelsForDayOverviewResponse> => {
 
     const { data, error } = await supabase
         .from("parcels")
@@ -69,10 +48,9 @@ const getParcelsOfSpecificDateAndLocation = async (
                 address_postcode, 
                 delivery_instructions
             )`
+            
         )
-        .gte("collection_datetime", startDateString)
-        .lt("collection_datetime", endDateString)
-        .eq("collection_centre", collectionCentreKey)
+        .in("primary_key", parcelIds)
         .order("collection_datetime");
 
     if (error) {
@@ -82,48 +60,11 @@ const getParcelsOfSpecificDateAndLocation = async (
 
     return { data: data, error: null };
 };
-
-type CollectionCentreResponse =
-    | {
-          data: CollectionCentreNameAndAbbreviation;
-          error: null;
-      }
-    | {
-          data: null;
-          error: { type: CollectionCentreErrorType; logId: string };
-      };
-
-type CollectionCentreErrorType = "collectionCentreFetchFailed" | "noMatchingCollectionCentre";
-
-const fetchCollectionCentreNameAndAbbreviation = async (
-    collectionCentreKey: string
-): Promise<CollectionCentreResponse> => {
-    const { data, error } = await supabase
-        .from("collection_centres")
-        .select()
-        .eq("primary_key", collectionCentreKey)
-        .single();
-
-    if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: Collection centre", error);
-        return { data: null, error: { type: "collectionCentreFetchFailed", logId: logId } };
-    }
-
-    if (!data) {
-        const logId = await logErrorReturnLogId("Error with fetch: Collection centre");
-        return { data: null, error: { type: "noMatchingCollectionCentre", logId: logId } };
-    }
-
-    return { data: data, error: null };
-};
-
-interface DayOverviewPdfData {
-    parcels: ParcelsTableRow[];
+export interface DayOverviewPdfData {
+    parcels: ParcelForDayOverview[];
 }
 
-type DayOverviewPdfErrorType =
-    | CollectionCentreErrorType
-    | ParcelsOfSpecificDateAndLocationErrorType;
+type DayOverviewPdfErrorType = ParcelsForDayOverviewErrorType;
 export type DayOverviewPdfError = { type: DayOverviewPdfErrorType; logId: string };
 
 const DayOverviewPdfButton = ({
@@ -134,12 +75,19 @@ const DayOverviewPdfButton = ({
     const fetchDataAndFileName = async (): Promise<
         PdfDataFetchResponse<DayOverviewPdfData, DayOverviewPdfErrorType>
     > => {
-
+        const parcelIds = parcels.map((parcel) => {
+            return parcel.parcelId;
+        });
+        const { data: parcelsForDayOverview, error: error } =
+        await getParcelsForDayOverview(parcelIds);
+    if (error) {
+        return { data: null, error: error };
+    }
         const fileName = `DayOverview.pdf`;
         return {
             data: {
                 pdfData: {
-                    parcels: parcels,
+                    parcels: parcelsForDayOverview,
                 },
                 fileName: fileName,
             },

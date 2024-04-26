@@ -10,14 +10,8 @@ import SelectedParcelsOverview from "../SelectedParcelsOverview";
 const getPdfErrorMessage = (error: DayOverviewPdfError): string => {
     let errorMessage: string;
     switch (error.type) {
-        case "collectionCentreFetchFailed":
-            errorMessage = "Failed to fetch collection centre.";
-            break;
-        case "noMatchingCollectionCentre":
-            errorMessage = "No matching collection centre found.";
-            break;
         case "parcelFetchFailed":
-            errorMessage = "Failed to fetch parcels for this day and collection centre.";
+            errorMessage = "Failed to fetch parcel data.";
             break;
     }
     return `${errorMessage} LogId: ${error.logId}`;
