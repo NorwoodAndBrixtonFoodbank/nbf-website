@@ -111,8 +111,8 @@ export const buildDeliveryCollectionFilter = async (): Promise<
 
     const keySet = new Set();
     const { data, error } = await supabase
-        .from("parcels_plus")
-        .select("collection_centre_name, collection_centre_acronym");
+        .from("collection_centres")
+        .select("name, acronym, is_shown");
     if (error) {
         const logId = await logErrorReturnLogId(
             "Error with fetch: Collection centre filter options",
@@ -124,15 +124,11 @@ export const buildDeliveryCollectionFilter = async (): Promise<
     const optionsSet: CollectionCentresOptions[] = optionsResponse.reduce<
         CollectionCentresOptions[]
     >((filteredOptions, row) => {
-        if (
-            row?.collection_centre_acronym &&
-            row.collection_centre_name &&
-            !keySet.has(row.collection_centre_acronym)
-        ) {
-            keySet.add(row.collection_centre_acronym);
+        if (row.acronym && row.name && !keySet.has(row.acronym)) {
+            keySet.add(row.acronym);
             filteredOptions.push({
-                name: row.collection_centre_name,
-                acronym: row.collection_centre_acronym,
+                key: row.acronym,
+                value: row.is_shown ? row.name : `${row.name} (inactive)`,
             });
         }
         return filteredOptions.sort();
