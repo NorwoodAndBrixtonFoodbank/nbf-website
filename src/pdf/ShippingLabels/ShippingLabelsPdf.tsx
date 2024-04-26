@@ -1,5 +1,7 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { faBuildingCircleArrowRight, faTruck } from "@fortawesome/free-solid-svg-icons";
+import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
 
 export interface ShippingLabelData {
     label_quantity: number;
@@ -118,13 +120,20 @@ const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
                     <View style={[styles.leftCol, styles.bottomAlign]}>
                         <Text style={styles.largeText}>{data.address_postcode}</Text>
                     </View>
-                    <View style={[styles.middleCol, styles.bottomAlign]}>
+                    <View style={[styles.middleCol, styles.bottomAlign, { flexDirection: "row" }]}>
                         <Text style={styles.mediumText}>
                             {data.packing_slot} |
-                            {data.collection_centre !== "DLVR"
-                                ? data.collection_centre // TODO VFB-56 needs icon
-                                : "Delivery"}
+                            {data.collection_centre === "DLVR"
+                                ? "Delivery "
+                                : data.collection_centre + " "}
                         </Text>
+                        <FontAwesomeIconPdfComponent
+                            faIcon={
+                                data.collection_centre === "DLVR"
+                                    ? faTruck
+                                    : faBuildingCircleArrowRight
+                            }
+                        ></FontAwesomeIconPdfComponent>
                     </View>
                     <View style={[styles.rightCol, styles.bottomAlign]}>
                         <Text style={styles.mediumText}>
