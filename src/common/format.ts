@@ -50,3 +50,5 @@ export const getDbDate = (dateTime: Dayjs): string => dateTime.format("YYYY-MM-D
 export const formatBoolean = (boolean: boolean): string => (boolean ? "True" : "False");
 
 export const formatJson = (json: Json): string => JSON.stringify(json);
+
+export const capitaliseWords = (words: string): string => words.split(" ").map((word)=>`${word[0].toUpperCase()}${word.slice(1)}`).join(" ");

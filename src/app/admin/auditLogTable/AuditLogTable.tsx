@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import Table, { SortState } from "@/components/Tables/Table";
+import Table, { Row, SortState } from "@/components/Tables/Table";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
@@ -17,7 +17,7 @@ import { auditLogTableSortableColumns } from "./sortFunctions";
 import Modal from "@/components/Modal/Modal";
 import Icon from "@/components/Icons/Icon";
 import { auditLogIcon } from "../AdminPage";
-import { useTheme } from "styled-components";
+import AuditLogModal from "./auditLogModal/AuditLogModal";
 
 const AuditLogTable: React.FC = () => {
     const [auditLogDataPortion, setAuditLogDataPortion] = useState<AuditLogRow[]>([]);
@@ -31,7 +31,7 @@ const AuditLogTable: React.FC = () => {
     const startPoint = (currentPage - 1) * auditLogCountPerPage;
     const endPoint = currentPage * auditLogCountPerPage - 1;
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-    const theme = useTheme();
+    const [selectedAuditLog, setSelectedAuditLog] = useState<AuditLogRow | null>(null);
 
     const fetchAndDisplayAuditLog = useCallback(async () => {
         setErrorMessage(null);
@@ -75,7 +75,7 @@ const AuditLogTable: React.FC = () => {
         };
     }, [fetchAndDisplayAuditLog]);
 
-    const onRowClick = () => setModalIsOpen(true);
+    const onRowClick = (row: Row<AuditLogRow>) => {setModalIsOpen(true); setSelectedAuditLog(row.data)}
 
     return (
         <>
@@ -125,26 +125,9 @@ const AuditLogTable: React.FC = () => {
                     primaryFiltersShown: false,
                     additionalFiltersShown: false,
                 }}
-                onRowClick={onRowClick}
+                onRowClick={(row) => onRowClick(row)}
             />
-            <Modal
-                        header={
-                            <>
-                                <Icon
-                                    icon={auditLogIcon}
-                                    color={theme.primary.largeForeground[2]}
-                                />{" "}
-                                Audit Log //change to specific action name
-                            </>
-                        }
-                        isOpen={modalIsOpen}
-                        onClose={() => {
-                            setModalIsOpen(false);
-                        }}
-                        headerId="auditLogModal"
-                    >
-                        <></>
-                    </Modal>
+            <AuditLogModal modalIsOpen={modalIsOpen} setModalIsOpen={setModalIsOpen} selectedAuditLog={selectedAuditLog}/>
         </>
     );
 };

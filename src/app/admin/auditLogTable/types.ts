@@ -2,6 +2,7 @@ import { Json } from "@/databaseTypesFile";
 import { Schema } from "@/databaseUtils";
 
 export interface AuditLogRow {
+    auditLogId: string;
     action: string;
     actorProfileId: string;
     clientId: string;
@@ -24,6 +25,7 @@ export const convertAuditLogResponseToAuditLogRow = (
     auditLogResponse: Schema["audit_log"][]
 ): AuditLogRow[] =>
     auditLogResponse.map((auditLogResponseRow) => ({
+        auditLogId: auditLogResponseRow.primary_key,
         action: auditLogResponseRow.action ?? "",
         actorProfileId: auditLogResponseRow.actor_profile_id ?? "",
         clientId: auditLogResponseRow.client_id ?? "",
