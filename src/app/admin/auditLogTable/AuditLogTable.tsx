@@ -14,9 +14,6 @@ import {
 } from "./rowsPerPageConstants";
 import { AuditLogRow, convertAuditLogResponseToAuditLogRow } from "./types";
 import { auditLogTableSortableColumns } from "./sortFunctions";
-import Modal from "@/components/Modal/Modal";
-import Icon from "@/components/Icons/Icon";
-import { auditLogIcon } from "../AdminPage";
 import AuditLogModal from "./auditLogModal/AuditLogModal";
 
 const AuditLogTable: React.FC = () => {
@@ -75,7 +72,10 @@ const AuditLogTable: React.FC = () => {
         };
     }, [fetchAndDisplayAuditLog]);
 
-    const onRowClick = (row: Row<AuditLogRow>) => {setModalIsOpen(true); setSelectedAuditLog(row.data)}
+    const onRowClick = (row: Row<AuditLogRow>): void => {
+        setModalIsOpen(true);
+        setSelectedAuditLog(row.data);
+    };
 
     return (
         <>
@@ -127,7 +127,11 @@ const AuditLogTable: React.FC = () => {
                 }}
                 onRowClick={(row) => onRowClick(row)}
             />
-            <AuditLogModal modalIsOpen={modalIsOpen} setModalIsOpen={setModalIsOpen} selectedAuditLog={selectedAuditLog}/>
+            <AuditLogModal
+                modalIsOpen={modalIsOpen}
+                setModalIsOpen={setModalIsOpen}
+                selectedAuditLog={selectedAuditLog}
+            />
         </>
     );
 };

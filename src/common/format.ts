@@ -51,4 +51,8 @@ export const formatBoolean = (boolean: boolean): string => (boolean ? "True" : "
 
 export const formatJson = (json: Json): string => JSON.stringify(json);
 
-export const capitaliseWords = (words: string): string => words.split(" ").map((word)=>`${word[0].toUpperCase()}${word.slice(1)}`).join(" ");
+export const capitaliseWords = (words: string): string =>
+    words
+        .split(" ")
+        .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
+        .join(" ");

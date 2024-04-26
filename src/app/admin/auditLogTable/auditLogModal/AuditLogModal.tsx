@@ -1,3 +1,4 @@
+import React from "react";
 import Icon from "@/components/Icons/Icon";
 import Modal from "@/components/Modal/Modal";
 import { useTheme } from "styled-components";
@@ -11,28 +12,30 @@ interface AuditLogModalProps {
     selectedAuditLog: AuditLogRow | null;
 }
 
-const AuditLogModal: React.FC<AuditLogModalProps> = ({modalIsOpen, setModalIsOpen, selectedAuditLog}) => {
+const AuditLogModal: React.FC<AuditLogModalProps> = ({
+    modalIsOpen,
+    setModalIsOpen,
+    selectedAuditLog,
+}) => {
     const theme = useTheme();
 
     return (
-    <Modal
-                        header={
-                            <>
-                                <Icon
-                                    icon={auditLogIcon}
-                                    color={theme.primary.largeForeground[2]}
-                                />{" "}
-                                {selectedAuditLog?.action ? capitaliseWords(selectedAuditLog?.action) : ""}
-                            </>
-                        }
-                        isOpen={modalIsOpen}
-                        onClose={() => {
-                            setModalIsOpen(false);
-                        }}
-                        headerId="auditLogModal"
-                    >
-                        <></>
-                    </Modal>
-)}
+        <Modal
+            header={
+                <>
+                    <Icon icon={auditLogIcon} color={theme.primary.largeForeground[2]} />{" "}
+                    {selectedAuditLog?.action ? capitaliseWords(selectedAuditLog?.action) : ""}
+                </>
+            }
+            isOpen={modalIsOpen}
+            onClose={() => {
+                setModalIsOpen(false);
+            }}
+            headerId="auditLogModal"
+        >
+            <></>
+        </Modal>
+    );
+};
 
 export default AuditLogModal;
