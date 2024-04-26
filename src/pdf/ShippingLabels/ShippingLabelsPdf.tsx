@@ -147,35 +147,42 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
 };
 
 export interface ShippingLabelsPdfProps {
-    data: ShippingLabelData[];
+    parcelsDataForShippingLabels: ShippingLabelData[];
 }
 
 interface ShippingLabelsForSingleParcelProps {
-    data: ShippingLabelData;
+    parcelDataForShippingLabel: ShippingLabelData;
 }
 
-const ShippingLabelsForSingleParcel: React.FC<ShippingLabelsForSingleParcelProps> = ({ data }) => {
+const ShippingLabelsForSingleParcel: React.FC<ShippingLabelsForSingleParcelProps> = ({
+    parcelDataForShippingLabel,
+}) => {
     return (
-        data.label_quantity > 0 &&
-        [...Array(data.label_quantity)].map((index: number) => {
+        parcelDataForShippingLabel.label_quantity > 0 &&
+        [...Array(parcelDataForShippingLabel.label_quantity)].map((_, index: number) => {
             return (
                 <SingleLabelCard
                     key={index} // eslint-disable-line react/no-array-index-key
-                    data={data}
+                    data={parcelDataForShippingLabel}
                     index={index}
-                    quantity={data.label_quantity}
+                    quantity={parcelDataForShippingLabel.label_quantity}
                 />
             );
         })
     );
 };
 
-const ShippingLabelsPdf: React.FC<ShippingLabelsPdfProps> = ({ data }) => {
+const ShippingLabelsPdf: React.FC<ShippingLabelsPdfProps> = ({ parcelsDataForShippingLabels }) => {
     return (
         <Document>
-            {data.map((parcelData: ShippingLabelData, index) => {
+            {parcelsDataForShippingLabels.map((parcelData: ShippingLabelData, index) => {
                 // eslint-disable-next-line react/no-array-index-key
-                return <ShippingLabelsForSingleParcel data={parcelData} key={index} />;
+                return (
+                    <ShippingLabelsForSingleParcel
+                        parcelDataForShippingLabel={parcelData}
+                        key={index}
+                    />
+                );
             })}
         </Document>
     );
