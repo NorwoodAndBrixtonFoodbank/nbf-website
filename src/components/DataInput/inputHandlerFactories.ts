@@ -5,7 +5,7 @@ type ValueSetter<Value> = (value: Value) => void;
 
 export type ChangeEventHandler = (event: React.ChangeEvent<HTMLInputElement>) => void;
 
-export type SelectChangeEventHandler = (event: SelectChangeEvent) => void;
+export type SelectChangeEventHandler<Value> = (event: SelectChangeEvent<Value>) => void;
 
 export interface BooleanGroup {
     [key: string]: boolean;
@@ -29,8 +29,8 @@ export const getRadioGroupHandler = (setValue: ValueSetter<string>): ChangeEvent
     return getValueChangeHandler(setValue);
 };
 
-export const getDropdownListHandler = (setValue: ValueSetter<string>): SelectChangeEventHandler => {
-    return (event: SelectChangeEvent) => {
+export const getDropdownListHandler = <Value = string>(setValue: ValueSetter<Value>): SelectChangeEventHandler<Value> => {
+    return (event: SelectChangeEvent<Value>) => {
         setValue(event.target.value);
     };
 };
