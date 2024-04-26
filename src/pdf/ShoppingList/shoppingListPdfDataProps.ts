@@ -87,7 +87,7 @@ export const prepareItemsListForHousehold = async (
             householdSize
         );
         if (listItemError) {
-            return { data: null, error: { type: listItemError.type, logId: listItemError.logId } };
+            return { data: null, error: listItemError };
         }
         itemsList.push({
             description: row.item_name,
