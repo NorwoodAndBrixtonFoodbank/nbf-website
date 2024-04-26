@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import GeneralActionModal, { Heading, ActionModalProps, maxParcelsToShow } from "./GeneralActionModal";
+import GeneralActionModal, { ActionModalProps, maxParcelsToShow } from "./GeneralActionModal";
 import DayOverviewPdfButton, { DayOverviewPdfError } from "@/pdf/DayOverview/DayOverviewPdfButton";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import { sendAuditLog } from "@/server/auditLog";

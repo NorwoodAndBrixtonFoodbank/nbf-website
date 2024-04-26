@@ -23,10 +23,6 @@ const doesNotEqualOne = (value: number): boolean => {
     return value !== 1;
 };
 
-const doesNotEqualZero = (value: number): boolean => {
-    return value !== 0;
-};
-
 export type ActionName =
     | "Download Shipping Labels"
     | "Download Shopping Lists"

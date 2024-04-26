@@ -15,7 +15,7 @@ interface Props {
     parcels: ParcelsTableRow[];
 }
 
-export type ParcelForDayOverview =  Pick<Schema["parcels"], "collection_datetime"> & {
+export type ParcelForDayOverview = Pick<Schema["parcels"], "collection_datetime"> & {
     clients: Pick<
         Schema["clients"],
         "flagged_for_attention" | "full_name" | "address_postcode" | "delivery_instructions"
@@ -37,7 +37,6 @@ type ParcelsForDayOverviewErrorType = "parcelFetchFailed";
 const getParcelsForDayOverview = async (
     parcelIds: string[]
 ): Promise<ParcelsForDayOverviewResponse> => {
-
     const { data, error } = await supabase
         .from("parcels")
         .select(
@@ -48,7 +47,6 @@ const getParcelsForDayOverview = async (
                 address_postcode, 
                 delivery_instructions
             )`
-            
         )
         .in("primary_key", parcelIds)
         .order("collection_datetime");
@@ -79,11 +77,11 @@ const DayOverviewPdfButton = ({
             return parcel.parcelId;
         });
         const { data: parcelsForDayOverview, error: error } =
-        await getParcelsForDayOverview(parcelIds);
-    if (error) {
-        return { data: null, error: error };
-    }
-        const fileName = `DayOverview.pdf`;
+            await getParcelsForDayOverview(parcelIds);
+        if (error) {
+            return { data: null, error: error };
+        }
+        const fileName = "DayOverview.pdf";
         return {
             data: {
                 pdfData: {

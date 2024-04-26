@@ -4,10 +4,7 @@ import React from "react";
 import { Svg, Document, Page, Text, View, StyleSheet, Path } from "@react-pdf/renderer";
 import { faFlag, faSquare, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 
-import {
-    DayOverviewPdfData,
-    ParcelForDayOverview,
-} from "@/pdf/DayOverview/DayOverviewPdfButton";
+import { DayOverviewPdfData, ParcelForDayOverview } from "@/pdf/DayOverview/DayOverviewPdfButton";
 
 interface DayOverviewRowProps {
     parcel: ParcelForDayOverview;
@@ -109,7 +106,9 @@ const DayOverviewRow: React.FC<DayOverviewRowProps> = ({ parcel }) => {
                 )}
             </View>
             <Text style={[styles.cellName, styles.cell]}>{parcel.clients!.full_name}</Text>
-            <Text style={[styles.cellPostcode, styles.cell]}>{parcel.clients!.address_postcode}</Text>
+            <Text style={[styles.cellPostcode, styles.cell]}>
+                {parcel.clients!.address_postcode}
+            </Text>
             <Text style={[styles.cellTime, styles.cell]}>
                 {dateTimeToAMPM(parcel.collection_datetime!)}
             </Text>
@@ -120,14 +119,14 @@ const DayOverviewRow: React.FC<DayOverviewRowProps> = ({ parcel }) => {
     );
 };
 
-const DayOverviewContent: React.FC<DayOverviewContentProps> = ({  parcels }) => {
+const DayOverviewContent: React.FC<DayOverviewContentProps> = ({ parcels }) => {
     return (
-            <View style={{ borderLeft: "1 solid black" }}>
-                <DayOverviewHeader />
-                {parcels.map((parcel, index) => (
-                    <DayOverviewRow key={index} parcel={parcel} /> // eslint-disable-line react/no-array-index-key
-                ))}
-            </View>
+        <View style={{ borderLeft: "1 solid black" }}>
+            <DayOverviewHeader />
+            {parcels.map((parcel, index) => (
+                <DayOverviewRow key={index} parcel={parcel} /> // eslint-disable-line react/no-array-index-key
+            ))}
+        </View>
     );
 };
 
