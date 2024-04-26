@@ -157,7 +157,7 @@ interface ShippingLabelsForSingleParcelProps {
 const ShippingLabelsForSingleParcel: React.FC<ShippingLabelsForSingleParcelProps> = ({ data }) => {
     return (
         data.label_quantity > 0 &&
-        [...Array(data.label_quantity)].map((value: undefined, index: number) => {
+        [...Array(data.label_quantity)].map((index: number) => {
             return (
                 <SingleLabelCard
                     key={index} // eslint-disable-line react/no-array-index-key
