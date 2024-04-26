@@ -20,6 +20,7 @@ export enum Errors {
     external = "Please try again later.",
     pastDate = "Please enter a date in the future.",
     invalidPackingSlot = "The previous packing slot is no longer available, please select a new packing slot.",
+    invalidCollectionCentre = "The previous collection centre is no longer available, please select a new collection centre.",
 }
 
 export const numberRegex = /^\d+$/;

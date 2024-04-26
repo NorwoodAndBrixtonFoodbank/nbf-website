@@ -3,7 +3,10 @@ import { Supabase } from "@/supabaseUtils";
 import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 import { PostgrestError } from "@supabase/supabase-js";
 
-type CollectionCentre = Pick<Schema["collection_centres"], "name" | "acronym" | "primary_key">;
+type CollectionCentre = Pick<
+    Schema["collection_centres"],
+    "name" | "acronym" | "primary_key" | "is_shown"
+>;
 
 type PackingSlot = Pick<Schema["packing_slots"], "primary_key" | "is_shown" | "name">;
 
@@ -54,7 +57,8 @@ export const fetchParcel = async (
             collection_centre:collection_centres ( 
                 name,
                 acronym,
-                primary_key
+                primary_key,
+                is_shown
             ),
             packing_slot: packing_slots (
                 name,
@@ -103,7 +107,10 @@ export type FetchCollectionCentresError = { type: FetchCollectionCentresErrorTyp
 export const getCollectionCentresInfo = async (
     supabase: Supabase
 ): Promise<FetchCollectionCentresResponse> => {
-    const { data, error } = await supabase.from("collection_centres").select("primary_key, name");
+    const { data, error } = await supabase
+        .from("collection_centres")
+        .select("primary_key, name")
+        .eq("is_shown", true);
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Collection centres data", error);
