@@ -244,16 +244,19 @@ export type Database = {
       collection_centres: {
         Row: {
           acronym: string
+          is_shown: boolean
           name: string
           primary_key: string
         }
         Insert: {
           acronym?: string
+          is_shown?: boolean
           name?: string
           primary_key?: string
         }
         Update: {
           acronym?: string
+          is_shown?: boolean
           name?: string
           primary_key?: string
         }
