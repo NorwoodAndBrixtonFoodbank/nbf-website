@@ -27,7 +27,7 @@ const formatDatetime = (datetimeString: string | null): string => {
 
 type ShippingLabelResponse =
     | {
-          data: ShippingLabelData;
+          data: ShippingLabelData[];
           error: null;
       }
     | {
@@ -113,16 +113,17 @@ const getParcelToShip = async (parcelId: string): Promise<ParcelToShipResponse> 
 };
 
 const getRequiredData = async (
-    parcelId: string,
+    parcelIds: string[],
     labelQuantity: number
 ): Promise<ShippingLabelResponse> => {
-    const { data: parcel, error: error } = await getParcelToShip(parcelId);
-    if (error) {
-        return { data: null, error };
-    }
-    const client = parcel.client;
-    return {
-        data: {
+    const parcelDataList: ShippingLabelData[] = [];
+    for (const parcelId of parcelIds) {
+        const { data: parcel, error: error } = await getParcelToShip(parcelId);
+        if (error) {
+            return { data: null, error };
+        }
+        const client = parcel.client;
+        parcelDataList.push({
             label_quantity: labelQuantity,
             parcel_id: parcelId,
             packing_slot: parcel.packing_slot?.name ?? "",
@@ -137,13 +138,13 @@ const getRequiredData = async (
             address_county: client.address_county,
             address_postcode: client.address_postcode,
             delivery_instructions: client.delivery_instructions,
-        },
-        error: null,
-    };
+        });
+    }
+    return { data: parcelDataList, error: null };
 };
 
 interface Props {
-    parcel: ParcelsTableRow;
+    parcels: ParcelsTableRow[];
     labelQuantity: number;
     onPdfCreationCompleted: () => void;
     disabled: boolean;
@@ -151,17 +152,17 @@ interface Props {
 }
 
 const ShippingLabelsPdfButton = ({
-    parcel,
+    parcels,
     labelQuantity,
     onPdfCreationCompleted,
     disabled,
     onPdfCreationFailed,
 }: Props): React.ReactElement => {
     const fetchDataAndFileName = async (): Promise<
-        PdfDataFetchResponse<ShippingLabelData, ShippingLabelErrorType>
+        PdfDataFetchResponse<ShippingLabelData[], ShippingLabelErrorType>
     > => {
-        const parcelId = parcel.parcelId;
-        const { data: requiredData, error } = await getRequiredData(parcelId, labelQuantity);
+        const parcelIds = parcels.map((parcel) => parcel.parcelId);
+        const { data: requiredData, error } = await getRequiredData(parcelIds, labelQuantity);
         if (error) {
             return { data: null, error };
         }
