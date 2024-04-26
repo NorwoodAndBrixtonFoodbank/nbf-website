@@ -130,7 +130,7 @@ const AuditLogTable: React.FC = () => {
             <AuditLogModal
                 modalIsOpen={modalIsOpen}
                 setModalIsOpen={setModalIsOpen}
-                selectedAuditLog={selectedAuditLog}
+                selectedAuditLogRow={selectedAuditLog}
             />
         </>
     );

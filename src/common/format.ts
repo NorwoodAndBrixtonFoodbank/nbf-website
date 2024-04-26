@@ -54,5 +54,5 @@ export const formatJson = (json: Json): string => JSON.stringify(json);
 export const capitaliseWords = (words: string): string =>
     words
         .split(" ")
-        .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
+        .map((word) => (word === "a" ? word : `${word[0].toUpperCase()}${word.slice(1)}`))
         .join(" ");
