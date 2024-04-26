@@ -7,13 +7,12 @@ import PdfButton from "@/components/PdfButton/PdfButton";
 import DayOverviewPdf from "./DayOverviewPdf";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { PdfDataFetchResponse } from "../common";
+import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 
 interface Props {
-    date: Date;
-    collectionCentreKey: string | null;
     onPdfCreationCompleted: () => void;
     onPdfCreationFailed: (error: DayOverviewPdfError) => void;
-    disabled: boolean;
+    parcels: ParcelsTableRow[];
 }
 
 export type ParcelOfSpecificDateAndLocation = Pick<Schema["parcels"], "collection_datetime"> & {
@@ -24,9 +23,7 @@ export type ParcelOfSpecificDateAndLocation = Pick<Schema["parcels"], "collectio
 };
 
 export interface DayOverviewData {
-    date: Date;
-    location: string;
-    data: ParcelOfSpecificDateAndLocation[];
+    parcels: ParcelsTableRow[];
 }
 
 type CollectionCentreNameAndAbbreviation = Pick<Schema["collection_centres"], "name" | "acronym">;
@@ -121,9 +118,7 @@ const fetchCollectionCentreNameAndAbbreviation = async (
 };
 
 interface DayOverviewPdfData {
-    date: Date;
-    location: string;
-    data: ParcelOfSpecificDateAndLocation[];
+    parcels: ParcelsTableRow[];
 }
 
 type DayOverviewPdfErrorType =
@@ -132,41 +127,19 @@ type DayOverviewPdfErrorType =
 export type DayOverviewPdfError = { type: DayOverviewPdfErrorType; logId: string };
 
 const DayOverviewPdfButton = ({
-    date,
-    collectionCentreKey,
     onPdfCreationCompleted,
     onPdfCreationFailed,
-    disabled,
+    parcels,
 }: Props): React.ReactElement => {
     const fetchDataAndFileName = async (): Promise<
         PdfDataFetchResponse<DayOverviewPdfData, DayOverviewPdfErrorType>
     > => {
-        const {
-            data: collectionCentreNameAndAbbreviation,
-            error: collectionCentreNameAndAbbreviationError,
-        } = await fetchCollectionCentreNameAndAbbreviation(collectionCentreKey!);
-        if (collectionCentreNameAndAbbreviationError) {
-            return { data: null, error: collectionCentreNameAndAbbreviationError };
-        }
 
-        const { data: parcelsOfSpecificDate, error: parcelsOfSpecificDateError } =
-            await getParcelsOfSpecificDateAndLocation(date, collectionCentreKey!);
-        if (parcelsOfSpecificDateError) {
-            return { data: null, error: parcelsOfSpecificDateError };
-        }
-
-        const dateString = getCurrentDate(date);
-
-        const acronym = `_${collectionCentreNameAndAbbreviation?.acronym}` ?? "";
-        const location = collectionCentreNameAndAbbreviation?.name ?? "";
-
-        const fileName = `DayOverview_${dateString}${acronym}.pdf`;
+        const fileName = `DayOverview.pdf`;
         return {
             data: {
                 pdfData: {
-                    date: date,
-                    location: location,
-                    data: parcelsOfSpecificDate,
+                    parcels: parcels,
                 },
                 fileName: fileName,
             },
@@ -180,7 +153,6 @@ const DayOverviewPdfButton = ({
             pdfComponent={DayOverviewPdf}
             onPdfCreationCompleted={onPdfCreationCompleted}
             onPdfCreationFailed={onPdfCreationFailed}
-            disabled={disabled}
         />
     );
 };

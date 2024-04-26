@@ -60,9 +60,8 @@ export const availableActions: AvailableActionsType = {
         newStatus: "Driver Overview Downloaded",
     },
     "Download Day Overview": {
-        errorCondition: doesNotEqualZero,
-        errorMessage:
-            "The day overview will show the parcels for a particular date and location. It will show not the currently selected parcel. Please unselect the parcels.",
+        errorCondition: isNotAtLeastOne,
+        errorMessage: "Please select at least one parcel.",
         newStatus: "Day Overview Downloaded",
     },
     "Delete Parcel Request": {
