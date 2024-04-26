@@ -32,7 +32,7 @@ describe("Data Input Components", () => {
                 ]}
                 listTitle="Dropdown List"
                 defaultValue="Default"
-                onChange={getDropdownListHandler(() => console.log("Dropdown Changed"))}
+                onChange={getDropdownListHandler(() => console.log("Dropdown Changed"), (value:string): value is string=>true)}
             />
         );
         cy.mount(

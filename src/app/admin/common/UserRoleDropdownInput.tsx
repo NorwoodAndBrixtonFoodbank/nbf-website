@@ -12,7 +12,7 @@ const roleLabelsAndValues: [string, UserRole][] = [
 
 interface Props {
     defaultValue: UserRole;
-    onChange: SelectChangeEventHandler;
+    onChange: SelectChangeEventHandler<any>;
 }
 
 const UserRoleDropdownInput: React.FC<Props> = (props) => {

@@ -60,8 +60,9 @@ const EditUserForm: React.FC<Props> = (props) => {
                 <EditHeader>Role</EditHeader>
                 <UserRoleDropdownInput
                     defaultValue={initialRole}
-                    onChange={getDropdownListHandler((role: string) =>
-                        setRole(role as DatabaseEnums["role"])
+                    onChange={getDropdownListHandler<UserRole>((userRole: UserRole) =>
+                        setRole(userRole),
+                        (value:UserRole|string): value is UserRole => (value as UserRole) !== undefined
                     )}
                 />
             </EditOption>

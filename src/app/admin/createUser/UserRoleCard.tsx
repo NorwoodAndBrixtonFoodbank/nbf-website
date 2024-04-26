@@ -10,8 +10,9 @@ const UserRoleCard: React.FC<InviteUserCardProps> = ({ fieldSetter }) => {
         <GenericFormCard title="User Role" required>
             <UserRoleDropdownInput
                 defaultValue="volunteer"
-                onChange={getDropdownListHandler((userRole: UserRole) =>
-                    fieldSetter({ role: userRole})
+                onChange={getDropdownListHandler<UserRole>((userRole: UserRole) =>
+                    fieldSetter({ role: userRole}),
+                    (value:UserRole|string): value is UserRole => (value as UserRole) !== undefined
                 )}
             />
         </GenericFormCard>
