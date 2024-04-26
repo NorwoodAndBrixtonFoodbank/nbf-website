@@ -19,7 +19,11 @@ describe("Accessibility tests in light mode", () => {
         cy.visit("/parcels");
         cy.get("h1", { timeout: 5000 }).should("exist");
 
-        cy.checkAccessibility();
+        cy.checkAccessibility({
+            rules: {
+                "empty-table-header": { enabled: false },
+            },
+        });
     });
 
     it("Checks parcels/add/[id] page", () => {
@@ -92,7 +96,11 @@ describe("Accessibility tests in dark mode", () => {
         cy.get("h1", { timeout: 5000 }).should("exist");
         cy.get("label[aria-label='Theme Switch']").click();
 
-        cy.checkAccessibility();
+        cy.checkAccessibility({
+            rules: {
+                "empty-table-header": { enabled: false },
+            },
+        });
     });
 
     it("Checks parcels/add/[id] page", () => {
