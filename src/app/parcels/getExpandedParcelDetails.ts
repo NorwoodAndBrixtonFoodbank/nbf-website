@@ -115,7 +115,7 @@ const getExpandedParcelDetails = async (
                 children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
                 packingDate: formatDatetimeAsDate(rawParcelDetails.packing_date),
                 packingSlot: rawParcelDetails.packing_slot?.name ?? "",
-                collection: rawParcelDetails.collection_centre?.name ?? "",
+                method: rawParcelDetails.collection_centre?.name ?? "",
                 createdAt: formatDateTime(rawParcelDetails.created_at),
             },
             events: processEventsDetails(rawParcelDetails.events),
@@ -134,7 +134,7 @@ export interface ExpandedParcelData extends Data {
     children: string;
     packingDate: string;
     packingSlot: string;
-    collection: string;
+    method: string;
     createdAt: string;
 }
 
