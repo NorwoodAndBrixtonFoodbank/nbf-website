@@ -66,8 +66,8 @@ const getQuantityAndNotes = async (
     const sizeNotes: keyof Schema["lists"] = `notes_for_${size}`;
     return {
         data: {
-            quantity: row[sizeQuantity]?.toString() ?? "",
-            notes: row[sizeNotes]?.toString() ?? "",
+            quantity: row[sizeQuantity] ?? "",
+            notes: row[sizeNotes] ?? "",
         },
         error: null,
     };
