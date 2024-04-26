@@ -70,6 +70,9 @@ const getPdfErrorMessage = (error: ShoppingListPdfError): string => {
         case "noMatchingParcels":
             errorMessage = "No parcel in the database matches the selected parcel(s).";
             break;
+        case "invalidFamilySize":
+            errorMessage = "Invalid family size for shopping list PDF.";
+            break;
     }
     return `${errorMessage} LogId: ${error.logId}`;
 };
