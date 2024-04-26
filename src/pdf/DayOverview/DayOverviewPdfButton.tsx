@@ -22,21 +22,21 @@ export type ParcelForDayOverview = Pick<Schema["parcels"], "collection_datetime"
     > | null;
 };
 
-type ParcelsForDayOverviewResponse =
+type ParcelForDayOverviewResponse =
     | {
           data: ParcelForDayOverview[];
           error: null;
       }
     | {
           data: null;
-          error: { type: ParcelsForDayOverviewErrorType; logId: string };
+          error: { type: ParcelForDayOverviewErrorType; logId: string };
       };
 
-type ParcelsForDayOverviewErrorType = "parcelFetchFailed";
+type ParcelForDayOverviewErrorType = "parcelFetchFailed";
 
 const getParcelsForDayOverview = async (
     parcelIds: string[]
-): Promise<ParcelsForDayOverviewResponse> => {
+): Promise<ParcelForDayOverviewResponse> => {
     const { data, error } = await supabase
         .from("parcels")
         .select(
@@ -62,7 +62,7 @@ export interface DayOverviewPdfData {
     parcels: ParcelForDayOverview[];
 }
 
-type DayOverviewPdfErrorType = ParcelsForDayOverviewErrorType;
+type DayOverviewPdfErrorType = ParcelForDayOverviewErrorType;
 export type DayOverviewPdfError = { type: DayOverviewPdfErrorType; logId: string };
 
 const DayOverviewPdfButton = ({
