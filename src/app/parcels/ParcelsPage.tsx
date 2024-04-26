@@ -532,7 +532,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const rowToLastStatusColumn = (data: ParcelsTableRow["lastStatus"] | null): string => {
         if (!data) {
-            return "None";
+            return "";
         }
         const { name, eventData, timestamp } = data;
         return (
