@@ -16,10 +16,11 @@ interface Props {
 }
 
 export type ParcelForDayOverview = Pick<Schema["parcels"], "collection_datetime"> & {
-    clients: Pick<
+    client: Pick<
         Schema["clients"],
         "flagged_for_attention" | "full_name" | "address_postcode" | "delivery_instructions"
     > | null;
+    collection_centre: Pick<Schema["collection_centres"], "name"> | null;
 };
 
 type ParcelForDayOverviewResponse =
@@ -41,7 +42,8 @@ const getParcelsForDayOverview = async (
         .from("parcels")
         .select(
             `collection_datetime, 
-            clients ( 
+            collection_centre:collection_centres(name),
+            client:clients ( 
                 flagged_for_attention, 
                 full_name, 
                 address_postcode, 

@@ -91,6 +91,7 @@ const DayOverviewHeader: React.FC<{}> = () => {
             <Text style={[styles.cellName, styles.cell]}>Name</Text>
             <Text style={[styles.cellPostcode, styles.cell]}>Postcode</Text>
             <Text style={[styles.cellTime, styles.cell]}>Time</Text>
+            <Text style={[styles.cellCollection, styles.cell]}>Collection</Text>
             <Text style={[styles.cellInstructions, styles.cell]}>Instructions</Text>
         </View>
     );
@@ -101,19 +102,22 @@ const DayOverviewRow: React.FC<DayOverviewRowProps> = ({ parcel }) => {
         <View style={styles.row} wrap={false}>
             <View style={[styles.cellLogo, styles.cell, styles.row]}>
                 <CustomSVG icon={faSquare} color="black" fill={false} />
-                {parcel.clients!.flagged_for_attention && (
+                {parcel.client!.flagged_for_attention && (
                     <CustomSVG icon={faFlag} color="orange" fill={true} />
                 )}
             </View>
-            <Text style={[styles.cellName, styles.cell]}>{parcel.clients!.full_name}</Text>
+            <Text style={[styles.cellName, styles.cell]}>{parcel.client!.full_name}</Text>
             <Text style={[styles.cellPostcode, styles.cell]}>
-                {parcel.clients!.address_postcode}
+                {parcel.client!.address_postcode}
             </Text>
             <Text style={[styles.cellTime, styles.cell]}>
                 {dateTimeToAMPM(parcel.collection_datetime!)}
             </Text>
+            <Text style={[styles.cellCollection, styles.cell]}>
+                {parcel.collection_centre!.name}
+            </Text>
             <Text style={[styles.cellInstructions, styles.cell]}>
-                {parcel.clients!.delivery_instructions}
+                {parcel.client!.delivery_instructions}
             </Text>
         </View>
     );
