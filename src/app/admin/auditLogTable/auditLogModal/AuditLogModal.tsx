@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Icon from "@/components/Icons/Icon";
 import Modal from "@/components/Modal/Modal";
@@ -6,6 +8,7 @@ import { auditLogIcon } from "../../AdminPage";
 import { AuditLogRow } from "../types";
 import ParcelLink from "./ParcelLink";
 import { capitaliseWords } from "@/common/format";
+import ClientLink from "./ClientLink";
 
 export const AuditLogModalContainer = styled.div`
     width: 800px;
@@ -67,6 +70,9 @@ const AuditLogModal: React.FC<AuditLogModalProps> = ({
             <AuditLogModalContainer>
                 {selectedAuditLogRow?.parcelId && (
                     <ParcelLink parcelId={selectedAuditLogRow.parcelId} />
+                )}
+                {selectedAuditLogRow?.clientId && (
+                    <ClientLink clientId={selectedAuditLogRow.clientId} />
                 )}
             </AuditLogModalContainer>
         </Modal>
