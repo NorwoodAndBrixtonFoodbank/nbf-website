@@ -1,116 +1,323 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import Table, { TableHeaders } from "@/components/Tables/Table";
-import styled from "styled-components";
+import React, { useEffect, useState } from "react";
 import { Schema } from "@/databaseUtils";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 import { logErrorReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import {
+    GridActionsCellItem,
+    GridColDef,
+    GridEventListener,
+    GridRowEditStopReasons,
+    GridRowId,
+    GridRowModes,
+    GridRowModesModel,
+    GridRowsProp,
+    GridToolbarContainer,
+} from "@mui/x-data-grid";
+import { AuditLog, sendAuditLog } from "@/server/auditLog";
+import Header from "@/app/admin/websiteDataTable/Header";
+import SaveIcon from "@mui/icons-material/Save";
+import CancelIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
+import StyledDataGrid from "@/app/admin/common/StyledDataGrid";
+import { LinearProgress } from "@mui/material";
+import {
+    fetchCollectionCentres,
+    insertNewCollectionCentre,
+    updateDbCollectionCentre,
+} from "@/app/admin/collectionCentresTable/CollectionCentreActions";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
 
-interface CollectionCentresTableRow {
+export interface CollectionCentresTableRow {
     acronym: Schema["collection_centres"]["acronym"];
     name: Schema["collection_centres"]["name"];
-    primary_key: Schema["collection_centres"]["primary_key"];
+    id: Schema["collection_centres"]["primary_key"];
+    isShown: Schema["collection_centres"]["is_shown"];
+    isNew: boolean;
 }
 
-export const OptionButtonDiv = styled.div`
-    display: flex;
-    padding-top: 1rem;
-    gap: 1rem;
-    justify-content: center;
-`;
+interface EditToolbarProps {
+    setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
+    setRowModesModel: (newModel: (oldModel: GridRowModesModel) => GridRowModesModel) => void;
+    rows: CollectionCentresTableRow[];
+}
 
-const collectionCentresTableHeaderKeysAndLabels: TableHeaders<Schema["collection_centres"]> = [
-    ["primary_key", "Centre ID"],
-    ["name", "Name"],
-    ["acronym", "Acronym"],
-];
+function EditToolbar(props: EditToolbarProps): React.JSX.Element {
+    const { setRows, setRowModesModel, rows } = props;
 
-const filters: Filter<CollectionCentresTableRow, string>[] = [
-    buildTextFilter({
-        key: "name",
-        label: "Name",
-        headers: collectionCentresTableHeaderKeysAndLabels,
-        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
-    }),
-    buildTextFilter({
-        key: "acronym",
-        label: "Acronym",
-        headers: collectionCentresTableHeaderKeysAndLabels,
-        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
-    }),
-];
+    const handleClick = (): void => {
+        const id = rows.length + 1;
+        setRows((oldRows) => [
+            ...oldRows,
+            { id, name: "", isShown: false, order: id, isNew: true },
+        ]);
+        setRowModesModel((oldModel) => ({
+            ...oldModel,
+            [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
+        }));
+    };
 
-const CollectionCentresTables: React.FC = () => {
-    const [collectionCentres, setCollectionCentres] = useState<Schema["collection_centres"][]>([]);
-    const [primaryFilters, setPrimaryFilters] =
-        useState<Filter<CollectionCentresTableRow, string>[]>(filters);
+    return (
+        <GridToolbarContainer>
+            <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
+                Add new slot
+            </Button>
+        </GridToolbarContainer>
+    );
+}
+
+function getBaseAuditLogForCollectionCentreAction(
+    action: string,
+    collectionCentreRow: CollectionCentresTableRow,
+    options?: {
+        excludeCollectionCentreId?: boolean;
+    }
+): Pick<AuditLog, "action" | "content" | "collectionCentreId"> {
+    return {
+        action,
+        content: {
+            collectionCentreName: collectionCentreRow.name,
+            collectionCentreAcronym: collectionCentreRow.acronym,
+            collectionCentreIsShown: collectionCentreRow.isShown,
+        },
+        collectionCentreId: options?.excludeCollectionCentreId ? undefined : collectionCentreRow.id,
+    };
+}
+
+const CollectionCentresTable: React.FC = () => {
+    const [rows, setRows] = useState<CollectionCentresTableRow[]>([]);
+    const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const fetchAndDisplayCollectionCentres = useCallback(async () => {
-        const { data, error } = await supabase.from("collection_centres").select();
-
-        if (error) {
-            const logId = await logErrorReturnLogId("Error with fetch: Collection Centres", {
-                error: error,
-            });
-            setErrorMessage(`Failed to fetch collection centres. Log ID: ${logId}`);
-            return;
-        }
-
-        setCollectionCentres(data);
+    useEffect(() => {
+        setErrorMessage(null);
+        fetchCollectionCentres()
+            .then((response) => setRows(response))
+            .catch((error) => {
+                void logErrorReturnLogId("Failed to fetch collection centre", { error });
+                setErrorMessage("Error fetching data, please reload");
+            })
+            .finally(() => setIsLoading(false));
     }, []);
 
     useEffect(() => {
-        void fetchAndDisplayCollectionCentres();
-    }, [fetchAndDisplayCollectionCentres]);
-
-    useEffect(() => {
         const subscriptionChannel = supabase
-            .channel("collection-centres-table-changes")
+            .channel("collection-centre-table-changes")
             .on(
                 "postgres_changes",
                 { event: "*", schema: "public", table: "collection_centres" },
-                fetchAndDisplayCollectionCentres
+                fetchCollectionCentres
             )
-            .subscribe((status, err) => {
-                if (subscriptionStatusRequiresErrorMessage(status, err, "collection_centres")) {
+            .subscribe((status, error) => {
+                subscriptionStatusRequiresErrorMessage(status, error, "collection_centres") &&
                     setErrorMessage("Error fetching data, please reload");
-                }
             });
 
         return () => {
             void supabase.removeChannel(subscriptionChannel);
         };
-    }, [fetchAndDisplayCollectionCentres]);
+    }, []);
+
+    const handleSaveClick = (id: GridRowId) => () => {
+        setRowModesModel((currentValue) => ({
+            ...currentValue,
+            [id]: { mode: GridRowModes.View },
+        }));
+    };
+
+    const processRowUpdate = async (
+        newRow: CollectionCentresTableRow
+    ): Promise<CollectionCentresTableRow> => {
+        setErrorMessage(null);
+        setIsLoading(true);
+
+        if (newRow.isNew) {
+            const { data: createdCollectionCentre, error: insertCollectionCentreError } =
+                await insertNewCollectionCentre(newRow);
+            const baseAuditLog = getBaseAuditLogForCollectionCentreAction(
+                "add a new collection centre",
+                newRow,
+                { excludeCollectionCentreId: true }
+            );
+
+            if (insertCollectionCentreError) {
+                setErrorMessage(
+                    `Failed to add the collection centre. Log ID: ${insertCollectionCentreError.logId}`
+                );
+                void sendAuditLog({
+                    ...baseAuditLog,
+                    wasSuccess: false,
+                    logId: insertCollectionCentreError.logId,
+                });
+            } else {
+                void sendAuditLog({
+                    ...baseAuditLog,
+                    collectionCentreId: createdCollectionCentre.collectionCentreId,
+                    wasSuccess: true,
+                });
+            }
+        } else {
+            const { error: updateCollectionCentreError } = await updateDbCollectionCentre(newRow);
+            const baseAuditLog = getBaseAuditLogForCollectionCentreAction(
+                "update a collection centre",
+                newRow
+            );
+
+            if (updateCollectionCentreError) {
+                setErrorMessage(
+                    `Failed to update the collection centre. Log ID: ${updateCollectionCentreError.logId}`
+                );
+                void sendAuditLog({
+                    ...baseAuditLog,
+                    wasSuccess: false,
+                    logId: updateCollectionCentreError.logId,
+                });
+            } else {
+                void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
+            }
+        }
+
+        setIsLoading(false);
+
+        return newRow;
+    };
+
+    const handleRowEditStop: GridEventListener<"rowEditStop"> = (params, event) => {
+        if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+            //prevents default behaviour of saving the edited state when clicking away from row being edited, force user to use save or cancel buttons
+            event.defaultMuiPrevented = true;
+        }
+    };
+
+    const handleEditClick = (id: GridRowId) => () => {
+        setRowModesModel((currentValue) => ({
+            ...currentValue,
+            [id]: { mode: GridRowModes.Edit },
+        }));
+    };
+
+    const handleCancelClick = (id: GridRowId) => () => {
+        setRowModesModel((currentValue) => ({
+            ...currentValue,
+            [id]: { mode: GridRowModes.View, ignoreModifications: true },
+        }));
+
+        const editedRow = rows.find((row) => row.id === id);
+        if (editedRow === undefined) {
+            void logErrorReturnLogId(
+                "Edited row in collection centre admin table is undefined onCancelClick"
+            );
+            setErrorMessage("Table error, please try again");
+        } else if (editedRow.isNew) {
+            setRows((currentValue) => currentValue.filter((row) => row.id !== id));
+        }
+    };
+
+    const collectionCentreColumns: GridColDef[] = [
+        {
+            field: "name",
+            headerName: "Collection Centre Name",
+            flex: 1,
+            minWidth: 400,
+            editable: true,
+            renderHeader: (params) => <Header {...params} />,
+        },
+        {
+            field: "acronym",
+            headerName: "Acronym",
+            flex: 1,
+            editable: true,
+            renderHeader: (params) => <Header {...params} />,
+        },
+        {
+            field: "isShown",
+            type: "boolean",
+            headerName: "Show",
+            flex: 1,
+            editable: true,
+            renderHeader: (params) => <Header {...params} />,
+        },
+        {
+            field: "actions",
+            type: "actions",
+            headerName: "Actions",
+            flex: 1,
+            cellClassName: "actions",
+            renderHeader: (params) => <Header {...params} />,
+            getActions: ({ id }) => {
+                const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+                if (isInEditMode) {
+                    return [
+                        <GridActionsCellItem
+                            icon={<SaveIcon />}
+                            label="Save"
+                            sx={{
+                                color: "primary.main",
+                            }}
+                            onClick={handleSaveClick(id)}
+                            key="Save"
+                        />,
+                        <GridActionsCellItem
+                            icon={<CancelIcon />}
+                            label="Cancel"
+                            className="textPrimary"
+                            onClick={handleCancelClick(id)}
+                            color="inherit"
+                            key="Cancel"
+                        />,
+                    ];
+                }
+
+                return [
+                    <GridActionsCellItem
+                        icon={<EditIcon />}
+                        label="Edit"
+                        className="textPrimary"
+                        onClick={handleEditClick(id)}
+                        color="inherit"
+                        key="Edit"
+                    />,
+                ];
+            },
+        },
+    ];
 
     return (
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
-            <Table
-                dataPortion={collectionCentres}
-                headerKeysAndLabels={collectionCentresTableHeaderKeysAndLabels}
-                defaultShownHeaders={["name", "acronym"]}
-                toggleableHeaders={["primary_key"]}
-                paginationConfig={{ enablePagination: false }}
-                checkboxConfig={{ displayed: false }}
-                sortConfig={{ sortPossible: false }}
-                editableConfig={{
-                    editable: false,
-                }}
-                filterConfig={{
-                    primaryFiltersShown: true,
-                    primaryFilters: primaryFilters,
-                    setPrimaryFilters: setPrimaryFilters,
-                    additionalFiltersShown: false,
-                }}
-            />
+            {rows && (
+                <StyledDataGrid
+                    rows={rows}
+                    columns={collectionCentreColumns}
+                    editMode="row"
+                    rowModesModel={rowModesModel}
+                    onRowModesModelChange={setRowModesModel}
+                    onRowEditStop={handleRowEditStop}
+                    processRowUpdate={processRowUpdate}
+                    slots={{
+                        toolbar: EditToolbar,
+                        loadingOverlay: LinearProgress,
+                    }}
+                    slotProps={{
+                        toolbar: { setRows, setRowModesModel, rows },
+                    }}
+                    loading={isLoading}
+                    getRowClassName={(params) =>
+                        (params.indexRelativeToCurrentPage + 1) % 2 === 0
+                            ? "datagrid-row-even"
+                            : "datagrid-row-odd"
+                    }
+                    hideFooter
+                />
+            )}
         </>
     );
 };
 
-export default CollectionCentresTables;
+export default CollectionCentresTable;
