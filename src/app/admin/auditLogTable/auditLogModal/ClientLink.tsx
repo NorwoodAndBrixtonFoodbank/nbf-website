@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import LinkButton from "@/components/Buttons/LinkButton";
-import { AuditLogModalItem, ErrorContainer, Key, LinkContainer } from "./AuditLogModal";
+import { AuditLogModalItem, TextValueContainer, Key, LinkContainer } from "./AuditLogModal";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 
 interface ClientLinkProps {
@@ -80,9 +80,9 @@ const ClientLink: React.FC<ClientLinkProps> = ({ clientId }) => {
                 </LinkContainer>
             )}
             {errorMessage && (
-                <ErrorContainer>
+                <TextValueContainer>
                     <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>
-                </ErrorContainer>
+                </TextValueContainer>
             )}
         </AuditLogModalItem>
     );

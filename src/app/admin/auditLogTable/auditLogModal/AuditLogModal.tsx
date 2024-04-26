@@ -6,9 +6,10 @@ import Modal from "@/components/Modal/Modal";
 import styled, { useTheme } from "styled-components";
 import { auditLogIcon } from "../../AdminPage";
 import { AuditLogRow } from "../types";
-import ParcelLink from "./ParcelLink";
+import { getParcelInfo } from "./getParcelInfo";
 import { capitaliseWords } from "@/common/format";
 import ClientLink from "./ClientLink";
+import CollectionCentreName from "./CollectionCentreName";
 
 export const AuditLogModalContainer = styled.div`
     width: 800px;
@@ -34,7 +35,7 @@ export const LinkContainer = styled.div`
     padding: 0rem 0.5rem;
 `;
 
-export const ErrorContainer = styled.div`
+export const TextValueContainer = styled.div`
     padding: 1rem 0.5rem;
 `;
 
@@ -68,11 +69,14 @@ const AuditLogModal: React.FC<AuditLogModalProps> = ({
             headerId="auditLogModal"
         >
             <AuditLogModalContainer>
-                {selectedAuditLogRow?.parcelId && (
-                    <ParcelLink parcelId={selectedAuditLogRow.parcelId} />
-                )}
+                {selectedAuditLogRow?.parcelId && 
+                    getParcelInfo(selectedAuditLogRow.parcelId)
+                }
                 {selectedAuditLogRow?.clientId && (
                     <ClientLink clientId={selectedAuditLogRow.clientId} />
+                )}
+                {selectedAuditLogRow?.collectionCentreId && (
+                    <CollectionCentreName collectionCentreId={selectedAuditLogRow.collectionCentreId} />
                 )}
             </AuditLogModalContainer>
         </Modal>

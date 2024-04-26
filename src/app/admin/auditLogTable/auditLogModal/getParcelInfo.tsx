@@ -4,29 +4,17 @@ import React, { useEffect, useState } from "react";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import LinkButton from "@/components/Buttons/LinkButton";
-import { AuditLogModalItem, ErrorContainer, Key, LinkContainer } from "./AuditLogModal";
+import { AuditLogModalItem, TextValueContainer, Key, LinkContainer } from "./AuditLogModal";
 import dayjs from "dayjs";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-
-interface ParcelLinkProps {
-    parcelId: string;
-}
+import ForeignInfo from "./ForeignInfo";
+import { ForeignResponse } from "./types";
 
 interface ParcelOverviewDetails {
     collectionDatetime: Date | null;
     fullName: string;
     addressPostcode: string;
 }
-
-type ParcelOverviewDetailsResponse =
-    | {
-          parcelOverviewDetails: ParcelOverviewDetails;
-          error: null;
-      }
-    | {
-          parcelOverviewDetails: null;
-          error: ParcelOverviewDetailsError;
-      };
 
 type ParcelOverviewDetailsErrorType = "failedParcelOverviewDetailsFetch" | "nullClient";
 interface ParcelOverviewDetailsError {
@@ -36,7 +24,7 @@ interface ParcelOverviewDetailsError {
 
 const fetchParcelOverviewDetails = async (
     parcelId: string
-): Promise<ParcelOverviewDetailsResponse> => {
+): Promise<ForeignResponse<ParcelOverviewDetails, ParcelOverviewDetailsError>> => {
     const { data: data, error } = await supabase
         .from("parcels")
         .select("primary_key, client:clients(full_name, address_postcode), collection_datetime")
@@ -47,7 +35,7 @@ const fetchParcelOverviewDetails = async (
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: parcels", { error: error });
         return {
-            parcelOverviewDetails: null,
+            data: null,
             error: { type: "failedParcelOverviewDetailsFetch", logId: logId },
         };
     }
@@ -56,7 +44,7 @@ const fetchParcelOverviewDetails = async (
         const logId = await logErrorReturnLogId("Error with fetch: parcels. Client null", {
             error: error,
         });
-        return { parcelOverviewDetails: null, error: { type: "nullClient", logId: logId } };
+        return { data: null, error: { type: "nullClient", logId: logId } };
     }
 
     const convertedData = {
@@ -65,7 +53,7 @@ const fetchParcelOverviewDetails = async (
         addressPostcode: data.client.address_postcode,
     };
 
-    return { parcelOverviewDetails: convertedData, error: null };
+    return { data: convertedData, error: null };
 };
 
 const getErrorMessage = (error: ParcelOverviewDetailsError): string => {
@@ -81,26 +69,7 @@ const getErrorMessage = (error: ParcelOverviewDetailsError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const ParcelLink: React.FC<ParcelLinkProps> = ({ parcelId }) => {
-    const [parcelOverviewDetails, setParcelOverviewDetails] =
-        useState<ParcelOverviewDetails | null>(null);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-    useEffect(() => {
-        (async () => {
-            const { parcelOverviewDetails, error } = await fetchParcelOverviewDetails(parcelId);
-            if (error) {
-                setErrorMessage(getErrorMessage(error));
-                return;
-            }
-            setParcelOverviewDetails(parcelOverviewDetails);
-        })();
-    }, [parcelId]);
-
-    return (
-        <AuditLogModalItem>
-            <Key>PARCEL: </Key>
-            {parcelOverviewDetails && (
+const getParcelLink = (parcelOverviewDetails: ParcelOverviewDetails, parcelId: string): React.ReactNode => (
                 <LinkContainer>
                     <LinkButton link={`/parcels?parcelId=${parcelId}`}>
                         {parcelOverviewDetails.addressPostcode}
@@ -108,15 +77,6 @@ const ParcelLink: React.FC<ParcelLinkProps> = ({ parcelId }) => {
                         {parcelOverviewDetails.collectionDatetime &&
                             ` @ ${dayjs(parcelOverviewDetails.collectionDatetime!).format("DD/MM/YYYY HH:mm")}`}
                     </LinkButton>
-                </LinkContainer>
-            )}
-            {errorMessage && (
-                <ErrorContainer>
-                    <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>
-                </ErrorContainer>
-            )}
-        </AuditLogModalItem>
-    );
-};
+                </LinkContainer>)
 
-export default ParcelLink;
+export const getParcelInfo = (parcelId: string): React.ReactNode => ForeignInfo<ParcelOverviewDetails, ParcelOverviewDetailsError>({foreignKey: parcelId, fetchResponse: fetchParcelOverviewDetails, getErrorMessage: getErrorMessage, infoComponent: getParcelLink});
