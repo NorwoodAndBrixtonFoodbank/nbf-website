@@ -14,6 +14,10 @@ import {
 } from "./rowsPerPageConstants";
 import { AuditLogRow, convertAuditLogResponseToAuditLogRow } from "./types";
 import { auditLogTableSortableColumns } from "./sortFunctions";
+import Modal from "@/components/Modal/Modal";
+import Icon from "@/components/Icons/Icon";
+import { auditLogIcon } from "../AdminPage";
+import { useTheme } from "styled-components";
 
 const AuditLogTable: React.FC = () => {
     const [auditLogDataPortion, setAuditLogDataPortion] = useState<AuditLogRow[]>([]);
@@ -26,6 +30,8 @@ const AuditLogTable: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const startPoint = (currentPage - 1) * auditLogCountPerPage;
     const endPoint = currentPage * auditLogCountPerPage - 1;
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+    const theme = useTheme();
 
     const fetchAndDisplayAuditLog = useCallback(async () => {
         setErrorMessage(null);
@@ -68,6 +74,8 @@ const AuditLogTable: React.FC = () => {
             void supabase.removeChannel(subscriptionChannel);
         };
     }, [fetchAndDisplayAuditLog]);
+
+    const onRowClick = () => setModalIsOpen(true);
 
     return (
         <>
@@ -117,7 +125,26 @@ const AuditLogTable: React.FC = () => {
                     primaryFiltersShown: false,
                     additionalFiltersShown: false,
                 }}
+                onRowClick={onRowClick}
             />
+            <Modal
+                        header={
+                            <>
+                                <Icon
+                                    icon={auditLogIcon}
+                                    color={theme.primary.largeForeground[2]}
+                                />{" "}
+                                Audit Log //change to specific action name
+                            </>
+                        }
+                        isOpen={modalIsOpen}
+                        onClose={() => {
+                            setModalIsOpen(false);
+                        }}
+                        headerId="auditLogModal"
+                    >
+                        <></>
+                    </Modal>
         </>
     );
 };
