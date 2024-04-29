@@ -59,7 +59,9 @@ const getErrorMessage = (error: ProfileNameError): string => {
 };
 
 const ProfileNameComponent: React.FC<ProfileNameDetails> = ({ firstName, lastName, userId }) => (
-    <TextValueContainer>{userId === null ? "Deleted User" : `${firstName} ${lastName}`}</TextValueContainer>
+    <TextValueContainer>
+        {userId === null ? "Deleted User" : `${firstName} ${lastName}`}
+    </TextValueContainer>
 );
 
 const ProfileName: React.FC<{ profileId: string }> = ({ profileId }) => (

@@ -12,7 +12,7 @@ interface ParcelLinkDetails {
     parcelId: string;
     collectionDatetime: Date | null;
     fullName: string;
-    addressPostcode: string;
+    addressPostcode: string | null;
 }
 
 type ParcelLinkErrorType = "failedParcelOverviewDetailsFetch" | "nullClient";

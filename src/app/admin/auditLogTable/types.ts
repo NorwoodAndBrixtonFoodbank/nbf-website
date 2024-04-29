@@ -29,7 +29,10 @@ export const convertAuditLogResponseToAuditLogRow = (
     auditLogResponse.map((auditLogResponseRow) => ({
         auditLogId: auditLogResponseRow.primary_key ?? "",
         action: auditLogResponseRow.action ?? "",
-        actorName: auditLogResponseRow.actor_user_id === null ? "User Deleted" : (auditLogResponseRow.actor_name ?? ""),
+        actorName:
+            auditLogResponseRow.actor_user_id === null
+                ? "User Deleted"
+                : auditLogResponseRow.actor_name ?? "",
         clientId: auditLogResponseRow.client_id ?? "",
         collectionCentreId: auditLogResponseRow.collection_centre_id ?? "",
         content: auditLogResponseRow.content ?? "",
