@@ -5,13 +5,13 @@ import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import { AuditLogModalRowResponse } from "./types";
 import styled from "styled-components";
 
-const AuditLogModalItem = styled.div`
+export const AuditLogModalItem = styled.div`
     display: flex;
     flex-direction: row;
     padding-bottom: 0.5em;
 `;
 
-const Key = styled.div`
+export const Key = styled.div`
     flex: 0 0 30%;
     font-weight: 600;
     padding: 1rem 0.5em;

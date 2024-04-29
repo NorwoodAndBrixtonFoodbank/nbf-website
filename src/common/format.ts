@@ -56,3 +56,9 @@ export const capitaliseWords = (words: string): string =>
         .split(" ")
         .map((word) => (word === "a" ? word : `${word[0].toUpperCase()}${word.slice(1)}`))
         .join(" ");
+
+export const getReadableWebsiteDataName = (name: string): string =>
+    name
+        .split("_")
+        .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
+        .join(" ");

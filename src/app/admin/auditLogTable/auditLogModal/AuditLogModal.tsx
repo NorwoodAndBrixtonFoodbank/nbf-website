@@ -14,6 +14,9 @@ import ListsIngredientName from "./auditLogModalRows/ListsIngredientName";
 import EventName from "./auditLogModalRows/EventName";
 import ListsHotelIngredientName from "./auditLogModalRows/ListsHotelIngredientName";
 import ProfileName from "./auditLogModalRows/ProfileName";
+import PackingSlotName from "./auditLogModalRows/PackingSlotName";
+import StatusOrderEventName from "./auditLogModalRows/StatusOrderEventName";
+import WebsiteDataName from "./auditLogModalRows/WebsiteDataName";
 
 export const AuditLogModalContainer = styled.div`
     width: 800px;
@@ -75,6 +78,15 @@ const AuditLogModal: React.FC<AuditLogModalProps> = ({
                 )}
                 {selectedAuditLogRow?.listHotelId && (
                     <ListsHotelIngredientName listsHotelId={selectedAuditLogRow.listHotelId} />
+                )}
+                {selectedAuditLogRow?.packingSlotId && (
+                    <PackingSlotName packingSlotId={selectedAuditLogRow.packingSlotId} />
+                )}
+                {selectedAuditLogRow?.statusOrder && (
+                    <StatusOrderEventName statusOrderEventName={selectedAuditLogRow.statusOrder} />
+                )}
+                {selectedAuditLogRow?.websiteData && (
+                    <WebsiteDataName websiteDataName={selectedAuditLogRow.websiteData} />
                 )}
             </AuditLogModalContainer>
         </Modal>

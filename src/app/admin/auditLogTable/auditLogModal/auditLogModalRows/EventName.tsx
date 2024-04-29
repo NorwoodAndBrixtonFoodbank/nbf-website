@@ -43,7 +43,7 @@ const getErrorMessage = (error: EventNameError): string => {
     let errorMessage: string = "";
     switch (error.type) {
         case "failedEventFetch":
-            errorMessage = "Failed to fetch collection centre name.";
+            errorMessage = "Failed to fetch event data.";
             break;
     }
     return `${errorMessage} Log ID: ${error.logId}`;
