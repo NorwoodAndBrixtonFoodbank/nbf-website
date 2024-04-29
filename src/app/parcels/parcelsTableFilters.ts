@@ -137,8 +137,8 @@ export const buildDeliveryCollectionFilter = async (): Promise<
     return checklistFilter<ParcelsTableRow>({
         key: "deliveryCollection",
         filterLabel: "Method",
-        itemLabelsAndKeys: optionsSet.map((option) => [option!.name, option!.acronym]),
-        initialCheckedKeys: optionsSet.map((option) => option!.acronym),
+        itemLabelsAndKeys: optionsSet.map((option) => [option.value, option.key]),
+        initialCheckedKeys: optionsSet.map((option) => option.key),
         methodConfig: { paginationType: PaginationType.Server, method: deliveryCollectionSearch },
     });
 };
