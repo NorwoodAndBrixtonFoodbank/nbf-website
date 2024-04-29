@@ -10,6 +10,10 @@ import { capitaliseWords } from "@/common/format";
 import CollectionCentreName from "./CollectionCentreName";
 import ParcelLink from "./ParcelLink";
 import ClientLink from "./ClientLink";
+import EventName from "./EventName";
+import ProfileName from "./ProfileName";
+import ListsIngredientName from "./ListsIngredientName";
+import ListsHotelIngredientName from "./ListsHotelIngredientName";
 
 export const AuditLogModalContainer = styled.div`
     width: 800px;
@@ -75,6 +79,26 @@ const AuditLogModal: React.FC<AuditLogModalProps> = ({
                 {selectedAuditLogRow?.collectionCentreId && (
                     <CollectionCentreName
                         collectionCentreId={selectedAuditLogRow.collectionCentreId}
+                    />
+                )}
+                {selectedAuditLogRow?.eventId && (
+                    <EventName
+                        eventId={selectedAuditLogRow.eventId}
+                    />
+                )}
+                {selectedAuditLogRow?.profileId && (
+                    <ProfileName
+                        profileId={selectedAuditLogRow.profileId}
+                    />
+                )}
+                {selectedAuditLogRow?.listId && (
+                    <ListsIngredientName
+                        listsId={selectedAuditLogRow.listId}
+                    />
+                )}
+                {selectedAuditLogRow?.listHotelId && (
+                    <ListsHotelIngredientName
+                        listsHotelId={selectedAuditLogRow.listHotelId}
                     />
                 )}
             </AuditLogModalContainer>
