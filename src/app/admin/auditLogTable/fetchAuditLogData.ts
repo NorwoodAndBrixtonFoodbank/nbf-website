@@ -1,13 +1,12 @@
 import { logErrorReturnLogId } from "@/logger/logger";
 import { Supabase } from "@/supabaseUtils";
-import { AuditLogRow } from "./types";
+import { AuditLogResponseData, AuditLogRow } from "./types";
 import { SortState } from "@/components/Tables/Table";
 import { PaginationType } from "@/components/Tables/Filters";
-import { Schema } from "@/databaseUtils";
 
 type AuditLogResponse =
     | {
-          data: Schema["audit_log"][];
+          data: AuditLogResponseData;
           error: null;
       }
     | {
@@ -40,7 +39,11 @@ export const fetchAuditLog = async (
     endIndex: number,
     sortState: SortState<AuditLogRow>
 ): Promise<AuditLogResponse> => {
-    let query = supabase.from("audit_log").select("*").range(startIndex, endIndex);
+    let query = supabase
+        .from("audit_log")
+        .select("*, profiles!actor_profile_id(first_name, last_name, user_id)")
+        .range(startIndex, endIndex)
+        .limit(1, { foreignTable: "profiles" });
 
     if (
         sortState.sortEnabled &&

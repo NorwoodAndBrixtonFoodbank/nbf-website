@@ -5,6 +5,7 @@ import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import AuditLogModalRow, { TextValueContainer } from "../AuditLogModalRow";
 import { AuditLogModalRowResponse } from "../types";
+import { displayProfileName } from "../../format";
 
 interface ProfileNameDetails {
     firstName: string;
@@ -59,9 +60,7 @@ const getErrorMessage = (error: ProfileNameError): string => {
 };
 
 const ProfileNameComponent: React.FC<ProfileNameDetails> = ({ firstName, lastName, userId }) => (
-    <TextValueContainer>
-        {userId === null ? "Deleted User" : `${firstName} ${lastName}`}
-    </TextValueContainer>
+    <TextValueContainer>{displayProfileName(firstName, lastName, userId)}</TextValueContainer>
 );
 
 const ProfileName: React.FC<{ profileId: string }> = ({ profileId }) => (

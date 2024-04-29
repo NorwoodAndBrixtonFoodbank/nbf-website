@@ -1,10 +1,15 @@
 import { Json } from "@/databaseTypesFile";
 import { Schema } from "@/databaseUtils";
+import { displayProfileName } from "./format";
+
+export type AuditLogResponseData = (Schema["audit_log"] & {
+    actor: Pick<Schema["profiles"], "first_name" | "last_name" | "user_id">;
+})[];
 
 export interface AuditLogRow {
     auditLogId: string;
     action: string;
-    actorProfileId: string;
+    actorName: string;
     clientId: string;
     collectionCentreId: string;
     content: Json;
@@ -22,12 +27,16 @@ export interface AuditLogRow {
 }
 
 export const convertAuditLogResponseToAuditLogRow = (
-    auditLogResponse: Schema["audit_log"][]
+    auditLogResponse: AuditLogResponseData
 ): AuditLogRow[] =>
     auditLogResponse.map((auditLogResponseRow) => ({
         auditLogId: auditLogResponseRow.primary_key,
         action: auditLogResponseRow.action ?? "",
-        actorProfileId: auditLogResponseRow.actor_profile_id ?? "",
+        actorName: displayProfileName(
+            auditLogResponseRow.actor.first_name ?? "",
+            auditLogResponseRow.actor.last_name ?? "",
+            auditLogResponseRow.actor.user_id
+        ),
         clientId: auditLogResponseRow.client_id ?? "",
         collectionCentreId: auditLogResponseRow.collection_centre_id ?? "",
         content: auditLogResponseRow.content ?? "",

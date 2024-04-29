@@ -21,3 +21,9 @@ export const getAuditLogErrorMessage = (error: AuditLogError | AuditLogCountErro
     }
     return `${errorMessage} Log ID: ${error.logId}`;
 };
+
+export const displayProfileName = (
+    firstName: string,
+    lastName: string,
+    userId: string | null
+): string => (userId === null ? "Deleted User" : `${firstName} ${lastName}`);

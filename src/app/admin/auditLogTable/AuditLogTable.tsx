@@ -86,22 +86,10 @@ const AuditLogTable: React.FC = () => {
                 defaultShownHeaders={[
                     "action",
                     "createdAt",
-                    "actorProfileId",
+                    "actorName",
                     "content",
                     "wasSuccess",
                     "logId",
-                ]}
-                toggleableHeaders={[
-                    "parcelId",
-                    "clientId",
-                    "eventId",
-                    "listId",
-                    "collectionCentreId",
-                    "profileId",
-                    "packingSlotId",
-                    "listHotelId",
-                    "statusOrder",
-                    "websiteData",
                 ]}
                 columnDisplayFunctions={auditLogTableColumnDisplayFunctions}
                 paginationConfig={{
