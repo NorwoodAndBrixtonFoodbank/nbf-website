@@ -5,8 +5,8 @@ import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import LinkButton from "@/components/Buttons/LinkButton";
 import dayjs from "dayjs";
-import GeneralForeignInfo from "../GeneralForeignInfo";
-import { ForeignResponse } from "../types";
+import AuditLogModalRow from "../AuditLogModalRow";
+import { AuditLogModalRowResponse } from "../types";
 
 interface ParcelLinkDetails {
     parcelId: string;
@@ -23,7 +23,7 @@ interface ParcelLinkError {
 
 const fetchParcelLinkDetails = async (
     parcelId: string
-): Promise<ForeignResponse<ParcelLinkDetails, ParcelLinkError>> => {
+): Promise<AuditLogModalRowResponse<ParcelLinkDetails, ParcelLinkError>> => {
     const { data: data, error } = await supabase
         .from("parcels")
         .select("primary_key, client:clients(full_name, address_postcode), collection_datetime")
@@ -75,19 +75,19 @@ const ParcelLinkComponent: React.FC<ParcelLinkDetails> = ({
     addressPostcode,
     collectionDatetime,
 }) => (
-        <LinkButton link={`/parcels?parcelId=${parcelId}`}>
-            {addressPostcode}
-            {fullName && ` - ${fullName}`}
-            {collectionDatetime && ` @ ${dayjs(collectionDatetime!).format("DD/MM/YYYY HH:mm")}`}
-        </LinkButton>
+    <LinkButton link={`/parcels?parcelId=${parcelId}`}>
+        {addressPostcode}
+        {fullName && ` - ${fullName}`}
+        {collectionDatetime && ` @ ${dayjs(collectionDatetime!).format("DD/MM/YYYY HH:mm")}`}
+    </LinkButton>
 );
 
 const ParcelLink: React.FC<{ parcelId: string }> = ({ parcelId }) => (
-    <GeneralForeignInfo<ParcelLinkDetails, ParcelLinkError>
+    <AuditLogModalRow<ParcelLinkDetails, ParcelLinkError>
         foreignKey={parcelId}
         fetchResponse={fetchParcelLinkDetails}
         getErrorMessage={getErrorMessage}
-        SpecificInfoComponent={ParcelLinkComponent}
+        RowComponentWhenSuccessful={ParcelLinkComponent}
         header="parcel"
     />
 );

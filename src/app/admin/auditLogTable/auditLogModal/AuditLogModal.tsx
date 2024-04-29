@@ -7,13 +7,13 @@ import styled, { useTheme } from "styled-components";
 import { auditLogIcon } from "../../AdminPage";
 import { AuditLogRow } from "../types";
 import { capitaliseWords } from "@/common/format";
-import CollectionCentreName from "./infoComponentsForForeignTables.tsx/CollectionCentreName";
-import ParcelLink from "./infoComponentsForForeignTables.tsx/ParcelLink";
-import ClientLink from "./infoComponentsForForeignTables.tsx/ClientLink";
-import EventName from "./infoComponentsForForeignTables.tsx/EventName";
-import ProfileName from "./infoComponentsForForeignTables.tsx/ProfileName";
-import ListsIngredientName from "./infoComponentsForForeignTables.tsx/ListsIngredientName";
-import ListsHotelIngredientName from "./infoComponentsForForeignTables.tsx/ListsHotelIngredientName";
+import CollectionCentreName from "./auditLogModalRows/CollectionCentreName";
+import ParcelLink from "./auditLogModalRows/ParcelLink";
+import ClientLink from "./auditLogModalRows/ClientLink";
+import ListsIngredientName from "./auditLogModalRows/ListsIngredientName";
+import EventName from "./auditLogModalRows/EventName";
+import ListsHotelIngredientName from "./auditLogModalRows/ListsHotelIngredientName";
+import ProfileName from "./auditLogModalRows/ProfileName";
 
 export const AuditLogModalContainer = styled.div`
     width: 800px;
@@ -21,23 +21,6 @@ export const AuditLogModalContainer = styled.div`
 
     display: flex;
     flex-direction: column;
-`;
-
-export const AuditLogModalItem = styled.div`
-    display: flex;
-    flex-direction: row;
-    padding-bottom: 0.5em;
-`;
-
-export const Key = styled.div`
-    flex: 0 0 30%;
-    font-weight: 600;
-    padding: 1rem 0.5em;
-    align-content: center;
-`;
-
-export const TextValueContainer = styled.div`
-    padding: 1rem;
 `;
 
 interface AuditLogModalProps {
@@ -82,24 +65,16 @@ const AuditLogModal: React.FC<AuditLogModalProps> = ({
                     />
                 )}
                 {selectedAuditLogRow?.eventId && (
-                    <EventName
-                        eventId={selectedAuditLogRow.eventId}
-                    />
+                    <EventName eventId={selectedAuditLogRow.eventId} />
                 )}
                 {selectedAuditLogRow?.profileId && (
-                    <ProfileName
-                        profileId={selectedAuditLogRow.profileId}
-                    />
+                    <ProfileName profileId={selectedAuditLogRow.profileId} />
                 )}
                 {selectedAuditLogRow?.listId && (
-                    <ListsIngredientName
-                        listsId={selectedAuditLogRow.listId}
-                    />
+                    <ListsIngredientName listsId={selectedAuditLogRow.listId} />
                 )}
                 {selectedAuditLogRow?.listHotelId && (
-                    <ListsHotelIngredientName
-                        listsHotelId={selectedAuditLogRow.listHotelId}
-                    />
+                    <ListsHotelIngredientName listsHotelId={selectedAuditLogRow.listHotelId} />
                 )}
             </AuditLogModalContainer>
         </Modal>

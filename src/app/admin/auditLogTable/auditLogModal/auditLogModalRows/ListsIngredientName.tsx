@@ -3,11 +3,10 @@
 import React from "react";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { TextValueContainer } from "../AuditLogModal";
-import { ForeignResponse } from "../types";
-import GeneralForeignInfo from "../GeneralForeignInfo";
+import AuditLogModalRow, { TextValueContainer } from "../AuditLogModalRow";
+import { AuditLogModalRowResponse } from "../types";
 
-interface ListsIngredientName {
+interface ListsIngredientNameDetails {
     ingredientName: string;
 }
 
@@ -19,7 +18,7 @@ interface ListsIngredientError {
 
 const fetchListIngredientName = async (
     eventId: string
-): Promise<ForeignResponse<ListsIngredientName, ListsIngredientError>> => {
+): Promise<AuditLogModalRowResponse<ListsIngredientNameDetails, ListsIngredientError>> => {
     const { data: data, error } = await supabase
         .from("lists")
         .select("item_name")
@@ -37,7 +36,7 @@ const fetchListIngredientName = async (
         };
     }
 
-    return { data: {ingredientName: data.item_name}, error: null };
+    return { data: { ingredientName: data.item_name }, error: null };
 };
 
 const getErrorMessage = (error: ListsIngredientError): string => {
@@ -50,16 +49,16 @@ const getErrorMessage = (error: ListsIngredientError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const ListsIngredientNameComponent: React.FC<ListsIngredientName> = ({ ingredientName }) => (
+const ListsIngredientNameComponent: React.FC<ListsIngredientNameDetails> = ({ ingredientName }) => (
     <TextValueContainer>{ingredientName}</TextValueContainer>
 );
 
 const ListsIngredientName: React.FC<{ listsId: string }> = ({ listsId }) => (
-    <GeneralForeignInfo<ListsIngredientName, ListsIngredientError>
+    <AuditLogModalRow<ListsIngredientNameDetails, ListsIngredientError>
         foreignKey={listsId}
         fetchResponse={fetchListIngredientName}
         getErrorMessage={getErrorMessage}
-        SpecificInfoComponent={ListsIngredientNameComponent}
+        RowComponentWhenSuccessful={ListsIngredientNameComponent}
         header="Lists Ingredient"
     />
 );

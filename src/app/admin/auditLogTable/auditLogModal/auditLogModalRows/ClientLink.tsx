@@ -4,8 +4,8 @@ import React from "react";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import LinkButton from "@/components/Buttons/LinkButton";
-import { ForeignResponse } from "../types";
-import GeneralForeignInfo from "../GeneralForeignInfo";
+import { AuditLogModalRowResponse } from "../types";
+import AuditLogModalRow from "../AuditLogModalRow";
 
 interface ClientLinkDetails {
     clientId: string;
@@ -20,7 +20,7 @@ interface ClientLinkDetailsError {
 
 const fetchClientLinkDetails = async (
     clientId: string
-): Promise<ForeignResponse<ClientLinkDetails, ClientLinkDetailsError>> => {
+): Promise<AuditLogModalRowResponse<ClientLinkDetails, ClientLinkDetailsError>> => {
     const { data: data, error } = await supabase
         .from("clients")
         .select("primary_key, full_name")
@@ -50,15 +50,15 @@ const getErrorMessage = (error: ClientLinkDetailsError): string => {
 };
 
 const ClientLinkComponent: React.FC<ClientLinkDetails> = ({ clientId, clientName }) => (
-        <LinkButton link={`/clients?clientId=${clientId}`}>{clientName}</LinkButton>
+    <LinkButton link={`/clients?clientId=${clientId}`}>{clientName}</LinkButton>
 );
 
 const ClientLink: React.FC<{ clientId: string }> = ({ clientId }) => (
-    <GeneralForeignInfo<ClientLinkDetails, ClientLinkDetailsError>
+    <AuditLogModalRow<ClientLinkDetails, ClientLinkDetailsError>
         foreignKey={clientId}
         fetchResponse={fetchClientLinkDetails}
         getErrorMessage={getErrorMessage}
-        SpecificInfoComponent={ClientLinkComponent}
+        RowComponentWhenSuccessful={ClientLinkComponent}
         header="client"
     />
 );

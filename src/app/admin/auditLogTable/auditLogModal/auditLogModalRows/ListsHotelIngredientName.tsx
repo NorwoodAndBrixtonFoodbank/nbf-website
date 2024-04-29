@@ -3,11 +3,10 @@
 import React from "react";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { TextValueContainer } from "../AuditLogModal";
-import { ForeignResponse } from "../types";
-import GeneralForeignInfo from "../GeneralForeignInfo";
+import AuditLogModalRow, { TextValueContainer } from "../AuditLogModalRow";
+import { AuditLogModalRowResponse } from "../types";
 
-interface ListsHotelIngredientName {
+interface ListsHotelIngredientNameDetails {
     ingredientName: string;
 }
 
@@ -19,7 +18,9 @@ interface ListsHotelIngredientError {
 
 const fetchListIngredientName = async (
     eventId: string
-): Promise<ForeignResponse<ListsHotelIngredientName, ListsHotelIngredientError>> => {
+): Promise<
+    AuditLogModalRowResponse<ListsHotelIngredientNameDetails, ListsHotelIngredientError>
+> => {
     const { data: data, error } = await supabase
         .from("lists_hotel")
         .select("item_name")
@@ -37,7 +38,7 @@ const fetchListIngredientName = async (
         };
     }
 
-    return { data: {ingredientName: data.item_name}, error: null };
+    return { data: { ingredientName: data.item_name }, error: null };
 };
 
 const getErrorMessage = (error: ListsHotelIngredientError): string => {
@@ -50,16 +51,16 @@ const getErrorMessage = (error: ListsHotelIngredientError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const ListsHotelIngredientNameComponent: React.FC<ListsHotelIngredientName> = ({ ingredientName }) => (
-    <TextValueContainer>{ingredientName}</TextValueContainer>
-);
+const ListsHotelIngredientNameComponent: React.FC<ListsHotelIngredientNameDetails> = ({
+    ingredientName,
+}) => <TextValueContainer>{ingredientName}</TextValueContainer>;
 
 const ListsHotelIngredientName: React.FC<{ listsHotelId: string }> = ({ listsHotelId }) => (
-    <GeneralForeignInfo<ListsHotelIngredientName, ListsHotelIngredientError>
+    <AuditLogModalRow<ListsHotelIngredientNameDetails, ListsHotelIngredientError>
         foreignKey={listsHotelId}
         fetchResponse={fetchListIngredientName}
         getErrorMessage={getErrorMessage}
-        SpecificInfoComponent={ListsHotelIngredientNameComponent}
+        RowComponentWhenSuccessful={ListsHotelIngredientNameComponent}
         header="Lists Hotel Ingredient"
     />
 );

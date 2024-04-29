@@ -3,11 +3,10 @@
 import React from "react";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { TextValueContainer } from "../AuditLogModal";
-import { ForeignResponse } from "../types";
-import GeneralForeignInfo from "../GeneralForeignInfo";
+import AuditLogModalRow, { TextValueContainer } from "../AuditLogModalRow";
+import { AuditLogModalRowResponse } from "../types";
 
-interface EventName {
+interface EventNameDetails {
     eventName: string;
 }
 
@@ -19,7 +18,7 @@ interface EventNameError {
 
 const fetchEventName = async (
     eventId: string
-): Promise<ForeignResponse<EventName, EventNameError>> => {
+): Promise<AuditLogModalRowResponse<EventNameDetails, EventNameError>> => {
     const { data: data, error } = await supabase
         .from("events")
         .select("primary_key, new_parcel_status")
@@ -37,7 +36,7 @@ const fetchEventName = async (
         };
     }
 
-    return { data: {eventName: data.new_parcel_status}, error: null };
+    return { data: { eventName: data.new_parcel_status }, error: null };
 };
 
 const getErrorMessage = (error: EventNameError): string => {
@@ -50,16 +49,16 @@ const getErrorMessage = (error: EventNameError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const EventNameComponent: React.FC<EventName> = ({ eventName }) => (
+const EventNameComponent: React.FC<EventNameDetails> = ({ eventName }) => (
     <TextValueContainer>{eventName}</TextValueContainer>
 );
 
 const EventName: React.FC<{ eventId: string }> = ({ eventId }) => (
-    <GeneralForeignInfo<EventName, EventNameError>
+    <AuditLogModalRow<EventNameDetails, EventNameError>
         foreignKey={eventId}
         fetchResponse={fetchEventName}
         getErrorMessage={getErrorMessage}
-        SpecificInfoComponent={EventNameComponent}
+        RowComponentWhenSuccessful={EventNameComponent}
         header="event"
     />
 );

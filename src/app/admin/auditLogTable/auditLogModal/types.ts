@@ -1,9 +1,9 @@
-export type ForeignResponse<ForeignData, ForeignError> =
+export type AuditLogModalRowResponse<Data, Error> =
     | {
-          data: ForeignData;
+          data: Data;
           error: null;
       }
     | {
           data: null;
-          error: ForeignError;
+          error: Error;
       };

@@ -3,11 +3,10 @@
 import React from "react";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { TextValueContainer } from "../AuditLogModal";
-import { ForeignResponse } from "../types";
-import GeneralForeignInfo from "../GeneralForeignInfo";
+import AuditLogModalRow, { TextValueContainer } from "../AuditLogModalRow";
+import { AuditLogModalRowResponse } from "../types";
 
-interface CollectionCentreName {
+interface CollectionCentreNameDetails {
     collectionCentreName: string;
 }
 
@@ -19,7 +18,7 @@ interface CollectionCentreNameError {
 
 const fetchCollectionCentreName = async (
     collectionCentreId: string
-): Promise<ForeignResponse<CollectionCentreName, CollectionCentreNameError>> => {
+): Promise<AuditLogModalRowResponse<CollectionCentreNameDetails, CollectionCentreNameError>> => {
     const { data: data, error } = await supabase
         .from("collection_centres")
         .select("primary_key, name")
@@ -37,7 +36,7 @@ const fetchCollectionCentreName = async (
         };
     }
 
-    return { data: {collectionCentreName: data.name}, error: null };
+    return { data: { collectionCentreName: data.name }, error: null };
 };
 
 const getErrorMessage = (error: CollectionCentreNameError): string => {
@@ -50,16 +49,16 @@ const getErrorMessage = (error: CollectionCentreNameError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const CollectionCentreNameComponent: React.FC<CollectionCentreName> = ({ collectionCentreName }) => (
-    <TextValueContainer>{collectionCentreName}</TextValueContainer>
-);
+const CollectionCentreNameComponent: React.FC<CollectionCentreNameDetails> = ({
+    collectionCentreName,
+}) => <TextValueContainer>{collectionCentreName}</TextValueContainer>;
 
 const CollectionCentreName: React.FC<{ collectionCentreId: string }> = ({ collectionCentreId }) => (
-    <GeneralForeignInfo<CollectionCentreName, CollectionCentreNameError>
+    <AuditLogModalRow<CollectionCentreNameDetails, CollectionCentreNameError>
         foreignKey={collectionCentreId}
         fetchResponse={fetchCollectionCentreName}
         getErrorMessage={getErrorMessage}
-        SpecificInfoComponent={CollectionCentreNameComponent}
+        RowComponentWhenSuccessful={CollectionCentreNameComponent}
         header="collection centre"
     />
 );

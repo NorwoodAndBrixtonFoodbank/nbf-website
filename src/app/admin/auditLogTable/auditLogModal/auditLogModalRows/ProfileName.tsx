@@ -3,11 +3,10 @@
 import React from "react";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { TextValueContainer } from "../AuditLogModal";
-import { ForeignResponse } from "../types";
-import GeneralForeignInfo from "../GeneralForeignInfo";
+import AuditLogModalRow, { TextValueContainer } from "../AuditLogModalRow";
+import { AuditLogModalRowResponse } from "../types";
 
-interface ProfileName {
+interface ProfileNameDetails {
     firstName: string;
     lastName: string;
     userId: string | null;
@@ -21,7 +20,7 @@ interface ProfileNameError {
 
 const fetchEventName = async (
     profileId: string
-): Promise<ForeignResponse<ProfileName, ProfileNameError>> => {
+): Promise<AuditLogModalRowResponse<ProfileNameDetails, ProfileNameError>> => {
     const { data: data, error } = await supabase
         .from("profiles")
         .select("primary_key, first_name, last_name, user_id")
@@ -39,7 +38,14 @@ const fetchEventName = async (
         };
     }
 
-    return { data: {firstName: data.first_name ?? "", lastName: data.last_name ?? "", userId: data.user_id}, error: null };
+    return {
+        data: {
+            firstName: data.first_name ?? "",
+            lastName: data.last_name ?? "",
+            userId: data.user_id,
+        },
+        error: null,
+    };
 };
 
 const getErrorMessage = (error: ProfileNameError): string => {
@@ -52,16 +58,18 @@ const getErrorMessage = (error: ProfileNameError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const ProfileNameComponent: React.FC<ProfileName> = ({ firstName, lastName, userId }) => (
-    <TextValueContainer>{userId === null ? "Deleted User" : `${firstName} ${lastName}`}</TextValueContainer>
+const ProfileNameComponent: React.FC<ProfileNameDetails> = ({ firstName, lastName, userId }) => (
+    <TextValueContainer>
+        {userId === null ? "Deleted User" : `${firstName} ${lastName}`}
+    </TextValueContainer>
 );
 
 const ProfileName: React.FC<{ profileId: string }> = ({ profileId }) => (
-    <GeneralForeignInfo<ProfileName, ProfileNameError>
+    <AuditLogModalRow<ProfileNameDetails, ProfileNameError>
         foreignKey={profileId}
         fetchResponse={fetchEventName}
         getErrorMessage={getErrorMessage}
-        SpecificInfoComponent={ProfileNameComponent}
+        RowComponentWhenSuccessful={ProfileNameComponent}
         header="profile"
     />
 );
