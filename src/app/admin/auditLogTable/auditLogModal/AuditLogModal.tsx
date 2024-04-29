@@ -8,8 +8,8 @@ import { auditLogIcon } from "../../AdminPage";
 import { AuditLogRow } from "../types";
 import { capitaliseWords } from "@/common/format";
 import CollectionCentreName from "./CollectionCentreName";
-import { ParcelLink } from "./ParcelLink";
-import { ClientLink } from "./ClientLink";
+import ParcelLink from "./ParcelLink";
+import ClientLink from "./ClientLink";
 
 export const AuditLogModalContainer = styled.div`
     width: 800px;
@@ -29,14 +29,11 @@ export const Key = styled.div`
     flex: 0 0 30%;
     font-weight: 600;
     padding: 1rem 0.5em;
-`;
-
-export const LinkContainer = styled.div`
-    padding: 0rem 0.5rem;
+    align-content: center;
 `;
 
 export const TextValueContainer = styled.div`
-    padding: 1rem 0.5rem;
+    padding: 1rem;
 `;
 
 interface AuditLogModalProps {

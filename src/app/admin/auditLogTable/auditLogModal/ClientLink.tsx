@@ -4,7 +4,6 @@ import React from "react";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import LinkButton from "@/components/Buttons/LinkButton";
-import { LinkContainer } from "./AuditLogModal";
 import { ForeignResponse } from "./types";
 import GeneralForeignInfo from "./GeneralForeignInfo";
 
@@ -50,18 +49,18 @@ const getErrorMessage = (error: ClientLinkDetailsError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const GeneralClientLink: React.FC<ClientLinkDetails> = ({ clientId, clientName }) => (
-    <LinkContainer>
+const ClientLinkComponent: React.FC<ClientLinkDetails> = ({ clientId, clientName }) => (
         <LinkButton link={`/clients?clientId=${clientId}`}>{clientName}</LinkButton>
-    </LinkContainer>
 );
 
-export const ClientLink: React.FC<{ clientId: string }> = ({ clientId }) => (
+const ClientLink: React.FC<{ clientId: string }> = ({ clientId }) => (
     <GeneralForeignInfo<ClientLinkDetails, ClientLinkDetailsError>
         foreignKey={clientId}
         fetchResponse={fetchClientLinkDetails}
         getErrorMessage={getErrorMessage}
-        SpecificInfoComponent={GeneralClientLink}
+        SpecificInfoComponent={ClientLinkComponent}
         header="client"
     />
 );
+
+export default ClientLink;

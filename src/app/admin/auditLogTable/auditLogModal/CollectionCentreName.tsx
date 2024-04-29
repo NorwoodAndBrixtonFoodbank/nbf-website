@@ -1,24 +1,15 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { AuditLogModalItem, TextValueContainer, Key } from "./AuditLogModal";
-import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import { TextValueContainer } from "./AuditLogModal";
+import { ForeignResponse } from "./types";
+import GeneralForeignInfo from "./GeneralForeignInfo";
 
-interface CollectionCentreNameProps {
-    collectionCentreId: string;
+interface CollectionCentreName {
+    collectionCentreName: string;
 }
-
-type CollectionCentreNameResponse =
-    | {
-          collectionCentreName: string;
-          error: null;
-      }
-    | {
-          collectionCentreName: null;
-          error: CollectionCentreNameError;
-      };
 
 type CollectionCentreNameErrorType = "failedCollectionCentreNameFetch";
 interface CollectionCentreNameError {
@@ -28,7 +19,7 @@ interface CollectionCentreNameError {
 
 const fetchCollectionCentreName = async (
     collectionCentreId: string
-): Promise<CollectionCentreNameResponse> => {
+): Promise<ForeignResponse<CollectionCentreName, CollectionCentreNameError>> => {
     const { data: data, error } = await supabase
         .from("collection_centres")
         .select("primary_key, name")
@@ -41,12 +32,12 @@ const fetchCollectionCentreName = async (
             error: error,
         });
         return {
-            collectionCentreName: null,
+            data: null,
             error: { type: "failedCollectionCentreNameFetch", logId: logId },
         };
     }
 
-    return { collectionCentreName: data.name, error: null };
+    return { data: {collectionCentreName: data.name}, error: null };
 };
 
 const getErrorMessage = (error: CollectionCentreNameError): string => {
@@ -59,35 +50,18 @@ const getErrorMessage = (error: CollectionCentreNameError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const CollectionCentreName: React.FC<CollectionCentreNameProps> = ({ collectionCentreId }) => {
-    const [collectionCentreName, setCollectionCentreName] = useState<string | null>(null);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+const CollectionCentreNameComponent: React.FC<CollectionCentreName> = ({ collectionCentreName }) => (
+    <TextValueContainer>{collectionCentreName}</TextValueContainer>
+);
 
-    useEffect(() => {
-        (async () => {
-            const { collectionCentreName, error } =
-                await fetchCollectionCentreName(collectionCentreId);
-            if (error) {
-                setErrorMessage(getErrorMessage(error));
-                return;
-            }
-            setCollectionCentreName(collectionCentreName);
-        })();
-    }, [collectionCentreId]);
-
-    return (
-        <AuditLogModalItem>
-            <Key>COLLECTION CENTRE: </Key>
-            {collectionCentreName && (
-                <TextValueContainer>{collectionCentreName}</TextValueContainer>
-            )}
-            {errorMessage && (
-                <TextValueContainer>
-                    <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>
-                </TextValueContainer>
-            )}
-        </AuditLogModalItem>
-    );
-};
+const CollectionCentreName: React.FC<{ collectionCentreId: string }> = ({ collectionCentreId }) => (
+    <GeneralForeignInfo<CollectionCentreName, CollectionCentreNameError>
+        foreignKey={collectionCentreId}
+        fetchResponse={fetchCollectionCentreName}
+        getErrorMessage={getErrorMessage}
+        SpecificInfoComponent={CollectionCentreNameComponent}
+        header="collection centre"
+    />
+);
 
 export default CollectionCentreName;

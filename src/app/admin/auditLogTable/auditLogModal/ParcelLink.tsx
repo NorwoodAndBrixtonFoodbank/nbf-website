@@ -4,7 +4,6 @@ import React from "react";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import LinkButton from "@/components/Buttons/LinkButton";
-import { LinkContainer } from "./AuditLogModal";
 import dayjs from "dayjs";
 import GeneralForeignInfo from "./GeneralForeignInfo";
 import { ForeignResponse } from "./types";
@@ -70,27 +69,27 @@ const getErrorMessage = (error: ParcelLinkError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const GeneralParcelLink: React.FC<ParcelLinkDetails> = ({
+const ParcelLinkComponent: React.FC<ParcelLinkDetails> = ({
     parcelId,
     fullName,
     addressPostcode,
     collectionDatetime,
 }) => (
-    <LinkContainer>
         <LinkButton link={`/parcels?parcelId=${parcelId}`}>
             {addressPostcode}
             {fullName && ` - ${fullName}`}
             {collectionDatetime && ` @ ${dayjs(collectionDatetime!).format("DD/MM/YYYY HH:mm")}`}
         </LinkButton>
-    </LinkContainer>
 );
 
-export const ParcelLink: React.FC<{ parcelId: string }> = ({ parcelId }) => (
+const ParcelLink: React.FC<{ parcelId: string }> = ({ parcelId }) => (
     <GeneralForeignInfo<ParcelLinkDetails, ParcelLinkError>
         foreignKey={parcelId}
         fetchResponse={fetchParcelLinkDetails}
         getErrorMessage={getErrorMessage}
-        SpecificInfoComponent={GeneralParcelLink}
+        SpecificInfoComponent={ParcelLinkComponent}
         header="parcel"
     />
 );
+
+export default ParcelLink;
