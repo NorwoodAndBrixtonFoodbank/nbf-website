@@ -5,8 +5,8 @@ import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import LinkButton from "@/components/Buttons/LinkButton";
 import dayjs from "dayjs";
-import GeneralForeignInfo from "./GeneralForeignInfo";
-import { ForeignResponse } from "./types";
+import GeneralForeignInfo from "../GeneralForeignInfo";
+import { ForeignResponse } from "../types";
 
 interface ParcelLinkDetails {
     parcelId: string;

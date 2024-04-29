@@ -7,13 +7,13 @@ import styled, { useTheme } from "styled-components";
 import { auditLogIcon } from "../../AdminPage";
 import { AuditLogRow } from "../types";
 import { capitaliseWords } from "@/common/format";
-import CollectionCentreName from "./CollectionCentreName";
-import ParcelLink from "./ParcelLink";
-import ClientLink from "./ClientLink";
-import EventName from "./EventName";
-import ProfileName from "./ProfileName";
-import ListsIngredientName from "./ListsIngredientName";
-import ListsHotelIngredientName from "./ListsHotelIngredientName";
+import CollectionCentreName from "./infoComponentsForForeignTables.tsx/CollectionCentreName";
+import ParcelLink from "./infoComponentsForForeignTables.tsx/ParcelLink";
+import ClientLink from "./infoComponentsForForeignTables.tsx/ClientLink";
+import EventName from "./infoComponentsForForeignTables.tsx/EventName";
+import ProfileName from "./infoComponentsForForeignTables.tsx/ProfileName";
+import ListsIngredientName from "./infoComponentsForForeignTables.tsx/ListsIngredientName";
+import ListsHotelIngredientName from "./infoComponentsForForeignTables.tsx/ListsHotelIngredientName";
 
 export const AuditLogModalContainer = styled.div`
     width: 800px;

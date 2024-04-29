@@ -4,8 +4,8 @@ import React from "react";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import LinkButton from "@/components/Buttons/LinkButton";
-import { ForeignResponse } from "./types";
-import GeneralForeignInfo from "./GeneralForeignInfo";
+import { ForeignResponse } from "../types";
+import GeneralForeignInfo from "../GeneralForeignInfo";
 
 interface ClientLinkDetails {
     clientId: string;
