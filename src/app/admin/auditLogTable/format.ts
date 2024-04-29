@@ -1,10 +1,9 @@
-import { formatBoolean, formatDateTime, formatJson } from "@/common/format";
+import { formatBoolean, formatDateTime } from "@/common/format";
 import { AuditLogCountError, AuditLogError } from "./fetchAuditLogData";
 
 export const auditLogTableColumnDisplayFunctions = {
     createdAt: formatDateTime,
     wasSuccess: formatBoolean,
-    content: formatJson,
 };
 
 export const getAuditLogErrorMessage = (error: AuditLogError | AuditLogCountError): string => {

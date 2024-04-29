@@ -2,7 +2,7 @@ import { Json } from "@/databaseTypesFile";
 import { ViewSchema } from "@/databaseUtils";
 import { displayProfileName } from "./format";
 
-export type AuditLogResponseData = (ViewSchema["audit_log_plus"])[];
+export type AuditLogResponseData = ViewSchema["audit_log_plus"][];
 
 export interface AuditLogRow {
     auditLogId: string;

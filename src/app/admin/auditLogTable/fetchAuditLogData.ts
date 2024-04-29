@@ -39,10 +39,7 @@ export const fetchAuditLog = async (
     endIndex: number,
     sortState: SortState<AuditLogRow>
 ): Promise<AuditLogResponse> => {
-    let query = supabase
-        .from("audit_log_plus")
-        .select("*")
-        .range(startIndex, endIndex)
+    let query = supabase.from("audit_log_plus").select("*").range(startIndex, endIndex);
 
     if (
         sortState.sortEnabled &&
