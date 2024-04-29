@@ -58,20 +58,20 @@ const getErrorMessage = (error: ProfileNameError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const ProfileNameComponent: React.FC<ProfileNameDetails> = ({ firstName, lastName, userId }) => (
+const ProfileName: React.FC<ProfileNameDetails> = ({ firstName, lastName, userId }) => (
     <TextValueContainer>
         {userId === null ? "Deleted User" : `${firstName} ${lastName}`}
     </TextValueContainer>
 );
 
-const ProfileName: React.FC<{ profileId: string }> = ({ profileId }) => (
+const ProfileAuditLogModalRow: React.FC<{ profileId: string }> = ({ profileId }) => (
     <AuditLogModalRow<ProfileNameDetails, ProfileNameError>
         foreignKey={profileId}
         fetchResponse={fetchEventName}
         getErrorMessage={getErrorMessage}
-        RowComponentWhenSuccessful={ProfileNameComponent}
+        RowComponentWhenSuccessful={ProfileName}
         header="profile"
     />
 );
 
-export default ProfileName;
+export default ProfileAuditLogModalRow;

@@ -49,18 +49,20 @@ const getErrorMessage = (error: CollectionCentreNameError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const CollectionCentreNameComponent: React.FC<CollectionCentreNameDetails> = ({
-    collectionCentreName,
-}) => <TextValueContainer>{collectionCentreName}</TextValueContainer>;
+const CollectionCentreName: React.FC<CollectionCentreNameDetails> = ({ collectionCentreName }) => (
+    <TextValueContainer>{collectionCentreName}</TextValueContainer>
+);
 
-const CollectionCentreName: React.FC<{ collectionCentreId: string }> = ({ collectionCentreId }) => (
+const CollectionCentreAuditLogModalRow: React.FC<{ collectionCentreId: string }> = ({
+    collectionCentreId,
+}) => (
     <AuditLogModalRow<CollectionCentreNameDetails, CollectionCentreNameError>
         foreignKey={collectionCentreId}
         fetchResponse={fetchCollectionCentreName}
         getErrorMessage={getErrorMessage}
-        RowComponentWhenSuccessful={CollectionCentreNameComponent}
+        RowComponentWhenSuccessful={CollectionCentreName}
         header="collection centre"
     />
 );
 
-export default CollectionCentreName;
+export default CollectionCentreAuditLogModalRow;

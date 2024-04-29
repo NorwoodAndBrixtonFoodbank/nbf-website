@@ -69,7 +69,7 @@ const getErrorMessage = (error: ParcelLinkError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const ParcelLinkComponent: React.FC<ParcelLinkDetails> = ({
+const ParcelLink: React.FC<ParcelLinkDetails> = ({
     parcelId,
     fullName,
     addressPostcode,
@@ -82,14 +82,14 @@ const ParcelLinkComponent: React.FC<ParcelLinkDetails> = ({
     </LinkButton>
 );
 
-const ParcelLink: React.FC<{ parcelId: string }> = ({ parcelId }) => (
+const ParcelAuditLogModalRow: React.FC<{ parcelId: string }> = ({ parcelId }) => (
     <AuditLogModalRow<ParcelLinkDetails, ParcelLinkError>
         foreignKey={parcelId}
         fetchResponse={fetchParcelLinkDetails}
         getErrorMessage={getErrorMessage}
-        RowComponentWhenSuccessful={ParcelLinkComponent}
+        RowComponentWhenSuccessful={ParcelLink}
         header="parcel"
     />
 );
 
-export default ParcelLink;
+export default ParcelAuditLogModalRow;

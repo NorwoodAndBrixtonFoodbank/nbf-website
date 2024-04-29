@@ -7,16 +7,16 @@ import styled, { useTheme } from "styled-components";
 import { auditLogIcon } from "../../AdminPage";
 import { AuditLogRow } from "../types";
 import { capitaliseWords, formatJson } from "@/common/format";
-import CollectionCentreName from "./auditLogModalRows/CollectionCentreName";
-import ParcelLink from "./auditLogModalRows/ParcelLink";
-import ClientLink from "./auditLogModalRows/ClientLink";
-import ListsIngredientName from "./auditLogModalRows/ListsIngredientName";
-import EventName from "./auditLogModalRows/EventName";
-import ListsHotelIngredientName from "./auditLogModalRows/ListsHotelIngredientName";
-import ProfileName from "./auditLogModalRows/ProfileName";
-import PackingSlotName from "./auditLogModalRows/PackingSlotName";
-import StatusOrderEventName from "./auditLogModalRows/StatusOrderEventName";
-import WebsiteDataName from "./auditLogModalRows/WebsiteDataName";
+import CollectionCentreAuditLogModalRow from "./auditLogModalRows/CollectionCentre";
+import ParcelAuditLogModalRow from "./auditLogModalRows/Parcel";
+import ClientAuditLogModalRow from "./auditLogModalRows/Client";
+import ListsAuditLogModalRow from "./auditLogModalRows/Lists";
+import EventAuditLogModalRow from "./auditLogModalRows/Event";
+import ListsHotelAuditLogModalRow from "./auditLogModalRows/ListsHotel";
+import ProfileAuditLogModalRow from "./auditLogModalRows/Profile";
+import PackingSlotAuditLogModalRow from "./auditLogModalRows/PackingSlot";
+import StatusOrderAuditLogModalRow from "./auditLogModalRows/StatusOrder";
+import WebsiteDataAuditLogModalRow from "./auditLogModalRows/WebsiteData";
 import { AuditLogModalItem, Key, TextValueContainer } from "./AuditLogModalRow";
 
 export const AuditLogModalContainer = styled.div`
@@ -59,38 +59,44 @@ const AuditLogModal: React.FC<AuditLogModalProps> = ({
             {selectedAuditLogRow && (
                 <AuditLogModalContainer>
                     {selectedAuditLogRow.parcelId && (
-                        <ParcelLink parcelId={selectedAuditLogRow.parcelId} />
+                        <ParcelAuditLogModalRow parcelId={selectedAuditLogRow.parcelId} />
                     )}
                     {selectedAuditLogRow.clientId && (
-                        <ClientLink clientId={selectedAuditLogRow.clientId} />
+                        <ClientAuditLogModalRow clientId={selectedAuditLogRow.clientId} />
                     )}
                     {selectedAuditLogRow.collectionCentreId && (
-                        <CollectionCentreName
+                        <CollectionCentreAuditLogModalRow
                             collectionCentreId={selectedAuditLogRow.collectionCentreId}
                         />
                     )}
                     {selectedAuditLogRow.eventId && (
-                        <EventName eventId={selectedAuditLogRow.eventId} />
+                        <EventAuditLogModalRow eventId={selectedAuditLogRow.eventId} />
                     )}
                     {selectedAuditLogRow.profileId && (
-                        <ProfileName profileId={selectedAuditLogRow.profileId} />
+                        <ProfileAuditLogModalRow profileId={selectedAuditLogRow.profileId} />
                     )}
                     {selectedAuditLogRow.listId && (
-                        <ListsIngredientName listsId={selectedAuditLogRow.listId} />
+                        <ListsAuditLogModalRow listsId={selectedAuditLogRow.listId} />
                     )}
                     {selectedAuditLogRow.listHotelId && (
-                        <ListsHotelIngredientName listsHotelId={selectedAuditLogRow.listHotelId} />
+                        <ListsHotelAuditLogModalRow
+                            listsHotelId={selectedAuditLogRow.listHotelId}
+                        />
                     )}
                     {selectedAuditLogRow.packingSlotId && (
-                        <PackingSlotName packingSlotId={selectedAuditLogRow.packingSlotId} />
+                        <PackingSlotAuditLogModalRow
+                            packingSlotId={selectedAuditLogRow.packingSlotId}
+                        />
                     )}
                     {selectedAuditLogRow.statusOrder && (
-                        <StatusOrderEventName
+                        <StatusOrderAuditLogModalRow
                             statusOrderEventName={selectedAuditLogRow.statusOrder}
                         />
                     )}
                     {selectedAuditLogRow.websiteData && (
-                        <WebsiteDataName websiteDataName={selectedAuditLogRow.websiteData} />
+                        <WebsiteDataAuditLogModalRow
+                            websiteDataName={selectedAuditLogRow.websiteData}
+                        />
                     )}
                     <AuditLogModalItem>
                         <Key>ACTION CONTENT: </Key>

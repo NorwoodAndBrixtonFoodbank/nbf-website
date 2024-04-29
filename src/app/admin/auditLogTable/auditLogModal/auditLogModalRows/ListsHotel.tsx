@@ -16,7 +16,7 @@ interface ListsHotelIngredientError {
     logId: string;
 }
 
-const fetchListIngredientName = async (
+const fetchListHotelIngredientName = async (
     eventId: string
 ): Promise<
     AuditLogModalRowResponse<ListsHotelIngredientNameDetails, ListsHotelIngredientError>
@@ -51,18 +51,18 @@ const getErrorMessage = (error: ListsHotelIngredientError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const ListsHotelIngredientNameComponent: React.FC<ListsHotelIngredientNameDetails> = ({
+const ListsHotelIngredientName: React.FC<ListsHotelIngredientNameDetails> = ({
     ingredientName,
 }) => <TextValueContainer>{ingredientName}</TextValueContainer>;
 
-const ListsHotelIngredientName: React.FC<{ listsHotelId: string }> = ({ listsHotelId }) => (
+const ListsHotelAuditLogModalRow: React.FC<{ listsHotelId: string }> = ({ listsHotelId }) => (
     <AuditLogModalRow<ListsHotelIngredientNameDetails, ListsHotelIngredientError>
         foreignKey={listsHotelId}
-        fetchResponse={fetchListIngredientName}
+        fetchResponse={fetchListHotelIngredientName}
         getErrorMessage={getErrorMessage}
-        RowComponentWhenSuccessful={ListsHotelIngredientNameComponent}
+        RowComponentWhenSuccessful={ListsHotelIngredientName}
         header="Lists Hotel Ingredient"
     />
 );
 
-export default ListsHotelIngredientName;
+export default ListsHotelAuditLogModalRow;

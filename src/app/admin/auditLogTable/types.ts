@@ -19,7 +19,7 @@ export interface AuditLogRow {
     parcelId: string;
     profileId: string;
     statusOrder: string;
-    wasSuccess: boolean;
+    wasSuccess: boolean | null;
     websiteData: string;
 }
 
@@ -45,6 +45,6 @@ export const convertAuditLogResponseToAuditLogRow = (
         parcelId: auditLogResponseRow.parcel_id ?? "",
         profileId: auditLogResponseRow.profile_id ?? "",
         statusOrder: auditLogResponseRow.status_order ?? "",
-        wasSuccess: auditLogResponseRow.wasSuccess ?? false,
+        wasSuccess: auditLogResponseRow.wasSuccess ?? null,
         websiteData: auditLogResponseRow.website_data ?? "",
     }));

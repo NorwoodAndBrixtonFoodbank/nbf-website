@@ -49,18 +49,18 @@ const getErrorMessage = (error: PackingSlotNameError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const PackingSlotNameComponent: React.FC<PackingSlotNameDetails> = ({ packingSlotName }) => (
+const PackingSlotName: React.FC<PackingSlotNameDetails> = ({ packingSlotName }) => (
     <TextValueContainer>{packingSlotName}</TextValueContainer>
 );
 
-const PackingSlotName: React.FC<{ packingSlotId: string }> = ({ packingSlotId }) => (
+const PackingSlotAuditLogModalRow: React.FC<{ packingSlotId: string }> = ({ packingSlotId }) => (
     <AuditLogModalRow<PackingSlotNameDetails, PackingSlotNameError>
         foreignKey={packingSlotId}
         fetchResponse={fetchPackingSlotName}
         getErrorMessage={getErrorMessage}
-        RowComponentWhenSuccessful={PackingSlotNameComponent}
+        RowComponentWhenSuccessful={PackingSlotName}
         header="packing slot"
     />
 );
 
-export default PackingSlotName;
+export default PackingSlotAuditLogModalRow;

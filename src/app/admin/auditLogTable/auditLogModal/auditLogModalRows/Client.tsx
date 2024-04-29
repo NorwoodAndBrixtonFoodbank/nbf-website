@@ -13,6 +13,7 @@ interface ClientLinkDetails {
 }
 
 type ClientLinkDetailsErrorType = "failedClientFetch";
+
 interface ClientLinkDetailsError {
     type: ClientLinkDetailsErrorType;
     logId: string;
@@ -49,18 +50,18 @@ const getErrorMessage = (error: ClientLinkDetailsError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const ClientLinkComponent: React.FC<ClientLinkDetails> = ({ clientId, clientName }) => (
+const ClientLink: React.FC<ClientLinkDetails> = ({ clientId, clientName }) => (
     <LinkButton link={`/clients?clientId=${clientId}`}>{clientName}</LinkButton>
 );
 
-const ClientLink: React.FC<{ clientId: string }> = ({ clientId }) => (
+const ClientAuditLogModalRow: React.FC<{ clientId: string }> = ({ clientId }) => (
     <AuditLogModalRow<ClientLinkDetails, ClientLinkDetailsError>
         foreignKey={clientId}
         fetchResponse={fetchClientLinkDetails}
         getErrorMessage={getErrorMessage}
-        RowComponentWhenSuccessful={ClientLinkComponent}
+        RowComponentWhenSuccessful={ClientLink}
         header="client"
     />
 );
 
-export default ClientLink;
+export default ClientAuditLogModalRow;

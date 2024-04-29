@@ -49,18 +49,18 @@ const getErrorMessage = (error: ListsIngredientError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const ListsIngredientNameComponent: React.FC<ListsIngredientNameDetails> = ({ ingredientName }) => (
+const ListsIngredientName: React.FC<ListsIngredientNameDetails> = ({ ingredientName }) => (
     <TextValueContainer>{ingredientName}</TextValueContainer>
 );
 
-const ListsIngredientName: React.FC<{ listsId: string }> = ({ listsId }) => (
+const ListsAuditLogModalRow: React.FC<{ listsId: string }> = ({ listsId }) => (
     <AuditLogModalRow<ListsIngredientNameDetails, ListsIngredientError>
         foreignKey={listsId}
         fetchResponse={fetchListIngredientName}
         getErrorMessage={getErrorMessage}
-        RowComponentWhenSuccessful={ListsIngredientNameComponent}
+        RowComponentWhenSuccessful={ListsIngredientName}
         header="Lists Ingredient"
     />
 );
 
-export default ListsIngredientName;
+export default ListsAuditLogModalRow;

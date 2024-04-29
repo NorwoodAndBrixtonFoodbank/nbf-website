@@ -3,14 +3,13 @@
 import React from "react";
 import { AuditLogModalItem, Key, TextValueContainer } from "../AuditLogModalRow";
 
-const StatusOrderEventName: React.FC<{ statusOrderEventName: string }> = ({
+const StatusOrderAuditLogModalRow: React.FC<{ statusOrderEventName: string }> = ({
     statusOrderEventName,
 }) => (
     <AuditLogModalItem>
-        {" "}
         <Key>STATUS ORDER: </Key>
-        <TextValueContainer>{statusOrderEventName}</TextValueContainer>{" "}
+        <TextValueContainer>{statusOrderEventName}</TextValueContainer>
     </AuditLogModalItem>
 );
 
-export default StatusOrderEventName;
+export default StatusOrderAuditLogModalRow;
