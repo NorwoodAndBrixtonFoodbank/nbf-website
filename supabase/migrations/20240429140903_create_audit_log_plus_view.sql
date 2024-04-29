@@ -15,8 +15,8 @@ create or replace view "public"."audit_log_plus" as  SELECT audit_log.action,
     audit_log.status_order,
     audit_log."wasSuccess",
     audit_log.website_data,
-    concat(profiles.first_name, ' ', profiles.last_name) AS actor_profile_name,
-    profiles.user_id AS actor_profile_user_id
+    concat(profiles.first_name, ' ', profiles.last_name) AS actor_name,
+    profiles.user_id AS actor_user_id
    FROM (audit_log
      LEFT JOIN profiles ON ((audit_log.actor_profile_id = profiles.primary_key)))
   ORDER BY audit_log.created_at;

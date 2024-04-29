@@ -45,9 +45,7 @@ const AuditLogTable: React.FC = () => {
             setErrorMessage(getAuditLogErrorMessage(error));
             return;
         }
-        console.log(data);
         const convertedData = convertAuditLogResponseToAuditLogRow(data);
-        console.log(convertedData);
         setAuditLogDataPortion(convertedData);
     }, [startPoint, endPoint, sortState]);
 

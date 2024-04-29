@@ -667,9 +667,9 @@ export type Database = {
       audit_log_plus: {
         Row: {
           action: string | null
+          actor_name: string | null
           actor_profile_id: string | null
-          actor_profile_name: string | null
-          actor_profile_user_id: string | null
+          actor_user_id: string | null
           client_id: string | null
           collection_centre_id: string | null
           content: Json | null
@@ -787,14 +787,14 @@ export type Database = {
           },
           {
             foreignKeyName: "profiles_user_id_fkey"
-            columns: ["actor_profile_user_id"]
+            columns: ["actor_user_id"]
             isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "profiles_user_id_fkey"
-            columns: ["actor_profile_user_id"]
+            columns: ["actor_user_id"]
             isOneToOne: true
             referencedRelation: "profiles_plus"
             referencedColumns: ["user_id"]
