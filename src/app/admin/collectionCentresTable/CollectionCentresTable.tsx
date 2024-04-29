@@ -161,6 +161,7 @@ const CollectionCentresTable: React.FC = () => {
                     collectionCentreId: createdCollectionCentre.collectionCentreId,
                     wasSuccess: true,
                 });
+                setIsLoading(false);
             }
         } else {
             const { error: updateCollectionCentreError } = await updateDbCollectionCentre(newRow);
@@ -180,10 +181,9 @@ const CollectionCentresTable: React.FC = () => {
                 });
             } else {
                 void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
+                setIsLoading(false);
             }
         }
-
-        setIsLoading(false);
 
         return newRow;
     };
