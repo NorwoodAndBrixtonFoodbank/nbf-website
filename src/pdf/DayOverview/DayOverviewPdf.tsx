@@ -4,30 +4,19 @@ import React from "react";
 import { Svg, Document, Page, Text, View, StyleSheet, Path } from "@react-pdf/renderer";
 import { faFlag, faSquare, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 
-import {
-    DayOverviewData,
-    getCurrentDate,
-    ParcelOfSpecificDateAndLocation,
-} from "@/pdf/DayOverview/DayOverviewPdfButton";
+import { DayOverviewPdfData, ParcelForDayOverview } from "@/pdf/DayOverview/DayOverviewPdfButton";
 import { nullPostcodeDisplay } from "@/common/format";
 
-interface DayOverviewSubtitleProps {
-    subtitleKey: string;
-    children: string;
-}
-
 interface DayOverviewRowProps {
-    row: ParcelOfSpecificDateAndLocation;
+    parcel: ParcelForDayOverview;
 }
 
 interface DayOverviewContentProps {
-    date: Date;
-    location: string;
-    data: ParcelOfSpecificDateAndLocation[];
+    parcels: ParcelForDayOverview[];
 }
 
 interface DayOverviewPdfProps {
-    data: DayOverviewData;
+    data: DayOverviewPdfData;
 }
 
 interface CustomSVGProps {
@@ -49,10 +38,6 @@ const styles = StyleSheet.create({
         fontSize: "30px",
         textAlign: "center",
         margin: "0 22.5pt 22.5pt",
-    },
-    subtitleWrap: {
-        justifyContent: "space-between",
-        marginBottom: "4pt",
     },
     svg: {
         margin: "0 0.75pt",
@@ -100,13 +85,6 @@ const DayOverviewMargin: React.FC<{}> = () => {
     return <View style={styles.margin} fixed></View>;
 };
 
-const DayOverviewSubtitle: React.FC<DayOverviewSubtitleProps> = ({ subtitleKey, children }) => (
-    <Text>
-        <Text style={styles.bold}>{subtitleKey}: </Text>
-        {children}
-    </Text>
-);
-
 const DayOverviewHeader: React.FC<{}> = () => {
     return (
         <View style={[styles.row, styles.bold, { borderTop: "1 solid black" }]} fixed>
@@ -114,50 +92,46 @@ const DayOverviewHeader: React.FC<{}> = () => {
             <Text style={[styles.cellName, styles.cell]}>Name</Text>
             <Text style={[styles.cellPostcode, styles.cell]}>Postcode</Text>
             <Text style={[styles.cellTime, styles.cell]}>Time</Text>
+            <Text style={[styles.cellCollection, styles.cell]}>Collection</Text>
             <Text style={[styles.cellInstructions, styles.cell]}>Instructions</Text>
         </View>
     );
 };
 
-const DayOverviewRow: React.FC<DayOverviewRowProps> = ({ row }) => {
+const DayOverviewRow: React.FC<DayOverviewRowProps> = ({ parcel }) => {
     return (
         <View style={styles.row} wrap={false}>
             <View style={[styles.cellLogo, styles.cell, styles.row]}>
                 <CustomSVG icon={faSquare} color="black" fill={false} />
-                {row.clients!.flagged_for_attention && (
+                {parcel.client!.flagged_for_attention && (
                     <CustomSVG icon={faFlag} color="orange" fill={true} />
                 )}
             </View>
-            <Text style={[styles.cellName, styles.cell]}>{row.clients!.full_name}</Text>
+            <Text style={[styles.cellName, styles.cell]}>{parcel.client!.full_name}</Text>
             <Text style={[styles.cellPostcode, styles.cell]}>
-                {row.clients!.address_postcode ?? nullPostcodeDisplay}
+                {parcel.client!.address_postcode ?? nullPostcodeDisplay}
             </Text>
             <Text style={[styles.cellTime, styles.cell]}>
-                {dateTimeToAMPM(row.collection_datetime!)}
+                {dateTimeToAMPM(parcel.collection_datetime!)}
+            </Text>
+            <Text style={[styles.cellCollection, styles.cell]}>
+                {parcel.collection_centre!.name}
             </Text>
             <Text style={[styles.cellInstructions, styles.cell]}>
-                {row.clients!.delivery_instructions}
+                {parcel.client!.delivery_instructions}
             </Text>
         </View>
     );
 };
 
-const DayOverviewContent: React.FC<DayOverviewContentProps> = ({ date, location, data }) => {
+const DayOverviewContent: React.FC<DayOverviewContentProps> = ({ parcels }) => {
     return (
-        <>
-            <View style={[styles.subtitleWrap, styles.row]}>
-                <DayOverviewSubtitle subtitleKey="Date">
-                    {getCurrentDate(date, true)}
-                </DayOverviewSubtitle>
-                <DayOverviewSubtitle subtitleKey="Location">{location}</DayOverviewSubtitle>
-            </View>
-            <View style={{ borderLeft: "1 solid black" }}>
-                <DayOverviewHeader />
-                {data.map((datum, index) => (
-                    <DayOverviewRow key={index} row={datum} /> // eslint-disable-line react/no-array-index-key
-                ))}
-            </View>
-        </>
+        <View style={{ borderLeft: "1 solid black" }}>
+            <DayOverviewHeader />
+            {parcels.map((parcel, index) => (
+                <DayOverviewRow key={index} parcel={parcel} /> // eslint-disable-line react/no-array-index-key
+            ))}
+        </View>
     );
 };
 
@@ -167,7 +141,7 @@ const DayOverviewPdf: React.FC<DayOverviewPdfProps> = ({ data }) => {
             <Page size="A4" style={styles.page}>
                 <DayOverviewMargin />
                 <Text style={styles.title}>Day Overview</Text>
-                <DayOverviewContent date={data.date} location={data.location} data={data.data} />
+                <DayOverviewContent parcels={data.parcels} />
                 <DayOverviewMargin />
             </Page>
         </Document>

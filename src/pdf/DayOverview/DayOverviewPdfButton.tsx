@@ -7,75 +7,50 @@ import PdfButton from "@/components/PdfButton/PdfButton";
 import DayOverviewPdf from "./DayOverviewPdf";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { PdfDataFetchResponse } from "../common";
+import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 
 interface Props {
-    date: Date;
-    collectionCentreKey: string | null;
     onPdfCreationCompleted: () => void;
     onPdfCreationFailed: (error: DayOverviewPdfError) => void;
-    disabled: boolean;
+    parcels: ParcelsTableRow[];
 }
 
-export type ParcelOfSpecificDateAndLocation = Pick<Schema["parcels"], "collection_datetime"> & {
-    clients: Pick<
+export type ParcelForDayOverview = Pick<Schema["parcels"], "collection_datetime"> & {
+    client: Pick<
         Schema["clients"],
         "flagged_for_attention" | "full_name" | "address_postcode" | "delivery_instructions"
     > | null;
+    collection_centre: Pick<Schema["collection_centres"], "name"> | null;
 };
 
-export interface DayOverviewData {
-    date: Date;
-    location: string;
-    data: ParcelOfSpecificDateAndLocation[];
-}
-
-type CollectionCentreNameAndAbbreviation = Pick<Schema["collection_centres"], "name" | "acronym">;
-
-export const getCurrentDate = (date: Date, hyphen: boolean = false): string => {
-    const formattedDate = date.toLocaleString("en-CA", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-    });
-
-    return hyphen ? formattedDate : formattedDate.replaceAll("-", "");
-};
-
-type ParcelsOfSpecificDateAndLocationResponse =
+type ParcelForDayOverviewResponse =
     | {
-          data: ParcelOfSpecificDateAndLocation[];
+          data: ParcelForDayOverview[];
           error: null;
       }
     | {
           data: null;
-          error: { type: ParcelsOfSpecificDateAndLocationErrorType; logId: string };
+          error: { type: ParcelForDayOverviewErrorType; logId: string };
       };
 
-type ParcelsOfSpecificDateAndLocationErrorType = "parcelFetchFailed";
+type ParcelForDayOverviewErrorType = "parcelFetchFailed";
 
-const getParcelsOfSpecificDateAndLocation = async (
-    date: Date,
-    collectionCentreKey: string
-): Promise<ParcelsOfSpecificDateAndLocationResponse> => {
-    const startDateString = date.toISOString();
-    const endDate = new Date(date);
-    endDate.setDate(date.getDate() + 1);
-    const endDateString = endDate.toISOString();
-
+const getParcelsForDayOverview = async (
+    parcelIds: string[]
+): Promise<ParcelForDayOverviewResponse> => {
     const { data, error } = await supabase
         .from("parcels")
         .select(
             `collection_datetime, 
-            clients ( 
+            collection_centre:collection_centres(name),
+            client:clients ( 
                 flagged_for_attention, 
                 full_name, 
                 address_postcode, 
                 delivery_instructions
             )`
         )
-        .gte("collection_datetime", startDateString)
-        .lt("collection_datetime", endDateString)
-        .eq("collection_centre", collectionCentreKey)
+        .in("primary_key", parcelIds)
         .order("collection_datetime");
 
     if (error) {
@@ -85,88 +60,34 @@ const getParcelsOfSpecificDateAndLocation = async (
 
     return { data: data, error: null };
 };
-
-type CollectionCentreResponse =
-    | {
-          data: CollectionCentreNameAndAbbreviation;
-          error: null;
-      }
-    | {
-          data: null;
-          error: { type: CollectionCentreErrorType; logId: string };
-      };
-
-type CollectionCentreErrorType = "collectionCentreFetchFailed" | "noMatchingCollectionCentre";
-
-const fetchCollectionCentreNameAndAbbreviation = async (
-    collectionCentreKey: string
-): Promise<CollectionCentreResponse> => {
-    const { data, error } = await supabase
-        .from("collection_centres")
-        .select()
-        .eq("primary_key", collectionCentreKey)
-        .single();
-
-    if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: Collection centre", error);
-        return { data: null, error: { type: "collectionCentreFetchFailed", logId: logId } };
-    }
-
-    if (!data) {
-        const logId = await logErrorReturnLogId("Error with fetch: Collection centre");
-        return { data: null, error: { type: "noMatchingCollectionCentre", logId: logId } };
-    }
-
-    return { data: data, error: null };
-};
-
-interface DayOverviewPdfData {
-    date: Date;
-    location: string;
-    data: ParcelOfSpecificDateAndLocation[];
+export interface DayOverviewPdfData {
+    parcels: ParcelForDayOverview[];
 }
 
-type DayOverviewPdfErrorType =
-    | CollectionCentreErrorType
-    | ParcelsOfSpecificDateAndLocationErrorType;
+type DayOverviewPdfErrorType = ParcelForDayOverviewErrorType;
 export type DayOverviewPdfError = { type: DayOverviewPdfErrorType; logId: string };
 
 const DayOverviewPdfButton = ({
-    date,
-    collectionCentreKey,
     onPdfCreationCompleted,
     onPdfCreationFailed,
-    disabled,
+    parcels,
 }: Props): React.ReactElement => {
     const fetchDataAndFileName = async (): Promise<
         PdfDataFetchResponse<DayOverviewPdfData, DayOverviewPdfErrorType>
     > => {
-        const {
-            data: collectionCentreNameAndAbbreviation,
-            error: collectionCentreNameAndAbbreviationError,
-        } = await fetchCollectionCentreNameAndAbbreviation(collectionCentreKey!);
-        if (collectionCentreNameAndAbbreviationError) {
-            return { data: null, error: collectionCentreNameAndAbbreviationError };
+        const parcelIds = parcels.map((parcel) => {
+            return parcel.parcelId;
+        });
+        const { data: parcelsForDayOverview, error: error } =
+            await getParcelsForDayOverview(parcelIds);
+        if (error) {
+            return { data: null, error: error };
         }
-
-        const { data: parcelsOfSpecificDate, error: parcelsOfSpecificDateError } =
-            await getParcelsOfSpecificDateAndLocation(date, collectionCentreKey!);
-        if (parcelsOfSpecificDateError) {
-            return { data: null, error: parcelsOfSpecificDateError };
-        }
-
-        const dateString = getCurrentDate(date);
-
-        const acronym = `_${collectionCentreNameAndAbbreviation?.acronym}` ?? "";
-        const location = collectionCentreNameAndAbbreviation?.name ?? "";
-
-        const fileName = `DayOverview_${dateString}${acronym}.pdf`;
+        const fileName = "DayOverview.pdf";
         return {
             data: {
                 pdfData: {
-                    date: date,
-                    location: location,
-                    data: parcelsOfSpecificDate,
+                    parcels: parcelsForDayOverview,
                 },
                 fileName: fileName,
             },
@@ -180,7 +101,6 @@ const DayOverviewPdfButton = ({
             pdfComponent={DayOverviewPdf}
             onPdfCreationCompleted={onPdfCreationCompleted}
             onPdfCreationFailed={onPdfCreationFailed}
-            disabled={disabled}
         />
     );
 };
