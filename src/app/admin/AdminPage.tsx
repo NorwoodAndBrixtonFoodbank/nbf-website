@@ -55,11 +55,6 @@ const AdminPage: React.FC = () => {
             panelContent: <CollectionCentresTable />,
         },
         {
-            panelTitle: "Create Collection Centre",
-            panelIcon: faBuildingCircleArrowRight,
-            panelContent: <CreateCollectionCentreForm />,
-        },
-        {
             panelTitle: "Modify Packing Slots",
             panelIcon: faBoxOpen,
             panelContent: <PackingSlotsTable />,
