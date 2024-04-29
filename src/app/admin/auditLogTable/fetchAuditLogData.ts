@@ -40,10 +40,9 @@ export const fetchAuditLog = async (
     sortState: SortState<AuditLogRow>
 ): Promise<AuditLogResponse> => {
     let query = supabase
-        .from("audit_log")
-        .select("*, profiles!actor_profile_id(first_name, last_name, user_id)")
+        .from("audit_log_plus")
+        .select("*")
         .range(startIndex, endIndex)
-        .limit(1, { foreignTable: "profiles" });
 
     if (
         sortState.sortEnabled &&

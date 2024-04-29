@@ -1,0 +1,26 @@
+create or replace view "public"."audit_log_plus" as  SELECT audit_log.action,
+    audit_log.actor_profile_id,
+    audit_log.client_id,
+    audit_log.collection_centre_id,
+    audit_log.content,
+    audit_log.created_at,
+    audit_log.event_id,
+    audit_log.list_hotel_id,
+    audit_log.list_id,
+    audit_log.log_id,
+    audit_log.packing_slot_id,
+    audit_log.parcel_id,
+    audit_log.primary_key,
+    audit_log.profile_id,
+    audit_log.status_order,
+    audit_log."wasSuccess",
+    audit_log.website_data,
+    profiles.first_name AS actor_profile_first_name,
+    profiles.last_name AS actor_profile_last_name,
+    profiles.user_id AS actor_profile_user_id
+   FROM (audit_log
+     LEFT JOIN profiles ON ((audit_log.actor_profile_id = profiles.primary_key)))
+  ORDER BY audit_log.created_at;
+
+
+

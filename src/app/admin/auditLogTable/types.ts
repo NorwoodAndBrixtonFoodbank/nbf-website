@@ -1,10 +1,8 @@
 import { Json } from "@/databaseTypesFile";
-import { Schema } from "@/databaseUtils";
+import { ViewSchema } from "@/databaseUtils";
 import { displayProfileName } from "./format";
 
-export type AuditLogResponseData = (Schema["audit_log"] & {
-    actor: Pick<Schema["profiles"], "first_name" | "last_name" | "user_id">;
-})[];
+export type AuditLogResponseData = (ViewSchema["audit_log_plus"])[];
 
 export interface AuditLogRow {
     auditLogId: string;
@@ -30,12 +28,12 @@ export const convertAuditLogResponseToAuditLogRow = (
     auditLogResponse: AuditLogResponseData
 ): AuditLogRow[] =>
     auditLogResponse.map((auditLogResponseRow) => ({
-        auditLogId: auditLogResponseRow.primary_key,
+        auditLogId: auditLogResponseRow.primary_key ?? "",
         action: auditLogResponseRow.action ?? "",
         actorName: displayProfileName(
-            auditLogResponseRow.actor.first_name ?? "",
-            auditLogResponseRow.actor.last_name ?? "",
-            auditLogResponseRow.actor.user_id
+            auditLogResponseRow.actor_profile_first_name ?? "",
+            auditLogResponseRow.actor_profile_last_name ?? "",
+            auditLogResponseRow.actor_profile_user_id
         ),
         clientId: auditLogResponseRow.client_id ?? "",
         collectionCentreId: auditLogResponseRow.collection_centre_id ?? "",
@@ -49,6 +47,6 @@ export const convertAuditLogResponseToAuditLogRow = (
         parcelId: auditLogResponseRow.parcel_id ?? "",
         profileId: auditLogResponseRow.profile_id ?? "",
         statusOrder: auditLogResponseRow.status_order ?? "",
-        wasSuccess: auditLogResponseRow.wasSuccess ?? "",
+        wasSuccess: auditLogResponseRow.wasSuccess ?? false,
         websiteData: auditLogResponseRow.website_data ?? "",
     }));
