@@ -1,31 +1,30 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import LinkButton from "@/components/Buttons/LinkButton";
-import { AuditLogModalItem, TextValueContainer, Key, LinkContainer } from "./AuditLogModal";
+import { LinkContainer } from "./AuditLogModal";
 import dayjs from "dayjs";
-import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-import GeneralForeignInfo from "./ForeignInfo";
+import GeneralForeignInfo from "./GeneralForeignInfo";
 import { ForeignResponse } from "./types";
 
-interface ParcelOverviewDetails {
+interface ParcelLinkDetails {
     parcelId: string;
     collectionDatetime: Date | null;
     fullName: string;
     addressPostcode: string;
 }
 
-type ParcelOverviewDetailsErrorType = "failedParcelOverviewDetailsFetch" | "nullClient";
-interface ParcelOverviewDetailsError {
-    type: ParcelOverviewDetailsErrorType;
+type ParcelLinkErrorType = "failedParcelOverviewDetailsFetch" | "nullClient";
+interface ParcelLinkError {
+    type: ParcelLinkErrorType;
     logId: string;
 }
 
-const fetchParcelOverviewDetails = async (
+const fetchParcelLinkDetails = async (
     parcelId: string
-): Promise<ForeignResponse<ParcelOverviewDetails, ParcelOverviewDetailsError>> => {
+): Promise<ForeignResponse<ParcelLinkDetails, ParcelLinkError>> => {
     const { data: data, error } = await supabase
         .from("parcels")
         .select("primary_key, client:clients(full_name, address_postcode), collection_datetime")
@@ -58,7 +57,7 @@ const fetchParcelOverviewDetails = async (
     return { data: convertedData, error: null };
 };
 
-const getErrorMessage = (error: ParcelOverviewDetailsError): string => {
+const getErrorMessage = (error: ParcelLinkError): string => {
     let errorMessage: string = "";
     switch (error.type) {
         case "failedParcelOverviewDetailsFetch":
@@ -71,14 +70,27 @@ const getErrorMessage = (error: ParcelOverviewDetailsError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const GeneralParcelLink: React.FC<{foreignData: ParcelOverviewDetails}> = ({foreignData}) => (
-                <LinkContainer>
-                    <LinkButton link={`/parcels?parcelId=${foreignData.parcelId}`}>
-                        {foreignData.addressPostcode}
-                        {foreignData.fullName && ` - ${foreignData.fullName}`}
-                        {foreignData.collectionDatetime &&
-                            ` @ ${dayjs(foreignData.collectionDatetime!).format("DD/MM/YYYY HH:mm")}`}
-                    </LinkButton>
-                </LinkContainer>)
+const GeneralParcelLink: React.FC<ParcelLinkDetails> = ({
+    parcelId,
+    fullName,
+    addressPostcode,
+    collectionDatetime,
+}) => (
+    <LinkContainer>
+        <LinkButton link={`/parcels?parcelId=${parcelId}`}>
+            {addressPostcode}
+            {fullName && ` - ${fullName}`}
+            {collectionDatetime && ` @ ${dayjs(collectionDatetime!).format("DD/MM/YYYY HH:mm")}`}
+        </LinkButton>
+    </LinkContainer>
+);
 
-export const ParcelLink: React.FC<{parcelId: string}> = ({parcelId}) => GeneralForeignInfo<ParcelOverviewDetails, ParcelOverviewDetailsError>({foreignKey: parcelId, fetchResponse: fetchParcelOverviewDetails, getErrorMessage: getErrorMessage, SpecificInfoComponent: GeneralParcelLink});
+export const ParcelLink: React.FC<{ parcelId: string }> = ({ parcelId }) => (
+    <GeneralForeignInfo<ParcelLinkDetails, ParcelLinkError>
+        foreignKey={parcelId}
+        fetchResponse={fetchParcelLinkDetails}
+        getErrorMessage={getErrorMessage}
+        SpecificInfoComponent={GeneralParcelLink}
+        header="parcel"
+    />
+);

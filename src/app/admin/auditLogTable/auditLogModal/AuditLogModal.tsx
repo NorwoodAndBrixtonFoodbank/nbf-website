@@ -7,9 +7,9 @@ import styled, { useTheme } from "styled-components";
 import { auditLogIcon } from "../../AdminPage";
 import { AuditLogRow } from "../types";
 import { capitaliseWords } from "@/common/format";
-import ClientLink from "./ClientLink";
 import CollectionCentreName from "./CollectionCentreName";
 import { ParcelLink } from "./ParcelLink";
+import { ClientLink } from "./ClientLink";
 
 export const AuditLogModalContainer = styled.div`
     width: 800px;
@@ -69,14 +69,16 @@ const AuditLogModal: React.FC<AuditLogModalProps> = ({
             headerId="auditLogModal"
         >
             <AuditLogModalContainer>
-                {selectedAuditLogRow?.parcelId && 
+                {selectedAuditLogRow?.parcelId && (
                     <ParcelLink parcelId={selectedAuditLogRow.parcelId} />
-                }
+                )}
                 {selectedAuditLogRow?.clientId && (
                     <ClientLink clientId={selectedAuditLogRow.clientId} />
                 )}
                 {selectedAuditLogRow?.collectionCentreId && (
-                    <CollectionCentreName collectionCentreId={selectedAuditLogRow.collectionCentreId} />
+                    <CollectionCentreName
+                        collectionCentreId={selectedAuditLogRow.collectionCentreId}
+                    />
                 )}
             </AuditLogModalContainer>
         </Modal>

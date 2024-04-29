@@ -1,33 +1,27 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import LinkButton from "@/components/Buttons/LinkButton";
-import { AuditLogModalItem, TextValueContainer, Key, LinkContainer } from "./AuditLogModal";
-import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import { LinkContainer } from "./AuditLogModal";
+import { ForeignResponse } from "./types";
+import GeneralForeignInfo from "./GeneralForeignInfo";
 
-interface ClientLinkProps {
+interface ClientLinkDetails {
     clientId: string;
+    clientName: string;
 }
 
-type ClientNameResponse =
-    | {
-          clientName: string;
-          error: null;
-      }
-    | {
-          clientName: null;
-          error: ClientNameError;
-      };
-
-type ClientNameErrorType = "failedClientNameFetch";
-interface ClientNameError {
-    type: ClientNameErrorType;
+type ClientLinkDetailsErrorType = "failedClientFetch";
+interface ClientLinkDetailsError {
+    type: ClientLinkDetailsErrorType;
     logId: string;
 }
 
-const fetchClientName = async (clientId: string): Promise<ClientNameResponse> => {
+const fetchClientLinkDetails = async (
+    clientId: string
+): Promise<ForeignResponse<ClientLinkDetails, ClientLinkDetailsError>> => {
     const { data: data, error } = await supabase
         .from("clients")
         .select("primary_key, full_name")
@@ -38,54 +32,36 @@ const fetchClientName = async (clientId: string): Promise<ClientNameResponse> =>
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: clients", { error: error });
         return {
-            clientName: null,
-            error: { type: "failedClientNameFetch", logId: logId },
+            data: null,
+            error: { type: "failedClientFetch", logId: logId },
         };
     }
 
-    return { clientName: data.full_name, error: null };
+    return { data: { clientId: data.primary_key, clientName: data.full_name }, error: null };
 };
 
-const getErrorMessage = (error: ClientNameError): string => {
+const getErrorMessage = (error: ClientLinkDetailsError): string => {
     let errorMessage: string = "";
     switch (error.type) {
-        case "failedClientNameFetch":
-            errorMessage = "Failed to fetch client's name.";
+        case "failedClientFetch":
+            errorMessage = "Failed to fetch client's details.";
             break;
     }
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const ClientLink: React.FC<ClientLinkProps> = ({ clientId }) => {
-    const [clientName, setClientName] = useState<string | null>(null);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+const GeneralClientLink: React.FC<ClientLinkDetails> = ({ clientId, clientName }) => (
+    <LinkContainer>
+        <LinkButton link={`/clients?clientId=${clientId}`}>{clientName}</LinkButton>
+    </LinkContainer>
+);
 
-    useEffect(() => {
-        (async () => {
-            const { clientName, error } = await fetchClientName(clientId);
-            if (error) {
-                setErrorMessage(getErrorMessage(error));
-                return;
-            }
-            setClientName(clientName);
-        })();
-    }, [clientId]);
-
-    return (
-        <AuditLogModalItem>
-            <Key>CLIENT: </Key>
-            {clientName && (
-                <LinkContainer>
-                    <LinkButton link={`/clients?clientId=${clientId}`}>{clientName}</LinkButton>
-                </LinkContainer>
-            )}
-            {errorMessage && (
-                <TextValueContainer>
-                    <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>
-                </TextValueContainer>
-            )}
-        </AuditLogModalItem>
-    );
-};
-
-export default ClientLink;
+export const ClientLink: React.FC<{ clientId: string }> = ({ clientId }) => (
+    <GeneralForeignInfo<ClientLinkDetails, ClientLinkDetailsError>
+        foreignKey={clientId}
+        fetchResponse={fetchClientLinkDetails}
+        getErrorMessage={getErrorMessage}
+        SpecificInfoComponent={GeneralClientLink}
+        header="client"
+    />
+);

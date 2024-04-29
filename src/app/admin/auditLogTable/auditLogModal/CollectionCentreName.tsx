@@ -3,8 +3,7 @@
 import React, { useEffect, useState } from "react";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
-import LinkButton from "@/components/Buttons/LinkButton";
-import { AuditLogModalItem, TextValueContainer, Key, LinkContainer } from "./AuditLogModal";
+import { AuditLogModalItem, TextValueContainer, Key } from "./AuditLogModal";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 
 interface CollectionCentreNameProps {
@@ -27,7 +26,9 @@ interface CollectionCentreNameError {
     logId: string;
 }
 
-const fetchCollectionCentreName = async (collectionCentreId: string): Promise<CollectionCentreNameResponse> => {
+const fetchCollectionCentreName = async (
+    collectionCentreId: string
+): Promise<CollectionCentreNameResponse> => {
     const { data: data, error } = await supabase
         .from("collection_centres")
         .select("primary_key, name")
@@ -36,7 +37,9 @@ const fetchCollectionCentreName = async (collectionCentreId: string): Promise<Co
         .single();
 
     if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: collection centres", { error: error });
+        const logId = await logErrorReturnLogId("Error with fetch: collection centres", {
+            error: error,
+        });
         return {
             collectionCentreName: null,
             error: { type: "failedCollectionCentreNameFetch", logId: logId },
@@ -62,7 +65,8 @@ const CollectionCentreName: React.FC<CollectionCentreNameProps> = ({ collectionC
 
     useEffect(() => {
         (async () => {
-            const { collectionCentreName, error } = await fetchCollectionCentreName(collectionCentreId);
+            const { collectionCentreName, error } =
+                await fetchCollectionCentreName(collectionCentreId);
             if (error) {
                 setErrorMessage(getErrorMessage(error));
                 return;

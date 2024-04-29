@@ -1,23 +1,25 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import supabase from "@/supabaseClient";
-import { logErrorReturnLogId } from "@/logger/logger";
-import LinkButton from "@/components/Buttons/LinkButton";
-import { AuditLogModalItem, TextValueContainer, Key, LinkContainer } from "./AuditLogModal";
-import dayjs from "dayjs";
+import { AuditLogModalItem, TextValueContainer, Key } from "./AuditLogModal";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import { ForeignResponse } from "./types";
 
-interface GeneralForeignInfoProps <ForeignData, ForeignError>{
+interface GeneralForeignInfoProps<ForeignData, ForeignError> {
     foreignKey: string;
-    fetchResponse: (foreignKey: string) => Promise<ForeignResponse<ForeignData, ForeignError>>
-    getErrorMessage: (error: ForeignError) => string
-    SpecificInfoComponent: React.FC<{foreignData: ForeignData}>;
-
+    fetchResponse: (foreignKey: string) => Promise<ForeignResponse<ForeignData, ForeignError>>;
+    getErrorMessage: (error: ForeignError) => string;
+    SpecificInfoComponent: React.FC<ForeignData>;
+    header: string;
 }
 
-const GeneralForeignInfo = <ForeignData,ForeignError>({ foreignKey, fetchResponse, getErrorMessage, SpecificInfoComponent }: GeneralForeignInfoProps<ForeignData,ForeignError>): React.ReactElement => {
+const GeneralForeignInfo = <ForeignData, ForeignError>({
+    foreignKey,
+    fetchResponse,
+    getErrorMessage,
+    SpecificInfoComponent,
+    header
+}: GeneralForeignInfoProps<ForeignData, ForeignError>): React.ReactElement => {
     const [foreignData, setForeignData] = useState<ForeignData | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -30,14 +32,12 @@ const GeneralForeignInfo = <ForeignData,ForeignError>({ foreignKey, fetchRespons
             }
             setForeignData(data);
         })();
-    }, [foreignKey]);
+    }, [foreignKey, fetchResponse, getErrorMessage]);
 
     return (
         <AuditLogModalItem>
-            <Key>PARCEL: </Key>
-            {foreignData && 
-                <SpecificInfoComponent foreignData={foreignData}/>
-            }
+            <Key>{header.toUpperCase()}: </Key>
+            {foreignData && <SpecificInfoComponent {...foreignData} />}
             {errorMessage && (
                 <TextValueContainer>
                     <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>
