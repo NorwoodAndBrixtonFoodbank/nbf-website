@@ -104,7 +104,7 @@ type FetchCollectionCentresResponse =
 type FetchCollectionCentresErrorType = "collectionCentresFetchFailed";
 export type FetchCollectionCentresError = { type: FetchCollectionCentresErrorType; logId: string };
 
-export const getCollectionCentresInfo = async (
+export const getActiveCollectionCentres = async (
     supabase: Supabase
 ): Promise<FetchCollectionCentresResponse> => {
     const { data, error } = await supabase
