@@ -39,7 +39,7 @@ export const saveParcelStatus = async (
     statusEventData?: string | null,
     date?: Dayjs | null
 ): Promise<SaveParcelStatusResult> => {
-    const timestamp = (date ?? dayjs()).set("second", 0).toISOString();
+    const timestamp = (date ?? dayjs()).toISOString();
     const eventsToInsert = parcelIds
         .map((parcelId: string) => {
             return {
