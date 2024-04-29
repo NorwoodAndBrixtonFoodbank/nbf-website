@@ -49,7 +49,7 @@ const getErrorMessage = (error: EventNameError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const Event: React.FC<EventNameDetails> = ({ eventName }) => (
+const EventName: React.FC<EventNameDetails> = ({ eventName }) => (
     <TextValueContainer>{eventName}</TextValueContainer>
 );
 
@@ -58,7 +58,7 @@ const EventAuditLogModalRow: React.FC<{ eventId: string }> = ({ eventId }) => (
         foreignKey={eventId}
         fetchResponse={fetchEventName}
         getErrorMessage={getErrorMessage}
-        RowComponentWhenSuccessful={Event}
+        RowComponentWhenSuccessful={EventName}
         header="event"
     />
 );
