@@ -1,5 +1,4 @@
 import supabase from "@/supabaseClient";
-import { DatabaseError } from "@/app/errorClasses";
 import { Tables } from "@/databaseTypesFile";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { PostgrestError } from "@supabase/supabase-js";
