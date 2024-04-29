@@ -13,13 +13,16 @@ import {
 import { hexToRgb, SelectChangeEvent } from "@mui/material";
 import CheckboxGroupInput from "@/components/DataInput/CheckboxGroupInput";
 import PasswordInput from "@/components/DataInput/PasswordInput";
+import { logInfoReturnLogId } from "@/logger/logger";
 
 describe("Data Input Components", () => {
     it("renders", () => {
         cy.mount(
             <CheckboxInput
                 label="LABEL"
-                onChange={getCheckboxHandler(() => console.log("Checkbox Changed"))}
+                onChange={getCheckboxHandler(
+                    () => void logInfoReturnLogId("DataInput component test: Checkbox Changed")
+                )}
             />
         );
         cy.mount(
@@ -32,21 +35,28 @@ describe("Data Input Components", () => {
                 ]}
                 listTitle="Dropdown List"
                 defaultValue="Default"
-                onChange={getDropdownListHandler(() => console.log("Dropdown Changed"))}
+                onChange={getDropdownListHandler(
+                    () => void logInfoReturnLogId("DataInput component test: Dropdown Changed"),
+                    (value: string): value is string => true
+                )}
             />
         );
         cy.mount(
             <FreeFormTextInput
                 label="FreeForm"
                 defaultValue="default"
-                onChange={getFreeFormTextHandler(() => console.log("Freeform Changed"))}
+                onChange={getFreeFormTextHandler(
+                    () => void logInfoReturnLogId("DataInput component test: Freeform Changed")
+                )}
             />
         );
         cy.mount(
             <PasswordInput
                 label="Password"
                 defaultValue="password"
-                onChange={getFreeFormTextHandler(() => console.log("Password Changed"))}
+                onChange={getFreeFormTextHandler(
+                    () => void logInfoReturnLogId("DataInput component test: Password Changed")
+                )}
             />
         );
         cy.mount(
@@ -57,7 +67,9 @@ describe("Data Input Components", () => {
                     ["C", "c"],
                 ]}
                 groupTitle="Radio Group"
-                onChange={getRadioGroupHandler(() => console.log("Radio Changed"))}
+                onChange={getRadioGroupHandler(
+                    () => void logInfoReturnLogId("DataInput component test: Radio Changed")
+                )}
             />
         );
         cy.mount(
@@ -68,7 +80,11 @@ describe("Data Input Components", () => {
                     ["Label C", "c"],
                 ]}
                 groupLabel="Checkbox Group"
-                onChange={getCheckboxGroupHandler({}, () => console.log("Checkbox Group Changed"))}
+                onChange={getCheckboxGroupHandler(
+                    {},
+                    () =>
+                        void logInfoReturnLogId("DataInput component test: Checkbox Group Changed")
+                )}
             />
         );
     });

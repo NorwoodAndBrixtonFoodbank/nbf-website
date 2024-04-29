@@ -1,11 +1,12 @@
 import React from "react";
-import { CardProps, onChangeDateOrTime, errorText } from "@/components/Form/formFunctions";
+import { onChangeDateOrTime, errorText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { TimePicker } from "@mui/x-date-pickers";
 import { ErrorText } from "@/components/Form/formStyling";
 import dayjs from "dayjs";
+import { ParcelCardProps } from "../ParcelForm";
 
-const CollectionTimeCard: React.FC<CardProps> = ({
+const CollectionTimeCard: React.FC<ParcelCardProps> = ({
     errorSetter,
     fieldSetter,
     formErrors,

@@ -1,6 +1,5 @@
 import { Schema } from "@/databaseUtils";
-import { displayList } from "@/common/format";
-
+import { displayList, nullPostcodeDisplay } from "@/common/format";
 interface NappySizeAndExtraInformation {
     nappySize: string;
     extraInformation: string;
@@ -42,7 +41,7 @@ export const prepareClientSummary = (clientData: Schema["clients"]): ClientSumma
         extra_information,
     } = clientData;
 
-    const address = [address_1, address_2, address_town, address_county, address_postcode]
+    const formattedAddress = [address_1, address_2, address_town, address_county, address_postcode]
         .filter((value) => value !== "")
         .join("\n");
 
@@ -51,7 +50,7 @@ export const prepareClientSummary = (clientData: Schema["clients"]): ClientSumma
     return {
         name: full_name,
         contact: phone_number,
-        address: address,
+        address: address_postcode ? formattedAddress : nullPostcodeDisplay,
         extraInformation: extraInformation,
     };
 };

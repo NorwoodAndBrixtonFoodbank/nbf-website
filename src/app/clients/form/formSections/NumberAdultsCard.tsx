@@ -3,16 +3,14 @@ import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import {
     Errors,
     errorExists,
-    ErrorSetter,
     errorText,
-    FieldSetter,
     numberRegex,
     NumberAdultsByGender,
 } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 import { GappedDiv } from "@/components/Form/formStyling";
-import { ClientCardProps } from "../ClientForm";
+import { ClientCardProps, ClientErrorSetter, ClientSetter } from "../ClientForm";
 
 const getNumberAdultsOfGenderDefault = (numberAdultsOfGender: number): string | undefined => {
     return numberAdultsOfGender === 0 ? undefined : numberAdultsOfGender.toString();
@@ -29,15 +27,15 @@ const getQuantity = (input: string): number => {
 };
 
 const setNumberAdults = (
-    fieldSetter: FieldSetter,
-    errorSetter: ErrorSetter,
+    fieldSetter: ClientSetter,
+    errorSetter: ClientErrorSetter,
     adults: NumberAdultsByGender,
     fieldKey: keyof NumberAdultsByGender
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
         const newAdults = { ...adults, [fieldKey]: getQuantity(input) };
-        fieldSetter("adults", newAdults);
+        fieldSetter({ adults: newAdults });
 
         const invalidAdultEntry =
             newAdults.numberFemales < 0 ||
@@ -55,7 +53,7 @@ const setNumberAdults = (
             errorType = Errors.required;
         }
 
-        errorSetter("adults", errorType);
+        errorSetter({ adults: errorType });
     };
 };
 
@@ -73,6 +71,7 @@ const NumberAdultsCard: React.FC<ClientCardProps> = ({
         >
             <GappedDiv>
                 <FreeFormTextInput
+                    id="client-number-females"
                     error={errorExists(formErrors.adults)}
                     label="Female"
                     defaultValue={getNumberAdultsOfGenderDefault(fields.adults.numberFemales)}

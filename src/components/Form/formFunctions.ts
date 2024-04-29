@@ -6,9 +6,9 @@ import {
 import { Database } from "@/databaseTypesFile";
 import dayjs, { Dayjs } from "dayjs";
 
-type Field = Fields[keyof Fields];
-export type ErrorSetter = (errorKey: string, errorType: Errors) => void;
-export type FieldSetter = (fieldKey: string, newFieldValue: Field) => void;
+export type Setter<SpecificFields extends Fields> = (
+    fieldValuesToUpdate: Partial<SpecificFields>
+) => void;
 export type Gender = Database["public"]["Enums"]["gender"];
 
 export enum Errors {
@@ -24,11 +24,14 @@ export enum Errors {
 
 export const numberRegex = /^\d+$/;
 
-export interface CardProps {
-    formErrors: FormErrors;
-    errorSetter: ErrorSetter;
-    fieldSetter: FieldSetter;
-    fields: Fields;
+export interface CardProps<
+    SpecificFields extends Fields,
+    SpecificErrors extends FormErrors<SpecificFields>,
+> {
+    formErrors: SpecificErrors;
+    errorSetter: Setter<SpecificErrors>;
+    fieldSetter: Setter<SpecificFields>;
+    fields: SpecificFields;
 }
 
 export interface Person {
@@ -47,25 +50,16 @@ export interface Fields {
     [fieldKey: string]: any;
 }
 
-export interface FormErrors {
-    [errorKey: string]: Errors;
-}
-
-export const setError = (
-    errorSetter: (errors: FormErrors) => void,
-    errorValues: FormErrors
-): ErrorSetter => {
-    return (errorKey, errorType) => {
-        errorSetter({ ...errorValues, [errorKey]: errorType });
-    };
+export type FormErrors<SpecificFields extends Fields> = {
+    [errorKey in keyof SpecificFields]?: Errors;
 };
 
-export const setField = <SpecificFields extends Fields>(
-    fieldSetter: (fieldValues: SpecificFields) => void,
+export const createSetter = <SpecificFields extends Fields>(
+    setFields: (SpecificFields: SpecificFields) => void,
     fieldValues: SpecificFields
-): FieldSetter => {
-    return (fieldKey, newFieldValue) => {
-        fieldSetter({ ...fieldValues, [fieldKey]: newFieldValue });
+): Setter<SpecificFields> => {
+    return (fieldValuesToUpdate: Partial<SpecificFields>): void => {
+        setFields({ ...fieldValues, ...fieldValuesToUpdate });
     };
 };
 
@@ -89,89 +83,95 @@ const getErrorType = (
     return Errors.none;
 };
 
-export const onChangeText = (
-    fieldSetter: FieldSetter,
-    errorSetter: ErrorSetter,
-    key: string,
+export const onChangeText = <SpecificFields extends Fields>(
+    fieldSetter: Setter<SpecificFields>,
+    errorSetter: Setter<FormErrors<SpecificFields>> | Setter<Required<FormErrors<SpecificFields>>>,
+    key: keyof SpecificFields,
     required?: boolean,
     regex?: RegExp,
-    formattingFunction?: (value: string) => Field,
+    formattingFunction?: (value: string) => SpecificFields[keyof SpecificFields],
     additionalCondition?: (value: string) => boolean
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
         const errorType = getErrorType(input, required, regex, additionalCondition);
-        errorSetter(key, errorType);
+        errorSetter({ [key]: errorType } as { [key in keyof FormErrors<SpecificFields>]: Errors });
         if (errorType === Errors.none) {
             const newValue = formattingFunction ? formattingFunction(input) : input;
-            fieldSetter(key, newValue);
+            fieldSetter({ [key]: newValue } as { [key in keyof SpecificFields]: any });
         }
     };
 };
 
-export const onChangeCheckbox = (
-    fieldSetter: FieldSetter,
+export const onChangeCheckbox = <SpecificFields extends Fields>(
+    fieldSetter: Setter<SpecificFields>,
     currentObject: BooleanGroup,
     key: string
 ): ChangeEventHandler => {
     return (event) => {
         const newObject = { ...currentObject, [event.target.name]: event.target.checked };
-        fieldSetter(key, newObject);
+        fieldSetter({ [key]: newObject } as { [key in keyof SpecificFields]: any });
     };
 };
 
-export const onChangeRadioGroup = (
-    fieldSetter: FieldSetter,
+export const onChangeRadioGroup = <SpecificFields extends Fields>(
+    fieldSetter: Setter<SpecificFields>,
     key: string
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
-        fieldSetter(key, input === "Yes");
+        fieldSetter({ [key]: input === "Yes" } as { [key in keyof SpecificFields]: any });
     };
 };
 
-export const valueOnChangeRadioGroup = (
-    fieldSetter: FieldSetter,
-    errorSetter: ErrorSetter,
+export const valueOnChangeRadioGroup = <SpecificFields extends Fields>(
+    fieldSetter: Setter<SpecificFields>,
+    errorSetter: Setter<FormErrors<SpecificFields>> | Setter<Required<FormErrors<SpecificFields>>>,
     key: string
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
-        fieldSetter(key, input);
-        errorSetter(key, Errors.none);
+        fieldSetter({ [key]: input } as { [key in keyof SpecificFields]: any });
+        errorSetter({ [key]: Errors.none } as {
+            [key in keyof FormErrors<SpecificFields>]: Errors;
+        });
     };
 };
 
-export const valueOnChangeDropdownList = (
-    fieldSetter: FieldSetter,
-    errorSetter: ErrorSetter,
+export const valueOnChangeDropdownList = <SpecificFields extends Fields>(
+    fieldSetter: Setter<SpecificFields>,
+    errorSetter: Setter<FormErrors<SpecificFields>> | Setter<Required<FormErrors<SpecificFields>>>,
     key: string
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
-        fieldSetter(key, input);
-        errorSetter(key, Errors.none);
+        fieldSetter({ [key]: input } as { [key in keyof SpecificFields]: any });
+        errorSetter({ [key]: Errors.none } as {
+            [key in keyof FormErrors<SpecificFields>]: Errors;
+        });
     };
 };
 
-export const onChangeDateOrTime = (
-    fieldSetter: FieldSetter,
-    errorSetter: ErrorSetter,
+export const onChangeDateOrTime = <SpecificFields extends Fields>(
+    fieldSetter: Setter<SpecificFields>,
+    errorSetter: Setter<FormErrors<SpecificFields>> | Setter<Required<FormErrors<SpecificFields>>>,
     key: string,
     value: Dayjs | null
 ): void => {
     if (value === null || isNaN(Date.parse(value.toString()))) {
-        fieldSetter(key, null);
-        errorSetter(key, Errors.invalid);
+        fieldSetter({ [key]: null } as { [key in keyof SpecificFields]: any });
+        errorSetter({ [key]: Errors.invalid } as {
+            [key in keyof FormErrors<SpecificFields>]: Errors;
+        });
         return;
     }
-    errorSetter(key, Errors.none);
-    fieldSetter(key, value);
+    fieldSetter({ [key]: value } as { [key in keyof SpecificFields]: any });
+    errorSetter({ [key]: Errors.none } as { [key in keyof FormErrors<SpecificFields>]: Errors });
 };
 
-export const onChangeDate = (
-    fieldSetter: FieldSetter,
-    errorSetter: ErrorSetter,
+export const onChangeDate = <SpecificFields extends Fields>(
+    fieldSetter: Setter<SpecificFields>,
+    errorSetter: Setter<FormErrors<SpecificFields>> | Setter<Required<FormErrors<SpecificFields>>>,
     key: string,
     value: Dayjs | null
 ): void => {
@@ -182,7 +182,9 @@ export const onChangeDate = (
 
     const earliestPossibleDateTime = dayjs().startOf("day");
     if (value.isBefore(earliestPossibleDateTime)) {
-        errorSetter(key, Errors.pastDate);
+        errorSetter({ key: Errors.pastDate } as {
+            [key in keyof FormErrors<SpecificFields>]: Errors;
+        });
     }
 };
 
@@ -198,9 +200,12 @@ export const checkboxGroupToArray = (checkedBoxes: BooleanGroup): string[] => {
     return Object.keys(checkedBoxes).filter((key) => checkedBoxes[key]);
 };
 
-export const checkErrorOnSubmit = (
-    errorType: FormErrors,
-    errorSetter: (errors: FormErrors) => void,
+export const checkErrorOnSubmit = <
+    SpecificFields extends Fields,
+    SpecificErrors extends FormErrors<SpecificFields>,
+>(
+    errorType: SpecificErrors,
+    errorSetter: (errors: SpecificErrors) => void,
     keysToCheck?: string[]
 ): boolean => {
     let errorExists = false;
@@ -225,5 +230,5 @@ export const checkErrorOnSubmit = (
 };
 
 export const getDefaultTextValue = (fields: Fields, fieldKey: keyof Fields): string | undefined => {
-    return fields[fieldKey].length === 0 ? undefined : fields[fieldKey];
+    return fields[fieldKey] ?? undefined;
 };

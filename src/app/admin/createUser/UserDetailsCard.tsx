@@ -1,10 +1,15 @@
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { CardProps, errorExists, errorText, onChangeText } from "@/components/Form/formFunctions";
+import { errorExists, errorText, onChangeText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import React from "react";
+import { InviteUserCardProps } from "./CreateUserForm";
 
 const telephoneRegex = /^0\d{10}$/;
-const UserDetailsCard: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSetter }) => {
+const UserDetailsCard: React.FC<InviteUserCardProps> = ({
+    fieldSetter,
+    formErrors,
+    errorSetter,
+}) => {
     return (
         <GenericFormCard
             title="User Details"

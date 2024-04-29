@@ -1,5 +1,6 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { nullPostcodeDisplay } from "@/common/format";
 import { faBuildingCircleArrowRight, faTruck } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
 
@@ -10,13 +11,13 @@ export interface ShippingLabelData {
     collection_centre: string;
     collection_datetime: string;
     voucher_number: string;
-    full_name?: string;
-    phone_number?: string;
-    address_1?: string;
-    address_2?: string;
-    address_town?: string;
-    address_county?: string;
-    address_postcode?: string;
+    full_name: string;
+    phone_number: string;
+    address_1: string;
+    address_2: string;
+    address_town: string;
+    address_county: string;
+    address_postcode: string | null;
     delivery_instructions?: string;
 }
 
@@ -94,22 +95,26 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                 </View>
                 <View style={styles.middleRow}>
                     <View style={styles.leftCol}>
-                        <Text>
-                            {data.address_1}
-                            <br />
-                        </Text>
-                        <Text>
-                            {data.address_2}
-                            <br />
-                        </Text>
-                        <Text>
-                            {data.address_town}
-                            <br />
-                        </Text>
-                        <Text>
-                            {data.address_county}
-                            <br />
-                        </Text>
+                        {data.address_postcode && (
+                            <>
+                                <Text>
+                                    {data.address_1}
+                                    <br />
+                                </Text>
+                                <Text>
+                                    {data.address_2}
+                                    <br />
+                                </Text>
+                                <Text>
+                                    {data.address_town}
+                                    <br />
+                                </Text>
+                                <Text>
+                                    {data.address_county}
+                                    <br />
+                                </Text>
+                            </>
+                        )}
                     </View>
                     <View style={styles.middleCol}>
                         <Text style={styles.headingText}>Delivery Instructions:</Text>
@@ -118,7 +123,9 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                 </View>
                 <View style={styles.bottomRow}>
                     <View style={[styles.leftCol, styles.bottomAlign]}>
-                        <Text style={styles.largeText}>{data.address_postcode}</Text>
+                        <Text style={styles.largeText}>
+                            {data.address_postcode ?? nullPostcodeDisplay}
+                        </Text>
                     </View>
                     <View style={[styles.middleCol, styles.bottomAlign, { flexDirection: "row" }]}>
                         <Text style={styles.mediumText}>

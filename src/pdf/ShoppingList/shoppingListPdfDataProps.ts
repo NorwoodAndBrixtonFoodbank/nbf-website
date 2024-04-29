@@ -13,7 +13,7 @@ export interface Item {
 }
 
 export interface ShoppingListPdfData {
-    postcode: string;
+    postcode: string | null;
     parcelInfo: ParcelInfo;
     clientSummary: ClientSummary;
     householdSummary: HouseholdSummary;
