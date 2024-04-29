@@ -12,10 +12,10 @@ const roleLabelsAndValues: [string, UserRole][] = [
 
 interface Props {
     defaultValue: UserRole;
-    onChange: SelectChangeEventHandler<any>;
+    onChange: SelectChangeEventHandler<UserRole>;
 }
 
-const UserRoleDropdownInput: React.FC<Props> = (props) => {
+const UserRoleDropdownInput = (props: Props): React.ReactElement => {
     return (
         <DropdownListInput
             selectLabelId="user-role-select-label"
