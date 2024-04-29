@@ -61,7 +61,7 @@ function EditToolbar(props: EditToolbarProps): React.JSX.Element {
     return (
         <GridToolbarContainer>
             <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-                Add new slot
+                Add a new collection centre
             </Button>
         </GridToolbarContainer>
     );
