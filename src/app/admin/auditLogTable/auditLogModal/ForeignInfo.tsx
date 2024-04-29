@@ -9,15 +9,15 @@ import dayjs from "dayjs";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import { ForeignResponse } from "./types";
 
-interface ForeignInfoProps <ForeignData, ForeignError>{
+interface GeneralForeignInfoProps <ForeignData, ForeignError>{
     foreignKey: string;
     fetchResponse: (foreignKey: string) => Promise<ForeignResponse<ForeignData, ForeignError>>
     getErrorMessage: (error: ForeignError) => string
-    infoComponent: (foreignData: ForeignData, foreignKey: string) => React.ReactNode;
+    SpecificInfoComponent: React.FC<{foreignData: ForeignData}>;
 
 }
 
-const ForeignInfo = <ForeignData,ForeignError>({ foreignKey, fetchResponse, getErrorMessage, infoComponent }: ForeignInfoProps<ForeignData,ForeignError>): React.ReactElement => {
+const GeneralForeignInfo = <ForeignData,ForeignError>({ foreignKey, fetchResponse, getErrorMessage, SpecificInfoComponent }: GeneralForeignInfoProps<ForeignData,ForeignError>): React.ReactElement => {
     const [foreignData, setForeignData] = useState<ForeignData | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -36,7 +36,7 @@ const ForeignInfo = <ForeignData,ForeignError>({ foreignKey, fetchResponse, getE
         <AuditLogModalItem>
             <Key>PARCEL: </Key>
             {foreignData && 
-                infoComponent(foreignData, foreignKey)
+                <SpecificInfoComponent foreignData={foreignData}/>
             }
             {errorMessage && (
                 <TextValueContainer>
@@ -47,4 +47,4 @@ const ForeignInfo = <ForeignData,ForeignError>({ foreignKey, fetchResponse, getE
     );
 };
 
-export default ForeignInfo;
+export default GeneralForeignInfo;

@@ -7,10 +7,11 @@ import LinkButton from "@/components/Buttons/LinkButton";
 import { AuditLogModalItem, TextValueContainer, Key, LinkContainer } from "./AuditLogModal";
 import dayjs from "dayjs";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-import ForeignInfo from "./ForeignInfo";
+import GeneralForeignInfo from "./ForeignInfo";
 import { ForeignResponse } from "./types";
 
 interface ParcelOverviewDetails {
+    parcelId: string;
     collectionDatetime: Date | null;
     fullName: string;
     addressPostcode: string;
@@ -48,6 +49,7 @@ const fetchParcelOverviewDetails = async (
     }
 
     const convertedData = {
+        parcelId: data.primary_key,
         collectionDatetime: data.collection_datetime ? new Date(data.collection_datetime) : null,
         fullName: data.client.full_name,
         addressPostcode: data.client.address_postcode,
@@ -69,14 +71,14 @@ const getErrorMessage = (error: ParcelOverviewDetailsError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const getParcelLink = (parcelOverviewDetails: ParcelOverviewDetails, parcelId: string): React.ReactNode => (
+const GeneralParcelLink: React.FC<{foreignData: ParcelOverviewDetails}> = ({foreignData}) => (
                 <LinkContainer>
-                    <LinkButton link={`/parcels?parcelId=${parcelId}`}>
-                        {parcelOverviewDetails.addressPostcode}
-                        {parcelOverviewDetails.fullName && ` - ${parcelOverviewDetails.fullName}`}
-                        {parcelOverviewDetails.collectionDatetime &&
-                            ` @ ${dayjs(parcelOverviewDetails.collectionDatetime!).format("DD/MM/YYYY HH:mm")}`}
+                    <LinkButton link={`/parcels?parcelId=${foreignData.parcelId}`}>
+                        {foreignData.addressPostcode}
+                        {foreignData.fullName && ` - ${foreignData.fullName}`}
+                        {foreignData.collectionDatetime &&
+                            ` @ ${dayjs(foreignData.collectionDatetime!).format("DD/MM/YYYY HH:mm")}`}
                     </LinkButton>
                 </LinkContainer>)
 
-export const getParcelInfo = (parcelId: string): React.ReactNode => ForeignInfo<ParcelOverviewDetails, ParcelOverviewDetailsError>({foreignKey: parcelId, fetchResponse: fetchParcelOverviewDetails, getErrorMessage: getErrorMessage, infoComponent: getParcelLink});
+export const ParcelLink: React.FC<{parcelId: string}> = ({parcelId}) => GeneralForeignInfo<ParcelOverviewDetails, ParcelOverviewDetailsError>({foreignKey: parcelId, fetchResponse: fetchParcelOverviewDetails, getErrorMessage: getErrorMessage, SpecificInfoComponent: GeneralParcelLink});

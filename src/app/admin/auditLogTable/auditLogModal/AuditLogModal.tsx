@@ -6,10 +6,10 @@ import Modal from "@/components/Modal/Modal";
 import styled, { useTheme } from "styled-components";
 import { auditLogIcon } from "../../AdminPage";
 import { AuditLogRow } from "../types";
-import { getParcelInfo } from "./getParcelInfo";
 import { capitaliseWords } from "@/common/format";
 import ClientLink from "./ClientLink";
 import CollectionCentreName from "./CollectionCentreName";
+import { ParcelLink } from "./ParcelLink";
 
 export const AuditLogModalContainer = styled.div`
     width: 800px;
@@ -70,7 +70,7 @@ const AuditLogModal: React.FC<AuditLogModalProps> = ({
         >
             <AuditLogModalContainer>
                 {selectedAuditLogRow?.parcelId && 
-                    getParcelInfo(selectedAuditLogRow.parcelId)
+                    <ParcelLink parcelId={selectedAuditLogRow.parcelId} />
                 }
                 {selectedAuditLogRow?.clientId && (
                     <ClientLink clientId={selectedAuditLogRow.clientId} />
