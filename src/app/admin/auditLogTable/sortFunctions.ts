@@ -20,10 +20,10 @@ export const auditLogTableSortableColumns: SortOptions<AuditLogRow>[] = [
         },
     },
     {
-        key: "content",
+        key: "actorName",
         sortMethodConfig: {
             method: (query, sortDirection) =>
-                query.order("content", { ascending: sortDirection === "asc" }),
+                query.order("actor_profile_name", { ascending: sortDirection === "asc" }),
             paginationType: PaginationType.Server,
         },
     },

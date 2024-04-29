@@ -667,9 +667,8 @@ export type Database = {
       audit_log_plus: {
         Row: {
           action: string | null
-          actor_profile_first_name: string | null
           actor_profile_id: string | null
-          actor_profile_last_name: string | null
+          actor_profile_name: string | null
           actor_profile_user_id: string | null
           client_id: string | null
           collection_centre_id: string | null

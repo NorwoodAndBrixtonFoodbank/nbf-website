@@ -1,6 +1,5 @@
 import { Json } from "@/databaseTypesFile";
 import { ViewSchema } from "@/databaseUtils";
-import { displayProfileName } from "./format";
 
 export type AuditLogResponseData = ViewSchema["audit_log_plus"][];
 
@@ -30,11 +29,7 @@ export const convertAuditLogResponseToAuditLogRow = (
     auditLogResponse.map((auditLogResponseRow) => ({
         auditLogId: auditLogResponseRow.primary_key ?? "",
         action: auditLogResponseRow.action ?? "",
-        actorName: displayProfileName(
-            auditLogResponseRow.actor_profile_first_name ?? "",
-            auditLogResponseRow.actor_profile_last_name ?? "",
-            auditLogResponseRow.actor_profile_user_id
-        ),
+        actorName: auditLogResponseRow.actor_profile_user_id === null ? "User Deleted" : (auditLogResponseRow.actor_profile_name ?? ""),
         clientId: auditLogResponseRow.client_id ?? "",
         collectionCentreId: auditLogResponseRow.collection_centre_id ?? "",
         content: auditLogResponseRow.content ?? "",
