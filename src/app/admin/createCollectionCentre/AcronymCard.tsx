@@ -1,9 +1,14 @@
 import React from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import GenericFormCard from "@/components/Form/GenericFormCard";
-import { CardProps, errorExists, errorText, onChangeText } from "@/components/Form/formFunctions";
+import { errorExists, errorText, onChangeText } from "@/components/Form/formFunctions";
+import { CollectionCentreCardProps } from "./CreateCollectionCentreForm";
 
-const Acronymcard: React.FC<CardProps> = ({ fieldSetter, formErrors, errorSetter }) => {
+const Acronymcard: React.FC<CollectionCentreCardProps> = ({
+    fieldSetter,
+    formErrors,
+    errorSetter,
+}) => {
     return (
         <GenericFormCard
             title="Acronym"

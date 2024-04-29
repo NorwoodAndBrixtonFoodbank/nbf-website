@@ -46,16 +46,16 @@ import {
     voucherSearch,
 } from "@/app/parcels/parcelsTableFilters";
 import { ActionsContainer } from "@/components/Form/formStyling";
-import { formatDateTime, formatDatetimeAsDate } from "@/common/format";
+import { formatDateTime, formatDatetimeAsDate, nullPostcodeDisplay } from "@/common/format";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
-    ["iconsColumn", "Flags"],
+    ["iconsColumn", ""],
     ["fullName", "Name"],
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],
     ["phoneNumber", "Phone"],
     ["voucherNumber", "Voucher"],
-    ["deliveryCollection", "Collection"],
+    ["deliveryCollection", "Method"],
     ["packingDate", "Packing Date"],
     ["packingSlot", "Packing Slot"],
     ["lastStatus", "Last Status"],
@@ -63,6 +63,7 @@ export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
 ];
 
 const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
+    "iconsColumn",
     "fullName",
     "familyCategory",
     "addressPostcode",
@@ -173,7 +174,7 @@ const toggleableHeaders: (keyof ParcelsTableRow)[] = [
 
 const parcelTableColumnStyleOptions = {
     iconsColumn: {
-        width: "3rem",
+        width: "4rem",
     },
     fullName: {
         minWidth: "8rem",
@@ -532,7 +533,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const rowToLastStatusColumn = (data: ParcelsTableRow["lastStatus"] | null): string => {
         if (!data) {
-            return "None";
+            return "";
         }
         const { name, eventData, timestamp } = data;
         return (
@@ -542,11 +543,16 @@ const ParcelsPage: React.FC<{}> = () => {
         );
     };
 
+    const formatNullPostcode = (postcodeData: ParcelsTableRow["addressPostcode"]): string => {
+        return postcodeData ?? nullPostcodeDisplay;
+    };
+
     const parcelTableColumnDisplayFunctions = {
         iconsColumn: rowToIconsColumn,
         deliveryCollection: rowToDeliveryCollectionColumn,
         packingDate: formatDatetimeAsDate,
         lastStatus: rowToLastStatusColumn,
+        addressPostcode: formatNullPostcode,
         createdAt: formatDateTime,
     };
 

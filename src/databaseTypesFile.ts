@@ -173,7 +173,7 @@ export type Database = {
           address_1: string
           address_2: string
           address_county: string
-          address_postcode: string
+          address_postcode: string | null
           address_town: string
           baby_food: boolean | null
           delivery_instructions: string
@@ -194,7 +194,7 @@ export type Database = {
           address_1?: string
           address_2?: string
           address_county?: string
-          address_postcode?: string
+          address_postcode?: string | null
           address_town?: string
           baby_food?: boolean | null
           delivery_instructions?: string
@@ -215,7 +215,7 @@ export type Database = {
           address_1?: string
           address_2?: string
           address_county?: string
-          address_postcode?: string
+          address_postcode?: string | null
           address_town?: string
           baby_food?: boolean | null
           delivery_instructions?: string

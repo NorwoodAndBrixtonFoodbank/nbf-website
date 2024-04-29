@@ -1,5 +1,8 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { nullPostcodeDisplay } from "@/common/format";
+import { faBuildingCircleArrowRight, faTruck } from "@fortawesome/free-solid-svg-icons";
+import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
 
 export interface ShippingLabelData {
     label_quantity: number;
@@ -8,13 +11,13 @@ export interface ShippingLabelData {
     collection_centre: string;
     collection_datetime: string;
     voucher_number: string;
-    full_name?: string;
-    phone_number?: string;
-    address_1?: string;
-    address_2?: string;
-    address_town?: string;
-    address_county?: string;
-    address_postcode?: string;
+    full_name: string;
+    phone_number: string;
+    address_1: string;
+    address_2: string;
+    address_town: string;
+    address_county: string;
+    address_postcode: string | null;
     delivery_instructions?: string;
 }
 
@@ -72,7 +75,7 @@ interface LabelCardProps {
     quantity: number;
 }
 
-const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
+const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
     return (
         <Page size={labelSizePixels} style={styles.page}>
             <View style={styles.cardWrapper} wrap={false}>
@@ -92,22 +95,26 @@ const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
                 </View>
                 <View style={styles.middleRow}>
                     <View style={styles.leftCol}>
-                        <Text>
-                            {data.address_1}
-                            <br />
-                        </Text>
-                        <Text>
-                            {data.address_2}
-                            <br />
-                        </Text>
-                        <Text>
-                            {data.address_town}
-                            <br />
-                        </Text>
-                        <Text>
-                            {data.address_county}
-                            <br />
-                        </Text>
+                        {data.address_postcode && (
+                            <>
+                                <Text>
+                                    {data.address_1}
+                                    <br />
+                                </Text>
+                                <Text>
+                                    {data.address_2}
+                                    <br />
+                                </Text>
+                                <Text>
+                                    {data.address_town}
+                                    <br />
+                                </Text>
+                                <Text>
+                                    {data.address_county}
+                                    <br />
+                                </Text>
+                            </>
+                        )}
                     </View>
                     <View style={styles.middleCol}>
                         <Text style={styles.headingText}>Delivery Instructions:</Text>
@@ -116,19 +123,28 @@ const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
                 </View>
                 <View style={styles.bottomRow}>
                     <View style={[styles.leftCol, styles.bottomAlign]}>
-                        <Text style={styles.largeText}>{data.address_postcode}</Text>
+                        <Text style={styles.largeText}>
+                            {data.address_postcode ?? nullPostcodeDisplay}
+                        </Text>
                     </View>
-                    <View style={[styles.middleCol, styles.bottomAlign]}>
+                    <View style={[styles.middleCol, styles.bottomAlign, { flexDirection: "row" }]}>
                         <Text style={styles.mediumText}>
                             {data.packing_slot} |
-                            {data.collection_centre !== "DLVR"
-                                ? data.collection_centre // TODO VFB-56 needs icon
-                                : "Delivery"}
+                            {data.collection_centre === "DLVR"
+                                ? "Delivery "
+                                : data.collection_centre + " "}
                         </Text>
+                        <FontAwesomeIconPdfComponent
+                            faIcon={
+                                data.collection_centre === "DLVR"
+                                    ? faTruck
+                                    : faBuildingCircleArrowRight
+                            }
+                        ></FontAwesomeIconPdfComponent>
                     </View>
                     <View style={[styles.rightCol, styles.bottomAlign]}>
                         <Text style={styles.mediumText}>
-                            Item {index + 1} of {quantity}
+                            Label {index + 1} of {quantity}
                         </Text>
                     </View>
                 </View>
@@ -138,23 +154,43 @@ const LabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
 };
 
 export interface ShippingLabelsPdfProps {
-    data: ShippingLabelData;
+    data: ShippingLabelData[];
 }
+
+interface ShippingLabelsForSingleParcelProps {
+    parcelDataForShippingLabel: ShippingLabelData;
+}
+
+const ShippingLabelsForSingleParcel: React.FC<ShippingLabelsForSingleParcelProps> = ({
+    parcelDataForShippingLabel,
+}) => {
+    return (
+        parcelDataForShippingLabel.label_quantity > 0 &&
+        [...Array(parcelDataForShippingLabel.label_quantity)].map((_, index: number) => {
+            return (
+                <SingleLabelCard
+                    key={index} // eslint-disable-line react/no-array-index-key
+                    data={parcelDataForShippingLabel}
+                    index={index}
+                    quantity={parcelDataForShippingLabel.label_quantity}
+                />
+            );
+        })
+    );
+};
 
 const ShippingLabelsPdf: React.FC<ShippingLabelsPdfProps> = ({ data }) => {
     return (
         <Document>
-            {data.label_quantity > 0 &&
-                [...Array(data.label_quantity)].map((value: undefined, index: number) => {
-                    return (
-                        <LabelCard
-                            key={index} // eslint-disable-line react/no-array-index-key
-                            data={data}
-                            index={index}
-                            quantity={data.label_quantity}
-                        />
-                    );
-                })}
+            {data.map((parcelData: ShippingLabelData, index) => {
+                return (
+                    <ShippingLabelsForSingleParcel
+                        parcelDataForShippingLabel={parcelData}
+                        // eslint-disable-next-line react/no-array-index-key
+                        key={index}
+                    />
+                );
+            })}
         </Document>
     );
 };

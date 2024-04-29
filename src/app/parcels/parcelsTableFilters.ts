@@ -11,7 +11,7 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { CollectionCentresOptions } from "@/app/parcels/fetchParcelTableData";
-import { getDbDate } from "@/common/format";
+import { getDbDate, nullPostcodeDisplay } from "@/common/format";
 
 interface packingSlotOptionsSet {
     key: string;
@@ -29,6 +29,14 @@ export const postcodeSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
     state: string
 ): PostgrestFilterBuilder<Database["public"], any, any> => {
+    if (state === "") {
+        return query;
+    }
+    if (nullPostcodeDisplay.toLowerCase().includes(state.toLowerCase())) {
+        return query.or(
+            `client_address_postcode.ilike.%${state}%, client_address_postcode.is.null`
+        );
+    }
     return query.ilike("client_address_postcode", `%${state}%`);
 };
 
@@ -132,7 +140,7 @@ export const buildDeliveryCollectionFilter = async (): Promise<
 
     return checklistFilter<ParcelsTableRow>({
         key: "deliveryCollection",
-        filterLabel: "Collection",
+        filterLabel: "Method",
         itemLabelsAndKeys: optionsSet.map((option) => [option!.name, option!.acronym]),
         initialCheckedKeys: optionsSet.map((option) => option!.acronym),
         methodConfig: { paginationType: PaginationType.Server, method: deliveryCollectionSearch },

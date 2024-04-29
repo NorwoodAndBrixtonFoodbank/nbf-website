@@ -9,28 +9,31 @@ import {
     checkErrorOnSubmit,
     Errors,
     FormErrors,
-    setError,
-    setField,
+    createSetter,
+    CardProps,
 } from "@/components/Form/formFunctions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
-import { Database } from "@/databaseTypesFile";
 import Alert from "@mui/material/Alert/Alert";
 import { User } from "@supabase/gotrue-js";
 import { logInfoReturnLogId } from "@/logger/logger";
 import UserDetailsCard from "@/app/admin/createUser/UserDetailsCard";
 import { InviteUserError, adminInviteUser } from "@/server/adminInviteUser";
 import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
+import { UserRole } from "@/databaseUtils";
 
-export interface InviteUserDetails {
+export interface InviteUserFields {
     email: string;
-    role: Database["public"]["Enums"]["role"];
+    role: UserRole;
     firstName: string;
     lastName: string;
     telephoneNumber: string;
 }
+type InviteUserErrors = Required<FormErrors<InviteUserFields>>;
 
-const initialFields: InviteUserDetails = {
+export type InviteUserCardProps = CardProps<InviteUserFields, InviteUserErrors>;
+
+const initialFields: InviteUserFields = {
     email: "",
     role: "volunteer",
     firstName: "",
@@ -38,7 +41,7 @@ const initialFields: InviteUserDetails = {
     telephoneNumber: "",
 };
 
-const initialFormErrors: FormErrors = {
+const initialFormErrors: InviteUserErrors = {
     email: Errors.initial,
     role: Errors.none,
     firstName: Errors.initial,
@@ -63,8 +66,8 @@ const CreateUserForm: React.FC<{}> = () => {
     const [fields, setFields] = useState(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
 
-    const fieldSetter = setField(setFields, fields);
-    const errorSetter = setError(setFormErrors, formErrors);
+    const fieldSetter = createSetter(setFields, fields);
+    const errorSetter = createSetter(setFormErrors, formErrors);
 
     const [formError, setFormError] = useState(Errors.none);
     const [submitDisabled, setSubmitDisabled] = useState(false);
@@ -78,7 +81,7 @@ const CreateUserForm: React.FC<{}> = () => {
         setFormError(Errors.none);
         setServerError(null);
 
-        if (checkErrorOnSubmit(formErrors, setFormErrors)) {
+        if (checkErrorOnSubmit<InviteUserFields, InviteUserErrors>(formErrors, setFormErrors)) {
             setFormError(Errors.submit);
             setSubmitDisabled(false);
             return;

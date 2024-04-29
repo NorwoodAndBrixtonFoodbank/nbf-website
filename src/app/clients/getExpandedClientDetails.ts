@@ -2,6 +2,7 @@ import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
+import { nullPostcodeDisplay } from "@/common/format";
 
 const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
     const rawClientDetails = await getRawClientDetails(clientId);
@@ -102,6 +103,9 @@ export const formatAddressFromClientDetails = (
         "address_1" | "address_2" | "address_town" | "address_county" | "address_postcode"
     >
 ): string => {
+    if (!client.address_postcode) {
+        return nullPostcodeDisplay;
+    }
     return [
         client.address_1,
         client.address_2,

@@ -1,11 +1,12 @@
 import React from "react";
-import { CardProps, errorText, valueOnChangeDropdownList } from "@/components/Form/formFunctions";
+import { errorText, valueOnChangeDropdownList } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { CollectionCentresLabelsAndValues } from "@/common/fetch";
+import { ParcelCardProps } from "../ParcelForm";
 
-interface CollectionCentreCardProps extends CardProps {
+interface CollectionCentreCardProps extends ParcelCardProps {
     collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues;
 }
 const CollectionCentreCard: React.FC<CollectionCentreCardProps> = ({

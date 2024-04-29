@@ -19,13 +19,7 @@ const isNotAtLeastOne = (value: number): boolean => {
     return value < 1;
 };
 
-const doesNotEqualOne = (value: number): boolean => {
-    return value !== 1;
-};
-
-const doesNotEqualZero = (value: number): boolean => {
-    return value !== 0;
-};
+const errorMessage = "Please select at least one parcel.";
 
 export type ActionName =
     | "Download Shipping Labels"
@@ -37,42 +31,27 @@ export type ActionName =
 
 type AvailableActionsType = {
     [actionKey in ActionName]: {
-        errorCondition: (value: number) => boolean;
-        errorMessage: string;
         newStatus: StatusType;
     };
 };
 
 export const availableActions: AvailableActionsType = {
     "Download Shipping Labels": {
-        errorCondition: doesNotEqualOne,
-        errorMessage: "Please select exactly one parcel.",
         newStatus: "Shipping Labels Downloaded",
     },
     "Download Shopping Lists": {
-        errorCondition: isNotAtLeastOne,
-        errorMessage: "Please select at least one parcel.",
         newStatus: "Shopping List Downloaded",
     },
     "Download Driver Overview": {
-        errorCondition: isNotAtLeastOne,
-        errorMessage: "Please select at least one parcel.",
         newStatus: "Driver Overview Downloaded",
     },
     "Download Day Overview": {
-        errorCondition: doesNotEqualZero,
-        errorMessage:
-            "The day overview will show the parcels for a particular date and location. It will show not the currently selected parcel. Please unselect the parcels.",
         newStatus: "Day Overview Downloaded",
     },
     "Delete Parcel Request": {
-        errorCondition: isNotAtLeastOne,
-        errorMessage: "Please select at least one parcel.",
         newStatus: "Request Deleted",
     },
     "Generate Map": {
-        errorCondition: isNotAtLeastOne,
-        errorMessage: "Please select at least one parcel.",
         newStatus: "Map Generated",
     },
 };
@@ -169,14 +148,14 @@ const Actions: React.FC<Props> = ({
                     anchorEl={actionAnchorElement}
                 >
                     <MenuList id="action-menu">
-                        {Object.entries(availableActions).map(([key, value]) => {
+                        {Object.entries(availableActions).map(([key]) => {
                             return (
                                 <MenuItem
                                     key={key}
                                     onClick={onMenuItemClick(
                                         key as ActionName,
-                                        value.errorCondition,
-                                        value.errorMessage
+                                        isNotAtLeastOne,
+                                        errorMessage
                                     )}
                                 >
                                     {key}

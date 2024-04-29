@@ -69,7 +69,7 @@ export const processingDataToParcelsTableData = async (
             clientId: parcel.client_id ?? "",
             fullName: parcel.client_full_name ?? "",
             familyCategory: familyCountToFamilyCategory(parcel.family_count ?? 0),
-            addressPostcode: parcel.client_address_postcode ?? "",
+            addressPostcode: parcel.client_address_postcode,
             phoneNumber: parcel.client_phone_number ?? "",
             deliveryCollection: {
                 collectionCentreName: parcel.collection_centre_name ?? "-",

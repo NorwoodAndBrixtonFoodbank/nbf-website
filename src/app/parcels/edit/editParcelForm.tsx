@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import ParcelForm, { ParcelFields, initialParcelFields } from "../form/ParcelForm";
+import ParcelForm, { ParcelErrors, ParcelFields, initialParcelFields } from "../form/ParcelForm";
 import {
     CollectionCentresLabelsAndValues,
     fetchParcel,
@@ -14,7 +14,7 @@ import {
     FetchParcelError,
 } from "@/common/fetch";
 import supabase from "@/supabaseClient";
-import { Errors, FormErrors } from "@/components/Form/formFunctions";
+import { Errors } from "@/components/Form/formFunctions";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import Title from "@/components/Title/Title";
 
@@ -114,10 +114,10 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
         })();
     }, [parcelId]);
 
-    const initialFormErrors: FormErrors = {
+    const initialFormErrors: ParcelErrors = {
         voucherNumber: Errors.none,
         packingDate: Errors.none,
-        packingSlots: Errors.none,
+        packingSlot: Errors.none,
         shippingMethod: Errors.none,
         collectionDate: Errors.none,
         collectionTime: Errors.none,

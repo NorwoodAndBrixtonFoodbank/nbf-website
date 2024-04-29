@@ -2,17 +2,23 @@ import React from "react";
 import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
 import { ClientSummary, RequirementSummary } from "@/common/formatClientsData";
 import { HouseholdSummary } from "@/common/formatFamiliesData";
-import { formatCamelCaseKey } from "@/common/format";
+import { formatCamelCaseKey, nullPostcodeDisplay } from "@/common/format";
 import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import { Item, ShoppingListPdfData } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
+import { faBuildingCircleArrowRight, faTruck } from "@fortawesome/free-solid-svg-icons";
+import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
 
 export type BlockProps = ParcelInfo | HouseholdSummary | RequirementSummary;
 
 const styles = StyleSheet.create({
-    paper: {
-        marginLeft: "0.75in",
-        marginRight: "0.75in",
-        lineHeight: "1.5pt",
+    sheet: {
+        paddingTop: "0.3in",
+        paddingBottom: "0.3in",
+        paddingLeft: "0.25in",
+    },
+    page: {
+        width: "97%",
+        lineHeight: "1.2pt",
     },
     flexRow: {
         display: "flex",
@@ -21,7 +27,6 @@ const styles = StyleSheet.create({
     flexColumn: {
         display: "flex",
         flexDirection: "column",
-        padding: "5pt",
     },
     pdfHeader: {
         justifyContent: "space-between",
@@ -30,56 +35,66 @@ const styles = StyleSheet.create({
         maxWidth: "20%",
         alignSelf: "center",
     },
-    infoBlock: {
-        borderStyle: "solid",
-        border: "1pt",
-        borderBottom: "0",
+    infoCellNoBorder: {
+        width: "100%",
     },
     infoCell: {
-        width: "50%",
-        padding: "5pt",
-    },
-    tableRow: {
+        width: "100%",
+        paddingTop: "5pt",
         borderStyle: "solid",
         border: "1pt",
-        paddingVertical: "4pt",
-        textAlign: "center",
+    },
+    tableRow: {
+        textAlign: "left",
     },
     tableItemDescription: {
-        width: "25%",
+        paddingVertical: "2pt",
+        width: "30%",
+        border: "1pt",
+        borderStyle: "solid",
     },
     tableQuantity: {
-        width: "35%",
+        paddingVertical: "2pt",
+        width: "20%",
+        border: "1pt",
+        borderStyle: "solid",
     },
     tableNotes: {
-        width: "30%",
+        paddingVertical: "2pt",
+        width: "40%",
+        border: "1pt",
+        borderStyle: "solid",
     },
     tableDone: {
+        paddingVertical: "2pt",
         width: "10%",
+        border: "1pt",
+        borderStyle: "solid",
     },
     title: {
-        fontSize: "30pt",
+        fontSize: "22pt",
         fontFamily: "Helvetica-Bold",
     },
     subtitle: {
-        fontSize: "24pt",
-        fontFamily: "Helvetica",
+        fontSize: "16pt",
+        fontFamily: "Helvetica-Bold",
+        paddingTop: "2pt",
     },
     keyText: {
-        fontSize: "12pt",
+        fontSize: "11pt",
         fontFamily: "Helvetica-Bold",
+        textAlign: "left",
+        paddingLeft: "2pt",
     },
     normalText: {
-        fontSize: "12pt",
+        fontSize: "11pt",
         fontFamily: "Helvetica",
+        paddingLeft: "2pt",
     },
     inputText: {
-        paddingTop: "20pt",
+        paddingTop: "10pt",
     },
-    checkBox: {
-        alignSelf: "center",
-        width: "18pt",
-        height: "18pt",
+    tableCell: {
         borderStyle: "solid",
         border: "1pt",
     },
@@ -101,6 +116,9 @@ const OneLine: React.FC<OneLineProps> = ({ header, value }) => {
 const TableHeadings: React.FC<{}> = () => {
     return (
         <View style={[styles.flexRow, styles.tableRow]}>
+            <View style={styles.tableDone}>
+                <Text style={styles.keyText}>Done</Text>
+            </View>
             <View style={styles.tableItemDescription}>
                 <Text style={styles.keyText}>Item Description</Text>
             </View>
@@ -110,9 +128,6 @@ const TableHeadings: React.FC<{}> = () => {
             <View style={styles.tableNotes}>
                 <Text style={styles.keyText}>Notes</Text>
             </View>
-            <View style={styles.tableDone}>
-                <Text style={styles.keyText}>Done</Text>
-            </View>
         </View>
     );
 };
@@ -120,6 +135,7 @@ const TableHeadings: React.FC<{}> = () => {
 const ItemToRow: React.FC<Item> = (item) => {
     return (
         <View style={[styles.flexRow, styles.tableRow]} wrap={false}>
+            <View style={styles.tableDone} />
             <View style={styles.tableItemDescription}>
                 <Text style={styles.normalText}>{item.description}</Text>
             </View>
@@ -128,9 +144,6 @@ const ItemToRow: React.FC<Item> = (item) => {
             </View>
             <View style={styles.tableNotes}>
                 <Text style={styles.normalText}>{item.notes}</Text>
-            </View>
-            <View style={styles.tableDone}>
-                <View style={styles.checkBox} />
             </View>
         </View>
     );
@@ -145,6 +158,16 @@ const DisplayItemsList: React.FC<DisplayItemsListProps> = ({ itemsList }) => {
         <View>
             {itemsList.map((item, index) => (
                 <ItemToRow {...item} key={index} /> // eslint-disable-line react/no-array-index-key
+            ))}
+        </View>
+    );
+};
+
+const DisplayAsBlockNoBorder: React.FC<BlockProps> = (data: BlockProps) => {
+    return (
+        <View style={styles.infoCellNoBorder}>
+            {Object.entries(data).map(([propKey, propValue]) => (
+                <OneLine key={propKey} header={formatCamelCaseKey(propKey)} value={propValue} />
             ))}
         </View>
     );
@@ -176,11 +199,11 @@ const FormatClientCell: React.FC<FormatClientCellProps> = ({ propKey, propValue 
 const DisplayClientSummary: React.FC<ClientSummary> = (clientSummary) => {
     return (
         <>
-            <View style={[styles.flexRow, styles.infoBlock]}>
+            <View style={styles.flexRow}>
                 <FormatClientCell propKey="name" propValue={clientSummary.name} />
                 <FormatClientCell propKey="contact" propValue={clientSummary.contact} />
             </View>
-            <View style={[styles.flexRow, styles.infoBlock]}>
+            <View style={styles.flexRow}>
                 <FormatClientCell propKey="address" propValue={clientSummary.address} />
                 <FormatClientCell
                     propKey="extraInformation"
@@ -197,20 +220,31 @@ interface SingleShoppingListProps {
 
 const SingleShoppingList: React.FC<SingleShoppingListProps> = ({ parcelData }) => {
     return (
-        <Page size="A4">
-            <View style={{ height: "0.75in" }} fixed />
-            <View style={styles.paper}>
+        <Page size="A4" style={styles.sheet}>
+            <View style={styles.page}>
                 <View style={[styles.flexRow, styles.pdfHeader]}>
                     <View style={styles.flexColumn}>
-                        <Text style={styles.title}>Shopping List</Text>
-                        <Text style={styles.subtitle}>POSTCODE: {parcelData.postcode}</Text>
+                        <View style={styles.flexRow}>
+                            <Text style={styles.title}>Shopping List</Text>
+                            <Text style={styles.title}> |</Text>
+                            <FontAwesomeIconPdfComponent
+                                faIcon={
+                                    parcelData.parcelInfo.collectionSite === "N/A - Delivery"
+                                        ? faTruck
+                                        : faBuildingCircleArrowRight
+                                }
+                            ></FontAwesomeIconPdfComponent>
+                        </View>
+                        <Text style={styles.subtitle}>
+                            POSTCODE: {parcelData.postcode ?? nullPostcodeDisplay}
+                        </Text>
                     </View>
                     {/* eslint-disable-next-line jsx-a11y/alt-text -- React-PDF Image doesn't  have alt text property*/}
                     <Image src="/logo.png" style={[styles.flexRow, styles.logoStyling]} />
                 </View>
-                <DisplayAsBlock {...parcelData.parcelInfo} />
+                <DisplayAsBlockNoBorder {...parcelData.parcelInfo} />
                 <DisplayClientSummary {...parcelData.clientSummary} />
-                <View style={[styles.flexRow, styles.infoBlock]}>
+                <View style={styles.flexRow}>
                     <DisplayAsBlock {...parcelData.householdSummary} />
                     <DisplayAsBlock {...parcelData.requirementSummary} />
                 </View>
@@ -219,16 +253,25 @@ const SingleShoppingList: React.FC<SingleShoppingListProps> = ({ parcelData }) =
                     <DisplayItemsList itemsList={parcelData.itemsList} />
                 </View>
                 <View style={styles.flexColumn} wrap={false}>
-                    <Text style={[styles.keyText, { paddingTop: "5pt" }]}>
-                        Warehouse Manager Notes
-                    </Text>
-                    <Text style={styles.normalText}>{parcelData.endNotes}</Text>
-                    <Text style={[styles.keyText, styles.inputText]}>Date Packed:</Text>
-                    <Text style={[styles.keyText, styles.inputText]}>Packer Name:</Text>
-                    <Text style={[styles.keyText, styles.inputText]}>Packer Signature:</Text>
+                    <View style={[styles.flexRow, styles.infoCell]}>
+                        <Text style={[styles.keyText, { paddingTop: "5pt" }]}>
+                            Warehouse Manager Notes
+                        </Text>
+                    </View>
+                    <View style={[styles.flexRow, styles.infoCell]}>
+                        <Text style={styles.normalText}>{parcelData.endNotes}</Text>
+                    </View>
+                    <View style={[styles.flexRow, styles.infoCell]}>
+                        <Text style={[styles.keyText, styles.inputText]}>Date Packed:</Text>
+                    </View>
+                    <View style={[styles.flexRow, styles.infoCell]}>
+                        <Text style={[styles.keyText, styles.inputText]}>Packer Name:</Text>
+                    </View>
+                    <View style={[styles.flexRow, styles.infoCell]}>
+                        <Text style={[styles.keyText, styles.inputText]}>Packer Signature:</Text>
+                    </View>
                 </View>
             </View>
-            <View style={{ height: "0.75in" }} fixed />
         </Page>
     );
 };
