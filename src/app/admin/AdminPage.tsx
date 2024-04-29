@@ -10,7 +10,6 @@ import CreateUserForm from "@/app/admin/createUser/CreateUserForm";
 import {
     faUsers,
     faUserPlus,
-    faCity,
     faBuildingCircleArrowRight,
     faBoxOpen,
     IconDefinition,
@@ -20,7 +19,6 @@ import {
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CollectionCentresTable from "@/app/admin/collectionCentresTable/CollectionCentresTable";
-import CreateCollectionCentreForm from "@/app/admin/createCollectionCentre/CreateCollectionCentreForm";
 import PackingSlotsTable from "@/app/admin/packingSlotsTable/PackingSlotsTable";
 import WebsiteDataTable from "./websiteDataTable/WebsiteDataTable";
 import AuditLogTable from "./auditLogTable/AuditLogTable";
@@ -51,7 +49,7 @@ const AdminPage: React.FC = () => {
         { panelTitle: "Create User", panelIcon: faUserPlus, panelContent: <CreateUserForm /> },
         {
             panelTitle: "Collection Centres Table",
-            panelIcon: faCity,
+            panelIcon: faBuildingCircleArrowRight,
             panelContent: <CollectionCentresTable />,
         },
         {
