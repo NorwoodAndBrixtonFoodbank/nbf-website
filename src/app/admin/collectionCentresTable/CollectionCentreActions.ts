@@ -18,7 +18,7 @@ type FetchCollectionCentresResult =
       };
 
 export const fetchCollectionCentres = async (): Promise<FetchCollectionCentresResult> => {
-    const { data, error } = await supabase.from("collection_centres").select();
+    const { data, error } = await supabase.from("collection_centres").select().order("name");
     if (error) {
         const logId = await logErrorReturnLogId("Failed to fetch collection centres", { error });
         return { data: null, error: { type: "failedToFetchCollectionCentres", logId } };
