@@ -3,20 +3,20 @@
 import React from "react";
 import { MenuItem, InputLabel, Select, FormControl, SelectChangeEvent } from "@mui/material";
 
-interface Props {
+interface Props<Value> {
     labelsAndValues: [string, string][];
     listTitle?: string;
-    defaultValue?: string;
-    onChange?: (event: SelectChangeEvent) => void;
+    defaultValue?: Value;
+    onChange?: (event: SelectChangeEvent<Value>) => void;
     selectLabelId: string;
 }
 
-const DropdownListInput: React.FC<Props> = (props) => {
+const DropdownListInput = <Value,>(props: Props<Value>): React.ReactElement => {
     return (
         <FormControl fullWidth>
             <InputLabel id={props.selectLabelId}>{props.listTitle}</InputLabel>
             <Select
-                defaultValue={props.defaultValue ?? ""}
+                defaultValue={props.defaultValue ?? undefined}
                 onChange={props.onChange}
                 labelId={props.selectLabelId}
             >

@@ -11,8 +11,8 @@ import {
     FormErrors,
     NumberAdultsByGender,
     Person,
-    setError,
-    setField,
+    createSetter,
+    Setter,
 } from "@/components/Form/formFunctions";
 import {
     CenterComponent,
@@ -40,7 +40,7 @@ import Title from "@/components/Title/Title";
 
 interface Props {
     initialFields: ClientFields;
-    initialFormErrors: FormErrors;
+    initialFormErrors: ClientErrors;
     editConfig: EditConfig;
 }
 
@@ -53,7 +53,7 @@ export interface ClientFields extends Fields {
     addressLine2: string;
     addressTown: string;
     addressCounty: string;
-    addressPostcode: string;
+    addressPostcode: string | null;
     adults: NumberAdultsByGender;
     numberChildren: number;
     children: Person[];
@@ -70,9 +70,19 @@ export interface ClientFields extends Fields {
     lastUpdated: string | undefined;
 }
 
-export interface ClientCardProps extends CardProps {
-    fields: ClientFields;
+export interface ClientErrors extends FormErrors<ClientFields> {
+    fullName: Errors;
+    phoneNumber: Errors;
+    addressLine1: Errors;
+    addressPostcode: Errors;
+    adults: Errors;
+    numberChildren: Errors;
+    nappySize: Errors;
 }
+
+export type ClientSetter = Setter<ClientFields>;
+export type ClientErrorSetter = Setter<ClientErrors>;
+export type ClientCardProps = CardProps<ClientFields, ClientErrors>;
 
 const formSections = [
     FullNameCard,
@@ -94,14 +104,14 @@ const formSections = [
 const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editConfig }) => {
     const router = useRouter();
     const [fields, setFields] = useState<ClientFields>(initialFields);
-    const [formErrors, setFormErrors] = useState(initialFormErrors);
+    const [formErrors, setFormErrors] = useState<ClientErrors>(initialFormErrors);
     const [submitError, setSubmitError] = useState(Errors.none);
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
     const [submitDisabled, setSubmitDisabled] = useState(false);
 
     useEffect(() => {
         if (fields.numberChildren <= fields.children.length) {
-            fieldSetter("children", fields.children.slice(0, fields.numberChildren));
+            fieldSetter({ children: fields.children.slice(0, fields.numberChildren) });
             return;
         }
 
@@ -113,11 +123,11 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
                     age: -1,
                 };
             });
-        fieldSetter("children", [...fields.children, ...extraChildren]);
+        fieldSetter({ children: [...fields.children, ...extraChildren] });
     }, [fields.numberChildren]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const fieldSetter = setField(setFields, fields);
-    const errorSetter = setError(setFormErrors, formErrors);
+    const fieldSetter = createSetter(setFields, fields);
+    const errorSetter = createSetter(setFormErrors, formErrors);
 
     const submitForm = async (): Promise<void> => {
         setSubmitDisabled(true);

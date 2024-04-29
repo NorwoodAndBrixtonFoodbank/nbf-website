@@ -97,7 +97,7 @@ const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse>
                 line2: client?.address_2 ?? null,
                 town: client?.address_town ?? null,
                 county: client?.address_county ?? null,
-                postcode: client?.address_postcode ?? "",
+                postcode: client?.address_postcode,
             },
             contact: client?.phone_number ?? "",
             packingDate: formatDateToDate(parcel.packing_date) ?? null,

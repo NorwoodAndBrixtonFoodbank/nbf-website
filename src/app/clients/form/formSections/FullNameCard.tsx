@@ -18,6 +18,7 @@ const FullNameCard: React.FC<ClientCardProps> = ({
     return (
         <GenericFormCard title="Client Full Name" required={true} text="First and last name">
             <FreeFormTextInput
+                id="client-full-name"
                 label="Name"
                 defaultValue={getDefaultTextValue(fields, "fullName")}
                 error={errorExists(formErrors.fullName)}

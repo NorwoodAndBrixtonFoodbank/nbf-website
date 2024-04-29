@@ -46,7 +46,7 @@ import {
     voucherSearch,
 } from "@/app/parcels/parcelsTableFilters";
 import { ActionsContainer } from "@/components/Form/formStyling";
-import { formatDateTime, formatDatetimeAsDate } from "@/common/format";
+import { formatDateTime, formatDatetimeAsDate, nullPostcodeDisplay } from "@/common/format";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", ""],
@@ -543,11 +543,16 @@ const ParcelsPage: React.FC<{}> = () => {
         );
     };
 
+    const formatNullPostcode = (postcodeData: ParcelsTableRow["addressPostcode"]): string => {
+        return postcodeData ?? nullPostcodeDisplay;
+    };
+
     const parcelTableColumnDisplayFunctions = {
         iconsColumn: rowToIconsColumn,
         deliveryCollection: rowToDeliveryCollectionColumn,
         packingDate: formatDatetimeAsDate,
         lastStatus: rowToLastStatusColumn,
+        addressPostcode: formatNullPostcode,
         createdAt: formatDateTime,
     };
 

@@ -3,7 +3,6 @@ import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import {
     errorExists,
     errorText,
-    FieldSetter,
     onChangeText,
     numberRegex,
     Person,
@@ -13,14 +12,14 @@ import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { StyledCard, FormText } from "@/components/Form/formStyling";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
-import { ClientCardProps } from "../ClientForm";
+import { ClientCardProps, ClientSetter } from "../ClientForm";
 
 const maxNumberChildren = (value: string): boolean => {
     return parseInt(value) <= 20;
 };
 
 const getChild = (
-    fieldSetter: FieldSetter,
+    fieldSetter: ClientSetter,
     children: Person[],
     index: number,
     subFieldName: "gender" | "age"
@@ -32,7 +31,7 @@ const getChild = (
         } else {
             children[index][subFieldName] = parseInt(input);
         }
-        fieldSetter("children", [...children]);
+        fieldSetter({ children: [...children] });
     };
 };
 
@@ -50,6 +49,7 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
         >
             <>
                 <FreeFormTextInput
+                    id="client-number-children"
                     label="Number of Children"
                     defaultValue={
                         fields.numberChildren !== 0 ? fields.numberChildren.toString() : undefined
