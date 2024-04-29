@@ -19,7 +19,7 @@ const isNotAtLeastOne = (value: number): boolean => {
     return value < 1;
 };
 
-const errorMessage = "Please select at least one parcel."
+const errorMessage = "Please select at least one parcel.";
 
 export type ActionName =
     | "Download Shipping Labels"
@@ -148,7 +148,7 @@ const Actions: React.FC<Props> = ({
                     anchorEl={actionAnchorElement}
                 >
                     <MenuList id="action-menu">
-                        {Object.entries(availableActions).map(([key, value]) => {
+                        {Object.entries(availableActions).map(([key]) => {
                             return (
                                 <MenuItem
                                     key={key}
