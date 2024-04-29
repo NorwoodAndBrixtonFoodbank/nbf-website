@@ -112,7 +112,7 @@ const CollectionCentresTable: React.FC = () => {
             .on(
                 "postgres_changes",
                 { event: "*", schema: "public", table: "collection_centres" },
-                fetchCollectionCentres
+                getCollectionCentresForTable
             )
             .subscribe((status, error) => {
                 subscriptionStatusRequiresErrorMessage(status, error, "collection_centres") &&
@@ -122,7 +122,7 @@ const CollectionCentresTable: React.FC = () => {
         return () => {
             void supabase.removeChannel(subscriptionChannel);
         };
-    }, []);
+    }, [getCollectionCentresForTable]);
 
     const handleSaveClick = (id: GridRowId) => () => {
         setRowModesModel((currentValue) => ({
