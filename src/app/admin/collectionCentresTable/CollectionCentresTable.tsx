@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Schema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
@@ -51,10 +51,7 @@ function EditToolbar(props: EditToolbarProps): React.JSX.Element {
 
     const handleClick = (): void => {
         const id = rows.length + 1;
-        setRows((oldRows) => [
-            ...oldRows,
-            { id, name: "", isShown: false, order: id, isNew: true },
-        ]);
+        setRows((oldRows) => [...oldRows, { id, name: "", isShown: false, isNew: true }]);
         setRowModesModel((oldModel) => ({
             ...oldModel,
             [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
@@ -94,16 +91,20 @@ const CollectionCentresTable: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    useEffect(() => {
+    const getCollectionCentresForTable = useCallback(async () => {
         setErrorMessage(null);
-        fetchCollectionCentres()
-            .then((response) => setRows(response))
-            .catch((error) => {
-                void logErrorReturnLogId("Failed to fetch collection centre", { error });
-                setErrorMessage("Error fetching data, please reload");
-            })
-            .finally(() => setIsLoading(false));
+        const { data, error } = await fetchCollectionCentres();
+        if (error) {
+            setErrorMessage("Error fetching data, please reload");
+            return;
+        }
+        setRows(data);
+        setIsLoading(false);
     }, []);
+
+    useEffect(() => {
+        void getCollectionCentresForTable();
+    }, [getCollectionCentresForTable]);
 
     useEffect(() => {
         const subscriptionChannel = supabase

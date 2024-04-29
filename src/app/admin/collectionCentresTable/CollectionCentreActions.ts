@@ -8,14 +8,24 @@ import { CollectionCentresTableRow } from "@/app/admin/collectionCentresTable/Co
 type DbCollectionCentre = Tables<"collection_centres">;
 type NewDbCollectionCentre = Omit<DbCollectionCentre, "primary_key">;
 
-export const fetchCollectionCentres = async (): Promise<CollectionCentresTableRow[]> => {
+type FetchCollectionCentresResult =
+    | {
+          data: CollectionCentresTableRow[];
+          error: null;
+      }
+    | {
+          data: null;
+          error: { type: "failedToFetchCollectionCentres"; logId: string };
+      };
+
+export const fetchCollectionCentres = async (): Promise<FetchCollectionCentresResult> => {
     const { data, error } = await supabase.from("collection_centres").select();
     if (error) {
         const logId = await logErrorReturnLogId("Failed to fetch collection centres", { error });
-        throw new DatabaseError("fetch", "packing slots", logId);
+        return { data: null, error: { type: "failedToFetchCollectionCentres", logId } };
     }
 
-    return data.map(
+    const formattedData = data.map(
         (row): CollectionCentresTableRow => ({
             name: row.name,
             acronym: row.acronym,
@@ -24,6 +34,8 @@ export const fetchCollectionCentres = async (): Promise<CollectionCentresTableRo
             isNew: false,
         })
     );
+
+    return { data: formattedData, error: null };
 };
 
 const formatExistingRowToDBCollectionCentre = (
