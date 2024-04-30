@@ -102,6 +102,56 @@ const CollectionCentresTable: React.FC = () => {
         }));
     };
 
+    const addNewCollectionCentre = async (newRow: CollectionCentresTableRow): Promise<void> => {
+        const { data: createdCollectionCentre, error: insertCollectionCentreError } =
+            await insertNewCollectionCentre(newRow);
+        const baseAuditLog = getBaseAuditLogForCollectionCentreAction(
+            "add a new collection centre",
+            newRow,
+            { excludeCollectionCentreId: true }
+        );
+
+        if (insertCollectionCentreError) {
+            setErrorMessage(
+                `Failed to add the collection centre. Log ID: ${insertCollectionCentreError.logId}`
+            );
+            void sendAuditLog({
+                ...baseAuditLog,
+                wasSuccess: false,
+                logId: insertCollectionCentreError.logId,
+            });
+        } else {
+            void sendAuditLog({
+                ...baseAuditLog,
+                collectionCentreId: createdCollectionCentre.collectionCentreId,
+                wasSuccess: true,
+            });
+            setIsLoading(false);
+        }
+    };
+
+    const updateCollectionCentre = async (newRow: CollectionCentresTableRow): Promise<void> => {
+        const { error: updateCollectionCentreError } = await updateDbCollectionCentre(newRow);
+        const baseAuditLog = getBaseAuditLogForCollectionCentreAction(
+            "update a collection centre",
+            newRow
+        );
+
+        if (updateCollectionCentreError) {
+            setErrorMessage(
+                `Failed to update the collection centre. Log ID: ${updateCollectionCentreError.logId}`
+            );
+            void sendAuditLog({
+                ...baseAuditLog,
+                wasSuccess: false,
+                logId: updateCollectionCentreError.logId,
+            });
+        } else {
+            void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
+            setIsLoading(false);
+        }
+    };
+
     const processRowUpdate = async (
         newRow: CollectionCentresTableRow
     ): Promise<CollectionCentresTableRow> => {
@@ -109,51 +159,9 @@ const CollectionCentresTable: React.FC = () => {
         setIsLoading(true);
 
         if (newRow.isNew) {
-            const { data: createdCollectionCentre, error: insertCollectionCentreError } =
-                await insertNewCollectionCentre(newRow);
-            const baseAuditLog = getBaseAuditLogForCollectionCentreAction(
-                "add a new collection centre",
-                newRow,
-                { excludeCollectionCentreId: true }
-            );
-
-            if (insertCollectionCentreError) {
-                setErrorMessage(
-                    `Failed to add the collection centre. Log ID: ${insertCollectionCentreError.logId}`
-                );
-                void sendAuditLog({
-                    ...baseAuditLog,
-                    wasSuccess: false,
-                    logId: insertCollectionCentreError.logId,
-                });
-            } else {
-                void sendAuditLog({
-                    ...baseAuditLog,
-                    collectionCentreId: createdCollectionCentre.collectionCentreId,
-                    wasSuccess: true,
-                });
-                setIsLoading(false);
-            }
+            void addNewCollectionCentre(newRow);
         } else {
-            const { error: updateCollectionCentreError } = await updateDbCollectionCentre(newRow);
-            const baseAuditLog = getBaseAuditLogForCollectionCentreAction(
-                "update a collection centre",
-                newRow
-            );
-
-            if (updateCollectionCentreError) {
-                setErrorMessage(
-                    `Failed to update the collection centre. Log ID: ${updateCollectionCentreError.logId}`
-                );
-                void sendAuditLog({
-                    ...baseAuditLog,
-                    wasSuccess: false,
-                    logId: updateCollectionCentreError.logId,
-                });
-            } else {
-                void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
-                setIsLoading(false);
-            }
+            void updateCollectionCentre(newRow);
         }
 
         return newRow;
