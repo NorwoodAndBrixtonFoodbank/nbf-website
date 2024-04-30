@@ -1,5 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
-import { GoTrueAdminApi } from "@supabase/gotrue-js";
+import { createClient, GoTrueAdminApi } from "@supabase/supabase-js";
 
 export function getSupabaseAdminAuthClient(): GoTrueAdminApi {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

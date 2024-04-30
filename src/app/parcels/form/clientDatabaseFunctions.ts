@@ -4,7 +4,7 @@ import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 type ParcelDatabaseInsertRecord = InsertSchema["parcels"];
-type ParcelDatabaseUpdateRecord = UpdateSchema["parcels"];
+type ParcelDatabaseUpdateRecord = UpdateSchema["parcels"] & { last_updated: string };
 
 type InsertParcelErrors = "failedToInsertParcel";
 type InsertParcelReturnType = { error: { type: InsertParcelErrors; logId: string } | null };

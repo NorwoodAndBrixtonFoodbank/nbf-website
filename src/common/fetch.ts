@@ -30,7 +30,7 @@ export interface ParcelWithCollectionCentreAndPackingSlot {
     packing_slot: PackingSlot | null;
     primary_key: string;
     voucher_number: string | null;
-    last_updated: string | undefined;
+    last_updated: string;
 }
 
 export type FetchParcelResponse =
