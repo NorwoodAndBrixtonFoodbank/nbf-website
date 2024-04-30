@@ -45,7 +45,7 @@ const getProfileNameOrErrorMessage = async (
             firstName: data.first_name ?? "",
             lastName: data.last_name ?? "",
             userId: data.user_id,
-            role: data.role
+            role: data.role,
         },
         errorMessage: null,
     };

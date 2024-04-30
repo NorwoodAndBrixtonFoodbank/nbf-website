@@ -22,4 +22,5 @@ export const getAuditLogErrorMessage = (error: AuditLogError | AuditLogCountErro
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-export const profileDisplayNameForDeletedUser = (role: UserRole | null) => `Deleted User ${role && `- ${capitaliseWords(role)}`}`;
+export const profileDisplayNameForDeletedUser = (role: UserRole | null): string =>
+    `Deleted User ${role && `- ${capitaliseWords(role)}`}`;

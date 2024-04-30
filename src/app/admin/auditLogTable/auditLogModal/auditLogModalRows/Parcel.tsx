@@ -4,7 +4,6 @@ import React from "react";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import LinkButton from "@/components/Buttons/LinkButton";
-import dayjs from "dayjs";
 import AuditLogModalRow from "../AuditLogModalRow";
 import { AuditLogModalRowResponse } from "../types";
 import { getParcelOverviewString } from "@/common/format";
