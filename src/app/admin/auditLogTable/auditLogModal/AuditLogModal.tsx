@@ -28,16 +28,11 @@ export const AuditLogModalContainer = styled.div`
 `;
 
 interface AuditLogModalProps {
-    modalIsOpen: boolean;
-    setModalIsOpen: (modalIsOpen: boolean) => void;
     selectedAuditLogRow: AuditLogRow | null;
+    onClose: () => void;
 }
 
-const AuditLogModal: React.FC<AuditLogModalProps> = ({
-    modalIsOpen,
-    setModalIsOpen,
-    selectedAuditLogRow,
-}) => {
+const AuditLogModal: React.FC<AuditLogModalProps> = ({ selectedAuditLogRow, onClose }) => {
     const theme = useTheme();
 
     return (
@@ -50,10 +45,8 @@ const AuditLogModal: React.FC<AuditLogModalProps> = ({
                         : ""}
                 </>
             }
-            isOpen={modalIsOpen}
-            onClose={() => {
-                setModalIsOpen(false);
-            }}
+            isOpen={selectedAuditLogRow !== null}
+            onClose={onClose}
             headerId="auditLogModal"
         >
             {selectedAuditLogRow && (

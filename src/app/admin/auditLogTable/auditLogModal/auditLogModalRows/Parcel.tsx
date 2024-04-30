@@ -21,9 +21,9 @@ interface ParcelLinkError {
     logId: string;
 }
 
-const fetchParcelLinkDetails = async (
+const getParcelLinkDetailsOrErrorMessage = async (
     parcelId: string
-): Promise<AuditLogModalRowResponse<ParcelLinkDetails, ParcelLinkError>> => {
+): Promise<AuditLogModalRowResponse<ParcelLinkDetails>> => {
     const { data: data, error } = await supabase
         .from("parcels")
         .select("primary_key, client:clients(full_name, address_postcode), collection_datetime")
@@ -35,7 +35,10 @@ const fetchParcelLinkDetails = async (
         const logId = await logErrorReturnLogId("Error with fetch: parcels", { error: error });
         return {
             data: null,
-            error: { type: "failedParcelOverviewDetailsFetch", logId: logId },
+            errorMessage: getErrorMessage({
+                type: "failedParcelOverviewDetailsFetch",
+                logId: logId,
+            }),
         };
     }
 
@@ -43,7 +46,7 @@ const fetchParcelLinkDetails = async (
         const logId = await logErrorReturnLogId("Error with fetch: parcels. Client null", {
             error: error,
         });
-        return { data: null, error: { type: "nullClient", logId: logId } };
+        return { data: null, errorMessage: getErrorMessage({ type: "nullClient", logId: logId }) };
     }
 
     const convertedData = {
@@ -53,7 +56,7 @@ const fetchParcelLinkDetails = async (
         addressPostcode: data.client.address_postcode,
     };
 
-    return { data: convertedData, error: null };
+    return { data: convertedData, errorMessage: null };
 };
 
 const getErrorMessage = (error: ParcelLinkError): string => {
@@ -83,10 +86,8 @@ const ParcelLink: React.FC<ParcelLinkDetails> = ({
 );
 
 const ParcelAuditLogModalRow: React.FC<{ parcelId: string }> = ({ parcelId }) => (
-    <AuditLogModalRow<ParcelLinkDetails, ParcelLinkError>
-        foreignKey={parcelId}
-        fetchResponse={fetchParcelLinkDetails}
-        getErrorMessage={getErrorMessage}
+    <AuditLogModalRow<ParcelLinkDetails>
+        getDataOrErrorMessage={() => getParcelLinkDetailsOrErrorMessage(parcelId)}
         RowComponentWhenSuccessful={ParcelLink}
         header="parcel"
     />

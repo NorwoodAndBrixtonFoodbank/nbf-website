@@ -16,14 +16,13 @@ interface ListsIngredientError {
     logId: string;
 }
 
-const fetchListIngredientName = async (
+const getListIngredientNameOrErrorMessage = async (
     eventId: string
-): Promise<AuditLogModalRowResponse<ListsIngredientNameDetails, ListsIngredientError>> => {
+): Promise<AuditLogModalRowResponse<ListsIngredientNameDetails>> => {
     const { data: data, error } = await supabase
         .from("lists")
         .select("item_name")
         .eq("primary_key", eventId)
-        .limit(1)
         .single();
 
     if (error) {
@@ -32,11 +31,11 @@ const fetchListIngredientName = async (
         });
         return {
             data: null,
-            error: { type: "failedListsFetch", logId: logId },
+            errorMessage: getErrorMessage({ type: "failedListsFetch", logId: logId }),
         };
     }
 
-    return { data: { ingredientName: data.item_name }, error: null };
+    return { data: { ingredientName: data.item_name }, errorMessage: null };
 };
 
 const getErrorMessage = (error: ListsIngredientError): string => {
@@ -54,10 +53,8 @@ const ListsIngredientName: React.FC<ListsIngredientNameDetails> = ({ ingredientN
 );
 
 const ListsAuditLogModalRow: React.FC<{ listsId: string }> = ({ listsId }) => (
-    <AuditLogModalRow<ListsIngredientNameDetails, ListsIngredientError>
-        foreignKey={listsId}
-        fetchResponse={fetchListIngredientName}
-        getErrorMessage={getErrorMessage}
+    <AuditLogModalRow<ListsIngredientNameDetails>
+        getDataOrErrorMessage={() => getListIngredientNameOrErrorMessage(listsId)}
         RowComponentWhenSuccessful={ListsIngredientName}
         header="Lists Ingredient"
     />

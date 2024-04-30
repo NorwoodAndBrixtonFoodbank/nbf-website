@@ -16,14 +16,13 @@ interface PackingSlotNameError {
     logId: string;
 }
 
-const fetchPackingSlotName = async (
+const getPackingSlotNameOrErrorMessage = async (
     packingSlotId: string
-): Promise<AuditLogModalRowResponse<PackingSlotNameDetails, PackingSlotNameError>> => {
+): Promise<AuditLogModalRowResponse<PackingSlotNameDetails>> => {
     const { data: data, error } = await supabase
         .from("packing_slots")
         .select("primary_key, name")
         .eq("primary_key", packingSlotId)
-        .limit(1)
         .single();
 
     if (error) {
@@ -32,11 +31,11 @@ const fetchPackingSlotName = async (
         });
         return {
             data: null,
-            error: { type: "failedPackingSlotsFetch", logId: logId },
+            errorMessage: getErrorMessage({ type: "failedPackingSlotsFetch", logId: logId }),
         };
     }
 
-    return { data: { packingSlotName: data.name }, error: null };
+    return { data: { packingSlotName: data.name }, errorMessage: null };
 };
 
 const getErrorMessage = (error: PackingSlotNameError): string => {
@@ -54,10 +53,8 @@ const PackingSlotName: React.FC<PackingSlotNameDetails> = ({ packingSlotName }) 
 );
 
 const PackingSlotAuditLogModalRow: React.FC<{ packingSlotId: string }> = ({ packingSlotId }) => (
-    <AuditLogModalRow<PackingSlotNameDetails, PackingSlotNameError>
-        foreignKey={packingSlotId}
-        fetchResponse={fetchPackingSlotName}
-        getErrorMessage={getErrorMessage}
+    <AuditLogModalRow<PackingSlotNameDetails>
+        getDataOrErrorMessage={() => getPackingSlotNameOrErrorMessage(packingSlotId)}
         RowComponentWhenSuccessful={PackingSlotName}
         header="packing slot"
     />

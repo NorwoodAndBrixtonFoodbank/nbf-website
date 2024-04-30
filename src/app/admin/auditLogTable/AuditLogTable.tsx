@@ -12,7 +12,7 @@ import {
     defaultNumberOfAuditLogRowsPerPage,
     numberOfAuditLogRowsPerPageOption,
 } from "./rowsPerPageConstants";
-import { AuditLogRow, convertAuditLogResponseToAuditLogRow } from "./types";
+import { AuditLogRow, convertAuditLogPlusRowsToAuditLogRows } from "./types";
 import { auditLogTableSortableColumns } from "./sortFunctions";
 import AuditLogModal from "./auditLogModal/AuditLogModal";
 
@@ -27,8 +27,7 @@ const AuditLogTable: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const startPoint = (currentPage - 1) * auditLogCountPerPage;
     const endPoint = currentPage * auditLogCountPerPage - 1;
-    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-    const [selectedAuditLog, setSelectedAuditLog] = useState<AuditLogRow | null>(null);
+    const [selectedAuditLogRow, setSelectedAuditLogRow] = useState<AuditLogRow | null>(null);
 
     const fetchAndDisplayAuditLog = useCallback(async () => {
         setErrorMessage(null);
@@ -45,7 +44,7 @@ const AuditLogTable: React.FC = () => {
             setErrorMessage(getAuditLogErrorMessage(error));
             return;
         }
-        const convertedData = convertAuditLogResponseToAuditLogRow(data);
+        const convertedData = convertAuditLogPlusRowsToAuditLogRows(data);
         setAuditLogDataPortion(convertedData);
     }, [startPoint, endPoint, sortState]);
 
@@ -73,8 +72,7 @@ const AuditLogTable: React.FC = () => {
     }, [fetchAndDisplayAuditLog]);
 
     const onRowClick = (row: Row<AuditLogRow>): void => {
-        setModalIsOpen(true);
-        setSelectedAuditLog(row.data);
+        setSelectedAuditLogRow(row.data);
     };
 
     return (
@@ -116,9 +114,8 @@ const AuditLogTable: React.FC = () => {
                 onRowClick={(row) => onRowClick(row)}
             />
             <AuditLogModal
-                modalIsOpen={modalIsOpen}
-                setModalIsOpen={setModalIsOpen}
-                selectedAuditLogRow={selectedAuditLog}
+                selectedAuditLogRow={selectedAuditLogRow}
+                onClose={() => setSelectedAuditLogRow(null)}
             />
         </>
     );

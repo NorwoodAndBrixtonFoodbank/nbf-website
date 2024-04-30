@@ -1,12 +1,13 @@
 import { logErrorReturnLogId } from "@/logger/logger";
 import { Supabase } from "@/supabaseUtils";
-import { AuditLogResponseData, AuditLogRow } from "./types";
+import { AuditLogRow } from "./types";
 import { SortState } from "@/components/Tables/Table";
 import { PaginationType } from "@/components/Tables/Filters";
+import { AuditLogPlusRow } from "@/databaseUtils";
 
 type AuditLogResponse =
     | {
-          data: AuditLogResponseData;
+          data: AuditLogPlusRow[];
           error: null;
       }
     | {

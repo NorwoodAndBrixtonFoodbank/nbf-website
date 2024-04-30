@@ -16,14 +16,13 @@ interface EventNameError {
     logId: string;
 }
 
-const fetchEventName = async (
+const getEventNameOrErrorMessage = async (
     eventId: string
-): Promise<AuditLogModalRowResponse<EventNameDetails, EventNameError>> => {
+): Promise<AuditLogModalRowResponse<EventNameDetails>> => {
     const { data: data, error } = await supabase
         .from("events")
         .select("primary_key, new_parcel_status")
         .eq("primary_key", eventId)
-        .limit(1)
         .single();
 
     if (error) {
@@ -32,11 +31,11 @@ const fetchEventName = async (
         });
         return {
             data: null,
-            error: { type: "failedEventFetch", logId: logId },
+            errorMessage: getErrorMessage({ type: "failedEventFetch", logId: logId }),
         };
     }
 
-    return { data: { eventName: data.new_parcel_status }, error: null };
+    return { data: { eventName: data.new_parcel_status }, errorMessage: null };
 };
 
 const getErrorMessage = (error: EventNameError): string => {
@@ -54,10 +53,8 @@ const EventName: React.FC<EventNameDetails> = ({ eventName }) => (
 );
 
 const EventAuditLogModalRow: React.FC<{ eventId: string }> = ({ eventId }) => (
-    <AuditLogModalRow<EventNameDetails, EventNameError>
-        foreignKey={eventId}
-        fetchResponse={fetchEventName}
-        getErrorMessage={getErrorMessage}
+    <AuditLogModalRow<EventNameDetails>
+        getDataOrErrorMessage={() => getEventNameOrErrorMessage(eventId)}
         RowComponentWhenSuccessful={EventName}
         header="event"
     />

@@ -5,6 +5,7 @@ import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import AuditLogModalRow, { TextValueContainer } from "../AuditLogModalRow";
 import { AuditLogModalRowResponse } from "../types";
+import { profileDisplayNameForDeletedUser } from "../../format";
 
 interface ProfileNameDetails {
     firstName: string;
@@ -18,14 +19,13 @@ interface ProfileNameError {
     logId: string;
 }
 
-const fetchEventName = async (
+const getProfileNameOrErrorMessage = async (
     profileId: string
-): Promise<AuditLogModalRowResponse<ProfileNameDetails, ProfileNameError>> => {
+): Promise<AuditLogModalRowResponse<ProfileNameDetails>> => {
     const { data: data, error } = await supabase
         .from("profiles")
         .select("primary_key, first_name, last_name, user_id")
         .eq("primary_key", profileId)
-        .limit(1)
         .single();
 
     if (error) {
@@ -34,7 +34,7 @@ const fetchEventName = async (
         });
         return {
             data: null,
-            error: { type: "failedProfileFetch", logId: logId },
+            errorMessage: getErrorMessage({ type: "failedProfileFetch", logId: logId }),
         };
     }
 
@@ -44,7 +44,7 @@ const fetchEventName = async (
             lastName: data.last_name ?? "",
             userId: data.user_id,
         },
-        error: null,
+        errorMessage: null,
     };
 };
 
@@ -60,15 +60,13 @@ const getErrorMessage = (error: ProfileNameError): string => {
 
 const ProfileName: React.FC<ProfileNameDetails> = ({ firstName, lastName, userId }) => (
     <TextValueContainer>
-        {userId === null ? "Deleted User" : `${firstName} ${lastName}`}
+        {userId === null ? profileDisplayNameForDeletedUser : `${firstName} ${lastName}`}
     </TextValueContainer>
 );
 
 const ProfileAuditLogModalRow: React.FC<{ profileId: string }> = ({ profileId }) => (
-    <AuditLogModalRow<ProfileNameDetails, ProfileNameError>
-        foreignKey={profileId}
-        fetchResponse={fetchEventName}
-        getErrorMessage={getErrorMessage}
+    <AuditLogModalRow<ProfileNameDetails>
+        getDataOrErrorMessage={() => getProfileNameOrErrorMessage(profileId)}
         RowComponentWhenSuccessful={ProfileName}
         header="profile"
     />

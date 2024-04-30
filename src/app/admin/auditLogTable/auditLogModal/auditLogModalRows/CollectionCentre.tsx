@@ -16,14 +16,13 @@ interface CollectionCentreNameError {
     logId: string;
 }
 
-const fetchCollectionCentreName = async (
+const getCollectionCentreNameOrErrorMessage = async (
     collectionCentreId: string
-): Promise<AuditLogModalRowResponse<CollectionCentreNameDetails, CollectionCentreNameError>> => {
+): Promise<AuditLogModalRowResponse<CollectionCentreNameDetails>> => {
     const { data: data, error } = await supabase
         .from("collection_centres")
         .select("primary_key, name")
         .eq("primary_key", collectionCentreId)
-        .limit(1)
         .single();
 
     if (error) {
@@ -32,11 +31,14 @@ const fetchCollectionCentreName = async (
         });
         return {
             data: null,
-            error: { type: "failedCollectionCentreNameFetch", logId: logId },
+            errorMessage: getErrorMessage({
+                type: "failedCollectionCentreNameFetch",
+                logId: logId,
+            }),
         };
     }
 
-    return { data: { collectionCentreName: data.name }, error: null };
+    return { data: { collectionCentreName: data.name }, errorMessage: null };
 };
 
 const getErrorMessage = (error: CollectionCentreNameError): string => {
@@ -56,10 +58,8 @@ const CollectionCentreName: React.FC<CollectionCentreNameDetails> = ({ collectio
 const CollectionCentreAuditLogModalRow: React.FC<{ collectionCentreId: string }> = ({
     collectionCentreId,
 }) => (
-    <AuditLogModalRow<CollectionCentreNameDetails, CollectionCentreNameError>
-        foreignKey={collectionCentreId}
-        fetchResponse={fetchCollectionCentreName}
-        getErrorMessage={getErrorMessage}
+    <AuditLogModalRow<CollectionCentreNameDetails>
+        getDataOrErrorMessage={() => getCollectionCentreNameOrErrorMessage(collectionCentreId)}
         RowComponentWhenSuccessful={CollectionCentreName}
         header="collection centre"
     />

@@ -1,9 +1,9 @@
-export type AuditLogModalRowResponse<Data, Error> =
+export type AuditLogModalRowResponse<Data> =
     | {
           data: Data;
-          error: null;
+          errorMessage: null;
       }
     | {
           data: null;
-          error: Error;
+          errorMessage: string;
       };

@@ -52,7 +52,7 @@ export const getDbDate = (dateTime: Dayjs): string => dateTime.format("YYYY-MM-D
 export const formatBooleanOrNull = (booleanOrNull: boolean | null): string =>
     booleanOrNull === null ? "" : booleanOrNull ? "True" : "False";
 
-export const formatJson = (json: Json): string => JSON.stringify(json);
+export const formatJson = (json: Json): string => JSON.stringify(json, null, 2);
 
 export const capitaliseWords = (words: string): string =>
     words

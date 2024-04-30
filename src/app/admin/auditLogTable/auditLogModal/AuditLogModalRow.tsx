@@ -22,34 +22,30 @@ export const TextValueContainer = styled.div`
     padding: 1rem;
 `;
 
-interface AuditLogModalRowProps<Data, Error> {
-    foreignKey: string;
-    fetchResponse: (foreignKey: string) => Promise<AuditLogModalRowResponse<Data, Error>>;
-    getErrorMessage: (error: Error) => string;
+interface AuditLogModalRowProps<Data> {
+    getDataOrErrorMessage: () => Promise<AuditLogModalRowResponse<Data>>;
     RowComponentWhenSuccessful: React.FC<Data>;
     header: string;
 }
 
-const AuditLogModalRow = <Data, Error>({
-    foreignKey,
-    fetchResponse,
-    getErrorMessage,
+const AuditLogModalRow = <Data,>({
+    getDataOrErrorMessage,
     RowComponentWhenSuccessful,
     header,
-}: AuditLogModalRowProps<Data, Error>): React.ReactElement => {
+}: AuditLogModalRowProps<Data>): React.ReactElement => {
     const [rowData, setRowData] = useState<Data | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     useEffect(() => {
         (async () => {
-            const { data, error } = await fetchResponse(foreignKey);
-            if (error) {
-                setErrorMessage(getErrorMessage(error));
+            const { data, errorMessage } = await getDataOrErrorMessage();
+            if (errorMessage) {
+                setErrorMessage(errorMessage);
                 return;
             }
             setRowData(data);
         })();
-    }, [foreignKey, fetchResponse, getErrorMessage]);
+    }, [getDataOrErrorMessage]);
 
     return (
         <AuditLogModalItem>

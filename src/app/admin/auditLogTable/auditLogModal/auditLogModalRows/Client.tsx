@@ -19,25 +19,24 @@ interface ClientLinkDetailsError {
     logId: string;
 }
 
-const fetchClientLinkDetails = async (
+const getClientLinkDetailsOrErrorMessage = async (
     clientId: string
-): Promise<AuditLogModalRowResponse<ClientLinkDetails, ClientLinkDetailsError>> => {
+): Promise<AuditLogModalRowResponse<ClientLinkDetails>> => {
     const { data: data, error } = await supabase
         .from("clients")
         .select("primary_key, full_name")
         .eq("primary_key", clientId)
-        .limit(1)
         .single();
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: clients", { error: error });
         return {
             data: null,
-            error: { type: "failedClientFetch", logId: logId },
+            errorMessage: getErrorMessage({ type: "failedClientFetch", logId: logId }),
         };
     }
 
-    return { data: { clientId: data.primary_key, clientName: data.full_name }, error: null };
+    return { data: { clientId: data.primary_key, clientName: data.full_name }, errorMessage: null };
 };
 
 const getErrorMessage = (error: ClientLinkDetailsError): string => {
@@ -55,10 +54,8 @@ const ClientLink: React.FC<ClientLinkDetails> = ({ clientId, clientName }) => (
 );
 
 const ClientAuditLogModalRow: React.FC<{ clientId: string }> = ({ clientId }) => (
-    <AuditLogModalRow<ClientLinkDetails, ClientLinkDetailsError>
-        foreignKey={clientId}
-        fetchResponse={fetchClientLinkDetails}
-        getErrorMessage={getErrorMessage}
+    <AuditLogModalRow<ClientLinkDetails>
+        getDataOrErrorMessage={() => getClientLinkDetailsOrErrorMessage(clientId)}
         RowComponentWhenSuccessful={ClientLink}
         header="client"
     />

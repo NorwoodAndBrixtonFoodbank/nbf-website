@@ -1,7 +1,6 @@
 import { Json } from "@/databaseTypesFile";
-import { ViewSchema } from "@/databaseUtils";
-
-export type AuditLogResponseData = ViewSchema["audit_log_plus"][];
+import { AuditLogPlusRow } from "@/databaseUtils";
+import { profileDisplayNameForDeletedUser } from "./format";
 
 export interface AuditLogRow {
     auditLogId: string;
@@ -23,28 +22,28 @@ export interface AuditLogRow {
     websiteData: string;
 }
 
-export const convertAuditLogResponseToAuditLogRow = (
-    auditLogResponse: AuditLogResponseData
+export const convertAuditLogPlusRowsToAuditLogRows = (
+    auditLogResponse: AuditLogPlusRow[]
 ): AuditLogRow[] =>
-    auditLogResponse.map((auditLogResponseRow) => ({
-        auditLogId: auditLogResponseRow.primary_key ?? "",
-        action: auditLogResponseRow.action ?? "",
+    auditLogResponse.map((auditLogPlusRow) => ({
+        auditLogId: auditLogPlusRow.primary_key ?? "",
+        action: auditLogPlusRow.action ?? "",
         actorName:
-            auditLogResponseRow.actor_user_id === null
-                ? "User Deleted"
-                : auditLogResponseRow.actor_name ?? "",
-        clientId: auditLogResponseRow.client_id ?? "",
-        collectionCentreId: auditLogResponseRow.collection_centre_id ?? "",
-        content: auditLogResponseRow.content ?? "",
-        createdAt: auditLogResponseRow.created_at ?? "",
-        eventId: auditLogResponseRow.event_id ?? "",
-        listHotelId: auditLogResponseRow.list_hotel_id ?? "",
-        listId: auditLogResponseRow.list_id ?? "",
-        logId: auditLogResponseRow.log_id ?? "",
-        packingSlotId: auditLogResponseRow.packing_slot_id ?? "",
-        parcelId: auditLogResponseRow.parcel_id ?? "",
-        profileId: auditLogResponseRow.profile_id ?? "",
-        statusOrder: auditLogResponseRow.status_order ?? "",
-        wasSuccess: auditLogResponseRow.wasSuccess ?? null,
-        websiteData: auditLogResponseRow.website_data ?? "",
+            auditLogPlusRow.actor_user_id === null
+                ? profileDisplayNameForDeletedUser
+                : auditLogPlusRow.actor_name ?? "",
+        clientId: auditLogPlusRow.client_id ?? "",
+        collectionCentreId: auditLogPlusRow.collection_centre_id ?? "",
+        content: auditLogPlusRow.content ?? "",
+        createdAt: auditLogPlusRow.created_at ?? "",
+        eventId: auditLogPlusRow.event_id ?? "",
+        listHotelId: auditLogPlusRow.list_hotel_id ?? "",
+        listId: auditLogPlusRow.list_id ?? "",
+        logId: auditLogPlusRow.log_id ?? "",
+        packingSlotId: auditLogPlusRow.packing_slot_id ?? "",
+        parcelId: auditLogPlusRow.parcel_id ?? "",
+        profileId: auditLogPlusRow.profile_id ?? "",
+        statusOrder: auditLogPlusRow.status_order ?? "",
+        wasSuccess: auditLogPlusRow.wasSuccess ?? null,
+        websiteData: auditLogPlusRow.website_data ?? "",
     }));
