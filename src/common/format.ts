@@ -66,5 +66,11 @@ export const getReadableWebsiteDataName = (name: string): string =>
         .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
         .join(" ");
 
-export const getParcelOverviewString = (addressPostcode: string | null, fullName: string, collectionDatetime: Date | null): string => `${addressPostcode ?? nullPostcodeDisplay}${fullName && ` - ${fullName}`}${collectionDatetime &&
-    ` @ ${dayjs(collectionDatetime!).format("DD/MM/YYYY HH:mm")}`}`
+export const getParcelOverviewString = (
+    addressPostcode: string | null,
+    fullName: string,
+    collectionDatetime: Date | null
+): string =>
+    `${addressPostcode ?? nullPostcodeDisplay}${fullName && ` - ${fullName}`}${
+        collectionDatetime && ` @ ${dayjs(collectionDatetime!).format("DD/MM/YYYY HH:mm")}`
+    }`;
