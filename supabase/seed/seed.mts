@@ -67,7 +67,8 @@ async function generateSeed(): Promise<void> {
     await seed.families(
         (generate) =>
             generate(1000, {
-                age: (ctx) => copycat.int(ctx.seed, { min: 0, max: 100 }),
+                birthYear: (ctx) => copycat.int(ctx.seed, { min: 1901, max: 2024 }),
+                birthMonth: null,
             }),
         { connect: true }
     );
