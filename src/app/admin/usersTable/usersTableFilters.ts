@@ -67,15 +67,6 @@ export const buildUserRoleFilter = async (): Promise<BuildUserRoleFilterAndError
 
     const userRolesFromDb: UserRole[] = data.map((row) => row.role) ?? [];
 
-    const uniqueUserRoles = userRolesFromDb.reduce<UserRole[]>((accumulator, userRole) => {
-        if (!accumulator.includes(userRole)) {
-            accumulator.push(userRole);
-        }
-        return accumulator;
-    }, []);
-
-    uniqueUserRoles.sort();
-
     const userRoleFilter = checklistFilter<UserRow>({
         key: "userRole",
         filterLabel: "User Role",
