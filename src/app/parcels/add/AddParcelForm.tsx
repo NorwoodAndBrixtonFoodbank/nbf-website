@@ -11,7 +11,7 @@ import {
     PackingSlotsError,
     PackingSlotsLabelsAndValues,
     fetchPackingSlotsInfo,
-    getCollectionCentresInfo,
+    getActiveCollectionCentres,
 } from "@/common/fetch";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import supabase from "@/supabaseClient";
@@ -50,7 +50,7 @@ const AddParcels = ({ clientId }: AddParcelProps): React.ReactElement => {
             setIsLoading(true);
 
             const { data: collectionCentresData, error: collectionCentresError } =
-                await getCollectionCentresInfo(supabase);
+                await getActiveCollectionCentres(supabase);
             if (collectionCentresError) {
                 setError(collectionCentresError);
                 setIsLoading(false);

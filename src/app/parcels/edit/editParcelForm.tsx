@@ -5,7 +5,7 @@ import ParcelForm, { ParcelErrors, ParcelFields, initialParcelFields } from "../
 import {
     CollectionCentresLabelsAndValues,
     fetchParcel,
-    getCollectionCentresInfo,
+    getActiveCollectionCentres,
     PackingSlotsLabelsAndValues,
     fetchPackingSlotsInfo,
     ParcelWithCollectionCentreAndPackingSlot,
@@ -84,7 +84,7 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
             setIsLoading(true);
 
             const { data: collectionCentresData, error: collectionCentresError } =
-                await getCollectionCentresInfo(supabase);
+                await getActiveCollectionCentres(supabase);
             if (collectionCentresError) {
                 setError(collectionCentresError);
                 setIsLoading(false);
