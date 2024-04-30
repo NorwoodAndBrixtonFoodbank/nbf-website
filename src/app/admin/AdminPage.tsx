@@ -39,6 +39,8 @@ const PanelIcon = styled(FontAwesomeIcon)`
     padding-right: 0.9rem;
 `;
 
+export const auditLogIcon = faRectangleList;
+
 const AdminPage: React.FC = () => {
     const adminPanels: Panel[] = [
         {
@@ -69,7 +71,7 @@ const AdminPage: React.FC = () => {
         },
         {
             panelTitle: "View Audit Logs",
-            panelIcon: faRectangleList,
+            panelIcon: auditLogIcon,
             panelContent: <AuditLogTable />,
         },
     ];

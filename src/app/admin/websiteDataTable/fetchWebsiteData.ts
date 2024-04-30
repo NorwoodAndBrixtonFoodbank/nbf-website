@@ -3,6 +3,7 @@ import { WebsiteDataRow } from "./WebsiteDataTable";
 import { Tables } from "@/databaseTypesFile";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
+import { getReadableWebsiteDataName } from "@/common/format";
 
 type DbWebsiteData = Tables<"website_data">;
 type FetchWebsiteDataErrors = "failedToFetchWebsiteData";
@@ -22,12 +23,6 @@ type UpdateWebsiteDataErrorReturn =
       }
     | { error: null };
 
-const getReadableName = (name: string): string =>
-    name
-        .split("_")
-        .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
-        .join(" ");
-
 export const fetchWebsiteData = async (): Promise<FetchWebsiteDataErrorReturn> => {
     const { data, error } = await supabase.from("website_data").select().order("name");
 
@@ -39,7 +34,7 @@ export const fetchWebsiteData = async (): Promise<FetchWebsiteDataErrorReturn> =
     const websiteData = data.map(
         (row): WebsiteDataRow => ({
             dbName: row.name,
-            readableName: getReadableName(row.name),
+            readableName: getReadableWebsiteDataName(row.name),
             value: row.value,
             id: row.name,
         })

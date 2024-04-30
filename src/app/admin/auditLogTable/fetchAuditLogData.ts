@@ -3,11 +3,11 @@ import { Supabase } from "@/supabaseUtils";
 import { AuditLogRow } from "./types";
 import { SortState } from "@/components/Tables/Table";
 import { PaginationType } from "@/components/Tables/Filters";
-import { Schema } from "@/databaseUtils";
+import { AuditLogPlusRow } from "@/databaseUtils";
 
 type AuditLogResponse =
     | {
-          data: Schema["audit_log"][];
+          data: AuditLogPlusRow[];
           error: null;
       }
     | {
@@ -40,7 +40,7 @@ export const fetchAuditLog = async (
     endIndex: number,
     sortState: SortState<AuditLogRow>
 ): Promise<AuditLogResponse> => {
-    let query = supabase.from("audit_log").select("*").range(startIndex, endIndex);
+    let query = supabase.from("audit_log_plus").select("*").range(startIndex, endIndex);
 
     if (
         sortState.sortEnabled &&

@@ -49,6 +49,19 @@ export const formatDateTime = (datetime: Date | string | null): string => {
 
 export const getDbDate = (dateTime: Dayjs): string => dateTime.format("YYYY-MM-DD");
 
-export const formatBoolean = (boolean: boolean): string => (boolean ? "True" : "False");
+export const formatBooleanOrNull = (booleanOrNull: boolean | null): string =>
+    booleanOrNull === null ? "" : booleanOrNull ? "True" : "False";
 
-export const formatJson = (json: Json): string => JSON.stringify(json);
+export const formatJson = (json: Json): string => JSON.stringify(json, null, 2);
+
+export const capitaliseWords = (words: string): string =>
+    words
+        .split(" ")
+        .map((word) => (word === "a" ? word : `${word[0].toUpperCase()}${word.slice(1)}`))
+        .join(" ");
+
+export const getReadableWebsiteDataName = (name: string): string =>
+    name
+        .split("_")
+        .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
+        .join(" ");

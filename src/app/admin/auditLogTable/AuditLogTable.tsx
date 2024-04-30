@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import Table, { SortState } from "@/components/Tables/Table";
+import Table, { Row, SortState } from "@/components/Tables/Table";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
@@ -12,8 +12,9 @@ import {
     defaultNumberOfAuditLogRowsPerPage,
     numberOfAuditLogRowsPerPageOption,
 } from "./rowsPerPageConstants";
-import { AuditLogRow, convertAuditLogResponseToAuditLogRow } from "./types";
+import { AuditLogRow, convertAuditLogPlusRowsToAuditLogRows } from "./types";
 import { auditLogTableSortableColumns } from "./sortFunctions";
+import AuditLogModal from "./auditLogModal/AuditLogModal";
 
 const AuditLogTable: React.FC = () => {
     const [auditLogDataPortion, setAuditLogDataPortion] = useState<AuditLogRow[]>([]);
@@ -26,6 +27,7 @@ const AuditLogTable: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const startPoint = (currentPage - 1) * auditLogCountPerPage;
     const endPoint = currentPage * auditLogCountPerPage - 1;
+    const [selectedAuditLogRow, setSelectedAuditLogRow] = useState<AuditLogRow | null>(null);
 
     const fetchAndDisplayAuditLog = useCallback(async () => {
         setErrorMessage(null);
@@ -42,7 +44,7 @@ const AuditLogTable: React.FC = () => {
             setErrorMessage(getAuditLogErrorMessage(error));
             return;
         }
-        const convertedData = convertAuditLogResponseToAuditLogRow(data);
+        const convertedData = convertAuditLogPlusRowsToAuditLogRows(data);
         setAuditLogDataPortion(convertedData);
     }, [startPoint, endPoint, sortState]);
 
@@ -69,6 +71,10 @@ const AuditLogTable: React.FC = () => {
         };
     }, [fetchAndDisplayAuditLog]);
 
+    const onRowClick = (row: Row<AuditLogRow>): void => {
+        setSelectedAuditLogRow(row.data);
+    };
+
     return (
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
@@ -78,22 +84,10 @@ const AuditLogTable: React.FC = () => {
                 defaultShownHeaders={[
                     "action",
                     "createdAt",
-                    "actorProfileId",
+                    "actorName",
                     "content",
                     "wasSuccess",
                     "logId",
-                ]}
-                toggleableHeaders={[
-                    "parcelId",
-                    "clientId",
-                    "eventId",
-                    "listId",
-                    "collectionCentreId",
-                    "profileId",
-                    "packingSlotId",
-                    "listHotelId",
-                    "statusOrder",
-                    "websiteData",
                 ]}
                 columnDisplayFunctions={auditLogTableColumnDisplayFunctions}
                 paginationConfig={{
@@ -117,6 +111,11 @@ const AuditLogTable: React.FC = () => {
                     primaryFiltersShown: false,
                     additionalFiltersShown: false,
                 }}
+                onRowClick={(row) => onRowClick(row)}
+            />
+            <AuditLogModal
+                selectedAuditLogRow={selectedAuditLogRow}
+                onClose={() => setSelectedAuditLogRow(null)}
             />
         </>
     );
