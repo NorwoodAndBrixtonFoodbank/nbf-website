@@ -86,8 +86,6 @@ interface Props {
     statusAnchorElement: HTMLElement | null;
     setStatusAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     setModalError: React.Dispatch<React.SetStateAction<string | null>>;
-    willSaveParcelStatus: () => void;
-    hasAttemptedToSaveParcelStatus: () => void;
 }
 
 const getStatusErrorMessage = (statusError: SaveParcelStatusError): string => {
@@ -105,8 +103,6 @@ const Statuses: React.FC<Props> = ({
     statusAnchorElement,
     setStatusAnchorElement,
     setModalError,
-    willSaveParcelStatus,
-    hasAttemptedToSaveParcelStatus,
 }) => {
     const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
     const [selectedStatus, setSelectedStatus] = useState<StatusType | null>(null);
@@ -133,11 +129,9 @@ const Statuses: React.FC<Props> = ({
     }, [setModalError]);
 
     const submitStatus = async (date: Dayjs): Promise<void> => {
-        willSaveParcelStatus();
         setServerErrorMessage(null);
         if (selectedStatus === null) {
             setServerErrorMessage("Chosen status was not found.");
-            hasAttemptedToSaveParcelStatus();
             return;
         }
         const { error } = await saveParcelStatus(
@@ -151,7 +145,6 @@ const Statuses: React.FC<Props> = ({
         if (error) {
             setServerErrorMessage(`${getStatusErrorMessage(error)} Log ID: ${error.logId}`);
         }
-        hasAttemptedToSaveParcelStatus();
         if (!error) {
             setStatusModal(false);
         }
