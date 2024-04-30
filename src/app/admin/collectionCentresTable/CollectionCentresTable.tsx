@@ -189,10 +189,10 @@ const CollectionCentresTable: React.FC = () => {
 
         const editedRow = rows.find((row) => row.id === id);
         if (editedRow === undefined) {
-            void logErrorReturnLogId(
+            const logId = logErrorReturnLogId(
                 "Edited row in collection centre admin table is undefined onCancelClick"
             );
-            setErrorMessage("Table error, please try again");
+            setErrorMessage(`Table error, please try again. Log ID: ${logId}`);
         } else if (editedRow.isNew) {
             setRows((currentValue) => currentValue.filter((row) => row.id !== id));
         }
