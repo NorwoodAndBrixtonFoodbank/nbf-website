@@ -47,6 +47,7 @@ import {
 } from "@/app/parcels/parcelsTableFilters";
 import { ActionsContainer } from "@/components/Form/formStyling";
 import { formatDateTime, formatDatetimeAsDate, nullPostcodeDisplay } from "@/common/format";
+import { formatEventName } from "./format";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", ""],
@@ -536,11 +537,7 @@ const ParcelsPage: React.FC<{}> = () => {
             return "";
         }
         const { name, eventData, timestamp } = data;
-        return (
-            `${name}` +
-            (eventData ? ` (${eventData})` : "") +
-            ` @ ${formatDatetimeAsDate(timestamp)}`
-        );
+        return formatEventName(name, eventData) + ` @ ${formatDatetimeAsDate(timestamp)}`;
     };
 
     const formatNullPostcode = (postcodeData: ParcelsTableRow["addressPostcode"]): string => {

@@ -7,9 +7,9 @@ import { SnackBarDiv } from "@/app/lists/ListDataview";
 import TextInput from "@/components/DataInput/FreeFormTextInput";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
-import Snackbar from "@mui/material/Snackbar/Snackbar";
-import Alert from "@mui/material/Alert/Alert";
-import Button from "@mui/material/Button/Button";
+import Snackbar from "@mui/material/Snackbar/";
+import Alert from "@mui/material/Alert/";
+import Button from "@mui/material/Button/";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { logErrorReturnLogId } from "@/logger/logger";
 

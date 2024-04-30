@@ -15,6 +15,7 @@ import DriverOverviewPdfButton, {
     DriverOverviewError,
 } from "@/pdf/DriverOverview/DriverOverviewPdfButton";
 import { sendAuditLog } from "@/server/auditLog";
+import { getEventDataDate } from "@/common/format";
 
 interface DriverOverviewInputProps {
     onDateChange: (newDate: Dayjs | null) => void;
@@ -90,7 +91,11 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
     };
 
     const onPdfCreationCompleted = async (): Promise<void> => {
-        const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
+        const { error } = await props.updateParcelStatuses(
+            props.selectedParcels,
+            props.newStatus,
+            `with ${driverName} ${getEventDataDate(date)}`
+        );
         if (error) {
             setErrorMessage(getStatusErrorMessageWithLogId(error));
         }

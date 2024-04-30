@@ -9,6 +9,7 @@ import {
     formatHouseholdFromFamilyDetails,
 } from "@/app/clients/getExpandedClientDetails";
 import { formatDateTime, formatDatetimeAsDate } from "@/common/format";
+import { formatEventName } from "./format";
 
 type FetchExpandedParcelDetailsResult =
     | {
@@ -155,7 +156,7 @@ export const processEventsDetails = (
     events: Pick<Schema["events"], "event_data" | "new_parcel_status" | "timestamp">[]
 ): EventTableRow[] => {
     return events.map((event) => ({
-        eventInfo: event.new_parcel_status + (event.event_data ? ` (${event.event_data})` : ""),
+        eventInfo: formatEventName(event.new_parcel_status, event.event_data),
         timestamp: new Date(event.timestamp),
     }));
 };

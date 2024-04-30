@@ -52,3 +52,5 @@ export const getDbDate = (dateTime: Dayjs): string => dateTime.format("YYYY-MM-D
 export const formatBoolean = (boolean: boolean): string => (boolean ? "True" : "False");
 
 export const formatJson = (json: Json): string => JSON.stringify(json);
+
+export const getEventDataDate = (dateTime: Dayjs): string => dateTime.format("DD/MM/YYYY");
