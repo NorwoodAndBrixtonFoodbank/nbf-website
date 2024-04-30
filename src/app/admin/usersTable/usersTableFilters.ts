@@ -23,14 +23,14 @@ export const firstNameSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
     state: string
 ): PostgrestFilterBuilder<Database["public"], any, any> => {
-    return query.ilike("first_name", `%${state}%`);
+    return query.or(`first_name.ilike.%${state}%,first_name.is.null`);
 };
 
 export const lastNameSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
     state: string
 ): PostgrestFilterBuilder<Database["public"], any, any> => {
-    return query.ilike("last_name", `%${state}%`);
+    return query.or(`last_name.ilike.%${state}%,last_name.is.null`);
 };
 
 export const emailSearch = (
