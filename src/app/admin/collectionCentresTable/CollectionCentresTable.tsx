@@ -14,8 +14,6 @@ import {
     GridRowId,
     GridRowModes,
     GridRowModesModel,
-    GridRowsProp,
-    GridToolbarContainer,
 } from "@mui/x-data-grid";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import Header from "@/app/admin/websiteDataTable/Header";
@@ -29,8 +27,7 @@ import {
     insertNewCollectionCentre,
     updateDbCollectionCentre,
 } from "@/app/admin/collectionCentresTable/CollectionCentreActions";
-import Button from "@mui/material/Button";
-import AddIcon from "@mui/icons-material/Add";
+import { EditToolbar } from "@/app/admin/collectionCentresTable/CollectionCentresTableToolbar";
 
 export interface CollectionCentresTableRow {
     acronym: Schema["collection_centres"]["acronym"];
@@ -38,33 +35,6 @@ export interface CollectionCentresTableRow {
     id: Schema["collection_centres"]["primary_key"];
     isShown: Schema["collection_centres"]["is_shown"];
     isNew: boolean;
-}
-
-interface EditToolbarProps {
-    setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
-    setRowModesModel: (newModel: (oldModel: GridRowModesModel) => GridRowModesModel) => void;
-    rows: CollectionCentresTableRow[];
-}
-
-function EditToolbar(props: EditToolbarProps): React.JSX.Element {
-    const { setRows, setRowModesModel, rows } = props;
-
-    const handleClick = (): void => {
-        const id = rows.length + 1;
-        setRows((oldRows) => [...oldRows, { id, name: "", isShown: false, isNew: true }]);
-        setRowModesModel((oldModel) => ({
-            ...oldModel,
-            [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
-        }));
-    };
-
-    return (
-        <GridToolbarContainer>
-            <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-                Add a new collection centre
-            </Button>
-        </GridToolbarContainer>
-    );
 }
 
 function getBaseAuditLogForCollectionCentreAction(
