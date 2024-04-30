@@ -669,6 +669,7 @@ export type Database = {
           action: string | null
           actor_name: string | null
           actor_profile_id: string | null
+          actor_role: Database["public"]["Enums"]["role"] | null
           actor_user_id: string | null
           client_id: string | null
           collection_centre_id: string | null

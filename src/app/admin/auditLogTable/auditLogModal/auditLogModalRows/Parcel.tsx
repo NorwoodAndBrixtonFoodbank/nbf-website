@@ -7,6 +7,7 @@ import LinkButton from "@/components/Buttons/LinkButton";
 import dayjs from "dayjs";
 import AuditLogModalRow from "../AuditLogModalRow";
 import { AuditLogModalRowResponse } from "../types";
+import { getParcelOverviewString } from "@/common/format";
 
 interface ParcelLinkDetails {
     parcelId: string;
@@ -79,9 +80,7 @@ const ParcelLink: React.FC<ParcelLinkDetails> = ({
     collectionDatetime,
 }) => (
     <LinkButton link={`/parcels?parcelId=${parcelId}`}>
-        {addressPostcode}
-        {fullName && ` - ${fullName}`}
-        {collectionDatetime && ` @ ${dayjs(collectionDatetime!).format("DD/MM/YYYY HH:mm")}`}
+        {getParcelOverviewString(addressPostcode, fullName, collectionDatetime)}
     </LinkButton>
 );
 
