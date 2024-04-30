@@ -566,14 +566,12 @@ const ParcelsPage: React.FC<{}> = () => {
         newStatus: StatusType,
         statusEventData?: string
     ): Promise<SaveParcelStatusResult> => {
-        setIsLoading(true);
         const { error } = await saveParcelStatus(
             parcels.map((parcel) => parcel.parcelId),
             newStatus,
             statusEventData
         );
         setCheckedParcelIds([]);
-        setIsLoading(false);
         return { error: error };
     };
 
@@ -599,8 +597,6 @@ const ParcelsPage: React.FC<{}> = () => {
                     <ActionAndStatusBar
                         fetchSelectedParcels={getCheckedParcelsData}
                         updateParcelStatuses={updateParcelStatuses}
-                        willSaveParcelStatus={() => setIsLoading(true)}
-                        hasAttemptedToSaveParcelStatus={() => setIsLoading(false)}
                     />
                 </ActionsContainer>
             </PreTableControls>

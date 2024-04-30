@@ -12,8 +12,6 @@ import { ArrowDropDown } from "@mui/icons-material";
 export interface ActionAndStatusBarProps {
     fetchSelectedParcels: () => Promise<ParcelsTableRow[]>;
     updateParcelStatuses: UpdateParcelStatuses;
-    willSaveParcelStatus: () => void;
-    hasAttemptedToSaveParcelStatus: () => void;
 }
 
 export type UpdateParcelStatuses = (
@@ -41,8 +39,6 @@ const ActionAndStatusBar: React.FC<ActionAndStatusBarProps> = (props) => {
                 statusAnchorElement={statusAnchorElement}
                 setStatusAnchorElement={setStatusAnchorElement}
                 setModalError={setModalError}
-                willSaveParcelStatus={props.willSaveParcelStatus}
-                hasAttemptedToSaveParcelStatus={props.hasAttemptedToSaveParcelStatus}
             />
             <Actions
                 fetchSelectedParcels={props.fetchSelectedParcels}
