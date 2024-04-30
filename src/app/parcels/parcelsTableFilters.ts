@@ -109,7 +109,6 @@ export const buildDeliveryCollectionFilter = async (): Promise<
         return query.in("collection_centre_acronym", state);
     };
 
-    const keySet = new Set();
     const { data, error } = await supabase
         .from("collection_centres")
         .select("name, acronym, is_shown");
@@ -121,18 +120,13 @@ export const buildDeliveryCollectionFilter = async (): Promise<
         throw new DatabaseError("fetch", "collection centre filter options", logId);
     }
     const optionsResponse = data ?? [];
-    const optionsSet: CollectionCentresOptions[] = optionsResponse.reduce<
-        CollectionCentresOptions[]
-    >((filteredOptions, row) => {
-        if (row.acronym && row.name && !keySet.has(row.acronym)) {
-            keySet.add(row.acronym);
-            filteredOptions.push({
-                key: row.acronym,
-                value: row.is_shown ? row.name : `${row.name} (inactive)`,
-            });
-        }
-        return filteredOptions.sort();
-    }, []);
+    const optionsSet: CollectionCentresOptions[] = [];
+    optionsResponse.map((row) => {
+        optionsSet.push({
+            key: row.acronym,
+            value: row.is_shown ? row.name : `${row.name} (inactive)`,
+        });
+    });
 
     return checklistFilter<ParcelsTableRow>({
         key: "deliveryCollection",
