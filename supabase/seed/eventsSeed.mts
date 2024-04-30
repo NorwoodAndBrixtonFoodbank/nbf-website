@@ -12,7 +12,6 @@ export const eventNamesWithNoData = [
     "Received by Centre",
     "Collection Failed",
     "Parcel Collected",
-    "Driver Overview Downloaded",
     "Map Generated",
     "Out for Delivery",
     "Delivered",

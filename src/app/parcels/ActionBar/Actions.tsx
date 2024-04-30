@@ -43,7 +43,7 @@ export const availableActions: AvailableActionsType = {
         newStatus: "Shopping List Downloaded",
     },
     "Download Driver Overview": {
-        newStatus: "Driver Overview Downloaded",
+        newStatus: "Out for Delivery",
     },
     "Download Day Overview": {
         newStatus: "Day Overview Downloaded",

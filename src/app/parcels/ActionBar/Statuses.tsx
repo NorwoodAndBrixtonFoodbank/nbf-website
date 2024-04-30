@@ -16,9 +16,8 @@ import { fetchParcelStatuses } from "@/app/parcels/fetchParcelTableData";
 export type StatusType = ParcelStatus[][number];
 
 const nonMenuStatuses: StatusType[] = [
-    "Driver Overview Downloaded", //Generated when driver overview pdf downloaded
     "Map Generated", //Generated when maps generated
-    "Out for Delivery",
+    "Out for Delivery", //Generated when driver overview pdf downloaded
     "Request Deleted", //Generated when parcel deleted
     "Shipping Labels Downloaded", //Generated when shipping labels pdf downloaded
     "Shopping List Downloaded", //Generated when shopping list pdf downloaded
