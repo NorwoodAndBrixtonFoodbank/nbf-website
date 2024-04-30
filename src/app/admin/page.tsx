@@ -9,7 +9,8 @@ export const revalidate = 0;
 
 export type DisplayedUserRole = UserRole | "UNKNOWN";
 export interface UserRow {
-    id: string;
+    userId: string;
+    profileId: string;
     firstName: string;
     lastName: string;
     userRole: DisplayedUserRole;

@@ -5,7 +5,7 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { sendAuditLog } from "@/server/auditLog";
 
 interface UpdateUserProfile {
-    userId: string;
+    profileId: string;
     role: UserRole;
     firstName?: string;
     lastName?: string;
@@ -15,13 +15,12 @@ interface UpdateUserProfile {
 export async function updateUserProfile(
     userDetails: UpdateUserProfile
 ): Promise<PostgrestError | null> {
-    const { data, error } = await supabase
+    const { error } = await supabase
         .from("profiles")
         .update({
             role: userDetails.role,
         })
-        .eq("user_id", userDetails.userId)
-        .select("profile_id:primary_key")
+        .eq("primary_key", userDetails.profileId)
         .single();
 
     const auditLog = {
@@ -32,12 +31,12 @@ export async function updateUserProfile(
             lastName: userDetails.lastName,
             phoneNumber: userDetails.phoneNumber,
         },
-        userId: userDetails.userId,
+        profileId: userDetails.profileId,
     };
 
     if (error) {
         const logId = await logErrorReturnLogId(
-            `Error with updating user profile: user id ${userDetails.userId}`,
+            `Error with updating profiles: profile id ${userDetails.profileId}`,
             {
                 error: error,
             }
@@ -46,6 +45,6 @@ export async function updateUserProfile(
         return error;
     }
 
-    await sendAuditLog({ ...auditLog, wasSuccess: true, profileId: data.profile_id });
+    await sendAuditLog({ ...auditLog, wasSuccess: true });
     return null;
 }

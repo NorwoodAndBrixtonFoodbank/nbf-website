@@ -79,8 +79,8 @@ export const buildUserRoleFilter = async (): Promise<BuildUserRoleFilterAndError
     const userRoleFilter = checklistFilter<UserRow>({
         key: "userRole",
         filterLabel: "User Role",
-        itemLabelsAndKeys: uniqueUserRoles.map((userRole) => [userRole, userRole]),
-        initialCheckedKeys: uniqueUserRoles,
+        itemLabelsAndKeys: userRolesFromDb.map((userRole) => [userRole, userRole]),
+        initialCheckedKeys: userRolesFromDb,
         methodConfig: { paginationType: PaginationType.Server, method: userRoleSearch },
     });
 

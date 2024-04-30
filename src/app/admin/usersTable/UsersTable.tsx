@@ -22,7 +22,7 @@ import { getCurrentUser } from "@/server/getCurrentUser";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 
 const usersTableHeaderKeysAndLabels: TableHeaders<UserRow> = [
-    ["id", "User ID"],
+    ["userId", "User ID"],
     ["firstName", "First Name"],
     ["lastName", "Last Name"],
     ["email", "Email"],
@@ -273,7 +273,7 @@ const UsersTable: React.FC = () => {
                 dataPortion={users}
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
-                toggleableHeaders={["id", "createdAt", "updatedAt"]}
+                toggleableHeaders={["userId", "createdAt", "updatedAt"]}
                 defaultShownHeaders={[
                     "firstName",
                     "lastName",
@@ -302,7 +302,7 @@ const UsersTable: React.FC = () => {
                     onDelete: userOnDelete,
                     onEdit: userOnEdit,
                     setDataPortion: setUsers,
-                    isDeletable: (row: UserRow) => row.id !== currentUserId,
+                    isDeletable: (row: UserRow) => row.userId !== currentUserId,
                 }}
                 filterConfig={{
                     primaryFiltersShown: true,
