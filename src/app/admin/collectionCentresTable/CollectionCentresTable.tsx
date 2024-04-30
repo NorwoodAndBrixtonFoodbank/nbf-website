@@ -85,8 +85,9 @@ const CollectionCentresTable: React.FC = () => {
                 getCollectionCentresForTable
             )
             .subscribe((status, error) => {
-                subscriptionStatusRequiresErrorMessage(status, error, "collection_centres") &&
+                if (subscriptionStatusRequiresErrorMessage(status, error, "collection_centres")) {
                     setErrorMessage("Error fetching data, please reload");
+                }
             });
 
         return () => {
