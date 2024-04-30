@@ -19,7 +19,7 @@ export interface DriverOverviewTableData {
 }
 
 export interface DriverOverviewCardDataProps {
-    driverName: string;
+    driverName: string | null;
     date: Date;
     tableData: DriverOverviewTableData[];
     message: string;
@@ -177,7 +177,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                 <View style={[styles.infoAndLogoContainer, styles.flexRow]}>
                     <View style={styles.informationContainer}>
                         <Text style={styles.h1text}>Driver Overview</Text>
-                        <Text style={styles.h2text}>Driver Name: {data.driverName}</Text>
+                        <Text style={styles.h2text}>Driver Name: {data.driverName ?? ""}</Text>
                         <Text style={styles.h2text}>Date: {data.date.toLocaleDateString()} </Text>
                     </View>
                     {/* eslint-disable-next-line -- needed to remove the need for alt text on the logo */}

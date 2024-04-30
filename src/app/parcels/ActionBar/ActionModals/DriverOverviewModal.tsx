@@ -71,14 +71,17 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-    const [driverName, setDriverName] = useState("");
+    const [driverName, setDriverName] = useState<string | null>(null);
     const [date, setDate] = useState(dayjs());
 
     const [isDateValid, setIsDateValid] = useState(true);
 
     const onDriverNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        if (event.target.value === "") {
+            setDriverName(null);
+        } else {
         setDriverName(event.target.value);
-    };
+    }};
     const onDateChange = (newDate: Dayjs | null): void => {
         setDate(newDate!);
     };
@@ -86,7 +89,7 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
     const onClose = (): void => {
         props.onClose();
         setDate(dayjs());
-        setDriverName("");
+        setDriverName(null);
         setErrorMessage(null);
     };
 
@@ -94,7 +97,7 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
         const { error } = await props.updateParcelStatuses(
             props.selectedParcels,
             props.newStatus,
-            `with ${driverName} ${getEventDataDate(date)}`
+            `with ${driverName ?? "Unknown Driver"} ${getEventDataDate(date)}`
         );
         if (error) {
             setErrorMessage(getStatusErrorMessageWithLogId(error));
