@@ -748,24 +748,10 @@ export type Database = {
             referencedColumns: ["client_id"]
           },
           {
-            foreignKeyName: "audit_log_collection_centre_id_fkey"
-            columns: ["collection_centre_id"]
-            isOneToOne: false
-            referencedRelation: "collection_centres"
-            referencedColumns: ["primary_key"]
-          },
-          {
             foreignKeyName: "audit_log_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
-            referencedColumns: ["primary_key"]
-          },
-          {
-            foreignKeyName: "audit_log_list_hotel_id_fkey"
-            columns: ["list_hotel_id"]
-            isOneToOne: false
-            referencedRelation: "lists_hotel"
             referencedColumns: ["primary_key"]
           },
           {
@@ -774,48 +760,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lists"
             referencedColumns: ["primary_key"]
-          },
-          {
-            foreignKeyName: "audit_log_packing_slot_id_fkey"
-            columns: ["packing_slot_id"]
-            isOneToOne: false
-            referencedRelation: "packing_slots"
-            referencedColumns: ["primary_key"]
-          },
-          {
-            foreignKeyName: "audit_log_parcel_id_fkey"
-            columns: ["parcel_id"]
-            isOneToOne: false
-            referencedRelation: "parcels"
-            referencedColumns: ["primary_key"]
-          },
-          {
-            foreignKeyName: "audit_log_parcel_id_fkey"
-            columns: ["parcel_id"]
-            isOneToOne: false
-            referencedRelation: "last_status"
-            referencedColumns: ["parcel_id"]
-          },
-          {
-            foreignKeyName: "audit_log_parcel_id_fkey"
-            columns: ["parcel_id"]
-            isOneToOne: false
-            referencedRelation: "parcels_plus"
-            referencedColumns: ["parcel_id"]
-          },
-          {
-            foreignKeyName: "audit_log_status_order_fkey"
-            columns: ["status_order"]
-            isOneToOne: false
-            referencedRelation: "status_order"
-            referencedColumns: ["event_name"]
-          },
-          {
-            foreignKeyName: "audit_log_website_data_fkey"
-            columns: ["website_data"]
-            isOneToOne: false
-            referencedRelation: "website_data"
-            referencedColumns: ["name"]
           },
           {
             foreignKeyName: "profiles_user_id_fkey"
@@ -830,6 +774,69 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "users_plus"
             referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "public_audit_log_collection_centre_id_fkey"
+            columns: ["collection_centre_id"]
+            isOneToOne: false
+            referencedRelation: "collection_centres"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_audit_log_list_hotel_id_fkey"
+            columns: ["list_hotel_id"]
+            isOneToOne: false
+            referencedRelation: "lists_hotel"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_audit_log_packing_slot_id_fkey"
+            columns: ["packing_slot_id"]
+            isOneToOne: false
+            referencedRelation: "packing_slots"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_audit_log_parcel_id_fkey"
+            columns: ["parcel_id"]
+            isOneToOne: false
+            referencedRelation: "parcels"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_audit_log_parcel_id_fkey"
+            columns: ["parcel_id"]
+            isOneToOne: false
+            referencedRelation: "last_status"
+            referencedColumns: ["parcel_id"]
+          },
+          {
+            foreignKeyName: "public_audit_log_parcel_id_fkey"
+            columns: ["parcel_id"]
+            isOneToOne: false
+            referencedRelation: "parcels_plus"
+            referencedColumns: ["parcel_id"]
+          },
+          {
+            foreignKeyName: "public_audit_log_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_audit_log_status_order_fkey"
+            columns: ["status_order"]
+            isOneToOne: false
+            referencedRelation: "status_order"
+            referencedColumns: ["event_name"]
+          },
+          {
+            foreignKeyName: "public_audit_log_website_data_fkey"
+            columns: ["website_data"]
+            isOneToOne: false
+            referencedRelation: "website_data"
+            referencedColumns: ["name"]
           },
         ]
       }
