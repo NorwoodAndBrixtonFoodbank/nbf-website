@@ -1,5 +1,6 @@
-import { formatBooleanOrNull, formatDateTime } from "@/common/format";
+import { capitaliseWords, formatBooleanOrNull, formatDateTime } from "@/common/format";
 import { AuditLogCountError, AuditLogError } from "./fetchAuditLogData";
+import { UserRole } from "@/databaseUtils";
 
 export const auditLogTableColumnDisplayFunctions = {
     createdAt: formatDateTime,
@@ -21,4 +22,4 @@ export const getAuditLogErrorMessage = (error: AuditLogError | AuditLogCountErro
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-export const profileDisplayNameForDeletedUser = "Deleted User";
+export const profileDisplayNameForDeletedUser = (role: UserRole | null) => `Deleted User ${role && `- ${capitaliseWords(role)}`}`;

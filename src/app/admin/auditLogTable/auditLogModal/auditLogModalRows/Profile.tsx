@@ -6,11 +6,13 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import AuditLogModalRow, { TextValueContainer } from "../AuditLogModalRow";
 import { AuditLogModalRowResponse } from "../types";
 import { profileDisplayNameForDeletedUser } from "../../format";
+import { UserRole } from "@/databaseUtils";
 
 interface ProfileNameDetails {
     firstName: string;
     lastName: string;
     userId: string | null;
+    role: UserRole;
 }
 
 type ProfileNameErrorType = "failedProfileFetch";
@@ -24,7 +26,7 @@ const getProfileNameOrErrorMessage = async (
 ): Promise<AuditLogModalRowResponse<ProfileNameDetails>> => {
     const { data: data, error } = await supabase
         .from("profiles")
-        .select("primary_key, first_name, last_name, user_id")
+        .select("primary_key, first_name, last_name, user_id, role")
         .eq("primary_key", profileId)
         .single();
 
@@ -43,6 +45,7 @@ const getProfileNameOrErrorMessage = async (
             firstName: data.first_name ?? "",
             lastName: data.last_name ?? "",
             userId: data.user_id,
+            role: data.role
         },
         errorMessage: null,
     };
@@ -58,9 +61,9 @@ const getErrorMessage = (error: ProfileNameError): string => {
     return `${errorMessage} Log ID: ${error.logId}`;
 };
 
-const ProfileName: React.FC<ProfileNameDetails> = ({ firstName, lastName, userId }) => (
+const ProfileName: React.FC<ProfileNameDetails> = ({ firstName, lastName, userId, role }) => (
     <TextValueContainer>
-        {userId === null ? profileDisplayNameForDeletedUser : `${firstName} ${lastName}`}
+        {userId === null ? profileDisplayNameForDeletedUser(role) : `${firstName} ${lastName}`}
     </TextValueContainer>
 );
 
