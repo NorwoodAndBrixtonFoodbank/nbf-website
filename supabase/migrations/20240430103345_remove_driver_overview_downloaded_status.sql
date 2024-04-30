@@ -1,4 +1,4 @@
-update public.events set events.new_parcel_status = "Out for Delivery" where events.new_parcel_status = "Driver Overview Downloaded";
+update public.events set new_parcel_status = 'Out for Delivery' where new_parcel_status = 'Driver Overview Downloaded';
 
 DELETE FROM public.status_order;
 
