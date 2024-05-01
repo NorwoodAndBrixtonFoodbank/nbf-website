@@ -71,6 +71,6 @@ export const getParcelOverviewString = (
     fullName: string,
     collectionDatetime: Date | null
 ): string =>
-    `${addressPostcode ?? nullPostcodeDisplay}${fullName && ` - ${fullName}`}${
-        collectionDatetime && ` @ ${dayjs(collectionDatetime!).format("DD/MM/YYYY HH:mm")}`
-    }`;
+    (addressPostcode ?? nullPostcodeDisplay) +
+    (fullName && ` - ${fullName}`) +
+    (collectionDatetime && ` @ ${dayjs(collectionDatetime).format("DD/MM/YYYY HH:mm")}`);
