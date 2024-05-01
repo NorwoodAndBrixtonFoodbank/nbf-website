@@ -22,20 +22,18 @@ have been delivered to clients.
 
 ### First time setup 
 
-* Download .env.local from Keeper and put in the top-level directory
+* Download .env.local (Local) from Keeper and put in the top-level directory as `.env.local`. Check that this file has NEXT_PUBLIC_SUPABASE_URL set to http://127.0.0.1:54321.
 
-* Use `npm install` to install any dependencies.
+* Use `npm run post_checkout` to install any dependencies.
 
 * If you're using WSL, you need to download some dependencies for Cypress:
 ```shell
 sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
 ```
 
-* Run website locally (`npm run dev`) and try to log in with the Test User (see Keeper) to verify it all works!
+* Run website locally (`npm run dev`) and try to log in with the test user (See Helpful commands section to see the users created for local dev) to verify it all works!
   * Note that the login page can be slightly flaky, but if it doesn't immediately error then it should be signed in!
     Pressing any of the navigation bar buttons will not then redirect you to the login page.
-* Follow the [Update and connect to the local database](#update-and-connect-to-the-local-database) and [Apply migrations to local database](#apply-migrations-to-local-database) steps to set up the local database
-* Use the output of `supabase start` to replace the details in `.env.local` so that our website can connect to the local database.
 
 * The best place to start is `src/app`, where the website is based! Look at the folder structure for an idea of what the
   website navigation will be.
@@ -60,6 +58,16 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
   * Can open the Cypress UI to see individual results with `npm run open:cypress`
 
 * Use `npx supabase functions serve` if you are receiving an errors such as "congestion zone" to run Supabase functions locally.
+- `npx supabase migration list` to compare what migrations are applied locally and on remote
+- `npm run dev:reset_supabase` to
+  - reset the Supabase database based on the migration files and the seed data
+  - create one user of each role with the following credentials:
+    - admin@example.com (admin123)
+    - volunteer@example.com (volunteer123)
+    - manager@example.com (manager123)
+    - staff@example.com (staff123)
+  - upload the congestion charge postcodes to the local Supabase storage
+- `npm run db:generate_seed` to generate `supabase/seed.sql` based on `supabase/seed/seed.mts`. This does not automatically put the data in the database. You'll need to run `npm run dev:reset_supabase`.
 
 ### Supabase development
 
@@ -70,21 +78,6 @@ To use the Supabase CLI:
 
 ### Database
 Database migrations are tracked under /supabase/migrations.
-
-#### Update and connect to the local database
-* Select the database to pull from. This will be our deployed dev database. 
-  ```shell
-  npx supabase link --project-ref <PROJECT_ID>
-  ```
-  You will be prompted for the database password, which can be found in Keeper.
-* Pull any new changes from the database.
-  ```shell
-  npx supabase db pull
-  ```
-* Start Supabase services on your local machine. This command will give you the "DB URL" you can use to connect to the database.
-  ```shell
-  npx supabase start
-  ```
 
 #### Make database changes
 You can either
@@ -105,7 +98,7 @@ You can regenerate the types
   ```shell
   npm run db:local:generate_types
   ```
-- from the deployed database
+- from the deployed database (probably won't be used but for reference)
   ```shell
   npm run db:remote:generate_types -- --project-id <PROJECT_ID>
   ```
@@ -129,18 +122,6 @@ You can regenerate the types
   ```shell
   npm run dev:reset_supabase
   ```
-
-#### Useful commands
-- `npx supabase migration list` to compare what migrations are applied locally and on remote
-- `npm run dev:reset_supabase` to
-  - reset the Supabase database based on the migration files and the seed data
-  - create one user of each role with the following credentials:
-    - admin@example.com (admin123)
-    - volunteer@example.com (volunteer123)
-    - manager@example.com (manager123)
-    - staff@example.com (staff123)
-  - upload the congestion charge postcodes to the local Supabase storage
-- `npm run db:generate_seed` to generate `supabase/seed.sql` based on `supabase/seed/seed.mts`. This does not automatically put the data in the database. You'll need to run `npm run dev:reset_supabase`.
 
 #### Useful links
 - [Local Development](https://supabase.com/docs/guides/cli/local-development)
