@@ -24,7 +24,7 @@ have been delivered to clients.
 
 * Download .env.local (Local) from Keeper and put in the top-level directory as `.env.local`. Check that this file has NEXT_PUBLIC_SUPABASE_URL set to http://127.0.0.1:54321.
 
-* Use `npm run post_checkout` to install any dependencies.
+* Use `npm run post_checkout` to install any dependencies. (You may need to log in to snaplet first: `npx snaplet auth setup`).
 
 * If you're using WSL, you need to download some dependencies for Cypress:
 ```shell
