@@ -184,7 +184,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         ]);
 
         const auditLog = {
-            action: "move a list item",
+            action: `move a list item ${row1.rowOrder <= row2.rowOrder ? "down" : "up"}`,
             listId: row1.primaryKey,
             content: {
                 itemName: row1.itemName,
