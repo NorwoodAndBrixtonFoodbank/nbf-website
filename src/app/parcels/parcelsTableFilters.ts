@@ -120,13 +120,10 @@ export const buildDeliveryCollectionFilter = async (): Promise<
         throw new DatabaseError("fetch", "collection centre filter options", logId);
     }
     const optionsResponse = data ?? [];
-    const optionsSet: CollectionCentresOptions[] = [];
-    optionsResponse.map((row) => {
-        optionsSet.push({
-            key: row.acronym,
-            value: row.is_shown ? row.name : `${row.name} (inactive)`,
-        });
-    });
+    const optionsSet: CollectionCentresOptions[] = optionsResponse.map((row) => ({
+        key: row.acronym,
+        value: row.is_shown ? row.name : `${row.name} (inactive)`,
+    }));
 
     return checklistFilter<ParcelsTableRow>({
         key: "deliveryCollection",
