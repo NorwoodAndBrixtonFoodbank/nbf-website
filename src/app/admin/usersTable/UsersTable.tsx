@@ -162,18 +162,9 @@ const UsersTable: React.FC = () => {
                     method: emailSearch,
                 },
             }),
+            buildUserRoleFilter(),
         ];
 
-        const { data: userRoleFilter, error } = await buildUserRoleFilter();
-        if (error) {
-            switch (error.type) {
-                case "failedToFetchUserRoleFilterOptions":
-                    setErrorMessage(`Failed to retrieve user role filters. Log ID: ${error.logId}`);
-                    break;
-            }
-        } else {
-            filters.push(userRoleFilter);
-        }
         return filters;
     };
 
