@@ -57,7 +57,6 @@ export const fetchAuditLog = async (
         const logId = await logErrorReturnLogId("Error with fetch: Audit Log", {
             error: error,
         });
-        console.error(error);
         return { data: null, error: { type: "failedAuditLogFetch", logId: logId } };
     }
 
