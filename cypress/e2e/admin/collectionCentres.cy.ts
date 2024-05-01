@@ -15,7 +15,6 @@ describe("Edit a collection centre on admins page", () => {
                 addCollectionCentreName(lastRow, newCollectionCentreName);
                 addCollectionCentreAcronym(lastRow, newCollectionCentreName);
                 clickOnSaveButton(lastRow);
-                cy.reload();
                 assertCollectionCentreName({
                     rowIndex: lastRow,
                     collectionCentreName: newCollectionCentreName,
