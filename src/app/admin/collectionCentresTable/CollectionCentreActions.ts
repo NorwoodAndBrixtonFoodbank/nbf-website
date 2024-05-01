@@ -58,7 +58,7 @@ const formatNewRowToDBCollectionCentre = (
     };
 };
 
-type InsertCollectionCentreResult =
+export type InsertCollectionCentreResult =
     | {
           data: { collectionCentreId: string };
           error: null;
@@ -92,7 +92,7 @@ export const insertNewCollectionCentre = async (
     return { data: { collectionCentreId: collectionCentre.primary_key }, error: null };
 };
 
-type UpdateCollectionCentreResult = {
+export type UpdateCollectionCentreResult = {
     error: {
         dbError: PostgrestError;
         logId: string;

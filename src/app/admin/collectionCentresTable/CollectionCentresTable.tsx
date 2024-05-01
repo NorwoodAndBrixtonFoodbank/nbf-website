@@ -24,7 +24,9 @@ import StyledDataGrid from "@/app/admin/common/StyledDataGrid";
 import { LinearProgress } from "@mui/material";
 import {
     fetchCollectionCentres,
+    InsertCollectionCentreResult,
     insertNewCollectionCentre,
+    UpdateCollectionCentreResult,
     updateDbCollectionCentre,
 } from "@/app/admin/collectionCentresTable/CollectionCentreActions";
 import { EditToolbar } from "@/app/admin/collectionCentresTable/CollectionCentresTableToolbar";
@@ -60,6 +62,7 @@ const CollectionCentresTable: React.FC = () => {
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [existingRowData, setExistingRowData] = useState<CollectionCentresTableRow | null>(null);
 
     const getCollectionCentresForTable = useCallback(async () => {
         setErrorMessage(null);
@@ -102,7 +105,9 @@ const CollectionCentresTable: React.FC = () => {
         }));
     };
 
-    const addNewCollectionCentre = async (newRow: CollectionCentresTableRow): Promise<void> => {
+    const addNewCollectionCentre = async (
+        newRow: CollectionCentresTableRow
+    ): Promise<InsertCollectionCentreResult> => {
         const { data: createdCollectionCentre, error: insertCollectionCentreError } =
             await insertNewCollectionCentre(newRow);
         const baseAuditLog = getBaseAuditLogForCollectionCentreAction(
@@ -120,6 +125,8 @@ const CollectionCentresTable: React.FC = () => {
                 wasSuccess: false,
                 logId: insertCollectionCentreError.logId,
             });
+            setIsLoading(false);
+            return { data: null, error: insertCollectionCentreError };
         } else {
             void sendAuditLog({
                 ...baseAuditLog,
@@ -127,10 +134,13 @@ const CollectionCentresTable: React.FC = () => {
                 wasSuccess: true,
             });
             setIsLoading(false);
+            return { data: createdCollectionCentre, error: null };
         }
     };
 
-    const updateCollectionCentre = async (newRow: CollectionCentresTableRow): Promise<void> => {
+    const updateCollectionCentre = async (
+        newRow: CollectionCentresTableRow
+    ): Promise<UpdateCollectionCentreResult> => {
         const { error: updateCollectionCentreError } = await updateDbCollectionCentre(newRow);
         const baseAuditLog = getBaseAuditLogForCollectionCentreAction(
             "update a collection centre",
@@ -146,10 +156,13 @@ const CollectionCentresTable: React.FC = () => {
                 wasSuccess: false,
                 logId: updateCollectionCentreError.logId,
             });
-        } else {
-            void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
             setIsLoading(false);
+            return { error: updateCollectionCentreError };
         }
+
+        void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
+        setIsLoading(false);
+        return { error: null };
     };
 
     const processRowUpdate = async (
@@ -159,12 +172,23 @@ const CollectionCentresTable: React.FC = () => {
         setIsLoading(true);
 
         if (newRow.isNew) {
-            void addNewCollectionCentre(newRow);
+            const { data: newCollectionCentreData, error: newCollectionCentreError } =
+                await addNewCollectionCentre(newRow);
+            if (newCollectionCentreError) {
+                return { ...newRow, name: "", acronym: "", isShown: false };
+            }
+            return { ...newRow, id: newCollectionCentreData.collectionCentreId };
         } else {
-            void updateCollectionCentre(newRow);
+            const { error: updateCollectionCentreError } = await updateCollectionCentre(newRow);
+            if (updateCollectionCentreError) {
+                if (existingRowData) {
+                    return existingRowData;
+                } else {
+                    return { ...newRow, name: "", acronym: "", isShown: true };
+                }
+            }
+            return newRow;
         }
-
-        return newRow;
     };
 
     const handleRowEditStop: GridEventListener<"rowEditStop"> = (params, event) => {
@@ -175,6 +199,8 @@ const CollectionCentresTable: React.FC = () => {
     };
 
     const handleEditClick = (id: GridRowId) => () => {
+        const existingRowIndex = rows.map((row) => row.id).indexOf(id.toString());
+        setExistingRowData(rows[existingRowIndex]);
         setRowModesModel((currentValue) => ({
             ...currentValue,
             [id]: { mode: GridRowModes.Edit },
