@@ -170,6 +170,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
 
         setListOfIngredients(newListOfIngredients);
     };
+
     const onSwapRows = async (row1: ListRow, row2: ListRow): Promise<void> => {
         const { error } = await supabase.from("lists").upsert([
             {
@@ -182,12 +183,32 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             },
         ]);
 
+        const auditLog = {
+            action: "move a list item",
+            listId: row1.primaryKey,
+            content: {
+                itemName: row1.itemName,
+                oldRowOrder: row1.rowOrder,
+            },
+        } as const satisfies Partial<AuditLog>;
+
         if (error) {
             const logId = await logErrorReturnLogId("Error with upsert: List row item order", {
                 error: error,
             });
             setErrorMessage(`Failed to swap rows. Log ID: ${logId}`);
+            void sendAuditLog({
+                ...auditLog,
+                wasSuccess: false,
+                logId: logId,
+            });
             return;
+        } else {
+            void sendAuditLog({
+                ...auditLog,
+                wasSuccess: true,
+                content: { ...auditLog.content, newRowOrder: row2.rowOrder },
+            });
         }
 
         reorderRows(row1, row2);
