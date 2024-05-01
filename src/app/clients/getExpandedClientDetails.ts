@@ -29,7 +29,8 @@ const getRawClientDetails = async (clientId: string) => {
             address_postcode,
     
             family:families(
-                age,
+                birth_year,
+                birth_month,
                 gender
             ),
     
@@ -118,13 +119,13 @@ export const formatAddressFromClientDetails = (
 };
 
 export const formatHouseholdFromFamilyDetails = (
-    family: Pick<Schema["families"], "age" | "gender">[]
+    family: Pick<Schema["families"], "birth_year" | "gender">[]
 ): string => {
     let adultCount = 0;
     let childCount = 0;
 
     for (const familyMember of family) {
-        if (familyMember.age === null || familyMember.age >= 16) {
+        if (familyMember.birth_year <= 2008) {
             adultCount++;
         } else {
             childCount++;
@@ -148,13 +149,14 @@ export const formatHouseholdFromFamilyDetails = (
 };
 
 export const formatBreakdownOfChildrenFromFamilyDetails = (
-    family: Pick<Schema["families"], "age" | "gender">[]
+    family: Pick<Schema["families"], "birth_year" | "gender">[]
 ): string => {
     const childDetails = [];
 
     for (const familyMember of family) {
-        if (familyMember.age !== null && familyMember.age <= 15) {
-            const age = familyMember.age === -1 ? "0-15" : familyMember.age.toString();
+        if (familyMember.birth_year !== null && familyMember.birth_year >= 2009) {
+            const age =
+                familyMember.birth_year === -1 ? "0-15" : familyMember.birth_year.toString();
             childDetails.push(`${age}-year-old ${familyMember.gender}`);
         }
     }

@@ -59,7 +59,8 @@ const getExpandedParcelDetails = async (
             address_postcode,
 
             family:families(
-                age,
+                birth_year,
+                birth_month,
                 gender
             )
         ),

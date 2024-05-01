@@ -54,7 +54,8 @@ export interface ClientFields extends Fields {
     addressTown: string;
     addressCounty: string;
     addressPostcode: string | null;
-    adults: NumberAdultsByGender;
+    adults: Person[];
+    numberOfAdults: NumberAdultsByGender;
     numberChildren: number;
     children: Person[];
     dietaryRequirements: BooleanGroup;
@@ -120,7 +121,7 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
             .map((_item) => {
                 return {
                     gender: "other",
-                    age: -1,
+                    birthYear: -1,
                 };
             });
         fieldSetter({ children: [...fields.children, ...extraChildren] });

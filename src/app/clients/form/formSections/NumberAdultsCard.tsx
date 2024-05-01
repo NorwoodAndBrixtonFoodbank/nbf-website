@@ -35,7 +35,7 @@ const setNumberAdults = (
     return (event) => {
         const input = event.target.value;
         const newAdults = { ...adults, [fieldKey]: getQuantity(input) };
-        fieldSetter({ adults: newAdults });
+        fieldSetter({ numberOfAdults: newAdults });
 
         const invalidAdultEntry =
             newAdults.numberFemales < 0 ||
@@ -74,22 +74,24 @@ const NumberAdultsCard: React.FC<ClientCardProps> = ({
                     id="client-number-females"
                     error={errorExists(formErrors.adults)}
                     label="Female"
-                    defaultValue={getNumberAdultsOfGenderDefault(fields.adults.numberFemales)}
+                    defaultValue={getNumberAdultsOfGenderDefault(
+                        fields.numberOfAdults.numberFemales
+                    )}
                     onChange={setNumberAdults(
                         fieldSetter,
                         errorSetter,
-                        fields.adults,
+                        fields.numberOfAdults,
                         "numberFemales"
                     )}
                 />
                 <FreeFormTextInput
                     error={errorExists(formErrors.adults)}
                     label="Male"
-                    defaultValue={getNumberAdultsOfGenderDefault(fields.adults.numberMales)}
+                    defaultValue={getNumberAdultsOfGenderDefault(fields.numberOfAdults.numberMales)}
                     onChange={setNumberAdults(
                         fieldSetter,
                         errorSetter,
-                        fields.adults,
+                        fields.numberOfAdults,
                         "numberMales"
                     )}
                 />
@@ -97,11 +99,13 @@ const NumberAdultsCard: React.FC<ClientCardProps> = ({
                     error={errorExists(formErrors.adults)}
                     helperText={errorText(formErrors.adults)}
                     label="Prefer Not To Say"
-                    defaultValue={getNumberAdultsOfGenderDefault(fields.adults.numberUnknownGender)}
+                    defaultValue={getNumberAdultsOfGenderDefault(
+                        fields.numberOfAdults.numberUnknownGender
+                    )}
                     onChange={setNumberAdults(
                         fieldSetter,
                         errorSetter,
-                        fields.adults,
+                        fields.numberOfAdults,
                         "numberUnknownGender"
                     )}
                 />

@@ -12,7 +12,8 @@ const AddClients: () => React.ReactElement = () => {
         addressTown: "",
         addressCounty: "",
         addressPostcode: "",
-        adults: {
+        adults: [],
+        numberOfAdults: {
             numberFemales: 0,
             numberMales: 0,
             numberUnknownGender: 0,

@@ -5,7 +5,7 @@ import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { processExtraInformation } from "@/common/formatClientsData";
 
 const isAdult = (member: Schema["families"]): boolean => {
-    return member.age === null || member.age >= 16;
+    return member.birth_year <= 2008;
 };
 
 const getNumberAdultsByGender = (
@@ -30,8 +30,19 @@ const autofill = (
         .map((child): Person => {
             return {
                 gender: child.gender,
-                age: child.age,
+                birthYear: child.birth_year,
+                birthMonth: child.birth_month,
                 primaryKey: child.primary_key,
+            };
+        });
+
+    const adults = familyData
+        .filter((member) => isAdult(member))
+        .map((adult): Person => {
+            return {
+                gender: adult.gender,
+                birthYear: adult.birth_year,
+                primaryKey: adult.primary_key,
             };
         });
 
@@ -47,11 +58,12 @@ const autofill = (
         addressTown: noPostcode ? "" : clientData.address_town,
         addressCounty: noPostcode ? "" : clientData.address_county,
         addressPostcode: clientData.address_postcode,
-        adults: {
+        numberOfAdults: {
             numberFemales: getNumberAdultsByGender(familyData, "female"),
             numberMales: getNumberAdultsByGender(familyData, "male"),
             numberUnknownGender: getNumberAdultsByGender(familyData, "other"),
         },
+        adults: adults,
         numberChildren: children.length,
         children: children,
         dietaryRequirements: arrayToBooleanGroup(clientData.dietary_requirements),

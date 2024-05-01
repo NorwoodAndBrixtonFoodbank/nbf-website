@@ -22,7 +22,7 @@ const getChild = (
     fieldSetter: ClientSetter,
     children: Person[],
     index: number,
-    subFieldName: "gender" | "age"
+    subFieldName: "gender" | "birthYear"
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
@@ -103,8 +103,13 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                                     ["Don't Know", "-1"],
                                 ]}
                                 listTitle="Age"
-                                defaultValue={child.age!.toString()}
-                                onChange={getChild(fieldSetter, fields.children, index, "age")}
+                                defaultValue={child.birthYear!.toString()}
+                                onChange={getChild(
+                                    fieldSetter,
+                                    fields.children,
+                                    index,
+                                    "birthYear"
+                                )}
                             />
                         </StyledCard>
                     );
