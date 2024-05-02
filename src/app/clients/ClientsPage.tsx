@@ -10,7 +10,7 @@ import supabase from "@/supabaseClient";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState, Suspense, useRef, useCallback } from "react";
 import { useTheme } from "styled-components";
-import getClientsDataAndCount from "./getClientsData";
+import getClientsDataAndCount, { ClientsFilter, ClientsSortState, DBClientRow } from "./getClientsData";
 import { useSearchParams, useRouter } from "next/navigation";
 import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
@@ -43,7 +43,7 @@ const fullNameSearch = (
     return query.ilike("full_name", `%${state}%`);
 };
 
-const filters: Filter<ClientsTableRow, any>[] = [
+const filters: ClientsFilter[] = [
     buildTextFilter({
         key: "fullName",
         label: "Name",
@@ -52,7 +52,7 @@ const filters: Filter<ClientsTableRow, any>[] = [
     }),
 ];
 
-const sortableColumns: SortOptions<ClientsTableRow>[] = [
+const sortableColumns: SortOptions<ClientsTableRow, DBClientRow>[] = [
     {
         key: "fullName",
         sortMethodConfig: {
@@ -85,8 +85,8 @@ const ClientsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [clientsDataPortion, setClientsDataPortion] = useState<ClientsTableRow[]>([]);
     const [filteredClientCount, setFilteredClientCount] = useState<number>(0);
-    const [sortState, setSortState] = useState<SortState<ClientsTableRow>>({ sortEnabled: false });
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<ClientsTableRow, any>[]>(filters);
+    const [sortState, setSortState] = useState<ClientsSortState>({ sortEnabled: false });
+    const [primaryFilters, setPrimaryFilters] = useState<ClientsFilter[]>(filters);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const clientTableFetchAbortController = useRef<AbortController | null>(null);
 

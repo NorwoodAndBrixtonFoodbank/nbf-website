@@ -5,7 +5,7 @@ import Table, { Row, SortState } from "@/components/Tables/Table";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-import { fetchAuditLog, fetchAuditLogCount } from "./fetchAuditLogData";
+import { AuditLogSortState, fetchAuditLog, fetchAuditLogCount } from "./fetchAuditLogData";
 import { auditLogTableHeaderKeysAndLabels } from "./columns";
 import { getAuditLogErrorMessage, auditLogTableColumnDisplayFunctions } from "./format";
 import {
@@ -15,12 +15,13 @@ import {
 import { AuditLogRow, convertAuditLogPlusRowsToAuditLogRows } from "./types";
 import { auditLogTableSortableColumns } from "./sortFunctions";
 import AuditLogModal from "./auditLogModal/AuditLogModal";
+import { AuditLogPlusDBRow } from "@/databaseUtils";
 
 const AuditLogTable: React.FC = () => {
     const [auditLogDataPortion, setAuditLogDataPortion] = useState<AuditLogRow[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [auditLogCount, setAuditLogCount] = useState<number>(0);
-    const [sortState, setSortState] = useState<SortState<AuditLogRow>>({ sortEnabled: false });
+    const [sortState, setSortState] = useState<AuditLogSortState>({ sortEnabled: false });
     const [auditLogCountPerPage, setAuditLogCountPerPage] = useState(
         defaultNumberOfAuditLogRowsPerPage
     );

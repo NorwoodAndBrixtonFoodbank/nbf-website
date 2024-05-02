@@ -20,7 +20,10 @@ import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
 import {
+    DBParcelRow,
     GetParcelDataAndCountErrorType,
+    ParcelsFilter,
+    ParcelsSortState,
     getParcelIds,
     getParcelsByIds,
     getParcelsDataAndCount,
@@ -73,7 +76,7 @@ const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
     "lastStatus",
 ];
 
-const sortableColumns: SortOptions<ParcelsTableRow>[] = [
+const sortableColumns: SortOptions<ParcelsTableRow, DBParcelRow>[] = [
     {
         key: "fullName",
         sortMethodConfig: {
@@ -268,15 +271,15 @@ const ParcelsPage: React.FC<{}> = () => {
     const searchParams = useSearchParams();
     const parcelId = searchParams.get(parcelIdParam);
 
-    const [sortState, setSortState] = useState<SortState<ParcelsTableRow>>({ sortEnabled: false });
+    const [sortState, setSortState] = useState<ParcelsSortState>({ sortEnabled: false });
 
     const [parcelCountPerPage, setParcelCountPerPage] = useState(defaultNumberOfParcelsPerPage);
     const [currentPage, setCurrentPage] = useState(1);
     const startPoint = (currentPage - 1) * parcelCountPerPage;
     const endPoint = currentPage * parcelCountPerPage - 1;
 
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<ParcelsTableRow, any>[]>([]);
-    const [additionalFilters, setAdditionalFilters] = useState<Filter<ParcelsTableRow, any>[]>([]);
+    const [primaryFilters, setPrimaryFilters] = useState<ParcelsFilter[]>([]);
+    const [additionalFilters, setAdditionalFilters] = useState<ParcelsFilter[]>([]);
 
     const [areFiltersLoadingForFirstTime, setAreFiltersLoadingForFirstTime] =
         useState<boolean>(true);
@@ -315,15 +318,15 @@ const ParcelsPage: React.FC<{}> = () => {
 
     useEffect(() => {
         const buildFilters = async (): Promise<{
-            primaryFilters: Filter<ParcelsTableRow, any>[];
-            additionalFilters: Filter<ParcelsTableRow, any>[];
+            primaryFilters: ParcelsFilter[];
+            additionalFilters: ParcelsFilter[];
         }> => {
             const today = dayjs();
             const dateFilter = buildDateFilter({
                 from: today,
                 to: today,
             });
-            const primaryFilters: Filter<ParcelsTableRow, any>[] = [
+            const primaryFilters: ParcelsFilter[] = [
                 dateFilter,
                 buildTextFilter({
                     key: "fullName",

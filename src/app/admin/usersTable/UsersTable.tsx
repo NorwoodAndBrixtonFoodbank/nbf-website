@@ -10,7 +10,7 @@ import SuccessFailureAlert, { AlertOptions } from "@/app/admin/common/SuccessFai
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import supabase from "@/supabaseClient";
-import { getUsersDataAndCount } from "@/app/admin/usersTable/getUsersData";
+import { DBUserRow, UsersFilter, UsersSortState, getUsersDataAndCount } from "@/app/admin/usersTable/getUsersData";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import {
     buildUserRoleFilter,
@@ -32,7 +32,7 @@ const usersTableHeaderKeysAndLabels: TableHeaders<UserRow> = [
     ["updatedAt", "Updated At"],
 ];
 
-const sortableColumns: SortOptions<UserRow>[] = [
+const sortableColumns: SortOptions<UserRow, DBUserRow>[] = [
     {
         key: "firstName",
         sortMethodConfig: {
@@ -114,10 +114,10 @@ const numberOfUsersPerPageOptions = [10, 25, 50, 100];
 const UsersTable: React.FC = () => {
     const [userToDelete, setUserToDelete] = useState<UserRow | null>(null);
     const [userToEdit, setUserToEdit] = useState<UserRow | null>(null);
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<UserRow, any>[]>([]);
+    const [primaryFilters, setPrimaryFilters] = useState<UsersFilter[]>([]);
     const [users, setUsers] = useState<UserRow[]>([]);
     const [filteredUsersCount, setFilteredUsersCount] = useState<number>(0);
-    const [sortState, setSortState] = useState<SortState<UserRow>>({ sortEnabled: false });
+    const [sortState, setSortState] = useState<UsersSortState>({ sortEnabled: false });
     const [isLoading, setIsLoading] = useState(true);
     const [userCountPerPage, setUserCountPerPage] = useState(defaultNumberOfUsersPerPage);
     const [currentPage, setCurrentPage] = useState(1);
@@ -133,8 +133,8 @@ const UsersTable: React.FC = () => {
         message: <></>,
     });
 
-    const buildFilters = async (): Promise<Filter<UserRow, any>[]> => {
-        const filters: Filter<UserRow, any>[] = [
+    const buildFilters = async (): Promise<UsersFilter[]> => {
+        const filters: UsersFilter[] = [
             buildTextFilter({
                 key: "firstName",
                 label: "First Name",

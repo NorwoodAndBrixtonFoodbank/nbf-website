@@ -10,7 +10,7 @@ import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
-import { CollectionCentresOptions } from "@/app/parcels/fetchParcelTableData";
+import { CollectionCentresOptions, DBParcelRow, ParcelsFilter } from "@/app/parcels/fetchParcelTableData";
 import { getDbDate, nullPostcodeDisplay } from "@/common/format";
 
 interface packingSlotOptionsSet {
@@ -82,7 +82,7 @@ export const voucherSearch = (
 
 export const buildDateFilter = (
     initialState: DateRangeState
-): Filter<ParcelsTableRow, DateRangeState> => {
+): ParcelsFilter<DateRangeState> => {
     const dateSearch = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: DateRangeState
@@ -100,7 +100,7 @@ export const buildDateFilter = (
 };
 
 export const buildDeliveryCollectionFilter = async (): Promise<
-    Filter<ParcelsTableRow, string[]>
+    ParcelsFilter<string[]>
 > => {
     const deliveryCollectionSearch = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
@@ -147,7 +147,7 @@ export const buildDeliveryCollectionFilter = async (): Promise<
     });
 };
 
-export const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]>> => {
+export const buildLastStatusFilter = async (): Promise<ParcelsFilter<string[]>> => {
     const lastStatusSearch = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
@@ -177,7 +177,7 @@ export const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, s
     }, []);
     data && optionsSet.push("None");
 
-    return checklistFilter<ParcelsTableRow>({
+    return checklistFilter<ParcelsTableRow, DBParcelRow>({
         key: "lastStatus",
         filterLabel: "Last Status",
         itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
@@ -186,7 +186,7 @@ export const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, s
     });
 };
 
-export const buildPackingSlotFilter = async (): Promise<Filter<ParcelsTableRow, string[]>> => {
+export const buildPackingSlotFilter = async (): Promise<ParcelsFilter<string[]>> => {
     const packingSlotSearch = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
@@ -225,7 +225,7 @@ export const buildPackingSlotFilter = async (): Promise<Filter<ParcelsTableRow, 
 
     optionsSet.sort();
 
-    return checklistFilter<ParcelsTableRow>({
+    return checklistFilter<ParcelsTableRow, DBParcelRow>({
         key: "packingSlot",
         filterLabel: "Packing Slot",
         itemLabelsAndKeys: optionsSet.map((option) => [option.value, option.key]),

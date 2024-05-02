@@ -118,17 +118,17 @@ export type FilterConfig<Data, DBRow extends Record<string, any>> =
       }
     | {
           primaryFiltersShown: true;
-          primaryFilters: Filter<Data, DBRow, any>[];
-          setPrimaryFilters: (primaryFilters: Filter<Data, DBRow, any>[]) => void;
+          primaryFilters: Filter<Data, any, DBRow>[];
+          setPrimaryFilters: (primaryFilters: Filter<Data, any, DBRow>[]) => void;
           additionalFiltersShown: false;
       }
     | {
           primaryFiltersShown: true;
           primaryFilters: Filter<Data,DBRow, any>[];
-          setPrimaryFilters: (primaryFilters: Filter<Data,DBRow, any>[]) => void;
+          setPrimaryFilters: (primaryFilters: Filter<Data, any,DBRow>[]) => void;
           additionalFiltersShown: true;
           additionalFilters: Filter<Data,DBRow,any>[];
-          setAdditionalFilters: (additionalFilters: Filter<Data,DBRow, any>[]) => void;
+          setAdditionalFilters: (additionalFilters: Filter<Data, any,DBRow>[]) => void;
       };
 
 export type EditableConfig<Data> =
@@ -200,7 +200,7 @@ const defaultColumnStyleOptions = {
     maxWidth: "20rem",
 } as const;
 
-const Table = <Data, DBRow extends Record<string,any>>({
+const Table = <Data, DBRow extends Record<string,any>={}>({
     dataPortion,
     headerKeysAndLabels,
     isLoading = false,

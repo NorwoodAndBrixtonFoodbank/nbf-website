@@ -2,12 +2,14 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { Supabase } from "@/supabaseUtils";
 import { AuditLogRow } from "./types";
 import { SortState } from "@/components/Tables/Table";
-import { PaginationType } from "@/components/Tables/Filters";
-import { AuditLogPlusRow, ViewSchema } from "@/databaseUtils";
+import { Filter, PaginationType } from "@/components/Tables/Filters";
+import { AuditLogPlusDBRow, ViewSchema } from "@/databaseUtils";
+
+export type AuditLogSortState = SortState<AuditLogRow, AuditLogPlusDBRow>
 
 type AuditLogResponse =
     | {
-          data: AuditLogPlusRow[];
+          data: AuditLogPlusDBRow[];
           error: null;
       }
     | {
@@ -38,7 +40,7 @@ export const fetchAuditLog = async (
     supabase: Supabase,
     startIndex: number,
     endIndex: number,
-    sortState: SortState<AuditLogRow>
+    sortState: AuditLogSortState
 ): Promise<AuditLogResponse> => {
     let query = supabase.from("audit_log_plus").select("*").range(startIndex, endIndex);
 

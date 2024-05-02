@@ -5,6 +5,11 @@ import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { UserRow } from "@/app/admin/page";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
+import { ViewSchema } from "@/databaseUtils";
+
+export type DBUserRow = ViewSchema["profiles_plus"]
+export type UsersFilter = Filter<UserRow, any, DBUserRow>
+export type UsersSortState = SortState<UserRow, DBUserRow>
 
 type GetUserDataAndCountErrorType =
     | "abortedFetchingProfilesTable"
@@ -39,8 +44,8 @@ export const getUsersDataAndCount = async (
     supabase: Supabase,
     startIndex: number,
     endIndex: number,
-    filters: Filter<UserRow, any>[],
-    sortState: SortState<UserRow>,
+    filters: UsersFilter[],
+    sortState: UsersSortState,
     abortSignal: AbortSignal
 ): Promise<GetUsersReturnType> => {
     let query = supabase.from("profiles_plus").select("*");
@@ -102,7 +107,7 @@ export const getUsersDataAndCount = async (
 
 const getUsersCount = async (
     supabase: Supabase,
-    filters: Filter<UserRow, any>[],
+    filters: UsersFilter[],
     abortSignal: AbortSignal
 ): Promise<GetUserCountReturnType> => {
     let query = supabase.from("profiles_plus").select("*", { count: "exact", head: true });
@@ -130,7 +135,7 @@ const getUsersCount = async (
 
 function getQueryWithFiltersApplied(
     originalQuery: PostgrestFilterBuilder<Database["public"], any, any>,
-    filters: Filter<UserRow, any>[]
+    filters: UsersFilter[]
 ): PostgrestFilterBuilder<Database["public"], any, any> {
     let query = originalQuery;
 

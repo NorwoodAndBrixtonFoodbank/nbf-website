@@ -8,7 +8,7 @@ export enum PaginationType {
     Client = "CLIENT",
 }
 
-export type MethodConfig<Data, DBRow extends Record<string, any>, State> =
+export type MethodConfig<Data, State, DBRow extends Record<string, any> = {}> =
     | {
           method: (
               query: PostgrestFilterBuilder<Database["public"], DBRow, any>,
@@ -21,12 +21,12 @@ export type MethodConfig<Data, DBRow extends Record<string, any>, State> =
           paginationType: PaginationType.Client;
       };
 
-export interface Filter<Data, DBRow  extends Record<string, any>, State> {
+export interface Filter<Data, State, DBRow extends Record<string, any> = {}> {
     key: keyof Data ;
     filterComponent: (state: State, setState: (state: State) => void) => React.ReactElement;
     state: State;
     initialState: State;
-    methodConfig: MethodConfig<Data, DBRow, State>;
+    methodConfig: MethodConfig<Data, State, DBRow>;
     areStatesIdentical: (stateA: State, stateB: State) => boolean;
 }
 

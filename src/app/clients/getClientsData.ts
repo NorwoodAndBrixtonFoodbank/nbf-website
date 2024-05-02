@@ -4,6 +4,11 @@ import { Supabase } from "@/supabaseUtils";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
+import { Schema } from "@/databaseUtils";
+
+export type DBClientRow = Schema["clients"]
+export type ClientsFilter = Filter<ClientsTableRow, any, DBClientRow>
+export type ClientsSortState = SortState<ClientsTableRow, DBClientRow>
 
 type GetClientsDataAndCountErrorType =
     | "abortedFetchingClientsTable"
@@ -38,8 +43,8 @@ const getClientsDataAndCount = async (
     supabase: Supabase,
     startIndex: number,
     endIndex: number,
-    filters: Filter<ClientsTableRow, any>[],
-    sortState: SortState<ClientsTableRow>,
+    filters: ClientsFilter[],
+    sortState: ClientsSortState,
     abortSignal: AbortSignal
 ): Promise<GetClientsReturnType> => {
     let query = supabase.from("clients_plus").select("*");
@@ -103,7 +108,7 @@ const getClientsDataAndCount = async (
 
 const getClientsCount = async (
     supabase: Supabase,
-    filters: Filter<ClientsTableRow, any>[],
+    filters: ClientsFilter[],
     abortSignal: AbortSignal
 ): Promise<GetClientsCountReturnType> => {
     let query = supabase.from("clients_plus").select("*", { count: "exact", head: true });

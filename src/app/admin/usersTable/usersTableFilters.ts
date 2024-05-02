@@ -6,12 +6,13 @@ import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { UserRole } from "@/databaseUtils";
+import { UsersFilter } from "./getUsersData";
 
 type BuildUserRoleFilterErrors = "failedToFetchUserRoleFilterOptions";
 
 type BuildUserRoleFilterAndError =
     | {
-          data: Filter<UserRow, string[]>;
+          data: UsersFilter;
           error: null;
       }
     | {

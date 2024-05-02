@@ -5,7 +5,11 @@ import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
-import { ParcelStatus, ParcelsPlusRow } from "@/databaseUtils";
+import { ParcelStatus, ParcelsPlusRow, Schema } from "@/databaseUtils";
+
+export type DBParcelRow = Schema["parcels"]
+export type ParcelsFilter<state=any> = Filter<ParcelsTableRow, state, DBParcelRow>
+export type ParcelsSortState = SortState<ParcelsTableRow, DBParcelRow>
 
 export type CongestionChargeDetails = {
     postcode: string;
@@ -38,8 +42,8 @@ export const getCongestionChargeDetailsForParcels = async (
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getParcelsQuery = (
     supabase: Supabase,
-    filters: Filter<ParcelsTableRow, any>[],
-    sortState: SortState<ParcelsTableRow>
+    filters: ParcelsFilter[],
+    sortState: ParcelsSortState
 ) => {
     let query = supabase.from("parcels_plus").select("*");
 
@@ -83,8 +87,8 @@ type GetDbParcelDataErrorType = "abortedFetch" | "failedToFetchParcelTable";
 
 const getParcelProcessingData = async (
     supabase: Supabase,
-    filters: Filter<ParcelsTableRow, any>[],
-    sortState: SortState<ParcelsTableRow>,
+    filters: ParcelsFilter[],
+    sortState: ParcelsSortState,
     abortSignal: AbortSignal,
     startIndex: number,
     endIndex: number
@@ -138,8 +142,8 @@ export type GetParcelDataAndCountErrorType =
 
 export const getParcelsDataAndCount = async (
     supabase: Supabase,
-    filters: Filter<ParcelsTableRow, any[]>[],
-    sortState: SortState<ParcelsTableRow>,
+    filters:ParcelsFilter[],
+    sortState: ParcelsSortState,
     abortSignal: AbortSignal,
     startIndex: number,
     endIndex: number
@@ -205,7 +209,7 @@ export const getParcelsDataAndCount = async (
 
 const getParcelsCount = async (
     supabase: Supabase,
-    filters: Filter<ParcelsTableRow, any>[],
+    filters: ParcelsFilter[],
     abortSignal: AbortSignal
 ): Promise<number> => {
     let query = supabase.from("parcels_plus").select("*", { count: "exact", head: true });
@@ -239,8 +243,8 @@ const getParcelsCount = async (
 };
 export const getParcelIds = async (
     supabase: Supabase,
-    filters: Filter<ParcelsTableRow, any>[],
-    sortState: SortState<ParcelsTableRow>
+    filters: ParcelsFilter[],
+    sortState: ParcelsSortState
 ): Promise<string[]> => {
     const query = getParcelsQuery(supabase, filters, sortState);
 
@@ -258,8 +262,8 @@ export const getParcelIds = async (
 
 export const getParcelsByIds = async (
     supabase: Supabase,
-    filters: Filter<ParcelsTableRow, any>[],
-    sortState: SortState<ParcelsTableRow>,
+    filters: ParcelsFilter[],
+    sortState: ParcelsSortState,
     parcelIds: string[]
 ): Promise<ParcelsTableRow[]> => {
     let query = getParcelsQuery(supabase, filters, sortState);
