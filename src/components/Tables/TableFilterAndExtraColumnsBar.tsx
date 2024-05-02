@@ -8,13 +8,13 @@ import styled from "styled-components";
 import { FilterAltOffOutlined, FilterAltOutlined } from "@mui/icons-material";
 import ColumnTogglePopup from "@/components/Tables/ColumnTogglePopup";
 
-interface Props<Data> {
-    setFilters: (filters: Filter<Data, any>[]) => void;
-    setAdditionalFilters: (filters: Filter<Data, any>[]) => void;
+interface Props<Data, DBRow extends Record<string,any>> {
+    setFilters: (filters: Filter<Data, DBRow, any>[]) => void;
+    setAdditionalFilters: (filters: Filter<Data, DBRow, any>[]) => void;
     handleClear: () => void;
     headers: TableHeaders<Data>;
-    filters: Filter<Data, any>[];
-    additionalFilters: Filter<Data, any>[];
+    filters: Filter<Data, DBRow, any>[];
+    additionalFilters: Filter<Data, DBRow, any>[];
     toggleableHeaders: readonly (keyof Data)[];
     setShownHeaderKeys: (headers: (keyof Data)[]) => void;
     shownHeaderKeys: readonly (keyof Data)[];
@@ -47,9 +47,9 @@ const Grow = styled.div`
     flex-grow: 1;
 `;
 
-export const filtersToComponents = <Data,>(
-    filters: Filter<Data, any>[],
-    setFilters: (filters: Filter<Data, any>[]) => void
+export const filtersToComponents = <Data, DBRow extends Record<string,any>>(
+    filters: Filter<Data, DBRow, any>[],
+    setFilters: (filters: Filter<Data, DBRow, any>[]) => void
 ): React.ReactElement[] => {
     return filters.map((filter, index) => {
         const onFilter = (state: any): void => {
@@ -64,7 +64,7 @@ export const filtersToComponents = <Data,>(
     });
 };
 
-const TableFilterAndExtraColumnsBar = <Data,>(props: Props<Data>): React.ReactElement => {
+const TableFilterAndExtraColumnsBar = <Data,DBRow extends Record<string,any>>(props: Props<Data, DBRow>): React.ReactElement => {
     const [showMoreFiltersAndHeaders, setShowMoreFiltersAndHeaders] = useState(false);
 
     const hasPrimaryFilters = props.filters.length !== 0;

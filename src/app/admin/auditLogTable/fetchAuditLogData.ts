@@ -3,7 +3,7 @@ import { Supabase } from "@/supabaseUtils";
 import { AuditLogRow } from "./types";
 import { SortState } from "@/components/Tables/Table";
 import { PaginationType } from "@/components/Tables/Filters";
-import { AuditLogPlusRow } from "@/databaseUtils";
+import { AuditLogPlusRow, ViewSchema } from "@/databaseUtils";
 
 type AuditLogResponse =
     | {
@@ -48,7 +48,7 @@ export const fetchAuditLog = async (
     ) {
         query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
     } else {
-        query = query.order("created_at", { ascending: false });
+        query = query.order<keyof ViewSchema["audit_log_plus"]>("created_at", { ascending: false });
     }
 
     const { data: auditLogs, error } = await query;
