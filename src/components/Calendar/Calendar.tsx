@@ -10,6 +10,7 @@ import styled from "styled-components";
 import EventModal from "@/components/Calendar/EventModal";
 import { Paper } from "@mui/material";
 import CalendarFilters from "@/components/Calendar/Filters";
+import enGbLocale from "@fullcalendar/core/locales/en-gb";
 
 export interface CalendarProps {
     initialEvents: CalendarEvent[];
@@ -280,6 +281,7 @@ const Calendar: React.FC<CalendarProps> = ({
                     eventInteractive={true}
                     height="auto"
                     eventDisplay="block"
+                    locale={enGbLocale}
                 />
             </CalendarStyling>
         </>
