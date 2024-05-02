@@ -144,7 +144,7 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                     </View>
                     <View style={[styles.rightCol, styles.bottomAlign]}>
                         <Text style={styles.mediumText}>
-                            Label {index + 1} of {quantity}
+                            Parcel {index + 1} of {quantity}
                         </Text>
                     </View>
                 </View>
