@@ -1,6 +1,5 @@
 "use client";
 
-import { Database } from "@/databaseTypesFile";
 import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
 import { PaginationType } from "@/components/Tables/Filters";
 import { dateFilter } from "@/components/Tables/DateFilter";
@@ -9,7 +8,14 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { getDbDate, nullPostcodeDisplay } from "@/common/format";
-import { CollectionCentresOptions, DbParcelRow, ParcelsFilter, ParcelsFilterMethod, ParcelsTableRow, packingSlotOptionsSet } from "./types";
+import {
+    CollectionCentresOptions,
+    DbParcelRow,
+    ParcelsFilter,
+    ParcelsFilterMethod,
+    ParcelsTableRow,
+    packingSlotOptionsSet,
+} from "./types";
 
 export const fullNameSearch: ParcelsFilterMethod<string> = (query, state) =>
     query.ilike("client_full_name", `%${state}%`);

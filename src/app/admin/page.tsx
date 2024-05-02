@@ -2,7 +2,6 @@ import React, { ReactElement } from "react";
 import Title from "@/components/Title/Title";
 import { Metadata } from "next";
 import AdminPage from "@/app/admin/AdminPage";
-import { UserRole } from "@/databaseUtils";
 
 // disables caching
 export const revalidate = 0;

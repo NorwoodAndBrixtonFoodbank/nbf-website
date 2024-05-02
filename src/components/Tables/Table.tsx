@@ -117,19 +117,19 @@ export type FilterConfig<Data, DbRow extends Record<string, any> = {}> =
           additionalFiltersShown: false;
       }
     | {
-        primaryFiltersShown: true;
+          primaryFiltersShown: true;
           paginationType: PaginationType.Client;
           primaryFilters: ClientSideFilter<Data, any>[];
           setPrimaryFilters: (primaryFilters: ClientSideFilter<Data, any>[]) => void;
           additionalFiltersShown: false;
       }
     | {
-        primaryFiltersShown: true;
-        paginationType: PaginationType.Server;
-        primaryFilters: ServerSideFilter<Data, any, DbRow>[];
-        setPrimaryFilters: (primaryFilters: ServerSideFilter<Data, any, DbRow>[]) => void;
-        additionalFiltersShown: false;
-    }
+          primaryFiltersShown: true;
+          paginationType: PaginationType.Server;
+          primaryFilters: ServerSideFilter<Data, any, DbRow>[];
+          setPrimaryFilters: (primaryFilters: ServerSideFilter<Data, any, DbRow>[]) => void;
+          additionalFiltersShown: false;
+      }
     | {
           primaryFiltersShown: true;
           paginationType: PaginationType.Client;
@@ -139,15 +139,15 @@ export type FilterConfig<Data, DbRow extends Record<string, any> = {}> =
           additionalFilters: ClientSideFilter<Data, any>[];
           setAdditionalFilters: (additionalFilters: ClientSideFilter<Data, any>[]) => void;
       }
-      | {
-        primaryFiltersShown: true;
-        paginationType: PaginationType.Server;
-        primaryFilters: ServerSideFilter<Data, any, DbRow>[];
-        setPrimaryFilters: (primaryFilters: ServerSideFilter<Data, any, DbRow>[]) => void;
-        additionalFiltersShown: true;
-        additionalFilters: ServerSideFilter<Data, any, DbRow>[];
-        setAdditionalFilters: (additionalFilters: ServerSideFilter<Data, any, DbRow>[]) => void;
-    };
+    | {
+          primaryFiltersShown: true;
+          paginationType: PaginationType.Server;
+          primaryFilters: ServerSideFilter<Data, any, DbRow>[];
+          setPrimaryFilters: (primaryFilters: ServerSideFilter<Data, any, DbRow>[]) => void;
+          additionalFiltersShown: true;
+          additionalFilters: ServerSideFilter<Data, any, DbRow>[];
+          setAdditionalFilters: (additionalFilters: ServerSideFilter<Data, any, DbRow>[]) => void;
+      };
 
 export type EditableConfig<Data> =
     | {
@@ -408,38 +408,40 @@ const Table = <Data, DbRow extends Record<string, any> = {}>({
     const handleClear = (): void => {
         if (filterConfig.primaryFiltersShown) {
             if (filterConfig.paginationType === PaginationType.Client) {
-            filterConfig.setPrimaryFilters(
-                filterConfig.primaryFilters.map((filter) => ({
-                    ...filter,
-                    state: filter.initialState,
-                }))
-            );
-        }
-        if (filterConfig.paginationType === PaginationType.Server) {
-            filterConfig.setPrimaryFilters(
-                filterConfig.primaryFilters.map((filter) => ({
-                    ...filter,
-                    state: filter.initialState,
-                }))
-            );
-        }
+                filterConfig.setPrimaryFilters(
+                    filterConfig.primaryFilters.map((filter) => ({
+                        ...filter,
+                        state: filter.initialState,
+                    }))
+                );
+            }
+            if (filterConfig.paginationType === PaginationType.Server) {
+                filterConfig.setPrimaryFilters(
+                    filterConfig.primaryFilters.map((filter) => ({
+                        ...filter,
+                        state: filter.initialState,
+                    }))
+                );
+            }
         }
         if (filterConfig.additionalFiltersShown) {
             if (filterConfig.paginationType === PaginationType.Client) {
-            filterConfig.setAdditionalFilters(
-                filterConfig.additionalFilters.map((filter) => ({
-                    ...filter,
-                    state: filter.initialState,
-                }))
-            );
-          }  if (filterConfig.paginationType === PaginationType.Server) {
                 filterConfig.setAdditionalFilters(
                     filterConfig.additionalFilters.map((filter) => ({
                         ...filter,
                         state: filter.initialState,
                     }))
                 );
-        }}
+            }
+            if (filterConfig.paginationType === PaginationType.Server) {
+                filterConfig.setAdditionalFilters(
+                    filterConfig.additionalFilters.map((filter) => ({
+                        ...filter,
+                        state: filter.initialState,
+                    }))
+                );
+            }
+        }
     };
 
     return (

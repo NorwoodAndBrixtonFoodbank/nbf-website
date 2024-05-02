@@ -2,8 +2,8 @@ import { ServerSideFilter } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 import { UserRole, ViewSchema } from "@/databaseUtils";
 
-export type DbUserRow = ViewSchema["profiles_plus"];
-export type UsersFilter = ServerSideFilter<UserRow, any, DbUserRow>;
+export type DbUserRow = ViewSchema["users_plus"];
+export type UsersFilter<State> = ServerSideFilter<UserRow, State, DbUserRow>;
 export type UsersSortState = SortState<UserRow, DbUserRow>;
 
 export type GetUserDataAndCountErrorType =
@@ -35,21 +35,10 @@ export type GetUserCountReturnType =
           data: number;
       };
 
-type BuildUserRoleFilterErrors = "failedToFetchUserRoleFilterOptions";
-
-export type BuildUserRoleFilterAndError =
-    | {
-          data: UsersFilter;
-          error: null;
-      }
-    | {
-          data: null;
-          error: { type: BuildUserRoleFilterErrors; logId: string };
-      };
-
 export type DisplayedUserRole = UserRole | "UNKNOWN";
 export interface UserRow {
-    id: string;
+    userId: string;
+    profileId: string;
     firstName: string;
     lastName: string;
     userRole: DisplayedUserRole;

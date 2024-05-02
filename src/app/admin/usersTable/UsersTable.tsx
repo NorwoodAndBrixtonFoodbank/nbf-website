@@ -10,10 +10,7 @@ import { PaginationType } from "@/components/Tables/Filters";
 import supabase from "@/supabaseClient";
 import { getUsersDataAndCount } from "@/app/admin/usersTable/getUsersData";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-import {
-    buildUserRoleFilter,
-    usersFilters,
-} from "@/app/admin/usersTable/filters";
+import { usersFilters } from "@/app/admin/usersTable/filters";
 import { getCurrentUser } from "@/server/getCurrentUser";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { defaultNumberOfUsersPerPage, numberOfUsersPerPageOptions } from "./constants";

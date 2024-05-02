@@ -9,8 +9,8 @@ import Table, {
 } from "@/components/Tables/Table";
 import StyleManager from "@/app/themes";
 import { ClientSideFilter, PaginationType } from "./Filters";
-import { buildTextFilter, filterRowByText } from "./TextFilter";
 import { SortOrder } from "react-data-table-component/dist/DataTable/types";
+import { buildClientSideTextFilter, filterRowByText } from "./TextFilter";
 
 interface TestData {
     full_name: string;
@@ -120,11 +120,11 @@ const Component: React.FC<TestTableProps> = ({
     sortable = false,
     tableData = data,
 }) => {
-    const fullNameFilter = buildTextFilter<TestData>({
+    const fullNameFilter = buildClientSideTextFilter<TestData>({
         key: "full_name",
         headers: headers,
         label: "Name",
-        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
+        method: filterRowByText,
     });
 
     const sortByFullName: SortOptions<TestData> = {
@@ -247,8 +247,7 @@ const Component: React.FC<TestTableProps> = ({
         setTestDataPortion(
             tableData.filter((row) => {
                 return primaryFilters.every((filter) => {
-                        return filter.method(row, filter.state, filter.key);
-                    return false;
+                    return filter.method(row, filter.state, filter.key);
                 });
             })
         );

@@ -8,21 +8,19 @@ export enum PaginationType {
     Client = "CLIENT",
 }
 
-export type ServerSideMethod<Data, State, DbRow extends Record<string, any>> = (
-              query: PostgrestFilterBuilder<Database["public"], DbRow, any>,
-              state: State
-          ) => PostgrestFilterBuilder<Database["public"], DbRow, any>;
+export type ServerSideFilterMethod<DbRow extends Record<string, any>, State> = (
+    query: PostgrestFilterBuilder<Database["public"], DbRow, any>,
+    state: State
+) => PostgrestFilterBuilder<Database["public"], DbRow, any>;
 
-      export type ClientSideMethod<Data, State> =
-            (row: Data, state: State, key: keyof Data) => boolean;
-  
+export type ClientSideFilterMethod<Data, State> = (row: Data, state: State, key: keyof Data) => boolean;
 
 export interface ServerSideFilter<Data, State, DbRow extends Record<string, any>> {
     key: keyof Data;
     filterComponent: (state: State, setState: (state: State) => void) => React.ReactElement;
     state: State;
     initialState: State;
-    method: ServerSideMethod<Data, State, DbRow>;
+    method: ServerSideFilterMethod<DbRow, State>;
     areStatesIdentical: (stateA: State, stateB: State) => boolean;
 }
 
@@ -31,7 +29,7 @@ export interface ClientSideFilter<Data, State> {
     filterComponent: (state: State, setState: (state: State) => void) => React.ReactElement;
     state: State;
     initialState: State;
-    method: ClientSideMethod<Data, State>;
+    method: ClientSideFilterMethod<Data, State>;
     areStatesIdentical: (stateA: State, stateB: State) => boolean;
 }
 

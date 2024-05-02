@@ -133,7 +133,8 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [listData, setListData] = useState<ListRow[]>(listOfIngredients);
-    const [primaryFilters, setPrimaryFilters] = useState<ClientSideFilter<ListRow, string>[]>(filters);
+    const [primaryFilters, setPrimaryFilters] =
+        useState<ClientSideFilter<ListRow, string>[]>(filters);
 
     if (listOfIngredients === null) {
         void logInfoReturnLogId("No ingredients found @ app/lists/ListDataView.tsx");
@@ -261,9 +262,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         setListData(
             listOfIngredients.filter((row) => {
                 return primaryFilters.every((filter) => {
-                    return (
-                        filter.method(row, filter.state, filter.key)
-                    );
+                    return filter.method(row, filter.state, filter.key);
                 });
             })
         );

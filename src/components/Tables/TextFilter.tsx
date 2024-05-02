@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import FreeFormTextInput from "../DataInput/FreeFormTextInput";
-import { ServerSideFilter, ClientSideFilter, defaultToString, PaginationType, ClientSideMethod, ServerSideMethod } from "./Filters";
+import { ServerSideFilter, defaultToString, ServerSideFilterMethod, ClientSideFilterMethod, ClientSideFilter } from "./Filters";
 import { TableHeaders } from "./Table";
 
 interface ServerSideTextFilterProps<Data, DbData extends Record<string, any>> {
@@ -9,7 +9,7 @@ interface ServerSideTextFilterProps<Data, DbData extends Record<string, any>> {
     headers: TableHeaders<Data>;
     label: string;
     initialValue?: string;
-    method: ServerSideMethod<Data, string, DbData>;
+    method: ServerSideFilterMethod<DbData, string>;
 }
 
 const TextFilterStyling = styled.div`
@@ -47,7 +47,48 @@ export const buildServerSideTextFilter = <Data, DbData extends Record<string, an
     };
 };
 
-export const buildClientSideTextFilter = <Data,>(row: Data, state: string, key: keyof Data): boolean => {
+interface ClientSideTextFilterProps<Data> {
+    key: keyof Data;
+    headers: TableHeaders<Data>;
+    label: string;
+    initialValue?: string;
+    method: ClientSideFilterMethod<Data, string>;
+}
+
+export const buildClientSideTextFilter = <Data,>({
+    key,
+    label,
+    initialValue = "",
+    method,
+}: ClientSideTextFilterProps<Data>): ClientSideFilter<Data, string> => {
+    return {
+        state: initialValue,
+        initialState: initialValue,
+        key: key,
+        method: method,
+        filterComponent: (state, setState) => {
+            return (
+                <TextFilterStyling key={label}>
+                    <FreeFormTextInput
+                        key={label}
+                        value={state}
+                        label={label}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            setState(event.target.value);
+                        }}
+                    />
+                </TextFilterStyling>
+            );
+        },
+        areStatesIdentical: (stateA, stateB) => stateA === stateB,
+    };
+};
+
+export const filterRowByText = <Data,>(
+    row: Data,
+    state: string,
+    key: keyof Data
+): boolean => {
     let string = defaultToString(row[key]);
     string = string.toLowerCase();
     state = state.toLowerCase();

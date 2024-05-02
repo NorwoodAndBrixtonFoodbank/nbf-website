@@ -62,21 +62,19 @@ export const usersFilters: UsersFilter<any>[] = [
         key: "firstName",
         label: "First Name",
         headers: usersTableHeaderKeysAndLabels,
-            method: firstNameSearch,
+        method: firstNameSearch,
     }),
     buildServerSideTextFilter({
         key: "lastName",
         label: "Last Name",
         headers: usersTableHeaderKeysAndLabels,
-        method:
-         lastNameSearch,
-        
+        method: lastNameSearch,
     }),
     buildServerSideTextFilter({
         key: "email",
         label: "Email",
         headers: usersTableHeaderKeysAndLabels,
-        method: 
-            emailSearch,
-        
-    })]
+        method: emailSearch,
+    }),
+    buildUserRoleFilter(),
+];
