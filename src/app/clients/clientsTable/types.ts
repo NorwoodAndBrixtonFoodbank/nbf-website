@@ -2,9 +2,9 @@ import { Filter } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 import { ViewSchema } from "@/databaseUtils";
 
-export type DBClientRow = ViewSchema["clients_plus"];
-export type ClientsFilter = Filter<ClientsTableRow, any, DBClientRow>;
-export type ClientsSortState = SortState<ClientsTableRow, DBClientRow>;
+export type DbClientRow = ViewSchema["clients_plus"];
+export type ClientsFilter = Filter<ClientsTableRow, any, DbClientRow>;
+export type ClientsSortState = SortState<ClientsTableRow, DbClientRow>;
 
 export type GetClientsDataAndCountErrorType =
     | "abortedFetchingClientsTable"

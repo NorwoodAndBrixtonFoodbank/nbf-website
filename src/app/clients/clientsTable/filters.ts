@@ -3,12 +3,12 @@ import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { Database } from "@/databaseTypesFile";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import clientsHeaders from "./headers";
-import { DBClientRow, ClientsFilter } from "./types";
+import { DbClientRow, ClientsFilter } from "./types";
 
 type ClientsFilterMethod<State> = (
-    query: PostgrestFilterBuilder<Database["public"], DBClientRow, any>,
+    query: PostgrestFilterBuilder<Database["public"], DbClientRow, any>,
     state: State
-) => PostgrestFilterBuilder<Database["public"], DBClientRow, any>;
+) => PostgrestFilterBuilder<Database["public"], DbClientRow, any>;
 
 const fullNameSearch: ClientsFilterMethod<string> = (query, state) =>
     query.ilike("full_name", `%${state}%`);

@@ -5,7 +5,7 @@ import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { UserRole } from "@/databaseUtils";
-import { BuildUserRoleFilterAndError, DBUserRow, UserRow } from "./types";
+import { BuildUserRoleFilterAndError, DbUserRow, UserRow } from "./types";
 
 export const firstNameSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
@@ -64,7 +64,7 @@ export const buildUserRoleFilter = async (): Promise<BuildUserRoleFilterAndError
 
     uniqueUserRoles.sort();
 
-    const userRoleFilter = checklistFilter<UserRow, DBUserRow>({
+    const userRoleFilter = checklistFilter<UserRow, DbUserRow>({
         key: "userRole",
         filterLabel: "User Role",
         itemLabelsAndKeys: uniqueUserRoles.map((userRole) => [userRole, userRole]),

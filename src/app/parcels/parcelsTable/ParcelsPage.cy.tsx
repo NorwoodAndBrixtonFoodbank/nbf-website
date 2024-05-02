@@ -7,7 +7,7 @@ import {
 } from "@/app/clients/getExpandedClientDetails";
 import { formatDatetimeAsDate } from "@/common/format";
 import { ParcelsPlusRow } from "@/databaseUtils";
-import convertParcelDBtoParcelRow, { processLastStatus } from "./convertParcelDBtoParcelRow";
+import convertParcelDbtoParcelRow, { processLastStatus } from "./convertParcelDbtoParcelRow";
 import { CongestionChargeDetails, ParcelsTableRow } from "./types";
 
 const sampleProcessingData: ParcelsPlusRow[] = [
@@ -45,7 +45,7 @@ const sampleCongestionChargeData: CongestionChargeDetails[] = [
 describe("Parcels Page", () => {
     describe("Backend Processing for Table Data", () => {
         it("Fields are set correctly", async () => {
-            const { parcelTableRows } = await convertParcelDBtoParcelRow(
+            const { parcelTableRows } = await convertParcelDbtoParcelRow(
                 sampleProcessingData,
                 sampleCongestionChargeData
             );

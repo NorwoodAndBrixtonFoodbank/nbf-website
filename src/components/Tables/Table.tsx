@@ -45,44 +45,44 @@ export type ColumnStyleOptions = Omit<
     "name" | "selector" | "sortable" | "sortFunction" | "cell"
 >;
 
-export interface SortOptions<Data, DBRow extends Record<string, any> = {}> {
+export interface SortOptions<Data, DbRow extends Record<string, any> = {}> {
     key: keyof Data;
-    sortMethodConfig: SortMethodConfig<DBRow>;
+    sortMethodConfig: SortMethodConfig<DbRow>;
 }
 
-type SortMethodConfig<DBRow extends Record<string, any>> =
+type SortMethodConfig<DbRow extends Record<string, any>> =
     | {
           paginationType: PaginationType.Server;
           method: (
-              query: PostgrestFilterBuilder<Database["public"], DBRow, any>,
+              query: PostgrestFilterBuilder<Database["public"], DbRow, any>,
               sortDirection: SortOrder
-          ) => PostgrestFilterBuilder<Database["public"], DBRow, any>;
+          ) => PostgrestFilterBuilder<Database["public"], DbRow, any>;
       }
     | {
           paginationType: PaginationType.Client;
           method: (sortDirection: SortOrder) => void;
       };
-export type SortState<Data, DBRow extends Record<string, any> = {}> =
+export type SortState<Data, DbRow extends Record<string, any> = {}> =
     | {
           sortEnabled: true;
           sortDirection: SortOrder;
-          column: CustomColumn<Data, DBRow>;
+          column: CustomColumn<Data, DbRow>;
       }
     | {
           sortEnabled: false;
       };
 
-export type SortConfig<Data, DBRow extends Record<string, any> = {}> =
+export type SortConfig<Data, DbRow extends Record<string, any> = {}> =
     | {
           sortPossible: true;
-          sortableColumns: SortOptions<Data, DBRow>[];
-          setSortState: (sortState: SortState<Data, DBRow>) => void;
+          sortableColumns: SortOptions<Data, DbRow>[];
+          setSortState: (sortState: SortState<Data, DbRow>) => void;
       }
     | { sortPossible: false };
 
-export interface CustomColumn<Data, DBRow extends Record<string, any>>
+export interface CustomColumn<Data, DbRow extends Record<string, any>>
     extends TableColumn<Row<Data>> {
-    sortMethodConfig?: SortMethodConfig<DBRow>;
+    sortMethodConfig?: SortMethodConfig<DbRow>;
 }
 
 export type CheckboxConfig<Data> =
@@ -111,24 +111,24 @@ export type PaginationConfig =
           enablePagination: false;
       };
 
-export type FilterConfig<Data, DBRow extends Record<string, any> = {}> =
+export type FilterConfig<Data, DbRow extends Record<string, any> = {}> =
     | {
           primaryFiltersShown: false;
           additionalFiltersShown: false;
       }
     | {
           primaryFiltersShown: true;
-          primaryFilters: Filter<Data, any, DBRow>[];
-          setPrimaryFilters: (primaryFilters: Filter<Data, any, DBRow>[]) => void;
+          primaryFilters: Filter<Data, any, DbRow>[];
+          setPrimaryFilters: (primaryFilters: Filter<Data, any, DbRow>[]) => void;
           additionalFiltersShown: false;
       }
     | {
           primaryFiltersShown: true;
-          primaryFilters: Filter<Data, DBRow, any>[];
-          setPrimaryFilters: (primaryFilters: Filter<Data, any, DBRow>[]) => void;
+          primaryFilters: Filter<Data, DbRow, any>[];
+          setPrimaryFilters: (primaryFilters: Filter<Data, any, DbRow>[]) => void;
           additionalFiltersShown: true;
-          additionalFilters: Filter<Data, DBRow, any>[];
-          setAdditionalFilters: (additionalFilters: Filter<Data, any, DBRow>[]) => void;
+          additionalFilters: Filter<Data, DbRow, any>[];
+          setAdditionalFilters: (additionalFilters: Filter<Data, any, DbRow>[]) => void;
       };
 
 export type EditableConfig<Data> =
@@ -142,14 +142,14 @@ export type EditableConfig<Data> =
       }
     | { editable: false };
 
-interface Props<Data, DBRow extends Record<string, any>> {
+interface Props<Data, DbRow extends Record<string, any>> {
     dataPortion: Data[];
     headerKeysAndLabels: TableHeaders<Data>;
     isLoading?: boolean;
     checkboxConfig: CheckboxConfig<Data>;
     paginationConfig: PaginationConfig;
-    sortConfig: SortConfig<Data, DBRow>;
-    filterConfig: FilterConfig<Data, DBRow>;
+    sortConfig: SortConfig<Data, DbRow>;
+    filterConfig: FilterConfig<Data, DbRow>;
     defaultShownHeaders?: readonly (keyof Data)[];
     toggleableHeaders?: readonly (keyof Data)[];
     columnDisplayFunctions?: ColumnDisplayFunctions<Data>;
@@ -200,7 +200,7 @@ const defaultColumnStyleOptions = {
     maxWidth: "20rem",
 } as const;
 
-const Table = <Data, DBRow extends Record<string, any> = {}>({
+const Table = <Data, DbRow extends Record<string, any> = {}>({
     dataPortion,
     headerKeysAndLabels,
     isLoading = false,
@@ -215,15 +215,15 @@ const Table = <Data, DBRow extends Record<string, any> = {}>({
     paginationConfig,
     editableConfig,
     pointerOnHover,
-}: Props<Data, DBRow>): React.ReactElement => {
+}: Props<Data, DbRow>): React.ReactElement => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
     );
 
     const shownHeaders = headerKeysAndLabels.filter(([key]) => shownHeaderKeys.includes(key));
 
-    const columns: CustomColumn<Data, DBRow>[] = shownHeaders.map(
-        ([headerKey, headerName]): CustomColumn<Data, DBRow> => {
+    const columns: CustomColumn<Data, DbRow>[] = shownHeaders.map(
+        ([headerKey, headerName]): CustomColumn<Data, DbRow> => {
             const columnStyles = Object.assign(
                 { ...defaultColumnStyleOptions },
                 columnStyleOptions[headerKey] ?? {}
@@ -255,7 +255,7 @@ const Table = <Data, DBRow extends Record<string, any> = {}>({
     );
 
     const handleSort = async (
-        column: CustomColumn<Data, DBRow>,
+        column: CustomColumn<Data, DbRow>,
         sortDirection: SortOrder
     ): Promise<void> => {
         if (sortConfig.sortPossible && Object.keys(column).length) {
@@ -408,7 +408,7 @@ const Table = <Data, DBRow extends Record<string, any> = {}>({
 
     return (
         <>
-            <TableFilterAndExtraColumnsBar<Data, DBRow>
+            <TableFilterAndExtraColumnsBar<Data, DbRow>
                 handleClear={handleClear}
                 setFilters={
                     filterConfig.primaryFiltersShown ? filterConfig.setPrimaryFilters : () => {}

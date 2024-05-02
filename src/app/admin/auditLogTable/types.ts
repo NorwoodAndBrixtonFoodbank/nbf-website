@@ -1,5 +1,5 @@
 import { Json } from "@/databaseTypesFile";
-import { AuditLogPlusDBRow } from "@/databaseUtils";
+import { AuditLogPlusDbRow } from "@/databaseUtils";
 import { profileDisplayNameForDeletedUser } from "./format";
 
 export interface AuditLogRow {
@@ -23,7 +23,7 @@ export interface AuditLogRow {
 }
 
 export const convertAuditLogPlusRowsToAuditLogRows = (
-    auditLogResponse: AuditLogPlusDBRow[]
+    auditLogResponse: AuditLogPlusDbRow[]
 ): AuditLogRow[] =>
     auditLogResponse.map((auditLogPlusRow) => ({
         auditLogId: auditLogPlusRow.primary_key ?? "",

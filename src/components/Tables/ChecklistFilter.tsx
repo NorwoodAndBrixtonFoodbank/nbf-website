@@ -4,21 +4,21 @@ import React from "react";
 import CheckboxGroupPopup from "../DataInput/CheckboxGroupPopup";
 import { Filter, MethodConfig } from "./Filters";
 
-interface ChecklistFilterProps<Data, DBData extends Record<string, any> = {}> {
+interface ChecklistFilterProps<Data, DbData extends Record<string, any> = {}> {
     key: keyof Data;
     filterLabel: string;
     itemLabelsAndKeys: [string, string][];
     initialCheckedKeys: string[];
-    methodConfig: MethodConfig<Data, string[], DBData>;
+    methodConfig: MethodConfig<Data, string[], DbData>;
 }
 
-export const checklistFilter = <Data, DBData extends Record<string, any> = {}>({
+export const checklistFilter = <Data, DbData extends Record<string, any> = {}>({
     key,
     filterLabel,
     itemLabelsAndKeys,
     initialCheckedKeys,
     methodConfig,
-}: ChecklistFilterProps<Data>): Filter<Data, string[], DBData> => {
+}: ChecklistFilterProps<Data>): Filter<Data, string[], DbData> => {
     return {
         key: key,
         state: initialCheckedKeys,

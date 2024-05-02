@@ -2,9 +2,9 @@ import { Filter } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 import { UserRole, ViewSchema } from "@/databaseUtils";
 
-export type DBUserRow = ViewSchema["profiles_plus"];
-export type UsersFilter = Filter<UserRow, any, DBUserRow>;
-export type UsersSortState = SortState<UserRow, DBUserRow>;
+export type DbUserRow = ViewSchema["profiles_plus"];
+export type UsersFilter = Filter<UserRow, any, DbUserRow>;
+export type UsersSortState = SortState<UserRow, DbUserRow>;
 
 export type GetUserDataAndCountErrorType =
     | "abortedFetchingProfilesTable"

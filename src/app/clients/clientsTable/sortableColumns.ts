@@ -1,7 +1,7 @@
 import { PaginationType } from "@/components/Tables/Filters";
 import { SortOptions } from "@/components/Tables/Table";
-import { ClientsTableRow, DBClientRow } from "./types";
-const clientsSortableColumns: SortOptions<ClientsTableRow, DBClientRow>[] = [
+import { ClientsTableRow, DbClientRow } from "./types";
+const clientsSortableColumns: SortOptions<ClientsTableRow, DbClientRow>[] = [
     {
         key: "fullName",
         sortMethodConfig: {

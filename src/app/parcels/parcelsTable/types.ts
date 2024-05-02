@@ -71,9 +71,9 @@ export type ParcelStatusesReturnType =
           error: { type: ParcelStatusesError; logId: string };
       };
 
-export type DBParcelRow = ViewSchema["parcels_plus"];
-export type ParcelsFilter<state = any> = Filter<ParcelsTableRow, state, DBParcelRow>;
-export type ParcelsSortState = SortState<ParcelsTableRow, DBParcelRow>;
+export type DbParcelRow = ViewSchema["parcels_plus"];
+export type ParcelsFilter<state = any> = Filter<ParcelsTableRow, state, DbParcelRow>;
+export type ParcelsSortState = SortState<ParcelsTableRow, DbParcelRow>;
 
 export type CongestionChargeDetails = {
     postcode: string;

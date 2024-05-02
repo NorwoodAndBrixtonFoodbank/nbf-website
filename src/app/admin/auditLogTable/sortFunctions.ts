@@ -1,9 +1,9 @@
 import { SortOptions } from "@/components/Tables/Table";
 import { AuditLogRow } from "./types";
 import { PaginationType } from "@/components/Tables/Filters";
-import { AuditLogPlusDBRow } from "@/databaseUtils";
+import { AuditLogPlusDbRow } from "@/databaseUtils";
 
-export const auditLogTableSortableColumns: SortOptions<AuditLogRow, AuditLogPlusDBRow>[] = [
+export const auditLogTableSortableColumns: SortOptions<AuditLogRow, AuditLogPlusDbRow>[] = [
     {
         key: "action",
         sortMethodConfig: {

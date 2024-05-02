@@ -8,13 +8,13 @@ import styled from "styled-components";
 import { FilterAltOffOutlined, FilterAltOutlined } from "@mui/icons-material";
 import ColumnTogglePopup from "@/components/Tables/ColumnTogglePopup";
 
-interface Props<Data, DBRow extends Record<string, any>> {
-    setFilters: (filters: Filter<Data, DBRow, any>[]) => void;
-    setAdditionalFilters: (filters: Filter<Data, DBRow, any>[]) => void;
+interface Props<Data, DbRow extends Record<string, any>> {
+    setFilters: (filters: Filter<Data, DbRow, any>[]) => void;
+    setAdditionalFilters: (filters: Filter<Data, DbRow, any>[]) => void;
     handleClear: () => void;
     headers: TableHeaders<Data>;
-    filters: Filter<Data, DBRow, any>[];
-    additionalFilters: Filter<Data, DBRow, any>[];
+    filters: Filter<Data, DbRow, any>[];
+    additionalFilters: Filter<Data, DbRow, any>[];
     toggleableHeaders: readonly (keyof Data)[];
     setShownHeaderKeys: (headers: (keyof Data)[]) => void;
     shownHeaderKeys: readonly (keyof Data)[];
@@ -47,9 +47,9 @@ const Grow = styled.div`
     flex-grow: 1;
 `;
 
-export const filtersToComponents = <Data, DBRow extends Record<string, any>>(
-    filters: Filter<Data, DBRow, any>[],
-    setFilters: (filters: Filter<Data, DBRow, any>[]) => void
+export const filtersToComponents = <Data, DbRow extends Record<string, any>>(
+    filters: Filter<Data, DbRow, any>[],
+    setFilters: (filters: Filter<Data, DbRow, any>[]) => void
 ): React.ReactElement[] => {
     return filters.map((filter, index) => {
         const onFilter = (state: any): void => {
@@ -64,8 +64,8 @@ export const filtersToComponents = <Data, DBRow extends Record<string, any>>(
     });
 };
 
-const TableFilterAndExtraColumnsBar = <Data, DBRow extends Record<string, any>>(
-    props: Props<Data, DBRow>
+const TableFilterAndExtraColumnsBar = <Data, DbRow extends Record<string, any>>(
+    props: Props<Data, DbRow>
 ): React.ReactElement => {
     const [showMoreFiltersAndHeaders, setShowMoreFiltersAndHeaders] = useState(false);
 

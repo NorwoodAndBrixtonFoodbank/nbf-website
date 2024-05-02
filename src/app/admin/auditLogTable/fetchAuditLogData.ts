@@ -3,13 +3,13 @@ import { Supabase } from "@/supabaseUtils";
 import { AuditLogRow } from "./types";
 import { SortState } from "@/components/Tables/Table";
 import { PaginationType } from "@/components/Tables/Filters";
-import { AuditLogPlusDBRow, ViewSchema } from "@/databaseUtils";
+import { AuditLogPlusDbRow, ViewSchema } from "@/databaseUtils";
 
-export type AuditLogSortState = SortState<AuditLogRow, AuditLogPlusDBRow>;
+export type AuditLogSortState = SortState<AuditLogRow, AuditLogPlusDbRow>;
 
 type AuditLogResponse =
     | {
-          data: AuditLogPlusDBRow[];
+          data: AuditLogPlusDbRow[];
           error: null;
       }
     | {

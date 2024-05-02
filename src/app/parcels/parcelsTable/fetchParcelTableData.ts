@@ -14,7 +14,7 @@ import {
     ParcelsSortState,
     ParcelsTableRow,
 } from "./types";
-import convertParcelDBtoParcelRow from "./convertParcelDBtoParcelRow";
+import convertParcelDbtoParcelRow from "./convertParcelDbtoParcelRow";
 
 export const getCongestionChargeDetailsForParcels = async (
     processingData: ParcelsPlusRow[],
@@ -70,7 +70,7 @@ const getParcelsQuery = (
     return query;
 };
 
-const fetchParcelDB = async (
+const fetchParcelsDbRows = async (
     supabase: Supabase,
     filters: ParcelsFilter[],
     sortState: ParcelsSortState,
@@ -112,7 +112,7 @@ export const getParcelsDataAndCount = async (
     startIndex: number,
     endIndex: number
 ): Promise<GetParcelDataAndCountResult> => {
-    const { parcels, error: getDbParcelsError } = await fetchParcelDB(
+    const { parcels, error: getDbParcelsError } = await fetchParcelsDbRows(
         supabase,
         filters,
         sortState,
@@ -142,7 +142,7 @@ export const getParcelsDataAndCount = async (
     }
 
     const congestionCharge = await getCongestionChargeDetailsForParcels(parcels, supabase);
-    const { parcelTableRows, error } = await convertParcelDBtoParcelRow(parcels, congestionCharge);
+    const { parcelTableRows, error } = await convertParcelDbtoParcelRow(parcels, congestionCharge);
 
     if (error) {
         switch (error.type) {
@@ -239,7 +239,7 @@ export const getParcelsByIds = async (
     }
 
     const congestionCharge = await getCongestionChargeDetailsForParcels(data, supabase);
-    const { parcelTableRows, error: processParcelDataError } = await convertParcelDBtoParcelRow(
+    const { parcelTableRows, error: processParcelDataError } = await convertParcelDbtoParcelRow(
         data,
         congestionCharge
     );

@@ -1,8 +1,8 @@
 import { PaginationType } from "@/components/Tables/Filters";
 import { SortOptions } from "@/components/Tables/Table";
-import { UserRow, DBUserRow } from "./types";
+import { UserRow, DbUserRow } from "./types";
 
-export const usersSortableColumns: SortOptions<UserRow, DBUserRow>[] = [
+export const usersSortableColumns: SortOptions<UserRow, DbUserRow>[] = [
     {
         key: "firstName",
         sortMethodConfig: {

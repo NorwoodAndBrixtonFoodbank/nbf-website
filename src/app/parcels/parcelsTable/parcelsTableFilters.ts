@@ -10,7 +10,7 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { getDbDate, nullPostcodeDisplay } from "@/common/format";
-import { CollectionCentresOptions, DBParcelRow, ParcelsFilter, ParcelsTableRow } from "./types";
+import { CollectionCentresOptions, DbParcelRow, ParcelsFilter, ParcelsTableRow } from "./types";
 
 interface packingSlotOptionsSet {
     key: string;
@@ -18,9 +18,9 @@ interface packingSlotOptionsSet {
 }
 
 type ParcelsFilterMethod<State> = (
-    query: PostgrestFilterBuilder<Database["public"], DBParcelRow, any>,
+    query: PostgrestFilterBuilder<Database["public"], DbParcelRow, any>,
     state: State
-) => PostgrestFilterBuilder<Database["public"], DBParcelRow, any>;
+) => PostgrestFilterBuilder<Database["public"], DbParcelRow, any>;
 
 export const fullNameSearch: ParcelsFilterMethod<string> = (query, state) =>
     query.ilike("client_full_name", `%${state}%`);
@@ -150,7 +150,7 @@ export const buildLastStatusFilter = async (): Promise<ParcelsFilter<string[]>> 
     }, []);
     data && optionsSet.push("None");
 
-    return checklistFilter<ParcelsTableRow, DBParcelRow>({
+    return checklistFilter<ParcelsTableRow, DbParcelRow>({
         key: "lastStatus",
         filterLabel: "Last Status",
         itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
@@ -195,7 +195,7 @@ export const buildPackingSlotFilter = async (): Promise<ParcelsFilter<string[]>>
 
     optionsSet.sort();
 
-    return checklistFilter<ParcelsTableRow, DBParcelRow>({
+    return checklistFilter<ParcelsTableRow, DbParcelRow>({
         key: "packingSlot",
         filterLabel: "Packing Slot",
         itemLabelsAndKeys: optionsSet.map((option) => [option.value, option.key]),

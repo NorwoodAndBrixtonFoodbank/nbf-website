@@ -16,7 +16,7 @@ type ProcessParcelDataResult =
           };
       };
 
-const convertParcelDBtoParcelRow = async (
+const convertParcelDbtoParcelRow = async (
     processingData: ParcelsPlusRow[],
     congestionCharge: CongestionChargeDetails[]
 ): Promise<ProcessParcelDataResult> => {
@@ -88,4 +88,4 @@ export const processLastStatus = (
     };
 };
 
-export default convertParcelDBtoParcelRow;
+export default convertParcelDbtoParcelRow;

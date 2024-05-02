@@ -4,12 +4,12 @@ import FreeFormTextInput from "../DataInput/FreeFormTextInput";
 import { Filter, MethodConfig, defaultToString } from "./Filters";
 import { TableHeaders } from "./Table";
 
-interface TextFilterProps<Data, DBData extends Record<string, any> = {}> {
+interface TextFilterProps<Data, DbData extends Record<string, any> = {}> {
     key: keyof Data;
     headers: TableHeaders<Data>;
     label: string;
     initialValue?: string;
-    methodConfig: MethodConfig<Data, string, DBData>;
+    methodConfig: MethodConfig<Data, string, DbData>;
 }
 
 const TextFilterStyling = styled.div`
@@ -18,12 +18,12 @@ const TextFilterStyling = styled.div`
     }
 `;
 
-export const buildTextFilter = <Data, DBData extends Record<string, any> = {}>({
+export const buildTextFilter = <Data, DbData extends Record<string, any> = {}>({
     key,
     label,
     initialValue = "",
     methodConfig,
-}: TextFilterProps<Data, DBData>): Filter<Data, string, DBData> => {
+}: TextFilterProps<Data, DbData>): Filter<Data, string, DbData> => {
     return {
         state: initialValue,
         initialState: initialValue,

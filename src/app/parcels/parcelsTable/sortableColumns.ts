@@ -1,8 +1,8 @@
 import { PaginationType } from "@/components/Tables/Filters";
 import { SortOptions } from "@/components/Tables/Table";
-import { ParcelsTableRow, DBParcelRow } from "./types";
+import { ParcelsTableRow, DbParcelRow } from "./types";
 
-const parcelsSortableColumns: SortOptions<ParcelsTableRow, DBParcelRow>[] = [
+const parcelsSortableColumns: SortOptions<ParcelsTableRow, DbParcelRow>[] = [
     {
         key: "fullName",
         sortMethodConfig: {
