@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
-import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import { StatusType } from "./Statuses";
 import { ActionModalProps } from "./ActionModals/GeneralActionModal";
 import DayOverviewModal from "./ActionModals/DayOverviewModal";
@@ -14,6 +13,7 @@ import GenerateMapModal from "./ActionModals/GenerateMapModal";
 import ShippingLabelModal from "./ActionModals/ShippingLabelModal";
 import ShoppingListModal from "./ActionModals/ShoppingListModal";
 import { UpdateParcelStatuses } from "./ActionAndStatusBar";
+import { ParcelsTableRow } from "../parcelsTable/types";
 
 const isNotAtLeastOne = (value: number): boolean => {
     return value < 1;

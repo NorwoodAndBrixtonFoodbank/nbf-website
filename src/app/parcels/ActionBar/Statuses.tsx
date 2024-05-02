@@ -6,12 +6,12 @@ import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import dayjs, { Dayjs } from "dayjs";
-import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import StatusesBarModal from "@/app/parcels/ActionBar/StatusesModal";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { sendAuditLog } from "@/server/auditLog";
 import { ParcelStatus } from "@/databaseUtils";
-import { fetchParcelStatuses } from "@/app/parcels/fetchParcelTableData";
+import { fetchParcelStatuses } from "@/app/parcels/parcelsTable/fetchParcelTableData";
+import { ParcelsTableRow } from "../parcelsTable/types";
 
 export type StatusType = ParcelStatus[][number];
 

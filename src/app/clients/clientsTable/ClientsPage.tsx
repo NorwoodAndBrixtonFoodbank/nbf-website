@@ -4,84 +4,24 @@ import LinkButton from "@/components/Buttons/LinkButton";
 import Icon from "@/components/Icons/Icon";
 import Modal from "@/components/Modal/Modal";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
-import Table, { SortOptions, TableHeaders } from "@/components/Tables/Table";
+import Table from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
 import supabase from "@/supabaseClient";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState, Suspense, useRef, useCallback } from "react";
 import { useTheme } from "styled-components";
-import getClientsDataAndCount, {
-    ClientsFilter,
-    ClientsSortState,
-    DBClientRow,
-} from "./getClientsData";
+import getClientsDataAndCount from "./getClientsData";
 import { useSearchParams, useRouter } from "next/navigation";
 import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
-import { buildTextFilter } from "@/components/Tables/TextFilter";
-import { PaginationType } from "@/components/Tables/Filters";
-import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
-import { Database } from "@/databaseTypesFile";
 import { CircularProgress } from "@mui/material";
-import { ErrorSecondaryText } from "../errorStylingandMessages";
+import { ErrorSecondaryText } from "../../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { nullPostcodeDisplay } from "@/common/format";
-
-export interface ClientsTableRow {
-    clientId: string;
-    fullName: string;
-    familyCategory: string;
-    addressPostcode: string | null;
-}
-
-const headers: TableHeaders<ClientsTableRow> = [
-    ["fullName", "Name"],
-    ["familyCategory", "Family"],
-    ["addressPostcode", "Postcode"],
-];
-
-const fullNameSearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
-    return query.ilike("full_name", `%${state}%`);
-};
-
-const filters: ClientsFilter[] = [
-    buildTextFilter({
-        key: "fullName",
-        label: "Name",
-        headers: headers,
-        methodConfig: { paginationType: PaginationType.Server, method: fullNameSearch },
-    }),
-];
-
-const sortableColumns: SortOptions<ClientsTableRow, DBClientRow>[] = [
-    {
-        key: "fullName",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("full_name", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "familyCategory",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("family_count", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "addressPostcode",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("address_postcode", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-];
+import clientsFilters from "./filters";
+import clientsSortableColumns from "./sortableColumns";
+import clientsHeaders from "./headers";
+import { ClientsTableRow, ClientsSortState, ClientsFilter } from "./types";
 
 const clientIdParam = "clientId";
 const ClientsPage: React.FC<{}> = () => {
@@ -90,7 +30,7 @@ const ClientsPage: React.FC<{}> = () => {
     const [clientsDataPortion, setClientsDataPortion] = useState<ClientsTableRow[]>([]);
     const [filteredClientCount, setFilteredClientCount] = useState<number>(0);
     const [sortState, setSortState] = useState<ClientsSortState>({ sortEnabled: false });
-    const [primaryFilters, setPrimaryFilters] = useState<ClientsFilter[]>(filters);
+    const [primaryFilters, setPrimaryFilters] = useState<ClientsFilter[]>(clientsFilters);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const clientTableFetchAbortController = useRef<AbortController | null>(null);
 
@@ -199,10 +139,10 @@ const ClientsPage: React.FC<{}> = () => {
                             }}
                             sortConfig={{
                                 sortPossible: true,
-                                sortableColumns: sortableColumns,
+                                sortableColumns: clientsSortableColumns,
                                 setSortState: setSortState,
                             }}
-                            headerKeysAndLabels={headers}
+                            headerKeysAndLabels={clientsHeaders}
                             onRowClick={(row) => {
                                 router.push(`/clients?${clientIdParam}=${row.data.clientId}`);
                             }}

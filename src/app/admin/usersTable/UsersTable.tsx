@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import Table, { SortOptions, TableHeaders } from "@/components/Tables/Table";
-import { UserRow } from "@/app/admin/page";
+import Table from "@/components/Tables/Table";
 import ManageUserModal from "@/app/admin/manageUser/ManageUserModal";
 import DeleteUserDialog from "@/app/admin/deleteUser/DeleteUserDialog";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
@@ -10,111 +9,20 @@ import SuccessFailureAlert, { AlertOptions } from "@/app/admin/common/SuccessFai
 import { PaginationType } from "@/components/Tables/Filters";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import supabase from "@/supabaseClient";
-import {
-    DBUserRow,
-    UsersFilter,
-    UsersSortState,
-    getUsersDataAndCount,
-} from "@/app/admin/usersTable/getUsersData";
+import { getUsersDataAndCount } from "@/app/admin/usersTable/getUsersData";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import {
     buildUserRoleFilter,
     emailSearch,
     firstNameSearch,
     lastNameSearch,
-} from "@/app/admin/usersTable/usersTableFilters";
+} from "@/app/admin/usersTable/filters";
 import { getCurrentUser } from "@/server/getCurrentUser";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
-
-const usersTableHeaderKeysAndLabels: TableHeaders<UserRow> = [
-    ["id", "User ID"],
-    ["firstName", "First Name"],
-    ["lastName", "Last Name"],
-    ["email", "Email"],
-    ["userRole", "Role"],
-    ["telephoneNumber", "Telephone Number"],
-    ["createdAt", "Created At"],
-    ["updatedAt", "Updated At"],
-];
-
-const sortableColumns: SortOptions<UserRow, DBUserRow>[] = [
-    {
-        key: "firstName",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("first_name", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "lastName",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("last_name", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "userRole",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("role", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "email",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("email", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "telephoneNumber",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("telephone_number", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "createdAt",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("created_at", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "updatedAt",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("updated_at", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-];
-
-const formatTimestamp = (timestamp: number): string => {
-    if (isNaN(timestamp)) {
-        return "-";
-    }
-
-    return new Date(timestamp).toLocaleString("en-gb");
-};
-
-const userTableColumnDisplayFunctions = {
-    createdAt: (createdAt: number | null) => {
-        return createdAt === null ? "-" : formatTimestamp(createdAt);
-    },
-    updatedAt: (updatedAt: number | null) => {
-        return updatedAt === null ? "-" : formatTimestamp(updatedAt);
-    },
-};
-
-const defaultNumberOfUsersPerPage = 10;
-const numberOfUsersPerPageOptions = [10, 25, 50, 100];
+import { defaultNumberOfUsersPerPage, numberOfUsersPerPageOptions } from "./constants";
+import { usersTableHeaderKeysAndLabels, userTableColumnDisplayFunctions } from "./headers";
+import { UserRow, UsersFilter, UsersSortState } from "./types";
+import { usersSortableColumns } from "./sortableColumns";
 
 const UsersTable: React.FC = () => {
     const [userToDelete, setUserToDelete] = useState<UserRow | null>(null);
@@ -299,7 +207,7 @@ const UsersTable: React.FC = () => {
                 }}
                 sortConfig={{
                     sortPossible: true,
-                    sortableColumns: sortableColumns,
+                    sortableColumns: usersSortableColumns,
                     setSortState: setSortState,
                 }}
                 editableConfig={{

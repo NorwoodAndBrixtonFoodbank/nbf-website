@@ -4,18 +4,13 @@ import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
 import { PaginationType } from "@/components/Tables/Filters";
-import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import { dateFilter } from "@/components/Tables/DateFilter";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
-import {
-    CollectionCentresOptions,
-    DBParcelRow,
-    ParcelsFilter,
-} from "@/app/parcels/fetchParcelTableData";
 import { getDbDate, nullPostcodeDisplay } from "@/common/format";
+import { CollectionCentresOptions, DBParcelRow, ParcelsFilter, ParcelsTableRow } from "./types";
 
 interface packingSlotOptionsSet {
     key: string;
@@ -27,9 +22,8 @@ type ParcelsFilterMethod<State> = (
     state: State
 ) => PostgrestFilterBuilder<Database["public"], DBParcelRow, any>;
 
-export const fullNameSearch: ParcelsFilterMethod<string> = (query, state) => {
-    return query.ilike("client_full_name", `%${state}%`);
-};
+export const fullNameSearch: ParcelsFilterMethod<string> = (query, state) =>
+    query.ilike("client_full_name", `%${state}%`);
 
 export const postcodeSearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "") {
@@ -66,13 +60,11 @@ export const familySearch: ParcelsFilterMethod<string> = (query, state) => {
     return query.eq("family_count", Number(state));
 };
 
-export const phoneSearch: ParcelsFilterMethod<string> = (query, state) => {
-    return query.ilike("client_phone_number", `%${state}%`);
-};
+export const phoneSearch: ParcelsFilterMethod<string> = (query, state) =>
+    query.ilike("client_phone_number", `%${state}%`);
 
-export const voucherSearch: ParcelsFilterMethod<string> = (query, state) => {
-    return query.ilike("voucher_number", `%${state}%`);
-};
+export const voucherSearch: ParcelsFilterMethod<string> = (query, state) =>
+    query.ilike("voucher_number", `%${state}%`);
 
 export const buildDateFilter = (initialState: DateRangeState): ParcelsFilter<DateRangeState> => {
     const dateSearch: ParcelsFilterMethod<DateRangeState> = (query, state) => {

@@ -1,43 +1,14 @@
-import { ClientsTableRow } from "@/app/clients/ClientsPage";
 import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
 import { Supabase } from "@/supabaseUtils";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { SortState } from "@/components/Tables/Table";
-import { ViewSchema } from "@/databaseUtils";
-
-export type DBClientRow = ViewSchema["clients_plus"];
-export type ClientsFilter = Filter<ClientsTableRow, any, DBClientRow>;
-export type ClientsSortState = SortState<ClientsTableRow, DBClientRow>;
-
-type GetClientsDataAndCountErrorType =
-    | "abortedFetchingClientsTable"
-    | "abortedFetchingClientsTableCount"
-    | "failedToFetchClientsTable"
-    | "failedToFetchClientsTableCount";
-
-type GetClientsReturnType =
-    | {
-          error: null;
-          data: {
-              clientData: ClientsTableRow[];
-              count: number;
-          };
-      }
-    | {
-          error: { type: GetClientsDataAndCountErrorType; logId: string };
-          data: null;
-      };
-
-type GetClientsCountReturnType =
-    | {
-          error: { type: GetClientsDataAndCountErrorType; logId: string };
-          data: null;
-      }
-    | {
-          error: null;
-          data: number;
-      };
+import { PaginationType } from "@/components/Tables/Filters";
+import {
+    ClientsFilter,
+    ClientsSortState,
+    ClientsTableRow,
+    GetClientsCountReturnType,
+    GetClientsReturnType,
+} from "./types";
 
 const getClientsDataAndCount = async (
     supabase: Supabase,

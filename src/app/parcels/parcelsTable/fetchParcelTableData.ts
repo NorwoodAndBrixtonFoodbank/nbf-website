@@ -1,20 +1,20 @@
 import { Supabase } from "@/supabaseUtils";
-import { AbortError, DatabaseError, EdgeFunctionError } from "../errorClasses";
-import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsTableData";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { SortState } from "@/components/Tables/Table";
+import { AbortError, DatabaseError, EdgeFunctionError } from "../../errorClasses";
+import { PaginationType } from "@/components/Tables/Filters";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
-import { ParcelStatus, ParcelsPlusRow, ViewSchema } from "@/databaseUtils";
-
-export type DBParcelRow = ViewSchema["parcels_plus"];
-export type ParcelsFilter<state = any> = Filter<ParcelsTableRow, state, DBParcelRow>;
-export type ParcelsSortState = SortState<ParcelsTableRow, DBParcelRow>;
-
-export type CongestionChargeDetails = {
-    postcode: string;
-    congestionCharge: boolean;
-};
+import { ParcelsPlusRow } from "@/databaseUtils";
+import {
+    CongestionChargeDetails,
+    GetDbParcelDataResult,
+    GetParcelDataAndCountErrorType,
+    GetParcelDataAndCountResult,
+    ParcelStatusesReturnType,
+    ParcelsFilter,
+    ParcelsSortState,
+    ParcelsTableRow,
+} from "./types";
+import convertParcelDBtoParcelRow from "./convertParcelDBtoParcelRow";
 
 export const getCongestionChargeDetailsForParcels = async (
     processingData: ParcelsPlusRow[],
@@ -70,22 +70,7 @@ const getParcelsQuery = (
     return query;
 };
 
-type GetDbParcelDataResult =
-    | {
-          parcels: ParcelsPlusRow[];
-          error: null;
-      }
-    | {
-          parcels: null;
-          error: {
-              type: GetDbParcelDataErrorType;
-              logId: string;
-          };
-      };
-
-type GetDbParcelDataErrorType = "abortedFetch" | "failedToFetchParcelTable";
-
-const getParcelProcessingData = async (
+const fetchParcelDB = async (
     supabase: Supabase,
     filters: ParcelsFilter[],
     sortState: ParcelsSortState,
@@ -119,27 +104,6 @@ const getParcelProcessingData = async (
     };
 };
 
-type GetParcelDataAndCountResult =
-    | {
-          data: {
-              parcelTableRows: ParcelsTableRow[];
-              count: number;
-          };
-          error: null;
-      }
-    | {
-          data: null;
-          error: {
-              type: GetParcelDataAndCountErrorType;
-              logId: string;
-          };
-      };
-
-export type GetParcelDataAndCountErrorType =
-    | "unknownError"
-    | "failedToFetchParcels"
-    | "abortedFetch";
-
 export const getParcelsDataAndCount = async (
     supabase: Supabase,
     filters: ParcelsFilter[],
@@ -148,7 +112,7 @@ export const getParcelsDataAndCount = async (
     startIndex: number,
     endIndex: number
 ): Promise<GetParcelDataAndCountResult> => {
-    const { parcels, error: getDbParcelsError } = await getParcelProcessingData(
+    const { parcels, error: getDbParcelsError } = await fetchParcelDB(
         supabase,
         filters,
         sortState,
@@ -178,10 +142,7 @@ export const getParcelsDataAndCount = async (
     }
 
     const congestionCharge = await getCongestionChargeDetailsForParcels(parcels, supabase);
-    const { parcelTableRows, error } = await processingDataToParcelsTableData(
-        parcels,
-        congestionCharge
-    );
+    const { parcelTableRows, error } = await convertParcelDBtoParcelRow(parcels, congestionCharge);
 
     if (error) {
         switch (error.type) {
@@ -278,8 +239,10 @@ export const getParcelsByIds = async (
     }
 
     const congestionCharge = await getCongestionChargeDetailsForParcels(data, supabase);
-    const { parcelTableRows, error: processParcelDataError } =
-        await processingDataToParcelsTableData(data, congestionCharge);
+    const { parcelTableRows, error: processParcelDataError } = await convertParcelDBtoParcelRow(
+        data,
+        congestionCharge
+    );
 
     if (processParcelDataError) {
         throw new Error("Failed to process parcels.", { cause: processParcelDataError });
@@ -287,25 +250,6 @@ export const getParcelsByIds = async (
 
     return parcelTableRows;
 };
-
-export interface CollectionCentresOptions {
-    name: string;
-    acronym: string;
-}
-export interface StatusResponseRow {
-    event_name: string;
-}
-
-type ParcelStatusesError = "failedToFetchStatuses";
-type ParcelStatusesReturnType =
-    | {
-          data: ParcelStatus[];
-          error: null;
-      }
-    | {
-          data: null;
-          error: { type: ParcelStatusesError; logId: string };
-      };
 
 export const fetchParcelStatuses = async (): Promise<ParcelStatusesReturnType> => {
     const { data: parcelStatusesListData, error: statusOrderError } = await supabase

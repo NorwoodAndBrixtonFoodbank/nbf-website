@@ -8,12 +8,12 @@ import GeneralActionModal, {
     ActionModalProps,
 } from "./GeneralActionModal";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
-import { ParcelsTableRow } from "../../getParcelsTableData";
 import { StatusType, getStatusErrorMessageWithLogId } from "../Statuses";
 import ShoppingListPdfButton from "@/pdf/ShoppingList/ShoppingListPdfButton";
 import { ShoppingListPdfError } from "@/pdf/ShoppingList/getShoppingListData";
 import { sendAuditLog } from "@/server/auditLog";
 import { nullPostcodeDisplay } from "@/common/format";
+import { ParcelsTableRow } from "../../parcelsTable/types";
 
 interface ShoppingListsConfirmationProps {
     selectedParcels: ParcelsTableRow[];

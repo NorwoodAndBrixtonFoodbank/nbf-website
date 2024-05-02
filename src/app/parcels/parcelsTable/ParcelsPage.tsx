@@ -1,9 +1,14 @@
 "use client";
 
-import Table, { Row, SortOptions, TableHeaders } from "@/components/Tables/Table";
+import Table, { Row } from "@/components/Tables/Table";
 import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
-import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
+import {
+    ParcelsTableRow,
+    GetParcelDataAndCountErrorType,
+    ParcelsSortState,
+    ParcelsFilter,
+} from "./types";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
@@ -19,23 +24,15 @@ import ActionAndStatusBar from "@/app/parcels/ActionBar/ActionAndStatusBar";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
-import {
-    DBParcelRow,
-    GetParcelDataAndCountErrorType,
-    ParcelsFilter,
-    ParcelsSortState,
-    getParcelIds,
-    getParcelsByIds,
-    getParcelsDataAndCount,
-} from "./fetchParcelTableData";
+import { getParcelIds, getParcelsByIds, getParcelsDataAndCount } from "./fetchParcelTableData";
 import dayjs from "dayjs";
 import { PaginationType } from "@/components/Tables/Filters";
-import { StatusType, saveParcelStatus, SaveParcelStatusResult } from "./ActionBar/Statuses";
+import { StatusType, saveParcelStatus, SaveParcelStatusResult } from "../ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { CircularProgress } from "@mui/material";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { ErrorSecondaryText } from "../errorStylingandMessages";
+import { ErrorSecondaryText } from "../../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import {
     buildDateFilter,
@@ -47,133 +44,16 @@ import {
     phoneSearch,
     postcodeSearch,
     voucherSearch,
-} from "@/app/parcels/parcelsTableFilters";
+} from "@/app/parcels/parcelsTable/parcelsTableFilters";
 import { ActionsContainer } from "@/components/Form/formStyling";
 import { formatDateTime, formatDatetimeAsDate, nullPostcodeDisplay } from "@/common/format";
-
-export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
-    ["iconsColumn", ""],
-    ["fullName", "Name"],
-    ["familyCategory", "Family"],
-    ["addressPostcode", "Postcode"],
-    ["phoneNumber", "Phone"],
-    ["voucherNumber", "Voucher"],
-    ["deliveryCollection", "Method"],
-    ["packingDate", "Packing Date"],
-    ["packingSlot", "Packing Slot"],
-    ["lastStatus", "Last Status"],
-    ["createdAt", "Created At"],
-];
-
-const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
-    "iconsColumn",
-    "fullName",
-    "familyCategory",
-    "addressPostcode",
-    "deliveryCollection",
-    "packingDate",
-    "packingSlot",
-    "lastStatus",
-];
-
-const sortableColumns: SortOptions<ParcelsTableRow, DBParcelRow>[] = [
-    {
-        key: "fullName",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("client_full_name", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "familyCategory",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("family_count", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "addressPostcode",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("client_address_postcode", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "phoneNumber",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("client_phone_number", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "voucherNumber",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("voucher_number", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "deliveryCollection",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("collection_centre_name", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "packingDate",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query
-                    .order("packing_date", { ascending: sortDirection === "asc" })
-                    .order("packing_slot_order")
-                    .order("client_full_name"),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "packingSlot",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("packing_slot_order", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "lastStatus",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("last_status_workflow_order", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "createdAt",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("created_at", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-];
-
-const toggleableHeaders: (keyof ParcelsTableRow)[] = [
-    "fullName",
-    "familyCategory",
-    "addressPostcode",
-    "phoneNumber",
-    "voucherNumber",
-    "deliveryCollection",
-    "packingDate",
-    "packingSlot",
-    "lastStatus",
-    "createdAt",
-];
+import parcelsSortableColumns from "./sortableColumns";
+import {
+    parcelIdParam,
+    defaultNumberOfParcelsPerPage,
+    numberOfParcelsPerPageOptions,
+} from "./constants";
+import { parcelTableHeaderKeysAndLabels, defaultShownHeaders, toggleableHeaders } from "./headers";
 
 const parcelTableColumnStyleOptions = {
     iconsColumn: {
@@ -247,11 +127,6 @@ function getParcelDataErrorMessage(errorType: GetParcelDataAndCountErrorType): s
             return null;
     }
 }
-
-const parcelIdParam = "parcelId";
-
-const defaultNumberOfParcelsPerPage = 100;
-const numberOfParcelsPerPageOptions = [10, 25, 50, 100];
 
 const ParcelsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -628,7 +503,7 @@ const ParcelsPage: React.FC<{}> = () => {
                             onRowClick={onParcelTableRowClick}
                             sortConfig={{
                                 sortPossible: true,
-                                sortableColumns: sortableColumns,
+                                sortableColumns: parcelsSortableColumns,
                                 setSortState: setSortState,
                             }}
                             filterConfig={{

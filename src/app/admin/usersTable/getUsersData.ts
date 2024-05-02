@@ -1,44 +1,15 @@
 import { Supabase } from "@/supabaseUtils";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { SortState } from "@/components/Tables/Table";
+import { PaginationType } from "@/components/Tables/Filters";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
-import { UserRow } from "@/app/admin/page";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
-import { ViewSchema } from "@/databaseUtils";
-
-export type DBUserRow = ViewSchema["profiles_plus"];
-export type UsersFilter = Filter<UserRow, any, DBUserRow>;
-export type UsersSortState = SortState<UserRow, DBUserRow>;
-
-type GetUserDataAndCountErrorType =
-    | "abortedFetchingProfilesTable"
-    | "abortedFetchingProfilesTableCount"
-    | "failedToFetchProfilesTable"
-    | "failedToFetchProfilesTableCount";
-
-type GetUsersReturnType =
-    | {
-          error: null;
-          data: {
-              userData: UserRow[];
-              count: number;
-          };
-      }
-    | {
-          error: { type: GetUserDataAndCountErrorType; logId: string };
-          data: null;
-      };
-
-type GetUserCountReturnType =
-    | {
-          error: { type: GetUserDataAndCountErrorType; logId: string };
-          data: null;
-      }
-    | {
-          error: null;
-          data: number;
-      };
+import {
+    UsersFilter,
+    UsersSortState,
+    GetUsersReturnType,
+    GetUserCountReturnType,
+    UserRow,
+} from "./types";
 
 export const getUsersDataAndCount = async (
     supabase: Supabase,

@@ -1,24 +1,11 @@
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { PaginationType } from "@/components/Tables/Filters";
-import { UserRow } from "@/app/admin/page";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { UserRole } from "@/databaseUtils";
-import { DBUserRow, UsersFilter } from "./getUsersData";
-
-type BuildUserRoleFilterErrors = "failedToFetchUserRoleFilterOptions";
-
-type BuildUserRoleFilterAndError =
-    | {
-          data: UsersFilter;
-          error: null;
-      }
-    | {
-          data: null;
-          error: { type: BuildUserRoleFilterErrors; logId: string };
-      };
+import { BuildUserRoleFilterAndError, DBUserRow, UserRow } from "./types";
 
 export const firstNameSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,

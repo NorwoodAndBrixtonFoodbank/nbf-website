@@ -1,8 +1,8 @@
-import { ParcelsTableRow } from "../getParcelsTableData";
 import styled from "styled-components";
 import React from "react";
 import dayjs from "dayjs";
 import { nullPostcodeDisplay } from "../../../common/format";
+import { ParcelsTableRow } from "../parcelsTable/types";
 
 const Heading = styled.div`
     font-size: 1.2rem;

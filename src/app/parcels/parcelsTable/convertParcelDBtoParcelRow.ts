@@ -1,36 +1,7 @@
-import { CongestionChargeDetails } from "@/app/parcels/fetchParcelTableData";
+import { CongestionChargeDetails, ParcelsTableRow } from "./types";
 import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { ParcelsPlusRow, Schema, ViewSchema } from "@/databaseUtils";
-
-export interface ParcelsTableRow {
-    parcelId: Schema["parcels"]["primary_key"];
-    clientId: Schema["clients"]["primary_key"];
-    fullName: Schema["clients"]["full_name"];
-    familyCategory: string;
-    addressPostcode: Schema["clients"]["address_postcode"];
-    phoneNumber: Schema["clients"]["phone_number"];
-    deliveryCollection: {
-        collectionCentreName: string;
-        collectionCentreAcronym: string;
-        congestionChargeApplies: boolean;
-    };
-    packingSlot: string | null;
-    collectionDatetime: Date | null;
-    lastStatus: {
-        name: string;
-        timestamp: Date;
-        eventData: string | null;
-        workflowOrder: number;
-    } | null;
-    voucherNumber: string | null;
-    iconsColumn: {
-        flaggedForAttention: boolean;
-        requiresFollowUpPhoneCall: boolean;
-    };
-    packingDate: Date | null;
-    createdAt: Date | null;
-}
+import { ParcelsPlusRow, ViewSchema } from "@/databaseUtils";
 
 type ProcessParcelDataResult =
     | {
@@ -45,7 +16,7 @@ type ProcessParcelDataResult =
           };
       };
 
-export const processingDataToParcelsTableData = async (
+const convertParcelDBtoParcelRow = async (
     processingData: ParcelsPlusRow[],
     congestionCharge: CongestionChargeDetails[]
 ): Promise<ProcessParcelDataResult> => {
@@ -93,16 +64,6 @@ export const processingDataToParcelsTableData = async (
     };
 };
 
-export type PackingTimeLabel = "AM" | "PM";
-
-export const datetimeToPackingTimeLabel = (datetime: string | null): PackingTimeLabel | null => {
-    if (datetime === null || isNaN(Date.parse(datetime))) {
-        return null;
-    }
-
-    return new Date(datetime).getHours() <= 11 ? "AM" : "PM";
-};
-
 export const processLastStatus = (
     event:
         | Pick<
@@ -126,3 +87,5 @@ export const processLastStatus = (
         workflowOrder: event.last_status_workflow_order ?? -1, //for now
     };
 };
+
+export default convertParcelDBtoParcelRow;

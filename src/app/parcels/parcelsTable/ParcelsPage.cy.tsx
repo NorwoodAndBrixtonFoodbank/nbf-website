@@ -1,10 +1,3 @@
-import { CongestionChargeDetails } from "@/app/parcels/fetchParcelTableData";
-import {
-    ParcelsTableRow,
-    datetimeToPackingTimeLabel,
-    processLastStatus,
-    processingDataToParcelsTableData,
-} from "@/app/parcels/getParcelsTableData";
 import { processEventsDetails } from "@/app/parcels/getExpandedParcelDetails";
 import {
     familyCountToFamilyCategory,
@@ -14,6 +7,8 @@ import {
 } from "@/app/clients/getExpandedClientDetails";
 import { formatDatetimeAsDate } from "@/common/format";
 import { ParcelsPlusRow } from "@/databaseUtils";
+import convertParcelDBtoParcelRow, { processLastStatus } from "./convertParcelDBtoParcelRow";
+import { CongestionChargeDetails, ParcelsTableRow } from "./types";
 
 const sampleProcessingData: ParcelsPlusRow[] = [
     {
@@ -50,7 +45,7 @@ const sampleCongestionChargeData: CongestionChargeDetails[] = [
 describe("Parcels Page", () => {
     describe("Backend Processing for Table Data", () => {
         it("Fields are set correctly", async () => {
-            const { parcelTableRows } = await processingDataToParcelsTableData(
+            const { parcelTableRows } = await convertParcelDBtoParcelRow(
                 sampleProcessingData,
                 sampleCongestionChargeData
             );
@@ -101,11 +96,6 @@ describe("Parcels Page", () => {
             expect(formatDatetimeAsDate("2024-11-23T01:43:50+00:00")).to.eq("23/11/2024");
             expect(formatDatetimeAsDate("Invalid_Date_Format")).to.eq("-");
             expect(formatDatetimeAsDate(null)).to.eq("-");
-        });
-
-        it("datetimeToPackingTimeLabel()", () => {
-            expect(datetimeToPackingTimeLabel("2023-08-04T08:30:00+00:00")).to.eq("AM");
-            expect(datetimeToPackingTimeLabel("2023-08-04T13:30:00+00:00")).to.eq("PM");
         });
 
         it("eventToStatusMessage()", () => {
