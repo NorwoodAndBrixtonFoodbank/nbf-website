@@ -5,9 +5,11 @@ import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { UserRole } from "@/databaseUtils";
-import { BuildUserRoleFilterAndError, DbUserRow, UserRow } from "./types";
+import { BuildUserRoleFilterAndError, DbUserRow, UserRow, UsersFilter } from "./types";
+import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
+import { usersTableHeaderKeysAndLabels } from "./headers";
 
-export const firstNameSearch = (
+const firstNameSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
     state: string
 ): PostgrestFilterBuilder<Database["public"], any, any> => {
@@ -18,7 +20,7 @@ export const firstNameSearch = (
     }
 };
 
-export const lastNameSearch = (
+const lastNameSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
     state: string
 ): PostgrestFilterBuilder<Database["public"], any, any> => {
@@ -29,14 +31,14 @@ export const lastNameSearch = (
     }
 };
 
-export const emailSearch = (
+const emailSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
     state: string
 ): PostgrestFilterBuilder<Database["public"], any, any> => {
     return query.ilike("email", `%${state}%`);
 };
 
-export const buildUserRoleFilter = async (): Promise<BuildUserRoleFilterAndError> => {
+const buildUserRoleFilter = async (): Promise<BuildUserRoleFilterAndError> => {
     const userRoleSearch = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
@@ -74,3 +76,27 @@ export const buildUserRoleFilter = async (): Promise<BuildUserRoleFilterAndError
 
     return { data: userRoleFilter, error: null };
 };
+
+export const usersFilters: UsersFilter[] = [
+    buildServerSideTextFilter({
+        key: "firstName",
+        label: "First Name",
+        headers: usersTableHeaderKeysAndLabels,
+            method: firstNameSearch,
+    }),
+    buildServerSideTextFilter({
+        key: "lastName",
+        label: "Last Name",
+        headers: usersTableHeaderKeysAndLabels,
+        method:
+         lastNameSearch,
+        
+    }),
+    buildServerSideTextFilter({
+        key: "email",
+        label: "Email",
+        headers: usersTableHeaderKeysAndLabels,
+        method: 
+            emailSearch,
+        
+    })]

@@ -15,7 +15,7 @@ import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
+import { ClientSideFilter, PaginationType } from "@/components/Tables/Filters";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 export interface ListRow {
@@ -112,7 +112,7 @@ const listsColumnStyleOptions: ColumnStyles<ListRow> = {
     ),
 };
 
-const filters: Filter<ListRow, string>[] = [
+const filters: ClientSideFilter<ListRow, string>[] = [
     buildTextFilter({
         key: "itemName",
         label: "Item",
@@ -133,7 +133,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [listData, setListData] = useState<ListRow[]>(listOfIngredients);
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<ListRow, string>[]>(filters);
+    const [primaryFilters, setPrimaryFilters] = useState<ClientSideFilter<ListRow, string>[]>(filters);
 
     if (listOfIngredients === null) {
         void logInfoReturnLogId("No ingredients found @ app/lists/ListDataView.tsx");
@@ -262,8 +262,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             listOfIngredients.filter((row) => {
                 return primaryFilters.every((filter) => {
                     return (
-                        filter.methodConfig.paginationType === PaginationType.Client &&
-                        filter.methodConfig.method(row, filter.state, filter.key)
+                        filter.method(row, filter.state, filter.key)
                     );
                 });
             })
@@ -312,6 +311,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                         setDataPortion: setListData,
                     }}
                     filterConfig={{
+                        paginationType: PaginationType.Client,
                         primaryFiltersShown: true,
                         primaryFilters: primaryFilters,
                         setPrimaryFilters: setPrimaryFilters,

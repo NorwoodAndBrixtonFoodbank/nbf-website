@@ -1,6 +1,5 @@
 "use client";
 
-import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
 import { PaginationType } from "@/components/Tables/Filters";
@@ -10,17 +9,7 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { getDbDate, nullPostcodeDisplay } from "@/common/format";
-import { CollectionCentresOptions, DbParcelRow, ParcelsFilter, ParcelsTableRow } from "./types";
-
-interface packingSlotOptionsSet {
-    key: string;
-    value: string;
-}
-
-type ParcelsFilterMethod<State> = (
-    query: PostgrestFilterBuilder<Database["public"], DbParcelRow, any>,
-    state: State
-) => PostgrestFilterBuilder<Database["public"], DbParcelRow, any>;
+import { CollectionCentresOptions, DbParcelRow, ParcelsFilter, ParcelsFilterMethod, ParcelsTableRow, packingSlotOptionsSet } from "./types";
 
 export const fullNameSearch: ParcelsFilterMethod<string> = (query, state) =>
     query.ilike("client_full_name", `%${state}%`);

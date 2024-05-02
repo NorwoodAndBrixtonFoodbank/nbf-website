@@ -7,18 +7,6 @@ import { UserRole } from "@/databaseUtils";
 // disables caching
 export const revalidate = 0;
 
-export type DisplayedUserRole = UserRole | "UNKNOWN";
-export interface UserRow {
-    id: string;
-    firstName: string;
-    lastName: string;
-    userRole: DisplayedUserRole;
-    email: string;
-    telephoneNumber: string;
-    createdAt: number | null;
-    updatedAt: number | null;
-}
-
 const Admin = async (): Promise<ReactElement> => {
     return (
         <main>

@@ -1,6 +1,8 @@
-import { Filter } from "@/components/Tables/Filters";
+import { ServerSideFilter } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
+import { Database } from "@/databaseTypesFile";
 import { ParcelStatus, ParcelsPlusRow, Schema, ViewSchema } from "@/databaseUtils";
+import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 
 export interface ParcelsTableRow {
     parcelId: Schema["parcels"]["primary_key"];
@@ -72,7 +74,7 @@ export type ParcelStatusesReturnType =
       };
 
 export type DbParcelRow = ViewSchema["parcels_plus"];
-export type ParcelsFilter<state = any> = Filter<ParcelsTableRow, state, DbParcelRow>;
+export type ParcelsFilter<state = any> = ServerSideFilter<ParcelsTableRow, state, DbParcelRow>;
 export type ParcelsSortState = SortState<ParcelsTableRow, DbParcelRow>;
 
 export type CongestionChargeDetails = {
@@ -94,3 +96,13 @@ export type GetDbParcelDataResult =
       };
 
 export type GetDbParcelDataErrorType = "abortedFetch" | "failedToFetchParcelTable";
+
+export interface packingSlotOptionsSet {
+    key: string;
+    value: string;
+}
+
+export type ParcelsFilterMethod<State> = (
+    query: PostgrestFilterBuilder<Database["public"], DbParcelRow, any>,
+    state: State
+) => PostgrestFilterBuilder<Database["public"], DbParcelRow, any>;

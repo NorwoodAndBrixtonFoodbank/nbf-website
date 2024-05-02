@@ -111,9 +111,7 @@ function getQueryWithFiltersApplied(
     let query = originalQuery;
 
     filters.forEach((filter) => {
-        if (filter.methodConfig.paginationType === PaginationType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
+            query = filter.method(query, filter.state);
     });
 
     return query;

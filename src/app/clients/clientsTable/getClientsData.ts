@@ -29,9 +29,7 @@ const getClientsDataAndCount = async (
         query = query.order("full_name");
     }
     filters.forEach((filter) => {
-        if (filter.methodConfig.paginationType === PaginationType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
+            query = filter.method(query, filter.state);
     });
 
     query.order("client_id");
@@ -85,9 +83,7 @@ const getClientsCount = async (
     let query = supabase.from("clients_plus").select("*", { count: "exact", head: true });
 
     filters.forEach((filter) => {
-        if (filter.methodConfig.paginationType === PaginationType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
+            query = filter.method(query, filter.state);
     });
 
     query = query.abortSignal(abortSignal);

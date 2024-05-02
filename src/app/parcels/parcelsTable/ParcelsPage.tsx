@@ -507,6 +507,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                 setSortState: setSortState,
                             }}
                             filterConfig={{
+                                paginationType: PaginationType.Server,
                                 primaryFiltersShown: true,
                                 additionalFiltersShown: true,
                                 primaryFilters: primaryFilters,

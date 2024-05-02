@@ -22,6 +22,7 @@ import clientsFilters from "./filters";
 import clientsSortableColumns from "./sortableColumns";
 import clientsHeaders from "./headers";
 import { ClientsTableRow, ClientsSortState, ClientsFilter } from "./types";
+import { PaginationType } from "@/components/Tables/Filters";
 
 const clientIdParam = "clientId";
 const ClientsPage: React.FC<{}> = () => {
@@ -147,6 +148,7 @@ const ClientsPage: React.FC<{}> = () => {
                                 router.push(`/clients?${clientIdParam}=${row.data.clientId}`);
                             }}
                             filterConfig={{
+                                paginationType: PaginationType.Server,
                                 primaryFiltersShown: true,
                                 primaryFilters: primaryFilters,
                                 setPrimaryFilters: setPrimaryFilters,

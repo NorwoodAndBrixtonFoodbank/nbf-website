@@ -218,6 +218,7 @@ const UsersTable: React.FC = () => {
                     isDeletable: (row: UserRow) => row.id !== currentUserId,
                 }}
                 filterConfig={{
+                    paginationType: PaginationType.Server,
                     primaryFiltersShown: true,
                     primaryFilters: primaryFilters,
                     setPrimaryFilters: setPrimaryFilters,

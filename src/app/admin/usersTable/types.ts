@@ -1,9 +1,9 @@
-import { Filter } from "@/components/Tables/Filters";
+import { ServerSideFilter } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 import { UserRole, ViewSchema } from "@/databaseUtils";
 
 export type DbUserRow = ViewSchema["profiles_plus"];
-export type UsersFilter = Filter<UserRow, any, DbUserRow>;
+export type UsersFilter = ServerSideFilter<UserRow, any, DbUserRow>;
 export type UsersSortState = SortState<UserRow, DbUserRow>;
 
 export type GetUserDataAndCountErrorType =

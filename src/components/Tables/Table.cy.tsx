@@ -8,7 +8,7 @@ import Table, {
     SortState,
 } from "@/components/Tables/Table";
 import StyleManager from "@/app/themes";
-import { Filter, PaginationType } from "./Filters";
+import { ClientSideFilter, PaginationType } from "./Filters";
 import { buildTextFilter, filterRowByText } from "./TextFilter";
 import { SortOrder } from "react-data-table-component/dist/DataTable/types";
 
@@ -144,7 +144,7 @@ const Component: React.FC<TestTableProps> = ({
         },
     };
 
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<TestData, string>[]>([
+    const [primaryFilters, setPrimaryFilters] = useState<ClientSideFilter<TestData, string>[]>([
         fullNameFilter,
     ]);
     const sortableColumns: SortOptions<TestData>[] = [sortByFullName];
@@ -221,6 +221,7 @@ const Component: React.FC<TestTableProps> = ({
     };
 
     const trueFilterConfig: FilterConfig<TestData> = {
+        paginationType: PaginationType.Client,
         primaryFiltersShown: true,
         primaryFilters: primaryFilters,
         setPrimaryFilters: setPrimaryFilters,
@@ -246,9 +247,7 @@ const Component: React.FC<TestTableProps> = ({
         setTestDataPortion(
             tableData.filter((row) => {
                 return primaryFilters.every((filter) => {
-                    if (filter.methodConfig.paginationType === PaginationType.Client) {
-                        return filter.methodConfig.method(row, filter.state, filter.key);
-                    }
+                        return filter.method(row, filter.state, filter.key);
                     return false;
                 });
             })

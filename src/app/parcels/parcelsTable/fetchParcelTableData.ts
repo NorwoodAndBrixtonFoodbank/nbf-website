@@ -47,10 +47,9 @@ const getParcelsQuery = (
 ) => {
     let query = supabase.from("parcels_plus").select("*");
 
-    filters.forEach((filter) => {
-        if (filter.methodConfig.paginationType === PaginationType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
+    filters.forEach((filter) => { 
+            query = filter.method(query, filter.state);
+        
     });
 
     if (
@@ -176,9 +175,7 @@ const getParcelsCount = async (
     let query = supabase.from("parcels_plus").select("*", { count: "exact", head: true });
 
     filters.forEach((filter) => {
-        if (filter.methodConfig.paginationType === PaginationType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
+            query = filter.method(query, filter.state);
     });
 
     query = query.abortSignal(abortSignal);
