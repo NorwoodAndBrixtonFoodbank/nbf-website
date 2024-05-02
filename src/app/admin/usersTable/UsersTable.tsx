@@ -7,15 +7,12 @@ import DeleteUserDialog from "@/app/admin/deleteUser/DeleteUserDialog";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import SuccessFailureAlert, { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
 import { PaginationType } from "@/components/Tables/Filters";
-import { buildTextFilter } from "@/components/Tables/TextFilter";
 import supabase from "@/supabaseClient";
 import { getUsersDataAndCount } from "@/app/admin/usersTable/getUsersData";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import {
     buildUserRoleFilter,
-    emailSearch,
-    firstNameSearch,
-    lastNameSearch,
+    usersFilters,
 } from "@/app/admin/usersTable/filters";
 import { getCurrentUser } from "@/server/getCurrentUser";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
@@ -27,7 +24,7 @@ import { usersSortableColumns } from "./sortableColumns";
 const UsersTable: React.FC = () => {
     const [userToDelete, setUserToDelete] = useState<UserRow | null>(null);
     const [userToEdit, setUserToEdit] = useState<UserRow | null>(null);
-    const [primaryFilters, setPrimaryFilters] = useState<UsersFilter[]>([]);
+    const [primaryFilters, setPrimaryFilters] = useState<UsersFilter<any>[]>(usersFilters);
     const [users, setUsers] = useState<UserRow[]>([]);
     const [filteredUsersCount, setFilteredUsersCount] = useState<number>(0);
     const [sortState, setSortState] = useState<UsersSortState>({ sortEnabled: false });
@@ -45,57 +42,6 @@ const UsersTable: React.FC = () => {
         success: undefined,
         message: <></>,
     });
-
-    const buildFilters = async (): Promise<UsersFilter[]> => {
-        const filters: UsersFilter[] = [
-            buildTextFilter({
-                key: "firstName",
-                label: "First Name",
-                headers: usersTableHeaderKeysAndLabels,
-                methodConfig: {
-                    paginationType: PaginationType.Server,
-                    method: firstNameSearch,
-                },
-            }),
-            buildTextFilter({
-                key: "lastName",
-                label: "Last Name",
-                headers: usersTableHeaderKeysAndLabels,
-                methodConfig: {
-                    paginationType: PaginationType.Server,
-                    method: lastNameSearch,
-                },
-            }),
-            buildTextFilter({
-                key: "email",
-                label: "Email",
-                headers: usersTableHeaderKeysAndLabels,
-                methodConfig: {
-                    paginationType: PaginationType.Server,
-                    method: emailSearch,
-                },
-            }),
-        ];
-
-        const { data: userRoleFilter, error } = await buildUserRoleFilter();
-        if (error) {
-            switch (error.type) {
-                case "failedToFetchUserRoleFilterOptions":
-                    setErrorMessage(`Failed to retrieve user role filters. Log ID: ${error.logId}`);
-                    break;
-            }
-        } else {
-            filters.push(userRoleFilter);
-        }
-        return filters;
-    };
-
-    useEffect(() => {
-        (async () => {
-            const filters = await buildFilters();
-            setPrimaryFilters(filters);
-        })();
-    }, []);
 
     const userOnDelete = (rowIndex: number): void => {
         setUserToDelete(users[rowIndex]);
@@ -186,7 +132,7 @@ const UsersTable: React.FC = () => {
                 dataPortion={users}
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
-                toggleableHeaders={["id", "createdAt", "updatedAt"]}
+                toggleableHeaders={["userId", "createdAt", "updatedAt"]}
                 defaultShownHeaders={[
                     "firstName",
                     "lastName",
@@ -215,7 +161,7 @@ const UsersTable: React.FC = () => {
                     onDelete: userOnDelete,
                     onEdit: userOnEdit,
                     setDataPortion: setUsers,
-                    isDeletable: (row: UserRow) => row.id !== currentUserId,
+                    isDeletable: (row: UserRow) => row.userId !== currentUserId,
                 }}
                 filterConfig={{
                     paginationType: PaginationType.Server,

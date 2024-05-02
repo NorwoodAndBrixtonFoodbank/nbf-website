@@ -30,7 +30,7 @@ export const convertAuditLogPlusRowsToAuditLogRows = (
         action: auditLogPlusRow.action ?? "",
         actorName:
             auditLogPlusRow.actor_user_id === null
-                ? profileDisplayNameForDeletedUser
+                ? profileDisplayNameForDeletedUser(auditLogPlusRow.actor_role)
                 : auditLogPlusRow.actor_name ?? "",
         clientId: auditLogPlusRow.client_id ?? "",
         collectionCentreId: auditLogPlusRow.collection_centre_id ?? "",

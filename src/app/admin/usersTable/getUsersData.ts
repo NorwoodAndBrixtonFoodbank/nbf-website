@@ -19,7 +19,7 @@ export const getUsersDataAndCount = async (
     sortState: UsersSortState,
     abortSignal: AbortSignal
 ): Promise<GetUsersReturnType> => {
-    let query = supabase.from("profiles_plus").select("*");
+    let query = supabase.from("users_plus").select("*");
 
     if (
         sortState.sortEnabled &&
@@ -53,7 +53,8 @@ export const getUsersDataAndCount = async (
 
     const userData: UserRow[] = users.map((user) => {
         return {
-            id: user.user_id ?? "",
+            userId: user.user_id ?? "",
+            profileId: user.profile_id ?? "",
             firstName: user.first_name ?? "",
             lastName: user.last_name ?? "",
             userRole: user.role ?? "UNKNOWN",
@@ -81,7 +82,7 @@ const getUsersCount = async (
     filters: UsersFilter[],
     abortSignal: AbortSignal
 ): Promise<GetUserCountReturnType> => {
-    let query = supabase.from("profiles_plus").select("*", { count: "exact", head: true });
+    let query = supabase.from("users_plus").select("*", { count: "exact", head: true });
 
     query = getQueryWithFiltersApplied(query, filters);
 

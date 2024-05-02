@@ -1,11 +1,9 @@
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { PaginationType } from "@/components/Tables/Filters";
-import supabase from "@/supabaseClient";
-import { logErrorReturnLogId } from "@/logger/logger";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { UserRole } from "@/databaseUtils";
-import { BuildUserRoleFilterAndError, DbUserRow, UserRow, UsersFilter } from "./types";
+import { DbUserRow, UserRow, UsersFilter } from "./types";
 import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import { usersTableHeaderKeysAndLabels } from "./headers";
 
@@ -38,7 +36,7 @@ const emailSearch = (
     return query.ilike("email", `%${state}%`);
 };
 
-const buildUserRoleFilter = async (): Promise<BuildUserRoleFilterAndError> => {
+export const buildUserRoleFilter = (): UsersFilter<string[]> => {
     const userRoleSearch = (
         query: PostgrestFilterBuilder<Database["public"], any, any>,
         state: string[]
@@ -46,38 +44,20 @@ const buildUserRoleFilter = async (): Promise<BuildUserRoleFilterAndError> => {
         return query.in("role", state);
     };
 
-    const { data, error } = await supabase.from("profiles").select("role");
-
-    if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: User role filter options", {
-            error: error,
-        });
-        return { data: null, error: { type: "failedToFetchUserRoleFilterOptions", logId: logId } };
-    }
-
-    const userRolesFromDb: UserRole[] = data.map((row) => row.role) ?? [];
-
-    const uniqueUserRoles = userRolesFromDb.reduce<UserRole[]>((accumulator, userRole) => {
-        if (!accumulator.includes(userRole)) {
-            accumulator.push(userRole);
-        }
-        return accumulator;
-    }, []);
-
-    uniqueUserRoles.sort();
+    const allUserRoles: UserRole[] = ["volunteer", "manager", "staff", "admin"];
 
     const userRoleFilter = checklistFilter<UserRow, DbUserRow>({
         key: "userRole",
         filterLabel: "User Role",
-        itemLabelsAndKeys: uniqueUserRoles.map((userRole) => [userRole, userRole]),
-        initialCheckedKeys: uniqueUserRoles,
+        itemLabelsAndKeys: allUserRoles.map((userRole) => [userRole, userRole]),
+        initialCheckedKeys: allUserRoles,
         methodConfig: { paginationType: PaginationType.Server, method: userRoleSearch },
     });
 
-    return { data: userRoleFilter, error: null };
+    return userRoleFilter;
 };
 
-export const usersFilters: UsersFilter[] = [
+export const usersFilters: UsersFilter<any>[] = [
     buildServerSideTextFilter({
         key: "firstName",
         label: "First Name",

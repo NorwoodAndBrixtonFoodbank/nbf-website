@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import React from "react";
-import dayjs from "dayjs";
-import { nullPostcodeDisplay } from "../../../common/format";
+import { getParcelOverviewString } from "../../../common/format";
 import { ParcelsTableRow } from "../parcelsTable/types";
 
 const Heading = styled.div`
@@ -30,10 +29,11 @@ const SelectedParcelsOverview: React.FC<ShowParcelsProps> = (props) => {
             <Heading>{props.parcels.length === 1 ? "Parcel" : "Parcels"} selected:</Heading>
             {props.parcels.slice(0, props.maxParcelsToShow).map((parcel) => (
                 <ListItem key={parcel.parcelId}>
-                    {parcel.addressPostcode ?? nullPostcodeDisplay}
-                    {parcel.fullName && ` - ${parcel.fullName}`}
-                    {parcel.collectionDatetime &&
-                        ` @ ${dayjs(parcel.collectionDatetime!).format("DD/MM/YYYY HH:mm")}`}
+                    {getParcelOverviewString(
+                        parcel.addressPostcode,
+                        parcel.fullName,
+                        parcel.collectionDatetime
+                    )}
                 </ListItem>
             ))}
             {props.parcels.length > props.maxParcelsToShow && <ListItem emphasised>...</ListItem>}

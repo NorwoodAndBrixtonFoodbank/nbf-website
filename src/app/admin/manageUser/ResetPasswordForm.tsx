@@ -32,7 +32,7 @@ const ResetPasswordForm: React.FC<Props> = (props) => {
 
     const onConfirmPassword = async (): Promise<void> => {
         const response = await adminUpdateUserEmailAndPassword({
-            userId: props.userToEdit.id,
+            userId: props.userToEdit.userId,
             attributes: { password },
         });
 
@@ -48,7 +48,7 @@ const ResetPasswordForm: React.FC<Props> = (props) => {
             void logInfoReturnLogId(`Password for ${props.userToEdit.email} updated successfully`);
         } else {
             const logId = await logErrorReturnLogId(
-                `Error resetting password userId: ${props.userToEdit.id}`
+                `Error resetting password userId: ${props.userToEdit.userId}`
             );
             props.onConfirm({
                 success: false,
