@@ -252,11 +252,6 @@ const Calendar: React.FC<CalendarProps> = ({
                     initialDate={initialDate}
                     views={{
                         dayGridMonth: {
-                            eventTimeFormat: {
-                                hour: "numeric",
-                                minute: "2-digit",
-                                meridiem: "short",
-                            },
                             titleFormat: { year: "numeric", month: "short" },
                             dayMaxEventRows: 3,
                             moreLinkClick: "day",
@@ -268,11 +263,6 @@ const Calendar: React.FC<CalendarProps> = ({
                             slotMaxTime: calendarEndTime,
                         },
                         timeGridDay: {
-                            eventTimeFormat: {
-                                hour: "numeric",
-                                minute: "2-digit",
-                                meridiem: "short",
-                            },
                             titleFormat: { year: "numeric", month: "short", day: "numeric" },
                             slotMinTime: calendarStartTime,
                             slotMaxTime: calendarEndTime,
@@ -282,6 +272,17 @@ const Calendar: React.FC<CalendarProps> = ({
                     height="auto"
                     eventDisplay="block"
                     locale={enGbLocale}
+                    eventTimeFormat={{
+                        hour: "numeric",
+                        minute: "2-digit",
+                        meridiem: "short",
+                        hour12: true,
+                    }}
+                    slotLabelFormat={{
+                        hour: "numeric",
+                        meridiem: "short",
+                        hour12: true,
+                    }}
                 />
             </CalendarStyling>
         </>
