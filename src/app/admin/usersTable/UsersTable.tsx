@@ -133,7 +133,7 @@ const UsersTable: React.FC = () => {
         message: <></>,
     });
 
-    const buildFilters = async (): Promise<Filter<UserRow, any>[]> => {
+    const buildFilters = (): Filter<UserRow, any>[] => {
         const filters: Filter<UserRow, any>[] = [
             buildTextFilter({
                 key: "firstName",
