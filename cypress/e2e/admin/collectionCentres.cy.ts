@@ -6,25 +6,31 @@ describe("Edit a collection centre on admins page", () => {
         cy.visit("/admin");
     });
 
-    it("Adds a collection centre successfully"),
-        () => {
-            toggleCollectionCentreSection();
-            clickOnAddButton();
-            getNumberOfAriaRows().then((lastRow) => {
-                const newCollectionCentreName = generateRandomCollectionCentreText();
-                addCollectionCentreName(lastRow, newCollectionCentreName);
-                addCollectionCentreAcronym(lastRow, newCollectionCentreName);
-                clickOnSaveButton(lastRow);
-                assertCollectionCentreName({
-                    rowIndex: lastRow,
-                    collectionCentreName: newCollectionCentreName,
-                });
+    it("Adds a collection centre successfully", () => {
+        toggleCollectionCentreSection();
+        assertCollectionCentreName({
+            rowIndex: 2,
+            collectionCentreName: "Brixton Hill - Methodist Church",
+        });
+        clickOnAddButton();
+        getNumberOfAriaRows().then((lastRow) => {
+            const newCollectionCentreName = generateRandomCollectionCentreText();
+            addCollectionCentreName(lastRow, newCollectionCentreName);
+            addCollectionCentreAcronym(lastRow, newCollectionCentreName);
+            clickOnSaveButton(lastRow);
+            assertCollectionCentreName({
+                rowIndex: lastRow,
+                collectionCentreName: newCollectionCentreName,
             });
-        };
+        });
+    });
 
     it("Hides a collection centre successfully", () => {
         toggleCollectionCentreSection();
-
+        assertCollectionCentreName({
+            rowIndex: 2,
+            collectionCentreName: "Brixton Hill - Methodist Church",
+        });
         getNumberOfAriaRows().then((lastRow) => {
             clickOnEditButton(lastRow);
             uncheckIsShownCheckbox(lastRow);
@@ -78,8 +84,8 @@ function addCollectionCentreName(rowIndex: number, text: string): void {
     cy.contains(collectionCentresTableText, { matchCase: false })
         .parents(".MuiPaper-root")
         .find(`[aria-rowindex="${rowIndex}"]`)
-        .find('[data-field]="name"]') // eslint-disable-line quotes
-        .get('input[type="text"]') // eslint-disable-line quotes
+        .get('[data-field="name"]') // eslint-disable-line quotes
+        .find('input[type="text"]') // eslint-disable-line quotes
         .type(text);
 }
 
@@ -87,13 +93,14 @@ function addCollectionCentreAcronym(rowIndex: number, text: string): void {
     cy.contains(collectionCentresTableText, { matchCase: false })
         .parents(".MuiPaper-root")
         .find(`[aria-rowindex="${rowIndex}"]`)
-        .find('[data-field]="acronym"]') // eslint-disable-line quotes
-        .get('input[type="text"]') // eslint-disable-line quotes
+        .get('[data-field="acronym"]') // eslint-disable-line quotes
+        .find('input[type="text"]') // eslint-disable-line quotes
         .type(text);
 }
 
 function generateRandomCollectionCentreText(): string {
-    return uuidv4();
+    const uuid = uuidv4();
+    return `z${uuid}`;
 }
 
 function clickOnEditButton(rowIndex: number): void {
