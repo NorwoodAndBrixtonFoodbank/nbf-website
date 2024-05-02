@@ -1,5 +1,5 @@
 import { Json } from "@/databaseTypesFile";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 export const nullPostcodeDisplay = "NFA";
 
@@ -65,3 +65,12 @@ export const getReadableWebsiteDataName = (name: string): string =>
         .split("_")
         .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
         .join(" ");
+
+export const getParcelOverviewString = (
+    addressPostcode: string | null,
+    fullName: string,
+    collectionDatetime: Date | null
+): string =>
+    (addressPostcode ?? nullPostcodeDisplay) +
+    (fullName && ` - ${fullName}`) +
+    (collectionDatetime && ` @ ${dayjs(collectionDatetime).format("DD/MM/YYYY HH:mm")}`);
