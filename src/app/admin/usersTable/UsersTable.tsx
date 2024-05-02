@@ -22,7 +22,7 @@ import { getCurrentUser } from "@/server/getCurrentUser";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 
 const usersTableHeaderKeysAndLabels: TableHeaders<UserRow> = [
-    ["id", "User ID"],
+    ["userId", "User ID"],
     ["firstName", "First Name"],
     ["lastName", "Last Name"],
     ["email", "Email"],
@@ -133,7 +133,7 @@ const UsersTable: React.FC = () => {
         message: <></>,
     });
 
-    const buildFilters = async (): Promise<Filter<UserRow, any>[]> => {
+    const buildFilters = (): Filter<UserRow, any>[] => {
         const filters: Filter<UserRow, any>[] = [
             buildTextFilter({
                 key: "firstName",
@@ -162,18 +162,9 @@ const UsersTable: React.FC = () => {
                     method: emailSearch,
                 },
             }),
+            buildUserRoleFilter(),
         ];
 
-        const { data: userRoleFilter, error } = await buildUserRoleFilter();
-        if (error) {
-            switch (error.type) {
-                case "failedToFetchUserRoleFilterOptions":
-                    setErrorMessage(`Failed to retrieve user role filters. Log ID: ${error.logId}`);
-                    break;
-            }
-        } else {
-            filters.push(userRoleFilter);
-        }
         return filters;
     };
 
@@ -273,7 +264,7 @@ const UsersTable: React.FC = () => {
                 dataPortion={users}
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
-                toggleableHeaders={["id", "createdAt", "updatedAt"]}
+                toggleableHeaders={["userId", "createdAt", "updatedAt"]}
                 defaultShownHeaders={[
                     "firstName",
                     "lastName",
@@ -302,7 +293,7 @@ const UsersTable: React.FC = () => {
                     onDelete: userOnDelete,
                     onEdit: userOnEdit,
                     setDataPortion: setUsers,
-                    isDeletable: (row: UserRow) => row.id !== currentUserId,
+                    isDeletable: (row: UserRow) => row.userId !== currentUserId,
                 }}
                 filterConfig={{
                     primaryFiltersShown: true,

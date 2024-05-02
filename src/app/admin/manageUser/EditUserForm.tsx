@@ -31,7 +31,7 @@ const EditUserForm: React.FC<Props> = (props) => {
 
     const onEditConfirm = async (): Promise<void> => {
         const error = await updateUserProfile({
-            userId: props.userToEdit.id,
+            profileId: props.userToEdit.profileId,
             role: role,
         });
 

@@ -47,7 +47,7 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
             return;
         }
 
-        const { error: deleteUserError } = await adminDeleteUser(props.userToDelete.id);
+        const { error: deleteUserError } = await adminDeleteUser(props.userToDelete.userId);
 
         if (deleteUserError) {
             const errorMessage = getErrorMessage(deleteUserError.type);
