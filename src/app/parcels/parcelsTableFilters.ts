@@ -3,14 +3,18 @@
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
+import { PaginationType } from "@/components/Tables/Filters";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import { dateFilter } from "@/components/Tables/DateFilter";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
-import { CollectionCentresOptions, DBParcelRow, ParcelsFilter } from "@/app/parcels/fetchParcelTableData";
+import {
+    CollectionCentresOptions,
+    DBParcelRow,
+    ParcelsFilter,
+} from "@/app/parcels/fetchParcelTableData";
 import { getDbDate, nullPostcodeDisplay } from "@/common/format";
 
 interface packingSlotOptionsSet {
@@ -18,17 +22,16 @@ interface packingSlotOptionsSet {
     value: string;
 }
 
-export const fullNameSearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
+type ParcelsFilterMethod<State> = (
+    query: PostgrestFilterBuilder<Database["public"], DBParcelRow, any>,
+    state: State
+) => PostgrestFilterBuilder<Database["public"], DBParcelRow, any>;
+
+export const fullNameSearch: ParcelsFilterMethod<string> = (query, state) => {
     return query.ilike("client_full_name", `%${state}%`);
 };
 
-export const postcodeSearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
+export const postcodeSearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "") {
         return query;
     }
@@ -40,10 +43,7 @@ export const postcodeSearch = (
     return query.ilike("client_address_postcode", `%${state}%`);
 };
 
-export const familySearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
+export const familySearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "") {
         return query;
     }
@@ -66,27 +66,16 @@ export const familySearch = (
     return query.eq("family_count", Number(state));
 };
 
-export const phoneSearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
+export const phoneSearch: ParcelsFilterMethod<string> = (query, state) => {
     return query.ilike("client_phone_number", `%${state}%`);
 };
 
-export const voucherSearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
+export const voucherSearch: ParcelsFilterMethod<string> = (query, state) => {
     return query.ilike("voucher_number", `%${state}%`);
 };
 
-export const buildDateFilter = (
-    initialState: DateRangeState
-): ParcelsFilter<DateRangeState> => {
-    const dateSearch = (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: DateRangeState
-    ): PostgrestFilterBuilder<Database["public"], any, any> => {
+export const buildDateFilter = (initialState: DateRangeState): ParcelsFilter<DateRangeState> => {
+    const dateSearch: ParcelsFilterMethod<DateRangeState> = (query, state) => {
         return query
             .gte("packing_date", getDbDate(state.from))
             .lte("packing_date", getDbDate(state.to));
@@ -99,13 +88,8 @@ export const buildDateFilter = (
     });
 };
 
-export const buildDeliveryCollectionFilter = async (): Promise<
-    ParcelsFilter<string[]>
-> => {
-    const deliveryCollectionSearch = (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: string[]
-    ): PostgrestFilterBuilder<Database["public"], any, any> => {
+export const buildDeliveryCollectionFilter = async (): Promise<ParcelsFilter<string[]>> => {
+    const deliveryCollectionSearch: ParcelsFilterMethod<string[]> = (query, state) => {
         return query.in("collection_centre_acronym", state);
     };
 
@@ -148,10 +132,7 @@ export const buildDeliveryCollectionFilter = async (): Promise<
 };
 
 export const buildLastStatusFilter = async (): Promise<ParcelsFilter<string[]>> => {
-    const lastStatusSearch = (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: string[]
-    ): PostgrestFilterBuilder<Database["public"], any, any> => {
+    const lastStatusSearch: ParcelsFilterMethod<string[]> = (query, state) => {
         if (state.includes("None")) {
             return query.or(
                 `last_status_event_name.is.null,last_status_event_name.in.(${state.join(",")})`
@@ -187,10 +168,7 @@ export const buildLastStatusFilter = async (): Promise<ParcelsFilter<string[]>> 
 };
 
 export const buildPackingSlotFilter = async (): Promise<ParcelsFilter<string[]>> => {
-    const packingSlotSearch = (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: string[]
-    ): PostgrestFilterBuilder<Database["public"], any, any> => {
+    const packingSlotSearch: ParcelsFilterMethod<string[]> = (query, state) => {
         return query.in("packing_slot_name", state);
     };
 

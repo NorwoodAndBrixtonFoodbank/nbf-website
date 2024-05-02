@@ -5,11 +5,11 @@ import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
-import { ParcelStatus, ParcelsPlusRow, Schema } from "@/databaseUtils";
+import { ParcelStatus, ParcelsPlusRow, ViewSchema } from "@/databaseUtils";
 
-export type DBParcelRow = Schema["parcels"]
-export type ParcelsFilter<state=any> = Filter<ParcelsTableRow, state, DBParcelRow>
-export type ParcelsSortState = SortState<ParcelsTableRow, DBParcelRow>
+export type DBParcelRow = ViewSchema["parcels_plus"];
+export type ParcelsFilter<state = any> = Filter<ParcelsTableRow, state, DBParcelRow>;
+export type ParcelsSortState = SortState<ParcelsTableRow, DBParcelRow>;
 
 export type CongestionChargeDetails = {
     postcode: string;
@@ -142,7 +142,7 @@ export type GetParcelDataAndCountErrorType =
 
 export const getParcelsDataAndCount = async (
     supabase: Supabase,
-    filters:ParcelsFilter[],
+    filters: ParcelsFilter[],
     sortState: ParcelsSortState,
     abortSignal: AbortSignal,
     startIndex: number,

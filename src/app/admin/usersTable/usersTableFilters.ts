@@ -1,12 +1,12 @@
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
+import { PaginationType } from "@/components/Tables/Filters";
 import { UserRow } from "@/app/admin/page";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { checklistFilter } from "@/components/Tables/ChecklistFilter";
 import { UserRole } from "@/databaseUtils";
-import { UsersFilter } from "./getUsersData";
+import { DBUserRow, UsersFilter } from "./getUsersData";
 
 type BuildUserRoleFilterErrors = "failedToFetchUserRoleFilterOptions";
 
@@ -77,7 +77,7 @@ export const buildUserRoleFilter = async (): Promise<BuildUserRoleFilterAndError
 
     uniqueUserRoles.sort();
 
-    const userRoleFilter = checklistFilter<UserRow>({
+    const userRoleFilter = checklistFilter<UserRow, DBUserRow>({
         key: "userRole",
         filterLabel: "User Role",
         itemLabelsAndKeys: uniqueUserRoles.map((userRole) => [userRole, userRole]),

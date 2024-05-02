@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import Table, { Row, SortState } from "@/components/Tables/Table";
+import Table, { Row } from "@/components/Tables/Table";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
@@ -15,7 +15,6 @@ import {
 import { AuditLogRow, convertAuditLogPlusRowsToAuditLogRows } from "./types";
 import { auditLogTableSortableColumns } from "./sortFunctions";
 import AuditLogModal from "./auditLogModal/AuditLogModal";
-import { AuditLogPlusDBRow } from "@/databaseUtils";
 
 const AuditLogTable: React.FC = () => {
     const [auditLogDataPortion, setAuditLogDataPortion] = useState<AuditLogRow[]>([]);

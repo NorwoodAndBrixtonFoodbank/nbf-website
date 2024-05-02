@@ -2,10 +2,10 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { Supabase } from "@/supabaseUtils";
 import { AuditLogRow } from "./types";
 import { SortState } from "@/components/Tables/Table";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
+import { PaginationType } from "@/components/Tables/Filters";
 import { AuditLogPlusDBRow, ViewSchema } from "@/databaseUtils";
 
-export type AuditLogSortState = SortState<AuditLogRow, AuditLogPlusDBRow>
+export type AuditLogSortState = SortState<AuditLogRow, AuditLogPlusDBRow>;
 
 type AuditLogResponse =
     | {

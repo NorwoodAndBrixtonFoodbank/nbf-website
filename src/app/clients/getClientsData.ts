@@ -4,11 +4,11 @@ import { Supabase } from "@/supabaseUtils";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
-import { Schema } from "@/databaseUtils";
+import { ViewSchema } from "@/databaseUtils";
 
-export type DBClientRow = Schema["clients"]
-export type ClientsFilter = Filter<ClientsTableRow, any, DBClientRow>
-export type ClientsSortState = SortState<ClientsTableRow, DBClientRow>
+export type DBClientRow = ViewSchema["clients_plus"];
+export type ClientsFilter = Filter<ClientsTableRow, any, DBClientRow>;
+export type ClientsSortState = SortState<ClientsTableRow, DBClientRow>;
 
 type GetClientsDataAndCountErrorType =
     | "abortedFetchingClientsTable"

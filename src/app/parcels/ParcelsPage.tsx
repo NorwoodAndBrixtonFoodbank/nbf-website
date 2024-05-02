@@ -1,6 +1,6 @@
 "use client";
 
-import Table, { Row, SortOptions, SortState, TableHeaders } from "@/components/Tables/Table";
+import Table, { Row, SortOptions, TableHeaders } from "@/components/Tables/Table";
 import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
@@ -29,7 +29,7 @@ import {
     getParcelsDataAndCount,
 } from "./fetchParcelTableData";
 import dayjs from "dayjs";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
+import { PaginationType } from "@/components/Tables/Filters";
 import { StatusType, saveParcelStatus, SaveParcelStatusResult } from "./ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
 import { buildTextFilter } from "@/components/Tables/TextFilter";

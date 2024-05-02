@@ -7,9 +7,9 @@ import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { ViewSchema } from "@/databaseUtils";
 
-export type DBUserRow = ViewSchema["profiles_plus"]
-export type UsersFilter = Filter<UserRow, any, DBUserRow>
-export type UsersSortState = SortState<UserRow, DBUserRow>
+export type DBUserRow = ViewSchema["profiles_plus"];
+export type UsersFilter = Filter<UserRow, any, DBUserRow>;
+export type UsersSortState = SortState<UserRow, DBUserRow>;
 
 type GetUserDataAndCountErrorType =
     | "abortedFetchingProfilesTable"

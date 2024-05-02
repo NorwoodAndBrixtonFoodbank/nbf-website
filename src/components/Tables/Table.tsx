@@ -18,7 +18,6 @@ import { Primitive, SortOrder } from "react-data-table-component/dist/DataTable/
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { Centerer } from "../Modal/ModalFormStyles";
-import { GenericSchema } from "@supabase/supabase-js/dist/module/lib/types";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -46,12 +45,12 @@ export type ColumnStyleOptions = Omit<
     "name" | "selector" | "sortable" | "sortFunction" | "cell"
 >;
 
-export interface SortOptions<Data, DBRow extends Record<string,any>> {
+export interface SortOptions<Data, DBRow extends Record<string, any> = {}> {
     key: keyof Data;
     sortMethodConfig: SortMethodConfig<DBRow>;
 }
 
-type SortMethodConfig<DBRow extends Record<string,any>> =
+type SortMethodConfig<DBRow extends Record<string, any>> =
     | {
           paginationType: PaginationType.Server;
           method: (
@@ -63,7 +62,7 @@ type SortMethodConfig<DBRow extends Record<string,any>> =
           paginationType: PaginationType.Client;
           method: (sortDirection: SortOrder) => void;
       };
-export type SortState<Data, DBRow extends Record<string,any>> =
+export type SortState<Data, DBRow extends Record<string, any> = {}> =
     | {
           sortEnabled: true;
           sortDirection: SortOrder;
@@ -73,7 +72,7 @@ export type SortState<Data, DBRow extends Record<string,any>> =
           sortEnabled: false;
       };
 
-export type SortConfig<Data, DBRow extends Record<string,any>> =
+export type SortConfig<Data, DBRow extends Record<string, any> = {}> =
     | {
           sortPossible: true;
           sortableColumns: SortOptions<Data, DBRow>[];
@@ -81,7 +80,8 @@ export type SortConfig<Data, DBRow extends Record<string,any>> =
       }
     | { sortPossible: false };
 
-export interface CustomColumn<Data, DBRow extends Record<string,any>> extends TableColumn<Row<Data>> {
+export interface CustomColumn<Data, DBRow extends Record<string, any>>
+    extends TableColumn<Row<Data>> {
     sortMethodConfig?: SortMethodConfig<DBRow>;
 }
 
@@ -111,7 +111,7 @@ export type PaginationConfig =
           enablePagination: false;
       };
 
-export type FilterConfig<Data, DBRow extends Record<string, any>> =
+export type FilterConfig<Data, DBRow extends Record<string, any> = {}> =
     | {
           primaryFiltersShown: false;
           additionalFiltersShown: false;
@@ -124,11 +124,11 @@ export type FilterConfig<Data, DBRow extends Record<string, any>> =
       }
     | {
           primaryFiltersShown: true;
-          primaryFilters: Filter<Data,DBRow, any>[];
-          setPrimaryFilters: (primaryFilters: Filter<Data, any,DBRow>[]) => void;
+          primaryFilters: Filter<Data, DBRow, any>[];
+          setPrimaryFilters: (primaryFilters: Filter<Data, any, DBRow>[]) => void;
           additionalFiltersShown: true;
-          additionalFilters: Filter<Data,DBRow,any>[];
-          setAdditionalFilters: (additionalFilters: Filter<Data, any,DBRow>[]) => void;
+          additionalFilters: Filter<Data, DBRow, any>[];
+          setAdditionalFilters: (additionalFilters: Filter<Data, any, DBRow>[]) => void;
       };
 
 export type EditableConfig<Data> =
@@ -142,7 +142,7 @@ export type EditableConfig<Data> =
       }
     | { editable: false };
 
-interface Props<Data, DBRow extends Record<string,any>> {
+interface Props<Data, DBRow extends Record<string, any>> {
     dataPortion: Data[];
     headerKeysAndLabels: TableHeaders<Data>;
     isLoading?: boolean;
@@ -200,7 +200,7 @@ const defaultColumnStyleOptions = {
     maxWidth: "20rem",
 } as const;
 
-const Table = <Data, DBRow extends Record<string,any>={}>({
+const Table = <Data, DBRow extends Record<string, any> = {}>({
     dataPortion,
     headerKeysAndLabels,
     isLoading = false,
@@ -255,7 +255,7 @@ const Table = <Data, DBRow extends Record<string,any>={}>({
     );
 
     const handleSort = async (
-        column: CustomColumn<Data,DBRow>,
+        column: CustomColumn<Data, DBRow>,
         sortDirection: SortOrder
     ): Promise<void> => {
         if (sortConfig.sortPossible && Object.keys(column).length) {

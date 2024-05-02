@@ -22,7 +22,7 @@ export type MethodConfig<Data, State, DBRow extends Record<string, any> = {}> =
       };
 
 export interface Filter<Data, State, DBRow extends Record<string, any> = {}> {
-    key: keyof Data ;
+    key: keyof Data;
     filterComponent: (state: State, setState: (state: State) => void) => React.ReactElement;
     state: State;
     initialState: State;

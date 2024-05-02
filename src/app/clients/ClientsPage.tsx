@@ -4,18 +4,22 @@ import LinkButton from "@/components/Buttons/LinkButton";
 import Icon from "@/components/Icons/Icon";
 import Modal from "@/components/Modal/Modal";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
-import Table, { SortOptions, TableHeaders, SortState } from "@/components/Tables/Table";
+import Table, { SortOptions, TableHeaders } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
 import supabase from "@/supabaseClient";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState, Suspense, useRef, useCallback } from "react";
 import { useTheme } from "styled-components";
-import getClientsDataAndCount, { ClientsFilter, ClientsSortState, DBClientRow } from "./getClientsData";
+import getClientsDataAndCount, {
+    ClientsFilter,
+    ClientsSortState,
+    DBClientRow,
+} from "./getClientsData";
 import { useSearchParams, useRouter } from "next/navigation";
 import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
+import { PaginationType } from "@/components/Tables/Filters";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { CircularProgress } from "@mui/material";

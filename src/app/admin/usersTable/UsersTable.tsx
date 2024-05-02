@@ -1,16 +1,21 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import Table, { SortOptions, SortState, TableHeaders } from "@/components/Tables/Table";
+import Table, { SortOptions, TableHeaders } from "@/components/Tables/Table";
 import { UserRow } from "@/app/admin/page";
 import ManageUserModal from "@/app/admin/manageUser/ManageUserModal";
 import DeleteUserDialog from "@/app/admin/deleteUser/DeleteUserDialog";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import SuccessFailureAlert, { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
+import { PaginationType } from "@/components/Tables/Filters";
 import { buildTextFilter } from "@/components/Tables/TextFilter";
 import supabase from "@/supabaseClient";
-import { DBUserRow, UsersFilter, UsersSortState, getUsersDataAndCount } from "@/app/admin/usersTable/getUsersData";
+import {
+    DBUserRow,
+    UsersFilter,
+    UsersSortState,
+    getUsersDataAndCount,
+} from "@/app/admin/usersTable/getUsersData";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import {
     buildUserRoleFilter,

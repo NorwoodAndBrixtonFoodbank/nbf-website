@@ -1,8 +1,9 @@
 import { SortOptions } from "@/components/Tables/Table";
 import { AuditLogRow } from "./types";
 import { PaginationType } from "@/components/Tables/Filters";
+import { AuditLogPlusDBRow } from "@/databaseUtils";
 
-export const auditLogTableSortableColumns: SortOptions<AuditLogRow>[] = [
+export const auditLogTableSortableColumns: SortOptions<AuditLogRow, AuditLogPlusDBRow>[] = [
     {
         key: "action",
         sortMethodConfig: {
@@ -23,7 +24,7 @@ export const auditLogTableSortableColumns: SortOptions<AuditLogRow>[] = [
         key: "actorName",
         sortMethodConfig: {
             method: (query, sortDirection) =>
-                query.order("actor_profile_name", { ascending: sortDirection === "asc" }),
+                query.order("actor_name", { ascending: sortDirection === "asc" }),
             paginationType: PaginationType.Server,
         },
     },

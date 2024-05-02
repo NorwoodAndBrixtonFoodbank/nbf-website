@@ -8,7 +8,7 @@ import styled from "styled-components";
 import { FilterAltOffOutlined, FilterAltOutlined } from "@mui/icons-material";
 import ColumnTogglePopup from "@/components/Tables/ColumnTogglePopup";
 
-interface Props<Data, DBRow extends Record<string,any>> {
+interface Props<Data, DBRow extends Record<string, any>> {
     setFilters: (filters: Filter<Data, DBRow, any>[]) => void;
     setAdditionalFilters: (filters: Filter<Data, DBRow, any>[]) => void;
     handleClear: () => void;
@@ -47,7 +47,7 @@ const Grow = styled.div`
     flex-grow: 1;
 `;
 
-export const filtersToComponents = <Data, DBRow extends Record<string,any>>(
+export const filtersToComponents = <Data, DBRow extends Record<string, any>>(
     filters: Filter<Data, DBRow, any>[],
     setFilters: (filters: Filter<Data, DBRow, any>[]) => void
 ): React.ReactElement[] => {
@@ -64,7 +64,9 @@ export const filtersToComponents = <Data, DBRow extends Record<string,any>>(
     });
 };
 
-const TableFilterAndExtraColumnsBar = <Data,DBRow extends Record<string,any>>(props: Props<Data, DBRow>): React.ReactElement => {
+const TableFilterAndExtraColumnsBar = <Data, DBRow extends Record<string, any>>(
+    props: Props<Data, DBRow>
+): React.ReactElement => {
     const [showMoreFiltersAndHeaders, setShowMoreFiltersAndHeaders] = useState(false);
 
     const hasPrimaryFilters = props.filters.length !== 0;
