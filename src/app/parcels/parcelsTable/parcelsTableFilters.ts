@@ -108,7 +108,7 @@ export const buildDeliveryCollectionFilter = async (): Promise<ParcelsFilter<str
         return filteredOptions.sort();
     }, []);
 
-    return serverSideChecklistFilter<ParcelsTableRow>({
+    return serverSideChecklistFilter<ParcelsTableRow, DbParcelRow>({
         key: "deliveryCollection",
         filterLabel: "Method",
         itemLabelsAndKeys: optionsSet.map((option) => [option!.name, option!.acronym]),

@@ -11,7 +11,7 @@ import StyleManager from "@/app/themes";
 import { ClientSideFilter, PaginationType } from "./Filters";
 import { SortOrder } from "react-data-table-component/dist/DataTable/types";
 import { buildClientSideTextFilter, filterRowByText } from "./TextFilter";
-import { clientSideSortMethod } from "./sortMethods";
+import { ClientSideSortMethod } from "./sortMethods";
 
 interface TestData {
     full_name: string;
@@ -128,7 +128,7 @@ const Component: React.FC<TestTableProps> = ({
         method: filterRowByText,
     });
 
-    const sortByFullName: SortOptions<TestData, clientSideSortMethod> = {
+    const sortByFullName: SortOptions<TestData, ClientSideSortMethod> = {
         key: "full_name",
         sortMethod: (sortDirection: SortOrder) => {
             const ascendingData = [...testDataPortion].sort((rowA, rowB) =>
@@ -145,7 +145,7 @@ const Component: React.FC<TestTableProps> = ({
     const [primaryFilters, setPrimaryFilters] = useState<ClientSideFilter<TestData, string>[]>([
         fullNameFilter,
     ]);
-    const sortableColumns: SortOptions<TestData, clientSideSortMethod>[] = [sortByFullName];
+    const sortableColumns: SortOptions<TestData, ClientSideSortMethod>[] = [sortByFullName];
 
     const [testDataPortion, setTestDataPortion] = useState<TestData[]>(tableData);
 
@@ -162,7 +162,7 @@ const Component: React.FC<TestTableProps> = ({
     const [checkedRowIds, setCheckedRowIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
 
-    const [sortState, setSortState] = useState<SortState<TestData, clientSideSortMethod>>({
+    const [sortState, setSortState] = useState<SortState<TestData, ClientSideSortMethod>>({
         sortEnabled: false,
     });
 
@@ -232,13 +232,13 @@ const Component: React.FC<TestTableProps> = ({
         additionalFiltersShown: false,
     };
 
-    const trueSortConfig: SortConfig<TestData, clientSideSortMethod> = {
+    const trueSortConfig: SortConfig<TestData, ClientSideSortMethod> = {
         sortPossible: true,
         sortableColumns: sortableColumns,
         setSortState: setSortState,
     };
 
-    const falseSortConfig: SortConfig<TestData, clientSideSortMethod> = {
+    const falseSortConfig: SortConfig<TestData, ClientSideSortMethod> = {
         sortPossible: false,
     };
 

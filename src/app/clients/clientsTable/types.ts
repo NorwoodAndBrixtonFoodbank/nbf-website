@@ -1,13 +1,12 @@
-import { ServerSideFilter } from "@/components/Tables/Filters";
+import { ServerSideFilter, ServerSideFilterMethod } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
-import { serverSideSortMethod } from "@/components/Tables/sortMethods";
-import { Database } from "@/databaseTypesFile";
+import { ServerSideSortMethod } from "@/components/Tables/sortMethods";
 import { ViewSchema } from "@/databaseUtils";
-import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 
 export type DbClientRow = ViewSchema["clients_plus"];
+export type ClientsFilterMethod<State = any> = ServerSideFilterMethod<DbClientRow, State>;
 export type ClientsFilter<State = any> = ServerSideFilter<ClientsTableRow, State, DbClientRow>;
-export type ClientsSortMethod = serverSideSortMethod<DbClientRow>;
+export type ClientsSortMethod = ServerSideSortMethod<DbClientRow>;
 export type ClientsSortState = SortState<ClientsTableRow, ClientsSortMethod>;
 
 export type GetClientsDataAndCountErrorType =
@@ -45,8 +44,3 @@ export interface ClientsTableRow {
     familyCategory: string;
     addressPostcode: string | null;
 }
-
-export type ClientsFilterMethod<State> = (
-    query: PostgrestFilterBuilder<Database["public"], DbClientRow, any>,
-    state: State
-) => PostgrestFilterBuilder<Database["public"], DbClientRow, any>;

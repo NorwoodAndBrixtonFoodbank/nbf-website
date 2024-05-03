@@ -20,7 +20,7 @@ import DataTable, { TableColumn } from "react-data-table-component";
 import styled from "styled-components";
 import { Primitive, SortOrder } from "react-data-table-component/dist/DataTable/types";
 import { Centerer } from "../Modal/ModalFormStyles";
-import { clientSideSortMethod, serverSideSortMethod } from "./sortMethods";
+import { ClientSideSortMethod, ServerSideSortMethod } from "./sortMethods";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -141,8 +141,8 @@ interface Props<Data, DbData extends Record<string, any>, PaginationType> {
     sortConfig: SortConfig<
         Data,
         PaginationType extends PaginationTypeEnum.Client
-            ? clientSideSortMethod
-            : serverSideSortMethod<DbData>
+            ? ClientSideSortMethod
+            : ServerSideSortMethod<DbData>
     >;
     filterConfig: FilterConfig<
         PaginationType extends PaginationTypeEnum.Client
@@ -227,8 +227,8 @@ const Table = <
     const columns: CustomColumn<
         Data,
         PaginationType extends PaginationTypeEnum.Client
-            ? clientSideSortMethod
-            : serverSideSortMethod<DbData>
+            ? ClientSideSortMethod
+            : ServerSideSortMethod<DbData>
     >[] = shownHeaders.map(([headerKey, headerName]) => {
         const columnStyles = Object.assign(
             { ...defaultColumnStyleOptions },
@@ -236,8 +236,8 @@ const Table = <
         );
         let sortMethod:
             | (PaginationType extends PaginationTypeEnum.Client
-                  ? clientSideSortMethod
-                  : serverSideSortMethod<DbData>)
+                  ? ClientSideSortMethod
+                  : ServerSideSortMethod<DbData>)
             | undefined;
         if (sortConfig.sortPossible) {
             sortMethod = sortConfig.sortableColumns.find(
@@ -267,8 +267,8 @@ const Table = <
         column: CustomColumn<
             Data,
             PaginationType extends PaginationTypeEnum.Client
-                ? clientSideSortMethod
-                : serverSideSortMethod<DbData>
+                ? ClientSideSortMethod
+                : ServerSideSortMethod<DbData>
         >,
         sortDirection: SortOrder
     ): Promise<void> => {

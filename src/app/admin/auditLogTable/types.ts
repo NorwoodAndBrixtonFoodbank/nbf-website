@@ -2,9 +2,9 @@ import { Json } from "@/databaseTypesFile";
 import { AuditLogPlusDbRow } from "@/databaseUtils";
 import { profileDisplayNameForDeletedUser } from "./format";
 import { SortState } from "@/components/Tables/Table";
-import { serverSideSortMethod } from "@/components/Tables/sortMethods";
+import { ServerSideSortMethod } from "@/components/Tables/sortMethods";
 
-export type AuditLogSortMethod = serverSideSortMethod<AuditLogPlusDbRow>;
+export type AuditLogSortMethod = ServerSideSortMethod<AuditLogPlusDbRow>;
 export type AuditLogSortState = SortState<AuditLogRow, AuditLogSortMethod>;
 
 export type AuditLogResponse =

@@ -18,7 +18,7 @@ export const serverSideChecklistFilter = <Data, DbData extends Record<string, an
     itemLabelsAndKeys,
     initialCheckedKeys,
     method,
-}: ChecklistFilterProps<Data>): ServerSideFilter<Data, string[], DbData> => {
+}: ChecklistFilterProps<Data, DbData>): ServerSideFilter<Data, string[], DbData> => {
     return {
         key: key,
         state: initialCheckedKeys,

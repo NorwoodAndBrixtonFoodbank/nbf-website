@@ -1,15 +1,10 @@
-import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
-import { Database } from "@/databaseTypesFile";
 import { serverSideChecklistFilter } from "@/components/Tables/ChecklistFilter";
 import { UserRole } from "@/databaseUtils";
-import { DbUserRow, UserRow, UsersFilter } from "./types";
+import { DbUserRow, UserRow, UsersFilter, UsersFilterMethod } from "./types";
 import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import { usersTableHeaderKeysAndLabels } from "./headers";
 
-const firstNameSearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
+const firstNameSearch: UsersFilterMethod<string> = (query, state) => {
     if (state === "") {
         return query;
     } else {
@@ -17,10 +12,7 @@ const firstNameSearch = (
     }
 };
 
-const lastNameSearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
+const lastNameSearch: UsersFilterMethod<string> = (query, state) => {
     if (state === "") {
         return query;
     } else {
@@ -28,18 +20,12 @@ const lastNameSearch = (
     }
 };
 
-const emailSearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
+const emailSearch: UsersFilterMethod<string> = (query, state) => {
     return query.ilike("email", `%${state}%`);
 };
 
 export const buildUserRoleFilter = (): UsersFilter<string[]> => {
-    const userRoleSearch = (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: string[]
-    ): PostgrestFilterBuilder<Database["public"], any, any> => {
+    const userRoleSearch: UsersFilterMethod<string[]> = (query, state) => {
         return query.in("role", state);
     };
 
