@@ -1,5 +1,6 @@
 import { ServerSideFilter } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
+import { serverSideSortMethod } from "@/components/Tables/sortMethods";
 import { Database } from "@/databaseTypesFile";
 import { ParcelStatus, ParcelsPlusRow, Schema, ViewSchema } from "@/databaseUtils";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
@@ -75,7 +76,8 @@ export type ParcelStatusesReturnType =
 
 export type DbParcelRow = ViewSchema["parcels_plus"];
 export type ParcelsFilter<state = any> = ServerSideFilter<ParcelsTableRow, state, DbParcelRow>;
-export type ParcelsSortState = SortState<ParcelsTableRow, DbParcelRow>;
+export type ParcelsSortMethod = serverSideSortMethod<DbParcelRow>;
+export type ParcelsSortState = SortState<ParcelsTableRow, ParcelsSortMethod>;
 
 export type CongestionChargeDetails = {
     postcode: string;

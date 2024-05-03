@@ -1,5 +1,4 @@
 import { Supabase } from "@/supabaseUtils";
-import { PaginationType } from "@/components/Tables/Filters";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
@@ -21,11 +20,8 @@ export const getUsersDataAndCount = async (
 ): Promise<GetUsersReturnType> => {
     let query = supabase.from("users_plus").select("*");
 
-    if (
-        sortState.sortEnabled &&
-        sortState.column.sortMethodConfig?.paginationType === PaginationType.Server
-    ) {
-        query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
+    if (sortState.sortEnabled && sortState.column.sortMethod) {
+        query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
         query = query.order("first_name");
     }

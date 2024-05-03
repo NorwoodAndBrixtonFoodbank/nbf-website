@@ -5,16 +5,18 @@ import Table, { Row } from "@/components/Tables/Table";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-import { AuditLogSortState, fetchAuditLog, fetchAuditLogCount } from "./fetchAuditLogData";
+import { fetchAuditLog, fetchAuditLogCount } from "./fetchAuditLogData";
 import { auditLogTableHeaderKeysAndLabels } from "./columns";
 import { getAuditLogErrorMessage, auditLogTableColumnDisplayFunctions } from "./format";
 import {
     defaultNumberOfAuditLogRowsPerPage,
     numberOfAuditLogRowsPerPageOption,
 } from "./rowsPerPageConstants";
-import { AuditLogRow, convertAuditLogPlusRowsToAuditLogRows } from "./types";
+import { AuditLogRow, AuditLogSortState, convertAuditLogPlusRowsToAuditLogRows } from "./types";
 import { auditLogTableSortableColumns } from "./sortFunctions";
 import AuditLogModal from "./auditLogModal/AuditLogModal";
+import { AuditLogPlusDbRow } from "@/databaseUtils";
+import { PaginationType } from "@/components/Tables/Filters";
 
 const AuditLogTable: React.FC = () => {
     const [auditLogDataPortion, setAuditLogDataPortion] = useState<AuditLogRow[]>([]);
@@ -78,7 +80,7 @@ const AuditLogTable: React.FC = () => {
     return (
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
-            <Table
+            <Table<AuditLogRow, PaginationType.Server, AuditLogPlusDbRow>
                 dataPortion={auditLogDataPortion}
                 headerKeysAndLabels={auditLogTableHeaderKeysAndLabels}
                 defaultShownHeaders={[

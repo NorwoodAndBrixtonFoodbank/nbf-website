@@ -293,7 +293,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
             <TableSurface>
                 <CommentBox originalComment={comment} />
-                <Table<ListRow>
+                <Table<ListRow, PaginationType.Client>
                     headerKeysAndLabels={listsHeaderKeysAndLabels}
                     toggleableHeaders={toggleableHeaders}
                     dataPortion={listData}
@@ -310,7 +310,6 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                         setDataPortion: setListData,
                     }}
                     filterConfig={{
-                        paginationType: PaginationType.Client,
                         primaryFiltersShown: true,
                         primaryFilters: primaryFilters,
                         setPrimaryFilters: setPrimaryFilters,

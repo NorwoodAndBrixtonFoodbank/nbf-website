@@ -52,6 +52,8 @@ export const defaultToString = (value: unknown): string => {
     return JSON.stringify(value);
 };
 
-export type Filter<Data, State, DbData extends Record<string, any> = {}> =
-    | ClientSideFilter<Data, State>
-    | ServerSideFilter<Data, State, DbData>;
+export interface CoreFilter<State = any> {
+    filterComponent: (state: State, setState: (state: State) => void) => React.ReactElement;
+    state: State;
+    initialState: State;
+}

@@ -6,7 +6,6 @@ import ManageUserModal from "@/app/admin/manageUser/ManageUserModal";
 import DeleteUserDialog from "@/app/admin/deleteUser/DeleteUserDialog";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import SuccessFailureAlert, { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
-import { PaginationType } from "@/components/Tables/Filters";
 import supabase from "@/supabaseClient";
 import { getUsersDataAndCount } from "@/app/admin/usersTable/getUsersData";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
@@ -15,8 +14,9 @@ import { getCurrentUser } from "@/server/getCurrentUser";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { defaultNumberOfUsersPerPage, numberOfUsersPerPageOptions } from "./constants";
 import { usersTableHeaderKeysAndLabels, userTableColumnDisplayFunctions } from "./headers";
-import { UserRow, UsersFilter, UsersSortState } from "./types";
+import { DbUserRow, UserRow, UsersFilter, UsersSortState } from "./types";
 import { usersSortableColumns } from "./sortableColumns";
+import { PaginationType } from "@/components/Tables/Filters";
 
 const UsersTable: React.FC = () => {
     const [userToDelete, setUserToDelete] = useState<UserRow | null>(null);
@@ -125,7 +125,7 @@ const UsersTable: React.FC = () => {
     return (
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
-            <Table
+            <Table<UserRow, PaginationType.Server, DbUserRow>
                 dataPortion={users}
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
@@ -161,7 +161,6 @@ const UsersTable: React.FC = () => {
                     isDeletable: (row: UserRow) => row.userId !== currentUserId,
                 }}
                 filterConfig={{
-                    paginationType: PaginationType.Server,
                     primaryFiltersShown: true,
                     primaryFilters: primaryFilters,
                     setPrimaryFilters: setPrimaryFilters,

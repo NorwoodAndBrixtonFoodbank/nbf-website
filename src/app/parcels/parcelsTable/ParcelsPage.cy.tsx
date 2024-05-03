@@ -7,7 +7,7 @@ import {
 } from "@/app/clients/getExpandedClientDetails";
 import { formatDatetimeAsDate } from "@/common/format";
 import { ParcelsPlusRow } from "@/databaseUtils";
-import convertParcelDbtoParcelRow, { processLastStatus } from "./convertParcelDbtoParcelRow";
+import convertParcelDbtoParcelRow, { processLastStatus } from "./convertParcelDBtoParcelRow";
 import { CongestionChargeDetails, ParcelsTableRow } from "./types";
 
 const sampleProcessingData: ParcelsPlusRow[] = [

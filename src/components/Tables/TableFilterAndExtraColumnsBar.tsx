@@ -3,18 +3,17 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { TableHeaders } from "@/components/Tables/Table";
-import { Filter } from "@/components/Tables/Filters";
 import styled from "styled-components";
 import { FilterAltOffOutlined, FilterAltOutlined } from "@mui/icons-material";
 import ColumnTogglePopup from "@/components/Tables/ColumnTogglePopup";
+import { CoreFilter } from "./Filters";
 
-interface Props<Data, DbData extends Record<string, any>> {
-    setFilters: (filters: Filter<Data, any, DbData>[]) => void;
-    setAdditionalFilters: (filters: Filter<Data, any, DbData>[]) => void;
-    handleClear: () => void;
+interface Props<Data, Filter extends CoreFilter> {
+    setFilters?: (filters: Filter[]) => void;
+    setAdditionalFilters?: (filters: Filter[]) => void;
     headers: TableHeaders<Data>;
-    filters: Filter<Data, any, DbData>[];
-    additionalFilters: Filter<Data, any, DbData>[];
+    filters?: Filter[];
+    additionalFilters?: Filter[];
     toggleableHeaders: readonly (keyof Data)[];
     setShownHeaderKeys: (headers: (keyof Data)[]) => void;
     shownHeaderKeys: readonly (keyof Data)[];
@@ -47,9 +46,9 @@ const Grow = styled.div`
     flex-grow: 1;
 `;
 
-export const filtersToComponents = <Data,>(
-    filters: Filter<Data, any>[],
-    setFilters: (filters: Filter<Data, any>[]) => void
+export const filtersToComponents = <Filter extends CoreFilter>(
+    filters: Filter[],
+    setFilters: (filters: Filter[]) => void
 ): React.ReactElement[] => {
     return filters.map((filter, index) => {
         const onFilter = (state: any): void => {
@@ -64,14 +63,36 @@ export const filtersToComponents = <Data,>(
     });
 };
 
-const TableFilterAndExtraColumnsBar = <Data, DbData extends Record<string, any>>(
-    props: Props<Data, DbData>
+const TableFilterAndExtraColumnsBar = <Data, Filter extends CoreFilter>(
+    props: Props<Data, Filter>
 ): React.ReactElement => {
+    const handleClear = (): void => {
+        props.setFilters &&
+            props.filters &&
+            props.setFilters(
+                props.filters?.map((filter) => ({
+                    ...filter,
+                    state: filter.initialState,
+                }))
+            );
+        props.setAdditionalFilters &&
+            props.additionalFilters &&
+            props.setAdditionalFilters(
+                props.additionalFilters?.map((filter) => ({
+                    ...filter,
+                    state: filter.initialState,
+                }))
+            );
+    };
+
     const [showMoreFiltersAndHeaders, setShowMoreFiltersAndHeaders] = useState(false);
 
-    const hasPrimaryFilters = props.filters.length !== 0;
+    const hasPrimaryFilters = props.filters && props.filters?.length !== 0 && props.setFilters;
 
-    const hasAdditionalFilters = props.additionalFilters.length !== 0;
+    const hasAdditionalFilters =
+        props.additionalFilters &&
+        props.additionalFilters?.length !== 0 &&
+        props.setAdditionalFilters;
 
     const hasToggleableHeaders = props.toggleableHeaders.length !== 0;
 
@@ -89,7 +110,10 @@ const TableFilterAndExtraColumnsBar = <Data, DbData extends Record<string, any>>
                 {hasPrimaryFilters && <FilterAltOutlined />}
                 <FilterContainer>
                     <>
-                        {filtersToComponents(props.filters, props.setFilters)}
+                        {props.filters &&
+                            props.filters?.length !== 0 &&
+                            props.setFilters &&
+                            filtersToComponents(props.filters, props.setFilters)}
                         <Grow />
                         {(hasAdditionalFilters || hasToggleableHeaders) && (
                             <StyledButton
@@ -104,7 +128,7 @@ const TableFilterAndExtraColumnsBar = <Data, DbData extends Record<string, any>>
                         {(hasPrimaryFilters || hasAdditionalFilters) && (
                             <StyledButton
                                 variant="outlined"
-                                onClick={props.handleClear}
+                                onClick={handleClear}
                                 color="inherit"
                                 startIcon={<FilterAltOffOutlined />}
                             >
@@ -119,14 +143,16 @@ const TableFilterAndExtraColumnsBar = <Data, DbData extends Record<string, any>>
                     <FiltersAndIconContainer>
                         {hasAdditionalFilters && <FilterAltOutlined />}
                         <FilterContainer>
-                            {props.additionalFilters.length > 0 && (
-                                <>
-                                    {filtersToComponents(
-                                        props.additionalFilters,
-                                        props.setAdditionalFilters
-                                    )}
-                                </>
-                            )}
+                            {props.additionalFilters &&
+                                props.additionalFilters?.length !== 0 &&
+                                props.setAdditionalFilters && (
+                                    <>
+                                        {filtersToComponents(
+                                            props.additionalFilters,
+                                            props.setAdditionalFilters
+                                        )}
+                                    </>
+                                )}
                             <Grow />
                             {props.toggleableHeaders.length > 0 && (
                                 <ColumnTogglePopup

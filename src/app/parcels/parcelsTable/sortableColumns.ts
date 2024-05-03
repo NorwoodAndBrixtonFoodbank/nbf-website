@@ -1,90 +1,59 @@
-import { PaginationType } from "@/components/Tables/Filters";
 import { SortOptions } from "@/components/Tables/Table";
-import { ParcelsTableRow, DbParcelRow } from "./types";
+import { ParcelsTableRow, ParcelsSortMethod } from "./types";
 
-const parcelsSortableColumns: SortOptions<ParcelsTableRow, DbParcelRow>[] = [
+const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] = [
     {
         key: "fullName",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("client_full_name", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("client_full_name", { ascending: sortDirection === "asc" }),
     },
     {
         key: "familyCategory",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("family_count", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("family_count", { ascending: sortDirection === "asc" }),
     },
     {
         key: "addressPostcode",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("client_address_postcode", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("client_address_postcode", { ascending: sortDirection === "asc" }),
     },
     {
         key: "phoneNumber",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("client_phone_number", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("client_phone_number", { ascending: sortDirection === "asc" }),
     },
     {
         key: "voucherNumber",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("voucher_number", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("voucher_number", { ascending: sortDirection === "asc" }),
     },
     {
         key: "deliveryCollection",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("collection_centre_name", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("collection_centre_name", { ascending: sortDirection === "asc" }),
     },
     {
         key: "packingDate",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query
-                    .order("packing_date", { ascending: sortDirection === "asc" })
-                    .order("packing_slot_order")
-                    .order("client_full_name"),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query
+                .order("packing_date", { ascending: sortDirection === "asc" })
+                .order("packing_slot_order")
+                .order("client_full_name"),
     },
     {
         key: "packingSlot",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("packing_slot_order", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("packing_slot_order", { ascending: sortDirection === "asc" }),
     },
     {
         key: "lastStatus",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("last_status_workflow_order", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("last_status_workflow_order", { ascending: sortDirection === "asc" }),
     },
     {
         key: "createdAt",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("created_at", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("created_at", { ascending: sortDirection === "asc" }),
     },
 ];
 

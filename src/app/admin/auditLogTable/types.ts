@@ -1,6 +1,40 @@
 import { Json } from "@/databaseTypesFile";
 import { AuditLogPlusDbRow } from "@/databaseUtils";
 import { profileDisplayNameForDeletedUser } from "./format";
+import { SortState } from "@/components/Tables/Table";
+import { serverSideSortMethod } from "@/components/Tables/sortMethods";
+
+export type AuditLogSortMethod = serverSideSortMethod<AuditLogPlusDbRow>;
+export type AuditLogSortState = SortState<AuditLogRow, AuditLogSortMethod>;
+
+export type AuditLogResponse =
+    | {
+          data: AuditLogPlusDbRow[];
+          error: null;
+      }
+    | {
+          data: null;
+          error: AuditLogError;
+      };
+
+export type AuditLogCountResponse =
+    | {
+          count: number;
+          error: null;
+      }
+    | {
+          count: null;
+          error: AuditLogCountError;
+      };
+
+export interface AuditLogError {
+    type: "failedAuditLogFetch";
+    logId: string;
+}
+export interface AuditLogCountError {
+    type: "failedAuditLogCountFetch" | "nullCount";
+    logId: string;
+}
 
 export interface AuditLogRow {
     auditLogId: string;

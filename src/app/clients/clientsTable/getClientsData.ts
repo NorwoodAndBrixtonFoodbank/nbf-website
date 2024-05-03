@@ -1,7 +1,6 @@
 import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
 import { Supabase } from "@/supabaseUtils";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
-import { PaginationType } from "@/components/Tables/Filters";
 import {
     ClientsFilter,
     ClientsSortState,
@@ -20,11 +19,8 @@ const getClientsDataAndCount = async (
 ): Promise<GetClientsReturnType> => {
     let query = supabase.from("clients_plus").select("*");
 
-    if (
-        sortState.sortEnabled &&
-        sortState.column.sortMethodConfig?.paginationType === PaginationType.Server
-    ) {
-        query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
+    if (sortState.sortEnabled && sortState.column.sortMethod) {
+        query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
         query = query.order("full_name");
     }

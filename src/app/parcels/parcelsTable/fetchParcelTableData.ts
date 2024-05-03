@@ -1,6 +1,5 @@
 import { Supabase } from "@/supabaseUtils";
 import { AbortError, DatabaseError, EdgeFunctionError } from "../../errorClasses";
-import { PaginationType } from "@/components/Tables/Filters";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { ParcelsPlusRow } from "@/databaseUtils";
@@ -14,7 +13,7 @@ import {
     ParcelsSortState,
     ParcelsTableRow,
 } from "./types";
-import convertParcelDbtoParcelRow from "./convertParcelDbtoParcelRow";
+import convertParcelDbtoParcelRow from "./convertParcelDBtoParcelRow";
 
 export const getCongestionChargeDetailsForParcels = async (
     processingData: ParcelsPlusRow[],
@@ -51,11 +50,8 @@ const getParcelsQuery = (
         query = filter.method(query, filter.state);
     });
 
-    if (
-        sortState.sortEnabled &&
-        sortState.column.sortMethodConfig?.paginationType === PaginationType.Server
-    ) {
-        query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
+    if (sortState.sortEnabled && sortState.column.sortMethod) {
+        query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
         query = query
             .order("packing_date", { ascending: false })

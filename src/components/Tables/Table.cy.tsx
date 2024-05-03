@@ -11,6 +11,7 @@ import StyleManager from "@/app/themes";
 import { ClientSideFilter, PaginationType } from "./Filters";
 import { SortOrder } from "react-data-table-component/dist/DataTable/types";
 import { buildClientSideTextFilter, filterRowByText } from "./TextFilter";
+import { clientSideSortMethod } from "./sortMethods";
 
 interface TestData {
     full_name: string;
@@ -127,27 +128,24 @@ const Component: React.FC<TestTableProps> = ({
         method: filterRowByText,
     });
 
-    const sortByFullName: SortOptions<TestData> = {
+    const sortByFullName: SortOptions<TestData, clientSideSortMethod> = {
         key: "full_name",
-        sortMethodConfig: {
-            method: (sortDirection: SortOrder) => {
-                const ascendingData = [...testDataPortion].sort((rowA, rowB) =>
-                    rowA.full_name > rowB.full_name ? 1 : rowB.full_name > rowA.full_name ? -1 : 0
-                );
-                if (sortDirection === "asc") {
-                    setTestDataPortion(ascendingData);
-                } else {
-                    setTestDataPortion([...ascendingData].reverse());
-                }
-            },
-            paginationType: PaginationType.Client,
+        sortMethod: (sortDirection: SortOrder) => {
+            const ascendingData = [...testDataPortion].sort((rowA, rowB) =>
+                rowA.full_name > rowB.full_name ? 1 : rowB.full_name > rowA.full_name ? -1 : 0
+            );
+            if (sortDirection === "asc") {
+                setTestDataPortion(ascendingData);
+            } else {
+                setTestDataPortion([...ascendingData].reverse());
+            }
         },
     };
 
     const [primaryFilters, setPrimaryFilters] = useState<ClientSideFilter<TestData, string>[]>([
         fullNameFilter,
     ]);
-    const sortableColumns: SortOptions<TestData>[] = [sortByFullName];
+    const sortableColumns: SortOptions<TestData, clientSideSortMethod>[] = [sortByFullName];
 
     const [testDataPortion, setTestDataPortion] = useState<TestData[]>(tableData);
 
@@ -164,7 +162,9 @@ const Component: React.FC<TestTableProps> = ({
     const [checkedRowIds, setCheckedRowIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
 
-    const [sortState, setSortState] = useState<SortState<TestData>>({ sortEnabled: false });
+    const [sortState, setSortState] = useState<SortState<TestData, clientSideSortMethod>>({
+        sortEnabled: false,
+    });
 
     // useEffect(() => {
     //     setCheckedRowIds([]);
@@ -220,26 +220,25 @@ const Component: React.FC<TestTableProps> = ({
         enablePagination: false,
     };
 
-    const trueFilterConfig: FilterConfig<TestData> = {
-        paginationType: PaginationType.Client,
+    const trueFilterConfig: FilterConfig<ClientSideFilter<TestData, any>> = {
         primaryFiltersShown: true,
         primaryFilters: primaryFilters,
         setPrimaryFilters: setPrimaryFilters,
         additionalFiltersShown: false,
     };
 
-    const falseFilterConfig: FilterConfig<TestData> = {
+    const falseFilterConfig: FilterConfig<ClientSideFilter<TestData, any>> = {
         primaryFiltersShown: false,
         additionalFiltersShown: false,
     };
 
-    const trueSortConfig: SortConfig<TestData> = {
+    const trueSortConfig: SortConfig<TestData, clientSideSortMethod> = {
         sortPossible: true,
         sortableColumns: sortableColumns,
         setSortState: setSortState,
     };
 
-    const falseSortConfig: SortConfig<TestData> = {
+    const falseSortConfig: SortConfig<TestData, clientSideSortMethod> = {
         sortPossible: false,
     };
 
@@ -254,17 +253,14 @@ const Component: React.FC<TestTableProps> = ({
     }, [primaryFilters, tableData]);
 
     useEffect(() => {
-        if (
-            sortState.sortEnabled &&
-            sortState.column.sortMethodConfig?.paginationType === PaginationType.Client
-        ) {
-            sortState.column.sortMethodConfig.method(sortState.sortDirection);
+        if (sortState.sortEnabled && sortState.column.sortMethod) {
+            sortState.column.sortMethod(sortState.sortDirection);
         }
     }, [sortState, testDataPortion]);
 
     return (
         <StyleManager>
-            <Table
+            <Table<TestData, PaginationType.Client>
                 dataPortion={testDataPortion}
                 headerKeysAndLabels={headers}
                 toggleableHeaders={toggleableHeaders}

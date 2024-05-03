@@ -1,30 +1,20 @@
-import { PaginationType } from "@/components/Tables/Filters";
 import { SortOptions } from "@/components/Tables/Table";
-import { ClientsTableRow, DbClientRow } from "./types";
-const clientsSortableColumns: SortOptions<ClientsTableRow, DbClientRow>[] = [
+import { ClientsSortMethod, ClientsTableRow } from "./types";
+const clientsSortableColumns: SortOptions<ClientsTableRow, ClientsSortMethod>[] = [
     {
         key: "fullName",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("full_name", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("full_name", { ascending: sortDirection === "asc" }),
     },
     {
         key: "familyCategory",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("family_count", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("family_count", { ascending: sortDirection === "asc" }),
     },
     {
         key: "addressPostcode",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("address_postcode", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("address_postcode", { ascending: sortDirection === "asc" }),
     },
 ];
 

@@ -1,62 +1,40 @@
-import { PaginationType } from "@/components/Tables/Filters";
 import { SortOptions } from "@/components/Tables/Table";
-import { UserRow, DbUserRow } from "./types";
+import { UserRow, UsersSortMethod } from "./types";
 
-export const usersSortableColumns: SortOptions<UserRow, DbUserRow>[] = [
+export const usersSortableColumns: SortOptions<UserRow, UsersSortMethod>[] = [
     {
         key: "firstName",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("first_name", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("first_name", { ascending: sortDirection === "asc" }),
     },
     {
         key: "lastName",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("last_name", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("last_name", { ascending: sortDirection === "asc" }),
     },
     {
         key: "userRole",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("role", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("role", { ascending: sortDirection === "asc" }),
     },
     {
         key: "email",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("email", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("email", { ascending: sortDirection === "asc" }),
     },
     {
         key: "telephoneNumber",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("telephone_number", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("telephone_number", { ascending: sortDirection === "asc" }),
     },
     {
         key: "createdAt",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("created_at", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("created_at", { ascending: sortDirection === "asc" }),
     },
     {
         key: "updatedAt",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("updated_at", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("updated_at", { ascending: sortDirection === "asc" }),
     },
 ];

@@ -8,6 +8,7 @@ import {
     GetParcelDataAndCountErrorType,
     ParcelsSortState,
     ParcelsFilter,
+    DbParcelRow,
 } from "./types";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
 import PhoneIcon from "@/components/Icons/PhoneIcon";
@@ -26,7 +27,6 @@ import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
 import { getParcelIds, getParcelsByIds, getParcelsDataAndCount } from "./fetchParcelTableData";
 import dayjs from "dayjs";
-import { PaginationType } from "@/components/Tables/Filters";
 import { StatusType, saveParcelStatus, SaveParcelStatusResult } from "../ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
 import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
@@ -54,6 +54,7 @@ import {
     numberOfParcelsPerPageOptions,
 } from "./constants";
 import { parcelTableHeaderKeysAndLabels, defaultShownHeaders, toggleableHeaders } from "./headers";
+import { PaginationType } from "@/components/Tables/Filters";
 
 const parcelTableColumnStyleOptions = {
     iconsColumn: {
@@ -486,7 +487,7 @@ const ParcelsPage: React.FC<{}> = () => {
                 <>
                     {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
                     <TableSurface>
-                        <Table
+                        <Table<ParcelsTableRow, PaginationType.Server, DbParcelRow>
                             dataPortion={parcelsDataPortion}
                             isLoading={isLoading}
                             paginationConfig={{
@@ -507,7 +508,6 @@ const ParcelsPage: React.FC<{}> = () => {
                                 setSortState: setSortState,
                             }}
                             filterConfig={{
-                                paginationType: PaginationType.Server,
                                 primaryFiltersShown: true,
                                 additionalFiltersShown: true,
                                 primaryFilters: primaryFilters,

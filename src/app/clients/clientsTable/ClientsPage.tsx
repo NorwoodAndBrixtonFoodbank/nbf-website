@@ -21,7 +21,7 @@ import { nullPostcodeDisplay } from "@/common/format";
 import clientsFilters from "./filters";
 import clientsSortableColumns from "./sortableColumns";
 import clientsHeaders from "./headers";
-import { ClientsTableRow, ClientsSortState, ClientsFilter } from "./types";
+import { ClientsTableRow, ClientsSortState, ClientsFilter, DbClientRow } from "./types";
 import { PaginationType } from "@/components/Tables/Filters";
 
 const clientIdParam = "clientId";
@@ -130,7 +130,7 @@ const ClientsPage: React.FC<{}> = () => {
                 <>
                     {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
                     <TableSurface>
-                        <Table
+                        <Table<ClientsTableRow, PaginationType.Server, DbClientRow>
                             dataPortion={clientsDataPortion}
                             paginationConfig={{
                                 enablePagination: true,
@@ -148,7 +148,6 @@ const ClientsPage: React.FC<{}> = () => {
                                 router.push(`/clients?${clientIdParam}=${row.data.clientId}`);
                             }}
                             filterConfig={{
-                                paginationType: PaginationType.Server,
                                 primaryFiltersShown: true,
                                 primaryFilters: primaryFilters,
                                 setPrimaryFilters: setPrimaryFilters,

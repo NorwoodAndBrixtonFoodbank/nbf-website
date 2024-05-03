@@ -1,40 +1,7 @@
 import { logErrorReturnLogId } from "@/logger/logger";
 import { Supabase } from "@/supabaseUtils";
-import { AuditLogRow } from "./types";
-import { SortState } from "@/components/Tables/Table";
-import { PaginationType } from "@/components/Tables/Filters";
-import { AuditLogPlusDbRow, ViewSchema } from "@/databaseUtils";
-
-export type AuditLogSortState = SortState<AuditLogRow, AuditLogPlusDbRow>;
-
-type AuditLogResponse =
-    | {
-          data: AuditLogPlusDbRow[];
-          error: null;
-      }
-    | {
-          data: null;
-          error: AuditLogError;
-      };
-
-type AuditLogCountResponse =
-    | {
-          count: number;
-          error: null;
-      }
-    | {
-          count: null;
-          error: AuditLogCountError;
-      };
-
-export interface AuditLogError {
-    type: "failedAuditLogFetch";
-    logId: string;
-}
-export interface AuditLogCountError {
-    type: "failedAuditLogCountFetch" | "nullCount";
-    logId: string;
-}
+import { AuditLogCountResponse, AuditLogResponse, AuditLogSortState } from "./types";
+import { ViewSchema } from "@/databaseUtils";
 
 export const fetchAuditLog = async (
     supabase: Supabase,
@@ -44,11 +11,8 @@ export const fetchAuditLog = async (
 ): Promise<AuditLogResponse> => {
     let query = supabase.from("audit_log_plus").select("*").range(startIndex, endIndex);
 
-    if (
-        sortState.sortEnabled &&
-        sortState.column.sortMethodConfig?.paginationType === PaginationType.Server
-    ) {
-        query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
+    if (sortState.sortEnabled && sortState.column.sortMethod) {
+        query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
         query = query.order<keyof ViewSchema["audit_log_plus"]>("created_at", { ascending: false });
     }

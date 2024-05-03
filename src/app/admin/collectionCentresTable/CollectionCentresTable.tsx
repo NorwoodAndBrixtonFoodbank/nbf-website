@@ -91,7 +91,7 @@ const CollectionCentresTables: React.FC = () => {
     return (
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
-            <Table
+            <Table<CollectionCentresTableRow, PaginationType.Client>
                 dataPortion={collectionCentres}
                 headerKeysAndLabels={collectionCentresTableHeaderKeysAndLabels}
                 defaultShownHeaders={["name", "acronym"]}
@@ -103,7 +103,6 @@ const CollectionCentresTables: React.FC = () => {
                     editable: false,
                 }}
                 filterConfig={{
-                    paginationType: PaginationType.Client,
                     primaryFiltersShown: true,
                     primaryFilters: primaryFilters,
                     setPrimaryFilters: setPrimaryFilters,
