@@ -49,7 +49,7 @@ export const availableActions: AvailableActionsType = {
         newStatus: "Day Overview Downloaded",
     },
     "Delete Parcel": {
-        newStatus: "Request Deleted",
+        newStatus: "Parcel Deleted",
     },
     "Generate Map": {
         newStatus: "Map Generated",

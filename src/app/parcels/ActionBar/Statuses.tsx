@@ -19,7 +19,7 @@ const nonMenuStatuses: StatusType[] = [
     "Driver Overview Downloaded", //Generated when driver overview pdf downloaded
     "Map Generated", //Generated when maps generated
     "Out for Delivery",
-    "Request Deleted", //Generated when parcel deleted
+    "Parcel Deleted", //Generated when parcel deleted
     "Shipping Labels Downloaded", //Generated when shipping labels pdf downloaded
     "Shopping List Downloaded", //Generated when shopping list pdf downloaded
 ];
