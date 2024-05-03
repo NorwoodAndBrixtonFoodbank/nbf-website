@@ -2,7 +2,7 @@ export const eventNamesWithNumberData = ["Shipping Labels Downloaded"];
 
 export const eventNamesWithNoData = [
     "No Status",
-    "Request Denied",
+    "Parcel Denied",
     "Pending More Info",
     "Called and Confirmed",
     "Called and No Response",
@@ -19,5 +19,5 @@ export const eventNamesWithNoData = [
     "Delivery Failed",
     "Delivery Cancelled",
     "Fulfilled with Trussell Trust",
-    "Request Deleted",
+    "Parcel Deleted",
 ];
