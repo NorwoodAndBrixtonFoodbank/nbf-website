@@ -231,6 +231,16 @@ const ClientsPage: React.FC<{}> = () => {
                             router.push("/clients");
                         }}
                         headerId="clientsDetailModal"
+                        footer={
+                            <Centerer>
+                                <LinkButton link={`/clients/edit/${clientId}`}>
+                                    Edit Client
+                                </LinkButton>
+                                <LinkButton link={`/parcels/add/${clientId}`}>
+                                    Add Parcel
+                                </LinkButton>
+                            </Centerer>
+                        }
                     >
                         <OutsideDiv>
                             <ContentDiv>
@@ -240,17 +250,6 @@ const ClientsPage: React.FC<{}> = () => {
                                     </Suspense>
                                 )}
                             </ContentDiv>
-
-                            <ButtonsDiv>
-                                <Centerer>
-                                    <LinkButton link={`/clients/edit/${clientId}`}>
-                                        Edit Client
-                                    </LinkButton>
-                                    <LinkButton link={`/parcels/add/${clientId}`}>
-                                        Add Parcel
-                                    </LinkButton>
-                                </Centerer>
-                            </ButtonsDiv>
                         </OutsideDiv>
                     </Modal>
                 </>

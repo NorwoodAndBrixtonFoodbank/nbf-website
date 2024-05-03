@@ -668,6 +668,25 @@ const ParcelsPage: React.FC<{}> = () => {
                             router.push("/parcels");
                         }}
                         headerId="expandedParcelDetailsModal"
+                        footer={
+                            <Centerer>
+                                <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
+                                    Edit Parcel
+                                </LinkButton>
+                                {clientIdForSelectedParcel && (
+                                    <LinkButton
+                                        link={`/clients?clientId=${clientIdForSelectedParcel}`}
+                                    >
+                                        See Client Details
+                                    </LinkButton>
+                                )}
+                                {clientIdForSelectedParcel && (
+                                    <LinkButton link={`/clients/edit/${clientIdForSelectedParcel}`}>
+                                        Edit Client Details
+                                    </LinkButton>
+                                )}
+                            </Centerer>
+                        }
                     >
                         <OutsideDiv>
                             <ContentDiv>
@@ -675,27 +694,6 @@ const ParcelsPage: React.FC<{}> = () => {
                                     <ExpandedParcelDetails parcelId={selectedParcelId} />
                                 </Suspense>
                             </ContentDiv>
-                            <ButtonsDiv>
-                                <Centerer>
-                                    <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
-                                        Edit Parcel
-                                    </LinkButton>
-                                    {clientIdForSelectedParcel && (
-                                        <LinkButton
-                                            link={`/clients?clientId=${clientIdForSelectedParcel}`}
-                                        >
-                                            See Client Details
-                                        </LinkButton>
-                                    )}
-                                    {clientIdForSelectedParcel && (
-                                        <LinkButton
-                                            link={`/clients/edit/${clientIdForSelectedParcel}`}
-                                        >
-                                            Edit Client Details
-                                        </LinkButton>
-                                    )}
-                                </Centerer>
-                            </ButtonsDiv>
                         </OutsideDiv>
                     </Modal>
                 </>
