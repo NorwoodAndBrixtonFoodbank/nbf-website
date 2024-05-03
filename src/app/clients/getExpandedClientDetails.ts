@@ -18,7 +18,6 @@ const getRawClientDetails = async (clientId: string) => {
         .from("clients")
         .select(
             `
-            primary_key,
             full_name,
             phone_number,
             delivery_instructions,
@@ -65,7 +64,6 @@ export const familyCountToFamilyCategory = (count: number): string => {
 };
 
 export interface ExpandedClientData {
-    primaryKey: string;
     fullName: string;
     address: string;
     deliveryInstructions: string;
@@ -82,7 +80,6 @@ export interface ExpandedClientData {
 
 export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientData => {
     return {
-        primaryKey: client.primary_key,
         fullName: client.full_name,
         address: formatAddressFromClientDetails(client),
         deliveryInstructions: client.delivery_instructions,
