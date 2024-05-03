@@ -26,7 +26,7 @@ export type ActionName =
     | "Download Shopping Lists"
     | "Download Driver Overview"
     | "Download Day Overview"
-    | "Delete Parcel Request"
+    | "Delete Parcel"
     | "Generate Map";
 
 type AvailableActionsType = {
