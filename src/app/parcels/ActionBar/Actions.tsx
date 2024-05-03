@@ -77,7 +77,7 @@ const getActionModal = (
             return <DriverOverviewModal {...actionModalProps} />;
         case "Download Day Overview":
             return <DayOverviewModal {...actionModalProps} />;
-        case "Delete Parcel Request":
+        case "Delete Parcel":
             return <DeleteParcelModal {...actionModalProps} />;
         case "Generate Map":
             return <GenerateMapModal {...actionModalProps} />;
