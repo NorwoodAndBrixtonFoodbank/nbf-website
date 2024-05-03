@@ -1,7 +1,13 @@
 import React from "react";
 import styled from "styled-components";
 import FreeFormTextInput from "../DataInput/FreeFormTextInput";
-import { ServerSideFilter, defaultToString, ServerSideFilterMethod, ClientSideFilterMethod, ClientSideFilter } from "./Filters";
+import {
+    ServerSideFilter,
+    defaultToString,
+    ServerSideFilterMethod,
+    ClientSideFilterMethod,
+    ClientSideFilter,
+} from "./Filters";
 import { TableHeaders } from "./Table";
 
 interface ServerSideTextFilterProps<Data, DbData extends Record<string, any>> {
@@ -84,11 +90,7 @@ export const buildClientSideTextFilter = <Data,>({
     };
 };
 
-export const filterRowByText = <Data,>(
-    row: Data,
-    state: string,
-    key: keyof Data
-): boolean => {
+export const filterRowByText = <Data,>(row: Data, state: string, key: keyof Data): boolean => {
     let string = defaultToString(row[key]);
     string = string.toLowerCase();
     state = state.toLowerCase();

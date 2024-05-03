@@ -1,7 +1,7 @@
 "use client";
 
 import Icon from "@/components/Icons/Icon";
-import { ClientSideFilter, PaginationType, ServerSideFilter } from "@/components/Tables/Filters";
+import { Filter, PaginationType } from "@/components/Tables/Filters";
 import TableFilterAndExtraColumnsBar from "@/components/Tables/TableFilterAndExtraColumnsBar";
 import {
     faAnglesDown,
@@ -45,44 +45,44 @@ export type ColumnStyleOptions = Omit<
     "name" | "selector" | "sortable" | "sortFunction" | "cell"
 >;
 
-export interface SortOptions<Data, DbRow extends Record<string, any> = {}> {
+export interface SortOptions<Data, DbData extends Record<string, any> = {}> {
     key: keyof Data;
-    sortMethodConfig: SortMethodConfig<DbRow>;
+    sortMethodConfig: SortMethodConfig<DbData>;
 }
 
-type SortMethodConfig<DbRow extends Record<string, any>> =
+type SortMethodConfig<DbData extends Record<string, any>> =
     | {
           paginationType: PaginationType.Server;
           method: (
-              query: PostgrestFilterBuilder<Database["public"], DbRow, any>,
+              query: PostgrestFilterBuilder<Database["public"], DbData, any>,
               sortDirection: SortOrder
-          ) => PostgrestFilterBuilder<Database["public"], DbRow, any>;
+          ) => PostgrestFilterBuilder<Database["public"], DbData, any>;
       }
     | {
           paginationType: PaginationType.Client;
           method: (sortDirection: SortOrder) => void;
       };
-export type SortState<Data, DbRow extends Record<string, any> = {}> =
+export type SortState<Data, DbData extends Record<string, any> = {}> =
     | {
           sortEnabled: true;
           sortDirection: SortOrder;
-          column: CustomColumn<Data, DbRow>;
+          column: CustomColumn<Data, DbData>;
       }
     | {
           sortEnabled: false;
       };
 
-export type SortConfig<Data, DbRow extends Record<string, any> = {}> =
+export type SortConfig<Data, DbData extends Record<string, any> = {}> =
     | {
           sortPossible: true;
-          sortableColumns: SortOptions<Data, DbRow>[];
-          setSortState: (sortState: SortState<Data, DbRow>) => void;
+          sortableColumns: SortOptions<Data, DbData>[];
+          setSortState: (sortState: SortState<Data, DbData>) => void;
       }
     | { sortPossible: false };
 
-export interface CustomColumn<Data, DbRow extends Record<string, any>>
+export interface CustomColumn<Data, DbData extends Record<string, any>>
     extends TableColumn<Row<Data>> {
-    sortMethodConfig?: SortMethodConfig<DbRow>;
+    sortMethodConfig?: SortMethodConfig<DbData>;
 }
 
 export type CheckboxConfig<Data> =
@@ -111,42 +111,24 @@ export type PaginationConfig =
           enablePagination: false;
       };
 
-export type FilterConfig<Data, DbRow extends Record<string, any> = {}> =
+export type FilterConfig<Data, DbData extends Record<string, any> = {}> =
     | {
           primaryFiltersShown: false;
           additionalFiltersShown: false;
       }
     | {
           primaryFiltersShown: true;
-          paginationType: PaginationType.Client;
-          primaryFilters: ClientSideFilter<Data, any>[];
-          setPrimaryFilters: (primaryFilters: ClientSideFilter<Data, any>[]) => void;
+          primaryFilters: Filter<Data, any, DbData>[];
+          setPrimaryFilters: (primaryFilters: Filter<Data, any, DbData>[]) => void;
           additionalFiltersShown: false;
       }
     | {
           primaryFiltersShown: true;
-          paginationType: PaginationType.Server;
-          primaryFilters: ServerSideFilter<Data, any, DbRow>[];
-          setPrimaryFilters: (primaryFilters: ServerSideFilter<Data, any, DbRow>[]) => void;
-          additionalFiltersShown: false;
-      }
-    | {
-          primaryFiltersShown: true;
-          paginationType: PaginationType.Client;
-          primaryFilters: ClientSideFilter<Data, any>[];
-          setPrimaryFilters: (primaryFilters: ClientSideFilter<Data, any>[]) => void;
+          primaryFilters: Filter<Data, any, DbData>[];
+          setPrimaryFilters: (primaryFilters: Filter<Data, any, DbData>[]) => void;
           additionalFiltersShown: true;
-          additionalFilters: ClientSideFilter<Data, any>[];
-          setAdditionalFilters: (additionalFilters: ClientSideFilter<Data, any>[]) => void;
-      }
-    | {
-          primaryFiltersShown: true;
-          paginationType: PaginationType.Server;
-          primaryFilters: ServerSideFilter<Data, any, DbRow>[];
-          setPrimaryFilters: (primaryFilters: ServerSideFilter<Data, any, DbRow>[]) => void;
-          additionalFiltersShown: true;
-          additionalFilters: ServerSideFilter<Data, any, DbRow>[];
-          setAdditionalFilters: (additionalFilters: ServerSideFilter<Data, any, DbRow>[]) => void;
+          additionalFilters: Filter<Data, any, DbData>[];
+          setAdditionalFilters: (additionalFilters: Filter<Data, any, DbData>[]) => void;
       };
 
 export type EditableConfig<Data> =
@@ -160,14 +142,14 @@ export type EditableConfig<Data> =
       }
     | { editable: false };
 
-interface Props<Data, DbRow extends Record<string, any>> {
+interface Props<Data, DbData extends Record<string, any>> {
     dataPortion: Data[];
     headerKeysAndLabels: TableHeaders<Data>;
     isLoading?: boolean;
     checkboxConfig: CheckboxConfig<Data>;
     paginationConfig: PaginationConfig;
-    sortConfig: SortConfig<Data, DbRow>;
-    filterConfig: FilterConfig<Data, DbRow>;
+    sortConfig: SortConfig<Data, DbData>;
+    filterConfig: FilterConfig<Data, DbData>;
     defaultShownHeaders?: readonly (keyof Data)[];
     toggleableHeaders?: readonly (keyof Data)[];
     columnDisplayFunctions?: ColumnDisplayFunctions<Data>;
@@ -218,7 +200,7 @@ const defaultColumnStyleOptions = {
     maxWidth: "20rem",
 } as const;
 
-const Table = <Data, DbRow extends Record<string, any> = {}>({
+const Table = <Data, DbData extends Record<string, any> = {}>({
     dataPortion,
     headerKeysAndLabels,
     isLoading = false,
@@ -233,15 +215,15 @@ const Table = <Data, DbRow extends Record<string, any> = {}>({
     paginationConfig,
     editableConfig,
     pointerOnHover,
-}: Props<Data, DbRow>): React.ReactElement => {
+}: Props<Data, DbData>): React.ReactElement => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
     );
 
     const shownHeaders = headerKeysAndLabels.filter(([key]) => shownHeaderKeys.includes(key));
 
-    const columns: CustomColumn<Data, DbRow>[] = shownHeaders.map(
-        ([headerKey, headerName]): CustomColumn<Data, DbRow> => {
+    const columns: CustomColumn<Data, DbData>[] = shownHeaders.map(
+        ([headerKey, headerName]): CustomColumn<Data, DbData> => {
             const columnStyles = Object.assign(
                 { ...defaultColumnStyleOptions },
                 columnStyleOptions[headerKey] ?? {}
@@ -273,7 +255,7 @@ const Table = <Data, DbRow extends Record<string, any> = {}>({
     );
 
     const handleSort = async (
-        column: CustomColumn<Data, DbRow>,
+        column: CustomColumn<Data, DbData>,
         sortDirection: SortOrder
     ): Promise<void> => {
         if (sortConfig.sortPossible && Object.keys(column).length) {
@@ -407,46 +389,26 @@ const Table = <Data, DbRow extends Record<string, any> = {}>({
 
     const handleClear = (): void => {
         if (filterConfig.primaryFiltersShown) {
-            if (filterConfig.paginationType === PaginationType.Client) {
-                filterConfig.setPrimaryFilters(
-                    filterConfig.primaryFilters.map((filter) => ({
-                        ...filter,
-                        state: filter.initialState,
-                    }))
-                );
-            }
-            if (filterConfig.paginationType === PaginationType.Server) {
-                filterConfig.setPrimaryFilters(
-                    filterConfig.primaryFilters.map((filter) => ({
-                        ...filter,
-                        state: filter.initialState,
-                    }))
-                );
-            }
-        }
-        if (filterConfig.additionalFiltersShown) {
-            if (filterConfig.paginationType === PaginationType.Client) {
-                filterConfig.setAdditionalFilters(
-                    filterConfig.additionalFilters.map((filter) => ({
-                        ...filter,
-                        state: filter.initialState,
-                    }))
-                );
-            }
-            if (filterConfig.paginationType === PaginationType.Server) {
-                filterConfig.setAdditionalFilters(
-                    filterConfig.additionalFilters.map((filter) => ({
-                        ...filter,
-                        state: filter.initialState,
-                    }))
-                );
-            }
+            filterConfig.setPrimaryFilters(
+                filterConfig.primaryFilters.map((filter) => ({
+                    ...filter,
+                    state: filter.initialState,
+                }))
+            );
         }
     };
+    if (filterConfig.additionalFiltersShown) {
+        filterConfig.setAdditionalFilters(
+            filterConfig.additionalFilters.map((filter) => ({
+                ...filter,
+                state: filter.initialState,
+            }))
+        );
+    }
 
     return (
         <>
-            <TableFilterAndExtraColumnsBar<Data, DbRow>
+            <TableFilterAndExtraColumnsBar<Data, DbData>
                 handleClear={handleClear}
                 setFilters={
                     filterConfig.primaryFiltersShown ? filterConfig.setPrimaryFilters : () => {}

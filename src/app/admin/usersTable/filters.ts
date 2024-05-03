@@ -1,7 +1,6 @@
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
-import { PaginationType } from "@/components/Tables/Filters";
-import { checklistFilter } from "@/components/Tables/ChecklistFilter";
+import { serverSideChecklistFilter } from "@/components/Tables/ChecklistFilter";
 import { UserRole } from "@/databaseUtils";
 import { DbUserRow, UserRow, UsersFilter } from "./types";
 import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
@@ -46,12 +45,12 @@ export const buildUserRoleFilter = (): UsersFilter<string[]> => {
 
     const allUserRoles: UserRole[] = ["volunteer", "manager", "staff", "admin"];
 
-    const userRoleFilter = checklistFilter<UserRow, DbUserRow>({
+    const userRoleFilter = serverSideChecklistFilter<UserRow, DbUserRow>({
         key: "userRole",
         filterLabel: "User Role",
         itemLabelsAndKeys: allUserRoles.map((userRole) => [userRole, userRole]),
         initialCheckedKeys: allUserRoles,
-        methodConfig: { paginationType: PaginationType.Server, method: userRoleSearch },
+        method: userRoleSearch,
     });
 
     return userRoleFilter;

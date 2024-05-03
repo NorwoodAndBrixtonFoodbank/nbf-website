@@ -1,12 +1,11 @@
 "use client";
 
 import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
-import { PaginationType } from "@/components/Tables/Filters";
-import { dateFilter } from "@/components/Tables/DateFilter";
+import { serverSideDateFilter } from "@/components/Tables/DateFilter";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
-import { checklistFilter } from "@/components/Tables/ChecklistFilter";
+import { serverSideChecklistFilter } from "@/components/Tables/ChecklistFilter";
 import { getDbDate, nullPostcodeDisplay } from "@/common/format";
 import {
     CollectionCentresOptions,
@@ -67,10 +66,10 @@ export const buildDateFilter = (initialState: DateRangeState): ParcelsFilter<Dat
             .gte("packing_date", getDbDate(state.from))
             .lte("packing_date", getDbDate(state.to));
     };
-    return dateFilter<ParcelsTableRow>({
+    return serverSideDateFilter<ParcelsTableRow, DbParcelRow>({
         key: "packingDate",
         label: "",
-        methodConfig: { paginationType: PaginationType.Server, method: dateSearch },
+        method: dateSearch,
         initialState: initialState,
     });
 };
@@ -109,12 +108,12 @@ export const buildDeliveryCollectionFilter = async (): Promise<ParcelsFilter<str
         return filteredOptions.sort();
     }, []);
 
-    return checklistFilter<ParcelsTableRow>({
+    return serverSideChecklistFilter<ParcelsTableRow>({
         key: "deliveryCollection",
         filterLabel: "Method",
         itemLabelsAndKeys: optionsSet.map((option) => [option!.name, option!.acronym]),
         initialCheckedKeys: optionsSet.map((option) => option!.acronym),
-        methodConfig: { paginationType: PaginationType.Server, method: deliveryCollectionSearch },
+        method: deliveryCollectionSearch,
     });
 };
 
@@ -145,12 +144,12 @@ export const buildLastStatusFilter = async (): Promise<ParcelsFilter<string[]>> 
     }, []);
     data && optionsSet.push("None");
 
-    return checklistFilter<ParcelsTableRow, DbParcelRow>({
+    return serverSideChecklistFilter<ParcelsTableRow, DbParcelRow>({
         key: "lastStatus",
         filterLabel: "Last Status",
         itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
         initialCheckedKeys: optionsSet.filter((option) => option !== "Request Deleted"),
-        methodConfig: { paginationType: PaginationType.Server, method: lastStatusSearch },
+        method: lastStatusSearch,
     });
 };
 
@@ -190,11 +189,11 @@ export const buildPackingSlotFilter = async (): Promise<ParcelsFilter<string[]>>
 
     optionsSet.sort();
 
-    return checklistFilter<ParcelsTableRow, DbParcelRow>({
+    return serverSideChecklistFilter<ParcelsTableRow, DbParcelRow>({
         key: "packingSlot",
         filterLabel: "Packing Slot",
         itemLabelsAndKeys: optionsSet.map((option) => [option.value, option.key]),
         initialCheckedKeys: optionsSet.map((option) => option.key),
-        methodConfig: { paginationType: PaginationType.Server, method: packingSlotSearch },
+        method: packingSlotSearch,
     });
 };

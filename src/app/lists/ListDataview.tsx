@@ -14,7 +14,7 @@ import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
-import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
+import { buildClientSideTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 import { ClientSideFilter, PaginationType } from "@/components/Tables/Filters";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
@@ -113,11 +113,11 @@ const listsColumnStyleOptions: ColumnStyles<ListRow> = {
 };
 
 const filters: ClientSideFilter<ListRow, string>[] = [
-    buildTextFilter({
+    buildClientSideTextFilter({
         key: "itemName",
         label: "Item",
         headers: listsHeaderKeysAndLabels,
-        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
+        method: filterRowByText,
     }),
 ];
 

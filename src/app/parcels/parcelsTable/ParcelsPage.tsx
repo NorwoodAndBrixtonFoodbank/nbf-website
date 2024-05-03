@@ -29,7 +29,7 @@ import dayjs from "dayjs";
 import { PaginationType } from "@/components/Tables/Filters";
 import { StatusType, saveParcelStatus, SaveParcelStatusResult } from "../ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
-import { buildTextFilter } from "@/components/Tables/TextFilter";
+import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import { CircularProgress } from "@mui/material";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { ErrorSecondaryText } from "../../errorStylingandMessages";
@@ -153,8 +153,8 @@ const ParcelsPage: React.FC<{}> = () => {
     const startPoint = (currentPage - 1) * parcelCountPerPage;
     const endPoint = currentPage * parcelCountPerPage - 1;
 
-    const [primaryFilters, setPrimaryFilters] = useState<ParcelsFilter[]>([]);
-    const [additionalFilters, setAdditionalFilters] = useState<ParcelsFilter[]>([]);
+    const [primaryFilters, setPrimaryFilters] = useState<ParcelsFilter<any>[]>([]);
+    const [additionalFilters, setAdditionalFilters] = useState<ParcelsFilter<any>[]>([]);
 
     const [areFiltersLoadingForFirstTime, setAreFiltersLoadingForFirstTime] =
         useState<boolean>(true);
@@ -203,39 +203,39 @@ const ParcelsPage: React.FC<{}> = () => {
             });
             const primaryFilters: ParcelsFilter[] = [
                 dateFilter,
-                buildTextFilter({
+                buildServerSideTextFilter({
                     key: "fullName",
                     label: "Name",
                     headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { paginationType: PaginationType.Server, method: fullNameSearch },
+                    method: fullNameSearch,
                 }),
-                buildTextFilter({
+                buildServerSideTextFilter({
                     key: "addressPostcode",
                     label: "Postcode",
                     headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { paginationType: PaginationType.Server, method: postcodeSearch },
+                    method: postcodeSearch,
                 }),
                 await buildDeliveryCollectionFilter(),
             ];
 
             const additionalFilters = [
-                buildTextFilter({
+                buildServerSideTextFilter({
                     key: "familyCategory",
                     label: "Family",
                     headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { paginationType: PaginationType.Server, method: familySearch },
+                    method: familySearch,
                 }),
-                buildTextFilter({
+                buildServerSideTextFilter({
                     key: "phoneNumber",
                     label: "Phone",
                     headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { paginationType: PaginationType.Server, method: phoneSearch },
+                    method: phoneSearch,
                 }),
-                buildTextFilter({
+                buildServerSideTextFilter({
                     key: "voucherNumber",
                     label: "Voucher",
                     headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { paginationType: PaginationType.Server, method: voucherSearch },
+                    method: voucherSearch,
                 }),
                 await buildLastStatusFilter(),
                 await buildPackingSlotFilter(),

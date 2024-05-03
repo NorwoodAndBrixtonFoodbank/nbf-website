@@ -1,9 +1,11 @@
 import { ServerSideFilter } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
+import { Database } from "@/databaseTypesFile";
 import { ViewSchema } from "@/databaseUtils";
+import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 
 export type DbClientRow = ViewSchema["clients_plus"];
-export type ClientsFilter = ServerSideFilter<ClientsTableRow, any, DbClientRow>;
+export type ClientsFilter<State = any> = ServerSideFilter<ClientsTableRow, State, DbClientRow>;
 export type ClientsSortState = SortState<ClientsTableRow, DbClientRow>;
 
 export type GetClientsDataAndCountErrorType =
@@ -41,3 +43,8 @@ export interface ClientsTableRow {
     familyCategory: string;
     addressPostcode: string | null;
 }
+
+export type ClientsFilterMethod<State> = (
+    query: PostgrestFilterBuilder<Database["public"], DbClientRow, any>,
+    state: State
+) => PostgrestFilterBuilder<Database["public"], DbClientRow, any>;

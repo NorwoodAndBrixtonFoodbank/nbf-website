@@ -4,8 +4,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import Table, { TableHeaders } from "@/components/Tables/Table";
 import styled from "styled-components";
 import { Schema } from "@/databaseUtils";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
+import { ClientSideFilter, PaginationType } from "@/components/Tables/Filters";
+import { buildClientSideTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 import { logErrorReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
@@ -30,25 +30,25 @@ const collectionCentresTableHeaderKeysAndLabels: TableHeaders<Schema["collection
     ["acronym", "Acronym"],
 ];
 
-const filters: Filter<CollectionCentresTableRow, string>[] = [
-    buildTextFilter({
+const filters: ClientSideFilter<CollectionCentresTableRow, string>[] = [
+    buildClientSideTextFilter({
         key: "name",
         label: "Name",
         headers: collectionCentresTableHeaderKeysAndLabels,
-        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
+        method: filterRowByText,
     }),
-    buildTextFilter({
+    buildClientSideTextFilter({
         key: "acronym",
         label: "Acronym",
         headers: collectionCentresTableHeaderKeysAndLabels,
-        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
+        method: filterRowByText,
     }),
 ];
 
 const CollectionCentresTables: React.FC = () => {
     const [collectionCentres, setCollectionCentres] = useState<Schema["collection_centres"][]>([]);
     const [primaryFilters, setPrimaryFilters] =
-        useState<Filter<CollectionCentresTableRow, string>[]>(filters);
+        useState<ClientSideFilter<CollectionCentresTableRow, string>[]>(filters);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const fetchAndDisplayCollectionCentres = useCallback(async () => {
@@ -103,6 +103,7 @@ const CollectionCentresTables: React.FC = () => {
                     editable: false,
                 }}
                 filterConfig={{
+                    paginationType: PaginationType.Client,
                     primaryFiltersShown: true,
                     primaryFilters: primaryFilters,
                     setPrimaryFilters: setPrimaryFilters,
