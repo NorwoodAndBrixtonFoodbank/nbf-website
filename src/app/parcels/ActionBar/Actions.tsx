@@ -48,7 +48,7 @@ export const availableActions: AvailableActionsType = {
     "Download Day Overview": {
         newStatus: "Day Overview Downloaded",
     },
-    "Delete Parcel Request": {
+    "Delete Parcel": {
         newStatus: "Request Deleted",
     },
     "Generate Map": {
