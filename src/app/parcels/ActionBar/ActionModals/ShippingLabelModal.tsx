@@ -22,7 +22,11 @@ const ShippingLabelsInput: React.FC<ShippingLabelsInputProps> = ({ onLabelQuanti
     return (
         <>
             <Heading>Shipping Labels</Heading>
-            <FreeFormTextInput type="number" onChange={onLabelQuantityChange} label="Quantity" />
+            <FreeFormTextInput
+                type="number"
+                onChange={onLabelQuantityChange}
+                label="Quantity (required)"
+            />
         </>
     );
 };
