@@ -8,19 +8,10 @@ export enum PaginationType {
     Client = "CLIENT",
 }
 
-type ColumnExists<
-    DbData extends Record<string, any>,
-    ColumnName extends string,
-> = ColumnName extends keyof DbData ? true : false;
-
 export type ServerSideFilterMethod<DbData extends Record<string, any>, State> = (
     query: PostgrestFilterBuilder<Database["public"], DbData, any>,
     state: State
-) => {
-    [K in Extract<keyof DbData, string>]: ColumnExists<DbData, K> extends true
-        ? PostgrestFilterBuilder<Database["public"], DbData, any>
-        : never;
-}[Extract<keyof DbData, string>];
+) => PostgrestFilterBuilder<Database["public"], DbData, any>;
 
 export type ClientSideFilterMethod<Data, State> = (
     row: Data,
