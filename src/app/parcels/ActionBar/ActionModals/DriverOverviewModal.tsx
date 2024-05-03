@@ -32,7 +32,7 @@ const DriverOverviewInput: React.FC<DriverOverviewInputProps> = ({
     return (
         <>
             <Heading>Delivery Information</Heading>
-            <FreeFormTextInput onChange={onDriverNameChange} label="Driver's Name" />
+            <FreeFormTextInput onChange={onDriverNameChange} label="Driver's Name (required)" />
             <DatePicker
                 defaultValue={dayjs()}
                 onChange={onDateChange}
