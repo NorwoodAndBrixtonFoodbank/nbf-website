@@ -1,4 +1,4 @@
-alter table "public"."events" drop constraint "events_new_parcel_status_fkey";
+alter table "public"."events" drop constraint "public_events_new_parcel_status_fkey";
 
 alter table "public"."events" add constraint "public_events_new_parcel_status_fkey" FOREIGN KEY (new_parcel_status) REFERENCES status_order(event_name) ON UPDATE CASCADE not valid;
 

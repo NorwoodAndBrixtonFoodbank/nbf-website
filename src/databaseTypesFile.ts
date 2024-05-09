@@ -327,13 +327,6 @@ export type Database = {
             referencedRelation: "parcels_plus"
             referencedColumns: ["parcel_id"]
           },
-          {
-            foreignKeyName: "public_events_new_parcel_status_fkey"
-            columns: ["new_parcel_status"]
-            isOneToOne: false
-            referencedRelation: "status_order"
-            referencedColumns: ["event_name"]
-          },
         ]
       }
       families: {
