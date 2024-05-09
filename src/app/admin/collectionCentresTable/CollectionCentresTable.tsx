@@ -182,9 +182,9 @@ const CollectionCentresTable: React.FC = () => {
             const { error: updateCollectionCentreError } = await updateCollectionCentre(newRow);
             if (updateCollectionCentreError) {
                 if (existingRowData) {
-                    return existingRowData;
-                } else {
-                    return { ...newRow, name: "", acronym: "", isShown: true };
+                    const rowToReturn = { ...existingRowData };
+                    setExistingRowData(null);
+                    return rowToReturn;
                 }
             }
             return newRow;
