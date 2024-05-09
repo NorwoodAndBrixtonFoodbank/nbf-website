@@ -222,6 +222,7 @@ const CollectionCentresTable: React.FC = () => {
         } else if (editedRow.isNew) {
             setRows((currentValue) => currentValue.filter((row) => row.id !== id));
         }
+        setExistingRowData(null);
     };
 
     const collectionCentreColumns: GridColDef[] = [
