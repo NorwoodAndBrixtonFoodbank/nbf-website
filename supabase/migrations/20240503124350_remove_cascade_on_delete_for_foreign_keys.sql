@@ -10,7 +10,7 @@ alter table "public"."audit_log" drop constraint "audit_log_status_order_fkey";
 
 alter table "public"."audit_log" drop constraint "audit_log_website_data_fkey";
 
-alter table "public"."events" drop constraint "events_new_parcel_status_fkey";
+alter table "public"."events" drop constraint "public_events_new_parcel_status_fkey";
 
 alter table "public"."events" drop constraint "events_parcel_id_fkey";
 
@@ -50,7 +50,7 @@ alter table "public"."audit_log" add constraint "public_audit_log_website_data_f
 
 alter table "public"."audit_log" validate constraint "public_audit_log_website_data_fkey";
 
-alter table "public"."events" add constraint "public_events_new_parcel_status_fkey" FOREIGN KEY (new_parcel_status) REFERENCES status_order(event_name) ON DELETE RESTRICT not valid;
+alter table "public"."events" add constraint "public_events_new_parcel_status_fkey" FOREIGN KEY (new_parcel_status) REFERENCES status_order(event_name) ON DELETE RESTRICT ON UPDATE CASCADE not valid;
 
 alter table "public"."events" validate constraint "public_events_new_parcel_status_fkey";
 
