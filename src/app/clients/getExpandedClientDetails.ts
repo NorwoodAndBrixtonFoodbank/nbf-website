@@ -3,7 +3,9 @@ import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { nullPostcodeDisplay } from "@/common/format";
-import { getChildAgeUsingBirthYear } from "@/common/getCurrentYear";
+import {
+    getChildAgeUsingBirthYearAndMonth,
+} from "@/common/getCurrentYear";
 
 const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
     const rawClientDetails = await getRawClientDetails(clientId);
@@ -147,14 +149,25 @@ export const formatHouseholdFromFamilyDetails = (
 };
 
 export const formatBreakdownOfChildrenFromFamilyDetails = (
-    family: Pick<Schema["families"], "birth_year" | "gender">[]
+    family: Pick<Schema["families"], "birth_year" | "birth_month" | "gender">[]
 ): string => {
     const childDetails = [];
 
     for (const familyMember of family) {
-        if (familyMember.birth_year !== null && familyMember.birth_year >= 2009) {
-            const age = getChildAgeUsingBirthYear(familyMember.birth_year);
-            childDetails.push(`${age}-year-old ${familyMember.gender}`);
+        if (familyMember.birth_year >= 2009 && familyMember.birth_year < 2022) {
+            const age = getChildAgeUsingBirthYearAndMonth(familyMember.birth_year);
+            childDetails.push(`${age} ${familyMember.gender}`);
+        } else if (familyMember.birth_year >= 2022) {
+            if (familyMember.birth_month) {
+                const age = getChildAgeUsingBirthYearAndMonth(
+                    familyMember.birth_year,
+                    familyMember.birth_month
+                );
+                childDetails.push(`${age} ${familyMember.gender}`);
+            } else {
+                const age = getChildAgeUsingBirthYearAndMonth(familyMember.birth_year);
+                childDetails.push(`${age} ${familyMember.gender}`);
+            }
         }
     }
 
