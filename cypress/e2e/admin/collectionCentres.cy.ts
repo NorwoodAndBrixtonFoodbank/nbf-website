@@ -6,7 +6,7 @@ describe("Edit a collection centre on admins page", () => {
         cy.visit("/admin");
     });
 
-    it("Adds a collection centre successfully", () => {
+    it("Adds a collection centre and hides it successfully", () => {
         toggleCollectionCentreSection();
         assertCollectionCentreName({
             rowIndex: 2,
@@ -22,16 +22,6 @@ describe("Edit a collection centre on admins page", () => {
                 rowIndex: lastRow,
                 collectionCentreName: newCollectionCentreName,
             });
-        });
-    });
-
-    it("Hides a collection centre successfully", () => {
-        toggleCollectionCentreSection();
-        assertCollectionCentreName({
-            rowIndex: 2,
-            collectionCentreName: "Brixton Hill - Methodist Church",
-        });
-        getNumberOfAriaRows().then((lastRow) => {
             clickOnEditButton(lastRow);
             uncheckIsShownCheckbox(lastRow);
             clickOnSaveButton(lastRow);
