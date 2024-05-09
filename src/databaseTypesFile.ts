@@ -934,7 +934,7 @@ export type Database = {
       }
     }
     Functions: {
-      insertClientAndTheirFamily: {
+      insert_client_and_family: {
         Args: {
           clientrecord: Json
           familymembers: Json
