@@ -3,6 +3,7 @@ import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { nullPostcodeDisplay } from "@/common/format";
+import { getChildAgeUsingBirthYear } from "@/common/getCurrentYear";
 
 const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
     const rawClientDetails = await getRawClientDetails(clientId);
@@ -152,8 +153,7 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
 
     for (const familyMember of family) {
         if (familyMember.birth_year !== null && familyMember.birth_year >= 2009) {
-            const age =
-                familyMember.birth_year === -1 ? "0-15" : familyMember.birth_year.toString();
+            const age = getChildAgeUsingBirthYear(familyMember.birth_year);
             childDetails.push(`${age}-year-old ${familyMember.gender}`);
         }
     }

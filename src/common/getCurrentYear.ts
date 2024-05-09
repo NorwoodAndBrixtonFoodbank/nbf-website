@@ -6,3 +6,7 @@ export const getCurrentYear = (): number => {
 export const isChildUsingBirthYear = (birthYear: number): boolean => {
     return getCurrentYear() - birthYear <= 15;
 };
+
+export const getChildAgeUsingBirthYear = (birthYear: number): number => {
+    return getCurrentYear() - birthYear;
+};
