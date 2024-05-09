@@ -109,7 +109,7 @@ export const buildDeliveryCollectionFilter = async (): Promise<
         return query.in("collection_centre_acronym", state);
     };
 
-    const { data, error } = await supabase
+    const { data: collection_centres, error } = await supabase
         .from("collection_centres")
         .select("name, acronym, is_shown");
     if (error) {
@@ -119,8 +119,7 @@ export const buildDeliveryCollectionFilter = async (): Promise<
         );
         throw new DatabaseError("fetch", "collection centre filter options", logId);
     }
-    const optionsResponse = data ?? [];
-    const optionsSet: CollectionCentresOptions[] = optionsResponse.map((row) => ({
+    const optionsSet: CollectionCentresOptions[] = collection_centres.map((row) => ({
         key: row.acronym,
         value: row.is_shown ? row.name : `${row.name} (inactive)`,
     }));
