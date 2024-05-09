@@ -1,59 +1,34 @@
 import React from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import {
-    Errors,
     errorExists,
     errorText,
     numberRegex,
-    NumberAdultsByGender,
+    Person,
+    Gender,
+    onChangeText,
 } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
-import { GappedDiv } from "@/components/Form/formStyling";
-import { ClientCardProps, ClientErrorSetter, ClientSetter } from "../ClientForm";
+import { FormText, StyledCard } from "@/components/Form/formStyling";
+import { ClientCardProps, ClientSetter } from "../ClientForm";
+import DropdownListInput from "@/components/DataInput/DropdownListInput";
+import { adultBirthYearList } from "@/app/clients/form/birthYearDropdown";
 
-const getNumberAdultsOfGenderDefault = (numberAdultsOfGender: number): string | undefined => {
-    return numberAdultsOfGender === 0 ? undefined : numberAdultsOfGender.toString();
-};
-
-const getQuantity = (input: string): number => {
-    if (input === "") {
-        return 0;
-    }
-    if (input.match(numberRegex)) {
-        return parseInt(input);
-    }
-    return -1;
-};
-
-const setNumberAdults = (
+const getAdult = (
     fieldSetter: ClientSetter,
-    errorSetter: ClientErrorSetter,
-    adults: NumberAdultsByGender,
-    fieldKey: keyof NumberAdultsByGender
+    adults: Person[],
+    index: number,
+    subFieldName: "gender" | "birthYear"
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
-        const newAdults = { ...adults, [fieldKey]: getQuantity(input) };
-        fieldSetter({ numberOfAdults: newAdults });
-
-        const invalidAdultEntry =
-            newAdults.numberFemales < 0 ||
-            newAdults.numberMales < 0 ||
-            newAdults.numberUnknownGender < 0;
-        const allAdultEntriesZero =
-            newAdults.numberFemales === 0 &&
-            newAdults.numberMales === 0 &&
-            newAdults.numberUnknownGender === 0;
-
-        let errorType: Errors = Errors.none;
-        if (invalidAdultEntry) {
-            errorType = Errors.invalid;
-        } else if (allAdultEntriesZero) {
-            errorType = Errors.required;
+        if (subFieldName === "gender") {
+            adults[index][subFieldName] = (input !== "Don't Know" ? input : "other") as Gender;
+        } else {
+            adults[index][subFieldName] = parseInt(input);
         }
-
-        errorSetter({ adults: errorType });
+        fieldSetter({ adults: [...adults] });
     };
 };
 
@@ -63,53 +38,59 @@ const NumberAdultsCard: React.FC<ClientCardProps> = ({
     fieldSetter,
     fields,
 }) => {
+    console.log(fields.numberOfAdults);
     return (
         <GenericFormCard
             title="Number of Adults"
             required={true}
-            text="Please enter the number of adults (aged 16 or above) in the appropriate category."
+            text="Please enter the number of adults (aged 16 or above)."
         >
-            <GappedDiv>
+            <>
                 <FreeFormTextInput
-                    id="client-number-females"
-                    error={errorExists(formErrors.adults)}
-                    label="Female"
-                    defaultValue={getNumberAdultsOfGenderDefault(
-                        fields.numberOfAdults.numberFemales
-                    )}
-                    onChange={setNumberAdults(
+                    id="client-number-adults"
+                    label="Number of Adults"
+                    defaultValue={
+                        fields.numberOfAdults !== 0 ? fields.numberOfAdults.toString() : undefined
+                    }
+                    error={errorExists(formErrors.numberOfAdults)}
+                    helperText={errorText(formErrors.numberOfAdults)}
+                    onChange={onChangeText(
                         fieldSetter,
                         errorSetter,
-                        fields.numberOfAdults,
-                        "numberFemales"
+                        "numberOfAdults",
+                        true,
+                        numberRegex,
+                        parseInt
                     )}
                 />
-                <FreeFormTextInput
-                    error={errorExists(formErrors.adults)}
-                    label="Male"
-                    defaultValue={getNumberAdultsOfGenderDefault(fields.numberOfAdults.numberMales)}
-                    onChange={setNumberAdults(
-                        fieldSetter,
-                        errorSetter,
-                        fields.numberOfAdults,
-                        "numberMales"
-                    )}
-                />
-                <FreeFormTextInput
-                    error={errorExists(formErrors.adults)}
-                    helperText={errorText(formErrors.adults)}
-                    label="Prefer Not To Say"
-                    defaultValue={getNumberAdultsOfGenderDefault(
-                        fields.numberOfAdults.numberUnknownGender
-                    )}
-                    onChange={setNumberAdults(
-                        fieldSetter,
-                        errorSetter,
-                        fields.numberOfAdults,
-                        "numberUnknownGender"
-                    )}
-                />
-            </GappedDiv>
+                {fields.adults.map((adult: Person, index: number) => {
+                    return (
+                        <StyledCard key={adult.primaryKey}>
+                            <FormText>Adult {index + 1}</FormText>
+                            <DropdownListInput
+                                selectLabelId="adult-gender-select-label"
+                                labelsAndValues={[
+                                    ["Male", "male"],
+                                    ["Female", "female"],
+                                    ["Prefer Not To Say", "other"],
+                                ]}
+                                listTitle="Gender"
+                                defaultValue={adult.gender}
+                                onChange={getAdult(fieldSetter, fields.adults, index, "gender")}
+                            />
+                            <DropdownListInput
+                                selectLabelId="adult-birth-year-select-label"
+                                labelsAndValues={adultBirthYearList.map((year) => {
+                                    return [year, year];
+                                })}
+                                listTitle="Year of Birth"
+                                defaultValue={adult.birthYear ? adult.birthYear.toString() : "2024"}
+                                onChange={getAdult(fieldSetter, fields.adults, index, "birthYear")}
+                            />
+                        </StyledCard>
+                    );
+                })}
+            </>
         </GenericFormCard>
     );
 };

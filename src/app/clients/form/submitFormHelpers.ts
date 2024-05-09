@@ -63,7 +63,7 @@ type addClientResult =
 export const submitAddClientForm = async (fields: ClientFields): Promise<addClientResult> => {
     const clientRecord = formatClientRecord(fields);
     const familyMembers = getFamilyMembers(fields.adults, fields.children);
-    const { data: clientId, error } = await supabase.rpc("insertClientAndTheirFamily", {
+    const { data: clientId, error } = await supabase.rpc("insert_client_and_family", {
         clientrecord: clientRecord,
         familymembers: familyMembers,
     });

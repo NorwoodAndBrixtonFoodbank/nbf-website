@@ -9,7 +9,6 @@ import {
     Errors,
     Fields,
     FormErrors,
-    NumberAdultsByGender,
     Person,
     createSetter,
     Setter,
@@ -55,8 +54,8 @@ export interface ClientFields extends Fields {
     addressCounty: string;
     addressPostcode: string | null;
     adults: Person[];
-    numberOfAdults: NumberAdultsByGender;
-    numberChildren: number;
+    numberOfAdults: number;
+    numberOfChildren: number;
     children: Person[];
     dietaryRequirements: BooleanGroup;
     feminineProducts: BooleanGroup;
@@ -76,8 +75,8 @@ export interface ClientErrors extends FormErrors<ClientFields> {
     phoneNumber: Errors;
     addressLine1: Errors;
     addressPostcode: Errors;
-    adults: Errors;
-    numberChildren: Errors;
+    numberOfAdults: Errors;
+    numberOfChildren: Errors;
     nappySize: Errors;
 }
 
@@ -111,12 +110,12 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
     const [submitDisabled, setSubmitDisabled] = useState(false);
 
     useEffect(() => {
-        if (fields.numberChildren <= fields.children.length) {
-            fieldSetter({ children: fields.children.slice(0, fields.numberChildren) });
+        if (fields.numberOfChildren <= fields.children.length) {
+            fieldSetter({ children: fields.children.slice(0, fields.numberOfChildren) });
             return;
         }
 
-        const extraChildren: Person[] = Array(fields.numberChildren - fields.children.length)
+        const extraChildren: Person[] = Array(fields.numberOfChildren - fields.children.length)
             .fill(0)
             .map((_item) => {
                 return {
@@ -125,7 +124,7 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
                 };
             });
         fieldSetter({ children: [...fields.children, ...extraChildren] });
-    }, [fields.numberChildren]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [fields.numberOfChildren]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const fieldSetter = createSetter(setFields, fields);
     const errorSetter = createSetter(setFormErrors, formErrors);

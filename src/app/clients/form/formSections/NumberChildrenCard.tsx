@@ -13,6 +13,7 @@ import { StyledCard, FormText } from "@/components/Form/formStyling";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 import { ClientCardProps, ClientSetter } from "../ClientForm";
+import { childBirthMonthList, childBirthYearList } from "@/app/clients/form/birthYearDropdown";
 
 const maxNumberChildren = (value: string): boolean => {
     return parseInt(value) <= 20;
@@ -22,7 +23,7 @@ const getChild = (
     fieldSetter: ClientSetter,
     children: Person[],
     index: number,
-    subFieldName: "gender" | "birthYear"
+    subFieldName: "gender" | "birthYear" | "birthMonth"
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
@@ -52,14 +53,16 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                     id="client-number-children"
                     label="Number of Children"
                     defaultValue={
-                        fields.numberChildren !== 0 ? fields.numberChildren.toString() : undefined
+                        fields.numberOfChildren !== 0
+                            ? fields.numberOfChildren.toString()
+                            : undefined
                     }
-                    error={errorExists(formErrors.numberChildren)}
-                    helperText={errorText(formErrors.numberChildren)}
+                    error={errorExists(formErrors.numberOfChildren)}
+                    helperText={errorText(formErrors.numberOfChildren)}
                     onChange={onChangeText(
                         fieldSetter,
                         errorSetter,
-                        "numberChildren",
+                        "numberOfChildren",
                         true,
                         numberRegex,
                         parseInt,
@@ -83,32 +86,28 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                             />
                             <DropdownListInput
                                 selectLabelId="children-age-select-label"
-                                labelsAndValues={[
-                                    ["<1", "0"],
-                                    ["1", "1"],
-                                    ["2", "2"],
-                                    ["3", "3"],
-                                    ["4", "4"],
-                                    ["5", "5"],
-                                    ["6", "6"],
-                                    ["7", "7"],
-                                    ["8", "8"],
-                                    ["9", "9"],
-                                    ["10", "10"],
-                                    ["11", "11"],
-                                    ["12", "12"],
-                                    ["13", "13"],
-                                    ["14", "14"],
-                                    ["15", "15"],
-                                    ["Don't Know", "-1"],
-                                ]}
-                                listTitle="Age"
-                                defaultValue={child.birthYear!.toString()}
+                                labelsAndValues={childBirthYearList.map((year) => {
+                                    return [year, year];
+                                })}
+                                listTitle="Year of Birth"
+                                defaultValue={child.birthYear ? child.birthYear.toString() : "2024"}
                                 onChange={getChild(
                                     fieldSetter,
                                     fields.children,
                                     index,
                                     "birthYear"
+                                )}
+                            />
+                            <DropdownListInput
+                                selectLabelId="children-birth-year-select-label"
+                                labelsAndValues={childBirthMonthList}
+                                listTitle="Month of Birth"
+                                defaultValue={child.birthMonth ? child.birthMonth.toString() : "1"}
+                                onChange={getChild(
+                                    fieldSetter,
+                                    fields.children,
+                                    index,
+                                    "birthMonth"
                                 )}
                             />
                         </StyledCard>

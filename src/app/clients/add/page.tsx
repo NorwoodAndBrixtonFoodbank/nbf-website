@@ -13,12 +13,8 @@ const AddClients: () => React.ReactElement = () => {
         addressCounty: "",
         addressPostcode: "",
         adults: [],
-        numberOfAdults: {
-            numberFemales: 0,
-            numberMales: 0,
-            numberUnknownGender: 0,
-        },
-        numberChildren: 0,
+        numberOfAdults: 0,
+        numberOfChildren: 0,
         children: [],
         dietaryRequirements: {},
         feminineProducts: {},
@@ -38,8 +34,8 @@ const AddClients: () => React.ReactElement = () => {
         phoneNumber: Errors.none,
         addressLine1: Errors.initial,
         addressPostcode: Errors.initial,
-        adults: Errors.initial,
-        numberChildren: Errors.initial,
+        numberOfAdults: Errors.initial,
+        numberOfChildren: Errors.initial,
         nappySize: Errors.none,
     };
 
