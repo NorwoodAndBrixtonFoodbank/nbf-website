@@ -26,7 +26,7 @@ export type ActionName =
     | "Download Shopping Lists"
     | "Download Driver Overview"
     | "Download Day Overview"
-    | "Delete Parcel Request"
+    | "Delete Parcel"
     | "Generate Map";
 
 type AvailableActionsType = {
@@ -48,8 +48,8 @@ export const availableActions: AvailableActionsType = {
     "Download Day Overview": {
         newStatus: "Day Overview Downloaded",
     },
-    "Delete Parcel Request": {
-        newStatus: "Request Deleted",
+    "Delete Parcel": {
+        newStatus: "Parcel Deleted",
     },
     "Generate Map": {
         newStatus: "Map Generated",
@@ -77,7 +77,7 @@ const getActionModal = (
             return <DriverOverviewModal {...actionModalProps} />;
         case "Download Day Overview":
             return <DayOverviewModal {...actionModalProps} />;
-        case "Delete Parcel Request":
+        case "Delete Parcel":
             return <DeleteParcelModal {...actionModalProps} />;
         case "Generate Map":
             return <GenerateMapModal {...actionModalProps} />;
