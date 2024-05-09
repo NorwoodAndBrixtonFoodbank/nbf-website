@@ -14,7 +14,7 @@ describe("Edit a collection centre on admins page", () => {
         });
         clickOnAddButton();
         getNumberOfAriaRows().then((lastRow) => {
-            const newCollectionCentreName = generateRandomCollectionCentreText();
+            const newCollectionCentreName = `z${uuidv4()}`; //makes sure it is the last entry
             addCollectionCentreName(lastRow, newCollectionCentreName);
             addCollectionCentreAcronym(lastRow, newCollectionCentreName);
             clickOnSaveButton(lastRow);
@@ -86,11 +86,6 @@ function addCollectionCentreAcronym(rowIndex: number, text: string): void {
         .get('[data-field="acronym"]') // eslint-disable-line quotes
         .find('input[type="text"]') // eslint-disable-line quotes
         .type(text);
-}
-
-function generateRandomCollectionCentreText(): string {
-    const uuid = uuidv4();
-    return `z${uuid}`;
 }
 
 function clickOnEditButton(rowIndex: number): void {
