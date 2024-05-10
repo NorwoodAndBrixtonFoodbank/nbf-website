@@ -4,7 +4,7 @@ import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { nullPostcodeDisplay } from "@/common/format";
 
-const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
+const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientDetails> => {
     const rawClientDetails = await getRawClientDetails(clientId);
     return rawDataToExpandedClientDetails(rawClientDetails);
 };
@@ -64,7 +64,7 @@ export const familyCountToFamilyCategory = (count: number): string => {
     return "Family of 10+";
 };
 
-export interface ExpandedClientData {
+export interface ExpandedClientDetails {
     primaryKey: string;
     fullName: string;
     address: string;
@@ -81,7 +81,7 @@ export interface ExpandedClientData {
     isActive: boolean;
 }
 
-export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientData => {
+export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientDetails => {
     return {
         primaryKey: client.primary_key,
         fullName: client.full_name ?? "",

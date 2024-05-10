@@ -10,7 +10,7 @@ import supabase from "@/supabaseClient";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState, Suspense, useRef, useCallback } from "react";
 import { useTheme } from "styled-components";
-import getClientsDataAndCount from "./getClientsData";
+import getClientsDataAndCount, { GetClientIsActiveError, getIsClientActive } from "./getClientsData";
 import { useSearchParams, useRouter } from "next/navigation";
 import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
@@ -80,6 +80,13 @@ const sortableColumns: SortOptions<ClientsTableRow>[] = [
     },
 ];
 
+const getIsClientActiveErrorMessage = (error: GetClientIsActiveError): string => {
+    switch (error.type){
+        case "failedClientIsActiveFetch":
+            return `Failed to determine whether client is active. Please reload. Log ID: ${error.logId}`
+    }
+}
+
 const clientIdParam = "clientId";
 const ClientsPage: React.FC<{}> = () => {
     const [isLoadingForFirstTime, setIsLoadingForFirstTime] = useState(true);
@@ -90,6 +97,8 @@ const ClientsPage: React.FC<{}> = () => {
     const [primaryFilters, setPrimaryFilters] = useState<Filter<ClientsTableRow, any>[]>(filters);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const clientTableFetchAbortController = useRef<AbortController | null>(null);
+    const [isSelectedClientActive, setIsSelectedClientActive] = useState<boolean | null>(null);
+    const [modalErrorMessage, setModalErrorMessage] = useState<string| null>(null);
 
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
@@ -172,6 +181,18 @@ const ClientsPage: React.FC<{}> = () => {
     const searchParams = useSearchParams();
     const clientId = searchParams.get(clientIdParam);
 
+    useEffect(()=>{
+        (async () => {
+            setModalErrorMessage(null);
+            if (clientId) {const {isActive, error} = await getIsClientActive(supabase, clientId);
+            if (error) {
+                setModalErrorMessage(getIsClientActiveErrorMessage(error));
+                return
+            } setIsSelectedClientActive(isActive);
+        }
+        })();
+    }, [clientId])
+
     const formatNullPostcode = (postcodeData: ClientsTableRow["addressPostcode"]): string => {
         return postcodeData ?? nullPostcodeDisplay;
     };
@@ -243,10 +264,15 @@ const ClientsPage: React.FC<{}> = () => {
                             </ContentDiv>
 
                             <ButtonsDiv>
+                            {modalErrorMessage && 
+                                 <ErrorSecondaryText>{modalErrorMessage}</ErrorSecondaryText>    
+                                }
                                 <Centerer>
-                                    <LinkButton link={`/clients/edit/${clientId}`}>
+                                    {
+                                    <LinkButton link={`/clients/edit/${clientId}`} disabled={!isSelectedClientActive}>
                                         Edit Client
-                                    </LinkButton>
+                                    </LinkButton>  
+                                }
                                     <LinkButton link={`/parcels/add/${clientId}`}>
                                         Add Parcel
                                     </LinkButton>
