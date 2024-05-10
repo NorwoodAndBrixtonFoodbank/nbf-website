@@ -3,6 +3,9 @@
 ## Overview
 A backup of the dev database is taken every hour using a GitHub workflow. See the workflow definition for the commands to generate backup files. When a disaster strikes where the dev database needs to be restored, follow this guide.
 
+## Decrypting data backup file
+The data backup file is encrypted to protect sensitive information. The encrypted backup file can be decrypted using the backup decryption repository. 
+
 ## Restoring Supabase with a backup
 - Create a new Supabase project in the same organisation as the original Supabase project 
   - generate a DB password and add it to Keeper 
