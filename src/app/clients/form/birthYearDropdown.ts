@@ -9,8 +9,12 @@ export const childBirthYearList: [string, string][] = childBirthYears.map((year)
     return [`${year}`, `${year}`];
 });
 
-export const adultBirthYearList: string[] = Array.from({ length: 120 }, (_, index) => {
+export const adultBirthYears: string[] = Array.from({ length: 120 }, (_, index) => {
     return (currentYear - index - 16).toString();
+});
+
+export const adultBirthYearList: [string, string][] = adultBirthYears.map((year) => {
+    return [`${year}`, `${year}`];
 });
 
 const monthsOfTheYear = [
