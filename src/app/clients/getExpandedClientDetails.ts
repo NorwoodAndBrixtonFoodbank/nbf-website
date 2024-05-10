@@ -3,9 +3,7 @@ import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { nullPostcodeDisplay } from "@/common/format";
-import {
-    getChildAgeUsingBirthYearAndMonth,
-} from "@/common/getCurrentYear";
+import { getChildAgeUsingBirthYearAndMonth } from "@/common/getCurrentYear";
 
 const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
     const rawClientDetails = await getRawClientDetails(clientId);

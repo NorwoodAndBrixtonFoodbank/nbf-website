@@ -179,24 +179,24 @@ describe("Parcels Page", () => {
         it("formatBreakdownOfChildrenFromFamilyDetails()", () => {
             expect(
                 formatBreakdownOfChildrenFromFamilyDetails([
-                    { birth_year: 1988, gender: "female" },
-                    { birth_year: 2019, gender: "male" },
-                    { birth_year: 2020, gender: "female" },
-                    { birth_year: 2009, gender: "other" },
+                    { birth_year: 1988, birth_month: null, gender: "female" },
+                    { birth_year: 2019, birth_month: null, gender: "male" },
+                    { birth_year: 2020, birth_month: null, gender: "female" },
+                    { birth_year: 2009, birth_month: null, gender: "other" },
                 ])
             ).to.eq("5-year-old male, 4-year-old female, 15-year-old other");
 
             expect(
                 formatBreakdownOfChildrenFromFamilyDetails([
-                    { birth_year: 1988, gender: "female" },
-                    { birth_year: 2009, gender: "female" },
+                    { birth_year: 1988, birth_month: null, gender: "female" },
+                    { birth_year: 2009, birth_month: null, gender: "female" },
                 ])
             ).to.eq("15-year-old female");
 
             expect(
                 formatBreakdownOfChildrenFromFamilyDetails([
-                    { birth_year: 1988, gender: "female" },
-                    { birth_year: 1998, gender: "male" },
+                    { birth_year: 1988, birth_month: null, gender: "female" },
+                    { birth_year: 1998, birth_month: null, gender: "male" },
                 ])
             ).to.eq("No Children");
         });
