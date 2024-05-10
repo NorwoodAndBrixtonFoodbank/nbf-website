@@ -34,11 +34,13 @@ create or replace view "public"."clients_plus" as  SELECT clients.primary_key AS
     clients.full_name,
     clients.address_postcode,
     clients.phone_number,
-    clients.is_active,
     family_count.family_count
    FROM (clients
      LEFT JOIN family_count ON ((clients.family_id = family_count.family_id)))
+  WHERE (clients.is_active = true)
   ORDER BY clients.full_name;
+
+
 
 
 
