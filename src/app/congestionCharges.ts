@@ -10,7 +10,7 @@ export type CongestionChargeDetails = {
 };
 
 export const getCongestionChargeDetailsForParcelsTable = async (
-    processingData: ParcelsPlusRow[],
+    processingData: ParcelsPlusRow[]
 ): Promise<CongestionChargeDetails[]> => {
     const postcodes = [];
     for (const parcel of processingData) {
@@ -22,7 +22,9 @@ export const getCongestionChargeDetailsForParcelsTable = async (
     return postcodesWithCongestionChargeDetails;
 };
 
-export const addCongestionChargeDetailsForDayOverview = async (parcels: ParcelForDayOverview[]) => {
+export const addCongestionChargeDetailsForDayOverview = async (
+    parcels: ParcelForDayOverview[]
+): Promise<ParcelForDayOverview[]> => {
     const postcodes: (string | null)[] = [];
 
     for (const parcel of parcels) {
@@ -33,15 +35,17 @@ export const addCongestionChargeDetailsForDayOverview = async (parcels: ParcelFo
 
     const postcodesWithCongestionChargeDetails = await checkForCongestionCharge(postcodes);
 
-    for (let i = 0; i < parcels.length ; i++) {
-        parcels[i].congestionChargeApplies = postcodesWithCongestionChargeDetails[i].congestionCharge;
+    for (let index = 0; index < parcels.length; index++) {
+        parcels[index].congestionChargeApplies =
+            postcodesWithCongestionChargeDetails[index].congestionCharge;
     }
 
     return parcels;
-}
+};
 
-const checkForCongestionCharge = async (postcodes: (string | null)[]) => {
-
+const checkForCongestionCharge = async (
+    postcodes: (string | null)[]
+): Promise<CongestionChargeDetails[]> => {
     const response = await supabase.functions.invoke("check-congestion-charge", {
         body: { postcodes: postcodes },
     });
@@ -55,4 +59,4 @@ const checkForCongestionCharge = async (postcodes: (string | null)[]) => {
     }
 
     return response.data;
-}
+};

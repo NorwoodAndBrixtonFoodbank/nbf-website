@@ -85,8 +85,9 @@ const DayOverviewPdfButton = ({
         if (error) {
             return { data: null, error: error };
         }
-        
-        const parcelsForDayOverviewWithCongestionChargeDetails = await addCongestionChargeDetailsForDayOverview(parcelsForDayOverview);
+
+        const parcelsForDayOverviewWithCongestionChargeDetails =
+            await addCongestionChargeDetailsForDayOverview(parcelsForDayOverview);
 
         const fileName = "DayOverview.pdf";
         return {

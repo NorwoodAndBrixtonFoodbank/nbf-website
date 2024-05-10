@@ -1,5 +1,5 @@
 import { Supabase } from "@/supabaseUtils";
-import { AbortError, DatabaseError, EdgeFunctionError } from "../errorClasses";
+import { AbortError, DatabaseError } from "../errorClasses";
 import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsTableData";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";

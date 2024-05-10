@@ -7,7 +7,10 @@ interface FontAwesomeIconProps {
     color?: string;
 }
 
-const FontAwesomeIconPdfComponent = ({ faIcon: { icon }, color="black" }: FontAwesomeIconProps): ReactElement => {
+const FontAwesomeIconPdfComponent = ({
+    faIcon: { icon },
+    color = "black",
+}: FontAwesomeIconProps): ReactElement => {
     const width = icon[0];
     const height = icon[1];
     const unicode = icon[4];
