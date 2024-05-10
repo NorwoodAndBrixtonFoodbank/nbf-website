@@ -52,7 +52,7 @@ const getParcelLinkDetailsOrErrorMessage = async (
     const convertedData = {
         parcelId: data.primary_key,
         collectionDatetime: data.collection_datetime ? new Date(data.collection_datetime) : null,
-        fullName: data.client.full_name,
+        fullName: data.client.full_name ?? "",
         addressPostcode: data.client.address_postcode,
     };
 

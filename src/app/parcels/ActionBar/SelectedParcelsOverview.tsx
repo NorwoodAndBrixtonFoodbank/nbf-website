@@ -31,7 +31,7 @@ const SelectedParcelsOverview: React.FC<ShowParcelsProps> = (props) => {
                 <ListItem key={parcel.parcelId}>
                     {getParcelOverviewString(
                         parcel.addressPostcode,
-                        parcel.fullName,
+                        parcel.fullName ?? "",
                         parcel.collectionDatetime
                     )}
                 </ListItem>

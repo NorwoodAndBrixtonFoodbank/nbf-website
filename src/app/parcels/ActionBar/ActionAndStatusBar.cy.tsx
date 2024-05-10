@@ -155,7 +155,9 @@ describe("Parcels - Action Bar", () => {
                 if (parcel.addressPostcode) {
                     cy.get(".MuiPaper-root").contains(parcel.addressPostcode);
                 }
-                cy.get(".MuiPaper-root").contains(parcel.fullName);
+                if (parcel.fullName) {
+                    cy.get(".MuiPaper-root").contains(parcel.fullName);
+                }
             });
         });
     });
@@ -208,7 +210,9 @@ describe("Parcels - Action Bar", () => {
             if (row.addressPostcode) {
                 cy.get(".MuiPaper-root").contains(row.addressPostcode);
             }
-            cy.get(".MuiPaper-root").contains(row.fullName);
+            if (row.fullName) {
+                cy.get(".MuiPaper-root").contains(row.fullName);
+            }
         });
     });
 });

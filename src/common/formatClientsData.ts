@@ -45,11 +45,11 @@ export const prepareClientSummary = (clientData: Schema["clients"]): ClientSumma
         .filter((value) => value !== "")
         .join("\n");
 
-    const { extraInformation } = processExtraInformation(extra_information);
+    const { extraInformation } = processExtraInformation(extra_information ?? "");
 
     return {
-        name: full_name,
-        contact: phone_number,
+        name: full_name ?? "",
+        contact: phone_number ?? "",
         address: address_postcode ? formattedAddress : nullPostcodeDisplay,
         extraInformation: extraInformation,
     };
@@ -57,7 +57,7 @@ export const prepareClientSummary = (clientData: Schema["clients"]): ClientSumma
 
 export const prepareRequirementSummary = (clientData: Schema["clients"]): RequirementSummary => {
     let babyProduct: string;
-    const { nappySize } = processExtraInformation(clientData.extra_information);
+    const { nappySize } = processExtraInformation(clientData.extra_information ?? "");
 
     switch (clientData.baby_food) {
         case true:
@@ -72,10 +72,10 @@ export const prepareRequirementSummary = (clientData: Schema["clients"]): Requir
     }
 
     return {
-        feminineProductsRequired: displayList(clientData.feminine_products),
+        feminineProductsRequired: displayList(clientData.feminine_products ?? []),
         babyProductsRequired: babyProduct,
-        petFoodRequired: displayList(clientData.pet_food),
-        dietaryRequirements: displayList(clientData.dietary_requirements),
-        otherItems: displayList(clientData.other_items),
+        petFoodRequired: displayList(clientData.pet_food ?? []),
+        dietaryRequirements: displayList(clientData.dietary_requirements ?? []),
+        otherItems: displayList(clientData.other_items ?? []),
     };
 };

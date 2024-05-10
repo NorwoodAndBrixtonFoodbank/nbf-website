@@ -130,14 +130,14 @@ const getRequiredData = async (
             collection_centre: parcel.collection_centre?.acronym ?? "",
             collection_datetime: formatDatetime(parcel.collection_datetime),
             voucher_number: parcel.voucher_number ?? "",
-            full_name: client.full_name,
-            phone_number: client.phone_number,
-            address_1: client.address_1,
-            address_2: client.address_2,
-            address_town: client.address_town,
-            address_county: client.address_county,
+            full_name: client.full_name ?? "",
+            phone_number: client.phone_number ?? "",
+            address_1: client.address_1 ?? "",
+            address_2: client.address_2 ?? "",
+            address_town: client.address_town ?? "",
+            address_county: client.address_county ?? "",
             address_postcode: client.address_postcode,
-            delivery_instructions: client.delivery_instructions,
+            delivery_instructions: client.delivery_instructions ?? "",
         });
     }
     return { data: parcelDataList, error: null };

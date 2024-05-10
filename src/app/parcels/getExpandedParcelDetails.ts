@@ -107,10 +107,10 @@ const getExpandedParcelDetails = async (
         parcelDetails: {
             expandedParcelData: {
                 voucherNumber: rawParcelDetails.voucher_number ?? "",
-                fullName: client.full_name,
+                fullName: client.full_name ?? "",
                 address: formatAddressFromClientDetails(client),
-                deliveryInstructions: client.delivery_instructions,
-                phoneNumber: client.phone_number,
+                deliveryInstructions: client.delivery_instructions ?? "",
+                phoneNumber: client.phone_number ?? "",
                 household: formatHouseholdFromFamilyDetails(client.family),
                 children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
                 packingDate: formatDatetimeAsDate(rawParcelDetails.packing_date),

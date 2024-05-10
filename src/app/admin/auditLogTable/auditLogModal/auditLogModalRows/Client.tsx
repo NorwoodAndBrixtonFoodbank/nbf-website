@@ -36,7 +36,10 @@ const getClientLinkDetailsOrErrorMessage = async (
         };
     }
 
-    return { data: { clientId: data.primary_key, clientName: data.full_name }, errorMessage: null };
+    return {
+        data: { clientId: data.primary_key, clientName: data.full_name ?? "" },
+        errorMessage: null,
+    };
 };
 
 const getErrorMessage = (error: ClientLinkDetailsError): string => {
