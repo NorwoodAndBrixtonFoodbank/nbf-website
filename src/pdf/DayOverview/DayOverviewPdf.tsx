@@ -112,7 +112,7 @@ const DayOverviewRow: React.FC<DayOverviewRowProps> = ({ parcel }) => {
             <Text style={[styles.cellName, styles.cell]}>{parcel.client!.full_name}</Text>
             <View style={[styles.cell, styles.cellPostcode, styles.row]}>     
                 <Text>{parcel.client!.address_postcode ?? nullPostcodeDisplay}</Text>
-                <FontAwesomeIconPdfComponent faIcon={faCopyright} color="red"/>
+                {(parcel.collection_centre!.name === "Delivery" && parcel.congestionChargeApplies) && <FontAwesomeIconPdfComponent faIcon={faCopyright} color="red"/>}
             </View>
             <Text style={[styles.cellTime, styles.cell]}>
                 {dateTimeToAMPM(parcel.collection_datetime!)}

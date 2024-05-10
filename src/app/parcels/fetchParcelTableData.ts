@@ -25,7 +25,7 @@ export const getCongestionChargeDetailsForParcels = async (
     return postcodesWithCongestionChargeDetails;
 };
 
-const checkForCongestionCharge = async (postcodes: (string | null)[]) => {
+export const checkForCongestionCharge = async (postcodes: (string | null)[]) => {
 
     const response = await supabase.functions.invoke("check-congestion-charge", {
         body: { postcodes: postcodes },

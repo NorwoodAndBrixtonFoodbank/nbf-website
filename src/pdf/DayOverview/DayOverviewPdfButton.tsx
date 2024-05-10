@@ -8,6 +8,8 @@ import DayOverviewPdf from "./DayOverviewPdf";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { PdfDataFetchResponse } from "../common";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
+import { CongestionChargeDetails, checkForCongestionCharge } from "@/app/parcels/fetchParcelTableData";
+import { gridColumnsTotalWidthSelector } from "@mui/x-data-grid";
 
 interface Props {
     onPdfCreationCompleted: () => void;
@@ -21,6 +23,7 @@ export type ParcelForDayOverview = Pick<Schema["parcels"], "collection_datetime"
         "flagged_for_attention" | "full_name" | "address_postcode" | "delivery_instructions"
     > | null;
     collection_centre: Pick<Schema["collection_centres"], "name"> | null;
+    congestionChargeApplies?: boolean;
 };
 
 type ParcelForDayOverviewResponse =
@@ -67,6 +70,27 @@ export interface DayOverviewPdfData {
 type DayOverviewPdfErrorType = ParcelForDayOverviewErrorType;
 export type DayOverviewPdfError = { type: DayOverviewPdfErrorType; logId: string };
 
+const getCongestionChargeDetailsForDayOverview = async (parcels: ParcelForDayOverview[]) => {
+    const postcodes: (string | null)[] = [];
+
+    for (const parcel of parcels) {
+        if (parcel.client?.address_postcode) {
+            postcodes.push(parcel.client?.address_postcode);
+        }
+    }
+
+    const postcodesWithCongestionChargeDetails = await checkForCongestionCharge(postcodes);
+
+    console.log(postcodesWithCongestionChargeDetails);
+
+    for (let i = 0; i < parcels.length ; i++) {
+        parcels[i].congestionChargeApplies = postcodesWithCongestionChargeDetails[i].congestionCharge;
+    }
+    console.log(parcels);
+
+    return parcels;
+}
+
 const DayOverviewPdfButton = ({
     onPdfCreationCompleted,
     onPdfCreationFailed,
@@ -83,11 +107,14 @@ const DayOverviewPdfButton = ({
         if (error) {
             return { data: null, error: error };
         }
+        
+       const parcelsForDayOverviewWithCongestionChargeDetails = await getCongestionChargeDetailsForDayOverview(parcelsForDayOverview);
+
         const fileName = "DayOverview.pdf";
         return {
             data: {
                 pdfData: {
-                    parcels: parcelsForDayOverview,
+                    parcels: parcelsForDayOverviewWithCongestionChargeDetails,
                 },
                 fileName: fileName,
             },
