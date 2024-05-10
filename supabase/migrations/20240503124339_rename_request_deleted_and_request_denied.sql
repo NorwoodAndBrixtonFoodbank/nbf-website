@@ -10,4 +10,4 @@ WHERE event_name = 'Request Deleted';
 
 UPDATE status_order
 SET event_name = 'Parcel Denied'
-WHERE event_name = 'Request Denied';20240503124339_rename_request_deleted_and_request_denied.sql
+WHERE event_name = 'Request Denied';
