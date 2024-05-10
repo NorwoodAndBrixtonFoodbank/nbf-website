@@ -31,7 +31,6 @@ export interface ClientsTableRow {
     fullName: string;
     familyCategory: string;
     addressPostcode: string | null;
-    isActive: boolean;
 }
 
 const headers: TableHeaders<ClientsTableRow> = [

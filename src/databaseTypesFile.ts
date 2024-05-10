@@ -892,6 +892,7 @@ export type Database = {
           client_flagged_for_attention: boolean | null
           client_full_name: string | null
           client_id: string | null
+          client_is_active: boolean | null
           client_phone_number: string | null
           client_signposting_call_required: boolean | null
           collection_centre_acronym: string | null
