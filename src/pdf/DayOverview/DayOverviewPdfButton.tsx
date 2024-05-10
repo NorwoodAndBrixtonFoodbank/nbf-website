@@ -81,12 +81,9 @@ const getCongestionChargeDetailsForDayOverview = async (parcels: ParcelForDayOve
 
     const postcodesWithCongestionChargeDetails = await checkForCongestionCharge(postcodes);
 
-    console.log(postcodesWithCongestionChargeDetails);
-
     for (let i = 0; i < parcels.length ; i++) {
         parcels[i].congestionChargeApplies = postcodesWithCongestionChargeDetails[i].congestionCharge;
     }
-    console.log(parcels);
 
     return parcels;
 }
