@@ -8,8 +8,7 @@ import DayOverviewPdf from "./DayOverviewPdf";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { PdfDataFetchResponse } from "../common";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import { CongestionChargeDetails, checkForCongestionCharge } from "@/app/parcels/fetchParcelTableData";
-import { gridColumnsTotalWidthSelector } from "@mui/x-data-grid";
+import { checkForCongestionCharge } from "@/app/parcels/fetchParcelTableData";
 
 interface Props {
     onPdfCreationCompleted: () => void;
