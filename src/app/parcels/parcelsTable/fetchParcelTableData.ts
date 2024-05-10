@@ -268,7 +268,7 @@ export const getClientIdForSelectedParcel = async (
     parcelId: string
 ): Promise<FetchClientIdResult> => {
     const { data: clientIdData, error: clientIdError } = await supabase
-        .from("parcelss")
+        .from("parcels")
         .select("client_id")
         .eq("primary_key", parcelId)
         .single();
