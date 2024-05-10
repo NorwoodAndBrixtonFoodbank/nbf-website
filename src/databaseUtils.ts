@@ -31,5 +31,3 @@ export type ViewNames = keyof Views;
 export type ParcelsPlusRow = Views["parcels_plus"]["Row"];
 
 export type ParcelStatus = Schema["status_order"]["event_name"];
-
-export type AuditLogPlusDbRow = ViewSchema["audit_log_plus"];

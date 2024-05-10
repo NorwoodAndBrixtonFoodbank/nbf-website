@@ -6,9 +6,9 @@ import getShoppingListData, {
 } from "@/pdf/ShoppingList/getShoppingListData";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import ShoppingListPdf from "@/pdf/ShoppingList/ShoppingListPdf";
+import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 import { ShoppingListPdfData } from "./shoppingListPdfDataProps";
 import { PdfDataFetchResponse } from "../common";
-import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 
 interface Props {
     parcels: ParcelsTableRow[];

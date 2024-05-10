@@ -13,10 +13,11 @@ import { usersFilters } from "@/app/admin/usersTable/filters";
 import { getCurrentUser } from "@/server/getCurrentUser";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { defaultNumberOfUsersPerPage, numberOfUsersPerPageOptions } from "./constants";
-import { usersTableHeaderKeysAndLabels, userTableColumnDisplayFunctions } from "./headers";
+import { usersTableHeaderKeysAndLabels } from "./headers";
 import { DbUserRow, UserRow, UsersFilter, UsersSortState } from "./types";
 import { usersSortableColumns } from "./sortableColumns";
 import { PaginationType } from "@/components/Tables/Filters";
+import { userTableColumnDisplayFunctions } from "./format";
 
 const UsersTable: React.FC = () => {
     const [userToDelete, setUserToDelete] = useState<UserRow | null>(null);

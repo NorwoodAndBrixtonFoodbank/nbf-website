@@ -262,3 +262,19 @@ export const fetchParcelStatuses = async (): Promise<ParcelStatusesReturnType> =
 
     return { data: parcelStatusesList, error: null };
 };
+
+export const getClientIdForSelectedParcel = async (parcelId: string): Promise<string> => {
+    const { data, error } = await supabase
+        .from("parcels")
+        .select("client_id")
+        .eq("primary_key", parcelId)
+        .single();
+
+    if (error) {
+        const message = `Failed to fetch client ID for a parcel with ID ${parcelId}`;
+        const logId = await logErrorReturnLogId(message, { error });
+        throw new Error(message + ` Log ID: ${logId}`);
+    }
+
+    return data.client_id;
+};

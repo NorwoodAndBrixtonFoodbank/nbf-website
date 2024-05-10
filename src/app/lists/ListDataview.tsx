@@ -18,6 +18,8 @@ import { buildClientSideTextFilter, filterRowByText } from "@/components/Tables/
 import { ClientSideFilter, PaginationType } from "@/components/Tables/Filters";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
+type ListFilter = ClientSideFilter<ListRow, any>;
+
 export interface ListRow {
     primaryKey: string;
     rowOrder: number;
@@ -112,7 +114,7 @@ const listsColumnStyleOptions: ColumnStyles<ListRow> = {
     ),
 };
 
-const filters: ClientSideFilter<ListRow, string>[] = [
+const filters: ListFilter[] = [
     buildClientSideTextFilter({
         key: "itemName",
         label: "Item",
@@ -133,8 +135,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [listData, setListData] = useState<ListRow[]>(listOfIngredients);
-    const [primaryFilters, setPrimaryFilters] =
-        useState<ClientSideFilter<ListRow, string>[]>(filters);
+    const [primaryFilters, setPrimaryFilters] = useState<ListFilter[]>(filters);
 
     if (listOfIngredients === null) {
         void logInfoReturnLogId("No ingredients found @ app/lists/ListDataView.tsx");

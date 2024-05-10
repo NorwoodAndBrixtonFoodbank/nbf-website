@@ -1,11 +1,11 @@
 import ActionAndStatusBar, {
     ActionAndStatusBarProps,
 } from "@/app/parcels/ActionBar/ActionAndStatusBar";
+import { ParcelsTableRow } from "../parcelsTable/types";
 import React from "react";
 import StyleManager from "@/app/themes";
 import Localization from "@/app/Localization";
 import { SaveParcelStatusResult } from "./Statuses";
-import { ParcelsTableRow } from "../parcelsTable/types";
 
 describe("Parcels - Action Bar", () => {
     const mockData: ParcelsTableRow[] = [

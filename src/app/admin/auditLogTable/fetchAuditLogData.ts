@@ -1,7 +1,6 @@
 import { logErrorReturnLogId } from "@/logger/logger";
 import { Supabase } from "@/supabaseUtils";
 import { AuditLogCountResponse, AuditLogResponse, AuditLogSortState } from "./types";
-import { ViewSchema } from "@/databaseUtils";
 
 export const fetchAuditLog = async (
     supabase: Supabase,
@@ -14,7 +13,7 @@ export const fetchAuditLog = async (
     if (sortState.sortEnabled && sortState.column.sortMethod) {
         query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
-        query = query.order<keyof ViewSchema["audit_log_plus"]>("created_at", { ascending: false });
+        query = query.order("created_at", { ascending: false });
     }
 
     const { data: auditLogs, error } = await query;

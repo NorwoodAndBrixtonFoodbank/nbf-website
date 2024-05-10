@@ -12,10 +12,14 @@ import {
     defaultNumberOfAuditLogRowsPerPage,
     numberOfAuditLogRowsPerPageOption,
 } from "./rowsPerPageConstants";
-import { AuditLogRow, AuditLogSortState, convertAuditLogPlusRowsToAuditLogRows } from "./types";
+import {
+    AuditLogRow,
+    AuditLogSortState,
+    DBAuditLogRow,
+    convertAuditLogPlusRowsToAuditLogRows,
+} from "./types";
 import { auditLogTableSortableColumns } from "./sortFunctions";
 import AuditLogModal from "./auditLogModal/AuditLogModal";
-import { AuditLogPlusDbRow } from "@/databaseUtils";
 import { PaginationType } from "@/components/Tables/Filters";
 
 const AuditLogTable: React.FC = () => {
@@ -80,7 +84,7 @@ const AuditLogTable: React.FC = () => {
     return (
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
-            <Table<AuditLogRow, PaginationType.Server, AuditLogPlusDbRow>
+            <Table<AuditLogRow, PaginationType.Server, DBAuditLogRow>
                 dataPortion={auditLogDataPortion}
                 headerKeysAndLabels={auditLogTableHeaderKeysAndLabels}
                 defaultShownHeaders={[

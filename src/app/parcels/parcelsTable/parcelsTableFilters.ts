@@ -15,11 +15,14 @@ import {
     ParcelsTableRow,
     packingSlotOptionsSet,
 } from "./types";
+import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
+import dayjs from "dayjs";
+import { parcelTableHeaderKeysAndLabels } from "./headers";
 
-export const fullNameSearch: ParcelsFilterMethod<string> = (query, state) =>
+const fullNameSearch: ParcelsFilterMethod<string> = (query, state) =>
     query.ilike("client_full_name", `%${state}%`);
 
-export const postcodeSearch: ParcelsFilterMethod<string> = (query, state) => {
+const postcodeSearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "") {
         return query;
     }
@@ -31,7 +34,7 @@ export const postcodeSearch: ParcelsFilterMethod<string> = (query, state) => {
     return query.ilike("client_address_postcode", `%${state}%`);
 };
 
-export const familySearch: ParcelsFilterMethod<string> = (query, state) => {
+const familySearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "") {
         return query;
     }
@@ -54,13 +57,13 @@ export const familySearch: ParcelsFilterMethod<string> = (query, state) => {
     return query.eq("family_count", Number(state));
 };
 
-export const phoneSearch: ParcelsFilterMethod<string> = (query, state) =>
+const phoneSearch: ParcelsFilterMethod<string> = (query, state) =>
     query.ilike("client_phone_number", `%${state}%`);
 
-export const voucherSearch: ParcelsFilterMethod<string> = (query, state) =>
+const voucherSearch: ParcelsFilterMethod<string> = (query, state) =>
     query.ilike("voucher_number", `%${state}%`);
 
-export const buildDateFilter = (initialState: DateRangeState): ParcelsFilter<DateRangeState> => {
+const buildDateFilter = (initialState: DateRangeState): ParcelsFilter<DateRangeState> => {
     const dateSearch: ParcelsFilterMethod<DateRangeState> = (query, state) => {
         return query
             .gte("packing_date", getDbDate(state.from))
@@ -74,7 +77,7 @@ export const buildDateFilter = (initialState: DateRangeState): ParcelsFilter<Dat
     });
 };
 
-export const buildDeliveryCollectionFilter = async (): Promise<ParcelsFilter<string[]>> => {
+const buildDeliveryCollectionFilter = async (): Promise<ParcelsFilter<string[]>> => {
     const deliveryCollectionSearch: ParcelsFilterMethod<string[]> = (query, state) => {
         return query.in("collection_centre_acronym", state);
     };
@@ -117,7 +120,7 @@ export const buildDeliveryCollectionFilter = async (): Promise<ParcelsFilter<str
     });
 };
 
-export const buildLastStatusFilter = async (): Promise<ParcelsFilter<string[]>> => {
+const buildLastStatusFilter = async (): Promise<ParcelsFilter<string[]>> => {
     const lastStatusSearch: ParcelsFilterMethod<string[]> = (query, state) => {
         if (state.includes("None")) {
             return query.or(
@@ -153,7 +156,7 @@ export const buildLastStatusFilter = async (): Promise<ParcelsFilter<string[]>> 
     });
 };
 
-export const buildPackingSlotFilter = async (): Promise<ParcelsFilter<string[]>> => {
+const buildPackingSlotFilter = async (): Promise<ParcelsFilter<string[]>> => {
     const packingSlotSearch: ParcelsFilterMethod<string[]> = (query, state) => {
         return query.in("packing_slot_name", state);
     };
@@ -197,3 +200,56 @@ export const buildPackingSlotFilter = async (): Promise<ParcelsFilter<string[]>>
         method: packingSlotSearch,
     });
 };
+
+const buildFilters = async (): Promise<{
+    primaryFilters: ParcelsFilter[];
+    additionalFilters: ParcelsFilter[];
+}> => {
+    const today = dayjs();
+    const dateFilter = buildDateFilter({
+        from: today,
+        to: today,
+    });
+    const primaryFilters: ParcelsFilter[] = [
+        dateFilter,
+        buildServerSideTextFilter({
+            key: "fullName",
+            label: "Name",
+            headers: parcelTableHeaderKeysAndLabels,
+            method: fullNameSearch,
+        }),
+        buildServerSideTextFilter({
+            key: "addressPostcode",
+            label: "Postcode",
+            headers: parcelTableHeaderKeysAndLabels,
+            method: postcodeSearch,
+        }),
+        await buildDeliveryCollectionFilter(),
+    ];
+
+    const additionalFilters = [
+        buildServerSideTextFilter({
+            key: "familyCategory",
+            label: "Family",
+            headers: parcelTableHeaderKeysAndLabels,
+            method: familySearch,
+        }),
+        buildServerSideTextFilter({
+            key: "phoneNumber",
+            label: "Phone",
+            headers: parcelTableHeaderKeysAndLabels,
+            method: phoneSearch,
+        }),
+        buildServerSideTextFilter({
+            key: "voucherNumber",
+            label: "Voucher",
+            headers: parcelTableHeaderKeysAndLabels,
+            method: voucherSearch,
+        }),
+        await buildLastStatusFilter(),
+        await buildPackingSlotFilter(),
+    ];
+    return { primaryFilters: primaryFilters, additionalFilters: additionalFilters };
+};
+
+export default buildFilters;

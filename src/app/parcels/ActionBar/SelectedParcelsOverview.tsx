@@ -1,7 +1,7 @@
+import { ParcelsTableRow } from "../parcelsTable/types";
 import styled from "styled-components";
 import React from "react";
 import { getParcelOverviewString } from "../../../common/format";
-import { ParcelsTableRow } from "../parcelsTable/types";
 
 const Heading = styled.div`
     font-size: 1.2rem;

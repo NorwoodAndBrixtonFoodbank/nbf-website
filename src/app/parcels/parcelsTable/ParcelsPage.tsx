@@ -2,19 +2,8 @@
 
 import Table, { Row } from "@/components/Tables/Table";
 import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import styled, { useTheme } from "styled-components";
-import {
-    ParcelsTableRow,
-    GetParcelDataAndCountErrorType,
-    ParcelsSortState,
-    ParcelsFilter,
-    DbParcelRow,
-} from "./types";
-import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
-import PhoneIcon from "@/components/Icons/PhoneIcon";
-import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
-import DeliveryIcon from "@/components/Icons/DeliveryIcon";
-import CollectionIcon from "@/components/Icons/CollectionIcon";
+import { useTheme } from "styled-components";
+import { ParcelsTableRow, ParcelsSortState, ParcelsFilter, DbParcelRow } from "./types";
 import ExpandedParcelDetails from "@/app/parcels/ExpandedParcelDetails";
 import ExpandedParcelDetailsFallback from "@/app/parcels/ExpandedParcelDetailsFallback";
 import Icon from "@/components/Icons/Icon";
@@ -25,28 +14,19 @@ import ActionAndStatusBar from "@/app/parcels/ActionBar/ActionAndStatusBar";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
-import { getParcelIds, getParcelsByIds, getParcelsDataAndCount } from "./fetchParcelTableData";
-import dayjs from "dayjs";
+import {
+    getClientIdForSelectedParcel,
+    getParcelIds,
+    getParcelsByIds,
+    getParcelsDataAndCount,
+} from "./fetchParcelTableData";
 import { StatusType, saveParcelStatus, SaveParcelStatusResult } from "../ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
-import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import { CircularProgress } from "@mui/material";
-import { logErrorReturnLogId } from "@/logger/logger";
 import { ErrorSecondaryText } from "../../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
-import {
-    buildDateFilter,
-    buildDeliveryCollectionFilter,
-    buildLastStatusFilter,
-    buildPackingSlotFilter,
-    familySearch,
-    fullNameSearch,
-    phoneSearch,
-    postcodeSearch,
-    voucherSearch,
-} from "@/app/parcels/parcelsTable/parcelsTableFilters";
+import buildFilters from "@/app/parcels/parcelsTable/parcelsTableFilters";
 import { ActionsContainer } from "@/components/Form/formStyling";
-import { formatDateTime, formatDatetimeAsDate, nullPostcodeDisplay } from "@/common/format";
 import parcelsSortableColumns from "./sortableColumns";
 import {
     parcelIdParam,
@@ -55,79 +35,12 @@ import {
 } from "./constants";
 import { parcelTableHeaderKeysAndLabels, defaultShownHeaders, toggleableHeaders } from "./headers";
 import { PaginationType } from "@/components/Tables/Filters";
-
-const parcelTableColumnStyleOptions = {
-    iconsColumn: {
-        width: "4rem",
-    },
-    fullName: {
-        minWidth: "8rem",
-    },
-    familyCategory: {
-        hide: 550,
-    },
-    addressPostcode: {
-        hide: 800,
-    },
-    deliveryCollection: {
-        minWidth: "6rem",
-    },
-    packingDate: {
-        hide: 800,
-    },
-    packingSlot: {
-        hide: 800,
-        minWidth: "6rem",
-    },
-    lastStatus: {
-        minWidth: "8rem",
-    },
-};
-
-const PreTableControls = styled.div`
-    margin: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    align-items: stretch;
-    justify-content: space-between;
-`;
-
-function getSelectedParcelCountMessage(numberOfSelectedParcels: number): string | null {
-    if (numberOfSelectedParcels === 0) {
-        return null;
-    }
-    return numberOfSelectedParcels === 1
-        ? "1 parcel selected"
-        : `${numberOfSelectedParcels} parcels selected`;
-}
-
-async function getClientIdForSelectedParcel(parcelId: string): Promise<string> {
-    const { data, error } = await supabase
-        .from("parcels")
-        .select("client_id")
-        .eq("primary_key", parcelId)
-        .single();
-
-    if (error) {
-        const message = `Failed to fetch client ID for a parcel with ID ${parcelId}`;
-        const logId = await logErrorReturnLogId(message, { error });
-        throw new Error(message + ` Log ID: ${logId}`);
-    }
-
-    return data.client_id;
-}
-
-function getParcelDataErrorMessage(errorType: GetParcelDataAndCountErrorType): string | null {
-    switch (errorType) {
-        case "unknownError":
-            return "Unknown error has occurred. Please reload.";
-        case "failedToFetchParcels":
-            return "Failed to fetch parcels. Please reload.";
-        case "abortedFetch":
-            return null;
-    }
-}
+import {
+    getSelectedParcelCountMessage,
+    getParcelDataErrorMessage,
+    parcelTableColumnDisplayFunctions,
+} from "./format";
+import { PreTableControls, parcelTableColumnStyleOptions } from "./styles";
 
 const ParcelsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -193,56 +106,6 @@ const ParcelsPage: React.FC<{}> = () => {
     }, [fetchAndSetClientIdForSelectedParcel]);
 
     useEffect(() => {
-        const buildFilters = async (): Promise<{
-            primaryFilters: ParcelsFilter[];
-            additionalFilters: ParcelsFilter[];
-        }> => {
-            const today = dayjs();
-            const dateFilter = buildDateFilter({
-                from: today,
-                to: today,
-            });
-            const primaryFilters: ParcelsFilter[] = [
-                dateFilter,
-                buildServerSideTextFilter({
-                    key: "fullName",
-                    label: "Name",
-                    headers: parcelTableHeaderKeysAndLabels,
-                    method: fullNameSearch,
-                }),
-                buildServerSideTextFilter({
-                    key: "addressPostcode",
-                    label: "Postcode",
-                    headers: parcelTableHeaderKeysAndLabels,
-                    method: postcodeSearch,
-                }),
-                await buildDeliveryCollectionFilter(),
-            ];
-
-            const additionalFilters = [
-                buildServerSideTextFilter({
-                    key: "familyCategory",
-                    label: "Family",
-                    headers: parcelTableHeaderKeysAndLabels,
-                    method: familySearch,
-                }),
-                buildServerSideTextFilter({
-                    key: "phoneNumber",
-                    label: "Phone",
-                    headers: parcelTableHeaderKeysAndLabels,
-                    method: phoneSearch,
-                }),
-                buildServerSideTextFilter({
-                    key: "voucherNumber",
-                    label: "Voucher",
-                    headers: parcelTableHeaderKeysAndLabels,
-                    method: voucherSearch,
-                }),
-                await buildLastStatusFilter(),
-                await buildPackingSlotFilter(),
-            ];
-            return { primaryFilters: primaryFilters, additionalFilters: additionalFilters };
-        };
         (async () => {
             setAreFiltersLoadingForFirstTime(true);
             const filtersObject = await buildFilters();
@@ -372,68 +235,6 @@ const ParcelsPage: React.FC<{}> = () => {
             setAllCheckBoxSelected(allChecked);
         }
     }, [filteredParcelCount, checkedParcelIds, isAllCheckBoxSelected]);
-
-    const rowToIconsColumn = ({
-        flaggedForAttention,
-        requiresFollowUpPhoneCall,
-    }: ParcelsTableRow["iconsColumn"]): React.ReactElement => {
-        return (
-            <>
-                {flaggedForAttention && <FlaggedForAttentionIcon />}
-                {requiresFollowUpPhoneCall && <PhoneIcon color={theme.main.largeForeground[0]} />}
-            </>
-        );
-    };
-
-    const rowToDeliveryCollectionColumn = (
-        collectionData: ParcelsTableRow["deliveryCollection"]
-    ): React.ReactElement => {
-        const { collectionCentreName, collectionCentreAcronym, congestionChargeApplies } =
-            collectionData;
-        if (collectionCentreName === "Delivery") {
-            return (
-                <>
-                    <DeliveryIcon color={theme.main.largeForeground[0]} />
-                    {congestionChargeApplies && <CongestionChargeAppliesIcon />}
-                </>
-            );
-        }
-
-        return (
-            <>
-                <CollectionIcon
-                    color={theme.main.largeForeground[0]}
-                    collectionPoint={collectionCentreName}
-                />
-                {collectionCentreAcronym}
-            </>
-        );
-    };
-
-    const rowToLastStatusColumn = (data: ParcelsTableRow["lastStatus"] | null): string => {
-        if (!data) {
-            return "";
-        }
-        const { name, eventData, timestamp } = data;
-        return (
-            `${name}` +
-            (eventData ? ` (${eventData})` : "") +
-            ` @ ${formatDatetimeAsDate(timestamp)}`
-        );
-    };
-
-    const formatNullPostcode = (postcodeData: ParcelsTableRow["addressPostcode"]): string => {
-        return postcodeData ?? nullPostcodeDisplay;
-    };
-
-    const parcelTableColumnDisplayFunctions = {
-        iconsColumn: rowToIconsColumn,
-        deliveryCollection: rowToDeliveryCollectionColumn,
-        packingDate: formatDatetimeAsDate,
-        lastStatus: rowToLastStatusColumn,
-        addressPostcode: formatNullPostcode,
-        createdAt: formatDateTime,
-    };
 
     const onParcelTableRowClick = (row: Row<ParcelsTableRow>): void => {
         setSelectedParcelId(row.data.parcelId);

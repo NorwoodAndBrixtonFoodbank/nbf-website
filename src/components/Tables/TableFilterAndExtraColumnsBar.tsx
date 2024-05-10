@@ -67,22 +67,22 @@ const TableFilterAndExtraColumnsBar = <Data, Filter extends CoreFilter>(
     props: Props<Data, Filter>
 ): React.ReactElement => {
     const handleClear = (): void => {
-        props.setFilters &&
-            props.filters &&
+        if (props.setFilters && props.filters) {
             props.setFilters(
                 props.filters?.map((filter) => ({
                     ...filter,
                     state: filter.initialState,
                 }))
             );
-        props.setAdditionalFilters &&
-            props.additionalFilters &&
+        }
+        if (props.setAdditionalFilters && props.additionalFilters) {
             props.setAdditionalFilters(
                 props.additionalFilters?.map((filter) => ({
                     ...filter,
                     state: filter.initialState,
                 }))
             );
+        }
     };
 
     const [showMoreFiltersAndHeaders, setShowMoreFiltersAndHeaders] = useState(false);
