@@ -8,7 +8,7 @@ export const getCurrentMonth = (): number => {
 };
 
 export const isChildUsingBirthYear = (birthYear: number): boolean => {
-    return getCurrentYear() - birthYear <= 15;
+    return getCurrentYear() - birthYear <= 16;
 };
 
 export const getChildAgeUsingBirthYearAndMonth = (
@@ -23,9 +23,9 @@ export const getChildAgeUsingBirthYearAndMonth = (
     } else {
         totalMonths = years * 12;
     }
-    if (totalMonths <= 24) {
+    if (totalMonths <= 12) {
         return `${totalMonths} month old`;
-    } else if (totalMonths > 24 && totalMonths < 36) {
+    } else if (totalMonths > 12 && totalMonths < 24) {
         return `${years} year old`;
     } else {
         return `${years - 1} to ${years} year old`;

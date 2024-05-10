@@ -6,6 +6,7 @@ import { nullPostcodeDisplay } from "@/common/format";
 import {
     getAdultAgeUsingBirthYear,
     getChildAgeUsingBirthYearAndMonth,
+    getCurrentYear,
 } from "@/common/getCurrentYear";
 
 const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
@@ -128,7 +129,7 @@ export const formatHouseholdFromFamilyDetails = (
     let childCount = 0;
 
     for (const familyMember of family) {
-        if (familyMember.birth_year <= 2008) {
+        if (familyMember.birth_year <= getCurrentYear() - 17) {
             adultCount++;
         } else {
             childCount++;
@@ -157,7 +158,7 @@ export const formatBreakdownOfAdultsFromFamilyDetails = (
     const adultDetails = [];
 
     for (const familyMember of family) {
-        if (familyMember.birth_year < 2009) {
+        if (familyMember.birth_year < getCurrentYear() - 17) {
             const age = getAdultAgeUsingBirthYear(familyMember.birth_year);
             adultDetails.push(`${age} ${familyMember.gender}`);
         }
@@ -176,10 +177,13 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
     const childDetails = [];
 
     for (const familyMember of family) {
-        if (familyMember.birth_year >= 2009 && familyMember.birth_year < 2022) {
+        if (
+            familyMember.birth_year >= getCurrentYear() - 17 &&
+            familyMember.birth_year < getCurrentYear() - 2
+        ) {
             const age = getChildAgeUsingBirthYearAndMonth(familyMember.birth_year);
             childDetails.push(`${age} ${familyMember.gender}`);
-        } else if (familyMember.birth_year >= 2022) {
+        } else if (familyMember.birth_year >= getCurrentYear() - 2) {
             if (familyMember.birth_month) {
                 const age = getChildAgeUsingBirthYearAndMonth(
                     familyMember.birth_year,
