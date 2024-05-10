@@ -48,7 +48,7 @@ function fillName(value: string): void {
 }
 
 function fillNumberAdults(value: string): void {
-    fillTextboxWithId("client-number-females", value);
+    fillTextboxWithId("client-number-adults", value);
 }
 
 function fillNumberChildren(value: string): void {
