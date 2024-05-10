@@ -264,9 +264,7 @@ export const fetchParcelStatuses = async (): Promise<ParcelStatusesReturnType> =
     return { data: parcelStatusesList, error: null };
 };
 
-export const getClientIdForSelectedParcel = async (
-    parcelId: string
-): Promise<FetchClientIdResult> => {
+export const getClientIdForParcel = async (parcelId: string): Promise<FetchClientIdResult> => {
     const { data: clientIdData, error: clientIdError } = await supabase
         .from("parcels")
         .select("client_id")

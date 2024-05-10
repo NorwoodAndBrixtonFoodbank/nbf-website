@@ -15,7 +15,7 @@ import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
 import {
-    getClientIdForSelectedParcel,
+    getClientIdForParcel,
     getParcelIds,
     getParcelsByIds,
     getParcelsDataAndCount,
@@ -87,7 +87,7 @@ const ParcelsPage: React.FC<{}> = () => {
             return;
         }
 
-        const { clientId, error } = await getClientIdForSelectedParcel(parcelId);
+        const { clientId, error } = await getClientIdForParcel(parcelId);
         if (error) {
             setModalErrorMessage(getClientIdErrorMessage(error));
         } else {
