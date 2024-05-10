@@ -7,6 +7,7 @@ import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
 export interface ShippingLabelData {
     label_quantity: number;
     parcel_id: string;
+    packing_date: string;
     packing_slot: string;
     collection_centre: string;
     collection_datetime: string;
@@ -40,12 +41,14 @@ const styles = StyleSheet.create({
         height: "100%",
         display: "flex",
         flexDirection: "column",
+        padding: "0.2cm",
     },
     topRow: {
         justifyContent: "flex-start",
         flexBasis: "20%",
         display: "flex",
         flexDirection: "row",
+
     },
     middleRow: { flex: 1, display: "flex", flexDirection: "row" },
     bottomRow: {
@@ -56,7 +59,7 @@ const styles = StyleSheet.create({
     },
     leftCol: { justifyContent: "flex-start", flexBasis: "36%" },
     middleCol: { flex: 1 },
-    rightCol: { justifyContent: "flex-end", flexBasis: "25%" },
+    rightCol: { justifyContent: "space-evenly", flexBasis: "25%" },
     bottomAlign: { marginTop: "auto" },
     headingText: { fontFamily: "Helvetica-Bold", textTransform: "uppercase" },
     largeText: {
@@ -90,7 +93,7 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                     </Text>
                     <Text style={styles.rightCol}>
                         <Text style={styles.headingText}>Packed:</Text>
-                        <Text> {data.packing_slot}</Text>
+                        <Text>{data.packing_date} {data.packing_slot}</Text>
                     </Text>
                 </View>
                 <View style={styles.middleRow}>
