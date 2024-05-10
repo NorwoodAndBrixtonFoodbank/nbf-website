@@ -53,6 +53,6 @@ const checkForCongestionCharge = async (postcodes: (string | null)[]) => {
         );
         throw new EdgeFunctionError("congestion charge check", logId);
     }
-    return response.data;
 
+    return response.data;
 }
