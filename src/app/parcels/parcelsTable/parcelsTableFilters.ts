@@ -65,7 +65,7 @@ const voucherSearch: ParcelsFilterMethod<string> = (query, state) => {
         return query.ilike("voucher_number", "");
     }
     return query.ilike("voucher_number", `%${state}%`);
-}
+};
 
 const buildDateFilter = (initialState: DateRangeState): ParcelsFilter<DateRangeState> => {
     const dateSearch: ParcelsFilterMethod<DateRangeState> = (query, state) => {
@@ -90,6 +90,7 @@ const buildDeliveryCollectionFilter = async (): Promise<ParcelsFilter<string[]>>
         .from("collection_centres")
         .select("name, acronym, is_shown");
     if (error) {
+        console.error(error)
         const logId = await logErrorReturnLogId(
             "Error with fetch: Collection centre filter options",
             error

@@ -54,8 +54,8 @@ export type GetParcelDataAndCountErrorType =
     | "abortedFetch";
 
 export interface CollectionCentresOptions {
-    name: string;
-    acronym: string;
+    key: string;
+    value: string;
 }
 export interface StatusResponseRow {
     event_name: string;
