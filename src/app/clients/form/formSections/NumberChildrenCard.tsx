@@ -99,7 +99,7 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                             <DropdownListInput
                                 selectLabelId="children-birth-month-select-label"
                                 labelsAndValues={childBirthMonthList}
-                                listTitle="Month of Birth"
+                                listTitle="Month of Birth (optional)"
                                 defaultValue={child.birthMonth?.toString()}
                                 onChange={getChild(
                                     fieldSetter,
