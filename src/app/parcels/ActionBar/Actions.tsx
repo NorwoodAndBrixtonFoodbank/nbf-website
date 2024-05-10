@@ -22,12 +22,12 @@ const isNotAtLeastOne = (value: number): boolean => {
 const errorMessage = "Please select at least one parcel.";
 
 export type ActionName =
-    | "Download Shipping Labels"
-    | "Download Shopping Lists"
-    | "Download Driver Overview"
     | "Download Day Overview"
-    | "Delete Parcel"
-    | "Generate Map";
+    | "Download Shopping Lists"
+    | "Download Shipping Labels"
+    | "Generate Map"
+    | "Download Driver Overview"
+    | "Delete Parcel";
 
 type AvailableActionsType = {
     [actionKey in ActionName]: {
@@ -36,23 +36,23 @@ type AvailableActionsType = {
 };
 
 export const availableActions: AvailableActionsType = {
-    "Download Shipping Labels": {
-        newStatus: "Shipping Labels Downloaded",
+    "Download Day Overview": {
+        newStatus: "Day Overview Downloaded",
     },
     "Download Shopping Lists": {
         newStatus: "Shopping List Downloaded",
     },
-    "Download Driver Overview": {
-        newStatus: "Driver Overview Downloaded",
-    },
-    "Download Day Overview": {
-        newStatus: "Day Overview Downloaded",
-    },
-    "Delete Parcel": {
-        newStatus: "Parcel Deleted",
+    "Download Shipping Labels": {
+        newStatus: "Shipping Labels Downloaded",
     },
     "Generate Map": {
         newStatus: "Map Generated",
+    },
+    "Download Driver Overview": {
+        newStatus: "Driver Overview Downloaded",
+    },
+    "Delete Parcel": {
+        newStatus: "Parcel Deleted",
     },
 };
 
