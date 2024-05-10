@@ -44,9 +44,9 @@ const getExpandedParcelDetails = async (
             name
          ),
         collection_centre:collection_centres (
-            name
+            name,
+            is_shown
          ),
-
         client:clients(
             primary_key,
             full_name,
@@ -115,7 +115,9 @@ const getExpandedParcelDetails = async (
                 children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
                 packingDate: formatDatetimeAsDate(rawParcelDetails.packing_date),
                 packingSlot: rawParcelDetails.packing_slot?.name ?? "",
-                method: rawParcelDetails.collection_centre?.name ?? "",
+                method: rawParcelDetails.collection_centre?.is_shown
+                    ? rawParcelDetails.collection_centre?.name
+                    : `${rawParcelDetails.collection_centre?.name} (inactive)`,
                 createdAt: formatDateTime(rawParcelDetails.created_at),
             },
             events: processEventsDetails(rawParcelDetails.events),

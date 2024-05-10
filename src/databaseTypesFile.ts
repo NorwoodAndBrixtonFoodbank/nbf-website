@@ -104,24 +104,10 @@ export type Database = {
             referencedColumns: ["client_id"]
           },
           {
-            foreignKeyName: "audit_log_collection_centre_id_fkey"
-            columns: ["collection_centre_id"]
-            isOneToOne: false
-            referencedRelation: "collection_centres"
-            referencedColumns: ["primary_key"]
-          },
-          {
             foreignKeyName: "audit_log_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
-            referencedColumns: ["primary_key"]
-          },
-          {
-            foreignKeyName: "audit_log_list_hotel_id_fkey"
-            columns: ["list_hotel_id"]
-            isOneToOne: false
-            referencedRelation: "lists_hotel"
             referencedColumns: ["primary_key"]
           },
           {
@@ -132,42 +118,70 @@ export type Database = {
             referencedColumns: ["primary_key"]
           },
           {
-            foreignKeyName: "audit_log_packing_slot_id_fkey"
+            foreignKeyName: "public_audit_log_collection_centre_id_fkey"
+            columns: ["collection_centre_id"]
+            isOneToOne: false
+            referencedRelation: "collection_centres"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_audit_log_list_hotel_id_fkey"
+            columns: ["list_hotel_id"]
+            isOneToOne: false
+            referencedRelation: "lists_hotel"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_audit_log_packing_slot_id_fkey"
             columns: ["packing_slot_id"]
             isOneToOne: false
             referencedRelation: "packing_slots"
             referencedColumns: ["primary_key"]
           },
           {
-            foreignKeyName: "audit_log_parcel_id_fkey"
+            foreignKeyName: "public_audit_log_parcel_id_fkey"
             columns: ["parcel_id"]
             isOneToOne: false
             referencedRelation: "last_status"
             referencedColumns: ["parcel_id"]
           },
           {
-            foreignKeyName: "audit_log_parcel_id_fkey"
+            foreignKeyName: "public_audit_log_parcel_id_fkey"
             columns: ["parcel_id"]
             isOneToOne: false
             referencedRelation: "parcels"
             referencedColumns: ["primary_key"]
           },
           {
-            foreignKeyName: "audit_log_parcel_id_fkey"
+            foreignKeyName: "public_audit_log_parcel_id_fkey"
             columns: ["parcel_id"]
             isOneToOne: false
             referencedRelation: "parcels_plus"
             referencedColumns: ["parcel_id"]
           },
           {
-            foreignKeyName: "audit_log_status_order_fkey"
+            foreignKeyName: "public_audit_log_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_audit_log_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "users_plus"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "public_audit_log_status_order_fkey"
             columns: ["status_order"]
             isOneToOne: false
             referencedRelation: "status_order"
             referencedColumns: ["event_name"]
           },
           {
-            foreignKeyName: "audit_log_website_data_fkey"
+            foreignKeyName: "public_audit_log_website_data_fkey"
             columns: ["website_data"]
             isOneToOne: false
             referencedRelation: "website_data"
@@ -244,16 +258,19 @@ export type Database = {
       collection_centres: {
         Row: {
           acronym: string
+          is_shown: boolean
           name: string
           primary_key: string
         }
         Insert: {
           acronym?: string
+          is_shown?: boolean
           name?: string
           primary_key?: string
         }
         Update: {
           acronym?: string
+          is_shown?: boolean
           name?: string
           primary_key?: string
         }
@@ -283,28 +300,28 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "events_new_parcel_status_fkey"
+            foreignKeyName: "public_events_new_parcel_status_fkey"
             columns: ["new_parcel_status"]
             isOneToOne: false
             referencedRelation: "status_order"
             referencedColumns: ["event_name"]
           },
           {
-            foreignKeyName: "events_parcel_id_fkey"
+            foreignKeyName: "public_events_parcel_id_fkey"
             columns: ["parcel_id"]
             isOneToOne: false
             referencedRelation: "last_status"
             referencedColumns: ["parcel_id"]
           },
           {
-            foreignKeyName: "events_parcel_id_fkey"
+            foreignKeyName: "public_events_parcel_id_fkey"
             columns: ["parcel_id"]
             isOneToOne: false
             referencedRelation: "parcels"
             referencedColumns: ["primary_key"]
           },
           {
-            foreignKeyName: "events_parcel_id_fkey"
+            foreignKeyName: "public_events_parcel_id_fkey"
             columns: ["parcel_id"]
             isOneToOne: false
             referencedRelation: "parcels_plus"
@@ -333,14 +350,14 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "families_family_id_fkey"
+            foreignKeyName: "public_families_family_id_fkey"
             columns: ["family_id"]
             isOneToOne: false
             referencedRelation: "clients"
             referencedColumns: ["family_id"]
           },
           {
-            foreignKeyName: "families_family_id_fkey"
+            foreignKeyName: "public_families_family_id_fkey"
             columns: ["family_id"]
             isOneToOne: false
             referencedRelation: "family_count"
@@ -561,35 +578,35 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "parcels_client_id_fkey"
+            foreignKeyName: "public_parcels_client_id_fkey"
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients"
             referencedColumns: ["primary_key"]
           },
           {
-            foreignKeyName: "parcels_client_id_fkey"
+            foreignKeyName: "public_parcels_client_id_fkey"
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients_plus"
             referencedColumns: ["client_id"]
           },
           {
-            foreignKeyName: "parcels_client_id_fkey"
+            foreignKeyName: "public_parcels_client_id_fkey"
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "parcels_plus"
             referencedColumns: ["client_id"]
           },
           {
-            foreignKeyName: "parcels_collection_centre_fkey"
+            foreignKeyName: "public_parcels_collection_centre_fkey"
             columns: ["collection_centre"]
             isOneToOne: false
             referencedRelation: "collection_centres"
             referencedColumns: ["primary_key"]
           },
           {
-            foreignKeyName: "parcels_packing_slot_fkey"
+            foreignKeyName: "public_parcels_packing_slot_fkey"
             columns: ["packing_slot"]
             isOneToOne: false
             referencedRelation: "packing_slots"
@@ -731,24 +748,10 @@ export type Database = {
             referencedColumns: ["client_id"]
           },
           {
-            foreignKeyName: "audit_log_collection_centre_id_fkey"
-            columns: ["collection_centre_id"]
-            isOneToOne: false
-            referencedRelation: "collection_centres"
-            referencedColumns: ["primary_key"]
-          },
-          {
             foreignKeyName: "audit_log_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
-            referencedColumns: ["primary_key"]
-          },
-          {
-            foreignKeyName: "audit_log_list_hotel_id_fkey"
-            columns: ["list_hotel_id"]
-            isOneToOne: false
-            referencedRelation: "lists_hotel"
             referencedColumns: ["primary_key"]
           },
           {
@@ -757,48 +760,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lists"
             referencedColumns: ["primary_key"]
-          },
-          {
-            foreignKeyName: "audit_log_packing_slot_id_fkey"
-            columns: ["packing_slot_id"]
-            isOneToOne: false
-            referencedRelation: "packing_slots"
-            referencedColumns: ["primary_key"]
-          },
-          {
-            foreignKeyName: "audit_log_parcel_id_fkey"
-            columns: ["parcel_id"]
-            isOneToOne: false
-            referencedRelation: "parcels"
-            referencedColumns: ["primary_key"]
-          },
-          {
-            foreignKeyName: "audit_log_parcel_id_fkey"
-            columns: ["parcel_id"]
-            isOneToOne: false
-            referencedRelation: "last_status"
-            referencedColumns: ["parcel_id"]
-          },
-          {
-            foreignKeyName: "audit_log_parcel_id_fkey"
-            columns: ["parcel_id"]
-            isOneToOne: false
-            referencedRelation: "parcels_plus"
-            referencedColumns: ["parcel_id"]
-          },
-          {
-            foreignKeyName: "audit_log_status_order_fkey"
-            columns: ["status_order"]
-            isOneToOne: false
-            referencedRelation: "status_order"
-            referencedColumns: ["event_name"]
-          },
-          {
-            foreignKeyName: "audit_log_website_data_fkey"
-            columns: ["website_data"]
-            isOneToOne: false
-            referencedRelation: "website_data"
-            referencedColumns: ["name"]
           },
           {
             foreignKeyName: "profiles_user_id_fkey"
@@ -813,6 +774,76 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "users_plus"
             referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "public_audit_log_collection_centre_id_fkey"
+            columns: ["collection_centre_id"]
+            isOneToOne: false
+            referencedRelation: "collection_centres"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_audit_log_list_hotel_id_fkey"
+            columns: ["list_hotel_id"]
+            isOneToOne: false
+            referencedRelation: "lists_hotel"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_audit_log_packing_slot_id_fkey"
+            columns: ["packing_slot_id"]
+            isOneToOne: false
+            referencedRelation: "packing_slots"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_audit_log_parcel_id_fkey"
+            columns: ["parcel_id"]
+            isOneToOne: false
+            referencedRelation: "parcels"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_audit_log_parcel_id_fkey"
+            columns: ["parcel_id"]
+            isOneToOne: false
+            referencedRelation: "last_status"
+            referencedColumns: ["parcel_id"]
+          },
+          {
+            foreignKeyName: "public_audit_log_parcel_id_fkey"
+            columns: ["parcel_id"]
+            isOneToOne: false
+            referencedRelation: "parcels_plus"
+            referencedColumns: ["parcel_id"]
+          },
+          {
+            foreignKeyName: "public_audit_log_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_audit_log_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "users_plus"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "public_audit_log_status_order_fkey"
+            columns: ["status_order"]
+            isOneToOne: false
+            referencedRelation: "status_order"
+            referencedColumns: ["event_name"]
+          },
+          {
+            foreignKeyName: "public_audit_log_website_data_fkey"
+            columns: ["website_data"]
+            isOneToOne: false
+            referencedRelation: "website_data"
+            referencedColumns: ["name"]
           },
         ]
       }
@@ -843,7 +874,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "events_new_parcel_status_fkey"
+            foreignKeyName: "public_events_new_parcel_status_fkey"
             columns: ["event_name"]
             isOneToOne: false
             referencedRelation: "status_order"
@@ -876,7 +907,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "events_new_parcel_status_fkey"
+            foreignKeyName: "public_events_new_parcel_status_fkey"
             columns: ["last_status_event_name"]
             isOneToOne: false
             referencedRelation: "status_order"

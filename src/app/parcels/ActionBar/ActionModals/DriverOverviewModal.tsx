@@ -32,7 +32,7 @@ const DriverOverviewInput: React.FC<DriverOverviewInputProps> = ({
     return (
         <>
             <Heading>Delivery Information</Heading>
-            <FreeFormTextInput onChange={onDriverNameChange} label="Driver's Name" />
+            <FreeFormTextInput onChange={onDriverNameChange} label="Driver's Name (required)" />
             <DatePicker
                 defaultValue={dayjs()}
                 onChange={onDateChange}
@@ -74,6 +74,8 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
     const [date, setDate] = useState(dayjs());
 
     const [isDateValid, setIsDateValid] = useState(true);
+
+    const isInputValid = isDateValid && driverName.length > 0;
 
     const onDriverNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setDriverName(event.target.value);
@@ -136,7 +138,7 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
                     driverName={driverName}
                     onPdfCreationCompleted={onPdfCreationCompleted}
                     onPdfCreationFailed={onPdfCreationFailed}
-                    disabled={!isDateValid}
+                    disabled={!isInputValid}
                 />
             }
             contentAboveButton={

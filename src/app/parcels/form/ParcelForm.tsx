@@ -98,6 +98,7 @@ interface ParcelFormProps {
     collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues;
     packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues;
     packingSlotIsShown?: boolean;
+    collectionCentreIsShown?: boolean;
 }
 
 const withCollectionFormSections = [
@@ -136,6 +137,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     collectionCentresLabelsAndValues,
     packingSlotsLabelsAndValues,
     packingSlotIsShown,
+    collectionCentreIsShown,
 }) => {
     const router = useRouter();
     const [fields, setFields] = useState(initialFields);
@@ -167,6 +169,15 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             }));
         }
     }, [editMode, packingSlotIsShown]);
+
+    useEffect(() => {
+        if (editMode && !collectionCentreIsShown) {
+            setFormErrors((currentState) => ({
+                ...currentState,
+                collectionCentre: Errors.invalidCollectionCentre,
+            }));
+        }
+    }, [editMode, collectionCentreIsShown]);
 
     const formSections =
         fields.shippingMethod === "Collection"

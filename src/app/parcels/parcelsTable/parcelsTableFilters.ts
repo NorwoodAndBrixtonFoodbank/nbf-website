@@ -60,8 +60,12 @@ const familySearch: ParcelsFilterMethod<string> = (query, state) => {
 const phoneSearch: ParcelsFilterMethod<string> = (query, state) =>
     query.ilike("client_phone_number", `%${state}%`);
 
-const voucherSearch: ParcelsFilterMethod<string> = (query, state) =>
-    query.ilike("voucher_number", `%${state}%`);
+const voucherSearch: ParcelsFilterMethod<string> = (query, state) => {
+    if (state === "?") {
+        return query.ilike("voucher_number", "");
+    }
+    return query.ilike("voucher_number", `%${state}%`);
+}
 
 const buildDateFilter = (initialState: DateRangeState): ParcelsFilter<DateRangeState> => {
     const dateSearch: ParcelsFilterMethod<DateRangeState> = (query, state) => {
@@ -82,10 +86,9 @@ const buildDeliveryCollectionFilter = async (): Promise<ParcelsFilter<string[]>>
         return query.in("collection_centre_acronym", state);
     };
 
-    const keySet = new Set();
-    const { data, error } = await supabase
-        .from("parcels_plus")
-        .select("collection_centre_name, collection_centre_acronym");
+    const { data: collection_centres, error } = await supabase
+        .from("collection_centres")
+        .select("name, acronym, is_shown");
     if (error) {
         const logId = await logErrorReturnLogId(
             "Error with fetch: Collection centre filter options",
@@ -93,29 +96,16 @@ const buildDeliveryCollectionFilter = async (): Promise<ParcelsFilter<string[]>>
         );
         throw new DatabaseError("fetch", "collection centre filter options", logId);
     }
-    const optionsResponse = data ?? [];
-    const optionsSet: CollectionCentresOptions[] = optionsResponse.reduce<
-        CollectionCentresOptions[]
-    >((filteredOptions, row) => {
-        if (
-            row?.collection_centre_acronym &&
-            row.collection_centre_name &&
-            !keySet.has(row.collection_centre_acronym)
-        ) {
-            keySet.add(row.collection_centre_acronym);
-            filteredOptions.push({
-                name: row.collection_centre_name,
-                acronym: row.collection_centre_acronym,
-            });
-        }
-        return filteredOptions.sort();
-    }, []);
+    const optionsSet: CollectionCentresOptions[] = collection_centres.map((row) => ({
+        key: row.acronym,
+        value: row.is_shown ? row.name : `${row.name} (inactive)`,
+    }));
 
     return serverSideChecklistFilter<ParcelsTableRow, DbParcelRow>({
         key: "deliveryCollection",
         filterLabel: "Method",
-        itemLabelsAndKeys: optionsSet.map((option) => [option!.name, option!.acronym]),
-        initialCheckedKeys: optionsSet.map((option) => option!.acronym),
+        itemLabelsAndKeys: optionsSet.map((option) => [option.value, option.key]),
+        initialCheckedKeys: optionsSet.map((option) => option.key),
         method: deliveryCollectionSearch,
     });
 };
