@@ -247,7 +247,7 @@ export const getParcelsByIds = async (
         throw new DatabaseError("fetch", "parcel table", logId);
     }
 
-    const congestionCharge = await getCongestionChargeDetailsForParcelsTable(data, supabase);
+    const congestionCharge = await getCongestionChargeDetailsForParcelsTable(data);
     const { parcelTableRows, error: processParcelDataError } =
         await processingDataToParcelsTableData(data, congestionCharge);
 

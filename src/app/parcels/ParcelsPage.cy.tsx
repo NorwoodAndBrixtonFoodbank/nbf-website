@@ -1,4 +1,4 @@
-import { CongestionChargeDetails } from "@/app/parcels/fetchParcelTableData";
+import { CongestionChargeDetails } from "../congestionCharges";
 import {
     ParcelsTableRow,
     datetimeToPackingTimeLabel,
