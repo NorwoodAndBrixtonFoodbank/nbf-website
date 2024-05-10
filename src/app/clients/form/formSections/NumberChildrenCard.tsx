@@ -85,12 +85,10 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                                 onChange={getChild(fieldSetter, fields.children, index, "gender")}
                             />
                             <DropdownListInput
-                                selectLabelId="children-age-select-label"
-                                labelsAndValues={childBirthYearList.map((year) => {
-                                    return [year, year];
-                                })}
-                                listTitle="Year of Birth"
-                                defaultValue={child.birthYear ? child.birthYear.toString() : "2024"}
+                                selectLabelId="children-birth-year-select-label"
+                                labelsAndValues={childBirthYearList}
+                                listTitle="Year of Birth*"
+                                defaultValue={child.birthYear.toString()}
                                 onChange={getChild(
                                     fieldSetter,
                                     fields.children,
@@ -99,10 +97,10 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                                 )}
                             />
                             <DropdownListInput
-                                selectLabelId="children-birth-year-select-label"
+                                selectLabelId="children-birth-month-select-label"
                                 labelsAndValues={childBirthMonthList}
                                 listTitle="Month of Birth"
-                                defaultValue={child.birthMonth ? child.birthMonth.toString() : "1"}
+                                defaultValue={child.birthMonth?.toString()}
                                 onChange={getChild(
                                     fieldSetter,
                                     fields.children,
