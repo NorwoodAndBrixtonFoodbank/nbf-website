@@ -218,10 +218,16 @@ function getSelectedParcelCountMessage(numberOfSelectedParcels: number): string 
         : `${numberOfSelectedParcels} parcels selected`;
 }
 
-async function getClientIdForSelectedParcel(parcelId: string): Promise<string> {
+interface SelectedClientDetails {
+    clientId: string;
+    isClientActive: boolean;
+}
+
+async function getClientIdAndIsActiveForSelectedParcel(parcelId: string): Promise<SelectedClientDetails>
+ {
     const { data, error } = await supabase
         .from("parcels")
-        .select("client_id")
+        .select("client_id, client:clients(is_active)")
         .eq("primary_key", parcelId)
         .single();
 
@@ -231,7 +237,13 @@ async function getClientIdForSelectedParcel(parcelId: string): Promise<string> {
         throw new Error(message + ` Log ID: ${logId}`);
     }
 
-    return data.client_id;
+    if (data.client == null) {
+        const message = `Failed to find matching client for a parcel with ID ${parcelId}`;
+        const logId = await logErrorReturnLogId(message, { error });
+        throw new Error(message + ` Log ID: ${logId}`);
+    }
+
+    return {clientId: data.client_id, isClientActive: data.client.is_active};
 }
 
 function getParcelDataErrorMessage(errorType: GetParcelDataAndCountErrorType): string | null {
@@ -255,7 +267,7 @@ const ParcelsPage: React.FC<{}> = () => {
     const [parcelsDataPortion, setParcelsDataPortion] = useState<ParcelsTableRow[]>([]);
     const [filteredParcelCount, setFilteredParcelCount] = useState<number>(0);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
-    const [clientIdForSelectedParcel, setClientIdForSelectedParcel] = useState<string | null>(null);
+    const [selectedClientDetails, setSelectedClientDetails] = useState<SelectedClientDetails | null>(null);
 
     const [checkedParcelIds, setCheckedParcelIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
@@ -287,13 +299,13 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const selectedParcelMessage = getSelectedParcelCountMessage(checkedParcelIds.length);
 
-    const fetchAndSetClientIdForSelectedParcel = useCallback((): void => {
+    const fetchAndSetClientForSelectedParcel = useCallback((): void => {
         if (parcelId === null) {
             return;
         }
 
-        getClientIdForSelectedParcel(parcelId)
-            .then((clientId) => setClientIdForSelectedParcel(clientId))
+        getClientIdAndIsActiveForSelectedParcel(parcelId)
+            .then((data) => setSelectedClientDetails(data))
             .catch((error) => {
                 if (error instanceof Error) {
                     setErrorMessage(error.message);
@@ -309,9 +321,9 @@ const ParcelsPage: React.FC<{}> = () => {
     }, [parcelId]);
 
     useEffect(() => {
-        setClientIdForSelectedParcel(null);
-        void fetchAndSetClientIdForSelectedParcel();
-    }, [fetchAndSetClientIdForSelectedParcel]);
+        setSelectedClientDetails(null);
+        void fetchAndSetClientForSelectedParcel();
+    }, [fetchAndSetClientForSelectedParcel]);
 
     useEffect(() => {
         const buildFilters = async (): Promise<{
@@ -680,16 +692,18 @@ const ParcelsPage: React.FC<{}> = () => {
                                     <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
                                         Edit Parcel
                                     </LinkButton>
-                                    {clientIdForSelectedParcel && (
+                                    {selectedClientDetails && (
                                         <LinkButton
-                                            link={`/clients?clientId=${clientIdForSelectedParcel}`}
+                                            link={`/clients?clientId=${selectedClientDetails.clientId}`}
+                                            disabled={!selectedClientDetails.isClientActive}
                                         >
                                             See Client Details
                                         </LinkButton>
                                     )}
-                                    {clientIdForSelectedParcel && (
+                                    {selectedClientDetails && (
                                         <LinkButton
-                                            link={`/clients/edit/${clientIdForSelectedParcel}`}
+                                            link={`/clients/edit/${selectedClientDetails.clientId}`}
+                                            disabled={!selectedClientDetails.isClientActive}
                                         >
                                             Edit Client Details
                                         </LinkButton>
