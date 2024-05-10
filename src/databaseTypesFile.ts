@@ -191,67 +191,70 @@ export type Database = {
       }
       clients: {
         Row: {
-          address_1: string
-          address_2: string
-          address_county: string
+          address_1: string | null
+          address_2: string | null
+          address_county: string | null
           address_postcode: string | null
-          address_town: string
+          address_town: string | null
           baby_food: boolean | null
-          delivery_instructions: string
-          dietary_requirements: string[]
-          extra_information: string
+          delivery_instructions: string | null
+          dietary_requirements: string[] | null
+          extra_information: string | null
           family_id: string
-          feminine_products: string[]
-          flagged_for_attention: boolean
-          full_name: string
+          feminine_products: string[] | null
+          flagged_for_attention: boolean | null
+          full_name: string | null
+          is_active: boolean
           last_updated: string
-          other_items: string[]
-          pet_food: string[]
-          phone_number: string
+          other_items: string[] | null
+          pet_food: string[] | null
+          phone_number: string | null
           primary_key: string
-          signposting_call_required: boolean
+          signposting_call_required: boolean | null
         }
         Insert: {
-          address_1?: string
-          address_2?: string
-          address_county?: string
+          address_1?: string | null
+          address_2?: string | null
+          address_county?: string | null
           address_postcode?: string | null
-          address_town?: string
+          address_town?: string | null
           baby_food?: boolean | null
-          delivery_instructions?: string
-          dietary_requirements?: string[]
-          extra_information?: string
+          delivery_instructions?: string | null
+          dietary_requirements?: string[] | null
+          extra_information?: string | null
           family_id?: string
-          feminine_products?: string[]
-          flagged_for_attention?: boolean
-          full_name?: string
+          feminine_products?: string[] | null
+          flagged_for_attention?: boolean | null
+          full_name?: string | null
+          is_active?: boolean
           last_updated?: string
-          other_items?: string[]
-          pet_food?: string[]
-          phone_number?: string
+          other_items?: string[] | null
+          pet_food?: string[] | null
+          phone_number?: string | null
           primary_key?: string
-          signposting_call_required?: boolean
+          signposting_call_required?: boolean | null
         }
         Update: {
-          address_1?: string
-          address_2?: string
-          address_county?: string
+          address_1?: string | null
+          address_2?: string | null
+          address_county?: string | null
           address_postcode?: string | null
-          address_town?: string
+          address_town?: string | null
           baby_food?: boolean | null
-          delivery_instructions?: string
-          dietary_requirements?: string[]
-          extra_information?: string
+          delivery_instructions?: string | null
+          dietary_requirements?: string[] | null
+          extra_information?: string | null
           family_id?: string
-          feminine_products?: string[]
-          flagged_for_attention?: boolean
-          full_name?: string
+          feminine_products?: string[] | null
+          flagged_for_attention?: boolean | null
+          full_name?: string | null
+          is_active?: boolean
           last_updated?: string
-          other_items?: string[]
-          pet_food?: string[]
-          phone_number?: string
+          other_items?: string[] | null
+          pet_food?: string[] | null
+          phone_number?: string | null
           primary_key?: string
-          signposting_call_required?: boolean
+          signposting_call_required?: boolean | null
         }
         Relationships: []
       }
@@ -853,6 +856,7 @@ export type Database = {
           client_id: string | null
           family_count: number | null
           full_name: string | null
+          is_active: boolean | null
           phone_number: string | null
         }
         Relationships: []
