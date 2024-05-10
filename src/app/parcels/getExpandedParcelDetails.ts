@@ -5,6 +5,7 @@ import { EventTableRow } from "./EventTable";
 import { logErrorReturnLogId } from "@/logger/logger";
 import {
     formatAddressFromClientDetails,
+    formatBreakdownOfAdultsFromFamilyDetails,
     formatBreakdownOfChildrenFromFamilyDetails,
     formatHouseholdFromFamilyDetails,
 } from "@/app/clients/getExpandedClientDetails";
@@ -113,6 +114,7 @@ const getExpandedParcelDetails = async (
                 deliveryInstructions: client.delivery_instructions,
                 phoneNumber: client.phone_number,
                 household: formatHouseholdFromFamilyDetails(client.family),
+                adults: formatBreakdownOfAdultsFromFamilyDetails(client.family),
                 children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
                 packingDate: formatDatetimeAsDate(rawParcelDetails.packing_date),
                 packingSlot: rawParcelDetails.packing_slot?.name ?? "",
@@ -134,6 +136,7 @@ export interface ExpandedParcelData extends Data {
     deliveryInstructions: string;
     phoneNumber: string;
     household: string;
+    adults: string;
     children: string;
     packingDate: string;
     packingSlot: string;

@@ -1,18 +1,58 @@
 import { Person } from "@/components/Form/formFunctions";
 import { Schema } from "@/databaseUtils";
 import { displayList } from "@/common/format";
-import { getCurrentYear, isChildUsingBirthYear } from "@/common/getCurrentYear";
+import {
+    getChildAgeUsingBirthYearAndMonth,
+    getCurrentYear,
+    isChildUsingBirthYear,
+} from "@/common/getCurrentYear";
 
 export interface HouseholdSummary {
     householdSize: string;
     genderBreakdown: string;
+    ageAndGenderOfAdults: string;
     numberOfBabies: string;
     ageAndGenderOfChildren: string;
 }
 
 const getChild = (child: Person): string => {
-    const gender = child.gender === "male" ? "M" : child.gender === "female" ? "F" : "-";
-    return `${child.birthYear} ${gender}`;
+    let gender;
+    switch (child.gender) {
+        case "male":
+            gender = "M";
+            break;
+        case "female":
+            gender = "F";
+            break;
+        case "other":
+            gender = "-";
+            break;
+    }
+    let age;
+    if (child.birthMonth) {
+        age = getChildAgeUsingBirthYearAndMonth(child.birthYear, true, child.birthMonth);
+    } else {
+        age = getChildAgeUsingBirthYearAndMonth(child.birthYear, true);
+    }
+
+    return `${age} ${gender}`;
+};
+
+const getAdult = (adult: Person): string => {
+    let gender;
+    switch (adult.gender) {
+        case "male":
+            gender = "M";
+            break;
+        case "female":
+            gender = "F";
+            break;
+        case "other":
+            gender = "-";
+            break;
+    }
+    const age = getCurrentYear() - adult.birthYear;
+    return `${age} ${gender}`;
 };
 
 const convertPlural = (value: number, description: string): string => {
@@ -26,7 +66,13 @@ export const prepareHouseholdSummary = (familyData: Schema["families"][]): House
             gender: child.gender,
             birthMonth: child.birth_month,
             birthYear: child.birth_year,
-            primaryKey: child.primary_key,
+        };
+    });
+    const adults = familyData.filter((member) => !isChildUsingBirthYear(member.birth_year));
+    const formattedAdults: Person[] = adults.map((adult) => {
+        return {
+            gender: adult.gender,
+            birthYear: adult.birth_year,
         };
     });
     const householdSize = familyData.length;
@@ -48,6 +94,7 @@ export const prepareHouseholdSummary = (familyData: Schema["families"][]): House
     return {
         householdSize: `${adultText} ${childText}`,
         genderBreakdown: `${femaleText} ${maleText} ${otherText}`,
+        ageAndGenderOfAdults: displayList(formattedAdults.map((adult) => getAdult(adult))),
         numberOfBabies: numberBabies.toString(),
         ageAndGenderOfChildren: displayList(formattedChildren.map((child) => getChild(child))),
     };

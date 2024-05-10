@@ -158,7 +158,7 @@ export const formatBreakdownOfAdultsFromFamilyDetails = (
     const adultDetails = [];
 
     for (const familyMember of family) {
-        if (familyMember.birth_year < getCurrentYear() - 17) {
+        if (familyMember.birth_year < getCurrentYear() - 16) {
             const age = getAdultAgeUsingBirthYear(familyMember.birth_year);
             adultDetails.push(`${age} ${familyMember.gender}`);
         }
@@ -178,20 +178,21 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
 
     for (const familyMember of family) {
         if (
-            familyMember.birth_year >= getCurrentYear() - 17 &&
+            familyMember.birth_year >= getCurrentYear() - 16 &&
             familyMember.birth_year < getCurrentYear() - 2
         ) {
-            const age = getChildAgeUsingBirthYearAndMonth(familyMember.birth_year);
+            const age = getChildAgeUsingBirthYearAndMonth(familyMember.birth_year, false);
             childDetails.push(`${age} ${familyMember.gender}`);
         } else if (familyMember.birth_year >= getCurrentYear() - 2) {
             if (familyMember.birth_month) {
                 const age = getChildAgeUsingBirthYearAndMonth(
                     familyMember.birth_year,
+                    false,
                     familyMember.birth_month
                 );
                 childDetails.push(`${age} ${familyMember.gender}`);
             } else {
-                const age = getChildAgeUsingBirthYearAndMonth(familyMember.birth_year);
+                const age = getChildAgeUsingBirthYearAndMonth(familyMember.birth_year, false);
                 childDetails.push(`${age} ${familyMember.gender}`);
             }
         }
