@@ -223,8 +223,9 @@ interface SelectedClientDetails {
     isClientActive: boolean;
 }
 
-async function getClientIdAndIsActiveForSelectedParcel(parcelId: string): Promise<SelectedClientDetails>
- {
+async function getClientIdAndIsActiveForSelectedParcel(
+    parcelId: string
+): Promise<SelectedClientDetails> {
     const { data, error } = await supabase
         .from("parcels")
         .select("client_id, client:clients(is_active)")
@@ -243,7 +244,7 @@ async function getClientIdAndIsActiveForSelectedParcel(parcelId: string): Promis
         throw new Error(message + ` Log ID: ${logId}`);
     }
 
-    return {clientId: data.client_id, isClientActive: data.client.is_active};
+    return { clientId: data.client_id, isClientActive: data.client.is_active };
 }
 
 function getParcelDataErrorMessage(errorType: GetParcelDataAndCountErrorType): string | null {
@@ -267,7 +268,8 @@ const ParcelsPage: React.FC<{}> = () => {
     const [parcelsDataPortion, setParcelsDataPortion] = useState<ParcelsTableRow[]>([]);
     const [filteredParcelCount, setFilteredParcelCount] = useState<number>(0);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
-    const [selectedClientDetails, setSelectedClientDetails] = useState<SelectedClientDetails | null>(null);
+    const [selectedClientDetails, setSelectedClientDetails] =
+        useState<SelectedClientDetails | null>(null);
 
     const [checkedParcelIds, setCheckedParcelIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);

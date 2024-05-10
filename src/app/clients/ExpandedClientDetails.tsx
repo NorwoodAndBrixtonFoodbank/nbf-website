@@ -23,8 +23,12 @@ const ExpandedClientDetails = async ({ clientId }: Props): Promise<React.ReactEl
     const expandedClientParcelsDetails = await getClientParcelsDetails(clientId);
 
     return (
-        <> 
-           {expandedClientDetails.isActive ? <DataViewer data={{ ...expandedClientDetails }} /> : <DeletedText>Client has been deleted.</DeletedText>}
+        <>
+            {expandedClientDetails.isActive ? (
+                <DataViewer data={{ ...expandedClientDetails }} />
+            ) : (
+                <DeletedText>Client has been deleted.</DeletedText>
+            )}
             <ClientParcelsTable parcelsData={expandedClientParcelsDetails} />
         </>
     );
