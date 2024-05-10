@@ -38,7 +38,8 @@ const getRawClientDetails = async (clientId: string) => {
             baby_food,
             pet_food,
             other_items,
-            extra_information
+            extra_information,
+            is_active
         `
         )
         .eq("primary_key", clientId)
@@ -77,23 +78,25 @@ export interface ExpandedClientData {
     petFood: string;
     otherRequirements: string;
     extraInformation: string;
+    isActive: boolean;
 }
 
 export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientData => {
     return {
         primaryKey: client.primary_key,
-        fullName: client.full_name,
+        fullName: client.full_name ?? "",
         address: formatAddressFromClientDetails(client),
-        deliveryInstructions: client.delivery_instructions,
-        phoneNumber: client.phone_number,
+        deliveryInstructions: client.delivery_instructions ?? "",
+        phoneNumber: client.phone_number ?? "",
         household: formatHouseholdFromFamilyDetails(client.family),
         children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
-        dietaryRequirements: client.dietary_requirements.join(", "),
-        feminineProducts: client.feminine_products.join(", "),
+        dietaryRequirements: client.dietary_requirements?.join(", ") ?? "",
+        feminineProducts: client.feminine_products?.join(", ") ?? "",
         babyProducts: client.baby_food,
-        petFood: client.pet_food.join(", "),
-        otherRequirements: client.other_items.join(", "),
-        extraInformation: client.extra_information,
+        petFood: client.pet_food?.join(", ") ?? "",
+        otherRequirements: client.other_items?.join(", ") ?? "",
+        extraInformation: client.extra_information ?? "",
+        isActive: client.is_active,
     };
 };
 
