@@ -4,7 +4,7 @@ import { ReactElement } from "react";
 
 interface FontAwesomeIconProps {
     faIcon: IconDefinition;
-    color: string;
+    color?: string;
 }
 
 const FontAwesomeIconPdfComponent = ({ faIcon: { icon }, color="black" }: FontAwesomeIconProps): ReactElement => {
