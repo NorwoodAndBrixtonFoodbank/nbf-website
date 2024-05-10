@@ -1,4 +1,4 @@
-import { CongestionChargeDetails } from "@/app/parcels/fetchParcelTableData";
+import { CongestionChargeDetails } from "../congestionCharges";
 import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { ParcelsPlusRow, Schema, ViewSchema } from "@/databaseUtils";

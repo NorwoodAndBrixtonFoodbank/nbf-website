@@ -8,7 +8,7 @@ import DayOverviewPdf from "./DayOverviewPdf";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { PdfDataFetchResponse } from "../common";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import { checkForCongestionCharge } from "@/app/parcels/fetchParcelTableData";
+import { addCongestionChargeDetailsForDayOverview } from "@/app/congestionCharges";
 
 interface Props {
     onPdfCreationCompleted: () => void;
@@ -69,24 +69,6 @@ export interface DayOverviewPdfData {
 type DayOverviewPdfErrorType = ParcelForDayOverviewErrorType;
 export type DayOverviewPdfError = { type: DayOverviewPdfErrorType; logId: string };
 
-const getCongestionChargeDetailsForDayOverview = async (parcels: ParcelForDayOverview[]) => {
-    const postcodes: (string | null)[] = [];
-
-    for (const parcel of parcels) {
-        if (parcel.client?.address_postcode) {
-            postcodes.push(parcel.client?.address_postcode);
-        }
-    }
-
-    const postcodesWithCongestionChargeDetails = await checkForCongestionCharge(postcodes);
-
-    for (let i = 0; i < parcels.length ; i++) {
-        parcels[i].congestionChargeApplies = postcodesWithCongestionChargeDetails[i].congestionCharge;
-    }
-
-    return parcels;
-}
-
 const DayOverviewPdfButton = ({
     onPdfCreationCompleted,
     onPdfCreationFailed,
@@ -104,7 +86,7 @@ const DayOverviewPdfButton = ({
             return { data: null, error: error };
         }
         
-       const parcelsForDayOverviewWithCongestionChargeDetails = await getCongestionChargeDetailsForDayOverview(parcelsForDayOverview);
+        const parcelsForDayOverviewWithCongestionChargeDetails = await addCongestionChargeDetailsForDayOverview(parcelsForDayOverview);
 
         const fileName = "DayOverview.pdf";
         return {

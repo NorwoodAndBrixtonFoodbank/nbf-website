@@ -6,41 +6,7 @@ import { SortState } from "@/components/Tables/Table";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { ParcelStatus, ParcelsPlusRow } from "@/databaseUtils";
-
-export type CongestionChargeDetails = {
-    postcode: string;
-    congestionCharge: boolean;
-};
-
-export const getCongestionChargeDetailsForParcels = async (
-    processingData: ParcelsPlusRow[],
-): Promise<CongestionChargeDetails[]> => {
-    const postcodes = [];
-    for (const parcel of processingData) {
-        postcodes.push(parcel.client_address_postcode);
-    }
-
-    const postcodesWithCongestionChargeDetails = await checkForCongestionCharge(postcodes);
-
-    return postcodesWithCongestionChargeDetails;
-};
-
-export const checkForCongestionCharge = async (postcodes: (string | null)[]) => {
-
-    const response = await supabase.functions.invoke("check-congestion-charge", {
-        body: { postcodes: postcodes },
-    });
-
-    if (response.error) {
-        const logId = await logErrorReturnLogId(
-            "Error with congestion charge check",
-            response.error
-        );
-        throw new EdgeFunctionError("congestion charge check", logId);
-    }
-    return response.data;
-
-}
+import { getCongestionChargeDetailsForParcelsTable } from "../congestionCharges";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getParcelsQuery = (
@@ -180,7 +146,8 @@ export const getParcelsDataAndCount = async (
         };
     }
 
-    const congestionCharge = await getCongestionChargeDetailsForParcels(parcels, supabase);
+    const congestionCharge = await getCongestionChargeDetailsForParcelsTable(parcels);
+
     const { parcelTableRows, error } = await processingDataToParcelsTableData(
         parcels,
         congestionCharge
@@ -280,7 +247,7 @@ export const getParcelsByIds = async (
         throw new DatabaseError("fetch", "parcel table", logId);
     }
 
-    const congestionCharge = await getCongestionChargeDetailsForParcels(data, supabase);
+    const congestionCharge = await getCongestionChargeDetailsForParcelsTable(data, supabase);
     const { parcelTableRows, error: processParcelDataError } =
         await processingDataToParcelsTableData(data, congestionCharge);
 
