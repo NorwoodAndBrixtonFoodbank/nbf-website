@@ -4,13 +4,13 @@ import { SortState } from "@/components/Tables/Table";
 import { ServerSideSortMethod } from "@/components/Tables/sortMethods";
 import { ViewSchema } from "@/databaseUtils";
 
-export type DBAuditLogRow = ViewSchema["audit_log_plus"];
-export type AuditLogSortMethod = ServerSideSortMethod<DBAuditLogRow>;
+export type DbAuditLogRow = ViewSchema["audit_log_plus"];
+export type AuditLogSortMethod = ServerSideSortMethod<DbAuditLogRow>;
 export type AuditLogSortState = SortState<AuditLogRow, AuditLogSortMethod>;
 
 export type AuditLogResponse =
     | {
-          data: DBAuditLogRow[];
+          data: DbAuditLogRow[];
           error: null;
       }
     | {
@@ -58,7 +58,7 @@ export interface AuditLogRow {
 }
 
 export const convertAuditLogPlusRowsToAuditLogRows = (
-    auditLogResponse: DBAuditLogRow[]
+    auditLogResponse: DbAuditLogRow[]
 ): AuditLogRow[] =>
     auditLogResponse.map((auditLogPlusRow) => ({
         auditLogId: auditLogPlusRow.primary_key ?? "",

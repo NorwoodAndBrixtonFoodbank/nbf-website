@@ -5,6 +5,7 @@ import supabase from "@/supabaseClient";
 import { ParcelsPlusRow } from "@/databaseUtils";
 import {
     CongestionChargeDetails,
+    FetchClientIdResult,
     GetDbParcelDataResult,
     GetParcelDataAndCountErrorType,
     GetParcelDataAndCountResult,
@@ -263,18 +264,20 @@ export const fetchParcelStatuses = async (): Promise<ParcelStatusesReturnType> =
     return { data: parcelStatusesList, error: null };
 };
 
-export const getClientIdForSelectedParcel = async (parcelId: string): Promise<string> => {
-    const { data, error } = await supabase
-        .from("parcels")
+export const getClientIdForSelectedParcel = async (
+    parcelId: string
+): Promise<FetchClientIdResult> => {
+    const { data: clientIdData, error: clientIdError } = await supabase
+        .from("parcelss")
         .select("client_id")
         .eq("primary_key", parcelId)
         .single();
 
-    if (error) {
+    if (clientIdError) {
         const message = `Failed to fetch client ID for a parcel with ID ${parcelId}`;
-        const logId = await logErrorReturnLogId(message, { error });
-        throw new Error(message + ` Log ID: ${logId}`);
+        const logId = await logErrorReturnLogId(message, { error: clientIdError });
+        return { clientId: null, error: { type: "failedClientIdFetch", logId: logId } };
     }
 
-    return data.client_id;
+    return { clientId: clientIdData.client_id, error: null };
 };

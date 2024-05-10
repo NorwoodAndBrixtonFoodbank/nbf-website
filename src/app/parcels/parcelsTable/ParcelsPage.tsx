@@ -39,6 +39,7 @@ import {
     getSelectedParcelCountMessage,
     getParcelDataErrorMessage,
     parcelTableColumnDisplayFunctions,
+    getClientIdErrorMessage,
 } from "./format";
 import { PreTableControls, parcelTableColumnStyleOptions } from "./styles";
 
@@ -75,22 +76,23 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+    const [modalErrorMessage, setModalErrorMessage] = useState<string | null>(null);
+
     const parcelsTableFetchAbortController = useRef<AbortController | null>(null);
 
     const selectedParcelMessage = getSelectedParcelCountMessage(checkedParcelIds.length);
 
-    const fetchAndSetClientIdForSelectedParcel = useCallback((): void => {
+    const fetchAndSetClientIdForSelectedParcel = useCallback(async (): Promise<void> => {
         if (parcelId === null) {
             return;
         }
 
-        getClientIdForSelectedParcel(parcelId)
-            .then((clientId) => setClientIdForSelectedParcel(clientId))
-            .catch((error) => {
-                if (error instanceof Error) {
-                    setErrorMessage(error.message);
-                }
-            });
+        const { clientId, error } = await getClientIdForSelectedParcel(parcelId);
+        if (error) {
+            setModalErrorMessage(getClientIdErrorMessage(error));
+        } else {
+            setClientIdForSelectedParcel(clientId);
+        }
     }, [parcelId]);
 
     useEffect(() => {
@@ -375,6 +377,9 @@ const ParcelsPage: React.FC<{}> = () => {
                                         </LinkButton>
                                     )}
                                 </Centerer>
+                                {modalErrorMessage && (
+                                    <ErrorSecondaryText>{modalErrorMessage}</ErrorSecondaryText>
+                                )}
                             </ButtonsDiv>
                         </OutsideDiv>
                     </Modal>

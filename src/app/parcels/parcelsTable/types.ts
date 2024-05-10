@@ -102,3 +102,19 @@ export interface packingSlotOptionsSet {
     key: string;
     value: string;
 }
+
+type FetchClientIdErrorType = "failedClientIdFetch";
+export interface FetchClientIdError {
+    type: FetchClientIdErrorType;
+    logId: string;
+}
+
+export type FetchClientIdResult =
+    | {
+          clientId: string;
+          error: null;
+      }
+    | {
+          clientId: null;
+          error: FetchClientIdError;
+      };

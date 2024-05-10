@@ -1,6 +1,6 @@
 import React from "react";
 import { formatDateTime, formatDatetimeAsDate, nullPostcodeDisplay } from "@/common/format";
-import { GetParcelDataAndCountErrorType, ParcelsTableRow } from "./types";
+import { FetchClientIdError, GetParcelDataAndCountErrorType, ParcelsTableRow } from "./types";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
 import DeliveryIcon from "@/components/Icons/DeliveryIcon";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
@@ -80,6 +80,13 @@ export const getParcelDataErrorMessage = (
             return "Failed to fetch parcels. Please reload.";
         case "abortedFetch":
             return null;
+    }
+};
+
+export const getClientIdErrorMessage = (error: FetchClientIdError): string | null => {
+    switch (error.type) {
+        case "failedClientIdFetch":
+            return `Failed to fetch client ID for the selected parcel. Please reload. Log ID: ${error.logId}`;
     }
 };
 

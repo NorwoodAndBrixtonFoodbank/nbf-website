@@ -15,7 +15,7 @@ import {
 import {
     AuditLogRow,
     AuditLogSortState,
-    DBAuditLogRow,
+    DbAuditLogRow,
     convertAuditLogPlusRowsToAuditLogRows,
 } from "./types";
 import { auditLogTableSortableColumns } from "./sortFunctions";
@@ -84,7 +84,7 @@ const AuditLogTable: React.FC = () => {
     return (
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
-            <Table<AuditLogRow, PaginationType.Server, DBAuditLogRow>
+            <Table<AuditLogRow, PaginationType.Server, DbAuditLogRow>
                 dataPortion={auditLogDataPortion}
                 headerKeysAndLabels={auditLogTableHeaderKeysAndLabels}
                 defaultShownHeaders={[
