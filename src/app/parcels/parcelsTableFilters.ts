@@ -77,6 +77,9 @@ export const voucherSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
     state: string
 ): PostgrestFilterBuilder<Database["public"], any, any> => {
+    if (state === "?") {
+        return query.ilike("voucher_number", "");
+    }
     return query.ilike("voucher_number", `%${state}%`);
 };
 
