@@ -3,7 +3,10 @@ import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { nullPostcodeDisplay } from "@/common/format";
-import { getChildAgeUsingBirthYearAndMonth } from "@/common/getCurrentYear";
+import {
+    getAdultAgeUsingBirthYear,
+    getChildAgeUsingBirthYearAndMonth,
+} from "@/common/getCurrentYear";
 
 const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
     const rawClientDetails = await getRawClientDetails(clientId);
@@ -70,6 +73,7 @@ export interface ExpandedClientData {
     deliveryInstructions: string;
     phoneNumber: string;
     household: string;
+    adults: string;
     children: string;
     dietaryRequirements: string;
     feminineProducts: string;
@@ -86,6 +90,7 @@ export const rawDataToExpandedClientDetails = (client: RawClientDetails): Expand
         deliveryInstructions: client.delivery_instructions,
         phoneNumber: client.phone_number,
         household: formatHouseholdFromFamilyDetails(client.family),
+        adults: formatBreakdownOfAdultsFromFamilyDetails(client.family),
         children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
         dietaryRequirements: client.dietary_requirements.join(", "),
         feminineProducts: client.feminine_products.join(", "),
@@ -144,6 +149,25 @@ export const formatHouseholdFromFamilyDetails = (
     const occupantDisplay = `Occupant${adultCount + childCount > 1 ? "s" : ""}`;
 
     return `${familyCategory} ${occupantDisplay} (${adultChildBreakdown.join(", ")})`;
+};
+
+export const formatBreakdownOfAdultsFromFamilyDetails = (
+    family: Pick<Schema["families"], "birth_year" | "gender">[]
+): string => {
+    const adultDetails = [];
+
+    for (const familyMember of family) {
+        if (familyMember.birth_year < 2009) {
+            const age = getAdultAgeUsingBirthYear(familyMember.birth_year);
+            adultDetails.push(`${age} ${familyMember.gender}`);
+        }
+    }
+
+    if (adultDetails.length === 0) {
+        return "No Adults";
+    }
+
+    return adultDetails.join(", ");
 };
 
 export const formatBreakdownOfChildrenFromFamilyDetails = (

@@ -31,3 +31,8 @@ export const getChildAgeUsingBirthYearAndMonth = (
         return `${years - 1} to ${years} year old`;
     }
 };
+
+export const getAdultAgeUsingBirthYear = (birthYear: number): string => {
+    const years = getCurrentYear() - birthYear;
+    return `${years} year old`;
+};
