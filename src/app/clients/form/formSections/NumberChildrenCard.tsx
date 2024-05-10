@@ -87,7 +87,7 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                             <DropdownListInput
                                 selectLabelId="children-birth-year-select-label"
                                 labelsAndValues={childBirthYearList}
-                                listTitle="Year of Birth*"
+                                listTitle="Year of Birth"
                                 defaultValue={child.birthYear.toString()}
                                 onChange={getChild(
                                     fieldSetter,
