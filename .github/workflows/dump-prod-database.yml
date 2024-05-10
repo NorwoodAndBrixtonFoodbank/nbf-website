@@ -23,7 +23,7 @@ jobs:
         run: npx supabase link --project-ref $SUPABASE_PROD_PROJECT_ID
 
       - name: Create db-backup folder
-        run: mkdir db-backup
+        run: mkdir db-backup db-backup-unencrypted
 
       - name: Dump schema
         run: npx supabase db dump -f db-backup/schema.sql
