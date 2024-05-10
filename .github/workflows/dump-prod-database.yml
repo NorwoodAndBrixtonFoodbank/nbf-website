@@ -8,6 +8,7 @@ env:
   SUPABASE_PROD_PROJECT_ID: ${{ secrets.SUPABASE_PROD_PROJECT_ID }}
   SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_PROD_DATABASE_PASSWORD }}
   SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_PROD_ACCESS_TOKEN }}
+  BACKUP_ENCRYPTION_PASSPHRASE: ${{ secrets.BACKUP_ENCRYPTION_PASSPHRASE }}
 
 jobs:
   dump-prod-database:
@@ -31,7 +32,10 @@ jobs:
         run: npx supabase db dump --role-only -f db-backup/role.sql
 
       - name: Dump data
-        run: npx supabase db dump --data-only -f db-backup/data.sql
+        run: npx supabase db dump --data-only -f db-backup-unencrypted/data.sql
+
+      - name: Encrypt data
+        run: gpg --symmetric --cipher-algo AES256 --passphrase "$BACKUP_ENCRYPTION_PASSPHRASE" --batch --output db-backup/data.sql.gpg db-backup-unencrypted/data.sql
 
       - name: Save files as artifacts
         uses: actions/upload-artifact@v4
