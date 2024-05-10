@@ -6,6 +6,8 @@ import { faFlag, faSquare, IconDefinition } from "@fortawesome/free-solid-svg-ic
 
 import { DayOverviewPdfData, ParcelForDayOverview } from "@/pdf/DayOverview/DayOverviewPdfButton";
 import { nullPostcodeDisplay } from "@/common/format";
+import { faCopyright } from "@fortawesome/free-solid-svg-icons";
+import FontAwesomeIconPdfComponent from "../FontAwesomeIconPdfComponent";
 
 interface DayOverviewRowProps {
     parcel: ParcelForDayOverview;
@@ -22,7 +24,7 @@ interface DayOverviewPdfProps {
 interface CustomSVGProps {
     icon: IconDefinition;
     color: string;
-    fill: boolean;
+    fill?: boolean;
 }
 
 const styles = StyleSheet.create({
@@ -108,9 +110,10 @@ const DayOverviewRow: React.FC<DayOverviewRowProps> = ({ parcel }) => {
                 )}
             </View>
             <Text style={[styles.cellName, styles.cell]}>{parcel.client!.full_name}</Text>
-            <Text style={[styles.cellPostcode, styles.cell]}>
-                {parcel.client!.address_postcode ?? nullPostcodeDisplay}
-            </Text>
+            <View style={[styles.cell, styles.cellPostcode, styles.row]}>     
+                <Text>{parcel.client!.address_postcode ?? nullPostcodeDisplay}</Text>
+                <FontAwesomeIconPdfComponent faIcon={faCopyright} color="red"/>
+            </View>
             <Text style={[styles.cellTime, styles.cell]}>
                 {dateTimeToAMPM(parcel.collection_datetime!)}
             </Text>
