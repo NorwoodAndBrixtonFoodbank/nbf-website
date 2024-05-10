@@ -1,5 +1,6 @@
 import { logErrorReturnLogId } from "@/logger/logger";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { updateUserLastLogin } from "@/app/admin/manageUser/UpdateUserProfile";
 
 export async function signInWithPassword(credentials: {
     email: string;
@@ -12,6 +13,7 @@ export async function signInWithPassword(credentials: {
         void logErrorReturnLogId("Sign in with password failed", { error });
         throw error;
     }
+    console.log((await supabase.auth.getUser()).data);
 }
 
 export async function signInWithTokens(accessToken: string, refreshToken: string): Promise<void> {

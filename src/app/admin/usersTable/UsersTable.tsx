@@ -28,6 +28,7 @@ const usersTableHeaderKeysAndLabels: TableHeaders<UserRow> = [
     ["email", "Email"],
     ["userRole", "Role"],
     ["telephoneNumber", "Telephone Number"],
+    ["lastLoggedInAt", "Last Logged In At"],
     ["createdAt", "Created At"],
     ["updatedAt", "Updated At"],
 ];
@@ -70,6 +71,14 @@ const sortableColumns: SortOptions<UserRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("telephone_number", { ascending: sortDirection === "asc" }),
+            paginationType: PaginationType.Server,
+        },
+    },
+    {
+        key: "lastLoggedInAt",
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("lastLoggedInAt", { ascending: sortDirection === "asc" }),
             paginationType: PaginationType.Server,
         },
     },
@@ -271,6 +280,7 @@ const UsersTable: React.FC = () => {
                     "userRole",
                     "email",
                     "telephoneNumber",
+                    "lastLoggedInAt",
                     "createdAt",
                     "updatedAt",
                 ]}

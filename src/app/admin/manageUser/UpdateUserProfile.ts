@@ -6,10 +6,11 @@ import { sendAuditLog } from "@/server/auditLog";
 
 interface UpdateUserProfile {
     profileId: string;
-    role: UserRole;
+    role?: UserRole;
     firstName?: string;
     lastName?: string;
     phoneNumber?: string;
+    lastlogin?: string;
 }
 
 export async function updateUserProfile(
@@ -46,5 +47,18 @@ export async function updateUserProfile(
     }
 
     await sendAuditLog({ ...auditLog, wasSuccess: true });
+    return null;
+}
+
+export async function updateUserLastLogin(
+    userDetails: UpdateUserProfile
+): Promise<PostgrestError | null> {
+    await supabase
+        .from("profiles")
+        .update({
+            last_logged_in_at: userDetails.lastlogin
+        })
+        .eq("primary_key", userDetails.profileId)
+        .single();
     return null;
 }

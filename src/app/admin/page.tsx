@@ -16,6 +16,7 @@ export interface UserRow {
     userRole: DisplayedUserRole;
     email: string;
     telephoneNumber: string;
+    lastLoggedInAt: number | null;
     createdAt: number | null;
     updatedAt: number | null;
 }

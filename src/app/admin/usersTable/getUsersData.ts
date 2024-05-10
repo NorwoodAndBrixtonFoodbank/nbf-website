@@ -84,6 +84,7 @@ export const getUsersDataAndCount = async (
             userRole: user.role ?? "UNKNOWN",
             email: user.email ?? "",
             telephoneNumber: user.telephone_number ?? "-",
+            lastLoggedInAt: user.last_logged_in_at ? Date.parse(user.last_logged_in_at) : null,
             createdAt: user.created_at ? Date.parse(user.created_at) : null,
             updatedAt: user.updated_at ? Date.parse(user.updated_at) : null,
         };
