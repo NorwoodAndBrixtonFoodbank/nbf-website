@@ -37,6 +37,7 @@ import Button from "@mui/material/Button";
 import { submitAddClientForm, submitEditClientForm } from "@/app/clients/form/submitFormHelpers";
 import Title from "@/components/Title/Title";
 import { getCurrentYear } from "@/common/getCurrentYear";
+import { adultBirthYearList } from "@/app/clients/form/birthYearDropdown";
 
 interface Props {
     initialFields: ClientFields;
@@ -126,6 +127,23 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
             });
         fieldSetter({ children: [...fields.children, ...extraChildren] });
     }, [fields.numberOfChildren]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        if (fields.numberOfAdults <= fields.adults.length) {
+            fieldSetter({ adults: fields.adults.slice(0, fields.numberOfAdults) });
+            return;
+        }
+
+        const extraAdults: Person[] = Array(fields.numberOfAdults - fields.adults.length)
+            .fill(0)
+            .map((_item) => {
+                return {
+                    gender: "other",
+                    birthYear: parseInt(adultBirthYearList[0][0]),
+                };
+            });
+        fieldSetter({ adults: [...fields.adults, ...extraAdults] });
+    }, [fields.numberOfAdults]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const fieldSetter = createSetter(setFields, fields);
     const errorSetter = createSetter(setFormErrors, formErrors);

@@ -38,7 +38,6 @@ const NumberAdultsCard: React.FC<ClientCardProps> = ({
     fieldSetter,
     fields,
 }) => {
-    console.log(fields.numberOfAdults);
     return (
         <GenericFormCard
             title="Number of Adults"
@@ -80,11 +79,9 @@ const NumberAdultsCard: React.FC<ClientCardProps> = ({
                             />
                             <DropdownListInput
                                 selectLabelId="adult-birth-year-select-label"
-                                labelsAndValues={adultBirthYearList.map((year) => {
-                                    return [year, year];
-                                })}
+                                labelsAndValues={adultBirthYearList}
                                 listTitle="Year of Birth"
-                                defaultValue={adult.birthYear ? adult.birthYear.toString() : "2024"}
+                                defaultValue={adult.birthYear.toString()}
                                 onChange={getAdult(fieldSetter, fields.adults, index, "birthYear")}
                             />
                         </StyledCard>
