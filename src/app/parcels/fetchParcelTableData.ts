@@ -14,12 +14,18 @@ export type CongestionChargeDetails = {
 
 export const getCongestionChargeDetailsForParcels = async (
     processingData: ParcelsPlusRow[],
-    supabase: Supabase
 ): Promise<CongestionChargeDetails[]> => {
     const postcodes = [];
     for (const parcel of processingData) {
         postcodes.push(parcel.client_address_postcode);
     }
+
+    const postcodesWithCongestionChargeDetails = await checkForCongestionCharge(postcodes);
+
+    return postcodesWithCongestionChargeDetails;
+};
+
+const checkForCongestionCharge = async (postcodes: (string | null)[]) => {
 
     const response = await supabase.functions.invoke("check-congestion-charge", {
         body: { postcodes: postcodes },
@@ -33,7 +39,8 @@ export const getCongestionChargeDetailsForParcels = async (
         throw new EdgeFunctionError("congestion charge check", logId);
     }
     return response.data;
-};
+
+}
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getParcelsQuery = (
