@@ -35,7 +35,7 @@ const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
     );
 
     const mapsLinkForSelectedParcels =
-        "https://www.google.com/maps/dir/" + formattedPostcodes.join("/");
+        "https://www.google.com/maps/dir/" + formattedPostcodes.join("/") + "//";
 
     return (
         <GeneralActionModal
