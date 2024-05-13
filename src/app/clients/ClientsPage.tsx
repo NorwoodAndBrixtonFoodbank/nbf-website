@@ -25,6 +25,9 @@ import { CircularProgress } from "@mui/material";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { nullPostcodeDisplay } from "@/common/format";
+import ConfirmDialog from "@/components/Modal/ConfirmDialog";
+import DeleteButton from "@/components/Buttons/DeleteButton";
+import deleteClient from "./deleteClient";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -101,6 +104,7 @@ const ClientsPage: React.FC<{}> = () => {
     const clientTableFetchAbortController = useRef<AbortController | null>(null);
     const [isSelectedClientActive, setIsSelectedClientActive] = useState<boolean | null>(null);
     const [modalErrorMessage, setModalErrorMessage] = useState<string | null>(null);
+    const [isDeleteClientDialogOpen, setIsDeleteClientDialogOpen] = useState<boolean>(false);
 
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
@@ -281,10 +285,25 @@ const ClientsPage: React.FC<{}> = () => {
                                     <LinkButton link={`/parcels/add/${clientId}`}>
                                         Add Parcel
                                     </LinkButton>
+                                    <DeleteButton onClick={() => setIsDeleteClientDialogOpen(true)}>
+                                        Delete Client
+                                    </DeleteButton>
                                 </Centerer>
                             </ButtonsDiv>
                         </OutsideDiv>
                     </Modal>
+                    {clientId && (
+                        <ConfirmDialog
+                            isOpen={isDeleteClientDialogOpen}
+                            message="Are you sure you want to delete this client? This action cannot be undone."
+                            onCancel={() => setIsDeleteClientDialogOpen(false)}
+                            onConfirm={() => {
+                                deleteClient(clientId);
+                                setIsDeleteClientDialogOpen(false);
+                                router.push("/clients");
+                            }}
+                        ></ConfirmDialog>
+                    )}
                 </>
             )}
         </>

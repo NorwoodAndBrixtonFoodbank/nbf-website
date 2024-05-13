@@ -936,6 +936,19 @@ export type Database = {
       }
     }
     Functions: {
+      anonymiseClientAndDeleteFamily: {
+        Args: {
+          clientid: string
+          lastupdated: string
+        }
+        Returns: undefined
+      }
+      deactivateClientAndDeleteFamily2: {
+        Args: {
+          clientid: string
+        }
+        Returns: undefined
+      }
       insertClientAndTheirFamily: {
         Args: {
           clientrecord: Json
