@@ -8,7 +8,7 @@ import DayOverviewPdf from "./DayOverviewPdf";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { PdfDataFetchResponse } from "../common";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import { checkForCongestionCharge } from "@/app/congestionCharges";
+import { CongestionChargeError, checkForCongestionCharge } from "@/app/congestionCharges";
 
 interface Props {
     onPdfCreationCompleted: () => void;
@@ -32,7 +32,7 @@ type ParcelForDayOverviewResponse =
       }
     | {
           data: null;
-          error: { type: ParcelForDayOverviewErrorType; logId: string };
+          error: { type: ParcelForDayOverviewErrorType | CongestionChargeError; logId: string };
       };
 
 type ParcelForDayOverviewErrorType = "parcelFetchFailed";
@@ -66,12 +66,12 @@ export interface DayOverviewPdfData {
     parcels: ParcelForDayOverview[];
 }
 
-type DayOverviewPdfErrorType = ParcelForDayOverviewErrorType;
+type DayOverviewPdfErrorType = ParcelForDayOverviewErrorType | CongestionChargeError;
 export type DayOverviewPdfError = { type: DayOverviewPdfErrorType; logId: string };
 
 const addCongestionChargeDetailsForDayOverview = async (
     parcels: ParcelForDayOverview[]
-): Promise<ParcelForDayOverview[]> => {
+): Promise<ParcelForDayOverviewResponse> => {
     const postcodes: (string | null)[] = [];
 
     for (const parcel of parcels) {
@@ -80,8 +80,10 @@ const addCongestionChargeDetailsForDayOverview = async (
         }
     }
 
-    const { data: postcodesWithCongestionChargeDetails } =
+    const { data: postcodesWithCongestionChargeDetails, error } =
         await checkForCongestionCharge(postcodes);
+
+    if (error) { return {data: null, error: error}}
 
     if (postcodesWithCongestionChargeDetails) {
         for (let index = 0; index < parcels.length; index++) {
@@ -90,7 +92,7 @@ const addCongestionChargeDetailsForDayOverview = async (
         }
     }
 
-    return parcels;
+    return {data: parcels, error: null} ;
 };
 
 const DayOverviewPdfButton = ({
@@ -110,8 +112,10 @@ const DayOverviewPdfButton = ({
             return { data: null, error: error };
         }
 
-        const parcelsForDayOverviewWithCongestionChargeDetails =
+        const {data: parcelsForDayOverviewWithCongestionChargeDetails, error: congestionChargeError} =
             await addCongestionChargeDetailsForDayOverview(parcelsForDayOverview);
+
+        if (congestionChargeError) { return { data: null, error: congestionChargeError }}
 
         const fileName = "DayOverview.pdf";
         return {
