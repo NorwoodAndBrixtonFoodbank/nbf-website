@@ -25,18 +25,17 @@ const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
         setActionCompleted(true);
     };
 
-    const formattedPostcodes = props.selectedParcels.reduce<string[]>(
-        (formattedPostcodes, parcel) => {
+    const formattedPostcodes = Array.from(
+        props.selectedParcels.reduce<Set<string>>((formattedPostcodes, parcel) => {
             if (parcel.addressPostcode) {
-                formattedPostcodes.push(parcel.addressPostcode.replaceAll(" ", ""));
+                formattedPostcodes.add(parcel.addressPostcode.replaceAll(" ", ""));
             }
             return formattedPostcodes;
-        },
-        []
+        }, new Set())
     );
+
     const mapsLinkForSelectedParcels =
         "https://www.google.com/maps/dir/" + formattedPostcodes.join("/");
-    ("//");
 
     return (
         <GeneralActionModal
