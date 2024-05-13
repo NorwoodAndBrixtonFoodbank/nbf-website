@@ -9,7 +9,6 @@ interface Props<Value> {
     defaultValue?: Value;
     onChange?: (event: SelectChangeEvent<Value>) => void;
     selectLabelId: string;
-    helperText?: string;
 }
 
 const DropdownListInput = <Value,>(props: Props<Value>): React.ReactElement => {
