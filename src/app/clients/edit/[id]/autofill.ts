@@ -5,7 +5,7 @@ import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { processExtraInformation } from "@/common/formatClientsData";
 
 const isAdult = (member: Schema["families"]): boolean => {
-    return member.birth_year <= 2008;
+    return member.birth_year <= 2007;
 };
 
 const arrayToBooleanGroup = (data: string[]): BooleanGroup => {
