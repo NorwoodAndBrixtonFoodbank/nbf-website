@@ -8,7 +8,7 @@ import DayOverviewPdf from "./DayOverviewPdf";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { PdfDataFetchResponse } from "../common";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import { addCongestionChargeDetailsForDayOverview } from "@/app/congestionCharges";
+import { checkForCongestionCharge } from "@/app/congestionCharges";
 
 interface Props {
     onPdfCreationCompleted: () => void;
@@ -68,6 +68,27 @@ export interface DayOverviewPdfData {
 
 type DayOverviewPdfErrorType = ParcelForDayOverviewErrorType;
 export type DayOverviewPdfError = { type: DayOverviewPdfErrorType; logId: string };
+
+const addCongestionChargeDetailsForDayOverview = async (
+    parcels: ParcelForDayOverview[]
+): Promise<ParcelForDayOverview[]> => {
+    const postcodes: (string | null)[] = [];
+
+    for (const parcel of parcels) {
+        if (parcel.client?.address_postcode) {
+            postcodes.push(parcel.client?.address_postcode);
+        }
+    }
+
+    const postcodesWithCongestionChargeDetails = await checkForCongestionCharge(postcodes);
+
+    for (let index = 0; index < parcels.length; index++) {
+        parcels[index].congestionChargeApplies =
+            postcodesWithCongestionChargeDetails[index].congestionCharge;
+    }
+
+    return parcels;
+};
 
 const DayOverviewPdfButton = ({
     onPdfCreationCompleted,

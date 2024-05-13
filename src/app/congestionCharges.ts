@@ -1,49 +1,13 @@
-import { ParcelsPlusRow } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { EdgeFunctionError } from "./errorClasses";
-import { ParcelForDayOverview } from "@/pdf/DayOverview/DayOverviewPdfButton";
 
 export type CongestionChargeDetails = {
     postcode: string;
     congestionCharge: boolean;
 };
 
-export const getCongestionChargeDetailsForParcelsTable = async (
-    processingData: ParcelsPlusRow[]
-): Promise<CongestionChargeDetails[]> => {
-    const postcodes = [];
-    for (const parcel of processingData) {
-        postcodes.push(parcel.client_address_postcode);
-    }
-
-    const postcodesWithCongestionChargeDetails = await checkForCongestionCharge(postcodes);
-
-    return postcodesWithCongestionChargeDetails;
-};
-
-export const addCongestionChargeDetailsForDayOverview = async (
-    parcels: ParcelForDayOverview[]
-): Promise<ParcelForDayOverview[]> => {
-    const postcodes: (string | null)[] = [];
-
-    for (const parcel of parcels) {
-        if (parcel.client?.address_postcode) {
-            postcodes.push(parcel.client?.address_postcode);
-        }
-    }
-
-    const postcodesWithCongestionChargeDetails = await checkForCongestionCharge(postcodes);
-
-    for (let index = 0; index < parcels.length; index++) {
-        parcels[index].congestionChargeApplies =
-            postcodesWithCongestionChargeDetails[index].congestionCharge;
-    }
-
-    return parcels;
-};
-
-const checkForCongestionCharge = async (
+export const checkForCongestionCharge = async (
     postcodes: (string | null)[]
 ): Promise<CongestionChargeDetails[]> => {
     const response = await supabase.functions.invoke("check-congestion-charge", {

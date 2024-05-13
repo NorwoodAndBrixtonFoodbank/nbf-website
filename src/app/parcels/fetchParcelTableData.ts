@@ -6,7 +6,8 @@ import { SortState } from "@/components/Tables/Table";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { ParcelStatus, ParcelsPlusRow } from "@/databaseUtils";
-import { getCongestionChargeDetailsForParcelsTable } from "../congestionCharges";
+import { checkForCongestionCharge } from "../congestionCharges";
+import { CongestionChargeDetails } from "../congestionCharges";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getParcelsQuery = (
@@ -230,6 +231,19 @@ export const getParcelIds = async (
     }, []);
 };
 
+const getCongestionChargeDetailsForParcelsTable = async (
+    processingData: ParcelsPlusRow[]
+): Promise<CongestionChargeDetails[]> => {
+    const postcodes = [];
+    for (const parcel of processingData) {
+        postcodes.push(parcel.client_address_postcode);
+    }
+
+    const postcodesWithCongestionChargeDetails = await checkForCongestionCharge(postcodes);
+
+    return postcodesWithCongestionChargeDetails;
+};
+
 export const getParcelsByIds = async (
     supabase: Supabase,
     filters: Filter<ParcelsTableRow, any>[],
@@ -296,3 +310,5 @@ export const fetchParcelStatuses = async (): Promise<ParcelStatusesReturnType> =
 
     return { data: parcelStatusesList, error: null };
 };
+
+
