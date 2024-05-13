@@ -80,11 +80,14 @@ const addCongestionChargeDetailsForDayOverview = async (
         }
     }
 
-    const postcodesWithCongestionChargeDetails = await checkForCongestionCharge(postcodes);
+    const { data: postcodesWithCongestionChargeDetails } =
+        await checkForCongestionCharge(postcodes);
 
-    for (let index = 0; index < parcels.length; index++) {
-        parcels[index].congestionChargeApplies =
-            postcodesWithCongestionChargeDetails[index].congestionCharge;
+    if (postcodesWithCongestionChargeDetails) {
+        for (let index = 0; index < parcels.length; index++) {
+            parcels[index].congestionChargeApplies =
+                postcodesWithCongestionChargeDetails[index].congestionCharge;
+        }
     }
 
     return parcels;

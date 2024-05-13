@@ -8,16 +8,15 @@ export type CongestionChargeDetails = {
 
 export type CongestionChargeError = "failedToRetrieveCongestionChargeDetails";
 
-export type CongestionChargeReturnType = 
-    {
-        data: CongestionChargeDetails[];
-        error: null;
-    }
-  | {
-        data: null;
-        error: { type: CongestionChargeError; logId: string };
-    };
-
+export type CongestionChargeReturnType =
+    | {
+          data: CongestionChargeDetails[];
+          error: null;
+      }
+    | {
+          data: null;
+          error: { type: CongestionChargeError; logId: string };
+      };
 
 export const checkForCongestionCharge = async (
     postcodes: (string | null)[]
@@ -31,8 +30,8 @@ export const checkForCongestionCharge = async (
             "Error with congestion charge check",
             response.error
         );
-        return { data: null, error: { type: "failedToRetrieveCongestionChargeDetails", logId }}
+        return { data: null, error: { type: "failedToRetrieveCongestionChargeDetails", logId } };
     }
-    
-    return { data: response.data, error: null}
+
+    return { data: response.data, error: null };
 };
