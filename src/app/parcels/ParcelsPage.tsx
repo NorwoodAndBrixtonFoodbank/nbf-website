@@ -240,6 +240,8 @@ function getParcelDataErrorMessage(errorType: GetParcelDataAndCountErrorType): s
             return "Unknown error has occurred. Please reload.";
         case "failedToFetchParcels":
             return "Failed to fetch parcels. Please reload.";
+        case "failedToRetrieveCongestionChargeDetails":
+            return "Failed to retrieve congestion charge details"
         case "abortedFetch":
             return null;
     }
@@ -400,7 +402,9 @@ const ParcelsPage: React.FC<{}> = () => {
                 if (newErrorMessage !== null) {
                     setErrorMessage(`${newErrorMessage} Log ID: ${error.logId}`);
                 }
-            } else {
+            } 
+            
+            if (data) {
                 setParcelsDataPortion(data.parcelTableRows);
                 setFilteredParcelCount(data.count);
             }
