@@ -5,7 +5,7 @@ import {
     getChildAgeUsingBirthYearAndMonth,
     getCurrentYear,
     isChildUsingBirthYear,
-} from "@/common/getCurrentYear";
+} from "@/common/getAgesOfFamily";
 
 export interface HouseholdSummary {
     householdSize: string;

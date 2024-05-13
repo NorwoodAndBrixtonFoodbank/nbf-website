@@ -7,7 +7,7 @@ import {
     getAdultAgeUsingBirthYear,
     getChildAgeUsingBirthYearAndMonth,
     getCurrentYear,
-} from "@/common/getCurrentYear";
+} from "@/common/getAgesOfFamily";
 
 const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
     const rawClientDetails = await getRawClientDetails(clientId);
