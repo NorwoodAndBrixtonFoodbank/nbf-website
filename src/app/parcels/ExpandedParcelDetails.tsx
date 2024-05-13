@@ -12,8 +12,7 @@ import { styled } from "styled-components";
 
 const DeletedText = styled.div`
     font-weight: 600;
-    padding: 0.5em 0 1em 0;
-    justify-content: center;
+    padding: 0.5em 0 2em 0;
     display: flex;
     flex-direction: row;
 `;

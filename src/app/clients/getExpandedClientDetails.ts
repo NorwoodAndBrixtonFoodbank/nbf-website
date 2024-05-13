@@ -168,3 +168,36 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
 
     return childDetails.join(", ");
 };
+
+type GetClientIsActiveErrorType = "failedClientIsActiveFetch";
+export interface GetClientIsActiveError {
+    type: GetClientIsActiveErrorType;
+    logId: string;
+}
+
+type GetClientIsActiveResponse =
+    | {
+          error: null;
+          isActive: boolean;
+      }
+    | {
+          error: GetClientIsActiveError;
+          isActive: null;
+      };
+
+export const getIsClientActive = async (
+    clientId: string
+): Promise<GetClientIsActiveResponse> => {
+    const { data: isActiveData, error: isActiveError } = await supabase
+        .from("clients")
+        .select("primary_key, is_active")
+        .eq("primary_key", clientId)
+        .single();
+    if (isActiveError) {
+        const logId = await logErrorReturnLogId("Error with fetch: client table", {
+            error: isActiveError,
+        });
+        return { error: { type: "failedClientIsActiveFetch", logId }, isActive: null };
+    }
+    return { isActive: isActiveData.is_active, error: null };
+};

@@ -10,10 +10,7 @@ import supabase from "@/supabaseClient";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState, Suspense, useRef, useCallback } from "react";
 import { useTheme } from "styled-components";
-import getClientsDataAndCount, {
-    GetClientIsActiveError,
-    getIsClientActive,
-} from "./getClientsData";
+import getClientsDataAndCount from "./getClientsData";
 import { useSearchParams, useRouter } from "next/navigation";
 import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
@@ -27,7 +24,8 @@ import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionSta
 import { nullPostcodeDisplay } from "@/common/format";
 import ConfirmDialog from "@/components/Modal/ConfirmDialog";
 import DeleteButton from "@/components/Buttons/DeleteButton";
-import deleteClient from "./deleteClient";
+import deleteClient, { DeleteClientError } from "./deleteClient";
+import { GetClientIsActiveError, getIsClientActive } from "./getExpandedClientDetails";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -92,6 +90,13 @@ const getIsClientActiveErrorMessage = (error: GetClientIsActiveError): string =>
     }
 };
 
+const getDeleteClientErrorMessage = (error: DeleteClientError): string => {
+    switch (error.type) {
+        case "failedClientDeletion":
+            return `Failed to delete client. Please try again later. Log ID: ${error.logId}`;
+    }
+};
+
 const clientIdParam = "clientId";
 const ClientsPage: React.FC<{}> = () => {
     const [isLoadingForFirstTime, setIsLoadingForFirstTime] = useState(true);
@@ -103,7 +108,8 @@ const ClientsPage: React.FC<{}> = () => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const clientTableFetchAbortController = useRef<AbortController | null>(null);
     const [isSelectedClientActive, setIsSelectedClientActive] = useState<boolean | null>(null);
-    const [modalErrorMessage, setModalErrorMessage] = useState<string | null>(null);
+    const [isClientActiveErrorMessage, setIsClientActiveErrorMessage] = useState<string | null>(null);
+    const [deleteClientErrorMessage, setDeleteClientErrorMessage] = useState<string | null>(null);
     const [isDeleteClientDialogOpen, setIsDeleteClientDialogOpen] = useState<boolean>(false);
 
     const [perPage, setPerPage] = useState(10);
@@ -189,11 +195,11 @@ const ClientsPage: React.FC<{}> = () => {
 
     useEffect(() => {
         (async () => {
-            setModalErrorMessage(null);
+            setIsClientActiveErrorMessage(null);
             if (clientId) {
-                const { isActive, error } = await getIsClientActive(supabase, clientId);
+                const { isActive, error } = await getIsClientActive(clientId);
                 if (error) {
-                    setModalErrorMessage(getIsClientActiveErrorMessage(error));
+                    setIsClientActiveErrorMessage(getIsClientActiveErrorMessage(error));
                     return;
                 }
                 setIsSelectedClientActive(isActive);
@@ -272,13 +278,16 @@ const ClientsPage: React.FC<{}> = () => {
                             </ContentDiv>
 
                             <ButtonsDiv>
-                                {modalErrorMessage && (
-                                    <ErrorSecondaryText>{modalErrorMessage}</ErrorSecondaryText>
+                                {isClientActiveErrorMessage && (
+                                    <ErrorSecondaryText>{isClientActiveErrorMessage}</ErrorSecondaryText>
                                 )}
+                                {deleteClientErrorMessage && (
+                                    <ErrorSecondaryText>{deleteClientErrorMessage}</ErrorSecondaryText>
+                                )}
+                                {isSelectedClientActive &&
                                 <Centerer>
-                                    <LinkButton
+                                        <LinkButton
                                         link={`/clients/edit/${clientId}`}
-                                        disabled={!isSelectedClientActive}
                                     >
                                         Edit Client
                                     </LinkButton>
@@ -289,6 +298,7 @@ const ClientsPage: React.FC<{}> = () => {
                                         Delete Client
                                     </DeleteButton>
                                 </Centerer>
+}
                             </ButtonsDiv>
                         </OutsideDiv>
                     </Modal>
@@ -297,8 +307,14 @@ const ClientsPage: React.FC<{}> = () => {
                             isOpen={isDeleteClientDialogOpen}
                             message="Are you sure you want to delete this client? This action cannot be undone."
                             onCancel={() => setIsDeleteClientDialogOpen(false)}
-                            onConfirm={() => {
-                                deleteClient(clientId);
+                            onConfirm={async () => {
+                                setDeleteClientErrorMessage(null);
+                                const {error: deleteClientError} = await deleteClient(clientId);
+                                if (deleteClientError) {
+                                    setDeleteClientErrorMessage(getDeleteClientErrorMessage(deleteClientError));
+                                    setIsDeleteClientDialogOpen(false);
+                                    return;
+                                }
                                 setIsDeleteClientDialogOpen(false);
                                 router.push("/clients");
                             }}
