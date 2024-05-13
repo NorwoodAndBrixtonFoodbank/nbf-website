@@ -31,10 +31,11 @@ alter table "public"."clients" alter column "phone_number" drop not null;
 
 alter table "public"."clients" alter column "signposting_call_required" drop not null;
 
-reate or replace view "public"."clients_plus" as  SELECT clients.primary_key AS client_id,
+create or replace view "public"."clients_plus" as  SELECT clients.primary_key AS client_id,
     clients.full_name,
     clients.address_postcode,
     clients.phone_number,
+    clients.is_active,
     family_count.family_count
    FROM (clients
      LEFT JOIN family_count ON ((clients.family_id = family_count.family_id)))
@@ -70,8 +71,43 @@ create or replace view "public"."parcels_plus" as  SELECT parcels.primary_key AS
      LEFT JOIN last_status ON ((last_status.parcel_id = parcels.primary_key)))
   ORDER BY parcels.packing_date DESC;
 
+set check_function_bodies = off;
 
+CREATE OR REPLACE FUNCTION public."deactivateClient"(clientid uuid)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$DECLARE
+    updated_family_id UUID;
+BEGIN  
+    UPDATE clients 
+    SET 
+        full_name = null,
+        phone_number = null,
+        address_1 = null,
+        address_2 = null,
+        address_town = null,
+        address_county = null,
+        address_postcode = null,
+        delivery_instructions = null,
+        dietary_requirements = null,
+        feminine_products = null,
+        baby_food = null,
+        pet_food = null,
+        other_items = null,
+        extra_information = null,
+        flagged_for_attention = null,
+        signposting_call_required = null
+    WHERE 
+        primary_key = clientId;
 
+    SELECT family_id INTO updated_family_id
+    FROM clients
+    WHERE primary_key = clientId;
+
+    DELETE FROM families WHERE family_id = updated_family_id;
+
+END;$function$
+;
 
 
 

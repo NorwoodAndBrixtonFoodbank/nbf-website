@@ -26,9 +26,7 @@ export const fullNameSearch = (
         return query;
     }
     if (deletedClientNameDisplay.toLowerCase().includes(state.toLowerCase())) {
-        return query.or(
-            `client_full_name.ilike.%${state}%, client_full_name.is.null`
-        );
+        return query.or(`client_full_name.ilike.%${state}%, client_full_name.is.null`);
     }
     return query.ilike("client_full_name", `%${state}%`);
 };
@@ -72,7 +70,7 @@ export const familySearch = (
         return query.gte("family_count", 10);
     }
     if (stateAsNumber === 1) {
-        return query.lte("family_count", 1);
+        return query.eq("family_count", 1);
     }
     return query.eq("family_count", Number(state));
 };
@@ -85,9 +83,7 @@ export const phoneSearch = (
         return query;
     }
     if ("-".toLowerCase().includes(state.toLowerCase())) {
-        return query.or(
-            `client_phone_number.ilike.%${state}%, client_phone_number.is.null`
-        );
+        return query.or(`client_phone_number.ilike.%${state}%, client_phone_number.is.null`);
     }
     return query.ilike("client_phone_number", `%${state}%`);
 };

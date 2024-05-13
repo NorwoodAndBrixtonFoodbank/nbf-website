@@ -38,7 +38,10 @@ const getClientLinkDetailsOrErrorMessage = async (
     }
 
     return {
-        data: { clientId: data.primary_key, clientName: data.full_name ?? auditLogModalDisplayNameForDeletedClient },
+        data: {
+            clientId: data.primary_key,
+            clientName: data.full_name ?? auditLogModalDisplayNameForDeletedClient,
+        },
         errorMessage: null,
     };
 };

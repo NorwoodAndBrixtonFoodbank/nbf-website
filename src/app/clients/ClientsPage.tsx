@@ -108,7 +108,9 @@ const ClientsPage: React.FC<{}> = () => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const clientTableFetchAbortController = useRef<AbortController | null>(null);
     const [isSelectedClientActive, setIsSelectedClientActive] = useState<boolean | null>(null);
-    const [isClientActiveErrorMessage, setIsClientActiveErrorMessage] = useState<string | null>(null);
+    const [isClientActiveErrorMessage, setIsClientActiveErrorMessage] = useState<string | null>(
+        null
+    );
     const [deleteClientErrorMessage, setDeleteClientErrorMessage] = useState<string | null>(null);
     const [isDeleteClientDialogOpen, setIsDeleteClientDialogOpen] = useState<boolean>(false);
 
@@ -279,26 +281,30 @@ const ClientsPage: React.FC<{}> = () => {
 
                             <ButtonsDiv>
                                 {isClientActiveErrorMessage && (
-                                    <ErrorSecondaryText>{isClientActiveErrorMessage}</ErrorSecondaryText>
+                                    <ErrorSecondaryText>
+                                        {isClientActiveErrorMessage}
+                                    </ErrorSecondaryText>
                                 )}
                                 {deleteClientErrorMessage && (
-                                    <ErrorSecondaryText>{deleteClientErrorMessage}</ErrorSecondaryText>
+                                    <ErrorSecondaryText>
+                                        {deleteClientErrorMessage}
+                                    </ErrorSecondaryText>
                                 )}
-                                {isSelectedClientActive &&
-                                <Centerer>
-                                        <LinkButton
-                                        link={`/clients/edit/${clientId}`}
-                                    >
-                                        Edit Client
-                                    </LinkButton>
-                                    <LinkButton link={`/parcels/add/${clientId}`}>
-                                        Add Parcel
-                                    </LinkButton>
-                                    <DeleteButton onClick={() => setIsDeleteClientDialogOpen(true)}>
-                                        Delete Client
-                                    </DeleteButton>
-                                </Centerer>
-}
+                                {isSelectedClientActive && (
+                                    <Centerer>
+                                        <LinkButton link={`/clients/edit/${clientId}`}>
+                                            Edit Client
+                                        </LinkButton>
+                                        <LinkButton link={`/parcels/add/${clientId}`}>
+                                            Add Parcel
+                                        </LinkButton>
+                                        <DeleteButton
+                                            onClick={() => setIsDeleteClientDialogOpen(true)}
+                                        >
+                                            Delete Client
+                                        </DeleteButton>
+                                    </Centerer>
+                                )}
                             </ButtonsDiv>
                         </OutsideDiv>
                     </Modal>
@@ -309,9 +315,11 @@ const ClientsPage: React.FC<{}> = () => {
                             onCancel={() => setIsDeleteClientDialogOpen(false)}
                             onConfirm={async () => {
                                 setDeleteClientErrorMessage(null);
-                                const {error: deleteClientError} = await deleteClient(clientId);
+                                const { error: deleteClientError } = await deleteClient(clientId);
                                 if (deleteClientError) {
-                                    setDeleteClientErrorMessage(getDeleteClientErrorMessage(deleteClientError));
+                                    setDeleteClientErrorMessage(
+                                        getDeleteClientErrorMessage(deleteClientError)
+                                    );
                                     setIsDeleteClientDialogOpen(false);
                                     return;
                                 }

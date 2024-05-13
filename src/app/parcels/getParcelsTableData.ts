@@ -3,7 +3,7 @@ import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDeta
 import { logErrorReturnLogId } from "@/logger/logger";
 import { ParcelsPlusRow, Schema, ViewSchema } from "@/databaseUtils";
 
-export const deletedClientNameDisplay = "(Deleted Client)"
+export const deletedClientNameDisplay = "(Deleted Client)";
 
 export interface ParcelsTableRow {
     parcelId: Schema["parcels"]["primary_key"];

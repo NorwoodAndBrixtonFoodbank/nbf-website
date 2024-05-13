@@ -185,9 +185,7 @@ type GetClientIsActiveResponse =
           isActive: null;
       };
 
-export const getIsClientActive = async (
-    clientId: string
-): Promise<GetClientIsActiveResponse> => {
+export const getIsClientActive = async (clientId: string): Promise<GetClientIsActiveResponse> => {
     const { data: isActiveData, error: isActiveError } = await supabase
         .from("clients")
         .select("primary_key, is_active")

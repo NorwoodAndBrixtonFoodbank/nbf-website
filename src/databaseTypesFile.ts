@@ -936,14 +936,7 @@ export type Database = {
       }
     }
     Functions: {
-      anonymiseClientAndDeleteFamily: {
-        Args: {
-          clientid: string
-          lastupdated: string
-        }
-        Returns: undefined
-      }
-      deactivateClientAndDeleteFamily2: {
+      deactivateClient: {
         Args: {
           clientid: string
         }

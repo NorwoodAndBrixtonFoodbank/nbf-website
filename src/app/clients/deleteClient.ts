@@ -10,7 +10,7 @@ export interface DeleteClientError {
 type DeleteClientResponse = { error: DeleteClientError | null };
 
 const deleteClient = async (clientId: string): Promise<DeleteClientResponse> => {
-    const { error: deleteClientError } = await supabase.rpc("deactivateClientAndDeleteFamily2", {
+    const { error: deleteClientError } = await supabase.rpc("deactivateClient", {
         clientid: clientId,
     });
 

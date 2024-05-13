@@ -59,18 +59,15 @@ async function generateSeed(): Promise<void> {
             extraInformation: (ctx) => copycat.sentence(ctx.seed, { maxWords: 20 }),
             flaggedForAttention: (ctx) => copycat.bool(ctx.seed),
             signpostingCallRequired: (ctx) => copycat.bool(ctx.seed),
+            families: (generate) =>
+                generate(
+                    { min: 1, max: 12 },
+                    { age: (ctx) => copycat.int(ctx.seed, { min: 0, max: 100 }) }
+                ),
         })
     );
 
     await seed.collectionCentres(collectionCentres);
-
-    await seed.families(
-        (generate) =>
-            generate(1000, {
-                age: (ctx) => copycat.int(ctx.seed, { min: 0, max: 100 }),
-            }),
-        { connect: true }
-    );
 
     await seed.lists(listsSeedRequired);
 
