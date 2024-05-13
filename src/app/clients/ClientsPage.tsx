@@ -213,6 +213,20 @@ const ClientsPage: React.FC<{}> = () => {
         return postcodeData ?? nullPostcodeDisplay;
     };
 
+    const onDeleteClient = async (): Promise<void> => {
+        if (clientId) {
+            setDeleteClientErrorMessage(null);
+            const { error: deleteClientError } = await deleteClient(clientId);
+            if (deleteClientError) {
+                setDeleteClientErrorMessage(getDeleteClientErrorMessage(deleteClientError));
+                setIsDeleteClientDialogOpen(false);
+                return;
+            }
+            setIsDeleteClientDialogOpen(false);
+            router.push("/clients");
+        }
+    };
+
     return (
         <>
             {isLoadingForFirstTime ? (
@@ -308,26 +322,12 @@ const ClientsPage: React.FC<{}> = () => {
                             </ButtonsDiv>
                         </OutsideDiv>
                     </Modal>
-                    {clientId && (
-                        <ConfirmDialog
-                            isOpen={isDeleteClientDialogOpen}
-                            message="Are you sure you want to delete this client? This action cannot be undone."
-                            onCancel={() => setIsDeleteClientDialogOpen(false)}
-                            onConfirm={async () => {
-                                setDeleteClientErrorMessage(null);
-                                const { error: deleteClientError } = await deleteClient(clientId);
-                                if (deleteClientError) {
-                                    setDeleteClientErrorMessage(
-                                        getDeleteClientErrorMessage(deleteClientError)
-                                    );
-                                    setIsDeleteClientDialogOpen(false);
-                                    return;
-                                }
-                                setIsDeleteClientDialogOpen(false);
-                                router.push("/clients");
-                            }}
-                        ></ConfirmDialog>
-                    )}
+                    <ConfirmDialog
+                        isOpen={isDeleteClientDialogOpen}
+                        message="Are you sure you want to delete this client? This action cannot be undone."
+                        onCancel={() => setIsDeleteClientDialogOpen(false)}
+                        onConfirm={onDeleteClient}
+                    ></ConfirmDialog>
                 </>
             )}
         </>
