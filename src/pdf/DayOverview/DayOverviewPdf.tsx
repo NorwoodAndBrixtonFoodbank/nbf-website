@@ -23,7 +23,7 @@ interface DayOverviewPdfProps {
 interface CustomSVGProps {
     icon: IconDefinition;
     color: string;
-    fill?: boolean;
+    fill: boolean;
 }
 
 const styles = StyleSheet.create({
