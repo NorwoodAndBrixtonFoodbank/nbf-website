@@ -86,7 +86,6 @@ const getClientsDataAndCount = async (
             fullName: client.full_name ?? "",
             familyCategory: familyCountToFamilyCategory(client.family_count ?? 0),
             addressPostcode: client.address_postcode,
-            isActive: client.is_active ?? true,
         };
     });
 
@@ -107,7 +106,10 @@ const getClientsCount = async (
     filters: Filter<ClientsTableRow, any>[],
     abortSignal: AbortSignal
 ): Promise<GetClientsCountReturnType> => {
-    let query = supabase.from("clients_plus").select("*", { count: "exact", head: true }).eq("is_active", true);
+    let query = supabase
+        .from("clients_plus")
+        .select("*", { count: "exact", head: true })
+        .eq("is_active", true);
 
     filters.forEach((filter) => {
         if (filter.methodConfig.paginationType === PaginationType.Server) {

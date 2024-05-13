@@ -63,35 +63,37 @@ export const processingDataToParcelsTableData = async (
         };
     }
 
-
     return {
         parcelTableRows: processingData.map((parcel, index) => {
             const clientActive = parcel.client_is_active;
-            return ({
-            parcelId: parcel.parcel_id ?? "",
-            clientId: parcel.client_id ?? "",
-            fullName: clientActive ? (parcel.client_full_name ?? "") : "(Deleted Client)",
-            familyCategory: clientActive ? familyCountToFamilyCategory(parcel.family_count ?? 0) : "-",
-            addressPostcode: clientActive ? parcel.client_address_postcode : "-",
-            phoneNumber: clientActive ? (parcel.client_phone_number ?? "") : "-",
-            deliveryCollection: {
-                collectionCentreName: parcel.collection_centre_name ?? "-",
-                collectionCentreAcronym: parcel.collection_centre_acronym ?? "-",
-                congestionChargeApplies: congestionCharge[index].congestionCharge,
-            },
-            collectionDatetime: parcel.collection_datetime
-                ? new Date(parcel.collection_datetime)
-                : null,
-            packingSlot: parcel.packing_slot_name,
-            lastStatus: processLastStatus(parcel),
-            voucherNumber: parcel.voucher_number,
-            packingDate: parcel.packing_date ? new Date(parcel.packing_date) : null,
-            iconsColumn: {
-                flaggedForAttention: parcel.client_flagged_for_attention ?? false,
-                requiresFollowUpPhoneCall: parcel.client_signposting_call_required ?? false,
-            },
-            createdAt: parcel.created_at ? new Date(parcel.created_at) : null,
-        })}),
+            return {
+                parcelId: parcel.parcel_id ?? "",
+                clientId: parcel.client_id ?? "",
+                fullName: clientActive ? parcel.client_full_name ?? "" : "(Deleted Client)",
+                familyCategory: clientActive
+                    ? familyCountToFamilyCategory(parcel.family_count ?? 0)
+                    : "-",
+                addressPostcode: clientActive ? parcel.client_address_postcode : "-",
+                phoneNumber: clientActive ? parcel.client_phone_number ?? "" : "-",
+                deliveryCollection: {
+                    collectionCentreName: parcel.collection_centre_name ?? "-",
+                    collectionCentreAcronym: parcel.collection_centre_acronym ?? "-",
+                    congestionChargeApplies: congestionCharge[index].congestionCharge,
+                },
+                collectionDatetime: parcel.collection_datetime
+                    ? new Date(parcel.collection_datetime)
+                    : null,
+                packingSlot: parcel.packing_slot_name,
+                lastStatus: processLastStatus(parcel),
+                voucherNumber: parcel.voucher_number,
+                packingDate: parcel.packing_date ? new Date(parcel.packing_date) : null,
+                iconsColumn: {
+                    flaggedForAttention: parcel.client_flagged_for_attention ?? false,
+                    requiresFollowUpPhoneCall: parcel.client_signposting_call_required ?? false,
+                },
+                createdAt: parcel.created_at ? new Date(parcel.created_at) : null,
+            };
+        }),
         error: null,
     };
 };
