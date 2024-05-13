@@ -4,7 +4,7 @@ import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
+import { ParcelsTableRow, deletedClientNameDisplay } from "@/app/parcels/getParcelsTableData";
 import { dateFilter } from "@/components/Tables/DateFilter";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
@@ -22,6 +22,14 @@ export const fullNameSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
     state: string
 ): PostgrestFilterBuilder<Database["public"], any, any> => {
+    if (state === "") {
+        return query;
+    }
+    if (deletedClientNameDisplay.toLowerCase().includes(state.toLowerCase())) {
+        return query.or(
+            `client_full_name.ilike.%${state}%, client_full_name.is.null`
+        );
+    }
     return query.ilike("client_full_name", `%${state}%`);
 };
 
@@ -47,6 +55,9 @@ export const familySearch = (
     if (state === "") {
         return query;
     }
+    if (state === "-") {
+        return query.eq("family_count", 0);
+    }
     if ("single".includes(state.toLowerCase())) {
         return query.lte("family_count", 1);
     }
@@ -70,6 +81,14 @@ export const phoneSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
     state: string
 ): PostgrestFilterBuilder<Database["public"], any, any> => {
+    if (state === "") {
+        return query;
+    }
+    if ("-".toLowerCase().includes(state.toLowerCase())) {
+        return query.or(
+            `client_phone_number.ilike.%${state}%, client_phone_number.is.null`
+        );
+    }
     return query.ilike("client_phone_number", `%${state}%`);
 };
 

@@ -6,6 +6,7 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import LinkButton from "@/components/Buttons/LinkButton";
 import { AuditLogModalRowResponse } from "../types";
 import AuditLogModalRow from "../AuditLogModalRow";
+import { auditLogModalDisplayNameForDeletedClient } from "../../format";
 
 interface ClientLinkDetails {
     clientId: string;
@@ -37,7 +38,7 @@ const getClientLinkDetailsOrErrorMessage = async (
     }
 
     return {
-        data: { clientId: data.primary_key, clientName: data.full_name ?? "" },
+        data: { clientId: data.primary_key, clientName: data.full_name ?? auditLogModalDisplayNameForDeletedClient },
         errorMessage: null,
     };
 };

@@ -3,6 +3,8 @@ import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDeta
 import { logErrorReturnLogId } from "@/logger/logger";
 import { ParcelsPlusRow, Schema, ViewSchema } from "@/databaseUtils";
 
+export const deletedClientNameDisplay = "(Deleted Client)"
+
 export interface ParcelsTableRow {
     parcelId: Schema["parcels"]["primary_key"];
     clientId: Schema["clients"]["primary_key"];
@@ -69,7 +71,7 @@ export const processingDataToParcelsTableData = async (
             return {
                 parcelId: parcel.parcel_id ?? "",
                 clientId: parcel.client_id ?? "",
-                fullName: clientActive ? parcel.client_full_name ?? "" : "(Deleted Client)",
+                fullName: clientActive ? parcel.client_full_name ?? "" : deletedClientNameDisplay,
                 familyCategory: clientActive
                     ? familyCountToFamilyCategory(parcel.family_count ?? 0)
                     : "-",
