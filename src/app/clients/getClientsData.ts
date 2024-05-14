@@ -86,6 +86,7 @@ const getClientsDataAndCount = async (
             fullName: client.full_name ?? "",
             familyCategory: familyCountToFamilyCategory(client.family_count ?? 0),
             addressPostcode: client.address_postcode,
+            phoneNumber: client.phone_number,
         };
     });
 

@@ -28,12 +28,14 @@ export interface ClientsTableRow {
     fullName: string;
     familyCategory: string;
     addressPostcode: string | null;
+    phoneNumber: string | null;
 }
 
 const headers: TableHeaders<ClientsTableRow> = [
     ["fullName", "Name"],
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],
+    ["phoneNumber", "Phone Number"]
 ];
 
 const fullNameSearch = (
@@ -74,6 +76,14 @@ const sortableColumns: SortOptions<ClientsTableRow>[] = [
         sortMethodConfig: {
             method: (query, sortDirection) =>
                 query.order("address_postcode", { ascending: sortDirection === "asc" }),
+            paginationType: PaginationType.Server,
+        },
+    },
+    {
+        key: "phoneNumber",
+        sortMethodConfig: {
+            method: (query, sortDirection) =>
+                query.order("phone_number", { ascending: sortDirection === "asc" }),
             paginationType: PaginationType.Server,
         },
     },
