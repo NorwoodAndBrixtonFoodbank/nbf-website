@@ -14,7 +14,7 @@ const getPdfErrorMessage = (error: DayOverviewPdfError): string => {
             errorMessage = "Failed to fetch parcel data.";
             break;
         case "failedToRetrieveCongestionChargeDetails":
-            errorMessage = "Failed to retrieve congestion charge data"
+            errorMessage = "Failed to retrieve congestion charge data";
     }
     return `${errorMessage} LogId: ${error.logId}`;
 };

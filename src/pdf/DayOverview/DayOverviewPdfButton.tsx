@@ -83,7 +83,9 @@ const addCongestionChargeDetailsForDayOverview = async (
     const { data: postcodesWithCongestionChargeDetails, error } =
         await checkForCongestionCharge(postcodes);
 
-    if (error) { return {data: null, error: error}}
+    if (error) {
+        return { data: null, error: error };
+    }
 
     if (postcodesWithCongestionChargeDetails) {
         for (let index = 0; index < parcels.length; index++) {
@@ -92,7 +94,7 @@ const addCongestionChargeDetailsForDayOverview = async (
         }
     }
 
-    return {data: parcels, error: null} ;
+    return { data: parcels, error: null };
 };
 
 const DayOverviewPdfButton = ({
@@ -112,10 +114,14 @@ const DayOverviewPdfButton = ({
             return { data: null, error: error };
         }
 
-        const {data: parcelsForDayOverviewWithCongestionChargeDetails, error: congestionChargeError} =
-            await addCongestionChargeDetailsForDayOverview(parcelsForDayOverview);
+        const {
+            data: parcelsForDayOverviewWithCongestionChargeDetails,
+            error: congestionChargeError,
+        } = await addCongestionChargeDetailsForDayOverview(parcelsForDayOverview);
 
-        if (congestionChargeError) { return { data: null, error: congestionChargeError }}
+        if (congestionChargeError) {
+            return { data: null, error: congestionChargeError };
+        }
 
         const fileName = "DayOverview.pdf";
         return {
