@@ -16,6 +16,7 @@ export interface DriverOverviewTableData {
     contact?: string;
     packingDate: string | null;
     instructions?: string;
+    clientIsActive: boolean;
 }
 
 export interface DriverOverviewCardDataProps {
@@ -146,7 +147,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                     <Text>{rowData.name}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.addressColumnWidth]}>
-                    {rowData.address.postcode ? (
+                    {rowData.address.postcode || rowData.clientIsActive ? (
                         <>
                             <Text>{rowData.address.line1}</Text>
                             <Text>{rowData.address.line2}</Text>
@@ -155,7 +156,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                             <Text>{rowData.address.postcode}</Text>
                         </>
                     ) : (
-                        <Text>{nullPostcodeDisplay}</Text>
+                        <Text>{rowData.clientIsActive ? nullPostcodeDisplay : "-"}</Text>
                     )}
                 </View>
                 <View style={[styles.tableColumn, styles.contactColumnWidth]}>

@@ -4,7 +4,7 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { ParcelsPlusRow, Schema, ViewSchema } from "@/databaseUtils";
 import { displayNameForDeletedClient } from "@/common/format";
 
-export const parcelsPageDeletedClientDisplayName = `(${displayNameForDeletedClient})`
+export const parcelsPageDeletedClientDisplayName = `(${displayNameForDeletedClient})`;
 
 export interface ParcelsTableRow {
     parcelId: Schema["parcels"]["primary_key"];

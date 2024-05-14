@@ -73,6 +73,8 @@ const getPdfErrorMessage = (error: ShoppingListPdfError): string => {
         case "invalidFamilySize":
             errorMessage = "Invalid family size for shopping list PDF.";
             break;
+        case "inactiveClient":
+            errorMessage = "One or more selected parcels belong to inactive clients.";
     }
     return `${errorMessage} LogId: ${error.logId}`;
 };

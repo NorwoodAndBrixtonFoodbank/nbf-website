@@ -4,7 +4,10 @@ import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { ParcelsTableRow, parcelsPageDeletedClientDisplayName } from "@/app/parcels/getParcelsTableData";
+import {
+    ParcelsTableRow,
+    parcelsPageDeletedClientDisplayName,
+} from "@/app/parcels/getParcelsTableData";
 import { dateFilter } from "@/components/Tables/DateFilter";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";

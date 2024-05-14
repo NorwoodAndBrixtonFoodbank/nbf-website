@@ -62,12 +62,18 @@ const getParcelsForDayOverview = async (
 
     const processedData = data.map((parcel) => {
         if (parcel.client?.is_active) {
-        return parcel
-    }
-    return {...parcel, client: {
-        flagged_for_attention: false, full_name: displayNameForDeletedClient, address_postcode: "-", delivery_instructions: "-"
-    }}
-})
+            return parcel;
+        }
+        return {
+            ...parcel,
+            client: {
+                flagged_for_attention: false,
+                full_name: displayNameForDeletedClient,
+                address_postcode: "-",
+                delivery_instructions: "-",
+            },
+        };
+    });
 
     return { data: processedData, error: null };
 };

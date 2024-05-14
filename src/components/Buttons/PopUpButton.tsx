@@ -10,7 +10,7 @@ interface Props {
     displayText: string;
 }
 
-const PopUpButton: React.FC<Props> = ({ children, displayText}) => {
+const PopUpButton: React.FC<Props> = ({ children, displayText }) => {
     const [open, setOpen] = useState(false);
 
     return (
