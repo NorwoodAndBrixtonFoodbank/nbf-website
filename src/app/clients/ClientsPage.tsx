@@ -35,7 +35,7 @@ const headers: TableHeaders<ClientsTableRow> = [
     ["fullName", "Name"],
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],
-    ["phoneNumber", "Phone Number"]
+    ["phoneNumber", "Phone Number"],
 ];
 
 const fullNameSearch = (
