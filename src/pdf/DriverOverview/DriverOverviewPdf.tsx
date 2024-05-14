@@ -16,6 +16,7 @@ export interface DriverOverviewTableData {
     contact?: string;
     packingDate: string | null;
     instructions?: string;
+    numberOfLabels?: number | null;
 }
 
 export interface DriverOverviewCardDataProps {
@@ -115,6 +116,9 @@ const styles = StyleSheet.create({
     instructionsColumnWidth: {
         width: "25%",
     },
+    numberOfLabelsColumnWidth: {
+        width: "15%",
+    },
 });
 
 const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
@@ -134,6 +138,9 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
             </View>
             <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
                 <Text>Instructions</Text>
+            </View>
+            <View style={[styles.tableColumn, styles.numberOfLabelsColumnWidth]}>
+                <Text>Number of Parcels</Text>
             </View>
         </View>
     );
@@ -162,10 +169,13 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                     <Text>{rowData.contact}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
-                    <Text>{rowData.packingDate ? rowData.packingDate : "No recorded date"}</Text>
+                    <Text>{rowData.packingDate || "No recorded date"}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
                     <Text>{rowData.instructions}</Text>
+                </View>
+                <View style={[styles.tableColumn, styles.numberOfLabelsColumnWidth]}>
+                    <Text>{rowData.numberOfLabels || "No labels downloaded"}</Text>
                 </View>
             </View>
         );

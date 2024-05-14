@@ -31,7 +31,10 @@ const compareDriverOverviewTableData = (
     return 0;
 };
 
-type ParcelsForDelivery = (Schema["parcels"] & { client: Schema["clients"] })[];
+type ParcelsForDelivery = (Schema["parcels"] & {
+    client: Schema["clients"];
+    labelCount?: number;
+})[];
 
 type ParcelsForDeliveryResponse =
     | {
@@ -43,7 +46,32 @@ type ParcelsForDeliveryResponse =
           error: { type: ParcelsForDeliveryErrorType; logId: string };
       };
 
-type ParcelsForDeliveryErrorType = "parcelFetchFailed" | "noMatchingClient";
+type ParcelsForDeliveryErrorType = "parcelFetchFailed" | "noMatchingClient" | "eventFetchFailed";
+
+type ParcelEventResponse =
+    | {
+          data: Schema["events"][];
+          error: null;
+      }
+    | {
+          data: null;
+          error: { type: ParcelsForDeliveryErrorType; logId: string };
+      };
+
+// Gets all "shipping labels downloaded" events for the given parcels
+const getParcelEvents = async (parcelIds: string[]): Promise<ParcelEventResponse> => {
+    const { data, error } = await supabase
+        .from("events")
+        .select("*")
+        .in("parcel_id", parcelIds)
+        .eq("new_parcel_status", "Shipping Labels Downloaded")
+        .order("timestamp", { ascending: false });
+    if (error) {
+        const logId = await logErrorReturnLogId("Error with fetch: Events", error);
+        return { data: null, error: { type: "eventFetchFailed", logId: logId } };
+    }
+    return { data: data, error: null };
+};
 
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDeliveryResponse> => {
     const { data, error } = await supabase
@@ -65,6 +93,19 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDel
             return { data: null, error: { type: "noMatchingClient", logId: logId } };
         }
         dataWithNonNullClients.push({ ...parcel, client: parcel.client });
+    }
+
+    const eventResponse = await getParcelEvents(parcelIds);
+    if (eventResponse.error || !eventResponse.data) {
+        return eventResponse;
+    }
+
+    // Find most recent label download event and store the number of labels (the event_data)
+    for (const parcel of dataWithNonNullClients) {
+        const event = eventResponse.data.find((row) => row.parcel_id === parcel.primary_key);
+        if (event && event.event_data) {
+            parcel.labelCount = Number.parseInt(event.event_data);
+        }
     }
 
     return { data: dataWithNonNullClients, error: null };
@@ -102,6 +143,7 @@ const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse>
             contact: client?.phone_number ?? "",
             packingDate: formatDateToDate(parcel.packing_date) ?? null,
             instructions: client?.delivery_instructions ?? "",
+            numberOfLabels: parcel.labelCount ?? null,
         });
     }
     clientInformation.sort(compareDriverOverviewTableData);
