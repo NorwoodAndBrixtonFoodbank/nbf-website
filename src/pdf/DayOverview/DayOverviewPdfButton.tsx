@@ -87,9 +87,9 @@ const addCongestionChargeDetailsForDayOverview = async (
         return { data: null, error: error };
     }
 
-    for (let index = 0; index < parcels.length; index++) {
-        parcels[index].congestionChargeApplies = postcodesWithCongestionChargeDetails[index].congestionCharge;
-    }
+    parcels.map((parcel, index) => {
+        parcel.congestionChargeApplies = postcodesWithCongestionChargeDetails[index].congestionCharge;
+    })
 
     return { data: parcels, error: null };
 };
