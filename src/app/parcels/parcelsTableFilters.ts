@@ -38,6 +38,9 @@ export const postcodeSearch = (
     if (state === "") {
         return query;
     }
+    if (state === "-") {
+        return query.is("client_address_postcode", null);
+    }
     if (nullPostcodeDisplay.toLowerCase().includes(state.toLowerCase())) {
         return query.or(
             `client_address_postcode.ilike.%${state}%, client_address_postcode.is.null`

@@ -7,6 +7,7 @@ import { createSeedClient } from "@snaplet/seed";
 import { copycat } from "@snaplet/copycat";
 import { listsSeedRequired } from "./listsSeed.mjs";
 import {
+    booleansWeightedToTrue,
     possibleDietaryRequirements,
     possibleFeminineProducts,
     possibleOtherItems,
@@ -59,6 +60,7 @@ async function generateSeed(): Promise<void> {
             extraInformation: (ctx) => copycat.sentence(ctx.seed, { maxWords: 20 }),
             flaggedForAttention: (ctx) => copycat.bool(ctx.seed),
             signpostingCallRequired: (ctx) => copycat.bool(ctx.seed),
+            isActive: (ctx) => copycat.oneOf(ctx.seed, booleansWeightedToTrue),
             families: (generate) =>
                 generate(
                     { min: 1, max: 12 },

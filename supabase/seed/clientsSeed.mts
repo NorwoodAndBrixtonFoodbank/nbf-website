@@ -37,3 +37,5 @@ export const possibleParcelPostCodes = [
     "CB8 9LJ",
     null,
 ];
+
+export const booleansWeightedToTrue = [true, true, true, true, true, true, true, false];

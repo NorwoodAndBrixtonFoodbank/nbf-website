@@ -96,7 +96,8 @@ BEGIN
         other_items = null,
         extra_information = null,
         flagged_for_attention = null,
-        signposting_call_required = null
+        signposting_call_required = null,
+        is_active = false
     WHERE 
         primary_key = clientId;
 
@@ -108,6 +109,14 @@ BEGIN
 
 END;$function$
 ;
+
+create policy "Disable updates on inactive clients"
+on "public"."clients"
+as restrictive
+for update
+to authenticated
+using ((is_active = true))
+with check (((is_active = true) OR (is_active = false)));
 
 
 
