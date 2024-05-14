@@ -6,7 +6,7 @@ import { SortState } from "@/components/Tables/Table";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { ParcelStatus, ParcelsPlusRow } from "@/databaseUtils";
-import { checkForCongestionCharge, CongestionChargeReturnType } from "../congestionCharges";
+import { checkForCongestionCharge, CongestionChargeReturnType } from "../../common/congestionCharges";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getParcelsQuery = (

@@ -8,7 +8,7 @@ import DayOverviewPdf from "./DayOverviewPdf";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { PdfDataFetchResponse } from "../common";
 import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import { CongestionChargeError, checkForCongestionCharge } from "@/app/congestionCharges";
+import { CongestionChargeError, checkForCongestionCharge } from "@/common/congestionCharges";
 
 interface Props {
     onPdfCreationCompleted: () => void;

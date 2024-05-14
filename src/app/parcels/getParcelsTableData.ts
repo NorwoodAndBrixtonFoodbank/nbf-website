@@ -1,4 +1,4 @@
-import { CongestionChargeDetails } from "../congestionCharges";
+import { CongestionChargeDetails } from "../../common/congestionCharges";
 import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { ParcelsPlusRow, Schema, ViewSchema } from "@/databaseUtils";
