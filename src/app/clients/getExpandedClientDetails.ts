@@ -38,7 +38,8 @@ const getRawClientDetails = async (clientId: string) => {
             baby_food,
             pet_food,
             other_items,
-            extra_information
+            extra_information,
+            notes
         `
         )
         .eq("primary_key", clientId)
@@ -77,6 +78,7 @@ export interface ExpandedClientData {
     petFood: string;
     otherRequirements: string;
     extraInformation: string;
+    notes: string | null;
 }
 
 export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientData => {
@@ -94,6 +96,7 @@ export const rawDataToExpandedClientDetails = (client: RawClientDetails): Expand
         petFood: client.pet_food.join(", "),
         otherRequirements: client.other_items.join(", "),
         extraInformation: client.extra_information,
+        notes: client.notes,
     };
 };
 
