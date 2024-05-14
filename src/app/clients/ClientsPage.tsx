@@ -45,12 +45,38 @@ const fullNameSearch = (
     return query.ilike("full_name", `%${state}%`);
 };
 
+const postcodeSearch = (
+    query: PostgrestFilterBuilder<Database["public"], any, any>,
+    state: string
+): PostgrestFilterBuilder<Database["public"], any, any> => {
+    return query.ilike("address_postcode", `%${state}%`);
+};
+
+const phoneNumberSearch = (
+    query: PostgrestFilterBuilder<Database["public"], any, any>,
+    state: string
+): PostgrestFilterBuilder<Database["public"], any, any> => {
+    return query.ilike("phone_number", `%${state}%`);
+};
+
 const filters: Filter<ClientsTableRow, any>[] = [
     buildTextFilter({
         key: "fullName",
         label: "Name",
         headers: headers,
         methodConfig: { paginationType: PaginationType.Server, method: fullNameSearch },
+    }),
+    buildTextFilter({
+        key: "addressPostcode",
+        label: "Postcode",
+        headers: headers,
+        methodConfig: { paginationType: PaginationType.Server, method: postcodeSearch },
+    }),
+    buildTextFilter({
+        key: "phoneNumber",
+        label: "Phone Number",
+        headers: headers,
+        methodConfig: { paginationType: PaginationType.Server, method: phoneNumberSearch },
     }),
 ];
 
