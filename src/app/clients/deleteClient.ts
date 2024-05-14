@@ -29,6 +29,7 @@ const deleteClient = async (clientId: string): Promise<DeleteClientResponse> => 
     }
 
     void sendAuditLog({ ...baseAuditLogProps, wasSuccess: true });
+
     return { error: null };
 };
 

@@ -24,5 +24,3 @@ export const getAuditLogErrorMessage = (error: AuditLogError | AuditLogCountErro
 
 export const profileDisplayNameForDeletedUser = (role: UserRole | null): string =>
     `Deleted User ${role && `- ${capitaliseWords(role)}`}`;
-
-export const auditLogModalDisplayNameForDeletedClient = "Deleted Client";

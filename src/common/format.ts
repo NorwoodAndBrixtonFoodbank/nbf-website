@@ -68,9 +68,21 @@ export const getReadableWebsiteDataName = (name: string): string =>
 
 export const getParcelOverviewString = (
     addressPostcode: string | null,
-    fullName: string,
-    collectionDatetime: Date | null
-): string =>
-    (addressPostcode ?? nullPostcodeDisplay) +
-    (fullName && ` - ${fullName}`) +
-    (collectionDatetime && ` @ ${dayjs(collectionDatetime).format("DD/MM/YYYY HH:mm")}`);
+    fullName: string | null,
+    collectionDatetime: Date | null,
+    clientIsActive?: boolean | null
+): string => {
+    if (clientIsActive) {
+        return (
+            (addressPostcode ?? nullPostcodeDisplay) +
+            (fullName && ` - ${fullName}`) +
+            (collectionDatetime && ` @ ${dayjs(collectionDatetime).format("DD/MM/YYYY HH:mm")}`)
+        );
+    }
+    return (
+        displayNameForDeletedClient +
+        (collectionDatetime && ` @ ${dayjs(collectionDatetime).format("DD/MM/YYYY HH:mm")}`)
+    );
+};
+
+export const displayNameForDeletedClient = "Deleted Client";

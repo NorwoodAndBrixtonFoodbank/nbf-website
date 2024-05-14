@@ -117,7 +117,3 @@ for update
 to authenticated
 using ((is_active = true))
 with check (((is_active = true) OR (is_active = false)));
-
-
-
-

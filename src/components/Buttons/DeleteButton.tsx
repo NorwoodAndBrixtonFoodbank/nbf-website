@@ -7,7 +7,7 @@ interface Props {
     onClick: () => void;
 }
 
-const LinkButton: React.FC<Props> = ({ children, onClick }) => {
+const DeleteButton: React.FC<Props> = ({ children, onClick }) => {
     return (
         <ButtonWrap>
             <Button onClick={onClick} color="error" variant="contained">
@@ -17,4 +17,4 @@ const LinkButton: React.FC<Props> = ({ children, onClick }) => {
     );
 };
 
-export default LinkButton;
+export default DeleteButton;

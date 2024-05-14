@@ -169,9 +169,9 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
     return childDetails.join(", ");
 };
 
-type GetClientIsActiveErrorType = "failedClientIsActiveFetch";
-export interface GetClientIsActiveError {
-    type: GetClientIsActiveErrorType;
+type IsClientActiveErrorType = "failedClientIsActiveFetch";
+export interface IsClientActiveError {
+    type: IsClientActiveErrorType;
     logId: string;
 }
 
@@ -181,7 +181,7 @@ type GetClientIsActiveResponse =
           isActive: boolean;
       }
     | {
-          error: GetClientIsActiveError;
+          error: IsClientActiveError;
           isActive: null;
       };
 
@@ -191,11 +191,13 @@ export const getIsClientActive = async (clientId: string): Promise<GetClientIsAc
         .select("primary_key, is_active")
         .eq("primary_key", clientId)
         .single();
+
     if (isActiveError) {
         const logId = await logErrorReturnLogId("Error with fetch: client table", {
             error: isActiveError,
         });
         return { error: { type: "failedClientIsActiveFetch", logId }, isActive: null };
     }
+
     return { isActive: isActiveData.is_active, error: null };
 };

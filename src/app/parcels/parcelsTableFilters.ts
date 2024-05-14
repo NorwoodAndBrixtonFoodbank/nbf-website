@@ -4,7 +4,7 @@ import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
 import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { ParcelsTableRow, deletedClientNameDisplay } from "@/app/parcels/getParcelsTableData";
+import { ParcelsTableRow, parcelsPageDeletedClientDisplayName } from "@/app/parcels/getParcelsTableData";
 import { dateFilter } from "@/components/Tables/DateFilter";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
@@ -25,7 +25,7 @@ export const fullNameSearch = (
     if (state === "") {
         return query;
     }
-    if (deletedClientNameDisplay.toLowerCase().includes(state.toLowerCase())) {
+    if (parcelsPageDeletedClientDisplayName.toLowerCase().includes(state.toLowerCase())) {
         return query.or(`client_full_name.ilike.%${state}%, client_full_name.is.null`);
     }
     return query.ilike("client_full_name", `%${state}%`);

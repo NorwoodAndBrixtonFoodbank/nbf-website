@@ -223,9 +223,7 @@ interface SelectedClientDetails {
     isClientActive: boolean;
 }
 
-async function getClientIdAndIsActiveForSelectedParcel(
-    parcelId: string
-): Promise<SelectedClientDetails> {
+async function getClientIdAndIsActive(parcelId: string): Promise<SelectedClientDetails> {
     const { data, error } = await supabase
         .from("parcels")
         .select("client_id, client:clients(is_active)")
@@ -301,12 +299,12 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const selectedParcelMessage = getSelectedParcelCountMessage(checkedParcelIds.length);
 
-    const fetchAndSetClientForSelectedParcel = useCallback((): void => {
+    const fetchAndSetClientDetailsForSelectedParcel = useCallback((): void => {
         if (parcelId === null) {
             return;
         }
 
-        getClientIdAndIsActiveForSelectedParcel(parcelId)
+        getClientIdAndIsActive(parcelId)
             .then((data) => setSelectedClientDetails(data))
             .catch((error) => {
                 if (error instanceof Error) {
@@ -324,8 +322,8 @@ const ParcelsPage: React.FC<{}> = () => {
 
     useEffect(() => {
         setSelectedClientDetails(null);
-        void fetchAndSetClientForSelectedParcel();
-    }, [fetchAndSetClientForSelectedParcel]);
+        void fetchAndSetClientDetailsForSelectedParcel();
+    }, [fetchAndSetClientDetailsForSelectedParcel]);
 
     useEffect(() => {
         const buildFilters = async (): Promise<{
@@ -695,20 +693,20 @@ const ParcelsPage: React.FC<{}> = () => {
                                         Edit Parcel
                                     </LinkButton>
                                     {selectedClientDetails && (
-                                        <LinkButton
-                                            link={`/clients?clientId=${selectedClientDetails.clientId}`}
-                                            disabled={!selectedClientDetails.isClientActive}
-                                        >
-                                            See Client Details
-                                        </LinkButton>
-                                    )}
-                                    {selectedClientDetails && (
-                                        <LinkButton
-                                            link={`/clients/edit/${selectedClientDetails.clientId}`}
-                                            disabled={!selectedClientDetails.isClientActive}
-                                        >
-                                            Edit Client Details
-                                        </LinkButton>
+                                        <>
+                                            <LinkButton
+                                                link={`/clients?clientId=${selectedClientDetails.clientId}`}
+                                                disabled={!selectedClientDetails.isClientActive}
+                                            >
+                                                See Client Details
+                                            </LinkButton>
+                                            <LinkButton
+                                                link={`/clients/edit/${selectedClientDetails.clientId}`}
+                                                disabled={!selectedClientDetails.isClientActive}
+                                            >
+                                                Edit Client Details
+                                            </LinkButton>
+                                        </>
                                     )}
                                 </Centerer>
                             </ButtonsDiv>

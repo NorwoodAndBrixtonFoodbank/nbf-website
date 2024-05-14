@@ -2,8 +2,9 @@ import { CongestionChargeDetails } from "@/app/parcels/fetchParcelTableData";
 import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { ParcelsPlusRow, Schema, ViewSchema } from "@/databaseUtils";
+import { displayNameForDeletedClient } from "@/common/format";
 
-export const deletedClientNameDisplay = "(Deleted Client)";
+export const parcelsPageDeletedClientDisplayName = `(${displayNameForDeletedClient})`
 
 export interface ParcelsTableRow {
     parcelId: Schema["parcels"]["primary_key"];
@@ -32,6 +33,7 @@ export interface ParcelsTableRow {
     };
     packingDate: Date | null;
     createdAt: Date | null;
+    clientIsActive: boolean | null;
 }
 
 type ProcessParcelDataResult =
@@ -71,7 +73,9 @@ export const processingDataToParcelsTableData = async (
             return {
                 parcelId: parcel.parcel_id ?? "",
                 clientId: parcel.client_id ?? "",
-                fullName: clientActive ? parcel.client_full_name ?? "" : deletedClientNameDisplay,
+                fullName: clientActive
+                    ? parcel.client_full_name ?? ""
+                    : parcelsPageDeletedClientDisplayName,
                 familyCategory: clientActive
                     ? familyCountToFamilyCategory(parcel.family_count ?? 0)
                     : "-",
@@ -90,10 +94,15 @@ export const processingDataToParcelsTableData = async (
                 voucherNumber: parcel.voucher_number,
                 packingDate: parcel.packing_date ? new Date(parcel.packing_date) : null,
                 iconsColumn: {
-                    flaggedForAttention: parcel.client_flagged_for_attention ?? false,
-                    requiresFollowUpPhoneCall: parcel.client_signposting_call_required ?? false,
+                    flaggedForAttention: parcel.client_is_active
+                        ? parcel.client_flagged_for_attention ?? false
+                        : false,
+                    requiresFollowUpPhoneCall: parcel.client_is_active
+                        ? parcel.client_signposting_call_required ?? false
+                        : false,
                 },
                 createdAt: parcel.created_at ? new Date(parcel.created_at) : null,
+                clientIsActive: parcel.client_is_active,
             };
         }),
         error: null,

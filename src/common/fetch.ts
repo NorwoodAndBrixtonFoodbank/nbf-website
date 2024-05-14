@@ -64,7 +64,7 @@ export const fetchParcel = async (
                 name,
                 primary_key,
                 is_shown
-            )`
+            )`,
         )
         .eq("primary_key", parcelID)
         .single();

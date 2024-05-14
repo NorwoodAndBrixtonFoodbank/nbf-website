@@ -84,6 +84,7 @@ describe("Parcels Page", () => {
                         requiresFollowUpPhoneCall: true,
                     },
                     createdAt: new Date("2023-12-31T12:00:00+00:00"),
+                    clientIsActive: true,
                 },
             ];
             expect(parcelTableRows).to.deep.equal(expected);

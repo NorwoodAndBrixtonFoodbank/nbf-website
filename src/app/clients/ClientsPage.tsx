@@ -25,7 +25,7 @@ import { nullPostcodeDisplay } from "@/common/format";
 import ConfirmDialog from "@/components/Modal/ConfirmDialog";
 import DeleteButton from "@/components/Buttons/DeleteButton";
 import deleteClient, { DeleteClientError } from "./deleteClient";
-import { GetClientIsActiveError, getIsClientActive } from "./getExpandedClientDetails";
+import { IsClientActiveError, getIsClientActive } from "./getExpandedClientDetails";
 
 export interface ClientsTableRow {
     clientId: string;
@@ -83,7 +83,7 @@ const sortableColumns: SortOptions<ClientsTableRow>[] = [
     },
 ];
 
-const getIsClientActiveErrorMessage = (error: GetClientIsActiveError): string => {
+const getIsClientActiveErrorMessage = (error: IsClientActiveError): string => {
     switch (error.type) {
         case "failedClientIsActiveFetch":
             return `Failed to determine whether client is active. Please reload. Log ID: ${error.logId}`;
