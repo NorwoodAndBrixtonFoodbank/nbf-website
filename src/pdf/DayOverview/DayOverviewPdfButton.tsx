@@ -87,10 +87,8 @@ const addCongestionChargeDetailsForDayOverview = async (
         return { data: null, error: error };
     }
 
-    if (postcodesWithCongestionChargeDetails) {
-        for (let index = 0; index < parcels.length; index++) {
-            parcels[index].congestionChargeApplies = postcodesWithCongestionChargeDetails[index].congestionCharge;
-        }
+    for (let index = 0; index < parcels.length; index++) {
+        parcels[index].congestionChargeApplies = postcodesWithCongestionChargeDetails[index].congestionCharge;
     }
 
     return { data: parcels, error: null };
