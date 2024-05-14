@@ -205,6 +205,7 @@ export type Database = {
           flagged_for_attention: boolean
           full_name: string
           last_updated: string
+          notes: string | null
           other_items: string[]
           pet_food: string[]
           phone_number: string
@@ -226,6 +227,7 @@ export type Database = {
           flagged_for_attention?: boolean
           full_name?: string
           last_updated?: string
+          notes?: string | null
           other_items?: string[]
           pet_food?: string[]
           phone_number?: string
@@ -247,6 +249,7 @@ export type Database = {
           flagged_for_attention?: boolean
           full_name?: string
           last_updated?: string
+          notes?: string | null
           other_items?: string[]
           pet_food?: string[]
           phone_number?: string
