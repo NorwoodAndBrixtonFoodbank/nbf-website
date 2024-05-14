@@ -178,25 +178,34 @@ const parcelTableColumnStyleOptions = {
     },
     fullName: {
         minWidth: "8rem",
+        maxWidth: "12rem"
     },
     familyCategory: {
         hide: 550,
+        minWidth: "8rem",
+        maxWidth: "10rem"
     },
     addressPostcode: {
         hide: 800,
+        minwidth: "8rem",
+        maxWidth: "10rem"
     },
     deliveryCollection: {
         minWidth: "6rem",
+        maxWidth: "10rem"
     },
     packingDate: {
         hide: 800,
+        minWidth: "8rem",
+        maxWidth: "10rem"
     },
     packingSlot: {
         hide: 800,
-        minWidth: "6rem",
+        minWidth: "5rem",
+        maxWidth: "10rem"
     },
     lastStatus: {
-        minWidth: "8rem",
+        minWidth: "14rem",
     },
 };
 
