@@ -11,6 +11,19 @@ import {
     CongestionChargeReturnType,
 } from "../../common/congestionCharges";
 
+const getCongestionChargeDetailsForParcelsTable = async (
+    processingData: ParcelsPlusRow[]
+): Promise<CongestionChargeReturnType> => {
+    const postcodes = [];
+    for (const parcel of processingData) {
+        postcodes.push(parcel.client_address_postcode);
+    }
+
+    const congestionChargeDetails = await checkForCongestionCharge(postcodes);
+
+    return congestionChargeDetails;
+};
+
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getParcelsQuery = (
     supabase: Supabase,
@@ -91,6 +104,7 @@ const getParcelProcessingData = async (
     };
 };
 
+
 type GetParcelDataAndCountResult =
     | {
           data: {
@@ -106,54 +120,6 @@ type GetParcelDataAndCountResult =
               logId: string;
           };
       };
-
-const getParcelsCount = async (
-    supabase: Supabase,
-    filters: Filter<ParcelsTableRow, any>[],
-    abortSignal: AbortSignal
-): Promise<number> => {
-    let query = supabase.from("parcels_plus").select("*", { count: "exact", head: true });
-
-    filters.forEach((filter) => {
-        if (filter.methodConfig.paginationType === PaginationType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
-    });
-
-    query = query.abortSignal(abortSignal);
-
-    const { count, error } = await query;
-
-    if (error) {
-        const logId = abortSignal.aborted
-            ? await logInfoReturnLogId("Aborted fetch: parcel table count", error)
-            : await logErrorReturnLogId("Error with fetch: parcel table count", error);
-        if (abortSignal.aborted) {
-            throw new AbortError("fetch", "parcel table", "logId");
-        }
-
-        throw new DatabaseError("fetch", "parcel table", logId);
-    }
-
-    if (count === null) {
-        const logId = await logErrorReturnLogId("Error with fetch: Parcels, count is null");
-        throw new DatabaseError("fetch", "parcels", logId);
-    }
-    return count;
-};
-
-const getCongestionChargeDetailsForParcelsTable = async (
-    processingData: ParcelsPlusRow[]
-): Promise<CongestionChargeReturnType> => {
-    const postcodes = [];
-    for (const parcel of processingData) {
-        postcodes.push(parcel.client_address_postcode);
-    }
-
-    const congestionChargeDetails = await checkForCongestionCharge(postcodes);
-
-    return congestionChargeDetails;
-};
 
 export type GetParcelDataAndCountErrorType =
     | "unknownError"
@@ -235,6 +201,41 @@ export const getParcelsDataAndCount = async (
         },
         error: null,
     };
+};
+
+const getParcelsCount = async (
+    supabase: Supabase,
+    filters: Filter<ParcelsTableRow, any>[],
+    abortSignal: AbortSignal
+): Promise<number> => {
+    let query = supabase.from("parcels_plus").select("*", { count: "exact", head: true });
+
+    filters.forEach((filter) => {
+        if (filter.methodConfig.paginationType === PaginationType.Server) {
+            query = filter.methodConfig.method(query, filter.state);
+        }
+    });
+
+    query = query.abortSignal(abortSignal);
+
+    const { count, error } = await query;
+
+    if (error) {
+        const logId = abortSignal.aborted
+            ? await logInfoReturnLogId("Aborted fetch: parcel table count", error)
+            : await logErrorReturnLogId("Error with fetch: parcel table count", error);
+        if (abortSignal.aborted) {
+            throw new AbortError("fetch", "parcel table", "logId");
+        }
+
+        throw new DatabaseError("fetch", "parcel table", logId);
+    }
+
+    if (count === null) {
+        const logId = await logErrorReturnLogId("Error with fetch: Parcels, count is null");
+        throw new DatabaseError("fetch", "parcels", logId);
+    }
+    return count;
 };
 
 export const getParcelIds = async (
