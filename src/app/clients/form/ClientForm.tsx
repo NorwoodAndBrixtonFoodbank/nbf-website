@@ -37,6 +37,7 @@ import SignpostingCallCard from "@/app/clients/form/formSections/SignpostingCall
 import Button from "@mui/material/Button";
 import { submitAddClientForm, submitEditClientForm } from "@/app/clients/form/submitFormHelpers";
 import Title from "@/components/Title/Title";
+import ClientNotesCard from "@/app/clients/form/formSections/ClientNotes";
 
 interface Props {
     initialFields: ClientFields;
@@ -48,6 +49,7 @@ type EditConfig = { editMode: true; clientID: string } | { editMode: false };
 
 export interface ClientFields extends Fields {
     fullName: string;
+    notes: string | null;
     phoneNumber: string;
     addressLine1: string;
     addressLine2: string;
@@ -85,6 +87,7 @@ export type ClientErrorSetter = Setter<ClientErrors>;
 export type ClientCardProps = CardProps<ClientFields, ClientErrors>;
 
 const formSections = [
+    ClientNotesCard,
     FullNameCard,
     PhoneNumberCard,
     AddressCard,
