@@ -104,7 +104,6 @@ const getParcelProcessingData = async (
     };
 };
 
-
 type GetParcelDataAndCountResult =
     | {
           data: {

@@ -26,10 +26,9 @@ export const checkForCongestionCharge = async (
     });
 
     if (response.error) {
-        const logId = await logErrorReturnLogId(
-            "Error with congestion charge check",
-            {error: response.error}
-        );
+        const logId = await logErrorReturnLogId("Error with congestion charge check", {
+            error: response.error,
+        });
         return { data: null, error: { type: "failedToRetrieveCongestionChargeDetails", logId } };
     }
 
