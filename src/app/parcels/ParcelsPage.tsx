@@ -177,35 +177,42 @@ const parcelTableColumnStyleOptions = {
         width: "4rem",
     },
     fullName: {
-        minWidth: "8rem",
-        maxWidth: "12rem"
+        basis: "8rem",
+        grow: 1,
+        minWidth: "8rem"
     },
     familyCategory: {
         hide: 550,
-        minWidth: "8rem",
-        maxWidth: "10rem"
+        basis: "8rem",
+        grow: 1,
+        minWidth: "6rem"
     },
     addressPostcode: {
         hide: 800,
-        minwidth: "8rem",
-        maxWidth: "10rem"
+        basis: "800",
+        grow: 1,
+        minWidth: "6rem"
     },
     deliveryCollection: {
-        minWidth: "6rem",
-        maxWidth: "10rem"
+        basis: "6rem",
+        grow: 1,
+        minWidth: "6rem"
     },
     packingDate: {
         hide: 800,
-        minWidth: "8rem",
-        maxWidth: "10rem"
+        basis: "8rem",
+        grow: 1,
+        minWidth: "6rem"
     },
     packingSlot: {
         hide: 800,
-        minWidth: "5rem",
-        maxWidth: "10rem"
+        basis: "5rem",
+        grow: 1,
+        minWidth: "5rem"
     },
     lastStatus: {
-        minWidth: "14rem",
+        basis: "15rem",
+        grow: 5
     },
 };
 
