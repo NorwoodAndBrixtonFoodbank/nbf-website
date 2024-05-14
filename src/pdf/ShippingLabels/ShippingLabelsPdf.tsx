@@ -1,10 +1,8 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { nullPostcodeDisplay } from "@/common/format";
-import { faCalendarXmark, faShoePrints, faTruck } from "@fortawesome/free-solid-svg-icons";
+import { faShoePrints, faTruck } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
-import { AlignHorizontalLeft } from "@mui/icons-material";
-
 export interface ShippingLabelData {
     label_quantity: number;
     parcel_id: string;
@@ -49,7 +47,6 @@ const styles = StyleSheet.create({
         flexBasis: "20%",
         display: "flex",
         flexDirection: "row",
-
     },
     middleRow: { flex: 1, display: "flex", flexDirection: "row" },
     bottomRow: {
@@ -60,8 +57,8 @@ const styles = StyleSheet.create({
     },
     leftCol: { flexBasis: "32%", textAlign: "left" },
     middleCol: { flex: 1, textAlign: "left" },
-    rightCol: { flexBasis: "28%", textAlign: "right"},
-    bottomAlign: { marginTop: "21px"},
+    rightCol: { flexBasis: "28%", textAlign: "right" },
+    bottomAlign: { marginTop: "21px" },
     headingText: { fontFamily: "Helvetica-Bold", textTransform: "uppercase" },
     largeText: {
         fontSize: "26pt",
@@ -84,19 +81,19 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
         <Page size={labelSizePixels} style={styles.page}>
             <View style={styles.cardWrapper} wrap={true}>
                 <View style={[styles.topRow]}>
-                    <View style={[styles.leftCol, {flexDirection: "row"}]}>
+                    <View style={[styles.leftCol, { flexDirection: "row" }]}>
                         <Text style={styles.headingText}>Name: </Text>
                         <Text>{data.full_name}</Text>
                     </View>
-                    <View style={[styles.middleCol, {flexDirection: "row"}]}>
+                    <View style={[styles.middleCol, { flexDirection: "row" }]}>
                         <Text style={styles.headingText}>Contact: </Text>
                         <Text>{data.phone_number}</Text>
                     </View>
                     <View style={[styles.rightCol]}>
-                        <View style={{flexDirection: "row", justifyContent: "flex-end"}}>
-                            <Text style={[styles.headingText]}>Packed:{" "}</Text>
+                        <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+                            <Text style={[styles.headingText]}>Packed: </Text>
                             <Text>{data.packing_date}</Text>
-                        </View>    
+                        </View>
                     </View>
                 </View>
                 <View style={styles.middleRow}>
@@ -128,21 +125,19 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                     </View>
                 </View>
                 <View style={[styles.bottomRow]}>
-                    <View style={[styles.leftCol, {marginTop: "15px"}]}>
+                    <View style={[styles.leftCol, { marginTop: "15px" }]}>
                         <Text style={styles.largeText}>
                             {data.address_postcode ?? nullPostcodeDisplay}
                         </Text>
                     </View>
-                    <View style={[styles.middleCol, { flexDirection: "row"}]}>
-                        <View style = {[styles.bottomAlign]}>
-                            <Text style={styles.mediumText}>
-                                {data.packing_slot}{" "} 
-                            </Text>
+                    <View style={[styles.middleCol, { flexDirection: "row" }]}>
+                        <View style={[styles.bottomAlign]}>
+                            <Text style={styles.mediumText}>{data.packing_slot} </Text>
                         </View>
-                        <View style = {{marginTop: "auto"}}>
-                            <Text style={{fontWeight: "bold", fontSize: "25pt"}}>|</Text>
+                        <View style={{ marginTop: "auto" }}>
+                            <Text style={{ fontWeight: "bold", fontSize: "25pt" }}>|</Text>
                         </View>
-                        <View style = {[styles.bottomAlign, { flexDirection: "row" }]}>
+                        <View style={[styles.bottomAlign, { flexDirection: "row" }]}>
                             <Text style={styles.mediumText}>
                                 {" "}
                                 {data.collection_centre === "DLVR"
@@ -150,11 +145,7 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                                     : data.collection_centre + " "}
                             </Text>
                             <FontAwesomeIconPdfComponent
-                                faIcon={
-                                    data.collection_centre === "DLVR"
-                                        ? faTruck
-                                        : faShoePrints
-                                }
+                                faIcon={data.collection_centre === "DLVR" ? faTruck : faShoePrints}
                             ></FontAwesomeIconPdfComponent>
                         </View>
                     </View>
