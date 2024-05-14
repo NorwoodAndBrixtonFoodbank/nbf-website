@@ -7,10 +7,11 @@ interface RequestPasswordResetResponse {
 }
 
 function formatErrorMessage(error: AuthError): string {
+    const helpEmailAddress = "help@foodbankapp.org";
     let errorMessage = error.message;
     // HTTP 429 is "too many requests". Usually means email rate limit has been exceeded.
     if (error.status === 429) {
-        errorMessage += ".\nPlease contact admin for help.\nhelp@foodbankapp.org";
+        errorMessage += `.\nPlease contact admin for help.\n${helpEmailAddress}`;
     }
     return errorMessage;
 }
