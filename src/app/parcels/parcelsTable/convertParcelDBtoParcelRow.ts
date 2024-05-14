@@ -1,7 +1,7 @@
 import { CongestionChargeDetails, ParcelsTableRow } from "./types";
 import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { ParcelsPlusRow, ViewSchema } from "@/databaseUtils";
+import { DbParcelRow, ViewSchema } from "@/databaseUtils";
 
 type ProcessParcelDataResult =
     | {
@@ -17,7 +17,7 @@ type ProcessParcelDataResult =
       };
 
 const convertParcelDbtoParcelRow = async (
-    processingData: ParcelsPlusRow[],
+    processingData: DbParcelRow[],
     congestionCharge: CongestionChargeDetails[]
 ): Promise<ProcessParcelDataResult> => {
     if (processingData.length !== congestionCharge.length) {

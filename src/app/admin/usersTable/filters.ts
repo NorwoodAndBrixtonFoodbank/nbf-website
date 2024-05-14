@@ -1,6 +1,6 @@
 import { serverSideChecklistFilter } from "@/components/Tables/ChecklistFilter";
-import { UserRole } from "@/databaseUtils";
-import { DbUserRow, UserRow, UsersFilter, UsersFilterMethod } from "./types";
+import { DbUserRow, UserRole } from "@/databaseUtils";
+import { UserRow, UsersFilter, UsersFilterMethod } from "./types";
 import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import { usersTableHeaderKeysAndLabels } from "./headers";
 
@@ -24,7 +24,7 @@ const emailSearch: UsersFilterMethod<string> = (query, state) => {
     return query.ilike("email", `%${state}%`);
 };
 
-export const buildUserRoleFilter = (): UsersFilter<string[]> => {
+const buildUserRoleFilter = (): UsersFilter<string[]> => {
     const userRoleSearch: UsersFilterMethod<string[]> = (query, state) => {
         return query.in("role", state);
     };
@@ -42,7 +42,7 @@ export const buildUserRoleFilter = (): UsersFilter<string[]> => {
     return userRoleFilter;
 };
 
-export const usersFilters: UsersFilter<any>[] = [
+export const usersFilters: (UsersFilter<string> | UsersFilter<string[]>)[] = [
     buildServerSideTextFilter({
         key: "firstName",
         label: "First Name",

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import Table, { Row } from "@/components/Tables/Table";
+import { Row, ServerPaginatedTable } from "@/components/Tables/Table";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
@@ -12,15 +12,10 @@ import {
     defaultNumberOfAuditLogRowsPerPage,
     numberOfAuditLogRowsPerPageOption,
 } from "./rowsPerPageConstants";
-import {
-    AuditLogRow,
-    AuditLogSortState,
-    DbAuditLogRow,
-    convertAuditLogPlusRowsToAuditLogRows,
-} from "./types";
+import { AuditLogRow, AuditLogSortState, convertAuditLogPlusRowsToAuditLogRows } from "./types";
 import { auditLogTableSortableColumns } from "./sortFunctions";
 import AuditLogModal from "./auditLogModal/AuditLogModal";
-import { PaginationType } from "@/components/Tables/Filters";
+import { DbAuditLogRow } from "@/databaseUtils";
 
 const AuditLogTable: React.FC = () => {
     const [auditLogDataPortion, setAuditLogDataPortion] = useState<AuditLogRow[]>([]);
@@ -84,7 +79,7 @@ const AuditLogTable: React.FC = () => {
     return (
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
-            <Table<AuditLogRow, PaginationType.Server, DbAuditLogRow>
+            <ServerPaginatedTable<AuditLogRow, DbAuditLogRow>
                 dataPortion={auditLogDataPortion}
                 headerKeysAndLabels={auditLogTableHeaderKeysAndLabels}
                 defaultShownHeaders={[

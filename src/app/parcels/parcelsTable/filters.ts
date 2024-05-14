@@ -9,15 +9,16 @@ import { serverSideChecklistFilter } from "@/components/Tables/ChecklistFilter";
 import { getDbDate, nullPostcodeDisplay } from "@/common/format";
 import {
     CollectionCentresOptions,
-    DbParcelRow,
     ParcelsFilter,
     ParcelsFilterMethod,
+    ParcelsFilters,
     ParcelsTableRow,
     packingSlotOptionsSet,
 } from "./types";
 import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import dayjs from "dayjs";
 import { parcelTableHeaderKeysAndLabels } from "./headers";
+import { DbParcelRow } from "@/databaseUtils";
 
 const fullNameSearch: ParcelsFilterMethod<string> = (query, state) =>
     query.ilike("client_full_name", `%${state}%`);
@@ -193,15 +194,15 @@ const buildPackingSlotFilter = async (): Promise<ParcelsFilter<string[]>> => {
 };
 
 const buildFilters = async (): Promise<{
-    primaryFilters: ParcelsFilter[];
-    additionalFilters: ParcelsFilter[];
+    primaryFilters: ParcelsFilters;
+    additionalFilters: ParcelsFilters;
 }> => {
     const today = dayjs();
     const dateFilter = buildDateFilter({
         from: today,
         to: today,
     });
-    const primaryFilters: ParcelsFilter[] = [
+    const primaryFilters: ParcelsFilters = [
         dateFilter,
         buildServerSideTextFilter({
             key: "fullName",

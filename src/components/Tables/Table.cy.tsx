@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Table, {
+import {
     CheckboxConfig,
+    ClientPaginatedTable,
     FilterConfig,
     PaginationConfig,
     SortConfig,
@@ -8,7 +9,7 @@ import Table, {
     SortState,
 } from "@/components/Tables/Table";
 import StyleManager from "@/app/themes";
-import { ClientSideFilter, PaginationType } from "./Filters";
+import { ClientSideFilter } from "./Filters";
 import { SortOrder } from "react-data-table-component/dist/DataTable/types";
 import { buildClientSideTextFilter, filterRowByText } from "./TextFilter";
 import { ClientSideSortMethod } from "./sortMethods";
@@ -260,7 +261,7 @@ const Component: React.FC<TestTableProps> = ({
 
     return (
         <StyleManager>
-            <Table<TestData, PaginationType.Client>
+            <ClientPaginatedTable<TestData>
                 dataPortion={testDataPortion}
                 headerKeysAndLabels={headers}
                 toggleableHeaders={toggleableHeaders}
@@ -274,7 +275,7 @@ const Component: React.FC<TestTableProps> = ({
     );
 };
 
-describe("<Table />", () => {
+describe("<ClientPaginatedTable />", () => {
     it("renders", () => {
         cy.mount(<Component tableData={data} />);
     });

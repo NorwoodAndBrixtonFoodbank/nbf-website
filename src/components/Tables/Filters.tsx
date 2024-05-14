@@ -19,22 +19,21 @@ export type ClientSideFilterMethod<Data, State> = (
     key: keyof Data
 ) => boolean;
 
-export interface ServerSideFilter<Data, State, DbData extends Record<string, any>> {
+interface BasicFilter<Data, State> {
     key: keyof Data;
     filterComponent: (state: State, setState: (state: State) => void) => React.ReactElement;
     state: State;
     initialState: State;
-    method: ServerSideFilterMethod<DbData, State>;
     areStatesIdentical: (stateA: State, stateB: State) => boolean;
 }
 
-export interface ClientSideFilter<Data, State> {
-    key: keyof Data;
-    filterComponent: (state: State, setState: (state: State) => void) => React.ReactElement;
-    state: State;
-    initialState: State;
+export interface ServerSideFilter<Data, State, DbData extends Record<string, any>>
+    extends BasicFilter<Data, State> {
+    method: ServerSideFilterMethod<DbData, State>;
+}
+
+export interface ClientSideFilter<Data, State> extends BasicFilter<Data, State> {
     method: ClientSideFilterMethod<Data, State>;
-    areStatesIdentical: (stateA: State, stateB: State) => boolean;
 }
 
 export const headerLabelFromKey = <Data, Key extends keyof Data>(
@@ -51,9 +50,3 @@ export const defaultToString = (value: unknown): string => {
 
     return JSON.stringify(value);
 };
-
-export interface CoreFilter<State = any> {
-    filterComponent: (state: State, setState: (state: State) => void) => React.ReactElement;
-    state: State;
-    initialState: State;
-}

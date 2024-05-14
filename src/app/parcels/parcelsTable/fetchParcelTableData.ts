@@ -2,7 +2,7 @@ import { Supabase } from "@/supabaseUtils";
 import { AbortError, DatabaseError, EdgeFunctionError } from "../../errorClasses";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
-import { ParcelsPlusRow } from "@/databaseUtils";
+import { DbParcelRow } from "@/databaseUtils";
 import {
     CongestionChargeDetails,
     FetchClientIdResult,
@@ -10,14 +10,14 @@ import {
     GetParcelDataAndCountErrorType,
     GetParcelDataAndCountResult,
     ParcelStatusesReturnType,
-    ParcelsFilter,
+    ParcelsFilters,
     ParcelsSortState,
     ParcelsTableRow,
 } from "./types";
 import convertParcelDbtoParcelRow from "./convertParcelDBtoParcelRow";
 
 export const getCongestionChargeDetailsForParcels = async (
-    processingData: ParcelsPlusRow[],
+    processingData: DbParcelRow[],
     supabase: Supabase
 ): Promise<CongestionChargeDetails[]> => {
     const postcodes = [];
@@ -42,7 +42,7 @@ export const getCongestionChargeDetailsForParcels = async (
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getParcelsQuery = (
     supabase: Supabase,
-    filters: ParcelsFilter[],
+    filters: ParcelsFilters,
     sortState: ParcelsSortState
 ) => {
     let query = supabase.from("parcels_plus").select("*");
@@ -67,7 +67,7 @@ const getParcelsQuery = (
 
 const fetchParcelsDbRows = async (
     supabase: Supabase,
-    filters: ParcelsFilter[],
+    filters: ParcelsFilters,
     sortState: ParcelsSortState,
     abortSignal: AbortSignal,
     startIndex: number,
@@ -101,7 +101,7 @@ const fetchParcelsDbRows = async (
 
 export const getParcelsDataAndCount = async (
     supabase: Supabase,
-    filters: ParcelsFilter[],
+    filters: ParcelsFilters,
     sortState: ParcelsSortState,
     abortSignal: AbortSignal,
     startIndex: number,
@@ -165,7 +165,7 @@ export const getParcelsDataAndCount = async (
 
 const getParcelsCount = async (
     supabase: Supabase,
-    filters: ParcelsFilter[],
+    filters: ParcelsFilters,
     abortSignal: AbortSignal
 ): Promise<number> => {
     let query = supabase.from("parcels_plus").select("*", { count: "exact", head: true });
@@ -197,7 +197,7 @@ const getParcelsCount = async (
 };
 export const getParcelIds = async (
     supabase: Supabase,
-    filters: ParcelsFilter[],
+    filters: ParcelsFilters,
     sortState: ParcelsSortState
 ): Promise<string[]> => {
     const query = getParcelsQuery(supabase, filters, sortState);
@@ -216,7 +216,7 @@ export const getParcelIds = async (
 
 export const getParcelsByIds = async (
     supabase: Supabase,
-    filters: ParcelsFilter[],
+    filters: ParcelsFilters,
     sortState: ParcelsSortState,
     parcelIds: string[]
 ): Promise<ParcelsTableRow[]> => {

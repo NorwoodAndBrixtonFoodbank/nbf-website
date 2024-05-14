@@ -6,11 +6,11 @@ import {
     formatHouseholdFromFamilyDetails,
 } from "@/app/clients/getExpandedClientDetails";
 import { formatDatetimeAsDate } from "@/common/format";
-import { ParcelsPlusRow } from "@/databaseUtils";
+import { DbParcelRow } from "@/databaseUtils";
 import convertParcelDbtoParcelRow, { processLastStatus } from "./convertParcelDBtoParcelRow";
 import { CongestionChargeDetails, ParcelsTableRow } from "./types";
 
-const sampleProcessingData: ParcelsPlusRow[] = [
+const sampleProcessingData: DbParcelRow[] = [
     {
         parcel_id: "PRIMARY_KEY",
         collection_centre_name: "COLLECTION_CENTRE",

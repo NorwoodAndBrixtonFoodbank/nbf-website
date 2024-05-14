@@ -6,9 +6,9 @@ import { TableHeaders } from "@/components/Tables/Table";
 import styled from "styled-components";
 import { FilterAltOffOutlined, FilterAltOutlined } from "@mui/icons-material";
 import ColumnTogglePopup from "@/components/Tables/ColumnTogglePopup";
-import { CoreFilter } from "./Filters";
+import { ClientSideFilter, ServerSideFilter } from "./Filters";
 
-interface Props<Data, Filter extends CoreFilter> {
+interface Props<Data, Filter extends ClientSideFilter<any, any> | ServerSideFilter<any, any, any>> {
     setFilters?: (filters: Filter[]) => void;
     setAdditionalFilters?: (filters: Filter[]) => void;
     headers: TableHeaders<Data>;
@@ -46,7 +46,9 @@ const Grow = styled.div`
     flex-grow: 1;
 `;
 
-export const filtersToComponents = <Filter extends CoreFilter>(
+export const filtersToComponents = <
+    Filter extends ClientSideFilter<any, any> | ServerSideFilter<any, any, any>,
+>(
     filters: Filter[],
     setFilters: (filters: Filter[]) => void
 ): React.ReactElement[] => {
@@ -63,7 +65,10 @@ export const filtersToComponents = <Filter extends CoreFilter>(
     });
 };
 
-const TableFilterAndExtraColumnsBar = <Data, Filter extends CoreFilter>(
+const TableFilterAndExtraColumnsBar = <
+    Data,
+    Filter extends ClientSideFilter<any, any> | ServerSideFilter<any, any, any>,
+>(
     props: Props<Data, Filter>
 ): React.ReactElement => {
     const handleClear = (): void => {
@@ -87,12 +92,10 @@ const TableFilterAndExtraColumnsBar = <Data, Filter extends CoreFilter>(
 
     const [showMoreFiltersAndHeaders, setShowMoreFiltersAndHeaders] = useState(false);
 
-    const hasPrimaryFilters = props.filters && props.filters?.length !== 0 && props.setFilters;
+    const hasPrimaryFilters = props.filters?.length !== 0 && props.setFilters;
 
     const hasAdditionalFilters =
-        props.additionalFilters &&
-        props.additionalFilters?.length !== 0 &&
-        props.setAdditionalFilters;
+        props.additionalFilters?.length !== 0 && props.setAdditionalFilters;
 
     const hasToggleableHeaders = props.toggleableHeaders.length !== 0;
 

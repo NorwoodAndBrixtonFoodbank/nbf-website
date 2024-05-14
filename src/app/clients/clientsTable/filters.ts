@@ -2,7 +2,7 @@ import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import clientsHeaders from "./headers";
 import { ClientsFilter, ClientsFilterMethod } from "./types";
 
-const fullNameSearch: ClientsFilterMethod<string> = (query, state) =>
+const fullNameSearch: ClientsFilterMethod = (query, state) =>
     query.ilike("full_name", `%${state}%`);
 
 const clientsFilters: ClientsFilter[] = [

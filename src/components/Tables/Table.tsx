@@ -71,7 +71,7 @@ export type SortConfig<Data, SortMethod extends Function> =
       }
     | { sortPossible: false };
 
-export interface CustomColumn<Data, SortMethod extends Function> extends TableColumn<Row<Data>> {
+interface CustomColumn<Data, SortMethod extends Function> extends TableColumn<Row<Data>> {
     sortMethod?: SortMethod;
 }
 
@@ -620,4 +620,10 @@ const TableStyling = styled.div`
     }
 `;
 
-export default Table;
+export const ServerPaginatedTable = <Data, DbData extends Record<string, any>>(
+    props: Props<Data, DbData, PaginationTypeEnum.Server>
+): React.ReactElement => <Table<Data, PaginationTypeEnum.Server, DbData> {...props} />;
+
+export const ClientPaginatedTable = <Data,>(
+    props: Props<Data, {}, PaginationTypeEnum.Client>
+): React.ReactElement => <Table<Data, PaginationTypeEnum.Client> {...props} />;

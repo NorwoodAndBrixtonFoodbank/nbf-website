@@ -28,6 +28,9 @@ export type TableNames = keyof Tables;
 
 export type ViewNames = keyof Views;
 
-export type ParcelsPlusRow = Views["parcels_plus"]["Row"];
-
 export type ParcelStatus = Schema["status_order"]["event_name"];
+
+export type DbAuditLogRow = ViewSchema["audit_log_plus"];
+export type DbUserRow = ViewSchema["users_plus"];
+export type DbClientRow = ViewSchema["clients_plus"];
+export type DbParcelRow = ViewSchema["parcels_plus"];

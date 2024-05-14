@@ -1,9 +1,8 @@
 import { ServerSideFilter, ServerSideFilterMethod } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 import { ServerSideSortMethod } from "@/components/Tables/sortMethods";
-import { UserRole, ViewSchema } from "@/databaseUtils";
+import { DbUserRow, UserRole } from "@/databaseUtils";
 
-export type DbUserRow = ViewSchema["users_plus"];
 export type UsersFilterMethod<State> = ServerSideFilterMethod<DbUserRow, State>;
 export type UsersFilter<State> = ServerSideFilter<UserRow, State, DbUserRow>;
 export type UsersSortMethod = ServerSideSortMethod<DbUserRow>;

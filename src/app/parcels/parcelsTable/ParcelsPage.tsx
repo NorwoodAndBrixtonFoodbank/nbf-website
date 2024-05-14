@@ -1,9 +1,9 @@
 "use client";
 
-import Table, { Row } from "@/components/Tables/Table";
+import { Row, ServerPaginatedTable } from "@/components/Tables/Table";
 import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useTheme } from "styled-components";
-import { ParcelsTableRow, ParcelsSortState, ParcelsFilter, DbParcelRow } from "./types";
+import { ParcelsTableRow, ParcelsSortState, ParcelsFilter } from "./types";
 import ExpandedParcelDetails from "@/app/parcels/ExpandedParcelDetails";
 import ExpandedParcelDetailsFallback from "@/app/parcels/ExpandedParcelDetailsFallback";
 import Icon from "@/components/Icons/Icon";
@@ -25,7 +25,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { CircularProgress } from "@mui/material";
 import { ErrorSecondaryText } from "../../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
-import buildFilters from "@/app/parcels/parcelsTable/parcelsTableFilters";
+import buildFilters from "@/app/parcels/parcelsTable/filters";
 import { ActionsContainer } from "@/components/Form/formStyling";
 import parcelsSortableColumns from "./sortableColumns";
 import {
@@ -34,7 +34,6 @@ import {
     numberOfParcelsPerPageOptions,
 } from "./constants";
 import { parcelTableHeaderKeysAndLabels, defaultShownHeaders, toggleableHeaders } from "./headers";
-import { PaginationType } from "@/components/Tables/Filters";
 import {
     getSelectedParcelCountMessage,
     getParcelDataErrorMessage,
@@ -42,6 +41,7 @@ import {
     getClientIdErrorMessage,
 } from "./format";
 import { PreTableControls, parcelTableColumnStyleOptions } from "./styles";
+import { DbParcelRow } from "@/databaseUtils";
 
 const ParcelsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -290,7 +290,7 @@ const ParcelsPage: React.FC<{}> = () => {
                 <>
                     {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
                     <TableSurface>
-                        <Table<ParcelsTableRow, PaginationType.Server, DbParcelRow>
+                        <ServerPaginatedTable<ParcelsTableRow, DbParcelRow>
                             dataPortion={parcelsDataPortion}
                             isLoading={isLoading}
                             paginationConfig={{

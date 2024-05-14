@@ -1,6 +1,10 @@
 "use client";
 
-import Table, { ColumnDisplayFunctions, ColumnStyles } from "@/components/Tables/Table";
+import {
+    ClientPaginatedTable,
+    ColumnDisplayFunctions,
+    ColumnStyles,
+} from "@/components/Tables/Table";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import EditModal, { EditModalState } from "@/app/lists/EditModal";
@@ -15,7 +19,7 @@ import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { buildClientSideTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
-import { ClientSideFilter, PaginationType } from "@/components/Tables/Filters";
+import { ClientSideFilter } from "@/components/Tables/Filters";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 type ListFilter = ClientSideFilter<ListRow, any>;
@@ -294,7 +298,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
             <TableSurface>
                 <CommentBox originalComment={comment} />
-                <Table<ListRow, PaginationType.Client>
+                <ClientPaginatedTable<ListRow>
                     headerKeysAndLabels={listsHeaderKeysAndLabels}
                     toggleableHeaders={toggleableHeaders}
                     dataPortion={listData}

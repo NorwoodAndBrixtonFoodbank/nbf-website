@@ -1,11 +1,10 @@
 import { ServerSideFilter, ServerSideFilterMethod } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 import { ServerSideSortMethod } from "@/components/Tables/sortMethods";
-import { ViewSchema } from "@/databaseUtils";
+import { DbClientRow } from "@/databaseUtils";
 
-export type DbClientRow = ViewSchema["clients_plus"];
-export type ClientsFilterMethod<State = any> = ServerSideFilterMethod<DbClientRow, State>;
-export type ClientsFilter<State = any> = ServerSideFilter<ClientsTableRow, State, DbClientRow>;
+export type ClientsFilterMethod = ServerSideFilterMethod<DbClientRow, string>;
+export type ClientsFilter = ServerSideFilter<ClientsTableRow, string, DbClientRow>;
 export type ClientsSortMethod = ServerSideSortMethod<DbClientRow>;
 export type ClientsSortState = SortState<ClientsTableRow, ClientsSortMethod>;
 

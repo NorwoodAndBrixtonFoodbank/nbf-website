@@ -1,7 +1,8 @@
+import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
 import { ServerSideFilter, ServerSideFilterMethod } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 import { ServerSideSortMethod } from "@/components/Tables/sortMethods";
-import { ParcelStatus, ParcelsPlusRow, Schema, ViewSchema } from "@/databaseUtils";
+import { DbParcelRow, ParcelStatus, Schema } from "@/databaseUtils";
 
 export interface ParcelsTableRow {
     parcelId: Schema["parcels"]["primary_key"];
@@ -72,9 +73,13 @@ export type ParcelStatusesReturnType =
           error: { type: ParcelStatusesError; logId: string };
       };
 
-export type DbParcelRow = ViewSchema["parcels_plus"];
-export type ParcelsFilterMethod<State = any> = ServerSideFilterMethod<DbParcelRow, State>;
-export type ParcelsFilter<State = any> = ServerSideFilter<ParcelsTableRow, State, DbParcelRow>;
+export type ParcelsFilterMethod<State> = ServerSideFilterMethod<DbParcelRow, State>;
+export type ParcelsFilter<State> = ServerSideFilter<ParcelsTableRow, State, DbParcelRow>;
+export type ParcelsFilters = (
+    | ParcelsFilter<string>
+    | ParcelsFilter<string[]>
+    | ParcelsFilter<DateRangeState>
+)[];
 export type ParcelsSortMethod = ServerSideSortMethod<DbParcelRow>;
 export type ParcelsSortState = SortState<ParcelsTableRow, ParcelsSortMethod>;
 
@@ -85,7 +90,7 @@ export type CongestionChargeDetails = {
 
 export type GetDbParcelDataResult =
     | {
-          parcels: ParcelsPlusRow[];
+          parcels: DbParcelRow[];
           error: null;
       }
     | {

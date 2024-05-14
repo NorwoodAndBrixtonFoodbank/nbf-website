@@ -4,7 +4,7 @@ import LinkButton from "@/components/Buttons/LinkButton";
 import Icon from "@/components/Icons/Icon";
 import Modal from "@/components/Modal/Modal";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
-import Table from "@/components/Tables/Table";
+import { ServerPaginatedTable } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
 import supabase from "@/supabaseClient";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -21,10 +21,10 @@ import { nullPostcodeDisplay } from "@/common/format";
 import clientsFilters from "./filters";
 import clientsSortableColumns from "./sortableColumns";
 import clientsHeaders from "./headers";
-import { ClientsTableRow, ClientsSortState, ClientsFilter, DbClientRow } from "./types";
-import { PaginationType } from "@/components/Tables/Filters";
+import { ClientsTableRow, ClientsSortState, ClientsFilter } from "./types";
+import { DbClientRow } from "@/databaseUtils";
+import { clientIdParam } from "./constants";
 
-const clientIdParam = "clientId";
 const ClientsPage: React.FC<{}> = () => {
     const [isLoadingForFirstTime, setIsLoadingForFirstTime] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
@@ -130,7 +130,7 @@ const ClientsPage: React.FC<{}> = () => {
                 <>
                     {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
                     <TableSurface>
-                        <Table<ClientsTableRow, PaginationType.Server, DbClientRow>
+                        <ServerPaginatedTable<ClientsTableRow, DbClientRow>
                             dataPortion={clientsDataPortion}
                             paginationConfig={{
                                 enablePagination: true,

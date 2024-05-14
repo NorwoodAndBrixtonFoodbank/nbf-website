@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import Table from "@/components/Tables/Table";
+import { ServerPaginatedTable } from "@/components/Tables/Table";
 import ManageUserModal from "@/app/admin/manageUser/ManageUserModal";
 import DeleteUserDialog from "@/app/admin/deleteUser/DeleteUserDialog";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
@@ -14,10 +14,10 @@ import { getCurrentUser } from "@/server/getCurrentUser";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { defaultNumberOfUsersPerPage, numberOfUsersPerPageOptions } from "./constants";
 import { usersTableHeaderKeysAndLabels } from "./headers";
-import { DbUserRow, UserRow, UsersFilter, UsersSortState } from "./types";
+import { UserRow, UsersFilter, UsersSortState } from "./types";
 import { usersSortableColumns } from "./sortableColumns";
-import { PaginationType } from "@/components/Tables/Filters";
 import { userTableColumnDisplayFunctions } from "./format";
+import { DbUserRow } from "@/databaseUtils";
 
 const UsersTable: React.FC = () => {
     const [userToDelete, setUserToDelete] = useState<UserRow | null>(null);
@@ -126,7 +126,7 @@ const UsersTable: React.FC = () => {
     return (
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
-            <Table<UserRow, PaginationType.Server, DbUserRow>
+            <ServerPaginatedTable<UserRow, DbUserRow>
                 dataPortion={users}
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
