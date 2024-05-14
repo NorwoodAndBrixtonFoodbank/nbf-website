@@ -75,21 +75,24 @@ const addCongestionChargeDetailsForDayOverview = async (
     const postcodes: (string | null)[] = [];
 
     for (const parcel of parcels) {
-        parcel.client?.address_postcode ? postcodes.push(parcel.client?.address_postcode): postcodes.push(null);
+        parcel.client?.address_postcode
+            ? postcodes.push(parcel.client?.address_postcode)
+            : postcodes.push(null);
     }
 
     const { data: postcodesWithCongestionChargeDetails, error } =
         await checkForCongestionCharge(postcodes);
 
-    console.log(postcodesWithCongestionChargeDetails)
+    console.log(postcodesWithCongestionChargeDetails);
 
     if (error) {
         return { data: null, error: error };
     }
 
     parcels.map((parcel, index) => {
-        parcel.congestionChargeApplies = postcodesWithCongestionChargeDetails[index].congestionCharge;
-    })
+        parcel.congestionChargeApplies =
+            postcodesWithCongestionChargeDetails[index].congestionCharge;
+    });
 
     return { data: parcels, error: null };
 };
