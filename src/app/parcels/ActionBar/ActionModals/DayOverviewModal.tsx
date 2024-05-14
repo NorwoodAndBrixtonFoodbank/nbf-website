@@ -15,6 +15,7 @@ const getPdfErrorMessage = (error: DayOverviewPdfError): string => {
             break;
         case "failedToRetrieveCongestionChargeDetails":
             errorMessage = "Failed to retrieve congestion charge data";
+            break;
     }
     return `${errorMessage} LogId: ${error.logId}`;
 };
