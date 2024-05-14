@@ -40,6 +40,7 @@ const autofill = (
     const noPostcode = clientData.address_postcode === null;
 
     return {
+        notes: clientData.notes,
         fullName: clientData.full_name,
         phoneNumber: clientData.phone_number,
         addressLine1: noPostcode ? "" : clientData.address_1,
