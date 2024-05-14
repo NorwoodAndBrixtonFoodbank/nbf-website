@@ -91,7 +91,8 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                     </View>
                     <View style={[styles.rightCol]}>
                         <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-                            <Text style={[styles.headingText]}>Packed:{" "}</Text>
+                            <Text style={[styles.headingText]}>Packed:</Text>
+                            <Text> </Text>
                             <Text>{data.packing_date}</Text>
                         </View>
                     </View>
