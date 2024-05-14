@@ -24,18 +24,17 @@ export interface ShippingLabelData {
 }
 
 const mmToPixels = (mm: number): number => {
-    const inches = mm / 2.54
-    const pixelsPerCm = 21.285;
-    return mm * pixelsPerCm;
+    const pixelsPerMmAt72Dpi = 72 / 25.4;
+    return mm * pixelsPerMmAt72Dpi;
 };
 
-const labelSizePixels = { width: mmToPixels(20), height: mmToPixels(6.2) };
+const labelSizePixels = { width: mmToPixels(200), height: mmToPixels(62) };
 
 const styles = StyleSheet.create({
     page: {
         padding: "0.2cm",
         fontFamily: "Helvetica",
-        fontSize: "10pt",
+        fontSize: "11pt",
         lineHeight: 1.25,
     },
     cardWrapper: {
@@ -62,14 +61,14 @@ const styles = StyleSheet.create({
     leftCol: { flexBasis: "32%", textAlign: "left" },
     middleCol: { flex: 1, textAlign: "left" },
     rightCol: { flexBasis: "28%", textAlign: "right"},
-    bottomAlign: { marginTop: "13px"},
+    bottomAlign: { marginTop: "21px"},
     headingText: { fontFamily: "Helvetica-Bold", textTransform: "uppercase" },
     largeText: {
-        fontSize: "20pt",
+        fontSize: "26pt",
         lineHeight: 1,
     },
     mediumText: {
-        fontSize: "15pt",
+        fontSize: "19pt",
         lineHeight: 1,
     },
 });
@@ -129,7 +128,7 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                     </View>
                 </View>
                 <View style={[styles.bottomRow]}>
-                    <View style={[styles.leftCol, {marginTop: "10px"}]}>
+                    <View style={[styles.leftCol, {marginTop: "15px"}]}>
                         <Text style={styles.largeText}>
                             {data.address_postcode ?? nullPostcodeDisplay}
                         </Text>
@@ -141,7 +140,7 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                             </Text>
                         </View>
                         <View style = {{marginTop: "auto"}}>
-                            <Text style={{fontWeight: "bold", fontSize: "20pt"}}>|</Text>
+                            <Text style={{fontWeight: "bold", fontSize: "25pt"}}>|</Text>
                         </View>
                         <View style = {[styles.bottomAlign, { flexDirection: "row" }]}>
                             <Text style={styles.mediumText}>
