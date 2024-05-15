@@ -1,5 +1,8 @@
 # Supabase
 
+## Supabase console
+You can access the supabase console at localhost:54323
+
 ## Tables
 Some tables are managed by us; these are in the public schema.
 Some tables are managed by Supabase, importantly, `auth.users`, which deals with the users table.

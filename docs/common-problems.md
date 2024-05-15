@@ -14,7 +14,7 @@
 - Make sure all docker containers are running
 
 ## Any kind of error to do with the data showing up on the website
-- It's possible you may have forgot to run `npm run post_checkout` and thus the front end may be incompatible with the back end
+- It's possible you forgot to run `npm run post_checkout` and thus the front end may be incompatible with the back end. Run the command.
 
 ## Failed to fetch error on attempting to log into website
 - Make sure all docker containers are running; if not, start them
