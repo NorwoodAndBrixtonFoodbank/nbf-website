@@ -10,6 +10,7 @@ import {
     GetParcelDataAndCountErrorType,
     GetParcelDataAndCountResult,
     ParcelStatusesReturnType,
+    ParcelsFilter,
     ParcelsFilters,
     ParcelsSortState,
     ParcelsTableRow,
@@ -42,7 +43,7 @@ export const getCongestionChargeDetailsForParcels = async (
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getParcelsQuery = (
     supabase: Supabase,
-    filters: ParcelsFilters,
+    filters: ParcelsFilter<any>[],
     sortState: ParcelsSortState
 ) => {
     let query = supabase.from("parcels_plus").select("*");
@@ -101,7 +102,7 @@ const fetchParcelsDbRows = async (
 
 export const getParcelsDataAndCount = async (
     supabase: Supabase,
-    filters: ParcelsFilters,
+    filters: ParcelsFilter<any>[],
     sortState: ParcelsSortState,
     abortSignal: AbortSignal,
     startIndex: number,
@@ -165,7 +166,7 @@ export const getParcelsDataAndCount = async (
 
 const getParcelsCount = async (
     supabase: Supabase,
-    filters: ParcelsFilters,
+    filters: ParcelsFilter<any>[],
     abortSignal: AbortSignal
 ): Promise<number> => {
     let query = supabase.from("parcels_plus").select("*", { count: "exact", head: true });
