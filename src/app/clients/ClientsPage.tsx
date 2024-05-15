@@ -35,7 +35,7 @@ const headers: TableHeaders<ClientsTableRow> = [
     ["fullName", "Name"],
     ["familyCategory", "Family"],
     ["addressPostcode", "Postcode"],
-    ["phoneNumber", "Phone Number"],
+    ["phoneNumber", "Phone"],
 ];
 
 const fullNameSearch = (
@@ -49,6 +49,12 @@ const postcodeSearch = (
     query: PostgrestFilterBuilder<Database["public"], any, any>,
     state: string
 ): PostgrestFilterBuilder<Database["public"], any, any> => {
+    if (state === "") {
+        return query;
+    }
+    if (nullPostcodeDisplay.toLowerCase().includes(state.toLowerCase())) {
+        return query.or(`address_postcode.ilike.%${state}%, address_postcode.is.null`);
+    }
     return query.ilike("address_postcode", `%${state}%`);
 };
 
@@ -74,7 +80,7 @@ const filters: Filter<ClientsTableRow, any>[] = [
     }),
     buildTextFilter({
         key: "phoneNumber",
-        label: "Phone Number",
+        label: "Phone",
         headers: headers,
         methodConfig: { paginationType: PaginationType.Server, method: phoneNumberSearch },
     }),
