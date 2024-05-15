@@ -14,6 +14,7 @@ have been delivered to clients.
 * Cypress for both component unit tests and integration tests (may add Jest in the future!)
 * AWS Amplify for hosting the frontend website
 * AWS CloudWatch for logging errors and warnings
+* Snaplet for generating deterministic seeded data
 
 ## Prerequisite
 - You need Docker installed. The easiest way to get started is to download [Docker Desktop](https://www.docker.com/products/docker-desktop/). If you are using Windows, you may have to run `net localgroup docker-users <your_softwire_username> /ADD` as an administrator to add yourself to the docker-users group, where `<your_softwire_username>` is your non-admin Softwire username.
