@@ -46,39 +46,17 @@ type ParcelsForDeliveryResponse =
           error: { type: ParcelsForDeliveryErrorType; logId: string };
       };
 
-type ParcelsForDeliveryErrorType = "parcelFetchFailed" | "noMatchingClient" | "eventFetchFailed";
-
-type ParcelEventResponse =
-    | {
-          data: Schema["events"][];
-          error: null;
-      }
-    | {
-          data: null;
-          error: { type: ParcelsForDeliveryErrorType; logId: string };
-      };
-
-// Gets all "shipping labels downloaded" events for the given parcels
-const getParcelEvents = async (parcelIds: string[]): Promise<ParcelEventResponse> => {
-    const { data, error } = await supabase
-        .from("events")
-        .select("*")
-        .in("parcel_id", parcelIds)
-        .eq("new_parcel_status", "Shipping Labels Downloaded")
-        .order("timestamp", { ascending: false });
-    if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: Events", error);
-        return { data: null, error: { type: "eventFetchFailed", logId: logId } };
-    }
-    return { data: data, error: null };
-};
+type ParcelsForDeliveryErrorType = "parcelFetchFailed" | "noMatchingClient";
 
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDeliveryResponse> => {
     const { data, error } = await supabase
         .from("parcels")
-        .select("*, client:clients(*)")
+        .select("*, client:clients(*), events(event_data)")
         .in("primary_key", parcelIds)
-        .limit(1, { foreignTable: "clients" });
+        .limit(1, { foreignTable: "clients" })
+        .eq("events.new_parcel_status", "Shipping Labels Downloaded")
+        .order("timestamp", { foreignTable: "events", ascending: false });
+
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Parcels", error);
         return { data: null, error: { type: "parcelFetchFailed", logId: logId } };
@@ -92,20 +70,13 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDel
             );
             return { data: null, error: { type: "noMatchingClient", logId: logId } };
         }
-        dataWithNonNullClients.push({ ...parcel, client: parcel.client });
-    }
 
-    const eventResponse = await getParcelEvents(parcelIds);
-    if (eventResponse.error || !eventResponse.data) {
-        return eventResponse;
-    }
-
-    // Find most recent label download event and store the number of labels (the event_data)
-    for (const parcel of dataWithNonNullClients) {
-        const event = eventResponse.data.find((row) => row.parcel_id === parcel.primary_key);
-        if (event && event.event_data) {
-            parcel.labelCount = Number.parseInt(event.event_data);
+        let labelCount: number | undefined;
+        if (parcel.events && parcel.events.length > 0 && parcel.events[0].event_data) {
+            labelCount = Number.parseInt(parcel.events[0].event_data);
         }
+
+        dataWithNonNullClients.push({ ...parcel, client: parcel.client, labelCount: labelCount });
     }
 
     return { data: dataWithNonNullClients, error: null };
