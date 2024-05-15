@@ -43,12 +43,12 @@ export const getCongestionChargeDetailsForParcels = async (
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getParcelsQuery = (
     supabase: Supabase,
-    filters: ParcelsFilter<any>[],
+    filters: ParcelsFilters,
     sortState: ParcelsSortState
 ) => {
     let query = supabase.from("parcels_plus").select("*");
 
-    filters.forEach((filter) => {
+    filters.forEach((filter: ParcelsFilter<any>) => {
         query = filter.method(query, filter.state);
     });
 
@@ -102,7 +102,7 @@ const fetchParcelsDbRows = async (
 
 export const getParcelsDataAndCount = async (
     supabase: Supabase,
-    filters: ParcelsFilter<any>[],
+    filters: ParcelsFilters,
     sortState: ParcelsSortState,
     abortSignal: AbortSignal,
     startIndex: number,
@@ -166,12 +166,12 @@ export const getParcelsDataAndCount = async (
 
 const getParcelsCount = async (
     supabase: Supabase,
-    filters: ParcelsFilter<any>[],
+    filters: ParcelsFilters,
     abortSignal: AbortSignal
 ): Promise<number> => {
     let query = supabase.from("parcels_plus").select("*", { count: "exact", head: true });
 
-    filters.forEach((filter) => {
+    filters.forEach((filter: ParcelsFilter<any>) => {
         query = filter.method(query, filter.state);
     });
 

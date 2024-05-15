@@ -8,13 +8,14 @@ import {
     GetUsersReturnType,
     GetUserCountReturnType,
     UserRow,
+    UsersFilters,
 } from "./types";
 
 export const getUsersDataAndCount = async (
     supabase: Supabase,
     startIndex: number,
     endIndex: number,
-    filters: UsersFilter<any>[],
+    filters: UsersFilters,
     sortState: UsersSortState,
     abortSignal: AbortSignal
 ): Promise<GetUsersReturnType> => {
@@ -75,7 +76,7 @@ export const getUsersDataAndCount = async (
 
 const getUsersCount = async (
     supabase: Supabase,
-    filters: UsersFilter<any>[],
+    filters: UsersFilters,
     abortSignal: AbortSignal
 ): Promise<GetUserCountReturnType> => {
     let query = supabase.from("users_plus").select("*", { count: "exact", head: true });
@@ -103,11 +104,11 @@ const getUsersCount = async (
 
 function getQueryWithFiltersApplied(
     originalQuery: PostgrestFilterBuilder<Database["public"], any, any>,
-    filters: UsersFilter<any>[]
+    filters: UsersFilters
 ): PostgrestFilterBuilder<Database["public"], any, any> {
     let query = originalQuery;
 
-    filters.forEach((filter) => {
+    filters.forEach((filter: UsersFilter<any>) => {
         query = filter.method(query, filter.state);
     });
 
