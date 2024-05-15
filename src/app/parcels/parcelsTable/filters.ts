@@ -219,7 +219,7 @@ const buildFilters = async (): Promise<{
         await buildDeliveryCollectionFilter(),
     ];
 
-    const additionalFilters = [
+    const additionalFilters: ParcelsFilters = [
         buildServerSideTextFilter({
             key: "familyCategory",
             label: "Family",
