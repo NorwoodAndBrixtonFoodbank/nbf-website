@@ -129,7 +129,8 @@ const sortableColumns: SortOptions<ParcelsTableRow>[] = [
                 query
                     .order("packing_date", { ascending: sortDirection === "asc" })
                     .order("packing_slot_order")
-                    .order("client_full_name"),
+                    .order("collection_centre_name", { ascending: false })
+                    .order("client_address_postcode"),
             paginationType: PaginationType.Server,
         },
     },
