@@ -1,7 +1,7 @@
 # Supabase
 
 ## Supabase console
-You can access the supabase console at localhost:54323
+You can access the local Supabase console at localhost:54323 which allows you to view and edit your local database.
 
 ## Tables
 Some tables are managed by us; these are in the public schema.
