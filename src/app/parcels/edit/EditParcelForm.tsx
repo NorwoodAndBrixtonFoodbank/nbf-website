@@ -17,10 +17,7 @@ import supabase from "@/supabaseClient";
 import { Errors } from "@/components/Form/formFunctions";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import Title from "@/components/Title/Title";
-import {
-    ParcelDatabaseUpdateRecord,
-    updateParcel,
-} from "@/app/parcels/form/clientDatabaseFunctions";
+import { ParcelDatabaseUpdateRecord, updateParcel } from "@/app/parcels/form/submitFormHelpers";
 
 interface EditParcelFormProps {
     parcelId: string;

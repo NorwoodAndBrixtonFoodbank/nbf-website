@@ -25,13 +25,9 @@ import CollectionDateCard from "@/app/parcels/form/formSections/CollectionDateCa
 import CollectionTimeCard from "@/app/parcels/form/formSections/CollectionTimeCard";
 import CollectionCentreCard from "@/app/parcels/form/formSections/CollectionCentreCard";
 import {
-    InsertParcelErrors,
-    InsertParcelReturnType,
-    ParcelDatabaseInsertRecord,
-    ParcelDatabaseUpdateRecord,
-    UpdateParcelErrors,
-    UpdateParcelReturnType,
-} from "@/app/parcels/form/clientDatabaseFunctions";
+    ParcelDatabaseErrors,
+    WriteParcelToDatabaseFunction,
+} from "@/app/parcels/form/submitFormHelpers";
 import { Button, IconButton } from "@mui/material";
 import { Schema } from "@/databaseUtils";
 import dayjs, { Dayjs } from "dayjs";
@@ -102,9 +98,7 @@ interface ParcelFormProps {
     deliveryPrimaryKey: Schema["collection_centres"]["primary_key"];
     collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues;
     packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues;
-    writeParcelInfoToDatabase:
-        | ((parcelRecord: ParcelDatabaseUpdateRecord) => Promise<UpdateParcelReturnType>)
-        | ((parcelRecord: ParcelDatabaseInsertRecord) => Promise<InsertParcelReturnType>);
+    writeParcelInfoToDatabase: WriteParcelToDatabaseFunction;
 }
 
 const withCollectionFormSections = [
@@ -133,12 +127,12 @@ const mergeDateAndTime = (date: string, time: string): Dayjs => {
 const parcelModalRouterPath = (parcelId: string): string => `/parcels?parcelId=${parcelId}`;
 
 const databaseErrorMessageFromErrorType = (
-    errorType: UpdateParcelErrors | InsertParcelErrors,
+    errorType: ParcelDatabaseErrors,
     logId: string
 ): string => {
     switch (errorType) {
         case "failedToInsertParcel":
-            return `Failed to update parcel. Log ID: ${logId}`;
+            return `Failed to insert parcel. Log ID: ${logId}`;
         case "failedToUpdateParcel":
             return `Failed to update parcel. Log ID: ${logId}`;
         case "concurrentUpdateConflict":
@@ -230,7 +224,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             last_updated: fields.lastUpdated,
         };
 
-        const { error, parcelId } = await writeParcelInfoToDatabase(parcelRecord);
+        const { parcelId, error } = await writeParcelInfoToDatabase(parcelRecord);
         setSubmitDisabled(false);
 
         if (parcelId) {

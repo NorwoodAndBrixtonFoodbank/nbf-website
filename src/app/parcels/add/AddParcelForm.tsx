@@ -16,7 +16,7 @@ import {
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import supabase from "@/supabaseClient";
 import Title from "@/components/Title/Title";
-import { insertParcel } from "@/app/parcels/form/clientDatabaseFunctions";
+import { insertParcel } from "@/app/parcels/form/submitFormHelpers";
 
 interface AddParcelProps {
     clientId: string;
