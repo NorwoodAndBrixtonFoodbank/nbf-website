@@ -1,13 +1,13 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { AuthError } from "@supabase/gotrue-js";
+import { helpEmailAddress } from "@/common/helpEmailAddress";
 
 interface RequestPasswordResetResponse {
     errorMessage: string | null;
 }
 
 function formatErrorMessage(error: AuthError): string {
-    const helpEmailAddress = "help@foodbankapp.org";
     let errorMessage = error.message;
     // HTTP 429 is "too many requests". Usually means email rate limit has been exceeded.
     if (error.status === 429) {
