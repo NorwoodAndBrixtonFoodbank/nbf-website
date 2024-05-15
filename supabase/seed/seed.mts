@@ -18,10 +18,10 @@ import { collectionCentres } from "./collectionCentresSeed.mjs";
 import { listsHotels } from "./listsHotelsSeed.mjs";
 import { packingSlots } from "./packingSlotsSeed.mjs";
 import {
-    earliestParcelEventDate,
+    earliestParcelOrEventDate,
     farFutureDate,
     getPseudoRandomDateBetween,
-    latestParcelEventDate,
+    latestEventDate,
     parcelCreationDateTime,
 } from "./dateData.mjs";
 import { genders } from "./families.mjs";
@@ -68,7 +68,7 @@ async function generateSeed(): Promise<void> {
             signpostingCallRequired: (ctx) => copycat.bool(ctx.seed),
             families: (generateFamily) =>
                 generateFamily(
-                    { min: 1, max: 12 },
+                    { min: 1, max: 8 },
                     {
                         age: (ctx) => copycat.int(ctx.seed, { min: 0, max: 100 }),
                         gender: (ctx) => copycat.oneOf(ctx.seed, genders),
@@ -87,9 +87,9 @@ async function generateSeed(): Promise<void> {
         (generate) =>
             generate(5000, {
                 packingDate: (ctx) =>
-                    getPseudoRandomDateBetween(earliestParcelEventDate, farFutureDate, ctx.seed),
+                    getPseudoRandomDateBetween(earliestParcelOrEventDate, farFutureDate, ctx.seed),
                 collectionDatetime: (ctx) =>
-                    getPseudoRandomDateBetween(earliestParcelEventDate, farFutureDate, ctx.seed),
+                    getPseudoRandomDateBetween(earliestParcelOrEventDate, farFutureDate, ctx.seed),
                 createdAt: parcelCreationDateTime,
             }),
         { connect: true }
@@ -103,8 +103,8 @@ async function generateSeed(): Promise<void> {
                     eventData: (ctx) => copycat.int(ctx.seed, { min: 1, max: 10 }).toString(),
                     timestamp: (ctx) =>
                         getPseudoRandomDateBetween(
-                            earliestParcelEventDate,
-                            latestParcelEventDate,
+                            earliestParcelOrEventDate,
+                            latestEventDate,
                             ctx.seed
                         ),
                 }),
@@ -120,8 +120,8 @@ async function generateSeed(): Promise<void> {
                     eventData: () => "",
                     timestamp: (ctx) =>
                         getPseudoRandomDateBetween(
-                            earliestParcelEventDate,
-                            latestParcelEventDate,
+                            earliestParcelOrEventDate,
+                            latestEventDate,
                             ctx.seed
                         ),
                 }),
