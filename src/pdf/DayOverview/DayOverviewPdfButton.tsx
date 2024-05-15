@@ -74,16 +74,13 @@ const addCongestionChargeDetailsForDayOverview = async (
 ): Promise<ParcelForDayOverviewResponse> => {
     const postcodes: (string | null)[] = [];
 
-    for (const parcel of parcels) {
-        parcel.client?.address_postcode
-            ? postcodes.push(parcel.client?.address_postcode)
-            : postcodes.push(null);
-    }
+    parcels.map((parcel) => {
+        const postcode = parcel.client?.address_postcode || null;
+        postcodes.push(postcode);
+    });
 
     const { data: postcodesWithCongestionChargeDetails, error } =
         await checkForCongestionCharge(postcodes);
-
-    console.log(postcodesWithCongestionChargeDetails);
 
     if (error) {
         return { data: null, error: error };
