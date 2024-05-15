@@ -114,10 +114,10 @@ const styles = StyleSheet.create({
         width: "20%",
     },
     instructionsColumnWidth: {
-        width: "25%",
+        width: "20%",
     },
     numberOfLabelsColumnWidth: {
-        width: "15%",
+        width: "20%",
     },
 });
 
