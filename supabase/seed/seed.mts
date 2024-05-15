@@ -17,7 +17,12 @@ import { eventNamesWithNoData, eventNamesWithNumberData } from "./eventsSeed.mjs
 import { collectionCentres } from "./collectionCentresSeed.mjs";
 import { listsHotels } from "./listsHotelsSeed.mjs";
 import { packingSlots } from "./packingSlotsSeed.mjs";
-import { earliestDate, getPseudoRandomDateBetween, latestDate } from "./dateData.mjs";
+import {
+    earliestDate,
+    getPseudoRandomDateBetween,
+    latestDate,
+    parcelCreationDateTime,
+} from "./dateData.mjs";
 
 generateSeed();
 
@@ -83,7 +88,7 @@ async function generateSeed(): Promise<void> {
                     getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
                 collectionDatetime: (ctx) =>
                     getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
-                createdAt: new Date("2023-12-31T12:00:00"),
+                createdAt: parcelCreationDateTime,
             }),
         { connect: true }
     );
