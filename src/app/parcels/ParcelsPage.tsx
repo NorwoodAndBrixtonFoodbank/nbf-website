@@ -402,9 +402,7 @@ const ParcelsPage: React.FC<{}> = () => {
                 if (newErrorMessage !== null) {
                     setErrorMessage(`${newErrorMessage} Log ID: ${error.logId}`);
                 }
-            }
-
-            if (data) {
+            } else {
                 setParcelsDataPortion(data.parcelTableRows);
                 setFilteredParcelCount(data.count);
             }
