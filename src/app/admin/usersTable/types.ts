@@ -5,7 +5,7 @@ import { DbUserRow, UserRole } from "@/databaseUtils";
 
 export type UsersFilterMethod<State> = ServerSideFilterMethod<DbUserRow, State>;
 export type UsersFilter<State> = ServerSideFilter<UserRow, State, DbUserRow>;
-export type UsersFilters = (UsersFilter<string> | UsersFilter<string[]>)[]
+export type UsersFilters = (UsersFilter<string> | UsersFilter<string[]>)[];
 export type UsersSortMethod = ServerSideSortMethod<DbUserRow>;
 export type UsersSortState = SortState<UserRow, UsersSortMethod>;
 

@@ -14,7 +14,7 @@ import { getCurrentUser } from "@/server/getCurrentUser";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { defaultNumberOfUsersPerPage, numberOfUsersPerPageOptions } from "./constants";
 import { usersTableHeaderKeysAndLabels } from "./headers";
-import { UserRow, UsersFilter, UsersFilters, UsersSortState } from "./types";
+import { UserRow, UsersFilters, UsersSortState } from "./types";
 import { usersSortableColumns } from "./sortableColumns";
 import { userTableColumnDisplayFunctions } from "./format";
 import { DbUserRow } from "@/databaseUtils";
