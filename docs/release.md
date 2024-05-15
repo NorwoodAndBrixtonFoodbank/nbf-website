@@ -37,7 +37,7 @@
 4. Move all the tickets in UAT to done on both Jira and GitHub (make sure there's no comments saying that the ticket failed the testing and needs to be moved back to in progress/needs a new ticket created)
 5. Create a milestone on GitHub matching the name of the release (Issues -> Milestones -> New milestone)
 6. Mark relevant issues on GitHub (Release column) with the milestone, and move them to UAT. 
-7. Create a fix version on Jira matching the name of the release (Navbar on the left -> Releases -> Create version (NOTE: this needs permissions))
+7. Create a fix version on Jira matching the name of the release (Navbar on the left -> Releases -> Create version (NOTE: this needs admin permissions))
 8. Mark relevant tickets on Jira (Release column) with the fix version, and move them to UAT.
 9. Release the fix version on Jira once all issues for that version are moved to Done.
 
