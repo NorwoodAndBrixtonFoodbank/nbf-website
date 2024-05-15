@@ -27,7 +27,9 @@ const getParcelLinkDetailsOrErrorMessage = async (
 ): Promise<AuditLogModalRowResponse<ParcelLinkDetails>> => {
     const { data: data, error } = await supabase
         .from("parcels")
-        .select("primary_key, client:clients(full_name, address_postcode, is_active), collection_datetime")
+        .select(
+            "primary_key, client:clients(full_name, address_postcode, is_active), collection_datetime"
+        )
         .eq("primary_key", parcelId)
         .limit(1, { foreignTable: "clients" })
         .single();
@@ -79,7 +81,7 @@ const ParcelLink: React.FC<ParcelLinkDetails> = ({
     fullName,
     addressPostcode,
     collectionDatetime,
-    clientIsActive
+    clientIsActive,
 }) => (
     <LinkButton link={`/parcels?parcelId=${parcelId}`}>
         {getParcelOverviewString(addressPostcode, fullName, collectionDatetime, clientIsActive)}
