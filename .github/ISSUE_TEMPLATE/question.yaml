@@ -2,7 +2,7 @@ name: Question
 description: Ask a question to the team
 labels: ["question"]
 assignees:
-  - rickaw
+  - 8kristy
 body:
   - type: textarea
     id: question
