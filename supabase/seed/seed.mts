@@ -18,9 +18,10 @@ import { collectionCentres } from "./collectionCentresSeed.mjs";
 import { listsHotels } from "./listsHotelsSeed.mjs";
 import { packingSlots } from "./packingSlotsSeed.mjs";
 import {
-    earliestDate,
+    earliestParcelEventDate,
+    farFutureDate,
     getPseudoRandomDateBetween,
-    latestDate,
+    latestParcelEventDate,
     parcelCreationDateTime,
 } from "./dateData.mjs";
 import { genders } from "./families.mjs";
@@ -86,9 +87,9 @@ async function generateSeed(): Promise<void> {
         (generate) =>
             generate(5000, {
                 packingDate: (ctx) =>
-                    getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
+                    getPseudoRandomDateBetween(earliestParcelEventDate, farFutureDate, ctx.seed),
                 collectionDatetime: (ctx) =>
-                    getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
+                    getPseudoRandomDateBetween(earliestParcelEventDate, farFutureDate, ctx.seed),
                 createdAt: parcelCreationDateTime,
             }),
         { connect: true }
@@ -101,7 +102,11 @@ async function generateSeed(): Promise<void> {
                     newParcelStatus: status,
                     eventData: (ctx) => copycat.int(ctx.seed, { min: 1, max: 10 }).toString(),
                     timestamp: (ctx) =>
-                        getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
+                        getPseudoRandomDateBetween(
+                            earliestParcelEventDate,
+                            latestParcelEventDate,
+                            ctx.seed
+                        ),
                 }),
             { connect: true }
         );
@@ -114,7 +119,11 @@ async function generateSeed(): Promise<void> {
                     newParcelStatus: status,
                     eventData: () => "",
                     timestamp: (ctx) =>
-                        getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
+                        getPseudoRandomDateBetween(
+                            earliestParcelEventDate,
+                            latestParcelEventDate,
+                            ctx.seed
+                        ),
                 }),
             { connect: true }
         );
