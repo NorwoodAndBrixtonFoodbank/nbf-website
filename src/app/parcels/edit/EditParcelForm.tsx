@@ -1,22 +1,26 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import ParcelForm, { ParcelErrors, ParcelFields, initialParcelFields } from "../form/ParcelForm";
+import ParcelForm, { initialParcelFields, ParcelErrors, ParcelFields } from "../form/ParcelForm";
 import {
     CollectionCentresLabelsAndValues,
-    fetchParcel,
-    getActiveCollectionCentres,
-    PackingSlotsLabelsAndValues,
-    fetchPackingSlotsInfo,
-    ParcelWithCollectionCentreAndPackingSlot,
     FetchCollectionCentresError,
-    PackingSlotsError,
+    fetchPackingSlotsInfo,
+    fetchParcel,
     FetchParcelError,
+    getActiveCollectionCentres,
+    PackingSlotsError,
+    PackingSlotsLabelsAndValues,
+    ParcelWithCollectionCentreAndPackingSlot,
 } from "@/common/fetch";
 import supabase from "@/supabaseClient";
 import { Errors } from "@/components/Form/formFunctions";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import Title from "@/components/Title/Title";
+import {
+    ParcelDatabaseUpdateRecord,
+    updateParcel,
+} from "@/app/parcels/form/clientDatabaseFunctions";
 
 interface EditParcelFormProps {
     parcelId: string;
@@ -111,7 +115,6 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
             );
             setPackingSlotsIsShown(parcelData.packing_slot?.is_shown);
             setCollectionCentreIsShown(parcelData.collection_centre?.is_shown === true);
-
             setIsLoading(false);
         })();
     }, [parcelId]);
@@ -119,11 +122,11 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
     const initialFormErrors: ParcelErrors = {
         voucherNumber: Errors.none,
         packingDate: Errors.none,
-        packingSlot: Errors.none,
+        packingSlot: packingSlotIsShown ? Errors.none : Errors.invalidPackingSlot,
         shippingMethod: Errors.none,
         collectionDate: Errors.none,
         collectionTime: Errors.none,
-        collectionCentre: Errors.none,
+        collectionCentre: collectionCentreIsShown ? Errors.none : Errors.invalidCollectionCentre,
     };
 
     return (
@@ -137,13 +140,12 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
                 <ParcelForm
                     initialFields={initialFormFields}
                     initialFormErrors={initialFormErrors}
-                    editMode={true}
-                    parcelId={parcelId}
+                    writeParcelInfoToDatabase={(parcelDatabaseRecord: ParcelDatabaseUpdateRecord) =>
+                        updateParcel(parcelDatabaseRecord, parcelId)
+                    }
                     deliveryPrimaryKey={deliveryKey}
                     collectionCentresLabelsAndValues={collectionCentres}
                     packingSlotsLabelsAndValues={packingSlots}
-                    packingSlotIsShown={packingSlotIsShown}
-                    collectionCentreIsShown={collectionCentreIsShown}
                 />
             )}
         </>
