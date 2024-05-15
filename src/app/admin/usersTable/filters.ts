@@ -1,6 +1,6 @@
 import { serverSideChecklistFilter } from "@/components/Tables/ChecklistFilter";
 import { DbUserRow, UserRole } from "@/databaseUtils";
-import { UserRow, UsersFilter, UsersFilterMethod } from "./types";
+import { UserRow, UsersFilter, UsersFilterMethod, UsersFilters } from "./types";
 import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import { usersTableHeaderKeysAndLabels } from "./headers";
 
@@ -42,7 +42,7 @@ const buildUserRoleFilter = (): UsersFilter<string[]> => {
     return userRoleFilter;
 };
 
-export const usersFilters: (UsersFilter<string> | UsersFilter<string[]>)[] = [
+export const usersFilters: UsersFilters = [
     buildServerSideTextFilter({
         key: "firstName",
         label: "First Name",

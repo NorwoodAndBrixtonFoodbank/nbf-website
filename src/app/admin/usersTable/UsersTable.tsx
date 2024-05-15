@@ -14,7 +14,7 @@ import { getCurrentUser } from "@/server/getCurrentUser";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { defaultNumberOfUsersPerPage, numberOfUsersPerPageOptions } from "./constants";
 import { usersTableHeaderKeysAndLabels } from "./headers";
-import { UserRow, UsersFilter, UsersSortState } from "./types";
+import { UserRow, UsersFilter, UsersFilters, UsersSortState } from "./types";
 import { usersSortableColumns } from "./sortableColumns";
 import { userTableColumnDisplayFunctions } from "./format";
 import { DbUserRow } from "@/databaseUtils";
@@ -22,7 +22,7 @@ import { DbUserRow } from "@/databaseUtils";
 const UsersTable: React.FC = () => {
     const [userToDelete, setUserToDelete] = useState<UserRow | null>(null);
     const [userToEdit, setUserToEdit] = useState<UserRow | null>(null);
-    const [primaryFilters, setPrimaryFilters] = useState<UsersFilter<any>[]>(usersFilters);
+    const [primaryFilters, setPrimaryFilters] = useState<UsersFilters>(usersFilters);
     const [users, setUsers] = useState<UserRow[]>([]);
     const [filteredUsersCount, setFilteredUsersCount] = useState<number>(0);
     const [sortState, setSortState] = useState<UsersSortState>({ sortEnabled: false });
