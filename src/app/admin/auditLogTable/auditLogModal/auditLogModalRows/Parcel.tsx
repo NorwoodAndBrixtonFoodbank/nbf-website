@@ -13,6 +13,7 @@ interface ParcelLinkDetails {
     collectionDatetime: Date | null;
     fullName: string;
     addressPostcode: string | null;
+    clientIsActive: boolean;
 }
 
 type ParcelLinkErrorType = "failedParcelOverviewDetailsFetch" | "nullClient";
@@ -26,7 +27,7 @@ const getParcelLinkDetailsOrErrorMessage = async (
 ): Promise<AuditLogModalRowResponse<ParcelLinkDetails>> => {
     const { data: data, error } = await supabase
         .from("parcels")
-        .select("primary_key, client:clients(full_name, address_postcode), collection_datetime")
+        .select("primary_key, client:clients(full_name, address_postcode, is_active), collection_datetime")
         .eq("primary_key", parcelId)
         .limit(1, { foreignTable: "clients" })
         .single();
@@ -54,6 +55,7 @@ const getParcelLinkDetailsOrErrorMessage = async (
         collectionDatetime: data.collection_datetime ? new Date(data.collection_datetime) : null,
         fullName: data.client.full_name ?? displayNameForDeletedClient,
         addressPostcode: data.client.address_postcode,
+        clientIsActive: data.client.is_active,
     };
 
     return { data: convertedData, errorMessage: null };
@@ -77,9 +79,10 @@ const ParcelLink: React.FC<ParcelLinkDetails> = ({
     fullName,
     addressPostcode,
     collectionDatetime,
+    clientIsActive
 }) => (
     <LinkButton link={`/parcels?parcelId=${parcelId}`}>
-        {getParcelOverviewString(addressPostcode, fullName, collectionDatetime)}
+        {getParcelOverviewString(addressPostcode, fullName, collectionDatetime, clientIsActive)}
     </LinkButton>
 );
 

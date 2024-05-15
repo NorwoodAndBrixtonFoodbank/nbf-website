@@ -15,7 +15,7 @@ const PopUpButton: React.FC<Props> = ({ children, displayText }) => {
 
     return (
         <ButtonWrap>
-            <Button variant="contained" onClick={() => setOpen(true)}>
+            <Button color="primary" variant="contained" onClick={() => setOpen(true)}>
                 {displayText}
             </Button>
             <StyledDialog open={open} onClose={() => setOpen(false)}>
