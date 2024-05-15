@@ -72,12 +72,7 @@ export type DayOverviewPdfError = { type: DayOverviewPdfErrorType; logId: string
 const addCongestionChargeDetailsForDayOverview = async (
     parcels: ParcelForDayOverview[]
 ): Promise<ParcelForDayOverviewResponse> => {
-    const postcodes: (string | null)[] = [];
-
-    parcels.map((parcel) => {
-        const postcode = parcel.client?.address_postcode || null;
-        postcodes.push(postcode);
-    });
+    const postcodes = parcels.map((parcel) => parcel.client?.address_postcode || null);
 
     const { data: postcodesWithCongestionChargeDetails, error } =
         await checkForCongestionCharge(postcodes);
