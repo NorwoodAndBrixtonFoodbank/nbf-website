@@ -1,10 +1,10 @@
-describe("Add client form", () => {
+describe("Client details modal", () => {
     beforeEach(() => {
         cy.login();
         cy.visit("/clients/");
     });
 
-    it("Displays an adults row in client modal", () => {
+    it("Displays an adults row", () => {
         openClientModal();
         assertAdultsRowDisplayedSuccessfully();
     });
