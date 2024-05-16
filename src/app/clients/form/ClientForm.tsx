@@ -57,8 +57,8 @@ export interface ClientFields extends Fields {
     addressPostcode: string | null;
     adults: Person[];
     numberOfAdults: number;
-    numberOfChildren: number;
     children: Person[];
+    numberOfChildren: number;
     dietaryRequirements: BooleanGroup;
     feminineProducts: BooleanGroup;
     babyProducts: boolean | null;
