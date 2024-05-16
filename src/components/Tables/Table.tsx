@@ -148,6 +148,7 @@ interface Props<Data> {
     checkboxConfig: CheckboxConfig<Data>;
     paginationConfig: PaginationConfig;
     sortConfig: SortConfig<Data>;
+    parcelRowBreakPoints?: number[];
     filterConfig: FilterConfig<Data>;
     defaultShownHeaders?: readonly (keyof Data)[];
     toggleableHeaders?: readonly (keyof Data)[];
@@ -210,6 +211,7 @@ const Table = <Data,>({
     columnStyleOptions = {},
     checkboxConfig,
     sortConfig,
+    parcelRowBreakPoints,
     filterConfig,
     paginationConfig,
     editableConfig,
@@ -404,6 +406,14 @@ const Table = <Data,>({
             );
         }
     };
+    
+    var NewTableStyling = TableStyling
+    parcelRowBreakPoints?.forEach((value) => {
+        NewTableStyling = styled(NewTableStyling)`
+        & .rdt_TableRow:nth-child(${value + 1}) {
+        background-color: black;
+        }`
+    })
 
     return (
         <>
@@ -426,7 +436,7 @@ const Table = <Data,>({
                 setShownHeaderKeys={setShownHeaderKeys}
                 shownHeaderKeys={shownHeaderKeys}
             />
-            <TableStyling>
+            <NewTableStyling>
                 <NoSsr>
                     <DataTable
                         columns={columns}
@@ -479,7 +489,7 @@ const Table = <Data,>({
                         striped
                     />
                 </NoSsr>
-            </TableStyling>
+            </NewTableStyling>
         </>
     );
 };

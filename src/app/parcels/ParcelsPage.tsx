@@ -47,6 +47,7 @@ import {
 } from "@/app/parcels/parcelsTableFilters";
 import { ActionsContainer } from "@/components/Form/formStyling";
 import { formatDateTime, formatDatetimeAsDate, nullPostcodeDisplay } from "@/common/format";
+import { toWeb } from "winston-cloudwatch";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", ""],
@@ -256,6 +257,7 @@ const ParcelsPage: React.FC<{}> = () => {
     const [filteredParcelCount, setFilteredParcelCount] = useState<number>(0);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [clientIdForSelectedParcel, setClientIdForSelectedParcel] = useState<string | null>(null);
+    const [parcelRowBreakPoints, setParcelRowBreakPoints] = useState<number[]>([])
 
     const [checkedParcelIds, setCheckedParcelIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
@@ -373,6 +375,25 @@ const ParcelsPage: React.FC<{}> = () => {
         })();
     }, []);
 
+    const searchForParcelsRowBreakPoints = (
+        parcelsTableRows: ParcelsTableRow[],
+        columnHeader: keyof ParcelsTableRow
+    ): number[] => {
+        let tempPackingSlot: string | null;
+        let breakPointIndices: number[] = [];
+        
+        parcelsTableRows.forEach((row, index) => {
+            if (index === 0) {}
+            else {
+                if (row.packingSlot !== tempPackingSlot) {
+                    breakPointIndices.push(index);
+                }
+            }
+            tempPackingSlot = row.packingSlot;
+        });
+        return breakPointIndices;
+    }
+
     const fetchAndDisplayParcelsData = useCallback(async (): Promise<void> => {
         const allFilters = [...primaryFilters, ...additionalFilters];
 
@@ -403,6 +424,7 @@ const ParcelsPage: React.FC<{}> = () => {
             } else {
                 setParcelsDataPortion(data.parcelTableRows);
                 setFilteredParcelCount(data.count);
+                setParcelRowBreakPoints(searchForParcelsRowBreakPoints(data.parcelTableRows, "packingSlot"))
             }
 
             parcelsTableFetchAbortController.current = null;
@@ -628,6 +650,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                 sortableColumns: sortableColumns,
                                 setSortState: setSortState,
                             }}
+                            parcelRowBreakPoints={parcelRowBreakPoints}
                             filterConfig={{
                                 primaryFiltersShown: true,
                                 additionalFiltersShown: true,
