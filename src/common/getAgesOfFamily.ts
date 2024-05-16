@@ -35,12 +35,11 @@ export const getChildAgeUsingBirthYearAndMonth = (
             return `${totalMonths}m`;
         }
         return `${totalMonths}-months-old`;
-    } else {
-        if (shortHand) {
-            return `${years}`;
-        }
-        return totalMonths < 24 ? `${years}-year-old` : `${years}-years-old`;
     }
+    if (shortHand) {
+        return `${years}`;
+    }
+    return totalMonths < 24 ? `${years}-year-old` : `${years}-years-old`;
 };
 
 export const getAdultAgeUsingBirthYear = (birthYear: number): string => {
