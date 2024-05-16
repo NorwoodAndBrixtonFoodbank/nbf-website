@@ -6,6 +6,7 @@ import { SortState } from "@/components/Tables/Table";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { ParcelStatus, ParcelsPlusRow } from "@/databaseUtils";
+import { StatusType } from "@/app/parcels/ActionBar/Statuses";
 
 export type CongestionChargeDetails = {
     postcode: string;
@@ -321,4 +322,22 @@ export const fetchParcelStatuses = async (): Promise<ParcelStatusesReturnType> =
     });
 
     return { data: parcelStatusesList, error: null };
+};
+
+export const getParcelsWithEvent = async (
+    targetEventName: StatusType,
+    parcelIds: string[]
+): Promise<GetDbParcelDataResult> => {
+    const { data, error } = await supabase
+        .from("parcels_plus")
+        .select("*, events!inner(new_parcel_status)")
+        .in("parcel_id", parcelIds)
+        .eq("events.new_parcel_status", targetEventName);
+
+    if (error) {
+        const logId = await logErrorReturnLogId("Failed to fetch parcels with events", error);
+        return { parcels: null, error: { type: "failedToFetchParcelTable", logId: logId } };
+    }
+
+    return { parcels: data, error: null };
 };

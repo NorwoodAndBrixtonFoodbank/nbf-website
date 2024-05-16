@@ -13,6 +13,7 @@ import ShippingLabelsPdfButton, {
 } from "@/pdf/ShippingLabels/ShippingLabelsPdfButton";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import { sendAuditLog } from "@/server/auditLog";
+import DuplicateDownloadWarning from "@/app/parcels/ActionBar/DuplicateDownloadWarning";
 
 interface ShippingLabelsInputProps {
     onLabelQuantityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -126,6 +127,10 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
                     <SelectedParcelsOverview
                         parcels={props.selectedParcels}
                         maxParcelsToShow={maxParcelsToShow}
+                    />
+                    <DuplicateDownloadWarning
+                        parcels={props.selectedParcels}
+                        targetEventName="Shipping Labels Downloaded"
                     />
                 </>
             }
