@@ -1,3 +1,5 @@
+import { youngestAdultBirthYear } from "@/app/clients/form/birthYearDropdown";
+
 export const getCurrentYear = (): number => {
     const currentDate = new Date();
     return currentDate.getFullYear();
@@ -45,4 +47,8 @@ export const getChildAgeUsingBirthYearAndMonth = (
 export const getAdultAgeUsingBirthYear = (birthYear: number): string => {
     const years = getCurrentYear() - birthYear;
     return `${years}-years-old`;
+};
+
+export const isAdult = (birthYear: number): boolean => {
+    return birthYear <= parseInt(youngestAdultBirthYear);
 };

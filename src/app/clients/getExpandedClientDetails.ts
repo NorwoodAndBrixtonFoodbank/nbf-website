@@ -7,6 +7,7 @@ import {
     getAdultAgeUsingBirthYear,
     getChildAgeUsingBirthYearAndMonth,
     getCurrentYear,
+    isAdult,
 } from "@/common/getAgesOfFamily";
 
 const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
@@ -129,7 +130,7 @@ export const formatHouseholdFromFamilyDetails = (
     let childCount = 0;
 
     for (const familyMember of family) {
-        if (familyMember.birth_year <= getCurrentYear() - 17) {
+        if (isAdult(familyMember.birth_year)) {
             adultCount++;
         } else {
             childCount++;

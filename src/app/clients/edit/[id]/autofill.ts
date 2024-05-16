@@ -3,11 +3,7 @@ import { ClientFields } from "@/app/clients/form/ClientForm";
 import { Person } from "@/components/Form/formFunctions";
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { processExtraInformation } from "@/common/formatClientsData";
-import { youngestAdultBirthYear } from "@/app/clients/form/birthYearDropdown";
-
-const isAdult = (member: Schema["families"]): boolean => {
-    return member.birth_year <= parseInt(youngestAdultBirthYear);
-};
+import { isAdult } from "@/common/getAgesOfFamily";
 
 const arrayToBooleanGroup = (data: string[]): BooleanGroup => {
     const reverted: BooleanGroup = {};
@@ -20,7 +16,7 @@ const autofill = (
     familyData: Schema["families"][]
 ): ClientFields => {
     const children = familyData
-        .filter((member) => !isAdult(member))
+        .filter((member) => !isAdult(member.birth_year))
         .map(
             (child): Person => ({
                 gender: child.gender,
@@ -31,7 +27,7 @@ const autofill = (
         );
 
     const adults = familyData
-        .filter((member) => isAdult(member))
+        .filter((member) => isAdult(member.birth_year))
         .map(
             (adult): Person => ({
                 gender: adult.gender,
