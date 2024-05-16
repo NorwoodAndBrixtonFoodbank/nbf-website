@@ -259,6 +259,8 @@ const ParcelsPage: React.FC<{}> = () => {
     const [clientIdForSelectedParcel, setClientIdForSelectedParcel] = useState<string | null>(null);
     const [parcelRowBreakPoints, setParcelRowBreakPoints] = useState<number[]>([])
 
+    const [sortedColumn, setSortedColumn] = useState<string>("")
+
     const [checkedParcelIds, setCheckedParcelIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
     const fetchParcelsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -375,21 +377,31 @@ const ParcelsPage: React.FC<{}> = () => {
         })();
     }, []);
 
+    type columnHeaderPackingDateOrSlot = Pick<ParcelsTableRow, "packingDate" | "packingSlot">
+
     const searchForParcelsRowBreakPoints = (
         parcelsTableRows: ParcelsTableRow[],
-        columnHeader: keyof ParcelsTableRow
+        columnHeader: keyof columnHeaderPackingDateOrSlot
     ): number[] => {
-        let tempPackingSlot: string | null;
+        let tempPackingSlot: string | null = parcelsTableRows[0].packingSlot;
+        let tempPackingDate: Date | null = parcelsTableRows[0].packingDate; 
         let breakPointIndices: number[] = [];
         
         parcelsTableRows.forEach((row, index) => {
-            if (index === 0) {}
-            else {
-                if (row.packingSlot !== tempPackingSlot) {
+            if (columnHeader === "packingDate") {
+                if (row[columnHeader]?.getDate() !== tempPackingDate?.getDate()) {
                     breakPointIndices.push(index);
                 }
+                tempPackingDate = row[columnHeader];
             }
-            tempPackingSlot = row.packingSlot;
+            if (columnHeader === "packingSlot") {
+                if (index === 0) {}
+                if (row[columnHeader] !== tempPackingSlot) {
+                    breakPointIndices.push(index);
+                }
+                tempPackingSlot = row[columnHeader];
+            }
+           
         });
         return breakPointIndices;
     }
@@ -424,7 +436,13 @@ const ParcelsPage: React.FC<{}> = () => {
             } else {
                 setParcelsDataPortion(data.parcelTableRows);
                 setFilteredParcelCount(data.count);
-                setParcelRowBreakPoints(searchForParcelsRowBreakPoints(data.parcelTableRows, "packingSlot"))
+                if (sortedColumn === "packingSlot") {
+                    setParcelRowBreakPoints(searchForParcelsRowBreakPoints(data.parcelTableRows, "packingSlot"))
+                } else if (sortedColumn === "packingDate"){
+                    setParcelRowBreakPoints(searchForParcelsRowBreakPoints(data.parcelTableRows, "packingDate"))
+                } else {
+                    setParcelRowBreakPoints([])
+                }
             }
 
             parcelsTableFetchAbortController.current = null;
@@ -673,6 +691,7 @@ const ParcelsPage: React.FC<{}> = () => {
                             }}
                             editableConfig={{ editable: false }}
                             pointerOnHover={true}
+                            setSortedColumn={setSortedColumn}
                         />
                     </TableSurface>
                     <Modal

@@ -157,6 +157,7 @@ interface Props<Data> {
     editableConfig: EditableConfig<Data>;
     onRowClick?: OnRowClickFunction<Data>;
     pointerOnHover?: boolean;
+    setSortedColumn?: (sortedColumn: string) => void;
 }
 
 interface CellProps<Data> {
@@ -216,6 +217,7 @@ const Table = <Data,>({
     paginationConfig,
     editableConfig,
     pointerOnHover,
+    setSortedColumn,
 }: Props<Data>): React.ReactElement => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
@@ -265,6 +267,9 @@ const Table = <Data,>({
                 column: column,
                 sortDirection: sortDirection,
             });
+            if (!!setSortedColumn) {
+                setSortedColumn(column.sortField ?? "")
+            }
         }
     };
 
@@ -411,10 +416,10 @@ const Table = <Data,>({
     parcelRowBreakPoints?.forEach((value) => {
         NewTableStyling = styled(NewTableStyling)`
         & .rdt_TableRow:nth-child(${value + 1}) {
-        background-color: black;
+        border-top: solid green;
         }`
     })
-
+    
     return (
         <>
             <TableFilterAndExtraColumnsBar<Data>
