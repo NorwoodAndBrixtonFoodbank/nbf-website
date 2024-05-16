@@ -181,18 +181,26 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
             familyMember.birth_year >= getCurrentYear() - 16 &&
             familyMember.birth_year < getCurrentYear() - 2
         ) {
-            const age = getChildAgeUsingBirthYearAndMonth(familyMember.birth_year, false);
+            const age = getChildAgeUsingBirthYearAndMonth(
+                familyMember.birth_year,
+                familyMember.birth_month,
+                false
+            );
             childDetails.push(`${age} ${familyMember.gender}`);
         } else if (familyMember.birth_year >= getCurrentYear() - 2) {
             if (familyMember.birth_month) {
                 const age = getChildAgeUsingBirthYearAndMonth(
                     familyMember.birth_year,
-                    false,
-                    familyMember.birth_month
+                    familyMember.birth_month,
+                    false
                 );
                 childDetails.push(`${age} ${familyMember.gender}`);
             } else {
-                const age = getChildAgeUsingBirthYearAndMonth(familyMember.birth_year, false);
+                const age = getChildAgeUsingBirthYearAndMonth(
+                    familyMember.birth_year,
+                    familyMember.birth_month,
+                    false
+                );
                 childDetails.push(`${age} ${familyMember.gender}`);
             }
         }

@@ -28,12 +28,12 @@ const getChild = (child: Person): string => {
             gender = "-";
             break;
     }
-    let age;
-    if (child.birthMonth) {
-        age = getChildAgeUsingBirthYearAndMonth(child.birthYear, true, child.birthMonth);
-    } else {
-        age = getChildAgeUsingBirthYearAndMonth(child.birthYear, true);
+
+    if (!child.birthMonth) {
+        child.birthMonth = null;
     }
+
+    const age = getChildAgeUsingBirthYearAndMonth(child.birthYear, child.birthMonth, true);
 
     return `${age} ${gender}`;
 };

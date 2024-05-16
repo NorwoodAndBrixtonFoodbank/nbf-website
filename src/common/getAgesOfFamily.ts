@@ -13,8 +13,8 @@ export const isChildUsingBirthYear = (birthYear: number): boolean => {
 
 export const getChildAgeUsingBirthYearAndMonth = (
     birthYear: number,
-    shortHand: boolean,
-    birthMonth?: number
+    birthMonth: number | null,
+    shortHand: boolean
 ): string => {
     const years = getCurrentYear() - birthYear;
     let totalMonths;
