@@ -3,9 +3,10 @@ import { ClientFields } from "@/app/clients/form/ClientForm";
 import { Person } from "@/components/Form/formFunctions";
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { processExtraInformation } from "@/common/formatClientsData";
+import { adultBirthYears, youngestAdultBirthYear } from "@/app/clients/form/birthYearDropdown";
 
 const isAdult = (member: Schema["families"]): boolean => {
-    return member.birth_year <= 2007;
+    return member.birth_year <= parseInt(youngestAdultBirthYear);
 };
 
 const arrayToBooleanGroup = (data: string[]): BooleanGroup => {
