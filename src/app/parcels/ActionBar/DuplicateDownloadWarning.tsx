@@ -21,13 +21,13 @@ const DuplicateDownloadWarning: React.FC<DuplicateDownloadWarningProps> = async 
         return;
     }
 
-    const postcodes = parcels.map(parcel => parcel.client_address_postcode);
+    const postcodes = parcels.map((parcel) => parcel.client_address_postcode);
     const uniquePostcodes = Array.from(new Set(postcodes));
 
     return (
         <StyledAlert severity="warning">
-            The following postcodes have already been downloaded: {uniquePostcodes.join(", ")}.
-            Are you sure you want to print again?
+            The following postcodes have already been downloaded: {uniquePostcodes.join(", ")}. Are
+            you sure you want to print again?
         </StyledAlert>
     );
 };

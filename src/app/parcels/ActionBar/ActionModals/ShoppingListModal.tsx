@@ -1,19 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import GeneralActionModal, {
-    Heading,
-    Paragraph,
-    maxParcelsToShow,
-    ActionModalProps,
-} from "./GeneralActionModal";
+import GeneralActionModal, { ActionModalProps, maxParcelsToShow } from "./GeneralActionModal";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
-import { ParcelsTableRow } from "../../getParcelsTableData";
-import { StatusType, getStatusErrorMessageWithLogId } from "../Statuses";
+import { getStatusErrorMessageWithLogId } from "../Statuses";
 import ShoppingListPdfButton from "@/pdf/ShoppingList/ShoppingListPdfButton";
 import { ShoppingListPdfError } from "@/pdf/ShoppingList/getShoppingListData";
 import { sendAuditLog } from "@/server/auditLog";
-import { nullPostcodeDisplay } from "@/common/format";
 import DuplicateDownloadWarning from "@/app/parcels/ActionBar/DuplicateDownloadWarning";
 
 const getPdfErrorMessage = (error: ShoppingListPdfError): string => {
