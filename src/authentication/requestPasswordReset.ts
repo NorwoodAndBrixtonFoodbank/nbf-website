@@ -2,18 +2,17 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { AuthError } from "@supabase/gotrue-js";
 import { helpEmailAddress } from "@/common/helpEmailAddress";
+import { HttpStatusCode } from "axios";
 
 interface RequestPasswordResetResponse {
     errorMessage: string | null;
 }
 
 function formatErrorMessage(error: AuthError): string {
-    let errorMessage = error.message;
-    // HTTP 429 is "too many requests". Usually means email rate limit has been exceeded.
-    if (error.status === 429) {
-        errorMessage += `.\nPlease contact admin for help.\n${helpEmailAddress}`;
+    if (error.status === HttpStatusCode.TooManyRequests) {
+        return error.message + `.\nPlease contact admin for help.\n${helpEmailAddress}`;
     }
-    return errorMessage;
+    return error.message;
 }
 
 export async function requestPasswordReset({
