@@ -58,11 +58,11 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
 ### Helpful commands
 
 * `npm run dev` to launch the website locally
-    * This has hot-reloading, so will update every time you save any TypeScript document.
+    * This has hot-reloading, so will update every time you save any TypeScript document
 
-* `npm run lint_fix` to get ESLint to try and fix any linting mistakes, and to report anything it cannot fix.
+* `npm run lint_fix` to get ESLint to try and fix any linting mistakes, and to report anything it cannot fix
 
-* `npm run post_checkout` to ensure the database and packages are up-to-date after switching to a new branch
+* `npm run post_checkout` to ensure the database and packages are up-to-date after switching to a new branch 
   * install new packages
   * reset the database
   * create one test user of each role
@@ -71,11 +71,11 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
 * `npm run build` to make an optimised build - you'll need to do this before running tests.
 
 * `npm run test` to run all tests. This will run both component and integration tests.
-  * Can single out test suites with:
+  * single out test suites with:
     * `npm run test:component` for just component (unit) tests
     * `npm run test:e2e` for just end-to-end tests
     * `npm run test:coverage` for a full coverage report at the end
-  * Can open the Cypress UI to see individual results with `npm run open:cypress`
+  * open the Cypress UI to see individual results with `npm run open:cypress`
 
 * `npx supabase functions serve` to run Supabase functions locally
 
@@ -89,7 +89,7 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
   * upload the congestion charge postcodes to the local Supabase storage
 
 * `npm run db:generate_seed` to generate `supabase/seed.sql` based on `supabase/seed/seed.mts`
-  * This does not automatically put the data in the database. You'll need to run `npm run dev:reset_supabase`.
+  * This does not automatically put the data in the database. You'll need to run `npm run dev:reset_supabase`
 
 ### Test user credentials
 
