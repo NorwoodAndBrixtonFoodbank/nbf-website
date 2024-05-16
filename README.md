@@ -62,13 +62,12 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
 
 * `npm run lint_fix` to get ESLint to try and fix any linting mistakes, and to report anything it cannot fix.
 
-* `npm run post_checkout` to 
-    * install new packages
-    * reset the database
-    * create one test user of each role
-    * reseed the data, without regenerating the seed
-  * This command is useful when switching between branches to have the most up-to-date database running.
-
+* `npm run post_checkout` to ensure the database and packages are up-to-date after switching to a new branch
+  * install new packages
+  * reset the database
+  * create one test user of each role
+  * reseed the data, without regenerating the seed
+  
 * `npm run build` to make an optimised build - you'll need to do this before running tests.
 
 * `npm run test` to run all tests. This will run both component and integration tests.
