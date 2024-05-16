@@ -5,7 +5,7 @@ import { HouseholdSummary } from "@/common/formatFamiliesData";
 import { formatCamelCaseKey, nullPostcodeDisplay } from "@/common/format";
 import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import { Item, ShoppingListPdfData } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
-import { faBuildingCircleArrowRight, faTruck } from "@fortawesome/free-solid-svg-icons";
+import { faTruck, faShoePrints } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
 
 export type BlockProps = ParcelInfo | HouseholdSummary | RequirementSummary;
@@ -231,7 +231,7 @@ const SingleShoppingList: React.FC<SingleShoppingListProps> = ({ parcelData }) =
                                 faIcon={
                                     parcelData.parcelInfo.collectionSite === "N/A - Delivery"
                                         ? faTruck
-                                        : faBuildingCircleArrowRight
+                                        : faShoePrints
                                 }
                             ></FontAwesomeIconPdfComponent>
                         </View>
