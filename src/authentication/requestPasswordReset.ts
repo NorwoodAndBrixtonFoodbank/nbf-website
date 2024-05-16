@@ -1,7 +1,7 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { AuthError } from "@supabase/gotrue-js";
-import { helpEmailAddress } from "@/common/helpEmailAddress";
+import { helpEmailAddress } from "@/common/contactDetails";
 import { HttpStatusCode } from "axios";
 
 interface RequestPasswordResetResponse {
