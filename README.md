@@ -7,14 +7,14 @@ have been delivered to clients.
 
 ## Technology stack
 
-* Supabase for hosting the backend (PostgreSQL database, custom authentication)
-* NextJS for full-stack application ('App Router')
-* Styled Components for CSS (CSS-in-JS)
-* Material UI for component library
-* Cypress for both component unit tests and integration tests (may add Jest in the future!)
-* AWS Amplify for hosting the frontend website
-* AWS CloudWatch for logging errors and warnings
-* Snaplet for generating deterministic seeded data
+* [Supabase](https://supabase.com/docs) for hosting the backend (PostgreSQL database, custom authentication)
+* [NextJS](https://nextjs.org/docs) for full-stack application ('App Router')
+* [Styled Components](https://styled-components.com/docs) for CSS (CSS-in-JS)
+* [Material UI](https://mui.com/material-ui/getting-started/) for component library
+* [Cypress](https://docs.cypress.io/guides/overview/why-cypress) for both component unit tests and integration tests (may add Jest in the future!)
+* [AWS Amplify](https://aws.amazon.com/amplify/) for hosting the frontend website
+* [AWS CloudWatch](https://aws.amazon.com/cloudwatch/) for logging errors and warnings
+* [Snaplet](https://docs.snaplet.dev/seed/getting-started/overview) for generating deterministic seeded data
 
 ## Prerequisite
 - You need Docker installed. The easiest way to get started is to download [Docker Desktop](https://www.docker.com/products/docker-desktop/). If you are using Windows, you may have to run `net localgroup docker-users <your_softwire_username> /ADD` as an administrator to add yourself to the docker-users group, where `<your_softwire_username>` is your non-admin Softwire username.
