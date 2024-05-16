@@ -63,10 +63,10 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
 * `npm run lint_fix` to get ESLint to try and fix any linting mistakes, and to report anything it cannot fix.
 
 * `npm run post_checkout` to 
-    - install new packages
-    - reset the database
-    - create one test user of each role
-    - reseed the data, without regenerating the seed
+    * install new packages
+    * reset the database
+    * create one test user of each role
+    * reseed the data, without regenerating the seed
   * This command is useful when switching between branches to have the most up-to-date database running.
 
 * `npm run build` to make an optimised build - you'll need to do this before running tests.
@@ -85,9 +85,9 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
 * `npx supabase migrations up --include-all --local` to run outstanding migrations locally
 
 * `npm run dev:reset_supabase` to
-  - reset the Supabase database based on the migration files and the seed data
-  - create one test user of each role
-  - upload the congestion charge postcodes to the local Supabase storage
+  * reset the Supabase database based on the migration files and the seed data
+  * create one test user of each role
+  * upload the congestion charge postcodes to the local Supabase storage
 
 * `npm run db:generate_seed` to generate `supabase/seed.sql` based on `supabase/seed/seed.mts`
   * This does not automatically put the data in the database. You'll need to run `npm run dev:reset_supabase`.
@@ -155,7 +155,7 @@ You can regenerate the types
   ```shell
   npm run dev:reset_supabase
   ```
-s
+
 #### Useful links
 - [Local Development](https://supabase.com/docs/guides/cli/local-development)
 - [Managing Environments](https://supabase.com/docs/guides/cli/managing-environments)
