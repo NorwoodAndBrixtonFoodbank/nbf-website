@@ -1,4 +1,4 @@
-# Supabase
+# How We Use Supabase
 
 ## Supabase console
 You can access the local Supabase console at localhost:54323 which allows you to view and edit your local database.
@@ -10,6 +10,10 @@ Some tables are managed by Supabase, importantly, `auth.users`, which deals with
 ## Views
 We use views to combine data from multiple tables or perform calculations on them. They are automatically updated when the tables they pull from update.
 Views make it easier for us to display data in the front end using server side paginated tables, as it is easy to filter and sort by the columns we want to.
+
+## Edge Functions
+These are TypeScript functions that Supabase hosts for us. They are seperate from the database. 
+We use them to check for congestion charges by postcode.
 
 ## Triggers
 Find in the database tab in the Supabase console.

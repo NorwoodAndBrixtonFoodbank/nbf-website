@@ -19,3 +19,7 @@
 ## Failed to fetch error on attempting to log into website
 - Make sure all docker containers are running; if not, start them
 - If they already were running or the above doesn't work, stop all docker containers, then run `npm run post_checkout` and `npm run dev`
+
+## Component tests failing
+- Known issue
+- Cypress component tests don't cope with server components / server actions on Next.js currently
