@@ -4,7 +4,7 @@ import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 export type WriteParcelToDatabaseFunction = UpdateParcel | InsertParcel;
-export type ParcelDatabaseErrors = InsertParcelErrors | UpdateParcelErrors;
+export type WriteParcelToDatabaseErrors = InsertParcelErrors | UpdateParcelErrors;
 
 type ParcelDatabaseInsertRecord = InsertSchema["parcels"];
 type ParcelDatabaseUpdateRecord = UpdateSchema["parcels"];

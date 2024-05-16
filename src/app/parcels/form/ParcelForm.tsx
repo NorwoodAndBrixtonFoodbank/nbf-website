@@ -25,7 +25,7 @@ import CollectionDateCard from "@/app/parcels/form/formSections/CollectionDateCa
 import CollectionTimeCard from "@/app/parcels/form/formSections/CollectionTimeCard";
 import CollectionCentreCard from "@/app/parcels/form/formSections/CollectionCentreCard";
 import {
-    ParcelDatabaseErrors,
+    WriteParcelToDatabaseErrors,
     WriteParcelToDatabaseFunction,
 } from "@/app/parcels/form/submitFormHelpers";
 import { Button, IconButton } from "@mui/material";
@@ -127,7 +127,7 @@ const mergeDateAndTime = (date: string, time: string): Dayjs => {
 const parcelModalRouterPath = (parcelId: string): string => `/parcels?parcelId=${parcelId}`;
 
 const databaseErrorMessageFromErrorType = (
-    errorType: ParcelDatabaseErrors,
+    errorType: WriteParcelToDatabaseErrors,
     logId: string
 ): string => {
     switch (errorType) {
@@ -231,14 +231,10 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         }
 
         if (error) {
-            /*
-               If the user is trying to edit a parcel that is currently being edited,
-               we want the user to refresh the page to get the current data, so we keep the submit button
-               disabled.
-             */
             if (error.type !== "concurrentUpdateConflict") {
                 setSubmitDisabled(false);
             }
+
             setSubmitErrorMessage(databaseErrorMessageFromErrorType(error.type, error.logId));
         }
     };
