@@ -1,12 +1,8 @@
 const currentDate = new Date();
 const currentYear = currentDate.getFullYear();
 
-const childBirthYears: string[] = Array.from({ length: 17 }, (_, index) => {
+export const childBirthYears: string[] = Array.from({ length: 17 }, (_, index) => {
     return (currentYear - index).toString();
-});
-
-export const childBirthYearList: [string, string][] = childBirthYears.map((year) => {
-    return [`${year}`, `${year}`];
 });
 
 export const adultBirthYears: string[] = Array.from({ length: 120 }, (_, index) => {
