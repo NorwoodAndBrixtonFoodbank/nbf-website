@@ -19,7 +19,7 @@ const maxNumberChildren = (value: string): boolean => {
     return parseInt(value) <= 20;
 };
 
-const getChild = (
+const setChildrenFields = (
     fieldSetter: ClientSetter,
     children: Person[],
     index: number,
@@ -90,7 +90,12 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                                 ]}
                                 listTitle="Gender"
                                 defaultValue={child.gender}
-                                onChange={getChild(fieldSetter, fields.children, index, "gender")}
+                                onChange={setChildrenFields(
+                                    fieldSetter,
+                                    fields.children,
+                                    index,
+                                    "gender"
+                                )}
                             />
                             <DropdownListInput
                                 selectLabelId="children-birth-year-select-label"
@@ -100,7 +105,7 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                                 ])}
                                 listTitle="Year of Birth"
                                 defaultValue={child.birthYear.toString()}
-                                onChange={getChild(
+                                onChange={setChildrenFields(
                                     fieldSetter,
                                     fields.children,
                                     index,
@@ -112,7 +117,7 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                                 labelsAndValues={childBirthMonthList}
                                 listTitle="Month of Birth (optional)"
                                 defaultValue={child.birthMonth?.toString()}
-                                onChange={getChild(
+                                onChange={setChildrenFields(
                                     fieldSetter,
                                     fields.children,
                                     index,
