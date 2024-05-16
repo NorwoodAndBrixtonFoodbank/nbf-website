@@ -8,9 +8,9 @@ export function getLocalSupabaseClient(): SupabaseClient {
         throw new Error("Supabase URL is not specified");
     }
 
-    if (!supabaseUrl.includes("localhost") && !supabaseUrl.includes("127.0.0.1")) {
-        throw new Error("Supabase URL needs to be a localhost port");
-    }
+    // if (!supabaseUrl.includes("localhost") && !supabaseUrl.includes("127.0.0.1")) {
+    //     throw new Error("Supabase URL needs to be a localhost port");
+    // }
 
     if (!supabaseKey) {
         throw new Error("Supabase key is not set");

@@ -21,37 +21,37 @@ async function createUserForEachRole(): Promise<void> {
     const supabase = getLocalSupabaseClient();
 
     await createUser(supabase, {
-        email: "admin@example.com",
-        password: "admin123",
+        email: "Team-VauxhallFoodbank@softwire.com",
+        password: "admin123", // TODO: CHANGE THIS TO WHATEVER PASSWORD YOU NEED TO USE
         role: "admin",
-        firstName: "admin",
-        lastName: "person",
+        firstName: "Softwire",
+        lastName: "Team",
         telephoneNumber: "0777777777777",
     });
-    await createUser(supabase, {
-        email: "volunteer@example.com",
-        password: "volunteer123",
-        role: "volunteer",
-        firstName: "volunteer",
-        lastName: "person",
-        telephoneNumber: "078888888888",
-    });
-    await createUser(supabase, {
-        email: "manager@example.com",
-        password: "manager123",
-        role: "manager",
-        firstName: "manager",
-        lastName: "person",
-        telephoneNumber: "078888888888",
-    });
-    await createUser(supabase, {
-        email: "staff@example.com",
-        password: "staff123",
-        role: "staff",
-        firstName: "staff",
-        lastName: "person",
-        telephoneNumber: "078888888888",
-    });
+    // await createUser(supabase, {
+    //     email: "volunteer@example.com",
+    //     password: "volunteer123",
+    //     role: "volunteer",
+    //     firstName: "volunteer",
+    //     lastName: "person",
+    //     telephoneNumber: "078888888888",
+    // });
+    // await createUser(supabase, {
+    //     email: "manager@example.com",
+    //     password: "manager123",
+    //     role: "manager",
+    //     firstName: "manager",
+    //     lastName: "person",
+    //     telephoneNumber: "078888888888",
+    // });
+    // await createUser(supabase, {
+    //     email: "staff@example.com",
+    //     password: "staff123",
+    //     role: "staff",
+    //     firstName: "staff",
+    //     lastName: "person",
+    //     telephoneNumber: "078888888888",
+    // });
 }
 
 async function createUser(supabase: SupabaseClient, userProfile: userProfile): Promise<void> {
