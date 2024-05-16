@@ -225,13 +225,20 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         };
 
         const { parcelId, error } = await writeParcelInfoToDatabase(parcelRecord);
-        setSubmitDisabled(false);
 
         if (parcelId) {
             router.push(parcelModalRouterPath(parcelId));
         }
 
         if (error) {
+            /*
+               If the user is trying to edit a parcel that is currently being edited,
+               we want the user to refresh the page to get the current data, so we keep the submit button
+               disabled.
+             */
+            if (error.type !== "concurrentUpdateConflict") {
+                setSubmitDisabled(false);
+            }
             setSubmitErrorMessage(databaseErrorMessageFromErrorType(error.type, error.logId));
         }
     };

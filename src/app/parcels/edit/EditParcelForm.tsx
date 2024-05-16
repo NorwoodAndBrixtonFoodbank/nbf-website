@@ -17,7 +17,7 @@ import supabase from "@/supabaseClient";
 import { Errors } from "@/components/Form/formFunctions";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import Title from "@/components/Title/Title";
-import { ParcelDatabaseUpdateRecord, updateParcel } from "@/app/parcels/form/submitFormHelpers";
+import { updateParcel } from "@/app/parcels/form/submitFormHelpers";
 
 interface EditParcelFormProps {
     parcelId: string;
@@ -137,9 +137,7 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
                 <ParcelForm
                     initialFields={initialFormFields}
                     initialFormErrors={initialFormErrors}
-                    writeParcelInfoToDatabase={(parcelDatabaseRecord: ParcelDatabaseUpdateRecord) =>
-                        updateParcel(parcelDatabaseRecord, parcelId)
-                    }
+                    writeParcelInfoToDatabase={updateParcel(parcelId)}
                     deliveryPrimaryKey={deliveryKey}
                     collectionCentresLabelsAndValues={collectionCentres}
                     packingSlotsLabelsAndValues={packingSlots}

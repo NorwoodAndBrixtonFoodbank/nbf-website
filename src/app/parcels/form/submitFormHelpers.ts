@@ -3,8 +3,11 @@ import { InsertSchema, UpdateSchema } from "@/databaseUtils";
 import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
+export type WriteParcelToDatabaseFunction = UpdateParcel | InsertParcel;
+export type ParcelDatabaseErrors = InsertParcelErrors | UpdateParcelErrors;
+
 type ParcelDatabaseInsertRecord = InsertSchema["parcels"];
-export type ParcelDatabaseUpdateRecord = UpdateSchema["parcels"];
+type ParcelDatabaseUpdateRecord = UpdateSchema["parcels"];
 
 type InsertParcelErrors = "failedToInsertParcel";
 type InsertParcelReturnType = {
@@ -12,14 +15,9 @@ type InsertParcelReturnType = {
     parcelId: string | null;
 };
 
-export type WriteParcelToDatabaseFunction =
-    | ((parcelRecord: ParcelDatabaseUpdateRecord) => Promise<UpdateParcelReturnType>)
-    | ((parcelRecord: ParcelDatabaseInsertRecord) => Promise<InsertParcelReturnType>);
-export type ParcelDatabaseErrors = InsertParcelErrors | UpdateParcelErrors;
+type InsertParcel = (parcelRecord: ParcelDatabaseInsertRecord) => Promise<InsertParcelReturnType>;
 
-export const insertParcel = async (
-    parcelRecord: ParcelDatabaseInsertRecord
-): Promise<InsertParcelReturnType> => {
+export const insertParcel: InsertParcel = async (parcelRecord) => {
     const { data, error } = await supabase
         .from("parcels")
         .insert(parcelRecord)
@@ -43,7 +41,7 @@ export const insertParcel = async (
     }
 
     await sendAuditLog({ ...auditLog, wasSuccess: true, parcelId: data.primary_key });
-    return { error: null, parcelId: data.primary_key };
+    return { parcelId: data.primary_key, error: null };
 };
 
 type UpdateParcelErrors = "failedToUpdateParcel" | "concurrentUpdateConflict";
@@ -52,10 +50,10 @@ type UpdateParcelReturnType = {
     parcelId: string | null;
 };
 
-export const updateParcel = async (
-    parcelRecord: ParcelDatabaseUpdateRecord,
-    primaryKey: string
-): Promise<UpdateParcelReturnType> => {
+type UpdateParcelWithPrimaryKey = (primaryKey: string) => UpdateParcel;
+type UpdateParcel = (parcelRecord: ParcelDatabaseUpdateRecord) => Promise<UpdateParcelReturnType>;
+
+export const updateParcel: UpdateParcelWithPrimaryKey = (primaryKey) => async (parcelRecord) => {
     const { error, count } = await supabase
         .from("parcels")
         .update(parcelRecord, { count: "exact" })
