@@ -13,7 +13,7 @@ import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFac
 import { FormText, StyledCard } from "@/components/Form/formStyling";
 import { ClientCardProps, ClientSetter } from "../ClientForm";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
-import { adultBirthYearList } from "@/app/clients/form/birthYearDropdown";
+import { adultBirthYears } from "@/app/clients/form/birthYearDropdown";
 
 const getAdult = (
     fieldSetter: ClientSetter,
@@ -79,7 +79,10 @@ const NumberAdultsCard: React.FC<ClientCardProps> = ({
                             />
                             <DropdownListInput
                                 selectLabelId="adult-birth-year-select-label"
-                                labelsAndValues={adultBirthYearList}
+                                labelsAndValues={adultBirthYears.map((year) => [
+                                    `${year}`,
+                                    `${year}`,
+                                ])}
                                 listTitle="Year of Birth"
                                 defaultValue={adult.birthYear.toString()}
                                 onChange={getAdult(fieldSetter, fields.adults, index, "birthYear")}

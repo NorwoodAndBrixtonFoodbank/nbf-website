@@ -37,7 +37,7 @@ import Button from "@mui/material/Button";
 import { submitAddClientForm, submitEditClientForm } from "@/app/clients/form/submitFormHelpers";
 import Title from "@/components/Title/Title";
 import { getCurrentYear } from "@/common/getAgesOfFamily";
-import { adultBirthYearList, youngestAdultBirthYear } from "@/app/clients/form/birthYearDropdown";
+import { youngestAdultBirthYear } from "@/app/clients/form/birthYearDropdown";
 
 interface Props {
     initialFields: ClientFields;
