@@ -37,7 +37,7 @@ import Button from "@mui/material/Button";
 import { submitAddClientForm, submitEditClientForm } from "@/app/clients/form/submitFormHelpers";
 import Title from "@/components/Title/Title";
 import { getCurrentYear } from "@/common/getAgesOfFamily";
-import { adultBirthYearList } from "@/app/clients/form/birthYearDropdown";
+import { adultBirthYearList, youngestAdultBirthYear } from "@/app/clients/form/birthYearDropdown";
 
 interface Props {
     initialFields: ClientFields;
@@ -139,7 +139,7 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
             .map((_item) => {
                 return {
                     gender: "other",
-                    birthYear: parseInt(adultBirthYearList[0][0]),
+                    birthYear: parseInt(youngestAdultBirthYear),
                 };
             });
         fieldSetter({ adults: [...fields.adults, ...extraAdults] });
