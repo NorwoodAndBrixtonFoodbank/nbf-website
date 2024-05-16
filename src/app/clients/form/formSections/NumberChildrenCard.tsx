@@ -13,7 +13,7 @@ import { StyledCard, FormText } from "@/components/Form/formStyling";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 import { ClientCardProps, ClientSetter } from "../ClientForm";
-import { childBirthMonthList, childBirthYears } from "@/app/clients/form/birthYearDropdown";
+import { childBirthMonthList, getChildBirthYears } from "@/app/clients/form/birthYearDropdown";
 
 const maxNumberChildren = (value: string): boolean => {
     return parseInt(value) <= 20;
@@ -94,7 +94,7 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                             />
                             <DropdownListInput
                                 selectLabelId="children-birth-year-select-label"
-                                labelsAndValues={childBirthYears.map((year) => [
+                                labelsAndValues={getChildBirthYears().map((year) => [
                                     `${year}`,
                                     `${year}`,
                                 ])}
