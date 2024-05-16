@@ -27,10 +27,18 @@ const getChild = (
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
-        if (subFieldName === "gender") {
-            children[index][subFieldName] = (input !== "Don't Know" ? input : "other") as Gender;
-        } else {
-            children[index][subFieldName] = parseInt(input);
+        switch (subFieldName) {
+            case "gender":
+                children[index][subFieldName] = (
+                    input !== "Don't Know" ? input : "other"
+                ) as Gender;
+                break;
+            case "birthYear":
+                children[index][subFieldName] = parseInt(input);
+                break;
+            case "birthMonth":
+                children[index][subFieldName] = parseInt(input);
+                break;
         }
         fieldSetter({ children: [...children] });
     };
