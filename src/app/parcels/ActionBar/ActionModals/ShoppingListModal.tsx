@@ -14,36 +14,7 @@ import ShoppingListPdfButton from "@/pdf/ShoppingList/ShoppingListPdfButton";
 import { ShoppingListPdfError } from "@/pdf/ShoppingList/getShoppingListData";
 import { sendAuditLog } from "@/server/auditLog";
 import { nullPostcodeDisplay } from "@/common/format";
-
-interface ShoppingListsConfirmationProps {
-    selectedParcels: ParcelsTableRow[];
-}
-
-const ShoppingListsConfirmation: React.FC<ShoppingListsConfirmationProps> = ({
-    selectedParcels,
-}) => {
-    const maxPostcodesToShow = 4;
-    const statusToFind: StatusType = "Shopping List Downloaded";
-
-    const printedListPostcodes = selectedParcels
-        .filter((parcel) => parcel.lastStatus?.name.startsWith(statusToFind))
-        .map((parcel) => parcel.addressPostcode ?? nullPostcodeDisplay);
-
-    return printedListPostcodes.length > 0 ? (
-        <>
-            <Heading>Shopping Lists</Heading>
-            <Paragraph>
-                Lists have already been printed for {printedListPostcodes.length} parcels with
-                postcodes:
-                {printedListPostcodes.slice(0, maxPostcodesToShow).join(", ")}
-                {printedListPostcodes.length > maxPostcodesToShow ? ", ..." : "."}
-            </Paragraph>
-            <Paragraph>Are you sure you want to print again?</Paragraph>
-        </>
-    ) : (
-        <></>
-    );
-};
+import DuplicateDownloadWarning from "@/app/parcels/ActionBar/DuplicateDownloadWarning";
 
 const getPdfErrorMessage = (error: ShoppingListPdfError): string => {
     let errorMessage: string;
@@ -128,10 +99,13 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
             }
             contentAboveButton={
                 <>
-                    <ShoppingListsConfirmation selectedParcels={props.selectedParcels} />
                     <SelectedParcelsOverview
                         parcels={props.selectedParcels}
                         maxParcelsToShow={maxParcelsToShow}
+                    />
+                    <DuplicateDownloadWarning
+                        parcels={props.selectedParcels}
+                        targetEventName="Shopping List Downloaded"
                     />
                 </>
             }
