@@ -11,7 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { CircularProgress, NoSsr } from "@mui/material";
 import IconButton from "@mui/material/IconButton/IconButton";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import styled from "styled-components";
 import { Primitive, SortOrder } from "react-data-table-component/dist/DataTable/types";
@@ -412,14 +412,6 @@ const Table = <Data,>({
         }
     };
     
-    var NewTableStyling = TableStyling
-    parcelRowBreakPoints?.forEach((value) => {
-        NewTableStyling = styled(NewTableStyling)`
-        & .rdt_TableRow:nth-child(${value + 1}) {
-        border-top: solid green;
-        }`
-    })
-    
     return (
         <>
             <TableFilterAndExtraColumnsBar<Data>
@@ -441,7 +433,7 @@ const Table = <Data,>({
                 setShownHeaderKeys={setShownHeaderKeys}
                 shownHeaderKeys={shownHeaderKeys}
             />
-            <NewTableStyling>
+            <TableStyling parcelRowBreakPoints={parcelRowBreakPoints}>
                 <NoSsr>
                     <DataTable
                         columns={columns}
@@ -494,7 +486,7 @@ const Table = <Data,>({
                         striped
                     />
                 </NoSsr>
-            </NewTableStyling>
+            </TableStyling>
         </>
     );
 };
@@ -513,7 +505,7 @@ const StyledIcon = styled(Icon)`
     margin: 0;
 `;
 
-const TableStyling = styled.div`
+const TableStyling = styled.div<{parcelRowBreakPoints?: number[]}>`
     // the component with the filter bars
     & > header {
         background-color: transparent;
@@ -633,6 +625,12 @@ const TableStyling = styled.div`
     & .rdt_TableRow:nth-child(odd) {
         background-color: ${(props) => props.theme.main.background[0]};
     }
+
+    ${(props) => props.parcelRowBreakPoints?.map(breakPoint => 
+        `& .rdt_TableRow:nth-child(${breakPoint + 1}) {
+            border-top: solid green;
+            }`
+    ).join()}
 `;
 
 export default Table;
