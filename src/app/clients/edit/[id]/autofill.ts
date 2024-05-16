@@ -3,7 +3,7 @@ import { ClientFields } from "@/app/clients/form/ClientForm";
 import { Person } from "@/components/Form/formFunctions";
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { processExtraInformation } from "@/common/formatClientsData";
-import { adultBirthYears, youngestAdultBirthYear } from "@/app/clients/form/birthYearDropdown";
+import { youngestAdultBirthYear } from "@/app/clients/form/birthYearDropdown";
 
 const isAdult = (member: Schema["families"]): boolean => {
     return member.birth_year <= parseInt(youngestAdultBirthYear);
@@ -21,24 +21,24 @@ const autofill = (
 ): ClientFields => {
     const children = familyData
         .filter((member) => !isAdult(member))
-        .map((child): Person => {
-            return {
+        .map(
+            (child): Person => ({
                 gender: child.gender,
                 birthYear: child.birth_year,
                 birthMonth: child.birth_month,
                 primaryKey: child.primary_key,
-            };
-        });
+            })
+        );
 
     const adults = familyData
         .filter((member) => isAdult(member))
-        .map((adult): Person => {
-            return {
+        .map(
+            (adult): Person => ({
                 gender: adult.gender,
                 birthYear: adult.birth_year,
                 primaryKey: adult.primary_key,
-            };
-        });
+            })
+        );
 
     const { nappySize, extraInformation } = processExtraInformation(clientData.extra_information);
 
