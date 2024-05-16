@@ -1,0 +1,24 @@
+name: Deploy staging database
+on:
+  push:
+    branches:
+      - staging
+
+env:
+  SUPABASE_STAGING_PROJECT_ID: ${{ secrets.SUPABASE_STAGING_PROJECT_ID }}
+  SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_STAGING_DATABASE_PASSWORD }}
+  SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_STAGING_ACCESS_TOKEN }}
+
+jobs:
+  deploy-staging-database:
+    name: Deploy staging database
+    environment: staging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+
+      - name: Link to the project
+        run: npx supabase link --project-ref $SUPABASE_STAGING_PROJECT_ID
+      - name: Apply the migration
+        run: npx supabase db push --include-all
