@@ -56,7 +56,13 @@ const styles = StyleSheet.create({
 
     cellLogo: { flex: 1 },
     cellName: { flex: 4 },
-    cellPostcode: { flex: 4 },
+    cellPostcode: { 
+        flex: 4,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "flex-start",
+        paddingTop: "1px"
+     },
     cellTime: { flex: 2 },
     cellCollection: { flex: 4 },
     cellInstructions: { flex: 10 },
@@ -110,10 +116,10 @@ const DayOverviewRow: React.FC<DayOverviewRowProps> = ({ parcel }) => {
             </View>
             <Text style={[styles.cellName, styles.cell]}>{parcel.client!.full_name}</Text>
             <View style={[styles.cell, styles.cellPostcode, styles.row]}>
-                <Text>{parcel.client!.address_postcode ?? nullPostcodeDisplay}</Text>
+                <Text>{parcel.client!.address_postcode ?? nullPostcodeDisplay}  </Text>
                 {parcel.collection_centre!.name === "Delivery" &&
                     parcel.congestionChargeApplies && (
-                        <FontAwesomeIconPdfComponent faIcon={faCopyright} color="red" />
+                        <FontAwesomeIconPdfComponent faIcon={faCopyright} color="red" styleWidth="10px" marginTop="1px"/>
                     )}
             </View>
             <Text style={[styles.cellTime, styles.cell]}>
