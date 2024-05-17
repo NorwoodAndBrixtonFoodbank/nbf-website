@@ -376,9 +376,9 @@ const ParcelsPage: React.FC<{}> = () => {
                                     <ExpandedParcelDetails parcelId={selectedParcelId} />
                                 </Suspense>
                             </ContentDiv>
-                                {modalErrorMessage && (
-                                    <ErrorSecondaryText>{modalErrorMessage}</ErrorSecondaryText>
-                                )}
+                            {modalErrorMessage && (
+                                <ErrorSecondaryText>{modalErrorMessage}</ErrorSecondaryText>
+                            )}
                         </OutsideDiv>
                     </Modal>
                 </>
