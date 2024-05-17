@@ -6,9 +6,9 @@ import { nullPostcodeDisplay } from "@/common/format";
 import {
     getAdultAgeUsingBirthYear,
     getChildAgeUsingBirthYearAndMonth,
-    getCurrentYear,
     isAdult,
 } from "@/common/getAgesOfFamily";
+import { getCurrentYear } from "@/common/date";
 
 const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
     const rawClientDetails = await getRawClientDetails(clientId);

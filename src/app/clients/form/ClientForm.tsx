@@ -36,7 +36,7 @@ import SignpostingCallCard from "@/app/clients/form/formSections/SignpostingCall
 import Button from "@mui/material/Button";
 import { submitAddClientForm, submitEditClientForm } from "@/app/clients/form/submitFormHelpers";
 import Title from "@/components/Title/Title";
-import { getCurrentYear } from "@/common/getAgesOfFamily";
+import { getCurrentYear } from "@/common/date";
 import { youngestAdultBirthYear } from "@/app/clients/form/birthYearDropdown";
 
 interface Props {
@@ -139,7 +139,7 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
             .map((_item) => {
                 return {
                     gender: "other",
-                    birthYear: parseInt(youngestAdultBirthYear),
+                    birthYear: parseInt(youngestAdultBirthYear()),
                 };
             });
         fieldSetter({ adults: [...fields.adults, ...extraAdults] });

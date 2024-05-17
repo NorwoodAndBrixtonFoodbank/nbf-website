@@ -42,5 +42,5 @@ export const getAdultAgeUsingBirthYear = (birthYear: number): string => {
 };
 
 export const isAdult = (birthYear: number): boolean => {
-    return birthYear <= parseInt(youngestAdultBirthYear);
+    return birthYear <= parseInt(youngestAdultBirthYear());
 };

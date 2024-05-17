@@ -1,11 +1,8 @@
 import { Person } from "@/components/Form/formFunctions";
 import { Schema } from "@/databaseUtils";
 import { displayList } from "@/common/format";
-import {
-    getChildAgeUsingBirthYearAndMonth,
-    getCurrentYear,
-    isChildUsingBirthYear,
-} from "@/common/getAgesOfFamily";
+import { getChildAgeUsingBirthYearAndMonth, isChildUsingBirthYear } from "@/common/getAgesOfFamily";
+import { getCurrentYear } from "@/common/date";
 
 export interface HouseholdSummary {
     householdSize: string;
