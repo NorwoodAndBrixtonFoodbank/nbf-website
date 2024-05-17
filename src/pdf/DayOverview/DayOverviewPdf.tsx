@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         alignItems: "flex-start",
-        paddingTop: "1px",
     },
     cellTime: { flex: 2 },
     cellCollection: { flex: 4 },
