@@ -1,5 +1,5 @@
 import React from "react";
-import { formatDateTime, formatDatetimeAsDate, nullPostcodeDisplay } from "@/common/format";
+import { displayNameForDeletedClient, formatDateTime, formatDatetimeAsDate, nullPostcodeDisplay } from "@/common/format";
 import { FetchClientIdError, GetParcelDataAndCountErrorType, ParcelsTableRow } from "./types";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
 import DeliveryIcon from "@/components/Icons/DeliveryIcon";
@@ -98,3 +98,5 @@ export const getSelectedParcelCountMessage = (numberOfSelectedParcels: number): 
         ? "1 parcel selected"
         : `${numberOfSelectedParcels} parcels selected`;
 };
+
+export const parcelsPageDeletedClientDisplayName = `(${displayNameForDeletedClient})`;

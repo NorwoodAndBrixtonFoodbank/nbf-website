@@ -31,6 +31,7 @@ export interface ParcelsTableRow {
     };
     packingDate: Date | null;
     createdAt: Date | null;
+    clientIsActive: boolean;
 }
 
 export type GetParcelDataAndCountResult =
@@ -108,18 +109,24 @@ export interface packingSlotOptionsSet {
     value: string;
 }
 
-type FetchClientIdErrorType = "failedClientIdFetch";
-export interface FetchClientIdError {
-    type: FetchClientIdErrorType;
+type FetchClientIdAndIsActiveErrorType = "failedClientIdAndIsActiveFetch" | "noMatchingClient";
+export interface FetchClientIdAndIsActiveError {
+    type: FetchClientIdAndIsActiveErrorType;
     logId: string;
 }
 
 export type FetchClientIdResult =
     | {
-          clientId: string;
+          data: SelectedClientDetails;
           error: null;
       }
     | {
-          clientId: null;
-          error: FetchClientIdError;
+          data: null;
+          error: FetchClientIdAndIsActiveError;
       };
+
+export interface SelectedClientDetails {
+        clientId: string;
+        isClientActive: boolean;
+    }
+    
