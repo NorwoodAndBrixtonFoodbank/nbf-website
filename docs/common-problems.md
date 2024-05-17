@@ -24,3 +24,13 @@
 ## Component tests failing
 - Known issue
 - Cypress component tests don't cope with server components / server actions on Next.js currently
+
+## E2E tests fails locally but not on the pipeline
+- Some tests modify the database and may fail if repeatedly run
+- Tests need to be run on fresh data
+- To resolve this run `npm post_checkout; npm run build; npm run test:e2e`
+
+## Tests failing on GitHub: Failed to start Supabase container
+- You may get a failed Start local Supabase instance:
+```failed to start docker container: Error response from daemon: driver failed programming external connectivity on endpoint supabase_db_vauxhall-foodbank ```
+- Sometimes this can happen and usually works on re-run of the test

@@ -1,46 +1,30 @@
 import { SortOptions } from "@/components/Tables/Table";
-import { AuditLogRow } from "./types";
-import { PaginationType } from "@/components/Tables/Filters";
+import { AuditLogRow, AuditLogSortMethod } from "./types";
 
-export const auditLogTableSortableColumns: SortOptions<AuditLogRow>[] = [
+export const auditLogTableSortableColumns: SortOptions<AuditLogRow, AuditLogSortMethod>[] = [
     {
         key: "action",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("action", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("action", { ascending: sortDirection === "asc" }),
     },
     {
         key: "createdAt",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("created_at", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("created_at", { ascending: sortDirection === "asc" }),
     },
     {
         key: "actorName",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("actor_name", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("actor_name", { ascending: sortDirection === "asc" }),
     },
     {
         key: "wasSuccess",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("wasSuccess", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("wasSuccess", { ascending: sortDirection === "asc" }),
     },
     {
         key: "logId",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("log_id", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
+        sortMethod: (query, sortDirection) =>
+            query.order("log_id", { ascending: sortDirection === "asc" }),
     },
 ];
