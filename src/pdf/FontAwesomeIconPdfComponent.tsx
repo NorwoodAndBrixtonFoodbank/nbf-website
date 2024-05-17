@@ -13,7 +13,7 @@ const FontAwesomeIconPdfComponent = ({
     faIcon: { icon },
     color = "black",
     styleWidth = "20px",
-    marginTop = "0px"
+    marginTop = "0px",
 }: FontAwesomeIconProps): ReactElement => {
     const width = icon[0];
     const height = icon[1];
