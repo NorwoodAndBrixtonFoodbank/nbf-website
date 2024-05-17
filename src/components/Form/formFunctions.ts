@@ -183,7 +183,7 @@ export const onChangeDate = <SpecificFields extends Fields>(
 
     const earliestPossibleDateTime = dayjs().startOf("day");
     if (value.isBefore(earliestPossibleDateTime)) {
-        errorSetter({ key: Errors.pastDate } as {
+        errorSetter({ [key]: Errors.pastDate } as {
             [key in keyof FormErrors<SpecificFields>]: Errors;
         });
     }
@@ -209,6 +209,7 @@ export const checkErrorOnSubmit = <
     errorSetter: (errors: SpecificErrors) => void,
     keysToCheck?: string[]
 ): boolean => {
+    console.log(errorType);
     let errorExists = false;
     let amendedErrorTypes = { ...errorType };
     for (const [errorKey, error] of Object.entries(errorType)) {
