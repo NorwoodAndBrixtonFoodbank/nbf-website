@@ -26,7 +26,7 @@ const mmToPixels = (mm: number): number => {
     return mm * pixelsPerMmAt72Dpi;
 };
 
-const labelSizePixels = { width: mmToPixels(200), height: mmToPixels(62) };
+const labelSizePixels = { width: mmToPixels(150), height: mmToPixels(62) };
 
 const styles = StyleSheet.create({
     page: {
