@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
-import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
+import { ParcelsTableRow } from "../parcelsTable/types";
 import { StatusType } from "./Statuses";
 import { ActionModalProps } from "./ActionModals/GeneralActionModal";
 import DayOverviewModal from "./ActionModals/DayOverviewModal";
