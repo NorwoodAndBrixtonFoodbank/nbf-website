@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { EditHeader, EditOption } from "@/app/admin/manageUser/ManageUserModal";
 import UserRoleDropdownInput from "@/app/admin/common/UserRoleDropdownInput";
 import { getDropdownListHandler } from "@/components/DataInput/inputHandlerFactories";
-import { DisplayedUserRole, UserRow } from "@/app/admin/page";
+import { DisplayedUserRole, UserRow } from "../usersTable/types";
 import Button from "@mui/material/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
