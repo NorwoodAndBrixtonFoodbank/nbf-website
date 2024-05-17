@@ -209,7 +209,6 @@ export const checkErrorOnSubmit = <
     errorSetter: (errors: SpecificErrors) => void,
     keysToCheck?: string[]
 ): boolean => {
-    console.log(errorType);
     let errorExists = false;
     let amendedErrorTypes = { ...errorType };
     for (const [errorKey, error] of Object.entries(errorType)) {
