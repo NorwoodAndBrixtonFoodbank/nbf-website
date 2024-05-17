@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Table, { TableHeaders } from "@/components/Tables/Table";
+import { ClientPaginatedTable, TableHeaders } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
 import { useRouter } from "next/navigation";
 
@@ -26,7 +26,7 @@ const ClientParcelsTable: React.FC<ClientParcelTableProps> = (props) => {
     const router = useRouter();
     return (
         <TableSurface>
-            <Table
+            <ClientPaginatedTable
                 dataPortion={props.parcelsData}
                 headerKeysAndLabels={headers}
                 paginationConfig={{ enablePagination: false }}
