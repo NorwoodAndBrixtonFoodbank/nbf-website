@@ -14,7 +14,7 @@ export const parcelTableColumnStyleOptions = {
         width: "4rem",
     },
     fullName: {
-        grow: 1,
+        grow: 1.3,
         minWidth: "8rem",
     },
     familyCategory: {
@@ -38,10 +38,10 @@ export const parcelTableColumnStyleOptions = {
     },
     packingSlot: {
         hide: 800,
-        grow: 1,
+        grow: 0.8,
         minWidth: "5rem",
     },
     lastStatus: {
-        grow: 5,
+        grow: 8,
     },
 };
