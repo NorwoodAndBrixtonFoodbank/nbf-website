@@ -17,7 +17,7 @@
 
 ### Triggers
 - Find in the database tab in the Supabase console.
-- These are functions which run whenever a particular table is updated.
+- These are SQL functions which run whenever a particular table is updated.
 
 ### Functions
 - Find in the database tab in the Supabase console.
@@ -38,7 +38,7 @@
 - Find in the database tab in the Supabase console.
 - Supabase allows us to manage our own enums. We can set column data types to be these enums.
 
-### Authentication Policies
+### Row Level Security (RLS) Policies 
 - Find in the authentication tab in the Supabase console.
 - The policies control what is possible for users to do, including restricting access by roles.
 - See https://supabase.com/docs/guides/database/postgres/row-level-security

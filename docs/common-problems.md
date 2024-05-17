@@ -12,13 +12,14 @@
 
 ## Congestion charge error on console and parcels not appearing in front end parcels table
 - Make sure all docker containers are running
+- Run `npx supabase functions serve` to ensure the edge functions are running
 
 ## Any kind of error to do with the data showing up on the website
-- It's possible you forgot to run `npm run post_checkout` and thus the front end may be incompatible with the back end. Run the command.
+- It's possible you forgot to run `npm run post_checkout` and thus the front end may be incompatible with the back end.
 
 ## Failed to fetch error on attempting to log into website
 - Make sure all docker containers are running; if not, start them
-- If they already were running or the above doesn't work, stop all docker containers, then run `npm run post_checkout` and `npm run dev`
+- If they already were running or the above doesn't work, then run `npm run post_checkout` and `npm run dev`
 
 ## Component tests failing
 - Known issue
