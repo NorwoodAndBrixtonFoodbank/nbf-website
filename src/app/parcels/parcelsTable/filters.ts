@@ -29,7 +29,7 @@ const fullNameSearch: ParcelsFilterMethod<string> = (query, state) => {
         return query.or(`client_full_name.ilike.%${state}%, client_full_name.is.null`);
     }
     return query.ilike("client_full_name", `%${state}%`);
-}
+};
 
 const postcodeSearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "") {
@@ -72,7 +72,7 @@ const familySearch: ParcelsFilterMethod<string> = (query, state) => {
     return query.eq("family_count", Number(state));
 };
 
-const phoneSearch: ParcelsFilterMethod<string> = (query, state) =>{
+const phoneSearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "") {
         return query;
     }

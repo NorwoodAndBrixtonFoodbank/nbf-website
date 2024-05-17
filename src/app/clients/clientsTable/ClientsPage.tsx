@@ -20,8 +20,8 @@ import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionSta
 import { nullPostcodeDisplay } from "@/common/format";
 import ConfirmDialog from "@/components/Modal/ConfirmDialog";
 import DeleteButton from "@/components/Buttons/DeleteButton";
-import deleteClient, { DeleteClientError } from "../deleteClient";
-import { IsClientActiveError, getIsClientActive } from "../getExpandedClientDetails";
+import deleteClient from "../deleteClient";
+import { getIsClientActive } from "../getExpandedClientDetails";
 import clientsFilters from "./filters";
 import clientsSortableColumns from "./sortableColumns";
 import clientsHeaders from "./headers";

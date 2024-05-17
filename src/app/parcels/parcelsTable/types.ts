@@ -126,7 +126,6 @@ export type FetchClientIdResult =
       };
 
 export interface SelectedClientDetails {
-        clientId: string;
-        isClientActive: boolean;
-    }
-    
+    clientId: string;
+    isClientActive: boolean;
+}

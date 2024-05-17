@@ -284,5 +284,8 @@ export const getClientIdAndIsActive = async (parcelId: string): Promise<FetchCli
         return { data: null, error: { type: "noMatchingClient", logId } };
     }
 
-    return { data: {clientId: data.client_id, isClientActive: data?.client?.is_active}, error: null };
+    return {
+        data: { clientId: data.client_id, isClientActive: data?.client?.is_active },
+        error: null,
+    };
 };

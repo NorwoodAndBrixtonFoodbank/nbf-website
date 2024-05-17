@@ -1,7 +1,6 @@
 import { CongestionChargeDetails, ParcelsTableRow } from "./types";
 import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { displayNameForDeletedClient } from "@/common/format";
 import { DbParcelRow, ViewSchema } from "@/databaseUtils";
 import { parcelsPageDeletedClientDisplayName } from "./format";
 

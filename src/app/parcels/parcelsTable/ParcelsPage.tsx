@@ -38,7 +38,7 @@ import {
     getSelectedParcelCountMessage,
     getParcelDataErrorMessage,
     parcelTableColumnDisplayFunctions,
-    getClientIdErrorMessage,
+    getClientIdAndIsActiveErrorMessage,
 } from "./format";
 import { PreTableControls, parcelTableColumnStyleOptions } from "./styles";
 import { DbParcelRow } from "@/databaseUtils";
@@ -90,7 +90,7 @@ const ParcelsPage: React.FC<{}> = () => {
 
         const { data, error } = await getClientIdAndIsActive(parcelId);
         if (error) {
-            setModalErrorMessage(getClientIdErrorMessage(error));
+            setModalErrorMessage(getClientIdAndIsActiveErrorMessage(error));
         } else {
             setSelectedClientDetails(data);
         }

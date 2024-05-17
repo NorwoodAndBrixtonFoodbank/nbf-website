@@ -1,6 +1,15 @@
 import React from "react";
-import { displayNameForDeletedClient, formatDateTime, formatDatetimeAsDate, nullPostcodeDisplay } from "@/common/format";
-import { FetchClientIdError, GetParcelDataAndCountErrorType, ParcelsTableRow } from "./types";
+import {
+    displayNameForDeletedClient,
+    formatDateTime,
+    formatDatetimeAsDate,
+    nullPostcodeDisplay,
+} from "@/common/format";
+import {
+    FetchClientIdAndIsActiveError,
+    GetParcelDataAndCountErrorType,
+    ParcelsTableRow,
+} from "./types";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
 import DeliveryIcon from "@/components/Icons/DeliveryIcon";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
@@ -83,10 +92,14 @@ export const getParcelDataErrorMessage = (
     }
 };
 
-export const getClientIdErrorMessage = (error: FetchClientIdError): string | null => {
+export const getClientIdAndIsActiveErrorMessage = (
+    error: FetchClientIdAndIsActiveError
+): string | null => {
     switch (error.type) {
-        case "failedClientIdFetch":
-            return `Failed to fetch client ID for the selected parcel. Please reload. Log ID: ${error.logId}`;
+        case "failedClientIdAndIsActiveFetch":
+            return `Failed to fetch client ID and is active for the selected parcel. Please reload. Log ID: ${error.logId}`;
+        case "noMatchingClient":
+            return `No matching client for the selected parcel. Please reload. Log ID: ${error.logId}`;
     }
 };
 
