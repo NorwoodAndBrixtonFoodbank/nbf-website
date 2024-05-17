@@ -148,7 +148,7 @@ interface Props<Data> {
     checkboxConfig: CheckboxConfig<Data>;
     paginationConfig: PaginationConfig;
     sortConfig: SortConfig<Data>;
-    parcelRowBreakPoints?: number[];
+    parcelRowBreakPoints?: number[]; //This is a list of indices where the line will be drawn when sorting by packing date/slot
     filterConfig: FilterConfig<Data>;
     defaultShownHeaders?: readonly (keyof Data)[];
     toggleableHeaders?: readonly (keyof Data)[];

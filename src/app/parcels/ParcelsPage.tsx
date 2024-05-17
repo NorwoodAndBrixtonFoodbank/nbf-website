@@ -47,7 +47,7 @@ import {
 } from "@/app/parcels/parcelsTableFilters";
 import { ActionsContainer } from "@/components/Form/formStyling";
 import { formatDateTime, formatDatetimeAsDate, nullPostcodeDisplay } from "@/common/format";
-import { toWeb } from "winston-cloudwatch";
+import { packingSlots } from "../../../supabase/seed/packingSlotsSeed.mjs";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", ""],
@@ -376,35 +376,45 @@ const ParcelsPage: React.FC<{}> = () => {
             setAreFiltersLoadingForFirstTime(false);
         })();
     }, []);
-
-    type columnHeaderPackingDateOrSlot = Pick<ParcelsTableRow, "packingDate" | "packingSlot">
-
-    const searchForParcelsRowBreakPoints = (
-        parcelsTableRows: ParcelsTableRow[],
-        columnHeader: keyof columnHeaderPackingDateOrSlot
-    ): number[] => {
-        let tempPackingSlot: string | null = parcelsTableRows[0].packingSlot;
-        let tempPackingDate: Date | null = parcelsTableRows[0].packingDate; 
-        let breakPointIndices: number[] = [];
-        
-        parcelsTableRows.forEach((row, index) => {
-            if (columnHeader === "packingDate") {
-                if (row[columnHeader]?.getDate() !== tempPackingDate?.getDate()) {
-                    breakPointIndices.push(index);
-                }
-                tempPackingDate = row[columnHeader];
+    
+    function getValueBoundaries<DataType>(values: (DataType | null)[]):number[] {
+        const valueSet = new Set(values)
+    
+        const boundaries: number[] = []
+        valueSet.forEach(value => {
+            if (value === values[0]) {
+                return
             }
-            if (columnHeader === "packingSlot") {
-                if (index === 0) {}
-                if (row[columnHeader] !== tempPackingSlot) {
-                    breakPointIndices.push(index);
-                }
-                tempPackingSlot = row[columnHeader];
+            
+            const indexOfFirstOccurrence = values.indexOf(value)
+            if (indexOfFirstOccurrence === -1) {
+                //
+            } else {
+                boundaries.push(indexOfFirstOccurrence)
             }
-           
-        });
-        return breakPointIndices;
+        })
+        return boundaries;
     }
+    
+    const searchForPackingSlotBreakPoints = (
+            parcelsTableRows: ParcelsTableRow[],
+        ): number[] => {
+            const packingSlotValues = parcelsTableRows.map((row) => {
+                return row.packingSlot;
+            })
+
+            return getValueBoundaries<string>(packingSlotValues);
+        }
+    
+    const searchForPackingDateBreakPoints = (
+            parcelsTableRows: ParcelsTableRow[],
+        ): number[] => {
+            const packingSlotValues = parcelsTableRows.map((row) => {
+                return row.packingDate?.getDate() ?? null;
+            })
+
+            return getValueBoundaries<number>(packingSlotValues);
+        }
 
     const fetchAndDisplayParcelsData = useCallback(async (): Promise<void> => {
         const allFilters = [...primaryFilters, ...additionalFilters];
@@ -437,9 +447,9 @@ const ParcelsPage: React.FC<{}> = () => {
                 setParcelsDataPortion(data.parcelTableRows);
                 setFilteredParcelCount(data.count);
                 if (sortedColumn === "packingSlot") {
-                    setParcelRowBreakPoints(searchForParcelsRowBreakPoints(data.parcelTableRows, "packingSlot"))
+                    setParcelRowBreakPoints(searchForPackingSlotBreakPoints(data.parcelTableRows))
                 } else if (sortedColumn === "packingDate"){
-                    setParcelRowBreakPoints(searchForParcelsRowBreakPoints(data.parcelTableRows, "packingDate"))
+                    setParcelRowBreakPoints(searchForPackingDateBreakPoints(data.parcelTableRows))
                 } else {
                     setParcelRowBreakPoints([])
                 }
