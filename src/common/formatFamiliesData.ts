@@ -30,7 +30,7 @@ const getChild = (child: Person): string => {
         child.birthMonth = null;
     }
 
-    const age = getChildAgeUsingBirthYearAndMonth(child.birthYear, child.birthMonth, true);
+    const age = getChildAgeUsingBirthYearAndMonth(child.birthYear, child.birthMonth ?? null, true);
 
     return `${age} ${gender}`;
 };
