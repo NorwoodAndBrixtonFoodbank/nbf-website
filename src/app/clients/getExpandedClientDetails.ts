@@ -7,6 +7,7 @@ import {
     getAdultAgeUsingBirthYear,
     getChildAgeUsingBirthYearAndMonth,
     isAdult,
+    isBaby,
 } from "@/common/getAgesOfFamily";
 import { getCurrentYear } from "@/common/date";
 
@@ -178,17 +179,14 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
     const childDetails = [];
 
     for (const familyMember of family) {
-        if (
-            familyMember.birth_year >= getCurrentYear() - 16 &&
-            familyMember.birth_year < getCurrentYear() - 2
-        ) {
+        if (!isAdult(familyMember.birth_year) && !isBaby(familyMember.birth_year)) {
             const age = getChildAgeUsingBirthYearAndMonth(
                 familyMember.birth_year,
                 familyMember.birth_month,
                 false
             );
             childDetails.push(`${age} ${familyMember.gender}`);
-        } else if (familyMember.birth_year >= getCurrentYear() - 2) {
+        } else if (isBaby(familyMember.birth_year)) {
             const age = getChildAgeUsingBirthYearAndMonth(
                 familyMember.birth_year,
                 familyMember.birth_month,
