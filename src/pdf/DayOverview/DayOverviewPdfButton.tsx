@@ -7,8 +7,8 @@ import PdfButton from "@/components/PdfButton/PdfButton";
 import DayOverviewPdf from "./DayOverviewPdf";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { PdfDataFetchResponse } from "../common";
-import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
 import { displayNameForDeletedClient } from "@/common/format";
+import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 
 interface Props {
     onPdfCreationCompleted: () => void;

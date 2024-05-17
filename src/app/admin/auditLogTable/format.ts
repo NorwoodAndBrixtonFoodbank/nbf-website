@@ -1,6 +1,6 @@
 import { capitaliseWords, formatBooleanOrNull, formatDateTime } from "@/common/format";
-import { AuditLogCountError, AuditLogError } from "./fetchAuditLogData";
 import { UserRole } from "@/databaseUtils";
+import { AuditLogError, AuditLogCountError } from "./types";
 
 export const auditLogTableColumnDisplayFunctions = {
     createdAt: formatDateTime,

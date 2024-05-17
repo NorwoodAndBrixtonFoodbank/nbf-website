@@ -8,7 +8,7 @@ import DriverOverviewPdf, { DriverOverviewTableData } from "@/pdf/DriverOverview
 import { logErrorReturnLogId } from "@/logger/logger";
 import { displayNameForDeletedClient, formatDateToDate } from "@/common/format";
 import { Dayjs } from "dayjs";
-import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
+import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 import { PdfDataFetchResponse } from "../common";
 
 interface DriverOverviewData {

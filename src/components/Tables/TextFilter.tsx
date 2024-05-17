@@ -1,15 +1,21 @@
 import React from "react";
 import styled from "styled-components";
 import FreeFormTextInput from "../DataInput/FreeFormTextInput";
-import { Filter, MethodConfig, defaultToString } from "./Filters";
+import {
+    ServerSideFilter,
+    defaultToString,
+    ServerSideFilterMethod,
+    ClientSideFilterMethod,
+    ClientSideFilter,
+} from "./Filters";
 import { TableHeaders } from "./Table";
 
-interface TextFilterProps<Data> {
+interface ServerSideTextFilterProps<Data, DbData extends Record<string, any>> {
     key: keyof Data;
     headers: TableHeaders<Data>;
     label: string;
     initialValue?: string;
-    methodConfig: MethodConfig<Data, string>;
+    method: ServerSideFilterMethod<DbData, string>;
 }
 
 const TextFilterStyling = styled.div`
@@ -18,17 +24,54 @@ const TextFilterStyling = styled.div`
     }
 `;
 
-export const buildTextFilter = <Data,>({
+export const buildServerSideTextFilter = <Data, DbData extends Record<string, any>>({
     key,
     label,
     initialValue = "",
-    methodConfig,
-}: TextFilterProps<Data>): Filter<Data, string> => {
+    method,
+}: ServerSideTextFilterProps<Data, DbData>): ServerSideFilter<Data, string, DbData> => {
     return {
         state: initialValue,
         initialState: initialValue,
         key: key,
-        methodConfig: methodConfig,
+        method: method,
+        filterComponent: (state, setState) => {
+            return (
+                <TextFilterStyling key={label}>
+                    <FreeFormTextInput
+                        key={label}
+                        value={state}
+                        label={label}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            setState(event.target.value);
+                        }}
+                    />
+                </TextFilterStyling>
+            );
+        },
+        areStatesIdentical: (stateA, stateB) => stateA === stateB,
+    };
+};
+
+interface ClientSideTextFilterProps<Data> {
+    key: keyof Data;
+    headers: TableHeaders<Data>;
+    label: string;
+    initialValue?: string;
+    method: ClientSideFilterMethod<Data, string>;
+}
+
+export const buildClientSideTextFilter = <Data,>({
+    key,
+    label,
+    initialValue = "",
+    method,
+}: ClientSideTextFilterProps<Data>): ClientSideFilter<Data, string> => {
+    return {
+        state: initialValue,
+        initialState: initialValue,
+        key: key,
+        method: method,
         filterComponent: (state, setState) => {
             return (
                 <TextFilterStyling key={label}>

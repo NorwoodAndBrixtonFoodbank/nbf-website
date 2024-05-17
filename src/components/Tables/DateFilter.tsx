@@ -1,12 +1,12 @@
 import React from "react";
-import { Filter, MethodConfig } from "./Filters";
+import { ServerSideFilter, ServerSideFilterMethod } from "./Filters";
 import DateRangeInputs, { DateRangeState } from "../DateRangeInputs/DateRangeInputs";
 import dayjs from "dayjs";
 
-interface DateFilterProps<Data> {
+interface DateFilterProps<Data, DbData extends Record<string, any>> {
     key: keyof Data;
     label: string;
-    methodConfig: MethodConfig<Data, DateRangeState>;
+    method: ServerSideFilterMethod<DbData, DateRangeState>;
     initialState: DateRangeState;
 }
 
@@ -24,16 +24,16 @@ const areDaysIdentical = (dayA: dayjs.Dayjs | null, dayB: dayjs.Dayjs | null): b
     return dayA && dayB ? dayA.isSame(dayB) : dayA === dayB;
 };
 
-export const dateFilter = <Data,>({
+export const serverSideDateFilter = <Data, DbData extends Record<string, any>>({
     key,
-    methodConfig,
+    method,
     initialState,
-}: DateFilterProps<Data>): Filter<Data, DateRangeState> => {
+}: DateFilterProps<Data, DbData>): ServerSideFilter<Data, DateRangeState, DbData> => {
     return {
         key: key,
         state: initialState,
         initialState: initialState,
-        methodConfig,
+        method,
         areStatesIdentical: (stateA, stateB) => areDateRangesIdentical(stateA, stateB),
         filterComponent: function (
             state: DateRangeState,

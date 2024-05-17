@@ -1,14 +1,9 @@
 "use client";
 
-import Table, { Row, SortOptions, SortState, TableHeaders } from "@/components/Tables/Table";
+import { Row, ServerPaginatedTable } from "@/components/Tables/Table";
 import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import styled, { useTheme } from "styled-components";
-import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
-import PhoneIcon from "@/components/Icons/PhoneIcon";
-import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
-import DeliveryIcon from "@/components/Icons/DeliveryIcon";
-import CollectionIcon from "@/components/Icons/CollectionIcon";
+import { useTheme } from "styled-components";
+import { ParcelsTableRow, ParcelsSortState, ParcelsFilter, SelectedClientDetails } from "./types";
 import ExpandedParcelDetails from "@/app/parcels/ExpandedParcelDetails";
 import ExpandedParcelDetailsFallback from "@/app/parcels/ExpandedParcelDetailsFallback";
 import Icon from "@/components/Icons/Icon";
@@ -20,246 +15,33 @@ import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
 import {
-    GetParcelDataAndCountErrorType,
+    getClientIdAndIsActive,
     getParcelIds,
     getParcelsByIds,
     getParcelsDataAndCount,
 } from "./fetchParcelTableData";
-import dayjs from "dayjs";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { StatusType, saveParcelStatus, SaveParcelStatusResult } from "./ActionBar/Statuses";
+import { StatusType, saveParcelStatus, SaveParcelStatusResult } from "../ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
-import { buildTextFilter } from "@/components/Tables/TextFilter";
 import { CircularProgress } from "@mui/material";
-import { logErrorReturnLogId } from "@/logger/logger";
-import { ErrorSecondaryText } from "../errorStylingandMessages";
+import { ErrorSecondaryText } from "../../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
-import {
-    buildDateFilter,
-    buildDeliveryCollectionFilter,
-    buildLastStatusFilter,
-    buildPackingSlotFilter,
-    familySearch,
-    fullNameSearch,
-    phoneSearch,
-    postcodeSearch,
-    voucherSearch,
-} from "@/app/parcels/parcelsTableFilters";
+import buildFilters from "@/app/parcels/parcelsTable/filters";
 import { ActionsContainer } from "@/components/Form/formStyling";
-import { formatDateTime, formatDatetimeAsDate, nullPostcodeDisplay } from "@/common/format";
-
-export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
-    ["iconsColumn", ""],
-    ["fullName", "Name"],
-    ["familyCategory", "Family"],
-    ["addressPostcode", "Postcode"],
-    ["phoneNumber", "Phone"],
-    ["voucherNumber", "Voucher"],
-    ["deliveryCollection", "Method"],
-    ["packingDate", "Packing Date"],
-    ["packingSlot", "Packing Slot"],
-    ["lastStatus", "Last Status"],
-    ["createdAt", "Created At"],
-];
-
-const defaultShownHeaders: (keyof ParcelsTableRow)[] = [
-    "iconsColumn",
-    "fullName",
-    "familyCategory",
-    "addressPostcode",
-    "deliveryCollection",
-    "packingDate",
-    "packingSlot",
-    "lastStatus",
-];
-
-const sortableColumns: SortOptions<ParcelsTableRow>[] = [
-    {
-        key: "fullName",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("client_full_name", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "familyCategory",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("family_count", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "addressPostcode",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("client_address_postcode", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "phoneNumber",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("client_phone_number", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "voucherNumber",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("voucher_number", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "deliveryCollection",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("collection_centre_name", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "packingDate",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query
-                    .order("packing_date", { ascending: sortDirection === "asc" })
-                    .order("packing_slot_order")
-                    .order("client_full_name"),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "packingSlot",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("packing_slot_order", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "lastStatus",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("last_status_workflow_order", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "createdAt",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("created_at", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-];
-
-const toggleableHeaders: (keyof ParcelsTableRow)[] = [
-    "fullName",
-    "familyCategory",
-    "addressPostcode",
-    "phoneNumber",
-    "voucherNumber",
-    "deliveryCollection",
-    "packingDate",
-    "packingSlot",
-    "lastStatus",
-    "createdAt",
-];
-
-const parcelTableColumnStyleOptions = {
-    iconsColumn: {
-        width: "4rem",
-    },
-    fullName: {
-        minWidth: "8rem",
-    },
-    familyCategory: {
-        hide: 550,
-    },
-    addressPostcode: {
-        hide: 800,
-    },
-    deliveryCollection: {
-        minWidth: "6rem",
-    },
-    packingDate: {
-        hide: 800,
-    },
-    packingSlot: {
-        hide: 800,
-        minWidth: "6rem",
-    },
-    lastStatus: {
-        minWidth: "8rem",
-    },
-};
-
-const PreTableControls = styled.div`
-    margin: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    align-items: stretch;
-    justify-content: space-between;
-`;
-
-function getSelectedParcelCountMessage(numberOfSelectedParcels: number): string | null {
-    if (numberOfSelectedParcels === 0) {
-        return null;
-    }
-    return numberOfSelectedParcels === 1
-        ? "1 parcel selected"
-        : `${numberOfSelectedParcels} parcels selected`;
-}
-
-interface SelectedClientDetails {
-    clientId: string;
-    isClientActive: boolean;
-}
-
-async function getClientIdAndIsActive(parcelId: string): Promise<SelectedClientDetails> {
-    const { data, error } = await supabase
-        .from("parcels")
-        .select("client_id, client:clients(is_active)")
-        .eq("primary_key", parcelId)
-        .single();
-
-    if (error) {
-        const message = `Failed to fetch client ID for a parcel with ID ${parcelId}`;
-        const logId = await logErrorReturnLogId(message, { error });
-        throw new Error(message + ` Log ID: ${logId}`);
-    }
-
-    if (data.client === null) {
-        const message = `Failed to find matching client for a parcel with ID ${parcelId}`;
-        const logId = await logErrorReturnLogId(message, { error });
-        throw new Error(message + ` Log ID: ${logId}`);
-    }
-
-    return { clientId: data.client_id, isClientActive: data.client.is_active };
-}
-
-function getParcelDataErrorMessage(errorType: GetParcelDataAndCountErrorType): string | null {
-    switch (errorType) {
-        case "unknownError":
-            return "Unknown error has occurred. Please reload.";
-        case "failedToFetchParcels":
-            return "Failed to fetch parcels. Please reload.";
-        case "abortedFetch":
-            return null;
-    }
-}
-
-const parcelIdParam = "parcelId";
-
-const defaultNumberOfParcelsPerPage = 100;
-const numberOfParcelsPerPageOptions = [10, 25, 50, 100];
+import parcelsSortableColumns from "./sortableColumns";
+import {
+    parcelIdParam,
+    defaultNumberOfParcelsPerPage,
+    numberOfParcelsPerPageOptions,
+} from "./constants";
+import { parcelTableHeaderKeysAndLabels, defaultShownHeaders, toggleableHeaders } from "./headers";
+import {
+    getSelectedParcelCountMessage,
+    getParcelDataErrorMessage,
+    parcelTableColumnDisplayFunctions,
+    getClientIdErrorMessage,
+} from "./format";
+import { PreTableControls, parcelTableColumnStyleOptions } from "./styles";
+import { DbParcelRow } from "@/databaseUtils";
 
 const ParcelsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -280,37 +62,38 @@ const ParcelsPage: React.FC<{}> = () => {
     const searchParams = useSearchParams();
     const parcelId = searchParams.get(parcelIdParam);
 
-    const [sortState, setSortState] = useState<SortState<ParcelsTableRow>>({ sortEnabled: false });
+    const [sortState, setSortState] = useState<ParcelsSortState>({ sortEnabled: false });
 
     const [parcelCountPerPage, setParcelCountPerPage] = useState(defaultNumberOfParcelsPerPage);
     const [currentPage, setCurrentPage] = useState(1);
     const startPoint = (currentPage - 1) * parcelCountPerPage;
     const endPoint = currentPage * parcelCountPerPage - 1;
 
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<ParcelsTableRow, any>[]>([]);
-    const [additionalFilters, setAdditionalFilters] = useState<Filter<ParcelsTableRow, any>[]>([]);
+    const [primaryFilters, setPrimaryFilters] = useState<ParcelsFilter<any>[]>([]);
+    const [additionalFilters, setAdditionalFilters] = useState<ParcelsFilter<any>[]>([]);
 
     const [areFiltersLoadingForFirstTime, setAreFiltersLoadingForFirstTime] =
         useState<boolean>(true);
 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+    const [modalErrorMessage, setModalErrorMessage] = useState<string | null>(null);
+
     const parcelsTableFetchAbortController = useRef<AbortController | null>(null);
 
     const selectedParcelMessage = getSelectedParcelCountMessage(checkedParcelIds.length);
 
-    const fetchAndSetClientDetailsForSelectedParcel = useCallback((): void => {
+    const fetchAndSetClientDetailsForSelectedParcel = useCallback(async (): Promise<void> => {
         if (parcelId === null) {
             return;
         }
 
-        getClientIdAndIsActive(parcelId)
-            .then((data) => setSelectedClientDetails(data))
-            .catch((error) => {
-                if (error instanceof Error) {
-                    setErrorMessage(error.message);
-                }
-            });
+        const { data, error } = await getClientIdAndIsActive(parcelId);
+        if (error) {
+            setModalErrorMessage(getClientIdErrorMessage(error));
+        } else {
+            setSelectedClientDetails(data);
+        }
     }, [parcelId]);
 
     useEffect(() => {
@@ -326,56 +109,6 @@ const ParcelsPage: React.FC<{}> = () => {
     }, [fetchAndSetClientDetailsForSelectedParcel]);
 
     useEffect(() => {
-        const buildFilters = async (): Promise<{
-            primaryFilters: Filter<ParcelsTableRow, any>[];
-            additionalFilters: Filter<ParcelsTableRow, any>[];
-        }> => {
-            const today = dayjs();
-            const dateFilter = buildDateFilter({
-                from: today,
-                to: today,
-            });
-            const primaryFilters: Filter<ParcelsTableRow, any>[] = [
-                dateFilter,
-                buildTextFilter({
-                    key: "fullName",
-                    label: "Name",
-                    headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { paginationType: PaginationType.Server, method: fullNameSearch },
-                }),
-                buildTextFilter({
-                    key: "addressPostcode",
-                    label: "Postcode",
-                    headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { paginationType: PaginationType.Server, method: postcodeSearch },
-                }),
-                await buildDeliveryCollectionFilter(),
-            ];
-
-            const additionalFilters = [
-                buildTextFilter({
-                    key: "familyCategory",
-                    label: "Family",
-                    headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { paginationType: PaginationType.Server, method: familySearch },
-                }),
-                buildTextFilter({
-                    key: "phoneNumber",
-                    label: "Phone",
-                    headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { paginationType: PaginationType.Server, method: phoneSearch },
-                }),
-                buildTextFilter({
-                    key: "voucherNumber",
-                    label: "Voucher",
-                    headers: parcelTableHeaderKeysAndLabels,
-                    methodConfig: { paginationType: PaginationType.Server, method: voucherSearch },
-                }),
-                await buildLastStatusFilter(),
-                await buildPackingSlotFilter(),
-            ];
-            return { primaryFilters: primaryFilters, additionalFilters: additionalFilters };
-        };
         (async () => {
             setAreFiltersLoadingForFirstTime(true);
             const filtersObject = await buildFilters();
@@ -506,68 +239,6 @@ const ParcelsPage: React.FC<{}> = () => {
         }
     }, [filteredParcelCount, checkedParcelIds, isAllCheckBoxSelected]);
 
-    const rowToIconsColumn = ({
-        flaggedForAttention,
-        requiresFollowUpPhoneCall,
-    }: ParcelsTableRow["iconsColumn"]): React.ReactElement => {
-        return (
-            <>
-                {flaggedForAttention && <FlaggedForAttentionIcon />}
-                {requiresFollowUpPhoneCall && <PhoneIcon color={theme.main.largeForeground[0]} />}
-            </>
-        );
-    };
-
-    const rowToDeliveryCollectionColumn = (
-        collectionData: ParcelsTableRow["deliveryCollection"]
-    ): React.ReactElement => {
-        const { collectionCentreName, collectionCentreAcronym, congestionChargeApplies } =
-            collectionData;
-        if (collectionCentreName === "Delivery") {
-            return (
-                <>
-                    <DeliveryIcon color={theme.main.largeForeground[0]} />
-                    {congestionChargeApplies && <CongestionChargeAppliesIcon />}
-                </>
-            );
-        }
-
-        return (
-            <>
-                <CollectionIcon
-                    color={theme.main.largeForeground[0]}
-                    collectionPoint={collectionCentreName}
-                />
-                {collectionCentreAcronym}
-            </>
-        );
-    };
-
-    const rowToLastStatusColumn = (data: ParcelsTableRow["lastStatus"] | null): string => {
-        if (!data) {
-            return "";
-        }
-        const { name, eventData, timestamp } = data;
-        return (
-            `${name}` +
-            (eventData ? ` (${eventData})` : "") +
-            ` @ ${formatDatetimeAsDate(timestamp)}`
-        );
-    };
-
-    const formatNullPostcode = (postcodeData: ParcelsTableRow["addressPostcode"]): string => {
-        return postcodeData ?? nullPostcodeDisplay;
-    };
-
-    const parcelTableColumnDisplayFunctions = {
-        iconsColumn: rowToIconsColumn,
-        deliveryCollection: rowToDeliveryCollectionColumn,
-        packingDate: formatDatetimeAsDate,
-        lastStatus: rowToLastStatusColumn,
-        addressPostcode: formatNullPostcode,
-        createdAt: formatDateTime,
-    };
-
     const onParcelTableRowClick = (row: Row<ParcelsTableRow>): void => {
         setSelectedParcelId(row.data.parcelId);
         router.push(`/parcels?${parcelIdParam}=${row.data.parcelId}`);
@@ -620,7 +291,7 @@ const ParcelsPage: React.FC<{}> = () => {
                 <>
                     {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
                     <TableSurface>
-                        <Table
+                        <ServerPaginatedTable<ParcelsTableRow, DbParcelRow>
                             dataPortion={parcelsDataPortion}
                             isLoading={isLoading}
                             paginationConfig={{
@@ -637,7 +308,7 @@ const ParcelsPage: React.FC<{}> = () => {
                             onRowClick={onParcelTableRowClick}
                             sortConfig={{
                                 sortPossible: true,
-                                sortableColumns: sortableColumns,
+                                sortableColumns: parcelsSortableColumns,
                                 setSortState: setSortState,
                             }}
                             filterConfig={{
@@ -709,6 +380,9 @@ const ParcelsPage: React.FC<{}> = () => {
                                         </>
                                     )}
                                 </Centerer>
+                                {modalErrorMessage && (
+                                    <ErrorSecondaryText>{modalErrorMessage}</ErrorSecondaryText>
+                                )}
                             </ButtonsDiv>
                         </OutsideDiv>
                     </Modal>

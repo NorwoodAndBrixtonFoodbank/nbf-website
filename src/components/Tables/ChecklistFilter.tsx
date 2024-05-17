@@ -2,28 +2,28 @@
 
 import React from "react";
 import CheckboxGroupPopup from "../DataInput/CheckboxGroupPopup";
-import { Filter, MethodConfig } from "./Filters";
+import { ServerSideFilter, ServerSideFilterMethod } from "./Filters";
 
-interface ChecklistFilterProps<Data> {
+interface ChecklistFilterProps<Data, DbData extends Record<string, any> = {}> {
     key: keyof Data;
     filterLabel: string;
     itemLabelsAndKeys: [string, string][];
     initialCheckedKeys: string[];
-    methodConfig: MethodConfig<Data, string[]>;
+    method: ServerSideFilterMethod<DbData, string[]>;
 }
 
-export const checklistFilter = <Data,>({
+export const serverSideChecklistFilter = <Data, DbData extends Record<string, any> = {}>({
     key,
     filterLabel,
     itemLabelsAndKeys,
     initialCheckedKeys,
-    methodConfig,
-}: ChecklistFilterProps<Data>): Filter<Data, string[]> => {
+    method,
+}: ChecklistFilterProps<Data, DbData>): ServerSideFilter<Data, string[], DbData> => {
     return {
         key: key,
         state: initialCheckedKeys,
         initialState: initialCheckedKeys,
-        methodConfig,
+        method,
         areStatesIdentical: (stateA, stateB) =>
             stateA.length === stateB.length && stateA.every((optionA) => stateB.includes(optionA)),
         filterComponent: function (
