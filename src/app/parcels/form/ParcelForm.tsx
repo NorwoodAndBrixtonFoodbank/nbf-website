@@ -187,7 +187,15 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         setSubmitDisabled(true);
         let inputError;
         if (fields.shippingMethod === "Collection") {
-            inputError = checkErrorOnSubmit(formErrors, setFormErrors);
+            inputError = checkErrorOnSubmit(formErrors, setFormErrors, [
+                "voucherNumber",
+                "packingDate",
+                "packingSlot",
+                "shippingMethod",
+                "collectionDate",
+                "collectionTime",
+                "collectionCentre",
+            ]);
         } else {
             inputError = checkErrorOnSubmit(formErrors, setFormErrors, [
                 "voucherNumber",
