@@ -25,7 +25,7 @@ const deleteClient = async (clientId: string): Promise<DeleteClientResponse> => 
             error: deleteClientError,
         });
         void sendAuditLog({ ...baseAuditLogProps, wasSuccess: false, logId });
-        return { error: { type: "failedClientDeletion", logId: logId } };
+        return { error: { type: "failedClientDeletion", logId } };
     }
 
     void sendAuditLog({ ...baseAuditLogProps, wasSuccess: true });
