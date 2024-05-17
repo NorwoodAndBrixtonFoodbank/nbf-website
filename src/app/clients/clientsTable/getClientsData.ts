@@ -1,61 +1,31 @@
-import { ClientsTableRow } from "@/app/clients/ClientsPage";
 import { familyCountToFamilyCategory } from "@/app/clients/getExpandedClientDetails";
 import { Supabase } from "@/supabaseUtils";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { SortState } from "@/components/Tables/Table";
-
-type GetClientsDataAndCountErrorType =
-    | "abortedFetchingClientsTable"
-    | "abortedFetchingClientsTableCount"
-    | "failedToFetchClientsTable"
-    | "failedToFetchClientsTableCount";
-
-type GetClientsReturnType =
-    | {
-          error: null;
-          data: {
-              clientData: ClientsTableRow[];
-              count: number;
-          };
-      }
-    | {
-          error: { type: GetClientsDataAndCountErrorType; logId: string };
-          data: null;
-      };
-
-type GetClientsCountReturnType =
-    | {
-          error: { type: GetClientsDataAndCountErrorType; logId: string };
-          data: null;
-      }
-    | {
-          error: null;
-          data: number;
-      };
+import {
+    ClientsFilter,
+    ClientsSortState,
+    ClientsTableRow,
+    GetClientsCountReturnType,
+    GetClientsReturnType,
+} from "./types";
 
 const getClientsDataAndCount = async (
     supabase: Supabase,
     startIndex: number,
     endIndex: number,
-    filters: Filter<ClientsTableRow, any>[],
-    sortState: SortState<ClientsTableRow>,
+    filters: ClientsFilter[],
+    sortState: ClientsSortState,
     abortSignal: AbortSignal
 ): Promise<GetClientsReturnType> => {
     let query = supabase.from("clients_plus").select("*");
 
-    if (
-        sortState.sortEnabled &&
-        sortState.column.sortMethodConfig?.paginationType === PaginationType.Server
-    ) {
-        query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
+    if (sortState.sortEnabled && sortState.column.sortMethod) {
+        query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
         query = query.order("full_name");
     }
     filters.forEach((filter) => {
-        if (filter.methodConfig.paginationType === PaginationType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
+        query = filter.method(query, filter.state);
     });
 
     query.order("client_id");
@@ -103,15 +73,13 @@ const getClientsDataAndCount = async (
 
 const getClientsCount = async (
     supabase: Supabase,
-    filters: Filter<ClientsTableRow, any>[],
+    filters: ClientsFilter[],
     abortSignal: AbortSignal
 ): Promise<GetClientsCountReturnType> => {
     let query = supabase.from("clients_plus").select("*", { count: "exact", head: true });
 
     filters.forEach((filter) => {
-        if (filter.methodConfig.paginationType === PaginationType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
+        query = filter.method(query, filter.state);
     });
 
     query = query.abortSignal(abortSignal);

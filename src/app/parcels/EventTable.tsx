@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Table, { TableHeaders } from "@/components/Tables/Table";
+import { ClientPaginatedTable, TableHeaders } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
 
 export interface EventTableRow {
@@ -32,7 +32,7 @@ const EventTable: React.FC<EventTableProps> = (props) => {
     return (
         <>
             <TableSurface>
-                <Table
+                <ClientPaginatedTable
                     dataPortion={props.tableData}
                     headerKeysAndLabels={eventsTableHeaderKeysAndLabels}
                     columnDisplayFunctions={eventsTableColumnDisplayFunctions}

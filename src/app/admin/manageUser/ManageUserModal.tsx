@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { UserRow } from "@/app/admin/page";
+import { UserRow } from "../usersTable/types";
 import Modal from "@/components/Modal/Modal";
 import styled from "styled-components";
 import ResetPasswordForm from "@/app/admin/manageUser/ResetPasswordForm";

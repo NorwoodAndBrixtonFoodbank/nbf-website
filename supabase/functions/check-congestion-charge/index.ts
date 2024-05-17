@@ -26,9 +26,10 @@ serve(async (req: Handler): Promise<Response> => {
 
         const { data, error } = await supabase.storage
             .from("public")
-            .download("public/congestion-zone-postcodes.txt");
+            .download("congestion-charge/congestion-zone-postcodes.txt");
 
         if (error) {
+            console.error(error);
             return new Response(
                 JSON.stringify({ error: error.message }),
                 generateCorsOptionsForJsonResponse(400)
@@ -44,6 +45,7 @@ serve(async (req: Handler): Promise<Response> => {
 
         return new Response(JSON.stringify(result), generateCorsOptionsForJsonResponse(200));
     } catch (error) {
+        console.error(error);
         return new Response(JSON.stringify(error), generateCorsOptionsForJsonResponse(400));
     }
 });
