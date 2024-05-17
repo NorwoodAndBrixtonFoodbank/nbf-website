@@ -157,7 +157,6 @@ interface Props<Data, DbData extends Record<string, any>, PaginationType> {
     editableConfig: EditableConfig<Data>;
     onRowClick?: OnRowClickFunction<Data>;
     pointerOnHover?: boolean;
-    setSortedColumn?: (sortedColumn: string) => void;
 }
 interface CellProps<Data> {
     row: Row<Data>;
@@ -220,7 +219,6 @@ const Table = <
     paginationConfig,
     editableConfig,
     pointerOnHover,
-    setSortedColumn,
 }: Props<Data, DbData, PaginationType>): React.ReactElement => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
@@ -282,9 +280,6 @@ const Table = <
                 column: column,
                 sortDirection: sortDirection,
             });
-            if (setSortedColumn) {
-                setSortedColumn(column.sortField ?? "");
-            }
         }
     };
 
@@ -433,7 +428,7 @@ const Table = <
                 setShownHeaderKeys={setShownHeaderKeys}
                 shownHeaderKeys={shownHeaderKeys}
             />
-            <TableStyling parcelRowBreakPoints={parcelRowBreakPoints}>
+            <TableStyling rowBreakPoints={parcelRowBreakPoints}>
                 <NoSsr>
                     <DataTable
                         columns={columns}
@@ -505,7 +500,7 @@ const StyledIcon = styled(Icon)`
     margin: 0;
 `;
 
-const TableStyling = styled.div<{ parcelRowBreakPoints?: number[] }>`
+const TableStyling = styled.div<{ rowBreakPoints?: number[] }>`
     // the component with the filter bars
     & > header {
         background-color: transparent;
@@ -627,7 +622,7 @@ const TableStyling = styled.div<{ parcelRowBreakPoints?: number[] }>`
     }
 
     ${(props) =>
-        props.parcelRowBreakPoints
+        props.rowBreakPoints
             ?.map(
                 (breakPoint) =>
                     `& .rdt_TableRow:nth-child(${breakPoint + 1}) {

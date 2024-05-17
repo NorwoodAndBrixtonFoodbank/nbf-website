@@ -42,6 +42,7 @@ import {
 } from "./format";
 import { PreTableControls, parcelTableColumnStyleOptions } from "./styles";
 import { DbParcelRow } from "@/databaseUtils";
+import { searchForBreakPoints } from "./conditionalStyling";
 
 const ParcelsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -50,8 +51,6 @@ const ParcelsPage: React.FC<{}> = () => {
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [clientIdForSelectedParcel, setClientIdForSelectedParcel] = useState<string | null>(null);
     const [parcelRowBreakPoints, setParcelRowBreakPoints] = useState<number[]>([]);
-
-    const [sortedColumn, setSortedColumn] = useState<string>("");
 
     const [checkedParcelIds, setCheckedParcelIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
@@ -120,41 +119,6 @@ const ParcelsPage: React.FC<{}> = () => {
         })();
     }, []);
 
-    function getValueBoundaries<DataType>(values: (DataType | null)[]): number[] {
-        const valueSet = new Set(values);
-
-        const boundaries: number[] = [];
-        valueSet.forEach((value) => {
-            if (value === values[0]) {
-                return;
-            }
-
-            const indexOfFirstOccurrence = values.indexOf(value);
-            if (indexOfFirstOccurrence === -1) {
-                //
-            } else {
-                boundaries.push(indexOfFirstOccurrence);
-            }
-        });
-        return boundaries;
-    }
-
-    const searchForPackingSlotBreakPoints = (parcelsTableRows: ParcelsTableRow[]): number[] => {
-        const packingSlotValues = parcelsTableRows.map((row) => {
-            return row.packingSlot;
-        });
-
-        return getValueBoundaries<string>(packingSlotValues);
-    };
-
-    const searchForPackingDateBreakPoints = (parcelsTableRows: ParcelsTableRow[]): number[] => {
-        const packingSlotValues = parcelsTableRows.map((row) => {
-            return row.packingDate?.getDate() ?? null;
-        });
-
-        return getValueBoundaries<number>(packingSlotValues);
-    };
-
     const fetchAndDisplayParcelsData = useCallback(async (): Promise<void> => {
         const allFilters = [...primaryFilters, ...additionalFilters];
 
@@ -185,19 +149,17 @@ const ParcelsPage: React.FC<{}> = () => {
             } else {
                 setParcelsDataPortion(data.parcelTableRows);
                 setFilteredParcelCount(data.count);
-                if (sortedColumn === "packingSlot") {
-                    setParcelRowBreakPoints(searchForPackingSlotBreakPoints(data.parcelTableRows));
-                } else if (sortedColumn === "packingDate") {
-                    setParcelRowBreakPoints(searchForPackingDateBreakPoints(data.parcelTableRows));
-                } else {
-                    setParcelRowBreakPoints([]);
+                if (sortState.sortEnabled && sortState.column.sortField) {
+                    setParcelRowBreakPoints(
+                        searchForBreakPoints(sortState.column.sortField, data.parcelTableRows)
+                    );
                 }
             }
 
             parcelsTableFetchAbortController.current = null;
             setIsLoading(false);
         }
-    }, [additionalFilters, endPoint, primaryFilters, sortState, startPoint, sortedColumn]);
+    }, [additionalFilters, endPoint, primaryFilters, sortState, startPoint]);
 
     useEffect(() => {
         if (!areFiltersLoadingForFirstTime) {
@@ -378,7 +340,6 @@ const ParcelsPage: React.FC<{}> = () => {
                             }}
                             editableConfig={{ editable: false }}
                             pointerOnHover={true}
-                            setSortedColumn={setSortedColumn}
                         />
                     </TableSurface>
                     <Modal
