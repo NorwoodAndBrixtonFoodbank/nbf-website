@@ -11,4 +11,6 @@
   `npm post_checkout; npm run build; npm run test:e2e`
 
 ## Tests failing on github: Failed to start supabase container
+- You may get a failed Start local Supabase instance:
+```failed to start docker container: Error response from daemon: driver failed programming external connectivity on endpoint supabase_db_vauxhall-foodbank ```
 - Sometimes this can happen and usually works on re-run of the test
