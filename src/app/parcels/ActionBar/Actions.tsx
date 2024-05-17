@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
@@ -14,6 +14,7 @@ import GenerateMapModal from "./ActionModals/GenerateMapModal";
 import ShippingLabelModal from "./ActionModals/ShippingLabelModal";
 import ShoppingListModal from "./ActionModals/ShoppingListModal";
 import { UpdateParcelStatuses } from "./ActionAndStatusBar";
+import { checkUserIsAdmin } from "@/app/parcels/ActionBar/ActionModals/adminActions";
 
 const isNotAtLeastOne = (value: number): boolean => {
     return value < 1;
@@ -35,7 +36,7 @@ type AvailableActionsType = {
     };
 };
 
-export const availableActions: AvailableActionsType = {
+export const adminAvailableActions: AvailableActionsType = {
     "Download Day Overview": {
         newStatus: "Day Overview Downloaded",
     },
@@ -53,6 +54,24 @@ export const availableActions: AvailableActionsType = {
     },
     "Delete Parcel": {
         newStatus: "Parcel Deleted",
+    },
+};
+
+export const nonAdminAvailableActions: Omit<AvailableActionsType, "Delete Parcel"> = {
+    "Download Day Overview": {
+        newStatus: "Day Overview Downloaded",
+    },
+    "Download Shopping Lists": {
+        newStatus: "Shopping List Downloaded",
+    },
+    "Download Shipping Labels": {
+        newStatus: "Shipping Labels Downloaded",
+    },
+    "Generate Map": {
+        newStatus: "Map Generated",
+    },
+    "Download Driver Overview": {
+        newStatus: "Driver Overview Downloaded",
     },
 };
 
@@ -93,6 +112,20 @@ const Actions: React.FC<Props> = ({
 }) => {
     const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
     const [modalToDisplay, setModalToDisplay] = useState<ActionName | null>(null);
+    const [userIsAdmin, setUserIsAdmin] = useState<boolean>(false);
+
+    useEffect(() => {
+        const isAdmin = async (): Promise<void> => {
+            const { isSuccess, failureReason } = await checkUserIsAdmin();
+            if (failureReason) {
+                setModalError(`Error authenticating as admin: ${failureReason}`);
+            } else {
+                setUserIsAdmin(isSuccess);
+            }
+        };
+
+        void isAdmin();
+    }, []);
 
     const onModalClose = (): void => {
         setModalToDisplay(null);
@@ -126,21 +159,23 @@ const Actions: React.FC<Props> = ({
 
     return (
         <>
-            {Object.entries(availableActions).map(([key, value]) => {
-                return (
-                    modalToDisplay === key &&
-                    getActionModal(key, {
-                        isOpen: true,
-                        onClose: onModalClose,
-                        selectedParcels: selectedParcels,
-                        header: modalToDisplay,
-                        headerId: "action-modal-header",
-                        actionName: modalToDisplay,
-                        updateParcelStatuses: updateParcelStatuses,
-                        newStatus: value.newStatus,
-                    })
-                );
-            })}
+            {Object.entries(userIsAdmin ? adminAvailableActions : nonAdminAvailableActions).map(
+                ([key, value]) => {
+                    return (
+                        modalToDisplay === key &&
+                        getActionModal(key, {
+                            isOpen: true,
+                            onClose: onModalClose,
+                            selectedParcels: selectedParcels,
+                            header: modalToDisplay,
+                            headerId: "action-modal-header",
+                            actionName: modalToDisplay,
+                            updateParcelStatuses: updateParcelStatuses,
+                            newStatus: value.newStatus,
+                        })
+                    );
+                }
+            )}
             {actionAnchorElement && (
                 <Menu
                     open
@@ -148,7 +183,9 @@ const Actions: React.FC<Props> = ({
                     anchorEl={actionAnchorElement}
                 >
                     <MenuList id="action-menu">
-                        {Object.entries(availableActions).map(([key]) => {
+                        {Object.entries(
+                            userIsAdmin ? adminAvailableActions : nonAdminAvailableActions
+                        ).map(([key]) => {
                             return (
                                 <MenuItem
                                     key={key}

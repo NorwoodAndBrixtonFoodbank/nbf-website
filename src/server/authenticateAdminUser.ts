@@ -1,7 +1,7 @@
 import { getSupabaseServerComponentClient } from "@/supabaseServer";
 import { fetchUserRole } from "@/common/fetchUserRole";
 
-type Authenticated =
+export type Authenticated =
     | {
           isSuccess: true;
           failureReason: null;
@@ -11,7 +11,7 @@ type Authenticated =
           failureReason: FailureReason;
       };
 
-type FailureReason =
+export type FailureReason =
     | "unauthenticated"
     | "unauthorised"
     | "fetch user error"
