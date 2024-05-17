@@ -88,7 +88,7 @@ export const phoneSearch = (
     if (state === "") {
         return query;
     }
-    if ("-".toLowerCase().includes(state.toLowerCase())) {
+    if ("-".includes(state.toLowerCase())) {
         return query.or(`client_phone_number.ilike.%${state}%, client_phone_number.is.null`);
     }
     return query.ilike("client_phone_number", `%${state}%`);

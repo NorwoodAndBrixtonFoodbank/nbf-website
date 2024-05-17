@@ -33,7 +33,7 @@ export interface ParcelsTableRow {
     };
     packingDate: Date | null;
     createdAt: Date | null;
-    clientIsActive: boolean | null;
+    clientIsActive: boolean;
 }
 
 type ProcessParcelDataResult =
@@ -102,7 +102,7 @@ export const processingDataToParcelsTableData = async (
                         : false,
                 },
                 createdAt: parcel.created_at ? new Date(parcel.created_at) : null,
-                clientIsActive: parcel.client_is_active,
+                clientIsActive: parcel.client_is_active ?? false,
             };
         }),
         error: null,

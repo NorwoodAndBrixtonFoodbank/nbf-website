@@ -103,7 +103,7 @@ const getExpandedParcelDetails = async (
         };
     }
 
-    const clientIsActive = rawParcelDetails.client?.is_active;
+    const clientIsActive = client.is_active;
 
     if (clientIsActive) {
         return {

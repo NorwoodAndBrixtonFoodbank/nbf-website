@@ -75,6 +75,7 @@ const getPdfErrorMessage = (error: ShoppingListPdfError): string => {
             break;
         case "inactiveClient":
             errorMessage = "One or more selected parcels belong to inactive clients.";
+            break;
     }
     return `${errorMessage} LogId: ${error.logId}`;
 };

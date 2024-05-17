@@ -70,7 +70,7 @@ export const getParcelOverviewString = (
     addressPostcode: string | null,
     fullName: string | null,
     collectionDatetime: Date | null,
-    clientIsActive?: boolean | null
+    clientIsActive: boolean
 ): string => {
     if (clientIsActive) {
         return (

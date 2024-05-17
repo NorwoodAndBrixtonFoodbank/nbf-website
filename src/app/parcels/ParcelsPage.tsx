@@ -236,7 +236,7 @@ async function getClientIdAndIsActive(parcelId: string): Promise<SelectedClientD
         throw new Error(message + ` Log ID: ${logId}`);
     }
 
-    if (data.client == null) {
+    if (data.client === null) {
         const message = `Failed to find matching client for a parcel with ID ${parcelId}`;
         const logId = await logErrorReturnLogId(message, { error });
         throw new Error(message + ` Log ID: ${logId}`);

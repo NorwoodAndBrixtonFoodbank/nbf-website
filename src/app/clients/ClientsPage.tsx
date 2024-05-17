@@ -217,12 +217,11 @@ const ClientsPage: React.FC<{}> = () => {
         if (clientId) {
             setDeleteClientErrorMessage(null);
             const { error: deleteClientError } = await deleteClient(clientId);
+            setIsDeleteClientDialogOpen(false);
             if (deleteClientError) {
                 setDeleteClientErrorMessage(getDeleteClientErrorMessage(deleteClientError));
-                setIsDeleteClientDialogOpen(false);
                 return;
             }
-            setIsDeleteClientDialogOpen(false);
             router.push("/clients");
         }
     };

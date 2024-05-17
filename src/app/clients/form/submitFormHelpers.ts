@@ -151,7 +151,9 @@ export const submitEditClientForm = async (
     }
 
     if (clientDataAndCount.updatedrows === 0) {
-        const logId = await logWarningReturnLogId("Concurrent editing of client");
+        const logId = await logWarningReturnLogId(
+            "Concurrent editing of client or editing deleted client"
+        );
         await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
         return { clientId: null, error: { type: "noRowsUpdated", logId } };
     }
