@@ -1,10 +1,10 @@
 import { ParcelsTableRow } from "./types";
 
 const getRowBoundaries = (columnValues: (string | number | null)[]): number[] => {
-    const distinctColumnValues = new Set(columnValues);
+    const setOfDistinctColumnValues = new Set(columnValues);
 
     const boundaries: number[] = [];
-    distinctColumnValues.forEach((columnValue) => {
+    setOfDistinctColumnValues.forEach((columnValue) => {
         if (columnValue === columnValues[0]) {
             return;
         }

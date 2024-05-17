@@ -149,7 +149,7 @@ interface Props<Data, DbData extends Record<string, any>, PaginationType> {
             ? ClientSideFilter<Data, any>
             : ServerSideFilter<Data, any, DbData>
     >;
-    parcelRowBreakPoints?: number[]; //This is a list of indices where the line will be drawn when sorting by packing date/slot
+    rowBreakPoints?: number[];
     defaultShownHeaders?: readonly (keyof Data)[];
     toggleableHeaders?: readonly (keyof Data)[];
     columnDisplayFunctions?: ColumnDisplayFunctions<Data>;
@@ -214,7 +214,7 @@ const Table = <
     columnStyleOptions = {},
     checkboxConfig,
     sortConfig,
-    parcelRowBreakPoints,
+    rowBreakPoints,
     filterConfig,
     paginationConfig,
     editableConfig,
@@ -428,7 +428,7 @@ const Table = <
                 setShownHeaderKeys={setShownHeaderKeys}
                 shownHeaderKeys={shownHeaderKeys}
             />
-            <TableStyling rowBreakPoints={parcelRowBreakPoints}>
+            <TableStyling rowBreakPoints={rowBreakPoints}>
                 <NoSsr>
                     <DataTable
                         columns={columns}

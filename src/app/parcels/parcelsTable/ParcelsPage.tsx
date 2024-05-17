@@ -317,7 +317,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                 sortableColumns: parcelsSortableColumns,
                                 setSortState: setSortState,
                             }}
-                            parcelRowBreakPoints={parcelRowBreakPoints}
+                            rowBreakPoints={parcelRowBreakPoints}
                             filterConfig={{
                                 primaryFiltersShown: true,
                                 additionalFiltersShown: true,
