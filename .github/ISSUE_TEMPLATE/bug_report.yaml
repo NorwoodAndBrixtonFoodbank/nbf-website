@@ -2,7 +2,7 @@ name: Bug Report
 description: File a bug report
 labels: ["bug"]
 assignees:
-  - rickaw
+  - 8kristy
 body:
   - type: markdown
     attributes:
