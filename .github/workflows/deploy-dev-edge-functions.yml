@@ -13,7 +13,7 @@ env:
   SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_DEV_ACCESS_TOKEN }}
 
 jobs:
-  deploy-dev-database:
+  deploy-dev-edge-functions:
     name: Deploy edge functions to dev
     environment: dev
     runs-on: ubuntu-latest

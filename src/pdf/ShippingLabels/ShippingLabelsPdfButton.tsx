@@ -126,6 +126,7 @@ const getRequiredData = async (
         parcelDataList.push({
             label_quantity: labelQuantity,
             parcel_id: parcelId,
+            packing_date: parcel.packing_date ?? "",
             packing_slot: parcel.packing_slot?.name ?? "",
             collection_centre: parcel.collection_centre?.acronym ?? "",
             collection_datetime: formatDatetime(parcel.collection_datetime),
