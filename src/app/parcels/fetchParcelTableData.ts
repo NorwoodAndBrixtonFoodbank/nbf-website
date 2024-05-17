@@ -275,7 +275,10 @@ export const getParcelsByIds = async (
         await getCongestionChargeDetailsForParcelsTable(data);
 
     if (congestionChargeError) {
-        const logId = await logErrorReturnLogId("Error retrieving congestion charge details", congestionChargeError);
+        const logId = await logErrorReturnLogId(
+            "Error retrieving congestion charge details",
+            congestionChargeError
+        );
         throw new EdgeFunctionError("congestion charge check", logId);
     }
 
