@@ -10,5 +10,6 @@ export const collectionCentres = [
     {
         name: "Delivery",
         acronym: "DLVR",
+        isDelivery: true,
     },
 ];

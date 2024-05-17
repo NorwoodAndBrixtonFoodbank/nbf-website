@@ -258,18 +258,21 @@ export type Database = {
       collection_centres: {
         Row: {
           acronym: string
+          is_delivery: boolean
           is_shown: boolean
           name: string
           primary_key: string
         }
         Insert: {
           acronym?: string
+          is_delivery?: boolean
           is_shown?: boolean
           name?: string
           primary_key?: string
         }
         Update: {
           acronym?: string
+          is_delivery?: boolean
           is_shown?: boolean
           name?: string
           primary_key?: string
@@ -895,6 +898,7 @@ export type Database = {
           collection_datetime: string | null
           created_at: string | null
           family_count: number | null
+          is_delivery: boolean | null
           last_status_event_data: string | null
           last_status_event_name: string | null
           last_status_timestamp: string | null
