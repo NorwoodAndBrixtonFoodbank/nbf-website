@@ -17,7 +17,14 @@ import { eventNamesWithNoData, eventNamesWithNumberData } from "./eventsSeed.mjs
 import { collectionCentres } from "./collectionCentresSeed.mjs";
 import { listsHotels } from "./listsHotelsSeed.mjs";
 import { packingSlots } from "./packingSlotsSeed.mjs";
-import { earliestDate, getPseudoRandomDateBetween, latestDate } from "./dateData.mjs";
+import {
+    earliestParcelOrEventDate,
+    farFutureDate,
+    getPseudoRandomDateBetween,
+    latestEventDate,
+    parcelCreationDateTime,
+} from "./dateData.mjs";
+import { genders } from "./families.mjs";
 
 generateSeed();
 
@@ -59,18 +66,18 @@ async function generateSeed(): Promise<void> {
             extraInformation: (ctx) => copycat.sentence(ctx.seed, { maxWords: 20 }),
             flaggedForAttention: (ctx) => copycat.bool(ctx.seed),
             signpostingCallRequired: (ctx) => copycat.bool(ctx.seed),
+            families: (generateFamily) =>
+                generateFamily(
+                    { min: 1, max: 8 },
+                    {
+                        age: (ctx) => copycat.int(ctx.seed, { min: 0, max: 100 }),
+                        gender: (ctx) => copycat.oneOf(ctx.seed, genders),
+                    }
+                ),
         })
     );
 
     await seed.collectionCentres(collectionCentres);
-
-    await seed.families(
-        (generate) =>
-            generate(1000, {
-                age: (ctx) => copycat.int(ctx.seed, { min: 0, max: 100 }),
-            }),
-        { connect: true }
-    );
 
     await seed.lists(listsSeedRequired);
 
@@ -80,10 +87,10 @@ async function generateSeed(): Promise<void> {
         (generate) =>
             generate(5000, {
                 packingDate: (ctx) =>
-                    getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
+                    getPseudoRandomDateBetween(earliestParcelOrEventDate, farFutureDate, ctx.seed),
                 collectionDatetime: (ctx) =>
-                    getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
-                createdAt: new Date("2023-12-31T12:00:00"),
+                    getPseudoRandomDateBetween(earliestParcelOrEventDate, farFutureDate, ctx.seed),
+                createdAt: parcelCreationDateTime,
             }),
         { connect: true }
     );
@@ -95,7 +102,11 @@ async function generateSeed(): Promise<void> {
                     newParcelStatus: status,
                     eventData: (ctx) => copycat.int(ctx.seed, { min: 1, max: 10 }).toString(),
                     timestamp: (ctx) =>
-                        getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
+                        getPseudoRandomDateBetween(
+                            earliestParcelOrEventDate,
+                            latestEventDate,
+                            ctx.seed
+                        ),
                 }),
             { connect: true }
         );
@@ -108,7 +119,11 @@ async function generateSeed(): Promise<void> {
                     newParcelStatus: status,
                     eventData: () => "",
                     timestamp: (ctx) =>
-                        getPseudoRandomDateBetween(earliestDate, latestDate, ctx.seed),
+                        getPseudoRandomDateBetween(
+                            earliestParcelOrEventDate,
+                            latestEventDate,
+                            ctx.seed
+                        ),
                 }),
             { connect: true }
         );

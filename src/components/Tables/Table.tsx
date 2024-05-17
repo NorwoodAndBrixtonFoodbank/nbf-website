@@ -1,7 +1,11 @@
 "use client";
 
 import Icon from "@/components/Icons/Icon";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
+import {
+    ClientSideFilter,
+    PaginationType as PaginationTypeEnum,
+    ServerSideFilter,
+} from "@/components/Tables/Filters";
 import TableFilterAndExtraColumnsBar from "@/components/Tables/TableFilterAndExtraColumnsBar";
 import {
     faAnglesDown,
@@ -15,9 +19,8 @@ import React, { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import styled from "styled-components";
 import { Primitive, SortOrder } from "react-data-table-component/dist/DataTable/types";
-import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
-import { Database } from "@/databaseTypesFile";
 import { Centerer } from "../Modal/ModalFormStyles";
+import { ClientSideSortMethod, ServerSideSortMethod } from "./sortMethods";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -45,43 +48,31 @@ export type ColumnStyleOptions = Omit<
     "name" | "selector" | "sortable" | "sortFunction" | "cell"
 >;
 
-export interface SortOptions<Data> {
+export interface SortOptions<Data, SortMethod extends Function> {
     key: keyof Data;
-    sortMethodConfig: SortMethodConfig;
+    sortMethod: SortMethod;
 }
 
-type SortMethodConfig =
-    | {
-          paginationType: PaginationType.Server;
-          method: (
-              query: PostgrestFilterBuilder<Database["public"], any, any>,
-              sortDirection: SortOrder
-          ) => PostgrestFilterBuilder<Database["public"], any, any>;
-      }
-    | {
-          paginationType: PaginationType.Client;
-          method: (sortDirection: SortOrder) => void;
-      };
-export type SortState<Data> =
+export type SortState<Data, SortMethod extends Function> =
     | {
           sortEnabled: true;
           sortDirection: SortOrder;
-          column: CustomColumn<Data>;
+          column: CustomColumn<Data, SortMethod>;
       }
     | {
           sortEnabled: false;
       };
 
-export type SortConfig<Data> =
+export type SortConfig<Data, SortMethod extends Function> =
     | {
           sortPossible: true;
-          sortableColumns: SortOptions<Data>[];
-          setSortState: (sortState: SortState<Data>) => void;
+          sortableColumns: SortOptions<Data, SortMethod>[];
+          setSortState: (sortState: SortState<Data, SortMethod>) => void;
       }
     | { sortPossible: false };
 
-export interface CustomColumn<Data> extends TableColumn<Row<Data>> {
-    sortMethodConfig?: SortMethodConfig;
+interface CustomColumn<Data, SortMethod extends Function> extends TableColumn<Row<Data>> {
+    sortMethod?: SortMethod;
 }
 
 export type CheckboxConfig<Data> =
@@ -110,24 +101,24 @@ export type PaginationConfig =
           enablePagination: false;
       };
 
-export type FilterConfig<Data> =
+export type FilterConfig<Filter> =
     | {
           primaryFiltersShown: false;
           additionalFiltersShown: false;
       }
     | {
           primaryFiltersShown: true;
-          primaryFilters: Filter<Data, any>[];
-          setPrimaryFilters: (primaryFilters: Filter<Data, any>[]) => void;
+          primaryFilters: Filter[];
+          setPrimaryFilters: (primaryFilters: Filter[]) => void;
           additionalFiltersShown: false;
       }
     | {
           primaryFiltersShown: true;
-          primaryFilters: Filter<Data, any>[];
-          setPrimaryFilters: (primaryFilters: Filter<Data, any>[]) => void;
+          primaryFilters: Filter[];
+          setPrimaryFilters: (primaryFilters: Filter[]) => void;
           additionalFiltersShown: true;
-          additionalFilters: Filter<Data, any>[];
-          setAdditionalFilters: (additionalFilters: Filter<Data, any>[]) => void;
+          additionalFilters: Filter[];
+          setAdditionalFilters: (additionalFilters: Filter[]) => void;
       };
 
 export type EditableConfig<Data> =
@@ -141,14 +132,23 @@ export type EditableConfig<Data> =
       }
     | { editable: false };
 
-interface Props<Data> {
+interface Props<Data, DbData extends Record<string, any>, PaginationType> {
     dataPortion: Data[];
     headerKeysAndLabels: TableHeaders<Data>;
     isLoading?: boolean;
     checkboxConfig: CheckboxConfig<Data>;
     paginationConfig: PaginationConfig;
-    sortConfig: SortConfig<Data>;
-    filterConfig: FilterConfig<Data>;
+    sortConfig: SortConfig<
+        Data,
+        PaginationType extends PaginationTypeEnum.Client
+            ? ClientSideSortMethod
+            : ServerSideSortMethod<DbData>
+    >;
+    filterConfig: FilterConfig<
+        PaginationType extends PaginationTypeEnum.Client
+            ? ClientSideFilter<Data, any>
+            : ServerSideFilter<Data, any, DbData>
+    >;
     defaultShownHeaders?: readonly (keyof Data)[];
     toggleableHeaders?: readonly (keyof Data)[];
     columnDisplayFunctions?: ColumnDisplayFunctions<Data>;
@@ -157,7 +157,6 @@ interface Props<Data> {
     onRowClick?: OnRowClickFunction<Data>;
     pointerOnHover?: boolean;
 }
-
 interface CellProps<Data> {
     row: Row<Data>;
     columnDisplayFunctions: ColumnDisplayFunctions<Data>;
@@ -199,7 +198,11 @@ const defaultColumnStyleOptions = {
     maxWidth: "20rem",
 } as const;
 
-const Table = <Data,>({
+const Table = <
+    Data,
+    PaginationType extends PaginationTypeEnum,
+    DbData extends Record<string, any> = {},
+>({
     dataPortion,
     headerKeysAndLabels,
     isLoading = false,
@@ -214,47 +217,59 @@ const Table = <Data,>({
     paginationConfig,
     editableConfig,
     pointerOnHover,
-}: Props<Data>): React.ReactElement => {
+}: Props<Data, DbData, PaginationType>): React.ReactElement => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
     );
 
     const shownHeaders = headerKeysAndLabels.filter(([key]) => shownHeaderKeys.includes(key));
 
-    const columns: CustomColumn<Data>[] = shownHeaders.map(
-        ([headerKey, headerName]): CustomColumn<Data> => {
-            const columnStyles = Object.assign(
-                { ...defaultColumnStyleOptions },
-                columnStyleOptions[headerKey] ?? {}
-            );
-            let sortMethodConfig;
-            if (sortConfig.sortPossible) {
-                sortMethodConfig = sortConfig.sortableColumns.find(
-                    (column) => column.key === headerKey
-                )?.sortMethodConfig;
-            }
-            const sortable = !!sortMethodConfig;
-
-            return {
-                name: <>{headerName}</>,
-                selector: (row) => row.data[headerKey] as Primitive, // The type cast here is needed as the type of selector is (row) => Primitive, but as we are using a custom cell, we can have it be anything
-                sortable: sortable,
-                cell: (row) => (
-                    <CustomCell
-                        row={row}
-                        columnDisplayFunctions={columnDisplayFunctions}
-                        headerKey={headerKey}
-                    />
-                ),
-                sortField: headerKey.toString(),
-                sortMethodConfig: sortMethodConfig,
-                ...columnStyles,
-            };
+    const columns: CustomColumn<
+        Data,
+        PaginationType extends PaginationTypeEnum.Client
+            ? ClientSideSortMethod
+            : ServerSideSortMethod<DbData>
+    >[] = shownHeaders.map(([headerKey, headerName]) => {
+        const columnStyles = Object.assign(
+            { ...defaultColumnStyleOptions },
+            columnStyleOptions[headerKey] ?? {}
+        );
+        let sortMethod:
+            | (PaginationType extends PaginationTypeEnum.Client
+                  ? ClientSideSortMethod
+                  : ServerSideSortMethod<DbData>)
+            | undefined;
+        if (sortConfig.sortPossible) {
+            sortMethod = sortConfig.sortableColumns.find(
+                (column) => column.key === headerKey
+            )?.sortMethod;
         }
-    );
+        const sortable = !!sortMethod;
+
+        return {
+            name: <>{headerName}</>,
+            selector: (row) => row.data[headerKey] as Primitive, // The type cast here is needed as the type of selector is (row) => Primitive, but as we are using a custom cell, we can have it be anything
+            sortable: sortable,
+            cell: (row) => (
+                <CustomCell
+                    row={row}
+                    columnDisplayFunctions={columnDisplayFunctions}
+                    headerKey={headerKey}
+                />
+            ),
+            sortField: headerKey.toString(),
+            sortMethod: sortMethod,
+            ...columnStyles,
+        };
+    });
 
     const handleSort = async (
-        column: CustomColumn<Data>,
+        column: CustomColumn<
+            Data,
+            PaginationType extends PaginationTypeEnum.Client
+                ? ClientSideSortMethod
+                : ServerSideSortMethod<DbData>
+        >,
         sortDirection: SortOrder
     ): Promise<void> => {
         if (sortConfig.sortPossible && Object.keys(column).length) {
@@ -386,41 +401,26 @@ const Table = <Data,>({
 
     const rows = dataPortion.map((data, index) => ({ rowId: index, data }));
 
-    const handleClear = (): void => {
-        if (filterConfig.primaryFiltersShown) {
-            filterConfig.setPrimaryFilters(
-                filterConfig.primaryFilters.map((filter) => ({
-                    ...filter,
-                    state: filter.initialState,
-                }))
-            );
-        }
-        if (filterConfig.additionalFiltersShown) {
-            filterConfig.setAdditionalFilters(
-                filterConfig.additionalFilters.map((filter) => ({
-                    ...filter,
-                    state: filter.initialState,
-                }))
-            );
-        }
-    };
-
     return (
         <>
-            <TableFilterAndExtraColumnsBar<Data>
-                handleClear={handleClear}
+            <TableFilterAndExtraColumnsBar<
+                Data,
+                PaginationType extends PaginationTypeEnum.Client
+                    ? ClientSideFilter<Data, any>
+                    : ServerSideFilter<Data, any, DbData>
+            >
                 setFilters={
-                    filterConfig.primaryFiltersShown ? filterConfig.setPrimaryFilters : () => {}
+                    filterConfig.primaryFiltersShown ? filterConfig.setPrimaryFilters : undefined
                 }
                 toggleableHeaders={toggleableHeaders}
-                filters={filterConfig.primaryFiltersShown ? filterConfig.primaryFilters : []}
+                filters={filterConfig.primaryFiltersShown ? filterConfig.primaryFilters : undefined}
                 additionalFilters={
-                    filterConfig.additionalFiltersShown ? filterConfig.additionalFilters : []
+                    filterConfig.additionalFiltersShown ? filterConfig.additionalFilters : undefined
                 }
                 setAdditionalFilters={
                     filterConfig.additionalFiltersShown
                         ? filterConfig.setAdditionalFilters
-                        : () => {}
+                        : undefined
                 }
                 headers={headerKeysAndLabels}
                 setShownHeaderKeys={setShownHeaderKeys}
@@ -620,4 +620,10 @@ const TableStyling = styled.div`
     }
 `;
 
-export default Table;
+export const ServerPaginatedTable = <Data, DbData extends Record<string, any>>(
+    props: Props<Data, DbData, PaginationTypeEnum.Server>
+): React.ReactElement => <Table<Data, PaginationTypeEnum.Server, DbData> {...props} />;
+
+export const ClientPaginatedTable = <Data,>(
+    props: Props<Data, {}, PaginationTypeEnum.Client>
+): React.ReactElement => <Table<Data, PaginationTypeEnum.Client> {...props} />;

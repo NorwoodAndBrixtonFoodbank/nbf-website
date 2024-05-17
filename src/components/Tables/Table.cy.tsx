@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Table, {
+import {
     CheckboxConfig,
+    ClientPaginatedTable,
     FilterConfig,
     PaginationConfig,
     SortConfig,
@@ -8,9 +9,10 @@ import Table, {
     SortState,
 } from "@/components/Tables/Table";
 import StyleManager from "@/app/themes";
-import { Filter, PaginationType } from "./Filters";
-import { buildTextFilter, filterRowByText } from "./TextFilter";
+import { ClientSideFilter } from "./Filters";
 import { SortOrder } from "react-data-table-component/dist/DataTable/types";
+import { buildClientSideTextFilter, filterRowByText } from "./TextFilter";
+import { ClientSideSortMethod } from "./sortMethods";
 
 interface TestData {
     full_name: string;
@@ -120,34 +122,31 @@ const Component: React.FC<TestTableProps> = ({
     sortable = false,
     tableData = data,
 }) => {
-    const fullNameFilter = buildTextFilter<TestData>({
+    const fullNameFilter = buildClientSideTextFilter<TestData>({
         key: "full_name",
         headers: headers,
         label: "Name",
-        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
+        method: filterRowByText,
     });
 
-    const sortByFullName: SortOptions<TestData> = {
+    const sortByFullName: SortOptions<TestData, ClientSideSortMethod> = {
         key: "full_name",
-        sortMethodConfig: {
-            method: (sortDirection: SortOrder) => {
-                const ascendingData = [...testDataPortion].sort((rowA, rowB) =>
-                    rowA.full_name > rowB.full_name ? 1 : rowB.full_name > rowA.full_name ? -1 : 0
-                );
-                if (sortDirection === "asc") {
-                    setTestDataPortion(ascendingData);
-                } else {
-                    setTestDataPortion([...ascendingData].reverse());
-                }
-            },
-            paginationType: PaginationType.Client,
+        sortMethod: (sortDirection: SortOrder) => {
+            const ascendingData = [...testDataPortion].sort((rowA, rowB) =>
+                rowA.full_name > rowB.full_name ? 1 : rowB.full_name > rowA.full_name ? -1 : 0
+            );
+            if (sortDirection === "asc") {
+                setTestDataPortion(ascendingData);
+            } else {
+                setTestDataPortion([...ascendingData].reverse());
+            }
         },
     };
 
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<TestData, string>[]>([
+    const [primaryFilters, setPrimaryFilters] = useState<ClientSideFilter<TestData, string>[]>([
         fullNameFilter,
     ]);
-    const sortableColumns: SortOptions<TestData>[] = [sortByFullName];
+    const sortableColumns: SortOptions<TestData, ClientSideSortMethod>[] = [sortByFullName];
 
     const [testDataPortion, setTestDataPortion] = useState<TestData[]>(tableData);
 
@@ -164,7 +163,9 @@ const Component: React.FC<TestTableProps> = ({
     const [checkedRowIds, setCheckedRowIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
 
-    const [sortState, setSortState] = useState<SortState<TestData>>({ sortEnabled: false });
+    const [sortState, setSortState] = useState<SortState<TestData, ClientSideSortMethod>>({
+        sortEnabled: false,
+    });
 
     // useEffect(() => {
     //     setCheckedRowIds([]);
@@ -220,25 +221,25 @@ const Component: React.FC<TestTableProps> = ({
         enablePagination: false,
     };
 
-    const trueFilterConfig: FilterConfig<TestData> = {
+    const trueFilterConfig: FilterConfig<ClientSideFilter<TestData, any>> = {
         primaryFiltersShown: true,
         primaryFilters: primaryFilters,
         setPrimaryFilters: setPrimaryFilters,
         additionalFiltersShown: false,
     };
 
-    const falseFilterConfig: FilterConfig<TestData> = {
+    const falseFilterConfig: FilterConfig<ClientSideFilter<TestData, any>> = {
         primaryFiltersShown: false,
         additionalFiltersShown: false,
     };
 
-    const trueSortConfig: SortConfig<TestData> = {
+    const trueSortConfig: SortConfig<TestData, ClientSideSortMethod> = {
         sortPossible: true,
         sortableColumns: sortableColumns,
         setSortState: setSortState,
     };
 
-    const falseSortConfig: SortConfig<TestData> = {
+    const falseSortConfig: SortConfig<TestData, ClientSideSortMethod> = {
         sortPossible: false,
     };
 
@@ -246,27 +247,21 @@ const Component: React.FC<TestTableProps> = ({
         setTestDataPortion(
             tableData.filter((row) => {
                 return primaryFilters.every((filter) => {
-                    if (filter.methodConfig.paginationType === PaginationType.Client) {
-                        return filter.methodConfig.method(row, filter.state, filter.key);
-                    }
-                    return false;
+                    return filter.method(row, filter.state, filter.key);
                 });
             })
         );
     }, [primaryFilters, tableData]);
 
     useEffect(() => {
-        if (
-            sortState.sortEnabled &&
-            sortState.column.sortMethodConfig?.paginationType === PaginationType.Client
-        ) {
-            sortState.column.sortMethodConfig.method(sortState.sortDirection);
+        if (sortState.sortEnabled && sortState.column.sortMethod) {
+            sortState.column.sortMethod(sortState.sortDirection);
         }
     }, [sortState, testDataPortion]);
 
     return (
         <StyleManager>
-            <Table
+            <ClientPaginatedTable<TestData>
                 dataPortion={testDataPortion}
                 headerKeysAndLabels={headers}
                 toggleableHeaders={toggleableHeaders}
@@ -280,7 +275,7 @@ const Component: React.FC<TestTableProps> = ({
     );
 };
 
-describe("<Table />", () => {
+describe("<ClientPaginatedTable />", () => {
     it("renders", () => {
         cy.mount(<Component tableData={data} />);
     });
