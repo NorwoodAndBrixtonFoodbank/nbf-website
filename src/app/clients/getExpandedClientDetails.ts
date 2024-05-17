@@ -189,21 +189,12 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
             );
             childDetails.push(`${age} ${familyMember.gender}`);
         } else if (familyMember.birth_year >= getCurrentYear() - 2) {
-            if (familyMember.birth_month) {
-                const age = getChildAgeUsingBirthYearAndMonth(
-                    familyMember.birth_year,
-                    familyMember.birth_month,
-                    false
-                );
-                childDetails.push(`${age} ${familyMember.gender}`);
-            } else {
-                const age = getChildAgeUsingBirthYearAndMonth(
-                    familyMember.birth_year,
-                    familyMember.birth_month,
-                    false
-                );
-                childDetails.push(`${age} ${familyMember.gender}`);
-            }
+            const age = getChildAgeUsingBirthYearAndMonth(
+                familyMember.birth_year,
+                familyMember.birth_month,
+                false
+            );
+            childDetails.push(`${age} ${familyMember.gender}`);
         }
     }
 
