@@ -19,7 +19,7 @@ export type CongestionChargeReturnType =
       };
 
 export const checkForCongestionCharge = async (
-    postcodes: (string | null)[]
+    postcodes: (string | null | undefined)[]
 ): Promise<CongestionChargeReturnType> => {
     const response = await supabase.functions.invoke("check-congestion-charge", {
         body: { postcodes: postcodes },

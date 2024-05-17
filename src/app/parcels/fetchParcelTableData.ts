@@ -19,9 +19,7 @@ const getCongestionChargeDetailsForParcelsTable = async (
         postcodes.push(parcel.client_address_postcode);
     }
 
-    const congestionChargeDetails = await checkForCongestionCharge(postcodes);
-
-    return congestionChargeDetails;
+    return await checkForCongestionCharge(postcodes);
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -277,7 +275,7 @@ export const getParcelsByIds = async (
         await getCongestionChargeDetailsForParcelsTable(data);
 
     if (congestionChargeError) {
-        const logId = await logErrorReturnLogId("Errr");
+        const logId = await logErrorReturnLogId("Error retrieving congestion charge details", congestionChargeError);
         throw new EdgeFunctionError("congestion charge check", logId);
     }
 
