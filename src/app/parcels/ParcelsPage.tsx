@@ -47,7 +47,6 @@ import {
 } from "@/app/parcels/parcelsTableFilters";
 import { ActionsContainer } from "@/components/Form/formStyling";
 import { formatDateTime, formatDatetimeAsDate, nullPostcodeDisplay } from "@/common/format";
-import { packingSlots } from "../../../supabase/seed/packingSlotsSeed.mjs";
 
 export const parcelTableHeaderKeysAndLabels: TableHeaders<ParcelsTableRow> = [
     ["iconsColumn", ""],
@@ -257,9 +256,9 @@ const ParcelsPage: React.FC<{}> = () => {
     const [filteredParcelCount, setFilteredParcelCount] = useState<number>(0);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [clientIdForSelectedParcel, setClientIdForSelectedParcel] = useState<string | null>(null);
-    const [parcelRowBreakPoints, setParcelRowBreakPoints] = useState<number[]>([])
+    const [parcelRowBreakPoints, setParcelRowBreakPoints] = useState<number[]>([]);
 
-    const [sortedColumn, setSortedColumn] = useState<string>("")
+    const [sortedColumn, setSortedColumn] = useState<string>("");
 
     const [checkedParcelIds, setCheckedParcelIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
@@ -376,45 +375,41 @@ const ParcelsPage: React.FC<{}> = () => {
             setAreFiltersLoadingForFirstTime(false);
         })();
     }, []);
-    
-    function getValueBoundaries<DataType>(values: (DataType | null)[]):number[] {
-        const valueSet = new Set(values)
-    
-        const boundaries: number[] = []
-        valueSet.forEach(value => {
+
+    function getValueBoundaries<DataType>(values: (DataType | null)[]): number[] {
+        const valueSet = new Set(values);
+
+        const boundaries: number[] = [];
+        valueSet.forEach((value) => {
             if (value === values[0]) {
-                return
+                return;
             }
-            
-            const indexOfFirstOccurrence = values.indexOf(value)
+
+            const indexOfFirstOccurrence = values.indexOf(value);
             if (indexOfFirstOccurrence === -1) {
                 //
             } else {
-                boundaries.push(indexOfFirstOccurrence)
+                boundaries.push(indexOfFirstOccurrence);
             }
-        })
+        });
         return boundaries;
     }
-    
-    const searchForPackingSlotBreakPoints = (
-            parcelsTableRows: ParcelsTableRow[],
-        ): number[] => {
-            const packingSlotValues = parcelsTableRows.map((row) => {
-                return row.packingSlot;
-            })
 
-            return getValueBoundaries<string>(packingSlotValues);
-        }
-    
-    const searchForPackingDateBreakPoints = (
-            parcelsTableRows: ParcelsTableRow[],
-        ): number[] => {
-            const packingSlotValues = parcelsTableRows.map((row) => {
-                return row.packingDate?.getDate() ?? null;
-            })
+    const searchForPackingSlotBreakPoints = (parcelsTableRows: ParcelsTableRow[]): number[] => {
+        const packingSlotValues = parcelsTableRows.map((row) => {
+            return row.packingSlot;
+        });
 
-            return getValueBoundaries<number>(packingSlotValues);
-        }
+        return getValueBoundaries<string>(packingSlotValues);
+    };
+
+    const searchForPackingDateBreakPoints = (parcelsTableRows: ParcelsTableRow[]): number[] => {
+        const packingSlotValues = parcelsTableRows.map((row) => {
+            return row.packingDate?.getDate() ?? null;
+        });
+
+        return getValueBoundaries<number>(packingSlotValues);
+    };
 
     const fetchAndDisplayParcelsData = useCallback(async (): Promise<void> => {
         const allFilters = [...primaryFilters, ...additionalFilters];
@@ -447,18 +442,18 @@ const ParcelsPage: React.FC<{}> = () => {
                 setParcelsDataPortion(data.parcelTableRows);
                 setFilteredParcelCount(data.count);
                 if (sortedColumn === "packingSlot") {
-                    setParcelRowBreakPoints(searchForPackingSlotBreakPoints(data.parcelTableRows))
-                } else if (sortedColumn === "packingDate"){
-                    setParcelRowBreakPoints(searchForPackingDateBreakPoints(data.parcelTableRows))
+                    setParcelRowBreakPoints(searchForPackingSlotBreakPoints(data.parcelTableRows));
+                } else if (sortedColumn === "packingDate") {
+                    setParcelRowBreakPoints(searchForPackingDateBreakPoints(data.parcelTableRows));
                 } else {
-                    setParcelRowBreakPoints([])
+                    setParcelRowBreakPoints([]);
                 }
             }
 
             parcelsTableFetchAbortController.current = null;
             setIsLoading(false);
         }
-    }, [additionalFilters, endPoint, primaryFilters, sortState, startPoint]);
+    }, [additionalFilters, endPoint, primaryFilters, sortState, startPoint, sortedColumn]);
 
     useEffect(() => {
         if (!areFiltersLoadingForFirstTime) {
