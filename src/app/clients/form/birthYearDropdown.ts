@@ -1,7 +1,4 @@
-const getCurrentYear = (): number => {
-    const currentDate = new Date();
-    return currentDate.getFullYear();
-};
+import { getCurrentYear } from "@/common/date";
 
 export const getChildBirthYears = (): string[] => {
     const currentYear = getCurrentYear();
