@@ -6,14 +6,48 @@ import {
     numberRegex,
     Person,
     Gender,
-    onChangeText,
+    Errors,
 } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 import { FormText, StyledCard } from "@/components/Form/formStyling";
-import { ClientCardProps, ClientSetter } from "../ClientForm";
+import { ClientCardProps, ClientErrorSetter, ClientSetter } from "../ClientForm";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { getAdultBirthYears } from "@/app/clients/form/birthYearDropdown";
+
+const getQuantity = (input: string): number => {
+    if (input === "") {
+        return 0;
+    }
+    if (input.match(numberRegex)) {
+        return parseInt(input);
+    }
+    return -1;
+};
+
+const setNumberOfAdults = (
+    fieldSetter: ClientSetter,
+    errorSetter: ClientErrorSetter
+): SelectChangeEventHandler => {
+    return (event) => {
+        const input = event.target.value;
+        const number = getQuantity(input);
+        fieldSetter({ numberOfAdults: number });
+
+        const invalidAdultEntry = number < 0;
+        const zeroAdultEntry = number === 0;
+
+        let errorType: Errors = Errors.none;
+        if (invalidAdultEntry) {
+            errorType = Errors.invalid;
+        }
+        if (zeroAdultEntry) {
+            errorType = Errors.required;
+        }
+
+        errorSetter({ numberOfAdults: errorType });
+    };
+};
 
 const setAdultsFields = (
     fieldSetter: ClientSetter,
@@ -56,14 +90,7 @@ const NumberAdultsCard: React.FC<ClientCardProps> = ({
                     }
                     error={errorExists(formErrors.numberOfAdults)}
                     helperText={errorText(formErrors.numberOfAdults)}
-                    onChange={onChangeText(
-                        fieldSetter,
-                        errorSetter,
-                        "numberOfAdults",
-                        true,
-                        numberRegex,
-                        parseInt
-                    )}
+                    onChange={setNumberOfAdults(fieldSetter, errorSetter)}
                 />
                 {fields.adults.map((adult: Person, index: number) => {
                     return (
