@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Button from "@mui/material/Button";
-import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
+import { ParcelsTableRow } from "../parcelsTable/types";
 import Alert from "@mui/material/Alert";
 import Statuses, { StatusType, SaveParcelStatusResult } from "@/app/parcels/ActionBar/Statuses";
 import Actions from "@/app/parcels/ActionBar/Actions";

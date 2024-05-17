@@ -1,4 +1,4 @@
-import { ParcelsTableRow } from "../getParcelsTableData";
+import { ParcelsTableRow } from "../parcelsTable/types";
 import styled from "styled-components";
 import React from "react";
 import { getParcelOverviewString } from "../../../common/format";

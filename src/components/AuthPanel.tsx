@@ -95,6 +95,7 @@ const AuthPanel: React.FC<AuthPanelProps> = ({
         color: ${theme.error};
         font-size: 13px;
         text-align: center;
+        white-space: pre-line;
     `;
 
     const SuccessMessage = styled.span`
