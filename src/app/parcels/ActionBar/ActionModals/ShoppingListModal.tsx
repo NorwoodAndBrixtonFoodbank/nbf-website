@@ -3,8 +3,7 @@
 import React, { useState } from "react";
 import GeneralActionModal, { ActionModalProps, maxParcelsToShow } from "./GeneralActionModal";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
-import { ParcelsTableRow } from "../../parcelsTable/types";
-import { StatusType, getStatusErrorMessageWithLogId } from "../Statuses";
+import { getStatusErrorMessageWithLogId } from "../Statuses";
 import ShoppingListPdfButton from "@/pdf/ShoppingList/ShoppingListPdfButton";
 import { ShoppingListPdfError } from "@/pdf/ShoppingList/getShoppingListData";
 import { sendAuditLog } from "@/server/auditLog";

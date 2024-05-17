@@ -1,9 +1,10 @@
 import React from "react";
-import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import { getParcelsWithEvent } from "@/app/parcels/fetchParcelTableData";
+
+import { getParcelsWithEvent } from "@/app/parcels/parcelsTable/fetchParcelTableData";
 import Alert from "@mui/material/Alert/Alert";
 import styled from "styled-components";
 import { StatusType } from "@/app/parcels/ActionBar/Statuses";
+import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 
 export interface DuplicateDownloadWarningProps {
     parcels: ParcelsTableRow[];
