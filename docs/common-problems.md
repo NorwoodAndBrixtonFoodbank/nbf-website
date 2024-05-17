@@ -9,3 +9,6 @@
 - Tests need to be run on fresh data
 - To resolve this run
   `npm post_checkout; npm run build; npm run test:e2e`
+
+## Tests failing on github: Failed to start supabase container
+- Sometimes this can happen and usually works on re-run of the test
