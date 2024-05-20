@@ -14,8 +14,14 @@ import GenerateMapModal from "./ActionModals/GenerateMapModal";
 import ShippingLabelModal from "./ActionModals/ShippingLabelModal";
 import ShoppingListModal from "./ActionModals/ShoppingListModal";
 import { UpdateParcelStatuses } from "./ActionAndStatusBar";
-import { RoleUpdateContext } from "@/app/roles";
-import { UserRole } from "@/databaseUtils";
+import {
+    AdminRolesType,
+    allRoles,
+    AllRolesType,
+    organisationRoles,
+    OrganisationRolesType,
+    RoleUpdateContext,
+} from "@/app/roles";
 
 const isNotAtLeastOne = (value: number): boolean => {
     return value < 1;
@@ -34,39 +40,39 @@ export type ActionName =
 type ActionTypes = {
     actionName: ActionName;
     newStatus: StatusType;
-    availableToRole: UserRole[];
+    availableToRole: AllRolesType[] | OrganisationRolesType[] | AdminRolesType[];
 };
 
 const availableActions: ActionTypes[] = [
     {
         actionName: "Download Day Overview",
         newStatus: "Day Overview Downloaded",
-        availableToRole: ["volunteer", "staff", "manager", "admin"],
+        availableToRole: allRoles,
     },
     {
         actionName: "Download Shopping Lists",
         newStatus: "Shopping List Downloaded",
-        availableToRole: ["volunteer", "staff", "manager", "admin"],
+        availableToRole: allRoles,
     },
     {
         actionName: "Download Shipping Labels",
         newStatus: "Shipping Labels Downloaded",
-        availableToRole: ["volunteer", "staff", "manager", "admin"],
+        availableToRole: allRoles,
     },
     {
         actionName: "Generate Map",
         newStatus: "Map Generated",
-        availableToRole: ["volunteer", "staff", "manager", "admin"],
+        availableToRole: allRoles,
     },
     {
         actionName: "Download Driver Overview",
         newStatus: "Driver Overview Downloaded",
-        availableToRole: ["volunteer", "staff", "manager", "admin"],
+        availableToRole: allRoles,
     },
     {
         actionName: "Delete Parcel",
         newStatus: "Parcel Deleted",
-        availableToRole: ["staff", "manager", "admin"],
+        availableToRole: organisationRoles,
     },
 ];
 

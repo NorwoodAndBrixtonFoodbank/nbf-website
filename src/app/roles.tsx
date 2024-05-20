@@ -69,3 +69,10 @@ export const RoleManager: React.FC<Props> = ({ children }) => {
         </RoleUpdateContext.Provider>
     );
 };
+
+export type AllRolesType = NonNullable<UserRole>;
+export type OrganisationRolesType = Omit<AllRolesType, "volunteer">;
+export type AdminRolesType = Omit<AllRolesType, "volunteer" | "staff" | "manager">;
+export const allRoles: AllRolesType[] = ["volunteer", "staff", "manager", "admin"];
+export const organisationRoles: OrganisationRolesType[] = ["staff", "manager", "admin"];
+export const adminRoles: AdminRolesType[] = ["admin"];
