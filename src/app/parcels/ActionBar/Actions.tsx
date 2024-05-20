@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
@@ -30,50 +30,36 @@ export type ActionName =
     | "Download Driver Overview"
     | "Delete Parcel";
 
-type AvailableActionsType = {
-    [actionKey in ActionName]: {
-        newStatus: StatusType;
-    };
+type ActionTypes = {
+    actionName: ActionName;
+    newStatus: StatusType;
+    availableToVolunteers: boolean;
 };
 
-export const allAvailableActions: AvailableActionsType = {
-    "Download Day Overview": {
+const availableActions: ActionTypes[] = [
+    {
+        actionName: "Download Day Overview",
         newStatus: "Day Overview Downloaded",
+        availableToVolunteers: true,
     },
-    "Download Shopping Lists": {
+    {
+        actionName: "Download Shopping Lists",
         newStatus: "Shopping List Downloaded",
+        availableToVolunteers: true,
     },
-    "Download Shipping Labels": {
+    {
+        actionName: "Download Shipping Labels",
         newStatus: "Shipping Labels Downloaded",
+        availableToVolunteers: true,
     },
-    "Generate Map": {
-        newStatus: "Map Generated",
-    },
-    "Download Driver Overview": {
+    { actionName: "Generate Map", newStatus: "Map Generated", availableToVolunteers: true },
+    {
+        actionName: "Download Driver Overview",
         newStatus: "Driver Overview Downloaded",
+        availableToVolunteers: true,
     },
-    "Delete Parcel": {
-        newStatus: "Parcel Deleted",
-    },
-};
-
-export const volunteerAvailableActions: Omit<AvailableActionsType, "Delete Parcel"> = {
-    "Download Day Overview": {
-        newStatus: "Day Overview Downloaded",
-    },
-    "Download Shopping Lists": {
-        newStatus: "Shopping List Downloaded",
-    },
-    "Download Shipping Labels": {
-        newStatus: "Shipping Labels Downloaded",
-    },
-    "Generate Map": {
-        newStatus: "Map Generated",
-    },
-    "Download Driver Overview": {
-        newStatus: "Driver Overview Downloaded",
-    },
-};
+    { actionName: "Delete Parcel", newStatus: "Parcel Deleted", availableToVolunteers: false },
+];
 
 interface Props {
     fetchSelectedParcels: () => Promise<ParcelsTableRow[]>;
@@ -112,7 +98,19 @@ const Actions: React.FC<Props> = ({
 }) => {
     const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
     const [modalToDisplay, setModalToDisplay] = useState<ActionName | null>(null);
+    const [availableActionsForUserRole, setAvailableActionsForUserRole] = useState<ActionTypes[]>(
+        []
+    );
     const { role } = useContext(RoleUpdateContext);
+
+    useEffect(() => {
+        if (role === "volunteer") {
+            const actionList = availableActions.filter((action) => action.availableToVolunteers);
+            setAvailableActionsForUserRole(actionList);
+        } else {
+            setAvailableActionsForUserRole(availableActions);
+        }
+    }, [role]);
 
     const onModalClose = (): void => {
         setModalToDisplay(null);
@@ -146,12 +144,10 @@ const Actions: React.FC<Props> = ({
 
     return (
         <>
-            {Object.entries(
-                role !== "volunteer" ? allAvailableActions : volunteerAvailableActions
-            ).map(([key, value]) => {
+            {availableActionsForUserRole.map(({ actionName, newStatus }) => {
                 return (
-                    modalToDisplay === key &&
-                    getActionModal(key, {
+                    modalToDisplay === actionName &&
+                    getActionModal(actionName, {
                         isOpen: true,
                         onClose: onModalClose,
                         selectedParcels: selectedParcels,
@@ -159,7 +155,7 @@ const Actions: React.FC<Props> = ({
                         headerId: "action-modal-header",
                         actionName: modalToDisplay,
                         updateParcelStatuses: updateParcelStatuses,
-                        newStatus: value.newStatus,
+                        newStatus: newStatus,
                     })
                 );
             })}
@@ -170,19 +166,17 @@ const Actions: React.FC<Props> = ({
                     anchorEl={actionAnchorElement}
                 >
                     <MenuList id="action-menu">
-                        {Object.entries(
-                            role !== "volunteer" ? allAvailableActions : volunteerAvailableActions
-                        ).map(([key]) => {
+                        {availableActionsForUserRole.map(({ actionName }) => {
                             return (
                                 <MenuItem
-                                    key={key}
+                                    key={actionName}
                                     onClick={onMenuItemClick(
-                                        key as ActionName,
+                                        actionName as ActionName,
                                         isNotAtLeastOne,
                                         errorMessage
                                     )}
                                 >
-                                    {key}
+                                    {actionName}
                                 </MenuItem>
                             );
                         })}
