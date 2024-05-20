@@ -50,7 +50,7 @@ const DriverOverviewInput: React.FC<DriverOverviewInputProps> = ({
 };
 
 const getPdfErrorMessage = (error: DriverOverviewError): string => {
-    let errorMessage: string = "";
+    let errorMessage: string;
     switch (error.type) {
         case "parcelFetchFailed":
             errorMessage = "Failed to fetch parcel data.";
