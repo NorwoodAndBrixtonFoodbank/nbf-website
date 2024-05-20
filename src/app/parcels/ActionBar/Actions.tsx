@@ -52,13 +52,21 @@ const availableActions: ActionTypes[] = [
         newStatus: "Shipping Labels Downloaded",
         availableToVolunteers: true,
     },
-    { actionName: "Generate Map", newStatus: "Map Generated", availableToVolunteers: true },
+    {
+        actionName: "Generate Map",
+        newStatus: "Map Generated",
+        availableToVolunteers: true,
+    },
     {
         actionName: "Download Driver Overview",
         newStatus: "Driver Overview Downloaded",
         availableToVolunteers: true,
     },
-    { actionName: "Delete Parcel", newStatus: "Parcel Deleted", availableToVolunteers: false },
+    {
+        actionName: "Delete Parcel",
+        newStatus: "Parcel Deleted",
+        availableToVolunteers: false,
+    },
 ];
 
 interface Props {
@@ -171,7 +179,7 @@ const Actions: React.FC<Props> = ({
                                 <MenuItem
                                     key={actionName}
                                     onClick={onMenuItemClick(
-                                        actionName as ActionName,
+                                        actionName,
                                         isNotAtLeastOne,
                                         errorMessage
                                     )}
