@@ -16,9 +16,7 @@ export const postcodeSearch = <DbData extends DbClientRow | DbParcelRow>(
             return query;
         }
         if (nullPostcodeDisplay.toLowerCase().includes(state.toLowerCase())) {
-            return query.or(
-                `${columnLabel}.ilike.%${state}%, ${columnLabel}.is.null`
-            );
+            return query.or(`${columnLabel}.ilike.%${state}%, ${columnLabel}.is.null`);
         }
         return query.ilike(`${columnLabel}`, `%${state}%`);
     };

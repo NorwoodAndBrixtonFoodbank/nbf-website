@@ -1,11 +1,7 @@
 import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import clientsHeaders from "./headers";
 import { ClientsFilter, ClientsFilterMethod } from "./types";
-import {
-    fullNameSearch,
-    phoneSearch,
-    postcodeSearch,
-} from "@/common/databaseFilters";
+import { fullNameSearch, phoneSearch, postcodeSearch } from "@/common/databaseFilters";
 import { DbClientRow } from "@/databaseUtils";
 
 const clientFullNameSearch: ClientsFilterMethod = fullNameSearch<DbClientRow>("full_name");

@@ -19,11 +19,7 @@ import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import dayjs from "dayjs";
 import { parcelTableHeaderKeysAndLabels } from "./headers";
 import { DbParcelRow } from "@/databaseUtils";
-import {
-    fullNameSearch,
-    phoneSearch,
-    postcodeSearch,
-} from "@/common/databaseFilters";
+import { fullNameSearch, phoneSearch, postcodeSearch } from "@/common/databaseFilters";
 
 const parcelsFullNameSearch: ParcelsFilterMethod<string> =
     fullNameSearch<DbParcelRow>("client_full_name");
