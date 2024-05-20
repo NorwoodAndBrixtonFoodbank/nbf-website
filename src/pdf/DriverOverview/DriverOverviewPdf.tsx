@@ -16,7 +16,7 @@ export interface DriverOverviewTableData {
     contact?: string;
     packingDate: string | null;
     instructions?: string;
-    numberOfLabels?: number | null;
+    numberOfLabels: number;
 }
 
 export interface DriverOverviewCardDataProps {

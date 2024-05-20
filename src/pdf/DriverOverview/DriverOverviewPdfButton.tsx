@@ -33,7 +33,7 @@ const compareDriverOverviewTableData = (
 
 type ParcelsForDelivery = (Schema["parcels"] & {
     client: Schema["clients"];
-    labelCount?: number;
+    labelCount: number;
 })[];
 
 type ParcelsForDeliveryResponse =
@@ -71,7 +71,7 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDel
             return { data: null, error: { type: "noMatchingClient", logId: logId } };
         }
 
-        let labelCount: number | undefined;
+        let labelCount: number = 0;
         if (parcel.events && parcel.events.length > 0 && parcel.events[0].event_data) {
             labelCount = Number.parseInt(parcel.events[0].event_data);
         }
@@ -114,7 +114,7 @@ const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse>
             contact: client?.phone_number ?? "",
             packingDate: formatDateToDate(parcel.packing_date) ?? null,
             instructions: client?.delivery_instructions ?? "",
-            numberOfLabels: parcel.labelCount ?? null,
+            numberOfLabels: parcel.labelCount,
         });
     }
     clientInformation.sort(compareDriverOverviewTableData);
