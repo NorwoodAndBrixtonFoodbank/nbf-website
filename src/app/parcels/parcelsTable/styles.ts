@@ -42,6 +42,6 @@ export const parcelTableColumnStyleOptions = {
         minWidth: "5rem",
     },
     lastStatus: {
-        grow: 8,
+        grow: 20,
     },
 };
