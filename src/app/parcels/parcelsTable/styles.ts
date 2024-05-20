@@ -19,21 +19,21 @@ export const parcelTableColumnStyleOptions = {
     },
     familyCategory: {
         hide: 550,
-        grow: 1,
+        grow: 0.8,
         minWidth: "6rem",
     },
     addressPostcode: {
         hide: 800,
-        grow: 1,
+        grow: 0.8,
         minWidth: "6rem",
     },
     deliveryCollection: {
-        grow: 1,
+        grow: 0.8,
         minWidth: "6rem",
     },
     packingDate: {
         hide: 800,
-        grow: 1,
+        grow: 0.8,
         minWidth: "6rem",
     },
     packingSlot: {
@@ -42,6 +42,7 @@ export const parcelTableColumnStyleOptions = {
         minWidth: "5rem",
     },
     lastStatus: {
-        grow: 20,
+        grow: 3,
+        maxWidth: "30rem",
     },
 };
