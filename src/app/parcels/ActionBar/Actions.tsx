@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
@@ -15,6 +15,7 @@ import ShippingLabelModal from "./ActionModals/ShippingLabelModal";
 import ShoppingListModal from "./ActionModals/ShoppingListModal";
 import { UpdateParcelStatuses } from "./ActionAndStatusBar";
 import { RoleUpdateContext } from "@/app/roles";
+import { UserRole } from "@/databaseUtils";
 
 const isNotAtLeastOne = (value: number): boolean => {
     return value < 1;
@@ -33,39 +34,39 @@ export type ActionName =
 type ActionTypes = {
     actionName: ActionName;
     newStatus: StatusType;
-    availableToVolunteers: boolean;
+    availableToRole: UserRole[];
 };
 
 const availableActions: ActionTypes[] = [
     {
         actionName: "Download Day Overview",
         newStatus: "Day Overview Downloaded",
-        availableToVolunteers: true,
+        availableToRole: ["volunteer", "staff", "manager", "admin"],
     },
     {
         actionName: "Download Shopping Lists",
         newStatus: "Shopping List Downloaded",
-        availableToVolunteers: true,
+        availableToRole: ["volunteer", "staff", "manager", "admin"],
     },
     {
         actionName: "Download Shipping Labels",
         newStatus: "Shipping Labels Downloaded",
-        availableToVolunteers: true,
+        availableToRole: ["volunteer", "staff", "manager", "admin"],
     },
     {
         actionName: "Generate Map",
         newStatus: "Map Generated",
-        availableToVolunteers: true,
+        availableToRole: ["volunteer", "staff", "manager", "admin"],
     },
     {
         actionName: "Download Driver Overview",
         newStatus: "Driver Overview Downloaded",
-        availableToVolunteers: true,
+        availableToRole: ["volunteer", "staff", "manager", "admin"],
     },
     {
         actionName: "Delete Parcel",
         newStatus: "Parcel Deleted",
-        availableToVolunteers: false,
+        availableToRole: ["staff", "manager", "admin"],
     },
 ];
 
@@ -106,19 +107,16 @@ const Actions: React.FC<Props> = ({
 }) => {
     const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
     const [modalToDisplay, setModalToDisplay] = useState<ActionName | null>(null);
-    const [availableActionsForUserRole, setAvailableActionsForUserRole] = useState<ActionTypes[]>(
-        []
-    );
     const { role } = useContext(RoleUpdateContext);
 
-    useEffect(() => {
-        if (role === "volunteer") {
-            const actionList = availableActions.filter((action) => action.availableToVolunteers);
-            setAvailableActionsForUserRole(actionList);
-        } else {
-            setAvailableActionsForUserRole(availableActions);
+    const getAvailableActionsForUserRole = (): ActionTypes[] => {
+        if (role === null) {
+            return [];
         }
-    }, [role]);
+        return availableActions.filter((action) => {
+            return action.availableToRole.includes(role);
+        });
+    };
 
     const onModalClose = (): void => {
         setModalToDisplay(null);
@@ -152,7 +150,7 @@ const Actions: React.FC<Props> = ({
 
     return (
         <>
-            {availableActionsForUserRole.map(({ actionName, newStatus }) => {
+            {getAvailableActionsForUserRole().map(({ actionName, newStatus }) => {
                 return (
                     modalToDisplay === actionName &&
                     getActionModal(actionName, {
@@ -174,7 +172,7 @@ const Actions: React.FC<Props> = ({
                     anchorEl={actionAnchorElement}
                 >
                     <MenuList id="action-menu">
-                        {availableActionsForUserRole.map(({ actionName }) => {
+                        {getAvailableActionsForUserRole().map(({ actionName }) => {
                             return (
                                 <MenuItem
                                     key={actionName}
