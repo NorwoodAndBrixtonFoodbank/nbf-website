@@ -8,6 +8,7 @@ import {
     formatHouseholdFromFamilyDetails,
 } from "@/app/clients/getExpandedClientDetails";
 import { formatDateTime, formatDatetimeAsDate } from "@/common/format";
+import { Data } from "@/components/DataViewer/DataViewer";
 
 type FetchExpandedParcelDetailsResult =
     | {
@@ -147,29 +148,29 @@ const getExpandedParcelDetails = async (
     };
 };
 
-export type ExpandedParcelData =
-    | {
-          isActive: true;
-          voucherNumber: string;
-          fullName: string;
-          address: string;
-          deliveryInstructions: string;
-          phoneNumber: string;
-          household: string;
-          children: string;
-          packingDate: string;
-          packingSlot: string;
-          method: string;
-          createdAt: string;
-      }
-    | {
-          isActive: false;
-          voucherNumber: string;
-          packingDate: string;
-          packingSlot: string;
-          method: string;
-          createdAt: string;
-      };
+interface ParcelDataIndependentOfClient extends Data {
+    voucherNumber: string;
+    packingDate: string;
+    packingSlot: string;
+    method: string;
+    createdAt: string;
+}
+
+interface ParcelDataForInactiveClient extends ParcelDataIndependentOfClient {
+    isActive: false;
+}
+
+interface ParcelDataForActiveClient extends ParcelDataIndependentOfClient {
+    isActive: true;
+    fullName: string;
+    address: string;
+    deliveryInstructions: string;
+    phoneNumber: string;
+    household: string;
+    children: string;
+}
+
+type ExpandedParcelData = ParcelDataForActiveClient | ParcelDataForInactiveClient;
 
 export interface ExpandedParcelDetails {
     expandedParcelData: ExpandedParcelData;

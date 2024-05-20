@@ -38,4 +38,4 @@ export const possibleParcelPostCodes = [
     null,
 ];
 
-export const booleansWeightedToTrue = [true, true, true, true, true, true, true, false];
+export const booleansWeightedToTrue = Array(9).fill(true).concat(Array(1).fill(false));

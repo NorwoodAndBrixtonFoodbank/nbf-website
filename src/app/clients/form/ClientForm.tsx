@@ -153,7 +153,7 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
                         break;
                     case "noRowsUpdated":
                         setSubmitErrorMessage(
-                            `Update failed. Either the client has been updated recently - please refresh - or the client has been deleted. Log ID: ${editClientError.logId}`
+                            `Update failed, please refresh. If the error persists, the client may have been deleted. Log ID: ${editClientError.logId}`
                         );
                         break;
                 }

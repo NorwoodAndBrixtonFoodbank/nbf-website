@@ -3,6 +3,8 @@ import dayjs, { Dayjs } from "dayjs";
 
 export const nullPostcodeDisplay = "NFA";
 
+export const displayNameForDeletedClient = "Deleted Client";
+
 export const formatCamelCaseKey = (objectKey: string): string => {
     const withSpace = objectKey.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
     return withSpace.toUpperCase();
@@ -84,5 +86,3 @@ export const getParcelOverviewString = (
         (collectionDatetime && ` @ ${dayjs(collectionDatetime).format("DD/MM/YYYY HH:mm")}`)
     );
 };
-
-export const displayNameForDeletedClient = "Deleted Client";
