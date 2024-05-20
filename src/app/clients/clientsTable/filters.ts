@@ -2,36 +2,36 @@ import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import clientsHeaders from "./headers";
 import { ClientsFilter, ClientsFilterMethod } from "./types";
 import {
-    fullNameMethodHelper,
-    phoneNumberMethodHelper,
-    postcodeMethodHelper,
+    fullNameSearch,
+    phoneSearch,
+    postcodeSearch,
 } from "@/common/databaseFilters";
 import { DbClientRow } from "@/databaseUtils";
 
-const fullNameSearch: ClientsFilterMethod = fullNameMethodHelper<DbClientRow>("full_name");
+const clientFullNameSearch: ClientsFilterMethod = fullNameSearch<DbClientRow>("full_name");
 
-const postcodeSearch: ClientsFilterMethod = postcodeMethodHelper<DbClientRow>("address_postcode");
+const clientPostcodeSearch: ClientsFilterMethod = postcodeSearch<DbClientRow>("address_postcode");
 
-const phoneNumberSearch: ClientsFilterMethod = phoneNumberMethodHelper<DbClientRow>("phone_number");
+const clientPhoneSearch: ClientsFilterMethod = phoneSearch<DbClientRow>("phone_number");
 
 const clientsFilters: ClientsFilter[] = [
     buildServerSideTextFilter({
         key: "fullName",
         label: "Name",
         headers: clientsHeaders,
-        method: fullNameSearch,
+        method: clientFullNameSearch,
     }),
     buildServerSideTextFilter({
         key: "addressPostcode",
         label: "Postcode",
         headers: clientsHeaders,
-        method: postcodeSearch,
+        method: clientPostcodeSearch,
     }),
     buildServerSideTextFilter({
         key: "phoneNumber",
         label: "Phone",
         headers: clientsHeaders,
-        method: phoneNumberSearch,
+        method: clientPhoneSearch,
     }),
 ];
 

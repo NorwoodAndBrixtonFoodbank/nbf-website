@@ -20,16 +20,16 @@ import dayjs from "dayjs";
 import { parcelTableHeaderKeysAndLabels } from "./headers";
 import { DbParcelRow } from "@/databaseUtils";
 import {
-    fullNameMethodHelper,
-    phoneNumberMethodHelper,
-    postcodeMethodHelper,
+    fullNameSearch,
+    phoneSearch,
+    postcodeSearch,
 } from "@/common/databaseFilters";
 
-const fullNameSearch: ParcelsFilterMethod<string> =
-    fullNameMethodHelper<DbParcelRow>("client_full_name");
+const parcelsFullNameSearch: ParcelsFilterMethod<string> =
+    fullNameSearch<DbParcelRow>("client_full_name");
 
-const postcodeSearch: ParcelsFilterMethod<string> =
-    postcodeMethodHelper<DbParcelRow>("client_address_postcode");
+const parcelPostcodeSearch: ParcelsFilterMethod<string> =
+    postcodeSearch<DbParcelRow>("client_address_postcode");
 
 const familySearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "") {
@@ -54,8 +54,8 @@ const familySearch: ParcelsFilterMethod<string> = (query, state) => {
     return query.eq("family_count", Number(state));
 };
 
-const phoneSearch: ParcelsFilterMethod<string> =
-    phoneNumberMethodHelper<DbParcelRow>("client_phone_number");
+const parcelPhoneSearch: ParcelsFilterMethod<string> =
+    phoneSearch<DbParcelRow>("client_phone_number");
 
 const voucherSearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "?") {
@@ -204,13 +204,13 @@ const buildFilters = async (): Promise<{
             key: "fullName",
             label: "Name",
             headers: parcelTableHeaderKeysAndLabels,
-            method: fullNameSearch,
+            method: parcelsFullNameSearch,
         }),
         buildServerSideTextFilter({
             key: "addressPostcode",
             label: "Postcode",
             headers: parcelTableHeaderKeysAndLabels,
-            method: postcodeSearch,
+            method: parcelPostcodeSearch,
         }),
         await buildDeliveryCollectionFilter(),
     ];
@@ -226,7 +226,7 @@ const buildFilters = async (): Promise<{
             key: "phoneNumber",
             label: "Phone",
             headers: parcelTableHeaderKeysAndLabels,
-            method: phoneSearch,
+            method: parcelPhoneSearch,
         }),
         buildServerSideTextFilter({
             key: "voucherNumber",
