@@ -6,7 +6,7 @@ import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { serverSideChecklistFilter } from "@/components/Tables/ChecklistFilter";
-import { getDbDate, nullPostcodeDisplay } from "@/common/format";
+import { getDbDate } from "@/common/format";
 import {
     CollectionCentresOptions,
     ParcelsFilter,
@@ -19,11 +19,17 @@ import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import dayjs from "dayjs";
 import { parcelTableHeaderKeysAndLabels } from "./headers";
 import { DbParcelRow } from "@/databaseUtils";
-import { fullNameMethodHelper, phoneNumberMethodHelper, postcodeMethodHelper } from "@/common/databaseFilters";
+import {
+    fullNameMethodHelper,
+    phoneNumberMethodHelper,
+    postcodeMethodHelper,
+} from "@/common/databaseFilters";
 
-const fullNameSearch: ParcelsFilterMethod<string> = fullNameMethodHelper<DbParcelRow>("client_full_name")
+const fullNameSearch: ParcelsFilterMethod<string> =
+    fullNameMethodHelper<DbParcelRow>("client_full_name");
 
-const postcodeSearch: ParcelsFilterMethod<string> = postcodeMethodHelper<DbParcelRow>("client_address_postcode")
+const postcodeSearch: ParcelsFilterMethod<string> =
+    postcodeMethodHelper<DbParcelRow>("client_address_postcode");
 
 const familySearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "") {
@@ -48,7 +54,8 @@ const familySearch: ParcelsFilterMethod<string> = (query, state) => {
     return query.eq("family_count", Number(state));
 };
 
-const phoneSearch: ParcelsFilterMethod<string> = phoneNumberMethodHelper<DbParcelRow>("client_phone_number")
+const phoneSearch: ParcelsFilterMethod<string> =
+    phoneNumberMethodHelper<DbParcelRow>("client_phone_number");
 
 const voucherSearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "?") {
