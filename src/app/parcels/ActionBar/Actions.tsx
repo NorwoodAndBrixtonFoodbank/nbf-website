@@ -118,10 +118,17 @@ const Actions: React.FC<Props> = ({
         const isAdmin = async (): Promise<void> => {
             const { isSuccess, failureReason } = await checkUserIsAdmin();
             if (failureReason) {
-                setModalError(`Error authenticating as admin: ${failureReason}`);
-            } else {
-                setUserIsAdmin(isSuccess);
+                switch (failureReason) {
+                    case "fetch user role error":
+                    case "fetch user error":
+                    case "unauthenticated":
+                        setModalError(`Error authenticating as admin: ${failureReason}`);
+                        break;
+                    case "unauthorised":
+                        break;
+                }
             }
+            setUserIsAdmin(isSuccess);
         };
 
         void isAdmin();
