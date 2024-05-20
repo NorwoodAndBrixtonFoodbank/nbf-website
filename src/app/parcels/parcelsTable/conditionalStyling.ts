@@ -1,17 +1,16 @@
 import { ParcelsTableRow } from "./types";
 
 const getRowBoundaries = (columnValues: (string | number | null)[]): number[] => {
-    const setOfDistinctColumnValues = new Set(columnValues);
-
+    let temp = columnValues[0];
     const boundaries: number[] = [];
-    setOfDistinctColumnValues.forEach((columnValue) => {
-        if (columnValue === columnValues[0]) {
-            return;
-        }
 
-        const indexOfFirstOccurrence = columnValues.indexOf(columnValue);
-        boundaries.push(indexOfFirstOccurrence);
-    });
+    columnValues.forEach((columnValue, index) => {
+        if (columnValue !== temp) {
+            boundaries.push(index)
+        }
+        temp = columnValue;
+    })
+    
     return boundaries;
 };
 
@@ -28,13 +27,13 @@ const searchForPackingDateBreakPoints = (parcelsTableRows: ParcelsTableRow[]): n
 export const searchForBreakPoints = (
     sortField: string,
     parcelsTableRows: ParcelsTableRow[]
-): number[] => {
+): number[][] => {
     switch (sortField) {
         case "packingSlot":
-            return searchForPackingSlotBreakPoints(parcelsTableRows);
+            return [searchForPackingSlotBreakPoints(parcelsTableRows),[]];
         case "packingDate":
-            return searchForPackingDateBreakPoints(parcelsTableRows);
+            return [searchForPackingDateBreakPoints(parcelsTableRows), searchForPackingSlotBreakPoints(parcelsTableRows)];
         default:
-            return [];
+            return [[],[]];
     }
 };

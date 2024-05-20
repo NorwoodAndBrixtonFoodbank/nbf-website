@@ -50,7 +50,7 @@ const ParcelsPage: React.FC<{}> = () => {
     const [filteredParcelCount, setFilteredParcelCount] = useState<number>(0);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [clientIdForSelectedParcel, setClientIdForSelectedParcel] = useState<string | null>(null);
-    const [parcelRowBreakPoints, setParcelRowBreakPoints] = useState<number[]>([]);
+    const [parcelRowBreakPoints, setParcelRowBreakPoints] = useState<number[][]>([[],[]]);
 
     const [checkedParcelIds, setCheckedParcelIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
