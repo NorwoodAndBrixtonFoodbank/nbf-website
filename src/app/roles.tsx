@@ -70,9 +70,9 @@ export const RoleManager: React.FC<Props> = ({ children }) => {
     );
 };
 
-export type AllRolesType = NonNullable<UserRole>;
-export type OrganisationRolesType = Omit<AllRolesType, "volunteer">;
-export type AdminRolesType = Omit<AllRolesType, "volunteer" | "staff" | "manager">;
+type AllRolesType = UserRole;
+type OrganisationRolesType = Exclude<AllRolesType, "volunteer">;
+type AdminRolesType = Exclude<AllRolesType, "volunteer" | "staff" | "manager">;
 export const allRoles: AllRolesType[] = ["volunteer", "staff", "manager", "admin"];
 export const organisationRoles: OrganisationRolesType[] = ["staff", "manager", "admin"];
 export const adminRoles: AdminRolesType[] = ["admin"];

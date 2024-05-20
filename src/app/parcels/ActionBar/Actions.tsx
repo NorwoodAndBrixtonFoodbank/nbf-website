@@ -14,14 +14,8 @@ import GenerateMapModal from "./ActionModals/GenerateMapModal";
 import ShippingLabelModal from "./ActionModals/ShippingLabelModal";
 import ShoppingListModal from "./ActionModals/ShoppingListModal";
 import { UpdateParcelStatuses } from "./ActionAndStatusBar";
-import {
-    AdminRolesType,
-    allRoles,
-    AllRolesType,
-    organisationRoles,
-    OrganisationRolesType,
-    RoleUpdateContext,
-} from "@/app/roles";
+import { allRoles, organisationRoles, RoleUpdateContext } from "@/app/roles";
+import { UserRole } from "@/databaseUtils";
 
 const isNotAtLeastOne = (value: number): boolean => {
     return value < 1;
@@ -40,7 +34,7 @@ export type ActionName =
 type ActionTypes = {
     actionName: ActionName;
     newStatus: StatusType;
-    availableToRole: AllRolesType[] | OrganisationRolesType[] | AdminRolesType[];
+    availableToRole: UserRole[];
 };
 
 const availableActions: ActionTypes[] = [
