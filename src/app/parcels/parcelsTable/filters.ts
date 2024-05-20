@@ -24,7 +24,7 @@ import { fullNameSearch, phoneSearch, postcodeSearch } from "@/common/databaseFi
 const parcelsFullNameSearch: ParcelsFilterMethod<string> =
     fullNameSearch<DbParcelRow>("client_full_name");
 
-const parcelPostcodeSearch: ParcelsFilterMethod<string> =
+const parcelsPostcodeSearch: ParcelsFilterMethod<string> =
     postcodeSearch<DbParcelRow>("client_address_postcode");
 
 const familySearch: ParcelsFilterMethod<string> = (query, state) => {
@@ -50,7 +50,7 @@ const familySearch: ParcelsFilterMethod<string> = (query, state) => {
     return query.eq("family_count", Number(state));
 };
 
-const parcelPhoneSearch: ParcelsFilterMethod<string> =
+const parcelsPhoneSearch: ParcelsFilterMethod<string> =
     phoneSearch<DbParcelRow>("client_phone_number");
 
 const voucherSearch: ParcelsFilterMethod<string> = (query, state) => {
@@ -206,7 +206,7 @@ const buildFilters = async (): Promise<{
             key: "addressPostcode",
             label: "Postcode",
             headers: parcelTableHeaderKeysAndLabels,
-            method: parcelPostcodeSearch,
+            method: parcelsPostcodeSearch,
         }),
         await buildDeliveryCollectionFilter(),
     ];
@@ -222,7 +222,7 @@ const buildFilters = async (): Promise<{
             key: "phoneNumber",
             label: "Phone",
             headers: parcelTableHeaderKeysAndLabels,
-            method: parcelPhoneSearch,
+            method: parcelsPhoneSearch,
         }),
         buildServerSideTextFilter({
             key: "voucherNumber",
