@@ -19,21 +19,11 @@ import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import dayjs from "dayjs";
 import { parcelTableHeaderKeysAndLabels } from "./headers";
 import { DbParcelRow } from "@/databaseUtils";
+import { fullNameMethodHelper, phoneNumberMethodHelper, postcodeMethodHelper } from "@/common/databaseFilters";
 
-const fullNameSearch: ParcelsFilterMethod<string> = (query, state) =>
-    query.ilike("client_full_name", `%${state}%`);
+const fullNameSearch: ParcelsFilterMethod<string> = fullNameMethodHelper<DbParcelRow>("client_full_name")
 
-const postcodeSearch: ParcelsFilterMethod<string> = (query, state) => {
-    if (state === "") {
-        return query;
-    }
-    if (nullPostcodeDisplay.toLowerCase().includes(state.toLowerCase())) {
-        return query.or(
-            `client_address_postcode.ilike.%${state}%, client_address_postcode.is.null`
-        );
-    }
-    return query.ilike("client_address_postcode", `%${state}%`);
-};
+const postcodeSearch: ParcelsFilterMethod<string> = postcodeMethodHelper<DbParcelRow>("client_address_postcode")
 
 const familySearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "") {
@@ -58,8 +48,7 @@ const familySearch: ParcelsFilterMethod<string> = (query, state) => {
     return query.eq("family_count", Number(state));
 };
 
-const phoneSearch: ParcelsFilterMethod<string> = (query, state) =>
-    query.ilike("client_phone_number", `%${state}%`);
+const phoneSearch: ParcelsFilterMethod<string> = phoneNumberMethodHelper<DbParcelRow>("client_phone_number")
 
 const voucherSearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "?") {

@@ -1,23 +1,14 @@
 import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import clientsHeaders from "./headers";
 import { ClientsFilter, ClientsFilterMethod } from "./types";
-import { nullPostcodeDisplay } from "@/common/format";
+import { fullNameMethodHelper, phoneNumberMethodHelper, postcodeMethodHelper } from "@/common/databaseFilters";
+import { DbClientRow } from "@/databaseUtils";
 
-const fullNameSearch: ClientsFilterMethod = (query, state) =>
-    query.ilike("full_name", `%${state}%`);
+const fullNameSearch: ClientsFilterMethod = fullNameMethodHelper<DbClientRow>("full_name")
 
-const postcodeSearch: ClientsFilterMethod = (query, state) => {
-    if (state === "") {
-        return query;
-    }
-    if (nullPostcodeDisplay.toLowerCase().includes(state.toLowerCase())) {
-        return query.or(`address_postcode.ilike.%${state}%, address_postcode.is.null`);
-    }
-    return query.ilike("address_postcode", `%${state}%`);
-};
+const postcodeSearch: ClientsFilterMethod = postcodeMethodHelper<DbClientRow>("address_postcode")
 
-const phoneNumberSearch: ClientsFilterMethod = (query, state) =>
-    query.ilike("phone_number", `%${state}%`);
+const phoneNumberSearch: ClientsFilterMethod = phoneNumberMethodHelper<DbClientRow>("phone_number")
 
 const clientsFilters: ClientsFilter[] = [
     buildServerSideTextFilter({
