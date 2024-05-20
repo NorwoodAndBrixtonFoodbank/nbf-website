@@ -622,20 +622,26 @@ const TableStyling = styled.div<{ rowBreakPoints?: number[][] }>`
     }
 
     ${(props) =>
-        props.rowBreakPoints?.slice()[1].map((lightGreenBreakPoint) =>
-            `& .rdt_TableRow:nth-child(${lightGreenBreakPoint + 1}) {
+        props.rowBreakPoints
+            ?.slice()[1]
+            .map(
+                (lightGreenBreakPoint) =>
+                    `& .rdt_TableRow:nth-child(${lightGreenBreakPoint + 1}) {
                 border-top: solid #77bda0;
             }`
-        ).join()
-    }
+            )
+            .join()}
 
     ${(props) =>
-        props.rowBreakPoints?.slice()[0].map((darkGreenBreakPoint) =>
-            `& .rdt_TableRow:nth-child(${darkGreenBreakPoint + 1}) {
+        props.rowBreakPoints
+            ?.slice()[0]
+            .map(
+                (darkGreenBreakPoint) =>
+                    `& .rdt_TableRow:nth-child(${darkGreenBreakPoint + 1}) {
                 border-top: solid #05663F;
             }`
-        ).join()
-    }
+            )
+            .join()}
 `;
 
 export const ServerPaginatedTable = <Data, DbData extends Record<string, any>>(
@@ -645,4 +651,3 @@ export const ServerPaginatedTable = <Data, DbData extends Record<string, any>>(
 export const ClientPaginatedTable = <Data,>(
     props: Props<Data, {}, PaginationTypeEnum.Client>
 ): React.ReactElement => <Table<Data, PaginationTypeEnum.Client> {...props} />;
-

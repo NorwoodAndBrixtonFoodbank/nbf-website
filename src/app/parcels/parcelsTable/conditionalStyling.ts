@@ -6,11 +6,11 @@ const getRowBoundaries = (columnValues: (string | number | null)[]): number[] =>
 
     columnValues.forEach((columnValue, index) => {
         if (columnValue !== temp) {
-            boundaries.push(index)
+            boundaries.push(index);
         }
         temp = columnValue;
-    })
-    
+    });
+
     return boundaries;
 };
 
@@ -30,10 +30,13 @@ export const searchForBreakPoints = (
 ): number[][] => {
     switch (sortField) {
         case "packingSlot":
-            return [searchForPackingSlotBreakPoints(parcelsTableRows),[]];
+            return [searchForPackingSlotBreakPoints(parcelsTableRows), []];
         case "packingDate":
-            return [searchForPackingDateBreakPoints(parcelsTableRows), searchForPackingSlotBreakPoints(parcelsTableRows)];
+            return [
+                searchForPackingDateBreakPoints(parcelsTableRows),
+                searchForPackingSlotBreakPoints(parcelsTableRows),
+            ];
         default:
-            return [[],[]];
+            return [[], []];
     }
 };
