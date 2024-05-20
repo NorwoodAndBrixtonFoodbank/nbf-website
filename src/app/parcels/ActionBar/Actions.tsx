@@ -118,6 +118,8 @@ const Actions: React.FC<Props> = ({
         });
     };
 
+    const availableActionsForUserRole = getAvailableActionsForUserRole();
+
     const onModalClose = (): void => {
         setModalToDisplay(null);
         setModalError(null);
@@ -150,7 +152,7 @@ const Actions: React.FC<Props> = ({
 
     return (
         <>
-            {getAvailableActionsForUserRole().map(({ actionName, newStatus }) => {
+            {availableActionsForUserRole.map(({ actionName, newStatus }) => {
                 return (
                     modalToDisplay === actionName &&
                     getActionModal(actionName, {
@@ -172,7 +174,7 @@ const Actions: React.FC<Props> = ({
                     anchorEl={actionAnchorElement}
                 >
                     <MenuList id="action-menu">
-                        {getAvailableActionsForUserRole().map(({ actionName }) => {
+                        {availableActionsForUserRole.map(({ actionName }) => {
                             return (
                                 <MenuItem
                                     key={actionName}
