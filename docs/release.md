@@ -1,31 +1,36 @@
 # Release Instructions
+## Branches
+- `dev` branch is automatically deployed to the dev environment
+  - Amplify watches changes in `dev` branch and deploys website automatically
+  - GitHub actions automatically deploy database migrations and edge functions upon merge to dev.
+- `staging` branch is not fully automatically deployed
+   - Amplify watches changes in `dev` branch and deploys website automatically
+   - GitHub actions ask GitHub team admins for approval on database migration and edge function deployment.
+
 ## Release Steps
-1. Reset the `main` branch to that tag and push. 
+1. Reset the `staging` branch to that tag and push. 
    ```
-   git checkout main
+   git checkout staging
    git pull
    git reset --hard dev
    git push
    ```
    This kicks off a few things
-   1. Website deployment using Amplify will automatically start when the `main` branch is pushed.
-   2. A pipeline asks for approval to start a dry-run of the database migration to production Supabase 
-   3. A pipeline asks for approval to start the database migration to production Supabase
-2. Approve the migration dry-run to production 
+   1. Website deployment using Amplify will automatically start when the `staging` branch is pushed.
+   2. A pipeline asks for approval to start a dry-run of the database migration to staging Supabase 
+   3. A pipeline asks for approval to start the database migration to staging Supabase
+2. Approve the migration dry-run to staging 
 3. Confirm the website deployment has succeeded on Amplify 
-4. If you're happy with the dry-run, execute the migration to production 
+4. If you're happy with the dry-run, execute the migration to staging 
    - It may be worth checking the order of the files and cross reference it with the commits
    - Also look at what the migrations are doing to ensure there's no conflicts/the declaration you want is defined last
-5. If necessary, reset the production database from the local machine
-   1. This should never be done once the website actually goes live
-   2. Make sure the local machine is at the latest `main` commit at this point
-6. If there have been any changes in email templates, update them on production Supabase (Navbar on the left -> Authentication -> Email templates)
+5. If there have been any changes in email templates, update them on staging Supabase (Navbar on the left -> Authentication -> Email templates)
    1. Update the email subjects
    2. Update the email content
-7. Follow the Admin Actions outlined below.
+6. Follow the Admin Actions outlined below.
 
 ## Admin Actions
-1. Create a git tag at the commit that has been deployed to production, prefixed with "v" e.g. `v0.4.0`
+1. Create a git tag at the commit that has been deployed to staging, prefixed with "v" e.g. `v0.4.0`
    ```
    git tag "v<version_number>"          // e.g. git tag "v0.4.0"
    ```
