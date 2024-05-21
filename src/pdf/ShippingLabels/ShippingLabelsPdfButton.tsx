@@ -135,7 +135,7 @@ const getRequiredData = async (
             voucher_number: parcel.voucher_number ?? "",
             full_name: clientIsActive ? client.full_name ?? "" : displayNameForDeletedClient,
             phone_number: clientIsActive ? client.phone_number ?? "" : "-",
-            address_1: clientIsActive ? client.address_1 ?? "" : "",
+            address_1: clientIsActive ? client.address_1 ?? "" : "", //Seeded deleted clients have is_active set to false, but their personal info fields are non-null
             address_2: clientIsActive ? client.address_2 ?? "" : "",
             address_town: clientIsActive ? client.address_town ?? "" : "",
             address_county: clientIsActive ? client.address_county ?? "" : "",
