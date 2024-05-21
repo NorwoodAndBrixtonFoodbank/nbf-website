@@ -1,7 +1,7 @@
 import { Json } from "@/databaseTypesFile";
 import dayjs, { Dayjs } from "dayjs";
 
-export const nullPostcodeDisplay = "NFA";
+export const displayPostcodeForHomelessClient = "NFA";
 
 export const displayNameForDeletedClient = "Deleted Client";
 
@@ -76,7 +76,7 @@ export const getParcelOverviewString = (
 ): string => {
     if (clientIsActive) {
         return (
-            (addressPostcode ?? nullPostcodeDisplay) +
+            (addressPostcode ?? displayPostcodeForHomelessClient) +
             (fullName && ` - ${fullName}`) +
             (collectionDatetime && ` @ ${dayjs(collectionDatetime).format("DD/MM/YYYY HH:mm")}`)
         );

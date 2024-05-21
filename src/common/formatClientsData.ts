@@ -1,5 +1,5 @@
 import { Schema } from "@/databaseUtils";
-import { displayList, nullPostcodeDisplay } from "@/common/format";
+import { displayList, displayPostcodeForHomelessClient } from "@/common/format";
 interface NappySizeAndExtraInformation {
     nappySize: string;
     extraInformation: string;
@@ -50,7 +50,7 @@ export const prepareClientSummary = (clientData: Schema["clients"]): ClientSumma
     return {
         name: full_name ?? "",
         contact: phone_number ?? "",
-        address: address_postcode ? formattedAddress : nullPostcodeDisplay,
+        address: address_postcode ? formattedAddress : displayPostcodeForHomelessClient,
         extraInformation: extraInformation,
     };
 };

@@ -2,7 +2,7 @@ import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { nullPostcodeDisplay } from "@/common/format";
+import { displayPostcodeForHomelessClient } from "@/common/format";
 
 const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientDetails> => {
     const rawClientDetails = await getRawClientDetails(clientId);
@@ -107,7 +107,7 @@ export const formatAddressFromClientDetails = (
     >
 ): string => {
     if (!client.address_postcode) {
-        return nullPostcodeDisplay;
+        return displayPostcodeForHomelessClient;
     }
     return [
         client.address_1,

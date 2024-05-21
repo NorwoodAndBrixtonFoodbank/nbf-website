@@ -1,6 +1,6 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
-import { nullPostcodeDisplay } from "@/common/format";
+import { displayPostcodeForHomelessClient } from "@/common/format";
 import { faShoePrints, faTruck } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
 export interface ShippingLabelData {
@@ -128,7 +128,7 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                 <View style={[styles.bottomRow]}>
                     <View style={[styles.leftCol, { marginTop: "15px" }]}>
                         <Text style={styles.largeText}>
-                            {data.address_postcode ?? nullPostcodeDisplay}
+                            {data.address_postcode ?? displayPostcodeForHomelessClient}
                         </Text>
                     </View>
                     <View style={[styles.middleCol, { flexDirection: "row" }]}>

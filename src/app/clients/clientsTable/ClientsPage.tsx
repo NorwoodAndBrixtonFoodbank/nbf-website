@@ -17,7 +17,7 @@ import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFa
 import { CircularProgress } from "@mui/material";
 import { ErrorSecondaryText } from "../../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
-import { nullPostcodeDisplay } from "@/common/format";
+import { displayPostcodeForHomelessClient } from "@/common/format";
 import ConfirmDialog from "@/components/Modal/ConfirmDialog";
 import DeleteButton from "@/components/Buttons/DeleteButton";
 import deleteClient from "../deleteClient";
@@ -142,7 +142,7 @@ const ClientsPage: React.FC<{}> = () => {
     }, [clientId]);
 
     const formatNullPostcode = (postcodeData: ClientsTableRow["addressPostcode"]): string => {
-        return postcodeData ?? nullPostcodeDisplay;
+        return postcodeData ?? displayPostcodeForHomelessClient;
     };
 
     const onDeleteClient = async (): Promise<void> => {

@@ -6,7 +6,7 @@ import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { serverSideChecklistFilter } from "@/components/Tables/ChecklistFilter";
-import { getDbDate, nullPostcodeDisplay } from "@/common/format";
+import { getDbDate, displayPostcodeForHomelessClient } from "@/common/format";
 import {
     CollectionCentresOptions,
     ParcelsFilter,
@@ -38,7 +38,7 @@ const postcodeSearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "-") {
         return query.is("client_address_postcode", null);
     }
-    if (nullPostcodeDisplay.toLowerCase().includes(state.toLowerCase())) {
+    if (displayPostcodeForHomelessClient.toLowerCase().includes(state.toLowerCase())) {
         return query.or(
             `client_address_postcode.ilike.%${state}%, client_address_postcode.is.null`
         );

@@ -3,7 +3,7 @@ import {
     displayNameForDeletedClient,
     formatDateTime,
     formatDatetimeAsDate,
-    nullPostcodeDisplay,
+    displayPostcodeForHomelessClient,
 } from "@/common/format";
 import {
     FetchClientIdAndIsActiveError,
@@ -67,7 +67,7 @@ const rowToLastStatusColumn = (data: ParcelsTableRow["lastStatus"] | null): stri
 };
 
 const formatNullPostcode = (postcodeData: ParcelsTableRow["addressPostcode"]): string => {
-    return postcodeData ?? nullPostcodeDisplay;
+    return postcodeData ?? displayPostcodeForHomelessClient;
 };
 
 export const parcelTableColumnDisplayFunctions = {

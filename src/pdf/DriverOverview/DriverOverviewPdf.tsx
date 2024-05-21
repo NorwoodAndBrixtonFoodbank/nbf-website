@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Text, Document, Page, View, StyleSheet, Image } from "@react-pdf/renderer";
-import { nullPostcodeDisplay } from "@/common/format";
+import { displayPostcodeForHomelessClient } from "@/common/format";
 
 export interface DriverOverviewTableData {
     name: string;
@@ -156,7 +156,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                             <Text>{rowData.address.postcode}</Text>
                         </>
                     ) : (
-                        <Text>{rowData.clientIsActive ? nullPostcodeDisplay : "-"}</Text>
+                        <Text>{rowData.clientIsActive ? displayPostcodeForHomelessClient : "-"}</Text>
                     )}
                 </View>
                 <View style={[styles.tableColumn, styles.contactColumnWidth]}>

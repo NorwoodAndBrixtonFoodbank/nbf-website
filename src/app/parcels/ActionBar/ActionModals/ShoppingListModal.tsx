@@ -13,7 +13,7 @@ import { StatusType, getStatusErrorMessageWithLogId } from "../Statuses";
 import ShoppingListPdfButton from "@/pdf/ShoppingList/ShoppingListPdfButton";
 import { ShoppingListPdfError } from "@/pdf/ShoppingList/getShoppingListData";
 import { sendAuditLog } from "@/server/auditLog";
-import { nullPostcodeDisplay } from "@/common/format";
+import { displayPostcodeForHomelessClient } from "@/common/format";
 
 interface ShoppingListsConfirmationProps {
     selectedParcels: ParcelsTableRow[];
@@ -27,7 +27,7 @@ const ShoppingListsConfirmation: React.FC<ShoppingListsConfirmationProps> = ({
 
     const printedListPostcodes = selectedParcels
         .filter((parcel) => parcel.lastStatus?.name.startsWith(statusToFind))
-        .map((parcel) => parcel.addressPostcode ?? nullPostcodeDisplay);
+        .map((parcel) => parcel.addressPostcode ?? displayPostcodeForHomelessClient);
 
     return printedListPostcodes.length > 0 ? (
         <>
