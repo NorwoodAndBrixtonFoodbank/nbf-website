@@ -1,4 +1,3 @@
-import { CongestionChargeError } from "@/common/congestionCharges";
 import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
 import { ServerSideFilter, ServerSideFilterMethod } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
@@ -45,7 +44,7 @@ export type GetParcelDataAndCountResult =
     | {
           data: null;
           error: {
-              type: GetParcelDataAndCountErrorType | CongestionChargeError;
+              type: GetParcelDataAndCountErrorType;
               logId: string;
           };
       };
