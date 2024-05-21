@@ -26,44 +26,41 @@ const searchForPackingDateBreakPoints = (parcelsTableRows: ParcelsTableRow[]): n
 };
 
 export type BreakPointConfig = {
-    name: string
-    breakPoints: number[]
-    colour: string
-    thickness?: string
-}
+    name: string;
+    breakPoints: number[];
+    colour: string;
+    thickness: string;
+};
 
-export const searchForBreakPoints = (
-    sortField: string,
-    parcelsTableRows: ParcelsTableRow[],
-    theme: DefaultTheme,
+export const searchForBreakPoints = <TableRow extends ParcelsTableRow>(
+    headerKey: keyof TableRow,
+    parcelsTableRows: TableRow[],
+    theme: DefaultTheme
 ): BreakPointConfig[] => {
-    switch (sortField) {
+    switch (headerKey) {
         case "packingSlot": {
-            let packingSlotBreakPointConfig = {
+            const packingSlotBreakPointConfig = {
                 name: "packingSlot",
                 breakPoints: searchForPackingSlotBreakPoints(parcelsTableRows),
                 colour: theme.primary.background[3],
-                thickness: "5pt"
-            }
+                thickness: "5pt",
+            };
             return [packingSlotBreakPointConfig];
         }
         case "packingDate": {
-            let packingSlotBreakPointConfig = {
+            const packingSlotBreakPointConfig = {
                 name: "packingSlot",
                 breakPoints: searchForPackingSlotBreakPoints(parcelsTableRows),
                 colour: theme.primary.background[2],
-                thickness: "2.5pt"
-            }
-            let packingDateBreakPointConfig = {
+                thickness: "2.5pt",
+            };
+            const packingDateBreakPointConfig = {
                 name: "packingDate",
                 breakPoints: searchForPackingDateBreakPoints(parcelsTableRows),
                 colour: theme.primary.background[3],
-                thickness: "5pt"
-            }
-            return [
-                packingSlotBreakPointConfig,
-                packingDateBreakPointConfig,
-            ];
+                thickness: "5pt",
+            };
+            return [packingSlotBreakPointConfig, packingDateBreakPointConfig];
         }
         default:
             return [];

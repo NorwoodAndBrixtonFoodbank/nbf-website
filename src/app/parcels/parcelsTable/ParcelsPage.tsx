@@ -50,7 +50,9 @@ const ParcelsPage: React.FC<{}> = () => {
     const [filteredParcelCount, setFilteredParcelCount] = useState<number>(0);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [clientIdForSelectedParcel, setClientIdForSelectedParcel] = useState<string | null>(null);
-    const [parcelRowBreakPointConfig, setParcelRowBreakPointConfig] = useState<BreakPointConfig[]>([]);
+    const [parcelRowBreakPointConfig, setParcelRowBreakPointConfig] = useState<BreakPointConfig[]>(
+        []
+    );
 
     const [checkedParcelIds, setCheckedParcelIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
@@ -157,12 +159,12 @@ const ParcelsPage: React.FC<{}> = () => {
     }, [additionalFilters, endPoint, primaryFilters, sortState, startPoint]);
 
     useEffect(() => {
-        if (sortState.sortEnabled && sortState.column.sortField) {
+        if (sortState.sortEnabled && sortState.column.headerKey) {
             setParcelRowBreakPointConfig(
-                searchForBreakPoints(sortState.column.sortField, parcelsDataPortion, theme)
+                searchForBreakPoints(sortState.column.headerKey, parcelsDataPortion, theme)
             );
         }
-    }, [sortState, parcelsDataPortion, theme])
+    }, [sortState, parcelsDataPortion, theme]);
 
     useEffect(() => {
         if (!areFiltersLoadingForFirstTime) {

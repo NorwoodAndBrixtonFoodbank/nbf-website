@@ -74,6 +74,7 @@ export type SortConfig<Data, SortMethod extends Function> =
 
 interface CustomColumn<Data, SortMethod extends Function> extends TableColumn<Row<Data>> {
     sortMethod?: SortMethod;
+    headerKey?: keyof Data;
 }
 
 export type CheckboxConfig<Data> =
@@ -261,6 +262,7 @@ const Table = <
                 />
             ),
             sortField: headerKey.toString(),
+            headerKey: headerKey,
             sortMethod: sortMethod,
             ...columnStyles,
         };
@@ -624,15 +626,15 @@ const TableStyling = styled.div<{ rowBreakPointConfigs?: BreakPointConfig[] }>`
 
     ${(props) =>
         props.rowBreakPointConfigs
-            ?.map(
-                (breakPointConfig) => {return (
-                    breakPointConfig.breakPoints.map(
+            ?.map((breakPointConfig) => {
+                return breakPointConfig.breakPoints
+                    .map(
                         (breakPoint) => `& .rdt_TableRow:nth-child(${breakPoint + 1}) {
                             border-top: ${breakPointConfig.thickness} solid ${breakPointConfig.colour};
                         }`
-                    ).join()
-                )}
-            )
+                    )
+                    .join();
+            })
             .join()}
 `;
 
