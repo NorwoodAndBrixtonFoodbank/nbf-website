@@ -27,22 +27,20 @@ const pathsOnlyShownToStaffAndAbove = ["/lists"] as const;
 const pathsOnlyShownToAdmin = ["/admin"] as const;
 
 const getShownPagesByRole = (role: UserRole | null): readonly string[] => {
-    switch (role) {
-        case "admin":
-            return [
-                ...pathsShownToAllAuthenticatedUsers,
-                ...pathsOnlyShownToStaffAndAbove,
-                ...pathsOnlyShownToAdmin,
-            ];
-        case "manager":
-            return [...pathsShownToAllAuthenticatedUsers, ...pathsOnlyShownToStaffAndAbove];
-        case "staff":
-            return [...pathsShownToAllAuthenticatedUsers, ...pathsOnlyShownToStaffAndAbove];
-        case "volunteer":
-            return pathsShownToAllAuthenticatedUsers;
-        case null:
-            return pathsNotRequiringLogin;
+    if (adminRoles.includes(role as AdminRolesType)) {
+        return [
+            ...pathsShownToAllAuthenticatedUsers,
+            ...pathsOnlyShownToStaffAndAbove,
+            ...pathsOnlyShownToAdmin,
+        ];
     }
+    if (organisationRoles.includes(role as OrganisationRolesType)) {
+        return [...pathsShownToAllAuthenticatedUsers, ...pathsOnlyShownToStaffAndAbove];
+    }
+    if (allRoles.includes(role as AllRolesType)) {
+        return pathsShownToAllAuthenticatedUsers;
+    }
+    return pathsNotRequiringLogin;
 };
 
 export const roleCanAccessPage = (role: UserRole | null, url: string): boolean => {
