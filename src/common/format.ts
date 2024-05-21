@@ -1,7 +1,9 @@
 import { Json } from "@/databaseTypesFile";
 import dayjs, { Dayjs } from "dayjs";
 
-export const nullPostcodeDisplay = "NFA";
+export const displayPostcodeForHomelessClient = "NFA";
+
+export const displayNameForDeletedClient = "Deleted Client";
 
 export const formatCamelCaseKey = (objectKey: string): string => {
     const withSpace = objectKey.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
@@ -68,9 +70,19 @@ export const getReadableWebsiteDataName = (name: string): string =>
 
 export const getParcelOverviewString = (
     addressPostcode: string | null,
-    fullName: string,
-    collectionDatetime: Date | null
-): string =>
-    (addressPostcode ?? nullPostcodeDisplay) +
-    (fullName && ` - ${fullName}`) +
-    (collectionDatetime && ` @ ${dayjs(collectionDatetime).format("DD/MM/YYYY HH:mm")}`);
+    fullName: string | null,
+    collectionDatetime: Date | null,
+    clientIsActive: boolean
+): string => {
+    if (clientIsActive) {
+        return (
+            (addressPostcode ?? displayPostcodeForHomelessClient) +
+            (fullName && ` - ${fullName}`) +
+            (collectionDatetime && ` @ ${dayjs(collectionDatetime).format("DD/MM/YYYY HH:mm")}`)
+        );
+    }
+    return (
+        displayNameForDeletedClient +
+        (collectionDatetime && ` @ ${dayjs(collectionDatetime).format("DD/MM/YYYY HH:mm")}`)
+    );
+};

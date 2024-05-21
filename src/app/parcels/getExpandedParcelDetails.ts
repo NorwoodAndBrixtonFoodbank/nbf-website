@@ -1,5 +1,4 @@
 import { Schema } from "@/databaseUtils";
-import { Data } from "@/components/DataViewer/DataViewer";
 import supabase from "@/supabaseClient";
 import { EventTableRow } from "./EventTable";
 import { logErrorReturnLogId } from "@/logger/logger";
@@ -9,6 +8,7 @@ import {
     formatHouseholdFromFamilyDetails,
 } from "@/app/clients/getExpandedClientDetails";
 import { formatDateTime, formatDatetimeAsDate } from "@/common/format";
+import { Data } from "@/components/DataViewer/DataViewer";
 
 type FetchExpandedParcelDetailsResult =
     | {
@@ -57,6 +57,7 @@ const getExpandedParcelDetails = async (
             address_town,
             address_county,
             address_postcode,
+            is_active,
 
             family:families(
                 age,
@@ -103,16 +104,37 @@ const getExpandedParcelDetails = async (
         };
     }
 
+    const clientIsActive = client.is_active;
+
+    if (clientIsActive) {
+        return {
+            parcelDetails: {
+                expandedParcelData: {
+                    isActive: true,
+                    voucherNumber: rawParcelDetails.voucher_number ?? "",
+                    fullName: client.full_name ?? "",
+                    address: formatAddressFromClientDetails(client),
+                    deliveryInstructions: client.delivery_instructions ?? "",
+                    phoneNumber: client.phone_number ?? "",
+                    household: formatHouseholdFromFamilyDetails(client.family),
+                    children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
+                    packingDate: formatDatetimeAsDate(rawParcelDetails.packing_date),
+                    packingSlot: rawParcelDetails.packing_slot?.name ?? "",
+                    method: rawParcelDetails.collection_centre?.is_shown
+                        ? rawParcelDetails.collection_centre?.name
+                        : `${rawParcelDetails.collection_centre?.name} (inactive)`,
+                    createdAt: formatDateTime(rawParcelDetails.created_at),
+                },
+                events: processEventsDetails(rawParcelDetails.events),
+            },
+            error: null,
+        };
+    }
     return {
         parcelDetails: {
             expandedParcelData: {
+                isActive: false,
                 voucherNumber: rawParcelDetails.voucher_number ?? "",
-                fullName: client.full_name,
-                address: formatAddressFromClientDetails(client),
-                deliveryInstructions: client.delivery_instructions,
-                phoneNumber: client.phone_number,
-                household: formatHouseholdFromFamilyDetails(client.family),
-                children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
                 packingDate: formatDatetimeAsDate(rawParcelDetails.packing_date),
                 packingSlot: rawParcelDetails.packing_slot?.name ?? "",
                 method: rawParcelDetails.collection_centre?.is_shown
@@ -126,19 +148,29 @@ const getExpandedParcelDetails = async (
     };
 };
 
-export interface ExpandedParcelData extends Data {
+interface ParcelDataIndependentOfClient extends Data {
     voucherNumber: string;
+    packingDate: string;
+    packingSlot: string;
+    method: string;
+    createdAt: string;
+}
+
+interface ParcelDataForInactiveClient extends ParcelDataIndependentOfClient {
+    isActive: false;
+}
+
+interface ParcelDataForActiveClient extends ParcelDataIndependentOfClient {
+    isActive: true;
     fullName: string;
     address: string;
     deliveryInstructions: string;
     phoneNumber: string;
     household: string;
     children: string;
-    packingDate: string;
-    packingSlot: string;
-    method: string;
-    createdAt: string;
 }
+
+type ExpandedParcelData = ParcelDataForActiveClient | ParcelDataForInactiveClient;
 
 export interface ExpandedParcelDetails {
     expandedParcelData: ExpandedParcelData;

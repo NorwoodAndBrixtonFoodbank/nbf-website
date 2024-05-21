@@ -2,7 +2,7 @@ import React from "react";
 import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
 import { ClientSummary, RequirementSummary } from "@/common/formatClientsData";
 import { HouseholdSummary } from "@/common/formatFamiliesData";
-import { formatCamelCaseKey, nullPostcodeDisplay } from "@/common/format";
+import { formatCamelCaseKey, displayPostcodeForHomelessClient } from "@/common/format";
 import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import { Item, ShoppingListPdfData } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
 import { faTruck, faShoePrints } from "@fortawesome/free-solid-svg-icons";
@@ -237,7 +237,7 @@ const SingleShoppingList: React.FC<SingleShoppingListProps> = ({ parcelData }) =
                             ></FontAwesomeIconPdfComponent>
                         </View>
                         <Text style={styles.subtitle}>
-                            POSTCODE: {parcelData.postcode ?? nullPostcodeDisplay}
+                            POSTCODE: {parcelData.postcode ?? displayPostcodeForHomelessClient}
                         </Text>
                     </View>
                     {/* eslint-disable-next-line jsx-a11y/alt-text -- React-PDF Image doesn't  have alt text property*/}

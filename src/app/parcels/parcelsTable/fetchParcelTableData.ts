@@ -265,18 +265,27 @@ export const fetchParcelStatuses = async (): Promise<ParcelStatusesReturnType> =
     return { data: parcelStatusesList, error: null };
 };
 
-export const getClientIdForParcel = async (parcelId: string): Promise<FetchClientIdResult> => {
-    const { data: clientIdData, error: clientIdError } = await supabase
+export const getClientIdAndIsActive = async (parcelId: string): Promise<FetchClientIdResult> => {
+    const { data, error } = await supabase
         .from("parcels")
-        .select("client_id")
+        .select("client_id, client:clients(is_active)")
         .eq("primary_key", parcelId)
         .single();
 
-    if (clientIdError) {
-        const message = `Failed to fetch client ID for a parcel with ID ${parcelId}`;
-        const logId = await logErrorReturnLogId(message, { error: clientIdError });
-        return { clientId: null, error: { type: "failedClientIdFetch", logId: logId } };
+    if (error) {
+        const message = `Failed to fetch client ID and is active for a parcel with ID ${parcelId}`;
+        const logId = await logErrorReturnLogId(message, { error });
+        return { data: null, error: { type: "failedClientIdAndIsActiveFetch", logId } };
     }
 
-    return { clientId: clientIdData.client_id, error: null };
+    if (data.client === null) {
+        const message = `Failed to find matching client for a parcel with ID ${parcelId}`;
+        const logId = await logErrorReturnLogId(message, { error });
+        return { data: null, error: { type: "noMatchingClient", logId } };
+    }
+
+    return {
+        data: { clientId: data.client_id, isClientActive: data?.client?.is_active },
+        error: null,
+    };
 };
