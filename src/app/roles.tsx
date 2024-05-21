@@ -27,22 +27,20 @@ const pathsOnlyShownToStaffAndAbove = ["/lists"] as const;
 const pathsOnlyShownToAdmin = ["/admin"] as const;
 
 const getShownPagesByRole = (role: UserRole | null): readonly string[] => {
-    switch (role) {
-        case "admin":
-            return [
-                ...pathsShownToAllAuthenticatedUsers,
-                ...pathsOnlyShownToStaffAndAbove,
-                ...pathsOnlyShownToAdmin,
-            ];
-        case "manager":
-            return [...pathsShownToAllAuthenticatedUsers, ...pathsOnlyShownToStaffAndAbove];
-        case "staff":
-            return [...pathsShownToAllAuthenticatedUsers, ...pathsOnlyShownToStaffAndAbove];
-        case "volunteer":
-            return pathsShownToAllAuthenticatedUsers;
-        case null:
-            return pathsNotRequiringLogin;
+    if (adminRoles.includes(role as AdminRolesType)) {
+        return [
+            ...pathsShownToAllAuthenticatedUsers,
+            ...pathsOnlyShownToStaffAndAbove,
+            ...pathsOnlyShownToAdmin,
+        ];
     }
+    if (organisationRoles.includes(role as OrganisationRolesType)) {
+        return [...pathsShownToAllAuthenticatedUsers, ...pathsOnlyShownToStaffAndAbove];
+    }
+    if (allRoles.includes(role as AllRolesType)) {
+        return pathsShownToAllAuthenticatedUsers;
+    }
+    return pathsNotRequiringLogin;
 };
 
 export const roleCanAccessPage = (role: UserRole | null, url: string): boolean => {
@@ -69,3 +67,10 @@ export const RoleManager: React.FC<Props> = ({ children }) => {
         </RoleUpdateContext.Provider>
     );
 };
+
+type AllRolesType = UserRole;
+type OrganisationRolesType = Exclude<AllRolesType, "volunteer">;
+type AdminRolesType = Exclude<AllRolesType, "volunteer" | "staff" | "manager">;
+export const allRoles: AllRolesType[] = ["volunteer", "staff", "manager", "admin"];
+export const organisationRoles: OrganisationRolesType[] = ["staff", "manager", "admin"];
+export const adminRoles: AdminRolesType[] = ["admin"];
