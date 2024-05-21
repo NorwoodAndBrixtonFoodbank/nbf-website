@@ -2,10 +2,10 @@ import React from "react";
 import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
 import { ClientSummary, RequirementSummary } from "@/common/formatClientsData";
 import { HouseholdSummary } from "@/common/formatFamiliesData";
-import { formatCamelCaseKey, nullPostcodeDisplay } from "@/common/format";
+import { formatCamelCaseKey, displayPostcodeForHomelessClient } from "@/common/format";
 import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import { Item, ShoppingListPdfData } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
-import { faBuildingCircleArrowRight, faTruck } from "@fortawesome/free-solid-svg-icons";
+import { faTruck, faShoePrints } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
 
 export type BlockProps = ParcelInfo | HouseholdSummary | RequirementSummary;
@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: "22pt",
         fontFamily: "Helvetica-Bold",
+        paddingRight: "6pt",
     },
     subtitle: {
         fontSize: "16pt",
@@ -226,17 +227,17 @@ const SingleShoppingList: React.FC<SingleShoppingListProps> = ({ parcelData }) =
                     <View style={styles.flexColumn}>
                         <View style={styles.flexRow}>
                             <Text style={styles.title}>Shopping List</Text>
-                            <Text style={styles.title}> |</Text>
+                            <Text style={styles.title}>|</Text>
                             <FontAwesomeIconPdfComponent
                                 faIcon={
                                     parcelData.parcelInfo.collectionSite === "N/A - Delivery"
                                         ? faTruck
-                                        : faBuildingCircleArrowRight
+                                        : faShoePrints
                                 }
                             ></FontAwesomeIconPdfComponent>
                         </View>
                         <Text style={styles.subtitle}>
-                            POSTCODE: {parcelData.postcode ?? nullPostcodeDisplay}
+                            POSTCODE: {parcelData.postcode ?? displayPostcodeForHomelessClient}
                         </Text>
                     </View>
                     {/* eslint-disable-next-line jsx-a11y/alt-text -- React-PDF Image doesn't  have alt text property*/}

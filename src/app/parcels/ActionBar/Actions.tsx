@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
@@ -14,6 +14,8 @@ import GenerateMapModal from "./ActionModals/GenerateMapModal";
 import ShippingLabelModal from "./ActionModals/ShippingLabelModal";
 import ShoppingListModal from "./ActionModals/ShoppingListModal";
 import { UpdateParcelStatuses } from "./ActionAndStatusBar";
+import { allRoles, organisationRoles, RoleUpdateContext } from "@/app/roles";
+import { UserRole } from "@/databaseUtils";
 
 const isNotAtLeastOne = (value: number): boolean => {
     return value < 1;
@@ -29,32 +31,44 @@ export type ActionName =
     | "Download Driver Overview"
     | "Delete Parcel";
 
-type AvailableActionsType = {
-    [actionKey in ActionName]: {
-        newStatus: StatusType;
-    };
+type ActionTypes = {
+    actionName: ActionName;
+    newStatus: StatusType;
+    availableToRole: UserRole[];
 };
 
-export const availableActions: AvailableActionsType = {
-    "Download Day Overview": {
+const availableActions: ActionTypes[] = [
+    {
+        actionName: "Download Day Overview",
         newStatus: "Day Overview Downloaded",
+        availableToRole: allRoles,
     },
-    "Download Shopping Lists": {
+    {
+        actionName: "Download Shopping Lists",
         newStatus: "Shopping List Downloaded",
+        availableToRole: allRoles,
     },
-    "Download Shipping Labels": {
+    {
+        actionName: "Download Shipping Labels",
         newStatus: "Shipping Labels Downloaded",
+        availableToRole: allRoles,
     },
-    "Generate Map": {
+    {
+        actionName: "Generate Map",
         newStatus: "Map Generated",
+        availableToRole: allRoles,
     },
-    "Download Driver Overview": {
+    {
+        actionName: "Download Driver Overview",
         newStatus: "Driver Overview Downloaded",
+        availableToRole: allRoles,
     },
-    "Delete Parcel": {
+    {
+        actionName: "Delete Parcel",
         newStatus: "Parcel Deleted",
+        availableToRole: organisationRoles,
     },
-};
+];
 
 interface Props {
     fetchSelectedParcels: () => Promise<ParcelsTableRow[]>;
@@ -93,6 +107,18 @@ const Actions: React.FC<Props> = ({
 }) => {
     const [selectedParcels, setSelectedParcels] = useState<ParcelsTableRow[]>([]);
     const [modalToDisplay, setModalToDisplay] = useState<ActionName | null>(null);
+    const { role } = useContext(RoleUpdateContext);
+
+    const getAvailableActionsForUserRole = (): ActionTypes[] => {
+        if (role === null) {
+            return [];
+        }
+        return availableActions.filter((action) => {
+            return action.availableToRole.includes(role);
+        });
+    };
+
+    const availableActionsForUserRole = getAvailableActionsForUserRole();
 
     const onModalClose = (): void => {
         setModalToDisplay(null);
@@ -126,10 +152,10 @@ const Actions: React.FC<Props> = ({
 
     return (
         <>
-            {Object.entries(availableActions).map(([key, value]) => {
+            {availableActionsForUserRole.map(({ actionName, newStatus }) => {
                 return (
-                    modalToDisplay === key &&
-                    getActionModal(key, {
+                    modalToDisplay === actionName &&
+                    getActionModal(actionName, {
                         isOpen: true,
                         onClose: onModalClose,
                         selectedParcels: selectedParcels,
@@ -137,7 +163,7 @@ const Actions: React.FC<Props> = ({
                         headerId: "action-modal-header",
                         actionName: modalToDisplay,
                         updateParcelStatuses: updateParcelStatuses,
-                        newStatus: value.newStatus,
+                        newStatus: newStatus,
                     })
                 );
             })}
@@ -148,17 +174,17 @@ const Actions: React.FC<Props> = ({
                     anchorEl={actionAnchorElement}
                 >
                     <MenuList id="action-menu">
-                        {Object.entries(availableActions).map(([key]) => {
+                        {availableActionsForUserRole.map(({ actionName }) => {
                             return (
                                 <MenuItem
-                                    key={key}
+                                    key={actionName}
                                     onClick={onMenuItemClick(
-                                        key as ActionName,
+                                        actionName,
                                         isNotAtLeastOne,
                                         errorMessage
                                     )}
                                 >
-                                    {key}
+                                    {actionName}
                                 </MenuItem>
                             );
                         })}
