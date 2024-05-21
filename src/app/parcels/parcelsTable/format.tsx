@@ -87,6 +87,8 @@ export const getParcelDataErrorMessage = (
             return "Unknown error has occurred. Please reload.";
         case "failedToFetchParcels":
             return "Failed to fetch parcels. Please reload.";
+        case "failedToRetrieveCongestionChargeDetails":
+            return "Failed to retrieve Congestion Charge details. Please reload.";
         case "abortedFetch":
             return null;
     }

@@ -9,6 +9,7 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { PdfDataFetchResponse } from "../common";
 import { displayNameForDeletedClient } from "@/common/format";
 import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
+import { CongestionChargeError, checkForCongestionCharge } from "@/common/congestionCharges";
 
 interface Props {
     onPdfCreationCompleted: () => void;
@@ -22,6 +23,7 @@ export type ParcelForDayOverview = Pick<Schema["parcels"], "collection_datetime"
         "flagged_for_attention" | "full_name" | "address_postcode" | "delivery_instructions"
     > | null;
     collection_centre: Pick<Schema["collection_centres"], "name"> | null;
+    congestionChargeApplies?: boolean;
 };
 
 type ParcelForDayOverviewResponse =
@@ -31,7 +33,7 @@ type ParcelForDayOverviewResponse =
       }
     | {
           data: null;
-          error: { type: ParcelForDayOverviewErrorType; logId: string };
+          error: { type: ParcelForDayOverviewErrorType | CongestionChargeError; logId: string };
       };
 
 type ParcelForDayOverviewErrorType = "parcelFetchFailed";
@@ -81,8 +83,28 @@ export interface DayOverviewPdfData {
     parcels: ParcelForDayOverview[];
 }
 
-type DayOverviewPdfErrorType = ParcelForDayOverviewErrorType;
+type DayOverviewPdfErrorType = ParcelForDayOverviewErrorType | CongestionChargeError;
 export type DayOverviewPdfError = { type: DayOverviewPdfErrorType; logId: string };
+
+const addCongestionChargeDetailsForDayOverview = async (
+    parcels: ParcelForDayOverview[]
+): Promise<ParcelForDayOverviewResponse> => {
+    const postcodes = parcels.map((parcel) => parcel.client?.address_postcode);
+
+    const { data: postcodesWithCongestionChargeDetails, error } =
+        await checkForCongestionCharge(postcodes);
+
+    if (error) {
+        return { data: null, error: error };
+    }
+
+    parcels.map((parcel, index) => {
+        parcel.congestionChargeApplies =
+            postcodesWithCongestionChargeDetails[index].congestionCharge;
+    });
+
+    return { data: parcels, error: null };
+};
 
 const DayOverviewPdfButton = ({
     onPdfCreationCompleted,
@@ -100,11 +122,21 @@ const DayOverviewPdfButton = ({
         if (error) {
             return { data: null, error: error };
         }
+
+        const {
+            data: parcelsForDayOverviewWithCongestionChargeDetails,
+            error: congestionChargeError,
+        } = await addCongestionChargeDetailsForDayOverview(parcelsForDayOverview);
+
+        if (congestionChargeError) {
+            return { data: null, error: congestionChargeError };
+        }
+
         const fileName = "DayOverview.pdf";
         return {
             data: {
                 pdfData: {
-                    parcels: parcelsForDayOverview,
+                    parcels: parcelsForDayOverviewWithCongestionChargeDetails,
                 },
                 fileName: fileName,
             },

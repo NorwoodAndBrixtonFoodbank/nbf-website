@@ -53,7 +53,8 @@ export type GetParcelDataAndCountResult =
 export type GetParcelDataAndCountErrorType =
     | "unknownError"
     | "failedToFetchParcels"
-    | "abortedFetch";
+    | "abortedFetch"
+    | "failedToRetrieveCongestionChargeDetails";
 
 export interface CollectionCentresOptions {
     key: string;
