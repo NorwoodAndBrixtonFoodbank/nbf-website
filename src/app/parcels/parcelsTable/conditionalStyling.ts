@@ -1,3 +1,4 @@
+import { DefaultTheme } from "styled-components/dist/types";
 import { ParcelsTableRow } from "./types";
 
 const getRowBoundaries = (columnValues: (string | number | null)[]): number[] => {
@@ -28,18 +29,21 @@ export type BreakPointConfig = {
     name: string
     breakPoints: number[]
     colour: string
+    thickness?: string
 }
 
 export const searchForBreakPoints = (
     sortField: string,
-    parcelsTableRows: ParcelsTableRow[]
+    parcelsTableRows: ParcelsTableRow[],
+    theme: DefaultTheme,
 ): BreakPointConfig[] => {
     switch (sortField) {
         case "packingSlot": {
             let packingSlotBreakPointConfig = {
                 name: "packingSlot",
                 breakPoints: searchForPackingSlotBreakPoints(parcelsTableRows),
-                colour: "green",
+                colour: theme.primary.background[3],
+                thickness: "5pt"
             }
             return [packingSlotBreakPointConfig];
         }
@@ -47,12 +51,14 @@ export const searchForBreakPoints = (
             let packingSlotBreakPointConfig = {
                 name: "packingSlot",
                 breakPoints: searchForPackingSlotBreakPoints(parcelsTableRows),
-                colour: "green",
+                colour: theme.primary.background[2],
+                thickness: "2.5pt"
             }
             let packingDateBreakPointConfig = {
                 name: "packingDate",
                 breakPoints: searchForPackingDateBreakPoints(parcelsTableRows),
-                colour: "blue",
+                colour: theme.primary.background[3],
+                thickness: "5pt"
             }
             return [
                 packingSlotBreakPointConfig,

@@ -628,7 +628,7 @@ const TableStyling = styled.div<{ rowBreakPointConfigs?: BreakPointConfig[] }>`
                 (breakPointConfig) => {return (
                     breakPointConfig.breakPoints.map(
                         (breakPoint) => `& .rdt_TableRow:nth-child(${breakPoint + 1}) {
-                            border-top: solid ${breakPointConfig.colour};
+                            border-top: ${breakPointConfig.thickness} solid ${breakPointConfig.colour};
                         }`
                     ).join()
                 )}
