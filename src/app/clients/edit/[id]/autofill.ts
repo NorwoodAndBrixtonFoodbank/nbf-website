@@ -35,17 +35,19 @@ const autofill = (
             };
         });
 
-    const { nappySize, extraInformation } = processExtraInformation(clientData.extra_information);
+    const { nappySize, extraInformation } = processExtraInformation(
+        clientData.extra_information ?? ""
+    );
 
     const noPostcode = clientData.address_postcode === null;
 
     return {
-        fullName: clientData.full_name,
-        phoneNumber: clientData.phone_number,
-        addressLine1: noPostcode ? "" : clientData.address_1,
-        addressLine2: noPostcode ? "" : clientData.address_2,
-        addressTown: noPostcode ? "" : clientData.address_town,
-        addressCounty: noPostcode ? "" : clientData.address_county,
+        fullName: clientData.full_name ?? "",
+        phoneNumber: clientData.phone_number ?? "",
+        addressLine1: noPostcode ? "" : clientData.address_1 ?? "",
+        addressLine2: noPostcode ? "" : clientData.address_2 ?? "",
+        addressTown: noPostcode ? "" : clientData.address_town ?? "",
+        addressCounty: noPostcode ? "" : clientData.address_county ?? "",
         addressPostcode: clientData.address_postcode,
         adults: {
             numberFemales: getNumberAdultsByGender(familyData, "female"),
@@ -54,16 +56,16 @@ const autofill = (
         },
         numberChildren: children.length,
         children: children,
-        dietaryRequirements: arrayToBooleanGroup(clientData.dietary_requirements),
-        feminineProducts: arrayToBooleanGroup(clientData.feminine_products),
+        dietaryRequirements: arrayToBooleanGroup(clientData.dietary_requirements ?? []),
+        feminineProducts: arrayToBooleanGroup(clientData.feminine_products ?? []),
         babyProducts: clientData.baby_food,
         nappySize: nappySize.replace("Nappy Size: ", ""),
-        petFood: arrayToBooleanGroup(clientData.pet_food),
-        otherItems: arrayToBooleanGroup(clientData.other_items),
-        deliveryInstructions: clientData.delivery_instructions,
+        petFood: arrayToBooleanGroup(clientData.pet_food ?? []),
+        otherItems: arrayToBooleanGroup(clientData.other_items ?? []),
+        deliveryInstructions: clientData.delivery_instructions ?? "",
         extraInformation: extraInformation,
-        attentionFlag: clientData.flagged_for_attention,
-        signpostingCall: clientData.signposting_call_required,
+        attentionFlag: clientData.flagged_for_attention ?? false,
+        signpostingCall: clientData.signposting_call_required ?? false,
         lastUpdated: clientData.last_updated,
     };
 };

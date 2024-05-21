@@ -6,7 +6,7 @@ import { Schema } from "@/databaseUtils";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import DriverOverviewPdf, { DriverOverviewTableData } from "@/pdf/DriverOverview/DriverOverviewPdf";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { formatDateToDate } from "@/common/format";
+import { displayNameForDeletedClient, formatDateToDate } from "@/common/format";
 import { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 import { PdfDataFetchResponse } from "../common";
@@ -102,8 +102,9 @@ const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse>
     }
     for (const parcel of parcels) {
         const client = parcel.client;
+        const clientIsActive = parcel.client.is_active;
         clientInformation.push({
-            name: client?.full_name ?? "",
+            name: clientIsActive ? client?.full_name ?? "" : displayNameForDeletedClient,
             address: {
                 line1: client?.address_1 ?? "",
                 line2: client?.address_2 ?? null,
@@ -111,9 +112,10 @@ const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse>
                 county: client?.address_county ?? null,
                 postcode: client?.address_postcode,
             },
-            contact: client?.phone_number ?? "",
+            contact: clientIsActive ? client?.phone_number ?? "" : "-",
             packingDate: formatDateToDate(parcel.packing_date) ?? null,
-            instructions: client?.delivery_instructions ?? "",
+            instructions: clientIsActive ? client?.delivery_instructions ?? "" : "-",
+            clientIsActive: clientIsActive,
             numberOfLabels: parcel.labelCount,
         });
     }

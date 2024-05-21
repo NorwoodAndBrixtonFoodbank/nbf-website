@@ -4,40 +4,28 @@ import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { DbParcelRow } from "@/databaseUtils";
 import {
-    CongestionChargeDetails,
-    FetchClientIdResult,
-    GetDbParcelDataResult,
-    GetParcelDataAndCountErrorType,
-    GetParcelDataAndCountResult,
-    ParcelStatusesReturnType,
-    ParcelsFilter,
     ParcelsFilters,
     ParcelsSortState,
+    ParcelsFilter,
+    GetDbParcelDataResult,
+    GetParcelDataAndCountResult,
+    GetParcelDataAndCountErrorType,
     ParcelsTableRow,
+    ParcelStatusesReturnType,
+    FetchClientIdResult,
 } from "./types";
+import { checkForCongestionCharge, CongestionChargeReturnType } from "@/common/congestionCharges";
 import convertParcelDbtoParcelRow from "./convertParcelDBtoParcelRow";
 
-export const getCongestionChargeDetailsForParcels = async (
-    processingData: DbParcelRow[],
-    supabase: Supabase
-): Promise<CongestionChargeDetails[]> => {
+const getCongestionChargeDetailsForParcelsTable = async (
+    processingData: DbParcelRow[]
+): Promise<CongestionChargeReturnType> => {
     const postcodes = [];
     for (const parcel of processingData) {
         postcodes.push(parcel.client_address_postcode);
     }
 
-    const response = await supabase.functions.invoke("check-congestion-charge", {
-        body: { postcodes: postcodes },
-    });
-
-    if (response.error) {
-        const logId = await logErrorReturnLogId(
-            "Error with congestion charge check",
-            response.error
-        );
-        throw new EdgeFunctionError("congestion charge check", logId);
-    }
-    return response.data;
+    return await checkForCongestionCharge(postcodes);
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -137,8 +125,20 @@ export const getParcelsDataAndCount = async (
         };
     }
 
-    const congestionCharge = await getCongestionChargeDetailsForParcels(parcels, supabase);
-    const { parcelTableRows, error } = await convertParcelDbtoParcelRow(parcels, congestionCharge);
+    const { data: congestionChargeData, error: congestionChargeError } =
+        await getCongestionChargeDetailsForParcelsTable(parcels);
+
+    if (congestionChargeError) {
+        return {
+            data: null,
+            error: congestionChargeError,
+        };
+    }
+
+    const { parcelTableRows, error } = await convertParcelDbtoParcelRow(
+        parcels,
+        congestionChargeData
+    );
 
     if (error) {
         switch (error.type) {
@@ -196,6 +196,7 @@ const getParcelsCount = async (
     }
     return count;
 };
+
 export const getParcelIds = async (
     supabase: Supabase,
     filters: ParcelsFilters,
@@ -232,10 +233,20 @@ export const getParcelsByIds = async (
         throw new DatabaseError("fetch", "parcel table", logId);
     }
 
-    const congestionCharge = await getCongestionChargeDetailsForParcels(data, supabase);
+    const { data: congestionChargeDetails, error: congestionChargeError } =
+        await getCongestionChargeDetailsForParcelsTable(data);
+
+    if (congestionChargeError) {
+        const logId = await logErrorReturnLogId(
+            "Error retrieving congestion charge details",
+            congestionChargeError
+        );
+        throw new EdgeFunctionError("congestion charge check", logId);
+    }
+
     const { parcelTableRows, error: processParcelDataError } = await convertParcelDbtoParcelRow(
         data,
-        congestionCharge
+        congestionChargeDetails
     );
 
     if (processParcelDataError) {
@@ -265,18 +276,27 @@ export const fetchParcelStatuses = async (): Promise<ParcelStatusesReturnType> =
     return { data: parcelStatusesList, error: null };
 };
 
-export const getClientIdForParcel = async (parcelId: string): Promise<FetchClientIdResult> => {
-    const { data: clientIdData, error: clientIdError } = await supabase
+export const getClientIdAndIsActive = async (parcelId: string): Promise<FetchClientIdResult> => {
+    const { data, error } = await supabase
         .from("parcels")
-        .select("client_id")
+        .select("client_id, client:clients(is_active)")
         .eq("primary_key", parcelId)
         .single();
 
-    if (clientIdError) {
-        const message = `Failed to fetch client ID for a parcel with ID ${parcelId}`;
-        const logId = await logErrorReturnLogId(message, { error: clientIdError });
-        return { clientId: null, error: { type: "failedClientIdFetch", logId: logId } };
+    if (error) {
+        const message = `Failed to fetch client ID and is active for a parcel with ID ${parcelId}`;
+        const logId = await logErrorReturnLogId(message, { error });
+        return { data: null, error: { type: "failedClientIdAndIsActiveFetch", logId } };
     }
 
-    return { clientId: clientIdData.client_id, error: null };
+    if (data.client === null) {
+        const message = `Failed to find matching client for a parcel with ID ${parcelId}`;
+        const logId = await logErrorReturnLogId(message, { error });
+        return { data: null, error: { type: "noMatchingClient", logId } };
+    }
+
+    return {
+        data: { clientId: data.client_id, isClientActive: data?.client?.is_active },
+        error: null,
+    };
 };

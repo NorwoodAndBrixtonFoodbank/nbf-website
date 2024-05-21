@@ -4,17 +4,24 @@ import { ReactElement } from "react";
 
 interface FontAwesomeIconProps {
     faIcon: IconDefinition;
+    color?: string;
+    styleWidth?: string;
+    marginTop?: string;
 }
 
-const FontAwesomeIconPdfComponent = ({ faIcon: { icon } }: FontAwesomeIconProps): ReactElement => {
+const FontAwesomeIconPdfComponent = ({
+    faIcon: { icon },
+    color = "black",
+    styleWidth = "20px",
+    marginTop = "0px",
+}: FontAwesomeIconProps): ReactElement => {
     const width = icon[0];
     const height = icon[1];
     const unicode = icon[4];
     const isDuoTone = Array.isArray(unicode);
     const paths = isDuoTone ? unicode : [unicode];
-    const color = "black";
     return (
-        <Svg viewBox={`0 0 ${width} ${height}`} style={{ width: "20px" }}>
+        <Svg viewBox={`0 0 ${width} ${height}`} style={{ width: styleWidth, marginTop: marginTop }}>
             {paths &&
                 paths.map((drawnPath, indexNumber) => (
                     <Path

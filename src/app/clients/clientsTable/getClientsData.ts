@@ -17,7 +17,7 @@ const getClientsDataAndCount = async (
     sortState: ClientsSortState,
     abortSignal: AbortSignal
 ): Promise<GetClientsReturnType> => {
-    let query = supabase.from("clients_plus").select("*");
+    let query = supabase.from("clients_plus").select("*").eq("is_active", true);
 
     if (sortState.sortEnabled && sortState.column.sortMethod) {
         query = sortState.column.sortMethod(query, sortState.sortDirection);
@@ -77,7 +77,10 @@ const getClientsCount = async (
     filters: ClientsFilter[],
     abortSignal: AbortSignal
 ): Promise<GetClientsCountReturnType> => {
-    let query = supabase.from("clients_plus").select("*", { count: "exact", head: true });
+    let query = supabase
+        .from("clients_plus")
+        .select("*", { count: "exact", head: true })
+        .eq("is_active", true);
 
     filters.forEach((filter) => {
         query = filter.method(query, filter.state);

@@ -8,6 +8,7 @@ import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 import { PdfDataFetchResponse } from "../common";
 import { Schema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
+import { displayNameForDeletedClient } from "@/common/format";
 
 const formatDatetime = (datetimeString: string | null): string => {
     if (datetimeString === null) {
@@ -123,6 +124,7 @@ const getRequiredData = async (
             return { data: null, error };
         }
         const client = parcel.client;
+        const clientIsActive = parcel.client.is_active;
         parcelDataList.push({
             label_quantity: labelQuantity,
             parcel_id: parcelId,
@@ -131,14 +133,14 @@ const getRequiredData = async (
             collection_centre: parcel.collection_centre?.acronym ?? "",
             collection_datetime: formatDatetime(parcel.collection_datetime),
             voucher_number: parcel.voucher_number ?? "",
-            full_name: client.full_name,
-            phone_number: client.phone_number,
-            address_1: client.address_1,
-            address_2: client.address_2,
-            address_town: client.address_town,
-            address_county: client.address_county,
-            address_postcode: client.address_postcode,
-            delivery_instructions: client.delivery_instructions,
+            full_name: clientIsActive ? client.full_name ?? "" : displayNameForDeletedClient,
+            phone_number: clientIsActive ? client.phone_number ?? "" : "-",
+            address_1: clientIsActive ? client.address_1 ?? "" : "", //Seeded deleted clients have is_active set to false, but their personal info fields are non-null
+            address_2: clientIsActive ? client.address_2 ?? "" : "",
+            address_town: clientIsActive ? client.address_town ?? "" : "",
+            address_county: clientIsActive ? client.address_county ?? "" : "",
+            address_postcode: clientIsActive ? client.address_postcode : "-",
+            delivery_instructions: clientIsActive ? client.delivery_instructions ?? "" : "-",
         });
     }
     return { data: parcelDataList, error: null };
