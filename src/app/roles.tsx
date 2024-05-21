@@ -41,6 +41,7 @@ const getShownPagesByRole = (role: UserRole | null): readonly string[] => {
         return pathsShownToAllAuthenticatedUsers;
     }
     return pathsNotRequiringLogin;
+    
 };
 
 export const roleCanAccessPage = (role: UserRole | null, url: string): boolean => {
