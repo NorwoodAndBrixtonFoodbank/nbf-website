@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import React from "react";
 import Title from "@/components/Title/Title";
-import ClientsPage from "@/app/clients/ClientsPage";
+import ClientsPage from "@/app/clients/clientsTable/ClientsPage";
 
 const Clients: () => Promise<React.ReactElement> = async () => {
     return (

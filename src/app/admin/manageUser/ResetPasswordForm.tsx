@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import PasswordInput from "@/components/DataInput/PasswordInput";
-import { UserRow } from "@/app/admin/page";
+import { UserRow } from "../usersTable/types";
 import { faKey } from "@fortawesome/free-solid-svg-icons/faKey";
 import { getPasswordHandler } from "@/components/DataInput/inputHandlerFactories";
 import { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";

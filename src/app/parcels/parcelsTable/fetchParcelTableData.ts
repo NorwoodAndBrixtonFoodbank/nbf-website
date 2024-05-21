@@ -1,18 +1,24 @@
 import { Supabase } from "@/supabaseUtils";
-import { AbortError, DatabaseError, EdgeFunctionError } from "../errorClasses";
-import { ParcelsTableRow, processingDataToParcelsTableData } from "./getParcelsTableData";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { SortState } from "@/components/Tables/Table";
+import { AbortError, DatabaseError, EdgeFunctionError } from "../../errorClasses";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
-import { ParcelStatus, ParcelsPlusRow } from "@/databaseUtils";
+import { DbParcelRow } from "@/databaseUtils";
 import {
-    checkForCongestionCharge,
-    CongestionChargeReturnType,
-} from "../../common/congestionCharges";
+    ParcelsFilters,
+    ParcelsSortState,
+    ParcelsFilter,
+    GetDbParcelDataResult,
+    GetParcelDataAndCountResult,
+    GetParcelDataAndCountErrorType,
+    ParcelsTableRow,
+    ParcelStatusesReturnType,
+    FetchClientIdResult,
+} from "./types";
+import { checkForCongestionCharge, CongestionChargeReturnType } from "@/common/congestionCharges";
+import convertParcelDbtoParcelRow from "./convertParcelDBtoParcelRow";
 
 const getCongestionChargeDetailsForParcelsTable = async (
-    processingData: ParcelsPlusRow[]
+    processingData: DbParcelRow[]
 ): Promise<CongestionChargeReturnType> => {
     const postcodes = [];
     for (const parcel of processingData) {
@@ -25,22 +31,17 @@ const getCongestionChargeDetailsForParcelsTable = async (
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getParcelsQuery = (
     supabase: Supabase,
-    filters: Filter<ParcelsTableRow, any>[],
-    sortState: SortState<ParcelsTableRow>
+    filters: ParcelsFilters,
+    sortState: ParcelsSortState
 ) => {
     let query = supabase.from("parcels_plus").select("*");
 
-    filters.forEach((filter) => {
-        if (filter.methodConfig.paginationType === PaginationType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
+    filters.forEach((filter: ParcelsFilter<any>) => {
+        query = filter.method(query, filter.state);
     });
 
-    if (
-        sortState.sortEnabled &&
-        sortState.column.sortMethodConfig?.paginationType === PaginationType.Server
-    ) {
-        query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
+    if (sortState.sortEnabled && sortState.column.sortMethod) {
+        query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
         query = query
             .order("packing_date", { ascending: false })
@@ -53,25 +54,10 @@ const getParcelsQuery = (
     return query;
 };
 
-type GetDbParcelDataResult =
-    | {
-          parcels: ParcelsPlusRow[];
-          error: null;
-      }
-    | {
-          parcels: null;
-          error: {
-              type: GetDbParcelDataErrorType;
-              logId: string;
-          };
-      };
-
-type GetDbParcelDataErrorType = "abortedFetch" | "failedToFetchParcelTable";
-
-const getParcelProcessingData = async (
+const fetchParcelsDbRows = async (
     supabase: Supabase,
-    filters: Filter<ParcelsTableRow, any>[],
-    sortState: SortState<ParcelsTableRow>,
+    filters: ParcelsFilters,
+    sortState: ParcelsSortState,
     abortSignal: AbortSignal,
     startIndex: number,
     endIndex: number
@@ -102,37 +88,15 @@ const getParcelProcessingData = async (
     };
 };
 
-type GetParcelDataAndCountResult =
-    | {
-          data: {
-              parcelTableRows: ParcelsTableRow[];
-              count: number;
-          };
-          error: null;
-      }
-    | {
-          data: null;
-          error: {
-              type: GetParcelDataAndCountErrorType;
-              logId: string;
-          };
-      };
-
-export type GetParcelDataAndCountErrorType =
-    | "unknownError"
-    | "failedToFetchParcels"
-    | "abortedFetch"
-    | "failedToRetrieveCongestionChargeDetails";
-
 export const getParcelsDataAndCount = async (
     supabase: Supabase,
-    filters: Filter<ParcelsTableRow, any[]>[],
-    sortState: SortState<ParcelsTableRow>,
+    filters: ParcelsFilters,
+    sortState: ParcelsSortState,
     abortSignal: AbortSignal,
     startIndex: number,
     endIndex: number
 ): Promise<GetParcelDataAndCountResult> => {
-    const { parcels, error: getDbParcelsError } = await getParcelProcessingData(
+    const { parcels, error: getDbParcelsError } = await fetchParcelsDbRows(
         supabase,
         filters,
         sortState,
@@ -171,7 +135,7 @@ export const getParcelsDataAndCount = async (
         };
     }
 
-    const { parcelTableRows, error } = await processingDataToParcelsTableData(
+    const { parcelTableRows, error } = await convertParcelDbtoParcelRow(
         parcels,
         congestionChargeData
     );
@@ -202,15 +166,13 @@ export const getParcelsDataAndCount = async (
 
 const getParcelsCount = async (
     supabase: Supabase,
-    filters: Filter<ParcelsTableRow, any>[],
+    filters: ParcelsFilters,
     abortSignal: AbortSignal
 ): Promise<number> => {
     let query = supabase.from("parcels_plus").select("*", { count: "exact", head: true });
 
-    filters.forEach((filter) => {
-        if (filter.methodConfig.paginationType === PaginationType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
+    filters.forEach((filter: ParcelsFilter<any>) => {
+        query = filter.method(query, filter.state);
     });
 
     query = query.abortSignal(abortSignal);
@@ -237,8 +199,8 @@ const getParcelsCount = async (
 
 export const getParcelIds = async (
     supabase: Supabase,
-    filters: Filter<ParcelsTableRow, any>[],
-    sortState: SortState<ParcelsTableRow>
+    filters: ParcelsFilters,
+    sortState: ParcelsSortState
 ): Promise<string[]> => {
     const query = getParcelsQuery(supabase, filters, sortState);
 
@@ -256,8 +218,8 @@ export const getParcelIds = async (
 
 export const getParcelsByIds = async (
     supabase: Supabase,
-    filters: Filter<ParcelsTableRow, any>[],
-    sortState: SortState<ParcelsTableRow>,
+    filters: ParcelsFilters,
+    sortState: ParcelsSortState,
     parcelIds: string[]
 ): Promise<ParcelsTableRow[]> => {
     let query = getParcelsQuery(supabase, filters, sortState);
@@ -282,8 +244,10 @@ export const getParcelsByIds = async (
         throw new EdgeFunctionError("congestion charge check", logId);
     }
 
-    const { parcelTableRows, error: processParcelDataError } =
-        await processingDataToParcelsTableData(data, congestionChargeDetails);
+    const { parcelTableRows, error: processParcelDataError } = await convertParcelDbtoParcelRow(
+        data,
+        congestionChargeDetails
+    );
 
     if (processParcelDataError) {
         throw new Error("Failed to process parcels.", { cause: processParcelDataError });
@@ -291,25 +255,6 @@ export const getParcelsByIds = async (
 
     return parcelTableRows;
 };
-
-export interface CollectionCentresOptions {
-    key: string;
-    value: string;
-}
-export interface StatusResponseRow {
-    event_name: string;
-}
-
-type ParcelStatusesError = "failedToFetchStatuses";
-type ParcelStatusesReturnType =
-    | {
-          data: ParcelStatus[];
-          error: null;
-      }
-    | {
-          data: null;
-          error: { type: ParcelStatusesError; logId: string };
-      };
 
 export const fetchParcelStatuses = async (): Promise<ParcelStatusesReturnType> => {
     const { data: parcelStatusesListData, error: statusOrderError } = await supabase
@@ -329,4 +274,20 @@ export const fetchParcelStatuses = async (): Promise<ParcelStatusesReturnType> =
     });
 
     return { data: parcelStatusesList, error: null };
+};
+
+export const getClientIdForParcel = async (parcelId: string): Promise<FetchClientIdResult> => {
+    const { data: clientIdData, error: clientIdError } = await supabase
+        .from("parcels")
+        .select("client_id")
+        .eq("primary_key", parcelId)
+        .single();
+
+    if (clientIdError) {
+        const message = `Failed to fetch client ID for a parcel with ID ${parcelId}`;
+        const logId = await logErrorReturnLogId(message, { error: clientIdError });
+        return { clientId: null, error: { type: "failedClientIdFetch", logId: logId } };
+    }
+
+    return { clientId: clientIdData.client_id, error: null };
 };
