@@ -64,6 +64,8 @@ const getParcelsQuery = (
 
     query = query.order("parcel_id");
 
+    console.log(query);
+
     return query;
 };
 
