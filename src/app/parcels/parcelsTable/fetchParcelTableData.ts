@@ -4,40 +4,28 @@ import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { DbParcelRow } from "@/databaseUtils";
 import {
-    CongestionChargeDetails,
-    FetchClientIdResult,
-    GetDbParcelDataResult,
-    GetParcelDataAndCountErrorType,
-    GetParcelDataAndCountResult,
-    ParcelStatusesReturnType,
-    ParcelsFilter,
     ParcelsFilters,
     ParcelsSortState,
+    ParcelsFilter,
+    GetDbParcelDataResult,
+    GetParcelDataAndCountResult,
+    GetParcelDataAndCountErrorType,
     ParcelsTableRow,
+    ParcelStatusesReturnType,
+    FetchClientIdResult,
 } from "./types";
+import { checkForCongestionCharge, CongestionChargeReturnType } from "@/common/congestionCharges";
 import convertParcelDbtoParcelRow from "./convertParcelDBtoParcelRow";
 
-export const getCongestionChargeDetailsForParcels = async (
-    processingData: DbParcelRow[],
-    supabase: Supabase
-): Promise<CongestionChargeDetails[]> => {
+const getCongestionChargeDetailsForParcelsTable = async (
+    processingData: DbParcelRow[]
+): Promise<CongestionChargeReturnType> => {
     const postcodes = [];
     for (const parcel of processingData) {
         postcodes.push(parcel.client_address_postcode);
     }
 
-    const response = await supabase.functions.invoke("check-congestion-charge", {
-        body: { postcodes: postcodes },
-    });
-
-    if (response.error) {
-        const logId = await logErrorReturnLogId(
-            "Error with congestion charge check",
-            response.error
-        );
-        throw new EdgeFunctionError("congestion charge check", logId);
-    }
-    return response.data;
+    return await checkForCongestionCharge(postcodes);
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -137,8 +125,20 @@ export const getParcelsDataAndCount = async (
         };
     }
 
-    const congestionCharge = await getCongestionChargeDetailsForParcels(parcels, supabase);
-    const { parcelTableRows, error } = await convertParcelDbtoParcelRow(parcels, congestionCharge);
+    const { data: congestionChargeData, error: congestionChargeError } =
+        await getCongestionChargeDetailsForParcelsTable(parcels);
+
+    if (congestionChargeError) {
+        return {
+            data: null,
+            error: congestionChargeError,
+        };
+    }
+
+    const { parcelTableRows, error } = await convertParcelDbtoParcelRow(
+        parcels,
+        congestionChargeData
+    );
 
     if (error) {
         switch (error.type) {
@@ -196,6 +196,7 @@ const getParcelsCount = async (
     }
     return count;
 };
+
 export const getParcelIds = async (
     supabase: Supabase,
     filters: ParcelsFilters,
@@ -232,10 +233,20 @@ export const getParcelsByIds = async (
         throw new DatabaseError("fetch", "parcel table", logId);
     }
 
-    const congestionCharge = await getCongestionChargeDetailsForParcels(data, supabase);
+    const { data: congestionChargeDetails, error: congestionChargeError } =
+        await getCongestionChargeDetailsForParcelsTable(data);
+
+    if (congestionChargeError) {
+        const logId = await logErrorReturnLogId(
+            "Error retrieving congestion charge details",
+            congestionChargeError
+        );
+        throw new EdgeFunctionError("congestion charge check", logId);
+    }
+
     const { parcelTableRows, error: processParcelDataError } = await convertParcelDbtoParcelRow(
         data,
-        congestionCharge
+        congestionChargeDetails
     );
 
     if (processParcelDataError) {
