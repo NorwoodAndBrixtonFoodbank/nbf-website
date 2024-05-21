@@ -26,6 +26,7 @@ import {
     prepareItemsListForHousehold,
     ShoppingListPdfData,
 } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 interface ClientDataAndFamilyData {
     clientData: Schema["clients"];
@@ -81,14 +82,19 @@ export type ShoppingListPdfError =
     | FetchListsError
     | FetchListsCommentError
     | FetchParcelError
-    | GetQuantityAndNotesError;
+    | GetQuantityAndNotesError
+    | InactiveClientError;
 
 export type ShoppingListPdfErrorType =
     | FetchShoppingListErrorType
     | FetchListsErrorType
     | FetchListsCommentErrorType
     | FetchParcelErrorType
-    | GetQuantityAndNotesErrorType;
+    | GetQuantityAndNotesErrorType
+    | InactiveClientErrorType;
+
+export type InactiveClientErrorType = "inactiveClient";
+export type InactiveClientError = { type: InactiveClientErrorType; logId: string };
 
 const getShoppingListDataForSingleParcel = async (
     parcelId: string
@@ -110,6 +116,11 @@ const getShoppingListDataForSingleParcel = async (
     const familyData = clientAndFamilyData.familyData;
     const clientData = clientAndFamilyData.clientData;
 
+    if (!clientData.is_active) {
+        const logId = await logErrorReturnLogId("Generating shopping list pdf for inactive client");
+        return { data: null, error: { type: "inactiveClient", logId: logId } };
+    }
+
     const { data: itemsListData, error: itemsListError } = await prepareItemsListForHousehold(
         familyData.length
     );
@@ -121,7 +132,7 @@ const getShoppingListDataForSingleParcel = async (
     const householdSummary = prepareHouseholdSummary(familyData);
     const requirementSummary = prepareRequirementSummary(clientData);
 
-    const { nappySize } = processExtraInformation(clientData.extra_information);
+    const { nappySize } = processExtraInformation(clientData.extra_information ?? "");
     requirementSummary.babyProductsRequired += ` (${nappySize})`;
 
     const { data: endNotes, error: listsCommentError } = await fetchListsComment(supabase);

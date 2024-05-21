@@ -7,6 +7,7 @@ import PdfButton from "@/components/PdfButton/PdfButton";
 import DayOverviewPdf from "./DayOverviewPdf";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { PdfDataFetchResponse } from "../common";
+import { displayNameForDeletedClient } from "@/common/format";
 import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 
 interface Props {
@@ -47,7 +48,8 @@ const getParcelsForDayOverview = async (
                 flagged_for_attention, 
                 full_name, 
                 address_postcode, 
-                delivery_instructions
+                delivery_instructions,
+                is_active
             )`
         )
         .in("primary_key", parcelIds)
@@ -58,7 +60,22 @@ const getParcelsForDayOverview = async (
         return { data: null, error: { type: "parcelFetchFailed", logId: logId } };
     }
 
-    return { data: data, error: null };
+    const processedData = data.map((parcel) => {
+        if (parcel.client?.is_active) {
+            return parcel;
+        }
+        return {
+            ...parcel,
+            client: {
+                flagged_for_attention: false,
+                full_name: displayNameForDeletedClient,
+                address_postcode: "-",
+                delivery_instructions: "-",
+            },
+        };
+    });
+
+    return { data: processedData, error: null };
 };
 export interface DayOverviewPdfData {
     parcels: ParcelForDayOverview[];
