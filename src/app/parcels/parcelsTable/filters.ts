@@ -6,7 +6,7 @@ import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { serverSideChecklistFilter } from "@/components/Tables/ChecklistFilter";
-import { getDbDate, nullPostcodeDisplay } from "@/common/format";
+import { getDbDate, displayPostcodeForHomelessClient } from "@/common/format";
 import {
     CollectionCentresOptions,
     ParcelsFilter,
@@ -19,15 +19,26 @@ import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import dayjs from "dayjs";
 import { parcelTableHeaderKeysAndLabels } from "./headers";
 import { DbParcelRow } from "@/databaseUtils";
+import { parcelsPageDeletedClientDisplayName } from "./format";
 
-const fullNameSearch: ParcelsFilterMethod<string> = (query, state) =>
-    query.ilike("client_full_name", `%${state}%`);
+const fullNameSearch: ParcelsFilterMethod<string> = (query, state) => {
+    if (state === "") {
+        return query;
+    }
+    if (parcelsPageDeletedClientDisplayName.toLowerCase().includes(state.toLowerCase())) {
+        return query.or(`client_full_name.ilike.%${state}%, client_full_name.is.null`);
+    }
+    return query.ilike("client_full_name", `%${state}%`);
+};
 
 const postcodeSearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "") {
         return query;
     }
-    if (nullPostcodeDisplay.toLowerCase().includes(state.toLowerCase())) {
+    if (state === "-") {
+        return query.is("client_address_postcode", null);
+    }
+    if (displayPostcodeForHomelessClient.toLowerCase().includes(state.toLowerCase())) {
         return query.or(
             `client_address_postcode.ilike.%${state}%, client_address_postcode.is.null`
         );
@@ -38,6 +49,9 @@ const postcodeSearch: ParcelsFilterMethod<string> = (query, state) => {
 const familySearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "") {
         return query;
+    }
+    if (state === "-") {
+        return query.eq("family_count", 0);
     }
     if ("single".includes(state.toLowerCase())) {
         return query.lte("family_count", 1);
@@ -53,13 +67,20 @@ const familySearch: ParcelsFilterMethod<string> = (query, state) => {
         return query.gte("family_count", 10);
     }
     if (stateAsNumber === 1) {
-        return query.lte("family_count", 1);
+        return query.eq("family_count", 1);
     }
     return query.eq("family_count", Number(state));
 };
 
-const phoneSearch: ParcelsFilterMethod<string> = (query, state) =>
-    query.ilike("client_phone_number", `%${state}%`);
+const phoneSearch: ParcelsFilterMethod<string> = (query, state) => {
+    if (state === "") {
+        return query;
+    }
+    if ("-".includes(state.toLowerCase())) {
+        return query.or(`client_phone_number.ilike.%${state}%, client_phone_number.is.null`);
+    }
+    return query.ilike("client_phone_number", `%${state}%`);
+};
 
 const voucherSearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "?") {

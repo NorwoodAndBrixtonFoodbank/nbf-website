@@ -5,8 +5,8 @@ import { Svg, Document, Page, Text, View, StyleSheet, Path } from "@react-pdf/re
 import { faFlag, faSquare, IconDefinition, faCopyright } from "@fortawesome/free-solid-svg-icons";
 
 import { DayOverviewPdfData, ParcelForDayOverview } from "@/pdf/DayOverview/DayOverviewPdfButton";
-import { nullPostcodeDisplay } from "@/common/format";
 import FontAwesomeIconPdfComponent from "../FontAwesomeIconPdfComponent";
+import { displayPostcodeForHomelessClient } from "@/common/format";
 
 interface DayOverviewRowProps {
     parcel: ParcelForDayOverview;
@@ -115,7 +115,7 @@ const DayOverviewRow: React.FC<DayOverviewRowProps> = ({ parcel }) => {
             </View>
             <Text style={[styles.cellName, styles.cell]}>{parcel.client!.full_name}</Text>
             <View style={[styles.cell, styles.cellPostcode, styles.row]}>
-                <Text>{parcel.client!.address_postcode ?? nullPostcodeDisplay} </Text>
+                <Text>{parcel.client!.address_postcode ?? displayPostcodeForHomelessClient} </Text>
                 {parcel.collection_centre!.name === "Delivery" &&
                     parcel.congestionChargeApplies && (
                         <FontAwesomeIconPdfComponent
