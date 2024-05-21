@@ -21,6 +21,7 @@ import styled from "styled-components";
 import { Primitive, SortOrder } from "react-data-table-component/dist/DataTable/types";
 import { Centerer } from "../Modal/ModalFormStyles";
 import { ClientSideSortMethod, ServerSideSortMethod } from "./sortMethods";
+import { BreakPointConfig } from "@/app/parcels/parcelsTable/conditionalStyling";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -149,7 +150,7 @@ interface Props<Data, DbData extends Record<string, any>, PaginationType> {
             ? ClientSideFilter<Data, any>
             : ServerSideFilter<Data, any, DbData>
     >;
-    rowBreakPoints?: number[][];
+    rowBreakPointConfigs?: BreakPointConfig[];
     defaultShownHeaders?: readonly (keyof Data)[];
     toggleableHeaders?: readonly (keyof Data)[];
     columnDisplayFunctions?: ColumnDisplayFunctions<Data>;
@@ -214,7 +215,7 @@ const Table = <
     columnStyleOptions = {},
     checkboxConfig,
     sortConfig,
-    rowBreakPoints,
+    rowBreakPointConfigs,
     filterConfig,
     paginationConfig,
     editableConfig,
@@ -428,7 +429,7 @@ const Table = <
                 setShownHeaderKeys={setShownHeaderKeys}
                 shownHeaderKeys={shownHeaderKeys}
             />
-            <TableStyling rowBreakPoints={rowBreakPoints}>
+            <TableStyling rowBreakPointConfigs={rowBreakPointConfigs}>
                 <NoSsr>
                     <DataTable
                         columns={columns}
@@ -500,7 +501,7 @@ const StyledIcon = styled(Icon)`
     margin: 0;
 `;
 
-const TableStyling = styled.div<{ rowBreakPoints?: number[][] }>`
+const TableStyling = styled.div<{ rowBreakPointConfigs?: BreakPointConfig[] }>`
     // the component with the filter bars
     & > header {
         background-color: transparent;
@@ -622,24 +623,15 @@ const TableStyling = styled.div<{ rowBreakPoints?: number[][] }>`
     }
 
     ${(props) =>
-        props.rowBreakPoints
-            ?.slice()[1]
-            .map(
-                (lightGreenBreakPoint) =>
-                    `& .rdt_TableRow:nth-child(${lightGreenBreakPoint + 1}) {
-                border-top: solid #77bda0;
-            }`
-            )
-            .join()}
-
-    ${(props) =>
-        props.rowBreakPoints
-            ?.slice()[0]
-            .map(
-                (darkGreenBreakPoint) =>
-                    `& .rdt_TableRow:nth-child(${darkGreenBreakPoint + 1}) {
-                border-top: solid #05663F;
-            }`
+        props.rowBreakPointConfigs
+            ?.map(
+                (breakPointConfig) => {return (
+                    breakPointConfig.breakPoints.map(
+                        (breakPoint) => `& .rdt_TableRow:nth-child(${breakPoint + 1}) {
+                            border-top: solid ${breakPointConfig.colour};
+                        }`
+                    ).join()
+                )}
             )
             .join()}
 `;

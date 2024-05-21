@@ -42,7 +42,7 @@ import {
 } from "./format";
 import { PreTableControls, parcelTableColumnStyleOptions } from "./styles";
 import { DbParcelRow } from "@/databaseUtils";
-import { searchForBreakPoints } from "./conditionalStyling";
+import { BreakPointConfig, searchForBreakPoints } from "./conditionalStyling";
 
 const ParcelsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -50,7 +50,7 @@ const ParcelsPage: React.FC<{}> = () => {
     const [filteredParcelCount, setFilteredParcelCount] = useState<number>(0);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [clientIdForSelectedParcel, setClientIdForSelectedParcel] = useState<string | null>(null);
-    const [parcelRowBreakPoints, setParcelRowBreakPoints] = useState<number[][]>([[], []]);
+    const [parcelRowBreakPointConfig, setParcelRowBreakPointConfig] = useState<BreakPointConfig[]>([]);
 
     const [checkedParcelIds, setCheckedParcelIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
@@ -150,7 +150,7 @@ const ParcelsPage: React.FC<{}> = () => {
                 setParcelsDataPortion(data.parcelTableRows);
                 setFilteredParcelCount(data.count);
                 if (sortState.sortEnabled && sortState.column.sortField) {
-                    setParcelRowBreakPoints(
+                    setParcelRowBreakPointConfig(
                         searchForBreakPoints(sortState.column.sortField, data.parcelTableRows)
                     );
                 }
@@ -317,7 +317,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                 sortableColumns: parcelsSortableColumns,
                                 setSortState: setSortState,
                             }}
-                            rowBreakPoints={parcelRowBreakPoints}
+                            rowBreakPointConfigs={parcelRowBreakPointConfig}
                             filterConfig={{
                                 primaryFiltersShown: true,
                                 additionalFiltersShown: true,

@@ -24,19 +24,42 @@ const searchForPackingDateBreakPoints = (parcelsTableRows: ParcelsTableRow[]): n
     return getRowBoundaries(packingSlotValues);
 };
 
+export type BreakPointConfig = {
+    name: string
+    breakPoints: number[]
+    colour: string
+}
+
 export const searchForBreakPoints = (
     sortField: string,
     parcelsTableRows: ParcelsTableRow[]
-): number[][] => {
+): BreakPointConfig[] => {
     switch (sortField) {
-        case "packingSlot":
-            return [searchForPackingSlotBreakPoints(parcelsTableRows), []];
-        case "packingDate":
+        case "packingSlot": {
+            let packingSlotBreakPointConfig = {
+                name: "packingSlot",
+                breakPoints: searchForPackingSlotBreakPoints(parcelsTableRows),
+                colour: "green",
+            }
+            return [packingSlotBreakPointConfig];
+        }
+        case "packingDate": {
+            let packingSlotBreakPointConfig = {
+                name: "packingSlot",
+                breakPoints: searchForPackingSlotBreakPoints(parcelsTableRows),
+                colour: "green",
+            }
+            let packingDateBreakPointConfig = {
+                name: "packingDate",
+                breakPoints: searchForPackingDateBreakPoints(parcelsTableRows),
+                colour: "blue",
+            }
             return [
-                searchForPackingDateBreakPoints(parcelsTableRows),
-                searchForPackingSlotBreakPoints(parcelsTableRows),
+                packingSlotBreakPointConfig,
+                packingDateBreakPointConfig,
             ];
+        }
         default:
-            return [[], []];
+            return [];
     }
 };
