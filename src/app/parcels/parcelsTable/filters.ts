@@ -26,7 +26,7 @@ const fullNameSearch: ParcelsFilterMethod<string> = (query, state) => {
         return query;
     }
     if (parcelsPageDeletedClientDisplayName.toLowerCase().includes(state.toLowerCase())) {
-        return query.or(`client_full_name.ilike.%${state}%, client_full_name.is.null`);
+        return query.or(`client_full_name.ilike.%${state}%, client_is_active.eq.false`);
     }
     return query.ilike("client_full_name", `%${state}%`);
 };
@@ -36,7 +36,7 @@ const postcodeSearch: ParcelsFilterMethod<string> = (query, state) => {
         return query;
     }
     if (state === "-") {
-        return query.is("client_address_postcode", null);
+        return query.is("client_is_active", false);
     }
     if (displayPostcodeForHomelessClient.toLowerCase().includes(state.toLowerCase())) {
         return query.or(
@@ -51,7 +51,7 @@ const familySearch: ParcelsFilterMethod<string> = (query, state) => {
         return query;
     }
     if (state === "-") {
-        return query.eq("family_count", 0);
+        return query.eq("client_is_active", false);
     }
     if ("single".includes(state.toLowerCase())) {
         return query.lte("family_count", 1);
@@ -77,7 +77,7 @@ const phoneSearch: ParcelsFilterMethod<string> = (query, state) => {
         return query;
     }
     if ("-".includes(state.toLowerCase())) {
-        return query.or(`client_phone_number.ilike.%${state}%, client_phone_number.is.null`);
+        return query.or(`client_phone_number.ilike.%${state}%, client_is_active.eq.false`);
     }
     return query.ilike("client_phone_number", `%${state}%`);
 };
