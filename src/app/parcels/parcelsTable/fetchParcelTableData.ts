@@ -319,8 +319,7 @@ export const getParcelPostcodesByEvent = async (
     }
 
     const postcodes = data
-        .filter((parcel) => parcel.client_address_postcode)
-        .map((parcel) => parcel.client_address_postcode!);
+        .map((parcel) => parcel.client_address_postcode);
     const uniquePostcodes = Array.from(new Set(postcodes));
 
     return { postcodes: uniquePostcodes, error: null };

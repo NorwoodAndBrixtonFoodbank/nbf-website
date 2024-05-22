@@ -133,7 +133,7 @@ export interface SelectedClientDetails {
 
 export type ParcelPostcodeResult =
     | {
-          postcodes: string[];
+          postcodes: (string | null)[];
           error: null;
       }
     | {
