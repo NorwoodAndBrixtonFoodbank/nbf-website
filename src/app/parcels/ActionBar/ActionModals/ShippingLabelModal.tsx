@@ -14,10 +14,7 @@ import ShippingLabelsPdfButton, {
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import { sendAuditLog } from "@/server/auditLog";
 import DuplicateDownloadWarning from "@/app/parcels/ActionBar/DuplicateDownloadWarning";
-import {
-    getParcelsWithEvent,
-    getUniquePostcodesFromParcels,
-} from "@/app/parcels/parcelsTable/fetchParcelTableData";
+import { getParcelPostcodesByEvent } from "@/app/parcels/parcelsTable/fetchParcelTableData";
 
 interface ShippingLabelsInputProps {
     onLabelQuantityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -114,14 +111,14 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
-            const { parcels, error } = await getParcelsWithEvent(
+            const { postcodes, error } = await getParcelPostcodesByEvent(
                 "Shipping Labels Downloaded",
                 parcelIds
             );
             if (error) {
                 return;
             }
-            setDuplicateDownloadedPostcodes(await getUniquePostcodesFromParcels(parcels));
+            setDuplicateDownloadedPostcodes(postcodes);
         };
         fetchData();
     }, [parcelIds]);

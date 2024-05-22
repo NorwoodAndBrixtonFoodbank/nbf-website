@@ -14,6 +14,7 @@ import {
     ParcelsFilters,
     ParcelsSortState,
     ParcelsTableRow,
+    ParcelPostcodeResult,
 } from "./types";
 import convertParcelDbtoParcelRow from "./convertParcelDBtoParcelRow";
 import { StatusType } from "@/app/parcels/ActionBar/Statuses";
@@ -282,27 +283,25 @@ export const getClientIdForParcel = async (parcelId: string): Promise<FetchClien
     return { clientId: clientIdData.client_id, error: null };
 };
 
-export const getParcelsWithEvent = async (
+export const getParcelPostcodesByEvent = async (
     targetEventName: StatusType,
     parcelIds: string[]
-): Promise<GetDbParcelDataResult> => {
+): Promise<ParcelPostcodeResult> => {
     const { data, error } = await supabase
         .from("parcels_plus")
-        .select("*, events!inner(new_parcel_status)")
+        .select("client_address_postcode, events!inner(new_parcel_status)")
         .in("parcel_id", parcelIds)
         .eq("events.new_parcel_status", targetEventName);
 
     if (error) {
         const logId = await logErrorReturnLogId("Failed to fetch parcels with events", error);
-        return { parcels: null, error: { type: "failedToFetchParcelTable", logId: logId } };
+        return { postcodes: null, error: { type: "failedToFetchParcelTable", logId: logId } };
     }
 
-    return { parcels: data, error: null };
-};
-
-export const getUniquePostcodesFromParcels = async (parcels: DbParcelRow[]): Promise<string[]> => {
-    const postcodes = parcels
-        .filter((parcel) => parcel)
+    const postcodes = data
+        .filter((parcel) => parcel.client_address_postcode)
         .map((parcel) => parcel.client_address_postcode!);
-    return Array.from(new Set(postcodes));
+    const uniquePostcodes = Array.from(new Set(postcodes));
+
+    return { postcodes: uniquePostcodes, error: null };
 };

@@ -123,3 +123,16 @@ export type FetchClientIdResult =
           clientId: null;
           error: FetchClientIdError;
       };
+
+export type ParcelPostcodeResult =
+    | {
+          postcodes: string[];
+          error: null;
+      }
+    | {
+          postcodes: null;
+          error: {
+              type: GetDbParcelDataErrorType;
+              logId: string;
+          };
+      };

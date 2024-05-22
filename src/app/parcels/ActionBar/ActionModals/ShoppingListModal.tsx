@@ -8,10 +8,7 @@ import ShoppingListPdfButton from "@/pdf/ShoppingList/ShoppingListPdfButton";
 import { ShoppingListPdfError } from "@/pdf/ShoppingList/getShoppingListData";
 import { sendAuditLog } from "@/server/auditLog";
 import DuplicateDownloadWarning from "@/app/parcels/ActionBar/DuplicateDownloadWarning";
-import {
-    getParcelsWithEvent,
-    getUniquePostcodesFromParcels,
-} from "@/app/parcels/parcelsTable/fetchParcelTableData";
+import { getParcelPostcodesByEvent } from "@/app/parcels/parcelsTable/fetchParcelTableData";
 
 const getPdfErrorMessage = (error: ShoppingListPdfError): string => {
     let errorMessage: string;
@@ -85,14 +82,14 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
-            const { parcels, error } = await getParcelsWithEvent(
+            const { postcodes, error } = await getParcelPostcodesByEvent(
                 "Shopping List Downloaded",
                 parcelIds
             );
             if (error) {
                 return;
             }
-            setDuplicateDownloadedPostcodes(await getUniquePostcodesFromParcels(parcels));
+            setDuplicateDownloadedPostcodes(postcodes);
         };
         fetchData();
     }, [parcelIds]);
