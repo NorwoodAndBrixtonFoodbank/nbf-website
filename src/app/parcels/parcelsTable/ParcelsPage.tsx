@@ -152,6 +152,11 @@ const ParcelsPage: React.FC<{}> = () => {
             } else {
                 setParcelsDataPortion(data.parcelTableRows);
                 setFilteredParcelCount(data.count);
+                if (sortState.sortEnabled && sortState.column.headerKey) {
+                    setParcelRowBreakPointConfig(
+                        searchForBreakPoints(sortState.column.headerKey, data.parcelTableRows, theme)
+                    );
+                }
             }
 
             parcelsTableFetchAbortController.current = null;
@@ -165,7 +170,7 @@ const ParcelsPage: React.FC<{}> = () => {
                 searchForBreakPoints(sortState.column.headerKey, parcelsDataPortion, theme)
             );
         }
-    }, [sortState, parcelsDataPortion, theme]);
+    }, [theme]);
 
     useEffect(() => {
         if (!areFiltersLoadingForFirstTime) {

@@ -39,28 +39,26 @@ export const searchForBreakPoints = <TableRow extends ParcelsTableRow>(
 ): BreakPointConfig[] => {
     switch (headerKey) {
         case "packingSlot": {
-            const packingSlotBreakPointConfig = {
+            return [{
                 name: "packingSlot",
                 breakPoints: searchForPackingSlotBreakPoints(parcelsTableRows),
                 colour: theme.primary.background[3],
                 thickness: "5pt",
-            };
-            return [packingSlotBreakPointConfig];
+            }];
         }
         case "packingDate": {
-            const packingSlotBreakPointConfig = {
+            return [{
                 name: "packingSlot",
                 breakPoints: searchForPackingSlotBreakPoints(parcelsTableRows),
                 colour: theme.primary.background[2],
                 thickness: "2.5pt",
-            };
-            const packingDateBreakPointConfig = {
+            }, 
+            {
                 name: "packingDate",
                 breakPoints: searchForPackingDateBreakPoints(parcelsTableRows),
                 colour: theme.primary.background[3],
                 thickness: "5pt",
-            };
-            return [packingSlotBreakPointConfig, packingDateBreakPointConfig];
+            }];
         }
         default:
             return [];
