@@ -16,6 +16,7 @@ import {
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import supabase from "@/supabaseClient";
 import Title from "@/components/Title/Title";
+import { insertParcel } from "@/app/parcels/form/submitFormHelpers";
 
 interface AddParcelProps {
     clientId: string;
@@ -88,7 +89,7 @@ const AddParcels = ({ clientId }: AddParcelProps): React.ReactElement => {
                         initialFields={initialParcelFields}
                         initialFormErrors={initialParcelFormErrors}
                         clientId={clientId}
-                        editMode={false}
+                        writeParcelInfoToDatabase={insertParcel}
                         deliveryPrimaryKey={deliveryPrimaryKey}
                         collectionCentresLabelsAndValues={collectionCentresLabelsAndValues}
                         packingSlotsLabelsAndValues={packingSlotsLabelsAndValues}

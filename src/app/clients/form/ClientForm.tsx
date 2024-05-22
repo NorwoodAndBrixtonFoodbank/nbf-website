@@ -170,9 +170,9 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
                             `Failed to update client and family. Log ID: ${editClientError.logId}`
                         );
                         break;
-                    case "concurrentUpdateConflict":
+                    case "noRowsUpdated":
                         setSubmitErrorMessage(
-                            `Record has been updated recently - please refresh. Log ID: ${editClientError.logId}`
+                            `Update failed, please refresh. If the error persists, the client may have been deleted. Log ID: ${editClientError.logId}`
                         );
                         break;
                 }

@@ -3,7 +3,7 @@
 import { Row, ServerPaginatedTable } from "@/components/Tables/Table";
 import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useTheme } from "styled-components";
-import { ParcelsTableRow, ParcelsSortState, ParcelsFilter } from "./types";
+import { ParcelsTableRow, ParcelsSortState, ParcelsFilter, SelectedClientDetails } from "./types";
 import ExpandedParcelDetails from "@/app/parcels/ExpandedParcelDetails";
 import ExpandedParcelDetailsFallback from "@/app/parcels/ExpandedParcelDetailsFallback";
 import Icon from "@/components/Icons/Icon";
@@ -15,7 +15,7 @@ import { Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormSt
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
 import {
-    getClientIdForParcel,
+    getClientIdAndIsActive,
     getParcelIds,
     getParcelsByIds,
     getParcelsDataAndCount,
@@ -38,7 +38,7 @@ import {
     getSelectedParcelCountMessage,
     getParcelDataErrorMessage,
     parcelTableColumnDisplayFunctions,
-    getClientIdErrorMessage,
+    getClientIdAndIsActiveErrorMessage,
 } from "./format";
 import { PreTableControls, parcelTableColumnStyleOptions } from "./styles";
 import { DbParcelRow } from "@/databaseUtils";
@@ -48,7 +48,8 @@ const ParcelsPage: React.FC<{}> = () => {
     const [parcelsDataPortion, setParcelsDataPortion] = useState<ParcelsTableRow[]>([]);
     const [filteredParcelCount, setFilteredParcelCount] = useState<number>(0);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
-    const [clientIdForSelectedParcel, setClientIdForSelectedParcel] = useState<string | null>(null);
+    const [selectedClientDetails, setSelectedClientDetails] =
+        useState<SelectedClientDetails | null>(null);
 
     const [checkedParcelIds, setCheckedParcelIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
@@ -82,16 +83,16 @@ const ParcelsPage: React.FC<{}> = () => {
 
     const selectedParcelMessage = getSelectedParcelCountMessage(checkedParcelIds.length);
 
-    const fetchAndSetClientIdForSelectedParcel = useCallback(async (): Promise<void> => {
+    const fetchAndSetClientDetailsForSelectedParcel = useCallback(async (): Promise<void> => {
         if (parcelId === null) {
             return;
         }
 
-        const { clientId, error } = await getClientIdForParcel(parcelId);
+        const { data, error } = await getClientIdAndIsActive(parcelId);
         if (error) {
-            setModalErrorMessage(getClientIdErrorMessage(error));
+            setModalErrorMessage(getClientIdAndIsActiveErrorMessage(error));
         } else {
-            setClientIdForSelectedParcel(clientId);
+            setSelectedClientDetails(data);
         }
     }, [parcelId]);
 
@@ -103,9 +104,9 @@ const ParcelsPage: React.FC<{}> = () => {
     }, [parcelId]);
 
     useEffect(() => {
-        setClientIdForSelectedParcel(null);
-        void fetchAndSetClientIdForSelectedParcel();
-    }, [fetchAndSetClientIdForSelectedParcel]);
+        setSelectedClientDetails(null);
+        void fetchAndSetClientDetailsForSelectedParcel();
+    }, [fetchAndSetClientDetailsForSelectedParcel]);
 
     useEffect(() => {
         (async () => {

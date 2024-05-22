@@ -32,6 +32,7 @@ const sampleProcessingData: DbParcelRow[] = [
         last_status_timestamp: "2023-08-04T13:30:00+00:00",
         last_status_workflow_order: 1,
         created_at: "2023-12-31T12:00:00+00:00",
+        client_is_active: true,
     },
 ];
 
@@ -78,6 +79,7 @@ describe("Parcels Page", () => {
                         requiresFollowUpPhoneCall: true,
                     },
                     createdAt: new Date("2023-12-31T12:00:00+00:00"),
+                    clientIsActive: true,
                 },
             ];
             expect(parcelTableRows).to.deep.equal(expected);

@@ -2,10 +2,11 @@
 
 import React from "react";
 import { Svg, Document, Page, Text, View, StyleSheet, Path } from "@react-pdf/renderer";
-import { faFlag, faSquare, IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import { faFlag, faSquare, IconDefinition, faCopyright } from "@fortawesome/free-solid-svg-icons";
 
 import { DayOverviewPdfData, ParcelForDayOverview } from "@/pdf/DayOverview/DayOverviewPdfButton";
-import { nullPostcodeDisplay } from "@/common/format";
+import FontAwesomeIconPdfComponent from "../FontAwesomeIconPdfComponent";
+import { displayPostcodeForHomelessClient } from "@/common/format";
 
 interface DayOverviewRowProps {
     parcel: ParcelForDayOverview;
@@ -55,7 +56,12 @@ const styles = StyleSheet.create({
 
     cellLogo: { flex: 1 },
     cellName: { flex: 4 },
-    cellPostcode: { flex: 4 },
+    cellPostcode: {
+        flex: 4,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "flex-start",
+    },
     cellTime: { flex: 2 },
     cellCollection: { flex: 4 },
     cellInstructions: { flex: 10 },
@@ -108,9 +114,18 @@ const DayOverviewRow: React.FC<DayOverviewRowProps> = ({ parcel }) => {
                 )}
             </View>
             <Text style={[styles.cellName, styles.cell]}>{parcel.client!.full_name}</Text>
-            <Text style={[styles.cellPostcode, styles.cell]}>
-                {parcel.client!.address_postcode ?? nullPostcodeDisplay}
-            </Text>
+            <View style={[styles.cell, styles.cellPostcode, styles.row]}>
+                <Text>{parcel.client!.address_postcode ?? displayPostcodeForHomelessClient} </Text>
+                {parcel.collection_centre!.name === "Delivery" &&
+                    parcel.congestionChargeApplies && (
+                        <FontAwesomeIconPdfComponent
+                            faIcon={faCopyright}
+                            color="red"
+                            styleWidth="10px"
+                            marginTop="1px"
+                        />
+                    )}
+            </View>
             <Text style={[styles.cellTime, styles.cell]}>
                 {dateTimeToAMPM(parcel.collection_datetime!)}
             </Text>
