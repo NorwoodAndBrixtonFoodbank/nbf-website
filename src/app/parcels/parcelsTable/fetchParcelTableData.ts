@@ -318,8 +318,7 @@ export const getParcelPostcodesByEvent = async (
         return { postcodes: null, error: { type: "failedToFetchParcelTable", logId: logId } };
     }
 
-    const postcodes = data
-        .map((parcel) => parcel.client_address_postcode);
+    const postcodes = data.map((parcel) => parcel.client_address_postcode);
     const uniquePostcodes = Array.from(new Set(postcodes));
 
     return { postcodes: uniquePostcodes, error: null };

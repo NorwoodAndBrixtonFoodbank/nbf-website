@@ -49,7 +49,9 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
-    const [duplicateDownloadedPostcodes, setDuplicateDownloadedPostcodes] = useState<(string | null)[]>([]);
+    const [duplicateDownloadedPostcodes, setDuplicateDownloadedPostcodes] = useState<
+        (string | null)[]
+    >([]);
 
     const onClose = (): void => {
         props.onClose();

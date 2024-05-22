@@ -58,7 +58,9 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [labelQuantity, setLabelQuantity] = useState<number>(0);
-    const [duplicateDownloadedPostcodes, setDuplicateDownloadedPostcodes] = useState<(string | null)[]>([]);
+    const [duplicateDownloadedPostcodes, setDuplicateDownloadedPostcodes] = useState<
+        (string | null)[]
+    >([]);
 
     const onLabelQuantityChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setLabelQuantity(parseInt(event.target.value, 10) ?? 0);
