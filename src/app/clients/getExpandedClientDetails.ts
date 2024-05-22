@@ -11,7 +11,7 @@ import {
 } from "@/common/getAgesOfFamily";
 import { getCurrentYear } from "@/common/date";
 
-const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientDetails> => {
+const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
     const rawClientDetails = await getRawClientDetails(clientId);
     return rawDataToExpandedClientDetails(rawClientDetails);
 };
@@ -88,9 +88,9 @@ export interface ExpandedClientData {
     isActive: boolean;
 }
 
-export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientDetails => {
+export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientData => {
     return {
-        fullName: client.full_name,
+        fullName: client.full_name ?? "",
         address: formatAddressFromClientDetails(client),
         deliveryInstructions: client.delivery_instructions ?? "",
         phoneNumber: client.phone_number ?? "",

@@ -356,17 +356,19 @@ const ParcelsPage: React.FC<{}> = () => {
                                 <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
                                     Edit Parcel
                                 </LinkButton>
-                                {clientIdForSelectedParcel && (
-                                    <LinkButton
-                                        link={`/clients?clientId=${clientIdForSelectedParcel}`}
-                                    >
-                                        See Client Details
-                                    </LinkButton>
-                                )}
-                                {clientIdForSelectedParcel && (
-                                    <LinkButton link={`/clients/edit/${clientIdForSelectedParcel}`}>
-                                        Edit Client Details
-                                    </LinkButton>
+                                {selectedClientDetails && (
+                                    <>
+                                        <LinkButton
+                                            link={`/clients?clientId=${selectedClientDetails.clientId}`}
+                                        >
+                                            See Client Details
+                                        </LinkButton>
+                                        <LinkButton
+                                            link={`/clients/edit/${selectedClientDetails.clientId}`}
+                                        >
+                                            Edit Client Details
+                                        </LinkButton>
+                                    </>
                                 )}
                             </Centerer>
                         }
