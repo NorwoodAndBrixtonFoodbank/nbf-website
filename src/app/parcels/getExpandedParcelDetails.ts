@@ -119,6 +119,7 @@ const getExpandedParcelDetails = async (
                     deliveryInstructions: client.delivery_instructions ?? "",
                     phoneNumber: client.phone_number ?? "",
                     household: formatHouseholdFromFamilyDetails(client.family),
+                    adults: formatBreakdownOfAdultsFromFamilyDetails(client.family),
                     children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
                     packingDate: formatDatetimeAsDate(rawParcelDetails.packing_date),
                     packingSlot: rawParcelDetails.packing_slot?.name ?? "",
