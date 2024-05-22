@@ -3,7 +3,7 @@
 import LinkButton from "@/components/Buttons/LinkButton";
 import Icon from "@/components/Icons/Icon";
 import Modal from "@/components/Modal/Modal";
-import { Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
+import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import { ServerPaginatedTable } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
 import supabase from "@/supabaseClient";
@@ -215,14 +215,19 @@ const ClientsPage: React.FC<{}> = () => {
                         }}
                         headerId="clientsDetailModal"
                         footer={
-                            <Centerer>
-                                <LinkButton link={`/clients/edit/${clientId}`}>
-                                    Edit Client
-                                </LinkButton>
-                                <LinkButton link={`/parcels/add/${clientId}`}>
-                                    Add Parcel
-                                </LinkButton>
-                            </Centerer>
+                            isSelectedClientActive && (
+                                <Centerer>
+                                    <LinkButton link={`/clients/edit/${clientId}`}>
+                                        Edit Client
+                                    </LinkButton>
+                                    <LinkButton link={`/parcels/add/${clientId}`}>
+                                        Add Parcel
+                                    </LinkButton>
+                                    <DeleteButton onClick={() => setIsDeleteClientDialogOpen(true)}>
+                                        Delete Client
+                                    </DeleteButton>
+                                </Centerer>
+                            )
                         }
                     >
                         <OutsideDiv>
@@ -244,21 +249,6 @@ const ClientsPage: React.FC<{}> = () => {
                                     <ErrorSecondaryText>
                                         {deleteClientErrorMessage}
                                     </ErrorSecondaryText>
-                                )}
-                                {isSelectedClientActive && (
-                                    <Centerer>
-                                        <LinkButton link={`/clients/edit/${clientId}`}>
-                                            Edit Client
-                                        </LinkButton>
-                                        <LinkButton link={`/parcels/add/${clientId}`}>
-                                            Add Parcel
-                                        </LinkButton>
-                                        <DeleteButton
-                                            onClick={() => setIsDeleteClientDialogOpen(true)}
-                                        >
-                                            Delete Client
-                                        </DeleteButton>
-                                    </Centerer>
                                 )}
                             </ButtonsDiv>
                         </OutsideDiv>
