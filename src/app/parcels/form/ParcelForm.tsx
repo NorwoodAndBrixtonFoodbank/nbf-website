@@ -24,13 +24,16 @@ import ShippingMethodCard from "@/app/parcels/form/formSections/ShippingMethodCa
 import CollectionDateCard from "@/app/parcels/form/formSections/CollectionDateCard";
 import CollectionTimeCard from "@/app/parcels/form/formSections/CollectionTimeCard";
 import CollectionCentreCard from "@/app/parcels/form/formSections/CollectionCentreCard";
-import { insertParcel, updateParcel } from "@/app/parcels/form/clientDatabaseFunctions";
+import {
+    WriteParcelToDatabaseErrors,
+    WriteParcelToDatabaseFunction,
+} from "@/app/parcels/form/submitFormHelpers";
 import { Button, IconButton } from "@mui/material";
 import { Schema } from "@/databaseUtils";
 import dayjs, { Dayjs } from "dayjs";
 import { CollectionCentresLabelsAndValues, PackingSlotsLabelsAndValues } from "@/common/fetch";
 import getExpandedClientDetails, {
-    ExpandedClientData,
+    ExpandedClientDetails,
 } from "@/app/clients/getExpandedClientDetails";
 import Modal from "@/components/Modal/Modal";
 import InfoIcon from "@mui/icons-material/Info";
@@ -92,13 +95,10 @@ interface ParcelFormProps {
     initialFields: ParcelFields;
     initialFormErrors: ParcelErrors;
     clientId?: string;
-    editMode: boolean;
-    parcelId?: string;
     deliveryPrimaryKey: Schema["collection_centres"]["primary_key"];
     collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues;
     packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues;
-    packingSlotIsShown?: boolean;
-    collectionCentreIsShown?: boolean;
+    writeParcelInfoToDatabase: WriteParcelToDatabaseFunction;
 }
 
 const withCollectionFormSections = [
@@ -124,6 +124,22 @@ const mergeDateAndTime = (date: string, time: string): Dayjs => {
     return dayjs(date).hour(dayjsTime.hour()).minute(dayjsTime.minute());
 };
 
+const parcelModalRouterPath = (parcelId: string): string => `/parcels?parcelId=${parcelId}`;
+
+const databaseErrorMessageFromErrorType = (
+    errorType: WriteParcelToDatabaseErrors,
+    logId: string
+): string => {
+    switch (errorType) {
+        case "failedToInsertParcel":
+            return `Failed to insert parcel. Log ID: ${logId}`;
+        case "failedToUpdateParcel":
+            return `Failed to update parcel. Log ID: ${logId}`;
+        case "concurrentUpdateConflict":
+            return `Record has been edited recently - please refresh the page. LogID: ${logId}`;
+    }
+};
+
 // TODO VFB-55:
 // The param deliveryPrimaryKey will need to remain until VFB-55 is done.
 
@@ -131,13 +147,10 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     initialFields,
     initialFormErrors,
     clientId,
-    editMode,
-    parcelId,
+    writeParcelInfoToDatabase,
     deliveryPrimaryKey,
     collectionCentresLabelsAndValues,
     packingSlotsLabelsAndValues,
-    packingSlotIsShown,
-    collectionCentreIsShown,
 }) => {
     const router = useRouter();
     const [fields, setFields] = useState(initialFields);
@@ -145,7 +158,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
     const [submitDisabled, setSubmitDisabled] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-    const [clientDetails, setClientDetails] = useState<ExpandedClientData | null>(null);
+    const [clientDetails, setClientDetails] = useState<ExpandedClientDetails | null>(null);
     const theme = useTheme();
     const clientIdForFetch = initialFields.clientId ? initialFields.clientId : clientId;
 
@@ -160,24 +173,6 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                 });
         }
     }, [clientDetails, clientIdForFetch]);
-
-    useEffect(() => {
-        if (editMode && !packingSlotIsShown) {
-            setFormErrors((currentState) => ({
-                ...currentState,
-                packingSlot: Errors.invalidPackingSlot,
-            }));
-        }
-    }, [editMode, packingSlotIsShown]);
-
-    useEffect(() => {
-        if (editMode && !collectionCentreIsShown) {
-            setFormErrors((currentState) => ({
-                ...currentState,
-                collectionCentre: Errors.invalidCollectionCentre,
-            }));
-        }
-    }, [editMode, collectionCentreIsShown]);
 
     const formSections =
         fields.shippingMethod === "Collection"
@@ -219,8 +214,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
 
         const isDelivery = fields.shippingMethod === "Delivery";
 
-        const formToAdd = {
-            primary_key: parcelId!,
+        const parcelRecord = {
             client_id: (clientId || fields.clientId)!,
             packing_date: packingDate,
             packing_slot: fields.packingSlot,
@@ -230,36 +224,19 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             last_updated: fields.lastUpdated,
         };
 
-        if (editMode) {
-            const { error: updateParcelError } = await updateParcel(formToAdd, parcelId!);
-            if (updateParcelError) {
-                let errorMessage: string;
-                switch (updateParcelError.type) {
-                    case "failedToUpdateParcel":
-                        errorMessage = `Failed to update parcel. Log ID: ${updateParcelError.logId}`;
-                        break;
-                    case "concurrentUpdateConflict":
-                        errorMessage = `Record has been edited recently - please refresh the page. LogID: ${updateParcelError.logId}`;
-                        break;
-                }
-                setSubmitErrorMessage(errorMessage);
-                return;
-            }
-        } else {
-            const { error: insertParcelError } = await insertParcel(formToAdd);
-            if (insertParcelError) {
-                let errorMessage: string;
-                switch (insertParcelError.type) {
-                    case "failedToInsertParcel":
-                        errorMessage = `Failed to insert parcel. Log ID: ${insertParcelError.logId}`;
-                        break;
-                }
-                setSubmitErrorMessage(errorMessage);
-                return;
-            }
+        const { parcelId, error } = await writeParcelInfoToDatabase(parcelRecord);
+
+        if (parcelId) {
+            router.push(parcelModalRouterPath(parcelId));
         }
-        router.push("/parcels/");
-        setSubmitDisabled(false);
+
+        if (error) {
+            if (error.type !== "concurrentUpdateConflict") {
+                setSubmitDisabled(false);
+            }
+
+            setSubmitErrorMessage(databaseErrorMessageFromErrorType(error.type, error.logId));
+        }
     };
 
     return (

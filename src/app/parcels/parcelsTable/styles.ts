@@ -14,25 +14,35 @@ export const parcelTableColumnStyleOptions = {
         width: "4rem",
     },
     fullName: {
+        grow: 1.3,
         minWidth: "8rem",
     },
     familyCategory: {
         hide: 550,
+        grow: 0.8,
+        minWidth: "6rem",
     },
     addressPostcode: {
         hide: 800,
+        grow: 0.8,
+        minWidth: "6rem",
     },
     deliveryCollection: {
+        grow: 0.8,
         minWidth: "6rem",
     },
     packingDate: {
         hide: 800,
+        grow: 0.8,
+        minWidth: "6rem",
     },
     packingSlot: {
         hide: 800,
-        minWidth: "6rem",
+        grow: 0.8,
+        minWidth: "5rem",
     },
     lastStatus: {
-        minWidth: "8rem",
+        grow: 3,
+        maxWidth: "30rem",
     },
 };

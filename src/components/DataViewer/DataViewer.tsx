@@ -52,17 +52,22 @@ const formatDisplayValue = (value: valueType): string => {
 
 export interface DataViewerProps {
     data: Data;
+    fieldsToHide?: Partial<[keyof Data]>;
 }
 
-const DataViewer: React.FC<DataViewerProps> = (props) => {
+const DataViewer: React.FC<DataViewerProps> = ({ data, fieldsToHide = [] }) => {
     return (
         <DataViewerContainer>
-            {Object.entries(props.data).map(([key, value]) => (
-                <DataViewerItem key={key}>
-                    <Key>{formatCamelCaseKey(key)}</Key>
-                    <Value>{formatDisplayValue(value)}</Value>
-                </DataViewerItem>
-            ))}
+            {Object.entries(data).map(([key, value]) => {
+                if (!fieldsToHide.includes(key)) {
+                    return (
+                        <DataViewerItem key={key}>
+                            <Key>{formatCamelCaseKey(key)}</Key>
+                            <Value>{formatDisplayValue(value)}</Value>
+                        </DataViewerItem>
+                    );
+                }
+            })}
         </DataViewerContainer>
     );
 };

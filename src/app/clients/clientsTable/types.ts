@@ -42,4 +42,5 @@ export interface ClientsTableRow {
     fullName: string;
     familyCategory: string;
     addressPostcode: string | null;
+    phoneNumber: string | null;
 }

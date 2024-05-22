@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Text, Document, Page, View, StyleSheet, Image } from "@react-pdf/renderer";
-import { nullPostcodeDisplay } from "@/common/format";
+import { displayPostcodeForHomelessClient } from "@/common/format";
 
 export interface DriverOverviewTableData {
     name: string;
@@ -16,6 +16,8 @@ export interface DriverOverviewTableData {
     contact?: string;
     packingDate: string | null;
     instructions?: string;
+    clientIsActive: boolean;
+    numberOfLabels: number;
 }
 
 export interface DriverOverviewCardDataProps {
@@ -113,7 +115,10 @@ const styles = StyleSheet.create({
         width: "20%",
     },
     instructionsColumnWidth: {
-        width: "25%",
+        width: "20%",
+    },
+    numberOfLabelsColumnWidth: {
+        width: "20%",
     },
 });
 
@@ -135,6 +140,9 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
             <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
                 <Text>Instructions</Text>
             </View>
+            <View style={[styles.tableColumn, styles.numberOfLabelsColumnWidth]}>
+                <Text>Number of Parcels</Text>
+            </View>
         </View>
     );
 
@@ -146,7 +154,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                     <Text>{rowData.name}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.addressColumnWidth]}>
-                    {rowData.address.postcode ? (
+                    {rowData.address.postcode || rowData.clientIsActive ? (
                         <>
                             <Text>{rowData.address.line1}</Text>
                             <Text>{rowData.address.line2}</Text>
@@ -155,17 +163,22 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                             <Text>{rowData.address.postcode}</Text>
                         </>
                     ) : (
-                        <Text>{nullPostcodeDisplay}</Text>
+                        <Text>
+                            {rowData.clientIsActive ? displayPostcodeForHomelessClient : "-"}
+                        </Text>
                     )}
                 </View>
                 <View style={[styles.tableColumn, styles.contactColumnWidth]}>
                     <Text>{rowData.contact}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
-                    <Text>{rowData.packingDate ? rowData.packingDate : "No recorded date"}</Text>
+                    <Text>{rowData.packingDate || "No recorded date"}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
                     <Text>{rowData.instructions}</Text>
+                </View>
+                <View style={[styles.tableColumn, styles.numberOfLabelsColumnWidth]}>
+                    <Text>{rowData.numberOfLabels || "No labels downloaded"}</Text>
                 </View>
             </View>
         );

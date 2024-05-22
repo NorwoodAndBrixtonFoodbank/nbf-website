@@ -1,6 +1,15 @@
 import React from "react";
-import { formatDateTime, formatDatetimeAsDate, nullPostcodeDisplay } from "@/common/format";
-import { FetchClientIdError, GetParcelDataAndCountErrorType, ParcelsTableRow } from "./types";
+import {
+    displayNameForDeletedClient,
+    formatDateTime,
+    formatDatetimeAsDate,
+    displayPostcodeForHomelessClient,
+} from "@/common/format";
+import {
+    FetchClientIdAndIsActiveError,
+    GetParcelDataAndCountErrorType,
+    ParcelsTableRow,
+} from "./types";
 import CongestionChargeAppliesIcon from "@/components/Icons/CongestionChargeAppliesIcon";
 import DeliveryIcon from "@/components/Icons/DeliveryIcon";
 import FlaggedForAttentionIcon from "@/components/Icons/FlaggedForAttentionIcon";
@@ -58,7 +67,7 @@ const rowToLastStatusColumn = (data: ParcelsTableRow["lastStatus"] | null): stri
 };
 
 const formatNullPostcode = (postcodeData: ParcelsTableRow["addressPostcode"]): string => {
-    return postcodeData ?? nullPostcodeDisplay;
+    return postcodeData ?? displayPostcodeForHomelessClient;
 };
 
 export const parcelTableColumnDisplayFunctions = {
@@ -78,15 +87,21 @@ export const getParcelDataErrorMessage = (
             return "Unknown error has occurred. Please reload.";
         case "failedToFetchParcels":
             return "Failed to fetch parcels. Please reload.";
+        case "failedToRetrieveCongestionChargeDetails":
+            return "Failed to retrieve Congestion Charge details. Please reload.";
         case "abortedFetch":
             return null;
     }
 };
 
-export const getClientIdErrorMessage = (error: FetchClientIdError): string | null => {
+export const getClientIdAndIsActiveErrorMessage = (
+    error: FetchClientIdAndIsActiveError
+): string | null => {
     switch (error.type) {
-        case "failedClientIdFetch":
-            return `Failed to fetch client ID for the selected parcel. Please reload. Log ID: ${error.logId}`;
+        case "failedClientIdAndIsActiveFetch":
+            return `Failed to fetch client ID and is active for the selected parcel. Please reload. Log ID: ${error.logId}`;
+        case "noMatchingClient":
+            return `No matching client for the selected parcel. Please reload. Log ID: ${error.logId}`;
     }
 };
 
@@ -98,3 +113,5 @@ export const getSelectedParcelCountMessage = (numberOfSelectedParcels: number): 
         ? "1 parcel selected"
         : `${numberOfSelectedParcels} parcels selected`;
 };
+
+export const parcelsPageDeletedClientDisplayName = `(${displayNameForDeletedClient})`;
