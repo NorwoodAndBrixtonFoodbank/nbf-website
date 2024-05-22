@@ -299,3 +299,10 @@ export const getParcelsWithEvent = async (
 
     return { parcels: data, error: null };
 };
+
+export const getUniquePostcodesFromParcels = async (parcels: DbParcelRow[]): Promise<string[]> => {
+    const postcodes = parcels
+        .filter((parcel) => parcel)
+        .map((parcel) => parcel.client_address_postcode!);
+    return Array.from(new Set(postcodes));
+};

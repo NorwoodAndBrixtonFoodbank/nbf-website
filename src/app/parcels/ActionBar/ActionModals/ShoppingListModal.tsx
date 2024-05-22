@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import GeneralActionModal, { ActionModalProps, maxParcelsToShow } from "./GeneralActionModal";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
@@ -8,6 +8,10 @@ import ShoppingListPdfButton from "@/pdf/ShoppingList/ShoppingListPdfButton";
 import { ShoppingListPdfError } from "@/pdf/ShoppingList/getShoppingListData";
 import { sendAuditLog } from "@/server/auditLog";
 import DuplicateDownloadWarning from "@/app/parcels/ActionBar/DuplicateDownloadWarning";
+import {
+    getParcelsWithEvent,
+    getUniquePostcodesFromParcels,
+} from "@/app/parcels/parcelsTable/fetchParcelTableData";
 
 const getPdfErrorMessage = (error: ShoppingListPdfError): string => {
     let errorMessage: string;
@@ -45,11 +49,14 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [duplicateDownloadedPostcodes, setDuplicateDownloadedPostcodes] = useState<string[]>([]);
 
     const onClose = (): void => {
         props.onClose();
         setErrorMessage(null);
     };
+
+    const parcelIds = props.selectedParcels.map((parcel) => parcel.parcelId);
 
     const onPdfCreationCompleted = async (): Promise<void> => {
         const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
@@ -61,7 +68,7 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
         void sendAuditLog({
             action: "create shopping list pdf",
             wasSuccess: true,
-            content: { parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId) },
+            content: { parcelIds: parcelIds },
         });
     };
 
@@ -71,10 +78,24 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
         void sendAuditLog({
             action: "create shopping list pdf",
             wasSuccess: false,
-            content: { parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId) },
+            content: { parcelIds: parcelIds },
             logId: pdfError.logId,
         });
     };
+
+    useEffect(() => {
+        const fetchData = async (): Promise<void> => {
+            const { parcels, error } = await getParcelsWithEvent(
+                "Shopping List Downloaded",
+                parcelIds
+            );
+            if (error) {
+                return;
+            }
+            setDuplicateDownloadedPostcodes(await getUniquePostcodesFromParcels(parcels));
+        };
+        fetchData();
+    }, [parcelIds]);
 
     return (
         <GeneralActionModal
@@ -96,10 +117,9 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
                         parcels={props.selectedParcels}
                         maxParcelsToShow={maxParcelsToShow}
                     />
-                    <DuplicateDownloadWarning
-                        parcels={props.selectedParcels}
-                        targetEventName="Shopping List Downloaded"
-                    />
+                    {duplicateDownloadedPostcodes.length > 0 && (
+                        <DuplicateDownloadWarning postcodes={duplicateDownloadedPostcodes} />
+                    )}
                 </>
             }
         />
