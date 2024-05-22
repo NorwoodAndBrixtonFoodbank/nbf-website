@@ -21,7 +21,6 @@ import styled from "styled-components";
 import { Primitive, SortOrder } from "react-data-table-component/dist/DataTable/types";
 import { Centerer } from "../Modal/ModalFormStyles";
 import { ClientSideSortMethod, ServerSideSortMethod } from "./sortMethods";
-import { BreakPointConfig } from "@/app/parcels/parcelsTable/conditionalStyling";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -133,6 +132,13 @@ export type EditableConfig<Data> =
           isDeletable?: (row: Data) => boolean;
       }
     | { editable: false };
+
+export type BreakPointConfig = {
+    name: string;
+    breakPoints: number[];
+    colour: string;
+    thickness: string;
+};
 
 interface Props<Data, DbData extends Record<string, any>, PaginationType> {
     dataPortion: Data[];

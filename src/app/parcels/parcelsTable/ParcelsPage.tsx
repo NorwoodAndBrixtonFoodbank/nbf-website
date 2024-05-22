@@ -1,6 +1,6 @@
 "use client";
 
-import { Row, ServerPaginatedTable } from "@/components/Tables/Table";
+import { BreakPointConfig, Row, ServerPaginatedTable } from "@/components/Tables/Table";
 import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useTheme } from "styled-components";
 import { ParcelsTableRow, ParcelsSortState, ParcelsFilter, SelectedClientDetails } from "./types";
@@ -42,7 +42,7 @@ import {
 } from "./format";
 import { PreTableControls, parcelTableColumnStyleOptions } from "./styles";
 import { DbParcelRow } from "@/databaseUtils";
-import { BreakPointConfig, searchForBreakPoints } from "./conditionalStyling";
+import { searchForBreakPoints } from "./conditionalStyling";
 
 const ParcelsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -152,11 +152,6 @@ const ParcelsPage: React.FC<{}> = () => {
             } else {
                 setParcelsDataPortion(data.parcelTableRows);
                 setFilteredParcelCount(data.count);
-                if (sortState.sortEnabled && sortState.column.headerKey) {
-                    setParcelRowBreakPointConfig(
-                        searchForBreakPoints(sortState.column.headerKey, data.parcelTableRows, theme)
-                    );
-                }
             }
 
             parcelsTableFetchAbortController.current = null;
@@ -170,7 +165,7 @@ const ParcelsPage: React.FC<{}> = () => {
                 searchForBreakPoints(sortState.column.headerKey, parcelsDataPortion, theme)
             );
         }
-    }, [theme]);
+    }, [sortState, parcelsDataPortion, theme]);
 
     useEffect(() => {
         if (!areFiltersLoadingForFirstTime) {

@@ -1,17 +1,17 @@
 import { DefaultTheme } from "styled-components/dist/types";
 import { ParcelsTableRow } from "./types";
+import { BreakPointConfig } from "@/components/Tables/Table";
 
 const getRowBoundaries = (columnValues: (string | number | null)[]): number[] => {
-    let temp = columnValues[0];
     const boundaries: number[] = [];
 
     columnValues.forEach((columnValue, index) => {
-        if (columnValue !== temp) {
+        const previousIndex = index - 1 >= 0 ? index - 1 : 0;
+        const previousValue = columnValues[previousIndex];
+        if (columnValue !== previousValue) {
             boundaries.push(index);
         }
-        temp = columnValue;
     });
-
     return boundaries;
 };
 
@@ -25,40 +25,37 @@ const searchForPackingDateBreakPoints = (parcelsTableRows: ParcelsTableRow[]): n
     return getRowBoundaries(packingSlotValues);
 };
 
-export type BreakPointConfig = {
-    name: string;
-    breakPoints: number[];
-    colour: string;
-    thickness: string;
-};
-
-export const searchForBreakPoints = <TableRow extends ParcelsTableRow>(
-    headerKey: keyof TableRow,
-    parcelsTableRows: TableRow[],
+export const searchForBreakPoints = (
+    headerKey: keyof ParcelsTableRow,
+    parcelsTableRows: ParcelsTableRow[],
     theme: DefaultTheme
 ): BreakPointConfig[] => {
     switch (headerKey) {
         case "packingSlot": {
-            return [{
-                name: "packingSlot",
-                breakPoints: searchForPackingSlotBreakPoints(parcelsTableRows),
-                colour: theme.primary.background[3],
-                thickness: "5pt",
-            }];
+            return [
+                {
+                    name: "packingSlot",
+                    breakPoints: searchForPackingSlotBreakPoints(parcelsTableRows),
+                    colour: theme.primary.background[3],
+                    thickness: "5pt",
+                },
+            ];
         }
         case "packingDate": {
-            return [{
-                name: "packingSlot",
-                breakPoints: searchForPackingSlotBreakPoints(parcelsTableRows),
-                colour: theme.primary.background[2],
-                thickness: "2.5pt",
-            }, 
-            {
-                name: "packingDate",
-                breakPoints: searchForPackingDateBreakPoints(parcelsTableRows),
-                colour: theme.primary.background[3],
-                thickness: "5pt",
-            }];
+            return [
+                {
+                    name: "packingSlot",
+                    breakPoints: searchForPackingSlotBreakPoints(parcelsTableRows),
+                    colour: theme.primary.background[2],
+                    thickness: "2.5pt",
+                },
+                {
+                    name: "packingDate",
+                    breakPoints: searchForPackingDateBreakPoints(parcelsTableRows),
+                    colour: theme.primary.background[3],
+                    thickness: "5pt",
+                },
+            ];
         }
         default:
             return [];
