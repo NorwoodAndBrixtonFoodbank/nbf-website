@@ -10,6 +10,9 @@
 ### Fails to create users when resetting database
 - Try again, sometimes it can take a few times to work
 
+### Login button does nothing after running post_checkout
+- Refresh the page. This might be due to your browser caching the old session, which is no longer recognised when supabase restarts.
+
 ### Congestion charge error on console and parcels not appearing in front end parcels table
 - Make sure all docker containers are running
 - Run `npx supabase functions serve` to ensure the edge functions are running
