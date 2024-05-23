@@ -6,47 +6,17 @@ import {
     numberRegex,
     Person,
     Gender,
-    Errors,
+    onChangeText,
 } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 import { FormText, StyledCard } from "@/components/Form/formStyling";
-import { ClientCardProps, ClientErrorSetter, ClientSetter } from "../ClientForm";
+import { ClientCardProps, ClientSetter } from "../ClientForm";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { getAdultBirthYears } from "@/app/clients/form/birthYearDropdown";
 
-const getQuantity = (input: string): number => {
-    if (input === "") {
-        return 0;
-    }
-    if (input.match(numberRegex)) {
-        return parseInt(input);
-    }
-    return -1;
-};
-
-const setNumberOfAdults = (
-    fieldSetter: ClientSetter,
-    errorSetter: ClientErrorSetter
-): SelectChangeEventHandler => {
-    return (event) => {
-        const input = event.target.value;
-        const number = getQuantity(input);
-        fieldSetter({ numberOfAdults: number });
-
-        const invalidAdultEntry = number < 0;
-        const zeroAdultEntry = number === 0;
-
-        let errorType: Errors = Errors.none;
-        if (invalidAdultEntry) {
-            errorType = Errors.invalid;
-        }
-        if (zeroAdultEntry) {
-            errorType = Errors.required;
-        }
-
-        errorSetter({ numberOfAdults: errorType });
-    };
+const numberOfAdultsRange = (value: string): boolean => {
+    return parseInt(value) <= 20 && parseInt(value) > 0;
 };
 
 const setAdultsFields = (
@@ -79,7 +49,7 @@ const NumberAdultsCard: React.FC<ClientCardProps> = ({
         <GenericFormCard
             title="Number of Adults"
             required={true}
-            text="Please enter the number of adults (aged 16 or above)."
+            text="Please enter a number between 1 and 20. (Note that adults are aged 16 or above)."
         >
             <>
                 <FreeFormTextInput
@@ -90,7 +60,15 @@ const NumberAdultsCard: React.FC<ClientCardProps> = ({
                     }
                     error={errorExists(formErrors.numberOfAdults)}
                     helperText={errorText(formErrors.numberOfAdults)}
-                    onChange={setNumberOfAdults(fieldSetter, errorSetter)}
+                    onChange={onChangeText(
+                        fieldSetter,
+                        errorSetter,
+                        "numberOfAdults",
+                        true,
+                        numberRegex,
+                        parseInt,
+                        numberOfAdultsRange
+                    )}
                 />
                 {fields.adults.map((adult: Person, index: number) => {
                     return (
