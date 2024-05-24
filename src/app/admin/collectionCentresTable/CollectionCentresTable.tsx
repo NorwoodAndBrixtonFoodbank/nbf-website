@@ -35,6 +35,7 @@ export interface CollectionCentresTableRow {
     acronym: Schema["collection_centres"]["acronym"];
     name: Schema["collection_centres"]["name"];
     id: Schema["collection_centres"]["primary_key"];
+    isDelivery: Schema["collection_centres"]["is_delivery"];
     isShown: Schema["collection_centres"]["is_shown"];
     isNew: boolean;
 }
