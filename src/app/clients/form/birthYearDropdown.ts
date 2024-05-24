@@ -1,4 +1,4 @@
-import { getCurrentYear } from "@/common/date";
+import { getCurrentMonth, getCurrentYear } from "@/common/date";
 
 export const getChildBirthYears = (): string[] => {
     const currentYear = getCurrentYear();
@@ -36,3 +36,11 @@ const monthsOfTheYear = [
 export const childBirthMonthList: [string, string][] = monthsOfTheYear.map((month, index) => {
     return [month, (index + 1).toString()];
 });
+
+const currentMonth = getCurrentMonth();
+const currentYearChildBirthMonths = monthsOfTheYear.slice(0, currentMonth);
+export const currentYearChildBirthMonthList: [string, string][] = currentYearChildBirthMonths.map(
+    (month, index) => {
+        return [month, (index + 1).toString()];
+    }
+);
