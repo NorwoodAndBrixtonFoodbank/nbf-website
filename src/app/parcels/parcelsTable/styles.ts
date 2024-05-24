@@ -22,12 +22,13 @@ export const parcelTableColumnStyleOptions = {
     familyCategory: {
         hide: 550,
         grow: 0.8,
-        minWidth: "6rem",
+        minWidth: "5rem",
     },
     addressPostcode: {
         hide: 800,
         grow: 0.8,
-        minWidth: "6rem",
+        minWidth: "5rem",
+        maxWidth: "6rem",
     },
     deliveryCollection: {
         grow: 0.8,
@@ -36,7 +37,7 @@ export const parcelTableColumnStyleOptions = {
     packingDate: {
         hide: 800,
         grow: 0.8,
-        minWidth: "6rem",
+        minWidth: "7rem",
     },
     packingSlot: {
         hide: 800,
