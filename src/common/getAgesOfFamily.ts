@@ -11,27 +11,17 @@ export const getChildAgeUsingBirthYearAndMonth = (
     shortHand: boolean
 ): string => {
     const years = getCurrentYear() - birthYear;
-    let totalMonths;
-    if (birthMonth) {
-        const months = getCurrentMonth() - birthMonth;
-        totalMonths = years * 12 + months;
-    } else {
-        totalMonths = years * 12;
-    }
+    const months = birthMonth ? getCurrentMonth() - birthMonth : 0;
+    const totalMonths = years * 12 + months;
+
     if (totalMonths <= 1) {
-        if (shortHand) {
-            return `${totalMonths}m`;
-        }
-        return `${totalMonths}-month-old`;
+        return shortHand ? `${totalMonths}m` : `${totalMonths}-month-old`;
     }
-    if (totalMonths <= 12) {
-        if (shortHand) {
-            return `${totalMonths}m`;
-        }
-        return `${totalMonths}-months-old`;
+    if (totalMonths < 12) {
+        return shortHand ? `${totalMonths}m` : `${totalMonths}-months-old`;
     }
     if (shortHand) {
-        return `${years}`;
+        return `${years}y`;
     }
     return totalMonths < 24 ? `${years}-year-old` : `${years}-years-old`;
 };
