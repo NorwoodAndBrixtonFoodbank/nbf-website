@@ -17,7 +17,7 @@ import { CircularProgress, NoSsr } from "@mui/material";
 import IconButton from "@mui/material/IconButton/IconButton";
 import React, { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { Primitive, SortOrder } from "react-data-table-component/dist/DataTable/types";
 import { Centerer } from "../Modal/ModalFormStyles";
 import { ClientSideSortMethod, ServerSideSortMethod } from "./sortMethods";
@@ -136,10 +136,19 @@ export type EditableConfig<Data> =
 export type BreakPointConfig = {
     name: string;
     breakPoints: number[];
+    dividingLineStyle: keyof DividingLineStyleOptions;
+};
+
+export type DividingLineStyleOptions = {
+    dateAndSlotPrimary: DividingLineStyle;
+    dateAndSlotSecondary: DividingLineStyle;
+    slotPrimary: DividingLineStyle;
+};
+
+type DividingLineStyle = {
     colour: string;
     thickness: string;
 };
-
 interface Props<Data, DbData extends Record<string, any>, PaginationType> {
     dataPortion: Data[];
     headerKeysAndLabels: TableHeaders<Data>;
@@ -412,6 +421,23 @@ const Table = <
 
     const rows = dataPortion.map((data, index) => ({ rowId: index, data }));
 
+    const theme = useTheme();
+
+    const dividingLineStyleOptions: DividingLineStyleOptions = {
+        dateAndSlotPrimary: {
+            colour: theme.primary.background[3],
+            thickness: "5pt",
+        },
+        dateAndSlotSecondary: {
+            colour: theme.primary.background[2],
+            thickness: "2.5pt",
+        },
+        slotPrimary: {
+            colour: theme.primary.background[3],
+            thickness: "5pt",
+        },
+    };
+
     return (
         <>
             <TableFilterAndExtraColumnsBar<
@@ -437,7 +463,10 @@ const Table = <
                 setShownHeaderKeys={setShownHeaderKeys}
                 shownHeaderKeys={shownHeaderKeys}
             />
-            <TableStyling rowBreakPointConfigs={rowBreakPointConfigs}>
+            <TableStyling
+                rowBreakPointConfigs={rowBreakPointConfigs ?? []}
+                dividingLineStyleOptions={dividingLineStyleOptions}
+            >
                 <NoSsr>
                     <DataTable
                         columns={columns}
@@ -509,7 +538,10 @@ const StyledIcon = styled(Icon)`
     margin: 0;
 `;
 
-const TableStyling = styled.div<{ rowBreakPointConfigs?: BreakPointConfig[] }>`
+const TableStyling = styled.div<{
+    rowBreakPointConfigs: BreakPointConfig[];
+    dividingLineStyleOptions: DividingLineStyleOptions;
+}>`
     // the component with the filter bars
     & > header {
         background-color: transparent;
@@ -632,11 +664,11 @@ const TableStyling = styled.div<{ rowBreakPointConfigs?: BreakPointConfig[] }>`
 
     ${(props) =>
         props.rowBreakPointConfigs
-            ?.map((breakPointConfig) => {
+            .map((breakPointConfig) => {
                 return breakPointConfig.breakPoints
                     .map(
                         (breakPoint) => `& .rdt_TableRow:nth-child(${breakPoint + 1}) {
-                            border-top: ${breakPointConfig.thickness} solid ${breakPointConfig.colour};
+                            border-top: ${props.dividingLineStyleOptions[breakPointConfig.dividingLineStyle].thickness} solid ${props.dividingLineStyleOptions[breakPointConfig.dividingLineStyle].colour};
                         }`
                     )
                     .join();

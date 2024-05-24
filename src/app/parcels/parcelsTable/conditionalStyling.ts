@@ -1,4 +1,3 @@
-import { DefaultTheme } from "styled-components/dist/types";
 import { ParcelsTableRow } from "./types";
 import { BreakPointConfig } from "@/components/Tables/Table";
 
@@ -27,8 +26,7 @@ const searchForPackingDateBreakPoints = (parcelsTableRows: ParcelsTableRow[]): n
 
 export const searchForBreakPoints = (
     headerKey: keyof ParcelsTableRow,
-    parcelsTableRows: ParcelsTableRow[],
-    theme: DefaultTheme
+    parcelsTableRows: ParcelsTableRow[]
 ): BreakPointConfig[] => {
     switch (headerKey) {
         case "packingSlot": {
@@ -36,8 +34,7 @@ export const searchForBreakPoints = (
                 {
                     name: "packingSlot",
                     breakPoints: searchForPackingSlotBreakPoints(parcelsTableRows),
-                    colour: theme.primary.background[3],
-                    thickness: "5pt",
+                    dividingLineStyle: "slotPrimary",
                 },
             ];
         }
@@ -46,14 +43,12 @@ export const searchForBreakPoints = (
                 {
                     name: "packingSlot",
                     breakPoints: searchForPackingSlotBreakPoints(parcelsTableRows),
-                    colour: theme.primary.background[2],
-                    thickness: "2.5pt",
+                    dividingLineStyle: "dateAndSlotSecondary",
                 },
                 {
                     name: "packingDate",
                     breakPoints: searchForPackingDateBreakPoints(parcelsTableRows),
-                    colour: theme.primary.background[3],
-                    thickness: "5pt",
+                    dividingLineStyle: "dateAndSlotPrimary",
                 },
             ];
         }

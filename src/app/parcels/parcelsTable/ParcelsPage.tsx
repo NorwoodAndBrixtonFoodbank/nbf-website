@@ -152,20 +152,17 @@ const ParcelsPage: React.FC<{}> = () => {
             } else {
                 setParcelsDataPortion(data.parcelTableRows);
                 setFilteredParcelCount(data.count);
+                if (sortState.sortEnabled && sortState.column.headerKey) {
+                    setParcelRowBreakPointConfig(
+                        searchForBreakPoints(sortState.column.headerKey, data.parcelTableRows)
+                    );
+                }
             }
 
             parcelsTableFetchAbortController.current = null;
             setIsLoading(false);
         }
     }, [additionalFilters, endPoint, primaryFilters, sortState, startPoint]);
-
-    useEffect(() => {
-        if (sortState.sortEnabled && sortState.column.headerKey) {
-            setParcelRowBreakPointConfig(
-                searchForBreakPoints(sortState.column.headerKey, parcelsDataPortion, theme)
-            );
-        }
-    }, [sortState, parcelsDataPortion, theme]);
 
     useEffect(() => {
         if (!areFiltersLoadingForFirstTime) {
