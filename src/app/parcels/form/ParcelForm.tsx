@@ -224,7 +224,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             last_updated: fields.lastUpdated,
         };
 
-        console.log(parcelRecord)
+        console.log(parcelRecord);
         const { parcelId, error } = await writeParcelInfoToDatabase(parcelRecord);
 
         if (parcelId) {

@@ -11,10 +11,9 @@ export interface DateRangeInputProps {
 }
 
 const SingleDateInput: React.FC<DateRangeInputProps> = (dateRangeInputProps) => {
-
     const setSingleDate = (date: Dayjs | null): void => {
         if (date) {
-            dateRangeInputProps.setDate(date)
+            dateRangeInputProps.setDate(date);
         }
     };
 
