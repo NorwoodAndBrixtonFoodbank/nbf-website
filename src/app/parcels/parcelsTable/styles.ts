@@ -13,7 +13,7 @@ export const parcelTableColumnStyleOptions = {
     iconsColumn: {
         maxWidth: "4rem",
         minWidth: "0.7rem",
-        grow: 0.6,
+        grow: 0.5,
     },
     fullName: {
         grow: 1.2,
@@ -21,28 +21,28 @@ export const parcelTableColumnStyleOptions = {
     },
     familyCategory: {
         hide: 550,
-        grow: 0.8,
+        grow: 0.7,
         minWidth: "5rem",
     },
     addressPostcode: {
         hide: 800,
-        grow: 0.8,
+        grow: 0.6,
         minWidth: "5rem",
         maxWidth: "6rem",
     },
     deliveryCollection: {
-        grow: 0.8,
+        grow: 0.6,
         minWidth: "6rem",
     },
     packingDate: {
         hide: 800,
-        grow: 0.8,
+        grow: 0.7,
         minWidth: "7rem",
     },
     packingSlot: {
         hide: 800,
-        grow: 0.8,
-        minWidth: "5rem",
+        grow: 0.5,
+        minWidth: "4rem",
     },
     lastStatus: {
         grow: 3,
