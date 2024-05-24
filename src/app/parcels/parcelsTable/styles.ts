@@ -11,11 +11,13 @@ export const PreTableControls = styled.div`
 
 export const parcelTableColumnStyleOptions = {
     iconsColumn: {
-        width: "4rem",
+        maxWidth: "4rem",
+        minWidth: "0.7rem",
+        grow: 0.6,
     },
     fullName: {
-        grow: 1.3,
-        minWidth: "8rem",
+        grow: 1,
+        minWidth: "6rem",
     },
     familyCategory: {
         hide: 550,
@@ -44,5 +46,6 @@ export const parcelTableColumnStyleOptions = {
     lastStatus: {
         grow: 3,
         maxWidth: "30rem",
+        minWidth: "10rem",
     },
 };
