@@ -16,7 +16,7 @@ export const parcelTableColumnStyleOptions = {
         grow: 0.6,
     },
     fullName: {
-        grow: 1,
+        grow: 1.2,
         minWidth: "6rem",
     },
     familyCategory: {
