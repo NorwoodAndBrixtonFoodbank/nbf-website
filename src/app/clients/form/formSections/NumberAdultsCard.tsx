@@ -15,8 +15,11 @@ import { ClientCardProps, ClientSetter } from "../ClientForm";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { getAdultBirthYears } from "@/app/clients/form/birthYearDropdown";
 
+const minimumNumberOfAdults = 1;
+const maximumNumberOfAdults = 20;
+
 const numberOfAdultsRange = (value: string): boolean => {
-    return parseInt(value) <= 20 && parseInt(value) > 0;
+    return parseInt(value) <= maximumNumberOfAdults && parseInt(value) >= minimumNumberOfAdults;
 };
 
 const setAdultsFields = (
