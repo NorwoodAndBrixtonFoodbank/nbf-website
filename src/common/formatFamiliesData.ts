@@ -4,7 +4,8 @@ import { displayList } from "@/common/format";
 import {
     getAdultAgeUsingBirthYear,
     getChildAgeUsingBirthYearAndMonth,
-    isChildUsingBirthYear,
+    isAdultPerson,
+    isChildPerson,
 } from "@/common/getAgesOfFamily";
 import { getCurrentYear } from "@/common/date";
 
@@ -37,7 +38,7 @@ const convertPlural = (value: number, description: string): string => {
 };
 
 export const prepareHouseholdSummary = (familyData: Schema["families"][]): HouseholdSummary => {
-    const children = familyData.filter((member) => isChildUsingBirthYear(member.birth_year));
+    const children = familyData.filter(isChildPerson);
     const formattedChildren: Person[] = children.map((child) => {
         return {
             gender: child.gender,
@@ -45,7 +46,7 @@ export const prepareHouseholdSummary = (familyData: Schema["families"][]): House
             birthYear: child.birth_year,
         };
     });
-    const adults = familyData.filter((member) => !isChildUsingBirthYear(member.birth_year));
+    const adults = familyData.filter(isAdultPerson);
     const formattedAdults: Person[] = adults.map((adult) => {
         return {
             gender: adult.gender,
@@ -73,7 +74,7 @@ export const prepareHouseholdSummary = (familyData: Schema["families"][]): House
         genderBreakdown: `${femaleText} ${maleText} ${otherText}`,
         ageAndGenderOfAdults: displayList(
             formattedAdults.map((adult) =>
-                getPerson(adult, getAdultAgeUsingBirthYear(adult.birthYear))
+                getPerson(adult, getAdultAgeUsingBirthYear(adult.birthYear, true))
             )
         ),
         numberOfBabies: numberBabies.toString(),

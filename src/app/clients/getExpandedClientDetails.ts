@@ -6,7 +6,7 @@ import { displayPostcodeForHomelessClient } from "@/common/format";
 import {
     getAdultAgeUsingBirthYear,
     getChildAgeUsingBirthYearAndMonth,
-    isAdult,
+    isAdultUsingBirthYear,
 } from "@/common/getAgesOfFamily";
 
 const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
@@ -132,7 +132,7 @@ export const formatHouseholdFromFamilyDetails = (
     let childCount = 0;
 
     for (const familyMember of family) {
-        if (isAdult(familyMember.birth_year)) {
+        if (isAdultUsingBirthYear(familyMember.birth_year)) {
             adultCount++;
         } else {
             childCount++;
@@ -161,8 +161,8 @@ export const formatBreakdownOfAdultsFromFamilyDetails = (
     const adultDetails = [];
 
     for (const familyMember of family) {
-        if (isAdult(familyMember.birth_year)) {
-            const age = getAdultAgeUsingBirthYear(familyMember.birth_year);
+        if (isAdultUsingBirthYear(familyMember.birth_year)) {
+            const age = getAdultAgeUsingBirthYear(familyMember.birth_year, false);
             adultDetails.push(`${age} ${familyMember.gender}`);
         }
     }
@@ -180,7 +180,7 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
     const childDetails = [];
 
     for (const familyMember of family) {
-        if (!isAdult(familyMember.birth_year)) {
+        if (!isAdultUsingBirthYear(familyMember.birth_year)) {
             const age = getChildAgeUsingBirthYearAndMonth(
                 familyMember.birth_year,
                 familyMember.birth_month,
