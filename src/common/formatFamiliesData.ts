@@ -22,7 +22,7 @@ const getChild = (child: Person): string => {
             gender = "F";
             break;
         case "other":
-            gender = "-";
+            gender = "O";
             break;
     }
 
@@ -41,7 +41,7 @@ const getAdult = (adult: Person): string => {
             gender = "F";
             break;
         case "other":
-            gender = "-";
+            gender = "O";
             break;
     }
     const age = getCurrentYear() - adult.birthYear;
