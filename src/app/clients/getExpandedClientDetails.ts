@@ -163,7 +163,7 @@ export const formatBreakdownOfAdultsFromFamilyDetails = (
     const adultDetails = [];
 
     for (const familyMember of family) {
-        if (familyMember.birth_year < getCurrentYear() - 16) {
+        if (isAdult(familyMember.birth_year)) {
             const age = getAdultAgeUsingBirthYear(familyMember.birth_year);
             adultDetails.push(`${age} ${familyMember.gender}`);
         }
