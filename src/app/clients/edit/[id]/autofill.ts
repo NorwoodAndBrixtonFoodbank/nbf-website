@@ -3,7 +3,7 @@ import { ClientFields } from "@/app/clients/form/ClientForm";
 import { Person } from "@/components/Form/formFunctions";
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { processExtraInformation } from "@/common/formatClientsData";
-import { isAdultPerson, isAdultUsingBirthYear, isChildPerson } from "@/common/getAgesOfFamily";
+import { isAdultPerson, isChildPerson } from "@/common/getAgesOfFamily";
 
 const arrayToBooleanGroup = (data: string[]): BooleanGroup => {
     const reverted: BooleanGroup = {};
