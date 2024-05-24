@@ -1,9 +1,5 @@
 alter table "public"."collection_centres" add column "is_delivery" boolean not null default false;
 
-update "public"."collection_centre"
-       set is_delivery=true
-       where collection_centre_name="Delivery";
-
 drop view if exists "public"."parcels_plus";
 
 create or replace view "public"."parcels_plus" as  SELECT parcels.primary_key AS parcel_id,
