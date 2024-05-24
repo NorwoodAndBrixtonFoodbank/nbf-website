@@ -360,11 +360,13 @@ const ParcelsPage: React.FC<{}> = () => {
                                     <>
                                         <LinkButton
                                             link={`/clients?clientId=${selectedClientDetails.clientId}`}
+                                            disabled={!selectedClientDetails.isClientActive}
                                         >
                                             See Client Details
                                         </LinkButton>
                                         <LinkButton
                                             link={`/clients/edit/${selectedClientDetails.clientId}`}
+                                            disabled={!selectedClientDetails.isClientActive}
                                         >
                                             Edit Client Details
                                         </LinkButton>
