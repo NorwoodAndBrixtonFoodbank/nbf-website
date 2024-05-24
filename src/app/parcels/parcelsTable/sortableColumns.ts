@@ -40,7 +40,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_slot_order")
                 .order("is_delivery", { ascending: false })
                 .order("client_address_postcode")
-                .order("collection_centre_name")
+                .order("collection_centre_name"),
     },
     {
         key: "packingSlot",
