@@ -17,12 +17,12 @@ export const parcelTableColumnStyleOptions = {
     },
     fullName: {
         grow: 1.2,
-        minWidth: "6rem",
+        minWidth: "6.5rem",
     },
     familyCategory: {
         hide: 550,
         grow: 0.7,
-        minWidth: "5rem",
+        minWidth: "6rem",
     },
     addressPostcode: {
         hide: 800,
