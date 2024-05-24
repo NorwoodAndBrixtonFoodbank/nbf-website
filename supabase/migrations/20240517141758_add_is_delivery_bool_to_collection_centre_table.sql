@@ -1,5 +1,9 @@
 alter table "public"."collection_centres" add column "is_delivery" boolean not null default false;
 
+update "public"."collection_centre"
+       set is_delivery=true
+       where collection_centre_name="Delivery";
+
 drop view if exists "public"."parcels_plus";
 
 create or replace view "public"."parcels_plus" as  SELECT parcels.primary_key AS parcel_id,
@@ -31,3 +35,4 @@ create or replace view "public"."parcels_plus" as  SELECT parcels.primary_key AS
      LEFT JOIN family_count ON ((family_count.family_id = clients.family_id)))
      LEFT JOIN last_status ON ((last_status.parcel_id = parcels.primary_key)))
   ORDER BY parcels.packing_date DESC;
+
