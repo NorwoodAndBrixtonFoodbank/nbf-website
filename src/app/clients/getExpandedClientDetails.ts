@@ -182,14 +182,7 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
     const childDetails = [];
 
     for (const familyMember of family) {
-        if (!isAdult(familyMember.birth_year) && !isBaby(familyMember.birth_year)) {
-            const age = getChildAgeUsingBirthYearAndMonth(
-                familyMember.birth_year,
-                familyMember.birth_month,
-                false
-            );
-            childDetails.push(`${age} ${familyMember.gender}`);
-        } else if (isBaby(familyMember.birth_year)) {
+        if (!isAdult(familyMember.birth_year)) {
             const age = getChildAgeUsingBirthYearAndMonth(
                 familyMember.birth_year,
                 familyMember.birth_month,
