@@ -14,13 +14,14 @@ const StyledAlert = styled(Alert)`
 `;
 
 const DuplicateDownloadWarning: React.FC<DuplicateDownloadWarningProps> = (props) => {
+    const formattedPostcodes = props.postcodes
+        .map((postcode) => postcode ?? displayPostcodeForHomelessClient)
+        .join(", ");
+
     return (
         <StyledAlert severity="warning">
-            The following postcodes have already been downloaded:{" "}
-            {props.postcodes
-                .map((postcode) => postcode ?? displayPostcodeForHomelessClient)
-                .join(", ")}
-            you sure you want to print again?
+            The following postcodes have already been downloaded: {formattedPostcodes}. Are you sure
+            you want to print again?
         </StyledAlert>
     );
 };
