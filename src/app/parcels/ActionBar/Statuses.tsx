@@ -16,6 +16,7 @@ import { fetchParcelStatuses } from "@/app/parcels/parcelsTable/fetchParcelTable
 export type StatusType = ParcelStatus[][number];
 
 const nonMenuStatuses: StatusType[] = [
+    "Packing Date Changed", //Generated when packing date is changed
     "Driver Overview Downloaded", //Generated when driver overview pdf downloaded
     "Map Generated", //Generated when maps generated
     "Out for Delivery",

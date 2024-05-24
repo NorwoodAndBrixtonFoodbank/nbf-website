@@ -1,6 +1,6 @@
 import React from "react";
 import { ServerSideFilter, ServerSideFilterMethod } from "./Filters";
-import DateRangeInputs, { DateRangeState } from "../DateRangeInputs/DateRangeInputs";
+import DateRangeInputs, { DateRangeState } from "../DateInputs/DateRangeInputs";
 import dayjs from "dayjs";
 
 interface DateFilterProps<Data, DbData extends Record<string, any>> {

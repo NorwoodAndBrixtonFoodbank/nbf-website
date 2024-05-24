@@ -1,6 +1,6 @@
 "use client";
 
-import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
+import { DateRangeState } from "@/components/DateInputs/DateRangeInputs";
 import { serverSideDateFilter } from "@/components/Tables/DateFilter";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
