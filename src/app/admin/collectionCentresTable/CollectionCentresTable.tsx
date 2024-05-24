@@ -23,11 +23,11 @@ import EditIcon from "@mui/icons-material/Edit";
 import StyledDataGrid from "@/app/admin/common/StyledDataGrid";
 import { LinearProgress } from "@mui/material";
 import {
-    fetchCollectionCentres,
+    fetchCollectionCentresForTable,
     InsertCollectionCentreResult,
-    insertNewCollectionCentre,
+    insertNewCollectionCentre, defaultCollectionTimeSlots,
     UpdateCollectionCentreResult,
-    updateDbCollectionCentre,
+    updateDbCollectionCentre
 } from "@/app/admin/collectionCentresTable/CollectionCentreActions";
 import { EditToolbar } from "@/app/admin/collectionCentresTable/CollectionCentresTableToolbar";
 
@@ -37,6 +37,7 @@ export interface CollectionCentresTableRow {
     id: Schema["collection_centres"]["primary_key"];
     isDelivery: Schema["collection_centres"]["is_delivery"];
     isShown: Schema["collection_centres"]["is_shown"];
+    timeSlots: Schema["collection_centres"]["time_slot"];
     isNew: boolean;
 }
 
@@ -67,7 +68,7 @@ const CollectionCentresTable: React.FC = () => {
 
     const getCollectionCentresForTable = useCallback(async () => {
         setErrorMessage(null);
-        const { data, error } = await fetchCollectionCentres();
+        const { data, error } = await fetchCollectionCentresForTable();
         if (error) {
             setErrorMessage("Error fetching data, please reload");
             return;
@@ -174,7 +175,7 @@ const CollectionCentresTable: React.FC = () => {
 
         if (newRow.isNew) {
             const { data: newCollectionCentreData, error: newCollectionCentreError } =
-                await addNewCollectionCentre(newRow);
+                await addNewCollectionCentre({ ...newRow, timeSlots: defaultCollectionTimeSlots });
             if (newCollectionCentreError) {
                 return { ...newRow, name: "", acronym: "", isShown: false };
             }

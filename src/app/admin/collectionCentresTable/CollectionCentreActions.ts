@@ -3,6 +3,7 @@ import { Tables } from "@/databaseTypesFile";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { PostgrestError } from "@supabase/supabase-js";
 import { CollectionCentresTableRow } from "@/app/admin/collectionCentresTable/CollectionCentresTable";
+import { Schema } from "@/databaseUtils";
 
 type DbCollectionCentre = Tables<"collection_centres">;
 type NewDbCollectionCentre = Omit<DbCollectionCentre, "primary_key">;
@@ -17,7 +18,27 @@ type FetchCollectionCentresResult =
           error: { type: "failedToFetchCollectionCentres"; logId: string };
       };
 
-export const fetchCollectionCentres = async (): Promise<FetchCollectionCentresResult> => {
+export const defaultCollectionTimeSlots: Schema["collection_centres"]["time_slot"] = [
+    { time_slot: "10:00:00", is_active: true },
+    { time_slot: "10:15:00", is_active: true },
+    { time_slot: "10:30:00", is_active: true },
+    { time_slot: "10:45:00", is_active: true },
+    { time_slot: "11:00:00", is_active: true },
+    { time_slot: "11:15:00", is_active: true },
+    { time_slot: "11:30:00", is_active: true },
+    { time_slot: "11:45:00", is_active: true },
+    { time_slot: "12:00:00", is_active: true },
+    { time_slot: "12:15:00", is_active: true },
+    { time_slot: "12:30:00", is_active: true },
+    { time_slot: "12:45:00", is_active: true },
+    { time_slot: "13:00:00", is_active: true },
+    { time_slot: "13:15:00", is_active: true },
+    { time_slot: "13:30:00", is_active: true },
+    { time_slot: "13:45:00", is_active: true },
+    { time_slot: "14:00:00", is_active: true },
+];
+
+export const fetchCollectionCentresForTable = async (): Promise<FetchCollectionCentresResult> => {
     const { data, error } = await supabase.from("collection_centres").select().order("name");
     if (error) {
         const logId = await logErrorReturnLogId("Failed to fetch collection centres", { error });
@@ -31,6 +52,7 @@ export const fetchCollectionCentres = async (): Promise<FetchCollectionCentresRe
             id: row.primary_key,
             isShown: row.is_shown,
             isDelivery: row.is_delivery,
+            timeSlots: row.time_slot,
             isNew: false,
         })
     );
@@ -47,6 +69,7 @@ const formatExistingRowToDBCollectionCentre = (
         acronym: row.acronym,
         is_shown: row.isShown,
         is_delivery: row.isDelivery,
+        time_slot: row.timeSlots,
     };
 };
 
@@ -58,6 +81,7 @@ const formatNewRowToDBCollectionCentre = (
         acronym: newRow.acronym,
         is_shown: newRow.isShown,
         is_delivery: newRow.isDelivery,
+        time_slot: newRow.timeSlots,
     };
 };
 
