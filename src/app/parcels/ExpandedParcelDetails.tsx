@@ -8,6 +8,14 @@ import getExpandedParcelDetails, {
 } from "@/app/parcels/getExpandedParcelDetails";
 import EventTable, { EventTableRow } from "./EventTable";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import { styled } from "styled-components";
+
+const DeletedText = styled.div`
+    font-weight: 600;
+    padding: 0.5em 0 2em 0;
+    display: flex;
+    flex-direction: row;
+`;
 
 interface Props {
     parcelId: string | null;
@@ -59,7 +67,13 @@ const ExpandedParcelDetailsView = ({ parcelId }: Props): ReactElement => {
 
             {parcelDetails && (
                 <>
-                    <DataViewer data={parcelDetails.expandedParcelData} />
+                    {!parcelDetails.expandedParcelData.isActive && (
+                        <DeletedText>This parcel belongs to a deleted client.</DeletedText>
+                    )}
+                    <DataViewer
+                        data={parcelDetails.expandedParcelData}
+                        fieldsToHide={["isActive"]}
+                    />
                     <EventTable
                         tableData={sortByTimestampWithMostRecentFirst(parcelDetails.events)}
                     />

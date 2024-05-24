@@ -6,7 +6,7 @@ import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
 import { serverSideChecklistFilter } from "@/components/Tables/ChecklistFilter";
-import { getDbDate, nullPostcodeDisplay } from "@/common/format";
+import { getDbDate } from "@/common/format";
 import {
     CollectionCentresOptions,
     ParcelsFilter,
@@ -19,25 +19,20 @@ import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import dayjs from "dayjs";
 import { parcelTableHeaderKeysAndLabels } from "./headers";
 import { DbParcelRow } from "@/databaseUtils";
+import { fullNameSearch, phoneSearch, postcodeSearch } from "@/common/databaseFilters";
 
-const fullNameSearch: ParcelsFilterMethod<string> = (query, state) =>
-    query.ilike("client_full_name", `%${state}%`);
+const parcelsFullNameSearch: ParcelsFilterMethod<string> =
+    fullNameSearch<DbParcelRow>("client_full_name");
 
-const postcodeSearch: ParcelsFilterMethod<string> = (query, state) => {
-    if (state === "") {
-        return query;
-    }
-    if (nullPostcodeDisplay.toLowerCase().includes(state.toLowerCase())) {
-        return query.or(
-            `client_address_postcode.ilike.%${state}%, client_address_postcode.is.null`
-        );
-    }
-    return query.ilike("client_address_postcode", `%${state}%`);
-};
+const parcelsPostcodeSearch: ParcelsFilterMethod<string> =
+    postcodeSearch<DbParcelRow>("client_address_postcode");
 
 const familySearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "") {
         return query;
+    }
+    if (state === "-") {
+        return query.eq("family_count", 0);
     }
     if ("single".includes(state.toLowerCase())) {
         return query.lte("family_count", 1);
@@ -53,13 +48,13 @@ const familySearch: ParcelsFilterMethod<string> = (query, state) => {
         return query.gte("family_count", 10);
     }
     if (stateAsNumber === 1) {
-        return query.lte("family_count", 1);
+        return query.eq("family_count", 1);
     }
     return query.eq("family_count", Number(state));
 };
 
-const phoneSearch: ParcelsFilterMethod<string> = (query, state) =>
-    query.ilike("client_phone_number", `%${state}%`);
+const parcelsPhoneSearch: ParcelsFilterMethod<string> =
+    phoneSearch<DbParcelRow>("client_phone_number");
 
 const voucherSearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "?") {
@@ -208,13 +203,13 @@ const buildFilters = async (): Promise<{
             key: "fullName",
             label: "Name",
             headers: parcelTableHeaderKeysAndLabels,
-            method: fullNameSearch,
+            method: parcelsFullNameSearch,
         }),
         buildServerSideTextFilter({
             key: "addressPostcode",
             label: "Postcode",
             headers: parcelTableHeaderKeysAndLabels,
-            method: postcodeSearch,
+            method: parcelsPostcodeSearch,
         }),
         await buildDeliveryCollectionFilter(),
     ];
@@ -230,7 +225,7 @@ const buildFilters = async (): Promise<{
             key: "phoneNumber",
             label: "Phone",
             headers: parcelTableHeaderKeysAndLabels,
-            method: phoneSearch,
+            method: parcelsPhoneSearch,
         }),
         buildServerSideTextFilter({
             key: "voucherNumber",

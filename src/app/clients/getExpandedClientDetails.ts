@@ -2,9 +2,9 @@ import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { nullPostcodeDisplay } from "@/common/format";
+import { displayPostcodeForHomelessClient } from "@/common/format";
 
-const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
+const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientDetails> => {
     const rawClientDetails = await getRawClientDetails(clientId);
     return rawDataToExpandedClientDetails(rawClientDetails);
 };
@@ -38,7 +38,8 @@ const getRawClientDetails = async (clientId: string) => {
             baby_food,
             pet_food,
             other_items,
-            extra_information
+            extra_information,
+            is_active
         `
         )
         .eq("primary_key", clientId)
@@ -63,7 +64,7 @@ export const familyCountToFamilyCategory = (count: number): string => {
     return "Family of 10+";
 };
 
-export interface ExpandedClientData {
+export interface ExpandedClientDetails {
     primaryKey: string;
     fullName: string;
     address: string;
@@ -77,23 +78,25 @@ export interface ExpandedClientData {
     petFood: string;
     otherRequirements: string;
     extraInformation: string;
+    isActive: boolean;
 }
 
-export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientData => {
+export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientDetails => {
     return {
         primaryKey: client.primary_key,
-        fullName: client.full_name,
+        fullName: client.full_name ?? "",
         address: formatAddressFromClientDetails(client),
-        deliveryInstructions: client.delivery_instructions,
-        phoneNumber: client.phone_number,
+        deliveryInstructions: client.delivery_instructions ?? "",
+        phoneNumber: client.phone_number ?? "",
         household: formatHouseholdFromFamilyDetails(client.family),
         children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
-        dietaryRequirements: client.dietary_requirements.join(", "),
-        feminineProducts: client.feminine_products.join(", "),
+        dietaryRequirements: client.dietary_requirements?.join(", ") ?? "",
+        feminineProducts: client.feminine_products?.join(", ") ?? "",
         babyProducts: client.baby_food,
-        petFood: client.pet_food.join(", "),
-        otherRequirements: client.other_items.join(", "),
-        extraInformation: client.extra_information,
+        petFood: client.pet_food?.join(", ") ?? "",
+        otherRequirements: client.other_items?.join(", ") ?? "",
+        extraInformation: client.extra_information ?? "",
+        isActive: client.is_active,
     };
 };
 
@@ -104,7 +107,7 @@ export const formatAddressFromClientDetails = (
     >
 ): string => {
     if (!client.address_postcode) {
-        return nullPostcodeDisplay;
+        return displayPostcodeForHomelessClient;
     }
     return [
         client.address_1,
@@ -164,4 +167,37 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
     }
 
     return childDetails.join(", ");
+};
+
+type IsClientActiveErrorType = "failedClientIsActiveFetch";
+export interface IsClientActiveError {
+    type: IsClientActiveErrorType;
+    logId: string;
+}
+
+type GetClientIsActiveResponse =
+    | {
+          error: null;
+          isActive: boolean;
+      }
+    | {
+          error: IsClientActiveError;
+          isActive: null;
+      };
+
+export const getIsClientActive = async (clientId: string): Promise<GetClientIsActiveResponse> => {
+    const { data: isActiveData, error: isActiveError } = await supabase
+        .from("clients")
+        .select("primary_key, is_active")
+        .eq("primary_key", clientId)
+        .single();
+
+    if (isActiveError) {
+        const logId = await logErrorReturnLogId("Error with fetch: client table", {
+            error: isActiveError,
+        });
+        return { error: { type: "failedClientIsActiveFetch", logId }, isActive: null };
+    }
+
+    return { isActive: isActiveData.is_active, error: null };
 };
