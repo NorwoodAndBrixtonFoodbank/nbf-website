@@ -37,10 +37,10 @@ export const childBirthMonthList: [string, string][] = monthsOfTheYear.map((mont
     return [month, (index + 1).toString()];
 });
 
-const currentMonth = getCurrentMonth();
-const currentYearChildBirthMonths = monthsOfTheYear.slice(0, currentMonth);
-export const currentYearChildBirthMonthList: [string, string][] = currentYearChildBirthMonths.map(
-    (month, index) => {
+export const getCurrentYearChildBirthMonthList = (): [string, string][] => {
+    const currentMonth = getCurrentMonth();
+    const currentYearChildBirthMonths = monthsOfTheYear.slice(0, currentMonth);
+    return currentYearChildBirthMonths.map((month, index) => {
         return [month, (index + 1).toString()];
-    }
-);
+    });
+};

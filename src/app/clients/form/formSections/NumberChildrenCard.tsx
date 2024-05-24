@@ -15,8 +15,8 @@ import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFac
 import { ClientCardProps, ClientSetter } from "@/app/clients/form/ClientForm";
 import {
     childBirthMonthList,
-    currentYearChildBirthMonthList,
     getChildBirthYears,
+    getCurrentYearChildBirthMonthList,
 } from "@/app/clients/form/birthYearDropdown";
 import { getCurrentYear } from "@/common/date";
 
@@ -121,7 +121,7 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                                 selectLabelId="children-birth-month-select-label"
                                 labelsAndValues={
                                     child.birthYear === getCurrentYear()
-                                        ? currentYearChildBirthMonthList
+                                        ? getCurrentYearChildBirthMonthList()
                                         : childBirthMonthList
                                 }
                                 listTitle="Month of Birth (optional)"
