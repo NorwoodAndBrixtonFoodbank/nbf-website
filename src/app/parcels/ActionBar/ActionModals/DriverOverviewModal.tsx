@@ -61,6 +61,9 @@ const getPdfErrorMessage = (error: DriverOverviewError): string => {
         case "driverMessageFetchFailed":
             errorMessage = "Failed to fetch driver overview message.";
             break;
+        case "noCollectionCentre":
+            errorMessage = "Failed to find a collection centre for one or more of the parcels.";
+            break;
     }
     return `${errorMessage} LogId: ${error.logId}`;
 };
