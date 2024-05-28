@@ -75,7 +75,8 @@ async function generateSeed(): Promise<void> {
                 generateFamily(
                     { min: 1, max: 8 },
                     {
-                        birthYear: (ctx) => copycat.int(ctx.seed, { min: thisYear - 120, max: thisYear }),
+                        birthYear: (ctx) =>
+                            copycat.int(ctx.seed, { min: thisYear - 120, max: thisYear }),
                         birthMonth: null,
                         gender: (ctx) => copycat.oneOf(ctx.seed, genders),
                     }
