@@ -37,22 +37,22 @@ const convertPlural = (value: number, description: string): string => {
     return `${value} ${description}${value !== 1 ? "s" : ""}`;
 };
 
+const getFormattedPeople = (
+    familyData: Schema["families"][],
+    filterFunction: (person: Schema["families"]) => boolean
+): Person[] => {
+    const people = familyData.filter((member) => filterFunction(member));
+    return people.map((person) => {
+        return {
+            gender: person.gender,
+            birthMonth: person.birth_month,
+            birthYear: person.birth_year,
+        };
+    });
+};
 export const prepareHouseholdSummary = (familyData: Schema["families"][]): HouseholdSummary => {
-    const children = familyData.filter(isChildPerson);
-    const formattedChildren: Person[] = children.map((child) => {
-        return {
-            gender: child.gender,
-            birthMonth: child.birth_month,
-            birthYear: child.birth_year,
-        };
-    });
-    const adults = familyData.filter(isAdultPerson);
-    const formattedAdults: Person[] = adults.map((adult) => {
-        return {
-            gender: adult.gender,
-            birthYear: adult.birth_year,
-        };
-    });
+    const formattedChildren: Person[] = getFormattedPeople(familyData, isChildPerson);
+    const formattedAdults: Person[] = getFormattedPeople(familyData, isAdultPerson);
     const householdSize = familyData.length;
     const numberBabies = familyData.filter(
         (member) => member.birth_year === getCurrentYear()
@@ -61,10 +61,10 @@ export const prepareHouseholdSummary = (familyData: Schema["families"][]): House
     const numberMales = familyData.filter((member) => member.gender === "male").length;
 
     const adultText = `${householdSize} (${convertPlural(
-        householdSize - children.length,
+        householdSize - formattedChildren.length,
         "Adult"
     )}`;
-    const childText = `${children.length} Child${children.length ? "ren" : ""})`;
+    const childText = `${formattedChildren.length} Child${formattedChildren.length ? "ren" : ""})`;
     const femaleText = `${convertPlural(numberFemales, "Female")}`;
     const maleText = `${convertPlural(numberMales, "Male")}`;
     const otherText = `${convertPlural(householdSize - numberFemales - numberMales, "Other")}`;
