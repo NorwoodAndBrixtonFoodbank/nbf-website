@@ -108,10 +108,7 @@ type DriverPdfResponse =
 
 type DriverPdfErrorType = ParcelsForDeliveryErrorType;
 
-const pushRowInfo = (
-    array: DriverOverviewTableData[],
-    parcel: ParcelForDelivery
-): undefined => {
+const pushRowInfo = (array: DriverOverviewTableData[], parcel: ParcelForDelivery): undefined => {
     const client = parcel.client;
     const clientIsActive = parcel.client.is_active;
     array.push({
