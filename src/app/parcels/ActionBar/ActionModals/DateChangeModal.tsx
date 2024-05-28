@@ -15,6 +15,7 @@ import supabase from "@/supabaseClient";
 import { getDbDate } from "@/common/format";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
+import { fetchParcel } from "@/common/fetch";
 
 const DateChangeInput: React.FC<DateRangeInputProps> = ({ setDate }) => {
     return (
@@ -33,20 +34,37 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
     const [date, setDate] = useState<Dayjs>(dayjs());
 
     const packingDateUpdate = async (packingDate: string, parcel: ParcelsTableRow) => {
-        const { error, count } = await supabase
+        const { data: parcelData, error: fetchError } = await fetchParcel(parcel.parcelId, supabase)
+        if (fetchError) {
+            const logId = await logErrorReturnLogId("Failed to fetch parcel data.", fetchError);
+            return { parcelId: null, error: { type: "failedToFetchParcel", logId } };
+        }
+
+        const { error: updateError, count } = await supabase
             .from("parcels")
             .update({ packing_date: packingDate }, { count: "exact" })
             .eq("primary_key", parcel.parcelId);
 
+        const parcelRecord = {
+            client_id: parcelData.client_id,
+            packing_date: parcelData.packing_date,
+            packing_slot: parcelData.packing_slot?.primary_key,
+            voucher_number: parcelData.voucher_number,
+            collection_centre: parcelData.collection_centre?.primary_key,
+            collection_datetime: parcelData.collection_datetime,
+            last_updated: parcelData.last_updated,
+        };
+
         const auditLog = {
             action: "changing dates",
-            content: { parcelDetails: {}, count: count },
+            content: { parcelDetails: parcelRecord , count: count },
             clientId: parcel.clientId,
             parcelId: parcel.parcelId,
         } as const satisfies Partial<AuditLog>;
+        
 
-        if (error) {
-            const logId = await logErrorReturnLogId("Error with update: parcel data", error);
+        if (updateError) {
+            const logId = await logErrorReturnLogId("Error with update: parcel data", updateError);
             await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
             return { parcelId: null, error: { type: "failedToUpdateParcel", logId } };
         }
@@ -66,7 +84,7 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
         if (error) {
             setErrorMessage(getStatusErrorMessageWithLogId(error));
         } else {
-            setSuccessMessage(`Packing Date Changed to ${date}`);
+            setSuccessMessage(`Packing Date Changed to ${getDbDate(dayjs(date))}`);
         }
         setActionCompleted(true);
 
