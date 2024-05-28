@@ -14,7 +14,11 @@ import {
     possibleParcelPostCodes,
     possiblePets,
 } from "./clientsSeed.mjs";
-import { eventNamesWithDriverData, eventNamesWithNoData, eventNamesWithNumberData } from "./eventsSeed.mjs";
+import {
+    eventNamesWithDriverData,
+    eventNamesWithNoData,
+    eventNamesWithNumberData,
+} from "./eventsSeed.mjs";
 import { collectionCentres } from "./collectionCentresSeed.mjs";
 import { listsHotels } from "./listsHotelsSeed.mjs";
 import { packingSlots } from "./packingSlotsSeed.mjs";
@@ -26,7 +30,6 @@ import {
     parcelCreationDateTime,
 } from "./dateData.mjs";
 import { genders } from "./families.mjs";
-import dayjs from "dayjs";
 
 generateSeed();
 
@@ -139,7 +142,11 @@ async function generateSeed(): Promise<void> {
                     newParcelStatus: status,
                     eventData: (ctx) => `with ${copycat.firstName(ctx.seed)}`,
                     timestamp: (ctx) =>
-                        getPseudoRandomDateBetween(earliestParcelOrEventDate, latestEventDate, ctx.seed),
+                        getPseudoRandomDateBetween(
+                            earliestParcelOrEventDate,
+                            latestEventDate,
+                            ctx.seed
+                        ),
                 }),
             { connect: true }
         );
