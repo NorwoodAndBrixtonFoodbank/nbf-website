@@ -265,9 +265,7 @@ export type Database = {
           is_shown: boolean
           name: string
           primary_key: string
-          time_slot:
-            | Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
-            | null
+          time_slot: Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
         }
         Insert: {
           acronym?: string
@@ -275,9 +273,7 @@ export type Database = {
           is_shown?: boolean
           name?: string
           primary_key?: string
-          time_slot?:
-            | Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
-            | null
+          time_slot: Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
         }
         Update: {
           acronym?: string
@@ -285,9 +281,7 @@ export type Database = {
           is_shown?: boolean
           name?: string
           primary_key?: string
-          time_slot?:
-            | Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
-            | null
+          time_slot?: Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
         }
         Relationships: []
       }

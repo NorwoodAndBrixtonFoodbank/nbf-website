@@ -21,3 +21,5 @@ update collection_centres set time_slot = ARRAY[
      ROW('13:45:00', TRUE)::collection_timeslot_type,
      ROW('14:00:00', TRUE)::collection_timeslot_type
  ];
+
+alter table "public"."collection_centres" alter column "time_slot" set not null;
