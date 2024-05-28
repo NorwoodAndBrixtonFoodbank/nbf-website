@@ -37,6 +37,8 @@ interface DriverOverviewCardProps {
     data: DriverOverviewCardDataProps;
 }
 
+type CreateHeaderProps = "Delivery" | "Collection";
+
 const styles = StyleSheet.create({
     container: {
         padding: 25,
@@ -135,7 +137,7 @@ const styles = StyleSheet.create({
 });
 
 const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
-    const createHeader = (category: string): React.JSX.Element => {
+    const createHeader = (category: CreateHeaderProps): React.JSX.Element => {
         return (
             <View style={[styles.tableHeader, styles.flexRow]}>
                 <View style={[styles.tableColumn, styles.nameColumnWidth]}>
