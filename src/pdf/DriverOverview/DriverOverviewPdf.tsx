@@ -162,7 +162,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
         );
     };
 
-    const createRowData = (rowData: DriverOverviewTableData, index: number): React.JSX.Element => {
+    const createRow = (rowData: DriverOverviewTableData, index: number): React.JSX.Element => {
         return (
             // eslint-disable-next-line react/no-array-index-key
             <View key={index} style={[styles.tableRow, styles.flexRow]} wrap={false}>
@@ -208,8 +208,8 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
 
     const deliveriesHeader = createHeader("Delivery");
     const collectionsHeader = createHeader("Collection");
-    const collections = data.tableData[0].map(createRowData);
-    const deliveries = data.tableData[1].map(createRowData);
+    const collections = data.tableData[0].map(createRow);
+    const deliveries = data.tableData[1].map(createRow);
 
     return (
         <Document>
