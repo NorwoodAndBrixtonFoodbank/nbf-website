@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
         marginRight: "5px",
         marginBottom: "5px",
         alignSelf: "flex-start",
-    }
+    },
 });
 
 const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
@@ -179,9 +179,9 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                 <Text>Number of Parcels</Text>
             </View>
         </View>
-    )
+    );
 
-    const createRowData = (rowData: DriverOverviewTableData, index: number) => {
+    const createRowData = (rowData: DriverOverviewTableData, index: number): React.JSX.Element => {
         return (
             // eslint-disable-next-line react/no-array-index-key
             <View key={index} style={[styles.tableRow, styles.flexRow]} wrap={false}>
@@ -189,22 +189,25 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                     <Text>{rowData.name}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.addressColumnWidth]}>
-                    { rowData.collection_centre.isDelivery ? rowData.address.postcode || rowData.clientIsActive ? (
-                        <>
-                            <Text>{rowData.address.line1}</Text>
-                            <Text>{rowData.address.line2}</Text>
-                            <Text>{rowData.address.town}</Text>
-                            <Text>{rowData.address.county}</Text>
-                            <Text>{rowData.address.postcode}</Text>
-                        </>
+                    {rowData.collection_centre.isDelivery ? (
+                        rowData.address.postcode || rowData.clientIsActive ? (
+                            <>
+                                <Text>{rowData.address.line1}</Text>
+                                <Text>{rowData.address.line2}</Text>
+                                <Text>{rowData.address.town}</Text>
+                                <Text>{rowData.address.county}</Text>
+                                <Text>{rowData.address.postcode}</Text>
+                            </>
+                        ) : (
+                            <Text>
+                                {rowData.clientIsActive ? displayPostcodeForHomelessClient : "-"}
+                            </Text>
+                        )
                     ) : (
-                        <Text>
-                            {rowData.clientIsActive ? displayPostcodeForHomelessClient : "-"}
-                        </Text>
-                    ):  <>
+                        <>
                             <Text>{rowData.collection_centre.name}</Text>
                         </>
-                    }
+                    )}
                 </View>
                 <View style={[styles.tableColumn, styles.contactColumnWidth]}>
                     <Text>{rowData.contact}</Text>
@@ -220,10 +223,10 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                 </View>
             </View>
         );
-    }
+    };
 
-    const collections = data.tableData[0].map(createRowData)
-    const deliveries = data.tableData[1].map(createRowData)
+    const collections = data.tableData[0].map(createRowData);
+    const deliveries = data.tableData[1].map(createRowData);
 
     return (
         <Document>
@@ -247,12 +250,14 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                 <View style={[styles.h2text, styles.collectionOrDeliveryHeader, styles.flexRow]}>
                     <Text style={styles.collectionOrDeliveryHeader}>Deliveries</Text>
                     <FontAwesomeIconPdfComponent faIcon={faTruck}></FontAwesomeIconPdfComponent>
-                    </View>
+                </View>
                 <View style={[styles.flexColumn, { width: "100%" }]}>{deliveryHeader}</View>
                 <View style={[styles.tableSection, styles.flexColumn]}>{deliveries}</View>
                 <View style={[styles.h2text, styles.collectionOrDeliveryHeader, styles.flexRow]}>
                     <Text style={[styles.collectionOrDeliveryHeader]}>Collections</Text>
-                    <FontAwesomeIconPdfComponent faIcon={faShoePrints}></FontAwesomeIconPdfComponent>
+                    <FontAwesomeIconPdfComponent
+                        faIcon={faShoePrints}
+                    ></FontAwesomeIconPdfComponent>
                 </View>
                 <View style={[styles.flexColumn, { width: "100%" }]}>{collectionHeader}</View>
                 <View style={[styles.tableSection, styles.flexColumn]}>{collections}</View>

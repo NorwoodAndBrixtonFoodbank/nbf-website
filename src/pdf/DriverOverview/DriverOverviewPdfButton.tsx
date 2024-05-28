@@ -31,11 +31,11 @@ const compareDriverOverviewTableData = (
     return 0;
 };
 
-type ParcelForDelivery = (Schema["parcels"] & {
+type ParcelForDelivery = Schema["parcels"] & {
     client: Schema["clients"];
     collection_centre: Schema["collection_centres"];
     labelCount: number;
-});
+};
 
 type ParcelsForDeliveryResponse =
     | {
@@ -55,7 +55,7 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDel
         .select("*, client:clients(*), events(event_data), collection_centre:collection_centres(*)")
         .in("primary_key", parcelIds)
         .limit(1, { foreignTable: "clients" })
-        .limit(1, { foreignTable: "collection_centres"})
+        .limit(1, { foreignTable: "collection_centres" })
         .eq("events.new_parcel_status", "Shipping Labels Downloaded")
         .order("timestamp", { foreignTable: "events", ascending: false });
 
@@ -76,7 +76,7 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDel
         if (parcel.collection_centre === null) {
             const logId = await logErrorReturnLogId(
                 "Error with fetch: Parcels. No collection centre found"
-            )
+            );
             return { data: null, error: { type: "noMatchingClient", logId: logId } }; //this needs to be changed
         }
 
@@ -85,7 +85,12 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDel
             labelCount = Number.parseInt(parcel.events[0].event_data);
         }
 
-        dataWithNonNullClients.push({ ...parcel, client: parcel.client, collection_centre: parcel.collection_centre, labelCount: labelCount });
+        dataWithNonNullClients.push({
+            ...parcel,
+            client: parcel.client,
+            collection_centre: parcel.collection_centre,
+            labelCount: labelCount,
+        });
     }
 
     return { data: dataWithNonNullClients, error: null };
@@ -111,43 +116,42 @@ const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse>
     }
     const collections: DriverOverviewTableData[] = [];
     const deliveries: DriverOverviewTableData[] = [];
+    const pushRowInfo = (
+        array: DriverOverviewTableData[],
+        parcel: ParcelForDelivery
+    ): undefined => {
+        const client = parcel.client;
+        const clientIsActive = parcel.client.is_active;
+        array.push({
+            name: clientIsActive ? client?.full_name ?? "" : displayNameForDeletedClient,
+            address: {
+                line1: client?.address_1 ?? "",
+                line2: client?.address_2 ?? null,
+                town: client?.address_town ?? null,
+                county: client?.address_county ?? null,
+                postcode: client?.address_postcode,
+            },
+            contact: clientIsActive ? client?.phone_number ?? "" : "-",
+            packingDate: formatDateToDate(parcel.packing_date) ?? null,
+            instructions: clientIsActive ? client?.delivery_instructions ?? "" : "-",
+            clientIsActive: clientIsActive,
+            numberOfLabels: parcel.labelCount,
+            collection_centre: {
+                name: parcel.collection_centre?.name,
+                isDelivery: parcel.collection_centre?.is_delivery,
+            },
+        });
+    };
 
-    
     for (const parcel of parcels) {
-    
-        const pushRowInfo = (array: DriverOverviewTableData[], parcel: ParcelForDelivery) => {
-            const client = parcel.client;
-            const clientIsActive = parcel.client.is_active;
-            array.push({
-                name: clientIsActive ? client?.full_name ?? "" : displayNameForDeletedClient,
-                address: {
-                    line1: client?.address_1 ?? "",
-                    line2: client?.address_2 ?? null,
-                    town: client?.address_town ?? null,
-                    county: client?.address_county ?? null,
-                    postcode: client?.address_postcode,
-                },
-                contact: clientIsActive ? client?.phone_number ?? "" : "-",
-                packingDate: formatDateToDate(parcel.packing_date) ?? null,
-                instructions: clientIsActive ? client?.delivery_instructions ?? "" : "-",
-                clientIsActive: clientIsActive,
-                numberOfLabels: parcel.labelCount,
-                collection_centre: {
-                    name: parcel.collection_centre?.name,
-                    isDelivery: parcel.collection_centre?.is_delivery,
-                }
-            });
-        }
-
         if (parcel.collection_centre?.is_delivery) {
-            pushRowInfo(deliveries, parcel)
+            pushRowInfo(deliveries, parcel);
         } else {
-            pushRowInfo(collections, parcel)
+            pushRowInfo(collections, parcel);
         }
-        
     }
     clientInformation.push(collections, deliveries);
-    clientInformation.map(category => category.sort(compareDriverOverviewTableData));
+    clientInformation.map((category) => category.sort(compareDriverOverviewTableData));
     return { data: clientInformation, error: null };
 };
 
