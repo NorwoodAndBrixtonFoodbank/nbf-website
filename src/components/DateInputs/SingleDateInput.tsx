@@ -6,14 +6,14 @@ import React from "react";
 
 const reasonableMinDate = dayjs("2020-01-01");
 
-export interface DateRangeInputProps {
+export interface DateInputProps {
     setDate: (date: Dayjs) => void;
 }
 
-const SingleDateInput: React.FC<DateRangeInputProps> = (dateRangeInputProps) => {
+const SingleDateInput: React.FC<DateInputProps> = (dateInputProps) => {
     const setSingleDate = (date: Dayjs | null): void => {
         if (date) {
-            dateRangeInputProps.setDate(date);
+            dateInputProps.setDate(date);
         }
     };
 

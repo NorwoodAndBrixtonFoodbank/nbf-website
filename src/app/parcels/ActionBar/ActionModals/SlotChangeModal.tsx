@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import GeneralActionModal, {
     ActionModalProps,
     ConfirmButtons,
@@ -7,33 +7,59 @@ import GeneralActionModal, {
 } from "./GeneralActionModal";
 import { Button } from "@mui/material";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
-import SingleDateInput, { DateInputProps } from "@/components/DateInputs/SingleDateInput";
-import dayjs, { Dayjs } from "dayjs";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import { ParcelsTableRow } from "../../parcelsTable/types";
 import supabase from "@/supabaseClient";
-import { getDbDate } from "@/common/format";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
-import { fetchParcel } from "@/common/fetch";
+import { PackingSlotsLabelsAndValues, fetchPackingSlotsInfo, fetchParcel } from "@/common/fetch";
+import DropdownListInput from "@/components/DataInput/DropdownListInput";
 
-const DateChangeInput: React.FC<DateInputProps> = ({ setDate }) => {
+interface SlotInputProps {
+    packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues;
+    setSlot: (slot: string) => void;
+}
+
+const SlotChangeInput: React.FC<SlotInputProps> = ({ packingSlotsLabelsAndValues, setSlot }) => {
     return (
         <>
             <Heading>What date would you like to change to?</Heading>
-            <SingleDateInput setDate={setDate} />
+            <DropdownListInput
+                selectLabelId="packing-slot-select-label"
+                labelsAndValues={packingSlotsLabelsAndValues}
+                listTitle="Packing Slot"
+                defaultValue=""
+                onChange={(event) => {
+                    console.log(event);
+                    setSlot(event.target.value ?? "");
+                }}
+            />
         </>
     );
 };
 
-const DateChangeModal: React.FC<ActionModalProps> = (props) => {
+const SlotChangeModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-    const [date, setDate] = useState<Dayjs>(dayjs());
+    const [packingSlots, setPackingSlots] = useState<[string, string][]>([]);
+    const [slot, setSlot] = useState<string>("");
 
-    const packingDateUpdate = async (packingDate: string, parcel: ParcelsTableRow) => {
+    useEffect(() => {
+        (async () => {
+            const { data: packingSlotsData, error: packingSlotsError } =
+                await fetchPackingSlotsInfo(supabase);
+            if (packingSlotsError) {
+                // setError(packingSlotsError);
+                // setIsLoading(false);
+                return;
+            }
+            setPackingSlots(packingSlotsData);
+        })();
+    }, []);
+
+    const packingSlotUpdate = async (packingSlot: string, parcel: ParcelsTableRow) => {
         const { data: parcelData, error: fetchError } = await fetchParcel(
             parcel.parcelId,
             supabase
@@ -45,7 +71,7 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
 
         const { error: updateError, count } = await supabase
             .from("parcels")
-            .update({ packing_date: packingDate }, { count: "exact" })
+            .update({ packing_slot: packingSlot }, { count: "exact" })
             .eq("primary_key", parcel.parcelId);
 
         const parcelRecord = {
@@ -59,7 +85,7 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
         };
 
         const auditLog = {
-            action: "changing packing dates",
+            action: "changing packing slot",
             content: { parcelDetails: parcelRecord, count: count },
             clientId: parcel.clientId,
             parcelId: parcel.parcelId,
@@ -81,18 +107,21 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
         return { parcelId: parcel.parcelId, error: null };
     };
 
-    const onDateChange = async (): Promise<void> => {
+    const onSlotChange = async (): Promise<void> => {
         const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
         if (error) {
             setErrorMessage(getStatusErrorMessageWithLogId(error));
         } else {
-            setSuccessMessage(`Packing Date Changed to ${getDbDate(dayjs(date))}`);
+            packingSlots.forEach((packingSlot) => {
+                if (packingSlot[1] === slot) {
+                    setSuccessMessage(`Packing Slot Changed to ${packingSlot[0]}`);
+                }
+            });
         }
         setActionCompleted(true);
 
         props.selectedParcels.forEach((parcel) => {
-            const packingDate = getDbDate(dayjs(date));
-            packingDateUpdate(packingDate, parcel);
+            packingSlotUpdate(slot, parcel);
         });
     };
 
@@ -113,14 +142,14 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
                     <Button variant="contained" onClick={onClose}>
                         Cancel
                     </Button>
-                    <Button variant="contained" onClick={onDateChange}>
+                    <Button variant="contained" onClick={onSlotChange}>
                         Change
                     </Button>
                 </ConfirmButtons>
             }
             contentAboveButton={
                 <>
-                    <DateChangeInput setDate={setDate} />
+                    <SlotChangeInput packingSlotsLabelsAndValues={packingSlots} setSlot={setSlot} />
                     <SelectedParcelsOverview
                         parcels={props.selectedParcels}
                         maxParcelsToShow={maxParcelsToShow}
@@ -130,4 +159,5 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
         />
     );
 };
-export default DateChangeModal;
+
+export default SlotChangeModal;
