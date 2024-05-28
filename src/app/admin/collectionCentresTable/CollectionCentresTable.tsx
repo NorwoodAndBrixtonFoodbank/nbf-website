@@ -21,15 +21,22 @@ import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import StyledDataGrid from "@/app/admin/common/StyledDataGrid";
-import { LinearProgress } from "@mui/material";
+import { Checkbox, FormControlLabel, FormGroup, LinearProgress } from "@mui/material";
 import {
     fetchCollectionCentresForTable,
     InsertCollectionCentreResult,
-    insertNewCollectionCentre, defaultCollectionTimeSlots,
+    insertNewCollectionCentre,
+    defaultCollectionTimeSlots,
     UpdateCollectionCentreResult,
-    updateDbCollectionCentre
+    updateDbCollectionCentre,
 } from "@/app/admin/collectionCentresTable/CollectionCentreActions";
 import { EditToolbar } from "@/app/admin/collectionCentresTable/CollectionCentresTableToolbar";
+import Button from "@mui/material/Button";
+import Icon from "@/components/Icons/Icon";
+import { faShoePrints } from "@fortawesome/free-solid-svg-icons";
+import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
+import Modal from "@/components/Modal/Modal";
+import { useTheme } from "styled-components";
 
 export interface CollectionCentresTableRow {
     acronym: Schema["collection_centres"]["acronym"];
@@ -65,6 +72,12 @@ const CollectionCentresTable: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [existingRowData, setExistingRowData] = useState<CollectionCentresTableRow | null>(null);
+    const [timeSlotModalIsOpen, setTimeSlotModalIsOpen] = useState<boolean>(false);
+    const [timeSlotModalErrorMessage, setTimeSlotModalErrorMessage] = useState("");
+    const [timeSlotModalData, setTimeSlotModalData] = useState<
+        Schema["collection_centres"]["time_slot"] | null
+    >(null);
+    const theme = useTheme();
 
     const getCollectionCentresForTable = useCallback(async () => {
         setErrorMessage(null);
@@ -99,6 +112,10 @@ const CollectionCentresTable: React.FC = () => {
             void supabase.removeChannel(subscriptionChannel);
         };
     }, [getCollectionCentresForTable]);
+
+    useEffect(() => {
+        console.log(timeSlotModalData);
+    }, [timeSlotModalData]);
 
     const handleSaveClick = (id: GridRowId) => () => {
         setRowModesModel((currentValue) => ({
@@ -252,6 +269,30 @@ const CollectionCentresTable: React.FC = () => {
             renderHeader: (params) => <Header {...params} />,
         },
         {
+            field: "timeSlot",
+            type: "actions",
+            headerName: "Time Slots",
+            flex: 1,
+            renderHeader: (params) => <Header {...params} />,
+            renderCell: (params) => {
+                const handleEditCollectionCentreTimeSlot = (): void => {
+                    const currentRow = params.row;
+                    setTimeSlotModalData(currentRow.timeSlots);
+                    setTimeSlotModalIsOpen(true);
+                };
+
+                return (
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={handleEditCollectionCentreTimeSlot}
+                    >
+                        Edit Collection Slots
+                    </Button>
+                );
+            },
+        },
+        {
             field: "actions",
             type: "actions",
             headerName: "Actions",
@@ -324,6 +365,57 @@ const CollectionCentresTable: React.FC = () => {
                     }
                     hideFooter
                 />
+            )}
+            {timeSlotModalIsOpen && (
+                <Modal
+                    header={
+                        <>
+                            <Icon icon={faShoePrints} color={theme.primary.largeForeground[2]} />{" "}
+                            Select Collection Centre Time Slots
+                        </>
+                    }
+                    isOpen={timeSlotModalIsOpen}
+                    onClose={() => {
+                        setTimeSlotModalIsOpen(false);
+                    }}
+                    headerId="expandedCollectionCentreTimeSlotsModal"
+                    footer={
+                        <Centerer>
+                            <Button>Save</Button>
+                        </Centerer>
+                    }
+                >
+                    <OutsideDiv>
+                        <ContentDiv>
+                            <FormGroup>
+                                {timeSlotModalData?.map((timeSlot) => {
+                                    if (timeSlot.is_active) {
+                                        return (
+                                            <FormControlLabel
+                                                control={<Checkbox defaultChecked />}
+                                                label={timeSlot.time_slot}
+                                                key={timeSlot.time_slot}
+                                            />
+                                        );
+                                    } else {
+                                        return (
+                                            <FormControlLabel
+                                                control={<Checkbox />}
+                                                label={timeSlot.time_slot}
+                                                key={timeSlot.time_slot}
+                                            />
+                                        );
+                                    }
+                                })}
+                            </FormGroup>
+                        </ContentDiv>
+                        <ButtonsDiv>
+                            {timeSlotModalErrorMessage && (
+                                <ErrorSecondaryText>{timeSlotModalErrorMessage}</ErrorSecondaryText>
+                            )}
+                        </ButtonsDiv>
+                    </OutsideDiv>
+                </Modal>
             )}
         </>
     );
