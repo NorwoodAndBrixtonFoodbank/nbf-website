@@ -135,51 +135,30 @@ const styles = StyleSheet.create({
 });
 
 const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
-    const deliveryHeader = (
-        <View style={[styles.tableHeader, styles.flexRow]}>
-            <View style={[styles.tableColumn, styles.nameColumnWidth]}>
-                <Text>Name</Text>
+    const createHeader = (category: string): React.JSX.Element => {
+        return (
+            <View style={[styles.tableHeader, styles.flexRow]}>
+                <View style={[styles.tableColumn, styles.nameColumnWidth]}>
+                    <Text>Name</Text>
+                </View>
+                <View style={[styles.tableColumn, styles.addressColumnWidth]}>
+                    <Text>{category === "Collection" ? "Collection Centre" : "Address"}</Text>
+                </View>
+                <View style={[styles.tableColumn, styles.contactColumnWidth]}>
+                    <Text>Contact</Text>
+                </View>
+                <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
+                    <Text>Packing Date</Text>
+                </View>
+                <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
+                    <Text>Instructions</Text>
+                </View>
+                <View style={[styles.tableColumn, styles.numberOfLabelsColumnWidth]}>
+                    <Text>Number of Parcels</Text>
+                </View>
             </View>
-            <View style={[styles.tableColumn, styles.addressColumnWidth]}>
-                <Text>Address</Text>
-            </View>
-            <View style={[styles.tableColumn, styles.contactColumnWidth]}>
-                <Text>Contact</Text>
-            </View>
-            <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
-                <Text>Packing Date</Text>
-            </View>
-            <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
-                <Text>Instructions</Text>
-            </View>
-            <View style={[styles.tableColumn, styles.numberOfLabelsColumnWidth]}>
-                <Text>Number of Parcels</Text>
-            </View>
-        </View>
-    );
-
-    const collectionHeader = (
-        <View style={[styles.tableHeader, styles.flexRow]}>
-            <View style={[styles.tableColumn, styles.nameColumnWidth]}>
-                <Text>Name</Text>
-            </View>
-            <View style={[styles.tableColumn, styles.addressColumnWidth]}>
-                <Text>Collection Centre</Text>
-            </View>
-            <View style={[styles.tableColumn, styles.contactColumnWidth]}>
-                <Text>Contact</Text>
-            </View>
-            <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
-                <Text>Packing Date</Text>
-            </View>
-            <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
-                <Text>Instructions</Text>
-            </View>
-            <View style={[styles.tableColumn, styles.numberOfLabelsColumnWidth]}>
-                <Text>Number of Parcels</Text>
-            </View>
-        </View>
-    );
+        );
+    };
 
     const createRowData = (rowData: DriverOverviewTableData, index: number): React.JSX.Element => {
         return (
@@ -225,6 +204,8 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
         );
     };
 
+    const deliveriesHeader = createHeader("Delivery");
+    const collectionsHeader = createHeader("Collection");
     const collections = data.tableData[0].map(createRowData);
     const deliveries = data.tableData[1].map(createRowData);
 
@@ -251,7 +232,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                     <Text style={styles.collectionOrDeliveryHeader}>Deliveries</Text>
                     <FontAwesomeIconPdfComponent faIcon={faTruck}></FontAwesomeIconPdfComponent>
                 </View>
-                <View style={[styles.flexColumn, { width: "100%" }]}>{deliveryHeader}</View>
+                <View style={[styles.flexColumn, { width: "100%" }]}>{deliveriesHeader}</View>
                 <View style={[styles.tableSection, styles.flexColumn]}>{deliveries}</View>
                 <View style={[styles.h2text, styles.collectionOrDeliveryHeader, styles.flexRow]}>
                     <Text style={[styles.collectionOrDeliveryHeader]}>Collections</Text>
@@ -259,7 +240,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                         faIcon={faShoePrints}
                     ></FontAwesomeIconPdfComponent>
                 </View>
-                <View style={[styles.flexColumn, { width: "100%" }]}>{collectionHeader}</View>
+                <View style={[styles.flexColumn, { width: "100%" }]}>{collectionsHeader}</View>
                 <View style={[styles.tableSection, styles.flexColumn]}>{collections}</View>
             </Page>
         </Document>
