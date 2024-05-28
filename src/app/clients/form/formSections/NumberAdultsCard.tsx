@@ -15,11 +15,13 @@ import { ClientCardProps, ClientSetter } from "../ClientForm";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { getAdultBirthYears } from "@/app/clients/form/birthYearDropdown";
 
-const minimumNumberOfAdults = 1;
-const maximumNumberOfAdults = 20;
+const MINIMUM_NUMBER_OF_ADULTS = 1;
+const MAXIMUM_NUMBER_OF_ADULTS = 20;
 
 const numberOfAdultsRange = (value: string): boolean => {
-    return parseInt(value) <= maximumNumberOfAdults && parseInt(value) >= minimumNumberOfAdults;
+    return (
+        parseInt(value) <= MAXIMUM_NUMBER_OF_ADULTS && parseInt(value) >= MINIMUM_NUMBER_OF_ADULTS
+    );
 };
 
 const setAdultsFields = (
