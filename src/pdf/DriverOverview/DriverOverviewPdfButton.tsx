@@ -132,7 +132,10 @@ const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse>
                 instructions: clientIsActive ? client?.delivery_instructions ?? "" : "-",
                 clientIsActive: clientIsActive,
                 numberOfLabels: parcel.labelCount,
-                isDelivery: parcel.collection_centre?.is_delivery,
+                collection_centre: {
+                    name: parcel.collection_centre?.name,
+                    isDelivery: parcel.collection_centre?.is_delivery,
+                }
             });
         }
 

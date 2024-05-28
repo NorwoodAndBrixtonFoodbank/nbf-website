@@ -18,7 +18,10 @@ export interface DriverOverviewTableData {
     instructions?: string;
     clientIsActive: boolean;
     numberOfLabels: number;
-    isDelivery: boolean;
+    collection_centre: {
+        name: string;
+        isDelivery: boolean;
+    };
 }
 
 export interface DriverOverviewCardDataProps {
@@ -125,7 +128,7 @@ const styles = StyleSheet.create({
 });
 
 const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
-    const header = (
+    const deliveryHeader = (
         <View style={[styles.tableHeader, styles.flexRow]}>
             <View style={[styles.tableColumn, styles.nameColumnWidth]}>
                 <Text>Name</Text>
@@ -148,6 +151,29 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
         </View>
     );
 
+    const collectionHeader = (
+        <View style={[styles.tableHeader, styles.flexRow]}>
+            <View style={[styles.tableColumn, styles.nameColumnWidth]}>
+                <Text>Name</Text>
+            </View>
+            <View style={[styles.tableColumn, styles.addressColumnWidth]}>
+                <Text>Collection Centre</Text>
+            </View>
+            <View style={[styles.tableColumn, styles.contactColumnWidth]}>
+                <Text>Contact</Text>
+            </View>
+            <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
+                <Text>Packing Date</Text>
+            </View>
+            <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
+                <Text>Instructions</Text>
+            </View>
+            <View style={[styles.tableColumn, styles.numberOfLabelsColumnWidth]}>
+                <Text>Number of Parcels</Text>
+            </View>
+        </View>
+    )
+
     const createRowData = (rowData: DriverOverviewTableData, index: number) => {
         return (
             // eslint-disable-next-line react/no-array-index-key
@@ -156,20 +182,22 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                     <Text>{rowData.name}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.addressColumnWidth]}>
-                    {rowData.address.postcode || rowData.clientIsActive ? (
+                    { rowData.collection_centre.isDelivery ? rowData.address.postcode || rowData.clientIsActive ? (
                         <>
                             <Text>{rowData.address.line1}</Text>
                             <Text>{rowData.address.line2}</Text>
                             <Text>{rowData.address.town}</Text>
                             <Text>{rowData.address.county}</Text>
                             <Text>{rowData.address.postcode}</Text>
-                            <Text>{rowData.isDelivery ? "Delivery" : "Collection"}</Text>
                         </>
                     ) : (
                         <Text>
                             {rowData.clientIsActive ? displayPostcodeForHomelessClient : "-"}
                         </Text>
-                    )}
+                    ):  <>
+                            <Text>{rowData.collection_centre.name}</Text>
+                        </>
+                    }
                 </View>
                 <View style={[styles.tableColumn, styles.contactColumnWidth]}>
                     <Text>{rowData.contact}</Text>
@@ -187,8 +215,8 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
         );
     }
 
-    const deliveries = data.tableData[0].map(createRowData)
-    const collections = data.tableData[1].map(createRowData)
+    const collections = data.tableData[0].map(createRowData)
+    const deliveries = data.tableData[1].map(createRowData)
 
     return (
         <Document>
@@ -209,9 +237,9 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                         COMPLETION OF DELIVERIES
                     </Text>
                 </View>
-                <View style={[styles.flexColumn, { width: "100%" }]}>{header}</View>
+                <View style={[styles.flexColumn, { width: "100%" }]}>{deliveryHeader}</View>
                 <View style={[styles.tableSection, styles.flexColumn]}>{deliveries}</View>
-                <View style={[styles.flexColumn, { width: "100%" }]}>{header}</View>
+                <View style={[styles.flexColumn, { width: "100%" }]}>{collectionHeader}</View>
                 <View style={[styles.tableSection, styles.flexColumn]}>{collections}</View>
             </Page>
         </Document>
