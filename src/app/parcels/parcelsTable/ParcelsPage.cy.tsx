@@ -27,6 +27,7 @@ const sampleProcessingData: DbParcelRow[] = [
         client_flagged_for_attention: false,
         client_signposting_call_required: true,
         family_count: 3,
+        is_delivery: false,
         last_status_event_name: "LAST_EVENT",
         last_status_event_data: "SOME_RELATED_DATA",
         last_status_timestamp: "2023-08-04T13:30:00+00:00",

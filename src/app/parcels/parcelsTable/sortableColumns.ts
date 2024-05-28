@@ -38,7 +38,9 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
             query
                 .order("packing_date", { ascending: sortDirection === "asc" })
                 .order("packing_slot_order")
-                .order("client_full_name"),
+                .order("is_delivery", { ascending: false })
+                .order("client_address_postcode")
+                .order("collection_centre_name"),
     },
     {
         key: "packingSlot",
