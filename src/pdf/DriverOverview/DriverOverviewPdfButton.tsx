@@ -47,7 +47,7 @@ type ParcelsForDeliveryResponse =
           error: { type: ParcelsForDeliveryErrorType; logId: string };
       };
 
-type ParcelsForDeliveryErrorType = "parcelFetchFailed" | "noMatchingClient";
+type ParcelsForDeliveryErrorType = "parcelFetchFailed" | "noMatchingClient" | "noCollectionCentre";
 
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDeliveryResponse> => {
     const { data, error } = await supabase
@@ -77,7 +77,7 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDel
             const logId = await logErrorReturnLogId(
                 "Error with fetch: Parcels. No collection centre found"
             );
-            return { data: null, error: { type: "noMatchingClient", logId: logId } }; //this needs to be changed
+            return { data: null, error: { type: "noCollectionCentre", logId: logId } };
         }
 
         let labelCount: number = 0;
