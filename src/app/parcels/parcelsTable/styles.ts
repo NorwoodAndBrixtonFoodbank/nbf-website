@@ -27,8 +27,7 @@ export const parcelTableColumnStyleOptions = {
     addressPostcode: {
         hide: 800,
         grow: 0.6,
-        minWidth: "5rem",
-        maxWidth: "6rem",
+        minWidth: "6rem",
     },
     deliveryCollection: {
         grow: 0.6,
