@@ -44,7 +44,7 @@ export interface CollectionCentresTableRow {
     id: Schema["collection_centres"]["primary_key"];
     isDelivery: Schema["collection_centres"]["is_delivery"];
     isShown: Schema["collection_centres"]["is_shown"];
-    timeSlots: Schema["collection_centres"]["time_slot"];
+    activeTimeSlots: Schema["collection_centres"]["active_time_slots"];
     isNew: boolean;
 }
 
@@ -79,7 +79,7 @@ const CollectionCentresTable: React.FC = () => {
     const [timeSlotModalIsOpen, setTimeSlotModalIsOpen] = useState<boolean>(false);
     const [timeSlotModalErrorMessage, setTimeSlotModalErrorMessage] = useState("");
     const [timeSlotModalData, setTimeSlotModalData] = useState<
-        Schema["collection_centres"]["time_slot"] | null
+        Schema["collection_centres"]["active_time_slots"] | null
     >(null);
     const theme = useTheme();
 
@@ -196,7 +196,10 @@ const CollectionCentresTable: React.FC = () => {
 
         if (newRow.isNew) {
             const { data: newCollectionCentreData, error: newCollectionCentreError } =
-                await addNewCollectionCentre({ ...newRow, timeSlots: defaultCollectionTimeSlots });
+                await addNewCollectionCentre({
+                    ...newRow,
+                    activeTimeSlots: defaultCollectionTimeSlots,
+                });
             if (newCollectionCentreError) {
                 return { ...newRow, name: "", acronym: "", isShown: false };
             }
@@ -281,7 +284,7 @@ const CollectionCentresTable: React.FC = () => {
             renderCell: (params) => {
                 const handleEditCollectionCentreTimeSlot = (): void => {
                     const currentRow = params.row;
-                    setTimeSlotModalData(currentRow.timeSlots);
+                    setTimeSlotModalData(currentRow.activeTimeSlots);
                     setTimeSlotModalIsOpen(true);
                 };
 
@@ -392,27 +395,28 @@ const CollectionCentresTable: React.FC = () => {
                     <OutsideDiv>
                         <ContentDiv>
                             <FormGroup>
-                                {timeSlotModalData &&
-                                    timeSlotModalData.map((timeSlot) => {
-                                        if (timeSlot.is_active && timeSlot.time_slot) {
-                                            return (
-                                                <FormControlLabel
-                                                    control={<Checkbox defaultChecked />}
-                                                    label={getHoursAndMinutes(timeSlot.time_slot)}
-                                                    key={timeSlot.time_slot}
-                                                />
-                                            );
-                                        }
-                                        if (!timeSlot.is_active && timeSlot.time_slot) {
-                                            return (
-                                                <FormControlLabel
-                                                    control={<Checkbox />}
-                                                    label={getHoursAndMinutes(timeSlot.time_slot)}
-                                                    key={timeSlot.time_slot}
-                                                />
-                                            );
-                                        }
-                                    })}
+                                {defaultCollectionTimeSlots.map((defaultTimeSlot) => {
+                                    if (
+                                        timeSlotModalData &&
+                                        timeSlotModalData.includes(defaultTimeSlot)
+                                    ) {
+                                        return (
+                                            <FormControlLabel
+                                                control={<Checkbox checked={true} />}
+                                                label={getHoursAndMinutes(defaultTimeSlot)}
+                                                key={defaultTimeSlot}
+                                            />
+                                        );
+                                    } else {
+                                        return (
+                                            <FormControlLabel
+                                                control={<Checkbox checked={false} />}
+                                                label={getHoursAndMinutes(defaultTimeSlot)}
+                                                key={defaultTimeSlot}
+                                            />
+                                        );
+                                    }
+                                })}
                             </FormGroup>
                         </ContentDiv>
                         <ButtonsDiv>
