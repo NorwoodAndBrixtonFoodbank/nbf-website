@@ -66,6 +66,10 @@ function getBaseAuditLogForCollectionCentreAction(
     };
 }
 
+const getHoursAndMinutes = (timeString: string): string => {
+    return timeString.slice(0, 5);
+};
+
 const CollectionCentresTable: React.FC = () => {
     const [rows, setRows] = useState<CollectionCentresTableRow[]>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
@@ -388,25 +392,27 @@ const CollectionCentresTable: React.FC = () => {
                     <OutsideDiv>
                         <ContentDiv>
                             <FormGroup>
-                                {timeSlotModalData?.map((timeSlot) => {
-                                    if (timeSlot.is_active) {
-                                        return (
-                                            <FormControlLabel
-                                                control={<Checkbox defaultChecked />}
-                                                label={timeSlot.time_slot}
-                                                key={timeSlot.time_slot}
-                                            />
-                                        );
-                                    } else {
-                                        return (
-                                            <FormControlLabel
-                                                control={<Checkbox />}
-                                                label={timeSlot.time_slot}
-                                                key={timeSlot.time_slot}
-                                            />
-                                        );
-                                    }
-                                })}
+                                {timeSlotModalData &&
+                                    timeSlotModalData.map((timeSlot) => {
+                                        if (timeSlot.is_active && timeSlot.time_slot) {
+                                            return (
+                                                <FormControlLabel
+                                                    control={<Checkbox defaultChecked />}
+                                                    label={getHoursAndMinutes(timeSlot.time_slot)}
+                                                    key={timeSlot.time_slot}
+                                                />
+                                            );
+                                        }
+                                        if (!timeSlot.is_active && timeSlot.time_slot) {
+                                            return (
+                                                <FormControlLabel
+                                                    control={<Checkbox />}
+                                                    label={getHoursAndMinutes(timeSlot.time_slot)}
+                                                    key={timeSlot.time_slot}
+                                                />
+                                            );
+                                        }
+                                    })}
                             </FormGroup>
                         </ContentDiv>
                         <ButtonsDiv>
