@@ -3,6 +3,8 @@
 import React from "react";
 import { Text, Document, Page, View, StyleSheet, Image } from "@react-pdf/renderer";
 import { displayPostcodeForHomelessClient } from "@/common/format";
+import { faTruck, faShoePrints } from "@fortawesome/free-solid-svg-icons";
+import FontAwesomeIconPdfComponent from "../FontAwesomeIconPdfComponent";
 
 export interface DriverOverviewTableData {
     name: string;
@@ -125,6 +127,11 @@ const styles = StyleSheet.create({
     numberOfLabelsColumnWidth: {
         width: "20%",
     },
+    collectionOrDeliveryHeader: {
+        marginRight: "5px",
+        marginBottom: "5px",
+        alignSelf: "flex-start",
+    }
 });
 
 const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
@@ -237,8 +244,16 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                         COMPLETION OF DELIVERIES
                     </Text>
                 </View>
+                <View style={[styles.h2text, styles.collectionOrDeliveryHeader, styles.flexRow]}>
+                    <Text style={styles.collectionOrDeliveryHeader}>Deliveries</Text>
+                    <FontAwesomeIconPdfComponent faIcon={faTruck}></FontAwesomeIconPdfComponent>
+                    </View>
                 <View style={[styles.flexColumn, { width: "100%" }]}>{deliveryHeader}</View>
                 <View style={[styles.tableSection, styles.flexColumn]}>{deliveries}</View>
+                <View style={[styles.h2text, styles.collectionOrDeliveryHeader, styles.flexRow]}>
+                    <Text style={[styles.collectionOrDeliveryHeader]}>Collections</Text>
+                    <FontAwesomeIconPdfComponent faIcon={faShoePrints}></FontAwesomeIconPdfComponent>
+                </View>
                 <View style={[styles.flexColumn, { width: "100%" }]}>{collectionHeader}</View>
                 <View style={[styles.tableSection, styles.flexColumn]}>{collections}</View>
             </Page>
