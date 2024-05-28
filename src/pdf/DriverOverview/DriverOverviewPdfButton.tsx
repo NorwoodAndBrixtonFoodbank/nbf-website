@@ -108,6 +108,33 @@ type DriverPdfResponse =
 
 type DriverPdfErrorType = ParcelsForDeliveryErrorType;
 
+const pushRowInfo = (
+    array: DriverOverviewTableData[],
+    parcel: ParcelForDelivery
+): undefined => {
+    const client = parcel.client;
+    const clientIsActive = parcel.client.is_active;
+    array.push({
+        name: clientIsActive ? client?.full_name ?? "" : displayNameForDeletedClient,
+        address: {
+            line1: client?.address_1 ?? "",
+            line2: client?.address_2 ?? null,
+            town: client?.address_town ?? null,
+            county: client?.address_county ?? null,
+            postcode: client?.address_postcode,
+        },
+        contact: clientIsActive ? client?.phone_number ?? "" : "-",
+        packingDate: formatDateToDate(parcel.packing_date) ?? null,
+        instructions: clientIsActive ? client?.delivery_instructions ?? "" : "-",
+        clientIsActive: clientIsActive,
+        numberOfLabels: parcel.labelCount,
+        collection_centre: {
+            name: parcel.collection_centre?.name,
+            isDelivery: parcel.collection_centre?.is_delivery,
+        },
+    });
+};
+
 const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse> => {
     const clientInformation = [];
     const { data: parcels, error: parcelsError } = await getParcelsForDelivery(parcelIds);
@@ -116,32 +143,6 @@ const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse>
     }
     const collections: DriverOverviewTableData[] = [];
     const deliveries: DriverOverviewTableData[] = [];
-    const pushRowInfo = (
-        array: DriverOverviewTableData[],
-        parcel: ParcelForDelivery
-    ): undefined => {
-        const client = parcel.client;
-        const clientIsActive = parcel.client.is_active;
-        array.push({
-            name: clientIsActive ? client?.full_name ?? "" : displayNameForDeletedClient,
-            address: {
-                line1: client?.address_1 ?? "",
-                line2: client?.address_2 ?? null,
-                town: client?.address_town ?? null,
-                county: client?.address_county ?? null,
-                postcode: client?.address_postcode,
-            },
-            contact: clientIsActive ? client?.phone_number ?? "" : "-",
-            packingDate: formatDateToDate(parcel.packing_date) ?? null,
-            instructions: clientIsActive ? client?.delivery_instructions ?? "" : "-",
-            clientIsActive: clientIsActive,
-            numberOfLabels: parcel.labelCount,
-            collection_centre: {
-                name: parcel.collection_centre?.name,
-                isDelivery: parcel.collection_centre?.is_delivery,
-            },
-        });
-    };
 
     for (const parcel of parcels) {
         if (parcel.collection_centre?.is_delivery) {
