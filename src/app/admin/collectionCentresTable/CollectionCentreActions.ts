@@ -30,6 +30,7 @@ export const fetchCollectionCentres = async (): Promise<FetchCollectionCentresRe
             acronym: row.acronym,
             id: row.primary_key,
             isShown: row.is_shown,
+            isDelivery: row.is_delivery,
             isNew: false,
         })
     );
@@ -45,6 +46,7 @@ const formatExistingRowToDBCollectionCentre = (
         name: row.name,
         acronym: row.acronym,
         is_shown: row.isShown,
+        is_delivery: row.isDelivery,
     };
 };
 
@@ -55,6 +57,7 @@ const formatNewRowToDBCollectionCentre = (
         name: newRow.name,
         acronym: newRow.acronym,
         is_shown: newRow.isShown,
+        is_delivery: newRow.isDelivery,
     };
 };
 

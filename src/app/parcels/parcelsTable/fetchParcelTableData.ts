@@ -46,7 +46,9 @@ const getParcelsQuery = (
         query = query
             .order("packing_date", { ascending: false })
             .order("packing_slot_order")
-            .order("client_full_name");
+            .order("is_delivery", { ascending: false })
+            .order("collection_centre_name")
+            .order("client_address_postcode");
     }
 
     query = query.order("parcel_id");
