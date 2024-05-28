@@ -11,7 +11,10 @@ export const revalidate = 0;
 
 const getCollectionCentres = async (): Promise<Schema["collection_centres"]["name"][]> => {
     const supabase = getSupabaseServerComponentClient();
-    const { data, error } = await supabase.from("collection_centres").select("name");
+    const { data, error } = await supabase
+        .from("collection_centres")
+        .select("name")
+        .eq("is_shown", true);
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Collection centre names", error);
         throw new DatabaseError("fetch", "collection centre names", logId);

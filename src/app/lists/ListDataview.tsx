@@ -1,6 +1,10 @@
 "use client";
 
-import Table, { ColumnDisplayFunctions, ColumnStyles } from "@/components/Tables/Table";
+import {
+    ClientPaginatedTable,
+    ColumnDisplayFunctions,
+    ColumnStyles,
+} from "@/components/Tables/Table";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import EditModal, { EditModalState } from "@/app/lists/EditModal";
@@ -14,9 +18,11 @@ import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
-import { buildTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
+import { buildClientSideTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
+import { ClientSideFilter } from "@/components/Tables/Filters";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
+
+type ListFilter = ClientSideFilter<ListRow, any>;
 
 export interface ListRow {
     primaryKey: string;
@@ -112,12 +118,12 @@ const listsColumnStyleOptions: ColumnStyles<ListRow> = {
     ),
 };
 
-const filters: Filter<ListRow, string>[] = [
-    buildTextFilter({
+const filters: ListFilter[] = [
+    buildClientSideTextFilter({
         key: "itemName",
         label: "Item",
         headers: listsHeaderKeysAndLabels,
-        methodConfig: { paginationType: PaginationType.Client, method: filterRowByText },
+        method: filterRowByText,
     }),
 ];
 
@@ -133,7 +139,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [listData, setListData] = useState<ListRow[]>(listOfIngredients);
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<ListRow, string>[]>(filters);
+    const [primaryFilters, setPrimaryFilters] = useState<ListFilter[]>(filters);
 
     if (listOfIngredients === null) {
         void logInfoReturnLogId("No ingredients found @ app/lists/ListDataView.tsx");
@@ -170,6 +176,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
 
         setListOfIngredients(newListOfIngredients);
     };
+
     const onSwapRows = async (row1: ListRow, row2: ListRow): Promise<void> => {
         const { error } = await supabase.from("lists").upsert([
             {
@@ -182,12 +189,32 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             },
         ]);
 
+        const auditLog = {
+            action: `move a list item ${row1.rowOrder <= row2.rowOrder ? "down" : "up"}`,
+            listId: row1.primaryKey,
+            content: {
+                itemName: row1.itemName,
+                oldRowOrder: row1.rowOrder,
+            },
+        } as const satisfies Partial<AuditLog>;
+
         if (error) {
             const logId = await logErrorReturnLogId("Error with upsert: List row item order", {
                 error: error,
             });
             setErrorMessage(`Failed to swap rows. Log ID: ${logId}`);
+            void sendAuditLog({
+                ...auditLog,
+                wasSuccess: false,
+                logId: logId,
+            });
             return;
+        } else {
+            void sendAuditLog({
+                ...auditLog,
+                wasSuccess: true,
+                content: { ...auditLog.content, newRowOrder: row2.rowOrder },
+            });
         }
 
         reorderRows(row1, row2);
@@ -240,10 +267,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         setListData(
             listOfIngredients.filter((row) => {
                 return primaryFilters.every((filter) => {
-                    return (
-                        filter.methodConfig.paginationType === PaginationType.Client &&
-                        filter.methodConfig.method(row, filter.state, filter.key)
-                    );
+                    return filter.method(row, filter.state, filter.key);
                 });
             })
         );
@@ -274,7 +298,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
             <TableSurface>
                 <CommentBox originalComment={comment} />
-                <Table<ListRow>
+                <ClientPaginatedTable<ListRow>
                     headerKeysAndLabels={listsHeaderKeysAndLabels}
                     toggleableHeaders={toggleableHeaders}
                     dataPortion={listData}

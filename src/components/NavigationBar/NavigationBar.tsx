@@ -111,7 +111,7 @@ const CenteredDiv = styled.div`
 
 const LoginDependent: React.FC<Props> = (props) => {
     const pathname = usePathname();
-    if (pathname === "/login") {
+    if (pathname === "/login" || pathname === "/forgot-password") {
         return <></>;
     }
     return <>{props.children}</>;

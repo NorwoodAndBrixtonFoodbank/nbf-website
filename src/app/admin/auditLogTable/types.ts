@@ -1,9 +1,45 @@
 import { Json } from "@/databaseTypesFile";
-import { Schema } from "@/databaseUtils";
+import { profileDisplayNameForDeletedUser } from "./format";
+import { SortState } from "@/components/Tables/Table";
+import { ServerSideSortMethod } from "@/components/Tables/sortMethods";
+import { DbAuditLogRow } from "@/databaseUtils";
+
+export type AuditLogSortMethod = ServerSideSortMethod<DbAuditLogRow>;
+export type AuditLogSortState = SortState<AuditLogRow, AuditLogSortMethod>;
+
+export type AuditLogResponse =
+    | {
+          data: DbAuditLogRow[];
+          error: null;
+      }
+    | {
+          data: null;
+          error: AuditLogError;
+      };
+
+export type AuditLogCountResponse =
+    | {
+          count: number;
+          error: null;
+      }
+    | {
+          count: null;
+          error: AuditLogCountError;
+      };
+
+export interface AuditLogError {
+    type: "failedAuditLogFetch";
+    logId: string;
+}
+export interface AuditLogCountError {
+    type: "failedAuditLogCountFetch" | "nullCount";
+    logId: string;
+}
 
 export interface AuditLogRow {
+    auditLogId: string;
     action: string;
-    actorProfileId: string;
+    actorName: string;
     clientId: string;
     collectionCentreId: string;
     content: Json;
@@ -16,28 +52,32 @@ export interface AuditLogRow {
     parcelId: string;
     profileId: string;
     statusOrder: string;
-    wasSuccess: boolean;
+    wasSuccess: boolean | null;
     websiteData: string;
 }
 
-export const convertAuditLogResponseToAuditLogRow = (
-    auditLogResponse: Schema["audit_log"][]
+export const convertAuditLogPlusRowsToAuditLogRows = (
+    auditLogResponse: DbAuditLogRow[]
 ): AuditLogRow[] =>
-    auditLogResponse.map((auditLogResponseRow) => ({
-        action: auditLogResponseRow.action ?? "",
-        actorProfileId: auditLogResponseRow.actor_profile_id ?? "",
-        clientId: auditLogResponseRow.client_id ?? "",
-        collectionCentreId: auditLogResponseRow.collection_centre_id ?? "",
-        content: auditLogResponseRow.content ?? "",
-        createdAt: auditLogResponseRow.created_at ?? "",
-        eventId: auditLogResponseRow.event_id ?? "",
-        listHotelId: auditLogResponseRow.list_hotel_id ?? "",
-        listId: auditLogResponseRow.list_id ?? "",
-        logId: auditLogResponseRow.log_id ?? "",
-        packingSlotId: auditLogResponseRow.packing_slot_id ?? "",
-        parcelId: auditLogResponseRow.parcel_id ?? "",
-        profileId: auditLogResponseRow.profile_id ?? "",
-        statusOrder: auditLogResponseRow.status_order ?? "",
-        wasSuccess: auditLogResponseRow.wasSuccess ?? "",
-        websiteData: auditLogResponseRow.website_data ?? "",
+    auditLogResponse.map((auditLogPlusRow) => ({
+        auditLogId: auditLogPlusRow.primary_key ?? "",
+        action: auditLogPlusRow.action ?? "",
+        actorName:
+            auditLogPlusRow.actor_user_id === null
+                ? profileDisplayNameForDeletedUser(auditLogPlusRow.actor_role)
+                : auditLogPlusRow.actor_name ?? "",
+        clientId: auditLogPlusRow.client_id ?? "",
+        collectionCentreId: auditLogPlusRow.collection_centre_id ?? "",
+        content: auditLogPlusRow.content ?? "",
+        createdAt: auditLogPlusRow.created_at ?? "",
+        eventId: auditLogPlusRow.event_id ?? "",
+        listHotelId: auditLogPlusRow.list_hotel_id ?? "",
+        listId: auditLogPlusRow.list_id ?? "",
+        logId: auditLogPlusRow.log_id ?? "",
+        packingSlotId: auditLogPlusRow.packing_slot_id ?? "",
+        parcelId: auditLogPlusRow.parcel_id ?? "",
+        profileId: auditLogPlusRow.profile_id ?? "",
+        statusOrder: auditLogPlusRow.status_order ?? "",
+        wasSuccess: auditLogPlusRow.wasSuccess ?? null,
+        websiteData: auditLogPlusRow.website_data ?? "",
     }));

@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import PasswordInput from "@/components/DataInput/PasswordInput";
-import { UserRow } from "@/app/admin/page";
+import { UserRow } from "../usersTable/types";
 import { faKey } from "@fortawesome/free-solid-svg-icons/faKey";
 import { getPasswordHandler } from "@/components/DataInput/inputHandlerFactories";
 import { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
@@ -32,7 +32,7 @@ const ResetPasswordForm: React.FC<Props> = (props) => {
 
     const onConfirmPassword = async (): Promise<void> => {
         const response = await adminUpdateUserEmailAndPassword({
-            userId: props.userToEdit.id,
+            userId: props.userToEdit.userId,
             attributes: { password },
         });
 
@@ -48,7 +48,7 @@ const ResetPasswordForm: React.FC<Props> = (props) => {
             void logInfoReturnLogId(`Password for ${props.userToEdit.email} updated successfully`);
         } else {
             const logId = await logErrorReturnLogId(
-                `Error resetting password userId: ${props.userToEdit.id}`
+                `Error resetting password userId: ${props.userToEdit.userId}`
             );
             props.onConfirm({
                 success: false,

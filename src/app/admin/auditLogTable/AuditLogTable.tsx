@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import Table, { SortState } from "@/components/Tables/Table";
+import { Row, ServerPaginatedTable } from "@/components/Tables/Table";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
@@ -12,20 +12,23 @@ import {
     defaultNumberOfAuditLogRowsPerPage,
     numberOfAuditLogRowsPerPageOption,
 } from "./rowsPerPageConstants";
-import { AuditLogRow, convertAuditLogResponseToAuditLogRow } from "./types";
+import { AuditLogRow, AuditLogSortState, convertAuditLogPlusRowsToAuditLogRows } from "./types";
 import { auditLogTableSortableColumns } from "./sortFunctions";
+import AuditLogModal from "./auditLogModal/AuditLogModal";
+import { DbAuditLogRow } from "@/databaseUtils";
 
 const AuditLogTable: React.FC = () => {
     const [auditLogDataPortion, setAuditLogDataPortion] = useState<AuditLogRow[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [auditLogCount, setAuditLogCount] = useState<number>(0);
-    const [sortState, setSortState] = useState<SortState<AuditLogRow>>({ sortEnabled: false });
+    const [sortState, setSortState] = useState<AuditLogSortState>({ sortEnabled: false });
     const [auditLogCountPerPage, setAuditLogCountPerPage] = useState(
         defaultNumberOfAuditLogRowsPerPage
     );
     const [currentPage, setCurrentPage] = useState(1);
     const startPoint = (currentPage - 1) * auditLogCountPerPage;
     const endPoint = currentPage * auditLogCountPerPage - 1;
+    const [selectedAuditLogRow, setSelectedAuditLogRow] = useState<AuditLogRow | null>(null);
 
     const fetchAndDisplayAuditLog = useCallback(async () => {
         setErrorMessage(null);
@@ -42,7 +45,7 @@ const AuditLogTable: React.FC = () => {
             setErrorMessage(getAuditLogErrorMessage(error));
             return;
         }
-        const convertedData = convertAuditLogResponseToAuditLogRow(data);
+        const convertedData = convertAuditLogPlusRowsToAuditLogRows(data);
         setAuditLogDataPortion(convertedData);
     }, [startPoint, endPoint, sortState]);
 
@@ -69,31 +72,23 @@ const AuditLogTable: React.FC = () => {
         };
     }, [fetchAndDisplayAuditLog]);
 
+    const onRowClick = (row: Row<AuditLogRow>): void => {
+        setSelectedAuditLogRow(row.data);
+    };
+
     return (
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
-            <Table
+            <ServerPaginatedTable<AuditLogRow, DbAuditLogRow>
                 dataPortion={auditLogDataPortion}
                 headerKeysAndLabels={auditLogTableHeaderKeysAndLabels}
                 defaultShownHeaders={[
                     "action",
                     "createdAt",
-                    "actorProfileId",
+                    "actorName",
                     "content",
                     "wasSuccess",
                     "logId",
-                ]}
-                toggleableHeaders={[
-                    "parcelId",
-                    "clientId",
-                    "eventId",
-                    "listId",
-                    "collectionCentreId",
-                    "profileId",
-                    "packingSlotId",
-                    "listHotelId",
-                    "statusOrder",
-                    "websiteData",
                 ]}
                 columnDisplayFunctions={auditLogTableColumnDisplayFunctions}
                 paginationConfig={{
@@ -117,6 +112,11 @@ const AuditLogTable: React.FC = () => {
                     primaryFiltersShown: false,
                     additionalFiltersShown: false,
                 }}
+                onRowClick={(row) => onRowClick(row)}
+            />
+            <AuditLogModal
+                selectedAuditLogRow={selectedAuditLogRow}
+                onClose={() => setSelectedAuditLogRow(null)}
             />
         </>
     );

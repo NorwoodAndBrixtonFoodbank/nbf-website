@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import GeneralActionModal, {
     Heading,
     maxParcelsToShow,
@@ -13,6 +13,8 @@ import ShippingLabelsPdfButton, {
 } from "@/pdf/ShippingLabels/ShippingLabelsPdfButton";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import { sendAuditLog } from "@/server/auditLog";
+import DuplicateDownloadWarning from "@/app/parcels/ActionBar/DuplicateDownloadWarning";
+import { getDuplicateDownloadedPostcodes } from "@/app/parcels/ActionBar/ActionModals/getDuplicateDownloadedPostcodes";
 
 interface ShippingLabelsInputProps {
     onLabelQuantityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -22,7 +24,11 @@ const ShippingLabelsInput: React.FC<ShippingLabelsInputProps> = ({ onLabelQuanti
     return (
         <>
             <Heading>Shipping Labels</Heading>
-            <FreeFormTextInput type="number" onChange={onLabelQuantityChange} label="Quantity" />
+            <FreeFormTextInput
+                type="number"
+                onChange={onLabelQuantityChange}
+                label="Quantity (required)"
+            />
         </>
     );
 };
@@ -52,6 +58,9 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [labelQuantity, setLabelQuantity] = useState<number>(0);
+    const [duplicateDownloadedPostcodes, setDuplicateDownloadedPostcodes] = useState<
+        (string | null)[]
+    >([]);
 
     const onLabelQuantityChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setLabelQuantity(parseInt(event.target.value, 10) ?? 0);
@@ -64,6 +73,8 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
         setLabelQuantity(0);
         setErrorMessage(null);
     };
+
+    const parcelIds = props.selectedParcels.map((parcel) => parcel.parcelId);
 
     const onPdfCreationCompleted = async (): Promise<void> => {
         const { error } = await props.updateParcelStatuses(
@@ -80,7 +91,7 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
             action: "create shipping label pdf",
             wasSuccess: true,
             content: {
-                parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId),
+                parcelIds: parcelIds,
                 labelQuantity: labelQuantity,
             },
         });
@@ -93,12 +104,21 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
             action: "create shipping label pdf",
             wasSuccess: false,
             content: {
-                parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId),
+                parcelIds: parcelIds,
                 labelQuantity: labelQuantity,
             },
             logId: pdfError.logId,
         });
     };
+
+    useEffect(() => {
+        getDuplicateDownloadedPostcodes(
+            parcelIds,
+            "Shipping Labels Downloaded",
+            setDuplicateDownloadedPostcodes,
+            setErrorMessage
+        );
+    }, [parcelIds]);
 
     return (
         <GeneralActionModal
@@ -123,6 +143,9 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
                         parcels={props.selectedParcels}
                         maxParcelsToShow={maxParcelsToShow}
                     />
+                    {duplicateDownloadedPostcodes.length > 0 && (
+                        <DuplicateDownloadWarning postcodes={duplicateDownloadedPostcodes} />
+                    )}
                 </>
             }
         />

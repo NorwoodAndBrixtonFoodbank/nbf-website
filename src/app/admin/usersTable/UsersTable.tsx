@@ -1,123 +1,31 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import Table, { SortOptions, SortState, TableHeaders } from "@/components/Tables/Table";
-import { UserRow } from "@/app/admin/page";
+import { ServerPaginatedTable } from "@/components/Tables/Table";
 import ManageUserModal from "@/app/admin/manageUser/ManageUserModal";
 import DeleteUserDialog from "@/app/admin/deleteUser/DeleteUserDialog";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import SuccessFailureAlert, { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { buildTextFilter } from "@/components/Tables/TextFilter";
 import supabase from "@/supabaseClient";
 import { getUsersDataAndCount } from "@/app/admin/usersTable/getUsersData";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-import {
-    buildUserRoleFilter,
-    emailSearch,
-    firstNameSearch,
-    lastNameSearch,
-} from "@/app/admin/usersTable/usersTableFilters";
+import { usersFilters } from "@/app/admin/usersTable/filters";
 import { getCurrentUser } from "@/server/getCurrentUser";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
-
-const usersTableHeaderKeysAndLabels: TableHeaders<UserRow> = [
-    ["id", "User ID"],
-    ["firstName", "First Name"],
-    ["lastName", "Last Name"],
-    ["email", "Email"],
-    ["userRole", "Role"],
-    ["telephoneNumber", "Telephone Number"],
-    ["createdAt", "Created At"],
-    ["updatedAt", "Updated At"],
-];
-
-const sortableColumns: SortOptions<UserRow>[] = [
-    {
-        key: "firstName",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("first_name", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "lastName",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("last_name", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "userRole",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("role", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "email",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("email", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "telephoneNumber",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("telephone_number", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "createdAt",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("created_at", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "updatedAt",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("updated_at", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-];
-
-const formatTimestamp = (timestamp: number): string => {
-    if (isNaN(timestamp)) {
-        return "-";
-    }
-
-    return new Date(timestamp).toLocaleString("en-gb");
-};
-
-const userTableColumnDisplayFunctions = {
-    createdAt: (createdAt: number | null) => {
-        return createdAt === null ? "-" : formatTimestamp(createdAt);
-    },
-    updatedAt: (updatedAt: number | null) => {
-        return updatedAt === null ? "-" : formatTimestamp(updatedAt);
-    },
-};
-
-const defaultNumberOfUsersPerPage = 10;
-const numberOfUsersPerPageOptions = [10, 25, 50, 100];
+import { defaultNumberOfUsersPerPage, numberOfUsersPerPageOptions } from "./constants";
+import { usersTableHeaderKeysAndLabels } from "./headers";
+import { UserRow, UsersFilters, UsersSortState } from "./types";
+import { usersSortableColumns } from "./sortableColumns";
+import { userTableColumnDisplayFunctions } from "./format";
+import { DbUserRow } from "@/databaseUtils";
 
 const UsersTable: React.FC = () => {
     const [userToDelete, setUserToDelete] = useState<UserRow | null>(null);
     const [userToEdit, setUserToEdit] = useState<UserRow | null>(null);
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<UserRow, any>[]>([]);
+    const [primaryFilters, setPrimaryFilters] = useState<UsersFilters>(usersFilters);
     const [users, setUsers] = useState<UserRow[]>([]);
     const [filteredUsersCount, setFilteredUsersCount] = useState<number>(0);
-    const [sortState, setSortState] = useState<SortState<UserRow>>({ sortEnabled: false });
+    const [sortState, setSortState] = useState<UsersSortState>({ sortEnabled: false });
     const [isLoading, setIsLoading] = useState(true);
     const [userCountPerPage, setUserCountPerPage] = useState(defaultNumberOfUsersPerPage);
     const [currentPage, setCurrentPage] = useState(1);
@@ -132,57 +40,6 @@ const UsersTable: React.FC = () => {
         success: undefined,
         message: <></>,
     });
-
-    const buildFilters = async (): Promise<Filter<UserRow, any>[]> => {
-        const filters: Filter<UserRow, any>[] = [
-            buildTextFilter({
-                key: "firstName",
-                label: "First Name",
-                headers: usersTableHeaderKeysAndLabels,
-                methodConfig: {
-                    paginationType: PaginationType.Server,
-                    method: firstNameSearch,
-                },
-            }),
-            buildTextFilter({
-                key: "lastName",
-                label: "Last Name",
-                headers: usersTableHeaderKeysAndLabels,
-                methodConfig: {
-                    paginationType: PaginationType.Server,
-                    method: lastNameSearch,
-                },
-            }),
-            buildTextFilter({
-                key: "email",
-                label: "Email",
-                headers: usersTableHeaderKeysAndLabels,
-                methodConfig: {
-                    paginationType: PaginationType.Server,
-                    method: emailSearch,
-                },
-            }),
-        ];
-
-        const { data: userRoleFilter, error } = await buildUserRoleFilter();
-        if (error) {
-            switch (error.type) {
-                case "failedToFetchUserRoleFilterOptions":
-                    setErrorMessage(`Failed to retrieve user role filters. Log ID: ${error.logId}`);
-                    break;
-            }
-        } else {
-            filters.push(userRoleFilter);
-        }
-        return filters;
-    };
-
-    useEffect(() => {
-        (async () => {
-            const filters = await buildFilters();
-            setPrimaryFilters(filters);
-        })();
-    }, []);
 
     const userOnDelete = (rowIndex: number): void => {
         setUserToDelete(users[rowIndex]);
@@ -269,11 +126,11 @@ const UsersTable: React.FC = () => {
     return (
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
-            <Table
+            <ServerPaginatedTable<UserRow, DbUserRow>
                 dataPortion={users}
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
-                toggleableHeaders={["id", "createdAt", "updatedAt"]}
+                toggleableHeaders={["userId", "createdAt", "updatedAt"]}
                 defaultShownHeaders={[
                     "firstName",
                     "lastName",
@@ -294,7 +151,7 @@ const UsersTable: React.FC = () => {
                 }}
                 sortConfig={{
                     sortPossible: true,
-                    sortableColumns: sortableColumns,
+                    sortableColumns: usersSortableColumns,
                     setSortState: setSortState,
                 }}
                 editableConfig={{
@@ -302,7 +159,7 @@ const UsersTable: React.FC = () => {
                     onDelete: userOnDelete,
                     onEdit: userOnEdit,
                     setDataPortion: setUsers,
-                    isDeletable: (row: UserRow) => row.id !== currentUserId,
+                    isDeletable: (row: UserRow) => row.userId !== currentUserId,
                 }}
                 filterConfig={{
                     primaryFiltersShown: true,

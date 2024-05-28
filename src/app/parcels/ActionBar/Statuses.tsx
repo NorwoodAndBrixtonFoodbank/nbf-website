@@ -6,19 +6,19 @@ import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import dayjs, { Dayjs } from "dayjs";
-import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
+import { ParcelsTableRow } from "../parcelsTable/types";
 import StatusesBarModal from "@/app/parcels/ActionBar/StatusesModal";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { sendAuditLog } from "@/server/auditLog";
 import { ParcelStatus } from "@/databaseUtils";
-import { fetchParcelStatuses } from "@/app/parcels/fetchParcelTableData";
+import { fetchParcelStatuses } from "@/app/parcels/parcelsTable/fetchParcelTableData";
 
 export type StatusType = ParcelStatus[][number];
 
 const nonMenuStatuses: StatusType[] = [
     "Map Generated", //Generated when maps generated
     "Out for Delivery", //Generated when driver overview pdf downloaded
-    "Request Deleted", //Generated when parcel deleted
+    "Parcel Deleted", //Generated when parcel deleted
     "Shipping Labels Downloaded", //Generated when shipping labels pdf downloaded
     "Shopping List Downloaded", //Generated when shopping list pdf downloaded
 ];

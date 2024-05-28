@@ -7,7 +7,7 @@ import { faClose } from "@fortawesome/free-solid-svg-icons";
 import Icon from "@/components/Icons/Icon";
 
 export const StyledDialog = styled(Dialog)`
-    & .MuiPaper-root {
+    & .MuiPaper-root:first-of-type {
         border: 0;
         border-radius: 2em;
         padding: 0;

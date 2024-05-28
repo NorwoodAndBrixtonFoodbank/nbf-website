@@ -46,14 +46,6 @@ export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
         const redirect = toRedirectTo();
         if (redirect) {
             router.push(redirect);
-
-            // if Client Side Routing is not working, fallback to changing the window location
-            setTimeout(() => {
-                const redirect = toRedirectTo();
-                if (redirect) {
-                    window.location.pathname = redirect;
-                }
-            }, 2500);
         }
     };
 

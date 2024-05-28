@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import React from "react";
-import ParcelsPage from "@/app/parcels/ParcelsPage";
+import ParcelsPage from "@/app/parcels/parcelsTable/ParcelsPage";
 import Title from "@/components/Title/Title";
 
 const Parcels: () => Promise<React.ReactElement> = async () => {

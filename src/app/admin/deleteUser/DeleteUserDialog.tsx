@@ -1,7 +1,7 @@
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import React from "react";
-import { UserRow } from "@/app/admin/page";
+import { UserRow } from "../usersTable/types";
 import styled from "styled-components";
 import Modal from "@/components/Modal/Modal";
 import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
@@ -47,7 +47,7 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
             return;
         }
 
-        const { error: deleteUserError } = await adminDeleteUser(props.userToDelete.id);
+        const { error: deleteUserError } = await adminDeleteUser(props.userToDelete.userId);
 
         if (deleteUserError) {
             const errorMessage = getErrorMessage(deleteUserError.type);

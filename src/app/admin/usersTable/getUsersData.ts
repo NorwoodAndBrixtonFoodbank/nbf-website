@@ -1,55 +1,28 @@
 import { Supabase } from "@/supabaseUtils";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { SortState } from "@/components/Tables/Table";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
-import { UserRow } from "@/app/admin/page";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
-
-type GetUserDataAndCountErrorType =
-    | "abortedFetchingProfilesTable"
-    | "abortedFetchingProfilesTableCount"
-    | "failedToFetchProfilesTable"
-    | "failedToFetchProfilesTableCount";
-
-type GetUsersReturnType =
-    | {
-          error: null;
-          data: {
-              userData: UserRow[];
-              count: number;
-          };
-      }
-    | {
-          error: { type: GetUserDataAndCountErrorType; logId: string };
-          data: null;
-      };
-
-type GetUserCountReturnType =
-    | {
-          error: { type: GetUserDataAndCountErrorType; logId: string };
-          data: null;
-      }
-    | {
-          error: null;
-          data: number;
-      };
+import {
+    UsersFilter,
+    UsersSortState,
+    GetUsersReturnType,
+    GetUserCountReturnType,
+    UserRow,
+    UsersFilters,
+} from "./types";
 
 export const getUsersDataAndCount = async (
     supabase: Supabase,
     startIndex: number,
     endIndex: number,
-    filters: Filter<UserRow, any>[],
-    sortState: SortState<UserRow>,
+    filters: UsersFilters,
+    sortState: UsersSortState,
     abortSignal: AbortSignal
 ): Promise<GetUsersReturnType> => {
-    let query = supabase.from("profiles_plus").select("*");
+    let query = supabase.from("users_plus").select("*");
 
-    if (
-        sortState.sortEnabled &&
-        sortState.column.sortMethodConfig?.paginationType === PaginationType.Server
-    ) {
-        query = sortState.column.sortMethodConfig.method(query, sortState.sortDirection);
+    if (sortState.sortEnabled && sortState.column.sortMethod) {
+        query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
         query = query.order("first_name");
     }
@@ -77,7 +50,8 @@ export const getUsersDataAndCount = async (
 
     const userData: UserRow[] = users.map((user) => {
         return {
-            id: user.user_id ?? "",
+            userId: user.user_id ?? "",
+            profileId: user.profile_id ?? "",
             firstName: user.first_name ?? "",
             lastName: user.last_name ?? "",
             userRole: user.role ?? "UNKNOWN",
@@ -102,10 +76,10 @@ export const getUsersDataAndCount = async (
 
 const getUsersCount = async (
     supabase: Supabase,
-    filters: Filter<UserRow, any>[],
+    filters: UsersFilters,
     abortSignal: AbortSignal
 ): Promise<GetUserCountReturnType> => {
-    let query = supabase.from("profiles_plus").select("*", { count: "exact", head: true });
+    let query = supabase.from("users_plus").select("*", { count: "exact", head: true });
 
     query = getQueryWithFiltersApplied(query, filters);
 
@@ -130,14 +104,12 @@ const getUsersCount = async (
 
 function getQueryWithFiltersApplied(
     originalQuery: PostgrestFilterBuilder<Database["public"], any, any>,
-    filters: Filter<UserRow, any>[]
+    filters: UsersFilters
 ): PostgrestFilterBuilder<Database["public"], any, any> {
     let query = originalQuery;
 
-    filters.forEach((filter) => {
-        if (filter.methodConfig.paginationType === PaginationType.Server) {
-            query = filter.methodConfig.method(query, filter.state);
-        }
+    filters.forEach((filter: UsersFilter<any>) => {
+        query = filter.method(query, filter.state);
     });
 
     return query;

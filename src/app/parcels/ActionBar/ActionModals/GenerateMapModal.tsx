@@ -27,16 +27,17 @@ const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
 
     const formattedPostcodes = props.selectedParcels.reduce<string[]>(
         (formattedPostcodes, parcel) => {
-            if (parcel.addressPostcode) {
+            if (parcel.addressPostcode && parcel.addressPostcode !== "-") {
                 formattedPostcodes.push(parcel.addressPostcode.replaceAll(" ", ""));
             }
             return formattedPostcodes;
         },
         []
     );
-    const mapsLinkForSelectedParcels =
-        "https://www.google.com/maps/dir/" + formattedPostcodes.join("/");
-    ("//");
+
+    const uniquePostcodes = Array.from(new Set(formattedPostcodes));
+
+    const mapsLinkForSelectedParcels = `https://www.google.com/maps/dir/${uniquePostcodes.join("/")}//`;
 
     return (
         <GeneralActionModal
@@ -49,7 +50,7 @@ const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
                 <Button
                     variant="contained"
                     onClick={() => {
-                        if (formattedPostcodes.length === 0) {
+                        if (uniquePostcodes.length === 0) {
                             setErrorMessage("No selected parcels have addresses.");
                             setActionCompleted(true);
                             return;

@@ -8,26 +8,32 @@ export enum PaginationType {
     Client = "CLIENT",
 }
 
-export type MethodConfig<Data, State> =
-    | {
-          method: (
-              query: PostgrestFilterBuilder<Database["public"], any, any>,
-              state: State
-          ) => PostgrestFilterBuilder<Database["public"], any, any>;
-          paginationType: PaginationType.Server;
-      }
-    | {
-          method: (row: Data, state: State, key: keyof Data) => boolean;
-          paginationType: PaginationType.Client;
-      };
+export type ServerSideFilterMethod<DbData extends Record<string, any>, State> = (
+    query: PostgrestFilterBuilder<Database["public"], DbData, any>,
+    state: State
+) => PostgrestFilterBuilder<Database["public"], DbData, any>;
 
-export interface Filter<Data, State> {
+export type ClientSideFilterMethod<Data, State> = (
+    row: Data,
+    state: State,
+    key: keyof Data
+) => boolean;
+
+interface BasicFilter<Data, State> {
     key: keyof Data;
     filterComponent: (state: State, setState: (state: State) => void) => React.ReactElement;
     state: State;
     initialState: State;
-    methodConfig: MethodConfig<Data, State>;
     areStatesIdentical: (stateA: State, stateB: State) => boolean;
+}
+
+export interface ServerSideFilter<Data, State, DbData extends Record<string, any>>
+    extends BasicFilter<Data, State> {
+    method: ServerSideFilterMethod<DbData, State>;
+}
+
+export interface ClientSideFilter<Data, State> extends BasicFilter<Data, State> {
+    method: ClientSideFilterMethod<Data, State>;
 }
 
 export const headerLabelFromKey = <Data, Key extends keyof Data>(

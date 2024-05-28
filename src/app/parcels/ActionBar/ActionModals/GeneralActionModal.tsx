@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ParcelsTableRow } from "../../getParcelsTableData";
+import { ParcelsTableRow } from "../../parcelsTable/types";
 import Modal from "@/components/Modal/Modal";
 import { ActionName } from "../Actions";
 import { StatusType } from "../Statuses";

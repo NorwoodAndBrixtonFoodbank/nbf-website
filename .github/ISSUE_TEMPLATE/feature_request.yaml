@@ -2,7 +2,7 @@ name: Feature request
 description: Suggest a feature
 labels: ["enhancement"]
 assignees:
-  - rickaw
+  - 8kristy
 body:
   - type: markdown
     attributes:
