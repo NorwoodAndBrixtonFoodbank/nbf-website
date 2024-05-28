@@ -137,7 +137,7 @@ async function generateSeed(): Promise<void> {
             (generate) =>
                 generate(1000, {
                     newParcelStatus: status,
-                    eventData: (ctx) => `with ${copycat.firstName(ctx.seed)} ${dayjs(getPseudoRandomDateBetween(earliestParcelOrEventDate, latestEventDate, ctx.seed)).format("DD/MM/YYYY")}`,
+                    eventData: (ctx) => `with ${copycat.firstName(ctx.seed)}`,
                     timestamp: (ctx) =>
                         getPseudoRandomDateBetween(earliestParcelOrEventDate, latestEventDate, ctx.seed),
                 }),

@@ -36,7 +36,7 @@ export const saveParcelStatus = async (
     parcelIds: string[],
     statusName: StatusType,
     statusEventData?: string | null,
-    date?: Dayjs | null
+    date?: Dayjs
 ): Promise<SaveParcelStatusResult> => {
     const timestamp = (date ?? dayjs()).toISOString();
     const eventsToInsert = parcelIds
