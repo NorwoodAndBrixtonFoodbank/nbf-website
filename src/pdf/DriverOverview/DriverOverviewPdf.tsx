@@ -35,7 +35,10 @@ interface DriverOverviewCardProps {
     data: DriverOverviewCardDataProps;
 }
 
-type CreateHeaderProps = "Delivery" | "Collection";
+enum Method {
+    Delivery = "Delivery",
+    Collection = "Collection",
+}
 
 export type DriverOverviewTablesData = {
     collections: DriverOverviewRowData[];
@@ -143,7 +146,7 @@ const styles = StyleSheet.create({
 });
 
 const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
-    const createHeader = (category: CreateHeaderProps): React.JSX.Element => {
+    const createHeader = (category: string): React.JSX.Element => {
         return (
             <View style={[styles.tableHeader, styles.flexRow]}>
                 <View style={[styles.tableColumn, styles.nameColumnWidth]}>
@@ -212,8 +215,8 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
         );
     };
 
-    const deliveriesHeader = createHeader("Delivery");
-    const collectionsHeader = createHeader("Collection");
+    const deliveriesHeader = createHeader(Method.Delivery);
+    const collectionsHeader = createHeader(Method.Collection);
     const collections = data.tableData.collections.map(createRow);
     const deliveries = data.tableData.deliveries.map(createRow);
 
