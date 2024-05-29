@@ -20,10 +20,8 @@ export interface DriverOverviewRowData {
     instructions?: string;
     clientIsActive: boolean;
     numberOfLabels: number;
-    collection_centre: {
-        name: string;
-        isDelivery: boolean;
-    };
+    collectionCentre: string;
+    isDelivery: boolean;
 }
 
 export interface DriverOverviewCardDataProps {
@@ -178,7 +176,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                     <Text>{rowData.name}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.addressColumnWidth]}>
-                    {rowData.collection_centre.isDelivery ? (
+                    {rowData.isDelivery ? (
                         rowData.address.postcode || rowData.clientIsActive ? (
                             <>
                                 <Text>{rowData.address.line1}</Text>
@@ -194,7 +192,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                         )
                     ) : (
                         <>
-                            <Text>{rowData.collection_centre.name}</Text>
+                            <Text>{rowData.collectionCentre}</Text>
                         </>
                     )}
                 </View>

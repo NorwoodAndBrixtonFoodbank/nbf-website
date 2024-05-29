@@ -125,10 +125,8 @@ const pushRowInfo = (array: DriverOverviewRowData[], parcel: ParcelForDelivery):
         instructions: clientIsActive ? client?.delivery_instructions ?? "" : "-",
         clientIsActive: clientIsActive,
         numberOfLabels: parcel.labelCount,
-        collection_centre: {
-            name: parcel.collection_centre?.name,
-            isDelivery: parcel.collection_centre?.is_delivery,
-        },
+        collectionCentre: parcel.collection_centre?.name,
+        isDelivery: parcel.collection_centre?.is_delivery,
     });
 };
 
