@@ -47,7 +47,7 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDel
         .limit(1, { foreignTable: "clients" })
         .limit(1, { foreignTable: "collection_centres" })
         .eq("events.new_parcel_status", "Shipping Labels Downloaded")
-        .order("name", { foreignTable: "collection_centres"})
+        .order("name", { foreignTable: "collection_centres" })
         .order("address_postcode", { foreignTable: "clients" })
         .order("timestamp", { foreignTable: "events", ascending: false });
 
