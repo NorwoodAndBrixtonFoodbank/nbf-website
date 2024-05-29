@@ -59,7 +59,7 @@ export interface ParcelFields extends Fields {
     packingSlot: string | undefined;
     shippingMethod: string | null;
     collectionDate: string | null;
-    collectionSlot: string | undefined;
+    collectionSlot: string | null;
     collectionCentre: string | null;
     lastUpdated: string | undefined;
 }
@@ -83,7 +83,7 @@ export const initialParcelFields: ParcelFields = {
     packingSlot: "",
     shippingMethod: null,
     collectionDate: null,
-    collectionSlot: "",
+    collectionSlot: null,
     collectionCentre: null,
     lastUpdated: undefined,
 };
@@ -106,7 +106,6 @@ interface ParcelFormProps {
     collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues;
     packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues;
     writeParcelInfoToDatabase: WriteParcelToDatabaseFunction;
-    collectionTimeSlotsLabelsAndValues: CollectionTimeSlotsLabelsAndValues;
 }
 
 const withCollectionFormSections = [
@@ -167,7 +166,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     const [submitErrorMessage, setSubmitErrorMessage] = useState("");
     const [submitDisabled, setSubmitDisabled] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-    const [clientDetails, setClientDetails] = useState<ExpandedClientDetails | null>(null);
+    const [clientDetails, setClientDetails] = useState<ExpandedClientData | null>(null);
     const [collectionSlotsLabelsAndValues, setCollectionSlotsLabelsAndValues] =
         useState<CollectionTimeSlotsLabelsAndValues>([]);
     const theme = useTheme();
