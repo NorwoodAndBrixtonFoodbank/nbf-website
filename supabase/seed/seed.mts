@@ -42,6 +42,9 @@ async function generateSeed(): Promise<void> {
 
     await seed.packingSlots(packingSlots);
 
+    const today = new Date();
+    const thisYear = today.getFullYear();
+
     await seed.clients((generate) =>
         generate(500, {
             fullName: (ctx) => copycat.fullName(ctx.seed),
@@ -76,11 +79,22 @@ async function generateSeed(): Promise<void> {
                 generateFamily(
                     { min: 1, max: 8 },
                     {
-                        age: (ctx) => copycat.int(ctx.seed, { min: 0, max: 100 }),
+                        birthYear: (ctx) =>
+                            copycat.int(ctx.seed, { min: thisYear - 120, max: thisYear }),
+                        birthMonth: null,
                         gender: (ctx) => copycat.oneOf(ctx.seed, genders),
                     }
                 ),
         })
+    );
+
+    await seed.families(
+        (generate) =>
+            generate(100, {
+                birthYear: thisYear,
+                birthMonth: (ctx) => copycat.int(ctx.seed, { min: 1, max: 5 }),
+            }),
+        { connect: true }
     );
 
     await seed.collectionCentres(collectionCentres);

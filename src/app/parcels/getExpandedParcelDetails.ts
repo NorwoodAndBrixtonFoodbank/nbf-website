@@ -4,6 +4,7 @@ import { EventTableRow } from "./EventTable";
 import { logErrorReturnLogId } from "@/logger/logger";
 import {
     formatAddressFromClientDetails,
+    formatBreakdownOfAdultsFromFamilyDetails,
     formatBreakdownOfChildrenFromFamilyDetails,
     formatHouseholdFromFamilyDetails,
 } from "@/app/clients/getExpandedClientDetails";
@@ -61,7 +62,8 @@ const getExpandedParcelDetails = async (
             is_active,
 
             family:families(
-                age,
+                birth_year,
+                birth_month,
                 gender
             )
         ),
@@ -118,6 +120,7 @@ const getExpandedParcelDetails = async (
                     deliveryInstructions: client.delivery_instructions ?? "",
                     phoneNumber: client.phone_number ?? "",
                     household: formatHouseholdFromFamilyDetails(client.family),
+                    adults: formatBreakdownOfAdultsFromFamilyDetails(client.family),
                     children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
                     packingDate: formatDatetimeAsDate(rawParcelDetails.packing_date),
                     packingSlot: rawParcelDetails.packing_slot?.name ?? "",
@@ -136,6 +139,13 @@ const getExpandedParcelDetails = async (
             expandedParcelData: {
                 isActive: false,
                 voucherNumber: rawParcelDetails.voucher_number ?? "",
+                fullName: client.full_name,
+                address: formatAddressFromClientDetails(client),
+                deliveryInstructions: client.delivery_instructions,
+                phoneNumber: client.phone_number,
+                household: formatHouseholdFromFamilyDetails(client.family),
+                adults: formatBreakdownOfAdultsFromFamilyDetails(client.family),
+                children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
                 packingDate: formatDatetimeAsDate(rawParcelDetails.packing_date),
                 packingSlot: rawParcelDetails.packing_slot?.name ?? "",
                 method: rawParcelDetails.collection_centre?.is_shown
@@ -168,6 +178,7 @@ interface ParcelDataForActiveClient extends ParcelDataIndependentOfClient {
     deliveryInstructions: string;
     phoneNumber: string;
     household: string;
+    adults: string;
     children: string;
 }
 

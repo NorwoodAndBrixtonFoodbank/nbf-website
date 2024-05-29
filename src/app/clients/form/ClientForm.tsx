@@ -9,7 +9,6 @@ import {
     Errors,
     Fields,
     FormErrors,
-    NumberAdultsByGender,
     Person,
     createSetter,
     Setter,
@@ -37,6 +36,8 @@ import SignpostingCallCard from "@/app/clients/form/formSections/SignpostingCall
 import Button from "@mui/material/Button";
 import { submitAddClientForm, submitEditClientForm } from "@/app/clients/form/submitFormHelpers";
 import Title from "@/components/Title/Title";
+import { getCurrentYear } from "@/common/date";
+import { youngestAdultBirthYear } from "@/app/clients/form/birthYearDropdown";
 
 interface Props {
     initialFields: ClientFields;
@@ -54,9 +55,10 @@ export interface ClientFields extends Fields {
     addressTown: string;
     addressCounty: string;
     addressPostcode: string | null;
-    adults: NumberAdultsByGender;
-    numberChildren: number;
+    adults: Person[];
+    numberOfAdults: number;
     children: Person[];
+    numberOfChildren: number;
     dietaryRequirements: BooleanGroup;
     feminineProducts: BooleanGroup;
     babyProducts: boolean | null;
@@ -75,8 +77,8 @@ export interface ClientErrors extends FormErrors<ClientFields> {
     phoneNumber: Errors;
     addressLine1: Errors;
     addressPostcode: Errors;
-    adults: Errors;
-    numberChildren: Errors;
+    numberOfAdults: Errors;
+    numberOfChildren: Errors;
     nappySize: Errors;
 }
 
@@ -110,21 +112,38 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
     const [submitDisabled, setSubmitDisabled] = useState(false);
 
     useEffect(() => {
-        if (fields.numberChildren <= fields.children.length) {
-            fieldSetter({ children: fields.children.slice(0, fields.numberChildren) });
+        if (fields.numberOfChildren <= fields.children.length) {
+            fieldSetter({ children: fields.children.slice(0, fields.numberOfChildren) });
             return;
         }
 
-        const extraChildren: Person[] = Array(fields.numberChildren - fields.children.length)
+        const extraChildren: Person[] = Array(fields.numberOfChildren - fields.children.length)
             .fill(0)
             .map((_item) => {
                 return {
                     gender: "other",
-                    age: -1,
+                    birthYear: getCurrentYear(),
                 };
             });
         fieldSetter({ children: [...fields.children, ...extraChildren] });
-    }, [fields.numberChildren]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [fields.numberOfChildren]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        if (fields.numberOfAdults <= fields.adults.length) {
+            fieldSetter({ adults: fields.adults.slice(0, fields.numberOfAdults) });
+            return;
+        }
+
+        const extraAdults: Person[] = Array(fields.numberOfAdults - fields.adults.length)
+            .fill(0)
+            .map((_item) => {
+                return {
+                    gender: "other",
+                    birthYear: parseInt(youngestAdultBirthYear()),
+                };
+            });
+        fieldSetter({ adults: [...fields.adults, ...extraAdults] });
+    }, [fields.numberOfAdults]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const fieldSetter = createSetter(setFields, fields);
     const errorSetter = createSetter(setFormErrors, formErrors);

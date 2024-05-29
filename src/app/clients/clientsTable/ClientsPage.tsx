@@ -214,6 +214,21 @@ const ClientsPage: React.FC<{}> = () => {
                             router.push("/clients");
                         }}
                         headerId="clientsDetailModal"
+                        footer={
+                            isSelectedClientActive && (
+                                <Centerer>
+                                    <LinkButton link={`/clients/edit/${clientId}`}>
+                                        Edit Client
+                                    </LinkButton>
+                                    <LinkButton link={`/parcels/add/${clientId}`}>
+                                        Add Parcel
+                                    </LinkButton>
+                                    <DeleteButton onClick={() => setIsDeleteClientDialogOpen(true)}>
+                                        Delete Client
+                                    </DeleteButton>
+                                </Centerer>
+                            )
+                        }
                     >
                         <OutsideDiv>
                             <ContentDiv>
@@ -234,21 +249,6 @@ const ClientsPage: React.FC<{}> = () => {
                                     <ErrorSecondaryText>
                                         {deleteClientErrorMessage}
                                     </ErrorSecondaryText>
-                                )}
-                                {isSelectedClientActive && (
-                                    <Centerer>
-                                        <LinkButton link={`/clients/edit/${clientId}`}>
-                                            Edit Client
-                                        </LinkButton>
-                                        <LinkButton link={`/parcels/add/${clientId}`}>
-                                            Add Parcel
-                                        </LinkButton>
-                                        <DeleteButton
-                                            onClick={() => setIsDeleteClientDialogOpen(true)}
-                                        >
-                                            Delete Client
-                                        </DeleteButton>
-                                    </Centerer>
                                 )}
                             </ButtonsDiv>
                         </OutsideDiv>
