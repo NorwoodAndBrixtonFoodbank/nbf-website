@@ -12,11 +12,13 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { sendAuditLog } from "@/server/auditLog";
 import { ParcelStatus } from "@/databaseUtils";
 import { fetchParcelStatuses } from "@/app/parcels/parcelsTable/fetchParcelTableData";
+import { event } from "cypress/types/jquery";
 
 export type StatusType = ParcelStatus[][number];
 
 const nonMenuStatuses: StatusType[] = [
     "Packing Date Changed", //Generated when packing date is changed
+    "Packing Slot Changed", //Generated when packing slot is changed
     "Driver Overview Downloaded", //Generated when driver overview pdf downloaded
     "Map Generated", //Generated when maps generated
     "Out for Delivery",
@@ -38,24 +40,28 @@ export const saveParcelStatus = async (
     parcelIds: string[],
     statusName: StatusType,
     statusEventData?: string | null,
+    clientIds?: string[],
+    action?: string,
     date?: Dayjs | null
 ): Promise<SaveParcelStatusResult> => {
     const timestamp = (date ?? dayjs()).toISOString();
     const eventsToInsert = parcelIds
-        .map((parcelId: string) => {
+        .map((parcelId: string, index) => {
             return {
                 new_parcel_status: statusName,
                 parcel_id: parcelId,
                 event_data: statusEventData,
+                client_id: clientIds?.slice()[index],
                 timestamp,
             };
         })
         .flat();
 
     const auditLogs = eventsToInsert.map((eventToInsert) => ({
-        action: "change parcel status",
+        action: action ?? "change parcel status",
         content: { eventToInsert },
         parcelId: eventToInsert.parcel_id,
+        clientId: eventToInsert.client_id,
     }));
 
     const { data, error } = await supabase
@@ -141,6 +147,8 @@ const Statuses: React.FC<Props> = ({
             }),
             selectedStatus,
             null,
+            undefined,
+            undefined,
             date
         );
         if (error) {

@@ -4,14 +4,14 @@ import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 export type WriteParcelToDatabaseFunction = UpdateParcel | InsertParcel;
-export type WriteParcelToDatabaseErrors = InsertParcelErrors | UpdateParcelErrors;
+export type WriteParcelToDatabaseErrors = InsertParcelErrorType | UpdateParcelErrorType;
 
 type ParcelDatabaseInsertRecord = InsertSchema["parcels"];
 type ParcelDatabaseUpdateRecord = UpdateSchema["parcels"];
 
-type InsertParcelErrors = "failedToInsertParcel";
+type InsertParcelErrorType = "failedToInsertParcel";
 type InsertParcelReturnType = {
-    error: { type: InsertParcelErrors; logId: string } | null;
+    error: { type: InsertParcelErrorType; logId: string } | null;
     parcelId: string | null;
 };
 
@@ -44,9 +44,10 @@ export const insertParcel: InsertParcel = async (parcelRecord) => {
     return { parcelId: data.primary_key, error: null };
 };
 
-type UpdateParcelErrors = "failedToUpdateParcel" | "concurrentUpdateConflict";
+type UpdateParcelErrorType = "failedToUpdateParcel" | "concurrentUpdateConflict";
+export type UpdateParcelError = { type: UpdateParcelErrorType; logId: string }
 type UpdateParcelReturnType = {
-    error: { type: UpdateParcelErrors; logId: string } | null;
+    error: UpdateParcelError | null;
     parcelId: string | null;
 };
 

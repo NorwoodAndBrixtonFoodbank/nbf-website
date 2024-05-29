@@ -17,7 +17,8 @@ export interface ActionAndStatusBarProps {
 export type UpdateParcelStatuses = (
     parcels: ParcelsTableRow[],
     newStatus: StatusType,
-    statusEventData?: string
+    statusEventData?: string,
+    action?: string
 ) => Promise<SaveParcelStatusResult>;
 
 const AlertBox = styled.div`

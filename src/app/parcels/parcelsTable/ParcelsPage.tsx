@@ -247,12 +247,15 @@ const ParcelsPage: React.FC<{}> = () => {
     const updateParcelStatuses = async (
         parcels: ParcelsTableRow[],
         newStatus: StatusType,
-        statusEventData?: string
+        statusEventData?: string,
+        action?: string,
     ): Promise<SaveParcelStatusResult> => {
         const { error } = await saveParcelStatus(
             parcels.map((parcel) => parcel.parcelId),
             newStatus,
-            statusEventData
+            statusEventData,
+            parcels.map((parcel) => parcel.clientId),
+            action
         );
         setCheckedParcelIds([]);
         return { error: error };
