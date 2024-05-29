@@ -111,10 +111,12 @@ type DriverPdfResponse =
 
 type DriverPdfErrorType = ParcelsForDeliveryErrorType;
 
-const pushRowInfo = (array: DriverOverviewRowData[], parcel: ParcelForDelivery): undefined => {
+const transformRowToDriverOverviewTableData = (
+    parcel: ParcelForDelivery
+): DriverOverviewRowData => {
     const client = parcel.client;
     const clientIsActive = parcel.client.is_active;
-    array.push({
+    return {
         name: clientIsActive ? client?.full_name ?? "" : displayNameForDeletedClient,
         address: {
             line1: client?.address_1 ?? "",
@@ -130,7 +132,27 @@ const pushRowInfo = (array: DriverOverviewRowData[], parcel: ParcelForDelivery):
         numberOfLabels: parcel.labelCount,
         collectionCentre: parcel.collection_centre?.name,
         isDelivery: parcel.collection_centre?.is_delivery,
-    });
+    };
+};
+
+const transformParcelDataToClientInformation = (
+    parcels: ParcelForDelivery[]
+): DriverOverviewTablesData => {
+    const collections: DriverOverviewRowData[] = [];
+    const deliveries: DriverOverviewRowData[] = [];
+
+    for (const parcel of parcels) {
+        if (parcel.collection_centre?.is_delivery) {
+            deliveries.push(transformRowToDriverOverviewTableData(parcel));
+        } else {
+            collections.push(transformRowToDriverOverviewTableData(parcel));
+        }
+    }
+
+    return {
+        collections: collections.sort(compareDriverOverviewTableData),
+        deliveries: deliveries.sort(compareDriverOverviewTableData),
+    };
 };
 
 const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse> => {
@@ -138,20 +160,7 @@ const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse>
     if (parcelsError) {
         return { data: null, error: parcelsError };
     }
-    const collections: DriverOverviewRowData[] = [];
-    const deliveries: DriverOverviewRowData[] = [];
-
-    for (const parcel of parcels) {
-        if (parcel.collection_centre?.is_delivery) {
-            pushRowInfo(deliveries, parcel);
-        } else {
-            pushRowInfo(collections, parcel);
-        }
-    }
-    const clientInformation: DriverOverviewTablesData = {
-        collections: collections.sort(compareDriverOverviewTableData),
-        deliveries: deliveries.sort(compareDriverOverviewTableData),
-    };
+    const clientInformation = transformParcelDataToClientInformation(parcels);
     return { data: clientInformation, error: null };
 };
 
