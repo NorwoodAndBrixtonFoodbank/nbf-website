@@ -21,6 +21,32 @@ interface DriverOverviewData {
     message: string;
 }
 
+const compareCollectionCentres = (
+    first: DriverOverviewRowData,
+    second: DriverOverviewRowData
+): number => {
+    if (first.collectionCentre < second.collectionCentre) {
+        return -1;
+    }
+    if (first.collectionCentre > second.collectionCentre) {
+        return 1;
+    }
+    return 0;
+};
+
+const comparePostcodes = (first: DriverOverviewRowData, second: DriverOverviewRowData): number => {
+    if (first.address.postcode && second.address.postcode) {
+        return first.address.postcode.localeCompare(second.address.postcode);
+    }
+    if (first.address.postcode) {
+        return 1;
+    }
+    if (second.address.postcode) {
+        return -1;
+    }
+    return 0;
+};
+
 type ParcelForDelivery = Schema["parcels"] & {
     client: Schema["clients"];
     collection_centre: Schema["collection_centres"];
@@ -47,9 +73,6 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDel
         .limit(1, { foreignTable: "clients" })
         .limit(1, { foreignTable: "collection_centres" })
         .eq("events.new_parcel_status", "Shipping Labels Downloaded")
-        .order("name", { foreignTable: "collection_centres" })
-        .order("address_postcode", { foreignTable: "clients" })
-        .order("timestamp", { foreignTable: "events", ascending: false });
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Parcels", error);
@@ -139,8 +162,8 @@ const transformParcelDataToClientInformation = (
     }
 
     return {
-        collections: collections,
-        deliveries: deliveries,
+        collections: collections.sort(compareCollectionCentres),
+        deliveries: deliveries.sort(comparePostcodes),
     };
 };
 
