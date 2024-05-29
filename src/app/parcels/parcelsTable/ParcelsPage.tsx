@@ -11,7 +11,7 @@ import { faBoxArchive } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal/Modal";
 import TableSurface from "@/components/Tables/TableSurface";
 import ActionAndStatusBar from "@/app/parcels/ActionBar/ActionAndStatusBar";
-import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
+import { Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import LinkButton from "@/components/Buttons/LinkButton";
 import supabase from "@/supabaseClient";
 import {
@@ -351,6 +351,29 @@ const ParcelsPage: React.FC<{}> = () => {
                             router.push("/parcels");
                         }}
                         headerId="expandedParcelDetailsModal"
+                        footer={
+                            <Centerer>
+                                <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
+                                    Edit Parcel
+                                </LinkButton>
+                                {selectedClientDetails && (
+                                    <>
+                                        <LinkButton
+                                            link={`/clients?clientId=${selectedClientDetails.clientId}`}
+                                            disabled={!selectedClientDetails.isClientActive}
+                                        >
+                                            See Client Details
+                                        </LinkButton>
+                                        <LinkButton
+                                            link={`/clients/edit/${selectedClientDetails.clientId}`}
+                                            disabled={!selectedClientDetails.isClientActive}
+                                        >
+                                            Edit Client Details
+                                        </LinkButton>
+                                    </>
+                                )}
+                            </Centerer>
+                        }
                     >
                         <OutsideDiv>
                             <ContentDiv>
@@ -358,32 +381,9 @@ const ParcelsPage: React.FC<{}> = () => {
                                     <ExpandedParcelDetails parcelId={selectedParcelId} />
                                 </Suspense>
                             </ContentDiv>
-                            <ButtonsDiv>
-                                <Centerer>
-                                    <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
-                                        Edit Parcel
-                                    </LinkButton>
-                                    {selectedClientDetails && (
-                                        <>
-                                            <LinkButton
-                                                link={`/clients?clientId=${selectedClientDetails.clientId}`}
-                                                disabled={!selectedClientDetails.isClientActive}
-                                            >
-                                                See Client Details
-                                            </LinkButton>
-                                            <LinkButton
-                                                link={`/clients/edit/${selectedClientDetails.clientId}`}
-                                                disabled={!selectedClientDetails.isClientActive}
-                                            >
-                                                Edit Client Details
-                                            </LinkButton>
-                                        </>
-                                    )}
-                                </Centerer>
-                                {modalErrorMessage && (
-                                    <ErrorSecondaryText>{modalErrorMessage}</ErrorSecondaryText>
-                                )}
-                            </ButtonsDiv>
+                            {modalErrorMessage && (
+                                <ErrorSecondaryText>{modalErrorMessage}</ErrorSecondaryText>
+                            )}
                         </OutsideDiv>
                     </Modal>
                 </>
