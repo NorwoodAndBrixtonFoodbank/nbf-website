@@ -261,27 +261,27 @@ export type Database = {
       collection_centres: {
         Row: {
           acronym: string
-          active_time_slots: string[]
           is_delivery: boolean
           is_shown: boolean
           name: string
           primary_key: string
+          time_slots: Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
         }
         Insert: {
           acronym?: string
-          active_time_slots?: string[]
           is_delivery?: boolean
           is_shown?: boolean
           name?: string
           primary_key?: string
+          time_slots?: Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
         }
         Update: {
           acronym?: string
-          active_time_slots?: string[]
           is_delivery?: boolean
           is_shown?: boolean
           name?: string
           primary_key?: string
+          time_slots?: Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
         }
         Relationships: []
       }
@@ -985,6 +985,10 @@ export type Database = {
       role: "volunteer" | "admin" | "manager" | "staff"
     }
     CompositeTypes: {
+      collection_timeslot_type: {
+        time: string | null
+        is_active: boolean | null
+      }
       update_client_result: {
         clientid: string | null
         updatedrows: number | null
