@@ -104,9 +104,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
         return { error: null };
     };
 
-    const editListItem = async (
-        listItem: Partial<Schema["lists"]>
-    ): Promise<EditListReturn> => {
+    const editListItem = async (listItem: Partial<Schema["lists"]>): Promise<EditListReturn> => {
         const { data: returnedListData, error: updateListItemError } = await supabase
             .from("lists")
             .update(listItem)
