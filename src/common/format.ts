@@ -86,3 +86,7 @@ export const getParcelOverviewString = (
         (collectionDatetime && ` @ ${dayjs(collectionDatetime).format("DD/MM/YYYY HH:mm")}`)
     );
 };
+
+export const formatTimeStringToHoursAndMinutes = (timeString: string): string => {
+    return timeString.slice(0, 5);
+};
