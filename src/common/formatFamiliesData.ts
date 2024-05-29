@@ -37,12 +37,21 @@ const convertPlural = (value: number, description: string): string => {
     return `${value} ${description}${value !== 1 ? "s" : ""}`;
 };
 
-const getFormattedPeople = (
+export const getFormattedPeople = (
     familyData: Schema["families"][],
-    filterFunction: (person: Schema["families"]) => boolean
+    filterFunction: (person: Schema["families"]) => boolean,
+    primaryKeyNeeded: boolean
 ): Person[] => {
     const people = familyData.filter((member) => filterFunction(member));
     return people.map((person) => {
+        if (primaryKeyNeeded) {
+            return {
+                gender: person.gender,
+                birthMonth: person.birth_month,
+                birthYear: person.birth_year,
+                primaryKey: person.primary_key,
+            };
+        }
         return {
             gender: person.gender,
             birthMonth: person.birth_month,
@@ -51,8 +60,8 @@ const getFormattedPeople = (
     });
 };
 export const prepareHouseholdSummary = (familyData: Schema["families"][]): HouseholdSummary => {
-    const formattedChildren: Person[] = getFormattedPeople(familyData, isChildPerson);
-    const formattedAdults: Person[] = getFormattedPeople(familyData, isAdultPerson);
+    const formattedChildren: Person[] = getFormattedPeople(familyData, isChildPerson, false);
+    const formattedAdults: Person[] = getFormattedPeople(familyData, isAdultPerson, false);
     const householdSize = familyData.length;
     const numberBabies = familyData.filter(
         (member) => member.birth_year === getCurrentYear()
