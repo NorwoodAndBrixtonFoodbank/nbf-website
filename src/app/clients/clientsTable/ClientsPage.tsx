@@ -154,9 +154,7 @@ const ClientsPage: React.FC<{}> = () => {
                 setDeleteClientErrorMessage(getDeleteClientErrorMessage(deleteClientError));
                 return;
             }
-            router.push("/clients");
         }
-        return;
     };
 
     return (
