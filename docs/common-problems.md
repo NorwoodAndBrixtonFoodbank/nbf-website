@@ -38,6 +38,6 @@
 ```failed to start docker container: Error response from daemon: driver failed programming external connectivity on endpoint supabase_db_vauxhall-foodbank ```
 - Sometimes this can happen and usually works on re-run of the test
 
-### Module `"@snaplet/seed"' has no exported member 'createSeedClient' and other TS errors with Snaplet
+### Module '"@snaplet/seed"' has no exported member 'createSeedClient' and other TS errors with Snaplet
 - Run `npx snaplet generate`
 - Reload your IDE window
