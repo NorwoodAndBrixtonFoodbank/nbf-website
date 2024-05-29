@@ -28,7 +28,7 @@
 - Known issue
 - Cypress component tests don't cope with server components / server actions on Next.js currently
 
-### E2E tests fails locally but not on the pipeline
+### E2E tests fail locally but not on the pipeline
 - Some tests modify the database and may fail if repeatedly run
 - Tests need to be run on fresh data
 - To resolve this run `npm post_checkout; npm run build; npm run test:e2e`
