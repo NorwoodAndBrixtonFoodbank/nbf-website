@@ -2,6 +2,7 @@ import { Schema } from "@/databaseUtils";
 import { Supabase } from "@/supabaseUtils";
 import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 import { PostgrestError } from "@supabase/supabase-js";
+import { formatTimeStringToHoursAndMinutes } from "@/common/format";
 
 type CollectionCentre = Pick<
     Schema["collection_centres"],
@@ -132,6 +133,54 @@ export const getActiveCollectionCentres = async (
         },
         error: null,
     };
+};
+
+export type CollectionTimeSlotsLabelsAndValues = [string, string][];
+
+type FetchCollectionTimeSlotsResponse =
+    | {
+          data: CollectionTimeSlotsLabelsAndValues;
+          error: null;
+      }
+    | {
+          data: null;
+          error: FetchCollectionTimeSlotsError;
+      };
+
+type FetchCollectionTimeSlotsErrorType = "collectionTimeSlotsFetchFailed";
+
+export type FetchCollectionTimeSlotsError = {
+    type: FetchCollectionTimeSlotsErrorType;
+    logId: string;
+};
+
+export const getActiveTimeSlotsForCollectionCentre = async (
+    collectionCentrePrimaryKey: string,
+    supabase: Supabase
+): Promise<FetchCollectionTimeSlotsResponse> => {
+    const { data, error } = await supabase
+        .from("collection_centres")
+        .select("time_slots")
+        .eq("primary_key", collectionCentrePrimaryKey)
+        .single();
+
+    if (error || !data) {
+        const logId = await logErrorReturnLogId(
+            "Error with fetch: Collection time slots data",
+            error
+        );
+        return { data: null, error: { type: "collectionTimeSlotsFetchFailed", logId: logId } };
+    }
+
+    const activeTimeSlots: CollectionTimeSlotsLabelsAndValues = data.time_slots
+        .filter(
+            (timeSlot): timeSlot is { time: string; is_active: boolean } =>
+                timeSlot.time !== null && timeSlot.is_active !== null
+        )
+        .filter((timeSlot) => timeSlot.is_active)
+        .map((timeSlot) => [formatTimeStringToHoursAndMinutes(timeSlot.time), timeSlot.time]);
+
+    return { data: activeTimeSlots, error: null };
 };
 
 type FetchClientResponse =

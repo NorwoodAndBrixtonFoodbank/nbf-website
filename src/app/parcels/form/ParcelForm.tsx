@@ -31,7 +31,13 @@ import {
 import { Button, IconButton } from "@mui/material";
 import { Schema } from "@/databaseUtils";
 import dayjs, { Dayjs } from "dayjs";
-import { CollectionCentresLabelsAndValues, PackingSlotsLabelsAndValues } from "@/common/fetch";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import {
+    CollectionCentresLabelsAndValues,
+    CollectionTimeSlotsLabelsAndValues,
+    getActiveTimeSlotsForCollectionCentre,
+    PackingSlotsLabelsAndValues,
+} from "@/common/fetch";
 import getExpandedClientDetails, {
     ExpandedClientDetails,
 } from "@/app/clients/getExpandedClientDetails";
@@ -44,6 +50,7 @@ import DataViewer from "@/components/DataViewer/DataViewer";
 import { useTheme } from "styled-components";
 import PackingSlotsCard from "@/app/parcels/form/formSections/PackingSlotsCard";
 import { getDbDate } from "@/common/format";
+import supabase from "@/supabaseClient";
 
 export interface ParcelFields extends Fields {
     clientId: string | null;
@@ -52,7 +59,7 @@ export interface ParcelFields extends Fields {
     packingSlot: string | undefined;
     shippingMethod: string | null;
     collectionDate: string | null;
-    collectionTime: string | null;
+    collectionSlot: string | undefined;
     collectionCentre: string | null;
     lastUpdated: string | undefined;
 }
@@ -63,7 +70,7 @@ export interface ParcelErrors extends FormErrors<ParcelFields> {
     packingSlot: Errors;
     shippingMethod: Errors;
     collectionDate: Errors;
-    collectionTime: Errors;
+    collectionSlot: Errors;
     collectionCentre: Errors;
 }
 
@@ -76,7 +83,7 @@ export const initialParcelFields: ParcelFields = {
     packingSlot: "",
     shippingMethod: null,
     collectionDate: null,
-    collectionTime: null,
+    collectionSlot: "",
     collectionCentre: null,
     lastUpdated: undefined,
 };
@@ -87,7 +94,7 @@ export const initialParcelFormErrors: ParcelErrors = {
     packingSlot: Errors.initial,
     shippingMethod: Errors.initial,
     collectionDate: Errors.initial,
-    collectionTime: Errors.initial,
+    collectionSlot: Errors.initial,
     collectionCentre: Errors.initial,
 };
 
@@ -99,6 +106,7 @@ interface ParcelFormProps {
     collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues;
     packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues;
     writeParcelInfoToDatabase: WriteParcelToDatabaseFunction;
+    collectionTimeSlotsLabelsAndValues: CollectionTimeSlotsLabelsAndValues;
 }
 
 const withCollectionFormSections = [
@@ -106,9 +114,9 @@ const withCollectionFormSections = [
     PackingDateCard,
     PackingSlotsCard,
     ShippingMethodCard,
+    CollectionCentreCard,
     CollectionDateCard,
     CollectionTimeCard,
-    CollectionCentreCard,
 ];
 
 const noCollectionFormSections = [
@@ -120,7 +128,8 @@ const noCollectionFormSections = [
 
 const mergeDateAndTime = (date: string, time: string): Dayjs => {
     // dayjs objects are immutable so the setter methods return a new object
-    const dayjsTime = dayjs(time);
+    dayjs.extend(customParseFormat);
+    const dayjsTime = dayjs(time, "HH:mm");
     return dayjs(date).hour(dayjsTime.hour()).minute(dayjsTime.minute());
 };
 
@@ -159,6 +168,8 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     const [submitDisabled, setSubmitDisabled] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [clientDetails, setClientDetails] = useState<ExpandedClientDetails | null>(null);
+    const [collectionSlotsLabelsAndValues, setCollectionSlotsLabelsAndValues] =
+        useState<CollectionTimeSlotsLabelsAndValues>([]);
     const theme = useTheme();
     const clientIdForFetch = initialFields.clientId ? initialFields.clientId : clientId;
 
@@ -173,6 +184,26 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                 });
         }
     }, [clientDetails, clientIdForFetch]);
+
+    useEffect(() => {
+        const getTimeSlots = async (): Promise<void> => {
+            if (fields.collectionCentre) {
+                const { data, error } = await getActiveTimeSlotsForCollectionCentre(
+                    fields.collectionCentre,
+                    supabase
+                );
+
+                if (error) {
+                    setSubmitErrorMessage(`${error.type}. Log ID: ${error.logId}`);
+                    return;
+                }
+
+                setCollectionSlotsLabelsAndValues(data);
+            }
+        };
+
+        getTimeSlots();
+    }, [fields.collectionCentre]);
 
     const formSections =
         fields.shippingMethod === "Collection"
@@ -208,7 +239,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         if (fields.shippingMethod === "Collection") {
             collectionDateTime = mergeDateAndTime(
                 fields.collectionDate!,
-                fields.collectionTime!
+                fields.collectionSlot!
             ).toISOString();
         }
 
@@ -267,6 +298,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                             fields={fields}
                             collectionCentresLabelsAndValues={collectionCentresLabelsAndValues}
                             packingSlotsLabelsAndValues={packingSlotsLabelsAndValues}
+                            collectionTimeSlotsLabelsAndValues={collectionSlotsLabelsAndValues}
                         />
                     );
                 })}

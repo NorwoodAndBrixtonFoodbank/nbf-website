@@ -38,6 +38,7 @@ import { faShoePrints } from "@fortawesome/free-solid-svg-icons";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
 import Modal from "@/components/Modal/Modal";
 import { useTheme } from "styled-components";
+import { formatTimeStringToHoursAndMinutes } from "@/common/format";
 
 export interface CollectionCentresTableRow {
     acronym: Schema["collection_centres"]["acronym"];
@@ -90,16 +91,12 @@ function getBaseAuditLogForCollectionCentreTimeSlots(
     };
 }
 
-const getHoursAndMinutes = (timeString: string): string => {
-    return timeString.slice(0, 5);
-};
-
 const formatCollectionCentreTimeSlotDbData = (
     row: CollectionCentresTableRow
 ): FormattedTimeSlotsWithPrimaryKey => {
     const formattedTimeSlots = row.timeSlots.map((timeSlot) => {
         return {
-            time: getHoursAndMinutes(timeSlot.time !== null ? timeSlot.time : ""),
+            time: formatTimeStringToHoursAndMinutes(timeSlot.time !== null ? timeSlot.time : ""),
             isActive: timeSlot.is_active !== null ? timeSlot.is_active : true,
         };
     });
@@ -194,7 +191,7 @@ const CollectionCentresTable: React.FC = () => {
 
         const changedTimeSlotsData = timeSlotModalData.timeSlots.map((timeSlot) => {
             if (
-                getHoursAndMinutes(timeSlot.time) ===
+                formatTimeStringToHoursAndMinutes(timeSlot.time) ===
                 event.currentTarget.parentElement?.parentElement?.innerText
             ) {
                 return {

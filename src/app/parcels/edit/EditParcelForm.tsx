@@ -37,7 +37,7 @@ const prepareParcelDataForForm = (
                 ? "Delivery"
                 : "Collection",
         collectionDate: parcelData.collection_datetime,
-        collectionTime: parcelData.collection_datetime,
+        collectionSlot: parcelData.collection_datetime,
         collectionCentre: parcelData.collection_centre?.primary_key ?? null,
         lastUpdated: parcelData.last_updated,
     };
@@ -122,7 +122,7 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
         packingSlot: packingSlotIsShown ? Errors.none : Errors.invalidPackingSlot,
         shippingMethod: Errors.none,
         collectionDate: Errors.none,
-        collectionTime: Errors.none,
+        collectionSlot: Errors.none,
         collectionCentre: collectionCentreIsShown ? Errors.none : Errors.invalidCollectionCentre,
     };
 

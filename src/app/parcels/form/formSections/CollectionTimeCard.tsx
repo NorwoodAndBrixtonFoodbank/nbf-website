@@ -1,35 +1,40 @@
 import React from "react";
-import { onChangeDateOrTime, errorText } from "@/components/Form/formFunctions";
+import { errorText, valueOnChangeDropdownList } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
-import { TimePicker } from "@mui/x-date-pickers";
 import { ErrorText } from "@/components/Form/formStyling";
-import dayjs from "dayjs";
 import { ParcelCardProps } from "../ParcelForm";
+import DropdownListInput from "@/components/DataInput/DropdownListInput";
+import { CollectionTimeSlotsLabelsAndValues } from "@/common/fetch";
 
-const CollectionTimeCard: React.FC<ParcelCardProps> = ({
+interface CollectionSlotsCardProps extends ParcelCardProps {
+    collectionTimeSlotsLabelsAndValues: CollectionTimeSlotsLabelsAndValues;
+}
+
+const CollectionSlotCard: React.FC<CollectionSlotsCardProps> = ({
     errorSetter,
     fieldSetter,
     formErrors,
     fields,
+    collectionTimeSlotsLabelsAndValues,
 }) => {
     return (
         <GenericFormCard
-            title="Collection Time"
+            title="Collection Slots"
             required={true}
-            text="What time is the client collecting their parcel?"
+            text="What slot is the client collecting their parcel?"
         >
             <>
-                <TimePicker
-                    onChange={(value) => {
-                        onChangeDateOrTime(fieldSetter, errorSetter, "collectionTime", value);
-                    }}
-                    label="Time"
-                    value={fields.collectionTime ? dayjs(fields.collectionTime) : null}
+                <DropdownListInput
+                    selectLabelId="collection-slot-select-label"
+                    labelsAndValues={collectionTimeSlotsLabelsAndValues}
+                    listTitle="Collection Slot"
+                    defaultValue={fields.collectionSlot ? fields.collectionSlot : ""}
+                    onChange={valueOnChangeDropdownList(fieldSetter, errorSetter, "collectionSlot")}
                 />
-                <ErrorText>{errorText(formErrors.collectionTime)}</ErrorText>
+                <ErrorText>{errorText(formErrors.collectionSlot)}</ErrorText>
             </>
         </GenericFormCard>
     );
 };
 
-export default CollectionTimeCard;
+export default CollectionSlotCard;
