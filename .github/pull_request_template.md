@@ -21,7 +21,8 @@ If you have made any changes to the database...
   - [ ] I have modified the seed in `supabase/seed/seed.mts` if appropriate
   - [ ] If I have modified the seed, I have also generated the seed with `npm run db:generate_seed` 
   - [ ] With my final set up, I can run `npm run dev:reset_supabase` without any errors.
-  - Does this require resetting the deployed database? - YES / NO (remove as appropriate)
+  - [ ] (Just before merging the ticket) I have updated the timestamps of the new migration files so that they are after all existing migration files.
+  - [ ] If I have added constraints e.g. `set not null`, I have taken reasonable measures to ensure constraint violations do not happen when the migration occurs. 
   - [ ] I have checked that migration can happen successfully without resetting the database, doing the following.
     - Make sure you have rebased your branch onto dev or merged dev into your branch.
     - Checkout the dev branch
