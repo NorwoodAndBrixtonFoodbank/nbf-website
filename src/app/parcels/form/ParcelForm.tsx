@@ -39,7 +39,7 @@ import {
     PackingSlotsLabelsAndValues,
 } from "@/common/fetch";
 import getExpandedClientDetails, {
-    ExpandedClientDetails,
+    ExpandedClientData,
 } from "@/app/clients/getExpandedClientDetails";
 import Modal from "@/components/Modal/Modal";
 import InfoIcon from "@mui/icons-material/Info";

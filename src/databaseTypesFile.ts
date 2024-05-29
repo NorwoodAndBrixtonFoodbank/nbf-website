@@ -340,19 +340,22 @@ export type Database = {
       }
       families: {
         Row: {
-          age: number | null
+          birth_month: number | null
+          birth_year: number
           family_id: string
           gender: Database["public"]["Enums"]["gender"]
           primary_key: string
         }
         Insert: {
-          age?: number | null
+          birth_month?: number | null
+          birth_year: number
           family_id: string
           gender?: Database["public"]["Enums"]["gender"]
           primary_key?: string
         }
         Update: {
-          age?: number | null
+          birth_month?: number | null
+          birth_year?: number
           family_id?: string
           gender?: Database["public"]["Enums"]["gender"]
           primary_key?: string
@@ -949,7 +952,7 @@ export type Database = {
         }
         Returns: undefined
       }
-      insertClientAndTheirFamily: {
+      insert_client_and_family: {
         Args: {
           clientrecord: Json
           familymembers: Json
