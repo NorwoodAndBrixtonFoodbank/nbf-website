@@ -269,7 +269,7 @@ export type Database = {
         }
         Insert: {
           acronym?: string
-          active_time_slots: string[]
+          active_time_slots?: string[]
           is_delivery?: boolean
           is_shown?: boolean
           name?: string
