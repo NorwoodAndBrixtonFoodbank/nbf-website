@@ -2,11 +2,16 @@ import supabase from "@/supabaseClient";
 import { Tables } from "@/databaseTypesFile";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { PostgrestError } from "@supabase/supabase-js";
-import { CollectionCentresTableRow } from "@/app/admin/collectionCentresTable/CollectionCentresTable";
+import {
+    CollectionCentresTableRow,
+    FormattedTimeSlot,
+    FormattedTimeSlotsWithPrimaryKey,
+} from "@/app/admin/collectionCentresTable/CollectionCentresTable";
 import { Schema } from "@/databaseUtils";
 
 type DbCollectionCentre = Tables<"collection_centres">;
 type NewDbCollectionCentre = Omit<DbCollectionCentre, "primary_key">;
+type DbCollectionCentreTimeSlots = Schema["collection_centres"]["time_slots"];
 
 type FetchCollectionCentresResult =
     | {
@@ -18,24 +23,24 @@ type FetchCollectionCentresResult =
           error: { type: "failedToFetchCollectionCentres"; logId: string };
       };
 
-export const defaultCollectionTimeSlots: Schema["collection_centres"]["active_time_slots"] = [
-    "10:00:00",
-    "10:15:00",
-    "10:30:00",
-    "10:45:00",
-    "11:00:00",
-    "11:15:00",
-    "11:30:00",
-    "11:45:00",
-    "12:00:00",
-    "12:15:00",
-    "12:30:00",
-    "12:45:00",
-    "13:00:00",
-    "13:15:00",
-    "13:30:00",
-    "13:45:00",
-    "14:00:00",
+export const defaultCollectionTimeSlots: Schema["collection_centres"]["time_slots"] = [
+    { time: "10:00:00", is_active: true },
+    { time: "10:15:00", is_active: true },
+    { time: "10:30:00", is_active: true },
+    { time: "10:45:00", is_active: true },
+    { time: "11:00:00", is_active: true },
+    { time: "11:15:00", is_active: true },
+    { time: "11:30:00", is_active: true },
+    { time: "11:45:00", is_active: true },
+    { time: "12:00:00", is_active: true },
+    { time: "12:15:00", is_active: true },
+    { time: "12:30:00", is_active: true },
+    { time: "12:45:00", is_active: true },
+    { time: "13:00:00", is_active: true },
+    { time: "13:15:00", is_active: true },
+    { time: "13:30:00", is_active: true },
+    { time: "13:45:00", is_active: true },
+    { time: "14:00:00", is_active: true },
 ];
 
 export const fetchCollectionCentresForTable = async (): Promise<FetchCollectionCentresResult> => {
@@ -52,12 +57,20 @@ export const fetchCollectionCentresForTable = async (): Promise<FetchCollectionC
             id: row.primary_key,
             isShown: row.is_shown,
             isDelivery: row.is_delivery,
-            activeTimeSlots: row.active_time_slots,
+            timeSlots: row.time_slots,
             isNew: false,
         })
     );
 
     return { data: formattedData, error: null };
+};
+
+const formatTimeSlotToDBCollectionCentreTimeSlot = (
+    timeSlotData: FormattedTimeSlot[]
+): DbCollectionCentreTimeSlots => {
+    return timeSlotData.map((timeSlot) => {
+        return { time: timeSlot.time, is_active: timeSlot.isActive };
+    });
 };
 
 const formatExistingRowToDBCollectionCentre = (
@@ -69,7 +82,7 @@ const formatExistingRowToDBCollectionCentre = (
         acronym: row.acronym,
         is_shown: row.isShown,
         is_delivery: row.isDelivery,
-        active_time_slots: row.activeTimeSlots,
+        time_slots: row.timeSlots,
     };
 };
 
@@ -81,7 +94,7 @@ const formatNewRowToDBCollectionCentre = (
         acronym: newRow.acronym,
         is_shown: newRow.isShown,
         is_delivery: newRow.isDelivery,
-        active_time_slots: newRow.activeTimeSlots,
+        time_slots: newRow.timeSlots,
     };
 };
 
@@ -137,6 +150,29 @@ export const updateDbCollectionCentre = async (
 
     if (error) {
         const logId = await logErrorReturnLogId("Failed to update collection centre", {
+            error,
+            newCollectionCentreData: processedData,
+        });
+
+        return { error: { dbError: error, logId } };
+    }
+
+    return { error: null };
+};
+
+export const updateDbCollectionCentreTimeSlots = async (
+    timeSlotsWithPrimaryKey: FormattedTimeSlotsWithPrimaryKey
+): Promise<UpdateCollectionCentreResult> => {
+    const processedData = formatTimeSlotToDBCollectionCentreTimeSlot(
+        timeSlotsWithPrimaryKey.timeSlots
+    );
+    const { error } = await supabase
+        .from("collection_centres")
+        .update({ time_slots: processedData })
+        .eq("primary_key", timeSlotsWithPrimaryKey.primaryKey);
+
+    if (error) {
+        const logId = await logErrorReturnLogId("Failed to update collection centre time slots", {
             error,
             newCollectionCentreData: processedData,
         });

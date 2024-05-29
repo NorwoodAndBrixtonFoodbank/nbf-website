@@ -29,6 +29,7 @@ import {
     defaultCollectionTimeSlots,
     UpdateCollectionCentreResult,
     updateDbCollectionCentre,
+    updateDbCollectionCentreTimeSlots,
 } from "@/app/admin/collectionCentresTable/CollectionCentreActions";
 import { EditToolbar } from "@/app/admin/collectionCentresTable/CollectionCentresTableToolbar";
 import Button from "@mui/material/Button";
@@ -44,8 +45,18 @@ export interface CollectionCentresTableRow {
     id: Schema["collection_centres"]["primary_key"];
     isDelivery: Schema["collection_centres"]["is_delivery"];
     isShown: Schema["collection_centres"]["is_shown"];
-    activeTimeSlots: Schema["collection_centres"]["active_time_slots"];
+    timeSlots: Schema["collection_centres"]["time_slots"];
     isNew: boolean;
+}
+
+export interface FormattedTimeSlot {
+    time: string;
+    isActive: boolean;
+}
+
+export interface FormattedTimeSlotsWithPrimaryKey {
+    primaryKey: Schema["collection_centres"]["primary_key"];
+    timeSlots: FormattedTimeSlot[];
 }
 
 function getBaseAuditLogForCollectionCentreAction(
@@ -66,8 +77,37 @@ function getBaseAuditLogForCollectionCentreAction(
     };
 }
 
+function getBaseAuditLogForCollectionCentreTimeSlots(
+    action: string,
+    timeSlotsWithPrimaryKey: FormattedTimeSlotsWithPrimaryKey
+): Pick<AuditLog, "action" | "content" | "collectionCentreId"> {
+    return {
+        action,
+        content: {
+            timeSlots: "Hello",
+        },
+        collectionCentreId: timeSlotsWithPrimaryKey.primaryKey,
+    };
+}
+
 const getHoursAndMinutes = (timeString: string): string => {
     return timeString.slice(0, 5);
+};
+
+const formatCollectionCentreTimeSlotDbData = (
+    row: CollectionCentresTableRow
+): FormattedTimeSlotsWithPrimaryKey => {
+    const formattedTimeSlots = row.timeSlots.map((timeSlot) => {
+        return {
+            time: getHoursAndMinutes(timeSlot.time !== null ? timeSlot.time : ""),
+            isActive: timeSlot.is_active !== null ? timeSlot.is_active : true,
+        };
+    });
+
+    return {
+        primaryKey: row.id,
+        timeSlots: formattedTimeSlots,
+    };
 };
 
 const CollectionCentresTable: React.FC = () => {
@@ -78,9 +118,8 @@ const CollectionCentresTable: React.FC = () => {
     const [existingRowData, setExistingRowData] = useState<CollectionCentresTableRow | null>(null);
     const [timeSlotModalIsOpen, setTimeSlotModalIsOpen] = useState<boolean>(false);
     const [timeSlotModalErrorMessage, setTimeSlotModalErrorMessage] = useState("");
-    const [timeSlotModalData, setTimeSlotModalData] = useState<
-        Schema["collection_centres"]["active_time_slots"] | null
-    >(null);
+    const [timeSlotModalData, setTimeSlotModalData] =
+        useState<FormattedTimeSlotsWithPrimaryKey | null>(null);
     const theme = useTheme();
 
     const getCollectionCentresForTable = useCallback(async () => {
@@ -97,6 +136,10 @@ const CollectionCentresTable: React.FC = () => {
     useEffect(() => {
         void getCollectionCentresForTable();
     }, [getCollectionCentresForTable]);
+
+    useEffect(() => {
+        console.log(timeSlotModalData);
+    }, [timeSlotModalData]);
 
     useEffect(() => {
         const subscriptionChannel = supabase
@@ -117,9 +160,62 @@ const CollectionCentresTable: React.FC = () => {
         };
     }, [getCollectionCentresForTable]);
 
-    useEffect(() => {
-        console.log(timeSlotModalData);
-    }, [timeSlotModalData]);
+    const handleModalSaveClick = async (): Promise<void> => {
+        if (timeSlotModalData === null) {
+            return;
+        }
+        const { error: updateTimeSlotError } =
+            await updateDbCollectionCentreTimeSlots(timeSlotModalData);
+        const baseAuditLog = getBaseAuditLogForCollectionCentreTimeSlots(
+            "update a collection centre",
+            timeSlotModalData
+        );
+
+        if (updateTimeSlotError) {
+            setTimeSlotModalErrorMessage(
+                `Failed to update the collection centre time slots. Log ID: ${updateTimeSlotError.logId}`
+            );
+            void sendAuditLog({
+                ...baseAuditLog,
+                wasSuccess: false,
+                logId: updateTimeSlotError.logId,
+            });
+        }
+
+        void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
+        setTimeSlotModalIsOpen(false);
+        getCollectionCentresForTable();
+    };
+
+    const handleTimeSlotCheckBoxChange = (event: React.SyntheticEvent<Element, Event>): void => {
+        if (!timeSlotModalData) {
+            return;
+        }
+
+        const changedTimeSlotsData = timeSlotModalData.timeSlots.map((timeSlot) => {
+            if (
+                getHoursAndMinutes(timeSlot.time) ===
+                event.currentTarget.parentElement?.parentElement?.innerText
+            ) {
+                return {
+                    time: timeSlot.time,
+                    isActive: (timeSlot.isActive = !timeSlot.isActive),
+                };
+            } else {
+                return {
+                    time: timeSlot.time,
+                    isActive: timeSlot.isActive,
+                };
+            }
+        });
+
+        const changedTimeSlotsDataWithPrimaryKey: FormattedTimeSlotsWithPrimaryKey = {
+            primaryKey: timeSlotModalData.primaryKey,
+            timeSlots: changedTimeSlotsData,
+        };
+
+        setTimeSlotModalData(changedTimeSlotsDataWithPrimaryKey);
+    };
 
     const handleSaveClick = (id: GridRowId) => () => {
         setRowModesModel((currentValue) => ({
@@ -198,7 +294,7 @@ const CollectionCentresTable: React.FC = () => {
             const { data: newCollectionCentreData, error: newCollectionCentreError } =
                 await addNewCollectionCentre({
                     ...newRow,
-                    activeTimeSlots: defaultCollectionTimeSlots,
+                    timeSlots: defaultCollectionTimeSlots,
                 });
             if (newCollectionCentreError) {
                 return { ...newRow, name: "", acronym: "", isShown: false };
@@ -284,7 +380,8 @@ const CollectionCentresTable: React.FC = () => {
             renderCell: (params) => {
                 const handleEditCollectionCentreTimeSlot = (): void => {
                     const currentRow = params.row;
-                    setTimeSlotModalData(currentRow.activeTimeSlots);
+                    const formattedTimeSlotData = formatCollectionCentreTimeSlotDbData(currentRow);
+                    setTimeSlotModalData(formattedTimeSlotData);
                     setTimeSlotModalIsOpen(true);
                 };
 
@@ -388,35 +485,24 @@ const CollectionCentresTable: React.FC = () => {
                     headerId="expandedCollectionCentreTimeSlotsModal"
                     footer={
                         <Centerer>
-                            <Button>Save</Button>
+                            <Button onClick={handleModalSaveClick}>Save</Button>
                         </Centerer>
                     }
                 >
                     <OutsideDiv>
                         <ContentDiv>
                             <FormGroup>
-                                {defaultCollectionTimeSlots.map((defaultTimeSlot) => {
-                                    if (
-                                        timeSlotModalData &&
-                                        timeSlotModalData.includes(defaultTimeSlot)
-                                    ) {
+                                {timeSlotModalData &&
+                                    timeSlotModalData.timeSlots.map((timeSlot) => {
                                         return (
                                             <FormControlLabel
-                                                control={<Checkbox checked={true} />}
-                                                label={getHoursAndMinutes(defaultTimeSlot)}
-                                                key={defaultTimeSlot}
+                                                control={<Checkbox checked={timeSlot.isActive} />}
+                                                label={timeSlot.time}
+                                                onChange={handleTimeSlotCheckBoxChange}
+                                                key={timeSlot.time}
                                             />
                                         );
-                                    } else {
-                                        return (
-                                            <FormControlLabel
-                                                control={<Checkbox checked={false} />}
-                                                label={getHoursAndMinutes(defaultTimeSlot)}
-                                                key={defaultTimeSlot}
-                                            />
-                                        );
-                                    }
-                                })}
+                                    })}
                             </FormGroup>
                         </ContentDiv>
                         <ButtonsDiv>
