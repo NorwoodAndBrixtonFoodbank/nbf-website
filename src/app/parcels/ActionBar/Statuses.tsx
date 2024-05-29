@@ -12,7 +12,6 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { sendAuditLog } from "@/server/auditLog";
 import { ParcelStatus } from "@/databaseUtils";
 import { fetchParcelStatuses } from "@/app/parcels/parcelsTable/fetchParcelTableData";
-import { event } from "cypress/types/jquery";
 
 export type StatusType = ParcelStatus[][number];
 

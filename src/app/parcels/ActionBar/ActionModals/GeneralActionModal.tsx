@@ -58,7 +58,7 @@ export const WarningMessage = styled.div`
     display: flex;
     justify-content: center;
     color: red;
-`
+`;
 
 const GeneralActionModal: React.FC<GeneralActionModalProps> = (props) => {
     return (

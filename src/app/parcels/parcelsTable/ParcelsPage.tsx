@@ -248,7 +248,7 @@ const ParcelsPage: React.FC<{}> = () => {
         parcels: ParcelsTableRow[],
         newStatus: StatusType,
         statusEventData?: string,
-        action?: string,
+        action?: string
     ): Promise<SaveParcelStatusResult> => {
         const { error } = await saveParcelStatus(
             parcels.map((parcel) => parcel.parcelId),
