@@ -4,7 +4,7 @@ import React from "react";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
 import PdfButton from "@/components/PdfButton/PdfButton";
-import DriverOverviewPdf, { DriverOverviewTableData } from "@/pdf/DriverOverview/DriverOverviewPdf";
+import DriverOverviewPdf, { DriverOverviewTablesData, DriverOverviewRowData } from "@/pdf/DriverOverview/DriverOverviewPdf";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { displayNameForDeletedClient, formatDateToDate } from "@/common/format";
 import { Dayjs } from "dayjs";
@@ -14,13 +14,13 @@ import { PdfDataFetchResponse } from "../common";
 interface DriverOverviewData {
     driverName: string;
     date: Date;
-    tableData: DriverOverviewTableData[][];
+    tableData: DriverOverviewTablesData;
     message: string;
 }
 
 const compareDriverOverviewTableData = (
-    first: DriverOverviewTableData,
-    second: DriverOverviewTableData
+    first: DriverOverviewRowData,
+    second: DriverOverviewRowData
 ): number => {
     if (first.name < second.name) {
         return -1;
@@ -98,7 +98,7 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDel
 
 type DriverPdfResponse =
     | {
-          data: DriverOverviewTableData[][];
+          data: DriverOverviewTablesData;
           error: null;
       }
     | {
@@ -108,7 +108,7 @@ type DriverPdfResponse =
 
 type DriverPdfErrorType = ParcelsForDeliveryErrorType;
 
-const pushRowInfo = (array: DriverOverviewTableData[], parcel: ParcelForDelivery): undefined => {
+const pushRowInfo = (array: DriverOverviewRowData[], parcel: ParcelForDelivery): undefined => {
     const client = parcel.client;
     const clientIsActive = parcel.client.is_active;
     array.push({
@@ -133,13 +133,12 @@ const pushRowInfo = (array: DriverOverviewTableData[], parcel: ParcelForDelivery
 };
 
 const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse> => {
-    const clientInformation = [];
     const { data: parcels, error: parcelsError } = await getParcelsForDelivery(parcelIds);
     if (parcelsError) {
         return { data: null, error: parcelsError };
     }
-    const collections: DriverOverviewTableData[] = [];
-    const deliveries: DriverOverviewTableData[] = [];
+    const collections: DriverOverviewRowData[] = [];
+    const deliveries: DriverOverviewRowData[] = [];
 
     for (const parcel of parcels) {
         if (parcel.collection_centre?.is_delivery) {
@@ -148,8 +147,10 @@ const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse>
             pushRowInfo(collections, parcel);
         }
     }
-    clientInformation.push(collections, deliveries);
-    clientInformation.map((category) => category.sort(compareDriverOverviewTableData));
+    const clientInformation: DriverOverviewTablesData = {
+        collections: collections.sort(compareDriverOverviewTableData),
+        deliveries: deliveries.sort(compareDriverOverviewTableData),
+    };
     return { data: clientInformation, error: null };
 };
 

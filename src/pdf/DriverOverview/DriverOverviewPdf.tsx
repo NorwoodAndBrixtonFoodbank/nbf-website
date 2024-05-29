@@ -6,7 +6,7 @@ import { displayPostcodeForHomelessClient } from "@/common/format";
 import { faTruck, faShoePrints } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIconPdfComponent from "../FontAwesomeIconPdfComponent";
 
-export interface DriverOverviewTableData {
+export interface DriverOverviewRowData {
     name: string;
     address: {
         line1: string;
@@ -29,7 +29,7 @@ export interface DriverOverviewTableData {
 export interface DriverOverviewCardDataProps {
     driverName: string;
     date: Date;
-    tableData: DriverOverviewTableData[][];
+    tableData: DriverOverviewTablesData;
     message: string;
 }
 
@@ -38,6 +38,11 @@ interface DriverOverviewCardProps {
 }
 
 type CreateHeaderProps = "Delivery" | "Collection";
+
+export type DriverOverviewTablesData = {
+    collections: DriverOverviewRowData[];
+    deliveries: DriverOverviewRowData[];
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -165,7 +170,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
         );
     };
 
-    const createRow = (rowData: DriverOverviewTableData, index: number): React.JSX.Element => {
+    const createRow = (rowData: DriverOverviewRowData, index: number): React.JSX.Element => {
         return (
             // eslint-disable-next-line react/no-array-index-key
             <View key={index} style={[styles.tableRow, styles.flexRow]} wrap={false}>
@@ -211,8 +216,8 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
 
     const deliveriesHeader = createHeader("Delivery");
     const collectionsHeader = createHeader("Collection");
-    const collections = data.tableData[0].map(createRow);
-    const deliveries = data.tableData[1].map(createRow);
+    const collections = data.tableData.collections.map(createRow);
+    const deliveries = data.tableData.deliveries.map(createRow);
 
     return (
         <Document>
