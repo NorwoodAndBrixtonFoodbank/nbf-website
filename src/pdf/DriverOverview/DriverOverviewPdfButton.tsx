@@ -21,19 +21,6 @@ interface DriverOverviewData {
     message: string;
 }
 
-const compareDriverOverviewTableData = (
-    first: DriverOverviewRowData,
-    second: DriverOverviewRowData
-): number => {
-    if (first.name < second.name) {
-        return -1;
-    }
-    if (first.name > second.name) {
-        return 1;
-    }
-    return 0;
-};
-
 type ParcelForDelivery = Schema["parcels"] & {
     client: Schema["clients"];
     collection_centre: Schema["collection_centres"];
@@ -60,6 +47,8 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDel
         .limit(1, { foreignTable: "clients" })
         .limit(1, { foreignTable: "collection_centres" })
         .eq("events.new_parcel_status", "Shipping Labels Downloaded")
+        .order("name", { foreignTable: "collection_centres"})
+        .order("address_postcode", { foreignTable: "clients" })
         .order("timestamp", { foreignTable: "events", ascending: false });
 
     if (error) {
@@ -150,8 +139,8 @@ const transformParcelDataToClientInformation = (
     }
 
     return {
-        collections: collections.sort(compareDriverOverviewTableData),
-        deliveries: deliveries.sort(compareDriverOverviewTableData),
+        collections: collections,
+        deliveries: deliveries,
     };
 };
 
