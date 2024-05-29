@@ -105,7 +105,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
     };
 
     const editListItem = async (
-        listItem: Partial<Schema["lists"]> & { primary_key: Schema["lists"]["primary_key"] }
+        listItem: Partial<Schema["lists"]>
     ): Promise<EditListReturn> => {
         const { data: returnedListData, error: updateListItemError } = await supabase
             .from("lists")
@@ -150,11 +150,8 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
                 }
                 return;
             }
-        } else if ("primary_key" in toSubmit && typeof toSubmit.primary_key === "string") {
-            const { error } = await editListItem({
-                ...toSubmit,
-                primary_key: toSubmit.primary_key,
-            });
+        } else {
+            const { error } = await editListItem(toSubmit);
             if (error) {
                 switch (error.type) {
                     case "failedToEditListItem":

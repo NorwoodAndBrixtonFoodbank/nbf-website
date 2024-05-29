@@ -54,7 +54,7 @@ export interface ParcelFields extends Fields {
     collectionDate: string | null;
     collectionTime: string | null;
     collectionCentre: string | null;
-    lastUpdated: string;
+    lastUpdated: string | undefined;
 }
 
 export interface ParcelErrors extends FormErrors<ParcelFields> {
@@ -78,7 +78,7 @@ export const initialParcelFields: ParcelFields = {
     collectionDate: null,
     collectionTime: null,
     collectionCentre: null,
-    lastUpdated: "",
+    lastUpdated: undefined,
 };
 
 export const initialParcelFormErrors: ParcelErrors = {

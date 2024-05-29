@@ -7,7 +7,7 @@ export type WriteParcelToDatabaseFunction = UpdateParcel | InsertParcel;
 export type WriteParcelToDatabaseErrors = InsertParcelErrors | UpdateParcelErrors;
 
 type ParcelDatabaseInsertRecord = InsertSchema["parcels"];
-type ParcelDatabaseUpdateRecord = UpdateSchema["parcels"] & { last_updated: string };
+type ParcelDatabaseUpdateRecord = UpdateSchema["parcels"];
 
 type InsertParcelErrors = "failedToInsertParcel";
 type InsertParcelReturnType = {
