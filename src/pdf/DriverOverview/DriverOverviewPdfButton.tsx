@@ -72,7 +72,7 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDel
         .in("primary_key", parcelIds)
         .limit(1, { foreignTable: "clients" })
         .limit(1, { foreignTable: "collection_centres" })
-        .eq("events.new_parcel_status", "Shipping Labels Downloaded")
+        .eq("events.new_parcel_status", "Shipping Labels Downloaded");
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Parcels", error);
