@@ -40,7 +40,7 @@ type CreateHeaderProps = "Delivery" | "Collection";
 export type DriverOverviewTablesData = {
     collections: DriverOverviewRowData[];
     deliveries: DriverOverviewRowData[];
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -236,7 +236,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                         COMPLETION OF DELIVERIES
                     </Text>
                 </View>
-                {deliveries.length ?
+                {deliveries.length ? (
                     <View style={styles.tableContainer}>
                         <View
                             style={[
@@ -255,10 +255,8 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                         </View>
                         <View style={[styles.tableSection, styles.flexColumn]}>{deliveries}</View>
                     </View>
-                    :
-                    null
-                }
-                {collections.length ?
+                ) : null}
+                {collections.length ? (
                     <View style={styles.tableContainer}>
                         <View
                             style={[
@@ -277,9 +275,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                         </View>
                         <View style={[styles.tableSection, styles.flexColumn]}>{collections}</View>
                     </View>
-                    :
-                    null
-                } 
+                ) : null}
             </Page>
         </Document>
     );

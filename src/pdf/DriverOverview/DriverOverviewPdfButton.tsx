@@ -4,7 +4,10 @@ import React from "react";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
 import PdfButton from "@/components/PdfButton/PdfButton";
-import DriverOverviewPdf, { DriverOverviewTablesData, DriverOverviewRowData } from "@/pdf/DriverOverview/DriverOverviewPdf";
+import DriverOverviewPdf, {
+    DriverOverviewTablesData,
+    DriverOverviewRowData,
+} from "@/pdf/DriverOverview/DriverOverviewPdf";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { displayNameForDeletedClient, formatDateToDate } from "@/common/format";
 import { Dayjs } from "dayjs";
