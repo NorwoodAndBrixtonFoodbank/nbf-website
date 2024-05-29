@@ -75,7 +75,7 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
 
     const [isDateValid, setIsDateValid] = useState(true);
 
-    const isInputValid = isDateValid && driverName && driverName.length > 0;
+    const isInputValid = isDateValid && driverName;
 
     const onDriverNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         if (event.target.value === "") {

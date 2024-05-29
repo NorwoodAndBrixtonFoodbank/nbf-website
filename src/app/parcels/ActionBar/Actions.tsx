@@ -5,6 +5,7 @@ import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import { ParcelsTableRow } from "../parcelsTable/types";
+import { StatusType } from "./Statuses";
 import { ActionModalProps } from "./ActionModals/GeneralActionModal";
 import DayOverviewModal from "./ActionModals/DayOverviewModal";
 import DeleteParcelModal from "./ActionModals/DeleteParcelModal";
@@ -15,7 +16,6 @@ import ShoppingListModal from "./ActionModals/ShoppingListModal";
 import { UpdateParcelStatuses } from "./ActionAndStatusBar";
 import { allRoles, organisationRoles, RoleUpdateContext } from "@/app/roles";
 import { UserRole } from "@/databaseUtils";
-import { StatusType } from "./Statuses";
 
 const isNotAtLeastOne = (value: number): boolean => {
     return value < 1;
