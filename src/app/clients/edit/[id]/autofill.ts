@@ -15,9 +15,9 @@ const autofill = (
     clientData: Schema["clients"],
     familyData: Schema["families"][]
 ): ClientFields => {
-    const children = getFormattedPeople(familyData, isChildPerson, true);
+    const children = getFormattedPeople(familyData, isChildPerson);
 
-    const adults = getFormattedPeople(familyData, isAdultPerson, true);
+    const adults = getFormattedPeople(familyData, isAdultPerson);
 
     const { nappySize, extraInformation } = processExtraInformation(
         clientData.extra_information ?? ""
