@@ -80,6 +80,9 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         paddingTop: 5,
     },
+    tableContainer: {
+        width: "100%",
+    },
     tableSection: {
         width: "100%",
         borderTop: "none",
@@ -230,20 +233,50 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                         COMPLETION OF DELIVERIES
                     </Text>
                 </View>
-                <View style={[styles.h2text, styles.collectionOrDeliveryHeader, styles.flexRow]}>
-                    <Text style={styles.collectionOrDeliveryHeader}>Deliveries</Text>
-                    <FontAwesomeIconPdfComponent faIcon={faTruck}></FontAwesomeIconPdfComponent>
-                </View>
-                <View style={[styles.flexColumn, { width: "100%" }]}>{deliveriesHeader}</View>
-                <View style={[styles.tableSection, styles.flexColumn]}>{deliveries}</View>
-                <View style={[styles.h2text, styles.collectionOrDeliveryHeader, styles.flexRow]}>
-                    <Text style={[styles.collectionOrDeliveryHeader]}>Collections</Text>
-                    <FontAwesomeIconPdfComponent
-                        faIcon={faShoePrints}
-                    ></FontAwesomeIconPdfComponent>
-                </View>
-                <View style={[styles.flexColumn, { width: "100%" }]}>{collectionsHeader}</View>
-                <View style={[styles.tableSection, styles.flexColumn]}>{collections}</View>
+                {deliveries.length ?
+                    <View style={styles.tableContainer}>
+                        <View
+                            style={[
+                                styles.h2text,
+                                styles.collectionOrDeliveryHeader,
+                                styles.flexRow,
+                            ]}
+                        >
+                            <Text style={styles.collectionOrDeliveryHeader}>Deliveries</Text>
+                            <FontAwesomeIconPdfComponent
+                                faIcon={faTruck}
+                            ></FontAwesomeIconPdfComponent>
+                        </View>
+                        <View style={[styles.flexColumn, { width: "100%" }]}>
+                            {deliveriesHeader}
+                        </View>
+                        <View style={[styles.tableSection, styles.flexColumn]}>{deliveries}</View>
+                    </View>
+                    :
+                    null
+                }
+                {collections.length ?
+                    <View style={styles.tableContainer}>
+                        <View
+                            style={[
+                                styles.h2text,
+                                styles.collectionOrDeliveryHeader,
+                                styles.flexRow,
+                            ]}
+                        >
+                            <Text style={[styles.collectionOrDeliveryHeader]}>Collections</Text>
+                            <FontAwesomeIconPdfComponent
+                                faIcon={faShoePrints}
+                            ></FontAwesomeIconPdfComponent>
+                        </View>
+                        <View style={[styles.flexColumn, { width: "100%" }]}>
+                            {collectionsHeader}
+                        </View>
+                        <View style={[styles.tableSection, styles.flexColumn]}>{collections}</View>
+                    </View>
+                    :
+                    null
+                } 
             </Page>
         </Document>
     );
