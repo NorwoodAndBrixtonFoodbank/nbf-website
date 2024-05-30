@@ -1,5 +1,6 @@
 import { Json } from "@/databaseTypesFile";
 import dayjs, { Dayjs } from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
 export const displayPostcodeForHomelessClient = "NFA";
 
@@ -88,5 +89,9 @@ export const getParcelOverviewString = (
 };
 
 export const formatTimeStringToHoursAndMinutes = (timeString: string): string => {
-    return timeString.slice(0, 5);
+    dayjs.extend(customParseFormat);
+    const dayjsTime = dayjs(timeString, "HH:mm:ss");
+    const hours = dayjsTime.hour();
+    const minutes = dayjsTime.minute() < 10 ? `0${dayjsTime.minute()}` : dayjsTime.minute();
+    return `${hours}:${minutes}`;
 };
