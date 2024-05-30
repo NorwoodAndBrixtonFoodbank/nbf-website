@@ -79,11 +79,8 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
     const isInputValid = isDateValid && driverName;
 
     const onDriverNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        if (event.target.value.trim().length === 0) {
-            setDriverName(null);
-        } else {
-            setDriverName(event.target.value.trim());
-        }
+        const trimmedDriverName = event.target.value.trim();
+        setDriverName(trimmedDriverName.length !== 0 ? trimmedDriverName : null);
     };
     const onDateChange = (newDate: Dayjs | null): void => {
         setDate(newDate!);
