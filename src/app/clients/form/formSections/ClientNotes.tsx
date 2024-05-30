@@ -9,10 +9,10 @@ const ClientNotesCard: React.FC<ClientCardProps> = ({ errorSetter, fieldSetter, 
         <GenericFormCard
             title="Notes"
             required={false}
-            text="Any helpful notes for this client can be stored here"
+            text="Any helpful notes for this client can be stored here."
         >
             <FreeFormTextInput
-                label="For example, received Microwave on 14/05/2024."
+                label="For example, received Microwave on 14/05/2024"
                 defaultValue={getDefaultTextValue(fields, "notes")}
                 onChange={onChangeText(fieldSetter, errorSetter, "notes")}
                 minRows={5}

@@ -50,7 +50,6 @@ type EditConfig = { editMode: true; clientID: string } | { editMode: false };
 
 export interface ClientFields extends Fields {
     fullName: string;
-    notes: string | null;
     phoneNumber: string;
     addressLine1: string;
     addressLine2: string;
@@ -72,6 +71,7 @@ export interface ClientFields extends Fields {
     attentionFlag: boolean;
     signpostingCall: boolean;
     lastUpdated: string | undefined;
+    notes: string | null;
 }
 
 export interface ClientErrors extends FormErrors<ClientFields> {
@@ -89,7 +89,6 @@ export type ClientErrorSetter = Setter<ClientErrors>;
 export type ClientCardProps = CardProps<ClientFields, ClientErrors>;
 
 const formSections = [
-    ClientNotesCard,
     FullNameCard,
     PhoneNumberCard,
     AddressCard,
@@ -104,6 +103,7 @@ const formSections = [
     AttentionFlagCard,
     SignpostingCallCard,
     ExtraInformationCard,
+    ClientNotesCard,
 ];
 
 const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editConfig }) => {
