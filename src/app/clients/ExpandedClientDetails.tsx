@@ -41,7 +41,13 @@ const ExpandedClientDetails = async ({ clientId }: Props): Promise<React.ReactEl
                 <DataViewer
                     data={{ ...expandedClientDetails }}
                     fieldsToHide={["primaryKey"]}
-                    editableFields={[{ key: "notes", onChange: onChangeNotes }]}
+                    editableFields={{
+                        ["notes"]: {
+                            onChange: onChangeNotes,
+                            onCancel: onCancelNotes,
+                            onSave: onSaveNotes,
+                        },
+                    }}
                 />
             ) : (
                 <DeletedText>Client has been deleted.</DeletedText>
