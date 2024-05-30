@@ -42,6 +42,7 @@ import {
 } from "./format";
 import { PreTableControls, parcelTableColumnStyleOptions } from "./styles";
 import { DbParcelRow } from "@/databaseUtils";
+import { Dayjs } from "dayjs";
 
 const ParcelsPage: React.FC<{}> = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -248,14 +249,16 @@ const ParcelsPage: React.FC<{}> = () => {
         parcels: ParcelsTableRow[],
         newStatus: StatusType,
         statusEventData?: string,
-        action?: string
+        action?: string,
+        date?: Dayjs
     ): Promise<SaveParcelStatusResult> => {
         const { error } = await saveParcelStatus(
             parcels.map((parcel) => parcel.parcelId),
             newStatus,
             statusEventData,
             parcels.map((parcel) => parcel.clientId),
-            action
+            action,
+            date
         );
         setCheckedParcelIds([]);
         return { error: error };

@@ -21,18 +21,22 @@ import { parcelTableHeaderKeysAndLabels } from "./headers";
 import { DbParcelRow } from "@/databaseUtils";
 import { fullNameSearch, phoneSearch, postcodeSearch } from "@/common/databaseFilters";
 
-const parcelsFullNameSearch: ParcelsFilterMethod<string> =
-    fullNameSearch<DbParcelRow>("client_full_name");
+const parcelsFullNameSearch: ParcelsFilterMethod<string> = fullNameSearch<DbParcelRow>(
+    "client_full_name",
+    "client_is_active"
+);
 
-const parcelsPostcodeSearch: ParcelsFilterMethod<string> =
-    postcodeSearch<DbParcelRow>("client_address_postcode");
+const parcelsPostcodeSearch: ParcelsFilterMethod<string> = postcodeSearch<DbParcelRow>(
+    "client_address_postcode",
+    "client_is_active"
+);
 
 const familySearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "") {
         return query;
     }
     if (state === "-") {
-        return query.eq("family_count", 0);
+        return query.eq("client_is_active", false);
     }
     if ("single".includes(state.toLowerCase())) {
         return query.lte("family_count", 1);
@@ -53,8 +57,10 @@ const familySearch: ParcelsFilterMethod<string> = (query, state) => {
     return query.eq("family_count", Number(state));
 };
 
-const parcelsPhoneSearch: ParcelsFilterMethod<string> =
-    phoneSearch<DbParcelRow>("client_phone_number");
+const parcelsPhoneSearch: ParcelsFilterMethod<string> = phoneSearch<DbParcelRow>(
+    "client_phone_number",
+    "client_is_active"
+);
 
 const voucherSearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "?") {

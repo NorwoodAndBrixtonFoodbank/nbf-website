@@ -74,7 +74,7 @@ const availableActions: ActionTypes[] = [
     },
     {
         actionName: "Download Driver Overview",
-        newStatus: "Driver Overview Downloaded",
+        newStatus: "Out for Delivery",
         availableToRole: allRoles,
     },
     {

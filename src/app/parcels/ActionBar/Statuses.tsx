@@ -20,7 +20,7 @@ const nonMenuStatuses: StatusType[] = [
     "Packing Slot Changed", //Generated when packing slot is changed
     "Driver Overview Downloaded", //Generated when driver overview pdf downloaded
     "Map Generated", //Generated when maps generated
-    "Out for Delivery",
+    "Out for Delivery", //Generated when driver overview pdf downloaded
     "Parcel Deleted", //Generated when parcel deleted
     "Shipping Labels Downloaded", //Generated when shipping labels pdf downloaded
     "Shopping List Downloaded", //Generated when shopping list pdf downloaded
@@ -41,7 +41,7 @@ export const saveParcelStatus = async (
     statusEventData?: string | null,
     clientIds?: string[],
     action?: string,
-    date?: Dayjs | null
+    date?: Dayjs 
 ): Promise<SaveParcelStatusResult> => {
     const timestamp = (date ?? dayjs()).toISOString();
     const eventsToInsert = parcelIds

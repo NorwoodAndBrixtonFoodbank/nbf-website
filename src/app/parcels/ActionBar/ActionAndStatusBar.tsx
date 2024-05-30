@@ -8,6 +8,7 @@ import Alert from "@mui/material/Alert";
 import Statuses, { StatusType, SaveParcelStatusResult } from "@/app/parcels/ActionBar/Statuses";
 import Actions from "@/app/parcels/ActionBar/Actions";
 import { ArrowDropDown } from "@mui/icons-material";
+import { Dayjs } from "dayjs";
 
 export interface ActionAndStatusBarProps {
     fetchSelectedParcels: () => Promise<ParcelsTableRow[]>;
@@ -18,7 +19,8 @@ export type UpdateParcelStatuses = (
     parcels: ParcelsTableRow[],
     newStatus: StatusType,
     statusEventData?: string,
-    action?: string
+    action?: string,
+    date?: Dayjs
 ) => Promise<SaveParcelStatusResult>;
 
 const AlertBox = styled.div`
