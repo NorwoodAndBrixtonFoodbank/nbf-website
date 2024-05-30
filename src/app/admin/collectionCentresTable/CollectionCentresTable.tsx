@@ -81,10 +81,13 @@ function getBaseAuditLogForCollectionCentreTimeSlots(
     action: string,
     timeSlotsWithPrimaryKey: FormattedTimeSlotsWithPrimaryKey
 ): Pick<AuditLog, "action" | "content" | "collectionCentreId"> {
+    const timeSlots = Object.fromEntries(
+        timeSlotsWithPrimaryKey.timeSlots.map((timeSlot) => [timeSlot.time, timeSlot.isActive])
+    );
     return {
         action,
         content: {
-            timeSlots: "Hello",
+            timeSlots,
         },
         collectionCentreId: timeSlotsWithPrimaryKey.primaryKey,
     };
@@ -159,7 +162,7 @@ const CollectionCentresTable: React.FC = () => {
         const { error: updateTimeSlotError } =
             await updateDbCollectionCentreTimeSlots(timeSlotModalData);
         const baseAuditLog = getBaseAuditLogForCollectionCentreTimeSlots(
-            "update a collection centre",
+            "update collection centre time slots",
             timeSlotModalData
         );
 
