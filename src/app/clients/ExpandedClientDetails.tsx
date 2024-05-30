@@ -1,10 +1,16 @@
-import React, { ChangeEvent } from "react";
-import DataViewer from "@/components/DataViewer/DataViewer";
-import getExpandedClientDetails from "@/app/clients/getExpandedClientDetails";
+import React, { ChangeEvent, useState } from "react";
+import DataViewer, {
+    DataForDataViewer,
+    convertDataToDataForDataViewer,
+} from "@/components/DataViewer/DataViewer";
+import getExpandedClientDetails, {
+    ExpandedClientData,
+} from "@/app/clients/getExpandedClientDetails";
 import ClientParcelsTable from "@/app/clients/ClientParcelsTable";
 import { getClientParcelsDetails } from "@/app/clients/getClientParcelsData";
 import { styled } from "styled-components";
 import supabase from "@/supabaseClient";
+import { ErrorSecondaryText } from "../errorStylingandMessages";
 
 interface Props {
     clientId: string;
@@ -23,35 +29,58 @@ const ExpandedClientDetails = async ({ clientId }: Props): Promise<React.ReactEl
 
     const expandedClientParcelsDetails = await getClientParcelsDetails(clientId);
 
-    const onChangeNotes = async (event: ChangeEvent<HTMLInputElement>): Promise<void> => {
+    const originalNotes = expandedClientDetails.notes;
+
+    const [notes, setNotes] = useState<string | null>(originalNotes);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const onSaveNotes = async (): Promise<void> => {
+        setErrorMessage(null);
         const { error } = await supabase
             .from("clients")
-            .update({ notes: event.target.value })
+            .update({ notes: notes })
             .eq("primary_key", expandedClientDetails.primaryKey);
         if (error) {
-            return;
+            setErrorMessage("Error saving notes");
         }
     };
 
-    //const [errorMessage, setErrorMessage] = useState<string|null>(null);
+    const onChangeNotes = async (event: ChangeEvent<HTMLInputElement>): Promise<void> => {
+        setNotes(event.target.value);
+    };
+
+    const onCancelNotes = async (): Promise<void> => {
+        setNotes(originalNotes);
+    };
+
+    const getExpandedClientDetailsForDataViewer = (
+        expandedClientDetails: ExpandedClientData
+    ): DataForDataViewer => {
+        const expandedClientDetailsForDataViewer = convertDataToDataForDataViewer({
+            ...expandedClientDetails,
+        });
+        delete expandedClientDetailsForDataViewer["primary_key"];
+        expandedClientDetailsForDataViewer["notes"] = {
+            value: expandedClientDetails["notes"],
+            editFunctions: {
+                onChange: onChangeNotes,
+                onCancel: onCancelNotes,
+                onSave: onSaveNotes,
+            },
+        };
+        return expandedClientDetailsForDataViewer;
+    };
 
     return (
         <>
             {expandedClientDetails.isActive ? (
                 <DataViewer
-                    data={{ ...expandedClientDetails }}
-                    fieldsToHide={["primaryKey"]}
-                    editableFields={{
-                        ["notes"]: {
-                            onChange: onChangeNotes,
-                            onCancel: onCancelNotes,
-                            onSave: onSaveNotes,
-                        },
-                    }}
+                    data={{ ...getExpandedClientDetailsForDataViewer(expandedClientDetails) }}
                 />
             ) : (
                 <DeletedText>Client has been deleted.</DeletedText>
             )}
+            <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>
             <ClientParcelsTable parcelsData={expandedClientParcelsDetails} />
         </>
     );
