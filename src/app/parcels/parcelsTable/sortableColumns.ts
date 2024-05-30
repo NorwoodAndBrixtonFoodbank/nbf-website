@@ -1,26 +1,43 @@
 import { SortOptions } from "@/components/Tables/Table";
 import { ParcelsTableRow, ParcelsSortMethod } from "./types";
 
+export const defaultParcelsSort: ParcelsSortMethod = (query, sortDirection) =>
+    query
+        .order("packing_date", { ascending: sortDirection === "asc" })
+        .order("packing_slot_order")
+        .order("is_delivery", { ascending: false })
+        .order("client_is_active", { ascending: false })
+        .order("client_address_postcode")
+        .order("collection_centre_name");
+
 const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] = [
     {
         key: "fullName",
         sortMethod: (query, sortDirection) =>
-            query.order("client_full_name", { ascending: sortDirection === "asc" }),
+            query
+                .order("client_is_active", { ascending: sortDirection !== "asc" })
+                .order("client_full_name", { ascending: sortDirection === "asc" }),
     },
     {
         key: "familyCategory",
         sortMethod: (query, sortDirection) =>
-            query.order("family_count", { ascending: sortDirection === "asc" }),
+            query
+                .order("client_is_active", { ascending: sortDirection !== "asc" })
+                .order("family_count", { ascending: sortDirection === "asc" }),
     },
     {
         key: "addressPostcode",
         sortMethod: (query, sortDirection) =>
-            query.order("client_address_postcode", { ascending: sortDirection === "asc" }),
+            query
+                .order("client_is_active", { ascending: sortDirection !== "asc" })
+                .order("client_address_postcode", { ascending: sortDirection === "asc" }),
     },
     {
         key: "phoneNumber",
         sortMethod: (query, sortDirection) =>
-            query.order("client_phone_number", { ascending: sortDirection === "asc" }),
+            query
+                .order("client_is_active", { ascending: sortDirection !== "asc" })
+                .order("client_phone_number", { ascending: sortDirection === "asc" }),
     },
     {
         key: "voucherNumber",
@@ -34,13 +51,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
     },
     {
         key: "packingDate",
-        sortMethod: (query, sortDirection) =>
-            query
-                .order("packing_date", { ascending: sortDirection === "asc" })
-                .order("packing_slot_order")
-                .order("is_delivery", { ascending: false })
-                .order("client_address_postcode")
-                .order("collection_centre_name"),
+        sortMethod: defaultParcelsSort,
     },
     {
         key: "packingSlot",
