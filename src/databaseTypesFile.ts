@@ -284,6 +284,7 @@ export type Database = {
       }
       events: {
         Row: {
+          client_id: string | null
           event_data: string | null
           new_parcel_status: string
           parcel_id: string
@@ -291,6 +292,7 @@ export type Database = {
           timestamp: string
         }
         Insert: {
+          client_id?: string | null
           event_data?: string | null
           new_parcel_status: string
           parcel_id: string
@@ -298,6 +300,7 @@ export type Database = {
           timestamp?: string
         }
         Update: {
+          client_id?: string | null
           event_data?: string | null
           new_parcel_status?: string
           parcel_id?: string
@@ -305,6 +308,27 @@ export type Database = {
           timestamp?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "public_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients_plus"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "public_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "parcels_plus"
+            referencedColumns: ["client_id"]
+          },
           {
             foreignKeyName: "public_events_new_parcel_status_fkey"
             columns: ["new_parcel_status"]
