@@ -17,7 +17,6 @@ const PackingSlotsCard: React.FC<PackingSlotsCardProps> = ({
     fields,
     packingSlotsLabelsAndValues,
 }) => {
-    console.log(fields.packingSlot);
     return (
         <GenericFormCard
             title="Packing Slots"

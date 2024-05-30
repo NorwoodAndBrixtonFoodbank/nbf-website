@@ -34,8 +34,7 @@ const SlotChangeInput: React.FC<SlotInputProps> = ({ packingSlotsLabelsAndValues
                 listTitle="Packing Slot"
                 defaultValue=""
                 onChange={(event) => {
-                    console.log(event);
-                    setSlot(event.target.value ?? "");
+                    setSlot(event.target.value);
                 }}
             />
         </>
@@ -86,7 +85,7 @@ const SlotChangeModal: React.FC<ActionModalProps> = (props) => {
             if (packingSlot[1] === slot) {
                 newPackingSlotText = packingSlot[0];
             }
-        });
+        }); //since 'slot' is the key for the packing slot, this algorithm is used to just recover the value, i.e. 'AM', 'PM, etc.
 
         const { error: statusUpdateError } = await props.updateParcelStatuses(
             props.selectedParcels,
