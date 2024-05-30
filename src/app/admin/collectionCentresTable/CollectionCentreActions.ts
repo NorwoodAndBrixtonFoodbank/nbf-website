@@ -23,26 +23,6 @@ type FetchCollectionCentresResult =
           error: { type: "failedToFetchCollectionCentres"; logId: string };
       };
 
-export const defaultCollectionTimeSlots: Schema["collection_centres"]["time_slots"] = [
-    { time: "10:00:00", is_active: true },
-    { time: "10:15:00", is_active: true },
-    { time: "10:30:00", is_active: true },
-    { time: "10:45:00", is_active: true },
-    { time: "11:00:00", is_active: true },
-    { time: "11:15:00", is_active: true },
-    { time: "11:30:00", is_active: true },
-    { time: "11:45:00", is_active: true },
-    { time: "12:00:00", is_active: true },
-    { time: "12:15:00", is_active: true },
-    { time: "12:30:00", is_active: true },
-    { time: "12:45:00", is_active: true },
-    { time: "13:00:00", is_active: true },
-    { time: "13:15:00", is_active: true },
-    { time: "13:30:00", is_active: true },
-    { time: "13:45:00", is_active: true },
-    { time: "14:00:00", is_active: true },
-];
-
 export const fetchCollectionCentresForTable = async (): Promise<FetchCollectionCentresResult> => {
     const { data, error } = await supabase.from("collection_centres").select().order("name");
     if (error) {

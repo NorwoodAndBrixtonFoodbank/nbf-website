@@ -26,7 +26,6 @@ import {
     fetchCollectionCentresForTable,
     InsertCollectionCentreResult,
     insertNewCollectionCentre,
-    defaultCollectionTimeSlots,
     UpdateCollectionCentreResult,
     updateDbCollectionCentre,
     updateDbCollectionCentreTimeSlots,
@@ -291,7 +290,6 @@ const CollectionCentresTable: React.FC = () => {
             const { data: newCollectionCentreData, error: newCollectionCentreError } =
                 await addNewCollectionCentre({
                     ...newRow,
-                    timeSlots: defaultCollectionTimeSlots,
                 });
             if (newCollectionCentreError) {
                 return { ...newRow, name: "", acronym: "", isShown: false };
