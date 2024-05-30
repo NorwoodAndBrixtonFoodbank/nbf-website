@@ -3,6 +3,7 @@ import GeneralActionModal, {
     ActionModalProps,
     ConfirmButtons,
     Heading,
+    WarningMessage,
     maxParcelsToShow,
 } from "./GeneralActionModal";
 import { Button } from "@mui/material";
@@ -29,9 +30,14 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-    const [date, setDate] = useState<Dayjs>(dayjs());
+    const [date, setDate] = useState<Dayjs>();
+    const [warningMessage, setWarningMessage] = useState<string>("");
 
     const onDateChange = async (): Promise<void> => {
+        if (!date) {
+            setWarningMessage("Please choose a valid packing date.");
+            return;
+        }
         const newPackingDate = getDbDate(dayjs(date));
         let packingDateUpdateError: FetchParcelError | UpdateParcelError | null = null;
         for (const parcel of props.selectedParcels) {
@@ -93,6 +99,7 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
                         parcels={props.selectedParcels}
                         maxParcelsToShow={maxParcelsToShow}
                     />
+                    <WarningMessage>{warningMessage}</WarningMessage>
                 </>
             }
         />
