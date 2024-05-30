@@ -475,7 +475,9 @@ const CollectionCentresTable: React.FC = () => {
                     headerId="expandedCollectionCentreTimeSlotsModal"
                     footer={
                         <Centerer>
-                            <Button onClick={handleModalSaveClick}>Save</Button>
+                            <Button onClick={handleModalSaveClick} variant="contained">
+                                Save
+                            </Button>
                         </Centerer>
                     }
                 >
