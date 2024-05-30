@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { ChangeEvent } from "react";
 import styled from "styled-components";
 import { formatCamelCaseKey } from "@/common/format";
+import FreeFormTextInput from "../DataInput/FreeFormTextInput";
 
 type valueType = string[] | string | number | boolean | null;
 
@@ -53,9 +54,17 @@ const formatDisplayValue = (value: valueType): string => {
 export interface DataViewerProps {
     data: Data;
     fieldsToHide?: Partial<[keyof Data]>;
+    editableFields?: {
+        key: keyof Data;
+        onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    }[];
 }
 
-const DataViewer: React.FC<DataViewerProps> = ({ data, fieldsToHide = [] }) => {
+const DataViewer: React.FC<DataViewerProps> = ({
+    data,
+    fieldsToHide = [],
+    editableFields = [],
+}) => {
     return (
         <DataViewerContainer>
             {Object.entries(data).map(([key, value]) => {
@@ -63,7 +72,21 @@ const DataViewer: React.FC<DataViewerProps> = ({ data, fieldsToHide = [] }) => {
                     return (
                         <DataViewerItem key={key}>
                             <Key>{formatCamelCaseKey(key)}</Key>
-                            <Value>{formatDisplayValue(value)}</Value>
+                            {editableFields
+                                .map((editableField) => editableField.key)
+                                .includes(key) ? (
+                                <FreeFormTextInput
+                                    defaultValue={formatDisplayValue(value)}
+                                    fullWidth
+                                    onChange={
+                                        editableFields.find(
+                                            (editableField) => editableField.key === key
+                                        )?.onChange
+                                    }
+                                />
+                            ) : (
+                                <Value>{formatDisplayValue(value)}</Value>
+                            )}
                         </DataViewerItem>
                     );
                 }
