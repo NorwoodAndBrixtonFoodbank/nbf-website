@@ -99,7 +99,7 @@ const formatCollectionCentreTimeSlotDbData = (
     const formattedTimeSlots = row.timeSlots.map((timeSlot) => {
         return {
             time: formatTimeStringToHoursAndMinutes(timeSlot.time !== null ? timeSlot.time : ""),
-            isActive: timeSlot.is_active !== null ? timeSlot.is_active : true,
+            isActive: timeSlot.is_active !== null ? timeSlot.is_active : false,
         };
     });
 
