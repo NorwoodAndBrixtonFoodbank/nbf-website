@@ -372,8 +372,7 @@ const CollectionCentresTable: React.FC = () => {
             renderHeader: (params) => <Header {...params} />,
             renderCell: (params) => {
                 const handleEditCollectionCentreTimeSlot = (): void => {
-                    const currentRow = params.row;
-                    const formattedTimeSlotData = formatCollectionCentreTimeSlotDbData(currentRow);
+                    const formattedTimeSlotData = formatCollectionCentreTimeSlotDbData(params.row);
                     setTimeSlotModalData(formattedTimeSlotData);
                     setTimeSlotModalIsOpen(true);
                 };
@@ -383,6 +382,7 @@ const CollectionCentresTable: React.FC = () => {
                         variant="outlined"
                         size="small"
                         onClick={handleEditCollectionCentreTimeSlot}
+                        disabled={params.row.isNew}
                     >
                         Edit Collection Slots
                     </Button>
