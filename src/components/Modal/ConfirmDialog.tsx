@@ -31,7 +31,7 @@ const ConfirmDialog: React.FC<Props> = ({ isOpen, message, onCancel, onConfirm }
             <ModalInner>
                 <Text>{message}</Text>
                 <Button onClick={onConfirm} variant="contained" color="primary">
-                    <p>Confirm</p>
+                    Confirm
                 </Button>
             </ModalInner>
         </Modal>
