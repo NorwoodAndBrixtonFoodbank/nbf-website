@@ -147,7 +147,9 @@ type FetchCollectionTimeSlotsResponse =
           error: FetchCollectionTimeSlotsError;
       };
 
-type FetchCollectionTimeSlotsErrorType = "collectionTimeSlotsFetchFailed";
+type FetchCollectionTimeSlotsErrorType =
+    | "collectionTimeSlotsFetchFailed"
+    | "noCollectionTimeSlotsData";
 
 export type FetchCollectionTimeSlotsError = {
     type: FetchCollectionTimeSlotsErrorType;
@@ -159,17 +161,24 @@ export const getActiveTimeSlotsForCollectionCentre = async (
     supabase: Supabase
 ): Promise<FetchCollectionTimeSlotsResponse> => {
     const { data, error } = await supabase
-        .from("collection_centres")
+        .from("collection_c")
         .select("time_slots")
         .eq("primary_key", collectionCentrePrimaryKey)
         .single();
 
-    if (error || !data) {
+    if (error) {
         const logId = await logErrorReturnLogId(
             "Error with fetch: Collection time slots data",
             error
         );
         return { data: null, error: { type: "collectionTimeSlotsFetchFailed", logId: logId } };
+    }
+
+    if (!data) {
+        const logId = await logErrorReturnLogId(
+            `Error with fetch: No collection time slots data with primary key ${collectionCentrePrimaryKey}`
+        );
+        return { data: null, error: { type: "noCollectionTimeSlotsData", logId: logId } };
     }
 
     const activeTimeSlots: CollectionTimeSlotsLabelsAndValues = data.time_slots

@@ -198,7 +198,16 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                 );
 
                 if (error) {
-                    setSubmitErrorMessage(`${error.type}. Log ID: ${error.logId}`);
+                    let errorMessage;
+                    switch (error.type) {
+                        case "collectionTimeSlotsFetchFailed":
+                            errorMessage = "Failed to fetch collection time slots";
+                            break;
+                        case "noCollectionTimeSlotsData":
+                            errorMessage = "No collection time slots data available";
+                            break;
+                    }
+                    setSubmitErrorMessage(`${errorMessage}. Log ID: ${error.logId}`);
                     return;
                 }
 
@@ -206,7 +215,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
             }
         };
 
-        getTimeSlots();
+        void getTimeSlots();
     }, [fields.collectionCentre]);
 
     const formSections =
