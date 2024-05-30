@@ -21,6 +21,7 @@ import styled, { useTheme } from "styled-components";
 import { Primitive, SortOrder } from "react-data-table-component/dist/DataTable/types";
 import { Centerer } from "../Modal/ModalFormStyles";
 import { ClientSideSortMethod, ServerSideSortMethod } from "./sortMethods";
+import { DividingLineStyleOptions, getDividingLineStyleOptions } from "@/app/parcels/parcelsTable/conditionalStyling";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -137,17 +138,6 @@ export type BreakPointConfig = {
     name: string;
     breakPoints: number[];
     dividingLineStyle: keyof DividingLineStyleOptions;
-};
-
-export type DividingLineStyleOptions = {
-    dateAndSlotPrimary: DividingLineStyle;
-    dateAndSlotSecondary: DividingLineStyle;
-    slotPrimary: DividingLineStyle;
-};
-
-type DividingLineStyle = {
-    colour: string;
-    thickness: string;
 };
 interface Props<Data, DbData extends Record<string, any>, PaginationType> {
     dataPortion: Data[];
@@ -421,23 +411,6 @@ const Table = <
 
     const rows = dataPortion.map((data, index) => ({ rowId: index, data }));
 
-    const theme = useTheme();
-
-    const dividingLineStyleOptions: DividingLineStyleOptions = {
-        dateAndSlotPrimary: {
-            colour: theme.primary.background[3],
-            thickness: "5pt",
-        },
-        dateAndSlotSecondary: {
-            colour: theme.primary.background[2],
-            thickness: "2.5pt",
-        },
-        slotPrimary: {
-            colour: theme.primary.background[3],
-            thickness: "5pt",
-        },
-    };
-
     return (
         <>
             <TableFilterAndExtraColumnsBar<
@@ -465,7 +438,7 @@ const Table = <
             />
             <TableStyling
                 rowBreakPointConfigs={rowBreakPointConfigs ?? []}
-                dividingLineStyleOptions={dividingLineStyleOptions}
+                dividingLineStyleOptions={getDividingLineStyleOptions()}
             >
                 <NoSsr>
                     <DataTable
@@ -675,6 +648,7 @@ const TableStyling = styled.div<{
             })
             .join()}
 `;
+// The inside map creates a div line at each required index for a specific style, and the outside map does this for each style
 
 export const ServerPaginatedTable = <Data, DbData extends Record<string, any>>(
     props: Props<Data, DbData, PaginationTypeEnum.Server>
