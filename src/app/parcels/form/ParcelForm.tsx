@@ -211,12 +211,24 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                     return;
                 }
 
+                if (data.length === 0) {
+                    setFormErrors({
+                        ...initialFormErrors,
+                        collectionSlot: Errors.noCollectionSlotsSet,
+                    });
+                } else {
+                    setFormErrors({
+                        ...initialFormErrors,
+                        collectionSlot: Errors.initial,
+                    });
+                }
+
                 setCollectionSlotsLabelsAndValues(data);
             }
         };
 
         void getTimeSlots();
-    }, [fields.collectionCentre]);
+    }, [fields.collectionCentre, initialFormErrors]);
 
     const formSections =
         fields.shippingMethod === "Collection"
