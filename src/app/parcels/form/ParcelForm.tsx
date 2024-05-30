@@ -168,7 +168,12 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [clientDetails, setClientDetails] = useState<ExpandedClientData | null>(null);
     const [collectionSlotsLabelsAndValues, setCollectionSlotsLabelsAndValues] =
-        useState<CollectionTimeSlotsLabelsAndValues>([]);
+        useState<CollectionTimeSlotsLabelsAndValues>([
+            [
+                "Please select a collection centre for available collection slots",
+                "Collection centre not selected",
+            ],
+        ]);
     const theme = useTheme();
     const clientIdForFetch = initialFields.clientId ? initialFields.clientId : clientId;
 
