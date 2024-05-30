@@ -365,9 +365,9 @@ const CollectionCentresTable: React.FC = () => {
             renderHeader: (params) => <Header {...params} />,
         },
         {
-            field: "timeSlot",
+            field: "collectionSlot",
             type: "actions",
-            headerName: "Time Slots",
+            headerName: "Collection Slots",
             flex: 1,
             renderHeader: (params) => <Header {...params} />,
             renderCell: (params) => {
