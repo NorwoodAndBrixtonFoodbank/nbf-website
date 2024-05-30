@@ -98,6 +98,7 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
             props.selectedParcels,
             props.newStatus,
             `with ${driverName ?? displayNameForNullDriverName}`,
+            undefined,
             date
         );
         if (error) {
