@@ -48,7 +48,7 @@ export interface ReportsTableRow {
     familySize9: number;
     familySize10Plus: number;
     totalWithPets: number;
-    catOnly: number;
-    dogOnly: number;
+    cat: number;
+    dog: number;
     catAndDog: number;
 }

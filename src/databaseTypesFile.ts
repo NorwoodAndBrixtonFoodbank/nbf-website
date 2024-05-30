@@ -668,14 +668,17 @@ export type Database = {
       status_order: {
         Row: {
           event_name: string
+          is_successfully_completed_event: boolean
           workflow_order: number
         }
         Insert: {
           event_name: string
+          is_successfully_completed_event?: boolean
           workflow_order: number
         }
         Update: {
           event_name?: string
+          is_successfully_completed_event?: boolean
           workflow_order?: number
         }
         Relationships: []
@@ -974,7 +977,7 @@ export type Database = {
           family_size_8: number | null
           family_size_9: number | null
           total_parcels: number | null
-          total_parcels_with_pets: number | null
+          total_with_pets: number | null
           week_commencing: string | null
         }
         Relationships: []

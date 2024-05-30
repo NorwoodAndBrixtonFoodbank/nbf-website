@@ -55,9 +55,9 @@ const getReportsDataAndCount = async (
             familySize8: report.family_size_8 ?? 0,
             familySize9: report.family_size_9 ?? 0,
             familySize10Plus: report.family_size_10_plus ?? 0,
-            totalWithPets: report.total_parcels_with_pets ?? 0,
-            catOnly: report.cat ?? 0,
-            dogOnly: report.dog ?? 0,
+            totalWithPets: report.total_with_pets ?? 0,
+            cat: report.cat ?? 0,
+            dog: report.dog ?? 0,
             catAndDog: report.cat_and_dog ?? 0,
         };
     });

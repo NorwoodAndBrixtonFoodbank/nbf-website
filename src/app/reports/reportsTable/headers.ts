@@ -13,10 +13,10 @@ const clientsHeaders: TableHeaders<any> = [
     ["familySize9", "Family of 9"],
     ["familySize10Plus", "Family of 10+"],
     ["total", "Total"],
-    ["catOnly", "Cats Only"],
-    ["dogOnly", "Dogs Only"],
-    ["catAndDog", "Cats and Dogs"],
-    ["totalWithPets", "Total with Pets"],
+    ["cat", "Cat Only"],
+    ["dog", "Dog Only"],
+    ["catAndDog", "Cat and Dog"],
+    ["totalWithPets", "Pets Total"],
 ];
 
 export default clientsHeaders;
