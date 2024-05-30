@@ -1,7 +1,7 @@
 import ActionAndStatusBar, {
     ActionAndStatusBarProps,
 } from "@/app/parcels/ActionBar/ActionAndStatusBar";
-import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
+import { ParcelsTableRow } from "../parcelsTable/types";
 import React from "react";
 import StyleManager from "@/app/themes";
 import Localization from "@/app/Localization";
@@ -36,6 +36,7 @@ describe("Parcels - Action Bar", () => {
             },
             voucherNumber: "123456789",
             createdAt: new Date("2023-12-31T12:00:00+00:00"),
+            clientIsActive: true,
         },
         {
             clientId: "primaryKey2",
@@ -64,6 +65,7 @@ describe("Parcels - Action Bar", () => {
             },
             voucherNumber: "123456aaaa789",
             createdAt: new Date("2023-12-31T12:00:00+00:00"),
+            clientIsActive: true,
         },
     ];
 
@@ -155,7 +157,9 @@ describe("Parcels - Action Bar", () => {
                 if (parcel.addressPostcode) {
                     cy.get(".MuiPaper-root").contains(parcel.addressPostcode);
                 }
-                cy.get(".MuiPaper-root").contains(parcel.fullName);
+                if (parcel.fullName) {
+                    cy.get(".MuiPaper-root").contains(parcel.fullName);
+                }
             });
         });
     });
@@ -208,7 +212,9 @@ describe("Parcels - Action Bar", () => {
             if (row.addressPostcode) {
                 cy.get(".MuiPaper-root").contains(row.addressPostcode);
             }
-            cy.get(".MuiPaper-root").contains(row.fullName);
+            if (row.fullName) {
+                cy.get(".MuiPaper-root").contains(row.fullName);
+            }
         });
     });
 });

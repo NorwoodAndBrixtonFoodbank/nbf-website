@@ -4,7 +4,7 @@ import LinkButton from "@/components/Buttons/LinkButton";
 import Icon from "@/components/Icons/Icon";
 import Modal from "@/components/Modal/Modal";
 import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
-import Table, { SortOptions, TableHeaders, SortState } from "@/components/Tables/Table";
+import { ServerPaginatedTable } from "@/components/Tables/Table";
 import TableSurface from "@/components/Tables/TableSurface";
 import supabase from "@/supabaseClient";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -14,81 +14,37 @@ import getClientsDataAndCount from "./getClientsData";
 import { useSearchParams, useRouter } from "next/navigation";
 import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 import ExpandedClientDetailsFallback from "@/app/clients/ExpandedClientDetailsFallback";
-import { buildTextFilter } from "@/components/Tables/TextFilter";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
-import { Database } from "@/databaseTypesFile";
 import { CircularProgress } from "@mui/material";
-import { ErrorSecondaryText } from "../errorStylingandMessages";
+import { ErrorSecondaryText } from "../../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
-import { nullPostcodeDisplay } from "@/common/format";
+import { displayPostcodeForHomelessClient } from "@/common/format";
+import ConfirmDialog from "@/components/Modal/ConfirmDialog";
+import DeleteButton from "@/components/Buttons/DeleteButton";
+import deleteClient from "../deleteClient";
+import { getIsClientActive } from "../getExpandedClientDetails";
+import clientsFilters from "./filters";
+import clientsSortableColumns from "./sortableColumns";
+import clientsHeaders from "./headers";
+import { ClientsTableRow, ClientsSortState, ClientsFilter } from "./types";
+import { DbClientRow } from "@/databaseUtils";
+import { clientIdParam } from "./constants";
+import { getIsClientActiveErrorMessage, getDeleteClientErrorMessage } from "./format";
 
-export interface ClientsTableRow {
-    clientId: string;
-    fullName: string;
-    familyCategory: string;
-    addressPostcode: string | null;
-}
-
-const headers: TableHeaders<ClientsTableRow> = [
-    ["fullName", "Name"],
-    ["familyCategory", "Family"],
-    ["addressPostcode", "Postcode"],
-];
-
-const fullNameSearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
-    return query.ilike("full_name", `%${state}%`);
-};
-
-const filters: Filter<ClientsTableRow, any>[] = [
-    buildTextFilter({
-        key: "fullName",
-        label: "Name",
-        headers: headers,
-        methodConfig: { paginationType: PaginationType.Server, method: fullNameSearch },
-    }),
-];
-
-const sortableColumns: SortOptions<ClientsTableRow>[] = [
-    {
-        key: "fullName",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("full_name", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "familyCategory",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("family_count", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-    {
-        key: "addressPostcode",
-        sortMethodConfig: {
-            method: (query, sortDirection) =>
-                query.order("address_postcode", { ascending: sortDirection === "asc" }),
-            paginationType: PaginationType.Server,
-        },
-    },
-];
-
-const clientIdParam = "clientId";
 const ClientsPage: React.FC<{}> = () => {
     const [isLoadingForFirstTime, setIsLoadingForFirstTime] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [clientsDataPortion, setClientsDataPortion] = useState<ClientsTableRow[]>([]);
     const [filteredClientCount, setFilteredClientCount] = useState<number>(0);
-    const [sortState, setSortState] = useState<SortState<ClientsTableRow>>({ sortEnabled: false });
-    const [primaryFilters, setPrimaryFilters] = useState<Filter<ClientsTableRow, any>[]>(filters);
+    const [sortState, setSortState] = useState<ClientsSortState>({ sortEnabled: false });
+    const [primaryFilters, setPrimaryFilters] = useState<ClientsFilter[]>(clientsFilters);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const clientTableFetchAbortController = useRef<AbortController | null>(null);
+    const [isSelectedClientActive, setIsSelectedClientActive] = useState<boolean | null>(null);
+    const [isClientActiveErrorMessage, setIsClientActiveErrorMessage] = useState<string | null>(
+        null
+    );
+    const [deleteClientErrorMessage, setDeleteClientErrorMessage] = useState<string | null>(null);
+    const [isDeleteClientDialogOpen, setIsDeleteClientDialogOpen] = useState<boolean>(false);
 
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
@@ -171,8 +127,35 @@ const ClientsPage: React.FC<{}> = () => {
     const searchParams = useSearchParams();
     const clientId = searchParams.get(clientIdParam);
 
+    useEffect(() => {
+        (async () => {
+            setIsClientActiveErrorMessage(null);
+            if (clientId) {
+                const { isActive, error } = await getIsClientActive(clientId);
+                if (error) {
+                    setIsClientActiveErrorMessage(getIsClientActiveErrorMessage(error));
+                    return;
+                }
+                setIsSelectedClientActive(isActive);
+            }
+        })();
+    }, [clientId]);
+
     const formatNullPostcode = (postcodeData: ClientsTableRow["addressPostcode"]): string => {
-        return postcodeData ?? nullPostcodeDisplay;
+        return postcodeData ?? displayPostcodeForHomelessClient;
+    };
+
+    const onDeleteClient = async (): Promise<void> => {
+        if (clientId) {
+            setDeleteClientErrorMessage(null);
+            const { error: deleteClientError } = await deleteClient(clientId);
+            setIsDeleteClientDialogOpen(false);
+            if (deleteClientError) {
+                setDeleteClientErrorMessage(getDeleteClientErrorMessage(deleteClientError));
+                return;
+            }
+            router.push("/clients");
+        }
     };
 
     return (
@@ -185,7 +168,7 @@ const ClientsPage: React.FC<{}> = () => {
                 <>
                     {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
                     <TableSurface>
-                        <Table
+                        <ServerPaginatedTable<ClientsTableRow, DbClientRow>
                             dataPortion={clientsDataPortion}
                             paginationConfig={{
                                 enablePagination: true,
@@ -195,10 +178,10 @@ const ClientsPage: React.FC<{}> = () => {
                             }}
                             sortConfig={{
                                 sortPossible: true,
-                                sortableColumns: sortableColumns,
+                                sortableColumns: clientsSortableColumns,
                                 setSortState: setSortState,
                             }}
-                            headerKeysAndLabels={headers}
+                            headerKeysAndLabels={clientsHeaders}
                             onRowClick={(row) => {
                                 router.push(`/clients?${clientIdParam}=${row.data.clientId}`);
                             }}
@@ -231,6 +214,21 @@ const ClientsPage: React.FC<{}> = () => {
                             router.push("/clients");
                         }}
                         headerId="clientsDetailModal"
+                        footer={
+                            isSelectedClientActive && (
+                                <Centerer>
+                                    <LinkButton link={`/clients/edit/${clientId}`}>
+                                        Edit Client
+                                    </LinkButton>
+                                    <LinkButton link={`/parcels/add/${clientId}`}>
+                                        Add Parcel
+                                    </LinkButton>
+                                    <DeleteButton onClick={() => setIsDeleteClientDialogOpen(true)}>
+                                        Delete Client
+                                    </DeleteButton>
+                                </Centerer>
+                            )
+                        }
                     >
                         <OutsideDiv>
                             <ContentDiv>
@@ -242,17 +240,25 @@ const ClientsPage: React.FC<{}> = () => {
                             </ContentDiv>
 
                             <ButtonsDiv>
-                                <Centerer>
-                                    <LinkButton link={`/clients/edit/${clientId}`}>
-                                        Edit Client
-                                    </LinkButton>
-                                    <LinkButton link={`/parcels/add/${clientId}`}>
-                                        Add Parcel
-                                    </LinkButton>
-                                </Centerer>
+                                {isClientActiveErrorMessage && (
+                                    <ErrorSecondaryText>
+                                        {isClientActiveErrorMessage}
+                                    </ErrorSecondaryText>
+                                )}
+                                {deleteClientErrorMessage && (
+                                    <ErrorSecondaryText>
+                                        {deleteClientErrorMessage}
+                                    </ErrorSecondaryText>
+                                )}
                             </ButtonsDiv>
                         </OutsideDiv>
                     </Modal>
+                    <ConfirmDialog
+                        isOpen={isDeleteClientDialogOpen}
+                        message="Are you sure you want to delete this client? This action cannot be undone."
+                        onCancel={() => setIsDeleteClientDialogOpen(false)}
+                        onConfirm={onDeleteClient}
+                    ></ConfirmDialog>
                 </>
             )}
         </>

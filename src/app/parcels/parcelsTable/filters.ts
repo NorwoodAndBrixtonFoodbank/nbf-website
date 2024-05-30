@@ -1,51 +1,38 @@
 "use client";
 
-import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
-import { Database } from "@/databaseTypesFile";
 import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
-import { Filter, PaginationType } from "@/components/Tables/Filters";
-import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
-import { dateFilter } from "@/components/Tables/DateFilter";
+import { serverSideDateFilter } from "@/components/Tables/DateFilter";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { DatabaseError } from "@/app/errorClasses";
-import { checklistFilter } from "@/components/Tables/ChecklistFilter";
-import { CollectionCentresOptions } from "@/app/parcels/fetchParcelTableData";
-import { getDbDate, nullPostcodeDisplay } from "@/common/format";
+import { serverSideChecklistFilter } from "@/components/Tables/ChecklistFilter";
+import { getDbDate } from "@/common/format";
+import {
+    CollectionCentresOptions,
+    ParcelsFilter,
+    ParcelsFilterMethod,
+    ParcelsFilters,
+    ParcelsTableRow,
+    packingSlotOptionsSet,
+} from "./types";
+import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
+import dayjs from "dayjs";
+import { parcelTableHeaderKeysAndLabels } from "./headers";
+import { DbParcelRow } from "@/databaseUtils";
+import { fullNameSearch, phoneSearch, postcodeSearch } from "@/common/databaseFilters";
 
-interface packingSlotOptionsSet {
-    key: string;
-    value: string;
-}
+const parcelsFullNameSearch: ParcelsFilterMethod<string> =
+    fullNameSearch<DbParcelRow>("client_full_name");
 
-export const fullNameSearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
-    return query.ilike("client_full_name", `%${state}%`);
-};
+const parcelsPostcodeSearch: ParcelsFilterMethod<string> =
+    postcodeSearch<DbParcelRow>("client_address_postcode");
 
-export const postcodeSearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
+const familySearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "") {
         return query;
     }
-    if (nullPostcodeDisplay.toLowerCase().includes(state.toLowerCase())) {
-        return query.or(
-            `client_address_postcode.ilike.%${state}%, client_address_postcode.is.null`
-        );
-    }
-    return query.ilike("client_address_postcode", `%${state}%`);
-};
-
-export const familySearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
-    if (state === "") {
-        return query;
+    if (state === "-") {
+        return query.eq("family_count", 0);
     }
     if ("single".includes(state.toLowerCase())) {
         return query.lte("family_count", 1);
@@ -61,54 +48,37 @@ export const familySearch = (
         return query.gte("family_count", 10);
     }
     if (stateAsNumber === 1) {
-        return query.lte("family_count", 1);
+        return query.eq("family_count", 1);
     }
     return query.eq("family_count", Number(state));
 };
 
-export const phoneSearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
-    return query.ilike("client_phone_number", `%${state}%`);
-};
+const parcelsPhoneSearch: ParcelsFilterMethod<string> =
+    phoneSearch<DbParcelRow>("client_phone_number");
 
-export const voucherSearch = (
-    query: PostgrestFilterBuilder<Database["public"], any, any>,
-    state: string
-): PostgrestFilterBuilder<Database["public"], any, any> => {
+const voucherSearch: ParcelsFilterMethod<string> = (query, state) => {
     if (state === "?") {
         return query.ilike("voucher_number", "");
     }
     return query.ilike("voucher_number", `%${state}%`);
 };
 
-export const buildDateFilter = (
-    initialState: DateRangeState
-): Filter<ParcelsTableRow, DateRangeState> => {
-    const dateSearch = (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: DateRangeState
-    ): PostgrestFilterBuilder<Database["public"], any, any> => {
+const buildDateFilter = (initialState: DateRangeState): ParcelsFilter<DateRangeState> => {
+    const dateSearch: ParcelsFilterMethod<DateRangeState> = (query, state) => {
         return query
             .gte("packing_date", getDbDate(state.from))
             .lte("packing_date", getDbDate(state.to));
     };
-    return dateFilter<ParcelsTableRow>({
+    return serverSideDateFilter<ParcelsTableRow, DbParcelRow>({
         key: "packingDate",
         label: "",
-        methodConfig: { paginationType: PaginationType.Server, method: dateSearch },
+        method: dateSearch,
         initialState: initialState,
     });
 };
 
-export const buildDeliveryCollectionFilter = async (): Promise<
-    Filter<ParcelsTableRow, string[]>
-> => {
-    const deliveryCollectionSearch = (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: string[]
-    ): PostgrestFilterBuilder<Database["public"], any, any> => {
+const buildDeliveryCollectionFilter = async (): Promise<ParcelsFilter<string[]>> => {
+    const deliveryCollectionSearch: ParcelsFilterMethod<string[]> = (query, state) => {
         return query.in("collection_centre_acronym", state);
     };
 
@@ -116,6 +86,7 @@ export const buildDeliveryCollectionFilter = async (): Promise<
         .from("collection_centres")
         .select("name, acronym, is_shown");
     if (error) {
+        console.error(error);
         const logId = await logErrorReturnLogId(
             "Error with fetch: Collection centre filter options",
             error
@@ -127,20 +98,17 @@ export const buildDeliveryCollectionFilter = async (): Promise<
         value: row.is_shown ? row.name : `${row.name} (inactive)`,
     }));
 
-    return checklistFilter<ParcelsTableRow>({
+    return serverSideChecklistFilter<ParcelsTableRow, DbParcelRow>({
         key: "deliveryCollection",
         filterLabel: "Method",
         itemLabelsAndKeys: optionsSet.map((option) => [option.value, option.key]),
         initialCheckedKeys: optionsSet.map((option) => option.key),
-        methodConfig: { paginationType: PaginationType.Server, method: deliveryCollectionSearch },
+        method: deliveryCollectionSearch,
     });
 };
 
-export const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, string[]>> => {
-    const lastStatusSearch = (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: string[]
-    ): PostgrestFilterBuilder<Database["public"], any, any> => {
+const buildLastStatusFilter = async (): Promise<ParcelsFilter<string[]>> => {
+    const lastStatusSearch: ParcelsFilterMethod<string[]> = (query, state) => {
         if (state.includes("None")) {
             return query.or(
                 `last_status_event_name.is.null,last_status_event_name.in.(${state.join(",")})`
@@ -166,20 +134,17 @@ export const buildLastStatusFilter = async (): Promise<Filter<ParcelsTableRow, s
     }, []);
     data && optionsSet.push("None");
 
-    return checklistFilter<ParcelsTableRow>({
+    return serverSideChecklistFilter<ParcelsTableRow, DbParcelRow>({
         key: "lastStatus",
         filterLabel: "Last Status",
         itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
         initialCheckedKeys: optionsSet.filter((option) => option !== "Request Deleted"),
-        methodConfig: { paginationType: PaginationType.Server, method: lastStatusSearch },
+        method: lastStatusSearch,
     });
 };
 
-export const buildPackingSlotFilter = async (): Promise<Filter<ParcelsTableRow, string[]>> => {
-    const packingSlotSearch = (
-        query: PostgrestFilterBuilder<Database["public"], any, any>,
-        state: string[]
-    ): PostgrestFilterBuilder<Database["public"], any, any> => {
+const buildPackingSlotFilter = async (): Promise<ParcelsFilter<string[]>> => {
+    const packingSlotSearch: ParcelsFilterMethod<string[]> = (query, state) => {
         return query.in("packing_slot_name", state);
     };
 
@@ -214,11 +179,64 @@ export const buildPackingSlotFilter = async (): Promise<Filter<ParcelsTableRow, 
 
     optionsSet.sort();
 
-    return checklistFilter<ParcelsTableRow>({
+    return serverSideChecklistFilter<ParcelsTableRow, DbParcelRow>({
         key: "packingSlot",
         filterLabel: "Packing Slot",
         itemLabelsAndKeys: optionsSet.map((option) => [option.value, option.key]),
         initialCheckedKeys: optionsSet.map((option) => option.key),
-        methodConfig: { paginationType: PaginationType.Server, method: packingSlotSearch },
+        method: packingSlotSearch,
     });
 };
+
+const buildFilters = async (): Promise<{
+    primaryFilters: ParcelsFilters;
+    additionalFilters: ParcelsFilters;
+}> => {
+    const today = dayjs();
+    const dateFilter = buildDateFilter({
+        from: today,
+        to: today,
+    });
+    const primaryFilters: ParcelsFilters = [
+        dateFilter,
+        buildServerSideTextFilter({
+            key: "fullName",
+            label: "Name",
+            headers: parcelTableHeaderKeysAndLabels,
+            method: parcelsFullNameSearch,
+        }),
+        buildServerSideTextFilter({
+            key: "addressPostcode",
+            label: "Postcode",
+            headers: parcelTableHeaderKeysAndLabels,
+            method: parcelsPostcodeSearch,
+        }),
+        await buildDeliveryCollectionFilter(),
+    ];
+
+    const additionalFilters: ParcelsFilters = [
+        buildServerSideTextFilter({
+            key: "familyCategory",
+            label: "Family",
+            headers: parcelTableHeaderKeysAndLabels,
+            method: familySearch,
+        }),
+        buildServerSideTextFilter({
+            key: "phoneNumber",
+            label: "Phone",
+            headers: parcelTableHeaderKeysAndLabels,
+            method: parcelsPhoneSearch,
+        }),
+        buildServerSideTextFilter({
+            key: "voucherNumber",
+            label: "Voucher",
+            headers: parcelTableHeaderKeysAndLabels,
+            method: voucherSearch,
+        }),
+        await buildLastStatusFilter(),
+        await buildPackingSlotFilter(),
+    ];
+    return { primaryFilters: primaryFilters, additionalFilters: additionalFilters };
+};
+
+export default buildFilters;

@@ -2,7 +2,12 @@ import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { nullPostcodeDisplay } from "@/common/format";
+import { displayPostcodeForHomelessClient } from "@/common/format";
+import {
+    getAdultAgeUsingBirthYear,
+    getChildAgeUsingBirthYearAndMonth,
+    isAdultUsingBirthYear,
+} from "@/common/getAgesOfFamily";
 
 const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
     const rawClientDetails = await getRawClientDetails(clientId);
@@ -18,7 +23,6 @@ const getRawClientDetails = async (clientId: string) => {
         .from("clients")
         .select(
             `
-            primary_key,
             full_name,
             phone_number,
             delivery_instructions,
@@ -29,7 +33,8 @@ const getRawClientDetails = async (clientId: string) => {
             address_postcode,
     
             family:families(
-                age,
+                birth_year,
+                birth_month,
                 gender
             ),
     
@@ -39,7 +44,8 @@ const getRawClientDetails = async (clientId: string) => {
             pet_food,
             other_items,
             extra_information,
-            notes
+            notes,
+            is_active
         `
         )
         .eq("primary_key", clientId)
@@ -65,12 +71,12 @@ export const familyCountToFamilyCategory = (count: number): string => {
 };
 
 export interface ExpandedClientData {
-    primaryKey: string;
     fullName: string;
     address: string;
     deliveryInstructions: string;
     phoneNumber: string;
     household: string;
+    adults: string;
     children: string;
     dietaryRequirements: string;
     feminineProducts: string;
@@ -79,23 +85,25 @@ export interface ExpandedClientData {
     otherRequirements: string;
     extraInformation: string;
     notes: string | null;
+    isActive: boolean;
 }
 
 export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientData => {
     return {
-        primaryKey: client.primary_key,
-        fullName: client.full_name,
+        fullName: client.full_name ?? "",
         address: formatAddressFromClientDetails(client),
-        deliveryInstructions: client.delivery_instructions,
-        phoneNumber: client.phone_number,
+        deliveryInstructions: client.delivery_instructions ?? "",
+        phoneNumber: client.phone_number ?? "",
         household: formatHouseholdFromFamilyDetails(client.family),
+        adults: formatBreakdownOfAdultsFromFamilyDetails(client.family),
         children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
-        dietaryRequirements: client.dietary_requirements.join(", "),
-        feminineProducts: client.feminine_products.join(", "),
+        dietaryRequirements: client.dietary_requirements?.join(", ") ?? "",
+        feminineProducts: client.feminine_products?.join(", ") ?? "",
         babyProducts: client.baby_food,
-        petFood: client.pet_food.join(", "),
-        otherRequirements: client.other_items.join(", "),
-        extraInformation: client.extra_information,
+        petFood: client.pet_food?.join(", ") ?? "",
+        otherRequirements: client.other_items?.join(", ") ?? "",
+        extraInformation: client.extra_information ?? "",
+        isActive: client.is_active,
         notes: client.notes,
     };
 };
@@ -107,7 +115,7 @@ export const formatAddressFromClientDetails = (
     >
 ): string => {
     if (!client.address_postcode) {
-        return nullPostcodeDisplay;
+        return displayPostcodeForHomelessClient;
     }
     return [
         client.address_1,
@@ -121,13 +129,13 @@ export const formatAddressFromClientDetails = (
 };
 
 export const formatHouseholdFromFamilyDetails = (
-    family: Pick<Schema["families"], "age" | "gender">[]
+    family: Pick<Schema["families"], "birth_year" | "gender">[]
 ): string => {
     let adultCount = 0;
     let childCount = 0;
 
     for (const familyMember of family) {
-        if (familyMember.age === null || familyMember.age >= 16) {
+        if (isAdultUsingBirthYear(familyMember.birth_year)) {
             adultCount++;
         } else {
             childCount++;
@@ -150,15 +158,38 @@ export const formatHouseholdFromFamilyDetails = (
     return `${familyCategory} ${occupantDisplay} (${adultChildBreakdown.join(", ")})`;
 };
 
+export const formatBreakdownOfAdultsFromFamilyDetails = (
+    family: Pick<Schema["families"], "birth_year" | "gender">[]
+): string => {
+    const adultDetails = [];
+
+    for (const familyMember of family) {
+        if (isAdultUsingBirthYear(familyMember.birth_year)) {
+            const age = getAdultAgeUsingBirthYear(familyMember.birth_year, false);
+            adultDetails.push(`${age} ${familyMember.gender}`);
+        }
+    }
+
+    if (adultDetails.length === 0) {
+        return "No Adults";
+    }
+
+    return adultDetails.join(", ");
+};
+
 export const formatBreakdownOfChildrenFromFamilyDetails = (
-    family: Pick<Schema["families"], "age" | "gender">[]
+    family: Pick<Schema["families"], "birth_year" | "birth_month" | "gender">[]
 ): string => {
     const childDetails = [];
 
     for (const familyMember of family) {
-        if (familyMember.age !== null && familyMember.age <= 15) {
-            const age = familyMember.age === -1 ? "0-15" : familyMember.age.toString();
-            childDetails.push(`${age}-year-old ${familyMember.gender}`);
+        if (!isAdultUsingBirthYear(familyMember.birth_year)) {
+            const age = getChildAgeUsingBirthYearAndMonth(
+                familyMember.birth_year,
+                familyMember.birth_month,
+                false
+            );
+            childDetails.push(`${age} ${familyMember.gender}`);
         }
     }
 
@@ -167,4 +198,37 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
     }
 
     return childDetails.join(", ");
+};
+
+type IsClientActiveErrorType = "failedClientIsActiveFetch";
+export interface IsClientActiveError {
+    type: IsClientActiveErrorType;
+    logId: string;
+}
+
+type GetClientIsActiveResponse =
+    | {
+          error: null;
+          isActive: boolean;
+      }
+    | {
+          error: IsClientActiveError;
+          isActive: null;
+      };
+
+export const getIsClientActive = async (clientId: string): Promise<GetClientIsActiveResponse> => {
+    const { data: isActiveData, error: isActiveError } = await supabase
+        .from("clients")
+        .select("primary_key, is_active")
+        .eq("primary_key", clientId)
+        .single();
+
+    if (isActiveError) {
+        const logId = await logErrorReturnLogId("Error with fetch: client table", {
+            error: isActiveError,
+        });
+        return { error: { type: "failedClientIsActiveFetch", logId }, isActive: null };
+    }
+
+    return { isActive: isActiveData.is_active, error: null };
 };

@@ -1,6 +1,40 @@
 import { Json } from "@/databaseTypesFile";
-import { AuditLogPlusRow } from "@/databaseUtils";
 import { profileDisplayNameForDeletedUser } from "./format";
+import { SortState } from "@/components/Tables/Table";
+import { ServerSideSortMethod } from "@/components/Tables/sortMethods";
+import { DbAuditLogRow } from "@/databaseUtils";
+
+export type AuditLogSortMethod = ServerSideSortMethod<DbAuditLogRow>;
+export type AuditLogSortState = SortState<AuditLogRow, AuditLogSortMethod>;
+
+export type AuditLogResponse =
+    | {
+          data: DbAuditLogRow[];
+          error: null;
+      }
+    | {
+          data: null;
+          error: AuditLogError;
+      };
+
+export type AuditLogCountResponse =
+    | {
+          count: number;
+          error: null;
+      }
+    | {
+          count: null;
+          error: AuditLogCountError;
+      };
+
+export interface AuditLogError {
+    type: "failedAuditLogFetch";
+    logId: string;
+}
+export interface AuditLogCountError {
+    type: "failedAuditLogCountFetch" | "nullCount";
+    logId: string;
+}
 
 export interface AuditLogRow {
     auditLogId: string;
@@ -23,7 +57,7 @@ export interface AuditLogRow {
 }
 
 export const convertAuditLogPlusRowsToAuditLogRows = (
-    auditLogResponse: AuditLogPlusRow[]
+    auditLogResponse: DbAuditLogRow[]
 ): AuditLogRow[] =>
     auditLogResponse.map((auditLogPlusRow) => ({
         auditLogId: auditLogPlusRow.primary_key ?? "",

@@ -1,49 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
-import GeneralActionModal, {
-    Heading,
-    Paragraph,
-    maxParcelsToShow,
-    ActionModalProps,
-} from "./GeneralActionModal";
+import React, { useEffect, useState } from "react";
+import GeneralActionModal, { ActionModalProps, maxParcelsToShow } from "./GeneralActionModal";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
-import { ParcelsTableRow } from "../../getParcelsTableData";
-import { StatusType, getStatusErrorMessageWithLogId } from "../Statuses";
+import { getStatusErrorMessageWithLogId } from "../Statuses";
 import ShoppingListPdfButton from "@/pdf/ShoppingList/ShoppingListPdfButton";
 import { ShoppingListPdfError } from "@/pdf/ShoppingList/getShoppingListData";
 import { sendAuditLog } from "@/server/auditLog";
-import { nullPostcodeDisplay } from "@/common/format";
-
-interface ShoppingListsConfirmationProps {
-    selectedParcels: ParcelsTableRow[];
-}
-
-const ShoppingListsConfirmation: React.FC<ShoppingListsConfirmationProps> = ({
-    selectedParcels,
-}) => {
-    const maxPostcodesToShow = 4;
-    const statusToFind: StatusType = "Shopping List Downloaded";
-
-    const printedListPostcodes = selectedParcels
-        .filter((parcel) => parcel.lastStatus?.name.startsWith(statusToFind))
-        .map((parcel) => parcel.addressPostcode ?? nullPostcodeDisplay);
-
-    return printedListPostcodes.length > 0 ? (
-        <>
-            <Heading>Shopping Lists</Heading>
-            <Paragraph>
-                Lists have already been printed for {printedListPostcodes.length} parcels with
-                postcodes:
-                {printedListPostcodes.slice(0, maxPostcodesToShow).join(", ")}
-                {printedListPostcodes.length > maxPostcodesToShow ? ", ..." : "."}
-            </Paragraph>
-            <Paragraph>Are you sure you want to print again?</Paragraph>
-        </>
-    ) : (
-        <></>
-    );
-};
+import DuplicateDownloadWarning from "@/app/parcels/ActionBar/DuplicateDownloadWarning";
+import { getDuplicateDownloadedPostcodes } from "@/app/parcels/ActionBar/ActionModals/getDuplicateDownloadedPostcodes";
 
 const getPdfErrorMessage = (error: ShoppingListPdfError): string => {
     let errorMessage: string;
@@ -73,6 +38,9 @@ const getPdfErrorMessage = (error: ShoppingListPdfError): string => {
         case "invalidFamilySize":
             errorMessage = "Invalid family size for shopping list PDF.";
             break;
+        case "inactiveClient":
+            errorMessage = "One or more selected parcels belong to inactive clients.";
+            break;
     }
     return `${errorMessage} LogId: ${error.logId}`;
 };
@@ -81,11 +49,16 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [duplicateDownloadedPostcodes, setDuplicateDownloadedPostcodes] = useState<
+        (string | null)[]
+    >([]);
 
     const onClose = (): void => {
         props.onClose();
         setErrorMessage(null);
     };
+
+    const parcelIds = props.selectedParcels.map((parcel) => parcel.parcelId);
 
     const onPdfCreationCompleted = async (): Promise<void> => {
         const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
@@ -97,7 +70,7 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
         void sendAuditLog({
             action: "create shopping list pdf",
             wasSuccess: true,
-            content: { parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId) },
+            content: { parcelIds: parcelIds },
         });
     };
 
@@ -107,10 +80,19 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
         void sendAuditLog({
             action: "create shopping list pdf",
             wasSuccess: false,
-            content: { parcelIds: props.selectedParcels.map((parcel) => parcel.parcelId) },
+            content: { parcelIds: parcelIds },
             logId: pdfError.logId,
         });
     };
+
+    useEffect(() => {
+        getDuplicateDownloadedPostcodes(
+            parcelIds,
+            "Shopping List Downloaded",
+            setDuplicateDownloadedPostcodes,
+            setErrorMessage
+        );
+    }, [parcelIds]);
 
     return (
         <GeneralActionModal
@@ -128,11 +110,13 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
             }
             contentAboveButton={
                 <>
-                    <ShoppingListsConfirmation selectedParcels={props.selectedParcels} />
                     <SelectedParcelsOverview
                         parcels={props.selectedParcels}
                         maxParcelsToShow={maxParcelsToShow}
                     />
+                    {duplicateDownloadedPostcodes.length > 0 && (
+                        <DuplicateDownloadWarning postcodes={duplicateDownloadedPostcodes} />
+                    )}
                 </>
             }
         />

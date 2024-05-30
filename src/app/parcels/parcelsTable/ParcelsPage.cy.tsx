@@ -1,10 +1,3 @@
-import { CongestionChargeDetails } from "@/app/parcels/fetchParcelTableData";
-import {
-    ParcelsTableRow,
-    datetimeToPackingTimeLabel,
-    processLastStatus,
-    processingDataToParcelsTableData,
-} from "@/app/parcels/getParcelsTableData";
 import { processEventsDetails } from "@/app/parcels/getExpandedParcelDetails";
 import {
     familyCountToFamilyCategory,
@@ -13,9 +6,11 @@ import {
     formatHouseholdFromFamilyDetails,
 } from "@/app/clients/getExpandedClientDetails";
 import { formatDatetimeAsDate } from "@/common/format";
-import { ParcelsPlusRow } from "@/databaseUtils";
+import { DbParcelRow } from "@/databaseUtils";
+import convertParcelDbtoParcelRow, { processLastStatus } from "./convertParcelDBtoParcelRow";
+import { CongestionChargeDetails, ParcelsTableRow } from "./types";
 
-const sampleProcessingData: ParcelsPlusRow[] = [
+const sampleProcessingData: DbParcelRow[] = [
     {
         parcel_id: "PRIMARY_KEY",
         collection_centre_name: "COLLECTION_CENTRE",
@@ -32,11 +27,13 @@ const sampleProcessingData: ParcelsPlusRow[] = [
         client_flagged_for_attention: false,
         client_signposting_call_required: true,
         family_count: 3,
+        is_delivery: false,
         last_status_event_name: "LAST_EVENT",
         last_status_event_data: "SOME_RELATED_DATA",
         last_status_timestamp: "2023-08-04T13:30:00+00:00",
         last_status_workflow_order: 1,
         created_at: "2023-12-31T12:00:00+00:00",
+        client_is_active: true,
     },
 ];
 
@@ -50,7 +47,7 @@ const sampleCongestionChargeData: CongestionChargeDetails[] = [
 describe("Parcels Page", () => {
     describe("Backend Processing for Table Data", () => {
         it("Fields are set correctly", async () => {
-            const { parcelTableRows } = await processingDataToParcelsTableData(
+            const { parcelTableRows } = await convertParcelDbtoParcelRow(
                 sampleProcessingData,
                 sampleCongestionChargeData
             );
@@ -83,6 +80,7 @@ describe("Parcels Page", () => {
                         requiresFollowUpPhoneCall: true,
                     },
                     createdAt: new Date("2023-12-31T12:00:00+00:00"),
+                    clientIsActive: true,
                 },
             ];
             expect(parcelTableRows).to.deep.equal(expected);
@@ -101,11 +99,6 @@ describe("Parcels Page", () => {
             expect(formatDatetimeAsDate("2024-11-23T01:43:50+00:00")).to.eq("23/11/2024");
             expect(formatDatetimeAsDate("Invalid_Date_Format")).to.eq("-");
             expect(formatDatetimeAsDate(null)).to.eq("-");
-        });
-
-        it("datetimeToPackingTimeLabel()", () => {
-            expect(datetimeToPackingTimeLabel("2023-08-04T08:30:00+00:00")).to.eq("AM");
-            expect(datetimeToPackingTimeLabel("2023-08-04T13:30:00+00:00")).to.eq("PM");
         });
 
         it("eventToStatusMessage()", () => {
@@ -152,26 +145,26 @@ describe("Parcels Page", () => {
         it("formatHouseholdFromFamilyDetails()", () => {
             expect(
                 formatHouseholdFromFamilyDetails([
-                    { age: 36, gender: "female" },
-                    { age: 5, gender: "male" },
-                    { age: 24, gender: "other" },
+                    { birth_year: 1988, gender: "female" },
+                    { birth_year: 2019, gender: "male" },
+                    { birth_year: 2000, gender: "other" },
                 ])
             ).to.eq("Family of 3 Occupants (2 adults, 1 child)");
 
             expect(
                 formatHouseholdFromFamilyDetails([
-                    { age: 36, gender: "female" },
-                    { age: 5, gender: "male" },
-                    { age: 4, gender: "female" },
-                    { age: 15, gender: "other" },
+                    { birth_year: 1988, gender: "female" },
+                    { birth_year: 2019, gender: "male" },
+                    { birth_year: 2020, gender: "female" },
+                    { birth_year: 2009, gender: "other" },
                 ])
             ).to.eq("Family of 4 Occupants (1 adult, 3 children)");
 
-            expect(formatHouseholdFromFamilyDetails([{ age: 16, gender: "female" }])).to.eq(
-                "Single Occupant (1 adult)"
-            );
+            expect(
+                formatHouseholdFromFamilyDetails([{ birth_year: 2008, gender: "female" }])
+            ).to.eq("Single Occupant (1 adult)");
 
-            expect(formatHouseholdFromFamilyDetails([{ age: 15, gender: "male" }])).to.eq(
+            expect(formatHouseholdFromFamilyDetails([{ birth_year: 2009, gender: "male" }])).to.eq(
                 "Single Occupant (1 child)"
             );
         });
@@ -179,24 +172,24 @@ describe("Parcels Page", () => {
         it("formatBreakdownOfChildrenFromFamilyDetails()", () => {
             expect(
                 formatBreakdownOfChildrenFromFamilyDetails([
-                    { age: 36, gender: "female" },
-                    { age: 5, gender: "male" },
-                    { age: 4, gender: "female" },
-                    { age: 15, gender: "other" },
+                    { birth_year: 1988, birth_month: null, gender: "female" },
+                    { birth_year: 2019, birth_month: null, gender: "male" },
+                    { birth_year: 2020, birth_month: null, gender: "female" },
+                    { birth_year: 2009, birth_month: null, gender: "other" },
                 ])
             ).to.eq("5-year-old male, 4-year-old female, 15-year-old other");
 
             expect(
                 formatBreakdownOfChildrenFromFamilyDetails([
-                    { age: 36, gender: "female" },
-                    { age: 15, gender: "female" },
+                    { birth_year: 1988, birth_month: null, gender: "female" },
+                    { birth_year: 2009, birth_month: null, gender: "female" },
                 ])
             ).to.eq("15-year-old female");
 
             expect(
                 formatBreakdownOfChildrenFromFamilyDetails([
-                    { age: 36, gender: "female" },
-                    { age: 26, gender: "male" },
+                    { birth_year: 1988, birth_month: null, gender: "female" },
+                    { birth_year: 1998, birth_month: null, gender: "male" },
                 ])
             ).to.eq("No Children");
         });

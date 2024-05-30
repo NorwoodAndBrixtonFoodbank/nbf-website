@@ -1,9 +1,5 @@
 import { InsertSchema, UpdateSchema } from "@/databaseUtils";
-import {
-    checkboxGroupToArray,
-    NumberAdultsByGender,
-    Person,
-} from "@/components/Form/formFunctions";
+import { checkboxGroupToArray, Person } from "@/components/Form/formFunctions";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 import { ClientFields } from "./ClientForm";
@@ -16,19 +12,13 @@ type ClientDatabaseUpdateRecord = UpdateSchema["clients"];
 const personToFamilyRecordWithoutFamilyId = (person: Person): FamilyDatabaseInsertRecord => {
     return {
         gender: person.gender,
-        age: person.age ?? null,
+        birth_year: person.birthYear,
+        birth_month: person.birthMonth ?? null,
     };
 };
 
-const getFamilyMembers = (
-    adults: NumberAdultsByGender,
-    children: Person[]
-): FamilyDatabaseInsertRecord[] => {
-    const peopleToInsert = children.concat(
-        Array<Person>(adults.numberFemales).fill({ gender: "female", age: undefined }),
-        Array<Person>(adults.numberMales).fill({ gender: "male", age: undefined }),
-        Array<Person>(adults.numberUnknownGender).fill({ gender: "other", age: undefined })
-    );
+const getFamilyMembers = (adults: Person[], children: Person[]): FamilyDatabaseInsertRecord[] => {
+    const peopleToInsert = children.concat(adults);
 
     return peopleToInsert.map((person) => personToFamilyRecordWithoutFamilyId(person));
 };
@@ -74,7 +64,7 @@ type addClientResult =
 export const submitAddClientForm = async (fields: ClientFields): Promise<addClientResult> => {
     const clientRecord = formatClientRecord(fields);
     const familyMembers = getFamilyMembers(fields.adults, fields.children);
-    const { data: clientId, error } = await supabase.rpc("insertClientAndTheirFamily", {
+    const { data: clientId, error } = await supabase.rpc("insert_client_and_family", {
         clientrecord: clientRecord,
         familymembers: familyMembers,
     });
@@ -107,7 +97,7 @@ export const submitAddClientForm = async (fields: ClientFields): Promise<addClie
     return { clientId: clientId, error: null };
 };
 
-type editClientErrors = "failedToUpdateClientAndFamily" | "concurrentUpdateConflict";
+type editClientErrors = "failedToUpdateClientAndFamily" | "noRowsUpdated";
 type editClientResult =
     | { clientId: string; error: null }
     | {
@@ -152,9 +142,11 @@ export const submitEditClientForm = async (
     }
 
     if (clientDataAndCount.updatedrows === 0) {
-        const logId = await logWarningReturnLogId("Concurrent editing of client");
+        const logId = await logWarningReturnLogId(
+            "Concurrent editing of client or editing deleted client"
+        );
         await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
-        return { clientId: null, error: { type: "concurrentUpdateConflict", logId } };
+        return { clientId: null, error: { type: "noRowsUpdated", logId } };
     }
 
     await sendAuditLog({

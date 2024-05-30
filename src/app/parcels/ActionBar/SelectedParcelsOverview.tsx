@@ -1,4 +1,4 @@
-import { ParcelsTableRow } from "../getParcelsTableData";
+import { ParcelsTableRow } from "../parcelsTable/types";
 import styled from "styled-components";
 import React from "react";
 import { getParcelOverviewString } from "../../../common/format";
@@ -32,7 +32,8 @@ const SelectedParcelsOverview: React.FC<ShowParcelsProps> = (props) => {
                     {getParcelOverviewString(
                         parcel.addressPostcode,
                         parcel.fullName,
-                        parcel.collectionDatetime
+                        parcel.collectionDatetime,
+                        parcel.clientIsActive
                     )}
                 </ListItem>
             ))}

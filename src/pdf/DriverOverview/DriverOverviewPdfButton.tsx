@@ -6,9 +6,9 @@ import { Schema } from "@/databaseUtils";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import DriverOverviewPdf, { DriverOverviewTableData } from "@/pdf/DriverOverview/DriverOverviewPdf";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { formatDateToDate } from "@/common/format";
+import { displayNameForDeletedClient, formatDateToDate } from "@/common/format";
 import { Dayjs } from "dayjs";
-import { ParcelsTableRow } from "@/app/parcels/getParcelsTableData";
+import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 import { PdfDataFetchResponse } from "../common";
 
 interface DriverOverviewData {
@@ -31,7 +31,10 @@ const compareDriverOverviewTableData = (
     return 0;
 };
 
-type ParcelsForDelivery = (Schema["parcels"] & { client: Schema["clients"] })[];
+type ParcelsForDelivery = (Schema["parcels"] & {
+    client: Schema["clients"];
+    labelCount: number;
+})[];
 
 type ParcelsForDeliveryResponse =
     | {
@@ -48,9 +51,12 @@ type ParcelsForDeliveryErrorType = "parcelFetchFailed" | "noMatchingClient";
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDeliveryResponse> => {
     const { data, error } = await supabase
         .from("parcels")
-        .select("*, client:clients(*)")
+        .select("*, client:clients(*), events(event_data)")
         .in("primary_key", parcelIds)
-        .limit(1, { foreignTable: "clients" });
+        .limit(1, { foreignTable: "clients" })
+        .eq("events.new_parcel_status", "Shipping Labels Downloaded")
+        .order("timestamp", { foreignTable: "events", ascending: false });
+
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Parcels", error);
         return { data: null, error: { type: "parcelFetchFailed", logId: logId } };
@@ -64,7 +70,13 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDel
             );
             return { data: null, error: { type: "noMatchingClient", logId: logId } };
         }
-        dataWithNonNullClients.push({ ...parcel, client: parcel.client });
+
+        let labelCount: number = 0;
+        if (parcel.events && parcel.events.length > 0 && parcel.events[0].event_data) {
+            labelCount = Number.parseInt(parcel.events[0].event_data);
+        }
+
+        dataWithNonNullClients.push({ ...parcel, client: parcel.client, labelCount: labelCount });
     }
 
     return { data: dataWithNonNullClients, error: null };
@@ -90,8 +102,9 @@ const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse>
     }
     for (const parcel of parcels) {
         const client = parcel.client;
+        const clientIsActive = parcel.client.is_active;
         clientInformation.push({
-            name: client?.full_name ?? "",
+            name: clientIsActive ? client?.full_name ?? "" : displayNameForDeletedClient,
             address: {
                 line1: client?.address_1 ?? "",
                 line2: client?.address_2 ?? null,
@@ -99,9 +112,11 @@ const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse>
                 county: client?.address_county ?? null,
                 postcode: client?.address_postcode,
             },
-            contact: client?.phone_number ?? "",
+            contact: clientIsActive ? client?.phone_number ?? "" : "-",
             packingDate: formatDateToDate(parcel.packing_date) ?? null,
-            instructions: client?.delivery_instructions ?? "",
+            instructions: clientIsActive ? client?.delivery_instructions ?? "" : "-",
+            clientIsActive: clientIsActive,
+            numberOfLabels: parcel.labelCount,
         });
     }
     clientInformation.sort(compareDriverOverviewTableData);
