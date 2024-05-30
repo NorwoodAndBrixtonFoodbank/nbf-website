@@ -468,7 +468,7 @@ const CollectionCentresTable: React.FC = () => {
                     header={
                         <>
                             <Icon icon={faShoePrints} color={theme.primary.largeForeground[2]} />{" "}
-                            Select Collection Centre Time Slots
+                            Edit Collection Centre Time Slots
                         </>
                     }
                     isOpen={timeSlotModalIsOpen}
