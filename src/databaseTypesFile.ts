@@ -867,6 +867,37 @@ export type Database = {
         }
         Relationships: []
       }
+      completed_parcels: {
+        Row: {
+          completed_timestamp: string | null
+          family_count: number | null
+          parcel_id: string | null
+          pet_food: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_events_parcel_id_fkey"
+            columns: ["parcel_id"]
+            isOneToOne: false
+            referencedRelation: "parcels"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_events_parcel_id_fkey"
+            columns: ["parcel_id"]
+            isOneToOne: false
+            referencedRelation: "last_status"
+            referencedColumns: ["parcel_id"]
+          },
+          {
+            foreignKeyName: "public_events_parcel_id_fkey"
+            columns: ["parcel_id"]
+            isOneToOne: false
+            referencedRelation: "parcels_plus"
+            referencedColumns: ["parcel_id"]
+          },
+        ]
+      }
       family_count: {
         Row: {
           family_count: number | null
@@ -926,6 +957,27 @@ export type Database = {
             referencedColumns: ["event_name"]
           },
         ]
+      }
+      reports: {
+        Row: {
+          cat: number | null
+          cat_and_dog: number | null
+          dog: number | null
+          family_size_1: number | null
+          family_size_10_plus: number | null
+          family_size_2: number | null
+          family_size_3: number | null
+          family_size_4: number | null
+          family_size_5: number | null
+          family_size_6: number | null
+          family_size_7: number | null
+          family_size_8: number | null
+          family_size_9: number | null
+          total_parcels: number | null
+          total_parcels_with_pets: number | null
+          week_commencing: string | null
+        }
+        Relationships: []
       }
       users_plus: {
         Row: {
