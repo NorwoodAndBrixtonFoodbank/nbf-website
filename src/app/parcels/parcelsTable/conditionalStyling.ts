@@ -1,4 +1,4 @@
-import { useTheme } from "styled-components";
+import { DefaultTheme } from "styled-components";
 import { ParcelsTableRow } from "./types";
 import { BreakPointConfig } from "@/components/Tables/Table";
 
@@ -68,10 +68,8 @@ export const searchForBreakPoints = (
     }
 };
 
-export const getDividingLineStyleOptions = (): DividingLineStyleOptions => {
-    const theme = useTheme()
-    return (
-        {
+export const getDividingLineStyleOptions = (theme: DefaultTheme): DividingLineStyleOptions => {
+    return {
         dateAndSlotPrimary: {
             colour: theme.primary.background[3],
             thickness: "5pt",
@@ -84,5 +82,5 @@ export const getDividingLineStyleOptions = (): DividingLineStyleOptions => {
             colour: theme.primary.background[3],
             thickness: "5pt",
         },
-    }
-)}
+    };
+};

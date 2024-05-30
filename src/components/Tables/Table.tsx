@@ -21,7 +21,10 @@ import styled, { useTheme } from "styled-components";
 import { Primitive, SortOrder } from "react-data-table-component/dist/DataTable/types";
 import { Centerer } from "../Modal/ModalFormStyles";
 import { ClientSideSortMethod, ServerSideSortMethod } from "./sortMethods";
-import { DividingLineStyleOptions, getDividingLineStyleOptions } from "@/app/parcels/parcelsTable/conditionalStyling";
+import {
+    DividingLineStyleOptions,
+    getDividingLineStyleOptions,
+} from "@/app/parcels/parcelsTable/conditionalStyling";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -233,6 +236,8 @@ const Table = <
 
     const shownHeaders = headerKeysAndLabels.filter(([key]) => shownHeaderKeys.includes(key));
 
+    const theme = useTheme();
+
     const columns: CustomColumn<
         Data,
         PaginationType extends PaginationTypeEnum.Client
@@ -438,7 +443,7 @@ const Table = <
             />
             <TableStyling
                 rowBreakPointConfigs={rowBreakPointConfigs ?? []}
-                dividingLineStyleOptions={getDividingLineStyleOptions()}
+                dividingLineStyleOptions={getDividingLineStyleOptions(theme)}
             >
                 <NoSsr>
                     <DataTable
