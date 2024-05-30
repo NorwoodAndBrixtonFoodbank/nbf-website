@@ -132,7 +132,7 @@ const CollectionCentresTable: React.FC = () => {
     useEffect(() => {
         void getCollectionCentresForTable();
     }, [getCollectionCentresForTable]);
-    
+
     useEffect(() => {
         const subscriptionChannel = supabase
             .channel("collection-centre-table-changes")
@@ -176,7 +176,6 @@ const CollectionCentresTable: React.FC = () => {
 
         void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
         setTimeSlotModalIsOpen(false);
-        getCollectionCentresForTable();
     };
 
     const handleTimeSlotCheckBoxChange = (event: React.SyntheticEvent<Element, Event>): void => {
