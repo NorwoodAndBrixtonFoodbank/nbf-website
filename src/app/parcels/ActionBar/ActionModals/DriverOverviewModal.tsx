@@ -15,6 +15,7 @@ import DriverOverviewPdfButton, {
     DriverOverviewError,
 } from "@/pdf/DriverOverview/DriverOverviewPdfButton";
 import { sendAuditLog } from "@/server/auditLog";
+import { displayNameForNullDriverName } from "@/common/format";
 
 interface DriverOverviewInputProps {
     onDateChange: (newDate: Dayjs | null) => void;
@@ -78,10 +79,10 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
     const isInputValid = isDateValid && driverName;
 
     const onDriverNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        if (event.target.value === "") {
+        if (event.target.value.trim().length === 0) {
             setDriverName(null);
         } else {
-            setDriverName(event.target.value);
+            setDriverName(event.target.value.trim());
         }
     };
     const onDateChange = (newDate: Dayjs | null): void => {
@@ -99,7 +100,7 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
         const { error } = await props.updateParcelStatuses(
             props.selectedParcels,
             props.newStatus,
-            `with ${driverName ?? "Unknown Driver"}`,
+            `with ${driverName ?? displayNameForNullDriverName}`,
             date
         );
         if (error) {
