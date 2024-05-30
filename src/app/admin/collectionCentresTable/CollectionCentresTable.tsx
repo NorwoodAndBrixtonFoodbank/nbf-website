@@ -170,14 +170,14 @@ const CollectionCentresTable: React.FC = () => {
             setTimeSlotModalErrorMessage(
                 `Failed to update the collection centre time slots. Log ID: ${updateTimeSlotError.logId}`
             );
-            void sendAuditLog({
+            await sendAuditLog({
                 ...baseAuditLog,
                 wasSuccess: false,
                 logId: updateTimeSlotError.logId,
             });
         }
 
-        void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
+        await sendAuditLog({ ...baseAuditLog, wasSuccess: true });
         setTimeSlotModalIsOpen(false);
     };
 
@@ -233,7 +233,7 @@ const CollectionCentresTable: React.FC = () => {
             setErrorMessage(
                 `Failed to add the collection centre. Log ID: ${insertCollectionCentreError.logId}`
             );
-            void sendAuditLog({
+            await sendAuditLog({
                 ...baseAuditLog,
                 wasSuccess: false,
                 logId: insertCollectionCentreError.logId,
@@ -241,7 +241,7 @@ const CollectionCentresTable: React.FC = () => {
             setIsLoading(false);
             return { data: null, error: insertCollectionCentreError };
         } else {
-            void sendAuditLog({
+            await sendAuditLog({
                 ...baseAuditLog,
                 collectionCentreId: createdCollectionCentre.collectionCentreId,
                 wasSuccess: true,
@@ -264,7 +264,7 @@ const CollectionCentresTable: React.FC = () => {
             setErrorMessage(
                 `Failed to update the collection centre. Log ID: ${updateCollectionCentreError.logId}`
             );
-            void sendAuditLog({
+            await sendAuditLog({
                 ...baseAuditLog,
                 wasSuccess: false,
                 logId: updateCollectionCentreError.logId,
@@ -273,7 +273,7 @@ const CollectionCentresTable: React.FC = () => {
             return { error: updateCollectionCentreError };
         }
 
-        void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
+        await sendAuditLog({ ...baseAuditLog, wasSuccess: true });
         setIsLoading(false);
         return { error: null };
     };
