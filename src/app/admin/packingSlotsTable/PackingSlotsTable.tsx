@@ -165,6 +165,7 @@ const PackingSlotsTable: React.FC = () => {
                 setErrorMessage(
                     `Failed to add the packing slot. Log ID: ${insertPackingSlotError.logId}`
                 );
+                setRows((rows) => rows.slice(0, -1));
                 void sendAuditLog({
                     ...baseAuditLog,
                     wasSuccess: false,
