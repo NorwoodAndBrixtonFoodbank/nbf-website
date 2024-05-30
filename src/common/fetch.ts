@@ -156,12 +156,17 @@ export type FetchCollectionTimeSlotsError = {
     logId: string;
 };
 
+type DbCollectionTimeSlotType = {
+    time: string;
+    is_active: boolean;
+};
+
 export const getActiveTimeSlotsForCollectionCentre = async (
     collectionCentrePrimaryKey: string,
     supabase: Supabase
 ): Promise<FetchCollectionTimeSlotsResponse> => {
     const { data, error } = await supabase
-        .from("collection_c")
+        .from("collection_centres")
         .select("time_slots")
         .eq("primary_key", collectionCentrePrimaryKey)
         .single();
@@ -183,11 +188,14 @@ export const getActiveTimeSlotsForCollectionCentre = async (
 
     const activeTimeSlots: CollectionTimeSlotsLabelsAndValues = data.time_slots
         .filter(
-            (timeSlot): timeSlot is { time: string; is_active: boolean } =>
+            (timeSlot): timeSlot is DbCollectionTimeSlotType =>
                 timeSlot.time !== null && timeSlot.is_active !== null
         )
-        .filter((timeSlot) => timeSlot.is_active)
-        .map((timeSlot) => [formatTimeStringToHoursAndMinutes(timeSlot.time), timeSlot.time]);
+        .filter((timeSlot: DbCollectionTimeSlotType) => timeSlot.is_active)
+        .map((timeSlot: DbCollectionTimeSlotType) => [
+            formatTimeStringToHoursAndMinutes(timeSlot.time),
+            timeSlot.time,
+        ]);
 
     return { data: activeTimeSlots, error: null };
 };
