@@ -130,3 +130,16 @@ export interface SelectedClientDetails {
     clientId: string;
     isClientActive: boolean;
 }
+
+export type ParcelPostcodeResult =
+    | {
+          postcodes: (string | null)[];
+          error: null;
+      }
+    | {
+          postcodes: null;
+          error: {
+              type: GetDbParcelDataErrorType;
+              logId: string;
+          };
+      };

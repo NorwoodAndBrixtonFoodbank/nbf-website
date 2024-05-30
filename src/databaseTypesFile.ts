@@ -261,18 +261,21 @@ export type Database = {
       collection_centres: {
         Row: {
           acronym: string
+          is_delivery: boolean
           is_shown: boolean
           name: string
           primary_key: string
         }
         Insert: {
           acronym?: string
+          is_delivery?: boolean
           is_shown?: boolean
           name?: string
           primary_key?: string
         }
         Update: {
           acronym?: string
+          is_delivery?: boolean
           is_shown?: boolean
           name?: string
           primary_key?: string
@@ -334,19 +337,22 @@ export type Database = {
       }
       families: {
         Row: {
-          age: number | null
+          birth_month: number | null
+          birth_year: number
           family_id: string
           gender: Database["public"]["Enums"]["gender"]
           primary_key: string
         }
         Insert: {
-          age?: number | null
+          birth_month?: number | null
+          birth_year: number
           family_id: string
           gender?: Database["public"]["Enums"]["gender"]
           primary_key?: string
         }
         Update: {
-          age?: number | null
+          birth_month?: number | null
+          birth_year?: number
           family_id?: string
           gender?: Database["public"]["Enums"]["gender"]
           primary_key?: string
@@ -900,6 +906,7 @@ export type Database = {
           collection_datetime: string | null
           created_at: string | null
           family_count: number | null
+          is_delivery: boolean | null
           last_status_event_data: string | null
           last_status_event_name: string | null
           last_status_timestamp: string | null
@@ -942,7 +949,7 @@ export type Database = {
         }
         Returns: undefined
       }
-      insertClientAndTheirFamily: {
+      insert_client_and_family: {
         Args: {
           clientrecord: Json
           familymembers: Json

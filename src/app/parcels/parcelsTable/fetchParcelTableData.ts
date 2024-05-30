@@ -13,9 +13,11 @@ import {
     ParcelsTableRow,
     ParcelStatusesReturnType,
     FetchClientIdResult,
+    ParcelPostcodeResult,
 } from "./types";
 import { checkForCongestionCharge, CongestionChargeReturnType } from "@/common/congestionCharges";
 import convertParcelDbtoParcelRow from "./convertParcelDBtoParcelRow";
+import { StatusType } from "@/app/parcels/ActionBar/Statuses";
 
 const getCongestionChargeDetailsForParcelsTable = async (
     processingData: DbParcelRow[]
@@ -46,7 +48,9 @@ const getParcelsQuery = (
         query = query
             .order("packing_date", { ascending: false })
             .order("packing_slot_order")
-            .order("client_full_name");
+            .order("is_delivery", { ascending: false })
+            .order("collection_centre_name")
+            .order("client_address_postcode");
     }
 
     query = query.order("parcel_id");
@@ -299,4 +303,25 @@ export const getClientIdAndIsActive = async (parcelId: string): Promise<FetchCli
         data: { clientId: data.client_id, isClientActive: data?.client?.is_active },
         error: null,
     };
+};
+
+export const getParcelPostcodesByEvent = async (
+    targetEventName: StatusType,
+    parcelIds: string[]
+): Promise<ParcelPostcodeResult> => {
+    const { data, error } = await supabase
+        .from("parcels_plus")
+        .select("client_address_postcode, events!inner(new_parcel_status)")
+        .in("parcel_id", parcelIds)
+        .eq("events.new_parcel_status", targetEventName);
+
+    if (error) {
+        const logId = await logErrorReturnLogId("Failed to fetch parcels with events", error);
+        return { postcodes: null, error: { type: "failedToFetchParcelTable", logId: logId } };
+    }
+
+    const postcodes = data.map((parcel) => parcel.client_address_postcode);
+    const uniquePostcodes = Array.from(new Set(postcodes));
+
+    return { postcodes: uniquePostcodes, error: null };
 };
