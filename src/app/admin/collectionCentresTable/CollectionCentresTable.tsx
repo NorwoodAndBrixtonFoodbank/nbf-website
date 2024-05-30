@@ -132,11 +132,7 @@ const CollectionCentresTable: React.FC = () => {
     useEffect(() => {
         void getCollectionCentresForTable();
     }, [getCollectionCentresForTable]);
-
-    useEffect(() => {
-        console.log(timeSlotModalData);
-    }, [timeSlotModalData]);
-
+    
     useEffect(() => {
         const subscriptionChannel = supabase
             .channel("collection-centre-table-changes")
