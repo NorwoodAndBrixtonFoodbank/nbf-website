@@ -22,7 +22,7 @@ import VoucherNumberCard from "@/app/parcels/form/formSections/VoucherNumberCard
 import PackingDateCard from "@/app/parcels/form/formSections/PackingDateCard";
 import ShippingMethodCard from "@/app/parcels/form/formSections/ShippingMethodCard";
 import CollectionDateCard from "@/app/parcels/form/formSections/CollectionDateCard";
-import CollectionTimeCard from "@/app/parcels/form/formSections/CollectionTimeCard";
+import CollectionSlotCard from "@/app/parcels/form/formSections/CollectionSlotCard";
 import CollectionCentreCard from "@/app/parcels/form/formSections/CollectionCentreCard";
 import {
     WriteParcelToDatabaseErrors,
@@ -115,7 +115,7 @@ const withCollectionFormSections = [
     ShippingMethodCard,
     CollectionCentreCard,
     CollectionDateCard,
-    CollectionTimeCard,
+    CollectionSlotCard,
 ];
 
 const noCollectionFormSections = [

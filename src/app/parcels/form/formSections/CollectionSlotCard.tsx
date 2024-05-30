@@ -21,7 +21,7 @@ const CollectionSlotCard: React.FC<CollectionSlotsCardProps> = ({
         <GenericFormCard
             title="Collection Slots"
             required={true}
-            text="What slot is the client collecting their parcel?"
+            text="What time is the client collecting their parcel?"
         >
             <>
                 <DropdownListInput
