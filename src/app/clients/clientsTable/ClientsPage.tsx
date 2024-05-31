@@ -154,7 +154,6 @@ const ClientsPage: React.FC<{}> = () => {
                 setDeleteClientErrorMessage(getDeleteClientErrorMessage(deleteClientError));
                 return;
             }
-            router.push("/clients");
         }
     };
 
@@ -258,7 +257,7 @@ const ClientsPage: React.FC<{}> = () => {
                         message="Are you sure you want to delete this client? This action cannot be undone."
                         onCancel={() => setIsDeleteClientDialogOpen(false)}
                         onConfirm={onDeleteClient}
-                    ></ConfirmDialog>
+                    />
                 </>
             )}
         </>

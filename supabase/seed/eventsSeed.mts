@@ -1,5 +1,7 @@
 export const eventNamesWithNumberData = ["Shipping Labels Downloaded"];
 
+export const eventNamesWithDriverData = ["Out for Delivery"];
+
 export const eventNamesWithNoData = [
     "No Status",
     "Parcel Denied",
@@ -12,9 +14,7 @@ export const eventNamesWithNoData = [
     "Received by Centre",
     "Collection Failed",
     "Parcel Collected",
-    "Driver Overview Downloaded",
     "Map Generated",
-    "Out for Delivery",
     "Delivered",
     "Delivery Failed",
     "Delivery Cancelled",

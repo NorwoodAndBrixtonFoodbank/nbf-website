@@ -18,6 +18,8 @@ import {
 import { checkForCongestionCharge, CongestionChargeReturnType } from "@/common/congestionCharges";
 import convertParcelDbtoParcelRow from "./convertParcelDBtoParcelRow";
 import { StatusType } from "@/app/parcels/ActionBar/Statuses";
+import { defaultParcelsSort } from "./sortableColumns";
+import { SortOrder } from "react-data-table-component";
 
 const getCongestionChargeDetailsForParcelsTable = async (
     processingData: DbParcelRow[]
@@ -45,12 +47,7 @@ const getParcelsQuery = (
     if (sortState.sortEnabled && sortState.column.sortMethod) {
         query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
-        query = query
-            .order("packing_date", { ascending: false })
-            .order("packing_slot_order")
-            .order("is_delivery", { ascending: false })
-            .order("collection_centre_name")
-            .order("client_address_postcode");
+        query = defaultParcelsSort(query, "desc" as SortOrder);
     }
 
     query = query.order("parcel_id");
