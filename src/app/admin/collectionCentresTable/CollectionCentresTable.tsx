@@ -202,6 +202,21 @@ const CollectionCentresTable: React.FC = () => {
         return existingTimeSlotData.timeSlots.some((slot) => slot.time === newTimeSlot.time);
     };
 
+    const addNewTimeSlotToTimeSlotModalData = (
+        existingTimeSlotData: FormattedTimeSlotsWithPrimaryKey,
+        newTimeSlot: FormattedTimeSlot
+    ): void => {
+        const newTimeSlotArray = [...existingTimeSlotData.timeSlots, newTimeSlot];
+        newTimeSlotArray.sort((slot1, slot2) => slot1.time.localeCompare(slot2.time));
+
+        const updatedTimeSlotModalData: FormattedTimeSlotsWithPrimaryKey = {
+            ...existingTimeSlotData,
+            timeSlots: newTimeSlotArray,
+        };
+
+        setTimeSlotModalData(updatedTimeSlotModalData);
+    };
+
     const handleSaveSlotClick = async (): Promise<void> => {
         setTimeSlotModalErrorMessage(null);
         if (timeSlotModalData === null || collectionTimeSlotValue === undefined) {
@@ -219,15 +234,8 @@ const CollectionCentresTable: React.FC = () => {
             return;
         }
 
-        const newTimeSlotArray = [...timeSlotModalData.timeSlots, newTimeSlot];
-        newTimeSlotArray.sort((slot1, slot2) => slot1.time.localeCompare(slot2.time));
+        addNewTimeSlotToTimeSlotModalData(timeSlotModalData, newTimeSlot);
 
-        const updatedTimeSlotModalData = {
-            ...timeSlotModalData,
-            timeSlots: newTimeSlotArray,
-        };
-
-        setTimeSlotModalData(updatedTimeSlotModalData);
         setEditableIsShown(false);
     };
 
@@ -236,29 +244,15 @@ const CollectionCentresTable: React.FC = () => {
             return;
         }
 
-        const changedTimeSlotsData = timeSlotModalData.timeSlots.map((timeSlot) => {
-            if (
-                formatTimeStringToHoursAndMinutes(timeSlot.time) ===
-                event.currentTarget.parentElement?.parentElement?.innerText
-            ) {
-                return {
-                    time: timeSlot.time,
-                    isActive: (timeSlot.isActive = !timeSlot.isActive),
-                };
-            } else {
-                return {
-                    time: timeSlot.time,
-                    isActive: timeSlot.isActive,
-                };
-            }
-        });
+        const updatedTime = event.currentTarget.parentElement?.parentElement?.innerText;
+        const timeSlot = timeSlotModalData.timeSlots.find((slot) => slot.time === updatedTime);
+        if (!timeSlot) {
+            return;
+        }
 
-        const changedTimeSlotsDataWithPrimaryKey: FormattedTimeSlotsWithPrimaryKey = {
-            primaryKey: timeSlotModalData.primaryKey,
-            timeSlots: changedTimeSlotsData,
-        };
+        timeSlot.isActive = !timeSlot.isActive;
 
-        setTimeSlotModalData(changedTimeSlotsDataWithPrimaryKey);
+        addNewTimeSlotToTimeSlotModalData(timeSlotModalData, timeSlot);
     };
 
     const handleSaveClick = (id: GridRowId) => () => {
