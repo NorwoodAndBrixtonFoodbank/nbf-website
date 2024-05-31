@@ -22,7 +22,7 @@ const getClientsDataAndCount = async (
     if (sortState.sortEnabled && sortState.column.sortMethod) {
         query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
-        query = query.order("full_name");
+        query.order("full_name");
     }
     filters.forEach((filter) => {
         query = filter.method(query, filter.state);
@@ -30,9 +30,9 @@ const getClientsDataAndCount = async (
 
     query.order("client_id");
 
-    query = query.range(startIndex, endIndex);
+    query.range(startIndex, endIndex);
 
-    query = query.abortSignal(abortSignal);
+    query.abortSignal(abortSignal);
 
     const { data: clients, error: clientError } = await query;
 

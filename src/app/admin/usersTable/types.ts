@@ -17,25 +17,25 @@ export type GetUserDataAndCountErrorType =
 
 export type GetUsersReturnType =
     | {
-          error: null;
           data: {
               userData: UserRow[];
               count: number;
           };
+          error: null;
       }
     | {
-          error: { type: GetUserDataAndCountErrorType; logId: string };
           data: null;
+          error: { type: GetUserDataAndCountErrorType; logId: string };
       };
 
 export type GetUserCountReturnType =
     | {
-          error: { type: GetUserDataAndCountErrorType; logId: string };
-          data: null;
+          data: number;
+          error: null;
       }
     | {
-          error: null;
-          data: number;
+          data: null;
+          error: { type: GetUserDataAndCountErrorType; logId: string };
       };
 
 export type DisplayedUserRole = UserRole | "UNKNOWN";
