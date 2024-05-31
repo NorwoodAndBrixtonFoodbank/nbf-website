@@ -5,7 +5,7 @@ import { Schema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
-import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import { ErrorSecondaryText, ErrorTextModalFooter } from "@/app/errorStylingandMessages";
 import {
     GridActionsCellItem,
     GridColDef,
@@ -137,6 +137,9 @@ const CollectionCentresTable: React.FC = () => {
         useState<FormattedTimeSlotsWithPrimaryKey | null>(null);
     const [editableIsShown, setEditableIsShown] = useState<boolean>(false);
     const [collectionTimeSlotValue, setCollectionTimeSlotValue] = useState<Dayjs>();
+    const [addCollectionTimeSlotError, setAddCollectionTimeSlotError] = useState<string | null>(
+        null
+    );
     const theme = useTheme();
 
     const getCollectionCentresForTable = useCallback(async () => {
@@ -227,7 +230,7 @@ const CollectionCentresTable: React.FC = () => {
     };
 
     const handleSaveSlotClick = async (): Promise<void> => {
-        setTimeSlotModalErrorMessage(null);
+        setAddCollectionTimeSlotError(null);
         if (timeSlotModalData === null || collectionTimeSlotValue === undefined) {
             return;
         }
@@ -237,7 +240,7 @@ const CollectionCentresTable: React.FC = () => {
         };
 
         if (checkIfSlotExists(timeSlotModalData, newTimeSlot)) {
-            setTimeSlotModalErrorMessage(
+            setAddCollectionTimeSlotError(
                 "This time slot already exists. Please select a different time."
             );
             return;
@@ -551,20 +554,27 @@ const CollectionCentresTable: React.FC = () => {
                                 </Button>
                             )}
                             {editableIsShown && (
-                                <Centerer>
-                                    <DesktopTimePicker
-                                        label="New Collection Slot"
-                                        views={["hours", "minutes"]}
-                                        format="HH:mm"
-                                        value={dayjs(collectionTimeSlotValue)}
-                                        onChange={(value) =>
-                                            value !== null && setCollectionTimeSlotValue(value)
-                                        }
-                                    />
-                                    <Button onClick={handleSaveSlotClick} variant="contained">
-                                        Save slot
-                                    </Button>
-                                </Centerer>
+                                <>
+                                    <Centerer>
+                                        <DesktopTimePicker
+                                            label="New Collection Slot"
+                                            views={["hours", "minutes"]}
+                                            format="HH:mm"
+                                            value={dayjs(collectionTimeSlotValue)}
+                                            onChange={(value) =>
+                                                value !== null && setCollectionTimeSlotValue(value)
+                                            }
+                                        />
+                                        <Button onClick={handleSaveSlotClick} variant="contained">
+                                            Save slot
+                                        </Button>
+                                    </Centerer>
+                                    {addCollectionTimeSlotError && (
+                                        <ErrorTextModalFooter>
+                                            {addCollectionTimeSlotError}
+                                        </ErrorTextModalFooter>
+                                    )}
+                                </>
                             )}
                             <Button onClick={handleModalSaveClick} variant="contained">
                                 Save
