@@ -50,7 +50,7 @@ const ExpandedClientDetails: React.FC<Props> = ({ clientId }) => {
         })();
     }, [clientId]);
 
-    useEffect(() => loadData(), [loadData]);
+    useEffect(loadData, [loadData]);
 
     const onSaveNotes = async (): Promise<void> => {
         setErrorMessage(null);

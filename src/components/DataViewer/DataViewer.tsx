@@ -102,9 +102,10 @@ const EditableDataViewerRow: React.FC<EditableDataViewerRowProps> = ({ editFunct
     <>
         <FreeFormTextInputForDataViewer>
             <FreeFormTextInput
-                defaultValue={formatDisplayValue(value)}
+                defaultValue={value?.toString() ?? ""}
                 fullWidth
                 onChange={editFunctions.onChange}
+                multiline
             />
         </FreeFormTextInputForDataViewer>
         <ButtonsContainer>
