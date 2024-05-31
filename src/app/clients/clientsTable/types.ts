@@ -16,25 +16,25 @@ export type GetClientsDataAndCountErrorType =
 
 export type GetClientsReturnType =
     | {
-          error: null;
           data: {
               clientData: ClientsTableRow[];
               count: number;
           };
+          error: null;
       }
     | {
-          error: { type: GetClientsDataAndCountErrorType; logId: string };
           data: null;
+          error: { type: GetClientsDataAndCountErrorType; logId: string };
       };
 
 export type GetClientsCountReturnType =
     | {
-          error: { type: GetClientsDataAndCountErrorType; logId: string };
           data: null;
+          error: { type: GetClientsDataAndCountErrorType; logId: string };
       }
     | {
-          error: null;
           data: number;
+          error: null;
       };
 
 export interface ClientsTableRow {

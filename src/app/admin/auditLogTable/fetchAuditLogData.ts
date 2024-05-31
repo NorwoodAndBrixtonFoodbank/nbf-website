@@ -13,7 +13,7 @@ export const fetchAuditLog = async (
     if (sortState.sortEnabled && sortState.column.sortMethod) {
         query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
-        query = query.order("created_at", { ascending: false });
+        query.order("created_at", { ascending: false });
     }
 
     const { data: auditLogs, error } = await query;
