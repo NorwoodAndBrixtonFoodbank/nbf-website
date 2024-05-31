@@ -1,8 +1,12 @@
 "use client";
 
 import React, { ReactElement, useCallback, useEffect, useState } from "react";
-import DataViewer from "@/components/DataViewer/DataViewer";
+import DataViewer, {
+    DataForDataViewer,
+    convertDataToDataForDataViewer,
+} from "@/components/DataViewer/DataViewer";
 import getExpandedParcelDetails, {
+    ExpandedParcelData,
     ExpandedParcelDetails,
     FetchExpandedParcelDetailsError,
 } from "@/app/parcels/getExpandedParcelDetails";
@@ -61,6 +65,19 @@ const ExpandedParcelDetailsView = ({ parcelId }: Props): ReactElement => {
         void fetchAndSetParcelDetails();
     }, [fetchAndSetParcelDetails]);
 
+    const getExpandedParcelDataForDataViewer = (
+        expandedParcelData: ExpandedParcelData
+    ): DataForDataViewer => {
+        const expandedParcelDetailsForDataViewer = convertDataToDataForDataViewer({
+            ...expandedParcelData,
+        });
+        expandedParcelDetailsForDataViewer["isActive"] = {
+            value: expandedParcelData["isActive"],
+            hide: true,
+        };
+        return expandedParcelDetailsForDataViewer;
+    };
+
     return (
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
@@ -71,8 +88,9 @@ const ExpandedParcelDetailsView = ({ parcelId }: Props): ReactElement => {
                         <DeletedText>This parcel belongs to a deleted client.</DeletedText>
                     )}
                     <DataViewer
-                        data={parcelDetails.expandedParcelData}
-                        fieldsToHide={["isActive"]}
+                        data={{
+                            ...getExpandedParcelDataForDataViewer(parcelDetails.expandedParcelData),
+                        }}
                     />
                     <EventTable
                         tableData={sortByTimestampWithMostRecentFirst(parcelDetails.events)}

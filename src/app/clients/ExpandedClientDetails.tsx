@@ -90,6 +90,10 @@ const ExpandedClientDetails: React.FC<Props> = ({ clientId }) => {
                 onSave: onSaveNotes,
             },
         };
+        expandedClientDetailsForDataViewer["isActive"] = {
+            value: expandedClientDetails["isActive"],
+            hide: true,
+        };
         return expandedClientDetailsForDataViewer;
     };
 

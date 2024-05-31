@@ -181,7 +181,7 @@ interface ParcelDataForActiveClient extends ParcelDataIndependentOfClient {
     children: string;
 }
 
-type ExpandedParcelData = ParcelDataForActiveClient | ParcelDataForInactiveClient;
+export type ExpandedParcelData = ParcelDataForActiveClient | ParcelDataForInactiveClient;
 
 export interface ExpandedParcelDetails {
     expandedParcelData: ExpandedParcelData;
