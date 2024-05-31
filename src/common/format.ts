@@ -40,11 +40,7 @@ export const formatDatetimeAsDate = (datetime: Date | string | null): string => 
     return new Date(datetime).toLocaleDateString("en-GB");
 };
 
-export const formatDatetimeAsTime = (datetime: Date | string | null): string => {
-    if (datetime instanceof Date) {
-        return datetime.toLocaleDateString("en-GB");
-    }
-
+export const formatDatetimeAsTime = (datetime: string | null): string => {
     if (datetime === null || isNaN(Date.parse(datetime))) {
         return "-";
     }
