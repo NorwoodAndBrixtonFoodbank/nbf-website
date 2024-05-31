@@ -8,7 +8,8 @@ export const defaultParcelsSort: ParcelsSortMethod = (query, sortDirection) =>
         .order("is_delivery", { ascending: false })
         .order("client_is_active", { ascending: false })
         .order("collection_centre_name")
-        .order("client_address_postcode");
+        .order("client_address_postcode")
+        .order("parcel_id");
 
 const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] = [
     {
@@ -21,7 +22,8 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_slot_order")
                 .order("is_delivery", { ascending: false })
                 .order("collection_centre_name")
-                .order("client_address_postcode"),
+                .order("client_address_postcode")
+                .order("parcel_id"),
     },
     {
         key: "familyCategory",
@@ -33,7 +35,8 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_slot_order")
                 .order("is_delivery", { ascending: false })
                 .order("collection_centre_name")
-                .order("client_address_postcode"),
+                .order("client_address_postcode")
+                .order("parcel_id"),
     },
     {
         key: "addressPostcode",
@@ -44,7 +47,8 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_date")
                 .order("packing_slot_order")
                 .order("is_delivery", { ascending: false })
-                .order("collection_centre_name"),
+                .order("collection_centre_name")
+                .order("parcel_id"),
     },
     {
         key: "phoneNumber",
@@ -56,7 +60,8 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_slot_order")
                 .order("is_delivery", { ascending: false })
                 .order("collection_centre_name")
-                .order("client_address_postcode"),
+                .order("client_address_postcode")
+                .order("parcel_id"),
     },
     {
         key: "voucherNumber",
@@ -67,7 +72,8 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_slot_order")
                 .order("is_delivery", { ascending: false })
                 .order("collection_centre_name")
-                .order("client_address_postcode"),
+                .order("client_address_postcode")
+                .order("parcel_id"),
     },
     {
         key: "deliveryCollection",
@@ -77,7 +83,8 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("collection_centre_name")
                 .order("packing_date")
                 .order("packing_slot_order")
-                .order("client_address_postcode"),
+                .order("client_address_postcode")
+                .order("parcel_id"),
     },
     {
         key: "packingDate",
@@ -91,7 +98,8 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_date")
                 .order("is_delivery", { ascending: false })
                 .order("collection_centre_name")
-                .order("client_address_postcode"),
+                .order("client_address_postcode")
+                .order("parcel_id"),
     },
     {
         key: "lastStatus",
@@ -102,7 +110,8 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_slot_order")
                 .order("is_delivery", { ascending: false })
                 .order("collection_centre_name")
-                .order("client_address_postcode"),   
+                .order("client_address_postcode")
+                .order("parcel_id"),
     },
     {
         key: "createdAt",
@@ -113,7 +122,8 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_slot_order")
                 .order("is_delivery", { ascending: false })
                 .order("collection_centre_name")
-                .order("client_address_postcode"),
+                .order("client_address_postcode")
+                .order("parcel_id"),
     },
 ];
 
