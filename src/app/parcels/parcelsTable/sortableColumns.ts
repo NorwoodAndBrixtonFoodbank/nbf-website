@@ -7,8 +7,8 @@ export const defaultParcelsSort: ParcelsSortMethod = (query, sortDirection) =>
         .order("packing_slot_order")
         .order("is_delivery", { ascending: false })
         .order("client_is_active", { ascending: false })
-        .order("client_address_postcode")
-        .order("collection_centre_name");
+        .order("collection_centre_name")
+        .order("client_address_postcode");
 
 const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] = [
     {
