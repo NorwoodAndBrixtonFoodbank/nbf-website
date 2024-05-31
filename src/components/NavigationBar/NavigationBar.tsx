@@ -138,6 +138,7 @@ const pages = [
     ["Lists", "/lists"],
     ["Calendar", "/calendar"],
     ["Admin", "/admin"],
+    ["Reports", "/reports"],
 ];
 
 const NavigationBar: React.FC<Props> = ({ children }) => {

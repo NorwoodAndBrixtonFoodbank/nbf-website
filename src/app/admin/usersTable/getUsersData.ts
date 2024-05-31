@@ -28,9 +28,9 @@ export const getUsersDataAndCount = async (
     }
     query = getQueryWithFiltersApplied(query, filters);
 
-    query = query.range(startIndex, endIndex);
+    query.range(startIndex, endIndex);
 
-    query = query.abortSignal(abortSignal);
+    query.abortSignal(abortSignal);
 
     const { data: users, error: userError } = await query;
 

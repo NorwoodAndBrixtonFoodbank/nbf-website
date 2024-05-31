@@ -223,9 +223,9 @@ export const getParcelsByIds = async (
     sortState: ParcelsSortState,
     parcelIds: string[]
 ): Promise<ParcelsTableRow[]> => {
-    let query = getParcelsQuery(supabase, filters, sortState);
+    const query = getParcelsQuery(supabase, filters, sortState);
     if (parcelIds) {
-        query = query.in("parcel_id", parcelIds);
+        query.in("parcel_id", parcelIds);
     }
 
     const { data, error } = await query;
