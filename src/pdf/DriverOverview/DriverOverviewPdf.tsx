@@ -3,7 +3,7 @@
 import React from "react";
 import { Text, Document, Page, View, StyleSheet, Image } from "@react-pdf/renderer";
 import { displayNameForNullDriverName, displayPostcodeForHomelessClient } from "@/common/format";
-import { faTruck, faShoePrints } from "@fortawesome/free-solid-svg-icons";
+import { faTruck, faShoePrints, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIconPdfComponent from "../FontAwesomeIconPdfComponent";
 
 export interface DriverOverviewRowData {
@@ -215,10 +215,36 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
         );
     };
 
-    const deliveriesHeader = createHeader(Method.Delivery);
-    const collectionsHeader = createHeader(Method.Collection);
-    const collections = data.tableData.collections.map(createRow);
-    const deliveries = data.tableData.deliveries.map(createRow);
+    const createTable = (
+        name: string,
+        header: React.JSX.Element,
+        tableRows: React.JSX.Element[],
+        icon: IconDefinition
+    ): React.JSX.Element => {
+        return (
+            <View style={styles.tableContainer}>
+                <View style={[styles.h2text, styles.collectionOrDeliveryHeader, styles.flexRow]}>
+                    <Text style={[styles.collectionOrDeliveryHeader]}>{name}</Text>
+                    <FontAwesomeIconPdfComponent faIcon={icon}></FontAwesomeIconPdfComponent>
+                </View>
+                <View style={[styles.flexColumn, { width: "100%" }]}>{header}</View>
+                <View style={[styles.tableSection, styles.flexColumn]}>{tableRows}</View>
+            </View>
+        );
+    };
+
+    const deliveriesHeader: React.JSX.Element = createHeader(Method.Delivery);
+    const collectionsHeader: React.JSX.Element = createHeader(Method.Collection);
+    const collections: React.JSX.Element[] = data.tableData.collections.map(createRow);
+    const deliveries: React.JSX.Element[] = data.tableData.deliveries.map(createRow);
+
+    const collectionsTable = createTable(
+        "Collections",
+        collectionsHeader,
+        collections,
+        faShoePrints
+    );
+    const deliveriesTable = createTable("Deliveries", deliveriesHeader, deliveries, faTruck);
 
     return (
         <Document>
@@ -241,46 +267,8 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                         COMPLETION OF DELIVERIES
                     </Text>
                 </View>
-                {deliveries.length ? (
-                    <View style={styles.tableContainer}>
-                        <View
-                            style={[
-                                styles.h2text,
-                                styles.collectionOrDeliveryHeader,
-                                styles.flexRow,
-                            ]}
-                        >
-                            <Text style={styles.collectionOrDeliveryHeader}>Deliveries</Text>
-                            <FontAwesomeIconPdfComponent
-                                faIcon={faTruck}
-                            ></FontAwesomeIconPdfComponent>
-                        </View>
-                        <View style={[styles.flexColumn, { width: "100%" }]}>
-                            {deliveriesHeader}
-                        </View>
-                        <View style={[styles.tableSection, styles.flexColumn]}>{deliveries}</View>
-                    </View>
-                ) : null}
-                {collections.length ? (
-                    <View style={styles.tableContainer}>
-                        <View
-                            style={[
-                                styles.h2text,
-                                styles.collectionOrDeliveryHeader,
-                                styles.flexRow,
-                            ]}
-                        >
-                            <Text style={[styles.collectionOrDeliveryHeader]}>Collections</Text>
-                            <FontAwesomeIconPdfComponent
-                                faIcon={faShoePrints}
-                            ></FontAwesomeIconPdfComponent>
-                        </View>
-                        <View style={[styles.flexColumn, { width: "100%" }]}>
-                            {collectionsHeader}
-                        </View>
-                        <View style={[styles.tableSection, styles.flexColumn]}>{collections}</View>
-                    </View>
-                ) : null}
+                {deliveries.length ? deliveriesTable : null}
+                {collections.length ? collectionsTable : null}
             </Page>
         </Document>
     );

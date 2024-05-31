@@ -38,13 +38,10 @@ const comparePostcodes = (first: DriverOverviewRowData, second: DriverOverviewRo
     if (first.address.postcode && second.address.postcode) {
         return first.address.postcode.localeCompare(second.address.postcode);
     }
-    if (first.address.postcode) {
-        return 1;
+    if (!first.address.postcode && !second.address.postcode) {
+        return 0;
     }
-    if (second.address.postcode) {
-        return -1;
-    }
-    return 0;
+    return first.address.postcode ? 1 : -1;
 };
 
 type ParcelForDelivery = Schema["parcels"] & {
@@ -147,23 +144,16 @@ const transformRowToDriverOverviewTableData = (
     };
 };
 
-const transformParcelDataToClientInformation = (
-    parcels: ParcelForDelivery[]
-): DriverOverviewTablesData => {
-    const collections: DriverOverviewRowData[] = [];
-    const deliveries: DriverOverviewRowData[] = [];
-
-    for (const parcel of parcels) {
-        if (parcel.collection_centre?.is_delivery) {
-            deliveries.push(transformRowToDriverOverviewTableData(parcel));
-        } else {
-            collections.push(transformRowToDriverOverviewTableData(parcel));
-        }
-    }
+const transformParcelDataToTableData = (parcels: ParcelForDelivery[]): DriverOverviewTablesData => {
+    const transformedParcels = parcels.map((parcel) =>
+        transformRowToDriverOverviewTableData(parcel)
+    );
 
     return {
-        collections: collections.sort(compareCollectionCentres),
-        deliveries: deliveries.sort(comparePostcodes),
+        collections: transformedParcels
+            .filter((parcel) => !parcel.isDelivery)
+            .sort(compareCollectionCentres),
+        deliveries: transformedParcels.filter((parcel) => parcel.isDelivery).sort(comparePostcodes),
     };
 };
 
@@ -172,8 +162,8 @@ const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse>
     if (parcelsError) {
         return { data: null, error: parcelsError };
     }
-    const clientInformation = transformParcelDataToClientInformation(parcels);
-    return { data: clientInformation, error: null };
+    const tableData = transformParcelDataToTableData(parcels);
+    return { data: tableData, error: null };
 };
 
 interface Props {
