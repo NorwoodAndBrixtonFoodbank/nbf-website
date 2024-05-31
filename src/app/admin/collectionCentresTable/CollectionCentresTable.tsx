@@ -138,7 +138,7 @@ const CollectionCentresTable: React.FC = () => {
     const [editableIsShown, setEditableIsShown] = useState<boolean>(false);
     const [collectionTimeSlotValue, setCollectionTimeSlotValue] = useState<Dayjs>();
     const theme = useTheme();
-
+    
     const getCollectionCentresForTable = useCallback(async () => {
         setErrorMessage(null);
         const { data, error } = await fetchCollectionCentresForTable();
@@ -201,6 +201,7 @@ const CollectionCentresTable: React.FC = () => {
 
     const handleAddSlotClick = async (): Promise<void> => {
         setEditableIsShown(true);
+        setCollectionTimeSlotValue(dayjs(collectionTimeSlotValue));
     };
 
     const checkIfSlotExists = (
