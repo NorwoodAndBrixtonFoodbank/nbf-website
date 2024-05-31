@@ -73,8 +73,8 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
         key: "deliveryCollection",
         sortMethod: (query, sortDirection) =>
             query
-                .order("is_delivery", {ascending: false})
-                .order("collection_centre_name", { ascending: sortDirection === "asc" })
+                .order("is_delivery", {ascending: sortDirection === "asc" })
+                .order("collection_centre_name")
                 .order("packing_date")
                 .order("packing_slot_order") 
                 .order("client_address_postcode")
