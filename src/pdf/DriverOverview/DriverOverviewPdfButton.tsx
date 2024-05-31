@@ -42,14 +42,15 @@ type ParcelsForDeliveryErrorType = "parcelFetchFailed" | "noMatchingClient" | "n
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDeliveryResponse> => {
     const { data, error } = await supabase
         .from("parcels")
-        .select("*, client:clients(*), events(event_data), collection_centre:collection_centres(*), collection_centres(name), clients(address_postcode)")
+        .select(
+            "*, client:clients(*), events(event_data), collection_centre:collection_centres(*), collection_centres(name), clients(address_postcode)"
+        )
         .in("primary_key", parcelIds)
         .limit(1, { foreignTable: "clients" })
         .limit(1, { foreignTable: "collection_centres" })
         .eq("events.new_parcel_status", "Shipping Labels Downloaded")
         .order("collection_centres(name)")
         .order("clients(address_postcode)");
-
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Parcels", error);
@@ -130,9 +131,8 @@ const transformParcelDataToTableData = (parcels: ParcelForDelivery[]): DriverOve
     );
 
     return {
-        collections: transformedParcels
-            .filter((parcel) => !parcel.isDelivery),
-        deliveries: transformedParcels.filter((parcel) => parcel.isDelivery)
+        collections: transformedParcels.filter((parcel) => !parcel.isDelivery),
+        deliveries: transformedParcels.filter((parcel) => parcel.isDelivery),
     };
 };
 
