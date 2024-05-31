@@ -3,8 +3,10 @@
 import React from "react";
 import { Text, Document, Page, View, StyleSheet, Image } from "@react-pdf/renderer";
 import { displayNameForNullDriverName, displayPostcodeForHomelessClient } from "@/common/format";
+import { faTruck, faShoePrints, IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import FontAwesomeIconPdfComponent from "../FontAwesomeIconPdfComponent";
 
-export interface DriverOverviewTableData {
+export interface DriverOverviewRowData {
     name: string;
     address: {
         line1: string;
@@ -18,18 +20,30 @@ export interface DriverOverviewTableData {
     instructions?: string;
     clientIsActive: boolean;
     numberOfLabels: number;
+    collectionCentre: string;
+    isDelivery: boolean;
 }
 
 export interface DriverOverviewCardDataProps {
     driverName: string | null;
     date: Date;
-    tableData: DriverOverviewTableData[];
+    tableData: DriverOverviewTablesData;
     message: string;
 }
 
 interface DriverOverviewCardProps {
     data: DriverOverviewCardDataProps;
 }
+
+enum Method {
+    Delivery = "Delivery",
+    Collection = "Collection",
+}
+
+export type DriverOverviewTablesData = {
+    collections: DriverOverviewRowData[];
+    deliveries: DriverOverviewRowData[];
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -72,10 +86,14 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         paddingTop: 5,
     },
+    tableContainer: {
+        width: "100%",
+    },
     tableSection: {
         width: "100%",
         borderTop: "none",
         borderBottom: "1px solid black",
+        marginBottom: "15px",
     },
     tableRow: {
         width: "100%",
@@ -120,33 +138,40 @@ const styles = StyleSheet.create({
     numberOfLabelsColumnWidth: {
         width: "20%",
     },
+    collectionOrDeliveryHeader: {
+        marginRight: "5px",
+        marginBottom: "5px",
+        alignSelf: "flex-start",
+    },
 });
 
 const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
-    const header = (
-        <View style={[styles.tableHeader, styles.flexRow]}>
-            <View style={[styles.tableColumn, styles.nameColumnWidth]}>
-                <Text>Name</Text>
+    const createHeader = (category: Method): React.JSX.Element => {
+        return (
+            <View style={[styles.tableHeader, styles.flexRow]}>
+                <View style={[styles.tableColumn, styles.nameColumnWidth]}>
+                    <Text>Name</Text>
+                </View>
+                <View style={[styles.tableColumn, styles.addressColumnWidth]}>
+                    <Text>{category === Method.Collection ? "Collection Centre" : "Address"}</Text>
+                </View>
+                <View style={[styles.tableColumn, styles.contactColumnWidth]}>
+                    <Text>Contact</Text>
+                </View>
+                <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
+                    <Text>Packing Date</Text>
+                </View>
+                <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
+                    <Text>Instructions</Text>
+                </View>
+                <View style={[styles.tableColumn, styles.numberOfLabelsColumnWidth]}>
+                    <Text>Number of Parcels</Text>
+                </View>
             </View>
-            <View style={[styles.tableColumn, styles.addressColumnWidth]}>
-                <Text>Address</Text>
-            </View>
-            <View style={[styles.tableColumn, styles.contactColumnWidth]}>
-                <Text>Contact</Text>
-            </View>
-            <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
-                <Text>Packing Date</Text>
-            </View>
-            <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
-                <Text>Instructions</Text>
-            </View>
-            <View style={[styles.tableColumn, styles.numberOfLabelsColumnWidth]}>
-                <Text>Number of Parcels</Text>
-            </View>
-        </View>
-    );
+        );
+    };
 
-    const table = data.tableData.map((rowData, index) => {
+    const createRow = (rowData: DriverOverviewRowData, index: number): React.JSX.Element => {
         return (
             // eslint-disable-next-line react/no-array-index-key
             <View key={index} style={[styles.tableRow, styles.flexRow]} wrap={false}>
@@ -154,18 +179,24 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                     <Text>{rowData.name}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.addressColumnWidth]}>
-                    {rowData.address.postcode || rowData.clientIsActive ? (
-                        <>
-                            <Text>{rowData.address.line1}</Text>
-                            <Text>{rowData.address.line2}</Text>
-                            <Text>{rowData.address.town}</Text>
-                            <Text>{rowData.address.county}</Text>
-                            <Text>{rowData.address.postcode}</Text>
-                        </>
+                    {rowData.isDelivery ? (
+                        rowData.address.postcode || rowData.clientIsActive ? (
+                            <>
+                                <Text>{rowData.address.line1}</Text>
+                                <Text>{rowData.address.line2}</Text>
+                                <Text>{rowData.address.town}</Text>
+                                <Text>{rowData.address.county}</Text>
+                                <Text>{rowData.address.postcode}</Text>
+                            </>
+                        ) : (
+                            <Text>
+                                {rowData.clientIsActive ? displayPostcodeForHomelessClient : "-"}
+                            </Text>
+                        )
                     ) : (
-                        <Text>
-                            {rowData.clientIsActive ? displayPostcodeForHomelessClient : "-"}
-                        </Text>
+                        <>
+                            <Text>{rowData.collectionCentre}</Text>
+                        </>
                     )}
                 </View>
                 <View style={[styles.tableColumn, styles.contactColumnWidth]}>
@@ -182,7 +213,38 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                 </View>
             </View>
         );
-    });
+    };
+
+    const createTable = (
+        name: string,
+        header: React.JSX.Element,
+        tableRows: React.JSX.Element[],
+        icon: IconDefinition
+    ): React.JSX.Element => {
+        return (
+            <View style={styles.tableContainer}>
+                <View style={[styles.h2text, styles.collectionOrDeliveryHeader, styles.flexRow]}>
+                    <Text style={[styles.collectionOrDeliveryHeader]}>{name}</Text>
+                    <FontAwesomeIconPdfComponent faIcon={icon}></FontAwesomeIconPdfComponent>
+                </View>
+                <View style={[styles.flexColumn, { width: "100%" }]}>{header}</View>
+                <View style={[styles.tableSection, styles.flexColumn]}>{tableRows}</View>
+            </View>
+        );
+    };
+
+    const deliveriesHeader: React.JSX.Element = createHeader(Method.Delivery);
+    const collectionsHeader: React.JSX.Element = createHeader(Method.Collection);
+    const collections: React.JSX.Element[] = data.tableData.collections.map(createRow);
+    const deliveries: React.JSX.Element[] = data.tableData.deliveries.map(createRow);
+
+    const collectionsTable = createTable(
+        "Collections",
+        collectionsHeader,
+        collections,
+        faShoePrints
+    );
+    const deliveriesTable = createTable("Deliveries", deliveriesHeader, deliveries, faTruck);
 
     return (
         <Document>
@@ -205,8 +267,8 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                         COMPLETION OF DELIVERIES
                     </Text>
                 </View>
-                <View style={[styles.flexColumn, { width: "100%" }]}>{header}</View>
-                <View style={[styles.tableSection, styles.flexColumn]}>{table}</View>
+                {deliveries.length && deliveriesTable}
+                {collections.length && collectionsTable}
             </Page>
         </Document>
     );
