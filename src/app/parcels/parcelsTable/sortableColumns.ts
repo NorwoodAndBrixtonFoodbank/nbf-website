@@ -19,7 +19,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("client_full_name", { ascending: sortDirection === "asc" })
                 .order("packing_date")
                 .order("packing_slot_order")
-                .order("is_delivery", {ascending: false})
+                .order("is_delivery", { ascending: false })
                 .order("client_address_postcode")
                 .order("collection_centre_name"),
     },
@@ -31,7 +31,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("family_count", { ascending: sortDirection === "asc" })
                 .order("packing_date")
                 .order("packing_slot_order")
-                .order("is_delivery", {ascending: false})
+                .order("is_delivery", { ascending: false })
                 .order("client_address_postcode")
                 .order("collection_centre_name"),
     },
@@ -43,7 +43,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("client_address_postcode", { ascending: sortDirection === "asc" })
                 .order("packing_date")
                 .order("packing_slot_order")
-                .order("is_delivery", {ascending: false})
+                .order("is_delivery", { ascending: false })
                 .order("collection_centre_name"),
     },
     {
@@ -54,7 +54,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("client_phone_number", { ascending: sortDirection === "asc" })
                 .order("packing_date")
                 .order("packing_slot_order")
-                .order("is_delivery", {ascending: false})
+                .order("is_delivery", { ascending: false })
                 .order("client_address_postcode")
                 .order("collection_centre_name"),
     },
@@ -65,7 +65,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("voucher_number", { ascending: sortDirection === "asc" })
                 .order("packing_date")
                 .order("packing_slot_order")
-                .order("is_delivery", {ascending: false})
+                .order("is_delivery", { ascending: false })
                 .order("client_address_postcode")
                 .order("collection_centre_name"),
     },
@@ -73,12 +73,11 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
         key: "deliveryCollection",
         sortMethod: (query, sortDirection) =>
             query
-                .order("is_delivery", {ascending: sortDirection === "asc" })
+                .order("is_delivery", { ascending: sortDirection === "asc" })
                 .order("collection_centre_name")
                 .order("packing_date")
-                .order("packing_slot_order") 
-                .order("client_address_postcode")
-                .order("collection_centre_name"),
+                .order("packing_slot_order")
+                .order("client_address_postcode"),
     },
     {
         key: "packingDate",
@@ -87,11 +86,12 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
     {
         key: "packingSlot",
         sortMethod: (query, sortDirection) =>
-            query.order("packing_slot_order", { ascending: sortDirection === "asc" })
-            .order("packing_date")
-            .order("is_delivery", {ascending: false})
-            .order("client_address_postcode")
-            .order("collection_centre_name"),
+            query
+                .order("packing_slot_order", { ascending: sortDirection === "asc" })
+                .order("packing_date")
+                .order("is_delivery", { ascending: false })
+                .order("client_address_postcode")
+                .order("collection_centre_name"),
     },
     {
         key: "lastStatus",
@@ -100,7 +100,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("last_status_workflow_order", { ascending: sortDirection === "asc" })
                 .order("packing_date")
                 .order("packing_slot_order")
-                .order("is_delivery", {ascending: false})
+                .order("is_delivery", { ascending: false })
                 .order("client_address_postcode")
                 .order("collection_centre_name"),
     },
@@ -111,7 +111,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("created_at", { ascending: sortDirection === "asc" })
                 .order("packing_date")
                 .order("packing_slot_order")
-                .order("is_delivery", {ascending: false})
+                .order("is_delivery", { ascending: false })
                 .order("client_address_postcode")
                 .order("collection_centre_name"),
     },
