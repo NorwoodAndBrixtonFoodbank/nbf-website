@@ -34,10 +34,18 @@ import { EditToolbar } from "@/app/admin/collectionCentresTable/CollectionCentre
 import Button from "@mui/material/Button";
 import Icon from "@/components/Icons/Icon";
 import { faShoePrints } from "@fortawesome/free-solid-svg-icons";
-import { ButtonsDiv, Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
+import {
+    ButtonsDiv,
+    Centerer,
+    ContentDiv,
+    OutsideDiv,
+    SpaceBetween,
+} from "@/components/Modal/ModalFormStyles";
 import Modal from "@/components/Modal/Modal";
 import { useTheme } from "styled-components";
-import { formatTimeStringToHoursAndMinutes } from "@/common/format";
+import { formatDayjsToHoursAndMinutes, formatTimeStringToHoursAndMinutes } from "@/common/format";
+import { DesktopTimePicker } from "@mui/x-date-pickers";
+import dayjs, { Dayjs } from "dayjs";
 
 export interface CollectionCentresTableRow {
     acronym: Schema["collection_centres"]["acronym"];
@@ -116,9 +124,11 @@ const CollectionCentresTable: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [existingRowData, setExistingRowData] = useState<CollectionCentresTableRow | null>(null);
     const [timeSlotModalIsOpen, setTimeSlotModalIsOpen] = useState<boolean>(false);
-    const [timeSlotModalErrorMessage, setTimeSlotModalErrorMessage] = useState("");
+    const [timeSlotModalErrorMessage, setTimeSlotModalErrorMessage] = useState<string | null>(null);
     const [timeSlotModalData, setTimeSlotModalData] =
         useState<FormattedTimeSlotsWithPrimaryKey | null>(null);
+    const [editableIsShown, setEditableIsShown] = useState<boolean>(false);
+    const [collectionTimeSlotValue, setCollectionTimeSlotValue] = useState<Dayjs>();
     const theme = useTheme();
 
     const getCollectionCentresForTable = useCallback(async () => {
@@ -179,6 +189,46 @@ const CollectionCentresTable: React.FC = () => {
 
         await sendAuditLog({ ...baseAuditLog, wasSuccess: true });
         setTimeSlotModalIsOpen(false);
+    };
+
+    const handleAddSlotClick = async (): Promise<void> => {
+        setEditableIsShown(true);
+    };
+
+    const checkIfSlotExists = (
+        existingTimeSlotData: FormattedTimeSlotsWithPrimaryKey,
+        newTimeSlot: FormattedTimeSlot
+    ): boolean => {
+        return existingTimeSlotData.timeSlots.some((slot) => slot.time === newTimeSlot.time);
+    };
+
+    const handleSaveSlotClick = async (): Promise<void> => {
+        setTimeSlotModalErrorMessage(null);
+        if (timeSlotModalData === null || collectionTimeSlotValue === undefined) {
+            return;
+        }
+        const newTimeSlot: FormattedTimeSlot = {
+            time: formatDayjsToHoursAndMinutes(collectionTimeSlotValue),
+            isActive: false,
+        };
+
+        if (checkIfSlotExists(timeSlotModalData, newTimeSlot)) {
+            setTimeSlotModalErrorMessage(
+                "This time slot already exists. Please select a different time."
+            );
+            return;
+        }
+
+        const newTimeSlotArray = [...timeSlotModalData.timeSlots, newTimeSlot];
+        newTimeSlotArray.sort((slot1, slot2) => slot1.time.localeCompare(slot2.time));
+
+        const updatedTimeSlotModalData = {
+            ...timeSlotModalData,
+            timeSlots: newTimeSlotArray,
+        };
+
+        setTimeSlotModalData(updatedTimeSlotModalData);
+        setEditableIsShown(false);
     };
 
     const handleTimeSlotCheckBoxChange = (event: React.SyntheticEvent<Element, Event>): void => {
@@ -477,11 +527,32 @@ const CollectionCentresTable: React.FC = () => {
                     }}
                     headerId="expandedCollectionCentreTimeSlotsModal"
                     footer={
-                        <Centerer>
+                        <SpaceBetween>
+                            {!editableIsShown && (
+                                <Button onClick={handleAddSlotClick} variant="contained">
+                                    Add a new slot
+                                </Button>
+                            )}
+                            {editableIsShown && (
+                                <Centerer>
+                                    <DesktopTimePicker
+                                        label="New Collection Slot"
+                                        views={["hours", "minutes"]}
+                                        format="HH:mm"
+                                        value={dayjs(collectionTimeSlotValue)}
+                                        onChange={(value) =>
+                                            value !== null && setCollectionTimeSlotValue(value)
+                                        }
+                                    />
+                                    <Button onClick={handleSaveSlotClick} variant="contained">
+                                        Save slot
+                                    </Button>
+                                </Centerer>
+                            )}
                             <Button onClick={handleModalSaveClick} variant="contained">
                                 Save
                             </Button>
-                        </Centerer>
+                        </SpaceBetween>
                     }
                 >
                     <OutsideDiv>

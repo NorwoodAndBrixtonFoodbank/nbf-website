@@ -107,3 +107,9 @@ export const formatTimeStringToHoursAndMinutes = (timeString: string): string =>
     const minutes = dayjsTime.minute() < 10 ? `0${dayjsTime.minute()}` : dayjsTime.minute();
     return `${hours}:${minutes}`;
 };
+
+export const formatDayjsToHoursAndMinutes = (dayjsTime: Dayjs): string => {
+    const hours = dayjsTime.hour();
+    const minutes = dayjsTime.minute() < 10 ? `0${dayjsTime.minute()}` : dayjsTime.minute();
+    return `${hours}:${minutes}`;
+};
