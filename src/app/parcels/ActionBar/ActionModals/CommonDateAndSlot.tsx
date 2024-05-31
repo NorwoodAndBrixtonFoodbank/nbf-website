@@ -6,7 +6,13 @@ import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
 
-export const getUpdateErrorMessage = ({parcelId, error}: {parcelId: string | null, error: FetchParcelError | UpdateParcelError | null}): string | undefined => {
+export const getUpdateErrorMessage = ({
+    parcelId,
+    error,
+}: {
+    parcelId: string | null;
+    error: FetchParcelError | UpdateParcelError | null;
+}): string | undefined => {
     let errorMessage: string = "";
     switch (error?.type) {
         case "noMatchingParcels":
@@ -22,7 +28,9 @@ export const getUpdateErrorMessage = ({parcelId, error}: {parcelId: string | nul
             errorMessage = "Record has been edited recently - please refresh the page.";
             break;
     }
-    if (errorMessage === "") return
+    if (errorMessage === "") {
+        return;
+    }
     return `${errorMessage} Parcel Id: ${parcelId} Log Id: ${error?.logId}`;
 };
 
@@ -36,47 +44,56 @@ export const packingDateOrSlotUpdate = async (
     parcelId: string | null;
     error: FetchParcelError | UpdateParcelError | null;
 }> => {
-
     type FieldToUpdate = {
-        packing_date?: string
-        packing_slot?: string
-    }
+        packing_date?: string;
+        packing_slot?: string;
+    };
 
-    const packingDateOrSlotDbUpdate = async (fieldToUpdate: FieldToUpdate) => {
-        return (await supabase
+    const packingDateOrSlotDbUpdate = async (
+        fieldToUpdate: FieldToUpdate
+    ): Promise<PostgrestSingleResponse<null>> => {
+        return await supabase
             .from("parcels")
             .update(fieldToUpdate, { count: "exact" })
-            .eq("primary_key", parcel.parcelId))
-    }
-    
+            .eq("primary_key", parcel.parcelId);
+    };
+
     let updateResponse: PostgrestSingleResponse<null>;
     let action: string;
 
     switch (updateField) {
         case "packingDate":
-            updateResponse = await packingDateOrSlotDbUpdate({ packing_date: packingDateOrSlotData })
+            updateResponse = await packingDateOrSlotDbUpdate({
+                packing_date: packingDateOrSlotData,
+            });
             action = "change packing date";
             break;
         case "packingSlot":
-            updateResponse = await packingDateOrSlotDbUpdate({ packing_slot: packingDateOrSlotData })
+            updateResponse = await packingDateOrSlotDbUpdate({
+                packing_slot: packingDateOrSlotData,
+            });
             action = "change packing slot";
             break;
     }
-    
+
     const { data: parcelData, error: fetchError } = await fetchParcel(parcel.parcelId, supabase);
     if (fetchError) {
-        const logId = await logErrorReturnLogId(
-            "Error with fetching parcel data",
-            fetchError
-        );
-        await sendAuditLog({action: action, content: { parcelDetails: {
-            client_id: parcel.clientId,
-            packing_date: parcel.packingDate?.toString(),
-            packing_slot: parcel.packingSlot,
-            voucher_number: parcel.voucherNumber,
-            collection_centre: parcel.deliveryCollection.collectionCentreName,
-            collection_datetime: parcel.collectionDatetime?.toString()
-        }}, wasSuccess: false, logId });
+        const logId = await logErrorReturnLogId("Error with fetching parcel data", fetchError);
+        await sendAuditLog({
+            action: action,
+            content: {
+                parcelDetails: {
+                    client_id: parcel.clientId,
+                    packing_date: parcel.packingDate?.toString(),
+                    packing_slot: parcel.packingSlot,
+                    voucher_number: parcel.voucherNumber,
+                    collection_centre: parcel.deliveryCollection.collectionCentreName,
+                    collection_datetime: parcel.collectionDatetime?.toString(),
+                },
+            },
+            wasSuccess: false,
+            logId,
+        });
         return { parcelId: parcel.parcelId, error: fetchError };
     }
 

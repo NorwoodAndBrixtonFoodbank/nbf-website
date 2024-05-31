@@ -10,13 +10,8 @@ import { Button } from "@mui/material";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import supabase from "@/supabaseClient";
-import {
-    FetchParcelError,
-    PackingSlotsLabelsAndValues,
-    fetchPackingSlotsInfo,
-} from "@/common/fetch";
+import { PackingSlotsLabelsAndValues, fetchPackingSlotsInfo } from "@/common/fetch";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
-import { UpdateParcelError } from "../../form/submitFormHelpers";
 import { getUpdateErrorMessage, packingDateOrSlotUpdate } from "./CommonDateAndSlot";
 
 interface SlotInputProps {
@@ -69,15 +64,14 @@ const SlotChangeModal: React.FC<ActionModalProps> = (props) => {
             setWarningMessage("Please choose a valid packing slot.");
             return;
         }
-        const packingSlotUpdateErrors = await Promise.all(props.selectedParcels.map((parcel) => {
-            return (packingDateOrSlotUpdate(
-                    "packingSlot",
-                    slot,
-                    parcel
-                ))
-        }))
+        const packingSlotUpdateErrors = await Promise.all(
+            props.selectedParcels.map((parcel) => {
+                return packingDateOrSlotUpdate("packingSlot", slot, parcel);
+            })
+        );
 
-        let newPackingSlotText: string = packingSlots.find(packingSlot => packingSlot [1] === slot)?.at(0) ?? "";
+        const newPackingSlotText: string =
+            packingSlots.find((packingSlot) => packingSlot[1] === slot)?.at(0) ?? "";
 
         const { error: statusUpdateError } = await props.updateParcelStatuses(
             props.selectedParcels,
@@ -85,9 +79,15 @@ const SlotChangeModal: React.FC<ActionModalProps> = (props) => {
             `new packing slot: ${newPackingSlotText}`,
             "change packing slot"
         );
-        if (!packingSlotUpdateErrors.every((packingSlotUpdateError) => packingSlotUpdateError.error === null)) {
+        if (
+            !packingSlotUpdateErrors.every(
+                (packingSlotUpdateError) => packingSlotUpdateError.error === null
+            )
+        ) {
             setErrorMessage(
-                packingSlotUpdateErrors.map((packingSlotUpdateError) => getUpdateErrorMessage(packingSlotUpdateError)).join("")
+                packingSlotUpdateErrors
+                    .map((packingSlotUpdateError) => getUpdateErrorMessage(packingSlotUpdateError))
+                    .join("")
             );
         } else if (statusUpdateError) {
             setErrorMessage(getStatusErrorMessageWithLogId(statusUpdateError));

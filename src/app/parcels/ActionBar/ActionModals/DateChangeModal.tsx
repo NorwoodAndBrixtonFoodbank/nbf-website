@@ -13,8 +13,6 @@ import dayjs, { Dayjs } from "dayjs";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import { getDbDate } from "@/common/format";
 import { getUpdateErrorMessage, packingDateOrSlotUpdate } from "./CommonDateAndSlot";
-import { FetchParcelError } from "@/common/fetch";
-import { UpdateParcelError } from "../../form/submitFormHelpers";
 
 const DateChangeInput: React.FC<DateInputProps> = ({ setDate }) => {
     return (
@@ -40,13 +38,11 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
         }
         const newPackingDate = getDbDate(dayjs(date));
 
-        const packingDateUpdateErrors = await Promise.all(props.selectedParcels.map((parcel) => {
-            return (packingDateOrSlotUpdate(
-                    "packingDate",
-                    newPackingDate,
-                    parcel
-                ))
-        }))
+        const packingDateUpdateErrors = await Promise.all(
+            props.selectedParcels.map((parcel) => {
+                return packingDateOrSlotUpdate("packingDate", newPackingDate, parcel);
+            })
+        );
 
         const { error: statusUpdateError } = await props.updateParcelStatuses(
             props.selectedParcels,
@@ -54,10 +50,15 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
             `new packing date: ${newPackingDate}`,
             "change packing date"
         );
-        if (!packingDateUpdateErrors.every((packingDateUpdateError) => packingDateUpdateError.error === null)
+        if (
+            !packingDateUpdateErrors.every(
+                (packingDateUpdateError) => packingDateUpdateError.error === null
+            )
         ) {
             setErrorMessage(
-                packingDateUpdateErrors.map((packingDateUpdateError) => getUpdateErrorMessage(packingDateUpdateError)).join("")
+                packingDateUpdateErrors
+                    .map((packingDateUpdateError) => getUpdateErrorMessage(packingDateUpdateError))
+                    .join("")
             );
         } else if (statusUpdateError) {
             setErrorMessage(getStatusErrorMessageWithLogId(statusUpdateError));
