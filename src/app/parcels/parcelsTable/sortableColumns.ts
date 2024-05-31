@@ -72,6 +72,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_slot_order")
                 .order("is_delivery", { ascending: false })
                 .order("collection_centre_name")
+                .order("client_is_active", { ascending: sortDirection !== "asc" })
                 .order("client_address_postcode")
                 .order("parcel_id"),
     },
@@ -83,6 +84,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("collection_centre_name")
                 .order("packing_date")
                 .order("packing_slot_order")
+                .order("client_is_active", { ascending: sortDirection !== "asc" })
                 .order("client_address_postcode")
                 .order("parcel_id"),
     },
@@ -98,6 +100,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_date")
                 .order("is_delivery", { ascending: false })
                 .order("collection_centre_name")
+                .order("client_is_active", { ascending: sortDirection !== "asc" })
                 .order("client_address_postcode")
                 .order("parcel_id"),
     },
@@ -110,6 +113,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_slot_order")
                 .order("is_delivery", { ascending: false })
                 .order("collection_centre_name")
+                .order("client_is_active", { ascending: sortDirection !== "asc" })
                 .order("client_address_postcode")
                 .order("parcel_id"),
     },
@@ -122,6 +126,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_slot_order")
                 .order("is_delivery", { ascending: false })
                 .order("collection_centre_name")
+                .order("client_is_active", { ascending: sortDirection !== "asc" })
                 .order("client_address_postcode")
                 .order("parcel_id"),
     },
