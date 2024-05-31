@@ -104,12 +104,20 @@ function getBaseAuditLogForCollectionCentreTimeSlots(
 const formatCollectionCentreTimeSlotDbData = (
     row: CollectionCentresTableRow
 ): FormattedTimeSlotsWithPrimaryKey => {
-    const formattedTimeSlots = row.timeSlots.map((timeSlot) => {
-        return {
-            time: formatTimeStringToHoursAndMinutes(timeSlot.time !== null ? timeSlot.time : ""),
-            isActive: timeSlot.is_active !== null ? timeSlot.is_active : false,
-        };
-    });
+    let formattedTimeSlots: FormattedTimeSlot[];
+
+    if (row.timeSlots === null) {
+        formattedTimeSlots = [];
+    } else {
+        formattedTimeSlots = row.timeSlots.map((timeSlot) => {
+            return {
+                time: formatTimeStringToHoursAndMinutes(
+                    timeSlot.time !== null ? timeSlot.time : ""
+                ),
+                isActive: timeSlot.is_active !== null ? timeSlot.is_active : false,
+            };
+        });
+    }
 
     return {
         primaryKey: row.id,
