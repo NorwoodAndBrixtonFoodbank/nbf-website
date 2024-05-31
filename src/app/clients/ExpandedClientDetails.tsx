@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import DataViewer, {
     DataForDataViewer,
     convertDataToDataForDataViewer,
@@ -7,10 +7,15 @@ import getExpandedClientDetails, {
     ExpandedClientData,
 } from "@/app/clients/getExpandedClientDetails";
 import ClientParcelsTable from "@/app/clients/ClientParcelsTable";
-import { getClientParcelsDetails } from "@/app/clients/getClientParcelsData";
+import {
+    ExpandedClientParcelDetails,
+    getClientParcelsDetails,
+} from "@/app/clients/getClientParcelsData";
 import { styled } from "styled-components";
 import supabase from "@/supabaseClient";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
+import { CircularProgress } from "@mui/material";
+import { Centerer } from "@/components/Modal/ModalFormStyles";
 
 interface Props {
     clientId: string;
@@ -24,22 +29,35 @@ const DeletedText = styled.div`
     flex-direction: row;
 `;
 
-const ExpandedClientDetails = async ({ clientId }: Props): Promise<React.ReactElement> => {
-    const expandedClientDetails = await getExpandedClientDetails(clientId);
+const ExpandedClientDetails: React.FC<Props> = ({ clientId }) => {
+    const [expandedClientDetails, setExpandedClientDetails] = useState<ExpandedClientData | null>(
+        null
+    );
+    const [expandedClientParcelsDetails, setExpandedClientParcelsDetails] = useState<
+        ExpandedClientParcelDetails[] | null
+    >(null);
 
-    const expandedClientParcelsDetails = await getClientParcelsDetails(clientId);
-
-    const originalNotes = expandedClientDetails.notes;
+    const originalNotes = expandedClientDetails?.notes ?? null;
 
     const [notes, setNotes] = useState<string | null>(originalNotes);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        (async () => {
+            setIsLoading(true);
+            setExpandedClientDetails(await getExpandedClientDetails(clientId));
+            setExpandedClientParcelsDetails(await getClientParcelsDetails(clientId));
+            setIsLoading(false);
+        })();
+    }, [clientId]);
 
     const onSaveNotes = async (): Promise<void> => {
         setErrorMessage(null);
         const { error } = await supabase
             .from("clients")
             .update({ notes: notes })
-            .eq("primary_key", expandedClientDetails.primaryKey);
+            .eq("primary_key", clientId);
         if (error) {
             setErrorMessage("Error saving notes");
         }
@@ -59,7 +77,6 @@ const ExpandedClientDetails = async ({ clientId }: Props): Promise<React.ReactEl
         const expandedClientDetailsForDataViewer = convertDataToDataForDataViewer({
             ...expandedClientDetails,
         });
-        delete expandedClientDetailsForDataViewer["primary_key"];
         expandedClientDetailsForDataViewer["notes"] = {
             value: expandedClientDetails["notes"],
             editFunctions: {
@@ -71,18 +88,26 @@ const ExpandedClientDetails = async ({ clientId }: Props): Promise<React.ReactEl
         return expandedClientDetailsForDataViewer;
     };
 
-    return (
-        <>
-            {expandedClientDetails.isActive ? (
-                <DataViewer
-                    data={{ ...getExpandedClientDetailsForDataViewer(expandedClientDetails) }}
-                />
-            ) : (
-                <DeletedText>Client has been deleted.</DeletedText>
-            )}
-            <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>
-            <ClientParcelsTable parcelsData={expandedClientParcelsDetails} />
-        </>
+    return isLoading ? (
+        <Centerer>
+            <CircularProgress />
+        </Centerer>
+    ) : (
+        expandedClientDetails && (
+            <>
+                {expandedClientDetails.isActive ? (
+                    <DataViewer
+                        data={{ ...getExpandedClientDetailsForDataViewer(expandedClientDetails) }}
+                    />
+                ) : (
+                    <DeletedText>Client has been deleted.</DeletedText>
+                )}
+                <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>
+                {expandedClientParcelsDetails && (
+                    <ClientParcelsTable parcelsData={expandedClientParcelsDetails} />
+                )}
+            </>
+        )
     );
 };
 

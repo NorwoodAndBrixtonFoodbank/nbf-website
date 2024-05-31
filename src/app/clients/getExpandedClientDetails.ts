@@ -45,8 +45,7 @@ const getRawClientDetails = async (clientId: string) => {
             other_items,
             extra_information,
             notes,
-            is_active,
-            primary_key
+            is_active
         `
         )
         .eq("primary_key", clientId)
@@ -87,7 +86,6 @@ export interface ExpandedClientData {
     extraInformation: string;
     notes: string | null;
     isActive: boolean;
-    primaryKey: string;
 }
 
 export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientData => {
@@ -107,7 +105,6 @@ export const rawDataToExpandedClientDetails = (client: RawClientDetails): Expand
         extraInformation: client.extra_information ?? "",
         isActive: client.is_active,
         notes: client.notes,
-        primaryKey: client.primary_key,
     };
 };
 

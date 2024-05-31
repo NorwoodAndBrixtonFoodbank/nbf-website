@@ -72,10 +72,6 @@ const formatDisplayValue = (value: ValueType): string => {
 
 export interface DataViewerProps {
     data: DataForDataViewer;
-    fieldsToHide?: Partial<[keyof DataForDataViewer]>;
-    editableFields?: {
-        [key: keyof DataForDataViewer]: EditFunctions;
-    };
 }
 
 interface EditFunctions {
@@ -111,7 +107,7 @@ const DataViewer: React.FC<DataViewerProps> = ({ data }) => {
     return (
         <DataViewerContainer>
             {Object.entries(data).map(([key, value]) => {
-                if (value.hide) {
+                if (!value.hide) {
                     return (
                         <DataViewerItem key={key}>
                             <Key>{formatCamelCaseKey(key)}</Key>
