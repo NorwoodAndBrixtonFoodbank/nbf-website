@@ -16,6 +16,8 @@ import ShoppingListModal from "./ActionModals/ShoppingListModal";
 import { UpdateParcelStatuses } from "./ActionAndStatusBar";
 import { allRoles, organisationRoles, RoleUpdateContext } from "@/app/roles";
 import { UserRole } from "@/databaseUtils";
+import DateChangeModal from "./ActionModals/DateChangeModal";
+import SlotChangeModal from "./ActionModals/SlotChangeModal";
 
 const isNotAtLeastOne = (value: number): boolean => {
     return value < 1;
@@ -24,6 +26,8 @@ const isNotAtLeastOne = (value: number): boolean => {
 const errorMessage = "Please select at least one parcel.";
 
 export type ActionName =
+    | "Change Packing Date"
+    | "Change Packing Slot"
     | "Download Day Overview"
     | "Download Shopping Lists"
     | "Download Shipping Labels"
@@ -38,6 +42,16 @@ type ActionTypes = {
 };
 
 const availableActions: ActionTypes[] = [
+    {
+        actionName: "Change Packing Date",
+        newStatus: "Packing Date Changed",
+        availableToRole: organisationRoles,
+    },
+    {
+        actionName: "Change Packing Slot",
+        newStatus: "Packing Slot Changed",
+        availableToRole: organisationRoles,
+    },
     {
         actionName: "Download Day Overview",
         newStatus: "Day Overview Downloaded",
@@ -83,6 +97,10 @@ const getActionModal = (
     actionModalProps: ActionModalProps
 ): React.ReactElement => {
     switch (actionName) {
+        case "Change Packing Date":
+            return <DateChangeModal {...actionModalProps} />;
+        case "Change Packing Slot":
+            return <SlotChangeModal {...actionModalProps} />;
         case "Download Shipping Labels":
             return <ShippingLabelModal {...actionModalProps} />;
         case "Download Shopping Lists":
