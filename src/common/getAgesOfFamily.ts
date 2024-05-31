@@ -3,7 +3,7 @@ import { getCurrentMonth, getCurrentYear } from "@/common/date";
 import { Schema } from "@/databaseUtils";
 
 export const isChildUsingBirthYear = (birthYear: number): boolean => {
-    return getCurrentYear() - birthYear <= 16;
+    return getCurrentYear() - birthYear < 16;
 };
 
 export const getChildAgeUsingBirthYearAndMonth = (
