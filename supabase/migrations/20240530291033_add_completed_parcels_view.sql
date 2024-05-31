@@ -27,6 +27,6 @@ SELECT
 FROM
     completed_events
         INNER JOIN
-    parcels_plus ON parcels_plus.parcel_id = completed_events.parcel_id AND NOT parcels_plus.last_status_event_name = 'Parcel Deleted'
+    parcels_plus ON parcels_plus.parcel_id = completed_events.parcel_id
         LEFT JOIN
     clients ON parcels_plus.client_id = clients.primary_key

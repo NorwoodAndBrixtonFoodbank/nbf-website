@@ -13,6 +13,7 @@ import { DbReportRow } from "@/databaseUtils";
 import getReportsDataAndCount from "./getReportsData";
 import reportsSortableColumns from "./sortableColumns";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
+import { reportsTableColumnStyleOptions } from "@/app/reports/reportsTable/styles";
 
 const ReportsPage: React.FC<{}> = () => {
     const [isLoadingForFirstTime, setIsLoadingForFirstTime] = useState(true);
@@ -110,6 +111,7 @@ const ReportsPage: React.FC<{}> = () => {
                                 sortableColumns: reportsSortableColumns,
                                 setSortState: setSortState,
                             }}
+                            columnStyleOptions={reportsTableColumnStyleOptions}
                             headerKeysAndLabels={reportsHeaders}
                             filterConfig={{
                                 primaryFiltersShown: false,

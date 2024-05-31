@@ -26,12 +26,12 @@ export type GetReportsReturnType =
 
 export type GetReportsCountReturnType =
     | {
-          data: null;
-          error: { type: GetReportsDataAndCountErrorType; logId: string };
-      }
-    | {
           data: number;
           error: null;
+      }
+    | {
+          data: null;
+          error: { type: GetReportsDataAndCountErrorType; logId: string };
       };
 
 export interface ReportsTableRow {

@@ -1,6 +1,5 @@
 CREATE OR REPLACE VIEW reports AS
 
--- Gets the date of the first completed parcel
 WITH first_completed_parcel AS (
     SELECT MIN(completed_timestamp) AS start_date
     FROM completed_parcels

@@ -29,12 +29,12 @@ export type GetClientsReturnType =
 
 export type GetClientsCountReturnType =
     | {
-          data: null;
-          error: { type: GetClientsDataAndCountErrorType; logId: string };
-      }
-    | {
           data: number;
           error: null;
+      }
+    | {
+          data: null;
+          error: { type: GetClientsDataAndCountErrorType; logId: string };
       };
 
 export interface ClientsTableRow {

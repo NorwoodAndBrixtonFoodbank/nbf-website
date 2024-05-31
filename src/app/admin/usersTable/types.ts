@@ -30,12 +30,12 @@ export type GetUsersReturnType =
 
 export type GetUserCountReturnType =
     | {
-          data: null;
-          error: { type: GetUserDataAndCountErrorType; logId: string };
-      }
-    | {
           data: number;
           error: null;
+      }
+    | {
+          data: null;
+          error: { type: GetUserDataAndCountErrorType; logId: string };
       };
 
 export type DisplayedUserRole = UserRole | "UNKNOWN";
