@@ -5,6 +5,7 @@ import DataViewer from "@/components/DataViewer/DataViewer";
 import getExpandedParcelDetails, {
     ExpandedParcelDetails,
     FetchExpandedParcelDetailsError,
+    getExpandedParcelDataForDataViewer,
 } from "@/app/parcels/getExpandedParcelDetails";
 import EventTable, { EventTableRow } from "./EventTable";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
@@ -71,8 +72,9 @@ const ExpandedParcelDetailsView = ({ parcelId }: Props): ReactElement => {
                         <DeletedText>This parcel belongs to a deleted client.</DeletedText>
                     )}
                     <DataViewer
-                        data={parcelDetails.expandedParcelData}
-                        fieldsToHide={["isActive"]}
+                        data={{
+                            ...getExpandedParcelDataForDataViewer(parcelDetails.expandedParcelData),
+                        }}
                     />
                     <EventTable
                         tableData={sortByTimestampWithMostRecentFirst(parcelDetails.events)}

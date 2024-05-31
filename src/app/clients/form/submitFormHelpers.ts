@@ -49,6 +49,7 @@ const formatClientRecord = (
         signposting_call_required: fields.signpostingCall,
         flagged_for_attention: fields.attentionFlag,
         last_updated: fields.lastUpdated,
+        notes: fields.notes,
     };
 };
 

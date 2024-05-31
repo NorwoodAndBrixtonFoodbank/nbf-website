@@ -233,7 +233,10 @@ const ClientsPage: React.FC<{}> = () => {
                             <ContentDiv>
                                 {clientId && (
                                     <Suspense fallback={<ExpandedClientDetailsFallback />}>
-                                        <ExpandedClientDetails clientId={clientId} />
+                                        <ExpandedClientDetails
+                                            clientId={clientId}
+                                            displayClientsParcels
+                                        />
                                     </Suspense>
                                 )}
                             </ContentDiv>

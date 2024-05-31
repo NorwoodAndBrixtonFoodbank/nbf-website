@@ -36,6 +36,7 @@ import SignpostingCallCard from "@/app/clients/form/formSections/SignpostingCall
 import Button from "@mui/material/Button";
 import { submitAddClientForm, submitEditClientForm } from "@/app/clients/form/submitFormHelpers";
 import Title from "@/components/Title/Title";
+import ClientNotesCard from "@/app/clients/form/formSections/ClientNotes";
 import { getCurrentYear } from "@/common/date";
 import { youngestAdultBirthYear } from "@/app/clients/form/birthYearDropdown";
 
@@ -70,6 +71,7 @@ export interface ClientFields extends Fields {
     attentionFlag: boolean;
     signpostingCall: boolean;
     lastUpdated: string | undefined;
+    notes: string | null;
 }
 
 export interface ClientErrors extends FormErrors<ClientFields> {
@@ -101,6 +103,7 @@ const formSections = [
     AttentionFlagCard,
     SignpostingCallCard,
     ExtraInformationCard,
+    ClientNotesCard,
 ];
 
 const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editConfig }) => {

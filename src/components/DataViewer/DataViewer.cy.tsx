@@ -1,5 +1,8 @@
 import React from "react";
-import DataViewer, { DataViewerProps } from "@/components/DataViewer/DataViewer";
+import DataViewer, {
+    DataViewerProps,
+    convertDataToDataForDataViewer,
+} from "@/components/DataViewer/DataViewer";
 import StyleManager from "@/app/themes";
 
 const longString = "abcdefghijklmnopqrstuvwxyz".repeat(20);
@@ -12,6 +15,8 @@ const data = {
     dietaryRequirements: null,
 };
 
+const dataForDataViewer = convertDataToDataForDataViewer(data);
+
 const StyledDataViewer: React.FC<DataViewerProps> = (props) => {
     return (
         <StyleManager>
@@ -22,11 +27,11 @@ const StyledDataViewer: React.FC<DataViewerProps> = (props) => {
 
 describe("Data Viewer Component", () => {
     it("renders", () => {
-        cy.mount(<StyledDataViewer data={data} />);
+        cy.mount(<StyledDataViewer data={dataForDataViewer} />);
     });
 
     it("data viewer shows expected values", () => {
-        cy.mount(<StyledDataViewer data={data} />);
+        cy.mount(<StyledDataViewer data={dataForDataViewer} />);
 
         cy.contains("ID");
         cy.contains(longString);

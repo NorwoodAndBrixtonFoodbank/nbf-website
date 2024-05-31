@@ -39,11 +39,10 @@ import Modal from "@/components/Modal/Modal";
 import InfoIcon from "@mui/icons-material/Info";
 import Icon from "@/components/Icons/Icon";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
-import DataViewer from "@/components/DataViewer/DataViewer";
 import { useTheme } from "styled-components";
 import PackingSlotsCard from "@/app/parcels/form/formSections/PackingSlotsCard";
 import { getDbDate } from "@/common/format";
+import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 
 export interface ParcelFields extends Fields {
     clientId: string | null;
@@ -277,7 +276,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                 </CenterComponent>
                 <FormErrorText>{submitErrorMessage}</FormErrorText>
             </StyledForm>
-            {clientDetails && (
+            {clientIdForFetch && (
                 <Modal
                     header={
                         <>
@@ -289,11 +288,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                     onClose={() => setModalIsOpen(false)}
                     headerId="clientsDetailModal"
                 >
-                    <OutsideDiv>
-                        <ContentDiv>
-                            <DataViewer data={{ ...clientDetails } ?? {}} />
-                        </ContentDiv>
-                    </OutsideDiv>
+                    <ExpandedClientDetails clientId={clientIdForFetch} />
                 </Modal>
             )}
         </CenterComponent>

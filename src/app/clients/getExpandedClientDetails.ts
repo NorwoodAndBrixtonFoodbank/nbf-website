@@ -44,6 +44,7 @@ const getRawClientDetails = async (clientId: string) => {
             pet_food,
             other_items,
             extra_information,
+            notes,
             is_active
         `
         )
@@ -83,6 +84,7 @@ export interface ExpandedClientData {
     petFood: string;
     otherRequirements: string;
     extraInformation: string;
+    notes: string | null;
     isActive: boolean;
 }
 
@@ -101,6 +103,7 @@ export const rawDataToExpandedClientDetails = (client: RawClientDetails): Expand
         petFood: client.pet_food?.join(", ") ?? "",
         otherRequirements: client.other_items?.join(", ") ?? "",
         extraInformation: client.extra_information ?? "",
+        notes: client.notes,
         isActive: client.is_active,
     };
 };
