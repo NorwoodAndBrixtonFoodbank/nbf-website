@@ -27,7 +27,7 @@ interface SlotInputProps {
 const SlotChangeInput: React.FC<SlotInputProps> = ({ packingSlotsLabelsAndValues, setSlot }) => {
     return (
         <>
-            <Heading>What date would you like to change to?</Heading>
+            <Heading>What slot would you like to change to?</Heading>
             <DropdownListInput
                 selectLabelId="packing-slot-select-label"
                 labelsAndValues={packingSlotsLabelsAndValues}
@@ -64,7 +64,7 @@ const SlotChangeModal: React.FC<ActionModalProps> = (props) => {
         setPackingSlots(packingSlotsData);
     })();
 
-    const onSlotChange = async (): Promise<void> => {
+    const onSlotSubmit = async (): Promise<void> => {
         if (slot === "") {
             setWarningMessage("Please choose a valid packing slot.");
             return;
@@ -121,7 +121,7 @@ const SlotChangeModal: React.FC<ActionModalProps> = (props) => {
                         <Button variant="contained" onClick={onClose}>
                             Cancel
                         </Button>
-                        <Button variant="contained" onClick={onSlotChange}>
+                        <Button variant="contained" onClick={onSlotSubmit}>
                             Change
                         </Button>
                     </ConfirmButtons>

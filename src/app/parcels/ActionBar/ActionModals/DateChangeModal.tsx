@@ -33,7 +33,7 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
     const [date, setDate] = useState<Dayjs>();
     const [warningMessage, setWarningMessage] = useState<string>("");
 
-    const onDateChange = async (): Promise<void> => {
+    const onDateSubmit = async (): Promise<void> => {
         if (!date) {
             setWarningMessage("Please choose a valid packing date.");
             return;
@@ -87,7 +87,7 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
                     <Button variant="contained" onClick={onClose}>
                         Cancel
                     </Button>
-                    <Button variant="contained" onClick={onDateChange}>
+                    <Button variant="contained" onClick={onDateSubmit}>
                         Change
                     </Button>
                 </ConfirmButtons>
