@@ -54,6 +54,19 @@ const Value = styled.div`
     padding: 0.2em 0.5em;
 `;
 
+const FreeFormTextInputForDataViewer = styled.div`
+    background-color: ${(props) => props.theme.main.background[0]};
+    width: 100%;
+    margin-right: 0.2em;
+`;
+
+const ButtonsContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    column-gap: 0.2em;
+`;
+
 const valueIsEmpty = (value: ValueType): boolean => {
     return (Array.isArray(value) && value.length === 0) || value === "" || value === null;
 };
@@ -87,19 +100,21 @@ interface EditableDataViewerRowProps {
 
 const EditableDataViewerRow: React.FC<EditableDataViewerRowProps> = ({ editFunctions, value }) => (
     <>
-        <FreeFormTextInput
-            defaultValue={formatDisplayValue(value)}
-            fullWidth
-            onChange={editFunctions.onChange}
-        />
-        <>
+        <FreeFormTextInputForDataViewer>
+            <FreeFormTextInput
+                defaultValue={formatDisplayValue(value)}
+                fullWidth
+                onChange={editFunctions.onChange}
+            />
+        </FreeFormTextInputForDataViewer>
+        <ButtonsContainer>
             <Button variant="outlined" onClick={editFunctions.onCancel}>
                 Cancel
             </Button>
             <Button variant="contained" onClick={editFunctions.onSave}>
                 Save
             </Button>
-        </>
+        </ButtonsContainer>
     </>
 );
 
