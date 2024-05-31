@@ -256,7 +256,7 @@ const CollectionCentresTable: React.FC = () => {
         const timeSlotIndex = timeSlotModalData.timeSlots.findIndex(
             (slot) => slot.time === updatedTime
         );
-        const timeSlot = timeSlotModalData.timeSlots.find((slot) => slot.time === updatedTime);
+        const timeSlot = timeSlotModalData.timeSlots[timeSlotIndex];
         if (!timeSlot) {
             return;
         }
