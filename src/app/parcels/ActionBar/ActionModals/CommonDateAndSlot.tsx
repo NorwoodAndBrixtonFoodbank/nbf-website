@@ -6,9 +6,9 @@ import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
 
-export const getUpdateErrorMessage = (error: FetchParcelError | UpdateParcelError): string => {
-    let errorMessage: string;
-    switch (error.type) {
+export const getUpdateErrorMessage = ({parcelId, error}: {parcelId: string | null, error: FetchParcelError | UpdateParcelError | null}): string | undefined => {
+    let errorMessage: string = "";
+    switch (error?.type) {
         case "noMatchingParcels":
             errorMessage = "No parcel in the database matches the selected parcel.";
             break;
@@ -22,7 +22,8 @@ export const getUpdateErrorMessage = (error: FetchParcelError | UpdateParcelErro
             errorMessage = "Record has been edited recently - please refresh the page.";
             break;
     }
-    return `${errorMessage} Log Id: ${error.logId}`;
+    if (errorMessage === "") return
+    return `${errorMessage} Parcel Id: ${parcelId} Log Id: ${error?.logId}`;
 };
 
 type UpdateField = "packingDate" | "packingSlot";

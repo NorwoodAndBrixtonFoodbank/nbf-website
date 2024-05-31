@@ -69,23 +69,15 @@ const SlotChangeModal: React.FC<ActionModalProps> = (props) => {
             setWarningMessage("Please choose a valid packing slot.");
             return;
         }
-        let packingSlotUpdateError: FetchParcelError | UpdateParcelError | null = null;
-        for (const parcel of props.selectedParcels) {
-            (async () => {
-                const { error } = await packingDateOrSlotUpdate("packingSlot", slot, parcel);
-                if (error) {
-                    packingSlotUpdateError = error;
-                    return;
-                }
-            })();
-        }
+        const packingSlotUpdateErrors = await Promise.all(props.selectedParcels.map((parcel) => {
+            return (packingDateOrSlotUpdate(
+                    "packingSlot",
+                    slot,
+                    parcel
+                ))
+        }))
 
-        let newPackingSlotText: string = "";
-        packingSlots.forEach((packingSlot) => {
-            if (packingSlot[1] === slot) {
-                newPackingSlotText = packingSlot[0];
-            }
-        }); //since 'slot' is the key for the packing slot, this algorithm is used to just recover the value, i.e. 'AM', 'PM, etc.
+        let newPackingSlotText: string = packingSlots.find(packingSlot => packingSlot [1] === slot)?.at(0) ?? "";
 
         const { error: statusUpdateError } = await props.updateParcelStatuses(
             props.selectedParcels,
@@ -93,8 +85,10 @@ const SlotChangeModal: React.FC<ActionModalProps> = (props) => {
             `new packing slot: ${newPackingSlotText}`,
             "change packing slot"
         );
-        if (packingSlotUpdateError) {
-            setErrorMessage(getUpdateErrorMessage(packingSlotUpdateError));
+        if (!packingSlotUpdateErrors.every((packingSlotUpdateError) => packingSlotUpdateError.error === null)) {
+            setErrorMessage(
+                packingSlotUpdateErrors.map((packingSlotUpdateError) => getUpdateErrorMessage(packingSlotUpdateError)).join("")
+            );
         } else if (statusUpdateError) {
             setErrorMessage(getStatusErrorMessageWithLogId(statusUpdateError));
         } else {

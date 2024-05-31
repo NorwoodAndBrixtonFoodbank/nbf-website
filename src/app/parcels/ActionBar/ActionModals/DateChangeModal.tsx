@@ -12,9 +12,9 @@ import SingleDateInput, { DateInputProps } from "@/components/DateInputs/SingleD
 import dayjs, { Dayjs } from "dayjs";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import { getDbDate } from "@/common/format";
+import { getUpdateErrorMessage, packingDateOrSlotUpdate } from "./CommonDateAndSlot";
 import { FetchParcelError } from "@/common/fetch";
 import { UpdateParcelError } from "../../form/submitFormHelpers";
-import { getUpdateErrorMessage, packingDateOrSlotUpdate } from "./CommonDateAndSlot";
 
 const DateChangeInput: React.FC<DateInputProps> = ({ setDate }) => {
     return (
@@ -39,20 +39,14 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
             return;
         }
         const newPackingDate = getDbDate(dayjs(date));
-        let packingDateUpdateError: FetchParcelError | UpdateParcelError | null = null;
-        for (const parcel of props.selectedParcels) {
-            (async () => {
-                const { error } = await packingDateOrSlotUpdate(
+
+        const packingDateUpdateErrors = await Promise.all(props.selectedParcels.map((parcel) => {
+            return (packingDateOrSlotUpdate(
                     "packingDate",
                     newPackingDate,
                     parcel
-                );
-                if (error) {
-                    packingDateUpdateError = error;
-                    return;
-                }
-            })();
-        }
+                ))
+        }))
 
         const { error: statusUpdateError } = await props.updateParcelStatuses(
             props.selectedParcels,
@@ -60,8 +54,11 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
             `new packing date: ${newPackingDate}`,
             "change packing date"
         );
-        if (packingDateUpdateError) {
-            setErrorMessage(getUpdateErrorMessage(packingDateUpdateError));
+        if (!packingDateUpdateErrors.every((packingDateUpdateError) => packingDateUpdateError.error === null)
+        ) {
+            setErrorMessage(
+                packingDateUpdateErrors.map((packingDateUpdateError) => getUpdateErrorMessage(packingDateUpdateError)).join("")
+            );
         } else if (statusUpdateError) {
             setErrorMessage(getStatusErrorMessageWithLogId(statusUpdateError));
         } else {

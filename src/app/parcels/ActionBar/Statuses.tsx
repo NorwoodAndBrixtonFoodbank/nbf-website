@@ -49,7 +49,7 @@ export const saveParcelStatus = async (
                 new_parcel_status: statusName,
                 parcel_id: parcelId,
                 event_data: statusEventData,
-                client_id: clientIds?.slice()[index],
+                client_id: clientIds?.at(index),
                 timestamp,
             };
         })
