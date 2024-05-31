@@ -105,13 +105,13 @@ export const getParcelOverviewString = (
 export const formatTimeStringToHoursAndMinutes = (timeString: string): string => {
     dayjs.extend(customParseFormat);
     const dayjsTime = dayjs(timeString, "HH:mm:ss");
-    const hours = dayjsTime.hour();
-    const minutes = dayjsTime.minute() < 10 ? `0${dayjsTime.minute()}` : dayjsTime.minute();
+    const hours = String(dayjsTime.hour()).padStart(2, "0");
+    const minutes = String(dayjsTime.minute()).padStart(2, "0");
     return `${hours}:${minutes}`;
 };
 
 export const formatDayjsToHoursAndMinutes = (dayjsTime: Dayjs): string => {
-    const hours = dayjsTime.hour();
-    const minutes = dayjsTime.minute() < 10 ? `0${dayjsTime.minute()}` : dayjsTime.minute();
+    const hours = String(dayjsTime.hour()).padStart(2, "0");
+    const minutes = String(dayjsTime.minute()).padStart(2, "0");
     return `${hours}:${minutes}`;
 };
