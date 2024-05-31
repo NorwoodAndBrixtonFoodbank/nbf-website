@@ -20,8 +20,8 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_date")
                 .order("packing_slot_order")
                 .order("is_delivery", { ascending: false })
-                .order("client_address_postcode")
-                .order("collection_centre_name"),
+                .order("collection_centre_name")
+                .order("client_address_postcode"),
     },
     {
         key: "familyCategory",
@@ -32,8 +32,8 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_date")
                 .order("packing_slot_order")
                 .order("is_delivery", { ascending: false })
-                .order("client_address_postcode")
-                .order("collection_centre_name"),
+                .order("collection_centre_name")
+                .order("client_address_postcode"),
     },
     {
         key: "addressPostcode",
@@ -55,8 +55,8 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_date")
                 .order("packing_slot_order")
                 .order("is_delivery", { ascending: false })
-                .order("client_address_postcode")
-                .order("collection_centre_name"),
+                .order("collection_centre_name")
+                .order("client_address_postcode"),
     },
     {
         key: "voucherNumber",
@@ -66,8 +66,8 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_date")
                 .order("packing_slot_order")
                 .order("is_delivery", { ascending: false })
-                .order("client_address_postcode")
-                .order("collection_centre_name"),
+                .order("collection_centre_name")
+                .order("client_address_postcode"),
     },
     {
         key: "deliveryCollection",
@@ -90,8 +90,8 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_slot_order", { ascending: sortDirection === "asc" })
                 .order("packing_date")
                 .order("is_delivery", { ascending: false })
-                .order("client_address_postcode")
-                .order("collection_centre_name"),
+                .order("collection_centre_name")
+                .order("client_address_postcode"),
     },
     {
         key: "lastStatus",
@@ -101,8 +101,8 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_date")
                 .order("packing_slot_order")
                 .order("is_delivery", { ascending: false })
-                .order("client_address_postcode")
-                .order("collection_centre_name"),
+                .order("collection_centre_name")
+                .order("client_address_postcode"),   
     },
     {
         key: "createdAt",
@@ -112,8 +112,8 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("packing_date")
                 .order("packing_slot_order")
                 .order("is_delivery", { ascending: false })
-                .order("client_address_postcode")
-                .order("collection_centre_name"),
+                .order("collection_centre_name")
+                .order("client_address_postcode"),
     },
 ];
 
