@@ -203,10 +203,18 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                     return;
                 }
 
+                const collectionTime = fields.collectionSlot;
+                const validCollectionSlot = data.find((slot) => slot[1] === collectionTime);
+
                 if (data.length === 0) {
                     setFormErrors({
                         ...initialFormErrors,
                         collectionSlot: Errors.noCollectionSlotsSet,
+                    });
+                } else if (collectionTime && !validCollectionSlot) {
+                    setFormErrors({
+                        ...initialFormErrors,
+                        collectionSlot: Errors.invalidCollectionSlot,
                     });
                 } else {
                     setFormErrors({
@@ -220,7 +228,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         };
 
         void getTimeSlots();
-    }, [fields.collectionCentre, initialFormErrors]);
+    }, [fields.collectionSlot, fields.collectionCentre, initialFormErrors]);
 
     const formSections =
         fields.shippingMethod === "Collection"
