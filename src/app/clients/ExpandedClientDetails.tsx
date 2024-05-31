@@ -19,6 +19,7 @@ import { updateClientNotes } from "./updateClientNotes";
 
 interface Props {
     clientId: string;
+    displayClientsParcels?: boolean;
 }
 
 const DeletedText = styled.div`
@@ -29,7 +30,7 @@ const DeletedText = styled.div`
     flex-direction: row;
 `;
 
-const ExpandedClientDetails: React.FC<Props> = ({ clientId }) => {
+const ExpandedClientDetails: React.FC<Props> = ({ clientId, displayClientsParcels = false }) => {
     const [clientDetails, setClientDetails] = useState<ExpandedClientData | null>(null);
     const [clientParcelsDetails, setClientParcelsDetails] = useState<
         ExpandedClientParcelDetails[] | null
@@ -109,7 +110,9 @@ const ExpandedClientDetails: React.FC<Props> = ({ clientId }) => {
                     <DeletedText>Client has been deleted.</DeletedText>
                 )}
                 <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>
-                {clientParcelsDetails && <ClientParcelsTable parcelsData={clientParcelsDetails} />}
+                {clientParcelsDetails && displayClientsParcels && (
+                    <ClientParcelsTable parcelsData={clientParcelsDetails} />
+                )}
             </>
         )
     );
