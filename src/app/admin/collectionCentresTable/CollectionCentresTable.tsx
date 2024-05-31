@@ -267,15 +267,9 @@ const CollectionCentresTable: React.FC = () => {
 
         timeSlot.isActive = !timeSlot.isActive;
 
-        const newTimeSlotsArray = [
-            ...timeSlotModalData.timeSlots.slice(0, timeSlotIndex),
-            timeSlot,
-            ...timeSlotModalData.timeSlots.slice(timeSlotIndex + 1),
-        ];
-
         const updatedTimeSlotData: FormattedTimeSlotsWithPrimaryKey = {
             ...timeSlotModalData,
-            timeSlots: newTimeSlotsArray,
+            timeSlots: timeSlotModalData.timeSlots,
         };
 
         setTimeSlotModalData(updatedTimeSlotData);
