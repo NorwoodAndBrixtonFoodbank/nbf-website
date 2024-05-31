@@ -146,14 +146,14 @@ const styles = StyleSheet.create({
 });
 
 const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
-    const createHeader = (category: string): React.JSX.Element => {
+    const createHeader = (category: Method): React.JSX.Element => {
         return (
             <View style={[styles.tableHeader, styles.flexRow]}>
                 <View style={[styles.tableColumn, styles.nameColumnWidth]}>
                     <Text>Name</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.addressColumnWidth]}>
-                    <Text>{category === "Collection" ? "Collection Centre" : "Address"}</Text>
+                    <Text>{category === Method.Collection ? "Collection Centre" : "Address"}</Text>
                 </View>
                 <View style={[styles.tableColumn, styles.contactColumnWidth]}>
                     <Text>Contact</Text>
