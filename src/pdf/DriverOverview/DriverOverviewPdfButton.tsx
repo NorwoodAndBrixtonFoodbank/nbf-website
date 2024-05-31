@@ -12,7 +12,7 @@ import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 import { PdfDataFetchResponse } from "../common";
 
 interface DriverOverviewData {
-    driverName: string;
+    driverName: string | null;
     date: Date;
     tableData: DriverOverviewTableData[];
     message: string;
@@ -125,7 +125,7 @@ const getDriverPdfData = async (parcelIds: string[]): Promise<DriverPdfResponse>
 
 interface Props {
     parcels: ParcelsTableRow[];
-    driverName: string;
+    driverName: string | null;
     date: Dayjs;
     onPdfCreationCompleted: () => void;
     onPdfCreationFailed: (error: DriverOverviewError) => void;

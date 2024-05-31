@@ -24,12 +24,11 @@ const deleteClient = async (clientId: string): Promise<DeleteClientResponse> => 
         const logId = await logErrorReturnLogId(`error with delete: client ${clientId}`, {
             error: deleteClientError,
         });
-        void sendAuditLog({ ...baseAuditLogProps, wasSuccess: false, logId });
+        await sendAuditLog({ ...baseAuditLogProps, wasSuccess: false, logId });
         return { error: { type: "failedClientDeletion", logId } };
     }
 
-    void sendAuditLog({ ...baseAuditLogProps, wasSuccess: true });
-
+    await sendAuditLog({ ...baseAuditLogProps, wasSuccess: true });
     return { error: null };
 };
 
