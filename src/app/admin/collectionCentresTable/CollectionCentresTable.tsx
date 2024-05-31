@@ -21,7 +21,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import StyledDataGrid from "@/app/admin/common/StyledDataGrid";
-import { Checkbox, FormControlLabel, FormGroup, LinearProgress } from "@mui/material";
+import { Checkbox, FormControlLabel, FormGroup, IconButton, LinearProgress } from "@mui/material";
 import {
     fetchCollectionCentresForTable,
     InsertCollectionCentreResult,
@@ -46,6 +46,7 @@ import { useTheme } from "styled-components";
 import { formatDayjsToHoursAndMinutes, formatTimeStringToHoursAndMinutes } from "@/common/format";
 import { DesktopTimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
+import ClearIcon from "@mui/icons-material/Clear";
 
 export interface CollectionCentresTableRow {
     acronym: Schema["collection_centres"]["acronym"];
@@ -270,6 +271,29 @@ const CollectionCentresTable: React.FC = () => {
         const updatedTimeSlotData: FormattedTimeSlotsWithPrimaryKey = {
             ...timeSlotModalData,
             timeSlots: timeSlotModalData.timeSlots,
+        };
+
+        setTimeSlotModalData(updatedTimeSlotData);
+    };
+
+    const handleDeleteTimeSlot = (event: React.MouseEvent<HTMLElement>): void => {
+        if (timeSlotModalData === null) {
+            return;
+        }
+
+        const timeToDelete = event.currentTarget.parentElement?.innerText;
+        const timeSlotIndex = timeSlotModalData.timeSlots.findIndex(
+            (slot) => slot.time === timeToDelete
+        );
+
+        const newTimeSlotsArray = [
+            ...timeSlotModalData.timeSlots.slice(0, timeSlotIndex),
+            ...timeSlotModalData.timeSlots.slice(timeSlotIndex + 1),
+        ];
+
+        const updatedTimeSlotData: FormattedTimeSlotsWithPrimaryKey = {
+            ...timeSlotModalData,
+            timeSlots: newTimeSlotsArray,
         };
 
         setTimeSlotModalData(updatedTimeSlotData);
@@ -582,12 +606,23 @@ const CollectionCentresTable: React.FC = () => {
                                 {timeSlotModalData &&
                                     timeSlotModalData.timeSlots.map((timeSlot) => {
                                         return (
-                                            <FormControlLabel
-                                                control={<Checkbox checked={timeSlot.isActive} />}
-                                                label={timeSlot.time}
-                                                onChange={handleTimeSlotCheckBoxChange}
-                                                key={timeSlot.time}
-                                            />
+                                            <ContentDiv key="Collection slot and delete button div">
+                                                <FormControlLabel
+                                                    control={
+                                                        <Checkbox checked={timeSlot.isActive} />
+                                                    }
+                                                    label={timeSlot.time}
+                                                    onChange={handleTimeSlotCheckBoxChange}
+                                                    key={timeSlot.time}
+                                                />
+                                                <IconButton
+                                                    aria-label="delete"
+                                                    onClick={handleDeleteTimeSlot}
+                                                    key="Delete"
+                                                >
+                                                    <ClearIcon />
+                                                </IconButton>
+                                            </ContentDiv>
                                         );
                                     })}
                             </FormGroup>
