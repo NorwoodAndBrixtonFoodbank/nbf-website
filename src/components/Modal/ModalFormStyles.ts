@@ -5,6 +5,13 @@ export const Centerer = styled.div`
     justify-content: center;
 `;
 
+export const SpaceBetween = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+`;
+
 export const OutsideDiv = styled.div`
     display: flex;
     flex-direction: column;

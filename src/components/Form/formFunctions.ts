@@ -21,6 +21,7 @@ export enum Errors {
     pastDate = "Please enter a date in the future.",
     invalidPackingSlot = "The previous packing slot is no longer available, please select a new packing slot.",
     invalidCollectionCentre = "The previous collection centre is no longer available, please select a new collection centre.",
+    noCollectionSlotsSet = "There are no collection slots set for this collection centre, please select a different collection centre or contact admin.",
 }
 
 export const numberRegex = /^\d+$/;

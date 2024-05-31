@@ -31,3 +31,8 @@ export const ErrorRetryText = styled.p`
     font-size: 0.75rem;
     color: ${(props) => props.theme.error};
 `;
+
+export const ErrorTextModalFooter = styled.p`
+    font-size: 0.75rem;
+    color: ${(props) => props.theme.error};
+`;

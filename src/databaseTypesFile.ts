@@ -265,6 +265,9 @@ export type Database = {
           is_shown: boolean
           name: string
           primary_key: string
+          time_slots:
+            | Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
+            | null
         }
         Insert: {
           acronym?: string
@@ -272,6 +275,9 @@ export type Database = {
           is_shown?: boolean
           name?: string
           primary_key?: string
+          time_slots?:
+            | Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
+            | null
         }
         Update: {
           acronym?: string
@@ -279,6 +285,9 @@ export type Database = {
           is_shown?: boolean
           name?: string
           primary_key?: string
+          time_slots?:
+            | Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
+            | null
         }
         Relationships: []
       }
@@ -1064,6 +1073,10 @@ export type Database = {
       role: "volunteer" | "admin" | "manager" | "staff"
     }
     CompositeTypes: {
+      collection_timeslot_type: {
+        time: string | null
+        is_active: boolean | null
+      }
       update_client_result: {
         clientid: string | null
         updatedrows: number | null

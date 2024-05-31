@@ -1,5 +1,6 @@
 import { Json } from "@/databaseTypesFile";
 import dayjs, { Dayjs } from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
 export const displayPostcodeForHomelessClient = "NFA";
 
@@ -37,6 +38,14 @@ export const formatDatetimeAsDate = (datetime: Date | string | null): string => 
     }
 
     return new Date(datetime).toLocaleDateString("en-GB");
+};
+
+export const formatDatetimeAsTime = (datetime: string | null): string => {
+    if (datetime === null || isNaN(Date.parse(datetime))) {
+        return "-";
+    }
+
+    return new Date(datetime).toLocaleTimeString("en-GB");
 };
 
 export const formatDateTime = (datetime: Date | string | null): string => {
@@ -87,4 +96,18 @@ export const getParcelOverviewString = (
         displayNameForDeletedClient +
         (collectionDatetime && ` @ ${dayjs(collectionDatetime).format("DD/MM/YYYY HH:mm")}`)
     );
+};
+
+export const formatTimeStringToHoursAndMinutes = (timeString: string): string => {
+    dayjs.extend(customParseFormat);
+    const dayjsTime = dayjs(timeString, "HH:mm:ss");
+    const hours = String(dayjsTime.hour()).padStart(2, "0");
+    const minutes = String(dayjsTime.minute()).padStart(2, "0");
+    return `${hours}:${minutes}`;
+};
+
+export const formatDayjsToHoursAndMinutes = (dayjsTime: Dayjs): string => {
+    const hours = String(dayjsTime.hour()).padStart(2, "0");
+    const minutes = String(dayjsTime.minute()).padStart(2, "0");
+    return `${hours}:${minutes}`;
 };
