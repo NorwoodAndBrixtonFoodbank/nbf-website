@@ -18,6 +18,7 @@ import { Errors } from "@/components/Form/formFunctions";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import Title from "@/components/Title/Title";
 import { updateParcel } from "@/app/parcels/form/submitFormHelpers";
+import { formatDatetimeAsTime } from "@/common/format";
 
 interface EditParcelFormProps {
     parcelId: string;
@@ -37,7 +38,7 @@ const prepareParcelDataForForm = (
                 ? "Delivery"
                 : "Collection",
         collectionDate: parcelData.collection_datetime,
-        collectionSlot: parcelData.collection_datetime,
+        collectionSlot: formatDatetimeAsTime(parcelData.collection_datetime),
         collectionCentre: parcelData.collection_centre?.primary_key ?? null,
         lastUpdated: parcelData.last_updated,
     };

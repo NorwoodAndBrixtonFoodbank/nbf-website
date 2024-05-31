@@ -128,8 +128,8 @@ const noCollectionFormSections = [
 const mergeDateAndTime = (date: string, time: string): Dayjs => {
     // dayjs objects are immutable so the setter methods return a new object
     dayjs.extend(customParseFormat);
-    const dayjsTime = dayjs(time, "HH:mm");
-    return dayjs(date).hour(dayjsTime.hour()).minute(dayjsTime.minute());
+    const dayjsTime = dayjs(time, "HH:mm:ss");
+    return dayjs(date).hour(dayjsTime.hour()).minute(dayjsTime.minute()).second(dayjsTime.second());
 };
 
 const parcelModalRouterPath = (parcelId: string): string => `/parcels?parcelId=${parcelId}`;
