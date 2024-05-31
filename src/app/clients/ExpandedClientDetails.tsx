@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import DataViewer, {
     DataForDataViewer,
     convertDataToDataForDataViewer,
@@ -43,7 +43,7 @@ const ExpandedClientDetails: React.FC<Props> = ({ clientId }) => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    useEffect(() => {
+    const loadData = useCallback(() => {
         (async () => {
             setIsLoading(true);
             setExpandedClientDetails(await getExpandedClientDetails(clientId));
@@ -51,6 +51,8 @@ const ExpandedClientDetails: React.FC<Props> = ({ clientId }) => {
             setIsLoading(false);
         })();
     }, [clientId]);
+
+    useEffect(() => loadData(), [loadData]);
 
     const onSaveNotes = async (): Promise<void> => {
         setErrorMessage(null);
@@ -60,7 +62,9 @@ const ExpandedClientDetails: React.FC<Props> = ({ clientId }) => {
             .eq("primary_key", clientId);
         if (error) {
             setErrorMessage("Error saving notes");
+            return;
         }
+        loadData();
     };
 
     const onChangeNotes = async (event: ChangeEvent<HTMLInputElement>): Promise<void> => {
@@ -69,6 +73,7 @@ const ExpandedClientDetails: React.FC<Props> = ({ clientId }) => {
 
     const onCancelNotes = async (): Promise<void> => {
         setNotes(originalNotes);
+        loadData();
     };
 
     const getExpandedClientDetailsForDataViewer = (
