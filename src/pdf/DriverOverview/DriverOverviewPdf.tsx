@@ -267,8 +267,8 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                         COMPLETION OF DELIVERIES
                     </Text>
                 </View>
-                {deliveries.length ? deliveriesTable : null}
-                {collections.length ? collectionsTable : null}
+                {deliveries.length && deliveriesTable}
+                {collections.length && collectionsTable}
             </Page>
         </Document>
     );
