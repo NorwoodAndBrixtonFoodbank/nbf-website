@@ -22,8 +22,8 @@ const getReportsDataAndCount = async (
         query.order("week_commencing", { ascending: false });
     }
 
-    query = query.range(startIndex, endIndex);
-    query = query.abortSignal(abortSignal);
+    query.range(startIndex, endIndex);
+    query.abortSignal(abortSignal);
 
     const { data: reports, error: reportsError } = await query;
 
@@ -44,7 +44,6 @@ const getReportsDataAndCount = async (
     const reportsData: ReportsTableRow[] = reports.map((report) => {
         return {
             weekCommencing: report.week_commencing ?? "",
-            total: report.total_parcels ?? 0,
             familySize1: report.family_size_1 ?? 0,
             familySize2: report.family_size_2 ?? 0,
             familySize3: report.family_size_3 ?? 0,
@@ -55,10 +54,11 @@ const getReportsDataAndCount = async (
             familySize8: report.family_size_8 ?? 0,
             familySize9: report.family_size_9 ?? 0,
             familySize10Plus: report.family_size_10_plus ?? 0,
-            totalWithPets: report.total_with_pets ?? 0,
+            total: report.total_parcels ?? 0,
             cat: report.cat ?? 0,
             dog: report.dog ?? 0,
             catAndDog: report.cat_and_dog ?? 0,
+            totalWithPets: report.total_with_pets ?? 0,
         };
     });
 
@@ -77,9 +77,9 @@ const getReportsCount = async (
     supabase: Supabase,
     abortSignal: AbortSignal
 ): Promise<GetReportsCountReturnType> => {
-    let query = supabase.from("reports").select("*", { count: "exact", head: true });
+    const query = supabase.from("reports").select("*", { count: "exact", head: true });
 
-    query = query.abortSignal(abortSignal);
+    query.abortSignal(abortSignal);
 
     const { count, error: reportsError } = await query;
 

@@ -1,6 +1,7 @@
 import { TableHeaders } from "@/components/Tables/Table";
+import { ReportsTableRow } from "@/app/reports/reportsTable/types";
 
-const clientsHeaders: TableHeaders<any> = [
+const clientsHeaders: TableHeaders<ReportsTableRow> = [
     ["weekCommencing", "Week Commencing"],
     ["familySize1", "Single"],
     ["familySize2", "Family of 2"],

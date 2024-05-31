@@ -97,7 +97,7 @@ const ReportsPage: React.FC<{}> = () => {
                 <>
                     {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
                     <TableSurface>
-                        <ServerPaginatedTable<any, DbReportRow>
+                        <ServerPaginatedTable<ReportsTableRow, DbReportRow>
                             dataPortion={reportsDataPortion}
                             paginationConfig={{
                                 enablePagination: true,

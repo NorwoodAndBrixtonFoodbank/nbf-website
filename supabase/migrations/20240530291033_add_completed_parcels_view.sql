@@ -2,6 +2,7 @@ CREATE OR REPLACE VIEW completed_parcels AS
 WITH completed_events AS (
     SELECT
         events.parcel_id,
+        -- If a parcel has multiple successful events, we chose the most recent.
         MAX(events.timestamp) AS completed_timestamp
     FROM
         events
@@ -14,6 +15,7 @@ WITH completed_events AS (
             WHERE
                 is_successfully_completed_event
         )
+    -- Ensures each parcel is only counted once.
     GROUP BY
         events.parcel_id
 )

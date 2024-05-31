@@ -13,30 +13,29 @@ export type GetReportsDataAndCountErrorType =
 
 export type GetReportsReturnType =
     | {
-          error: null;
           data: {
               reportsData: ReportsTableRow[];
               count: number;
           };
+          error: null;
       }
     | {
-          error: { type: GetReportsDataAndCountErrorType; logId: string };
           data: null;
+          error: { type: GetReportsDataAndCountErrorType; logId: string };
       };
 
 export type GetReportsCountReturnType =
     | {
-          error: { type: GetReportsDataAndCountErrorType; logId: string };
           data: null;
+          error: { type: GetReportsDataAndCountErrorType; logId: string };
       }
     | {
-          error: null;
           data: number;
+          error: null;
       };
 
 export interface ReportsTableRow {
     weekCommencing: string;
-    total: number;
     familySize1: number;
     familySize2: number;
     familySize3: number;
@@ -47,8 +46,9 @@ export interface ReportsTableRow {
     familySize8: number;
     familySize9: number;
     familySize10Plus: number;
-    totalWithPets: number;
+    total: number;
     cat: number;
     dog: number;
     catAndDog: number;
+    totalWithPets: number;
 }
