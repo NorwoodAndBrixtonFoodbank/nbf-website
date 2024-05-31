@@ -12,5 +12,7 @@ export const getDeleteClientErrorMessage = (error: DeleteClientError): string =>
     switch (error.type) {
         case "failedClientDeletion":
             return `Failed to delete client. Please try again later. Log ID: ${error.logId}`;
+        case "eventInsertionFailed":
+            return `Failed to delete client parcel. Please try again later. Log ID: ${error.logId}`;
     }
 };
