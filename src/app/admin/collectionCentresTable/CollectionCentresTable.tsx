@@ -253,6 +253,9 @@ const CollectionCentresTable: React.FC = () => {
         }
 
         const updatedTime = event.currentTarget.parentElement?.parentElement?.innerText;
+        const timeSlotIndex = timeSlotModalData.timeSlots.findIndex(
+            (slot) => slot.time === updatedTime
+        );
         const timeSlot = timeSlotModalData.timeSlots.find((slot) => slot.time === updatedTime);
         if (!timeSlot) {
             return;
@@ -261,6 +264,18 @@ const CollectionCentresTable: React.FC = () => {
         timeSlot.isActive = !timeSlot.isActive;
 
         addNewTimeSlotToTimeSlotModalData(timeSlotModalData, timeSlot);
+        const newTimeSlotsArray = [
+            ...timeSlotModalData.timeSlots.slice(0, timeSlotIndex),
+            timeSlot,
+            ...timeSlotModalData.timeSlots.slice(timeSlotIndex + 1),
+        ];
+
+        const updatedTimeSlotData: FormattedTimeSlotsWithPrimaryKey = {
+            ...timeSlotModalData,
+            timeSlots: newTimeSlotsArray,
+        };
+
+        setTimeSlotModalData(updatedTimeSlotData);
     };
 
     const handleSaveClick = (id: GridRowId) => () => {
