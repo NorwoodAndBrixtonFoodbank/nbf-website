@@ -12,10 +12,10 @@ import {
     getClientParcelsDetails,
 } from "@/app/clients/getClientParcelsData";
 import { styled } from "styled-components";
-import supabase from "@/supabaseClient";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
 import { CircularProgress } from "@mui/material";
 import { Centerer } from "@/components/Modal/ModalFormStyles";
+import { updateClientNotes } from "./updateClientNotes";
 
 interface Props {
     clientId: string;
@@ -30,14 +30,12 @@ const DeletedText = styled.div`
 `;
 
 const ExpandedClientDetails: React.FC<Props> = ({ clientId }) => {
-    const [expandedClientDetails, setExpandedClientDetails] = useState<ExpandedClientData | null>(
-        null
-    );
-    const [expandedClientParcelsDetails, setExpandedClientParcelsDetails] = useState<
+    const [clientDetails, setClientDetails] = useState<ExpandedClientData | null>(null);
+    const [clientParcelsDetails, setClientParcelsDetails] = useState<
         ExpandedClientParcelDetails[] | null
     >(null);
 
-    const originalNotes = expandedClientDetails?.notes ?? null;
+    const originalNotes = clientDetails?.notes ?? null;
 
     const [notes, setNotes] = useState<string | null>(originalNotes);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -46,8 +44,8 @@ const ExpandedClientDetails: React.FC<Props> = ({ clientId }) => {
     const loadData = useCallback(() => {
         (async () => {
             setIsLoading(true);
-            setExpandedClientDetails(await getExpandedClientDetails(clientId));
-            setExpandedClientParcelsDetails(await getClientParcelsDetails(clientId));
+            setClientDetails(await getExpandedClientDetails(clientId));
+            setClientParcelsDetails(await getClientParcelsDetails(clientId));
             setIsLoading(false);
         })();
     }, [clientId]);
@@ -56,45 +54,44 @@ const ExpandedClientDetails: React.FC<Props> = ({ clientId }) => {
 
     const onSaveNotes = async (): Promise<void> => {
         setErrorMessage(null);
-        const { error } = await supabase
-            .from("clients")
-            .update({ notes: notes })
-            .eq("primary_key", clientId);
+        const { error } = await updateClientNotes(clientId, notes);
         if (error) {
-            setErrorMessage("Error saving notes");
-            return;
+            setErrorMessage(`Error saving notes. Log ID: ${error.logId}`);
+            setNotes(originalNotes);
         }
         loadData();
     };
 
     const onChangeNotes = async (event: ChangeEvent<HTMLInputElement>): Promise<void> => {
+        setErrorMessage(null);
         setNotes(event.target.value);
     };
 
     const onCancelNotes = async (): Promise<void> => {
+        setErrorMessage(null);
         setNotes(originalNotes);
         loadData();
     };
 
     const getExpandedClientDetailsForDataViewer = (
-        expandedClientDetails: ExpandedClientData
+        clientDetails: ExpandedClientData
     ): DataForDataViewer => {
-        const expandedClientDetailsForDataViewer = convertDataToDataForDataViewer({
-            ...expandedClientDetails,
+        const clientDetailsForDataViewer = convertDataToDataForDataViewer({
+            ...clientDetails,
         });
-        expandedClientDetailsForDataViewer["notes"] = {
-            value: expandedClientDetails["notes"],
+        clientDetailsForDataViewer["notes"] = {
+            value: clientDetails["notes"],
             editFunctions: {
                 onChange: onChangeNotes,
                 onCancel: onCancelNotes,
                 onSave: onSaveNotes,
             },
         };
-        expandedClientDetailsForDataViewer["isActive"] = {
-            value: expandedClientDetails["isActive"],
+        clientDetailsForDataViewer["isActive"] = {
+            value: clientDetails["isActive"],
             hide: true,
         };
-        return expandedClientDetailsForDataViewer;
+        return clientDetailsForDataViewer;
     };
 
     return isLoading ? (
@@ -102,19 +99,17 @@ const ExpandedClientDetails: React.FC<Props> = ({ clientId }) => {
             <CircularProgress />
         </Centerer>
     ) : (
-        expandedClientDetails && (
+        clientDetails && (
             <>
-                {expandedClientDetails.isActive ? (
+                {clientDetails.isActive ? (
                     <DataViewer
-                        data={{ ...getExpandedClientDetailsForDataViewer(expandedClientDetails) }}
+                        data={{ ...getExpandedClientDetailsForDataViewer(clientDetails) }}
                     />
                 ) : (
                     <DeletedText>Client has been deleted.</DeletedText>
                 )}
                 <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>
-                {expandedClientParcelsDetails && (
-                    <ClientParcelsTable parcelsData={expandedClientParcelsDetails} />
-                )}
+                {clientParcelsDetails && <ClientParcelsTable parcelsData={clientParcelsDetails} />}
             </>
         )
     );

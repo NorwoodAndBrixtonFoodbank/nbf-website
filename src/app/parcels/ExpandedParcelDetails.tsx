@@ -1,14 +1,11 @@
 "use client";
 
 import React, { ReactElement, useCallback, useEffect, useState } from "react";
-import DataViewer, {
-    DataForDataViewer,
-    convertDataToDataForDataViewer,
-} from "@/components/DataViewer/DataViewer";
+import DataViewer from "@/components/DataViewer/DataViewer";
 import getExpandedParcelDetails, {
-    ExpandedParcelData,
     ExpandedParcelDetails,
     FetchExpandedParcelDetailsError,
+    getExpandedParcelDataForDataViewer,
 } from "@/app/parcels/getExpandedParcelDetails";
 import EventTable, { EventTableRow } from "./EventTable";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
@@ -64,19 +61,6 @@ const ExpandedParcelDetailsView = ({ parcelId }: Props): ReactElement => {
     useEffect(() => {
         void fetchAndSetParcelDetails();
     }, [fetchAndSetParcelDetails]);
-
-    const getExpandedParcelDataForDataViewer = (
-        expandedParcelData: ExpandedParcelData
-    ): DataForDataViewer => {
-        const expandedParcelDetailsForDataViewer = convertDataToDataForDataViewer({
-            ...expandedParcelData,
-        });
-        expandedParcelDetailsForDataViewer["isActive"] = {
-            value: expandedParcelData["isActive"],
-            hide: true,
-        };
-        return expandedParcelDetailsForDataViewer;
-    };
 
     return (
         <>

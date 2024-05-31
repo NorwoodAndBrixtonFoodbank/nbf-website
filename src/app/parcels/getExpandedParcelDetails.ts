@@ -9,7 +9,11 @@ import {
     formatHouseholdFromFamilyDetails,
 } from "@/app/clients/getExpandedClientDetails";
 import { formatDateTime, formatDatetimeAsDate } from "@/common/format";
-import { Data } from "@/components/DataViewer/DataViewer";
+import {
+    Data,
+    DataForDataViewer,
+    convertDataToDataForDataViewer,
+} from "@/components/DataViewer/DataViewer";
 
 type FetchExpandedParcelDetailsResult =
     | {
@@ -181,7 +185,7 @@ interface ParcelDataForActiveClient extends ParcelDataIndependentOfClient {
     children: string;
 }
 
-export type ExpandedParcelData = ParcelDataForActiveClient | ParcelDataForInactiveClient;
+type ExpandedParcelData = ParcelDataForActiveClient | ParcelDataForInactiveClient;
 
 export interface ExpandedParcelDetails {
     expandedParcelData: ExpandedParcelData;
@@ -206,3 +210,16 @@ export const processEventsDetails = (
 };
 
 export default getExpandedParcelDetails;
+
+export const getExpandedParcelDataForDataViewer = (
+    parcelDetails: ExpandedParcelData
+): DataForDataViewer => {
+    const parcelDetailsForDataViewer = convertDataToDataForDataViewer({
+        ...parcelDetails,
+    });
+    parcelDetailsForDataViewer["isActive"] = {
+        value: parcelDetails["isActive"],
+        hide: true,
+    };
+    return parcelDetailsForDataViewer;
+};
