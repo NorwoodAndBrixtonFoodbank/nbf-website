@@ -144,7 +144,7 @@ const buildLastStatusFilter = async (): Promise<ParcelsFilter<string[]>> => {
         key: "lastStatus",
         filterLabel: "Last Status",
         itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
-        initialCheckedKeys: optionsSet.filter((option) => option !== "Request Deleted"),
+        initialCheckedKeys: optionsSet.filter((option) => option !== "Request Deleted" && option !== "Parcel Deleted"),
         method: lastStatusSearch,
     });
 };
