@@ -198,9 +198,6 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                         case "collectionTimeSlotsFetchFailed":
                             errorMessage = "Failed to fetch collection time slots";
                             break;
-                        case "noCollectionTimeSlotsData":
-                            errorMessage = "No collection time slots data available";
-                            break;
                     }
                     setSubmitErrorMessage(`${errorMessage}. Log ID: ${error.logId}`);
                     return;
