@@ -5,7 +5,6 @@ import { Errors } from "@/components/Form/formFunctions";
 
 const AddClients: () => React.ReactElement = () => {
     const initialFields: ClientFields = {
-        notes: "",
         fullName: "",
         phoneNumber: "",
         addressLine1: "",
@@ -27,6 +26,7 @@ const AddClients: () => React.ReactElement = () => {
         extraInformation: "",
         attentionFlag: false,
         signpostingCall: false,
+        notes: "",
         lastUpdated: undefined,
     };
 

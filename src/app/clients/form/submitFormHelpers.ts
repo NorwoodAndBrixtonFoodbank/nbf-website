@@ -32,7 +32,6 @@ const formatClientRecord = (
             : `Nappy Size: ${fields.nappySize}, Extra Information: ${fields.extraInformation}`;
 
     return {
-        notes: fields.notes,
         full_name: fields.fullName,
         phone_number: fields.phoneNumber,
         address_1: fields.addressLine1,
@@ -50,6 +49,7 @@ const formatClientRecord = (
         signposting_call_required: fields.signpostingCall,
         flagged_for_attention: fields.attentionFlag,
         last_updated: fields.lastUpdated,
+        notes: fields.notes,
     };
 };
 

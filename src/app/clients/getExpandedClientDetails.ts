@@ -103,8 +103,8 @@ export const rawDataToExpandedClientDetails = (client: RawClientDetails): Expand
         petFood: client.pet_food?.join(", ") ?? "",
         otherRequirements: client.other_items?.join(", ") ?? "",
         extraInformation: client.extra_information ?? "",
-        isActive: client.is_active,
         notes: client.notes,
+        isActive: client.is_active,
     };
 };
 
