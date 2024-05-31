@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Text, Document, Page, View, StyleSheet, Image } from "@react-pdf/renderer";
-import { displayPostcodeForHomelessClient } from "@/common/format";
+import { displayNameForNullDriverName, displayPostcodeForHomelessClient } from "@/common/format";
 import { faTruck, faShoePrints } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIconPdfComponent from "../FontAwesomeIconPdfComponent";
 
@@ -25,7 +25,7 @@ export interface DriverOverviewRowData {
 }
 
 export interface DriverOverviewCardDataProps {
-    driverName: string;
+    driverName: string | null;
     date: Date;
     tableData: DriverOverviewTablesData;
     message: string;
@@ -226,7 +226,9 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                 <View style={[styles.infoAndLogoContainer, styles.flexRow]}>
                     <View style={styles.informationContainer}>
                         <Text style={styles.h1text}>Driver Overview</Text>
-                        <Text style={styles.h2text}>Driver Name: {data.driverName}</Text>
+                        <Text style={styles.h2text}>
+                            Driver Name: {data.driverName ?? displayNameForNullDriverName}
+                        </Text>
                         <Text style={styles.h2text}>Date: {data.date.toLocaleDateString()} </Text>
                     </View>
                     {/* eslint-disable-next-line -- needed to remove the need for alt text on the logo */}

@@ -15,6 +15,7 @@ import DriverOverviewPdfButton, {
     DriverOverviewError,
 } from "@/pdf/DriverOverview/DriverOverviewPdfButton";
 import { sendAuditLog } from "@/server/auditLog";
+import { displayNameForNullDriverName } from "@/common/format";
 
 interface DriverOverviewInputProps {
     onDateChange: (newDate: Dayjs | null) => void;
@@ -73,15 +74,16 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-    const [driverName, setDriverName] = useState("");
+    const [driverName, setDriverName] = useState<string | null>(null);
     const [date, setDate] = useState(dayjs());
 
     const [isDateValid, setIsDateValid] = useState(true);
 
-    const isInputValid = isDateValid && driverName.length > 0;
+    const isInputValid = isDateValid && driverName;
 
     const onDriverNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setDriverName(event.target.value);
+        const trimmedDriverName = event.target.value.trim();
+        setDriverName(trimmedDriverName.length !== 0 ? trimmedDriverName : null);
     };
     const onDateChange = (newDate: Dayjs | null): void => {
         setDate(newDate!);
@@ -90,12 +92,17 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
     const onClose = (): void => {
         props.onClose();
         setDate(dayjs());
-        setDriverName("");
+        setDriverName(null);
         setErrorMessage(null);
     };
 
     const onPdfCreationCompleted = async (): Promise<void> => {
-        const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
+        const { error } = await props.updateParcelStatuses(
+            props.selectedParcels,
+            props.newStatus,
+            `with ${driverName ?? displayNameForNullDriverName}`,
+            date
+        );
         if (error) {
             setErrorMessage(getStatusErrorMessageWithLogId(error));
         }
