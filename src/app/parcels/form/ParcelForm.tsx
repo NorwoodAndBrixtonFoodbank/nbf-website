@@ -203,18 +203,6 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                     return;
                 }
 
-                if (data.length === 0) {
-                    setFormErrors({
-                        ...initialFormErrors,
-                        collectionSlot: Errors.noCollectionSlotsSet,
-                    });
-                } else {
-                    setFormErrors({
-                        ...initialFormErrors,
-                        collectionSlot: Errors.initial,
-                    });
-                }
-
                 setCollectionSlotsLabelsAndValues(data);
             }
         };
