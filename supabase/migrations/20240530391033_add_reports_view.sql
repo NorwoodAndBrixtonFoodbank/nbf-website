@@ -6,14 +6,18 @@ WITH first_completed_parcel AS (
     FROM completed_parcels
 ),
 
--- Calculates the number of weeks of data that we need and creates a list: (0, 1, 2,...., number_of_weeks_needed)
-list_of_weeks AS (
- SELECT generate_series(
-        0,
-        52 * (EXTRACT(YEAR FROM CURRENT_DATE) - EXTRACT(YEAR FROM start_date)) + EXTRACT(WEEK FROM CURRENT_DATE) - EXTRACT(WEEK FROM start_date))
-     AS number_of_weeks_ago
- FROM first_completed_parcel
-)
+-- Calculates the number of weeks of data that we need and creates a list: (0, 1, 2, ...., number_of_weeks_needed)
+ list_of_weeks AS (
+     SELECT generate_series(
+            0,
+            -- Whole number of weeks between start of this week, and first parcel completed date.
+            CEIL(
+                (EXTRACT(EPOCH FROM date_trunc('week', CURRENT_DATE)) - EXTRACT(EPOCH FROM start_date))
+                    / (60 * 60 * 24 * 7)
+            ))
+        AS number_of_weeks_ago
+     FROM first_completed_parcel
+ )
 
 SELECT
     -- Gets the date of the start of each week from now to the date of the first completed parcel
@@ -31,16 +35,16 @@ SELECT
     COUNT(parcel_id) AS total_parcels,
     COUNT(CASE WHEN pet_food = ARRAY['Cat'] THEN 1 END) AS cat,
     COUNT(CASE WHEN pet_food = ARRAY['Dog'] THEN 1 END) AS dog,
-    -- @> so we count ['Dog', 'Cat'] as well as ['Cat', 'Dog]
+    -- @> so we count ['Dog', 'Cat'] as well as ['Cat', 'Dog']
     COUNT(CASE WHEN pet_food @> ARRAY['Cat','Dog'] THEN 1 END) AS cat_and_dog,
     COUNT(CASE WHEN NOT pet_food = ARRAY[]::text[] THEN 1 END) AS total_with_pets
 FROM
     list_of_weeks
     LEFT JOIN completed_parcels ON
-        -- Makes sure the parcels were completed within the displayed week
-            date_trunc('week', CURRENT_DATE) - ((number_of_weeks_ago - 1) * INTERVAL '1 week') > completed_timestamp
-        AND completed_timestamp >= date_trunc('week', CURRENT_DATE) - (number_of_weeks_ago * INTERVAL '1 week')
+    -- Makes sure the parcels were completed within the displayed week
+        date_trunc('week', CURRENT_DATE) - (number_of_weeks_ago * INTERVAL '1 week') <= completed_timestamp
+    AND completed_timestamp < date_trunc('week', CURRENT_DATE) - (number_of_weeks_ago * INTERVAL '1 week') + INTERVAL '1 week'
 GROUP BY
     week_commencing
 ORDER BY
-    week_commencing DESC;            
+    week_commencing DESC;
