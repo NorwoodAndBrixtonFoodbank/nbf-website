@@ -232,7 +232,7 @@ const CollectionCentresTable: React.FC = () => {
         }
         const newTimeSlot: FormattedTimeSlot = {
             time: formatDayjsToHoursAndMinutes(collectionTimeSlotValue),
-            isActive: false,
+            isActive: true,
         };
 
         if (checkIfSlotExists(timeSlotModalData, newTimeSlot)) {
@@ -263,7 +263,6 @@ const CollectionCentresTable: React.FC = () => {
 
         timeSlot.isActive = !timeSlot.isActive;
 
-        addNewTimeSlotToTimeSlotModalData(timeSlotModalData, timeSlot);
         const newTimeSlotsArray = [
             ...timeSlotModalData.timeSlots.slice(0, timeSlotIndex),
             timeSlot,
