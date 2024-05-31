@@ -147,9 +147,7 @@ type FetchCollectionTimeSlotsResponse =
           error: FetchCollectionTimeSlotsError;
       };
 
-type FetchCollectionTimeSlotsErrorType =
-    | "collectionTimeSlotsFetchFailed"
-    | "noCollectionTimeSlotsData";
+type FetchCollectionTimeSlotsErrorType = "collectionTimeSlotsFetchFailed";
 
 export type FetchCollectionTimeSlotsError = {
     type: FetchCollectionTimeSlotsErrorType;
@@ -179,11 +177,8 @@ export const getActiveTimeSlotsForCollectionCentre = async (
         return { data: null, error: { type: "collectionTimeSlotsFetchFailed", logId: logId } };
     }
 
-    if (!data) {
-        const logId = await logErrorReturnLogId(
-            `Error with fetch: No collection time slots data with primary key ${collectionCentrePrimaryKey}`
-        );
-        return { data: null, error: { type: "noCollectionTimeSlotsData", logId: logId } };
+    if (!data.time_slots) {
+        return { data: [], error: null };
     }
 
     const activeTimeSlots: CollectionTimeSlotsLabelsAndValues = data.time_slots
