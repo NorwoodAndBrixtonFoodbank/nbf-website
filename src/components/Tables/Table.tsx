@@ -17,10 +17,14 @@ import { CircularProgress, NoSsr } from "@mui/material";
 import IconButton from "@mui/material/IconButton/IconButton";
 import React, { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { Primitive, SortOrder } from "react-data-table-component/dist/DataTable/types";
 import { Centerer } from "../Modal/ModalFormStyles";
 import { ClientSideSortMethod, ServerSideSortMethod } from "./sortMethods";
+import {
+    DividingLineStyleOptions,
+    getDividingLineStyleOptions,
+} from "@/app/parcels/parcelsTable/conditionalStyling";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -73,6 +77,7 @@ export type SortConfig<Data, SortMethod extends Function> =
 
 interface CustomColumn<Data, SortMethod extends Function> extends TableColumn<Row<Data>> {
     sortMethod?: SortMethod;
+    headerKey?: keyof Data;
 }
 
 export type CheckboxConfig<Data> =
@@ -132,6 +137,11 @@ export type EditableConfig<Data> =
       }
     | { editable: false };
 
+export type BreakPointConfig = {
+    name: string;
+    breakPoints: number[];
+    dividingLineStyle: keyof DividingLineStyleOptions;
+};
 interface Props<Data, DbData extends Record<string, any>, PaginationType> {
     dataPortion: Data[];
     headerKeysAndLabels: TableHeaders<Data>;
@@ -149,6 +159,7 @@ interface Props<Data, DbData extends Record<string, any>, PaginationType> {
             ? ClientSideFilter<Data, any>
             : ServerSideFilter<Data, any, DbData>
     >;
+    rowBreakPointConfigs?: BreakPointConfig[];
     defaultShownHeaders?: readonly (keyof Data)[];
     toggleableHeaders?: readonly (keyof Data)[];
     columnDisplayFunctions?: ColumnDisplayFunctions<Data>;
@@ -213,6 +224,7 @@ const Table = <
     columnStyleOptions = {},
     checkboxConfig,
     sortConfig,
+    rowBreakPointConfigs,
     filterConfig,
     paginationConfig,
     editableConfig,
@@ -223,6 +235,8 @@ const Table = <
     );
 
     const shownHeaders = headerKeysAndLabels.filter(([key]) => shownHeaderKeys.includes(key));
+
+    const theme = useTheme();
 
     const columns: CustomColumn<
         Data,
@@ -258,6 +272,7 @@ const Table = <
                 />
             ),
             sortField: headerKey.toString(),
+            headerKey: headerKey,
             sortMethod: sortMethod,
             ...columnStyles,
         };
@@ -426,7 +441,10 @@ const Table = <
                 setShownHeaderKeys={setShownHeaderKeys}
                 shownHeaderKeys={shownHeaderKeys}
             />
-            <TableStyling>
+            <TableStyling
+                rowBreakPointConfigs={rowBreakPointConfigs ?? []}
+                dividingLineStyleOptions={getDividingLineStyleOptions(theme)}
+            >
                 <NoSsr>
                     <DataTable
                         columns={columns}
@@ -498,7 +516,10 @@ const StyledIcon = styled(Icon)`
     margin: 0;
 `;
 
-const TableStyling = styled.div`
+const TableStyling = styled.div<{
+    rowBreakPointConfigs: BreakPointConfig[];
+    dividingLineStyleOptions: DividingLineStyleOptions;
+}>`
     // the component with the filter bars
     & > header {
         background-color: transparent;
@@ -618,7 +639,21 @@ const TableStyling = styled.div`
     & .rdt_TableRow:nth-child(odd) {
         background-color: ${(props) => props.theme.main.background[0]};
     }
+
+    ${(props) =>
+        props.rowBreakPointConfigs
+            .map((breakPointConfig) => {
+                return breakPointConfig.breakPoints
+                    .map(
+                        (breakPoint) => `& .rdt_TableRow:nth-child(${breakPoint + 1}) {
+                            border-top: ${props.dividingLineStyleOptions[breakPointConfig.dividingLineStyle].thickness} solid ${props.dividingLineStyleOptions[breakPointConfig.dividingLineStyle].colour};
+                        }`
+                    )
+                    .join();
+            })
+            .join()}
 `;
+// The inside map creates a div line at each required index for a specific style, and the outside map does this for each style
 
 export const ServerPaginatedTable = <Data, DbData extends Record<string, any>>(
     props: Props<Data, DbData, PaginationTypeEnum.Server>

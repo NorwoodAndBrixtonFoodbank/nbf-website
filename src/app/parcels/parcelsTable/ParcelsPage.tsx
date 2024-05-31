@@ -1,6 +1,6 @@
 "use client";
 
-import { Row, ServerPaginatedTable } from "@/components/Tables/Table";
+import { BreakPointConfig, Row, ServerPaginatedTable } from "@/components/Tables/Table";
 import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useTheme } from "styled-components";
 import { ParcelsTableRow, ParcelsSortState, ParcelsFilter, SelectedClientDetails } from "./types";
@@ -42,6 +42,7 @@ import {
 } from "./format";
 import { PreTableControls, parcelTableColumnStyleOptions } from "./styles";
 import { DbParcelRow } from "@/databaseUtils";
+import { searchForBreakPoints } from "./conditionalStyling";
 import { Dayjs } from "dayjs";
 
 const ParcelsPage: React.FC<{}> = () => {
@@ -51,6 +52,9 @@ const ParcelsPage: React.FC<{}> = () => {
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [selectedClientDetails, setSelectedClientDetails] =
         useState<SelectedClientDetails | null>(null);
+    const [parcelRowBreakPointConfig, setParcelRowBreakPointConfig] = useState<BreakPointConfig[]>(
+        []
+    );
 
     const [checkedParcelIds, setCheckedParcelIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
@@ -149,6 +153,11 @@ const ParcelsPage: React.FC<{}> = () => {
             } else {
                 setParcelsDataPortion(data.parcelTableRows);
                 setFilteredParcelCount(data.count);
+                if (sortState.sortEnabled && sortState.column.headerKey) {
+                    setParcelRowBreakPointConfig(
+                        searchForBreakPoints(sortState.column.headerKey, data.parcelTableRows)
+                    );
+                }
             }
 
             parcelsTableFetchAbortController.current = null;
@@ -317,6 +326,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                 sortableColumns: parcelsSortableColumns,
                                 setSortState: setSortState,
                             }}
+                            rowBreakPointConfigs={parcelRowBreakPointConfig}
                             filterConfig={{
                                 primaryFiltersShown: true,
                                 additionalFiltersShown: true,
