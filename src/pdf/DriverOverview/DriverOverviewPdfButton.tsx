@@ -21,29 +21,6 @@ interface DriverOverviewData {
     message: string;
 }
 
-const compareCollectionCentres = (
-    first: DriverOverviewRowData,
-    second: DriverOverviewRowData
-): number => {
-    if (first.collectionCentre < second.collectionCentre) {
-        return -1;
-    }
-    if (first.collectionCentre > second.collectionCentre) {
-        return 1;
-    }
-    return 0;
-};
-
-const comparePostcodes = (first: DriverOverviewRowData, second: DriverOverviewRowData): number => {
-    if (first.address.postcode && second.address.postcode) {
-        return first.address.postcode.localeCompare(second.address.postcode);
-    }
-    if (!first.address.postcode && !second.address.postcode) {
-        return 0;
-    }
-    return first.address.postcode ? 1 : -1;
-};
-
 type ParcelForDelivery = Schema["parcels"] & {
     client: Schema["clients"];
     collection_centre: Schema["collection_centres"];
@@ -65,11 +42,14 @@ type ParcelsForDeliveryErrorType = "parcelFetchFailed" | "noMatchingClient" | "n
 const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDeliveryResponse> => {
     const { data, error } = await supabase
         .from("parcels")
-        .select("*, client:clients(*), events(event_data), collection_centre:collection_centres(*)")
+        .select("*, client:clients(*), events(event_data), collection_centre:collection_centres(*), collection_centres(name), clients(address_postcode)")
         .in("primary_key", parcelIds)
         .limit(1, { foreignTable: "clients" })
         .limit(1, { foreignTable: "collection_centres" })
-        .eq("events.new_parcel_status", "Shipping Labels Downloaded");
+        .eq("events.new_parcel_status", "Shipping Labels Downloaded")
+        .order("collection_centres(name)")
+        .order("clients(address_postcode)");
+
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Parcels", error);
@@ -151,9 +131,8 @@ const transformParcelDataToTableData = (parcels: ParcelForDelivery[]): DriverOve
 
     return {
         collections: transformedParcels
-            .filter((parcel) => !parcel.isDelivery)
-            .sort(compareCollectionCentres),
-        deliveries: transformedParcels.filter((parcel) => parcel.isDelivery).sort(comparePostcodes),
+            .filter((parcel) => !parcel.isDelivery),
+        deliveries: transformedParcels.filter((parcel) => parcel.isDelivery)
     };
 };
 
