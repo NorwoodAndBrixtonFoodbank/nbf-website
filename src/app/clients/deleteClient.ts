@@ -1,6 +1,7 @@
 import { logErrorReturnLogId } from "@/logger/logger";
 import { sendAuditLog } from "@/server/auditLog";
 import supabase from "@/supabaseClient";
+import { getClientParcelsDetails } from "./getClientParcelsData";
 
 type DeleteClientErrorType = "failedClientDeletion";
 export interface DeleteClientError {
@@ -13,6 +14,8 @@ const deleteClient = async (clientId: string): Promise<DeleteClientResponse> => 
     const { error: deleteClientError } = await supabase.rpc("deactivateClient", {
         clientid: clientId,
     });
+
+    getClientParcelsDetails(clientId);
 
     const baseAuditLogProps = {
         action: "delete a client",
