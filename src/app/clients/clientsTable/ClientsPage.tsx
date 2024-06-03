@@ -31,7 +31,6 @@ import { clientIdParam } from "./constants";
 import { getIsClientActiveErrorMessage, getDeleteClientErrorMessage } from "./format";
 import { getClientParcelsDetails } from "../getClientParcelsData";
 import { saveParcelStatus } from "@/app/parcels/ActionBar/Statuses";
- 
 
 const ClientsPage: React.FC<{}> = () => {
     const [isLoadingForFirstTime, setIsLoadingForFirstTime] = useState(true);
@@ -151,7 +150,7 @@ const ClientsPage: React.FC<{}> = () => {
     const onDeleteClient = async (): Promise<void> => {
         if (clientId) {
             setDeleteClientErrorMessage(null);
-            const deletedClientsParcels = await getClientParcelsDetails(clientId)
+            const deletedClientsParcels = await getClientParcelsDetails(clientId);
             const { error: deleteClientParcelError } = await saveParcelStatus(
                 deletedClientsParcels.map((parcel) => parcel.parcelId),
                 "Parcel Deleted"
