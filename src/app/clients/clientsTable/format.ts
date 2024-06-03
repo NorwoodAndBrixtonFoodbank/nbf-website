@@ -1,5 +1,6 @@
 import { DeleteClientError } from "../deleteClient";
 import { IsClientActiveError } from "../getExpandedClientDetails";
+import { SaveParcelStatusError } from "@/app/parcels/ActionBar/Statuses";
 
 export const getIsClientActiveErrorMessage = (error: IsClientActiveError): string => {
     switch (error.type) {
@@ -8,9 +9,13 @@ export const getIsClientActiveErrorMessage = (error: IsClientActiveError): strin
     }
 };
 
-export const getDeleteClientErrorMessage = (error: DeleteClientError): string => {
+export const getDeleteClientErrorMessage = (
+    error: DeleteClientError | SaveParcelStatusError
+): string => {
     switch (error.type) {
         case "failedClientDeletion":
             return `Failed to delete client. Please try again later. Log ID: ${error.logId}`;
+        case "eventInsertionFailed":
+            return `Failed to delete client parcel. Please try again later. Log ID: ${error.logId}`;
     }
 };

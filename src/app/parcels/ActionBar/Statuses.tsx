@@ -32,6 +32,11 @@ export interface SaveParcelStatusError {
     logId: string;
 }
 
+export interface DeleteClientError {
+    type: SaveParcelStatusErrorType;
+    logId: string;
+}
+
 export type SaveParcelStatusResult = { error: null | SaveParcelStatusError };
 
 export const saveParcelStatus = async (
