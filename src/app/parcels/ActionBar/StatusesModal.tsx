@@ -39,7 +39,7 @@ const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
             date
                 .set("year", newDate?.year() ?? date.year())
                 .set("month", newDate?.month() ?? date.month())
-                .set("day", newDate?.day() ?? date.day())
+                .set("date", newDate?.date() ?? date.date())
         );
 
     const onTimeChange = (newDate: Dayjs | null): void =>
