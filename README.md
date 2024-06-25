@@ -13,11 +13,15 @@ have been delivered to clients.
 * [Material UI](https://mui.com/material-ui/getting-started/) for component library
 * [Cypress](https://docs.cypress.io/guides/overview/why-cypress) for both component unit tests and integration tests (may add Jest in the future!)
 * [AWS Amplify](https://aws.amazon.com/amplify/) for hosting the frontend website
+  * Amplify automatically watches the repo for changes and deploys from specific branches
 * [AWS CloudWatch](https://aws.amazon.com/cloudwatch/) for logging errors and warnings
 * [Snaplet](https://docs.snaplet.dev/seed/getting-started/overview) for generating deterministic seeded data
 
-## Prerequisite
-- You need Docker installed. The easiest way to get started is to download [Docker Desktop](https://www.docker.com/products/docker-desktop/). If you are using Windows, you may have to run `net localgroup docker-users <your_softwire_username> /ADD` as an administrator to add yourself to the docker-users group, where `<your_softwire_username>` is your non-admin Softwire username. Whenever running the website locally, Docker must be open.
+## Requirements
+- Docker
+  - The easiest way to get started is to download [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+  - If you are using Windows, you may have to run `net localgroup docker-users <your_softwire_username> /ADD` as an administrator to add yourself to the docker-users group, where `<your_softwire_username>` is your non-admin Softwire username.
+  - Whenever running the website locally, Docker must be running (start docker desktop, once it's going you can close the window if you want).
 
 ## Development
 
@@ -27,28 +31,39 @@ have been delivered to clients.
 
 * Run `npx snaplet auth setup` to log into Snaplet 
 
-* Use `npm run post_checkout` to install any dependencies. If you get an error similar to 
-> Stopped supabase local development setup.
+* Use `npm run post_checkout` to install any dependencies.
+  * If you get an error similar to 
+    > Stopped supabase local development setup.
 failed to start docker container: Error response from daemon: Ports are not available: exposing port TCP 0.0.0.0:54322 -> 0.0.0.0:0: listen tcp 0.0.0.0:54322: bind: An attempt was made to access a socket in a way forbidden by its access permissions.
 
-Run the following commands:
+    Run the following commands:
 
-```
-net stop winnat
-netsh int ipv4 add excludedportrange protocol=tcp startport=554322 numberofports=1
-net start winnat
-```
-then re-run `npm run post_checkout`
+    ```
+    net stop winnat
+    netsh int ipv4 add excludedportrange protocol=tcp startport=554322 numberofports=1
+    net start winnat
+    ```
+    then re-run `npm run post_checkout`
 
 * If you're using WSL, you need to download some dependencies for Cypress:
-```shell
-sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
-```
+  ```shell
+  sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+  ```
 
-* Run website locally (`npm run dev`) and log in the test user credentials, see below
+### Running locally
+* Run website locally (`npm run dev`) and log in with one of the dev user credentials
   * Note that the login page can be slightly flaky, but if it doesn't immediately error then it should be signed in!
     Pressing any of the navigation bar buttons will not then redirect you to the login page.
+  * Dev user credentials:
 
+    | Email                 | Password     | Role      |
+    |-----------------------|--------------|-----------|
+    | admin@example.com     | admin123     | admin     |
+    | volunteer@example.com | volunteer123 | volunteer |
+    | manager@example.com   | manager123   | manager   |
+    | staff@example.com     | staff123     | staff     |
+
+### Repo structure
 * The best place to start is `src/app`, where the website is based! Look at the folder structure for an idea of what the
   website navigation will be.
 
@@ -91,20 +106,11 @@ sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-
 * `npm run db:generate_seed` to generate `supabase/seed.sql` based on `supabase/seed/seed.mts`
   * This does not automatically put the data in the database. You'll need to run `npm run dev:reset_supabase`
 
-### Test user credentials
-
-| Email                 | Password     | Role      |
-|-----------------------|--------------|-----------|
-| admin@example.com     | admin123     | admin     |
-| volunteer@example.com | volunteer123 | volunteer |
-| manager@example.com   | manager123   | manager   |
-| staff@example.com     | staff123     | staff     |   
- 
 ### Supabase development
 
 To use the Supabase CLI:
 * You'll need to have created a personal access token in Supabase and run `supabase login`
-* For many supabase features you'll need to have Docker Desktop running
+* For many supabase features you'll need to have Docker running
 * Run the commands as `supabase [...]`
 
 ### Database
@@ -121,7 +127,7 @@ You can either
   ```shell
   npx supabase migration new <name_of_migration>
   ```
-  and write sql queries yourself
+  and write sql queries yourself (not recommended)
 
 #### Update the TypeScript database type definition
 You can regenerate the types
