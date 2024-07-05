@@ -154,6 +154,7 @@ interface Props<Data, DbData extends Record<string, any>, PaginationType> {
             ? ClientSideSortMethod
             : ServerSideSortMethod<DbData>
     >;
+    defaultSortField?: string;
     filterConfig: FilterConfig<
         PaginationType extends PaginationTypeEnum.Client
             ? ClientSideFilter<Data, any>
@@ -224,6 +225,7 @@ const Table = <
     columnStyleOptions = {},
     checkboxConfig,
     sortConfig,
+    defaultSortField,
     rowBreakPointConfigs,
     filterConfig,
     paginationConfig,
@@ -272,6 +274,7 @@ const Table = <
                 />
             ),
             sortField: headerKey.toString(),
+            id: headerKey.toString(),
             headerKey: headerKey,
             sortMethod: sortMethod,
             ...columnStyles,
@@ -483,6 +486,7 @@ const Table = <
                         }
                         sortServer={sortConfig.sortPossible}
                         onSort={handleSort}
+                        defaultSortFieldId={defaultSortField}
                         progressComponent={
                             <Centerer role="rowgroup">
                                 <CircularProgress

@@ -47,7 +47,7 @@ const getParcelsQuery = (
     if (sortState.sortEnabled && sortState.column.sortMethod) {
         query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
-        query = defaultParcelsSort(query, "desc" as SortOrder);
+        query = defaultParcelsSort(query, "asc" as SortOrder);
     }
 
     query = query.order("parcel_id");

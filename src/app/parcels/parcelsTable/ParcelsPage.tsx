@@ -27,7 +27,7 @@ import { ErrorSecondaryText } from "../../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import buildFilters from "@/app/parcels/parcelsTable/filters";
 import { ActionsContainer } from "@/components/Form/formStyling";
-import parcelsSortableColumns from "./sortableColumns";
+import parcelsSortableColumns, { defaultParcelsSortKey } from "./sortableColumns";
 import {
     parcelIdParam,
     defaultNumberOfParcelsPerPage,
@@ -323,6 +323,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                 sortableColumns: parcelsSortableColumns,
                                 setSortState: setSortState,
                             }}
+                            defaultSortField={defaultParcelsSortKey}
                             rowBreakPointConfigs={parcelRowBreakPointConfig}
                             filterConfig={{
                                 primaryFiltersShown: true,
