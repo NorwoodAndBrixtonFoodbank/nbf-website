@@ -1,17 +1,6 @@
-import { SortOptions } from "@/components/Tables/Table";
+import { DefaultSortConfig, SortOptions } from "@/components/Tables/Table";
 import { ParcelsTableRow, ParcelsSortMethod } from "./types";
-
-export const defaultParcelsSort: ParcelsSortMethod = (query, sortDirection) =>
-    query
-        .order("packing_date", { ascending: sortDirection === "asc" })
-        .order("packing_slot_order")
-        .order("is_delivery", { ascending: false })
-        .order("collection_centre_name")
-        .order("client_is_active", { ascending: false })
-        .order("client_address_postcode")
-        .order("parcel_id");
-
-export const defaultParcelsSortKey: string = "packingDate";
+import { SortOrder } from "react-data-table-component";
 
 const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] = [
     {
@@ -92,7 +81,15 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
     },
     {
         key: "packingDate",
-        sortMethod: defaultParcelsSort,
+        sortMethod: (query, sortDirection) =>
+            query
+                .order("packing_date", { ascending: sortDirection === "asc" })
+                .order("packing_slot_order")
+                .order("is_delivery", { ascending: false })
+                .order("collection_centre_name")
+                .order("client_is_active", { ascending: false })
+                .order("client_address_postcode")
+                .order("parcel_id"),
     },
     {
         key: "packingSlot",
@@ -133,5 +130,15 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
                 .order("parcel_id"),
     },
 ];
+
+export const defaultParcelsSortConfig: DefaultSortConfig = {
+    defaultColumnHeaderKey: "packingDate",
+    defaultSortDirection: "asc" as SortOrder,
+};
+
+export const defaultParcelsSort: ParcelsSortMethod =
+    parcelsSortableColumns.find(
+        (column) => column.key === defaultParcelsSortConfig.defaultColumnHeaderKey
+    )?.sortMethod ?? ((query) => query);
 
 export default parcelsSortableColumns;

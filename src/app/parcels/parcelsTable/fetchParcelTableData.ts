@@ -18,8 +18,7 @@ import {
 import { checkForCongestionCharge, CongestionChargeReturnType } from "@/common/congestionCharges";
 import convertParcelDbtoParcelRow from "./convertParcelDBtoParcelRow";
 import { StatusType } from "@/app/parcels/ActionBar/Statuses";
-import { defaultParcelsSort } from "./sortableColumns";
-import { SortOrder } from "react-data-table-component";
+import { defaultParcelsSort, defaultParcelsSortConfig } from "./sortableColumns";
 
 const getCongestionChargeDetailsForParcelsTable = async (
     processingData: DbParcelRow[]
@@ -47,7 +46,7 @@ const getParcelsQuery = (
     if (sortState.sortEnabled && sortState.column.sortMethod) {
         query = sortState.column.sortMethod(query, sortState.sortDirection);
     } else {
-        query = defaultParcelsSort(query, "asc" as SortOrder);
+        query = defaultParcelsSort(query, defaultParcelsSortConfig.defaultSortDirection);
     }
 
     query = query.order("parcel_id");

@@ -27,7 +27,7 @@ import { ErrorSecondaryText } from "../../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import buildFilters from "@/app/parcels/parcelsTable/filters";
 import { ActionsContainer } from "@/components/Form/formStyling";
-import parcelsSortableColumns, { defaultParcelsSortKey } from "./sortableColumns";
+import parcelsSortableColumns, { defaultParcelsSortConfig } from "./sortableColumns";
 import {
     parcelIdParam,
     defaultNumberOfParcelsPerPage,
@@ -156,6 +156,14 @@ const ParcelsPage: React.FC<{}> = () => {
                 if (sortState.sortEnabled && sortState.column.headerKey) {
                     setParcelRowBreakPointConfig(
                         searchForBreakPoints(sortState.column.headerKey, data.parcelTableRows)
+                    );
+                } else {
+                    // The user hasn't request a specific sort, so breakpoints are as per default sorting
+                    setParcelRowBreakPointConfig(
+                        searchForBreakPoints(
+                            defaultParcelsSortConfig.defaultColumnHeaderKey as keyof ParcelsTableRow,
+                            data.parcelTableRows
+                        )
                     );
                 }
             }
@@ -323,7 +331,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                 sortableColumns: parcelsSortableColumns,
                                 setSortState: setSortState,
                             }}
-                            defaultSortField={defaultParcelsSortKey}
+                            defaultSortConfig={defaultParcelsSortConfig}
                             rowBreakPointConfigs={parcelRowBreakPointConfig}
                             filterConfig={{
                                 primaryFiltersShown: true,
