@@ -110,14 +110,14 @@ describe("Parcels - Action Bar", () => {
         it("should open the modal when an item is selected", () => {
             cy.get("#status-button").click();
             cy.get("#status-menu").should("exist");
-            cy.get("#status-menu").contains("Request Denied").click();
+            cy.get("#status-menu").contains("Parcel Denied").click();
             cy.get("#status-modal-header").should("exist");
         });
 
         it("should close the modal when the close button is clicked", () => {
             cy.get("#status-button").click();
             cy.get("#status-menu").should("exist");
-            cy.get("#status-menu").contains("Request Denied").click();
+            cy.get("#status-menu").contains("Parcel Denied").click();
             cy.get("#status-modal-header").should("exist");
             cy.get("[aria-label='Close Button']").click();
             cy.get("#status-modal-header").should("not.exist");
@@ -126,7 +126,7 @@ describe("Parcels - Action Bar", () => {
         it("should have a modal with date and time pickers", () => {
             cy.get("#status-button").click();
             cy.get("#status-menu").should("exist");
-            cy.get("#status-menu").contains("Request Denied").click();
+            cy.get("#status-menu").contains("Parcel Denied").click();
             cy.get("#status-modal-header").should("exist");
             cy.get(".MuiPaper-root").contains("Date");
             cy.get(".MuiPaper-root").contains("Time");
@@ -142,7 +142,7 @@ describe("Parcels - Action Bar", () => {
         it("should have a modal that contains the selected data", () => {
             cy.get("#status-button").click();
             cy.get("#status-menu").should("exist");
-            cy.get("#status-menu").contains("Request Denied").click();
+            cy.get("#status-menu").contains("Parcel Denied").click();
             cy.get("#status-modal-header").should("exist");
             cy.get(".MuiPaper-root").contains("Date");
             cy.get(".MuiPaper-root").contains("Time");
