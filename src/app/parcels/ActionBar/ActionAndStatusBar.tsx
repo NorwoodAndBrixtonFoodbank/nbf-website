@@ -19,6 +19,7 @@ export type UpdateParcelStatuses = (
     parcels: ParcelsTableRow[],
     newStatus: StatusType,
     statusEventData?: string,
+    action?: string,
     date?: Dayjs
 ) => Promise<SaveParcelStatusResult>;
 

@@ -4,7 +4,7 @@
   - Amplify watches changes in `dev` branch and deploys website automatically
   - GitHub actions automatically deploy database migrations and edge functions upon merge to dev.
 - `staging` branch is not fully automatically deployed
-   - Amplify watches changes in `dev` branch and deploys website automatically
+   - Amplify watches changes in `staging` branch and deploys website automatically
    - GitHub actions ask GitHub team admins for approval on database migration and edge function deployment.
 
 ## Release Steps

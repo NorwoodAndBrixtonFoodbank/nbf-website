@@ -265,6 +265,9 @@ export type Database = {
           is_shown: boolean
           name: string
           primary_key: string
+          time_slots:
+            | Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
+            | null
         }
         Insert: {
           acronym?: string
@@ -272,6 +275,9 @@ export type Database = {
           is_shown?: boolean
           name?: string
           primary_key?: string
+          time_slots?:
+            | Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
+            | null
         }
         Update: {
           acronym?: string
@@ -279,11 +285,15 @@ export type Database = {
           is_shown?: boolean
           name?: string
           primary_key?: string
+          time_slots?:
+            | Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
+            | null
         }
         Relationships: []
       }
       events: {
         Row: {
+          client_id: string | null
           event_data: string | null
           new_parcel_status: string
           parcel_id: string
@@ -291,6 +301,7 @@ export type Database = {
           timestamp: string
         }
         Insert: {
+          client_id?: string | null
           event_data?: string | null
           new_parcel_status: string
           parcel_id: string
@@ -298,6 +309,7 @@ export type Database = {
           timestamp?: string
         }
         Update: {
+          client_id?: string | null
           event_data?: string | null
           new_parcel_status?: string
           parcel_id?: string
@@ -305,6 +317,27 @@ export type Database = {
           timestamp?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "public_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients_plus"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "public_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "parcels_plus"
+            referencedColumns: ["client_id"]
+          },
           {
             foreignKeyName: "public_events_new_parcel_status_fkey"
             columns: ["new_parcel_status"]
@@ -1040,6 +1073,10 @@ export type Database = {
       role: "volunteer" | "admin" | "manager" | "staff"
     }
     CompositeTypes: {
+      collection_timeslot_type: {
+        time: string | null
+        is_active: boolean | null
+      }
       update_client_result: {
         clientid: string | null
         updatedrows: number | null
