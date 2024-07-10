@@ -206,6 +206,7 @@ export type Database = {
           full_name: string | null
           is_active: boolean
           last_updated: string
+          notes: string | null
           other_items: string[] | null
           pet_food: string[] | null
           phone_number: string | null
@@ -228,6 +229,7 @@ export type Database = {
           full_name?: string | null
           is_active?: boolean
           last_updated?: string
+          notes?: string | null
           other_items?: string[] | null
           pet_food?: string[] | null
           phone_number?: string | null
@@ -250,6 +252,7 @@ export type Database = {
           full_name?: string | null
           is_active?: boolean
           last_updated?: string
+          notes?: string | null
           other_items?: string[] | null
           pet_food?: string[] | null
           phone_number?: string | null

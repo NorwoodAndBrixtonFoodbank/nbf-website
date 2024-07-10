@@ -132,7 +132,7 @@ const PackingSlotsTable: React.FC = () => {
                 }
             )
             .subscribe(async (status, error) => {
-                subscriptionStatusRequiresErrorMessage(status, error, "packing_slot") &&
+                subscriptionStatusRequiresErrorMessage(status, error, "packing_slots") &&
                     setErrorMessage("Error fetching data, please reload");
             });
 

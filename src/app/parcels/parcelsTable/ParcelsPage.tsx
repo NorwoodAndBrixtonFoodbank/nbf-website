@@ -27,7 +27,7 @@ import { ErrorSecondaryText } from "../../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import buildFilters from "@/app/parcels/parcelsTable/filters";
 import { ActionsContainer } from "@/components/Form/formStyling";
-import parcelsSortableColumns from "./sortableColumns";
+import parcelsSortableColumns, { defaultParcelsSortConfig } from "./sortableColumns";
 import {
     parcelIdParam,
     defaultNumberOfParcelsPerPage,
@@ -157,6 +157,14 @@ const ParcelsPage: React.FC<{}> = () => {
                     setParcelRowBreakPointConfig(
                         searchForBreakPoints(sortState.column.headerKey, data.parcelTableRows)
                     );
+                } else {
+                    // The user hasn't request a specific sort, so breakpoints are as per default sorting
+                    setParcelRowBreakPointConfig(
+                        searchForBreakPoints(
+                            defaultParcelsSortConfig.defaultColumnHeaderKey as keyof ParcelsTableRow,
+                            data.parcelTableRows
+                        )
+                    );
                 }
             }
 
@@ -212,7 +220,7 @@ const ParcelsPage: React.FC<{}> = () => {
                 loadCountAndDataWithTimer
             )
             .subscribe((status, err) => {
-                subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&
+                subscriptionStatusRequiresErrorMessage(status, err, "parcels and related") &&
                     setErrorMessage("Error fetching data, please reload");
             });
 
@@ -326,6 +334,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                 sortableColumns: parcelsSortableColumns,
                                 setSortState: setSortState,
                             }}
+                            defaultSortConfig={defaultParcelsSortConfig}
                             rowBreakPointConfigs={parcelRowBreakPointConfig}
                             filterConfig={{
                                 primaryFiltersShown: true,

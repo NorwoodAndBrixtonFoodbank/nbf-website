@@ -75,6 +75,11 @@ export type SortConfig<Data, SortMethod extends Function> =
       }
     | { sortPossible: false };
 
+export interface DefaultSortConfig {
+    defaultColumnHeaderKey: string;
+    defaultSortDirection: SortOrder;
+}
+
 interface CustomColumn<Data, SortMethod extends Function> extends TableColumn<Row<Data>> {
     sortMethod?: SortMethod;
     headerKey?: keyof Data;
@@ -154,6 +159,7 @@ interface Props<Data, DbData extends Record<string, any>, PaginationType> {
             ? ClientSideSortMethod
             : ServerSideSortMethod<DbData>
     >;
+    defaultSortConfig?: DefaultSortConfig;
     filterConfig: FilterConfig<
         PaginationType extends PaginationTypeEnum.Client
             ? ClientSideFilter<Data, any>
@@ -224,6 +230,7 @@ const Table = <
     columnStyleOptions = {},
     checkboxConfig,
     sortConfig,
+    defaultSortConfig,
     rowBreakPointConfigs,
     filterConfig,
     paginationConfig,
@@ -272,6 +279,7 @@ const Table = <
                 />
             ),
             sortField: headerKey.toString(),
+            id: defaultSortConfig ? headerKey.toString() : null,
             headerKey: headerKey,
             sortMethod: sortMethod,
             ...columnStyles,
@@ -483,6 +491,7 @@ const Table = <
                         }
                         sortServer={sortConfig.sortPossible}
                         onSort={handleSort}
+                        defaultSortFieldId={defaultSortConfig?.defaultColumnHeaderKey}
                         progressComponent={
                             <Centerer role="rowgroup">
                                 <CircularProgress

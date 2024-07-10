@@ -29,6 +29,8 @@ import { ClientsTableRow, ClientsSortState, ClientsFilter } from "./types";
 import { DbClientRow } from "@/databaseUtils";
 import { clientIdParam } from "./constants";
 import { getIsClientActiveErrorMessage, getDeleteClientErrorMessage } from "./format";
+import { getClientParcelsDetails } from "../getClientParcelsData";
+import { saveParcelStatus } from "@/app/parcels/ActionBar/Statuses";
 
 const ClientsPage: React.FC<{}> = () => {
     const [isLoadingForFirstTime, setIsLoadingForFirstTime] = useState(true);
@@ -95,7 +97,7 @@ const ClientsPage: React.FC<{}> = () => {
 
     useEffect(() => {
         const subscriptionChannel = supabase
-            .channel("parcels-table-changes")
+            .channel("clients-table-changes")
             .on(
                 "postgres_changes",
                 { event: "*", schema: "public", table: "clients" },
@@ -112,7 +114,7 @@ const ClientsPage: React.FC<{}> = () => {
                 fetchAndDisplayClientsData
             )
             .subscribe((status, err) => {
-                subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&
+                subscriptionStatusRequiresErrorMessage(status, err, "clients and related") &&
                     setErrorMessage("Error fetching data, please reload");
             });
 
@@ -148,6 +150,15 @@ const ClientsPage: React.FC<{}> = () => {
     const onDeleteClient = async (): Promise<void> => {
         if (clientId) {
             setDeleteClientErrorMessage(null);
+            const deletedClientsParcels = await getClientParcelsDetails(clientId);
+            const { error: deleteClientParcelError } = await saveParcelStatus(
+                deletedClientsParcels.map((parcel) => parcel.parcelId),
+                "Parcel Deleted"
+            );
+            if (deleteClientParcelError) {
+                setDeleteClientErrorMessage(getDeleteClientErrorMessage(deleteClientParcelError));
+                return;
+            }
             const { error: deleteClientError } = await deleteClient(clientId);
             setIsDeleteClientDialogOpen(false);
             if (deleteClientError) {
@@ -233,7 +244,10 @@ const ClientsPage: React.FC<{}> = () => {
                             <ContentDiv>
                                 {clientId && (
                                     <Suspense fallback={<ExpandedClientDetailsFallback />}>
-                                        <ExpandedClientDetails clientId={clientId} />
+                                        <ExpandedClientDetails
+                                            clientId={clientId}
+                                            displayClientsParcels
+                                        />
                                     </Suspense>
                                 )}
                             </ContentDiv>
