@@ -48,6 +48,7 @@ const autofill = (
         attentionFlag: clientData.flagged_for_attention ?? false,
         signpostingCall: clientData.signposting_call_required ?? false,
         lastUpdated: clientData.last_updated,
+        notes: clientData.notes,
     };
 };
 

@@ -9,8 +9,12 @@ import {
     formatHouseholdFromFamilyDetails,
 } from "@/app/clients/getExpandedClientDetails";
 import { formatDateTime, formatDatetimeAsDate } from "@/common/format";
+import {
+    Data,
+    DataForDataViewer,
+    convertDataToDataForDataViewer,
+} from "@/components/DataViewer/DataViewer";
 import { formatEventName } from "./format";
-import { Data } from "@/components/DataViewer/DataViewer";
 
 type FetchExpandedParcelDetailsResult =
     | {
@@ -209,3 +213,16 @@ export const processEventsDetails = (
 };
 
 export default getExpandedParcelDetails;
+
+export const getExpandedParcelDataForDataViewer = (
+    parcelDetails: ExpandedParcelData
+): DataForDataViewer => {
+    const parcelDetailsForDataViewer = convertDataToDataForDataViewer({
+        ...parcelDetails,
+    });
+    parcelDetailsForDataViewer["isActive"] = {
+        value: parcelDetails["isActive"],
+        hide: true,
+    };
+    return parcelDetailsForDataViewer;
+};

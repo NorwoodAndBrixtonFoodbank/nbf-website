@@ -79,7 +79,7 @@ const ReportsPage: React.FC<{}> = () => {
             )
             .subscribe((status, err) => {
                 console.log(err);
-                subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&
+                subscriptionStatusRequiresErrorMessage(status, err, "parcels") &&
                     setErrorMessage("Error fetching data, please reload");
             });
 

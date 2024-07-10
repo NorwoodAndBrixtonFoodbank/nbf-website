@@ -85,6 +85,7 @@ async function generateSeed(): Promise<void> {
                         gender: (ctx) => copycat.oneOf(ctx.seed, genders),
                     }
                 ),
+            notes: (ctx) => copycat.sentence(ctx.seed, { maxWords: 25 }),
         })
     );
 
