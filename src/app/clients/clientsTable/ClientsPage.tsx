@@ -97,7 +97,7 @@ const ClientsPage: React.FC<{}> = () => {
 
     useEffect(() => {
         const subscriptionChannel = supabase
-            .channel("parcels-table-changes")
+            .channel("clients-table-changes")
             .on(
                 "postgres_changes",
                 { event: "*", schema: "public", table: "clients" },
@@ -114,7 +114,7 @@ const ClientsPage: React.FC<{}> = () => {
                 fetchAndDisplayClientsData
             )
             .subscribe((status, err) => {
-                subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&
+                subscriptionStatusRequiresErrorMessage(status, err, "clients and related") &&
                     setErrorMessage("Error fetching data, please reload");
             });
 

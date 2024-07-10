@@ -220,7 +220,7 @@ const ParcelsPage: React.FC<{}> = () => {
                 loadCountAndDataWithTimer
             )
             .subscribe((status, err) => {
-                subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&
+                subscriptionStatusRequiresErrorMessage(status, err, "parcels and related") &&
                     setErrorMessage("Error fetching data, please reload");
             });
 
