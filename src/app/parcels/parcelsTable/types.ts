@@ -1,4 +1,4 @@
-import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
+import { DateRangeState } from "@/components/DateInputs/DateRangeInputs";
 import { ServerSideFilter, ServerSideFilterMethod } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 import { ServerSideSortMethod } from "@/components/Tables/sortMethods";

@@ -27,7 +27,7 @@ import { ErrorSecondaryText } from "../../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import buildFilters from "@/app/parcels/parcelsTable/filters";
 import { ActionsContainer } from "@/components/Form/formStyling";
-import parcelsSortableColumns from "./sortableColumns";
+import parcelsSortableColumns, { defaultParcelsSortConfig } from "./sortableColumns";
 import {
     parcelIdParam,
     defaultNumberOfParcelsPerPage,
@@ -157,6 +157,14 @@ const ParcelsPage: React.FC<{}> = () => {
                     setParcelRowBreakPointConfig(
                         searchForBreakPoints(sortState.column.headerKey, data.parcelTableRows)
                     );
+                } else {
+                    // The user hasn't request a specific sort, so breakpoints are as per default sorting
+                    setParcelRowBreakPointConfig(
+                        searchForBreakPoints(
+                            defaultParcelsSortConfig.defaultColumnHeaderKey as keyof ParcelsTableRow,
+                            data.parcelTableRows
+                        )
+                    );
                 }
             }
 
@@ -258,12 +266,15 @@ const ParcelsPage: React.FC<{}> = () => {
         parcels: ParcelsTableRow[],
         newStatus: StatusType,
         statusEventData?: string,
+        action?: string,
         date?: Dayjs
     ): Promise<SaveParcelStatusResult> => {
         const { error } = await saveParcelStatus(
             parcels.map((parcel) => parcel.parcelId),
             newStatus,
             statusEventData,
+            parcels.map((parcel) => parcel.clientId),
+            action,
             date
         );
         setCheckedParcelIds([]);
@@ -323,6 +334,7 @@ const ParcelsPage: React.FC<{}> = () => {
                                 sortableColumns: parcelsSortableColumns,
                                 setSortState: setSortState,
                             }}
+                            defaultSortConfig={defaultParcelsSortConfig}
                             rowBreakPointConfigs={parcelRowBreakPointConfig}
                             filterConfig={{
                                 primaryFiltersShown: true,

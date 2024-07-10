@@ -2,6 +2,7 @@ import { Schema } from "@/databaseUtils";
 import { Supabase } from "@/supabaseUtils";
 import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 import { PostgrestError } from "@supabase/supabase-js";
+import { formatTimeStringToHoursAndMinutes } from "@/common/format";
 
 type CollectionCentre = Pick<
     Schema["collection_centres"],
@@ -132,6 +133,66 @@ export const getActiveCollectionCentres = async (
         },
         error: null,
     };
+};
+
+export type CollectionTimeSlotsLabelsAndValues = [string, string][];
+
+type FetchCollectionTimeSlotsResponse =
+    | {
+          data: CollectionTimeSlotsLabelsAndValues;
+          error: null;
+      }
+    | {
+          data: null;
+          error: FetchCollectionTimeSlotsError;
+      };
+
+type FetchCollectionTimeSlotsErrorType = "collectionTimeSlotsFetchFailed";
+
+export type FetchCollectionTimeSlotsError = {
+    type: FetchCollectionTimeSlotsErrorType;
+    logId: string;
+};
+
+type DbCollectionTimeSlotType = {
+    time: string;
+    is_active: boolean;
+};
+
+export const getActiveTimeSlotsForCollectionCentre = async (
+    collectionCentrePrimaryKey: string,
+    supabase: Supabase
+): Promise<FetchCollectionTimeSlotsResponse> => {
+    const { data, error } = await supabase
+        .from("collection_centres")
+        .select("time_slots")
+        .eq("primary_key", collectionCentrePrimaryKey)
+        .single();
+
+    if (error) {
+        const logId = await logErrorReturnLogId(
+            "Error with fetch: Collection time slots data",
+            error
+        );
+        return { data: null, error: { type: "collectionTimeSlotsFetchFailed", logId: logId } };
+    }
+
+    if (!data.time_slots) {
+        return { data: [], error: null };
+    }
+
+    const activeTimeSlots: CollectionTimeSlotsLabelsAndValues = data.time_slots
+        .filter(
+            (timeSlot): timeSlot is DbCollectionTimeSlotType =>
+                timeSlot.time !== null && timeSlot.is_active !== null
+        )
+        .filter((timeSlot: DbCollectionTimeSlotType) => timeSlot.is_active)
+        .map((timeSlot: DbCollectionTimeSlotType) => [
+            formatTimeStringToHoursAndMinutes(timeSlot.time),
+            timeSlot.time,
+        ]);
+
+    return { data: activeTimeSlots, error: null };
 };
 
 type FetchClientResponse =

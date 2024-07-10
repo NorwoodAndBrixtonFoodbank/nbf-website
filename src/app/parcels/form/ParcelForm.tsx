@@ -22,7 +22,7 @@ import VoucherNumberCard from "@/app/parcels/form/formSections/VoucherNumberCard
 import PackingDateCard from "@/app/parcels/form/formSections/PackingDateCard";
 import ShippingMethodCard from "@/app/parcels/form/formSections/ShippingMethodCard";
 import CollectionDateCard from "@/app/parcels/form/formSections/CollectionDateCard";
-import CollectionTimeCard from "@/app/parcels/form/formSections/CollectionTimeCard";
+import CollectionSlotCard from "@/app/parcels/form/formSections/CollectionSlotCard";
 import CollectionCentreCard from "@/app/parcels/form/formSections/CollectionCentreCard";
 import {
     WriteParcelToDatabaseErrors,
@@ -31,7 +31,13 @@ import {
 import { Button, IconButton } from "@mui/material";
 import { Schema } from "@/databaseUtils";
 import dayjs, { Dayjs } from "dayjs";
-import { CollectionCentresLabelsAndValues, PackingSlotsLabelsAndValues } from "@/common/fetch";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import {
+    CollectionCentresLabelsAndValues,
+    CollectionTimeSlotsLabelsAndValues,
+    getActiveTimeSlotsForCollectionCentre,
+    PackingSlotsLabelsAndValues,
+} from "@/common/fetch";
 import getExpandedClientDetails, {
     ExpandedClientData,
 } from "@/app/clients/getExpandedClientDetails";
@@ -43,6 +49,7 @@ import { useTheme } from "styled-components";
 import PackingSlotsCard from "@/app/parcels/form/formSections/PackingSlotsCard";
 import { getDbDate } from "@/common/format";
 import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
+import supabase from "@/supabaseClient";
 
 export interface ParcelFields extends Fields {
     clientId: string | null;
@@ -51,7 +58,7 @@ export interface ParcelFields extends Fields {
     packingSlot: string | undefined;
     shippingMethod: string | null;
     collectionDate: string | null;
-    collectionTime: string | null;
+    collectionSlot: string | null;
     collectionCentre: string | null;
     lastUpdated: string | undefined;
 }
@@ -62,7 +69,7 @@ export interface ParcelErrors extends FormErrors<ParcelFields> {
     packingSlot: Errors;
     shippingMethod: Errors;
     collectionDate: Errors;
-    collectionTime: Errors;
+    collectionSlot: Errors;
     collectionCentre: Errors;
 }
 
@@ -75,7 +82,7 @@ export const initialParcelFields: ParcelFields = {
     packingSlot: "",
     shippingMethod: null,
     collectionDate: null,
-    collectionTime: null,
+    collectionSlot: null,
     collectionCentre: null,
     lastUpdated: undefined,
 };
@@ -86,7 +93,7 @@ export const initialParcelFormErrors: ParcelErrors = {
     packingSlot: Errors.initial,
     shippingMethod: Errors.initial,
     collectionDate: Errors.initial,
-    collectionTime: Errors.initial,
+    collectionSlot: Errors.initial,
     collectionCentre: Errors.initial,
 };
 
@@ -105,9 +112,9 @@ const withCollectionFormSections = [
     PackingDateCard,
     PackingSlotsCard,
     ShippingMethodCard,
-    CollectionDateCard,
-    CollectionTimeCard,
     CollectionCentreCard,
+    CollectionDateCard,
+    CollectionSlotCard,
 ];
 
 const noCollectionFormSections = [
@@ -119,8 +126,9 @@ const noCollectionFormSections = [
 
 const mergeDateAndTime = (date: string, time: string): Dayjs => {
     // dayjs objects are immutable so the setter methods return a new object
-    const dayjsTime = dayjs(time);
-    return dayjs(date).hour(dayjsTime.hour()).minute(dayjsTime.minute());
+    dayjs.extend(customParseFormat);
+    const dayjsTime = dayjs(time, "HH:mm:ss");
+    return dayjs(date).hour(dayjsTime.hour()).minute(dayjsTime.minute()).second(dayjsTime.second());
 };
 
 const parcelModalRouterPath = (parcelId: string): string => `/parcels?parcelId=${parcelId}`;
@@ -158,6 +166,8 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     const [submitDisabled, setSubmitDisabled] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [clientDetails, setClientDetails] = useState<ExpandedClientData | null>(null);
+    const [collectionSlotsLabelsAndValues, setCollectionSlotsLabelsAndValues] =
+        useState<CollectionTimeSlotsLabelsAndValues>([]);
     const theme = useTheme();
     const clientIdForFetch = initialFields.clientId ? initialFields.clientId : clientId;
 
@@ -172,6 +182,32 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                 });
         }
     }, [clientDetails, clientIdForFetch]);
+
+    useEffect(() => {
+        const getTimeSlots = async (): Promise<void> => {
+            if (fields.collectionCentre) {
+                const { data, error } = await getActiveTimeSlotsForCollectionCentre(
+                    fields.collectionCentre,
+                    supabase
+                );
+
+                if (error) {
+                    let errorMessage;
+                    switch (error.type) {
+                        case "collectionTimeSlotsFetchFailed":
+                            errorMessage = "Failed to fetch collection time slots";
+                            break;
+                    }
+                    setSubmitErrorMessage(`${errorMessage}. Log ID: ${error.logId}`);
+                    return;
+                }
+
+                setCollectionSlotsLabelsAndValues(data);
+            }
+        };
+
+        void getTimeSlots();
+    }, [fields.collectionCentre, initialFormErrors]);
 
     const formSections =
         fields.shippingMethod === "Collection"
@@ -207,7 +243,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         if (fields.shippingMethod === "Collection") {
             collectionDateTime = mergeDateAndTime(
                 fields.collectionDate!,
-                fields.collectionTime!
+                fields.collectionSlot!
             ).toISOString();
         }
 
@@ -266,6 +302,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                             fields={fields}
                             collectionCentresLabelsAndValues={collectionCentresLabelsAndValues}
                             packingSlotsLabelsAndValues={packingSlotsLabelsAndValues}
+                            collectionTimeSlotsLabelsAndValues={collectionSlotsLabelsAndValues}
                         />
                     );
                 })}

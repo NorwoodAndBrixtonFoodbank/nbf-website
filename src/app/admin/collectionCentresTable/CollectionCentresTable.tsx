@@ -5,7 +5,7 @@ import { Schema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
-import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import { ErrorSecondaryText, ErrorTextModalFooter } from "@/app/errorStylingandMessages";
 import {
     GridActionsCellItem,
     GridColDef,
@@ -21,15 +21,31 @@ import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import StyledDataGrid from "@/app/admin/common/StyledDataGrid";
-import { LinearProgress } from "@mui/material";
+import { Checkbox, FormControlLabel, FormGroup, LinearProgress } from "@mui/material";
 import {
-    fetchCollectionCentres,
+    fetchCollectionCentresForTable,
     InsertCollectionCentreResult,
     insertNewCollectionCentre,
     UpdateCollectionCentreResult,
     updateDbCollectionCentre,
+    updateDbCollectionCentreTimeSlots,
 } from "@/app/admin/collectionCentresTable/CollectionCentreActions";
 import { EditToolbar } from "@/app/admin/collectionCentresTable/CollectionCentresTableToolbar";
+import Button from "@mui/material/Button";
+import Icon from "@/components/Icons/Icon";
+import { faShoePrints } from "@fortawesome/free-solid-svg-icons";
+import {
+    ButtonsDiv,
+    Centerer,
+    ContentDiv,
+    OutsideDiv,
+    SpaceBetween,
+} from "@/components/Modal/ModalFormStyles";
+import Modal from "@/components/Modal/Modal";
+import { useTheme } from "styled-components";
+import { formatDayjsToHoursAndMinutes, formatTimeStringToHoursAndMinutes } from "@/common/format";
+import { DesktopTimePicker } from "@mui/x-date-pickers";
+import dayjs, { Dayjs } from "dayjs";
 
 export interface CollectionCentresTableRow {
     acronym: Schema["collection_centres"]["acronym"];
@@ -37,7 +53,18 @@ export interface CollectionCentresTableRow {
     id: Schema["collection_centres"]["primary_key"];
     isDelivery: Schema["collection_centres"]["is_delivery"];
     isShown: Schema["collection_centres"]["is_shown"];
+    timeSlots: Schema["collection_centres"]["time_slots"];
     isNew: boolean;
+}
+
+export interface FormattedTimeSlot {
+    time: string;
+    isActive: boolean;
+}
+
+export interface FormattedTimeSlotsWithPrimaryKey {
+    primaryKey: Schema["collection_centres"]["primary_key"];
+    timeSlots: FormattedTimeSlot[];
 }
 
 function getBaseAuditLogForCollectionCentreAction(
@@ -58,16 +85,66 @@ function getBaseAuditLogForCollectionCentreAction(
     };
 }
 
+function getBaseAuditLogForCollectionCentreTimeSlots(
+    action: string,
+    timeSlotsWithPrimaryKey: FormattedTimeSlotsWithPrimaryKey
+): Pick<AuditLog, "action" | "content" | "collectionCentreId"> {
+    const timeSlots = Object.fromEntries(
+        timeSlotsWithPrimaryKey.timeSlots.map((timeSlot) => [timeSlot.time, timeSlot.isActive])
+    );
+    return {
+        action,
+        content: {
+            timeSlots,
+        },
+        collectionCentreId: timeSlotsWithPrimaryKey.primaryKey,
+    };
+}
+
+const formatCollectionCentreTimeSlotDbData = (
+    row: CollectionCentresTableRow
+): FormattedTimeSlotsWithPrimaryKey => {
+    let formattedTimeSlots: FormattedTimeSlot[];
+
+    if (row.timeSlots === null) {
+        formattedTimeSlots = [];
+    } else {
+        formattedTimeSlots = row.timeSlots.map((timeSlot) => {
+            return {
+                time: formatTimeStringToHoursAndMinutes(
+                    timeSlot.time !== null ? timeSlot.time : ""
+                ),
+                isActive: timeSlot.is_active !== null ? timeSlot.is_active : false,
+            };
+        });
+    }
+
+    return {
+        primaryKey: row.id,
+        timeSlots: formattedTimeSlots,
+    };
+};
+
 const CollectionCentresTable: React.FC = () => {
     const [rows, setRows] = useState<CollectionCentresTableRow[]>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [existingRowData, setExistingRowData] = useState<CollectionCentresTableRow | null>(null);
+    const [timeSlotModalIsOpen, setTimeSlotModalIsOpen] = useState<boolean>(false);
+    const [timeSlotModalErrorMessage, setTimeSlotModalErrorMessage] = useState<string | null>(null);
+    const [timeSlotModalData, setTimeSlotModalData] =
+        useState<FormattedTimeSlotsWithPrimaryKey | null>(null);
+    const [editableIsShown, setEditableIsShown] = useState<boolean>(false);
+    const [collectionTimeSlotValue, setCollectionTimeSlotValue] = useState<Dayjs>();
+    const [addCollectionTimeSlotError, setAddCollectionTimeSlotError] = useState<string | null>(
+        null
+    );
+    const theme = useTheme();
 
     const getCollectionCentresForTable = useCallback(async () => {
         setErrorMessage(null);
-        const { data, error } = await fetchCollectionCentres();
+        const { data, error } = await fetchCollectionCentresForTable();
         if (error) {
             setErrorMessage("Error fetching data, please reload");
             return;
@@ -99,6 +176,105 @@ const CollectionCentresTable: React.FC = () => {
         };
     }, [getCollectionCentresForTable]);
 
+    const handleModalSaveClick = async (): Promise<void> => {
+        if (timeSlotModalData === null) {
+            return;
+        }
+        const { error: updateTimeSlotError } =
+            await updateDbCollectionCentreTimeSlots(timeSlotModalData);
+        const baseAuditLog = getBaseAuditLogForCollectionCentreTimeSlots(
+            "update collection centre time slots",
+            timeSlotModalData
+        );
+
+        if (updateTimeSlotError) {
+            setTimeSlotModalErrorMessage(
+                `Failed to update the collection centre time slots. Log ID: ${updateTimeSlotError.logId}`
+            );
+            await sendAuditLog({
+                ...baseAuditLog,
+                wasSuccess: false,
+                logId: updateTimeSlotError.logId,
+            });
+        }
+
+        await sendAuditLog({ ...baseAuditLog, wasSuccess: true });
+        setTimeSlotModalIsOpen(false);
+    };
+
+    const handleAddSlotClick = async (): Promise<void> => {
+        setEditableIsShown(true);
+        setCollectionTimeSlotValue(dayjs(collectionTimeSlotValue));
+    };
+
+    const checkIfSlotExists = (
+        existingTimeSlotData: FormattedTimeSlotsWithPrimaryKey,
+        newTimeSlot: FormattedTimeSlot
+    ): boolean => {
+        return existingTimeSlotData.timeSlots.some((slot) => slot.time === newTimeSlot.time);
+    };
+
+    const addNewTimeSlotToTimeSlotModalData = (
+        existingTimeSlotData: FormattedTimeSlotsWithPrimaryKey,
+        newTimeSlot: FormattedTimeSlot
+    ): void => {
+        const newTimeSlotArray = [...existingTimeSlotData.timeSlots, newTimeSlot];
+        newTimeSlotArray.sort((slot1, slot2) => slot1.time.localeCompare(slot2.time));
+
+        const updatedTimeSlotModalData: FormattedTimeSlotsWithPrimaryKey = {
+            ...existingTimeSlotData,
+            timeSlots: newTimeSlotArray,
+        };
+
+        setTimeSlotModalData(updatedTimeSlotModalData);
+    };
+
+    const handleSaveSlotClick = async (): Promise<void> => {
+        setAddCollectionTimeSlotError(null);
+        if (timeSlotModalData === null || collectionTimeSlotValue === undefined) {
+            return;
+        }
+        const newTimeSlot: FormattedTimeSlot = {
+            time: formatDayjsToHoursAndMinutes(collectionTimeSlotValue),
+            isActive: true,
+        };
+
+        if (checkIfSlotExists(timeSlotModalData, newTimeSlot)) {
+            setAddCollectionTimeSlotError(
+                "This time slot already exists. Please select a different time."
+            );
+            return;
+        }
+
+        addNewTimeSlotToTimeSlotModalData(timeSlotModalData, newTimeSlot);
+
+        setEditableIsShown(false);
+    };
+
+    const handleTimeSlotCheckBoxChange = (event: React.SyntheticEvent<Element, Event>): void => {
+        if (!timeSlotModalData) {
+            return;
+        }
+
+        const updatedTime = event.currentTarget.parentElement?.parentElement?.innerText;
+        const timeSlotIndex = timeSlotModalData.timeSlots.findIndex(
+            (slot) => slot.time === updatedTime
+        );
+        const timeSlot = timeSlotModalData.timeSlots[timeSlotIndex];
+        if (!timeSlot) {
+            return;
+        }
+
+        timeSlot.isActive = !timeSlot.isActive;
+
+        const updatedTimeSlotData: FormattedTimeSlotsWithPrimaryKey = {
+            ...timeSlotModalData,
+            timeSlots: timeSlotModalData.timeSlots,
+        };
+
+        setTimeSlotModalData(updatedTimeSlotData);
+    };
+
     const handleSaveClick = (id: GridRowId) => () => {
         setRowModesModel((currentValue) => ({
             ...currentValue,
@@ -121,7 +297,7 @@ const CollectionCentresTable: React.FC = () => {
             setErrorMessage(
                 `Failed to add the collection centre. Log ID: ${insertCollectionCentreError.logId}`
             );
-            void sendAuditLog({
+            await sendAuditLog({
                 ...baseAuditLog,
                 wasSuccess: false,
                 logId: insertCollectionCentreError.logId,
@@ -129,7 +305,7 @@ const CollectionCentresTable: React.FC = () => {
             setIsLoading(false);
             return { data: null, error: insertCollectionCentreError };
         } else {
-            void sendAuditLog({
+            await sendAuditLog({
                 ...baseAuditLog,
                 collectionCentreId: createdCollectionCentre.collectionCentreId,
                 wasSuccess: true,
@@ -152,7 +328,7 @@ const CollectionCentresTable: React.FC = () => {
             setErrorMessage(
                 `Failed to update the collection centre. Log ID: ${updateCollectionCentreError.logId}`
             );
-            void sendAuditLog({
+            await sendAuditLog({
                 ...baseAuditLog,
                 wasSuccess: false,
                 logId: updateCollectionCentreError.logId,
@@ -161,7 +337,7 @@ const CollectionCentresTable: React.FC = () => {
             return { error: updateCollectionCentreError };
         }
 
-        void sendAuditLog({ ...baseAuditLog, wasSuccess: true });
+        await sendAuditLog({ ...baseAuditLog, wasSuccess: true });
         setIsLoading(false);
         return { error: null };
     };
@@ -174,7 +350,9 @@ const CollectionCentresTable: React.FC = () => {
 
         if (newRow.isNew) {
             const { data: newCollectionCentreData, error: newCollectionCentreError } =
-                await addNewCollectionCentre(newRow);
+                await addNewCollectionCentre({
+                    ...newRow,
+                });
             if (newCollectionCentreError) {
                 return { ...newRow, name: "", acronym: "", isShown: false };
             }
@@ -251,6 +429,31 @@ const CollectionCentresTable: React.FC = () => {
             renderHeader: (params) => <Header {...params} />,
         },
         {
+            field: "collectionSlot",
+            type: "actions",
+            headerName: "Collection Slots",
+            flex: 1,
+            renderHeader: (params) => <Header {...params} />,
+            renderCell: (params) => {
+                const handleEditCollectionCentreTimeSlot = (): void => {
+                    const formattedTimeSlotData = formatCollectionCentreTimeSlotDbData(params.row);
+                    setTimeSlotModalData(formattedTimeSlotData);
+                    setTimeSlotModalIsOpen(true);
+                };
+
+                return (
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={handleEditCollectionCentreTimeSlot}
+                        disabled={params.row.isNew}
+                    >
+                        Edit Collection Slots
+                    </Button>
+                );
+            },
+        },
+        {
             field: "actions",
             type: "actions",
             headerName: "Actions",
@@ -323,6 +526,79 @@ const CollectionCentresTable: React.FC = () => {
                     }
                     hideFooter
                 />
+            )}
+            {timeSlotModalIsOpen && (
+                <Modal
+                    header={
+                        <>
+                            <Icon icon={faShoePrints} color={theme.primary.largeForeground[2]} />{" "}
+                            Edit Collection Centre Time Slots
+                        </>
+                    }
+                    isOpen={timeSlotModalIsOpen}
+                    onClose={() => {
+                        setTimeSlotModalIsOpen(false);
+                    }}
+                    headerId="expandedCollectionCentreTimeSlotsModal"
+                    footer={
+                        <SpaceBetween>
+                            {!editableIsShown && (
+                                <Button onClick={handleAddSlotClick} variant="contained">
+                                    Add a new slot
+                                </Button>
+                            )}
+                            {editableIsShown && (
+                                <>
+                                    <Centerer>
+                                        <DesktopTimePicker
+                                            label="New Collection Slot"
+                                            views={["hours", "minutes"]}
+                                            format="HH:mm"
+                                            value={dayjs(collectionTimeSlotValue)}
+                                            onChange={(value) =>
+                                                value !== null && setCollectionTimeSlotValue(value)
+                                            }
+                                        />
+                                        <Button onClick={handleSaveSlotClick} variant="contained">
+                                            Save slot
+                                        </Button>
+                                    </Centerer>
+                                    {addCollectionTimeSlotError && (
+                                        <ErrorTextModalFooter>
+                                            {addCollectionTimeSlotError}
+                                        </ErrorTextModalFooter>
+                                    )}
+                                </>
+                            )}
+                            <Button onClick={handleModalSaveClick} variant="contained">
+                                Save
+                            </Button>
+                        </SpaceBetween>
+                    }
+                >
+                    <OutsideDiv>
+                        <ContentDiv>
+                            <FormGroup>
+                                {timeSlotModalData &&
+                                    timeSlotModalData.timeSlots.map((timeSlot) => {
+                                        return (
+                                            <FormControlLabel
+                                                control={<Checkbox checked={timeSlot.isActive} />}
+                                                label={timeSlot.time}
+                                                onChange={handleTimeSlotCheckBoxChange}
+                                                key={timeSlot.time}
+                                            />
+                                        );
+                                    })}
+                            </FormGroup>
+                        </ContentDiv>
+                        <ButtonsDiv>
+                            {timeSlotModalErrorMessage && (
+                                <ErrorSecondaryText>{timeSlotModalErrorMessage}</ErrorSecondaryText>
+                            )}
+                        </ButtonsDiv>
+                    </OutsideDiv>
+                </Modal>
             )}
         </>
     );

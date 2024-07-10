@@ -268,6 +268,9 @@ export type Database = {
           is_shown: boolean
           name: string
           primary_key: string
+          time_slots:
+            | Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
+            | null
         }
         Insert: {
           acronym?: string
@@ -275,6 +278,9 @@ export type Database = {
           is_shown?: boolean
           name?: string
           primary_key?: string
+          time_slots?:
+            | Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
+            | null
         }
         Update: {
           acronym?: string
@@ -282,11 +288,15 @@ export type Database = {
           is_shown?: boolean
           name?: string
           primary_key?: string
+          time_slots?:
+            | Database["public"]["CompositeTypes"]["collection_timeslot_type"][]
+            | null
         }
         Relationships: []
       }
       events: {
         Row: {
+          client_id: string | null
           event_data: string | null
           new_parcel_status: string
           parcel_id: string
@@ -294,6 +304,7 @@ export type Database = {
           timestamp: string
         }
         Insert: {
+          client_id?: string | null
           event_data?: string | null
           new_parcel_status: string
           parcel_id: string
@@ -301,6 +312,7 @@ export type Database = {
           timestamp?: string
         }
         Update: {
+          client_id?: string | null
           event_data?: string | null
           new_parcel_status?: string
           parcel_id?: string
@@ -308,6 +320,27 @@ export type Database = {
           timestamp?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "public_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients_plus"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "public_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "parcels_plus"
+            referencedColumns: ["client_id"]
+          },
           {
             foreignKeyName: "public_events_new_parcel_status_fkey"
             columns: ["new_parcel_status"]
@@ -671,14 +704,17 @@ export type Database = {
       status_order: {
         Row: {
           event_name: string
+          is_successfully_completed_event: boolean
           workflow_order: number
         }
         Insert: {
           event_name: string
+          is_successfully_completed_event?: boolean
           workflow_order: number
         }
         Update: {
           event_name?: string
+          is_successfully_completed_event?: boolean
           workflow_order?: number
         }
         Relationships: []
@@ -870,6 +906,37 @@ export type Database = {
         }
         Relationships: []
       }
+      completed_parcels: {
+        Row: {
+          completed_timestamp: string | null
+          family_count: number | null
+          parcel_id: string | null
+          pet_food: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_events_parcel_id_fkey"
+            columns: ["parcel_id"]
+            isOneToOne: false
+            referencedRelation: "parcels"
+            referencedColumns: ["primary_key"]
+          },
+          {
+            foreignKeyName: "public_events_parcel_id_fkey"
+            columns: ["parcel_id"]
+            isOneToOne: false
+            referencedRelation: "last_status"
+            referencedColumns: ["parcel_id"]
+          },
+          {
+            foreignKeyName: "public_events_parcel_id_fkey"
+            columns: ["parcel_id"]
+            isOneToOne: false
+            referencedRelation: "parcels_plus"
+            referencedColumns: ["parcel_id"]
+          },
+        ]
+      }
       family_count: {
         Row: {
           family_count: number | null
@@ -929,6 +996,27 @@ export type Database = {
             referencedColumns: ["event_name"]
           },
         ]
+      }
+      reports: {
+        Row: {
+          cat: number | null
+          cat_and_dog: number | null
+          dog: number | null
+          family_size_1: number | null
+          family_size_10_plus: number | null
+          family_size_2: number | null
+          family_size_3: number | null
+          family_size_4: number | null
+          family_size_5: number | null
+          family_size_6: number | null
+          family_size_7: number | null
+          family_size_8: number | null
+          family_size_9: number | null
+          total_parcels: number | null
+          total_with_pets: number | null
+          week_commencing: string | null
+        }
+        Relationships: []
       }
       users_plus: {
         Row: {
@@ -995,6 +1083,10 @@ export type Database = {
       role: "volunteer" | "admin" | "manager" | "staff"
     }
     CompositeTypes: {
+      collection_timeslot_type: {
+        time: string | null
+        is_active: boolean | null
+      }
       update_client_result: {
         clientid: string | null
         updatedrows: number | null

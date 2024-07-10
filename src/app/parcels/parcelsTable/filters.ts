@@ -1,6 +1,6 @@
 "use client";
 
-import { DateRangeState } from "@/components/DateRangeInputs/DateRangeInputs";
+import { DateRangeState } from "@/components/DateInputs/DateRangeInputs";
 import { serverSideDateFilter } from "@/components/Tables/DateFilter";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
@@ -144,7 +144,7 @@ const buildLastStatusFilter = async (): Promise<ParcelsFilter<string[]>> => {
         key: "lastStatus",
         filterLabel: "Last Status",
         itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
-        initialCheckedKeys: optionsSet.filter((option) => option !== "Request Deleted"),
+        initialCheckedKeys: optionsSet.filter((option) => option !== "Parcel Deleted"),
         method: lastStatusSearch,
     });
 };

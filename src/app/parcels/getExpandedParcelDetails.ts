@@ -45,7 +45,7 @@ const getExpandedParcelDetails = async (
         voucher_number,
         packing_date,
         created_at,
-        
+        collection_datetime,
         packing_slot: packing_slots (
             name
          ),
@@ -131,6 +131,7 @@ const getExpandedParcelDetails = async (
                     method: rawParcelDetails.collection_centre?.is_shown
                         ? rawParcelDetails.collection_centre?.name
                         : `${rawParcelDetails.collection_centre?.name} (inactive)`,
+                    collectionDateTime: formatDateTime(rawParcelDetails.collection_datetime),
                     createdAt: formatDateTime(rawParcelDetails.created_at),
                 },
                 events: processEventsDetails(rawParcelDetails.events),
@@ -155,6 +156,7 @@ const getExpandedParcelDetails = async (
                 method: rawParcelDetails.collection_centre?.is_shown
                     ? rawParcelDetails.collection_centre?.name
                     : `${rawParcelDetails.collection_centre?.name} (inactive)`,
+                collectionDateTime: rawParcelDetails.collection_datetime,
                 createdAt: formatDateTime(rawParcelDetails.created_at),
             },
             events: processEventsDetails(rawParcelDetails.events),
