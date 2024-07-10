@@ -46,10 +46,12 @@ const ExpandedClientDetails: React.FC<Props> = ({ clientId, displayClientsParcel
         (async () => {
             setIsLoading(true);
             setClientDetails(await getExpandedClientDetails(clientId));
-            setClientParcelsDetails(await getClientParcelsDetails(clientId));
+            setClientParcelsDetails(
+                displayClientsParcels ? await getClientParcelsDetails(clientId) : null
+            );
             setIsLoading(false);
         })();
-    }, [clientId]);
+    }, [clientId, displayClientsParcels]);
 
     useEffect(loadData, [loadData]);
 
