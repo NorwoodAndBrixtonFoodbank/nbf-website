@@ -77,11 +77,11 @@ export type ParcelStatusesReturnType =
 
 export type ParcelsFilterMethod<State> = ServerSideFilterMethod<DbParcelRow, State>;
 export type ParcelsFilter<State> = ServerSideFilter<ParcelsTableRow, State, DbParcelRow>;
-export type ParcelsFilters = (
+export type ParcelsFiltersAllStates =
     | ParcelsFilter<string>
     | ParcelsFilter<string[]>
-    | ParcelsFilter<DateRangeState>
-)[];
+    | ParcelsFilter<DateRangeState>;
+export type ParcelsFilters = ParcelsFiltersAllStates[];
 export type ParcelsSortMethod = ServerSideSortMethod<DbParcelRow>;
 export type ParcelsSortState = SortState<ParcelsTableRow, ParcelsSortMethod>;
 

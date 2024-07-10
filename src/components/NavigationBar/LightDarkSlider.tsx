@@ -51,7 +51,7 @@ const StyledSwitch = styled(Switch)`
     }
 `;
 
-const LightDarkSlider: React.FC<{}> = () => {
+const LightDarkSlider: React.FC = () => {
     const setThemeMode = useContext(ThemeUpdateContext);
     const theme = useTheme();
 

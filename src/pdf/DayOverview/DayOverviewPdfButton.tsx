@@ -17,7 +17,10 @@ interface Props {
     parcels: ParcelsTableRow[];
 }
 
-export type ParcelForDayOverview = Pick<Schema["parcels"], "collection_datetime"> & {
+export type ParcelForDayOverview = Pick<
+    Schema["parcels"],
+    "collection_datetime" | "primary_key"
+> & {
     client: Pick<
         Schema["clients"],
         "flagged_for_attention" | "full_name" | "address_postcode" | "delivery_instructions"
@@ -44,7 +47,7 @@ const getParcelsForDayOverview = async (
     const { data, error } = await supabase
         .from("parcels")
         .select(
-            `collection_datetime, 
+            `collection_datetime, primary_key,
             collection_centre:collection_centres(name),
             client:clients ( 
                 flagged_for_attention, 

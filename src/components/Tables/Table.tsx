@@ -2,9 +2,9 @@
 
 import Icon from "@/components/Icons/Icon";
 import {
-    ClientSideFilter,
+    DistributeClientFilter,
+    DistributeServerFilter,
     PaginationType as PaginationTypeEnum,
-    ServerSideFilter,
 } from "@/components/Tables/Filters";
 import TableFilterAndExtraColumnsBar from "@/components/Tables/TableFilterAndExtraColumnsBar";
 import {
@@ -25,6 +25,8 @@ import {
     DividingLineStyleOptions,
     getDividingLineStyleOptions,
 } from "@/app/parcels/parcelsTable/conditionalStyling";
+import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
+import { Database } from "@/databaseTypesFile";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -52,12 +54,17 @@ export type ColumnStyleOptions = Omit<
     "name" | "selector" | "sortable" | "sortFunction" | "cell"
 >;
 
-export interface SortOptions<Data, SortMethod extends Function> {
+type GenericSortMethod = (
+    sortDirection: SortOrder,
+    query: PostgrestFilterBuilder<Database["public"], Record<string, unknown>, unknown>
+) => void;
+
+export interface SortOptions<Data, SortMethod extends GenericSortMethod> {
     key: keyof Data;
     sortMethod: SortMethod;
 }
 
-export type SortState<Data, SortMethod extends Function> =
+export type SortState<Data, SortMethod extends GenericSortMethod> =
     | {
           sortEnabled: true;
           sortDirection: SortOrder;
@@ -67,7 +74,7 @@ export type SortState<Data, SortMethod extends Function> =
           sortEnabled: false;
       };
 
-export type SortConfig<Data, SortMethod extends Function> =
+export type SortConfig<Data, SortMethod extends GenericSortMethod> =
     | {
           sortPossible: true;
           sortableColumns: SortOptions<Data, SortMethod>[];
@@ -80,7 +87,7 @@ export interface DefaultSortConfig {
     defaultSortDirection: SortOrder;
 }
 
-interface CustomColumn<Data, SortMethod extends Function> extends TableColumn<Row<Data>> {
+interface CustomColumn<Data, SortMethod extends GenericSortMethod> extends TableColumn<Row<Data>> {
     sortMethod?: SortMethod;
     headerKey?: keyof Data;
 }
@@ -147,7 +154,7 @@ export type BreakPointConfig = {
     breakPoints: number[];
     dividingLineStyle: keyof DividingLineStyleOptions;
 };
-interface Props<Data, DbData extends Record<string, any>, PaginationType> {
+interface Props<Data, DbData extends Record<string, unknown>, PaginationType, FilterState> {
     dataPortion: Data[];
     headerKeysAndLabels: TableHeaders<Data>;
     isLoading?: boolean;
@@ -162,8 +169,8 @@ interface Props<Data, DbData extends Record<string, any>, PaginationType> {
     defaultSortConfig?: DefaultSortConfig;
     filterConfig: FilterConfig<
         PaginationType extends PaginationTypeEnum.Client
-            ? ClientSideFilter<Data, any>
-            : ServerSideFilter<Data, any, DbData>
+            ? DistributeClientFilter<Data, FilterState> //ClientSideFilter<Data, FilterState>
+            : DistributeServerFilter<Data, FilterState, DbData> //ServerSideFilter<Data, FilterState, DbData>
     >;
     rowBreakPointConfigs?: BreakPointConfig[];
     defaultShownHeaders?: readonly (keyof Data)[];
@@ -188,7 +195,7 @@ const CustomCell = <Data,>({
     const element: unknown = (
         <>
             {columnDisplayFunctions[headerKey]
-                ? columnDisplayFunctions[headerKey]!(row.data[headerKey])
+                ? columnDisplayFunctions[headerKey]?.(row.data[headerKey])
                 : row.data[headerKey]}
         </>
     );
@@ -218,7 +225,8 @@ const defaultColumnStyleOptions = {
 const Table = <
     Data,
     PaginationType extends PaginationTypeEnum,
-    DbData extends Record<string, any> = {},
+    FilterState,
+    DbData extends Record<string, unknown> = Record<string, never>,
 >({
     dataPortion,
     headerKeysAndLabels,
@@ -236,7 +244,7 @@ const Table = <
     paginationConfig,
     editableConfig,
     pointerOnHover,
-}: Props<Data, DbData, PaginationType>): React.ReactElement => {
+}: Props<Data, DbData, PaginationType, FilterState>): React.ReactElement => {
     const [shownHeaderKeys, setShownHeaderKeys] = useState(
         defaultShownHeaders ?? headerKeysAndLabels.map(([key]) => key)
     );
@@ -363,7 +371,7 @@ const Table = <
                         )}
                         {editableConfig.onEdit && (
                             <StyledIconButton
-                                onClick={() => editableConfig.onEdit!(row.rowId)}
+                                onClick={() => editableConfig.onEdit?.(row.rowId)}
                                 aria-label="edit"
                             >
                                 <StyledIcon icon={faPenToSquare} />
@@ -429,8 +437,9 @@ const Table = <
             <TableFilterAndExtraColumnsBar<
                 Data,
                 PaginationType extends PaginationTypeEnum.Client
-                    ? ClientSideFilter<Data, any>
-                    : ServerSideFilter<Data, any, DbData>
+                    ? DistributeClientFilter<Data, FilterState>
+                    : DistributeServerFilter<Data, FilterState, DbData>,
+                FilterState
             >
                 setFilters={
                     filterConfig.primaryFiltersShown ? filterConfig.setPrimaryFilters : undefined
@@ -482,12 +491,12 @@ const Table = <
                         onChangePage={
                             paginationConfig.enablePagination
                                 ? paginationConfig.onPageChange
-                                : () => {}
+                                : () => undefined
                         }
                         onChangeRowsPerPage={
                             paginationConfig.enablePagination
                                 ? paginationConfig.onPerPageChange
-                                : () => {}
+                                : () => undefined
                         }
                         sortServer={sortConfig.sortPossible}
                         onSort={handleSort}
@@ -664,10 +673,10 @@ const TableStyling = styled.div<{
 `;
 // The inside map creates a div line at each required index for a specific style, and the outside map does this for each style
 
-export const ServerPaginatedTable = <Data, DbData extends Record<string, any>>(
-    props: Props<Data, DbData, PaginationTypeEnum.Server>
-): React.ReactElement => <Table<Data, PaginationTypeEnum.Server, DbData> {...props} />;
+export const ServerPaginatedTable = <Data, DbData extends Record<string, unknown>, FilterState>(
+    props: Props<Data, DbData, PaginationTypeEnum.Server, FilterState>
+): React.ReactElement => <Table<Data, PaginationTypeEnum.Server, FilterState, DbData> {...props} />;
 
-export const ClientPaginatedTable = <Data,>(
-    props: Props<Data, {}, PaginationTypeEnum.Client>
-): React.ReactElement => <Table<Data, PaginationTypeEnum.Client> {...props} />;
+export const ClientPaginatedTable = <Data, FilterState>(
+    props: Props<Data, Record<string, never>, PaginationTypeEnum.Client, FilterState>
+): React.ReactElement => <Table<Data, PaginationTypeEnum.Client, FilterState> {...props} />;

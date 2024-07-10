@@ -120,13 +120,14 @@ const PackingSlotsTable: React.FC = () => {
                         const packingSlots = await fetchPackingSlots();
                         setRows(packingSlots);
                     } catch (error) {
-                        if (error) {
-                            setRows([]);
+                        setRows([]);
+                        setErrorMessage("Error fetching data, please reload");
+                        if (error instanceof Error) {
                             void logErrorReturnLogId(
                                 "Error with fetch: Packing slots subscription",
+                                {},
                                 error
                             );
-                            setErrorMessage("Error fetching data, please reload");
                         }
                     }
                 }

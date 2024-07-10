@@ -79,7 +79,7 @@ const AuditLogTable: React.FC = () => {
     return (
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
-            <ServerPaginatedTable<AuditLogRow, DbAuditLogRow>
+            <ServerPaginatedTable<AuditLogRow, DbAuditLogRow, never>
                 dataPortion={auditLogDataPortion}
                 headerKeysAndLabels={auditLogTableHeaderKeysAndLabels}
                 defaultShownHeaders={[

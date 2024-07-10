@@ -15,7 +15,7 @@ import reportsSortableColumns from "./sortableColumns";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { reportsTableColumnStyleOptions } from "@/app/reports/reportsTable/styles";
 
-const ReportsPage: React.FC<{}> = () => {
+const ReportsPage: React.FC = () => {
     const [isLoadingForFirstTime, setIsLoadingForFirstTime] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [reportsDataPortion, setReportsDataPortion] = useState<ReportsTableRow[]>([]);
@@ -98,7 +98,7 @@ const ReportsPage: React.FC<{}> = () => {
                 <>
                     {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
                     <TableSurface>
-                        <ServerPaginatedTable<ReportsTableRow, DbReportRow>
+                        <ServerPaginatedTable<ReportsTableRow, DbReportRow, never>
                             dataPortion={reportsDataPortion}
                             paginationConfig={{
                                 enablePagination: true,

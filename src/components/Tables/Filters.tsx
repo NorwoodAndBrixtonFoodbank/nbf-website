@@ -8,10 +8,16 @@ export enum PaginationType {
     Client = "CLIENT",
 }
 
-export type ServerSideFilterMethod<DbData extends Record<string, any>, State> = (
-    query: PostgrestFilterBuilder<Database["public"], DbData, any>,
+export type DbQuery<DbData extends Record<string, unknown>> = PostgrestFilterBuilder<
+    Database["public"],
+    DbData,
+    unknown
+>;
+
+export type ServerSideFilterMethod<DbData extends Record<string, unknown>, State> = (
+    query: DbQuery<DbData>,
     state: State
-) => PostgrestFilterBuilder<Database["public"], DbData, any>;
+) => DbQuery<DbData>;
 
 export type ClientSideFilterMethod<Data, State> = (
     row: Data,
@@ -21,13 +27,13 @@ export type ClientSideFilterMethod<Data, State> = (
 
 interface BasicFilter<Data, State> {
     key: keyof Data;
-    filterComponent: (state: State, setState: (state: State) => void) => React.ReactElement;
+    filterComponent: (state: State, setState: (state: State) => void) => React.ReactNode;
     state: State;
     initialState: State;
     areStatesIdentical: (stateA: State, stateB: State) => boolean;
 }
 
-export interface ServerSideFilter<Data, State, DbData extends Record<string, any>>
+export interface ServerSideFilter<Data, State, DbData extends Record<string, unknown>>
     extends BasicFilter<Data, State> {
     method: ServerSideFilterMethod<DbData, State>;
 }
@@ -35,6 +41,19 @@ export interface ServerSideFilter<Data, State, DbData extends Record<string, any
 export interface ClientSideFilter<Data, State> extends BasicFilter<Data, State> {
     method: ClientSideFilterMethod<Data, State>;
 }
+
+// This distributes union types, so if state is A | B this gives ClientSideFilter<A> | ClientSideFilter<B>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type DistributeClientFilter<Data, State> = State extends any
+    ? ClientSideFilter<Data, State>
+    : never;
+
+export type DistributeServerFilter<
+    Data,
+    State,
+    DbData extends Record<string, unknown>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+> = State extends any ? ServerSideFilter<Data, State, DbData> : never;
 
 export const headerLabelFromKey = <Data, Key extends keyof Data>(
     headers: TableHeaders<Data>,

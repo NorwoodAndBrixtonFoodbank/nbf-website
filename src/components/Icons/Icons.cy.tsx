@@ -8,7 +8,7 @@ import SpeechBubbleIcon, { SpeechBubbleProps } from "@/components/Icons/SpeechBu
 import DeliveryIcon from "@/components/Icons/DeliveryIcon";
 import StyleManager from "@/app/themes";
 
-const StyledCongestionChargeAppliesIcon: React.FC<{}> = () => {
+const StyledCongestionChargeAppliesIcon: React.FC = () => {
     return (
         <StyleManager>
             <CongestionChargeAppliesIcon />
@@ -23,14 +23,14 @@ const StyledCollectionIcon: React.FC<CollectionIconProps> = (props) => {
     );
 };
 
-const StyledFlaggedForAttentionIcon: React.FC<{}> = () => {
+const StyledFlaggedForAttentionIcon: React.FC = () => {
     return (
         <StyleManager>
             <FlaggedForAttentionIcon />
         </StyleManager>
     );
 };
-const StyledPhoneIcon: React.FC<{}> = () => {
+const StyledPhoneIcon: React.FC = () => {
     return (
         <StyleManager>
             <PhoneIcon />
@@ -46,7 +46,7 @@ const StyledSpeechBubbleIcon: React.FC<SpeechBubbleProps> = (props) => {
     );
 };
 
-const StyledDeliveryIcon: React.FC<{}> = () => {
+const StyledDeliveryIcon: React.FC = () => {
     return (
         <StyleManager>
             <DeliveryIcon />

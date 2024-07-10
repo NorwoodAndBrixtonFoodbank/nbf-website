@@ -13,7 +13,7 @@ export const getUpdateErrorMessage = ({
     parcelId: string | null;
     error: FetchParcelError | UpdateParcelError | null;
 }): string | undefined => {
-    let errorMessage: string = "";
+    let errorMessage = "";
     switch (error?.type) {
         case "noMatchingParcels":
             errorMessage = "No parcel in the database matches the selected parcel.";
@@ -52,7 +52,7 @@ export const packingDateOrSlotUpdate = async (
     const packingDateOrSlotDbUpdate = async (
         fieldToUpdate: FieldToUpdate
     ): Promise<PostgrestSingleResponse<null>> => {
-        return await supabase
+        return supabase
             .from("parcels")
             .update(fieldToUpdate, { count: "exact" })
             .eq("primary_key", parcel.parcelId);

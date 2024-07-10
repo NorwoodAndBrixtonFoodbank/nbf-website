@@ -169,9 +169,19 @@ const getShoppingListData = async (parcelIds: string[]): Promise<ShoppingListPdf
         })
     );
     if (lists.some((list) => list.error)) {
-        return { data: null, error: lists.filter((list) => list.error)[0].error! };
+        return {
+            data: null,
+            error: lists.filter((list) => list.error)[0].error as ShoppingListPdfError,
+        };
     }
-    return { data: lists.map((list) => list.data!), error: null };
+    return {
+        data: lists
+            .filter(
+                (list): list is { data: ShoppingListPdfData; error: null } => list.data !== null
+            )
+            .map((list) => list.data),
+        error: null,
+    };
 };
 
 export default getShoppingListData;

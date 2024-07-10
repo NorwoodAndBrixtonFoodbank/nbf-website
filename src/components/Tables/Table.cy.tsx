@@ -221,14 +221,14 @@ const Component: React.FC<TestTableProps> = ({
         enablePagination: false,
     };
 
-    const trueFilterConfig: FilterConfig<ClientSideFilter<TestData, any>> = {
+    const trueFilterConfig: FilterConfig<ClientSideFilter<TestData, string>> = {
         primaryFiltersShown: true,
         primaryFilters: primaryFilters,
         setPrimaryFilters: setPrimaryFilters,
         additionalFiltersShown: false,
     };
 
-    const falseFilterConfig: FilterConfig<ClientSideFilter<TestData, any>> = {
+    const falseFilterConfig: FilterConfig<ClientSideFilter<TestData, never>> = {
         primaryFiltersShown: false,
         additionalFiltersShown: false,
     };
@@ -261,7 +261,7 @@ const Component: React.FC<TestTableProps> = ({
 
     return (
         <StyleManager>
-            <ClientPaginatedTable<TestData>
+            <ClientPaginatedTable<TestData, string>
                 dataPortion={testDataPortion}
                 headerKeysAndLabels={headers}
                 toggleableHeaders={toggleableHeaders}

@@ -60,11 +60,11 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
                 success: true,
                 message: (
                     <>
-                        User <b>{props.userToDelete!.email}</b> deleted successfully.
+                        User <b>{props.userToDelete.email}</b> deleted successfully.
                     </>
                 ),
             });
-            void logInfoReturnLogId(`${props.userToDelete?.email} deleted successfully.`);
+            void logInfoReturnLogId(`${props.userToDelete.email} deleted successfully.`);
         }
 
         props.setUserToDelete(null);

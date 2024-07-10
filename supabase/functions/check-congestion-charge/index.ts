@@ -1,4 +1,5 @@
 /* eslint-disable import/no-unresolved */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck (for Deno references, annoyingly cannot get around for now)
 /* global Deno */
 
@@ -19,7 +20,7 @@ serve(async (req: Handler): Promise<Response> => {
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
             global: {
                 headers: {
-                    Authorization: req.headers.get("Authorization")!,
+                    Authorization: req.headers.get("Authorization"),
                 },
             },
         });

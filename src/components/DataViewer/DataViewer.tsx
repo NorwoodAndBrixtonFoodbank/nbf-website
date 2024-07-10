@@ -68,11 +68,11 @@ const ButtonsContainer = styled.div`
 `;
 
 const valueIsEmpty = (value: ValueType): boolean => {
-    return (Array.isArray(value) && value.length === 0) || value === "" || value === null;
+    return (Array.isArray(value) && value.length === 0) || value === "";
 };
 
 const formatDisplayValue = (value: ValueType): string => {
-    if (valueIsEmpty(value)) {
+    if (valueIsEmpty(value) || value === null) {
         return "-";
     }
 
@@ -80,7 +80,7 @@ const formatDisplayValue = (value: ValueType): string => {
         return value ? "Yes" : "No";
     }
 
-    return value!.toString();
+    return value.toString();
 };
 
 export interface DataViewerProps {

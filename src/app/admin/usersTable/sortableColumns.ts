@@ -4,37 +4,37 @@ import { UserRow, UsersSortMethod } from "./types";
 export const usersSortableColumns: SortOptions<UserRow, UsersSortMethod>[] = [
     {
         key: "firstName",
-        sortMethod: (query, sortDirection) =>
+        sortMethod: (sortDirection, query) =>
             query.order("first_name", { ascending: sortDirection === "asc" }),
     },
     {
         key: "lastName",
-        sortMethod: (query, sortDirection) =>
+        sortMethod: (sortDirection, query) =>
             query.order("last_name", { ascending: sortDirection === "asc" }),
     },
     {
         key: "userRole",
-        sortMethod: (query, sortDirection) =>
+        sortMethod: (sortDirection, query) =>
             query.order("role", { ascending: sortDirection === "asc" }),
     },
     {
         key: "email",
-        sortMethod: (query, sortDirection) =>
+        sortMethod: (sortDirection, query) =>
             query.order("email", { ascending: sortDirection === "asc" }),
     },
     {
         key: "telephoneNumber",
-        sortMethod: (query, sortDirection) =>
+        sortMethod: (sortDirection, query) =>
             query.order("telephone_number", { ascending: sortDirection === "asc" }),
     },
     {
         key: "createdAt",
-        sortMethod: (query, sortDirection) =>
+        sortMethod: (sortDirection, query) =>
             query.order("created_at", { ascending: sortDirection === "asc" }),
     },
     {
         key: "updatedAt",
-        sortMethod: (query, sortDirection) =>
+        sortMethod: (sortDirection, query) =>
             query.order("updated_at", { ascending: sortDirection === "asc" }),
     },
 ];

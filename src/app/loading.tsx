@@ -11,7 +11,7 @@ const Centerer = styled.div`
     height: 80vh;
 `;
 
-const Loading: React.FC<{}> = () => {
+const Loading: React.FC = () => {
     return (
         <main>
             <Centerer>

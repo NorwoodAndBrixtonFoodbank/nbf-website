@@ -8,7 +8,7 @@ import {
 } from "@/app/errorStylingandMessages";
 import LinkButton from "@/components/Buttons/LinkButton";
 
-const NotFoundPage: React.FC<{}> = () => {
+const NotFoundPage: React.FC = () => {
     return (
         <ErrorCenterer>
             <ErrorPanel elevation={5}>

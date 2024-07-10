@@ -15,7 +15,7 @@ const clientDetailFields = [
     "COLLECTION",
 ];
 
-const ExpandedClientDetailsFallback: React.FC<{}> = () => {
+const ExpandedClientDetailsFallback: React.FC = () => {
     return (
         <>
             <DataViewerFallback fieldPlaceholders={clientDetailFields} />;

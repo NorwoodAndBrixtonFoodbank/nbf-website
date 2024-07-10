@@ -17,7 +17,7 @@ describe("General Modal Component", () => {
                 header="Modal Header"
                 headerId="testModal"
                 isOpen={true}
-                onClose={() => {}}
+                onClose={() => undefined}
             >
                 <h1>Modal Content</h1>
             </StyledModal>
@@ -30,7 +30,7 @@ describe("General Modal Component", () => {
                 header="Modal Header"
                 headerId="testModal"
                 isOpen={true}
-                onClose={() => {}}
+                onClose={() => undefined}
             >
                 <h1>Modal Content</h1>
             </StyledModal>
@@ -46,7 +46,7 @@ describe("General Modal Component", () => {
                 header="Modal Header"
                 headerId="testModal"
                 isOpen={false}
-                onClose={() => {}}
+                onClose={() => undefined}
             >
                 <h1>Modal Content</h1>
             </StyledModal>

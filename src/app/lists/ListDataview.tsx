@@ -22,7 +22,7 @@ import { buildClientSideTextFilter, filterRowByText } from "@/components/Tables/
 import { ClientSideFilter } from "@/components/Tables/Filters";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
-type ListFilter = ClientSideFilter<ListRow, any>;
+type ListFilter = ClientSideFilter<ListRow, string>;
 
 export interface ListRow {
     primaryKey: string;
@@ -298,7 +298,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
             <TableSurface>
                 <CommentBox originalComment={comment} />
-                <ClientPaginatedTable<ListRow>
+                <ClientPaginatedTable<ListRow, string>
                     headerKeysAndLabels={listsHeaderKeysAndLabels}
                     toggleableHeaders={toggleableHeaders}
                     dataPortion={listData}

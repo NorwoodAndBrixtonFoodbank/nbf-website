@@ -221,8 +221,7 @@ const Calendar: React.FC<CalendarProps> = ({
     };
 
     const handleDateClick = (info: DateClickArg): void => {
-        const calendarApi = calendarRef.current!.getApi();
-        calendarApi.changeView("timeGridDay", info.dateStr);
+        calendarRef.current && calendarRef.current.getApi().changeView("timeGridDay", info.dateStr);
     };
 
     return (

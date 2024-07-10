@@ -86,7 +86,9 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
         setDriverName(trimmedDriverName.length !== 0 ? trimmedDriverName : null);
     };
     const onDateChange = (newDate: Dayjs | null): void => {
-        setDate(newDate!);
+        if (newDate) {
+            setDate(newDate);
+        }
     };
 
     const onClose = (): void => {

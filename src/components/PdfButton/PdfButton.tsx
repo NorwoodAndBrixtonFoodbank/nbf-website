@@ -40,7 +40,7 @@ const formatFileName = (fileName: string): string => {
 const PdfButton = <Data, ErrorType extends string>({
     fetchDataAndFileName,
     pdfComponent: PdfComponent,
-    onPdfCreationCompleted = () => {},
+    onPdfCreationCompleted = () => undefined,
     formatName = true,
     disabled = false,
     onPdfCreationFailed,

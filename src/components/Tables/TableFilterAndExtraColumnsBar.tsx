@@ -6,9 +6,13 @@ import { TableHeaders } from "@/components/Tables/Table";
 import styled from "styled-components";
 import { FilterAltOffOutlined, FilterAltOutlined } from "@mui/icons-material";
 import ColumnTogglePopup from "@/components/Tables/ColumnTogglePopup";
-import { ClientSideFilter, ServerSideFilter } from "./Filters";
+import { DistributeClientFilter, DistributeServerFilter } from "@/components/Tables/Filters";
 
-interface Props<Data, Filter extends ClientSideFilter<any, any> | ServerSideFilter<any, any, any>> {
+type FilterBase<Data, State> =
+    | DistributeClientFilter<Data, State>
+    | DistributeServerFilter<Data, State, Record<string, unknown>>;
+
+interface Props<Data, Filter extends FilterBase<Data, State>, State> {
     setFilters?: (filters: Filter[]) => void;
     setAdditionalFilters?: (filters: Filter[]) => void;
     headers: TableHeaders<Data>;
@@ -46,14 +50,12 @@ const Grow = styled.div`
     flex-grow: 1;
 `;
 
-export const filtersToComponents = <
-    Filter extends ClientSideFilter<any, any> | ServerSideFilter<any, any, any>,
->(
+export function filtersToComponents<Data, Filter extends FilterBase<Data, State>, State>(
     filters: Filter[],
     setFilters: (filters: Filter[]) => void
-): React.ReactElement[] => {
+): React.ReactNode[] {
     return filters.map((filter, index) => {
-        const onFilter = (state: any): void => {
+        const onFilter = (state: unknown): void => {
             const newFilters = [...filters];
             newFilters[index] = {
                 ...newFilters[index],
@@ -63,14 +65,11 @@ export const filtersToComponents = <
         };
         return filter.filterComponent(filter.state, onFilter);
     });
-};
+}
 
-const TableFilterAndExtraColumnsBar = <
-    Data,
-    Filter extends ClientSideFilter<any, any> | ServerSideFilter<any, any, any>,
->(
-    props: Props<Data, Filter>
-): React.ReactElement => {
+function TableFilterAndExtraColumnsBar<Data, Filter extends FilterBase<Data, State>, State>(
+    props: Props<Data, Filter, State>
+): React.ReactElement {
     const handleClear = (): void => {
         if (props.setFilters && props.filters) {
             props.setFilters(
@@ -116,7 +115,10 @@ const TableFilterAndExtraColumnsBar = <
                         {props.filters &&
                             props.filters?.length !== 0 &&
                             props.setFilters &&
-                            filtersToComponents(props.filters, props.setFilters)}
+                            filtersToComponents<Data, Filter, State>(
+                                props.filters,
+                                props.setFilters
+                            )}
                         <Grow />
                         {(hasAdditionalFilters || hasToggleableHeaders) && (
                             <StyledButton
@@ -150,7 +152,7 @@ const TableFilterAndExtraColumnsBar = <
                                 props.additionalFilters?.length !== 0 &&
                                 props.setAdditionalFilters && (
                                     <>
-                                        {filtersToComponents(
+                                        {filtersToComponents<Data, Filter, State>(
                                             props.additionalFilters,
                                             props.setAdditionalFilters
                                         )}
@@ -171,6 +173,6 @@ const TableFilterAndExtraColumnsBar = <
             )}
         </>
     );
-};
+}
 
 export default TableFilterAndExtraColumnsBar;

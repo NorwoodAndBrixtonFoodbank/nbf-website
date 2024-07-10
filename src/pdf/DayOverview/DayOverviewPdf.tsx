@@ -87,11 +87,11 @@ const CustomSVG: React.FC<CustomSVGProps> = ({ icon, color, fill }) => {
     );
 };
 
-const DayOverviewMargin: React.FC<{}> = () => {
+const DayOverviewMargin: React.FC = () => {
     return <View style={styles.margin} fixed></View>;
 };
 
-const DayOverviewHeader: React.FC<{}> = () => {
+const DayOverviewHeader: React.FC = () => {
     return (
         <View style={[styles.row, styles.bold, { borderTop: "1 solid black" }]} fixed>
             <Text style={[styles.cellLogo, styles.cell]}></Text>
@@ -109,14 +109,16 @@ const DayOverviewRow: React.FC<DayOverviewRowProps> = ({ parcel }) => {
         <View style={styles.row} wrap={false}>
             <View style={[styles.cellLogo, styles.cell, styles.row]}>
                 <CustomSVG icon={faSquare} color="black" fill={false} />
-                {parcel.client!.flagged_for_attention && (
+                {parcel.client?.flagged_for_attention && (
                     <CustomSVG icon={faFlag} color="orange" fill={true} />
                 )}
             </View>
-            <Text style={[styles.cellName, styles.cell]}>{parcel.client!.full_name}</Text>
+            <Text style={[styles.cellName, styles.cell]}>
+                {parcel.client?.full_name ?? "Client Name unknown"}
+            </Text>
             <View style={[styles.cell, styles.cellPostcode, styles.row]}>
-                <Text>{parcel.client!.address_postcode ?? displayPostcodeForHomelessClient} </Text>
-                {parcel.collection_centre!.name === "Delivery" &&
+                <Text>{parcel.client?.address_postcode ?? displayPostcodeForHomelessClient} </Text>
+                {parcel.collection_centre?.name === "Delivery" &&
                     parcel.congestionChargeApplies && (
                         <FontAwesomeIconPdfComponent
                             faIcon={faCopyright}
@@ -127,13 +129,15 @@ const DayOverviewRow: React.FC<DayOverviewRowProps> = ({ parcel }) => {
                     )}
             </View>
             <Text style={[styles.cellTime, styles.cell]}>
-                {dateTimeToAMPM(parcel.collection_datetime!)}
+                {parcel.collection_datetime
+                    ? dateTimeToAMPM(parcel.collection_datetime)
+                    : "collection time not specified"}
             </Text>
             <Text style={[styles.cellCollection, styles.cell]}>
-                {parcel.collection_centre!.name}
+                {parcel.collection_centre?.name ?? "Collection centre not specified"}
             </Text>
             <Text style={[styles.cellInstructions, styles.cell]}>
-                {parcel.client!.delivery_instructions}
+                {parcel.client?.delivery_instructions ?? "No instructions provided"}
             </Text>
         </View>
     );
@@ -143,8 +147,8 @@ const DayOverviewContent: React.FC<DayOverviewContentProps> = ({ parcels }) => {
     return (
         <View style={{ borderLeft: "1 solid black" }}>
             <DayOverviewHeader />
-            {parcels.map((parcel, index) => (
-                <DayOverviewRow key={index} parcel={parcel} /> // eslint-disable-line react/no-array-index-key
+            {parcels.map((parcel) => (
+                <DayOverviewRow key={parcel.primary_key} parcel={parcel} />
             ))}
         </View>
     );

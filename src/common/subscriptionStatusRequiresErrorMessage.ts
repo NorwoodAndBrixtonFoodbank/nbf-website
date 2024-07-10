@@ -7,10 +7,10 @@ export const subscriptionStatusRequiresErrorMessage = (
 ): boolean => {
     switch (status) {
         case "TIMED_OUT":
-            void logErrorReturnLogId(`Channel Timed Out: Subscribe to ${tableName} table`, err);
+            void logErrorReturnLogId(`Channel Timed Out: Subscribe to ${tableName} table`, {}, err);
             return true;
         case "CHANNEL_ERROR":
-            void logErrorReturnLogId(`Channel Error: Subscribe to ${tableName} table`, err);
+            void logErrorReturnLogId(`Channel Error: Subscribe to ${tableName} table`, {}, err);
             return true;
         case "CLOSED":
             void logInfoReturnLogId(`Subscription to ${tableName} table closed`);

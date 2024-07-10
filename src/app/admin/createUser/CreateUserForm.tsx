@@ -22,7 +22,7 @@ import { InviteUserError, adminInviteUser } from "@/server/adminInviteUser";
 import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 import { UserRole } from "@/databaseUtils";
 
-export interface InviteUserFields {
+export interface InviteUserFields extends Record<string, UserRole | string> {
     email: string;
     role: UserRole;
     firstName: string;
@@ -62,7 +62,7 @@ const getServerErrorMessage = (serverError: InviteUserError): string => {
 
 const formSections = [AccountDetails, UserRoleCard, UserDetailsCard];
 
-const CreateUserForm: React.FC<{}> = () => {
+const CreateUserForm: React.FC = () => {
     const [fields, setFields] = useState(initialFields);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
 

@@ -39,7 +39,7 @@ const getListIngredientNameOrErrorMessage = async (
 };
 
 const getErrorMessage = (error: ListsIngredientError): string => {
-    let errorMessage: string = "";
+    let errorMessage = "";
     switch (error.type) {
         case "failedListsFetch":
             errorMessage = "Failed to fetch ingredient name.";

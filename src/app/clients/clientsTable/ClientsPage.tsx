@@ -32,7 +32,7 @@ import { getIsClientActiveErrorMessage, getDeleteClientErrorMessage } from "./fo
 import { getClientParcelsDetails } from "../getClientParcelsData";
 import { saveParcelStatus } from "@/app/parcels/ActionBar/Statuses";
 
-const ClientsPage: React.FC<{}> = () => {
+const ClientsPage: React.FC = () => {
     const [isLoadingForFirstTime, setIsLoadingForFirstTime] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [clientsDataPortion, setClientsDataPortion] = useState<ClientsTableRow[]>([]);
@@ -178,7 +178,7 @@ const ClientsPage: React.FC<{}> = () => {
                 <>
                     {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
                     <TableSurface>
-                        <ServerPaginatedTable<ClientsTableRow, DbClientRow>
+                        <ServerPaginatedTable<ClientsTableRow, DbClientRow, string>
                             dataPortion={clientsDataPortion}
                             paginationConfig={{
                                 enablePagination: true,

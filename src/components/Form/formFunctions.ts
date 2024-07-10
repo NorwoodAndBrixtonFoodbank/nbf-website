@@ -49,9 +49,7 @@ export interface NumberAdultsByGender {
     numberUnknownGender: number;
 }
 
-export interface Fields {
-    [fieldKey: string]: any;
-}
+export type Fields = Record<string, unknown>;
 
 export type FormErrors<SpecificFields extends Fields> = {
     [errorKey in keyof SpecificFields]?: Errors;
@@ -101,7 +99,9 @@ export const onChangeText = <SpecificFields extends Fields>(
         errorSetter({ [key]: errorType } as { [key in keyof FormErrors<SpecificFields>]: Errors });
         if (errorType === Errors.none) {
             const newValue = formattingFunction ? formattingFunction(input) : input;
-            fieldSetter({ [key]: newValue } as { [key in keyof SpecificFields]: any });
+            fieldSetter({ [key]: newValue } as {
+                [key in keyof SpecificFields]: SpecificFields[key];
+            });
         }
     };
 };
@@ -113,7 +113,7 @@ export const onChangeCheckbox = <SpecificFields extends Fields>(
 ): ChangeEventHandler => {
     return (event) => {
         const newObject = { ...currentObject, [event.target.name]: event.target.checked };
-        fieldSetter({ [key]: newObject } as { [key in keyof SpecificFields]: any });
+        fieldSetter({ [key]: newObject } as { [key in keyof SpecificFields]: SpecificFields[key] });
     };
 };
 
@@ -123,7 +123,9 @@ export const onChangeRadioGroup = <SpecificFields extends Fields>(
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
-        fieldSetter({ [key]: input === "Yes" } as { [key in keyof SpecificFields]: any });
+        fieldSetter({ [key]: input === "Yes" } as {
+            [key in keyof SpecificFields]: SpecificFields[key];
+        });
     };
 };
 
@@ -134,7 +136,7 @@ export const valueOnChangeRadioGroup = <SpecificFields extends Fields>(
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
-        fieldSetter({ [key]: input } as { [key in keyof SpecificFields]: any });
+        fieldSetter({ [key]: input } as { [key in keyof SpecificFields]: SpecificFields[key] });
         errorSetter({ [key]: Errors.none } as {
             [key in keyof FormErrors<SpecificFields>]: Errors;
         });
@@ -148,7 +150,7 @@ export const valueOnChangeDropdownList = <SpecificFields extends Fields>(
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
-        fieldSetter({ [key]: input } as { [key in keyof SpecificFields]: any });
+        fieldSetter({ [key]: input } as { [key in keyof SpecificFields]: SpecificFields[key] });
         errorSetter({ [key]: Errors.none } as {
             [key in keyof FormErrors<SpecificFields>]: Errors;
         });
@@ -162,13 +164,13 @@ export const onChangeDateOrTime = <SpecificFields extends Fields>(
     value: Dayjs | null
 ): void => {
     if (value === null || isNaN(Date.parse(value.toString()))) {
-        fieldSetter({ [key]: null } as { [key in keyof SpecificFields]: any });
+        fieldSetter({ [key]: null } as { [key in keyof SpecificFields]: SpecificFields[key] });
         errorSetter({ [key]: Errors.invalid } as {
             [key in keyof FormErrors<SpecificFields>]: Errors;
         });
         return;
     }
-    fieldSetter({ [key]: value } as { [key in keyof SpecificFields]: any });
+    fieldSetter({ [key]: value } as { [key in keyof SpecificFields]: SpecificFields[key] });
     errorSetter({ [key]: Errors.none } as { [key in keyof FormErrors<SpecificFields>]: Errors });
 };
 
@@ -232,6 +234,7 @@ export const checkErrorOnSubmit = <
     return errorExists;
 };
 
+// This function is not type safe, but I don't have the context to fix it right now
 export const getDefaultTextValue = (fields: Fields, fieldKey: keyof Fields): string | undefined => {
-    return fields[fieldKey] ?? undefined;
+    return (fields[fieldKey] as string) ?? undefined;
 };

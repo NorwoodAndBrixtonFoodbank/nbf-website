@@ -64,7 +64,7 @@ const getParcelLinkDetailsOrErrorMessage = async (
 };
 
 const getErrorMessage = (error: ParcelLinkError): string => {
-    let errorMessage: string = "";
+    let errorMessage = "";
     switch (error.type) {
         case "failedParcelOverviewDetailsFetch":
             errorMessage = "Failed to fetch parcel details.";

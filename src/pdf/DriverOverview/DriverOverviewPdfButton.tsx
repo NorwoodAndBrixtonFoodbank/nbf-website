@@ -73,7 +73,7 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDel
             return { data: null, error: { type: "noCollectionCentre", logId: logId } };
         }
 
-        let labelCount: number = 0;
+        let labelCount = 0;
         if (parcel.events && parcel.events.length > 0 && parcel.events[0].event_data) {
             labelCount = Number.parseInt(parcel.events[0].event_data);
         }

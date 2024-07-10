@@ -1,6 +1,8 @@
 import { logErrorReturnLogId } from "@/logger/logger";
 import { Supabase } from "@/supabaseUtils";
 import { AuditLogCountResponse, AuditLogResponse, AuditLogSortState } from "./types";
+import { DbQuery } from "@/components/Tables/Filters";
+import { DbAuditLogRow } from "@/databaseUtils";
 
 export const fetchAuditLog = async (
     supabase: Supabase,
@@ -8,15 +10,21 @@ export const fetchAuditLog = async (
     endIndex: number,
     sortState: AuditLogSortState
 ): Promise<AuditLogResponse> => {
-    let query = supabase.from("audit_log_plus").select("*").range(startIndex, endIndex);
+    let query = supabase
+        .from("audit_log_plus")
+        .select("*")
+        .range(startIndex, endIndex) as DbQuery<DbAuditLogRow>;
 
     if (sortState.sortEnabled && sortState.column.sortMethod) {
-        query = sortState.column.sortMethod(query, sortState.sortDirection);
+        query = sortState.column.sortMethod(sortState.sortDirection, query);
     } else {
         query.order("created_at", { ascending: false });
     }
 
-    const { data: auditLogs, error } = await query;
+    const { data: auditLogs, error } = (await query) as {
+        data: DbAuditLogRow[];
+        error: Error | null;
+    };
 
     if (error) {
         const logId = await logErrorReturnLogId("Error with fetch: Audit Log", {
