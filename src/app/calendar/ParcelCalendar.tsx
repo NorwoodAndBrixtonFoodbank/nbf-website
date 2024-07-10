@@ -10,6 +10,7 @@ import {
     parcelsToCollectionEvents,
     ParcelsWithExtraFields,
 } from "@/app/calendar/parcelCalendarFunctions";
+import { Centerer } from "@/components/Modal/ModalFormStyles";
 
 interface ParcelCalendarProps {
     parcelsWithCollectionDate: ParcelsWithExtraFields[];
@@ -20,12 +21,6 @@ interface ColorTextProps {
     color: string;
     text: string;
 }
-
-const Centerer = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`;
 
 const CalendarWrapper = styled.div`
     width: min(100vw, 1200px);

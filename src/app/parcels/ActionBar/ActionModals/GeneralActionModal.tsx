@@ -6,6 +6,7 @@ import { StatusType } from "../Statuses";
 import React from "react";
 import { UpdateParcelStatuses } from "../ActionAndStatusBar";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import { Centerer } from "@/components/Modal/ModalFormStyles";
 
 export interface ActionModalProps extends Omit<React.ComponentProps<typeof Modal>, "children"> {
     selectedParcels: ParcelsTableRow[];
@@ -24,11 +25,6 @@ interface GeneralActionModalProps extends Omit<React.ComponentProps<typeof Modal
 }
 
 export const maxParcelsToShow = 5;
-
-export const Centerer = styled.div`
-    display: flex;
-    justify-content: center;
-`;
 
 export const Heading = styled.div`
     font-size: 1.2rem;

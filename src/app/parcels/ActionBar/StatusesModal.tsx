@@ -7,8 +7,9 @@ import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "../parcelsTable/types";
 import SelectedParcelsOverview from "./SelectedParcelsOverview";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import { Centerer } from "@/components/Modal/ModalFormStyles";
 
-interface StatusesBarModalProps extends React.ComponentProps<typeof Modal> {
+interface StatusesModalProps extends React.ComponentProps<typeof Modal> {
     selectedParcels: ParcelsTableRow[];
     onSubmit: (date: Dayjs) => void;
     errorText: string | null;
@@ -27,7 +28,7 @@ const ModalInner = styled.div`
     align-items: stretch;
 `;
 
-const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
+const StatusesModal: React.FC<StatusesModalProps> = (props) => {
     const [date, setDate] = useState(dayjs(new Date()));
 
     useEffect(() => {
@@ -55,29 +56,31 @@ const StatusesBarModal: React.FC<StatusesBarModalProps> = (props) => {
         <Modal {...props}>
             <ModalInner>
                 {props.errorText && <ErrorSecondaryText>{props.errorText}</ErrorSecondaryText>}
-                <Row>
-                    Date:
-                    <DatePicker
-                        value={date}
-                        defaultValue={date}
-                        onChange={onDateChange}
-                        disableFuture
-                    />
-                </Row>
-                <Row>
-                    Time:
-                    <TimePicker value={date} onChange={onTimeChange} disableFuture />
-                </Row>
+                <Centerer>
+                    <Row>
+                        Date:
+                        <DatePicker
+                            value={date}
+                            defaultValue={date}
+                            onChange={onDateChange}
+                            disableFuture
+                        />
+                        Time:
+                        <TimePicker value={date} onChange={onTimeChange} disableFuture />
+                    </Row>
+                </Centerer>
                 <SelectedParcelsOverview
                     parcels={props.selectedParcels}
                     maxParcelsToShow={maxParcelsToShow}
                 />
-                <Button type="button" variant="contained" onClick={() => props.onSubmit(date)}>
-                    Submit
-                </Button>
+                <Centerer>
+                    <Button type="button" variant="contained" onClick={() => props.onSubmit(date)}>
+                        Submit
+                    </Button>
+                </Centerer>
             </ModalInner>
         </Modal>
     );
 };
 
-export default StatusesBarModal;
+export default StatusesModal;

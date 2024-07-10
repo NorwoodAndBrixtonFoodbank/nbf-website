@@ -7,7 +7,7 @@ import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "../parcelsTable/types";
-import StatusesBarModal from "@/app/parcels/ActionBar/StatusesModal";
+import StatusesModal from "@/app/parcels/ActionBar/StatusesModal";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { sendAuditLog } from "@/server/auditLog";
 import { ParcelStatus } from "@/databaseUtils";
@@ -185,20 +185,20 @@ const Statuses: React.FC<Props> = ({
 
     return (
         <>
-            <StatusesBarModal
+            <StatusesModal
                 isOpen={statusModal}
                 onClose={() => {
                     setStatusModal(false);
                     setModalError(null);
                 }}
                 selectedParcels={selectedParcels}
-                header={selectedStatus ?? "Apply Status"}
+                header={"Apply Status" + (selectedStatus ? ": " + selectedStatus : "")}
                 headerId="status-modal-header"
                 onSubmit={submitStatus}
                 errorText={serverErrorMessage}
             >
                 <></>
-            </StatusesBarModal>
+            </StatusesModal>
 
             <Menu
                 open={statusAnchorElement !== null}

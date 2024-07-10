@@ -89,12 +89,12 @@ export const getParcelOverviewString = (
         return (
             (addressPostcode ?? displayPostcodeForHomelessClient) +
             (fullName && ` - ${fullName}`) +
-            (collectionDatetime && ` @ ${dayjs(collectionDatetime).format("DD/MM/YYYY HH:mm")}`)
+            (collectionDatetime && ` @ ${dayjs(collectionDatetime).format("DD/MM/YYYY")}`)
         );
     }
     return (
         displayNameForDeletedClient +
-        (collectionDatetime && ` @ ${dayjs(collectionDatetime).format("DD/MM/YYYY HH:mm")}`)
+        (collectionDatetime && ` @ ${dayjs(collectionDatetime).format("DD/MM/YYYY")}`)
     );
 };
 
