@@ -43,18 +43,16 @@ export const saveParcelStatus = async (
     parcelIds: string[],
     statusName: StatusType,
     statusEventData?: string | null,
-    clientIds?: string[],
     action?: string,
     date?: Dayjs
 ): Promise<SaveParcelStatusResult> => {
     const timestamp = (date ?? dayjs()).toISOString();
     const eventsToInsert = parcelIds
-        .map((parcelId: string, index) => {
+        .map((parcelId: string) => {
             return {
                 new_parcel_status: statusName,
                 parcel_id: parcelId,
                 event_data: statusEventData,
-                client_id: clientIds?.at(index),
                 timestamp,
             };
         })
@@ -64,7 +62,6 @@ export const saveParcelStatus = async (
         action: action ?? "change parcel status",
         content: { eventToInsert },
         parcelId: eventToInsert.parcel_id,
-        clientId: eventToInsert.client_id,
     }));
 
     const { data, error } = await supabase
@@ -150,7 +147,6 @@ const Statuses: React.FC<Props> = ({
             }),
             selectedStatus,
             null,
-            undefined,
             undefined,
             date
         );
