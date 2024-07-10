@@ -1047,13 +1047,6 @@ export type Database = {
         }
         Returns: string
       }
-      insertClientAndTheirFamily: {
-        Args: {
-          clientrecord: Json
-          familymembers: Json
-        }
-        Returns: string
-      }
       packing_slot_order_swap: {
         Args: {
           id1: string

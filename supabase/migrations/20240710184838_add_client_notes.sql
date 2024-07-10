@@ -2,7 +2,7 @@ alter table "public"."clients" add column "notes" text;
 
 set check_function_bodies = off;
 
-CREATE OR REPLACE FUNCTION public."insertClientAndTheirFamily"(clientrecord jsonb, familymembers jsonb)
+CREATE OR REPLACE FUNCTION public."insert_client_and_family"(clientrecord jsonb, familymembers jsonb)
  RETURNS uuid
  LANGUAGE plpgsql
 AS $function$DECLARE
