@@ -169,8 +169,8 @@ interface Props<Data, DbData extends Record<string, unknown>, PaginationType, Fi
     defaultSortConfig?: DefaultSortConfig;
     filterConfig: FilterConfig<
         PaginationType extends PaginationTypeEnum.Client
-            ? DistributeClientFilter<Data, FilterState> //ClientSideFilter<Data, FilterState>
-            : DistributeServerFilter<Data, FilterState, DbData> //ServerSideFilter<Data, FilterState, DbData>
+            ? DistributeClientFilter<Data, FilterState>
+            : DistributeServerFilter<Data, FilterState, DbData>
     >;
     rowBreakPointConfigs?: BreakPointConfig[];
     defaultShownHeaders?: readonly (keyof Data)[];
