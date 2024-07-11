@@ -273,7 +273,6 @@ const ParcelsPage: React.FC<{}> = () => {
             parcels.map((parcel) => parcel.parcelId),
             newStatus,
             statusEventData,
-            parcels.map((parcel) => parcel.clientId),
             action,
             date
         );

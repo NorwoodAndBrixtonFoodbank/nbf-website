@@ -7,7 +7,7 @@ import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "../parcelsTable/types";
-import StatusesBarModal from "@/app/parcels/ActionBar/StatusesModal";
+import StatusesModal from "@/app/parcels/ActionBar/StatusesModal";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { sendAuditLog } from "@/server/auditLog";
 import { ParcelStatus } from "@/databaseUtils";
@@ -43,18 +43,16 @@ export const saveParcelStatus = async (
     parcelIds: string[],
     statusName: StatusType,
     statusEventData?: string | null,
-    clientIds?: string[],
     action?: string,
     date?: Dayjs
 ): Promise<SaveParcelStatusResult> => {
     const timestamp = (date ?? dayjs()).toISOString();
     const eventsToInsert = parcelIds
-        .map((parcelId: string, index) => {
+        .map((parcelId: string) => {
             return {
                 new_parcel_status: statusName,
                 parcel_id: parcelId,
                 event_data: statusEventData,
-                client_id: clientIds?.at(index),
                 timestamp,
             };
         })
@@ -64,7 +62,6 @@ export const saveParcelStatus = async (
         action: action ?? "change parcel status",
         content: { eventToInsert },
         parcelId: eventToInsert.parcel_id,
-        clientId: eventToInsert.client_id,
     }));
 
     const { data, error } = await supabase
@@ -151,7 +148,6 @@ const Statuses: React.FC<Props> = ({
             selectedStatus,
             null,
             undefined,
-            undefined,
             date
         );
         if (error) {
@@ -185,20 +181,20 @@ const Statuses: React.FC<Props> = ({
 
     return (
         <>
-            <StatusesBarModal
+            <StatusesModal
                 isOpen={statusModal}
                 onClose={() => {
                     setStatusModal(false);
                     setModalError(null);
                 }}
                 selectedParcels={selectedParcels}
-                header={selectedStatus ?? "Apply Status"}
+                header={"Apply Status" + (selectedStatus ? ": " + selectedStatus : "")}
                 headerId="status-modal-header"
                 onSubmit={submitStatus}
                 errorText={serverErrorMessage}
             >
                 <></>
-            </StatusesBarModal>
+            </StatusesModal>
 
             <Menu
                 open={statusAnchorElement !== null}
