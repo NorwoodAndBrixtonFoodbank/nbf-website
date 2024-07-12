@@ -53,7 +53,7 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDel
         .order("clients(address_postcode)");
 
     if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: Parcels", error);
+        const logId = await logErrorReturnLogId("Error with fetch: Parcels", { error });
         return { data: null, error: { type: "parcelFetchFailed", logId: logId } };
     }
 
