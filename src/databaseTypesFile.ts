@@ -637,27 +637,39 @@ export type Database = {
       }
       profiles: {
         Row: {
+          created_at: string | null
+          email: string | null
           first_name: string | null
           last_name: string | null
+          last_sign_in_at: string | null
           primary_key: string
           role: Database["public"]["Enums"]["role"]
           telephone_number: string | null
+          updated_at: string | null
           user_id: string | null
         }
         Insert: {
+          created_at?: string | null
+          email?: string | null
           first_name?: string | null
           last_name?: string | null
+          last_sign_in_at?: string | null
           primary_key?: string
           role: Database["public"]["Enums"]["role"]
           telephone_number?: string | null
+          updated_at?: string | null
           user_id?: string | null
         }
         Update: {
+          created_at?: string | null
+          email?: string | null
           first_name?: string | null
           last_name?: string | null
+          last_sign_in_at?: string | null
           primary_key?: string
           role?: Database["public"]["Enums"]["role"]
           telephone_number?: string | null
+          updated_at?: string | null
           user_id?: string | null
         }
         Relationships: [

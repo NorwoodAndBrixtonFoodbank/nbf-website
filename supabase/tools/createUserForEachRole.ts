@@ -34,7 +34,7 @@ async function createUserForEachRole(): Promise<void> {
         role: "volunteer",
         firstName: "volunteer",
         lastName: "person",
-        telephoneNumber: "078888888888",
+        telephoneNumber: "020866666666",
     });
     await createUser(supabase, {
         email: "manager@example.com",
@@ -42,7 +42,7 @@ async function createUserForEachRole(): Promise<void> {
         role: "manager",
         firstName: "manager",
         lastName: "person",
-        telephoneNumber: "078888888888",
+        telephoneNumber: "075555555555",
     });
     await createUser(supabase, {
         email: "staff@example.com",
@@ -50,7 +50,7 @@ async function createUserForEachRole(): Promise<void> {
         role: "staff",
         firstName: "staff",
         lastName: "person",
-        telephoneNumber: "078888888888",
+        telephoneNumber: "074444444444",
     });
 }
 
@@ -69,12 +69,15 @@ async function createUser(supabase: SupabaseClient, userProfile: userProfile): P
     }
 
     if (data) {
+        const nowTimestamp = new Date().toISOString();
         const { error } = await supabase.from("profiles").insert({
             user_id: data.user.id,
             role: userProfile.role,
             first_name: userProfile.firstName,
             last_name: userProfile.lastName,
             telephone_number: userProfile.telephoneNumber,
+            email: userProfile.email,
+            created_at: nowTimestamp,
         });
         if (error) {
             console.log(

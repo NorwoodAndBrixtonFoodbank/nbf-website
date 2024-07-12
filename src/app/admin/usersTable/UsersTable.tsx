@@ -17,7 +17,7 @@ import { usersTableHeaderKeysAndLabels } from "./headers";
 import { UserRow, UsersFilters, UsersSortState } from "./types";
 import { usersSortableColumns } from "./sortableColumns";
 import { userTableColumnDisplayFunctions } from "./format";
-import { DbUserRow } from "@/databaseUtils";
+import { Schema } from "@/databaseUtils";
 
 const UsersTable: React.FC = () => {
     const [userToDelete, setUserToDelete] = useState<UserRow | null>(null);
@@ -126,11 +126,11 @@ const UsersTable: React.FC = () => {
     return (
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
-            <ServerPaginatedTable<UserRow, DbUserRow, string | string[]>
+            <ServerPaginatedTable<UserRow, Schema["profiles"], string | string[]>
                 dataPortion={users}
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
                 columnDisplayFunctions={userTableColumnDisplayFunctions}
-                toggleableHeaders={["userId", "createdAt", "updatedAt"]}
+                toggleableHeaders={["userId", "createdAt", "lastSignInAt", "updatedAt"]}
                 defaultShownHeaders={[
                     "firstName",
                     "lastName",
@@ -138,7 +138,7 @@ const UsersTable: React.FC = () => {
                     "email",
                     "telephoneNumber",
                     "createdAt",
-                    "updatedAt",
+                    "lastSignInAt",
                 ]}
                 checkboxConfig={{ displayed: false }}
                 paginationConfig={{
