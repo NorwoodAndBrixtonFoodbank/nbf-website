@@ -64,6 +64,8 @@ const AuditLogTable: React.FC = () => {
             .subscribe((status, err) => {
                 if (subscriptionStatusRequiresErrorMessage(status, err, "audit_log")) {
                     setErrorMessage("Error fetching data, please reload");
+                } else {
+                    setErrorMessage(null);
                 }
             });
 

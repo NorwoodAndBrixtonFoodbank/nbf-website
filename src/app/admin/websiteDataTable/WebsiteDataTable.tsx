@@ -72,8 +72,11 @@ const WebsiteDataTable: React.FC = () => {
                 fetchAndSetWebsiteData
             )
             .subscribe((status, err) => {
-                subscriptionStatusRequiresErrorMessage(status, err, "website_data") &&
+                if (subscriptionStatusRequiresErrorMessage(status, err, "website_data")) {
                     setErrorMessage("Error fetching data, please reload");
+                } else {
+                    setErrorMessage(null);
+                }
             });
         return () => {
             void supabase.removeChannel(subscriptionChannel);

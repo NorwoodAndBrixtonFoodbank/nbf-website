@@ -114,8 +114,11 @@ const UsersTable: React.FC = () => {
                 fetchAndDisplayUserData
             )
             .subscribe((status, err) => {
-                subscriptionStatusRequiresErrorMessage(status, err, "profiles") &&
+                if (subscriptionStatusRequiresErrorMessage(status, err, "profiles")) {
                     setErrorMessage("Error fetching users data, please reload");
+                } else {
+                    setErrorMessage(null);
+                }
             });
 
         return () => {

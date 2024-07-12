@@ -114,8 +114,11 @@ const ClientsPage: React.FC = () => {
                 fetchAndDisplayClientsData
             )
             .subscribe((status, err) => {
-                subscriptionStatusRequiresErrorMessage(status, err, "clients and related") &&
+                if (subscriptionStatusRequiresErrorMessage(status, err, "clients and related")) {
                     setErrorMessage("Error fetching data, please reload");
+                } else {
+                    setErrorMessage(null);
+                }
             });
 
         return () => {
