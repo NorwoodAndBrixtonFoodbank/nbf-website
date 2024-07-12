@@ -710,6 +710,24 @@ export type Database = {
         }
         Relationships: []
       }
+      wiki: {
+        Row: {
+          content: string
+          order: number
+          title: string
+        }
+        Insert: {
+          content?: string
+          order?: number
+          title?: string
+        }
+        Update: {
+          content?: string
+          order?: number
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       audit_log_plus: {
@@ -1039,6 +1057,10 @@ export type Database = {
         Returns: Database["public"]["CompositeTypes"]["update_client_result"]
       }
       user_is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      user_is_admin_or_manager: {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
