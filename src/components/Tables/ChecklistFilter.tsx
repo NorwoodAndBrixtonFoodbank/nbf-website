@@ -4,7 +4,10 @@ import React from "react";
 import CheckboxGroupPopup from "../DataInput/CheckboxGroupPopup";
 import { ServerSideFilter, ServerSideFilterMethod } from "./Filters";
 
-interface ChecklistFilterProps<Data, DbData extends Record<string, any> = {}> {
+interface ChecklistFilterProps<
+    Data,
+    DbData extends Record<string, unknown> = Record<string, never>,
+> {
     key: keyof Data;
     filterLabel: string;
     itemLabelsAndKeys: [string, string][];
@@ -12,7 +15,10 @@ interface ChecklistFilterProps<Data, DbData extends Record<string, any> = {}> {
     method: ServerSideFilterMethod<DbData, string[]>;
 }
 
-export const serverSideChecklistFilter = <Data, DbData extends Record<string, any> = {}>({
+export const serverSideChecklistFilter = <
+    Data,
+    DbData extends Record<string, unknown> = Record<string, never>,
+>({
     key,
     filterLabel,
     itemLabelsAndKeys,
@@ -29,7 +35,7 @@ export const serverSideChecklistFilter = <Data, DbData extends Record<string, an
         filterComponent: function (
             state: string[],
             setState: (state: string[]) => void
-        ): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
+        ): React.ReactNode {
             const onChangeCheckbox = (event: React.ChangeEvent<HTMLInputElement>): void => {
                 const checkboxKey = event.target.name as string;
                 if (event.target.checked) {

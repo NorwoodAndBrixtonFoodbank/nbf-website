@@ -8,6 +8,9 @@ import {
     GetClientsCountReturnType,
     GetClientsReturnType,
 } from "./types";
+import { DbQuery } from "@/components/Tables/Filters";
+import { DbClientRow } from "@/databaseUtils";
+import { PostgrestError } from "@supabase/supabase-js";
 
 const getClientsDataAndCount = async (
     supabase: Supabase,
@@ -17,10 +20,13 @@ const getClientsDataAndCount = async (
     sortState: ClientsSortState,
     abortSignal: AbortSignal
 ): Promise<GetClientsReturnType> => {
-    let query = supabase.from("clients_plus").select("*").eq("is_active", true);
+    let query = supabase
+        .from("clients_plus")
+        .select("*")
+        .eq("is_active", true) as DbQuery<DbClientRow>;
 
     if (sortState.sortEnabled && sortState.column.sortMethod) {
-        query = sortState.column.sortMethod(query, sortState.sortDirection);
+        query = sortState.column.sortMethod(sortState.sortDirection, query);
     } else {
         query.order("full_name");
     }
@@ -34,7 +40,10 @@ const getClientsDataAndCount = async (
 
     query.abortSignal(abortSignal);
 
-    const { data: clients, error: clientError } = await query;
+    const { data: clients, error: clientError } = (await query) as {
+        data: DbClientRow[];
+        error: PostgrestError | null;
+    };
 
     if (clientError) {
         if (abortSignal.aborted) {
@@ -80,7 +89,7 @@ const getClientsCount = async (
     let query = supabase
         .from("clients_plus")
         .select("*", { count: "exact", head: true })
-        .eq("is_active", true);
+        .eq("is_active", true) as DbQuery<DbClientRow>;
 
     filters.forEach((filter) => {
         query = filter.method(query, filter.state);

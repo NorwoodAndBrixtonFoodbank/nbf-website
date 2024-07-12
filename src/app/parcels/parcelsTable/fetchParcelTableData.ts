@@ -6,7 +6,6 @@ import { DbParcelRow } from "@/databaseUtils";
 import {
     ParcelsFilters,
     ParcelsSortState,
-    ParcelsFilter,
     GetDbParcelDataResult,
     GetParcelDataAndCountResult,
     GetParcelDataAndCountErrorType,
@@ -14,11 +13,13 @@ import {
     ParcelStatusesReturnType,
     FetchClientIdResult,
     ParcelPostcodeResult,
+    ParcelsFiltersAllStates,
 } from "./types";
 import { checkForCongestionCharge, CongestionChargeReturnType } from "@/common/congestionCharges";
 import convertParcelDbtoParcelRow from "./convertParcelDBtoParcelRow";
 import { StatusType } from "@/app/parcels/ActionBar/Statuses";
 import { defaultParcelsSort, defaultParcelsSortConfig } from "./sortableColumns";
+import { DbQuery } from "@/components/Tables/Filters";
 
 const getCongestionChargeDetailsForParcelsTable = async (
     processingData: DbParcelRow[]
@@ -31,22 +32,24 @@ const getCongestionChargeDetailsForParcelsTable = async (
     return await checkForCongestionCharge(postcodes);
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getParcelsQuery = (
     supabase: Supabase,
     filters: ParcelsFilters,
     sortState: ParcelsSortState
-) => {
-    let query = supabase.from("parcels_plus").select("*");
+): DbQuery<DbParcelRow> => {
+    let query = supabase.from("parcels_plus").select("*") as DbQuery<DbParcelRow>;
 
-    filters.forEach((filter: ParcelsFilter<any>) => {
-        query = filter.method(query, filter.state);
+    filters.forEach((filter: ParcelsFiltersAllStates) => {
+        // We know that filter.method and filter.state are compatible, but it doesn't work with filter defined
+        // through interfaces. Ideally we would rewrite filters to be classes so it's all consistent.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        query = filter.method(query, filter.state as any);
     });
 
     if (sortState.sortEnabled && sortState.column.sortMethod) {
-        query = sortState.column.sortMethod(query, sortState.sortDirection);
+        query = sortState.column.sortMethod(sortState.sortDirection, query);
     } else {
-        query = defaultParcelsSort(query, defaultParcelsSortConfig.defaultSortDirection);
+        query = defaultParcelsSort(defaultParcelsSortConfig.defaultSortDirection, query);
     }
 
     query = query.order("parcel_id");
@@ -66,12 +69,15 @@ const fetchParcelsDbRows = async (
     query = query.range(startIndex, endIndex);
     query = query.abortSignal(abortSignal);
 
-    const { data, error } = await query;
+    const { data, error } = (await query) as {
+        data: DbParcelRow[];
+        error: Error | null;
+    };
 
     if (error) {
         const logId = abortSignal.aborted
-            ? await logInfoReturnLogId("Aborted fetch: parcel table", error)
-            : await logErrorReturnLogId("Error with fetch: parcel table", error);
+            ? await logInfoReturnLogId("Aborted fetch: parcel table", {}, error)
+            : await logErrorReturnLogId("Error with fetch: parcel table", {}, error);
 
         return {
             parcels: null,
@@ -169,10 +175,15 @@ const getParcelsCount = async (
     filters: ParcelsFilters,
     abortSignal: AbortSignal
 ): Promise<number> => {
-    let query = supabase.from("parcels_plus").select("*", { count: "exact", head: true });
+    let query = supabase
+        .from("parcels_plus")
+        .select("*", { count: "exact", head: true }) as DbQuery<DbParcelRow>;
 
-    filters.forEach((filter: ParcelsFilter<any>) => {
-        query = filter.method(query, filter.state);
+    filters.forEach((filter: ParcelsFiltersAllStates) => {
+        // We know that filter.method and filter.state are compatible, but it doesn't work with filter defined
+        // through interfaces. Ideally we would rewrite filters to be classes so it's all consistent.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        query = filter.method(query, filter.state as any);
     });
 
     query = query.abortSignal(abortSignal);
@@ -204,9 +215,12 @@ export const getParcelIds = async (
 ): Promise<string[]> => {
     const query = getParcelsQuery(supabase, filters, sortState);
 
-    const { data, error } = await query;
+    const { data, error } = (await query) as {
+        data: DbParcelRow[];
+        error: Error | null;
+    };
     if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch", error);
+        const logId = await logErrorReturnLogId("Error with fetch", {}, error);
         throw new DatabaseError("fetch", "parcels", logId);
     }
 
@@ -227,9 +241,12 @@ export const getParcelsByIds = async (
         query.in("parcel_id", parcelIds);
     }
 
-    const { data, error } = await query;
+    const { data, error } = (await query) as {
+        data: DbParcelRow[];
+        error: Error | null;
+    };
     if (error) {
-        const logId = await logErrorReturnLogId("Error with fetch: parcel table", error);
+        const logId = await logErrorReturnLogId("Error with fetch: parcel table", {}, error);
         throw new DatabaseError("fetch", "parcel table", logId);
     }
 

@@ -8,7 +8,7 @@ import {
 } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { RoleUpdateContext } from "@/app/roles";
 import StyleManager from "@/app/themes";
-const StyledNavigationBar: React.FC<{}> = () => {
+const StyledNavigationBar: React.FC = () => {
     return (
         <StyleManager>
             <NavigationBar />
@@ -17,16 +17,16 @@ const StyledNavigationBar: React.FC<{}> = () => {
 };
 describe("<NavigationBar />", () => {
     const router: AppRouterInstance = {
-        push: () => {},
-        back: () => {},
-        forward: () => {},
-        replace: () => {},
-        prefetch: () => {},
-        refresh: () => {},
+        push: () => undefined,
+        back: () => undefined,
+        forward: () => undefined,
+        replace: () => undefined,
+        prefetch: () => undefined,
+        refresh: () => undefined,
     };
 
     const role = "admin";
-    const setRole = (): void => {};
+    const setRole = (): void => undefined;
 
     const RouterWrappedNavBar = (
         <RoleUpdateContext.Provider value={{ role, setRole }}>

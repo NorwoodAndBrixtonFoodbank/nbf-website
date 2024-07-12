@@ -42,7 +42,7 @@ const getCollectionCentreNameOrErrorMessage = async (
 };
 
 const getErrorMessage = (error: CollectionCentreNameError): string => {
-    let errorMessage: string = "";
+    let errorMessage = "";
     switch (error.type) {
         case "failedCollectionCentreNameFetch":
             errorMessage = "Failed to fetch collection centre name.";

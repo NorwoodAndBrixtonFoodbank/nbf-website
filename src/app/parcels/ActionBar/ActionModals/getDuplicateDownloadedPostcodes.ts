@@ -1,6 +1,6 @@
 import { getParcelPostcodesByEvent } from "@/app/parcels/parcelsTable/fetchParcelTableData";
 
-type DataCallbackType = (postcodes: (string | null)[]) => any;
+type DataCallbackType = (postcodes: (string | null)[]) => void;
 type ErrorCallbackType = (msg: string) => void;
 
 export const getDuplicateDownloadedPostcodes = async (

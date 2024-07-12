@@ -42,7 +42,7 @@ export type FetchParcelResponse =
     | { data: null; error: FetchParcelError };
 
 export type FetchParcelErrorType = "failedToFetchParcel" | "noMatchingParcels";
-export interface FetchParcelError {
+export interface FetchParcelError extends Record<string, string> {
     type: FetchParcelErrorType;
     logId: string;
 }
@@ -118,11 +118,11 @@ export const getActiveCollectionCentres = async (
         return { data: null, error: { type: "collectionCentresFetchFailed", logId: logId } };
     }
 
-    const collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues = data!
+    const collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues = data
         .filter((collectionCentre) => collectionCentre.name !== "Delivery")
         .map((collectionCentre) => [collectionCentre.name, collectionCentre.primary_key]);
 
-    const deliveryPrimaryKey = data!.filter(
+    const deliveryPrimaryKey = data.filter(
         (collectionCentre) => collectionCentre.name === "Delivery"
     )[0].primary_key;
 

@@ -19,9 +19,18 @@ export default defineConfig({
                 },
             });
 
+            if (
+                process.env.NEXT_PUBLIC_CYPRESS_TEST_USER === null ||
+                process.env.NEXT_PUBLIC_CYPRESS_TEST_PASS === null
+            ) {
+                throw new Error(
+                    "CYPRESS_TEST_USER and CYPRESS_TEST_PASS must be set in .env.local"
+                );
+            }
+
             config.env = {
-                TEST_USER: process.env.NEXT_PUBLIC_CYPRESS_TEST_USER!,
-                TEST_PASS: process.env.NEXT_PUBLIC_CYPRESS_TEST_PASS!,
+                TEST_USER: process.env.NEXT_PUBLIC_CYPRESS_TEST_USER,
+                TEST_PASS: process.env.NEXT_PUBLIC_CYPRESS_TEST_PASS,
             };
 
             return config;

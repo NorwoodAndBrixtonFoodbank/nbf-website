@@ -7,11 +7,11 @@ import { v4 as uuid } from "uuid";
 
 const logger = getLogger();
 
-type LogEvent = (message: string, meta?: Record<string, any>) => Promise<string>;
+type LogEvent = (message: string, meta?: Record<string, unknown>, error?: Error) => Promise<string>;
 
-export const logErrorReturnLogId: LogEvent = (message, meta) => {
+export const logErrorReturnLogId: LogEvent = (message, meta, error) => {
     const logId = uuid();
-    logger.error(message, { ...meta, logId });
+    logger.error(message, { ...meta, logId, error });
     return Promise.resolve(logId);
 };
 

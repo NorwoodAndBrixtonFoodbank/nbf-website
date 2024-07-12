@@ -25,7 +25,7 @@ export async function getCurrentUser(): Promise<CurrentUserResponse> {
     const { data, error } = await supabase.auth.getUser();
 
     if (error) {
-        const logId = await logErrorReturnLogId("error with auth getUser", error);
+        const logId = await logErrorReturnLogId("error with auth getUser", {}, error);
         return { data: null, error: { type: "userFetchFailed", logId: logId } };
     }
 

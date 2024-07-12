@@ -3,7 +3,7 @@ import { ServerSideFilter, ServerSideFilterMethod } from "./Filters";
 import DateRangeInputs, { DateRangeState } from "../DateInputs/DateRangeInputs";
 import dayjs from "dayjs";
 
-interface DateFilterProps<Data, DbData extends Record<string, any>> {
+interface DateFilterProps<Data, DbData extends Record<string, unknown>> {
     key: keyof Data;
     label: string;
     method: ServerSideFilterMethod<DbData, DateRangeState>;
@@ -24,7 +24,7 @@ const areDaysIdentical = (dayA: dayjs.Dayjs | null, dayB: dayjs.Dayjs | null): b
     return dayA && dayB ? dayA.isSame(dayB) : dayA === dayB;
 };
 
-export const serverSideDateFilter = <Data, DbData extends Record<string, any>>({
+export const serverSideDateFilter = <Data, DbData extends Record<string, unknown>>({
     key,
     method,
     initialState,
@@ -38,8 +38,8 @@ export const serverSideDateFilter = <Data, DbData extends Record<string, any>>({
         filterComponent: function (
             state: DateRangeState,
             setState: (state: DateRangeState) => void
-        ): React.ReactElement<any, string | React.JSXElementConstructor<any>> {
-            return <DateRangeInputs range={state} setRange={setState}></DateRangeInputs>;
+        ): React.ReactNode {
+            return <DateRangeInputs range={state} setRange={setState} />;
         },
     };
 };

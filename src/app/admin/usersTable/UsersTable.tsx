@@ -126,7 +126,7 @@ const UsersTable: React.FC = () => {
     return (
         <>
             {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
-            <ServerPaginatedTable<UserRow, DbUserRow>
+            <ServerPaginatedTable<UserRow, DbUserRow, string | string[]>
                 dataPortion={users}
                 headerKeysAndLabels={usersTableHeaderKeysAndLabels}
                 columnDisplayFunctions={userTableColumnDisplayFunctions}

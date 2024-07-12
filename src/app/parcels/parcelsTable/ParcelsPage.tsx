@@ -44,8 +44,9 @@ import { PreTableControls, parcelTableColumnStyleOptions } from "./styles";
 import { DbParcelRow } from "@/databaseUtils";
 import { searchForBreakPoints } from "./conditionalStyling";
 import { Dayjs } from "dayjs";
+import { DateRangeState } from "@/components/DateInputs/DateRangeInputs";
 
-const ParcelsPage: React.FC<{}> = () => {
+const ParcelsPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [parcelsDataPortion, setParcelsDataPortion] = useState<ParcelsTableRow[]>([]);
     const [filteredParcelCount, setFilteredParcelCount] = useState<number>(0);
@@ -74,8 +75,12 @@ const ParcelsPage: React.FC<{}> = () => {
     const startPoint = (currentPage - 1) * parcelCountPerPage;
     const endPoint = currentPage * parcelCountPerPage - 1;
 
-    const [primaryFilters, setPrimaryFilters] = useState<ParcelsFilter<any>[]>([]);
-    const [additionalFilters, setAdditionalFilters] = useState<ParcelsFilter<any>[]>([]);
+    const [primaryFilters, setPrimaryFilters] = useState<
+        (ParcelsFilter<string> | ParcelsFilter<DateRangeState> | ParcelsFilter<string[]>)[]
+    >([]);
+    const [additionalFilters, setAdditionalFilters] = useState<
+        (ParcelsFilter<string> | ParcelsFilter<DateRangeState> | ParcelsFilter<string[]>)[]
+    >([]);
 
     const [areFiltersLoadingForFirstTime, setAreFiltersLoadingForFirstTime] =
         useState<boolean>(true);
@@ -313,7 +318,11 @@ const ParcelsPage: React.FC<{}> = () => {
                 <>
                     {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
                     <TableSurface>
-                        <ServerPaginatedTable<ParcelsTableRow, DbParcelRow>
+                        <ServerPaginatedTable<
+                            ParcelsTableRow,
+                            DbParcelRow,
+                            string | DateRangeState | string[]
+                        >
                             dataPortion={parcelsDataPortion}
                             isLoading={isLoading}
                             paginationConfig={{

@@ -75,7 +75,7 @@ const formatListData = (listsData: Schema["lists"][]): ListRow[] => {
     );
 };
 
-const ListsPage: React.FC<{}> = () => {
+const ListsPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [listData, setListData] = useState<ListRow[]>([]);
     const [comment, setComment] = useState("");

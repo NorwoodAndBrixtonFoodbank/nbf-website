@@ -15,6 +15,7 @@ import "@cypress/code-coverage/support";
 import "cypress-axe";
 
 declare global {
+    // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace Cypress {
         /* eslint-disable no-unused-vars */
         interface Chainable {
@@ -26,7 +27,7 @@ declare global {
     }
 }
 
-const loginWithRetry = (iteration: number = 0): void => {
+const loginWithRetry = (iteration = 0): void => {
     if (iteration >= 4) {
         // This only ever seems to happen on GH Actions on the first test, so we can just log and move on
         // Redirects are tested by the auth spec

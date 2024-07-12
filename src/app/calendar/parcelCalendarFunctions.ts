@@ -26,12 +26,15 @@ export const parcelsToCollectionEvents = (
     colorMap: LocationColorMap
 ): CalendarEvent[] => {
     return parcels.map((parcel) => {
-        const fullName = parcel.clients!.full_name ?? "";
+        const fullName = parcel.clients?.full_name ?? "";
 
-        const collectionStart = new Date(parcel.collection_datetime!);
+        if (!parcel.collection_datetime) {
+            throw new Error(`Parcel ${parcel.primary_key} has no collection_datetime`);
+        }
+        const collectionStart = new Date(parcel.collection_datetime);
         const collectionEnd = new Date(collectionStart.getTime() + COLLECTION_DURATION_MS);
 
-        const collectionCentre = parcel.collection_centres!.name ?? "default";
+        const collectionCentre = parcel.collection_centres?.name ?? "default";
         const location = collectionCentre !== "default" ? `[${collectionCentre}]` : "";
 
         const eventColor = colorMap[collectionCentre] ?? colorMap.default;

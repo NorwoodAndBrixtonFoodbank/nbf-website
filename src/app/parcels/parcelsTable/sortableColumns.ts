@@ -5,7 +5,7 @@ import { SortOrder } from "react-data-table-component";
 const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] = [
     {
         key: "fullName",
-        sortMethod: (query, sortDirection) =>
+        sortMethod: (sortDirection, query) =>
             query
                 .order("client_is_active", { ascending: sortDirection !== "asc" })
                 .order("client_full_name", { ascending: sortDirection === "asc" })
@@ -18,7 +18,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
     },
     {
         key: "familyCategory",
-        sortMethod: (query, sortDirection) =>
+        sortMethod: (sortDirection, query) =>
             query
                 .order("client_is_active", { ascending: sortDirection !== "asc" })
                 .order("family_count", { ascending: sortDirection === "asc" })
@@ -31,7 +31,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
     },
     {
         key: "addressPostcode",
-        sortMethod: (query, sortDirection) =>
+        sortMethod: (sortDirection, query) =>
             query
                 .order("client_is_active", { ascending: sortDirection !== "asc" })
                 .order("client_address_postcode", { ascending: sortDirection === "asc" })
@@ -43,7 +43,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
     },
     {
         key: "phoneNumber",
-        sortMethod: (query, sortDirection) =>
+        sortMethod: (sortDirection, query) =>
             query
                 .order("client_is_active", { ascending: sortDirection !== "asc" })
                 .order("client_phone_number", { ascending: sortDirection === "asc" })
@@ -56,7 +56,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
     },
     {
         key: "voucherNumber",
-        sortMethod: (query, sortDirection) =>
+        sortMethod: (sortDirection, query) =>
             query
                 .order("voucher_number", { ascending: sortDirection === "asc" })
                 .order("packing_date")
@@ -69,7 +69,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
     },
     {
         key: "deliveryCollection",
-        sortMethod: (query, sortDirection) =>
+        sortMethod: (sortDirection, query) =>
             query
                 .order("is_delivery", { ascending: sortDirection === "asc" })
                 .order("collection_centre_name")
@@ -81,7 +81,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
     },
     {
         key: "packingDate",
-        sortMethod: (query, sortDirection) =>
+        sortMethod: (sortDirection, query) =>
             query
                 .order("packing_date", { ascending: sortDirection === "asc" })
                 .order("packing_slot_order")
@@ -93,7 +93,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
     },
     {
         key: "packingSlot",
-        sortMethod: (query, sortDirection) =>
+        sortMethod: (sortDirection, query) =>
             query
                 .order("packing_slot_order", { ascending: sortDirection === "asc" })
                 .order("packing_date")
@@ -105,7 +105,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
     },
     {
         key: "lastStatus",
-        sortMethod: (query, sortDirection) =>
+        sortMethod: (sortDirection, query) =>
             query
                 .order("last_status_workflow_order", { ascending: sortDirection === "asc" })
                 .order("packing_date")
@@ -118,7 +118,7 @@ const parcelsSortableColumns: SortOptions<ParcelsTableRow, ParcelsSortMethod>[] 
     },
     {
         key: "createdAt",
-        sortMethod: (query, sortDirection) =>
+        sortMethod: (sortDirection, query) =>
             query
                 .order("created_at", { ascending: sortDirection === "asc" })
                 .order("packing_date")
@@ -139,6 +139,6 @@ export const defaultParcelsSortConfig: DefaultSortConfig = {
 export const defaultParcelsSort: ParcelsSortMethod =
     parcelsSortableColumns.find(
         (column) => column.key === defaultParcelsSortConfig.defaultColumnHeaderKey
-    )?.sortMethod ?? ((query) => query);
+    )?.sortMethod ?? ((_, query) => query);
 
 export default parcelsSortableColumns;

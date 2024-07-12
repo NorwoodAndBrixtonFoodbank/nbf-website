@@ -114,7 +114,7 @@ const OneLine: React.FC<OneLineProps> = ({ header, value }) => {
     );
 };
 
-const TableHeadings: React.FC<{}> = () => {
+const TableHeadings: React.FC = () => {
     return (
         <View style={[styles.flexRow, styles.tableRow]}>
             <View style={styles.tableDone}>

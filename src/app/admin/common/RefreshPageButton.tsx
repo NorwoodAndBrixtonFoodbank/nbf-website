@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons/faArrowsRotate";
 import React from "react";
 
-const RefreshPageButton: React.FC<{}> = () => {
+const RefreshPageButton: React.FC = () => {
     const refreshPage = (): void => {
         window.location.reload();
     };

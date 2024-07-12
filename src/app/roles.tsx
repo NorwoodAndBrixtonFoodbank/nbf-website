@@ -55,7 +55,9 @@ interface RoleUpdateContextType {
 
 export const RoleUpdateContext = createContext<RoleUpdateContextType>({
     role: null,
-    setRole: (_role) => {},
+    setRole: (_role) => {
+        throw new Error("Context implementation not provided");
+    },
 });
 
 export const RoleManager: React.FC<Props> = ({ children }) => {

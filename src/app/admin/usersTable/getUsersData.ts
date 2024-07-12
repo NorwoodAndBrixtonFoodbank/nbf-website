@@ -3,13 +3,15 @@ import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
 import {
-    UsersFilter,
     UsersSortState,
     GetUsersReturnType,
     GetUserCountReturnType,
     UserRow,
     UsersFilters,
+    UsersFilterAllStates,
 } from "./types";
+import { DbQuery } from "@/components/Tables/Filters";
+import { DbUserRow } from "@/databaseUtils";
 
 export const getUsersDataAndCount = async (
     supabase: Supabase,
@@ -19,10 +21,10 @@ export const getUsersDataAndCount = async (
     sortState: UsersSortState,
     abortSignal: AbortSignal
 ): Promise<GetUsersReturnType> => {
-    let query = supabase.from("users_plus").select("*");
+    let query = supabase.from("users_plus").select("*") as DbQuery<DbUserRow>;
 
     if (sortState.sortEnabled && sortState.column.sortMethod) {
-        query = sortState.column.sortMethod(query, sortState.sortDirection);
+        query = sortState.column.sortMethod(sortState.sortDirection, query);
     } else {
         query = query.order("first_name");
     }
@@ -32,7 +34,10 @@ export const getUsersDataAndCount = async (
 
     query.abortSignal(abortSignal);
 
-    const { data: users, error: userError } = await query;
+    const { data: users, error: userError } = (await query) as {
+        data: DbUserRow[];
+        error: Error | null;
+    };
 
     if (userError) {
         if (abortSignal.aborted) {
@@ -79,7 +84,9 @@ const getUsersCount = async (
     filters: UsersFilters,
     abortSignal: AbortSignal
 ): Promise<GetUserCountReturnType> => {
-    let query = supabase.from("users_plus").select("*", { count: "exact", head: true });
+    let query = supabase
+        .from("users_plus")
+        .select("*", { count: "exact", head: true }) as DbQuery<DbUserRow>;
 
     query = getQueryWithFiltersApplied(query, filters);
 
@@ -103,13 +110,16 @@ const getUsersCount = async (
 };
 
 function getQueryWithFiltersApplied(
-    originalQuery: PostgrestFilterBuilder<Database["public"], any, any>,
+    originalQuery: PostgrestFilterBuilder<Database["public"], Record<string, unknown>, unknown>,
     filters: UsersFilters
-): PostgrestFilterBuilder<Database["public"], any, any> {
+): PostgrestFilterBuilder<Database["public"], Record<string, unknown>, unknown> {
     let query = originalQuery;
 
-    filters.forEach((filter: UsersFilter<any>) => {
-        query = filter.method(query, filter.state);
+    filters.forEach((filter: UsersFilterAllStates) => {
+        // We know that filter.method and filter.state are compatible, but it doesn't work with filter defined
+        // through interfaces. Ideally we would rewrite filters to be classes so it's all consistent.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        query = filter.method(query, filter.state as any);
     });
 
     return query;

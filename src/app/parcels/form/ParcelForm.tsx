@@ -240,17 +240,21 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
         const packingDate = getDbDate(dayjs(fields.packingDate));
 
         let collectionDateTime = null;
-        if (fields.shippingMethod === "Collection") {
+        if (
+            fields.shippingMethod === "Collection" &&
+            fields.collectionDate &&
+            fields.collectionSlot
+        ) {
             collectionDateTime = mergeDateAndTime(
-                fields.collectionDate!,
-                fields.collectionSlot!
+                fields.collectionDate,
+                fields.collectionSlot
             ).toISOString();
         }
 
         const isDelivery = fields.shippingMethod === "Delivery";
 
         const parcelRecord = {
-            client_id: (clientId || fields.clientId)!,
+            client_id: clientId || fields.clientId || "",
             packing_date: packingDate,
             packing_slot: fields.packingSlot,
             voucher_number: fields.voucherNumber,

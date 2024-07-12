@@ -6,6 +6,8 @@ import {
     GetReportsReturnType,
 } from "./types";
 import { Supabase } from "@/supabaseUtils";
+import { DbQuery } from "@/components/Tables/Filters";
+import { DbReportRow } from "@/databaseUtils";
 
 const getReportsDataAndCount = async (
     supabase: Supabase,
@@ -14,10 +16,10 @@ const getReportsDataAndCount = async (
     sortState: ReportsSortState,
     abortSignal: AbortSignal
 ): Promise<GetReportsReturnType> => {
-    let query = supabase.from("reports").select("*");
+    let query = supabase.from("reports").select("*") as DbQuery<DbReportRow>;
 
     if (sortState.sortEnabled && sortState.column.sortMethod) {
-        query = sortState.column.sortMethod(query, sortState.sortDirection);
+        query = sortState.column.sortMethod(sortState.sortDirection, query);
     } else {
         query.order("week_commencing", { ascending: false });
     }
@@ -25,7 +27,10 @@ const getReportsDataAndCount = async (
     query.range(startIndex, endIndex);
     query.abortSignal(abortSignal);
 
-    const { data: reports, error: reportsError } = await query;
+    const { data: reports, error: reportsError } = (await query) as {
+        data: DbReportRow[];
+        error: Error | null;
+    };
 
     if (reportsError) {
         if (abortSignal.aborted) {

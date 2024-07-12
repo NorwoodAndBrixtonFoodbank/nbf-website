@@ -10,7 +10,7 @@ import {
 } from "./Filters";
 import { TableHeaders } from "./Table";
 
-interface ServerSideTextFilterProps<Data, DbData extends Record<string, any>> {
+interface ServerSideTextFilterProps<Data, DbData extends Record<string, unknown>> {
     key: keyof Data;
     headers: TableHeaders<Data>;
     label: string;
@@ -24,7 +24,7 @@ const TextFilterStyling = styled.div`
     }
 `;
 
-export const buildServerSideTextFilter = <Data, DbData extends Record<string, any>>({
+export const buildServerSideTextFilter = <Data, DbData extends Record<string, unknown>>({
     key,
     label,
     initialValue = "",

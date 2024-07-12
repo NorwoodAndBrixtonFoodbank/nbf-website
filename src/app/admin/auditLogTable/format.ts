@@ -8,7 +8,7 @@ export const auditLogTableColumnDisplayFunctions = {
 };
 
 export const getAuditLogErrorMessage = (error: AuditLogError | AuditLogCountError): string => {
-    let errorMessage: string = "";
+    let errorMessage = "";
     switch (error.type) {
         case "failedAuditLogFetch":
             errorMessage = "Failed to fetch audit log.";

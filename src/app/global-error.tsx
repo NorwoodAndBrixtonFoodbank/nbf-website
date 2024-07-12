@@ -8,7 +8,7 @@ import {
 } from "@/app/errorStylingandMessages";
 import LinkButton from "@/components/Buttons/LinkButton";
 
-const GlobalError: React.FC<{}> = () => {
+const GlobalError: React.FC = () => {
     return (
         <ErrorCenterer>
             <ErrorPanel elevation={5}>

@@ -52,7 +52,7 @@ const getProfileNameOrErrorMessage = async (
 };
 
 const getErrorMessage = (error: ProfileNameError): string => {
-    let errorMessage: string = "";
+    let errorMessage = "";
     switch (error.type) {
         case "failedProfileFetch":
             errorMessage = "Failed to fetch profile data.";

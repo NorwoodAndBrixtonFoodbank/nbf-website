@@ -39,7 +39,7 @@ const getEventNameOrErrorMessage = async (
 };
 
 const getErrorMessage = (error: EventNameError): string => {
-    let errorMessage: string = "";
+    let errorMessage = "";
     switch (error.type) {
         case "failedEventFetch":
             errorMessage = "Failed to fetch event data.";

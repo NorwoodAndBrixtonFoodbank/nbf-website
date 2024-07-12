@@ -39,7 +39,7 @@ const getPackingSlotNameOrErrorMessage = async (
 };
 
 const getErrorMessage = (error: PackingSlotNameError): string => {
-    let errorMessage: string = "";
+    let errorMessage = "";
     switch (error.type) {
         case "failedPackingSlotsFetch":
             errorMessage = "Failed to fetch packing slots name.";

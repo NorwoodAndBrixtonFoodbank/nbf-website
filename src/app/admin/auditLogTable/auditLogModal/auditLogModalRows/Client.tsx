@@ -47,7 +47,7 @@ const getClientLinkDetailsOrErrorMessage = async (
 };
 
 const getErrorMessage = (error: ClientLinkDetailsError): string => {
-    let errorMessage: string = "";
+    let errorMessage = "";
     switch (error.type) {
         case "failedClientFetch":
             errorMessage = "Failed to fetch client's details.";
