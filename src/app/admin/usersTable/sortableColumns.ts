@@ -37,4 +37,9 @@ export const usersSortableColumns: SortOptions<UserRow, UsersSortMethod>[] = [
         sortMethod: (sortDirection, query) =>
             query.order("updated_at", { ascending: sortDirection === "asc" }),
     },
+    {
+        key: "lastSignInAt",
+        sortMethod: (sortDirection, query) =>
+            query.order("last_sign_in_at", { ascending: sortDirection === "asc" }),
+    },
 ];

@@ -1,9 +1,9 @@
 import { serverSideChecklistFilter } from "@/components/Tables/ChecklistFilter";
-import { DbUserRow } from "@/databaseUtils";
 import { UserRow, UsersFilter, UsersFilterMethod, UsersFilters } from "./types";
 import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import { usersTableHeaderKeysAndLabels } from "./headers";
 import { allRoles } from "@/app/roles";
+import { Schema } from "@/databaseUtils";
 
 const firstNameSearch: UsersFilterMethod<string> = (query, state) => {
     if (state === "") {
@@ -30,7 +30,7 @@ const buildUserRoleFilter = (): UsersFilter<string[]> => {
         return query.in("role", state);
     };
 
-    const userRoleFilter = serverSideChecklistFilter<UserRow, DbUserRow>({
+    const userRoleFilter = serverSideChecklistFilter<UserRow, Schema["profiles"]>({
         key: "userRole",
         filterLabel: "User Role",
         itemLabelsAndKeys: allRoles.map((userRole) => [userRole, userRole]),

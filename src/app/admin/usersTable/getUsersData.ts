@@ -11,7 +11,7 @@ import {
     UsersFilterAllStates,
 } from "./types";
 import { DbQuery } from "@/components/Tables/Filters";
-import { DbUserRow } from "@/databaseUtils";
+import { Schema } from "@/databaseUtils";
 
 export const getUsersDataAndCount = async (
     supabase: Supabase,
@@ -21,7 +21,7 @@ export const getUsersDataAndCount = async (
     sortState: UsersSortState,
     abortSignal: AbortSignal
 ): Promise<GetUsersReturnType> => {
-    let query = supabase.from("users_plus").select("*") as DbQuery<DbUserRow>;
+    let query = supabase.from("profiles").select("*") as DbQuery<Schema["profiles"]>;
 
     if (sortState.sortEnabled && sortState.column.sortMethod) {
         query = sortState.column.sortMethod(sortState.sortDirection, query);
@@ -35,7 +35,7 @@ export const getUsersDataAndCount = async (
     query.abortSignal(abortSignal);
 
     const { data: users, error: userError } = (await query) as {
-        data: DbUserRow[];
+        data: Schema["profiles"][];
         error: Error | null;
     };
 
@@ -47,16 +47,14 @@ export const getUsersDataAndCount = async (
             return { error: { type: "abortedFetchingProfilesTable", logId }, data: null };
         }
 
-        const logId = await logErrorReturnLogId("Error with fetch: profiles table", {
-            error: userError,
-        });
+        const logId = await logErrorReturnLogId("Error with fetch: profiles table", {}, userError);
         return { error: { type: "failedToFetchProfilesTable", logId }, data: null };
     }
 
     const userData: UserRow[] = users.map((user) => {
         return {
             userId: user.user_id ?? "",
-            profileId: user.profile_id ?? "",
+            profileId: user.primary_key ?? "",
             firstName: user.first_name ?? "",
             lastName: user.last_name ?? "",
             userRole: user.role ?? "UNKNOWN",
@@ -64,6 +62,7 @@ export const getUsersDataAndCount = async (
             telephoneNumber: user.telephone_number ?? "-",
             createdAt: user.created_at ? Date.parse(user.created_at) : null,
             updatedAt: user.updated_at ? Date.parse(user.updated_at) : null,
+            lastSignInAt: user.last_sign_in_at ? Date.parse(user.last_sign_in_at) : null,
         };
     });
 
@@ -84,9 +83,9 @@ const getUsersCount = async (
     filters: UsersFilters,
     abortSignal: AbortSignal
 ): Promise<GetUserCountReturnType> => {
-    let query = supabase
-        .from("users_plus")
-        .select("*", { count: "exact", head: true }) as DbQuery<DbUserRow>;
+    let query = supabase.from("profiles").select("*", { count: "exact", head: true }) as DbQuery<
+        Schema["profiles"]
+    >;
 
     query = getQueryWithFiltersApplied(query, filters);
 
