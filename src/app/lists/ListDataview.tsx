@@ -28,6 +28,7 @@ export interface ListRow {
     primaryKey: string;
     rowOrder: number;
     itemName: string;
+    listType: "regular" | "hotel";
     "1": QuantityAndNotes;
     "2": QuantityAndNotes;
     "3": QuantityAndNotes;
@@ -91,6 +92,7 @@ export const listRowToListDB = (listRow: ListRow): Schema["lists"] => ({
     quantity_for_10: listRow[10].quantity,
     primary_key: listRow.primaryKey,
     row_order: listRow.rowOrder,
+    list_type: listRow.listType,
 });
 
 const displayQuantityAndNotes = (data: QuantityAndNotes): React.ReactElement => {
