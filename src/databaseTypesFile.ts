@@ -1027,6 +1027,7 @@ export type Database = {
     }
     Enums: {
       gender: "male" | "female" | "other"
+      list_type: "regular" | "hotel"
       role: "volunteer" | "admin" | "manager" | "staff"
     }
     CompositeTypes: {
