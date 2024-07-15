@@ -112,6 +112,8 @@ const ListsPage: React.FC = () => {
             .subscribe((status, err) => {
                 if (subscriptionStatusRequiresErrorMessage(status, err, "lists")) {
                     setErrorMessage("Failed to fetch lists data, please reload");
+                } else {
+                    setErrorMessage(null);
                 }
             });
         return () => {
