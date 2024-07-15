@@ -1,19 +1,13 @@
-const formatTimestamp = (timestamp: number): string => {
-    if (isNaN(timestamp)) {
-        return "-";
-    }
-
-    return new Date(timestamp).toLocaleString("en-gb");
-};
+import { formatTimestampAsDatetimeInUserTimezone } from "@/common/format";
 
 export const userTableColumnDisplayFunctions = {
     createdAt: (createdAt: number | null) => {
-        return createdAt === null ? "-" : formatTimestamp(createdAt);
+        return createdAt === null ? "-" : formatTimestampAsDatetimeInUserTimezone(createdAt);
     },
     updatedAt: (updatedAt: number | null) => {
-        return updatedAt === null ? "-" : formatTimestamp(updatedAt);
+        return updatedAt === null ? "-" : formatTimestampAsDatetimeInUserTimezone(updatedAt);
     },
     lastSignInAt: (lastSignInAt: number | null) => {
-        return lastSignInAt === null ? "-" : formatTimestamp(lastSignInAt);
+        return lastSignInAt === null ? "-" : formatTimestampAsDatetimeInUserTimezone(lastSignInAt);
     },
 };

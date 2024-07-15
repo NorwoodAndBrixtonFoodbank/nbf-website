@@ -2,6 +2,8 @@ import { Json } from "@/databaseTypesFile";
 import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 
+const localeCode = "en-GB";
+
 export const displayPostcodeForHomelessClient = "NFA";
 
 export const displayNameForDeletedClient = "Deleted Client";
@@ -24,23 +26,31 @@ export const formatDateToDate = (dateString: string | null): string => {
     if (dateString === null) {
         return "";
     }
-    return new Date(dateString).toLocaleString("en-GB", {
+    return new Date(dateString).toLocaleString(localeCode, {
         year: "numeric",
         month: "numeric",
         day: "numeric",
     });
 };
 
+export const formatTimestampAsDatetimeInUserTimezone = (timestamp: number): string => {
+    if (isNaN(timestamp)) {
+        return "-";
+    }
+
+    return new Date(timestamp).toLocaleString(localeCode);
+};
+
 export const formatDatetimeAsDate = (datetime: Date | string | null): string => {
     if (datetime instanceof Date) {
-        return datetime.toLocaleDateString("en-GB");
+        return datetime.toLocaleDateString(localeCode);
     }
 
     if (datetime === null || isNaN(Date.parse(datetime))) {
         return "-";
     }
 
-    return new Date(datetime).toLocaleDateString("en-GB");
+    return new Date(datetime).toLocaleDateString(localeCode);
 };
 
 export const formatDatetimeAsTime = (datetime: string | null): string => {
@@ -48,19 +58,19 @@ export const formatDatetimeAsTime = (datetime: string | null): string => {
         return "-";
     }
 
-    return new Date(datetime).toLocaleTimeString("en-GB");
+    return new Date(datetime).toLocaleTimeString(localeCode);
 };
 
 export const formatDateTime = (datetime: Date | string | null): string => {
     if (datetime instanceof Date) {
-        return datetime.toLocaleString("en-GB");
+        return datetime.toLocaleString(localeCode);
     }
 
     if (datetime === null || isNaN(Date.parse(datetime))) {
         return "-";
     }
 
-    return new Date(datetime).toLocaleString("en-GB");
+    return new Date(datetime).toLocaleString(localeCode);
 };
 
 export const getDbDate = (dateTime: Dayjs): string => dateTime.format("YYYY-MM-DD");
