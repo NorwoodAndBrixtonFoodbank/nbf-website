@@ -13,4 +13,7 @@ export const userTableColumnDisplayFunctions = {
     updatedAt: (updatedAt: number | null) => {
         return updatedAt === null ? "-" : formatTimestamp(updatedAt);
     },
+    lastSignInAt: (lastSignInAt: number | null) => {
+        return lastSignInAt === null ? "-" : formatTimestamp(lastSignInAt);
+    },
 };
