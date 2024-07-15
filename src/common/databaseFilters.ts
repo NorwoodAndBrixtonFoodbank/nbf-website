@@ -8,15 +8,16 @@ export const fullNameSearch = <DbData extends DbClientRow | DbParcelRow>(
     clientIsActiveColumnLabel: Extract<keyof DbData, "is_active" | "client_is_active">
 ): ServerSideFilterMethod<DbData, string> => {
     return (query, state) => {
-        if (state === "") {
+        const cleanState = state.replace(/[^a-zA-Z0-9 ]/g, "");
+        if (cleanState === "") {
             return query;
         }
-        if (parcelsPageDeletedClientDisplayName.toLowerCase().includes(state.toLowerCase())) {
+        if (parcelsPageDeletedClientDisplayName.toLowerCase().includes(cleanState.toLowerCase())) {
             return query.or(
-                `${fullNameColumnLabel}.ilike.%${state}%, ${clientIsActiveColumnLabel}.eq.false`
+                `${fullNameColumnLabel}.ilike.%${cleanState}%, ${clientIsActiveColumnLabel}.eq.false`
             );
         }
-        return query.ilike(`${fullNameColumnLabel}`, `%${state}%`);
+        return query.ilike(fullNameColumnLabel, `%${cleanState}%`);
     };
 };
 
@@ -36,7 +37,7 @@ export const postcodeSearch = <DbData extends DbClientRow | DbParcelRow>(
                 .or(`${postcodeColumnLabel}.ilike.%${state}%, ${postcodeColumnLabel}.is.null`)
                 .neq(clientIsActiveColumnLabel, false);
         }
-        return query.ilike(`${postcodeColumnLabel}`, `%${state}%`);
+        return query.ilike(postcodeColumnLabel, `%${state}%`);
     };
 };
 
@@ -53,6 +54,6 @@ export const phoneSearch = <DbData extends DbClientRow | DbParcelRow>(
                 `${phoneColumnLabel}.ilike.%${state}%, ${clientIsActiveColumnLabel}.eq.false`
             );
         }
-        return query.ilike(`${phoneColumnLabel}`, `%${state}%`);
+        return query.ilike(phoneColumnLabel, `%${state}%`);
     };
 };
