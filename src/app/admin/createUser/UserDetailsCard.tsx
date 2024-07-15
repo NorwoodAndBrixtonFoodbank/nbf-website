@@ -3,8 +3,8 @@ import { errorExists, errorText, onChangeText } from "@/components/Form/formFunc
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import React from "react";
 import { InviteUserCardProps } from "./CreateUserForm";
+import { phoneNumberRegex } from "@/common/format";
 
-const telephoneRegex = /^0\d{10}$/;
 const UserDetailsCard: React.FC<InviteUserCardProps> = ({
     fieldSetter,
     formErrors,
@@ -40,7 +40,7 @@ const UserDetailsCard: React.FC<InviteUserCardProps> = ({
                     errorSetter,
                     "telephoneNumber",
                     false,
-                    telephoneRegex
+                    phoneNumberRegex
                 )}
             />
         </GenericFormCard>

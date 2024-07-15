@@ -8,6 +8,9 @@ export const displayNameForDeletedClient = "Deleted Client";
 
 export const displayNameForNullDriverName = "Unknown Driver";
 
+export const phoneNumberRegex = /^([+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6})?$/;
+// Regex source: https://ihateregex.io/expr/phone/
+
 export const formatCamelCaseKey = (objectKey: string): string => {
     const withSpace = objectKey.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
     return withSpace.toUpperCase();
