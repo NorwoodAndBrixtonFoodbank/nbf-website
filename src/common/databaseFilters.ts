@@ -8,15 +8,16 @@ export const fullNameSearch = <DbData extends DbClientRow | DbParcelRow>(
     clientIsActiveColumnLabel: Extract<keyof DbData, "is_active" | "client_is_active">
 ): ServerSideFilterMethod<DbData, string> => {
     return (query, state) => {
-        if (state === "") {
+        const newState = state.replace(/[,.():/]/g, "");
+        if (newState === "") {
             return query;
         }
-        if (parcelsPageDeletedClientDisplayName.toLowerCase().includes(state.toLowerCase())) {
+        if (parcelsPageDeletedClientDisplayName.toLowerCase().includes(newState.toLowerCase())) {
             return query.or(
-                `${fullNameColumnLabel}.ilike.%${state}%, ${clientIsActiveColumnLabel}.eq.false`
+                `${fullNameColumnLabel}.ilike.%${newState}%, ${clientIsActiveColumnLabel}.eq.false`
             );
         }
-        return query.ilike(`${fullNameColumnLabel}`, `%${state}%`);
+        return query.ilike(`${fullNameColumnLabel}`, `%${newState}%`);
     };
 };
 
