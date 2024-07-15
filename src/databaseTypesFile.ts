@@ -76,13 +76,6 @@ export type Database = {
             referencedColumns: ["primary_key"]
           },
           {
-            foreignKeyName: "audit_log_actor_profile_id_fkey"
-            columns: ["actor_profile_id"]
-            isOneToOne: false
-            referencedRelation: "users_plus"
-            referencedColumns: ["profile_id"]
-          },
-          {
             foreignKeyName: "audit_log_client_id_fkey"
             columns: ["client_id"]
             isOneToOne: false
@@ -165,13 +158,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["primary_key"]
-          },
-          {
-            foreignKeyName: "public_audit_log_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "users_plus"
-            referencedColumns: ["profile_id"]
           },
           {
             foreignKeyName: "public_audit_log_status_order_fkey"
@@ -637,27 +623,39 @@ export type Database = {
       }
       profiles: {
         Row: {
+          created_at: string | null
+          email: string | null
           first_name: string | null
           last_name: string | null
+          last_sign_in_at: string | null
           primary_key: string
           role: Database["public"]["Enums"]["role"]
           telephone_number: string | null
+          updated_at: string | null
           user_id: string | null
         }
         Insert: {
+          created_at?: string | null
+          email?: string | null
           first_name?: string | null
           last_name?: string | null
+          last_sign_in_at?: string | null
           primary_key?: string
           role: Database["public"]["Enums"]["role"]
           telephone_number?: string | null
+          updated_at?: string | null
           user_id?: string | null
         }
         Update: {
+          created_at?: string | null
+          email?: string | null
           first_name?: string | null
           last_name?: string | null
+          last_sign_in_at?: string | null
           primary_key?: string
           role?: Database["public"]["Enums"]["role"]
           telephone_number?: string | null
+          updated_at?: string | null
           user_id?: string | null
         }
         Relationships: [
@@ -667,13 +665,6 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "profiles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "users_plus"
-            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -710,6 +701,24 @@ export type Database = {
         }
         Relationships: []
       }
+      wiki: {
+        Row: {
+          content: string
+          order: number
+          title: string
+        }
+        Insert: {
+          content?: string
+          order?: number
+          title?: string
+        }
+        Update: {
+          content?: string
+          order?: number
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       audit_log_plus: {
@@ -742,13 +751,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["primary_key"]
-          },
-          {
-            foreignKeyName: "audit_log_actor_profile_id_fkey"
-            columns: ["actor_profile_id"]
-            isOneToOne: false
-            referencedRelation: "users_plus"
-            referencedColumns: ["profile_id"]
           },
           {
             foreignKeyName: "audit_log_client_id_fkey"
@@ -791,13 +793,6 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "profiles_user_id_fkey"
-            columns: ["actor_user_id"]
-            isOneToOne: true
-            referencedRelation: "users_plus"
-            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "public_audit_log_collection_centre_id_fkey"
@@ -847,13 +842,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["primary_key"]
-          },
-          {
-            foreignKeyName: "public_audit_log_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "users_plus"
-            referencedColumns: ["profile_id"]
           },
           {
             foreignKeyName: "public_audit_log_status_order_fkey"
@@ -994,20 +982,6 @@ export type Database = {
         }
         Relationships: []
       }
-      users_plus: {
-        Row: {
-          created_at: string | null
-          email: string | null
-          first_name: string | null
-          last_name: string | null
-          profile_id: string | null
-          role: Database["public"]["Enums"]["role"] | null
-          telephone_number: string | null
-          updated_at: string | null
-          user_id: string | null
-        }
-        Relationships: []
-      }
     }
     Functions: {
       deactivateClient: {
@@ -1042,6 +1016,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      user_is_admin_or_manager: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       user_is_admin_or_manager_or_staff: {
         Args: Record<PropertyKey, never>
         Returns: boolean
@@ -1049,6 +1027,7 @@ export type Database = {
     }
     Enums: {
       gender: "male" | "female" | "other"
+      list_type: "regular" | "hotel"
       role: "volunteer" | "admin" | "manager" | "staff"
     }
     CompositeTypes: {

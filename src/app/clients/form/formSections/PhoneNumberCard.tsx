@@ -8,9 +8,7 @@ import {
 } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ClientCardProps } from "../ClientForm";
-
-const phoneNumberRegex = /^([+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6})?$/;
-// Regex source: https://ihateregex.io/expr/phone/
+import { phoneNumberRegex } from "@/common/format";
 
 const formatPhoneNumber = (value: string): string => {
     const numericInput = value.replace(/(\D)/g, "");

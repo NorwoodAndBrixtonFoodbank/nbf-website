@@ -1,13 +1,13 @@
 import { ServerSideFilter, ServerSideFilterMethod } from "@/components/Tables/Filters";
 import { SortState } from "@/components/Tables/Table";
 import { ServerSideSortMethod } from "@/components/Tables/sortMethods";
-import { DbUserRow, UserRole } from "@/databaseUtils";
+import { Schema, UserRole } from "@/databaseUtils";
 
-export type UsersFilterMethod<State> = ServerSideFilterMethod<DbUserRow, State>;
-export type UsersFilter<State> = ServerSideFilter<UserRow, State, DbUserRow>;
+export type UsersFilterMethod<State> = ServerSideFilterMethod<Schema["profiles"], State>;
+export type UsersFilter<State> = ServerSideFilter<UserRow, State, Schema["profiles"]>;
 export type UsersFilterAllStates = UsersFilter<string> | UsersFilter<string[]>;
 export type UsersFilters = UsersFilterAllStates[];
-export type UsersSortMethod = ServerSideSortMethod<DbUserRow>;
+export type UsersSortMethod = ServerSideSortMethod<Schema["profiles"]>;
 export type UsersSortState = SortState<UserRow, UsersSortMethod>;
 
 export type GetUserDataAndCountErrorType =
@@ -50,4 +50,5 @@ export interface UserRow {
     telephoneNumber: string;
     createdAt: number | null;
     updatedAt: number | null;
+    lastSignInAt: number | null;
 }

@@ -92,7 +92,9 @@ export async function adminInviteUser(
             first_name: userDetails.firstName,
             last_name: userDetails.lastName,
             telephone_number: userDetails.telephoneNumber,
+            email: newUserData.user.email,
             user_id: newUserData.user.id,
+            created_at: newUserData.user.created_at,
         })
         .select()
         .single();

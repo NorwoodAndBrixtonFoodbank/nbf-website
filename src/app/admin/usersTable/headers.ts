@@ -10,4 +10,5 @@ export const usersTableHeaderKeysAndLabels: TableHeaders<UserRow> = [
     ["telephoneNumber", "Telephone Number"],
     ["createdAt", "Created At"],
     ["updatedAt", "Updated At"],
+    ["lastSignInAt", "Last Sign In"],
 ];

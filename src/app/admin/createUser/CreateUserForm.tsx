@@ -19,7 +19,6 @@ import { User } from "@supabase/gotrue-js";
 import { logInfoReturnLogId } from "@/logger/logger";
 import UserDetailsCard from "@/app/admin/createUser/UserDetailsCard";
 import { InviteUserError, adminInviteUser } from "@/server/adminInviteUser";
-import RefreshPageButton from "@/app/admin/common/RefreshPageButton";
 import { UserRole } from "@/databaseUtils";
 
 export interface InviteUserFields extends Record<string, UserRole | string> {
@@ -33,7 +32,7 @@ type InviteUserErrors = Required<FormErrors<InviteUserFields>>;
 
 export type InviteUserCardProps = CardProps<InviteUserFields, InviteUserErrors>;
 
-const initialFields: InviteUserFields = {
+const initialFieldValues: InviteUserFields = {
     email: "",
     role: "volunteer",
     firstName: "",
@@ -63,7 +62,7 @@ const getServerErrorMessage = (serverError: InviteUserError): string => {
 const formSections = [AccountDetails, UserRoleCard, UserDetailsCard];
 
 const CreateUserForm: React.FC = () => {
-    const [fields, setFields] = useState(initialFields);
+    const [fields, setFields] = useState(initialFieldValues);
     const [formErrors, setFormErrors] = useState(initialFormErrors);
 
     const fieldSetter = createSetter(setFields, fields);
@@ -95,6 +94,7 @@ const CreateUserForm: React.FC = () => {
             setServerError(error);
             setSubmitDisabled(false);
             setInvitedUser(null);
+            return;
         }
 
         setFormError(Errors.none);
@@ -120,19 +120,19 @@ const CreateUserForm: React.FC = () => {
                     );
                 })}
 
-                {invitedUser ? (
-                    <Alert severity="success" action={<RefreshPageButton />}>
+                <Button
+                    startIcon={<FontAwesomeIcon icon={faUserPlus} />}
+                    variant="contained"
+                    onClick={submitForm}
+                    disabled={submitDisabled}
+                >
+                    Invite User
+                </Button>
+
+                {invitedUser && (
+                    <Alert severity="success">
                         User <b>{invitedUser.email}</b> invited successfully.
                     </Alert>
-                ) : (
-                    <Button
-                        startIcon={<FontAwesomeIcon icon={faUserPlus} />}
-                        variant="contained"
-                        onClick={submitForm}
-                        disabled={submitDisabled}
-                    >
-                        Invite User
-                    </Button>
                 )}
                 {serverError && (
                     <Alert severity="error">{`${getServerErrorMessage(serverError)} Log ID: ${serverError.logId}`}</Alert>
