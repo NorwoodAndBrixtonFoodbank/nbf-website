@@ -69,7 +69,7 @@ async function createUser(supabase: SupabaseClient, userProfile: userProfile): P
     }
 
     if (data) {
-        const nowTimestamp = new Date().toISOString();
+        const nowTimestamp = "2024-07-13T11:04:00.000Z";
         const { error } = await supabase.from("profiles").insert({
             user_id: data.user.id,
             role: userProfile.role,
