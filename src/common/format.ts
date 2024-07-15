@@ -33,7 +33,7 @@ export const formatDateToDate = (dateString: string | null): string => {
     });
 };
 
-export const formatTimestampAsDatetimeInUserTimezone = (timestamp: number): string => {
+export const formatTimestampAsDatetime = (timestamp: number): string => {
     if (isNaN(timestamp)) {
         return "-";
     }

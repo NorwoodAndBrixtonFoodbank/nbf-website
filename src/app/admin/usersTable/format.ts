@@ -1,13 +1,13 @@
-import { formatTimestampAsDatetimeInUserTimezone } from "@/common/format";
+import { formatTimestampAsDatetime } from "@/common/format";
 
 export const userTableColumnDisplayFunctions = {
     createdAt: (createdAt: number | null) => {
-        return createdAt === null ? "-" : formatTimestampAsDatetimeInUserTimezone(createdAt);
+        return createdAt === null ? "-" : formatTimestampAsDatetime(createdAt);
     },
     updatedAt: (updatedAt: number | null) => {
-        return updatedAt === null ? "-" : formatTimestampAsDatetimeInUserTimezone(updatedAt);
+        return updatedAt === null ? "-" : formatTimestampAsDatetime(updatedAt);
     },
     lastSignInAt: (lastSignInAt: number | null) => {
-        return lastSignInAt === null ? "-" : formatTimestampAsDatetimeInUserTimezone(lastSignInAt);
+        return lastSignInAt === null ? "-" : formatTimestampAsDatetime(lastSignInAt);
     },
 };
