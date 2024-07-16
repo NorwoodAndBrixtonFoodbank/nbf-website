@@ -12,6 +12,7 @@ import {
 import ListsDataView, { ListRow, listsHeaderKeysAndLabels } from "@/app/lists/ListDataview";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
+import { ListName } from "@/app/lists/ListStates";
 
 interface FetchedListsData {
     listsData: Schema["lists"][];
@@ -81,8 +82,14 @@ const ListsPage: React.FC = () => {
     const [comment, setComment] = useState("");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+    const [currentList, setCurrentList] = useState<ListName>("regular");    
+    
     function handleSetError(error: string | null): void {
         setErrorMessage(error);
+    }
+
+    const filterData = (dataToFilter : FetchedListsData["listsData"]) : FetchedListsData["listsData"] => {
+        return dataToFilter.filter(i => i.list_type.toString() == currentList);
     }
 
     const fetchAndSetData = async (): Promise<void> => {
@@ -94,14 +101,15 @@ const ListsPage: React.FC = () => {
             setErrorMessage(getErrorMessage(error));
             return;
         }
-        setListData(formatListData(data.listsData));
+        const result = filterData(data.listsData)
+        setListData(formatListData(result));
         setComment(data.comment);
         setIsLoading(false);
     };
 
     useEffect(() => {
         fetchAndSetData();
-    }, []);
+    }, [currentList]);
 
     useEffect(() => {
         const subscriptionChannel = supabase
@@ -132,6 +140,8 @@ const ListsPage: React.FC = () => {
             comment={comment}
             errorMessage={errorMessage}
             setErrorMessage={handleSetError}
+            currentList={currentList}
+            setCurrentList={setCurrentList}
         />
     );
 };

@@ -21,9 +21,10 @@ import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { buildClientSideTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 import { ClientSideFilter } from "@/components/Tables/Filters";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
+import { ArrowDropDown } from "@mui/icons-material";
+import ListStates, { ListName } from "@/app/lists/ListStates";
 
 type ListFilter = ClientSideFilter<ListRow, string>;
-
 export interface ListRow {
     primaryKey: string;
     rowOrder: number;
@@ -52,6 +53,8 @@ interface ListDataViewProps {
     comment: string;
     errorMessage: string | null;
     setErrorMessage: (error: string | null) => void;
+    currentList: ListName;
+    setCurrentList: React.Dispatch<React.SetStateAction<ListName>>
 }
 
 export const listsHeaderKeysAndLabels = [
@@ -135,6 +138,8 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     comment,
     errorMessage,
     setErrorMessage,
+    currentList,
+    setCurrentList,
 }) => {
     const [modal, setModal] = useState<EditModalState>();
     const [toDelete, setToDelete] = useState<number | null>(null);
@@ -142,6 +147,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [listData, setListData] = useState<ListRow[]>(listOfIngredients);
     const [primaryFilters, setPrimaryFilters] = useState<ListFilter[]>(filters);
+    const [listStateAnchorElement, setListStateAnchorElement] = useState<HTMLElement | null>(null);
 
     if (listOfIngredients === null) {
         void logInfoReturnLogId("No ingredients found @ app/lists/ListDataView.tsx");
@@ -277,6 +283,12 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
 
     return (
         <>
+            <ListStates
+                listStateAnchorElement={listStateAnchorElement}
+                setListStateAnchorElement={setListStateAnchorElement}
+                currentList={currentList}
+                setCurrentList={setCurrentList}
+            />
             <ConfirmDialog
                 message={`Are you sure you want to delete ${
                     toDelete !== null ? listOfIngredients[toDelete].itemName : ""
@@ -300,6 +312,15 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
             <TableSurface>
                 <CommentBox originalComment={comment} />
+                <Button
+                    variant="contained"
+                    onClick={(event) => setListStateAnchorElement(event.currentTarget)}
+                    type="button"
+                    id="status-button"
+                    endIcon={<ArrowDropDown />}
+                >
+                    {currentList}
+                </Button>
                 <ClientPaginatedTable<ListRow, string>
                     headerKeysAndLabels={listsHeaderKeysAndLabels}
                     toggleableHeaders={toggleableHeaders}
