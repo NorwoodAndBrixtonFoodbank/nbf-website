@@ -27,6 +27,7 @@ import {
 } from "@/app/parcels/parcelsTable/conditionalStyling";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { Database } from "@/databaseTypesFile";
+import { ListName } from "@/app/lists/ListStates";
 
 export type TableHeaders<Data> = readonly (readonly [keyof Data, string])[];
 
@@ -122,12 +123,16 @@ export type FilterConfig<Filter> =
     | {
           primaryFiltersShown: false;
           additionalFiltersShown: false;
+          listChoiceButton: false;
       }
     | {
           primaryFiltersShown: true;
           primaryFilters: Filter[];
           setPrimaryFilters: (primaryFilters: Filter[]) => void;
           additionalFiltersShown: false;
+          listChoiceButton: true;
+          currentList: ListName;
+          setListStateAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
       }
     | {
           primaryFiltersShown: true;
@@ -136,6 +141,7 @@ export type FilterConfig<Filter> =
           additionalFiltersShown: true;
           additionalFilters: Filter[];
           setAdditionalFilters: (additionalFilters: Filter[]) => void;
+          listChoiceButton: false;
       };
 
 export type EditableConfig<Data> =
@@ -452,9 +458,12 @@ const Table = <
                         ? filterConfig.setAdditionalFilters
                         : undefined
                 }
+                setListChoiceButton={filterConfig.listChoiceButton}
                 headers={headerKeysAndLabels}
                 setShownHeaderKeys={setShownHeaderKeys}
                 shownHeaderKeys={shownHeaderKeys}
+                currentList={filterConfig.listChoiceButton ? filterConfig.currentList:undefined}
+                setListStateAnchorElement={filterConfig.listChoiceButton ? filterConfig.setListStateAnchorElement : undefined}
             />
             <TableStyling
                 $rowBreakPointConfigs={rowBreakPointConfigs ?? []}

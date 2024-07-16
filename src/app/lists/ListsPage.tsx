@@ -82,15 +82,17 @@ const ListsPage: React.FC = () => {
     const [comment, setComment] = useState("");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const [currentList, setCurrentList] = useState<ListName>("regular");    
+    const [currentList, setCurrentList] = useState<ListName>("Regular");    
     
     function handleSetError(error: string | null): void {
         setErrorMessage(error);
     }
 
     const filterData = (dataToFilter : FetchedListsData["listsData"]) : FetchedListsData["listsData"] => {
-        return dataToFilter.filter(i => i.list_type.toString() == currentList);
+        return dataToFilter.filter(i => i.list_type.toString() == currentList.toLowerCase());
     }
+
+    let data2 : FetchedListsData;
 
     const fetchAndSetData = async (): Promise<void> => {
         setIsLoading(true);
@@ -100,12 +102,13 @@ const ListsPage: React.FC = () => {
             setIsLoading(false);
             setErrorMessage(getErrorMessage(error));
             return;
-        }
+        }  
         const result = filterData(data.listsData)
         setListData(formatListData(result));
         setComment(data.comment);
         setIsLoading(false);
     };
+
 
     useEffect(() => {
         fetchAndSetData();

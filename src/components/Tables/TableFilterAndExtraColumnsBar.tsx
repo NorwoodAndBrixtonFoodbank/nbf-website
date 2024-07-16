@@ -7,6 +7,8 @@ import styled from "styled-components";
 import { FilterAltOffOutlined, FilterAltOutlined } from "@mui/icons-material";
 import ColumnTogglePopup from "@/components/Tables/ColumnTogglePopup";
 import { DistributeClientFilter, DistributeServerFilter } from "@/components/Tables/Filters";
+import { ListName } from "@/app/lists/ListStates";
+import { ArrowDropDown } from "@mui/icons-material";
 
 type FilterBase<Data, State> =
     | DistributeClientFilter<Data, State>
@@ -21,6 +23,9 @@ interface Props<Data, Filter extends FilterBase<Data, State>, State> {
     toggleableHeaders: readonly (keyof Data)[];
     setShownHeaderKeys: (headers: (keyof Data)[]) => void;
     shownHeaderKeys: readonly (keyof Data)[];
+    currentList?: ListName;
+    setListStateAnchorElement?: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
+    setListChoiceButton: boolean;
 }
 
 const StyledButton = styled(Button)`
@@ -109,6 +114,16 @@ function TableFilterAndExtraColumnsBar<Data, Filter extends FilterBase<Data, Sta
     return (
         <>
             <FiltersAndIconContainer>
+                {props.setListChoiceButton && props.setListStateAnchorElement &&
+                <Button
+                    variant="contained"
+                    onClick={(event) => props.setListStateAnchorElement ? props.setListStateAnchorElement(event.currentTarget) : null}
+                    type="button"
+                    id="status-button"
+                    endIcon={<ArrowDropDown />}
+                >
+                    Current List: {props.currentList}
+                </Button>}
                 {hasPrimaryFilters && <FilterAltOutlined />}
                 <FilterContainer>
                     <>

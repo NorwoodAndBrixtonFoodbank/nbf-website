@@ -3,7 +3,9 @@ import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 
-export type ListName = "regular" | "hotel";
+export type ListName = "Regular" | "Hotel";
+
+const allListTypes = ["Regular", "Hotel"]
 
 interface Props {
     listStateAnchorElement: HTMLElement | null;
@@ -13,7 +15,7 @@ interface Props {
 }
 
 const swapListNameValue = (currentListName: ListName): ListName => {
-    return currentListName === "regular" ? "hotel" : "regular";
+    return currentListName === "Regular" ? "Hotel" : "Regular";
 };
 
 const ListStates: React.FC<Props> = ({

@@ -312,15 +312,6 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
             <TableSurface>
                 <CommentBox originalComment={comment} />
-                <Button
-                    variant="contained"
-                    onClick={(event) => setListStateAnchorElement(event.currentTarget)}
-                    type="button"
-                    id="status-button"
-                    endIcon={<ArrowDropDown />}
-                >
-                    {currentList}
-                </Button>
                 <ClientPaginatedTable<ListRow, string>
                     headerKeysAndLabels={listsHeaderKeysAndLabels}
                     toggleableHeaders={toggleableHeaders}
@@ -342,6 +333,9 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                         primaryFilters: primaryFilters,
                         setPrimaryFilters: setPrimaryFilters,
                         additionalFiltersShown: false,
+                        listChoiceButton: true,
+                        currentList: currentList,
+                        setListStateAnchorElement: setListStateAnchorElement
                     }}
                 />
                 <ButtonMargin>
