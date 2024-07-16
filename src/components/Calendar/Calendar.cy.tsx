@@ -68,7 +68,7 @@ describe("<Calendar />", () => {
                 allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
-        cy.get("label").contains("Brixton Hill - Methodist Church").click();
+        cy.get("label").contains("Brixton Hill - Methodist Church");
         cy.get(".fc-event").should("be.visible");
     });
 
@@ -133,7 +133,7 @@ describe("<Calendar />", () => {
 
         cy.get(".fc-toolbar-title").should(
             "have.text",
-            `${tomorrowDMY[1]} ${tomorrowDMY[0]}, ${tomorrowDMY[2]}`
+            `${tomorrowDMY[0]} ${tomorrowDMY[1]} ${tomorrowDMY[2]}`
         );
     });
 
@@ -145,7 +145,7 @@ describe("<Calendar />", () => {
                 allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
-        cy.get("label").contains("Brixton Hill - Methodist Church").click();
+        cy.get("label").contains("Brixton Hill - Methodist Church");
         cy.get(".fc-event-title").contains("event2").parent().click();
         cy.get(".MuiDialog-container").should("include.text", "a piece of description text");
     });
@@ -158,7 +158,7 @@ describe("<Calendar />", () => {
                 allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
-        cy.get("label").contains("Brixton Hill - Methodist Church").click();
+        cy.get("label").contains("Brixton Hill - Methodist Church");
         cy.get(".fc-event-title").contains("event1").click();
         cy.get(".MuiDialog-container").should("not.include.text", "description");
     });
@@ -171,7 +171,7 @@ describe("<Calendar />", () => {
                 allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
-        cy.get("label").contains("Brixton Hill - Methodist Church").click();
+        cy.get("label").contains("Brixton Hill - Methodist Church");
         cy.get(".fc-event-title").contains("event1").click();
         cy.get(".MuiDialog-container").should(
             "include.text",
@@ -215,7 +215,7 @@ describe("<Calendar />", () => {
                 allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
-        cy.get("label").contains("Brixton Hill - Methodist Church").click();
+        cy.get("label").contains("Brixton Hill - Methodist Church");
         cy.get(".fc-event-title").contains("event2").parent().click();
         cy.get(".MuiDialog-container").should(
             "include.text",
@@ -245,11 +245,11 @@ describe("<Calendar />", () => {
                 allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
-        cy.get(`[aria-label="${todayLongDMY[1]} ${todayLongDMY[0]}, ${todayLongDMY[2]}"]`).click();
+        cy.get(`[aria-label="${todayLongDMY[0]} ${todayLongDMY[1]} ${todayLongDMY[2]}"]`).click();
         cy.get(".fc-timeGridDay-view").should("be.visible");
         cy.get(".fc-toolbar-title").should(
             "have.text",
-            `${todayShortDMY[1]} ${todayShortDMY[0]}, ${todayShortDMY[2]}`
+            `${todayShortDMY[0]} ${todayShortDMY[1]} ${todayShortDMY[2]}`
         );
     });
 });
