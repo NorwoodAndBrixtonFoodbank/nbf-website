@@ -3,12 +3,11 @@ import { ReactElement } from "react";
 import Title from "@/components/Title/Title";
 import InfoPage from "./InfoPage";
 
-
 const Info = async (): Promise<ReactElement> => {
     return (
         <main>
             <Title>Info Page</Title>
-            <InfoPage/>
+            <InfoPage />
         </main>
     );
 };
