@@ -14,9 +14,7 @@ import { hexToRgb, SelectChangeEvent } from "@mui/material";
 import CheckboxGroupInput from "@/components/DataInput/CheckboxGroupInput";
 import PasswordInput from "@/components/DataInput/PasswordInput";
 
-const mockIDLogger: (logId: string) => void = (logId: string) => {
-    return console.log(logId);
-};
+const mockIDLogger: (logId: string) => void = console.log;
 
 describe("Data Input Components", () => {
     it("renders", () => {
