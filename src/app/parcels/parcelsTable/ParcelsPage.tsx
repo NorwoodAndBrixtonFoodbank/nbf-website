@@ -354,6 +354,7 @@ const ParcelsPage: React.FC = () => {
                                 additionalFilters: additionalFilters,
                                 setPrimaryFilters: setPrimaryFilters,
                                 setAdditionalFilters: setAdditionalFilters,
+                                listChoiceButton: false,
                             }}
                             defaultShownHeaders={defaultShownHeaders}
                             toggleableHeaders={toggleableHeaders}

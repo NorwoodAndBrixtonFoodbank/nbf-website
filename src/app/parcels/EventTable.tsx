@@ -38,7 +38,11 @@ const EventTable: React.FC<EventTableProps> = (props) => {
                     columnDisplayFunctions={eventsTableColumnDisplayFunctions}
                     defaultShownHeaders={defaultShownHeaders}
                     checkboxConfig={{ displayed: false }}
-                    filterConfig={{ primaryFiltersShown: false, additionalFiltersShown: false }}
+                    filterConfig={{
+                        primaryFiltersShown: false,
+                        additionalFiltersShown: false,
+                        listChoiceButton: false,
+                    }}
                     sortConfig={{ sortPossible: false }}
                     paginationConfig={{ enablePagination: false }}
                     editableConfig={{ editable: false }}

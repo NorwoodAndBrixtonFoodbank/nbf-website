@@ -4,9 +4,6 @@ import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 
 export type ListName = "Regular" | "Hotel";
-
-const allListTypes = ["Regular", "Hotel"]
-
 interface Props {
     listStateAnchorElement: HTMLElement | null;
     setListStateAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
@@ -35,7 +32,10 @@ const ListStates: React.FC<Props> = ({
                     <MenuList id="listType-menu">
                         <MenuItem
                             key={swapListNameValue(currentList)}
-                            onClick={() => {setCurrentList(swapListNameValue(currentList)); setListStateAnchorElement(null)}}
+                            onClick={() => {
+                                setCurrentList(swapListNameValue(currentList));
+                                setListStateAnchorElement(null);
+                            }}
                         >
                             {swapListNameValue(currentList)}
                         </MenuItem>

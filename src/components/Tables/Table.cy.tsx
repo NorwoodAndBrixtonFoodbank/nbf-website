@@ -230,11 +230,13 @@ const Component: React.FC<TestTableProps> = ({
         primaryFilters: primaryFilters,
         setPrimaryFilters: setPrimaryFilters,
         additionalFiltersShown: false,
+        listChoiceButton: false,
     };
 
     const falseFilterConfig: FilterConfig<ClientSideFilter<TestData, never>> = {
         primaryFiltersShown: false,
         additionalFiltersShown: false,
+        listChoiceButton: false,
     };
 
     const trueSortConfig: SortConfig<TestData, ClientSideSortMethod> = {

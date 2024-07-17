@@ -4,11 +4,10 @@ import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import { TableHeaders } from "@/components/Tables/Table";
 import styled from "styled-components";
-import { FilterAltOffOutlined, FilterAltOutlined } from "@mui/icons-material";
+import { FilterAltOffOutlined, FilterAltOutlined, ArrowDropDown } from "@mui/icons-material";
 import ColumnTogglePopup from "@/components/Tables/ColumnTogglePopup";
 import { DistributeClientFilter, DistributeServerFilter } from "@/components/Tables/Filters";
 import { ListName } from "@/app/lists/ListStates";
-import { ArrowDropDown } from "@mui/icons-material";
 
 type FilterBase<Data, State> =
     | DistributeClientFilter<Data, State>
@@ -114,16 +113,21 @@ function TableFilterAndExtraColumnsBar<Data, Filter extends FilterBase<Data, Sta
     return (
         <>
             <FiltersAndIconContainer>
-                {props.setListChoiceButton && props.setListStateAnchorElement &&
-                <Button
-                    variant="contained"
-                    onClick={(event) => props.setListStateAnchorElement ? props.setListStateAnchorElement(event.currentTarget) : null}
-                    type="button"
-                    id="status-button"
-                    endIcon={<ArrowDropDown />}
-                >
-                    Current List: {props.currentList}
-                </Button>}
+                {props.setListChoiceButton && props.setListStateAnchorElement && (
+                    <Button
+                        variant="contained"
+                        onClick={(event) =>
+                            props.setListStateAnchorElement
+                                ? props.setListStateAnchorElement(event.currentTarget)
+                                : null
+                        }
+                        type="button"
+                        id="status-button"
+                        endIcon={<ArrowDropDown />}
+                    >
+                        Current List: {props.currentList}
+                    </Button>
+                )}
                 {hasPrimaryFilters && <FilterAltOutlined />}
                 <FilterContainer>
                     <>

@@ -142,6 +142,13 @@ export type FilterConfig<Filter> =
           additionalFilters: Filter[];
           setAdditionalFilters: (additionalFilters: Filter[]) => void;
           listChoiceButton: false;
+      }
+    | {
+          primaryFiltersShown: true;
+          primaryFilters: Filter[];
+          setPrimaryFilters: (primaryFilters: Filter[]) => void;
+          additionalFiltersShown: false;
+          listChoiceButton: false;
       };
 
 export type EditableConfig<Data> =
@@ -462,8 +469,12 @@ const Table = <
                 headers={headerKeysAndLabels}
                 setShownHeaderKeys={setShownHeaderKeys}
                 shownHeaderKeys={shownHeaderKeys}
-                currentList={filterConfig.listChoiceButton ? filterConfig.currentList:undefined}
-                setListStateAnchorElement={filterConfig.listChoiceButton ? filterConfig.setListStateAnchorElement : undefined}
+                currentList={filterConfig.listChoiceButton ? filterConfig.currentList : undefined}
+                setListStateAnchorElement={
+                    filterConfig.listChoiceButton
+                        ? filterConfig.setListStateAnchorElement
+                        : undefined
+                }
             />
             <TableStyling
                 $rowBreakPointConfigs={rowBreakPointConfigs ?? []}

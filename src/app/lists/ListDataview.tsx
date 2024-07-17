@@ -21,7 +21,6 @@ import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { buildClientSideTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 import { ClientSideFilter } from "@/components/Tables/Filters";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
-import { ArrowDropDown } from "@mui/icons-material";
 import ListStates, { ListName } from "@/app/lists/ListStates";
 
 type ListFilter = ClientSideFilter<ListRow, string>;
@@ -54,7 +53,7 @@ interface ListDataViewProps {
     errorMessage: string | null;
     setErrorMessage: (error: string | null) => void;
     currentList: ListName;
-    setCurrentList: React.Dispatch<React.SetStateAction<ListName>>
+    setCurrentList: React.Dispatch<React.SetStateAction<ListName>>;
 }
 
 export const listsHeaderKeysAndLabels = [
@@ -309,7 +308,12 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                     <Alert severity="error">{errorMessage}</Alert>
                 </SnackBarDiv>
             </Snackbar>
-            <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
+            <EditModal
+                onClose={() => setModal(undefined)}
+                data={modal}
+                key={modal?.primary_key}
+                currentList={currentList}
+            />
             <TableSurface>
                 <CommentBox originalComment={comment} />
                 <ClientPaginatedTable<ListRow, string>
@@ -335,7 +339,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                         additionalFiltersShown: false,
                         listChoiceButton: true,
                         currentList: currentList,
-                        setListStateAnchorElement: setListStateAnchorElement
+                        setListStateAnchorElement: setListStateAnchorElement,
                     }}
                 />
                 <ButtonMargin>

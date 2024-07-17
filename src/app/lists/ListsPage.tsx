@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import {
@@ -76,43 +76,65 @@ const formatListData = (listsData: Schema["lists"][]): ListRow[] => {
     );
 };
 
+const filterDataByListType = (
+    dataToFilter: FetchedListsData["listsData"],
+    currentList: ListName
+): FetchedListsData["listsData"] => {
+    console.log("filter data " + currentList)
+    const toReturn = dataToFilter.filter((item) => item.list_type.toString() == currentList.toLowerCase());
+    console.log("data is filtered")
+    return toReturn;
+};
+
 const ListsPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [listData, setListData] = useState<ListRow[]>([]);
     const [comment, setComment] = useState("");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    console.log("hard refresh");
+    const [currentList, setCurrentList] = useState<ListName>("Regular");
+    console.log("main page " + currentList);
+    const listsTableFetchAbortController = useRef<AbortController | null>(null);
 
-    const [currentList, setCurrentList] = useState<ListName>("Regular");    
-    
     function handleSetError(error: string | null): void {
         setErrorMessage(error);
     }
 
-    const filterData = (dataToFilter : FetchedListsData["listsData"]) : FetchedListsData["listsData"] => {
-        return dataToFilter.filter(i => i.list_type.toString() == currentList.toLowerCase());
-    }
-
-    let data2 : FetchedListsData;
-
-    const fetchAndSetData = async (): Promise<void> => {
+    const fetchAndSetData = useCallback(async (): Promise<void> => {
         setIsLoading(true);
-        setErrorMessage(null);
-        const { data, error } = await fetchListsData();
-        if (error) {
+        if (listsTableFetchAbortController.current) {
+            listsTableFetchAbortController.current.abort("stale request");
+        }
+        listsTableFetchAbortController.current = new AbortController();
+        if (listsTableFetchAbortController.current) {
+            setErrorMessage(null);
+            const { data, error } = await fetchListsData();
+            if (error) {
+                setIsLoading(false);
+                setErrorMessage(getErrorMessage(error));
+                return;
+            }
+            console.log("fetch and set data " + currentList);
+            
+            const result = filterDataByListType(data.listsData, currentList);
+            console.log("data is filtered (hopefully)")
+            setListData(formatListData(result));
+            setComment(data.comment);
+            listsTableFetchAbortController.current = null;
             setIsLoading(false);
-            setErrorMessage(getErrorMessage(error));
-            return;
-        }  
-        const result = filterData(data.listsData)
-        setListData(formatListData(result));
-        setComment(data.comment);
-        setIsLoading(false);
-    };
+            console.log("end: fetch and set data")
+        }
+    }, [setIsLoading, setErrorMessage, setListData, setComment, currentList]);
 
 
+    // const cachedFetchAndSetData = useCallback(() => {
+    //     fetchAndSetData();
+    // }, [setIsLoading, setErrorMessage, setErrorMessage, setListData, setComment, fetchAndSetData]);
+
+    
     useEffect(() => {
         fetchAndSetData();
-    }, [currentList]);
+    }, [fetchAndSetData]);
 
     useEffect(() => {
         const subscriptionChannel = supabase

@@ -203,6 +203,7 @@ const ClientsPage: React.FC = () => {
                                 primaryFilters: primaryFilters,
                                 setPrimaryFilters: setPrimaryFilters,
                                 additionalFiltersShown: false,
+                                listChoiceButton: false,
                             }}
                             checkboxConfig={{ displayed: false }}
                             editableConfig={{ editable: false }}
