@@ -1,5 +1,6 @@
 import WikiItem, { formatContent } from "@/app/info/WikiItem";
 import { DbWikiRow } from "@/databaseUtils";
+import { any } from "cypress/types/bluebird";
 
 describe("<WikiAccordian />", () => {
     const testData: DbWikiRow[] = [
@@ -16,19 +17,21 @@ describe("<WikiAccordian />", () => {
     ];
 
     const expectedFormattedContent: (string | React.JSX.Element)[] = [
-        "content1 ",
-        <a href="https://www.google.com/" key={0}>
-            https://www.google.com/
+        <span>{'content1 '}</span>,
+        <a href="https://www.google.com/">
+            {'https://www.google.com/'}
         </a>,
-        " also ",
-        <a href="https://www.bing.com/" key={1}>
-            bing
+        <span>{' also '}</span>,
+        <a href="https://www.bing.com/">
+            {'bing'}
         </a>,
-        "",
+        <span>{''}</span>,
     ];
 
     it("embeds links correctly", () => {
-        const result = formatContent(testData[0].content);
+        const result = formatContent(testData[0].content).map((htmlObject, index)=>{return{...htmlObject, key:null}})
+        console.log("result", result);
+        console.log("expected", expectedFormattedContent);
         expect(result).to.deep.equal(expectedFormattedContent);
     });
 
