@@ -183,6 +183,7 @@ export type Database = {
           address_postcode: string | null
           address_town: string | null
           baby_food: boolean | null
+          default_list: Database["public"]["Enums"]["list_type"]
           delivery_instructions: string | null
           dietary_requirements: string[] | null
           extra_information: string | null
@@ -206,6 +207,7 @@ export type Database = {
           address_postcode?: string | null
           address_town?: string | null
           baby_food?: boolean | null
+          default_list?: Database["public"]["Enums"]["list_type"]
           delivery_instructions?: string | null
           dietary_requirements?: string[] | null
           extra_information?: string | null
@@ -229,6 +231,7 @@ export type Database = {
           address_postcode?: string | null
           address_town?: string | null
           baby_food?: boolean | null
+          default_list?: Database["public"]["Enums"]["list_type"]
           delivery_instructions?: string | null
           dietary_requirements?: string[] | null
           extra_information?: string | null
@@ -375,6 +378,7 @@ export type Database = {
       lists: {
         Row: {
           item_name: string
+          list_type: Database["public"]["Enums"]["list_type"]
           notes_for_1: string | null
           notes_for_10: string | null
           notes_for_2: string | null
@@ -400,6 +404,7 @@ export type Database = {
         }
         Insert: {
           item_name?: string
+          list_type?: Database["public"]["Enums"]["list_type"]
           notes_for_1?: string | null
           notes_for_10?: string | null
           notes_for_2?: string | null
@@ -425,6 +430,7 @@ export type Database = {
         }
         Update: {
           item_name?: string
+          list_type?: Database["public"]["Enums"]["list_type"]
           notes_for_1?: string | null
           notes_for_10?: string | null
           notes_for_2?: string | null
@@ -556,6 +562,7 @@ export type Database = {
           collection_datetime: string | null
           created_at: string
           last_updated: string
+          list_type: Database["public"]["Enums"]["list_type"]
           packing_date: string | null
           packing_slot: string | null
           primary_key: string
@@ -567,6 +574,7 @@ export type Database = {
           collection_datetime?: string | null
           created_at?: string
           last_updated?: string
+          list_type?: Database["public"]["Enums"]["list_type"]
           packing_date?: string | null
           packing_slot?: string | null
           primary_key?: string
@@ -578,6 +586,7 @@ export type Database = {
           collection_datetime?: string | null
           created_at?: string
           last_updated?: string
+          list_type?: Database["public"]["Enums"]["list_type"]
           packing_date?: string | null
           packing_slot?: string | null
           primary_key?: string
