@@ -13,7 +13,8 @@ import {
 import { hexToRgb, SelectChangeEvent } from "@mui/material";
 import CheckboxGroupInput from "@/components/DataInput/CheckboxGroupInput";
 import PasswordInput from "@/components/DataInput/PasswordInput";
-import { logInfoReturnLogId } from "@/logger/logger";
+
+const mockIDLogger: (logId: string) => void = console.log;
 
 describe("Data Input Components", () => {
     it("renders", () => {
@@ -21,7 +22,7 @@ describe("Data Input Components", () => {
             <CheckboxInput
                 label="LABEL"
                 onChange={getCheckboxHandler(
-                    () => void logInfoReturnLogId("DataInput component test: Checkbox Changed")
+                    () => void mockIDLogger("DataInput component test: Checkbox Changed")
                 )}
             />
         );
@@ -36,7 +37,7 @@ describe("Data Input Components", () => {
                 listTitle="Dropdown List"
                 defaultValue="Default"
                 onChange={getDropdownListHandler(
-                    () => void logInfoReturnLogId("DataInput component test: Dropdown Changed"),
+                    () => void mockIDLogger("DataInput component test: Dropdown Changed"),
                     (value: string): value is string => true
                 )}
             />
@@ -46,7 +47,7 @@ describe("Data Input Components", () => {
                 label="FreeForm"
                 defaultValue="default"
                 onChange={getFreeFormTextHandler(
-                    () => void logInfoReturnLogId("DataInput component test: Freeform Changed")
+                    () => void mockIDLogger("DataInput component test: Freeform Changed")
                 )}
             />
         );
@@ -55,7 +56,7 @@ describe("Data Input Components", () => {
                 label="Password"
                 defaultValue="password"
                 onChange={getFreeFormTextHandler(
-                    () => void logInfoReturnLogId("DataInput component test: Password Changed")
+                    () => void mockIDLogger("DataInput component test: Password Changed")
                 )}
             />
         );
@@ -68,7 +69,7 @@ describe("Data Input Components", () => {
                 ]}
                 groupTitle="Radio Group"
                 onChange={getRadioGroupHandler(
-                    () => void logInfoReturnLogId("DataInput component test: Radio Changed")
+                    () => void mockIDLogger("DataInput component test: Radio Changed")
                 )}
             />
         );
@@ -82,8 +83,7 @@ describe("Data Input Components", () => {
                 groupLabel="Checkbox Group"
                 onChange={getCheckboxGroupHandler(
                     {},
-                    () =>
-                        void logInfoReturnLogId("DataInput component test: Checkbox Group Changed")
+                    () => void mockIDLogger("DataInput component test: Checkbox Group Changed")
                 )}
             />
         );
