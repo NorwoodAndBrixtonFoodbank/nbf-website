@@ -27,9 +27,6 @@ jobs:
       - name: Run linting
         run: npm run lint
 
-# Component tests are disabled for now as Cypress component tests don't support server components and actions.
-# See https://github.com/cypress-io/cypress/issues/27890
-
   component_tests:
     name: Run component tests
     runs-on: ubuntu-latest
