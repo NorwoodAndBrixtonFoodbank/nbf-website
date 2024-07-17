@@ -467,7 +467,6 @@ const Table = <
                         columns={columns}
                         data={rows}
                         keyField="rowId"
-                        fixedHeader
                         pagination={paginationConfig.enablePagination}
                         persistTableHead
                         onRowClicked={onRowClick}
