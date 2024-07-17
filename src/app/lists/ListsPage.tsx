@@ -80,27 +80,27 @@ const filterDataByListType = (
     dataToFilter: FetchedListsData["listsData"],
     currentList: ListName
 ): FetchedListsData["listsData"] => {
-    console.log("filter data " + currentList)
     const toReturn = dataToFilter.filter((item) => item.list_type.toString() == currentList.toLowerCase());
-    console.log("data is filtered")
     return toReturn;
 };
+
+let currentListValue : ListName;
 
 const ListsPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [listData, setListData] = useState<ListRow[]>([]);
     const [comment, setComment] = useState("");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    console.log("hard refresh");
     const [currentList, setCurrentList] = useState<ListName>("Regular");
-    console.log("main page " + currentList);
     const listsTableFetchAbortController = useRef<AbortController | null>(null);
+
+    currentListValue = currentList;
 
     function handleSetError(error: string | null): void {
         setErrorMessage(error);
     }
 
-    const fetchAndSetData = useCallback(async (): Promise<void> => {
+    const fetchAndSetData = useCallback(async (currentListValue : ListName): Promise<void> => {
         setIsLoading(true);
         if (listsTableFetchAbortController.current) {
             listsTableFetchAbortController.current.abort("stale request");
@@ -113,18 +113,14 @@ const ListsPage: React.FC = () => {
                 setIsLoading(false);
                 setErrorMessage(getErrorMessage(error));
                 return;
-            }
-            console.log("fetch and set data " + currentList);
-            
-            const result = filterDataByListType(data.listsData, currentList);
-            console.log("data is filtered (hopefully)")
+            }       
+            const result = filterDataByListType(data.listsData, currentListValue);
             setListData(formatListData(result));
             setComment(data.comment);
             listsTableFetchAbortController.current = null;
             setIsLoading(false);
-            console.log("end: fetch and set data")
         }
-    }, [setIsLoading, setErrorMessage, setListData, setComment, currentList]);
+    }, [setIsLoading, setErrorMessage, setListData, setComment]);
 
 
     // const cachedFetchAndSetData = useCallback(() => {
@@ -133,14 +129,14 @@ const ListsPage: React.FC = () => {
 
     
     useEffect(() => {
-        fetchAndSetData();
-    }, [fetchAndSetData]);
+        fetchAndSetData(currentListValue);
+    }, [currentList]);
 
     useEffect(() => {
         const subscriptionChannel = supabase
             .channel("lists-table-changes")
             .on("postgres_changes", { event: "*", schema: "public", table: "lists" }, async () => {
-                await fetchAndSetData();
+                await fetchAndSetData(currentListValue);
             })
             .subscribe((status, err) => {
                 if (subscriptionStatusRequiresErrorMessage(status, err, "lists")) {

@@ -76,9 +76,7 @@ const EditModal: React.FC<Props> = ({ data, onClose, currentList }) => {
         setToSubmit({ ...toSubmit, [key]: newValue });
     };
 
-    const addListItem = async (listItem: Partial<Schema["lists"]>): Promise<AddListReturn> => {
-        console.log("adding");
-        
+    const addListItem = async (listItem: Partial<Schema["lists"]>): Promise<AddListReturn> => {       
         const { data: returnedListData, error: insertListItemError } = await supabase
             .from("lists")
             .insert(listItem)
@@ -104,12 +102,10 @@ const EditModal: React.FC<Props> = ({ data, onClose, currentList }) => {
             wasSuccess: true,
             listId: returnedListData.primary_key,
         });
-
         return { error: null };
     };
 
     const editListItem = async (listItem: Partial<Schema["lists"]>): Promise<EditListReturn> => {
-        console.log("editting");
         const { data: returnedListData, error: updateListItemError } = await supabase
             .from("lists")
             .update(listItem)
