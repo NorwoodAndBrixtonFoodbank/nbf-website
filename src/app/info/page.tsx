@@ -1,15 +1,14 @@
 import { Metadata } from "next";
 import { ReactElement } from "react";
-import { getServerSideProps } from "@/app/info/InfoPage";
+import InfoPage, { getTopWikiRow } from "@/app/info/InfoPage";
 import Title from "@/components/Title/Title";
-import InfoPage from "@/app/info/InfoPage";
 
 const Info = async (): Promise<ReactElement> => {
-    const props = await getServerSideProps()
+    const props = await getTopWikiRow();
     return (
         <main>
             <Title>Info Page</Title>
-            <InfoPage {...props}/>
+            <InfoPage {...props} />
         </main>
     );
 };
