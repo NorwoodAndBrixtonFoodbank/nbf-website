@@ -90,7 +90,7 @@ failed to start docker container: Error response from daemon: Ports are not avai
     * `npm run test:component` for just component (unit) tests
     * `npm run test:e2e` for just end-to-end tests
     * `npm run test:coverage` for a full coverage report at the end
-  * open the Cypress UI to see individual results with `npm run open:cypress`
+  * open the Cypress UI to see individual results with `npm run cypress:open`
 
 * `npx supabase functions serve` to run Supabase functions locally
 
@@ -98,7 +98,7 @@ failed to start docker container: Error response from daemon: Ports are not avai
 
 * `npx supabase migrations up --include-all --local` to run outstanding migrations locally
 
-* `npm run dev:reset_supabase` to
+* `npm run reset_supabase` to
   * reset the Supabase database based on the migration files and the seed data
   * create one test user of each role
   * upload the congestion charge postcodes to the local Supabase storage
@@ -133,11 +133,11 @@ You can either
 You can regenerate the types
 - from the local database
   ```shell
-  npm run db:local:generate_types
+  npm run generate_types:local
   ```
 - from the deployed database (probably won't be used but for reference)
   ```shell
-  npm run db:remote:generate_types -- --project-id <PROJECT_ID>
+  npm run generate_types:remote -- --project-id <PROJECT_ID>
   ```
 
 #### Create sample data in tables
@@ -158,7 +158,7 @@ You can regenerate the types
   ```
 - Finally put the data into the database
   ```shell
-  npm run dev:reset_supabase
+  npm run reset_supabase
   ```
 
 #### Useful links
