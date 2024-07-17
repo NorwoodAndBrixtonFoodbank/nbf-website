@@ -25,7 +25,7 @@ jobs:
           rm -f ./supabase/seed/seed.mts
 
       - name: Run linting
-        run: npm run lint
+        run: npm run lint:ci
 
   component_tests:
     name: Run component tests
@@ -100,10 +100,10 @@ jobs:
         run: npx supabase start
 
       - name: Create users for the local Supabase instance
-        run: npm run dev:create_user_for_each_role
+        run: npx ts-node supabase/tools/createUserForEachRole.ts
 
       - name: Create bucket for the local Supabase instance
-        run: npm run dev:create_bucket
+        run: npx ts-node supabase/tools/createStorage.ts
 
       - name: Remove files irrelevant files that may cause TypeScript errors
         run:

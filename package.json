@@ -8,9 +8,10 @@
     "start": "next start",
     "start:test_server": "next start -p 3200",
 
+    "typecheck": "tsc",
     "lint": "npm run typecheck && next lint --dir . --ignore-path .gitignore",
     "lint_fix": "npm run typecheck && next lint --fix --dir . --ignore-path .gitignore",
-    "typecheck": "tsc --noEmit",
+    "lint:ci": "next lint --dir . --ignore-path .gitignore && npm run typecheck",
 
     "test": "start-server-and-test start:test_server 3200 cypress:all",
     "test:component": "start-server-and-test start:test_server 3200 cypress:component",
