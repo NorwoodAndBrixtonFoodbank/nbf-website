@@ -1,5 +1,5 @@
-import { formatContent } from "@/app/info/WikiItems";
-import WikiItems from "@/app/info/WikiItems";
+import { formatContent } from "@/app/info/WikiItem";
+import WikiItems from "@/app/info/WikiItem";
 import { DbWikiRow } from "@/databaseUtils";
 
 describe("<WikiAccordian />", () => {

@@ -1,8 +1,11 @@
+"use client";
+
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { DbWikiRow } from "@/databaseUtils";
+import { useMemo } from "react";
 
 interface AccordianProps {
     row: DbWikiRow;
@@ -35,22 +38,24 @@ export const formatContent: (topRowContent: string) => (React.JSX.Element)[] = (
     return contentParts.map((part: ContentPart)=>{return part.href ? <a href={part.href} key={part.key}>{part.content}</a> : <span key={part.key}>{part.content}</span>})
 };
 
-const WikiItems: React.FC<AccordianProps> = (props) => {
-    const formattedContent = formatContent(props.row.content);
-    return (
-        <>
-            <Accordion>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1-content"
-                    id="panel1-header"
-                >
-                    {props.row.title}
-                </AccordionSummary>
-                <AccordionDetails>{formattedContent}</AccordionDetails>
-            </Accordion>
-        </>
-    );
+const WikiItem: React.FC<AccordianProps> = (props) => {
+    const visibleWikiItem = useMemo(() => {
+        const formattedContent = formatContent(props.row.content);
+        return (
+                <Accordion>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                    >
+                        {props.row.title}
+                    </AccordionSummary>
+                    <AccordionDetails>{formattedContent}</AccordionDetails>
+                </Accordion>
+            );
+        }
+        , [props.row])
+    return visibleWikiItem;
 };
 
-export default WikiItems;
+export default WikiItem;
