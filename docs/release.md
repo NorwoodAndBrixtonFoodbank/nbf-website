@@ -39,10 +39,9 @@
    git push origin "v<version_number>"  // e.g. git push origin "v0.4.0"
    ```
 3. Create a release on GitHub, comparing to the last release. You can auto-generate the release notes.
-4. Move all the tickets in UAT to done on both Jira and GitHub (make sure there's no comments saying that the ticket failed the testing and needs to be moved back to in progress/needs a new ticket created)
-5. Create a milestone on GitHub matching the name of the release (Issues -> Milestones -> New milestone)
-6. Mark relevant issues on GitHub (Release column) with the milestone, and move them to UAT. 
-7. Create a fix version on Jira matching the name of the release (Navbar on the left -> Releases -> Create version (NOTE: this needs admin permissions))
-8. Mark relevant tickets on Jira (Release column) with the fix version, and move them to UAT.
-9. Release the fix version on Jira once all issues for that version are moved to Done.
+4. Create a milestone on GitHub matching the name of the release (Issues -> Milestones -> New milestone)
+5. Mark relevant issues on GitHub (Release column) with the milestone, and move them to UAT. 
+6. Create a fix version on Jira matching the name of the release (Navbar on the left -> Releases -> Create version (NOTE: this needs admin permissions))
+7. Mark relevant tickets on Jira (Release column) with the fix version, and move them to UAT.
+8. Release the fix version on Jira once all issues for that version are moved to Done.
 
