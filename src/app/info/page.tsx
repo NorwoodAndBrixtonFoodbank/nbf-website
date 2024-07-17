@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { ReactElement } from "react";
 import Title from "@/components/Title/Title";
-import InfoPage from "./InfoPage";
+import InfoPage from "@/app/info/InfoPage";
 
 const Info = async (): Promise<ReactElement> => {
     return (

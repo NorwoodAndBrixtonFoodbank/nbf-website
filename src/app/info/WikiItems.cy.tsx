@@ -1,5 +1,5 @@
-import { formatContent } from "./InfoPage";
-import WikiAccordian from "./WikiAccordian";
+import { formatContent } from "@/app/info/WikiItems";
+import WikiItems from "@/app/info/WikiItems";
 import { DbWikiRow } from "@/databaseUtils";
 
 describe("<WikiAccordian />", () => {
@@ -35,9 +35,8 @@ describe("<WikiAccordian />", () => {
 
     it("top row renders", () => {
         cy.mount(
-            <WikiAccordian
-                topRow={testData[0]}
-                formattedContent={formatContent(testData[0].content)}
+            <WikiItems
+                row={testData[0]}
             />
         );
     });
