@@ -27,11 +27,11 @@
     "coverage:run_tests": "start-server-and-test 'nyc npm run start:test_server' 3200 cypress:e2e",
     "coverage:report": "nyc report --reporter text && nyc report --reporter text-summary",
 
-    "reset_supabase": "supabase db reset && ts-node supabase/tools/createUserForEachRole.ts && ts-node supabase/tools/createStorage.ts",
+    "reset_supabase": "supabase db reset --local && ts-node supabase/tools/createUserForEachRole.ts && ts-node supabase/tools/createStorage.ts",
     "generate_types:local": "supabase gen types typescript --local --schema public > src/databaseTypesFile.ts",
     "generate_types:remote": "supabase gen types typescript --schema public > src/databaseTypesFile.ts",
     "db:generate_seed": "npx tsx supabase/seed/seed.mts > supabase/seed.sql",
-    "post_checkout": "npm install && npx supabase stop && npx supabase start && npm run dev:reset_supabase && npx snaplet generate"
+    "post_checkout": "npm install && npx supabase stop && npx supabase start && npm run reset_supabase && npx snaplet generate"
   },
   "nyc": {
     "all": true,
