@@ -15,6 +15,9 @@ describe("<WikiAccordian />", () => {
         },
     ];
 
+    // need this - if just use {""} in last element, running npm run lint_fix removes it and breaks the test
+    const emptyString = "";
+
     const expectedFormattedContent: (string | React.JSX.Element)[] = [
         <span key="a">{"content1 "}</span>,
         <a href="https://www.google.com/" key="a">
@@ -24,7 +27,7 @@ describe("<WikiAccordian />", () => {
         <a href="https://www.bing.com/" key="a">
             bing
         </a>,
-        <span key="a"></span>,
+        <span key="a">{emptyString}</span>,
     ];
 
     it("embeds links correctly", () => {
