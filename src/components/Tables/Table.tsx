@@ -13,7 +13,7 @@ import {
     faPenToSquare,
     faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { CircularProgress, NoSsr } from "@mui/material";
+import { Checkbox, CircularProgress, NoSsr } from "@mui/material";
 import IconButton from "@mui/material/IconButton/IconButton";
 import React, { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
@@ -408,8 +408,7 @@ const Table = <
     if (checkboxConfig.displayed) {
         columns.unshift({
             name: (
-                <input
-                    type="checkbox"
+                <Checkbox
                     aria-label="Select all rows"
                     checked={checkboxConfig.isAllCheckboxChecked}
                     onChange={() =>
@@ -418,8 +417,7 @@ const Table = <
                 />
             ),
             cell: (row: Row<Data>) => (
-                <input
-                    type="checkbox"
+                <Checkbox
                     aria-label={`Select row ${row.rowId}`}
                     checked={checkboxConfig.isRowChecked(row.data)}
                     onChange={() => checkboxConfig.onCheckboxClicked(row.data)}
