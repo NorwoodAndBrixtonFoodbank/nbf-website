@@ -13,14 +13,14 @@ REPLACE_THIS_LINE
 - [ ] Make sure you've verified it works via `npm run dev`
 - [ ] Make sure you've verified it works via `npm run build` and `npm run start`
 - [ ] Make sure you've fixed all linting problems with `npm run lint_fix`
-- [ ] Make sure you've tested via `npm run test:e2e`
+- [ ] Make sure you've tested via `npm run test`
 
 If you have made any changes to the database...
   - [ ] The migration files are up-to-date with my final set up (`npx supabase db diff -f <name_of_migration>` should create nothing at this point)
-  - [ ] I have updated the typescript definitions for the database with `npm run db:local:generate_types`
+  - [ ] I have updated the typescript definitions for the database with `npm run generate_types:local`
   - [ ] I have modified the seed in `supabase/seed/seed.mts` if appropriate
   - [ ] If I have modified the seed, I have also generated the seed with `npm run db:generate_seed` 
-  - [ ] With my final set up, I can run `npm run dev:reset_supabase` without any errors.
+  - [ ] With my final set up, I can run `npm run reset_supabase` without any errors.
   - [ ] (Just before merging the ticket) I have updated the timestamps of the new migration files so that they are after all existing migration files.
   - [ ] If I have added constraints e.g. `set not null`, I have taken reasonable measures to ensure constraint violations do not happen when the migration occurs. 
   - [ ] I have checked that migration can happen successfully without resetting the database, doing the following.
