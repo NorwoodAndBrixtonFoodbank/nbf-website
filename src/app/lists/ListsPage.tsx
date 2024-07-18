@@ -113,7 +113,7 @@ const ListsPage: React.FC = () => {
 
     useEffect(() => {
         fetchAndSetData();
-    }, []);
+    }, [fetchAndSetData]);
 
     useEffect(() => {
         const subscriptionChannel = supabase
@@ -131,7 +131,7 @@ const ListsPage: React.FC = () => {
         return () => {
             void supabase.removeChannel(subscriptionChannel);
         };
-    }, []);
+    }, [fetchAndSetData]);
 
     return isLoading ? (
         <></>
