@@ -412,7 +412,7 @@ const Table = <
                     type="checkbox"
                     aria-label="Select all rows"
                     checked={checkboxConfig.isAllCheckboxChecked}
-                    onClick={() =>
+                    onChange={() =>
                         checkboxConfig.onAllCheckboxClicked(checkboxConfig.isAllCheckboxChecked)
                     }
                 />
@@ -422,7 +422,7 @@ const Table = <
                     type="checkbox"
                     aria-label={`Select row ${row.rowId}`}
                     checked={checkboxConfig.isRowChecked(row.data)}
-                    onClick={() => checkboxConfig.onCheckboxClicked(row.data)}
+                    onChange={() => checkboxConfig.onCheckboxClicked(row.data)}
                 />
             ),
             width: "47px",
@@ -459,8 +459,8 @@ const Table = <
                 shownHeaderKeys={shownHeaderKeys}
             />
             <TableStyling
-                rowBreakPointConfigs={rowBreakPointConfigs ?? []}
-                dividingLineStyleOptions={getDividingLineStyleOptions(theme)}
+                $rowBreakPointConfigs={rowBreakPointConfigs ?? []}
+                $dividingLineStyleOptions={getDividingLineStyleOptions(theme)}
             >
                 <NoSsr>
                     <DataTable
@@ -534,8 +534,8 @@ const StyledIcon = styled(Icon)`
 `;
 
 const TableStyling = styled.div<{
-    rowBreakPointConfigs: BreakPointConfig[];
-    dividingLineStyleOptions: DividingLineStyleOptions;
+    $rowBreakPointConfigs: BreakPointConfig[];
+    $dividingLineStyleOptions: DividingLineStyleOptions;
 }>`
     // the component with the filter bars
     & > header {
@@ -658,12 +658,12 @@ const TableStyling = styled.div<{
     }
 
     ${(props) =>
-        props.rowBreakPointConfigs
+        props.$rowBreakPointConfigs
             .map((breakPointConfig) => {
                 return breakPointConfig.breakPoints
                     .map(
                         (breakPoint) => `& .rdt_TableRow:nth-child(${breakPoint + 1}) {
-                            border-top: ${props.dividingLineStyleOptions[breakPointConfig.dividingLineStyle].thickness} solid ${props.dividingLineStyleOptions[breakPointConfig.dividingLineStyle].colour};
+                            border-top: ${props.$dividingLineStyleOptions[breakPointConfig.dividingLineStyle].thickness} solid ${props.$dividingLineStyleOptions[breakPointConfig.dividingLineStyle].colour};
                         }`
                     )
                     .join();
