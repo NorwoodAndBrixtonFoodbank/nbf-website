@@ -287,7 +287,7 @@ const Table = <
                 />
             ),
             sortField: headerKey.toString(),
-            id: defaultSortConfig ? headerKey.toString() : null,
+            id: defaultSortConfig ? headerKey.toString() : undefined,
             headerKey: headerKey,
             sortMethod: sortMethod,
             ...columnStyles,
