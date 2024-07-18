@@ -105,6 +105,10 @@ const headers = [
     ["phone_number", "Phone Number"],
 ] as const;
 
+const selectorForRowCheckboxWithAriaLabel = (ariaLabel: string): string => {
+    return "span[aria-label='" + ariaLabel + "'] > input[type='checkbox']";
+};
+
 interface TestTableProps {
     displayCheckboxes?: boolean;
     toggleableHeaders?: (keyof TestData)[];
@@ -322,99 +326,99 @@ describe("<ClientPaginatedTable />", () => {
 
     it("checkbox select toggles", () => {
         cy.mount(<Component />);
-        cy.get("input[aria-label='Select row 0']").should("not.be.checked");
-        cy.get("input[aria-label='Select row 0']").click();
-        cy.get("input[aria-label='Select row 0']").should("be.checked");
-        cy.get("input[aria-label='Select row 0']").click();
-        cy.get("input[aria-label='Select row 0']").should("not.be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("not.be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).click();
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).click();
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("not.be.checked");
     });
 
     it("checkbox toggles only the selected one", () => {
         cy.mount(<Component />);
-        cy.get("input[aria-label='Select row 0']").should("not.be.checked");
-        cy.get("input[aria-label='Select row 2']").click();
-        cy.get("input[aria-label='Select row 0']").click();
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("not.be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 2")).click();
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).click();
 
-        cy.get("input[aria-label='Select row 0']").should("be.checked");
-        cy.get("input[aria-label='Select row 1']").should("not.be.checked");
-        cy.get("input[aria-label='Select row 2']").should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 1")).should("not.be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 2")).should("be.checked");
 
-        cy.get("input[aria-label='Select row 0']").click();
-        cy.get("input[aria-label='Select row 0']").should("not.be.checked");
-        cy.get("input[aria-label='Select row 1']").should("not.be.checked");
-        cy.get("input[aria-label='Select row 2']").should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).click();
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("not.be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 1")).should("not.be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 2")).should("be.checked");
     });
 
     it("filtering does not affect checkbox", () => {
         cy.mount(<Component filters />);
-        cy.get("input[aria-label='Select row 0']").should("not.be.checked");
-        cy.get("input[aria-label='Select row 0']").click();
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("not.be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).click();
         cy.get("input[type='text']").type("Sam");
         cy.get("input[type='text']").clear();
-        cy.get("input[aria-label='Select row 0']").should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("be.checked");
     });
 
     it("changing page does not affect checkbox", () => {
         cy.mount(<Component pagination />);
-        cy.get("input[aria-label='Select row 0']").should("not.be.checked");
-        cy.get("input[aria-label='Select row 0']").click();
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("not.be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).click();
         cy.get("button[id='pagination-next-page']").click();
         cy.get("button[id='pagination-previous-page']").click();
-        cy.get("input[aria-label='Select row 0']").should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("be.checked");
     });
 
     it("pagination limit does not affect checkbox", () => {
         cy.mount(<Component pagination />);
         cy.get("select[aria-label='Rows per page:']").select("15");
-        cy.get("input[aria-label='Select row 14']").should("not.be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 14")).should("not.be.checked");
 
-        cy.get("input[aria-label='Select row 14']").click();
-        cy.get("input[aria-label='Select row 14']").should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 14")).click();
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 14")).should("be.checked");
 
-        cy.get("input[aria-label='Select row 0']").click();
-        cy.get("input[aria-label='Select row 0']").should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).click();
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("be.checked");
 
         cy.get("select[aria-label='Rows per page:']").select("10");
-        cy.get("input[aria-label='Select row 0']").should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("be.checked");
         cy.get("select[aria-label='Rows per page:']").select("15");
 
-        cy.get("input[aria-label='Select row 0']").should("be.checked");
-        cy.get("input[aria-label='Select row 14']").should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 14")).should("be.checked");
     });
 
     it("checkall box toggles all data", () => {
         cy.mount(<Component tableData={smallerData} />);
-        cy.get("input[aria-label='Select all rows']").click();
-        cy.get("input[aria-label='Select row 0']").should("be.checked");
-        cy.get("input[aria-label='Select row 1']").should("be.checked");
-        cy.get("input[aria-label='Select row 2']").should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select all rows")).click();
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 1")).should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 2")).should("be.checked");
     });
 
     it("uncheck one row unticks the checkall box", () => {
         cy.mount(<Component tableData={smallerData} />);
-        cy.get("input[aria-label='Select all rows']").click();
-        cy.get("input[aria-label='Select row 0']").click();
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select all rows")).click();
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).click();
 
-        cy.get("input[aria-label='Select row 0']").should("not.be.checked");
-        cy.get("input[aria-label='Select row 1']").should("be.checked");
-        cy.get("input[aria-label='Select row 2']").should("be.checked");
-        cy.get("input[aria-label='Select all rows']").should("not.be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("not.be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 1")).should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 2")).should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select all rows")).should("not.be.checked");
     });
 
     it("check all rows ticks the checkall box", () => {
         cy.mount(<Component tableData={smallerData} />);
-        cy.get("input[aria-label='Select row 0']").click();
-        cy.get("input[aria-label='Select row 1']").click();
-        cy.get("input[aria-label='Select row 2']").click();
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).click();
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 1")).click();
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 2")).click();
 
-        cy.get("input[aria-label='Select all rows']").should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select all rows")).should("be.checked");
     });
 
     it("checkbox disabling works", () => {
         cy.mount(<Component tableData={smallerData} displayCheckboxes={false} />);
-        cy.get("input[aria-label='Select row 0']").should("not.exist");
-        cy.get("input[aria-label='Select row 5']").should("not.exist");
-        cy.get("input[aria-label='Select row 10']").should("not.exist");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("not.exist");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 5")).should("not.exist");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 10")).should("not.exist");
     });
 
     it("sorting is correct", () => {
@@ -432,18 +436,18 @@ describe("<ClientPaginatedTable />", () => {
     it("sorting does not affect checkbox", () => {
         cy.mount(<Component sortable tableData={data} />);
 
-        cy.get("input[aria-label='Select row 0']").click(); //Tom
-        cy.get("input[aria-label='Select row 0']").should("be.checked");
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).click(); //Tom
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("be.checked");
 
-        cy.get("input[aria-label='Select row 2']").click(); //Harper Garret
-        cy.get("input[aria-label='Select row 2']").should("be.checked");
-
-        cy.get("div").contains("Name").parent().click();
-        cy.get("input[aria-label='Select row 14']").should("be.checked"); //Tom
-        cy.get("input[aria-label='Select row 7']").should("be.checked"); //Harper Garret
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 2")).click(); //Harper Garret
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 2")).should("be.checked");
 
         cy.get("div").contains("Name").parent().click();
-        cy.get("input[aria-label='Select row 0']").should("be.checked"); //Tom
-        cy.get("input[aria-label='Select row 7']").should("be.checked"); //Harper Garret
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 14")).should("be.checked"); //Tom
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 7")).should("be.checked"); //Harper Garret
+
+        cy.get("div").contains("Name").parent().click();
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 0")).should("be.checked"); //Tom
+        cy.get(selectorForRowCheckboxWithAriaLabel("Select row 7")).should("be.checked"); //Harper Garret
     });
 });
