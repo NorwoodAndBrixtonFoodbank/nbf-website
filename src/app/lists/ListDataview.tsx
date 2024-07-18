@@ -156,7 +156,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     const toggleableHeaders = listsHeaderKeysAndLabels.map(([key]) => key);
 
     const onEdit = (index: number): void => {
-        setModal(listRowToListDB(listOfIngredients[index]));
+        setModal(listRowToListDB(listData[index]));
     };
 
     const reorderRows = (row1: ListRow, row2: ListRow): void => {
@@ -234,7 +234,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
 
     const onConfirmDeletion = async (): Promise<void> => {
         if (toDelete !== null) {
-            const itemToDelete = listOfIngredients[toDelete];
+            const itemToDelete = listData[toDelete];
 
             const auditLog = {
                 action: "delete a list item",
@@ -273,12 +273,15 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     useEffect(() => {
         setListData(
             listOfIngredients.filter((row) => {
-                return primaryFilters.every((filter) => {
-                    return filter.method(row, filter.state, filter.key);
-                });
+                return (
+                    row.listType.toString() === currentList.toLowerCase() &&
+                    primaryFilters.every((filter) => {
+                        return filter.method(row, filter.state, filter.key);
+                    })
+                );
             })
         );
-    }, [primaryFilters, listOfIngredients]);
+    }, [primaryFilters, listOfIngredients, currentList]);
 
     return (
         <>
@@ -290,7 +293,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             />
             <ConfirmDialog
                 message={`Are you sure you want to delete ${
-                    toDelete !== null ? listOfIngredients[toDelete].itemName : ""
+                    toDelete !== null ? listData[toDelete].itemName : ""
                 }?`}
                 isOpen={toDeleteModalOpen}
                 onConfirm={onConfirmDeletion}

@@ -59,6 +59,7 @@ const formatListData = (listsData: Schema["lists"][]): ListRow[] => {
         (row) =>
             ({
                 primaryKey: row.primary_key,
+                listType: row.list_type,
                 rowOrder: row.row_order,
                 itemName: row.item_name,
                 ...Object.fromEntries(
@@ -76,16 +77,6 @@ const formatListData = (listsData: Schema["lists"][]): ListRow[] => {
     );
 };
 
-const filterDataByListType = (
-    dataToFilter: FetchedListsData["listsData"],
-    currentList: ListName
-): FetchedListsData["listsData"] => {
-    const toReturn = dataToFilter.filter((item) => item.list_type.toString() == currentList.toLowerCase());
-    return toReturn;
-};
-
-let currentListValue : ListName;
-
 const ListsPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [listData, setListData] = useState<ListRow[]>([]);
@@ -94,13 +85,11 @@ const ListsPage: React.FC = () => {
     const [currentList, setCurrentList] = useState<ListName>("Regular");
     const listsTableFetchAbortController = useRef<AbortController | null>(null);
 
-    currentListValue = currentList;
-
     function handleSetError(error: string | null): void {
         setErrorMessage(error);
     }
 
-    const fetchAndSetData = useCallback(async (currentListValue : ListName): Promise<void> => {
+    const fetchAndSetData = useCallback(async (): Promise<void> => {
         setIsLoading(true);
         if (listsTableFetchAbortController.current) {
             listsTableFetchAbortController.current.abort("stale request");
@@ -113,30 +102,24 @@ const ListsPage: React.FC = () => {
                 setIsLoading(false);
                 setErrorMessage(getErrorMessage(error));
                 return;
-            }       
-            const result = filterDataByListType(data.listsData, currentListValue);
-            setListData(formatListData(result));
+            }
+
+            setListData(formatListData(data.listsData));
             setComment(data.comment);
             listsTableFetchAbortController.current = null;
             setIsLoading(false);
         }
     }, [setIsLoading, setErrorMessage, setListData, setComment]);
 
-
-    // const cachedFetchAndSetData = useCallback(() => {
-    //     fetchAndSetData();
-    // }, [setIsLoading, setErrorMessage, setErrorMessage, setListData, setComment, fetchAndSetData]);
-
-    
     useEffect(() => {
-        fetchAndSetData(currentListValue);
-    }, [currentList]);
+        fetchAndSetData();
+    }, []);
 
     useEffect(() => {
         const subscriptionChannel = supabase
             .channel("lists-table-changes")
             .on("postgres_changes", { event: "*", schema: "public", table: "lists" }, async () => {
-                await fetchAndSetData(currentListValue);
+                await fetchAndSetData();
             })
             .subscribe((status, err) => {
                 if (subscriptionStatusRequiresErrorMessage(status, err, "lists")) {

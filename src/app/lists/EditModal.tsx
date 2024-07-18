@@ -76,7 +76,7 @@ const EditModal: React.FC<Props> = ({ data, onClose, currentList }) => {
         setToSubmit({ ...toSubmit, [key]: newValue });
     };
 
-    const addListItem = async (listItem: Partial<Schema["lists"]>): Promise<AddListReturn> => {       
+    const addListItem = async (listItem: Partial<Schema["lists"]>): Promise<AddListReturn> => {
         const { data: returnedListData, error: insertListItemError } = await supabase
             .from("lists")
             .insert(listItem)
