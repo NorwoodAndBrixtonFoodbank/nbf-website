@@ -7,26 +7,21 @@
     "build": "next build",
     "start": "next start",
     "start:test_server": "next start -p 3200",
-
     "typecheck": "tsc",
     "lint": "npm run typecheck && next lint --dir . --ignore-path .gitignore",
     "lint_fix": "npm run typecheck && next lint --fix --dir . --ignore-path .gitignore",
     "lint:ci": "next lint --dir . --ignore-path .gitignore && npm run typecheck",
-
     "test": "start-server-and-test start:test_server 3200 cypress:all",
     "test:component": "start-server-and-test start:test_server 3200 cypress:component",
     "test:e2e": "start-server-and-test start:test_server 3200 cypress:e2e",
     "test:coverage": "npm run coverage:generate && npm run coverage:run_tests || npm run coverage:report",
-
     "cypress:all": "npm run cypress:component && npm run cypress:e2e",
     "cypress:component": "npx cypress run --component",
     "cypress:e2e": "npx cypress run --e2e",
     "cypress:open": "start-server-and-test 'next start -p 3100' 3100 'npx cypress open --config baseUrl=http://localhost:3100'",
-
     "coverage:generate": "nyc instrument --delete src .nyc_output --compact=false --all",
     "coverage:run_tests": "start-server-and-test 'nyc npm run start:test_server' 3200 cypress:e2e",
     "coverage:report": "nyc report --reporter text && nyc report --reporter text-summary",
-
     "reset_supabase": "supabase db reset --local && ts-node supabase/tools/createUserForEachRole.ts && ts-node supabase/tools/createStorage.ts",
     "generate_types:local": "supabase gen types typescript --local --schema public > src/databaseTypesFile.ts",
     "generate_types:remote": "supabase gen types typescript --schema public > src/databaseTypesFile.ts",
@@ -36,9 +31,18 @@
   "nyc": {
     "all": true,
     "extends": "@istanbuljs/nyc-config-typescript",
-    "include": ["src/**/*.ts", "src/**/*.tsx"],
-    "exclude": ["src/**/*.cy.ts", "src/**/*.cy.tsx"],
-    "extension": [".ts",".tsx"]
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
+    ],
+    "exclude": [
+      "src/**/*.cy.ts",
+      "src/**/*.cy.tsx"
+    ],
+    "extension": [
+      ".ts",
+      ".tsx"
+    ]
   },
   "dependencies": {
     "@emotion/is-prop-valid": "^1.2.1",
@@ -62,6 +66,7 @@
     "@supabase/auth-helpers-nextjs": "^0.7.2",
     "@supabase/gotrue-js": "^2.31.0",
     "@supabase/supabase-js": "^2.26.0",
+    "@types/file-saver": "^2.0.7",
     "@types/node": "20.3.1",
     "@types/pdf-parse": "^1.1.1",
     "@types/react": "18.2.13",
@@ -69,6 +74,7 @@
     "@types/react-fontawesome": "^1.6.5",
     "@types/react-modal": "^3.16.0",
     "@types/styled-components": "^5.1.26",
+    "@types/uuid": "^9.0.8",
     "dayjs": "^1.11.9",
     "dotenv": "^16.3.1",
     "encoding": "^0.1.13",
@@ -90,13 +96,12 @@
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.11.0",
+    "@next/bundle-analyzer": "^14.2.5",
     "@snaplet/copycat": "^5.0.0",
     "@snaplet/seed": "^0.88.2",
     "@types/cypress__code-coverage": "^3.10.0",
     "@types/cypress-dotenv": "^2.0.1",
-    "@types/file-saver": "^2.0.7",
     "@types/seedrandom": "^3.0.8",
-    "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "axe-core": "^4.7.2",

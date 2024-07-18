@@ -1,5 +1,11 @@
 /** @type {import("next").NextConfig} */
 
+import createBundleAnalyzerWrapper from "@next/bundle-analyzer";
+
+const withBundleAnalyzer = createBundleAnalyzerWrapper({
+    enabled: process.env.ANALYZE === "true",
+});
+
 const nextConfig = {
     compiler: {
         styledComponents: true,
@@ -19,4 +25,4 @@ const nextConfig = {
     },
 };
 
-module.exports = nextConfig;
+module.exports = withBundleAnalyzer(nextConfig);
