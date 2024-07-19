@@ -20,6 +20,7 @@ const pathsShownToAllAuthenticatedUsers = [
     "/parcels",
     "/update-password",
     "/set-password",
+    "/info",
 ] as const;
 
 const pathsOnlyShownToStaffAndAbove = ["/lists", "/reports"] as const;

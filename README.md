@@ -106,6 +106,11 @@ failed to start docker container: Error response from daemon: Ports are not avai
 * `npm run db:generate_seed` to generate `supabase/seed.sql` based on `supabase/seed/seed.mts`
   * This does not automatically put the data in the database. You'll need to run `npm run dev:reset_supabase`
 
+* If you set the environment variable `ANALZYE=true` in your shell before building the app, Next will create reports
+on the various bundle sizes when it builds and open them in your browser for you
+  * Powershell: `$env:ANALYZE='true'`
+
+
 ### Supabase development
 
 To use the Supabase CLI:

@@ -34,3 +34,4 @@ export type DbAuditLogRow = ViewSchema["audit_log_plus"];
 export type DbClientRow = ViewSchema["clients_plus"];
 export type DbParcelRow = ViewSchema["parcels_plus"];
 export type DbReportRow = ViewSchema["reports"];
+export type DbWikiRow = Schema["wiki"];

@@ -137,6 +137,7 @@ const pages = [
     ["Clients", "/clients"],
     ["Lists", "/lists"],
     ["Calendar", "/calendar"],
+    ["Info", "/info"],
     ["Admin", "/admin"],
     ["Reports", "/reports"],
 ];
