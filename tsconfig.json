@@ -5,6 +5,7 @@
     }
   },
   "compilerOptions": {
+    "types": ["jest", "@jest/globals"],
     "target": "es5",
     "lib": [
       "dom",

@@ -29,7 +29,7 @@ const getRawClientParcelsDetails = async (clientId: string): Promise<ParcelsDeta
         .select(
             `
         parcel_id:primary_key,
-        collection_centre:collection_centres ( 
+        collection_centre:collection_centres (
             name
          ),
         packing_date,
