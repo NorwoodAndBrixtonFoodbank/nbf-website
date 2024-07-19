@@ -15,7 +15,7 @@ interface ContentPart {
     key: string;
 }
 
-export const formatContent: (rowContent: string) => React.JSX.Element[] = (rowContent: string) => {
+export const convertContentToElements = (rowContent: string): React.JSX.Element[] => {
     const rowContentParts = rowContent.split(/(\[.*\]\(.*\)|<.*>)/);
     const contentParts: ContentPart[] = rowContentParts.map((part, index) => {
         if (index % 2 === 1) {
@@ -58,7 +58,7 @@ const WikiItems: React.FC<AccordianProps> = (props) => {
                             >
                                 <h2>{row.title}</h2>
                             </AccordionSummary>
-                            <AccordionDetails>{formatContent(row.content)}</AccordionDetails>
+                            <AccordionDetails>{convertContentToElements(row.content)}</AccordionDetails>
                         </Accordion>
                     </TableSurface>
                 );

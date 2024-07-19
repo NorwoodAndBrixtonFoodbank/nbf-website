@@ -1,4 +1,4 @@
-import WikiItems, { formatContent } from "@/app/info/WikiItems";
+import WikiItems, { convertContentToElements } from "@/app/info/WikiItems";
 import { DbWikiRow } from "@/databaseUtils";
 
 describe("<WikiAccordian />", () => {
@@ -19,7 +19,7 @@ describe("<WikiAccordian />", () => {
     const emptyString = "";
 
     // all keys defined to be 'a' to handle the randomly generated uuid keys assigned to testData when passed into formatContent
-    const expectedFormattedContent: (string | React.JSX.Element)[][] = [
+    const expectedFormattedContent: (React.JSX.Element)[][] = [
         [
             <span key="a">{"content1 "}</span>,
             <a href="https://www.google.com/" key="a">
@@ -36,7 +36,7 @@ describe("<WikiAccordian />", () => {
 
     it("embeds links correctly", () => {
         const result = testData.map((row) => {
-            return formatContent(row.content).map((htmlObject) => {
+            return convertContentToElements(row.content).map((htmlObject) => {
                 return { ...htmlObject, key: "a" };
             });
         });

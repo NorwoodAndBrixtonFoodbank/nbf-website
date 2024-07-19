@@ -26,13 +26,8 @@ export async function getWikiRows(): Promise<QueryType> {
 }
 
 const InfoPage: React.FC<QueryType> = ({ data, error }) => {
-    if (error) {
-        console.error(error);
-        return <h3>Error occured when fetching data.</h3>;
-    } else {
-        const rows: DbWikiRow[] = data;
-        return <WikiItems rows={rows} />;
-    }
-};
+    const rows: DbWikiRow[] | null= data; 
+    return (error)? <h3>Error occured when fetching data.</h3> : <>{rows && <WikiItems rows={rows}/>}</>
+}
 
 export default InfoPage;
