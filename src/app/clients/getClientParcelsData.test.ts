@@ -16,7 +16,7 @@ jest.mock("@/supabaseClient", () => {
 });
 
 describe("test for getClientparcelsData", () => {
-    test("Should format the data correctly", () => {
+    it("Should format the data correctly", () => {
         const sampleParcelData: ParcelsDetail = {
             parcel_id: "a2adb0ba-873e-506b-abd1-8cd1782923c8",
             collection_centre: {
