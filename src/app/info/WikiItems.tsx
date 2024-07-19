@@ -15,9 +15,7 @@ interface ContentPart {
     key: string;
 }
 
-export const formatContent: (rowContent: string) => React.JSX.Element[] = (
-    rowContent: string
-) => {
+export const formatContent: (rowContent: string) => React.JSX.Element[] = (rowContent: string) => {
     const rowContentParts = rowContent.split(/(\[.*\]\(.*\)|<.*>)/);
     const contentParts: ContentPart[] = rowContentParts.map((part, index) => {
         if (index % 2 === 1) {
