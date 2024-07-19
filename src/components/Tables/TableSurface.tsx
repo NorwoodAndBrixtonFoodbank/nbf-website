@@ -10,7 +10,7 @@ const StyledPaper = styled(Paper)`
     border-radius: 1rem;
 `;
 
-interface Props {
+export interface Props {
     children: React.ReactNode;
 }
 

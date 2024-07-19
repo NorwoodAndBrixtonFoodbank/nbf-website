@@ -3,7 +3,14 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { DbWikiRow } from "@/databaseUtils";
-import TableSurface from "@/components/Tables/TableSurface";
+import UpdateIcon from "@mui/icons-material/Update";
+import {
+    AccordionWrapper,
+    WikiUpdateButton,
+    buttonAlert,
+    AdminManagerDependent,
+    AccordionSurface,
+} from "@/app/info/lib/ClientSideHelpers";
 
 interface AccordianProps {
     rows: DbWikiRow[];
@@ -49,20 +56,27 @@ const WikiItems: React.FC<AccordianProps> = (props) => {
         <>
             {sortedRows.map((row: DbWikiRow) => {
                 return (
-                    <TableSurface key={row.order}>
-                        <Accordion elevation={0}>
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="panel1-content"
-                                id="panel1-header"
-                            >
-                                <h2>{row.title}</h2>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                {convertContentToElements(row.content)}
-                            </AccordionDetails>
-                        </Accordion>
-                    </TableSurface>
+                    <AccordionWrapper key={row.order}>
+                        <AdminManagerDependent>
+                            <WikiUpdateButton onClick={buttonAlert}>
+                                <UpdateIcon />
+                            </WikiUpdateButton>
+                        </AdminManagerDependent>
+                        <AccordionSurface>
+                            <Accordion elevation={0}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="panel1-content"
+                                    id="panel1-header"
+                                >
+                                    <h2>{row.title}</h2>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    {convertContentToElements(row.content)}
+                                </AccordionDetails>
+                            </Accordion>
+                        </AccordionSurface>
+                    </AccordionWrapper>
                 );
             })}
         </>
