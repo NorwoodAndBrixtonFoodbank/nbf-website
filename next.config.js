@@ -1,8 +1,7 @@
 /** @type {import("next").NextConfig} */
 
-import createBundleAnalyzerWrapper from "@next/bundle-analyzer";
-
-const withBundleAnalyzer = createBundleAnalyzerWrapper({
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
     enabled: process.env.ANALYZE === "true",
 });
 
