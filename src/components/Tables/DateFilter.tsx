@@ -39,7 +39,7 @@ export const serverSideDateFilter = <Data, DbData extends Record<string, unknown
             state: DateRangeState,
             setState: (state: DateRangeState) => void
         ): React.ReactNode {
-            return <DateRangeInputs range={state} setRange={setState} />;
+            return <DateRangeInputs key={key as string} range={state} setRange={setState} />;
         },
     };
 };

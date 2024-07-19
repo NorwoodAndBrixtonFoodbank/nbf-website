@@ -218,6 +218,8 @@ const buildFilters = async (): Promise<{
             method: parcelsPostcodeSearch,
         }),
         await buildDeliveryCollectionFilter(),
+        await buildPackingSlotFilter(),
+        await buildLastStatusFilter(),
     ];
 
     const additionalFilters: ParcelsFilters = [
@@ -239,8 +241,6 @@ const buildFilters = async (): Promise<{
             headers: parcelTableHeaderKeysAndLabels,
             method: voucherSearch,
         }),
-        await buildLastStatusFilter(),
-        await buildPackingSlotFilter(),
     ];
     return { primaryFilters: primaryFilters, additionalFilters: additionalFilters };
 };

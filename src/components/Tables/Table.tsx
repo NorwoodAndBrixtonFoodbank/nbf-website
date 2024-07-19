@@ -13,7 +13,7 @@ import {
     faPenToSquare,
     faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { CircularProgress, NoSsr } from "@mui/material";
+import { Checkbox, CircularProgress, NoSsr } from "@mui/material";
 import IconButton from "@mui/material/IconButton/IconButton";
 import React, { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
@@ -287,7 +287,7 @@ const Table = <
                 />
             ),
             sortField: headerKey.toString(),
-            id: defaultSortConfig ? headerKey.toString() : null,
+            id: defaultSortConfig ? headerKey.toString() : undefined,
             headerKey: headerKey,
             sortMethod: sortMethod,
             ...columnStyles,
@@ -408,21 +408,19 @@ const Table = <
     if (checkboxConfig.displayed) {
         columns.unshift({
             name: (
-                <input
-                    type="checkbox"
+                <Checkbox
                     aria-label="Select all rows"
                     checked={checkboxConfig.isAllCheckboxChecked}
-                    onClick={() =>
+                    onChange={() =>
                         checkboxConfig.onAllCheckboxClicked(checkboxConfig.isAllCheckboxChecked)
                     }
                 />
             ),
             cell: (row: Row<Data>) => (
-                <input
-                    type="checkbox"
+                <Checkbox
                     aria-label={`Select row ${row.rowId}`}
                     checked={checkboxConfig.isRowChecked(row.data)}
-                    onClick={() => checkboxConfig.onCheckboxClicked(row.data)}
+                    onChange={() => checkboxConfig.onCheckboxClicked(row.data)}
                 />
             ),
             width: "47px",
@@ -459,15 +457,14 @@ const Table = <
                 shownHeaderKeys={shownHeaderKeys}
             />
             <TableStyling
-                rowBreakPointConfigs={rowBreakPointConfigs ?? []}
-                dividingLineStyleOptions={getDividingLineStyleOptions(theme)}
+                $rowBreakPointConfigs={rowBreakPointConfigs ?? []}
+                $dividingLineStyleOptions={getDividingLineStyleOptions(theme)}
             >
                 <NoSsr>
                     <DataTable
                         columns={columns}
                         data={rows}
                         keyField="rowId"
-                        fixedHeader
                         pagination={paginationConfig.enablePagination}
                         persistTableHead
                         onRowClicked={onRowClick}
@@ -535,8 +532,8 @@ const StyledIcon = styled(Icon)`
 `;
 
 const TableStyling = styled.div<{
-    rowBreakPointConfigs: BreakPointConfig[];
-    dividingLineStyleOptions: DividingLineStyleOptions;
+    $rowBreakPointConfigs: BreakPointConfig[];
+    $dividingLineStyleOptions: DividingLineStyleOptions;
 }>`
     // the component with the filter bars
     & > header {
@@ -659,12 +656,12 @@ const TableStyling = styled.div<{
     }
 
     ${(props) =>
-        props.rowBreakPointConfigs
+        props.$rowBreakPointConfigs
             .map((breakPointConfig) => {
                 return breakPointConfig.breakPoints
                     .map(
                         (breakPoint) => `& .rdt_TableRow:nth-child(${breakPoint + 1}) {
-                            border-top: ${props.dividingLineStyleOptions[breakPointConfig.dividingLineStyle].thickness} solid ${props.dividingLineStyleOptions[breakPointConfig.dividingLineStyle].colour};
+                            border-top: ${props.$dividingLineStyleOptions[breakPointConfig.dividingLineStyle].thickness} solid ${props.$dividingLineStyleOptions[breakPointConfig.dividingLineStyle].colour};
                         }`
                     )
                     .join();
