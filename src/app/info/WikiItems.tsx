@@ -58,7 +58,9 @@ const WikiItems: React.FC<AccordianProps> = (props) => {
                             >
                                 <h2>{row.title}</h2>
                             </AccordionSummary>
-                            <AccordionDetails>{convertContentToElements(row.content)}</AccordionDetails>
+                            <AccordionDetails>
+                                {convertContentToElements(row.content)}
+                            </AccordionDetails>
                         </Accordion>
                     </TableSurface>
                 );

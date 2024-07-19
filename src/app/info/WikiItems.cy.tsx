@@ -19,7 +19,7 @@ describe("<WikiAccordian />", () => {
     const emptyString = "";
 
     // all keys defined to be 'a' to handle the randomly generated uuid keys assigned to testData when passed into formatContent
-    const expectedFormattedContent: (React.JSX.Element)[][] = [
+    const expectedFormattedContent: React.JSX.Element[][] = [
         [
             <span key="a">{"content1 "}</span>,
             <a href="https://www.google.com/" key="a">

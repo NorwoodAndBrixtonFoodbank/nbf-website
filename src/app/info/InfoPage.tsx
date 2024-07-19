@@ -6,6 +6,7 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/databaseTypesFile";
+import { logErrorReturnLogId } from "@/logger/logger";
 
 interface QuerySuccessType {
     data: DbWikiRow[];
@@ -26,8 +27,10 @@ export async function getWikiRows(): Promise<QueryType> {
 }
 
 const InfoPage: React.FC<QueryType> = ({ data, error }) => {
-    const rows: DbWikiRow[] | null= data; 
-    return (error)? <h3>Error occured when fetching data.</h3> : <>{rows && <WikiItems rows={rows}/>}</>
-}
+    if (error) {
+        logErrorReturnLogId("error fetching wiki data", error);
+    }
+    return error ? <h3>Error occured when fetching data.</h3> : <WikiItems rows={data} />;
+};
 
 export default InfoPage;
