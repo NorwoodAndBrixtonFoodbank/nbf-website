@@ -99,15 +99,16 @@
     "start-server-and-test": "^2.0.0",
     "styled-components": "^6.0.4",
     "supabase": "^1.142.2",
+    "typescript": "^5.5.3",
     "uuid": "^9.0.1",
     "winston": "^3.12.0",
-    "winston-cloudwatch": "^6.2.0",
-    "typescript": "^5.5.3"
+    "winston-cloudwatch": "^6.2.0"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.24.7",
     "@cypress/code-coverage": "^3.11.0",
     "@jest/globals": "^29.7.0",
+    "@next/bundle-analyzer": "^14.2.5",
     "@snaplet/copycat": "^5.0.0",
     "@snaplet/seed": "^0.88.2",
     "@types/cypress__code-coverage": "^3.10.0",
@@ -116,15 +117,6 @@
     "@types/jest": "^29.5.12",
     "@types/seedrandom": "^3.0.8",
     "@types/uuid": "^9.0.8",
-    "@typescript-eslint/eslint-plugin": "^5.62.0",
-    "@typescript-eslint/parser": "^5.62.0",
-    "@cypress/code-coverage": "^3.11.0",
-    "@next/bundle-analyzer": "^14.2.5",
-    "@snaplet/copycat": "^5.0.0",
-    "@snaplet/seed": "^0.88.2",
-    "@types/cypress__code-coverage": "^3.10.0",
-    "@types/cypress-dotenv": "^2.0.1",
-    "@types/seedrandom": "^3.0.8",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "axe-core": "^4.7.2",
@@ -144,7 +136,6 @@
     "seedrandom": "^3.0.5",
     "snaplet": "^0.88.2",
     "ts-node": "^10.9.2",
-    "snaplet": "^0.88.2",
     "ts-jest": "^29.2.2"
   }
 }
