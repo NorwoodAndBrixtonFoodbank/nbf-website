@@ -50,9 +50,15 @@
     },
     "testEnvironment": "node",
     "transform": {
-      "^.+.tsx?$": ["ts-jest", {}]
+      "^.+.tsx?$": [
+        "ts-jest",
+        {}
+      ]
     },
-    "modulePaths": ["<rootDir>/src", "<rootDir>/node_modules"]
+    "modulePaths": [
+      "<rootDir>/src",
+      "<rootDir>/node_modules"
+    ]
   },
   "dependencies": {
     "@emotion/is-prop-valid": "^1.2.1",
@@ -135,7 +141,7 @@
     "jest": "^29.7.0",
     "seedrandom": "^3.0.5",
     "snaplet": "^0.88.2",
-    "ts-node": "^10.9.2",
-    "ts-jest": "^29.2.2"
+    "ts-jest": "^29.2.2",
+    "ts-node": "^10.9.2"
   }
 }
