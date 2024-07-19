@@ -12,7 +12,7 @@
     "lint_fix": "npm run typecheck && next lint --fix --dir . --ignore-path .gitignore",
     "lint:ci": "next lint --dir . --ignore-path .gitignore && npm run typecheck",
     "test": "start-server-and-test start:test_server 3200 cypress:all && jest:all",
-    "test:component": "start-server-and-test start:test_server 3200 cypress:component && jest:component",
+    "test:component": "start-server-and-test start:test_server 3200 cypress:component && npm run jest:component",
     "test:e2e": "start-server-and-test start:test_server 3200 cypress:e2e",
     "test:coverage": "npm run coverage:generate && npm run coverage:run_tests || npm run coverage:report",
     "cypress:all": "npm run cypress:component && npm run cypress:e2e",
