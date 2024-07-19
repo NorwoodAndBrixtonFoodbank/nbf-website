@@ -3,7 +3,16 @@ import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 
-export type ListName = "Regular" | "Hotel";
+import { Database } from "@/databaseTypesFile";
+
+export type ListName = Database["public"]["Enums"]["list_type"];
+
+// export type ListName = "Regular" | "Hotel";
+
+// export enum ListName {
+//     Regular = "Regular",
+//     Hotel = "Hotel",
+// }
 interface Props {
     listStateAnchorElement: HTMLElement | null;
     setListStateAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;

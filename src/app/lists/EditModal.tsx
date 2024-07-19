@@ -141,9 +141,10 @@ const EditModal: React.FC<Props> = ({ data, onClose, currentList }) => {
         }
 
         if (data === null) {
-            currentList.toLowerCase() === "regular"
-                ? (toSubmit.list_type = "regular")
-                : (toSubmit.list_type = "hotel");
+            // currentList.toLowerCase() === "regular"
+            //     ? (toSubmit.list_type = "regular")
+            //     : (toSubmit.list_type = "hotel");
+            toSubmit.list_type = currentList;
             const { error } = await addListItem(toSubmit);
             if (error) {
                 switch (error.type) {

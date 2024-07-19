@@ -28,7 +28,7 @@ export interface ListRow {
     primaryKey: string;
     rowOrder: number;
     itemName: string;
-    listType: "regular" | "hotel";
+    listType: "Regular" | "Hotel";
     "1": QuantityAndNotes;
     "2": QuantityAndNotes;
     "3": QuantityAndNotes;
@@ -274,7 +274,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         setListData(
             listOfIngredients.filter((row) => {
                 return (
-                    row.listType.toString() === currentList.toLowerCase() &&
+                    row.listType === currentList &&
                     primaryFilters.every((filter) => {
                         return filter.method(row, filter.state, filter.key);
                     })
