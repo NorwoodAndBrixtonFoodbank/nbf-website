@@ -14,8 +14,8 @@ export type ListName = Database["public"]["Enums"]["list_type"];
 //     Hotel = "Hotel",
 // }
 interface Props {
-    listStateAnchorElement: HTMLElement | null;
-    setListStateAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
+    listStateDropDownElement: HTMLElement | null;
+    setListStateDropDownElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     currentList: ListName;
     setCurrentList: React.Dispatch<React.SetStateAction<ListName>>;
 }
@@ -25,32 +25,32 @@ const swapListNameValue = (currentListName: ListName): ListName => {
 };
 
 const ListStates: React.FC<Props> = ({
-    listStateAnchorElement,
-    setListStateAnchorElement,
+    listStateDropDownElement,
+    setListStateDropDownElement,
     currentList,
     setCurrentList,
 }) => {
     return (
         <>
-            {listStateAnchorElement && (
+            {
                 <Menu
                     open
-                    onClose={() => setListStateAnchorElement(null)}
-                    anchorEl={listStateAnchorElement}
+                    onClose={() => setListStateDropDownElement(null)}
+                    anchorEl={listStateDropDownElement}
                 >
                     <MenuList id="listType-menu">
                         <MenuItem
                             key={swapListNameValue(currentList)}
                             onClick={() => {
                                 setCurrentList(swapListNameValue(currentList));
-                                setListStateAnchorElement(null);
+                                setListStateDropDownElement(null);
                             }}
                         >
                             {swapListNameValue(currentList)}
                         </MenuItem>
                     </MenuList>
                 </Menu>
-            )}
+            }
         </>
     );
 };

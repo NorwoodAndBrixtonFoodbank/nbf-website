@@ -132,7 +132,7 @@ export type FilterConfig<Filter> =
           additionalFiltersShown: false;
           listChoiceButton: true;
           currentList: ListName;
-          setListStateAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
+          setListStateDropDownElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
       }
     | {
           primaryFiltersShown: true;
@@ -470,9 +470,9 @@ const Table = <
                 setShownHeaderKeys={setShownHeaderKeys}
                 shownHeaderKeys={shownHeaderKeys}
                 currentList={filterConfig.listChoiceButton ? filterConfig.currentList : undefined}
-                setListStateAnchorElement={
+                setListStateDropDownElement={
                     filterConfig.listChoiceButton
-                        ? filterConfig.setListStateAnchorElement
+                        ? filterConfig.setListStateDropDownElement
                         : undefined
                 }
             />

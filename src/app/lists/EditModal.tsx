@@ -170,7 +170,7 @@ const EditModal: React.FC<Props> = ({ data, onClose, currentList }) => {
     const Footer = (
         <>
             <Button variant="contained" color="primary" onClick={() => onSubmit(currentList)}>
-                Submit {currentList}
+                Submit
             </Button>
             <Snackbar
                 message={errorMessage}
@@ -186,7 +186,7 @@ const EditModal: React.FC<Props> = ({ data, onClose, currentList }) => {
 
     return (
         <Modal
-            header={toSubmit ? `Edit List Item - ${toSubmit.item_name}` : "Edit List Item -"}
+            header={toSubmit ? `Edit ${currentList} List Item - ${toSubmit.item_name}` : `Edit ${currentList} List Item -`}
             headerId="editList"
             isOpen={data !== undefined}
             onClose={onClose}

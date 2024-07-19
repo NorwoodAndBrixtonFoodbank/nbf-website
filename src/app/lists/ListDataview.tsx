@@ -146,7 +146,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [listData, setListData] = useState<ListRow[]>(listOfIngredients);
     const [primaryFilters, setPrimaryFilters] = useState<ListFilter[]>(filters);
-    const [listStateAnchorElement, setListStateAnchorElement] = useState<HTMLElement | null>(null);
+    const [listStateDropDownElement, setListStateDropDownElement] = useState<HTMLElement | null>(null);
 
     if (listOfIngredients === null) {
         void logInfoReturnLogId("No ingredients found @ app/lists/ListDataView.tsx");
@@ -285,12 +285,13 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
 
     return (
         <>
+            {listStateDropDownElement && 
             <ListStates
-                listStateAnchorElement={listStateAnchorElement}
-                setListStateAnchorElement={setListStateAnchorElement}
+                listStateDropDownElement={listStateDropDownElement}
+                setListStateDropDownElement={setListStateDropDownElement}
                 currentList={currentList}
                 setCurrentList={setCurrentList}
-            />
+            />}
             <ConfirmDialog
                 message={`Are you sure you want to delete ${
                     toDelete !== null ? listData[toDelete].itemName : ""
@@ -342,7 +343,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                         additionalFiltersShown: false,
                         listChoiceButton: true,
                         currentList: currentList,
-                        setListStateAnchorElement: setListStateAnchorElement,
+                        setListStateDropDownElement: setListStateDropDownElement,
                     }}
                 />
                 <ButtonMargin>

@@ -23,7 +23,7 @@ interface Props<Data, Filter extends FilterBase<Data, State>, State> {
     setShownHeaderKeys: (headers: (keyof Data)[]) => void;
     shownHeaderKeys: readonly (keyof Data)[];
     currentList?: ListName;
-    setListStateAnchorElement?: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
+    setListStateDropDownElement?: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     setListChoiceButton: boolean;
 }
 
@@ -113,12 +113,12 @@ function TableFilterAndExtraColumnsBar<Data, Filter extends FilterBase<Data, Sta
     return (
         <>
             <FiltersAndIconContainer>
-                {props.setListChoiceButton && props.setListStateAnchorElement && (
+                {props.setListChoiceButton && props.setListStateDropDownElement && (
                     <Button
                         variant="contained"
                         onClick={(event) =>
-                            props.setListStateAnchorElement
-                                ? props.setListStateAnchorElement(event.currentTarget)
+                            props.setListStateDropDownElement
+                                ? props.setListStateDropDownElement(event.currentTarget)
                                 : null
                         }
                         type="button"
