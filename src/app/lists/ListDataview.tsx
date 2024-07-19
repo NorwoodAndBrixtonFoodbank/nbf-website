@@ -279,7 +279,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         <>
             <ConfirmDialog
                 message={`Are you sure you want to delete ${
-                    toDelete ? listOfIngredients[toDelete].itemName : ""
+                    toDelete !== null ? listOfIngredients[toDelete].itemName : ""
                 }?`}
                 isOpen={toDeleteModalOpen}
                 onConfirm={onConfirmDeletion}
