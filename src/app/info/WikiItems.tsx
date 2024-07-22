@@ -1,16 +1,17 @@
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+// import Accordion from "@mui/material/Accordion";
+// import AccordionSummary from "@mui/material/AccordionSummary";
+// import AccordionDetails from "@mui/material/AccordionDetails";
+// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { DbWikiRow } from "@/databaseUtils";
-import UpdateIcon from "@mui/icons-material/Update";
-import { buttonAlert, AdminManagerDependent } from "@/app/info/ClientSideHelpers";
+// import UpdateIcon from "@mui/icons-material/Update";
+// import { enterEditButton, AdminManagerDependent, EditModeDependent } from "@/app/info/ClientSideHelpers";
 import {
     WikiItemPositioner,
-    WikiUpdateDataButton,
-    WikiItemAccordionSurface,
+    // WikiUpdateDataButton,
+    // WikiItemAccordionSurface,
 } from "@/app/info/StyleComponents";
-import React from "react";
+import React, { useState } from "react";
+import { EditModeDependentItem } from "./ClientSideHelpers";
 
 interface WikiItemsProps {
     rows: DbWikiRow[];
@@ -18,6 +19,7 @@ interface WikiItemsProps {
 
 interface WikiItemProps {
     row: DbWikiRow;
+    editMode: boolean;
 }
 
 interface ContentPart {
@@ -54,37 +56,25 @@ export const convertContentToElements = (rowContent: string): React.JSX.Element[
 
 const WikiItems: React.FC<WikiItemsProps> = (props) => {
     const sortedRows: DbWikiRow[] = props.rows.slice().sort((r1: DbWikiRow, r2: DbWikiRow) => {
-        return r1.order > r2.order ? 1 : -1;
+        return r1.row_order > r2.row_order ? 1 : -1;
     });
     return (
         <>
-            {sortedRows.map((row: DbWikiRow) => {
-                return <WikiItem key={row.order} row={row} />;
-            })}
+            {sortedRows
+                .filter((row?: DbWikiRow) => {
+                    return row;
+                })
+                .map((row: DbWikiRow) => {
+                    return <WikiItem row={row} editMode={false} key={row.row_order} />;
+                })}
         </>
     );
 };
 
-const WikiItem: React.FC<WikiItemProps> = ({ row }) => {
+const WikiItem: React.FC<WikiItemProps> = ({ row, editMode }) => {
     return (
         <WikiItemPositioner>
-            <AdminManagerDependent>
-                <WikiUpdateDataButton onClick={buttonAlert}>
-                    <UpdateIcon />
-                </WikiUpdateDataButton>
-            </AdminManagerDependent>
-            <WikiItemAccordionSurface>
-                <Accordion elevation={0}>
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1-content"
-                        id="panel1-header"
-                    >
-                        <h2>{row.title}</h2>
-                    </AccordionSummary>
-                    <AccordionDetails>{convertContentToElements(row.content)}</AccordionDetails>
-                </Accordion>
-            </WikiItemAccordionSurface>
+            <EditModeDependentItem row={row} editMode={editMode} />
         </WikiItemPositioner>
     );
 };

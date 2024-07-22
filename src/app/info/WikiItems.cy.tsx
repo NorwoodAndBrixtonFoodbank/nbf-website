@@ -6,12 +6,14 @@ describe("<WikiAccordian />", () => {
         {
             title: "title1",
             content: "content1 <https://www.google.com/> also [bing](https://www.bing.com/)",
-            order: 1,
+            row_order: 1,
+            wiki_key: "12345",
         },
         {
             title: "title2",
             content: "no links",
-            order: 2,
+            row_order: 2,
+            wiki_key: "123456",
         },
     ];
 
