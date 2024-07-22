@@ -34,7 +34,6 @@ const ClientParcelsTable: React.FC<ClientParcelTableProps> = (props) => {
                 filterConfig={{
                     primaryFiltersShown: false,
                     additionalFiltersShown: false,
-                    listChoiceButton: false,
                 }}
                 onRowClick={(row) => router.push(`/parcels?parcelId=${row.data.parcelId}`)}
                 checkboxConfig={{ displayed: false }}

@@ -169,7 +169,6 @@ const UsersTable: React.FC = () => {
                     primaryFilters: primaryFilters,
                     setPrimaryFilters: setPrimaryFilters,
                     additionalFiltersShown: false,
-                    listChoiceButton: false,
                 }}
                 isLoading={isLoading}
             />

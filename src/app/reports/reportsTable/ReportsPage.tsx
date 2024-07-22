@@ -118,7 +118,6 @@ const ReportsPage: React.FC = () => {
                             filterConfig={{
                                 primaryFiltersShown: false,
                                 additionalFiltersShown: false,
-                                listChoiceButton: false,
                             }}
                             checkboxConfig={{ displayed: false }}
                             editableConfig={{ editable: false }}

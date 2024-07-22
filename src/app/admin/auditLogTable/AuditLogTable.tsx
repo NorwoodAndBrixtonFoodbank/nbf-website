@@ -113,7 +113,6 @@ const AuditLogTable: React.FC = () => {
                 filterConfig={{
                     primaryFiltersShown: false,
                     additionalFiltersShown: false,
-                    listChoiceButton: false,
                 }}
                 onRowClick={(row) => onRowClick(row)}
             />

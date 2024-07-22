@@ -12,7 +12,9 @@ import Alert from "@mui/material/Alert/Alert";
 import Button from "@mui/material/Button/Button";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { ListName } from "@/app/lists/ListStates";
+import { Database } from "@/databaseTypesFile";
+
+type ListName = Database["public"]["Enums"]["list_type"];
 
 interface Props {
     onClose: () => void;
@@ -186,7 +188,11 @@ const EditModal: React.FC<Props> = ({ data, onClose, currentList }) => {
 
     return (
         <Modal
-            header={toSubmit ? `Edit ${currentList} List Item - ${toSubmit.item_name}` : `Edit ${currentList} List Item -`}
+            header={
+                toSubmit
+                    ? `Edit ${currentList} List Item - ${toSubmit.item_name}`
+                    : `Edit ${currentList} List Item -`
+            }
             headerId="editList"
             isOpen={data !== undefined}
             onClose={onClose}

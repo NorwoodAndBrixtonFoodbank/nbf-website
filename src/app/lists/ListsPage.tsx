@@ -9,10 +9,15 @@ import {
     fetchListsComment,
     fetchLists,
 } from "@/common/fetch";
-import ListsDataView, { ListRow, listsHeaderKeysAndLabels } from "@/app/lists/ListDataview";
+import ListsDataView, {
+    ListRow,
+    listsHeaderKeysAndLabels,
+    ListFilter,
+} from "@/app/lists/ListDataview";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
-import { ListName } from "@/app/lists/ListStates";
+import { buttonGroupFilter, filterRowbyButton } from "@/components/Tables/ButtonFilter";
+import { buildClientSideTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 
 interface FetchedListsData {
     listsData: Schema["lists"][];
@@ -77,13 +82,30 @@ const formatListData = (listsData: Schema["lists"][]): ListRow[] => {
     );
 };
 
+const filters: ListFilter[] = [
+    buildClientSideTextFilter({
+        key: "itemName",
+        label: "Item",
+        headers: listsHeaderKeysAndLabels,
+        method: filterRowByText,
+    }),
+    buttonGroupFilter({
+        key: "listType",
+        filterLabel: "",
+        filterOptions: ["Regular", "Hotel"],
+        initialActiveFilter: "Regular",
+        //method: (row: ListRow, state: string, key: keyof ListRow) => true
+        method: filterRowbyButton,
+    }),
+];
+
 const ListsPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [listData, setListData] = useState<ListRow[]>([]);
     const [comment, setComment] = useState("");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [currentList, setCurrentList] = useState<ListName>("Regular");
     const listsTableFetchAbortController = useRef<AbortController | null>(null);
+    const [primaryFilters, setPrimaryFilters] = useState<ListFilter[]>(filters);
 
     function handleSetError(error: string | null): void {
         setErrorMessage(error);
@@ -144,8 +166,8 @@ const ListsPage: React.FC = () => {
             comment={comment}
             errorMessage={errorMessage}
             setErrorMessage={handleSetError}
-            currentList={currentList}
-            setCurrentList={setCurrentList}
+            primaryFilters={primaryFilters}
+            setPrimaryFilters={setPrimaryFilters}
         />
     );
 };

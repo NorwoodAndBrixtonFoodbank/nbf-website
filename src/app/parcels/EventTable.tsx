@@ -41,7 +41,6 @@ const EventTable: React.FC<EventTableProps> = (props) => {
                     filterConfig={{
                         primaryFiltersShown: false,
                         additionalFiltersShown: false,
-                        listChoiceButton: false,
                     }}
                     sortConfig={{ sortPossible: false }}
                     paginationConfig={{ enablePagination: false }}

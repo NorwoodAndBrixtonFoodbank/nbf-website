@@ -18,12 +18,11 @@ import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
-import { buildClientSideTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
-import { ClientSideFilter } from "@/components/Tables/Filters";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
-import ListStates, { ListName } from "@/app/lists/ListStates";
+import { ClientSideFilter } from "@/components/Tables/Filters";
 
-type ListFilter = ClientSideFilter<ListRow, string>;
+export type ListFilter = ClientSideFilter<ListRow, string>;
+
 export interface ListRow {
     primaryKey: string;
     rowOrder: number;
@@ -52,8 +51,8 @@ interface ListDataViewProps {
     comment: string;
     errorMessage: string | null;
     setErrorMessage: (error: string | null) => void;
-    currentList: ListName;
-    setCurrentList: React.Dispatch<React.SetStateAction<ListName>>;
+    primaryFilters: ListFilter[];
+    setPrimaryFilters: (filters: ListFilter[]) => void;
 }
 
 export const listsHeaderKeysAndLabels = [
@@ -122,31 +121,21 @@ const listsColumnStyleOptions: ColumnStyles<ListRow> = {
     ),
 };
 
-const filters: ListFilter[] = [
-    buildClientSideTextFilter({
-        key: "itemName",
-        label: "Item",
-        headers: listsHeaderKeysAndLabels,
-        method: filterRowByText,
-    }),
-];
-
 const ListsDataView: React.FC<ListDataViewProps> = ({
     listOfIngredients,
     setListOfIngredients,
     comment,
     errorMessage,
     setErrorMessage,
-    currentList,
-    setCurrentList,
+    primaryFilters,
+    setPrimaryFilters,
 }) => {
     const [modal, setModal] = useState<EditModalState>();
     const [toDelete, setToDelete] = useState<number | null>(null);
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [listData, setListData] = useState<ListRow[]>(listOfIngredients);
-    const [primaryFilters, setPrimaryFilters] = useState<ListFilter[]>(filters);
-    const [listStateDropDownElement, setListStateDropDownElement] = useState<HTMLElement | null>(null);
+    const currentList = primaryFilters[1].state;
 
     if (listOfIngredients === null) {
         void logInfoReturnLogId("No ingredients found @ app/lists/ListDataView.tsx");
@@ -273,25 +262,15 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     useEffect(() => {
         setListData(
             listOfIngredients.filter((row) => {
-                return (
-                    row.listType === currentList &&
-                    primaryFilters.every((filter) => {
-                        return filter.method(row, filter.state, filter.key);
-                    })
-                );
+                return primaryFilters.every((filter) => {
+                    return filter.method(row, filter.state, filter.key);
+                });
             })
         );
-    }, [primaryFilters, listOfIngredients, currentList]);
+    }, [primaryFilters, listOfIngredients]);
 
     return (
         <>
-            {listStateDropDownElement && 
-            <ListStates
-                listStateDropDownElement={listStateDropDownElement}
-                setListStateDropDownElement={setListStateDropDownElement}
-                currentList={currentList}
-                setCurrentList={setCurrentList}
-            />}
             <ConfirmDialog
                 message={`Are you sure you want to delete ${
                     toDelete !== null ? listData[toDelete].itemName : ""
@@ -312,12 +291,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                     <Alert severity="error">{errorMessage}</Alert>
                 </SnackBarDiv>
             </Snackbar>
-            <EditModal
-                onClose={() => setModal(undefined)}
-                data={modal}
-                key={modal?.primary_key}
-                currentList={currentList}
-            />
+
             <TableSurface>
                 <CommentBox originalComment={comment} />
                 <ClientPaginatedTable<ListRow, string>
@@ -341,10 +315,13 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                         primaryFilters: primaryFilters,
                         setPrimaryFilters: setPrimaryFilters,
                         additionalFiltersShown: false,
-                        listChoiceButton: true,
-                        currentList: currentList,
-                        setListStateDropDownElement: setListStateDropDownElement,
                     }}
+                />
+                <EditModal
+                    onClose={() => setModal(undefined)}
+                    data={modal}
+                    key={modal?.primary_key}
+                    currentList={currentList == "Hotel" ? "Hotel" : "Regular"}
                 />
                 <ButtonMargin>
                     <Button variant="contained" onClick={() => setModal(null)}>
