@@ -3,7 +3,7 @@
 import { Button, Popover } from "@mui/material";
 import React, { useState } from "react";
 import CheckboxGroupInput from "./CheckboxGroupInput";
-import { ArrowDropDown } from "@mui/icons-material";
+import { ArrowDropDown, FilterAlt } from "@mui/icons-material";
 import styled from "styled-components";
 
 interface Props {
@@ -11,6 +11,7 @@ interface Props {
     defaultCheckedKeys?: string[];
     groupLabel?: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    anySelected?: () => boolean;
 }
 
 const ContainerDiv = styled.div`
@@ -43,7 +44,9 @@ const CheckboxGroupPopup: React.FC<Props> = (props) => {
                 onClick={(event) => setPopoverAnchorElement(event.currentTarget)}
                 disabled={!props.labelsAndKeys.length}
                 type="button"
-                endIcon={<ArrowDropDown />}
+                endIcon={
+                    props.anySelected && props.anySelected() ? <FilterAlt /> : <ArrowDropDown />
+                }
             >
                 {props.groupLabel}
             </Button>
