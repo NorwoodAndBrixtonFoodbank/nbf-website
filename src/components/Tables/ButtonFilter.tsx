@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import { ClientSideFilter, ClientSideFilterMethod } from "./Filters";
+import { ClientSideFilter, ClientSideFilterMethod, defaultToString } from "./Filters";
 import Button from "@mui/material/Button";
+import { capitaliseWords } from "@/common/format";
 
 interface ButtonGroupFilterProps<Data> {
     key: keyof Data;
@@ -49,20 +50,15 @@ export const buttonGroupFilter = <Data,>({
             state: string,
             setState: (state: string) => void
         ): React.ReactNode {
-            // const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-            //     setState();
-            // }
 
             return (
                 <>
-                    {console.log("button re-rerender")}
-                    {console.log(state)}
                     {filterLabel}
                     {filterOptions.map((optionName) => (
                         <FilterButton
                             key={optionName}
                             activeFilter={state}
-                            buttonLabel={optionName}
+                            buttonLabel={capitaliseWords(optionName)}
                             setState={setState}
                         />
                     ))}

@@ -27,7 +27,7 @@ export interface ListRow {
     primaryKey: string;
     rowOrder: number;
     itemName: string;
-    listType: "Regular" | "Hotel";
+    listType: "regular" | "hotel";
     "1": QuantityAndNotes;
     "2": QuantityAndNotes;
     "3": QuantityAndNotes;
@@ -321,7 +321,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                     onClose={() => setModal(undefined)}
                     data={modal}
                     key={modal?.primary_key}
-                    currentList={currentList == "Hotel" ? "Hotel" : "Regular"}
+                    currentList={currentList == "hotel" ? "hotel" : "regular"}
                 />
                 <ButtonMargin>
                     <Button variant="contained" onClick={() => setModal(null)}>

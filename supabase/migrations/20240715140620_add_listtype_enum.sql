@@ -1,1 +1,1 @@
-create type "public"."list_type" as enum ('Regular', 'Hotel');
+create type "public"."list_type" as enum ('regular', 'hotel');

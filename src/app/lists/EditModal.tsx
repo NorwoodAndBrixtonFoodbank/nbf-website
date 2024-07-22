@@ -13,6 +13,7 @@ import Button from "@mui/material/Button/Button";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { Database } from "@/databaseTypesFile";
+import { capitaliseWords } from "@/common/format";
 
 type ListName = Database["public"]["Enums"]["list_type"];
 
@@ -143,9 +144,6 @@ const EditModal: React.FC<Props> = ({ data, onClose, currentList }) => {
         }
 
         if (data === null) {
-            // currentList.toLowerCase() === "regular"
-            //     ? (toSubmit.list_type = "regular")
-            //     : (toSubmit.list_type = "hotel");
             toSubmit.list_type = currentList;
             const { error } = await addListItem(toSubmit);
             if (error) {
@@ -190,8 +188,8 @@ const EditModal: React.FC<Props> = ({ data, onClose, currentList }) => {
         <Modal
             header={
                 toSubmit
-                    ? `Edit ${currentList} List Item - ${toSubmit.item_name}`
-                    : `Edit ${currentList} List Item -`
+                    ? `Edit ${capitaliseWords(currentList)} List Item - ${toSubmit.item_name}`
+                    : `Edit ${capitaliseWords(currentList)} List Item -`
             }
             headerId="editList"
             isOpen={data !== undefined}

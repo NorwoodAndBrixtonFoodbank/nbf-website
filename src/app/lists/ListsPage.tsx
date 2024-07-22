@@ -92,8 +92,8 @@ const filters: ListFilter[] = [
     buttonGroupFilter({
         key: "listType",
         filterLabel: "",
-        filterOptions: ["Regular", "Hotel"],
-        initialActiveFilter: "Regular",
+        filterOptions: ["regular", "hotel"],
+        initialActiveFilter: "regular",
         //method: (row: ListRow, state: string, key: keyof ListRow) => true
         method: filterRowbyButton,
     }),
