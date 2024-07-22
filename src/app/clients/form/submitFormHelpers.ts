@@ -39,6 +39,7 @@ const formatClientRecord = (
         address_town: fields.addressTown,
         address_county: fields.addressCounty,
         address_postcode: fields.addressPostcode,
+        default_list: fields.listType == 'Hotel' ? 'hotel' : 'regular',
         dietary_requirements: checkboxGroupToArray(fields.dietaryRequirements),
         feminine_products: checkboxGroupToArray(fields.feminineProducts),
         baby_food: fields.babyProducts,

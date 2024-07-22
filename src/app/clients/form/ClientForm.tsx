@@ -39,6 +39,7 @@ import Title from "@/components/Title/Title";
 import ClientNotesCard from "@/app/clients/form/formSections/ClientNotes";
 import { getCurrentYear } from "@/common/date";
 import { youngestAdultBirthYear } from "@/app/clients/form/birthYearDropdown";
+import ListTypeCard from "./formSections/ListTypeCard";
 
 interface Props {
     initialFields: ClientFields;
@@ -60,6 +61,7 @@ export interface ClientFields extends Fields {
     numberOfAdults: number;
     children: Person[];
     numberOfChildren: number;
+    listType: string;
     dietaryRequirements: BooleanGroup;
     feminineProducts: BooleanGroup;
     babyProducts: boolean | null;
@@ -81,6 +83,7 @@ export interface ClientErrors extends FormErrors<ClientFields> {
     addressPostcode: Errors;
     numberOfAdults: Errors;
     numberOfChildren: Errors;
+    listType: Errors;
     nappySize: Errors;
 }
 
@@ -94,6 +97,7 @@ const formSections = [
     AddressCard,
     NumberAdultsCard,
     NumberChildrenCard,
+    ListTypeCard,
     DietaryRequirementCard,
     FeminineProductCard,
     BabyProductCard,
@@ -152,6 +156,9 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
     const errorSetter = createSetter(setFormErrors, formErrors);
 
     const submitForm = async (): Promise<void> => {
+
+        console.log("Submitting form:", fields.listType);
+
         setSubmitDisabled(true);
 
         const inputError = checkErrorOnSubmit(formErrors, setFormErrors);

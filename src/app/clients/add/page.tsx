@@ -16,6 +16,7 @@ const AddClients: () => React.ReactElement = () => {
         numberOfAdults: 0,
         numberOfChildren: 0,
         children: [],
+        listType: "",
         dietaryRequirements: {},
         feminineProducts: {},
         babyProducts: null,
@@ -37,6 +38,7 @@ const AddClients: () => React.ReactElement = () => {
         addressPostcode: Errors.initial,
         numberOfAdults: Errors.initial,
         numberOfChildren: Errors.initial,
+        listType: Errors.initial,
         nappySize: Errors.none,
     };
 
