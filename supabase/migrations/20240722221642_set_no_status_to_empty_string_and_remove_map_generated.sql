@@ -4,7 +4,7 @@ delete from public.events where new_parcel_status = 'Map Generated';
 
 delete from public.status_order where event_name = 'Map Generated';
 
-update public.status_order set workflow_order = 0 where event_name = '';
+update public.status_order set event_name = '' where workflow_order = 0;
 update public.status_order set workflow_order = 1 where event_name = 'Parcel Denied';
 update public.status_order set workflow_order = 2 where event_name = 'Pending More Info';
 update public.status_order set workflow_order = 3 where event_name = 'Called and Confirmed';
