@@ -114,13 +114,15 @@ const buildDeliveryCollectionFilter = async (): Promise<ParcelsFilter<string[]>>
 };
 
 const buildLastStatusFilter = async (): Promise<ParcelsFilter<string[]>> => {
+    const labelForNoStatus = "No Status";
+
     const lastStatusSearch: ParcelsFilterMethod<string[]> = (query, state) => {
         if (state.length === 0) {
             // Default is to show everything that's not deleted
             return query.neq("last_status_event_name", "Parcel Deleted");
-        } else if (state.includes("None")) {
+        } else if (state.includes(labelForNoStatus)) {
             return query.or(
-                `last_status_event_name.is.null,last_status_event_name.in.(${state.join(",")})`
+                `last_status_event_name.is.null,last_status_event_name.in.("",${state.join(",")})`
             );
         } else {
             return query.in("last_status_event_name", state);
@@ -141,7 +143,7 @@ const buildLastStatusFilter = async (): Promise<ParcelsFilter<string[]>> => {
         }
         return filteredOptions.sort();
     }, []);
-    data && optionsSet.push("None");
+    data && optionsSet.push(labelForNoStatus);
 
     return serverSideChecklistFilter<ParcelsTableRow, DbParcelRow>({
         key: "lastStatus",
@@ -159,7 +161,10 @@ const buildPackingSlotFilter = async (): Promise<ParcelsFilter<string[]>> => {
 
     const keySet = new Set();
 
-    const { data, error } = await supabase.from("packing_slots").select("name, is_shown");
+    const { data, error } = await supabase
+        .from("packing_slots")
+        .select("name, is_shown")
+        .order("order");
     if (error) {
         const logId = await logErrorReturnLogId(
             "Error with fetch: Packing slot filter options",

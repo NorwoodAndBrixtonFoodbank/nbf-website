@@ -287,7 +287,7 @@ export const fetchParcelStatuses = async (): Promise<ParcelStatusesReturnType> =
     }
 
     const parcelStatusesList = parcelStatusesListData.map((status) => {
-        return status.event_name;
+        return status.event_name === "" ? "No Status" : status.event_name;
     });
 
     return { data: parcelStatusesList, error: null };
