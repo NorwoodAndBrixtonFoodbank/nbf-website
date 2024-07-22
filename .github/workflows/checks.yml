@@ -28,7 +28,7 @@ jobs:
         run: npm run lint:ci
 
   component_tests:
-    name: Run component tests
+    name: Run Cypress component tests
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
@@ -55,7 +55,7 @@ jobs:
         run: npm run build
 
       - name: Run component tests
-        run: npm run test:component
+        run: npm run cypress:component
 
       - name: Upload Screenshots
         uses: actions/upload-artifact@v3
@@ -74,7 +74,7 @@ jobs:
           retention-days: 1
 
   e2e_tests:
-    name: Run end-to-end tests
+    name: Run Cypress end-to-end tests
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
@@ -113,7 +113,7 @@ jobs:
         run: npm run build
 
       - name: Run e2e tests
-        run: npm run test:e2e
+        run: npm run cypress:e2e
 
       - name: Upload Screenshots
         uses: actions/upload-artifact@v3
