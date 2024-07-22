@@ -134,13 +134,6 @@ jobs:
   jest_tests:
     name: Run Jest tests
     runs-on: ubuntu-latest
-    env:
-      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{secrets.SUPABASE_LOCAL_ANON_KEY}}
-      CLOUDWATCH_LOG_GROUP: ${{secrets.AWS_CLOUDWATCH_LOG_GROUP}}
-      CLOUDWATCH_LOG_STREAM: ${{secrets.AWS_CLOUDWATCH_LOG_STREAM}}
-      CLOUDWATCH_ACCESS_KEY: ${{secrets.AWS_CLOUDWATCH_ACCESS_KEY}}
-      CLOUDWATCH_SECRET_ACCESS_KEY: ${{secrets.AWS_CLOUDWATCH_SECRET_ACCESS_KEY}}
     steps:
       - name: Checkout this repo
         uses: actions/checkout@v4
@@ -150,13 +143,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Remove files irrelevant files that may cause TypeScript errors
-        run:
-          rm -f ./supabase/seed/seed.mts
-
-      - name: Compile
-        run: npm run build
   
       - name: Run jest tests
         run: npm run jest:all
