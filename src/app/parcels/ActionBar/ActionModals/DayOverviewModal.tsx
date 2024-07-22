@@ -31,7 +31,10 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
     };
 
     const onPdfCreationCompleted = async (): Promise<void> => {
-        const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
+        const { error } = await props.updateParcelStatuses(
+            props.selectedParcels,
+            "Day Overview Downloaded"
+        );
         if (error) {
             setErrorMessage(getStatusErrorMessageWithLogId(error));
         }

@@ -101,7 +101,7 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
     const onPdfCreationCompleted = async (): Promise<void> => {
         const { error } = await props.updateParcelStatuses(
             props.selectedParcels,
-            props.newStatus,
+            "Out for Delivery",
             `with ${driverName ?? displayNameForNullDriverName}`,
             undefined,
             date

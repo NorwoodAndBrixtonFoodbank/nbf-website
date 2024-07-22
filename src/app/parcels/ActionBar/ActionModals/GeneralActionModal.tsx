@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { ParcelsTableRow } from "../../parcelsTable/types";
 import Modal from "@/components/Modal/Modal";
 import { ActionName } from "../Actions";
-import { StatusType } from "../Statuses";
 import React from "react";
 import { UpdateParcelStatuses } from "../ActionAndStatusBar";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
@@ -11,7 +10,6 @@ import { Centerer } from "@/components/Modal/ModalFormStyles";
 export interface ActionModalProps extends Omit<React.ComponentProps<typeof Modal>, "children"> {
     selectedParcels: ParcelsTableRow[];
     updateParcelStatuses: UpdateParcelStatuses;
-    newStatus: StatusType;
     actionName: ActionName;
 }
 

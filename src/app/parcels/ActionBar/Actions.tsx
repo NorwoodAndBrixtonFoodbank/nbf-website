@@ -5,7 +5,6 @@ import Menu from "@mui/material/Menu/Menu";
 import MenuList from "@mui/material/MenuList/MenuList";
 import MenuItem from "@mui/material/MenuItem/MenuItem";
 import { ParcelsTableRow } from "../parcelsTable/types";
-import { StatusType } from "./Statuses";
 import { ActionModalProps } from "./ActionModals/GeneralActionModal";
 import DayOverviewModal from "./ActionModals/DayOverviewModal";
 import DeleteParcelModal from "./ActionModals/DeleteParcelModal";
@@ -37,49 +36,40 @@ export type ActionName =
 
 type ActionTypes = {
     actionName: ActionName;
-    newStatus: StatusType;
     availableToRole: UserRole[];
 };
 
 const availableActions: ActionTypes[] = [
     {
         actionName: "Change Packing Date",
-        newStatus: "Packing Date Changed",
         availableToRole: organisationRoles,
     },
     {
         actionName: "Change Packing Slot",
-        newStatus: "Packing Slot Changed",
         availableToRole: organisationRoles,
     },
     {
         actionName: "Download Day Overview",
-        newStatus: "Day Overview Downloaded",
         availableToRole: allRoles,
     },
     {
         actionName: "Download Shopping Lists",
-        newStatus: "Shopping List Downloaded",
         availableToRole: allRoles,
     },
     {
         actionName: "Download Shipping Labels",
-        newStatus: "Shipping Labels Downloaded",
         availableToRole: allRoles,
     },
     {
         actionName: "Generate Map",
-        newStatus: "Map Generated",
         availableToRole: allRoles,
     },
     {
         actionName: "Download Driver Overview",
-        newStatus: "Out for Delivery",
         availableToRole: allRoles,
     },
     {
         actionName: "Delete Parcel",
-        newStatus: "Parcel Deleted",
         availableToRole: organisationRoles,
     },
 ];
@@ -170,7 +160,7 @@ const Actions: React.FC<Props> = ({
 
     return (
         <>
-            {availableActionsForUserRole.map(({ actionName, newStatus }) => {
+            {availableActionsForUserRole.map(({ actionName }) => {
                 return (
                     modalToDisplay === actionName &&
                     getActionModal(actionName, {
@@ -181,7 +171,6 @@ const Actions: React.FC<Props> = ({
                         headerId: "action-modal-header",
                         actionName: modalToDisplay,
                         updateParcelStatuses: updateParcelStatuses,
-                        newStatus: newStatus,
                     })
                 );
             })}

@@ -18,7 +18,6 @@ export type StatusType = ParcelStatus[][number];
 const nonMenuStatuses: StatusType[] = [
     "Packing Date Changed", //Generated when packing date is changed
     "Packing Slot Changed", //Generated when packing slot is changed
-    "Map Generated", //Generated when maps generated
     "Out for Delivery", //Generated when driver overview pdf downloaded
     "Parcel Deleted", //Generated when parcel deleted
     "Shipping Labels Downloaded", //Generated when shipping labels pdf downloaded

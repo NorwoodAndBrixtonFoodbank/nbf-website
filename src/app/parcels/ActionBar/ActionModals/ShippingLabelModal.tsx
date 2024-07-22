@@ -79,7 +79,7 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
     const onPdfCreationCompleted = async (): Promise<void> => {
         const { error } = await props.updateParcelStatuses(
             props.selectedParcels,
-            props.newStatus,
+            "Shipping Labels Downloaded",
             labelQuantity.toString()
         );
         if (error) {

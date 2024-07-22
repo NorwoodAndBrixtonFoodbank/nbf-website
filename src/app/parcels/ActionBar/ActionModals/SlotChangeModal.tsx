@@ -75,7 +75,7 @@ const SlotChangeModal: React.FC<ActionModalProps> = (props) => {
 
         const { error: statusUpdateError } = await props.updateParcelStatuses(
             props.selectedParcels,
-            props.newStatus,
+            "Packing Slot Changed",
             `new packing slot: ${newPackingSlotText}`,
             "change packing slot"
         );
