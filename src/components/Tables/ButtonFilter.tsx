@@ -11,6 +11,7 @@ interface ButtonGroupFilterProps<Data> {
     filterOptions: string[];
     initialActiveFilter: string;
     method: ClientSideFilterMethod<Data, string>;
+    persistOnClear: boolean;
 }
 
 interface ButtonProps {
@@ -27,7 +28,7 @@ const FilterButton: React.FC<ButtonProps> = (buttonProps) => {
             variant={active ? "contained" : "outlined"}
             onClick={() => buttonProps.setState(buttonProps.buttonLabel)}
         >
-            {buttonProps.buttonLabel}
+            {capitaliseWords(buttonProps.buttonLabel)}
         </Button>
     );
 };
@@ -38,6 +39,7 @@ export const buttonGroupFilter = <Data,>({
     filterOptions,
     initialActiveFilter,
     method,
+    persistOnClear = false,
 }: ButtonGroupFilterProps<Data>): ClientSideFilter<Data, string> => {
     return {
         key: key,
@@ -45,12 +47,12 @@ export const buttonGroupFilter = <Data,>({
         initialState: initialActiveFilter,
         method: method,
         areStatesIdentical: (stateA, stateB) => stateA === stateB,
+        persistOnClear: persistOnClear,
 
         filterComponent: function (
             state: string,
             setState: (state: string) => void
         ): React.ReactNode {
-
             return (
                 <>
                     {filterLabel}
@@ -58,7 +60,7 @@ export const buttonGroupFilter = <Data,>({
                         <FilterButton
                             key={optionName}
                             activeFilter={state}
-                            buttonLabel={capitaliseWords(optionName)}
+                            buttonLabel={optionName}
                             setState={setState}
                         />
                     ))}
@@ -69,5 +71,5 @@ export const buttonGroupFilter = <Data,>({
 };
 
 export const filterRowbyButton = <Data,>(row: Data, state: string, key: keyof Data): boolean => {
-    return row[key] === state;
+    return defaultToString(row[key]) === state;
 };

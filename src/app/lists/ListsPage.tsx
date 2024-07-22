@@ -94,8 +94,8 @@ const filters: ListFilter[] = [
         filterLabel: "",
         filterOptions: ["regular", "hotel"],
         initialActiveFilter: "regular",
-        //method: (row: ListRow, state: string, key: keyof ListRow) => true
         method: filterRowbyButton,
+        persistOnClear: true,
     }),
 ];
 

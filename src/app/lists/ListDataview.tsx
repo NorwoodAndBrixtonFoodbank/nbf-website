@@ -135,7 +135,6 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [listData, setListData] = useState<ListRow[]>(listOfIngredients);
-    const currentList = primaryFilters[1].state;
 
     if (listOfIngredients === null) {
         void logInfoReturnLogId("No ingredients found @ app/lists/ListDataView.tsx");
@@ -321,7 +320,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                     onClose={() => setModal(undefined)}
                     data={modal}
                     key={modal?.primary_key}
-                    currentList={currentList == "hotel" ? "hotel" : "regular"}
+                    currentList={primaryFilters[1].state === "hotel" ? "hotel" : "regular"}
                 />
                 <ButtonMargin>
                     <Button variant="contained" onClick={() => setModal(null)}>
