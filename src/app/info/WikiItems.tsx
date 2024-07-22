@@ -4,14 +4,19 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { DbWikiRow } from "@/databaseUtils";
 import UpdateIcon from "@mui/icons-material/Update";
-import { buttonAlert, AdminManagerDependent, AccordionSurface } from "@/app/info/ClientSideHelpers";
-import { AccordionWrapper, WikiUpdateButton } from "@/app/info/StyleComponents";
+import { buttonAlert, AdminManagerDependent } from "@/app/info/ClientSideHelpers";
+import {
+    WikiItemPositioner,
+    WikiUpdateDataButton,
+    WikiItemAccordionSurface,
+} from "@/app/info/StyleComponents";
+import React from "react";
 
-interface AccordionProps {
+interface WikiItemsProps {
     rows: DbWikiRow[];
 }
 
-interface AccordionContentProps {
+interface WikiItemProps {
     row: DbWikiRow;
 }
 
@@ -47,47 +52,40 @@ export const convertContentToElements = (rowContent: string): React.JSX.Element[
     });
 };
 
-const WikiItems: React.FC<AccordionProps> = (props) => {
+const WikiItems: React.FC<WikiItemsProps> = (props) => {
     const sortedRows: DbWikiRow[] = props.rows.slice().sort((r1: DbWikiRow, r2: DbWikiRow) => {
         return r1.order > r2.order ? 1 : -1;
     });
     return (
         <>
             {sortedRows.map((row: DbWikiRow) => {
-                return (
-                    <AccordionWrapper key={row.order}>
-                        <UpdateComponent />
-                        <AccordionContent row={row} />
-                    </AccordionWrapper>
-                );
+                return <WikiItem key={row.order} row={row} />;
             })}
         </>
     );
 };
 
-const UpdateComponent: React.FC = () => {
+const WikiItem: React.FC<WikiItemProps> = ({ row }) => {
     return (
-        <AdminManagerDependent>
-            <WikiUpdateButton onClick={buttonAlert}>
-                <UpdateIcon />
-            </WikiUpdateButton>
-        </AdminManagerDependent>
-    );
-};
-const AccordionContent: React.FC<AccordionContentProps> = ({ row }) => {
-    return (
-        <AccordionSurface>
-            <Accordion elevation={0}>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1-content"
-                    id="panel1-header"
-                >
-                    <h2>{row.title}</h2>
-                </AccordionSummary>
-                <AccordionDetails>{convertContentToElements(row.content)}</AccordionDetails>
-            </Accordion>
-        </AccordionSurface>
+        <WikiItemPositioner>
+            <AdminManagerDependent>
+                <WikiUpdateDataButton onClick={buttonAlert}>
+                    <UpdateIcon />
+                </WikiUpdateDataButton>
+            </AdminManagerDependent>
+            <WikiItemAccordionSurface>
+                <Accordion elevation={0}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                    >
+                        <h2>{row.title}</h2>
+                    </AccordionSummary>
+                    <AccordionDetails>{convertContentToElements(row.content)}</AccordionDetails>
+                </Accordion>
+            </WikiItemAccordionSurface>
+        </WikiItemPositioner>
     );
 };
 
