@@ -1,17 +1,7 @@
-// import Accordion from "@mui/material/Accordion";
-// import AccordionSummary from "@mui/material/AccordionSummary";
-// import AccordionDetails from "@mui/material/AccordionDetails";
-// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { DbWikiRow } from "@/databaseUtils";
-// import UpdateIcon from "@mui/icons-material/Update";
-// import { enterEditButton, AdminManagerDependent, EditModeDependent } from "@/app/info/ClientSideHelpers";
-import {
-    WikiItemPositioner,
-    // WikiUpdateDataButton,
-    // WikiItemAccordionSurface,
-} from "@/app/info/StyleComponents";
-import React, { useState } from "react";
-import { EditModeDependentItem } from "./ClientSideHelpers";
+import { WikiItemPositioner } from "@/app/info/StyleComponents";
+import React from "react";
+import { EditModeDependentItem } from "@/app/info/ClientSideHelpers";
 
 interface WikiItemsProps {
     rows: DbWikiRow[];
@@ -54,28 +44,24 @@ export const convertContentToElements = (rowContent: string): React.JSX.Element[
     });
 };
 
+const WikiItem: React.FC<WikiItemProps> = ({ row, editMode }) => {
+    return (
+        <WikiItemPositioner>
+            <EditModeDependentItem row={row} editMode={editMode} />
+        </WikiItemPositioner>
+    );
+};
+
 const WikiItems: React.FC<WikiItemsProps> = (props) => {
     const sortedRows: DbWikiRow[] = props.rows.slice().sort((r1: DbWikiRow, r2: DbWikiRow) => {
         return r1.row_order > r2.row_order ? 1 : -1;
     });
     return (
         <>
-            {sortedRows
-                .filter((row?: DbWikiRow) => {
-                    return row;
-                })
-                .map((row: DbWikiRow) => {
-                    return <WikiItem row={row} editMode={false} key={row.row_order} />;
-                })}
+            {sortedRows.map((row: DbWikiRow) => {
+                return <WikiItem row={row} editMode={false} key={row.wiki_key} />;
+            })}
         </>
-    );
-};
-
-const WikiItem: React.FC<WikiItemProps> = ({ row, editMode }) => {
-    return (
-        <WikiItemPositioner>
-            <EditModeDependentItem row={row} editMode={editMode} />
-        </WikiItemPositioner>
     );
 };
 
