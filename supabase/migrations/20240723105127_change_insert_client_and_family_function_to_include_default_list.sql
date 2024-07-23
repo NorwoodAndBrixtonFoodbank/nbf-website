@@ -17,7 +17,7 @@ BEGIN
      WHEN clientRecord->>'flagged_for_attention' = 'false' THEN FALSE
      ELSE NULL END, CASE WHEN clientRecord->>'signposting_call_required' = 'true' THEN TRUE
      WHEN clientRecord->>'signposting_call_required' = 'false' THEN FALSE
-     ELSE NULL END, clientRecord->>'notes', clientRecord->>'default_list')
+     ELSE NULL END, clientRecord->>'notes', CAST(clientRecord->>'default_list' as list_type))
      RETURNING primary_key into inserted_client_id;
      
 

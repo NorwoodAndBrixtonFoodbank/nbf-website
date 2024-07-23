@@ -13,7 +13,10 @@ const ListTypeCard: React.FC<ClientCardProps> = ({
     fieldSetter,
     fields,
 }) => {
-    const listTypeLabelsAndValues : ListTypeLabelsAndValues = [["regular", "regular"],["hotel", "hotel"]];
+    const listTypeLabelsAndValues: ListTypeLabelsAndValues = [
+        ["regular", "regular"],
+        ["hotel", "hotel"],
+    ];
 
     return (
         <GenericFormCard

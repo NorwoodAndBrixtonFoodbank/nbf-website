@@ -39,7 +39,7 @@ const formatClientRecord = (
         address_town: fields.addressTown,
         address_county: fields.addressCounty,
         address_postcode: fields.addressPostcode,
-        default_list: fields.listType == 'hotel' ? 'hotel' : 'regular',
+        default_list: fields.listType == "hotel" ? "hotel" : "regular",
         dietary_requirements: checkboxGroupToArray(fields.dietaryRequirements),
         feminine_products: checkboxGroupToArray(fields.feminineProducts),
         baby_food: fields.babyProducts,
@@ -69,8 +69,6 @@ export const submitAddClientForm = async (fields: ClientFields): Promise<addClie
         clientrecord: clientRecord,
         familymembers: familyMembers,
     });
-
-    console.log("client record:", clientRecord);
 
     const auditLog = {
         action: "add a client",

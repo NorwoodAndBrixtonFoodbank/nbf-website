@@ -156,9 +156,6 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
     const errorSetter = createSetter(setFormErrors, formErrors);
 
     const submitForm = async (): Promise<void> => {
-
-        console.log("Submitting form:", fields.listType);
-
         setSubmitDisabled(true);
 
         const inputError = checkErrorOnSubmit(formErrors, setFormErrors);
