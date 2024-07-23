@@ -24,6 +24,8 @@ const nonMenuStatuses: StatusType[] = [
     "Shopping List Downloaded", //Generated when shopping list pdf downloaded
 ];
 
+const userFacingLabelForEmptyStatus = "No Status";
+
 type SaveParcelStatusErrorType = "eventInsertionFailed";
 
 export interface SaveParcelStatusError {
@@ -103,6 +105,9 @@ const getStatusErrorMessage = (statusError: SaveParcelStatusError): string => {
 
 export const getStatusErrorMessageWithLogId = (statusError: SaveParcelStatusError): string =>
     `${getStatusErrorMessage(statusError)} Log ID: ${statusError.logId}`;
+
+const userFacingStatusString = (selectedStatus: StatusType | null): string =>
+    selectedStatus && selectedStatus.length > 0 ? selectedStatus : userFacingLabelForEmptyStatus;
 
 const Statuses: React.FC<Props> = ({
     fetchSelectedParcels,
@@ -187,7 +192,7 @@ const Statuses: React.FC<Props> = ({
                     setModalError(null);
                 }}
                 selectedParcels={selectedParcels}
-                header={"Apply Status" + (selectedStatus ? ": " + selectedStatus : "")}
+                header={"Apply Status: " + userFacingStatusString(selectedStatus)}
                 headerId="status-modal-header"
                 onSubmit={submitStatus}
                 errorText={serverErrorMessage}
@@ -206,8 +211,11 @@ const Statuses: React.FC<Props> = ({
                             .filter((status) => !nonMenuStatuses.includes(status))
                             .map((status) => {
                                 return (
-                                    <MenuItem key={status} onClick={onMenuItemClick(status)}>
-                                        {status}
+                                    <MenuItem
+                                        key={userFacingStatusString(status)}
+                                        onClick={onMenuItemClick(status)}
+                                    >
+                                        {userFacingStatusString(status)}
                                     </MenuItem>
                                 );
                             })}

@@ -22,7 +22,9 @@ If you have made any changes to the database...
   - [ ] If I have modified the seed, I have also generated the seed with `npm run db:generate_seed` 
   - [ ] With my final set up, I can run `npm run reset_supabase` without any errors.
   - [ ] (Just before merging the ticket) I have updated the timestamps of the new migration files so that they are after all existing migration files.
-  - [ ] If I have added constraints e.g. `set not null`, I have taken reasonable measures to ensure constraint violations do not happen when the migration occurs. 
+  - [ ] I have taken reasonable measures to ensure constraint violations do not happen when the migration occurs, e.g.:
+    - audit_log FK constraints that could be violated
+    - any constraints that I have added, e.g. `set not null`
   - [ ] I have checked that migration can happen successfully without resetting the database, doing the following.
     - Make sure you have rebased your branch onto dev or merged dev into your branch.
     - Checkout the dev branch
