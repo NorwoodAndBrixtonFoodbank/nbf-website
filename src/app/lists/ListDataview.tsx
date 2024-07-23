@@ -147,7 +147,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     const toggleableHeaders = listsHeaderKeysAndLabels.map(([key]) => key);
 
     const onEdit = (index: number): void => {
-        setModal(listRowToListDB(listData[index]));
+        setModal(listRowToListDB(listOfIngredients[index]));
     };
 
     const reorderRows = (row1: ListRow, row2: ListRow): void => {
@@ -225,7 +225,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
 
     const onConfirmDeletion = async (): Promise<void> => {
         if (toDelete !== null) {
-            const itemToDelete = listData[toDelete];
+            const itemToDelete = listOfIngredients[toDelete];
 
             const auditLog = {
                 action: "delete a list item",
@@ -275,7 +275,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         <>
             <ConfirmDialog
                 message={`Are you sure you want to delete ${
-                    toDelete !== null ? listData[toDelete].itemName : ""
+                    toDelete !== null ? listOfIngredients[toDelete].itemName : ""
                 }?`}
                 isOpen={toDeleteModalOpen}
                 onConfirm={onConfirmDeletion}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import {
@@ -64,7 +64,6 @@ const formatListData = (listsData: Schema["lists"][]): ListRow[] => {
         (row) =>
             ({
                 primaryKey: row.primary_key,
-                listType: row.list_type,
                 rowOrder: row.row_order,
                 itemName: row.item_name,
                 ...Object.fromEntries(
@@ -111,31 +110,45 @@ const ListsPage: React.FC = () => {
         setErrorMessage(error);
     }
 
-    const fetchAndSetData = useCallback(async (): Promise<void> => {
-        setIsLoading(true);
-        if (listsTableFetchAbortController.current) {
-            listsTableFetchAbortController.current.abort("stale request");
-        }
-        listsTableFetchAbortController.current = new AbortController();
-        if (listsTableFetchAbortController.current) {
-            setErrorMessage(null);
-            const { data, error } = await fetchListsData();
-            if (error) {
-                setIsLoading(false);
-                setErrorMessage(getErrorMessage(error));
-                return;
-            }
+    // const fetchAndSetData = useCallback(async (): Promise<void> => {
+    //     setIsLoading(true);
+    //     if (listsTableFetchAbortController.current) {
+    //         listsTableFetchAbortController.current.abort("stale request");
+    //     }
+    //     listsTableFetchAbortController.current = new AbortController();
+    //     if (listsTableFetchAbortController.current) {
+    //         setErrorMessage(null);
+    //         const { data, error } = await fetchListsData();
+    //         if (error) {
+    //             setIsLoading(false);
+    //             setErrorMessage(getErrorMessage(error));
+    //             return;
+    //         }
 
-            setListData(formatListData(data.listsData));
-            setComment(data.comment);
-            listsTableFetchAbortController.current = null;
+    //         setListData(formatListData(data.listsData));
+    //         setComment(data.comment);
+    //         listsTableFetchAbortController.current = null;
+    //         setIsLoading(false);
+    //     }
+    // }, [setIsLoading, setErrorMessage, setListData, setComment]);
+
+    const fetchAndSetData = async (): Promise<void> => {
+        setIsLoading(true);
+        setErrorMessage(null);
+        const { data, error } = await fetchListsData();
+        if (error) {
             setIsLoading(false);
+            setErrorMessage(getErrorMessage(error));
+            return;
         }
-    }, [setIsLoading, setErrorMessage, setListData, setComment]);
+        setListData(formatListData(data.listsData));
+        setComment(data.comment);
+        setIsLoading(false);
+    }
 
     useEffect(() => {
         fetchAndSetData();
-    }, [fetchAndSetData]);
+    }, []);
 
     useEffect(() => {
         const subscriptionChannel = supabase
@@ -153,7 +166,7 @@ const ListsPage: React.FC = () => {
         return () => {
             void supabase.removeChannel(subscriptionChannel);
         };
-    }, [fetchAndSetData]);
+    }, []);
 
     return isLoading ? (
         <></>
