@@ -20,6 +20,9 @@ import CommentBox from "@/app/lists/CommentBox";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { ClientSideFilter } from "@/components/Tables/Filters";
+import { Database } from "@/databaseTypesFile";
+
+export type ListName = Database["public"]["Enums"]["list_type"];
 
 export type ListFilter = ClientSideFilter<ListRow, string>;
 
@@ -320,7 +323,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                     onClose={() => setModal(undefined)}
                     data={modal}
                     key={modal?.primary_key}
-                    currentList={primaryFilters[1].state === "hotel" ? "hotel" : "regular"}
+                    currentList={primaryFilters[1].state as ListName}
                 />
                 <ButtonMargin>
                     <Button variant="contained" onClick={() => setModal(null)}>

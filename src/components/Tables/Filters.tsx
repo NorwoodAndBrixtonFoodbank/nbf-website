@@ -31,7 +31,7 @@ interface BasicFilter<Data, State> {
     state: State;
     initialState: State;
     areStatesIdentical: (stateA: State, stateB: State) => boolean;
-    persistOnClear: boolean;
+    shouldPersistOnClear: boolean;
 }
 
 export interface ServerSideFilter<Data, State, DbData extends Record<string, unknown>>

@@ -74,10 +74,8 @@ function TableFilterAndExtraColumnsBar<Data, Filter extends FilterBase<Data, Sta
         if (props.setFilters && props.filters) {
             props.setFilters(
                 props.filters?.map((filter) =>
-                    filter.persistOnClear
-                        ? {
-                              ...filter,
-                          }
+                    filter.shouldPersistOnClear
+                        ? filter
                         : {
                               ...filter,
                               state: filter.initialState,
@@ -88,10 +86,8 @@ function TableFilterAndExtraColumnsBar<Data, Filter extends FilterBase<Data, Sta
         if (props.setAdditionalFilters && props.additionalFilters) {
             props.setAdditionalFilters(
                 props.additionalFilters?.map((filter) =>
-                    filter.persistOnClear
-                        ? {
-                              ...filter,
-                          }
+                    filter.shouldPersistOnClear
+                        ? filter
                         : {
                               ...filter,
                               state: filter.initialState,

@@ -3,7 +3,7 @@
 import Modal from "@/components/Modal/Modal";
 import React, { useState } from "react";
 import styled from "styled-components";
-import { SnackBarDiv } from "@/app/lists/ListDataview";
+import { ListName, SnackBarDiv } from "@/app/lists/ListDataview";
 import TextInput from "@/components/DataInput/FreeFormTextInput";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
@@ -12,10 +12,7 @@ import Alert from "@mui/material/Alert/Alert";
 import Button from "@mui/material/Button/Button";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { Database } from "@/databaseTypesFile";
 import { capitaliseWords } from "@/common/format";
-
-type ListName = Database["public"]["Enums"]["list_type"];
 
 interface Props {
     onClose: () => void;

@@ -95,7 +95,7 @@ const filters: ListFilter[] = [
         filterOptions: ["regular", "hotel"],
         initialActiveFilter: "regular",
         method: filterRowbyButton,
-        persistOnClear: true,
+        shouldPersistOnClear: true,
     }),
 ];
 

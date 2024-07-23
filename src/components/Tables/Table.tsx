@@ -127,15 +127,15 @@ export type FilterConfig<Filter> =
           primaryFiltersShown: true;
           primaryFilters: Filter[];
           setPrimaryFilters: (primaryFilters: Filter[]) => void;
-          additionalFiltersShown: true;
-          additionalFilters: Filter[];
-          setAdditionalFilters: (additionalFilters: Filter[]) => void;
+          additionalFiltersShown: false;
       }
     | {
           primaryFiltersShown: true;
           primaryFilters: Filter[];
           setPrimaryFilters: (primaryFilters: Filter[]) => void;
-          additionalFiltersShown: false;
+          additionalFiltersShown: true;
+          additionalFilters: Filter[];
+          setAdditionalFilters: (additionalFilters: Filter[]) => void;
       };
 
 export type EditableConfig<Data> =

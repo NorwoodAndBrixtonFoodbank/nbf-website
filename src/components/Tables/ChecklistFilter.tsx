@@ -13,7 +13,7 @@ interface ChecklistFilterProps<
     itemLabelsAndKeys: [string, string][];
     initialCheckedKeys: string[];
     method: ServerSideFilterMethod<DbData, string[]>;
-    persistOnClear?: boolean;
+    shouldPersistOnClear?: boolean;
 }
 
 export const serverSideChecklistFilter = <
@@ -25,14 +25,14 @@ export const serverSideChecklistFilter = <
     itemLabelsAndKeys,
     initialCheckedKeys,
     method,
-    persistOnClear = false,
+    shouldPersistOnClear = false,
 }: ChecklistFilterProps<Data, DbData>): ServerSideFilter<Data, string[], DbData> => {
     return {
         key: key,
         state: initialCheckedKeys,
         initialState: initialCheckedKeys,
         method,
-        persistOnClear: persistOnClear,
+        shouldPersistOnClear: shouldPersistOnClear,
         areStatesIdentical: (stateA, stateB) =>
             stateA.length === stateB.length && stateA.every((optionA) => stateB.includes(optionA)),
         filterComponent: function (

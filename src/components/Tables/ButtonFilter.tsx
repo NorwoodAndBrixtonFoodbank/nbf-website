@@ -11,7 +11,7 @@ interface ButtonGroupFilterProps<Data> {
     filterOptions: string[];
     initialActiveFilter: string;
     method: ClientSideFilterMethod<Data, string>;
-    persistOnClear: boolean;
+    shouldPersistOnClear: boolean;
 }
 
 interface ButtonProps {
@@ -21,11 +21,11 @@ interface ButtonProps {
 }
 
 const FilterButton: React.FC<ButtonProps> = (buttonProps) => {
-    const active = buttonProps.activeFilter === buttonProps.buttonLabel;
+    const isActive = buttonProps.activeFilter === buttonProps.buttonLabel;
     return (
         <Button
             color="primary"
-            variant={active ? "contained" : "outlined"}
+            variant={isActive ? "contained" : "outlined"}
             onClick={() => buttonProps.setState(buttonProps.buttonLabel)}
         >
             {capitaliseWords(buttonProps.buttonLabel)}
@@ -39,7 +39,7 @@ export const buttonGroupFilter = <Data,>({
     filterOptions,
     initialActiveFilter,
     method,
-    persistOnClear = false,
+    shouldPersistOnClear = false,
 }: ButtonGroupFilterProps<Data>): ClientSideFilter<Data, string> => {
     return {
         key: key,
@@ -47,7 +47,7 @@ export const buttonGroupFilter = <Data,>({
         initialState: initialActiveFilter,
         method: method,
         areStatesIdentical: (stateA, stateB) => stateA === stateB,
-        persistOnClear: persistOnClear,
+        shouldPersistOnClear: shouldPersistOnClear,
 
         filterComponent: function (
             state: string,
