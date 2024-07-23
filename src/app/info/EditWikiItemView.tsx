@@ -12,11 +12,11 @@ import { logErrorReturnLogId } from "@/logger/logger";
 interface EditViewProps {
     rowRef: DbWikiRow;
     setRowRef: (row?: DbWikiRow) => void;
-    setIsInEditModeRef: (editMode: boolean) => void;
+    setIsInEditModeRef: (isInEditMode: boolean) => void;
 }
 
 const deleteWikiItem = async (
-    setIsInEditModeRef: (editMode: boolean) => void,
+    setIsInEditModeRef: (isInEditMode: boolean) => void,
     setRowRef: (row?: DbWikiRow) => void,
     rowRef?: DbWikiRow
 ): Promise<void> => {
@@ -28,7 +28,7 @@ const deleteWikiItem = async (
                 .delete()
                 .match({ wiki_key: rowRef.wiki_key });
             if (response.error) {
-                logErrorReturnLogId("error deleting item", response.error);
+                logErrorReturnLogId("error deleting wiki row item", response.error);
             }
             setIsInEditModeRef(false);
             setRowRef(undefined);
@@ -55,7 +55,7 @@ const updateWikiItem = async (
             .update({ title: newTitle, content: newContent })
             .match({ wiki_key: rowRef.wiki_key });
         if (response.error) {
-            logErrorReturnLogId("error updating item", response.error);
+            logErrorReturnLogId("error updating wiki row item", response.error);
         }
         setIsInEditModeRef(false);
         setRowRef({

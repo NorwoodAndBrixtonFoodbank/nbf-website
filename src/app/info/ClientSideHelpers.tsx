@@ -5,7 +5,7 @@ import { useState } from "react";
 import DefaultWikiItemView from "@/app/info/DefaultWikiItemView";
 import EditWikiItemView from "@/app/info/EditWikiItemView";
 
-export const enterEditMode = (setIsInEditMode: (editMode: boolean) => void): void => {
+export const enterEditMode = (setIsInEditMode: (isInEditMode: boolean) => void): void => {
     setIsInEditMode(true);
 };
 
