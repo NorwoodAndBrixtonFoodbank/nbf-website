@@ -110,28 +110,6 @@ const ListsPage: React.FC = () => {
         setErrorMessage(error);
     }
 
-    // const fetchAndSetData = useCallback(async (): Promise<void> => {
-    //     setIsLoading(true);
-    //     if (listsTableFetchAbortController.current) {
-    //         listsTableFetchAbortController.current.abort("stale request");
-    //     }
-    //     listsTableFetchAbortController.current = new AbortController();
-    //     if (listsTableFetchAbortController.current) {
-    //         setErrorMessage(null);
-    //         const { data, error } = await fetchListsData();
-    //         if (error) {
-    //             setIsLoading(false);
-    //             setErrorMessage(getErrorMessage(error));
-    //             return;
-    //         }
-
-    //         setListData(formatListData(data.listsData));
-    //         setComment(data.comment);
-    //         listsTableFetchAbortController.current = null;
-    //         setIsLoading(false);
-    //     }
-    // }, [setIsLoading, setErrorMessage, setListData, setComment]);
-
     const fetchAndSetData = async (): Promise<void> => {
         setIsLoading(true);
         setErrorMessage(null);
@@ -144,7 +122,7 @@ const ListsPage: React.FC = () => {
         setListData(formatListData(data.listsData));
         setComment(data.comment);
         setIsLoading(false);
-    }
+    };
 
     useEffect(() => {
         fetchAndSetData();

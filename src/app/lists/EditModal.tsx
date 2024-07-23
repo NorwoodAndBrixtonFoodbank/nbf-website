@@ -101,6 +101,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
             wasSuccess: true,
             listId: returnedListData.primary_key,
         });
+
         return { error: null };
     };
 

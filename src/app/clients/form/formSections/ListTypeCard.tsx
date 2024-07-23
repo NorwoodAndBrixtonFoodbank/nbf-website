@@ -14,8 +14,8 @@ const ListTypeCard: React.FC<ClientCardProps> = ({
     fields,
 }) => {
     const listTypeLabelsAndValues: ListTypeLabelsAndValues = [
-        ["regular", "regular"],
-        ["hotel", "hotel"],
+        ["Regular", "regular"],
+        ["Hotel", "hotel"],
     ];
 
     return (
