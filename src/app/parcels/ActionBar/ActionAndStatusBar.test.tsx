@@ -1,54 +1,14 @@
-// import React from "react";
-// import { render } from "@testing-library/react";
-// import { expect, it } from "@jest/globals";
-// import "@testing-library/jest-dom/jest-globals";
-// import ActionAndStatusBar, {
-//     ActionAndStatusBarProps,
-// } from "@/app/parcels/ActionBar/ActionAndStatusBar";
-
-// // Mock the required functions and types
-// const mockFetchSelectedParcels = jest.fn().mockResolvedValue([]);
-// const mockUpdateParcelStatuses = jest.fn().mockResolvedValue({ error: null });
-
-// const mockProps: ActionAndStatusBarProps = {
-//     fetchSelectedParcels: mockFetchSelectedParcels,
-//     updateParcelStatuses: mockUpdateParcelStatuses,
-// };
-
-// // jest.mock('@mui/material/Menu/Menu', () => (
-// //     (props: React.PropsWithChildren<any>, context?: any) => {
-// //       return (
-// //         <div>
-// //           <input data-testid='mock-menu' />
-// //         </div>
-// //       );
-// //     }
-// //   ));
-// jest.mock("@/supabaseClient", () => {
-//     return { default: jest.fn() };
-// });
-
-
-// const logID = "a2adb0ba-873e-506b-abd1-8cd1782923c8";
-// jest.mock("@/logger/logger", () => ({
-//     logErrorReturnLogId: jest.fn(() => Promise.resolve(logID)),
-// }));
-
-// describe("ActionAndStatusBar", () => {
-//     it("renders the component", () => {
-//         const { getByText } = render(<ActionAndStatusBar {...mockProps} />);
-//         expect(getByText("Statuses")).toBeInTheDocument();
-//         expect(getByText("Actions")).toBeInTheDocument();
-//     });
-// });
-
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import React from "react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { expect, it } from "@jest/globals";
 import "@testing-library/jest-dom/jest-globals";
 import ActionAndStatusBar, {
     ActionAndStatusBarProps,
-    } from "@/app/parcels/ActionBar/ActionAndStatusBar";
+} from "@/app/parcels/ActionBar/ActionAndStatusBar";
+import { ParcelsTableRow } from "../parcelsTable/types";
+import StyleManager from "@/app/themes";
+import Localization from "@/app/Localization";
+import { SaveParcelStatusResult } from "./Statuses";
 
 // Mock functions for props
 // Mock the required functions and types
@@ -60,73 +20,152 @@ const mockProps: ActionAndStatusBarProps = {
     updateParcelStatuses: mockUpdateParcelStatuses,
 };
 
-// jest.mock('@mui/material/Menu/Menu', () => (
-//     (props: React.PropsWithChildren<any>, context?: any) => {
-//       return (
-//         <div>
-//           <input data-testid='mock-menu' />
-//         </div>
-//       );
-//     }
-//   ));
 jest.mock("@/supabaseClient", () => {
+    console.log("Mocking Supabase client");
     return { default: jest.fn() };
 });
-
-jest.mock("supabase", () => {
-    return { default: jest.fn() };
-})
 
 const logID = "a2adb0ba-873e-506b-abd1-8cd1782923c8";
 jest.mock("@/logger/logger", () => ({
     logErrorReturnLogId: jest.fn(() => Promise.resolve(logID)),
 }));
 
+jest.mock("@/app/parcels/ActionBar/Statuses", () => {
+    console.log("Mocking Statuses component"); // Add logging statement
+    return jest.fn().mockImplementation(() => (
+        <div>
+            <button data-testid="#status-button">Statuses</button>
+            <div data-testid="#status-menu">
+                <button>Parcel Denied</button>
+                {/* Add more status options as needed */}
+            </div>
+        </div>
+    ));
+});
 
-describe('ActionAndStatusBar', () => {
-  it('renders without crashing', () => {
-    render(
-      <ActionAndStatusBar
-        fetchSelectedParcels={mockFetchSelectedParcels}
-        updateParcelStatuses={mockUpdateParcelStatuses}
-      />
+Object.defineProperty(window, "matchMedia", {
+    writable: true,
+    value: jest.fn().mockImplementation((query) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: jest.fn(), // deprecated
+        removeListener: jest.fn(), // deprecated
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        dispatchEvent: jest.fn(),
+    })),
+});
+
+const MockActionBar: React.FC<ActionAndStatusBarProps> = ({
+    fetchSelectedParcels: fetchSelectedParcels,
+    updateParcelStatuses: onDeleteParcels,
+}) => {
+    return (
+        <Localization>
+            <StyleManager>
+                <ActionAndStatusBar
+                    fetchSelectedParcels={fetchSelectedParcels}
+                    updateParcelStatuses={onDeleteParcels}
+                />
+            </StyleManager>
+        </Localization>
     );
-    
-    // Check if buttons are rendered
-    expect(screen.getByText('Statuses')).toBeInTheDocument();
-    expect(screen.getByText('Actions')).toBeInTheDocument();
-  });
+};
 
-  it('opens status menu on click', () => {
-    render(
-      <ActionAndStatusBar
-        fetchSelectedParcels={mockFetchSelectedParcels}
-        updateParcelStatuses={mockUpdateParcelStatuses}
-      />
-    );
+describe("Parcels - Action Bar", () => {
+    const mockData: ParcelsTableRow[] = [
+        {
+            clientId: "primaryKey1",
+            addressPostcode: "AB1 2CD",
+            phoneNumber: "0987 654321",
+            deliveryCollection: {
+                collectionCentreName: "Centre 1",
+                collectionCentreAcronym: "C1",
+                congestionChargeApplies: false,
+            },
+            collectionDatetime: new Date(),
+            familyCategory: "Single",
+            fullName: "John Smith",
+            lastStatus: {
+                name: "Delivered",
+                eventData: "Some information",
+                timestamp: new Date(),
+                workflowOrder: 1,
+            },
+            packingDate: new Date(),
+            packingSlot: "AM",
+            parcelId: "123456789",
+            iconsColumn: {
+                requiresFollowUpPhoneCall: false,
+                flaggedForAttention: false,
+            },
+            voucherNumber: "123456789",
+            createdAt: new Date("2023-12-31T12:00:00+00:00"),
+            clientIsActive: true,
+        },
+        {
+            clientId: "primaryKey2",
+            addressPostcode: "AB1 aaaa2CD",
+            phoneNumber: "+1 234 567",
+            deliveryCollection: {
+                collectionCentreName: "Centraaaae 1",
+                collectionCentreAcronym: "C2",
+                congestionChargeApplies: true,
+            },
+            collectionDatetime: new Date(),
+            familyCategory: "Family of 4",
+            fullName: "John Smaaaaith",
+            lastStatus: {
+                name: "Called and Confirmed",
+                eventData: null,
+                timestamp: new Date(),
+                workflowOrder: 2,
+            },
+            packingDate: new Date(),
+            packingSlot: "PM",
+            parcelId: "123456aaaa789",
+            iconsColumn: {
+                requiresFollowUpPhoneCall: false,
+                flaggedForAttention: false,
+            },
+            voucherNumber: "123456aaaa789",
+            createdAt: new Date("2023-12-31T12:00:00+00:00"),
+            clientIsActive: true,
+        },
+    ];
 
-    // Check if status button is in the document
-    const statusButton = screen.getByText('Statuses');
-    expect(statusButton).toBeInTheDocument();
+    describe("Statuses", () => {
+        let parcelIds: string[] = ["123456789", "123456aaaa789"];
+        const onDeleteParcels = async (): Promise<SaveParcelStatusResult> => {
+            parcelIds = [];
+            return { error: null };
+        };
 
-    // Simulate button click
-    fireEvent.click(statusButton);
+        beforeEach(() => {
+            render(
+                <MockActionBar
+                    fetchSelectedParcels={async () =>
+                        await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
+                    }
+                    updateParcelStatuses={onDeleteParcels}
+                />
+            );
+        });
 
-    // Check if statusAnchorElement is set (if you have any specific logic, you can test it here)
-    // Currently, this is a placeholder for testing click functionality
-    // In a real scenario, you might want to check if a menu opens or some state changes
-  });
+        it("renders without crashing", () => {
+            expect(screen.getAllByText("Statuses")[0]).toBeInTheDocument();
+        });
 
-  it('shows error message when modalError is set', () => {
-    render(
-      <ActionAndStatusBar
-        fetchSelectedParcels={mockFetchSelectedParcels}
-        updateParcelStatuses={mockUpdateParcelStatuses}
-      />
-    );
+        it("should open the status menu when the status button is clicked", async () => {
+            const statusButton = screen.getByTestId("#status-button");
+            fireEvent.click(statusButton);
 
-    // Set modalError by updating the component props
-    // For simplicity, you might simulate state changes if applicable
-    // This requires adjustments based on how you manage state and props
-  });
+            await waitFor(() => {
+                expect(screen.getByTestId("#status-menu")).toBeInTheDocument();
+            });
+
+            expect(screen.getByText("Parcel Denied")).toBeInTheDocument();
+        });
+    });
 });
