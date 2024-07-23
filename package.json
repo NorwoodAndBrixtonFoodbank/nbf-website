@@ -21,7 +21,7 @@
     "cypress:e2e": "start-server-and-test start:test_server 3200 _cypress:e2e",
     "_cypress:e2e": "npx cypress run --e2e",
     "cypress:open": "start-server-and-test 'next start -p 3100' 3100 'npx cypress open --config baseUrl=http://localhost:3100'",
-    "jest:all": "npm run jest:component", 
+    "jest:all": "npm run jest:component",
     "jest:component": "npx jest",
     "coverage:generate": "nyc instrument --delete src .nyc_output --compact=false --all",
     "coverage:run_tests": "start-server-and-test 'nyc npm run start:test_server' 3200 cypress:e2e",
@@ -52,17 +52,25 @@
     "moduleNameMapper": {
       "@/(.*)$": "<rootDir>/src/$1"
     },
-    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "tsx",
+      "ts"
+    ],
+    "testEnvironment": "jsdom",
     "transform": {
-      "^.+.tsx?$": [
-        "ts-jest",
-        {}
-      ]
+      "^.+\\.(ts|tsx)?$": "ts-jest"
     },
     "modulePaths": [
       "<rootDir>/src",
       "<rootDir>/node_modules"
-    ]
+    ],
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.jest.json"
+      }
+    }
   },
   "dependencies": {
     "@emotion/is-prop-valid": "^1.2.1",
@@ -115,12 +123,19 @@
     "winston-cloudwatch": "^6.2.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.24.8",
+    "@babel/core": "^7.24.9",
+    "@babel/preset-env": "^7.24.8",
+    "@babel/preset-react": "^7.24.7",
     "@babel/preset-typescript": "^7.24.7",
+    "@babel/types": "^7.24.9",
     "@cypress/code-coverage": "^3.11.0",
     "@jest/globals": "^29.7.0",
     "@next/bundle-analyzer": "^14.2.5",
     "@snaplet/copycat": "^5.0.0",
     "@snaplet/seed": "^0.88.2",
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.0",
     "@types/cypress__code-coverage": "^3.10.0",
     "@types/cypress-dotenv": "^2.0.1",
     "@types/file-saver": "^2.0.7",
@@ -130,6 +145,7 @@
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "axe-core": "^4.7.2",
+    "babel-jest": "^29.7.0",
     "cypress": "^13.1.0",
     "cypress-axe": "^1.5.0",
     "eslint": "^8.43.0",
@@ -143,6 +159,8 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "react-test-renderer": "^18.3.1",
     "seedrandom": "^3.0.5",
     "snaplet": "^0.88.2",
     "ts-jest": "^29.2.2",
