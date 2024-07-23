@@ -1,6 +1,13 @@
+update public.audit_log
+  set event_id = null
+  from public.events
+  where audit_log.event_id = events.primary_key
+    and events.new_parcel_status = 'Map Generated';
+
 delete from public.events where new_parcel_status = 'Map Generated';
 
 delete from public.status_order where event_name = 'Map Generated';
+
 
 update status_order set event_name = '' where event_name = 'No Status';
 
