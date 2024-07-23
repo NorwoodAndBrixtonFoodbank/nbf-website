@@ -5,29 +5,30 @@ import { useState } from "react";
 import DefaultWikiItemView from "@/app/info/DefaultWikiItemView";
 import EditWikiItemView from "@/app/info/EditWikiItemView";
 
-export const enterEditMode = (setEditMode: (editMode: boolean) => void): void => {
-    setEditMode(true);
+export const enterEditMode = (setIsInEditMode: (editMode: boolean) => void): void => {
+    setIsInEditMode(true);
 };
 
 interface EditProps {
-    editMode: boolean;
+    isInEditMode: boolean;
     row?: DbWikiRow;
 }
 
-export const EditModeDependentItem: React.FC<EditProps> = ({ editMode, row }) => {
+export const EditModeDependentItem: React.FC<EditProps> = ({ isInEditMode: isInEditMode, row }) => {
     const [rowRef, setRowRef] = useState<DbWikiRow | undefined>(row);
-    const [editModeRef, setEditModeRef] = useState(editMode);
+    const [isInEditModeRef, setIsInEditModeRef] = useState(isInEditMode);
     return (
         <>
-            {!editModeRef ? (
-                <DefaultWikiItemView rowRef={rowRef} setEditModeRef={setEditModeRef} />
-            ) : (
-                <EditWikiItemView
-                    rowRef={rowRef}
-                    setRowRef={setRowRef}
-                    setEditModeRef={setEditModeRef}
-                />
-            )}
+            {rowRef &&
+                (!isInEditModeRef ? (
+                    <DefaultWikiItemView rowRef={rowRef} setIsInEditModeRef={setIsInEditModeRef} />
+                ) : (
+                    <EditWikiItemView
+                        rowRef={rowRef}
+                        setRowRef={setRowRef}
+                        setIsInEditModeRef={setIsInEditModeRef}
+                    />
+                ))}
         </>
     );
 };

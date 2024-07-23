@@ -9,7 +9,7 @@ interface WikiItemsProps {
 
 interface WikiItemProps {
     row: DbWikiRow;
-    editMode: boolean;
+    isInEditMode: boolean;
 }
 
 interface ContentPart {
@@ -44,10 +44,10 @@ export const convertContentToElements = (rowContent: string): React.JSX.Element[
     });
 };
 
-const WikiItem: React.FC<WikiItemProps> = ({ row, editMode }) => {
+const WikiItem: React.FC<WikiItemProps> = ({ row, isInEditMode }) => {
     return (
         <WikiItemPositioner>
-            <EditModeDependentItem row={row} editMode={editMode} />
+            <EditModeDependentItem row={row} isInEditMode={isInEditMode} />
         </WikiItemPositioner>
     );
 };
@@ -59,7 +59,7 @@ const WikiItems: React.FC<WikiItemsProps> = (props) => {
     return (
         <>
             {sortedRows.map((row: DbWikiRow) => {
-                return <WikiItem row={row} editMode={false} key={row.wiki_key} />;
+                return <WikiItem row={row} isInEditMode={false} key={row.wiki_key} />;
             })}
         </>
     );

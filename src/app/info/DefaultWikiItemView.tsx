@@ -9,40 +9,34 @@ import { convertContentToElements } from "@/app/info/WikiItems";
 import AdminManagerDependent from "@/app/info/AdminManagerDependent";
 
 interface DefaultViewProps {
-    rowRef?: DbWikiRow;
-    setEditModeRef: (editMode: boolean) => void;
+    rowRef: DbWikiRow;
+    setIsInEditModeRef: (isInEditMode: boolean) => void;
 }
 
-const DefaultWikiItemView: React.FC<DefaultViewProps> = ({ rowRef, setEditModeRef }) => {
+const DefaultWikiItemView: React.FC<DefaultViewProps> = ({ rowRef, setIsInEditModeRef }) => {
     return (
         <>
-            {rowRef && (
-                <>
-                    <AdminManagerDependent>
-                        <WikiUpdateDataButton
-                            onClick={() => {
-                                setEditModeRef(true);
-                            }}
-                        >
-                            <UpdateIcon />
-                        </WikiUpdateDataButton>
-                    </AdminManagerDependent>
-                    <WikiItemAccordionSurface>
-                        <Accordion elevation={0}>
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="panel1-content"
-                                id="panel1-header"
-                            >
-                                <h2>{rowRef.title}</h2>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                {convertContentToElements(rowRef.content)}
-                            </AccordionDetails>
-                        </Accordion>
-                    </WikiItemAccordionSurface>
-                </>
-            )}
+            <AdminManagerDependent>
+                <WikiUpdateDataButton
+                    onClick={() => {
+                        setIsInEditModeRef(true);
+                    }}
+                >
+                    <UpdateIcon />
+                </WikiUpdateDataButton>
+            </AdminManagerDependent>
+            <WikiItemAccordionSurface>
+                <Accordion elevation={0}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                    >
+                        <h2>{rowRef.title}</h2>
+                    </AccordionSummary>
+                    <AccordionDetails>{convertContentToElements(rowRef.content)}</AccordionDetails>
+                </Accordion>
+            </WikiItemAccordionSurface>
         </>
     );
 };
