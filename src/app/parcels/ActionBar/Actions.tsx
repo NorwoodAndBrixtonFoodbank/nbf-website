@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useContext, useState } from "react";
-import Menu from "@mui/material/Menu/Menu";
-import MenuList from "@mui/material/MenuList/MenuList";
-import MenuItem from "@mui/material/MenuItem/MenuItem";
+import Menu from "@mui/material/Menu";
+import MenuList from "@mui/material/MenuList";
+import MenuItem from "@mui/material/MenuItem";
 import { ParcelsTableRow } from "../parcelsTable/types";
 import { ActionModalProps } from "./ActionModals/GeneralActionModal";
 import DayOverviewModal from "./ActionModals/DayOverviewModal";

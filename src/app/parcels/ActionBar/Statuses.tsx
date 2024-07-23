@@ -2,9 +2,9 @@
 
 import supabase from "@/supabaseClient";
 import React, { useEffect, useState } from "react";
-import Menu from "@mui/material/Menu/Menu";
-import MenuList from "@mui/material/MenuList/MenuList";
-import MenuItem from "@mui/material/MenuItem/MenuItem";
+import Menu from "@mui/material/Menu";
+import MenuList from "@mui/material/MenuList";
+import MenuItem from "@mui/material/MenuItem";
 import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "../parcelsTable/types";
 import StatusesModal from "@/app/parcels/ActionBar/StatusesModal";
