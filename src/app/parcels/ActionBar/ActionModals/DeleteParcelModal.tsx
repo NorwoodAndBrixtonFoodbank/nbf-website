@@ -19,7 +19,7 @@ const DeleteParcelModal: React.FC<ActionModalProps> = (props) => {
     const numberOfParcelsToDelete = props.selectedParcels.length;
 
     const onDeleteParcels = async (): Promise<void> => {
-        const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
+        const { error } = await props.updateParcelStatuses(props.selectedParcels, "Parcel Deleted");
         if (error) {
             setErrorMessage(getStatusErrorMessageWithLogId(error));
         } else {

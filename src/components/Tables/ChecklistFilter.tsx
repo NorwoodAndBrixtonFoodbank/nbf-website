@@ -45,6 +45,10 @@ export const serverSideChecklistFilter = <
                 }
             };
 
+            const anySelected = (): boolean => {
+                return state.length > 0;
+            };
+
             return (
                 <CheckboxGroupPopup
                     key={filterLabel}
@@ -52,6 +56,7 @@ export const serverSideChecklistFilter = <
                     defaultCheckedKeys={state}
                     groupLabel={filterLabel}
                     onChange={onChangeCheckbox}
+                    anySelected={anySelected}
                 />
             );
         },

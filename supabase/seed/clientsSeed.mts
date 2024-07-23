@@ -32,9 +32,13 @@ export const possibleParcelPostCodes = [
     "E1 6AA",
     "E1 6AD",
     "E1 6AG",
-    "CB2 3JU",
-    "CB24 4RT",
-    "CB8 9LJ",
+    "N13 5UJ",
+    "NW6 4RL",
+    "SE11 5RD",
+    "SE24 0HG",
+    "SW14 8DL",
+    "SW1P 4JL",
+    "SW8 1SY",
     null,
 ];
 

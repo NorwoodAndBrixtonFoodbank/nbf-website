@@ -46,7 +46,7 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
 
         const { error: statusUpdateError } = await props.updateParcelStatuses(
             props.selectedParcels,
-            props.newStatus,
+            "Packing Date Changed",
             `new packing date: ${newPackingDate}`,
             "change packing date"
         );

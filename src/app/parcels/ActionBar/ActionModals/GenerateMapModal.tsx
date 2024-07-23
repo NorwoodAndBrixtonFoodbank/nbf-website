@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import GeneralActionModal, { ActionModalProps } from "./GeneralActionModal";
 import { Button } from "@mui/material";
-import { getStatusErrorMessageWithLogId } from "../Statuses";
 
 const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
@@ -13,16 +12,6 @@ const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
     const onClose = (): void => {
         props.onClose();
         setErrorMessage(null);
-    };
-
-    const onDoAction = async (): Promise<void> => {
-        const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
-        if (error) {
-            setErrorMessage(getStatusErrorMessageWithLogId(error));
-        } else {
-            setSuccessMessage("Map Generated");
-        }
-        setActionCompleted(true);
     };
 
     const formattedPostcodes = props.selectedParcels.reduce<string[]>(
@@ -59,7 +48,8 @@ const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
                             window.open(url, "_blank", "noopener, noreferrer");
                         };
                         openInNewTab(mapsLinkForSelectedParcels);
-                        onDoAction();
+                        setSuccessMessage("Map Generated");
+                        setActionCompleted(true);
                     }}
                 >
                     Generate Map

@@ -61,7 +61,10 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
     const parcelIds = props.selectedParcels.map((parcel) => parcel.parcelId);
 
     const onPdfCreationCompleted = async (): Promise<void> => {
-        const { error } = await props.updateParcelStatuses(props.selectedParcels, props.newStatus);
+        const { error } = await props.updateParcelStatuses(
+            props.selectedParcels,
+            "Shopping List Downloaded"
+        );
         if (error) {
             setErrorMessage(getStatusErrorMessageWithLogId(error));
         }

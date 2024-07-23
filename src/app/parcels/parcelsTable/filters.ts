@@ -85,7 +85,7 @@ const buildDateFilter = (initialState: DateRangeState): ParcelsFilter<DateRangeS
 
 const buildDeliveryCollectionFilter = async (): Promise<ParcelsFilter<string[]>> => {
     const deliveryCollectionSearch: ParcelsFilterMethod<string[]> = (query, state) => {
-        return query.in("collection_centre_acronym", state);
+        return state.length === 0 ? query : query.in("collection_centre_acronym", state);
     };
 
     const { data: collection_centres, error } = await supabase
@@ -108,16 +108,21 @@ const buildDeliveryCollectionFilter = async (): Promise<ParcelsFilter<string[]>>
         key: "deliveryCollection",
         filterLabel: "Method",
         itemLabelsAndKeys: optionsSet.map((option) => [option.value, option.key]),
-        initialCheckedKeys: optionsSet.map((option) => option.key),
+        initialCheckedKeys: [],
         method: deliveryCollectionSearch,
     });
 };
 
 const buildLastStatusFilter = async (): Promise<ParcelsFilter<string[]>> => {
+    const labelForNoStatus = "No Status";
+
     const lastStatusSearch: ParcelsFilterMethod<string[]> = (query, state) => {
-        if (state.includes("None")) {
+        if (state.length === 0) {
+            // Default is to show everything that's not deleted
+            return query.neq("last_status_event_name", "Parcel Deleted");
+        } else if (state.includes(labelForNoStatus)) {
             return query.or(
-                `last_status_event_name.is.null,last_status_event_name.in.(${state.join(",")})`
+                `last_status_event_name.is.null,last_status_event_name.in.("",${state.join(",")})`
             );
         } else {
             return query.in("last_status_event_name", state);
@@ -138,25 +143,28 @@ const buildLastStatusFilter = async (): Promise<ParcelsFilter<string[]>> => {
         }
         return filteredOptions.sort();
     }, []);
-    data && optionsSet.push("None");
+    data && optionsSet.push(labelForNoStatus);
 
     return serverSideChecklistFilter<ParcelsTableRow, DbParcelRow>({
         key: "lastStatus",
         filterLabel: "Last Status",
         itemLabelsAndKeys: optionsSet.map((value) => [value, value]),
-        initialCheckedKeys: optionsSet.filter((option) => option !== "Parcel Deleted"),
+        initialCheckedKeys: [],
         method: lastStatusSearch,
     });
 };
 
 const buildPackingSlotFilter = async (): Promise<ParcelsFilter<string[]>> => {
     const packingSlotSearch: ParcelsFilterMethod<string[]> = (query, state) => {
-        return query.in("packing_slot_name", state);
+        return state.length === 0 ? query : query.in("packing_slot_name", state);
     };
 
     const keySet = new Set();
 
-    const { data, error } = await supabase.from("packing_slots").select("name, is_shown");
+    const { data, error } = await supabase
+        .from("packing_slots")
+        .select("name, is_shown")
+        .order("order");
     if (error) {
         const logId = await logErrorReturnLogId(
             "Error with fetch: Packing slot filter options",
@@ -189,7 +197,7 @@ const buildPackingSlotFilter = async (): Promise<ParcelsFilter<string[]>> => {
         key: "packingSlot",
         filterLabel: "Packing Slot",
         itemLabelsAndKeys: optionsSet.map((option) => [option.value, option.key]),
-        initialCheckedKeys: optionsSet.map((option) => option.key),
+        initialCheckedKeys: [],
         method: packingSlotSearch,
     });
 };
