@@ -2,27 +2,27 @@
 
 import { DbWikiRow } from "@/databaseUtils";
 import { WikiItemAccordionSurface, WikiUpdateDataButton } from "@/app/info/StyleComponents";
-import UpdateIcon from "@mui/icons-material/Update";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { convertContentToElements } from "@/app/info/WikiItems";
 import AdminManagerDependent from "@/app/info/AdminManagerDependent";
+import EditIcon from "@mui/icons-material/Edit";
 
 interface DefaultViewProps {
-    rowRef: DbWikiRow;
-    setIsInEditModeRef: (isInEditMode: boolean) => void;
+    rowData: DbWikiRow;
+    openEditMode: () => void;
 }
 
-const DefaultWikiItemView: React.FC<DefaultViewProps> = ({ rowRef, setIsInEditModeRef }) => {
+const WikiItemDisplay: React.FC<DefaultViewProps> = ({ rowData, openEditMode }) => {
     return (
         <>
             <AdminManagerDependent>
                 <WikiUpdateDataButton
                     onClick={() => {
-                        setIsInEditModeRef(true);
+                        openEditMode();
                     }}
                 >
-                    <UpdateIcon />
+                    <EditIcon />
                 </WikiUpdateDataButton>
             </AdminManagerDependent>
             <WikiItemAccordionSurface>
@@ -32,13 +32,13 @@ const DefaultWikiItemView: React.FC<DefaultViewProps> = ({ rowRef, setIsInEditMo
                         aria-controls="panel1-content"
                         id="panel1-header"
                     >
-                        <h2>{rowRef.title}</h2>
+                        <h2>{rowData.title}</h2>
                     </AccordionSummary>
-                    <AccordionDetails>{convertContentToElements(rowRef.content)}</AccordionDetails>
+                    <AccordionDetails>{convertContentToElements(rowData.content)}</AccordionDetails>
                 </Accordion>
             </WikiItemAccordionSurface>
         </>
     );
 };
 
-export default DefaultWikiItemView;
+export default WikiItemDisplay;

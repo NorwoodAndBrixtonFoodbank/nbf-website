@@ -2,31 +2,38 @@
 
 import { DbWikiRow } from "@/databaseUtils";
 import { useState } from "react";
-import DefaultWikiItemView from "@/app/info/DefaultWikiItemView";
-import EditWikiItemView from "@/app/info/EditWikiItemView";
+import WikiItemDisplay from "@/app/info/WikiItemDisplay";
+import WikiItemEdit from "@/app/info/WikiItemEdit";
+import AdminManagerDependent from "./AdminManagerDependent";
 
 export const enterEditMode = (setIsInEditMode: (isInEditMode: boolean) => void): void => {
     setIsInEditMode(true);
 };
 
 interface EditProps {
-    isInEditMode: boolean;
     row?: DbWikiRow;
 }
 
-export const EditModeDependentItem: React.FC<EditProps> = ({ isInEditMode: isInEditMode, row }) => {
-    const [rowRef, setRowRef] = useState<DbWikiRow | undefined>(row);
-    const [isInEditModeRef, setIsInEditModeRef] = useState(isInEditMode);
+export const EditModeDependentItem: React.FC<EditProps> = ({ row }) => {
+    const [rowData, setrowData] = useState<DbWikiRow | undefined>(row);
+    const [isInEditMode, setIsInEditMode] = useState(false);
     return (
         <>
-            {rowRef &&
-                (!isInEditModeRef ? (
-                    <DefaultWikiItemView rowRef={rowRef} setIsInEditModeRef={setIsInEditModeRef} />
+            {rowData &&
+                (isInEditMode ? (
+                    <AdminManagerDependent>
+                        <WikiItemEdit
+                            rowData={rowData}
+                            setRowData={setrowData}
+                            setIsInEditMode={setIsInEditMode}
+                        />
+                    </AdminManagerDependent>
                 ) : (
-                    <EditWikiItemView
-                        rowRef={rowRef}
-                        setRowRef={setRowRef}
-                        setIsInEditModeRef={setIsInEditModeRef}
+                    <WikiItemDisplay
+                        rowData={rowData}
+                        openEditMode={() => {
+                            setIsInEditMode(true);
+                        }}
                     />
                 ))}
         </>
