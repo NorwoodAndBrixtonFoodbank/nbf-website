@@ -18,11 +18,13 @@ import TooltipCell from "@/app/lists/TooltipCell";
 import TableSurface from "@/components/Tables/TableSurface";
 import CommentBox from "@/app/lists/CommentBox";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
-import { buildClientSideTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
-import { ClientSideFilter } from "@/components/Tables/Filters";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
+import { ClientSideFilter } from "@/components/Tables/Filters";
+import { Database } from "@/databaseTypesFile";
 
-type ListFilter = ClientSideFilter<ListRow, string>;
+export type ListName = Database["public"]["Enums"]["list_type"];
+
+export type ListFilter = ClientSideFilter<ListRow, string>;
 
 export interface ListRow {
     primaryKey: string;
@@ -52,6 +54,8 @@ interface ListDataViewProps {
     comment: string;
     errorMessage: string | null;
     setErrorMessage: (error: string | null) => void;
+    primaryFilters: ListFilter[];
+    setPrimaryFilters: (filters: ListFilter[]) => void;
 }
 
 export const listsHeaderKeysAndLabels = [
@@ -120,28 +124,20 @@ const listsColumnStyleOptions: ColumnStyles<ListRow> = {
     ),
 };
 
-const filters: ListFilter[] = [
-    buildClientSideTextFilter({
-        key: "itemName",
-        label: "Item",
-        headers: listsHeaderKeysAndLabels,
-        method: filterRowByText,
-    }),
-];
-
 const ListsDataView: React.FC<ListDataViewProps> = ({
     listOfIngredients,
     setListOfIngredients,
     comment,
     errorMessage,
     setErrorMessage,
+    primaryFilters,
+    setPrimaryFilters,
 }) => {
     const [modal, setModal] = useState<EditModalState>();
     const [toDelete, setToDelete] = useState<number | null>(null);
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
     const [listData, setListData] = useState<ListRow[]>(listOfIngredients);
-    const [primaryFilters, setPrimaryFilters] = useState<ListFilter[]>(filters);
 
     if (listOfIngredients === null) {
         void logInfoReturnLogId("No ingredients found @ app/lists/ListDataView.tsx");
@@ -151,7 +147,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     const toggleableHeaders = listsHeaderKeysAndLabels.map(([key]) => key);
 
     const onEdit = (index: number): void => {
-        setModal(listRowToListDB(listOfIngredients[index]));
+        setModal(listRowToListDB(listData[index]));
     };
 
     const reorderRows = (row1: ListRow, row2: ListRow): void => {
@@ -229,7 +225,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
 
     const onConfirmDeletion = async (): Promise<void> => {
         if (toDelete !== null) {
-            const itemToDelete = listOfIngredients[toDelete];
+            const itemToDelete = listData[toDelete];
 
             const auditLog = {
                 action: "delete a list item",
@@ -279,7 +275,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
         <>
             <ConfirmDialog
                 message={`Are you sure you want to delete ${
-                    toDelete !== null ? listOfIngredients[toDelete].itemName : ""
+                    toDelete !== null ? listData[toDelete].itemName : ""
                 }?`}
                 isOpen={toDeleteModalOpen}
                 onConfirm={onConfirmDeletion}
@@ -297,7 +293,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                     <Alert severity="error">{errorMessage}</Alert>
                 </SnackBarDiv>
             </Snackbar>
-            <EditModal onClose={() => setModal(undefined)} data={modal} key={modal?.primary_key} />
+
             <TableSurface>
                 <CommentBox originalComment={comment} />
                 <ClientPaginatedTable<ListRow, string>
@@ -322,6 +318,12 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                         setPrimaryFilters: setPrimaryFilters,
                         additionalFiltersShown: false,
                     }}
+                />
+                <EditModal
+                    onClose={() => setModal(undefined)}
+                    data={modal}
+                    key={modal?.primary_key}
+                    currentList={primaryFilters[1].state as ListName}
                 />
                 <ButtonMargin>
                     <Button variant="contained" onClick={() => setModal(null)}>

@@ -73,18 +73,26 @@ function TableFilterAndExtraColumnsBar<Data, Filter extends FilterBase<Data, Sta
     const handleClear = (): void => {
         if (props.setFilters && props.filters) {
             props.setFilters(
-                props.filters?.map((filter) => ({
-                    ...filter,
-                    state: filter.initialState,
-                }))
+                props.filters?.map((filter) =>
+                    filter.shouldPersistOnClear
+                        ? filter
+                        : {
+                              ...filter,
+                              state: filter.initialState,
+                          }
+                )
             );
         }
         if (props.setAdditionalFilters && props.additionalFilters) {
             props.setAdditionalFilters(
-                props.additionalFilters?.map((filter) => ({
-                    ...filter,
-                    state: filter.initialState,
-                }))
+                props.additionalFilters?.map((filter) =>
+                    filter.shouldPersistOnClear
+                        ? filter
+                        : {
+                              ...filter,
+                              state: filter.initialState,
+                          }
+                )
             );
         }
     };

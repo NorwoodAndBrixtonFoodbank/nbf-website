@@ -8,6 +8,7 @@ interface DateFilterProps<Data, DbData extends Record<string, unknown>> {
     label: string;
     method: ServerSideFilterMethod<DbData, DateRangeState>;
     initialState: DateRangeState;
+    shouldPersistOnClear?: boolean;
 }
 
 const areDateRangesIdentical = (
@@ -28,12 +29,14 @@ export const serverSideDateFilter = <Data, DbData extends Record<string, unknown
     key,
     method,
     initialState,
+    shouldPersistOnClear = false,
 }: DateFilterProps<Data, DbData>): ServerSideFilter<Data, DateRangeState, DbData> => {
     return {
         key: key,
         state: initialState,
         initialState: initialState,
         method,
+        shouldPersistOnClear: shouldPersistOnClear,
         areStatesIdentical: (stateA, stateB) => areDateRangesIdentical(stateA, stateB),
         filterComponent: function (
             state: DateRangeState,

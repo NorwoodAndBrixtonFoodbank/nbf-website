@@ -3,7 +3,7 @@
 import Modal from "@/components/Modal/Modal";
 import React, { useState } from "react";
 import styled from "styled-components";
-import { SnackBarDiv } from "@/app/lists/ListDataview";
+import { ListName, SnackBarDiv } from "@/app/lists/ListDataview";
 import TextInput from "@/components/DataInput/FreeFormTextInput";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
@@ -12,10 +12,12 @@ import Alert from "@mui/material/Alert/Alert";
 import Button from "@mui/material/Button/Button";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { logErrorReturnLogId } from "@/logger/logger";
+import { capitaliseWords } from "@/common/format";
 
 interface Props {
     onClose: () => void;
     data: EditModalState;
+    currentList: ListName;
 }
 
 // null => add, undefined => modal closed
@@ -64,7 +66,7 @@ const listQuantityNoteAndLabels: [keyof Schema["lists"], keyof Schema["lists"], 
     ["quantity_for_10", "notes_for_10", "Family of 10+"],
 ];
 
-const EditModal: React.FC<Props> = ({ data, onClose }) => {
+const EditModal: React.FC<Props> = ({ data, onClose, currentList }) => {
     const [toSubmit, setToSubmit] = useState<Partial<Schema["lists"]> | null>(data ?? null);
 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -100,7 +102,6 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
             wasSuccess: true,
             listId: returnedListData.primary_key,
         });
-
         return { error: null };
     };
 
@@ -134,12 +135,13 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
         return { error: null };
     };
 
-    const onSubmit = async (): Promise<void> => {
+    const onSubmit = async (currentList: ListName): Promise<void> => {
         if (toSubmit === null) {
             return;
         }
 
         if (data === null) {
+            toSubmit.list_type = currentList;
             const { error } = await addListItem(toSubmit);
             if (error) {
                 switch (error.type) {
@@ -164,7 +166,7 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
 
     const Footer = (
         <>
-            <Button variant="contained" color="primary" onClick={onSubmit}>
+            <Button variant="contained" color="primary" onClick={() => onSubmit(currentList)}>
                 Submit
             </Button>
             <Snackbar
@@ -181,7 +183,11 @@ const EditModal: React.FC<Props> = ({ data, onClose }) => {
 
     return (
         <Modal
-            header={toSubmit ? `Edit List Item - ${toSubmit.item_name}` : "Edit List Item -"}
+            header={
+                toSubmit
+                    ? `Edit ${capitaliseWords(currentList)} List Item - ${toSubmit.item_name}`
+                    : `Edit ${capitaliseWords(currentList)} List Item -`
+            }
             headerId="editList"
             isOpen={data !== undefined}
             onClose={onClose}

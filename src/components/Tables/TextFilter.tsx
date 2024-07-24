@@ -16,6 +16,7 @@ interface ServerSideTextFilterProps<Data, DbData extends Record<string, unknown>
     label: string;
     initialValue?: string;
     method: ServerSideFilterMethod<DbData, string>;
+    shouldPersistOnClear?: boolean;
 }
 
 const TextFilterStyling = styled.div`
@@ -29,12 +30,14 @@ export const buildServerSideTextFilter = <Data, DbData extends Record<string, un
     label,
     initialValue = "",
     method,
+    shouldPersistOnClear = false,
 }: ServerSideTextFilterProps<Data, DbData>): ServerSideFilter<Data, string, DbData> => {
     return {
         state: initialValue,
         initialState: initialValue,
         key: key,
         method: method,
+        shouldPersistOnClear: shouldPersistOnClear,
         filterComponent: (state, setState) => {
             return (
                 <TextFilterStyling key={label}>
@@ -59,6 +62,7 @@ interface ClientSideTextFilterProps<Data> {
     label: string;
     initialValue?: string;
     method: ClientSideFilterMethod<Data, string>;
+    shouldPersistOnClear?: boolean;
 }
 
 export const buildClientSideTextFilter = <Data,>({
@@ -66,12 +70,14 @@ export const buildClientSideTextFilter = <Data,>({
     label,
     initialValue = "",
     method,
+    shouldPersistOnClear = false,
 }: ClientSideTextFilterProps<Data>): ClientSideFilter<Data, string> => {
     return {
         state: initialValue,
         initialState: initialValue,
         key: key,
         method: method,
+        shouldPersistOnClear: shouldPersistOnClear,
         filterComponent: (state, setState) => {
             return (
                 <TextFilterStyling key={label}>

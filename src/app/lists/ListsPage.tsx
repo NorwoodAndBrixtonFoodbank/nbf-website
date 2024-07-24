@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import {
@@ -9,9 +9,15 @@ import {
     fetchListsComment,
     fetchLists,
 } from "@/common/fetch";
-import ListsDataView, { ListRow, listsHeaderKeysAndLabels } from "@/app/lists/ListDataview";
+import ListsDataView, {
+    ListRow,
+    listsHeaderKeysAndLabels,
+    ListFilter,
+} from "@/app/lists/ListDataview";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
+import { buttonGroupFilter, filterRowbyButton } from "@/components/Tables/ButtonFilter";
+import { buildClientSideTextFilter, filterRowByText } from "@/components/Tables/TextFilter";
 
 interface FetchedListsData {
     listsData: Schema["lists"][];
@@ -58,6 +64,7 @@ const formatListData = (listsData: Schema["lists"][]): ListRow[] => {
         (row) =>
             ({
                 primaryKey: row.primary_key,
+                listType: row.list_type,
                 rowOrder: row.row_order,
                 itemName: row.item_name,
                 ...Object.fromEntries(
@@ -75,33 +82,60 @@ const formatListData = (listsData: Schema["lists"][]): ListRow[] => {
     );
 };
 
+const filters: ListFilter[] = [
+    buildClientSideTextFilter({
+        key: "itemName",
+        label: "Item",
+        headers: listsHeaderKeysAndLabels,
+        method: filterRowByText,
+    }),
+    buttonGroupFilter({
+        key: "listType",
+        filterLabel: "",
+        filterOptions: ["regular", "hotel"],
+        initialActiveFilter: "regular",
+        method: filterRowbyButton,
+        shouldPersistOnClear: true,
+    }),
+];
+
 const ListsPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [listData, setListData] = useState<ListRow[]>([]);
     const [comment, setComment] = useState("");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const listsTableFetchAbortController = useRef<AbortController | null>(null);
+    const [primaryFilters, setPrimaryFilters] = useState<ListFilter[]>(filters);
 
     function handleSetError(error: string | null): void {
         setErrorMessage(error);
     }
 
-    const fetchAndSetData = async (): Promise<void> => {
+    const fetchAndSetData = useCallback(async (): Promise<void> => {
         setIsLoading(true);
-        setErrorMessage(null);
-        const { data, error } = await fetchListsData();
-        if (error) {
-            setIsLoading(false);
-            setErrorMessage(getErrorMessage(error));
-            return;
+        if (listsTableFetchAbortController.current) {
+            listsTableFetchAbortController.current.abort("stale request");
         }
-        setListData(formatListData(data.listsData));
-        setComment(data.comment);
-        setIsLoading(false);
-    };
+        listsTableFetchAbortController.current = new AbortController();
+        if (listsTableFetchAbortController.current) {
+            setErrorMessage(null);
+            const { data, error } = await fetchListsData();
+            if (error) {
+                setIsLoading(false);
+                setErrorMessage(getErrorMessage(error));
+                return;
+            }
+
+            setListData(formatListData(data.listsData));
+            setComment(data.comment);
+            listsTableFetchAbortController.current = null;
+            setIsLoading(false);
+        }
+    }, [setIsLoading, setErrorMessage, setListData, setComment]);
 
     useEffect(() => {
         fetchAndSetData();
-    }, []);
+    }, [fetchAndSetData]);
 
     useEffect(() => {
         const subscriptionChannel = supabase
@@ -119,7 +153,7 @@ const ListsPage: React.FC = () => {
         return () => {
             void supabase.removeChannel(subscriptionChannel);
         };
-    }, []);
+    }, [fetchAndSetData]);
 
     return isLoading ? (
         <></>
@@ -132,6 +166,8 @@ const ListsPage: React.FC = () => {
             comment={comment}
             errorMessage={errorMessage}
             setErrorMessage={handleSetError}
+            primaryFilters={primaryFilters}
+            setPrimaryFilters={setPrimaryFilters}
         />
     );
 };
