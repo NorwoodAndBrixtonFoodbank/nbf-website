@@ -134,7 +134,7 @@ const EditModal: React.FC<Props> = ({ data, onClose, currentList }) => {
         });
         return { error: null };
     };
-    
+
     const onSubmit = async (currentList: ListName): Promise<void> => {
         if (toSubmit === null) {
             return;

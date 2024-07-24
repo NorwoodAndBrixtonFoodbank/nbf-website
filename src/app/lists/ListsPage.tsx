@@ -154,7 +154,7 @@ const ListsPage: React.FC = () => {
             void supabase.removeChannel(subscriptionChannel);
         };
     }, [fetchAndSetData]);
-    
+
     return isLoading ? (
         <></>
     ) : errorMessage ? (

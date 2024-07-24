@@ -31,7 +31,10 @@ const ClientParcelsTable: React.FC<ClientParcelTableProps> = (props) => {
                 headerKeysAndLabels={headers}
                 paginationConfig={{ enablePagination: false }}
                 sortConfig={{ sortPossible: false }}
-                filterConfig={{ primaryFiltersShown: false, additionalFiltersShown: false }}
+                filterConfig={{
+                    primaryFiltersShown: false,
+                    additionalFiltersShown: false,
+                }}
                 onRowClick={(row) => router.push(`/parcels?parcelId=${row.data.parcelId}`)}
                 checkboxConfig={{ displayed: false }}
                 editableConfig={{ editable: false }}
