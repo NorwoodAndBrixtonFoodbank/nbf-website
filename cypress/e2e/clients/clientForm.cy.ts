@@ -8,6 +8,7 @@ describe("Add client form", () => {
         fillName(fullName);
         fillNumberAdults("1");
         fillNumberChildren("0");
+        chooseListType();
 
         toggleNoAddress();
 
@@ -57,6 +58,11 @@ function fillNumberChildren(value: string): void {
 
 function fillPostcode(value: string): void {
     fillTextboxWithId("client-address-postcode", value);
+}
+
+function chooseListType(): void {
+    cy.get("#list-type-select-label").parent().click();
+    cy.contains("Regular").click();
 }
 
 function clickSubmitForm(): void {
