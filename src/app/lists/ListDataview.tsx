@@ -226,6 +226,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     const onConfirmDeletion = async (): Promise<void> => {
         if (toDelete !== null) {
             const itemToDelete = listData[toDelete];
+
             const auditLog = {
                 action: "delete a list item",
                 content: {
@@ -318,7 +319,12 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                         additionalFiltersShown: false,
                     }}
                 />
-
+                <EditModal
+                    onClose={() => setModal(undefined)}
+                    data={modal}
+                    key={modal?.primary_key}
+                    currentList={primaryFilters[1].state as ListName}
+                />
                 <ButtonMargin>
                     <Button variant="contained" onClick={() => setModal(null)}>
                         + Add

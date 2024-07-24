@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
@@ -109,6 +110,7 @@ const ListsPage: React.FC = () => {
     function handleSetError(error: string | null): void {
         setErrorMessage(error);
     }
+
     const fetchAndSetData = useCallback(async (): Promise<void> => {
         setIsLoading(true);
         if (listsTableFetchAbortController.current) {
@@ -123,15 +125,18 @@ const ListsPage: React.FC = () => {
                 setErrorMessage(getErrorMessage(error));
                 return;
             }
+
             setListData(formatListData(data.listsData));
             setComment(data.comment);
             listsTableFetchAbortController.current = null;
             setIsLoading(false);
         }
     }, [setIsLoading, setErrorMessage, setListData, setComment]);
+
     useEffect(() => {
         fetchAndSetData();
     }, [fetchAndSetData]);
+
     useEffect(() => {
         const subscriptionChannel = supabase
             .channel("lists-table-changes")
@@ -149,6 +154,7 @@ const ListsPage: React.FC = () => {
             void supabase.removeChannel(subscriptionChannel);
         };
     }, [fetchAndSetData]);
+    
     return isLoading ? (
         <></>
     ) : errorMessage ? (

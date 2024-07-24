@@ -65,6 +65,7 @@ const listQuantityNoteAndLabels: [keyof Schema["lists"], keyof Schema["lists"], 
     ["quantity_for_9", "notes_for_9", "Family of 9"],
     ["quantity_for_10", "notes_for_10", "Family of 10+"],
 ];
+
 const EditModal: React.FC<Props> = ({ data, onClose, currentList }) => {
     const [toSubmit, setToSubmit] = useState<Partial<Schema["lists"]> | null>(data ?? null);
 
@@ -101,7 +102,6 @@ const EditModal: React.FC<Props> = ({ data, onClose, currentList }) => {
             wasSuccess: true,
             listId: returnedListData.primary_key,
         });
-
         return { error: null };
     };
 
@@ -134,6 +134,7 @@ const EditModal: React.FC<Props> = ({ data, onClose, currentList }) => {
         });
         return { error: null };
     };
+    
     const onSubmit = async (currentList: ListName): Promise<void> => {
         if (toSubmit === null) {
             return;
