@@ -22,7 +22,7 @@ const ListTypeCard: React.FC<ClientCardProps> = ({
         <GenericFormCard
             title="List Type"
             required={true}
-            text="From which list should parcels for this client be packed using?"
+            text="Which list should be used by default to pack parcels for this client?"
         >
             <DropdownListInput
                 selectLabelId="list-type-select-label"
