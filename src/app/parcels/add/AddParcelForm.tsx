@@ -7,9 +7,12 @@ import ParcelForm, {
 } from "@/app/parcels/form/ParcelForm";
 import {
     CollectionCentresLabelsAndValues,
+    FetchClientError,
     FetchCollectionCentresError,
+    ListTypeLabelsAndValues,
     PackingSlotsError,
     PackingSlotsLabelsAndValues,
+    fetchClient,
     fetchPackingSlotsInfo,
     getActiveCollectionCentres,
 } from "@/common/fetch";
@@ -22,7 +25,9 @@ interface AddParcelProps {
     clientId: string;
 }
 
-const getErrorMessage = (error: FetchCollectionCentresError | PackingSlotsError): string => {
+const getErrorMessage = (
+    error: FetchCollectionCentresError | PackingSlotsError | FetchClientError
+): string => {
     let errorMessage: string;
     switch (error.type) {
         case "collectionCentresFetchFailed":
@@ -30,6 +35,12 @@ const getErrorMessage = (error: FetchCollectionCentresError | PackingSlotsError)
             break;
         case "packingSlotsFetchFailed":
             errorMessage = "Failed to fetch packing slots data. Please refresh the page.";
+            break;
+        case "clientFetchFailed":
+            errorMessage = "Unable to fetch client data. Please refresh the page.";
+            break;
+        case "noMatchingClients":
+            errorMessage = "No matching clients with client ID. Please refresh the page.";
             break;
     }
     return `${errorMessage} Log ID: ${error.logId}`;
@@ -41,9 +52,12 @@ const AddParcels = ({ clientId }: AddParcelProps): React.ReactElement => {
         useState<CollectionCentresLabelsAndValues | null>(null);
     const [packingSlotsLabelsAndValues, setPackingSlotsLabelsAndValues] =
         useState<PackingSlotsLabelsAndValues | null>(null);
-    const [error, setError] = useState<FetchCollectionCentresError | PackingSlotsError | null>(
-        null
+    const [listTypeLabelsAndValues, setListTypeLabelsAndValues] = useState<ListTypeLabelsAndValues>(
+        []
     );
+    const [error, setError] = useState<
+        FetchCollectionCentresError | PackingSlotsError | FetchClientError | null
+    >(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -70,9 +84,29 @@ const AddParcels = ({ clientId }: AddParcelProps): React.ReactElement => {
                 return;
             }
             setPackingSlotsLabelsAndValues(packingSlotsData);
+
+            const { data: clientData, error: clientError } = await fetchClient(clientId, supabase);
+            if (clientError) {
+                setError(clientError);
+                setIsLoading(false);
+                return;
+            }
+            initialParcelFields.listType = clientData.default_list;
+            setListTypeLabelsAndValues(
+                clientData.default_list === "regular"
+                    ? [
+                          ["Regular (default)", "regular"],
+                          ["Hotel", "hotel"],
+                      ]
+                    : [
+                          ["Regular", "regular"],
+                          ["Hotel (default)", "hotel"],
+                      ]
+            );
+
             setIsLoading(false);
         })();
-    }, []);
+    }, [clientId]);
 
     return (
         <>
@@ -93,6 +127,7 @@ const AddParcels = ({ clientId }: AddParcelProps): React.ReactElement => {
                         deliveryPrimaryKey={deliveryPrimaryKey}
                         collectionCentresLabelsAndValues={collectionCentresLabelsAndValues}
                         packingSlotsLabelsAndValues={packingSlotsLabelsAndValues}
+                        listTypeLabelsAndValues={listTypeLabelsAndValues}
                     />
                 )
             )}

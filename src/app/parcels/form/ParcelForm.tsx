@@ -36,6 +36,7 @@ import {
     CollectionCentresLabelsAndValues,
     CollectionTimeSlotsLabelsAndValues,
     getActiveTimeSlotsForCollectionCentre,
+    ListTypeLabelsAndValues,
     PackingSlotsLabelsAndValues,
 } from "@/common/fetch";
 import getExpandedClientDetails, {
@@ -50,9 +51,12 @@ import PackingSlotsCard from "@/app/parcels/form/formSections/PackingSlotsCard";
 import { getDbDate } from "@/common/format";
 import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 import supabase from "@/supabaseClient";
+import { ListName } from "@/app/lists/ListDataview";
+import ListTypeCard from "./formSections/ListTypeCard";
 
 export interface ParcelFields extends Fields {
     clientId: string | null;
+    listType: ListName | "";
     voucherNumber: string | null;
     packingDate: string | null;
     packingSlot: string | undefined;
@@ -64,6 +68,7 @@ export interface ParcelFields extends Fields {
 }
 
 export interface ParcelErrors extends FormErrors<ParcelFields> {
+    listType: Errors;
     voucherNumber: Errors;
     packingDate: Errors;
     packingSlot: Errors;
@@ -77,6 +82,7 @@ export type ParcelCardProps = CardProps<ParcelFields, ParcelErrors>;
 
 export const initialParcelFields: ParcelFields = {
     clientId: null,
+    listType: "",
     voucherNumber: "",
     packingDate: null,
     packingSlot: "",
@@ -88,6 +94,7 @@ export const initialParcelFields: ParcelFields = {
 };
 
 export const initialParcelFormErrors: ParcelErrors = {
+    listType: Errors.none,
     voucherNumber: Errors.none,
     packingDate: Errors.initial,
     packingSlot: Errors.initial,
@@ -105,9 +112,11 @@ interface ParcelFormProps {
     collectionCentresLabelsAndValues: CollectionCentresLabelsAndValues;
     packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues;
     writeParcelInfoToDatabase: WriteParcelToDatabaseFunction;
+    listTypeLabelsAndValues: ListTypeLabelsAndValues;
 }
 
 const withCollectionFormSections = [
+    ListTypeCard,
     VoucherNumberCard,
     PackingDateCard,
     PackingSlotsCard,
@@ -118,6 +127,7 @@ const withCollectionFormSections = [
 ];
 
 const noCollectionFormSections = [
+    ListTypeCard,
     VoucherNumberCard,
     PackingDateCard,
     PackingSlotsCard,
@@ -158,6 +168,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
     deliveryPrimaryKey,
     collectionCentresLabelsAndValues,
     packingSlotsLabelsAndValues,
+    listTypeLabelsAndValues,
 }) => {
     const router = useRouter();
     const [fields, setFields] = useState(initialFields);
@@ -307,6 +318,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
                             collectionCentresLabelsAndValues={collectionCentresLabelsAndValues}
                             packingSlotsLabelsAndValues={packingSlotsLabelsAndValues}
                             collectionTimeSlotsLabelsAndValues={collectionSlotsLabelsAndValues}
+                            listTypeLabelsAndValues={listTypeLabelsAndValues}
                         />
                     );
                 })}

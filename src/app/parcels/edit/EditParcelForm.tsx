@@ -4,11 +4,14 @@ import React, { useEffect, useState } from "react";
 import ParcelForm, { initialParcelFields, ParcelErrors, ParcelFields } from "../form/ParcelForm";
 import {
     CollectionCentresLabelsAndValues,
+    fetchClient,
+    FetchClientError,
     FetchCollectionCentresError,
     fetchPackingSlotsInfo,
     fetchParcel,
     FetchParcelError,
     getActiveCollectionCentres,
+    ListTypeLabelsAndValues,
     PackingSlotsError,
     PackingSlotsLabelsAndValues,
     ParcelWithCollectionCentreAndPackingSlot,
@@ -30,6 +33,7 @@ const prepareParcelDataForForm = (
 ): ParcelFields => {
     return {
         clientId: parcelData.client_id,
+        listType: parcelData.list_type,
         voucherNumber: parcelData.voucher_number,
         packingDate: parcelData.packing_date,
         packingSlot: parcelData.packing_slot?.primary_key,
@@ -45,7 +49,7 @@ const prepareParcelDataForForm = (
 };
 
 const getErrorMessage = (
-    error: FetchCollectionCentresError | PackingSlotsError | FetchParcelError
+    error: FetchCollectionCentresError | PackingSlotsError | FetchParcelError | FetchClientError
 ): string => {
     let errorMessage: string;
     switch (error.type) {
@@ -61,6 +65,12 @@ const getErrorMessage = (
         case "noMatchingParcels":
             errorMessage = "No parcel in the database matches the selected parcel.";
             break;
+        case "clientFetchFailed":
+            errorMessage = "Unable to fetch client data. Please refresh the page.";
+            break;
+        case "noMatchingClients":
+            errorMessage = "No matching clients with client ID. Please refresh the page.";
+            break;
     }
     return `${errorMessage} Log Id: ${error.logId}`;
 };
@@ -72,11 +82,14 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
     const [collectionCentres, setCollectionCentres] = useState<CollectionCentresLabelsAndValues>(
         []
     );
+    const [listTypeLabelsAndValues, setListTypeLabelsAndValues] = useState<ListTypeLabelsAndValues>(
+        []
+    );
     const [packingSlots, setPackingSlots] = useState<PackingSlotsLabelsAndValues>([]);
     const [packingSlotIsShown, setPackingSlotsIsShown] = useState<boolean | undefined>(true);
     const [collectionCentreIsShown, setCollectionCentreIsShown] = useState<boolean>(true);
     const [error, setError] = useState<
-        FetchCollectionCentresError | PackingSlotsError | FetchParcelError | null
+        FetchCollectionCentresError | PackingSlotsError | FetchParcelError | FetchClientError | null
     >(null);
 
     useEffect(() => {
@@ -113,11 +126,42 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
             );
             setPackingSlotsIsShown(parcelData.packing_slot?.is_shown);
             setCollectionCentreIsShown(parcelData.collection_centre?.is_shown === true);
+
+            if (!initialFormFields.clientId) {
+                setListTypeLabelsAndValues([
+                    ["Regular", "regular"],
+                    ["Hotel", "hotel"],
+                ]);
+            } else {
+                const { data: clientData, error: clientError } = await fetchClient(
+                    initialFormFields.clientId,
+                    supabase
+                );
+                if (clientError) {
+                    setError(clientError);
+                    setIsLoading(false);
+                    return;
+                }
+                setListTypeLabelsAndValues(
+                    clientData.default_list === "regular"
+                        ? [
+                              ["Regular (default)", "regular"],
+                              ["Hotel", "hotel"],
+                          ]
+                        : [
+                              ["Regular", "regular"],
+                              ["Hotel (default)", "hotel"],
+                          ]
+                );
+            }
+
             setIsLoading(false);
         })();
+        
     }, [parcelId]);
 
     const initialFormErrors: ParcelErrors = {
+        listType: Errors.none,
         voucherNumber: Errors.none,
         packingDate: Errors.none,
         packingSlot: packingSlotIsShown ? Errors.none : Errors.invalidPackingSlot,
@@ -142,6 +186,7 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
                     deliveryPrimaryKey={deliveryKey}
                     collectionCentresLabelsAndValues={collectionCentres}
                     packingSlotsLabelsAndValues={packingSlots}
+                    listTypeLabelsAndValues={listTypeLabelsAndValues}
                 />
             )}
         </>

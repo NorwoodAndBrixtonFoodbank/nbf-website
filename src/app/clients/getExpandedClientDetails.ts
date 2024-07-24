@@ -8,6 +8,7 @@ import {
     getChildAgeUsingBirthYearAndMonth,
     isAdultUsingBirthYear,
 } from "@/common/getAgesOfFamily";
+import { ListName } from "../lists/ListDataview";
 
 const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
     const rawClientDetails = await getRawClientDetails(clientId);
@@ -45,7 +46,8 @@ const getRawClientDetails = async (clientId: string) => {
             other_items,
             extra_information,
             notes,
-            is_active
+            is_active,
+            default_list
         `
         )
         .eq("primary_key", clientId)
@@ -86,6 +88,7 @@ export interface ExpandedClientData {
     extraInformation: string;
     notes: string | null;
     isActive: boolean;
+    defaultList: ListName;
 }
 
 export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientData => {
@@ -105,6 +108,7 @@ export const rawDataToExpandedClientDetails = (client: RawClientDetails): Expand
         extraInformation: client.extra_information ?? "",
         notes: client.notes,
         isActive: client.is_active,
+        defaultList: client.default_list,
     };
 };
 
