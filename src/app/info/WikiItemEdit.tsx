@@ -83,22 +83,15 @@ const WikiItemEdit: React.FC<EditViewProps> = ({ rowData, setRowData, setIsInEdi
         if (rowData) {
             const confirmation = confirm("Confirm deletion of this item?");
             if (confirmation) {
-                const {data, error} = await supabase
+                const response = await supabase
                     .from("wiki")
                     .delete()
                     .match({ wiki_key: rowData.wiki_key }) as WikiRowQueryType;  
-                if (error) {
-                    logErrorReturnLogId("error deleting wiki row item", error);
+                console.log(response)
+                if (response.error) {
+                    logErrorReturnLogId("error deleting wiki row item", response.error);
                 }
-                       
-                console.log("wiki key deleted: ", rowData.wiki_key);
-
-                // const query = (await supabase.from("wiki").select("*")) as WikiRowsQueryType; 
-                // if(query.error) { } else{
-                //     rows.splice(0, rows.length)       
-                //     rows.push(...query.data, rowData);
-                // }
-                router.refresh();    
+                setRowData(undefined);
                 setIsInEditMode(false);                
             }
         }

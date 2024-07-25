@@ -18,6 +18,7 @@ interface WikiRowQueryFailureType {
     data: null;
     error: PostgrestError;
 }
+export type WikiRowQueryType = WikiRowQuerySuccessType | WikiRowQueryFailureType;
 
 interface WikiRowsQuerySuccessType {
     data: DbWikiRow[];
@@ -29,9 +30,6 @@ interface WikiRowsQueryFailureType {
 }
 
 type WikiRowsQueryType = WikiRowsQuerySuccessType | WikiRowsQueryFailureType;
-
-export type WikiRowQueryType = WikiRowQuerySuccessType | WikiRowQueryFailureType;
-
 
 interface AddWikiItemButtonProps { 
     rows: DbWikiRow[];
@@ -53,8 +51,7 @@ const AddWikiItemButton: React.FC<AddWikiItemButtonProps> = ({rows}) => {
                 else {
                     rows.splice(0,rows.length)
                     rows.push(...query.data, data)
-                    // router.refresh();
-                    //location.reload();           
+                    location.reload();           
                 }
             }
         }
