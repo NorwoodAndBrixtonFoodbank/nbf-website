@@ -93,7 +93,7 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
     >(null);
 
     useEffect(() => {
-        async () => {
+        (async () => {
             if (!initialFormFields.clientId) {
                 setListTypeLabelsAndValues([
                     ["Regular", "regular"],
@@ -121,7 +121,7 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
                           ]
                 );
             }
-        };
+        })();
     }, [initialFormFields.clientId]);
 
     useEffect(() => {
