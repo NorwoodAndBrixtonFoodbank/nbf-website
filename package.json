@@ -61,7 +61,7 @@
     ],
     "testEnvironment": "jsdom",
     "setupFiles": [
-      "./jest.setup.js"
+      "./jest.setup.ts"
     ],
     "transform": {
       "^.+\\.(ts|tsx)?$": "ts-jest"

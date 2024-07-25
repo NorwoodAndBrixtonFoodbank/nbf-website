@@ -1,10 +1,10 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { expect, it } from "@jest/globals";
 import "@testing-library/jest-dom/jest-globals";
-import StatusesModal from './StatusesModal';
-import dayjs from 'dayjs';
-import { ParcelsTableRow } from '../parcelsTable/types';
+import StatusesModal from "./StatusesModal";
+import dayjs from "dayjs";
+import { ParcelsTableRow } from "../parcelsTable/types";
 import StyleManager from "@/app/themes";
 import Localization from "@/app/Localization";
 
@@ -14,8 +14,8 @@ import Localization from "@/app/Localization";
 //       matches: false,
 //       media: query,
 //       onchange: null,
-//       addListener: jest.fn(), 
-//       removeListener: jest.fn(), 
+//       addListener: jest.fn(),
+//       removeListener: jest.fn(),
 //       addEventListener: jest.fn(),
 //       removeEventListener: jest.fn(),
 //       dispatchEvent: jest.fn(),
@@ -88,52 +88,53 @@ const mockSelectedParcels = mockData;
 const mockOnClose = jest.fn();
 const mockOnSubmit = jest.fn();
 
-describe('StatusesModal component', () => {
+describe("StatusesModal component", () => {
     beforeEach(() => {
         jest.useFakeTimers();
-        jest.setSystemTime(new Date('2024-01-01T12:00:00'));
+        jest.setSystemTime(new Date("2024-01-01T12:00:00"));
         jest.clearAllMocks();
 
         render(
-        <Localization><StyleManager>
-            <StatusesModal
-                isOpen={true}
-                onClose={mockOnClose}
-                selectedParcels={mockSelectedParcels}
-                onSubmit={mockOnSubmit}
-                errorText={null}
-                headerId="status-modal-header"
-                header="Apply Status: Delivered" 
-                children={undefined}        
-            />
-        </StyleManager></Localization>
-        )
+            <Localization>
+                <StyleManager>
+                    <StatusesModal
+                        isOpen={true}
+                        onClose={mockOnClose}
+                        selectedParcels={mockSelectedParcels}
+                        onSubmit={mockOnSubmit}
+                        errorText={null}
+                        headerId="status-modal-header"
+                        header="Apply Status: Delivered"
+                    >
+                        children={null}
+                    </StatusesModal>
+                </StyleManager>
+            </Localization>
+        );
     });
 
-    it('renders without crashing', () => {
-        expect(screen.getByText('Submit')).toBeInTheDocument();
+    it("renders without crashing", () => {
+        expect(screen.getByText("Submit")).toBeInTheDocument();
     });
 
-    it('closes the modal when the close button is clicked', () => {
-        fireEvent.click(screen.getByLabelText('Close Button'));
+    it("closes the modal when the close button is clicked", () => {
+        fireEvent.click(screen.getByLabelText("Close Button"));
         expect(mockOnClose).toHaveBeenCalledTimes(1);
     });
 
-    it('submits the selected  date when the submit button is clicked', () => {
-        const mockDate = dayjs('2024-01-01 12:00:00');
-        fireEvent.click(screen.getByText('Submit'));
+    it("submits the selected  date when the submit button is clicked", () => {
+        const mockDate = dayjs("2024-01-01 12:00:00");
+        fireEvent.click(screen.getByText("Submit"));
 
         expect(mockOnSubmit).toHaveBeenCalledWith(mockDate);
     });
 
-    // it('does not submit with invalid date and time', () => { 
+    // it('does not submit with invalid date and time', () => {
     //     const dateInput = screen.getByLabelText("Choose date, selected date is 1 Jan 2024");
 
     //     userEvent.type(dateInput, '02012024');
-    //     fireEvent.click(screen.getByText('Submit')); 
+    //     fireEvent.click(screen.getByText('Submit'));
 
     //     expect(mockOnSubmit).not.toHaveBeenCalled();
     // });
-
-    
 });

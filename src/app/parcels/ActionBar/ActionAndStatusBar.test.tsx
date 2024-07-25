@@ -1,23 +1,14 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import React from "react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { expect, it } from "@jest/globals";
 import "@testing-library/jest-dom/jest-globals";
-import ActionAndStatusBar, { ActionAndStatusBarProps} from "@/app/parcels/ActionBar/ActionAndStatusBar";
+import ActionAndStatusBar, {
+    ActionAndStatusBarProps,
+} from "@/app/parcels/ActionBar/ActionAndStatusBar";
 import { ParcelsTableRow } from "../parcelsTable/types";
 import StyleManager from "@/app/themes";
 import Localization from "@/app/Localization";
 import { SaveParcelStatusResult } from "./Statuses";
-
-// Mock functions for props
-// Mock the required functions and types
-const mockFetchSelectedParcels = jest.fn().mockResolvedValue([]);
-const mockUpdateParcelStatuses = jest.fn().mockResolvedValue({ error: null });
-
-const mockProps: ActionAndStatusBarProps = {
-    fetchSelectedParcels: mockFetchSelectedParcels,
-    updateParcelStatuses: mockUpdateParcelStatuses,
-};
-
 jest.mock("@/supabaseClient", () => {
     return { default: jest.fn() };
 });
@@ -28,46 +19,42 @@ jest.mock("@/logger/logger", () => ({
 }));
 
 jest.mock("@/app/parcels/ActionBar/Statuses", () => {
-  console.log("Mocking Statuses component"); 
-  return jest.fn().mockImplementation(() => (
-      <div>
-          <button data-testid="#status-button">Statuses</button>
-          <div data-testid="#status-menu">
-              <button>Parcel Denied</button>
-              {/* Add more status options as needed */}
-          </div>
-      </div>
-  ));
+    return jest.fn().mockImplementation(() => (
+        <div>
+            <button data-testid="#status-button">Statuses</button>
+            <div data-testid="#status-menu">
+                <button>Parcel Denied</button>
+                {/* Add more status options as needed */}
+            </div>
+        </div>
+    ));
 });
 
 jest.mock("@/app/parcels/ActionBar/Actions", () => {
-    console.log("Mocking Statuses component"); 
     return jest.fn().mockImplementation(() => (
         <div>
-            <button data-testid="#status-button">Actions</button>
-            <div data-testid="#status-menu">
+            <button data-testid="#action-button">Actions</button>
+            <div data-testid="#action-menu">
                 <button>Download Shopping List</button>
                 {/* Add more status options as needed */}
             </div>
         </div>
     ));
-  });
-  
+});
 
-
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
     writable: true,
-    value: jest.fn().mockImplementation(query => ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addListener: jest.fn(), 
-      removeListener: jest.fn(), 
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn(),
+    value: jest.fn().mockImplementation((query) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        dispatchEvent: jest.fn(),
     })),
-  });
+});
 
 const MockActionBar: React.FC<ActionAndStatusBarProps> = ({
     fetchSelectedParcels: fetchSelectedParcels,
@@ -147,44 +134,47 @@ const mockData: ParcelsTableRow[] = [
 ];
 
 describe("Parcels - Action Bar", () => {
-    describe("Statuses", () => {
-        let parcelIds: string[] = ["123456789", "123456aaaa789"];
-        const onDeleteParcels = async (): Promise<SaveParcelStatusResult> => {
-            parcelIds = [];
-            return { error: null };
-        };
+    let parcelIds: string[] = ["123456789", "123456aaaa789"];
+    const onDeleteParcels = async (): Promise<SaveParcelStatusResult> => {
+        parcelIds = [];
+        return { error: null };
+    };
 
-        beforeEach(() => {
-            render(
-                <MockActionBar
-                    fetchSelectedParcels={async () =>
-                        await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
-                    }
-                    updateParcelStatuses={onDeleteParcels}
-                />
-            );
-        });
-
-        it('renders without crashing', () => {
-            expect(screen.getAllByText('Statuses')[0]).toBeInTheDocument();
-        });
-                
-
-        it("should open the status menu when the status button is clicked", async () => {
-            const statusButton = screen.getByTestId('#status-button');
-            fireEvent.click(statusButton);
-
-            await waitFor(() => {
-            expect(screen.getByTestId('#status-menu')).toBeInTheDocument();
-            });
-        });
-
-        // it("should open the modal when an item is selected", () => {
-            
-        //             });
-    
-        
+    beforeEach(() => {
+        render(
+            <MockActionBar
+                fetchSelectedParcels={async () =>
+                    await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
+                }
+                updateParcelStatuses={onDeleteParcels}
+            />
+        );
     });
 
-});
+    it("renders without crashing", () => {
+        expect(screen.getAllByText("Statuses")[0]).toBeInTheDocument();
+        expect(screen.getAllByText("Actions")[0]).toBeInTheDocument();
+    });
 
+    it("should open the status menu when the status button is clicked", async () => {
+        const statusButton = screen.getByTestId("#status-button");
+        fireEvent.click(statusButton);
+
+        await waitFor(() => {
+            expect(screen.getByTestId("#status-menu")).toBeInTheDocument();
+
+            expect(screen.getByText("Parcel Denied")).toBeInTheDocument();
+        });
+    });
+
+    it("should open the action menu when the item button is clicked", async () => {
+        const statusButton = screen.getByTestId("#action-button");
+        fireEvent.click(statusButton);
+
+        await waitFor(() => {
+            expect(screen.getByTestId("#action-menu")).toBeInTheDocument();
+
+            expect(screen.getByText("Download Shopping List")).toBeInTheDocument();
+        });
+    });
+});
