@@ -38,6 +38,7 @@ import {
     getActiveTimeSlotsForCollectionCentre,
     ListTypeLabelsAndValues,
     PackingSlotsLabelsAndValues,
+    ListName,
 } from "@/common/fetch";
 import getExpandedClientDetails, {
     ExpandedClientData,
@@ -51,7 +52,6 @@ import PackingSlotsCard from "@/app/parcels/form/formSections/PackingSlotsCard";
 import { getDbDate } from "@/common/format";
 import ExpandedClientDetails from "@/app/clients/ExpandedClientDetails";
 import supabase from "@/supabaseClient";
-import { ListName } from "@/app/lists/ListDataview";
 import ListTypeCard from "./formSections/ListTypeCard";
 
 export interface ParcelFields extends Fields {

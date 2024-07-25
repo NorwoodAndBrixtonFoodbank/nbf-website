@@ -15,11 +15,13 @@ import {
     fetchClient,
     fetchPackingSlotsInfo,
     getActiveCollectionCentres,
+    listTypes,
 } from "@/common/fetch";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import supabase from "@/supabaseClient";
 import Title from "@/components/Title/Title";
 import { insertParcel } from "@/app/parcels/form/submitFormHelpers";
+import { capitaliseWords } from "@/common/format";
 
 interface AddParcelProps {
     clientId: string;
@@ -93,15 +95,11 @@ const AddParcels = ({ clientId }: AddParcelProps): React.ReactElement => {
             }
             initialParcelFields.listType = clientData.default_list;
             setListTypeLabelsAndValues(
-                clientData.default_list === "regular"
-                    ? [
-                          ["Regular (default)", "regular"],
-                          ["Hotel", "hotel"],
-                      ]
-                    : [
-                          ["Regular", "regular"],
-                          ["Hotel (default)", "hotel"],
-                      ]
+                listTypes.map((listType) =>
+                    clientData.default_list === listType
+                        ? [capitaliseWords(listType) + " (default)", listType]
+                        : [capitaliseWords(listType), listType]
+                )
             );
 
             setIsLoading(false);

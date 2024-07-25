@@ -4,8 +4,7 @@ import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { ParcelCardProps } from "../ParcelForm";
-import { ListTypeLabelsAndValues } from "@/common/fetch";
-import { ListName } from "@/app/lists/ListDataview";
+import { ListTypeLabelsAndValues, ListName } from "@/common/fetch";
 
 interface ListTypeCardProps extends ParcelCardProps {
     listTypeLabelsAndValues: ListTypeLabelsAndValues;
@@ -33,7 +32,7 @@ const ListTypeCard: React.FC<ListTypeCardProps> = ({
             required={true}
             text={
                 clientDefaultList
-                    ? `Whist list should be used to pack this parcel? The default list type for this client is ${clientDefaultList}.`
+                    ? `Which list should be used to pack this parcel? The default list type for this client is ${clientDefaultList}.`
                     : "Which list should be used to pack this parcel?"
             }
         >

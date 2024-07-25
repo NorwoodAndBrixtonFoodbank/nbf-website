@@ -202,7 +202,12 @@ export type ListType = Database["public"]["Enums"]["list_type"];
 export const LIST_TYPES_ARRAY: ListType[] = ["regular", "hotel"] as const;
 
 export type FetchClientError = { type: FetchClientErrorType; logId: string };
+
 export type ListTypeLabelsAndValues = [string, string][];
+
+export type ListName = Database["public"]["Enums"]["list_type"];
+
+export const listTypes = ["regular", "hotel"] as ListName[];
 
 type FetchClientResponse =
     | {

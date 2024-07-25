@@ -15,13 +15,14 @@ import {
     PackingSlotsError,
     PackingSlotsLabelsAndValues,
     ParcelWithCollectionCentreAndPackingSlot,
+    listTypes,
 } from "@/common/fetch";
 import supabase from "@/supabaseClient";
 import { Errors } from "@/components/Form/formFunctions";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import Title from "@/components/Title/Title";
 import { updateParcel } from "@/app/parcels/form/submitFormHelpers";
-import { formatDatetimeAsTime } from "@/common/format";
+import { formatDatetimeAsTime, capitaliseWords } from "@/common/format";
 
 interface EditParcelFormProps {
     parcelId: string;
@@ -95,10 +96,9 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
     useEffect(() => {
         (async () => {
             if (!initialFormFields.clientId) {
-                setListTypeLabelsAndValues([
-                    ["Regular", "regular"],
-                    ["Hotel", "hotel"],
-                ]);
+                setListTypeLabelsAndValues(
+                    listTypes.map((listType) => [capitaliseWords(listType), listType])
+                );
             } else {
                 const { data: clientData, error: clientError } = await fetchClient(
                     initialFormFields.clientId,
@@ -110,15 +110,11 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
                     return;
                 }
                 setListTypeLabelsAndValues(
-                    clientData.default_list === "regular"
-                        ? [
-                              ["Regular (default)", "regular"],
-                              ["Hotel", "hotel"],
-                          ]
-                        : [
-                              ["Regular", "regular"],
-                              ["Hotel (default)", "hotel"],
-                          ]
+                    listTypes.map((listType) =>
+                        clientData.default_list === listType
+                            ? [capitaliseWords(listType) + " (default)", listType]
+                            : [capitaliseWords(listType), listType]
+                    )
                 );
             }
         })();
