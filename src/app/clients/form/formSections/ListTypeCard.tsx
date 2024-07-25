@@ -4,6 +4,8 @@ import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { ClientCardProps } from "../ClientForm";
+import { listTypes } from "@/common/fetch";
+import { capitaliseWords } from "@/common/format";
 
 type ListTypeLabelsAndValues = [string, string][];
 
@@ -13,10 +15,10 @@ const ListTypeCard: React.FC<ClientCardProps> = ({
     fieldSetter,
     fields,
 }) => {
-    const listTypeLabelsAndValues: ListTypeLabelsAndValues = [
-        ["Regular", "regular"],
-        ["Hotel", "hotel"],
-    ];
+    const listTypeLabelsAndValues: ListTypeLabelsAndValues = listTypes.map((listType) => [
+        capitaliseWords(listType),
+        listType,
+    ]);
 
     return (
         <GenericFormCard

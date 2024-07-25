@@ -8,6 +8,7 @@ import {
     FetchListsError,
     fetchListsComment,
     fetchLists,
+    listTypes,
 } from "@/common/fetch";
 import ListsDataView, {
     ListRow,
@@ -92,7 +93,7 @@ const filters: ListFilter[] = [
     buttonGroupFilter({
         key: "listType",
         filterLabel: "",
-        filterOptions: ["regular", "hotel"],
+        filterOptions: listTypes,
         initialActiveFilter: "regular",
         method: filterRowbyButton,
         shouldPersistOnClear: true,

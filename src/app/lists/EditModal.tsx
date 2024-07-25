@@ -3,7 +3,8 @@
 import Modal from "@/components/Modal/Modal";
 import React, { useState } from "react";
 import styled from "styled-components";
-import { ListName, SnackBarDiv } from "@/app/lists/ListDataview";
+import { SnackBarDiv } from "@/app/lists/ListDataview";
+import { ListName } from "@/common/fetch";
 import TextInput from "@/components/DataInput/FreeFormTextInput";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";

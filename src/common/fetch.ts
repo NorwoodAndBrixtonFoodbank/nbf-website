@@ -3,6 +3,7 @@ import { Supabase } from "@/supabaseUtils";
 import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 import { PostgrestError } from "@supabase/supabase-js";
 import { formatTimeStringToHoursAndMinutes } from "@/common/format";
+import { Database } from "@/databaseTypesFile";
 
 type CollectionCentre = Pick<
     Schema["collection_centres"],
@@ -194,6 +195,10 @@ export const getActiveTimeSlotsForCollectionCentre = async (
 
     return { data: activeTimeSlots, error: null };
 };
+
+export type ListName = Database["public"]["Enums"]["list_type"];
+
+export const listTypes = ["regular", "hotel"] as ListName[];
 
 type FetchClientResponse =
     | {

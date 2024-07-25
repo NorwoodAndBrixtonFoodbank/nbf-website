@@ -4,7 +4,7 @@ import supabase from "@/supabaseClient";
 import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 import { ClientFields } from "./ClientForm";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
-import { ListName } from "@/app/lists/ListDataview";
+import { ListName } from "@/common/fetch";
 
 type FamilyDatabaseInsertRecord = Omit<InsertSchema["families"], "family_id">;
 type ClientDatabaseInsertRecord = InsertSchema["clients"];

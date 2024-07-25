@@ -20,9 +20,7 @@ import CommentBox from "@/app/lists/CommentBox";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { ClientSideFilter } from "@/components/Tables/Filters";
-import { Database } from "@/databaseTypesFile";
-
-export type ListName = Database["public"]["Enums"]["list_type"];
+import { ListName } from "@/common/fetch";
 
 export type ListFilter = ClientSideFilter<ListRow, string>;
 
@@ -30,7 +28,7 @@ export interface ListRow {
     primaryKey: string;
     rowOrder: number;
     itemName: string;
-    listType: "regular" | "hotel";
+    listType: ListName;
     "1": QuantityAndNotes;
     "2": QuantityAndNotes;
     "3": QuantityAndNotes;
