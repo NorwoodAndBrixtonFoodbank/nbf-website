@@ -8,66 +8,102 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
+import { useRouter } from 'next/navigation'
+import { WikiRowQueryType } from "@/app/info/AddWikiItemButton";
+import { PostgrestError } from "@supabase/supabase-js";
 
 interface EditViewProps {
     rowData: DbWikiRow;
     setRowData: (row?: DbWikiRow) => void;
     setIsInEditMode: (isInEditMode: boolean) => void;
+    rows: DbWikiRow[];
 }
 
-const deleteWikiItem = async (
-    setIsInEditMode: (isInEditMode: boolean) => void,
-    setRowData: (row?: DbWikiRow) => void,
-    rowData?: DbWikiRow
-): Promise<void> => {
-    if (rowData) {
-        const confirmation = confirm("Confirm deletion of this item?");
-        if (confirmation) {
-            const response = await supabase
-                .from("wiki")
-                .delete()
-                .match({ wiki_key: rowData.wiki_key });
-            if (response.error) {
-                logErrorReturnLogId("error deleting wiki row item", response.error);
-            }
-            setIsInEditMode(false);
-            setRowData(undefined);
-            return;
-        }
-    }
-};
+interface WikiRowsQuerySuccessType {
+    data: DbWikiRow[];
+    error: null;
+}
+interface WikiRowsQueryFailureType {
+    data: null;
+    error: PostgrestError;
+}
 
-const cancelWikiItemEdit = (setIsInEditMode: (isInEditMode: boolean) => void): void => {
-    setIsInEditMode(false);
-};
+type WikiRowsQueryType = WikiRowsQuerySuccessType | WikiRowsQueryFailureType;
 
-const updateWikiItem = async (
-    rowData: DbWikiRow,
-    newTitle: string,
-    newContent: string,
-    setIsInEditMode: (isInEditMode: boolean) => void,
-    setRowData: (row: DbWikiRow) => void
-): Promise<void> => {
-    const confirmation = confirm("Confirm update of this item?");
-    if (confirmation) {
-        const response = await supabase
-            .from("wiki")
-            .update({ title: newTitle, content: newContent })
-            .match({ wiki_key: rowData.wiki_key });
-        if (response.error) {
-            logErrorReturnLogId("error updating wiki row item", response.error);
-        }
+const WikiItemEdit: React.FC<EditViewProps> = ({ rowData, setRowData, setIsInEditMode, rows }) => {
+    const router = useRouter()
+
+    const cancelWikiItemEdit = (
+        setIsInEditMode: (isInEditMode: boolean) => void
+    ): void => {
         setIsInEditMode(false);
-        setRowData({
-            title: newTitle,
-            content: newContent,
-            row_order: rowData.row_order,
-            wiki_key: rowData.wiki_key,
-        });
-    }
-};
+    };
 
-const WikiItemEdit: React.FC<EditViewProps> = ({ rowData, setRowData, setIsInEditMode }) => {
+    const updateWikiItem = async (
+        rowData: DbWikiRow,
+        newTitle: string,
+        newContent: string,
+        setIsInEditMode: (isInEditMode: boolean) => void,
+        setRowData: (row?: DbWikiRow) => void,
+    ): Promise<void> => {  
+        const confirmation = confirm("Confirm update of this item?");
+        if (confirmation) {
+        if (!newTitle && !newContent) {
+            const {data, error} = await supabase
+                    .from("wiki")
+                    .delete()
+                    .match({ wiki_key: rowData.wiki_key }) as WikiRowQueryType;  
+                if (error) {
+                    logErrorReturnLogId("error deleting wiki row item", error);
+                }                 
+                setRowData(undefined); 
+        } else {
+                const {data, error} = await supabase
+                    .from("wiki")
+                    .upsert({ title: newTitle, content: newContent, wiki_key: rowData.wiki_key }) as WikiRowQueryType;
+                if (error) {
+                    logErrorReturnLogId("error updating wiki row item");
+                }
+                setRowData({
+                    title: newTitle,
+                    content: newContent,
+                    row_order: rowData.row_order,
+                    wiki_key: rowData.wiki_key,
+                });         
+        }
+        setIsInEditMode(false);        
+    }
+    };
+
+    const deleteWikiItem = async (
+        setIsInEditMode: (isInEditMode: boolean) => void,
+        setRowData: (row?: DbWikiRow) => void,
+        rowData?: DbWikiRow
+    ): Promise<void> => {   
+        if (rowData) {
+            const confirmation = confirm("Confirm deletion of this item?");
+            if (confirmation) {
+                const {data, error} = await supabase
+                    .from("wiki")
+                    .delete()
+                    .match({ wiki_key: rowData.wiki_key }) as WikiRowQueryType;  
+                if (error) {
+                    logErrorReturnLogId("error deleting wiki row item", error);
+                }
+                       
+                console.log("wiki key deleted: ", rowData.wiki_key);
+
+                // const query = (await supabase.from("wiki").select("*")) as WikiRowsQueryType; 
+                // if(query.error) { } else{
+                //     rows.splice(0, rows.length)       
+                //     rows.push(...query.data, rowData);
+                // }
+                router.refresh();    
+                setIsInEditMode(false);                
+            }
+        }
+    };
+
     return (
         <>
             <WikiEditModeButton onClick={() => cancelWikiItemEdit(setIsInEditMode)}>

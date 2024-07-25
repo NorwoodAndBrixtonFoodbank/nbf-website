@@ -4,7 +4,8 @@ import { DbWikiRow } from "@/databaseUtils";
 import { useState } from "react";
 import WikiItemDisplay from "@/app/info/WikiItemDisplay";
 import WikiItemEdit from "@/app/info/WikiItemEdit";
-import AdminManagerDependent from "./AdminManagerDependent";
+import AdminManagerDependentView from "@/app/info/AdminManagerDependentView";
+import { useRouter } from "next/navigation";
 
 export const enterEditMode = (setIsInEditMode: (isInEditMode: boolean) => void): void => {
     setIsInEditMode(true);
@@ -12,22 +13,24 @@ export const enterEditMode = (setIsInEditMode: (isInEditMode: boolean) => void):
 
 interface EditProps {
     row?: DbWikiRow;
+    rows: DbWikiRow[]
 }
 
-export const EditModeDependentItem: React.FC<EditProps> = ({ row }) => {
+const EditModeDependentItem: React.FC<EditProps> = ({ row, rows}) => {
     const [rowData, setrowData] = useState<DbWikiRow | undefined>(row);
     const [isInEditMode, setIsInEditMode] = useState(false);
     return (
         <>
-            {rowData &&
-                (isInEditMode ? (
-                    <AdminManagerDependent>
+            {rowData !== undefined && 
+                (isInEditMode || (rowData.title === '' &&  rowData.content === '')? (
+                    <AdminManagerDependentView>
                         <WikiItemEdit
                             rowData={rowData}
                             setRowData={setrowData}
                             setIsInEditMode={setIsInEditMode}
+                            rows={rows}
                         />
-                    </AdminManagerDependent>
+                    </AdminManagerDependentView>
                 ) : (
                     <WikiItemDisplay
                         rowData={rowData}
@@ -39,3 +42,5 @@ export const EditModeDependentItem: React.FC<EditProps> = ({ row }) => {
         </>
     );
 };
+
+export default EditModeDependentItem;

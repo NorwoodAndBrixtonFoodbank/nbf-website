@@ -48,3 +48,9 @@ export const MultilineInput = styled.div`
     margin: 1rem;
     width: 100vw;
 `;
+
+export const ButtonMargin = styled.div`
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+`;

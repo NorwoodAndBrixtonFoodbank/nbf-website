@@ -5,7 +5,7 @@ import { WikiItemAccordionSurface, WikiUpdateDataButton } from "@/app/info/Style
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { convertContentToElements } from "@/app/info/WikiItems";
-import AdminManagerDependent from "@/app/info/AdminManagerDependent";
+import AdminManagerDependentView from "@/app/info/AdminManagerDependentView";
 import EditIcon from "@mui/icons-material/Edit";
 
 interface DefaultViewProps {
@@ -16,7 +16,7 @@ interface DefaultViewProps {
 const WikiItemDisplay: React.FC<DefaultViewProps> = ({ rowData, openEditMode }) => {
     return (
         <>
-            <AdminManagerDependent>
+            <AdminManagerDependentView>
                 <WikiUpdateDataButton
                     onClick={() => {
                         openEditMode();
@@ -24,7 +24,7 @@ const WikiItemDisplay: React.FC<DefaultViewProps> = ({ rowData, openEditMode }) 
                 >
                     <EditIcon />
                 </WikiUpdateDataButton>
-            </AdminManagerDependent>
+            </AdminManagerDependentView>
             <WikiItemAccordionSurface>
                 <Accordion elevation={0}>
                     <AccordionSummary

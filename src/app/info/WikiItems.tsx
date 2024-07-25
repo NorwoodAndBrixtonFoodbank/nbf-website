@@ -1,7 +1,10 @@
+
 import { DbWikiRow } from "@/databaseUtils";
 import { WikiItemPositioner } from "@/app/info/StyleComponents";
 import React from "react";
-import { EditModeDependentItem } from "@/app/info/ClientSideHelpers";
+import EditModeDependentItem from "@/app/info/EditModeDependentItem";
+import AdminManagerDependentView from "@/app/info/AdminManagerDependentView";
+import AddWikiItemButton from "@/app/info/AddWikiItemButton";
 
 interface WikiItemsProps {
     rows: DbWikiRow[];
@@ -9,12 +12,13 @@ interface WikiItemsProps {
 
 interface WikiItemProps {
     row: DbWikiRow;
+    rows: DbWikiRow[];
 }
 
 interface ContentPart {
     content: string;
-    href?: string;
     key: string;
+    href?: string;
 }
 
 export const convertContentToElements = (rowContent: string): React.JSX.Element[] => {
@@ -43,22 +47,26 @@ export const convertContentToElements = (rowContent: string): React.JSX.Element[
     });
 };
 
-const WikiItem: React.FC<WikiItemProps> = ({ row }) => {
+const WikiItem: React.FC<WikiItemProps> = ({ row, rows }) => {
+    
     return (
         <WikiItemPositioner>
-            <EditModeDependentItem row={row} />
+            <EditModeDependentItem row={row} rows={rows} />
         </WikiItemPositioner>
     );
 };
 
-const WikiItems: React.FC<WikiItemsProps> = (props) => {
-    const sortedRows: DbWikiRow[] = props.rows.slice().sort((r1: DbWikiRow, r2: DbWikiRow) => {
+const WikiItems: React.FC<WikiItemsProps> = ({rows}) => {
+    const sortedRows: DbWikiRow[] = rows.slice().sort((r1: DbWikiRow, r2: DbWikiRow) => {
         return r1.row_order > r2.row_order ? 1 : -1;
     });
     return (
-        <>
+        <>  
+            <AdminManagerDependentView>
+                <AddWikiItemButton rows={sortedRows}/>
+            </AdminManagerDependentView>
             {sortedRows.map((row: DbWikiRow) => {
-                return <WikiItem row={row} key={row.wiki_key} />;
+                return <WikiItem row={row} rows={sortedRows} key={row.wiki_key} />;
             })}
         </>
     );
