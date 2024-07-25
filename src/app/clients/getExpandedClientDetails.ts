@@ -97,6 +97,7 @@ export const rawDataToExpandedClientDetails = (client: RawClientDetails): Expand
         address: formatAddressFromClientDetails(client),
         deliveryInstructions: client.delivery_instructions ?? "",
         phoneNumber: client.phone_number ?? "",
+        defaultList: client.default_list,
         household: formatHouseholdFromFamilyDetails(client.family),
         adults: formatBreakdownOfAdultsFromFamilyDetails(client.family),
         children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
@@ -108,7 +109,6 @@ export const rawDataToExpandedClientDetails = (client: RawClientDetails): Expand
         extraInformation: client.extra_information ?? "",
         notes: client.notes,
         isActive: client.is_active,
-        defaultList: client.default_list,
     };
 };
 
