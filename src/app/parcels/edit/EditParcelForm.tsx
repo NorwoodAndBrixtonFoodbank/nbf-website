@@ -93,6 +93,38 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
     >(null);
 
     useEffect(() => {
+        async () => {
+            if (!initialFormFields.clientId) {
+                setListTypeLabelsAndValues([
+                    ["Regular", "regular"],
+                    ["Hotel", "hotel"],
+                ]);
+            } else {
+                const { data: clientData, error: clientError } = await fetchClient(
+                    initialFormFields.clientId,
+                    supabase
+                );
+                if (clientError) {
+                    setError(clientError);
+                    setIsLoading(false);
+                    return;
+                }
+                setListTypeLabelsAndValues(
+                    clientData.default_list === "regular"
+                        ? [
+                              ["Regular (default)", "regular"],
+                              ["Hotel", "hotel"],
+                          ]
+                        : [
+                              ["Regular", "regular"],
+                              ["Hotel (default)", "hotel"],
+                          ]
+                );
+            }
+        };
+    }, [initialFormFields.clientId]);
+
+    useEffect(() => {
         (async () => {
             setIsLoading(true);
 
@@ -127,37 +159,8 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
             setPackingSlotsIsShown(parcelData.packing_slot?.is_shown);
             setCollectionCentreIsShown(parcelData.collection_centre?.is_shown === true);
 
-            if (!initialFormFields.clientId) {
-                setListTypeLabelsAndValues([
-                    ["Regular", "regular"],
-                    ["Hotel", "hotel"],
-                ]);
-            } else {
-                const { data: clientData, error: clientError } = await fetchClient(
-                    initialFormFields.clientId,
-                    supabase
-                );
-                if (clientError) {
-                    setError(clientError);
-                    setIsLoading(false);
-                    return;
-                }
-                setListTypeLabelsAndValues(
-                    clientData.default_list === "regular"
-                        ? [
-                              ["Regular (default)", "regular"],
-                              ["Hotel", "hotel"],
-                          ]
-                        : [
-                              ["Regular", "regular"],
-                              ["Hotel (default)", "hotel"],
-                          ]
-                );
-            }
-
             setIsLoading(false);
         })();
-        
     }, [parcelId]);
 
     const initialFormErrors: ParcelErrors = {
