@@ -8,20 +8,6 @@ import { ParcelsTableRow } from "../parcelsTable/types";
 import StyleManager from "@/app/themes";
 import Localization from "@/app/Localization";
 
-// Object.defineProperty(window, 'matchMedia', {
-//     writable: true,
-//     value: jest.fn().mockImplementation(query => ({
-//       matches: false,
-//       media: query,
-//       onchange: null,
-//       addListener: jest.fn(),
-//       removeListener: jest.fn(),
-//       addEventListener: jest.fn(),
-//       removeEventListener: jest.fn(),
-//       dispatchEvent: jest.fn(),
-//     })),
-//   });
-
 const mockData: ParcelsTableRow[] = [
     {
         clientId: "primaryKey1",
@@ -129,12 +115,5 @@ describe("StatusesModal component", () => {
         expect(mockOnSubmit).toHaveBeenCalledWith(mockDate);
     });
 
-    // it('does not submit with invalid date and time', () => {
-    //     const dateInput = screen.getByLabelText("Choose date, selected date is 1 Jan 2024");
-
-    //     userEvent.type(dateInput, '02012024');
-    //     fireEvent.click(screen.getByText('Submit'));
-
-    //     expect(mockOnSubmit).not.toHaveBeenCalled();
-    // });
+    // Can add more tests
 });

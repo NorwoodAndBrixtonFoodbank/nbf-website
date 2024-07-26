@@ -43,20 +43,6 @@ jest.mock("@/app/parcels/ActionBar/Actions", () => {
     ));
 });
 
-Object.defineProperty(window, "matchMedia", {
-    writable: true,
-    value: jest.fn().mockImplementation((query) => ({
-        matches: false,
-        media: query,
-        onchange: null,
-        addListener: jest.fn(),
-        removeListener: jest.fn(),
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-        dispatchEvent: jest.fn(),
-    })),
-});
-
 export const MockActionBar: React.FC<ActionAndStatusBarProps> = ({
     fetchSelectedParcels: fetchSelectedParcels,
     updateParcelStatuses: onDeleteParcels,
@@ -178,4 +164,7 @@ describe("Parcels - Action Bar", () => {
             expect(screen.getByText("Download Shopping List")).toBeInTheDocument();
         });
     });
+
+    // Can add more tests
 });
+
