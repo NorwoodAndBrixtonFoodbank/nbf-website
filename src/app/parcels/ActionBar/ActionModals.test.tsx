@@ -1,16 +1,71 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { expect, it } from "@jest/globals";
 import "@testing-library/jest-dom/jest-globals";
-import dayjs from "dayjs";
-import { ParcelsTableRow } from "../parcelsTable/types";
+import GeneralActionModal from "./ActionModals/GeneralActionModal";
 import StyleManager from "@/app/themes";
 import Localization from "@/app/Localization";
-import { ActionModalProps } from "./ActionModals/GeneralActionModal";
-import DayOverviewModal from "./ActionModals/DayOverviewModal";
-import DeleteParcelModal from "./ActionModals/DeleteParcelModal";
-import DriverOverviewModal from "./ActionModals/DriverOverviewModal";
-import GenerateMapModal from "./ActionModals/GenerateMapModal";
-import ShippingLabelModal from "./ActionModals/ShippingLabelModal";
-import ShoppingListModal from "./ActionModals/ShoppingListModal";
-import { UpdateParcelStatuses } from "./ActionAndStatusBar";
+
+const mockOnClose = jest.fn();
+const mockOnSubmit = jest.fn();
+const mockContentAboveButton = <p>Test Content</p>;
+const mockActionButton = (
+    <button data-testid="action-button" onClick={mockOnSubmit}>
+        Download Shopping List
+    </button>
+);
+
+describe("Actions", () => {
+    beforeEach(() => {
+        render(
+            <Localization>
+                <StyleManager>
+                    <GeneralActionModal
+                        onClose={mockOnClose}
+                        errorMessage={null}
+                        actionShown={true}
+                        successMessage={null}
+                        actionButton={mockActionButton}
+                        contentAboveButton={mockContentAboveButton}
+                        header="TestModal"
+                        isOpen={true}
+                        headerId="test-modal-header"
+                    />
+                </StyleManager>
+            </Localization>
+        );
+    });
+
+    it("should render the modal with the action button and content above the button", () => {
+        expect(screen.getByTestId("action-button")).toBeInTheDocument();
+        expect(screen.getByText("Test Content")).toBeInTheDocument();
+    });
+
+    it("should call the onClose function when the close button is clicked", () => {
+        fireEvent.click(screen.getByLabelText("Close Button"));
+        expect(mockOnClose).toHaveBeenCalledTimes(1);
+    });
+
+    it("should call the onSubmit function when the action button is clicked", () => {
+        fireEvent.click(screen.getByTestId("action-button"));
+        expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not render the modal when isOpen is false", () => {
+        cleanup();
+        render(
+            <GeneralActionModal
+                onClose={mockOnClose}
+                errorMessage={null}
+                actionShown={true}
+                successMessage={null}
+                actionButton={mockActionButton}
+                contentAboveButton={mockContentAboveButton}
+                header="TestModal"
+                isOpen={false}
+                headerId="test-modal-header"
+            />
+        );
+        expect(screen.queryByText("Test Modal")).not.toBeInTheDocument();
+    });
+});

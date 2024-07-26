@@ -9,6 +9,7 @@ import { ParcelsTableRow } from "../parcelsTable/types";
 import StyleManager from "@/app/themes";
 import Localization from "@/app/Localization";
 import { SaveParcelStatusResult } from "./Statuses";
+
 jest.mock("@/supabaseClient", () => {
     return { default: jest.fn() };
 });
@@ -56,7 +57,7 @@ Object.defineProperty(window, "matchMedia", {
     })),
 });
 
-const MockActionBar: React.FC<ActionAndStatusBarProps> = ({
+export const MockActionBar: React.FC<ActionAndStatusBarProps> = ({
     fetchSelectedParcels: fetchSelectedParcels,
     updateParcelStatuses: onDeleteParcels,
 }) => {
@@ -72,7 +73,7 @@ const MockActionBar: React.FC<ActionAndStatusBarProps> = ({
     );
 };
 
-const mockData: ParcelsTableRow[] = [
+export const mockData: ParcelsTableRow[] = [
     {
         clientId: "primaryKey1",
         addressPostcode: "AB1 2CD",
