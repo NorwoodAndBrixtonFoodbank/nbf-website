@@ -1,7 +1,7 @@
 import React from "react";
 import WikiItems from "@/app/info/WikiItems";
 import { DbWikiRow } from "@/databaseUtils";
-import { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
+import { PostgrestError } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/databaseTypesFile";
@@ -27,12 +27,11 @@ async function getWikiRows(): Promise<WikiRowsQueryType> {
 }
 
 const InfoPage: React.FC = async () => {
-    const {data, error}: WikiRowsQueryType = await getWikiRows();
+    const { data, error }: WikiRowsQueryType = await getWikiRows();
     if (error) {
         logErrorReturnLogId("error fetching wiki data", error);
     }
-    return error ? <h3>Error occured when fetching data.</h3> : 
-    <WikiItems rows={data} />;
+    return error ? <h3>Error occured when fetching data.</h3> : <WikiItems rows={data} />;
 };
 
 export default InfoPage;

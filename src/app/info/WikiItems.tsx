@@ -49,7 +49,6 @@ export const convertContentToElements = (rowContent: string): React.JSX.Element[
 };
 
 const WikiItem: React.FC<WikiItemProps> = ({ row, sortedRows }) => {
-    
     return (
         <WikiItemPositioner>
             <EditModeDependentItem row={row} sortedRows={sortedRows} />
@@ -57,25 +56,31 @@ const WikiItem: React.FC<WikiItemProps> = ({ row, sortedRows }) => {
     );
 };
 
-const WikiItems: React.FC<WikiItemsProps> = ({rows}) => { 
+const WikiItems: React.FC<WikiItemsProps> = ({ rows }) => {
     const [sortedRows, setSortedRows] = React.useState<DbWikiRow[]>(
-        rows.slice().sort((r1: DbWikiRow, r2: DbWikiRow) => {return r1.row_order > r2.row_order ? 1 : -1;})
+        rows.slice().sort((r1: DbWikiRow, r2: DbWikiRow) => {
+            return r1.row_order > r2.row_order ? 1 : -1;
+        })
     );
-    
+
     const wikiItemsEndRef = useRef<HTMLDivElement>(null);
-    useEffect(() => {if(wikiItemsEndRef.current) wikiItemsEndRef.current.scrollIntoView({
-        behavior: "smooth",
-      });}, [sortedRows])
+    useEffect(() => {
+        if (wikiItemsEndRef.current) {
+            wikiItemsEndRef.current.scrollIntoView({
+                behavior: "smooth",
+            });
+        }
+    }, [sortedRows]);
 
     return (
-        <>  
+        <>
             <AdminManagerDependentView>
-                <AddWikiItemButton sortedRows={sortedRows} setSortedRows={setSortedRows}/>
+                <AddWikiItemButton sortedRows={sortedRows} setSortedRows={setSortedRows} />
             </AdminManagerDependentView>
             {sortedRows.map((row: DbWikiRow) => {
                 return <WikiItem row={row} sortedRows={sortedRows} key={row.wiki_key} />;
             })}
-            <div ref={wikiItemsEndRef}/>
+            <div ref={wikiItemsEndRef} />
         </>
     );
 };

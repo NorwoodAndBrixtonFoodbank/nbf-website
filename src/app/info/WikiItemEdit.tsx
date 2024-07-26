@@ -17,55 +17,77 @@ interface WikiItemEditProps {
     sortedRows: DbWikiRow[];
 }
 
-const WikiItemEdit: React.FC<WikiItemEditProps> = ({ rowData, setRowData, setIsInEditMode, sortedRows}) => {
-
+const WikiItemEdit: React.FC<WikiItemEditProps> = ({
+    rowData,
+    setRowData,
+    setIsInEditMode,
+    sortedRows,
+}) => {
     const deleteWikiItemWithoutConfirmation = async (): Promise<void> => {
-        const deleteResponse = await supabase
-                    .from("wiki")
-                    .delete()
-                    .match({ wiki_key: rowData.wiki_key }) as WikiRowQueryType;  
-                if (deleteResponse.error) {
-                    logErrorReturnLogId("error deleting wiki row item", deleteResponse.error);
-                }
-                const indexToRemove: number = sortedRows.findIndex((row) => row.wiki_key === rowData.wiki_key);
-                sortedRows.splice(indexToRemove, 1);
-                setRowData(undefined);
-    }
-
-    const cancelWikiItemEdit = async (): Promise<void> => {
-        (!rowData.title && !rowData.content) ? await deleteWikiItemWithoutConfirmation() : setIsInEditMode(false);
+        const deleteResponse = (await supabase
+            .from("wiki")
+            .delete()
+            .match({ wiki_key: rowData.wiki_key })) as WikiRowQueryType;
+        if (deleteResponse.error) {
+            logErrorReturnLogId("error deleting wiki row item", deleteResponse.error);
+        }
+        const indexToRemove: number = sortedRows.findIndex(
+            (row) => row.wiki_key === rowData.wiki_key
+        );
+        sortedRows.splice(indexToRemove, 1);
+        setRowData(undefined);
     };
 
-    const updateWikiItem = async (
-        newTitle: string,
-        newContent: string,
-    ): Promise<void> => {  
+    const cancelWikiItemEdit = async (): Promise<void> => {
+        !rowData.title && !rowData.content
+            ? await deleteWikiItemWithoutConfirmation()
+            : setIsInEditMode(false);
+    };
+
+    const updateWikiItem = async (newTitle: string, newContent: string): Promise<void> => {
         if (!newTitle && !newContent) {
-            const deleteUpdateConfirmation: boolean = confirm("Saving an item to be empty will delete it. Are you sure?");
-            if(deleteUpdateConfirmation) deleteWikiItemWithoutConfirmation();
-        } else {        
+            const deleteUpdateConfirmation: boolean = confirm(
+                "Saving an item to be empty will delete it. Are you sure?"
+            );
+            if (deleteUpdateConfirmation) {
+                deleteWikiItemWithoutConfirmation();
+            }
+        } else {
             const updateConfirmation: boolean = confirm("Confirm update of this item?");
             if (updateConfirmation) {
-                const updateResponse = await supabase
-                    .from("wiki")
-                    .upsert({ title: newTitle, content: newContent, wiki_key: rowData.wiki_key }) as WikiRowQueryType;
-                if(updateResponse.error) {logErrorReturnLogId("error updating wiki row item", updateResponse.error)} 
-                else{
-                    const updatedRow: DbWikiRow = {title: newTitle, content: newContent, row_order: rowData.row_order, wiki_key: rowData.wiki_key}
-                    setRowData(updatedRow);  
-                    if(!rowData.title && !rowData.content) sortedRows.splice(-1,1); sortedRows.push(updatedRow);
+                const updateResponse = (await supabase.from("wiki").upsert({
+                    title: newTitle,
+                    content: newContent,
+                    wiki_key: rowData.wiki_key,
+                })) as WikiRowQueryType;
+                if (updateResponse.error) {
+                    logErrorReturnLogId("error updating wiki row item", updateResponse.error);
+                } else {
+                    const updatedRow: DbWikiRow = {
+                        title: newTitle,
+                        content: newContent,
+                        row_order: rowData.row_order,
+                        wiki_key: rowData.wiki_key,
+                    };
+                    setRowData(updatedRow);
+                    if (!rowData.title && !rowData.content) {
+                        sortedRows.splice(-1, 1);
+                    }
+                    sortedRows.push(updatedRow);
                 }
             }
-            setIsInEditMode(false);        
+            setIsInEditMode(false);
         }
     };
 
-    const deleteWikiItem = async (
-    ): Promise<void> => {
-        if (!rowData.title && !rowData.content) {deleteWikiItemWithoutConfirmation();} 
-        else {
+    const deleteWikiItem = async (): Promise<void> => {
+        if (!rowData.title && !rowData.content) {
+            deleteWikiItemWithoutConfirmation();
+        } else {
             const confirmation: boolean = confirm("Confirm deletion of this item?");
-            if (confirmation) deleteWikiItemWithoutConfirmation();               
+            if (confirmation) {
+                deleteWikiItemWithoutConfirmation();
+            }
         }
     };
 
@@ -94,9 +116,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({ rowData, setRowData, setIsI
                     />
                 </div>
 
-                <WikiEditModeButton
-                    onClick={deleteWikiItem}
-                >
+                <WikiEditModeButton onClick={deleteWikiItem}>
                     <DeleteIcon />
                 </WikiEditModeButton>
                 <WikiEditModeButton
@@ -107,10 +127,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({ rowData, setRowData, setIsI
                         const content_input = document.getElementById(
                             `content_input_${rowData.wiki_key}`
                         ) as HTMLInputElement;
-                        updateWikiItem(
-                            title_input.value,
-                            content_input.value,
-                        );
+                        updateWikiItem(title_input.value, content_input.value);
                     }}
                 >
                     <SaveAltIcon />

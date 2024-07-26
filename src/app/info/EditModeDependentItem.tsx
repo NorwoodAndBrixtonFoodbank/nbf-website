@@ -11,13 +11,13 @@ interface EditProps {
     sortedRows: DbWikiRow[];
 }
 
-const EditModeDependentItem: React.FC<EditProps> = ({ row, sortedRows}) => {
+const EditModeDependentItem: React.FC<EditProps> = ({ row, sortedRows }) => {
     const [rowData, setrowData] = useState<DbWikiRow | undefined>(row);
-    const [isInEditMode, setIsInEditMode] = useState<Boolean>(false);
+    const [isInEditMode, setIsInEditMode] = useState<boolean>(false);
     return (
         <>
-            {rowData !== undefined && 
-                (isInEditMode || (rowData.title === '' &&  rowData.content === '')? (
+            {rowData !== undefined &&
+                (isInEditMode || (rowData.title === "" && rowData.content === "") ? (
                     <AdminManagerDependentView>
                         <WikiItemEdit
                             rowData={rowData}
