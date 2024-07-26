@@ -1,7 +1,8 @@
+"use client";
 
 import { DbWikiRow } from "@/databaseUtils";
 import { WikiItemPositioner } from "@/app/info/StyleComponents";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import EditModeDependentItem from "@/app/info/EditModeDependentItem";
 import AdminManagerDependentView from "@/app/info/AdminManagerDependentView";
 import AddWikiItemButton from "@/app/info/AddWikiItemButton";
@@ -12,7 +13,7 @@ interface WikiItemsProps {
 
 interface WikiItemProps {
     row: DbWikiRow;
-    rows: DbWikiRow[];
+    sortedRows: DbWikiRow[];
 }
 
 interface ContentPart {
@@ -47,27 +48,34 @@ export const convertContentToElements = (rowContent: string): React.JSX.Element[
     });
 };
 
-const WikiItem: React.FC<WikiItemProps> = ({ row, rows }) => {
+const WikiItem: React.FC<WikiItemProps> = ({ row, sortedRows }) => {
     
     return (
         <WikiItemPositioner>
-            <EditModeDependentItem row={row} rows={rows} />
+            <EditModeDependentItem row={row} sortedRows={sortedRows} />
         </WikiItemPositioner>
     );
 };
 
-const WikiItems: React.FC<WikiItemsProps> = ({rows}) => {
-    const sortedRows: DbWikiRow[] = rows.slice().sort((r1: DbWikiRow, r2: DbWikiRow) => {
-        return r1.row_order > r2.row_order ? 1 : -1;
-    });
+const WikiItems: React.FC<WikiItemsProps> = ({rows}) => { 
+    const [sortedRows, setSortedRows] = React.useState<DbWikiRow[]>(
+        rows.slice().sort((r1: DbWikiRow, r2: DbWikiRow) => {return r1.row_order > r2.row_order ? 1 : -1;})
+    );
+    
+    const wikiItemsEndRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {if(wikiItemsEndRef.current) wikiItemsEndRef.current.scrollIntoView({
+        behavior: "smooth",
+      });}, [sortedRows])
+
     return (
         <>  
             <AdminManagerDependentView>
-                <AddWikiItemButton rows={sortedRows}/>
+                <AddWikiItemButton sortedRows={sortedRows} setSortedRows={setSortedRows}/>
             </AdminManagerDependentView>
             {sortedRows.map((row: DbWikiRow) => {
-                return <WikiItem row={row} rows={sortedRows} key={row.wiki_key} />;
+                return <WikiItem row={row} sortedRows={sortedRows} key={row.wiki_key} />;
             })}
+            <div ref={wikiItemsEndRef}/>
         </>
     );
 };

@@ -5,9 +5,7 @@ import { ButtonMargin } from "@/app/info/StyleComponents";
 import { Button } from "@mui/material";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { useRouter } from 'next/navigation'
 import { PostgrestError } from "@supabase/supabase-js";
-import { getWikiRows } from "./InfoPage";
 
 interface WikiRowQuerySuccessType {
     data: DbWikiRow;
@@ -20,46 +18,23 @@ interface WikiRowQueryFailureType {
 }
 export type WikiRowQueryType = WikiRowQuerySuccessType | WikiRowQueryFailureType;
 
-interface WikiRowsQuerySuccessType {
-    data: DbWikiRow[];
-    error: null;
-}
-interface WikiRowsQueryFailureType {
-    data: null;
-    error: PostgrestError;
-}
-
-type WikiRowsQueryType = WikiRowsQuerySuccessType | WikiRowsQueryFailureType;
-
 interface AddWikiItemButtonProps { 
-    rows: DbWikiRow[];
+    sortedRows: DbWikiRow[];
+    setSortedRows: (rows: DbWikiRow[]) => void;
 }
 
-const AddWikiItemButton: React.FC<AddWikiItemButtonProps> = ({rows}) => {
-    const router = useRouter();
+const AddWikiItemButton: React.FC<AddWikiItemButtonProps> = ({sortedRows, setSortedRows}) => {
 
-    const addWikiItem = async (rows: DbWikiRow[]) => {
-        const query = (await supabase.from("wiki").select("*")) as WikiRowsQueryType;
-        console.log(query.data);
-        if (query.error) {logErrorReturnLogId("error fetching current wiki data", query.error)} 
-        else {
-            if(query.data.filter((row) => {return (!row.title && !row.content)}).length === 0) {
-                const {data, error} = await supabase.from('wiki').insert({}).select().single() as WikiRowQueryType;
-                if (error) {
-                    logErrorReturnLogId("error inserting and fetching new data", error);
-                }
-                else {
-                    rows.splice(0,rows.length)
-                    rows.push(...query.data, data)
-                    location.reload();           
-                }
-            }
+    const addWikiItem = async (): Promise<void> => {                
+        if(sortedRows.filter((row) => {return (!row.title && !row.content)}).length === 0) {
+            const {data, error} = await supabase.from('wiki').insert({}).select().single() as WikiRowQueryType;
+            error ? logErrorReturnLogId("error inserting and fetching new data", error) : setSortedRows([...sortedRows, data]);
         }
     }
 
     return (
     <ButtonMargin>
-        <Button variant="contained" onClick={()=>{addWikiItem(rows);}}>
+        <Button variant="contained" onClick={addWikiItem}>
             + Add
         </Button>
     </ButtonMargin>);

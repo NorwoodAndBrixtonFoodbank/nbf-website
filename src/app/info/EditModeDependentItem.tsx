@@ -5,20 +5,15 @@ import { useState } from "react";
 import WikiItemDisplay from "@/app/info/WikiItemDisplay";
 import WikiItemEdit from "@/app/info/WikiItemEdit";
 import AdminManagerDependentView from "@/app/info/AdminManagerDependentView";
-import { useRouter } from "next/navigation";
-
-export const enterEditMode = (setIsInEditMode: (isInEditMode: boolean) => void): void => {
-    setIsInEditMode(true);
-};
 
 interface EditProps {
     row?: DbWikiRow;
-    rows: DbWikiRow[]
+    sortedRows: DbWikiRow[];
 }
 
-const EditModeDependentItem: React.FC<EditProps> = ({ row, rows}) => {
+const EditModeDependentItem: React.FC<EditProps> = ({ row, sortedRows}) => {
     const [rowData, setrowData] = useState<DbWikiRow | undefined>(row);
-    const [isInEditMode, setIsInEditMode] = useState(false);
+    const [isInEditMode, setIsInEditMode] = useState<Boolean>(false);
     return (
         <>
             {rowData !== undefined && 
@@ -28,7 +23,7 @@ const EditModeDependentItem: React.FC<EditProps> = ({ row, rows}) => {
                             rowData={rowData}
                             setRowData={setrowData}
                             setIsInEditMode={setIsInEditMode}
-                            rows={rows}
+                            sortedRows={sortedRows}
                         />
                     </AdminManagerDependentView>
                 ) : (
