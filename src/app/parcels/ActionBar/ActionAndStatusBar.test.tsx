@@ -167,4 +167,3 @@ describe("Parcels - Action Bar", () => {
 
     // Can add more tests
 });
-
