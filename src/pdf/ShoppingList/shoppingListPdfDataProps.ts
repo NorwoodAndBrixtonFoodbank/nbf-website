@@ -7,11 +7,7 @@ import { Schema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { ListName } from "@/app/lists/ListDataview";
 
-export interface ItemWithListType extends ItemForPDF {
-    listType: ListName;
-}
-
-export interface ItemForPDF {
+export interface Item {
     description: string;
     quantity: string;
     notes: string;
@@ -23,13 +19,13 @@ export interface ShoppingListPdfData {
     clientSummary: ClientSummary;
     householdSummary: HouseholdSummary;
     requirementSummary: RequirementSummary;
-    itemsList: ItemForPDF[];
+    itemsList: Item[];
     endNotes: string;
 }
 
 type PrepareItemsListResult =
     | {
-          data: ItemWithListType[];
+          data: Item[];
           error: null;
       }
     | {
@@ -52,7 +48,7 @@ function numberIsValidFamilySize(value: number): value is FamilySize {
 export type GetQuantityAndNotesErrorType = "invalidFamilySize";
 export type GetQuantityAndNotesError = { type: GetQuantityAndNotesErrorType; logId: string };
 type GetQuantityAndNotesResult =
-    | { data: Pick<ItemForPDF, "quantity" | "notes">; error: null }
+    | { data: Pick<Item, "quantity" | "notes">; error: null }
     | { data: null; error: GetQuantityAndNotesError };
 
 const getQuantityAndNotes = async (
@@ -79,13 +75,14 @@ const getQuantityAndNotes = async (
 };
 
 export const prepareItemsListForHousehold = async (
-    householdSize: number
+    householdSize: number,
+    listType: ListName
 ): Promise<PrepareItemsListResult> => {
     const { data: listData, error } = await fetchLists(supabase);
     if (error) {
         return { data: null, error: error };
     }
-    const itemsList: ItemWithListType[] = [];
+    const itemsList: Item[] = [];
     for (const row of listData) {
         const { data: listItemData, error: listItemError } = await getQuantityAndNotes(
             row,
@@ -94,27 +91,11 @@ export const prepareItemsListForHousehold = async (
         if (listItemError) {
             return { data: null, error: listItemError };
         }
-        itemsList.push({
-            description: row.item_name,
-            ...listItemData,
-            listType: row.list_type,
-        });
-    }
-    return { data: itemsList, error: null };
-};
-
-export const filterItemsbyListType = (
-    itemsList: ItemWithListType[],
-    listType: ListName
-): ItemForPDF[] => {
-    const filteredItems: ItemForPDF[] = [];
-    for (const item of itemsList) {
-        listType === item.listType &&
-            filteredItems.push({
-                description: item.description,
-                quantity: item.quantity,
-                notes: item.notes,
+        row.list_type === listType &&
+            itemsList.push({
+                description: row.item_name,
+                ...listItemData,
             });
     }
-    return filteredItems;
+    return { data: itemsList, error: null };
 };

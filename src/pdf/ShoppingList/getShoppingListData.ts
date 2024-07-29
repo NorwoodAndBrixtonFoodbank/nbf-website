@@ -21,7 +21,6 @@ import {
 import { prepareHouseholdSummary } from "@/common/formatFamiliesData";
 import { prepareParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import {
-    filterItemsbyListType,
     GetQuantityAndNotesError,
     GetQuantityAndNotesErrorType,
     prepareItemsListForHousehold,
@@ -123,16 +122,12 @@ const getShoppingListDataForSingleParcel = async (
     }
 
     const { data: itemsListData, error: itemsListError } = await prepareItemsListForHousehold(
-        familyData.length
+        familyData.length,
+        parcelInfoAndClientIdData.parcelInfo.listType
     );
     if (itemsListError) {
         return { data: null, error: itemsListError };
     }
-
-    const filteredItemsListData = filterItemsbyListType(
-        itemsListData,
-        parcelInfoAndClientIdData.parcelInfo.listType
-    );
 
     const clientSummary = prepareClientSummary(clientData);
     const householdSummary = prepareHouseholdSummary(familyData);
@@ -152,7 +147,7 @@ const getShoppingListDataForSingleParcel = async (
         clientSummary: clientSummary,
         householdSummary: householdSummary,
         requirementSummary: requirementSummary,
-        itemsList: filteredItemsListData,
+        itemsList: itemsListData,
         endNotes: endNotes,
     };
     return { data: data, error: null };
