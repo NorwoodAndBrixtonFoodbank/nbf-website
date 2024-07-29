@@ -132,7 +132,8 @@ describe("Parcels - Action and Status Bar", () => {
                 <StyleManager>
                     <ActionAndStatusBar
                         fetchSelectedParcels={async () =>
-                            await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))}
+                            await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
+                        }
                         updateParcelStatuses={onDeleteParcels}
                     />
                 </StyleManager>
@@ -146,7 +147,7 @@ describe("Parcels - Action and Status Bar", () => {
     });
 
     it("should open the status menu when the status button is clicked", async () => {
-        const statusButton : HTMLElement = screen.getByTestId("#status-button");
+        const statusButton: HTMLElement = screen.getByTestId("#status-button");
         fireEvent.click(statusButton);
 
         await waitFor(() => {
@@ -157,7 +158,7 @@ describe("Parcels - Action and Status Bar", () => {
     });
 
     it("should open the action menu when the item button is clicked", async () => {
-        const statusButton : HTMLElement = screen.getByTestId("#action-button");
+        const statusButton: HTMLElement = screen.getByTestId("#action-button");
         fireEvent.click(statusButton);
 
         await waitFor(() => {

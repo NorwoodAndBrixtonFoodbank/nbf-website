@@ -69,10 +69,10 @@ const mockData: ParcelsTableRow[] = [
     },
 ];
 
-const mockSelectedParcels : ParcelsTableRow[] = mockData;
+const mockSelectedParcels: ParcelsTableRow[] = mockData;
 
-const mockOnClose : jest.Mock = jest.fn();
-const mockOnSubmit : jest.Mock = jest.fn();
+const mockOnClose: jest.Mock = jest.fn();
+const mockOnSubmit: jest.Mock = jest.fn();
 
 describe("StatusesModal component", () => {
     beforeEach(() => {

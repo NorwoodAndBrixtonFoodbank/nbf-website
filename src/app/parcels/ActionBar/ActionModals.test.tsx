@@ -6,10 +6,10 @@ import GeneralActionModal from "@/app/parcels/ActionBar/ActionModals/GeneralActi
 import StyleManager from "@/app/themes";
 import Localization from "@/app/Localization";
 
-const mockOnClose : jest.Mock = jest.fn();
-const mockOnSubmit : jest.Mock = jest.fn();
-const mockContentAboveButton : React.JSX.Element = <p>Test Content</p>;
-const mockActionButton : React.JSX.Element = (
+const mockOnClose: jest.Mock = jest.fn();
+const mockOnSubmit: jest.Mock = jest.fn();
+const mockContentAboveButton: React.JSX.Element = <p>Test Content</p>;
+const mockActionButton: React.JSX.Element = (
     <button data-testid="action-button" onClick={mockOnSubmit}>
         Download Shopping List
     </button>
