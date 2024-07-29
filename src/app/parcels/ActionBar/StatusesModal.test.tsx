@@ -109,7 +109,7 @@ describe("StatusesModal component", () => {
         expect(mockOnClose).toHaveBeenCalledTimes(1);
     });
 
-    it("submits the selected  date when the submit button is clicked", () => {
+    it("submits the selected valid date when the submit button is clicked", () => {
         const mockDate = dayjs("2024-01-01 12:00:00");
         fireEvent.click(screen.getByText("Submit"));
 
