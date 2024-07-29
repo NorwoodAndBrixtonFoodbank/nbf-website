@@ -4,7 +4,7 @@ import { ClientSummary, RequirementSummary } from "@/common/formatClientsData";
 import { HouseholdSummary } from "@/common/formatFamiliesData";
 import { formatCamelCaseKey, displayPostcodeForHomelessClient } from "@/common/format";
 import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
-import { Item, ShoppingListPdfData } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
+import { ItemForPDF, ShoppingListPdfData } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
 import { faTruck, faShoePrints } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
 
@@ -133,7 +133,7 @@ const TableHeadings: React.FC = () => {
     );
 };
 
-const ItemToRow: React.FC<Item> = (item) => {
+const ItemToRow: React.FC<ItemForPDF> = (item) => {
     return (
         <View style={[styles.flexRow, styles.tableRow]} wrap={false}>
             <View style={styles.tableDone} />
@@ -151,7 +151,7 @@ const ItemToRow: React.FC<Item> = (item) => {
 };
 
 interface DisplayItemsListProps {
-    itemsList: Item[];
+    itemsList: ItemForPDF[];
 }
 
 const DisplayItemsList: React.FC<DisplayItemsListProps> = ({ itemsList }) => {

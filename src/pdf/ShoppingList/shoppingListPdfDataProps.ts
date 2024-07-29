@@ -7,15 +7,14 @@ import { Schema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { ListName } from "@/app/lists/ListDataview";
 
-export interface Item {
+export interface ItemWithListType extends ItemForPDF {
+    listType: ListName;
+}
+
+export interface ItemForPDF {
     description: string;
     quantity: string;
     notes: string;
-}
-
-export interface ItemExtendedWithListType {
-    itemOutputContent: Item;
-    listType: ListName;
 }
 
 export interface ShoppingListPdfData {
@@ -24,13 +23,13 @@ export interface ShoppingListPdfData {
     clientSummary: ClientSummary;
     householdSummary: HouseholdSummary;
     requirementSummary: RequirementSummary;
-    itemsList: Item[];
+    itemsList: ItemForPDF[];
     endNotes: string;
 }
 
 type PrepareItemsListResult =
     | {
-          data: ItemExtendedWithListType[];
+          data: ItemWithListType[];
           error: null;
       }
     | {
@@ -53,7 +52,7 @@ function numberIsValidFamilySize(value: number): value is FamilySize {
 export type GetQuantityAndNotesErrorType = "invalidFamilySize";
 export type GetQuantityAndNotesError = { type: GetQuantityAndNotesErrorType; logId: string };
 type GetQuantityAndNotesResult =
-    | { data: Pick<Item, "quantity" | "notes">; error: null }
+    | { data: Pick<ItemForPDF, "quantity" | "notes">; error: null }
     | { data: null; error: GetQuantityAndNotesError };
 
 const getQuantityAndNotes = async (
@@ -86,7 +85,7 @@ export const prepareItemsListForHousehold = async (
     if (error) {
         return { data: null, error: error };
     }
-    const itemsList: ItemExtendedWithListType[] = [];
+    const itemsList: ItemWithListType[] = [];
     for (const row of listData) {
         const { data: listItemData, error: listItemError } = await getQuantityAndNotes(
             row,
@@ -96,7 +95,8 @@ export const prepareItemsListForHousehold = async (
             return { data: null, error: listItemError };
         }
         itemsList.push({
-            itemOutputContent: { description: row.item_name, ...listItemData },
+            description: row.item_name,
+            ...listItemData,
             listType: row.list_type,
         });
     }
@@ -104,12 +104,17 @@ export const prepareItemsListForHousehold = async (
 };
 
 export const filterItemsbyListType = (
-    itemsList: ItemExtendedWithListType[],
+    itemsList: ItemWithListType[],
     listType: ListName
-): Item[] => {
-    const filteredItems: Item[] = [];
+): ItemForPDF[] => {
+    const filteredItems: ItemForPDF[] = [];
     for (const item of itemsList) {
-        listType === item.listType && filteredItems.push(item.itemOutputContent);
+        listType === item.listType &&
+            filteredItems.push({
+                description: item.description,
+                quantity: item.quantity,
+                notes: item.notes,
+            });
     }
     return filteredItems;
 };
