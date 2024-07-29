@@ -20,7 +20,7 @@ import CommentBox from "@/app/lists/CommentBox";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { ClientSideFilter } from "@/components/Tables/Filters";
-import { ListName } from "@/common/fetch";
+import { ListType } from "@/common/fetch";
 
 export type ListFilter = ClientSideFilter<ListRow, string>;
 
@@ -28,7 +28,7 @@ export interface ListRow {
     primaryKey: string;
     rowOrder: number;
     itemName: string;
-    listType: ListName;
+    listType: ListType;
     "1": QuantityAndNotes;
     "2": QuantityAndNotes;
     "3": QuantityAndNotes;
@@ -321,7 +321,7 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
                     onClose={() => setModal(undefined)}
                     data={modal}
                     key={modal?.primary_key}
-                    currentList={primaryFilters[1].state as ListName}
+                    currentList={primaryFilters[1].state as ListType}
                 />
                 <ButtonMargin>
                     <Button variant="contained" onClick={() => setModal(null)}>

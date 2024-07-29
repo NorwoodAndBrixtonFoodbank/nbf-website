@@ -40,7 +40,7 @@ import ClientNotesCard from "@/app/clients/form/formSections/ClientNotes";
 import { getCurrentYear } from "@/common/date";
 import { youngestAdultBirthYear } from "@/app/clients/form/birthYearDropdown";
 import ListTypeCard from "./formSections/ListTypeCard";
-import { ListName } from "@/common/fetch";
+import { ListType } from "@/common/fetch";
 
 interface Props {
     initialFields: ClientFields;
@@ -62,7 +62,7 @@ export interface ClientFields extends Fields {
     numberOfAdults: number;
     children: Person[];
     numberOfChildren: number;
-    listType: ListName | "";
+    listType: ListType | null;
     dietaryRequirements: BooleanGroup;
     feminineProducts: BooleanGroup;
     babyProducts: boolean | null;

@@ -196,9 +196,9 @@ export const getActiveTimeSlotsForCollectionCentre = async (
     return { data: activeTimeSlots, error: null };
 };
 
-export type ListName = Database["public"]["Enums"]["list_type"];
+export type ListType = Database["public"]["Enums"]["list_type"];
 
-export const listTypes = ["regular", "hotel"] as ListName[];
+export const LIST_TYPES_ARRAY: ListType[] = ["regular", "hotel"] as const;
 
 type FetchClientResponse =
     | {

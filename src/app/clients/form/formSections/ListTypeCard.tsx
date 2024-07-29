@@ -4,7 +4,7 @@ import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { ClientCardProps } from "../ClientForm";
-import { listTypes } from "@/common/fetch";
+import { LIST_TYPES_ARRAY } from "@/common/fetch";
 import { capitaliseWords } from "@/common/format";
 
 type ListTypeLabelsAndValues = [string, string][];
@@ -15,7 +15,7 @@ const ListTypeCard: React.FC<ClientCardProps> = ({
     fieldSetter,
     fields,
 }) => {
-    const listTypeLabelsAndValues: ListTypeLabelsAndValues = listTypes.map((listType) => [
+    const listTypeLabelsAndValues: ListTypeLabelsAndValues = LIST_TYPES_ARRAY.map((listType) => [
         capitaliseWords(listType),
         listType,
     ]);
@@ -30,7 +30,7 @@ const ListTypeCard: React.FC<ClientCardProps> = ({
                 selectLabelId="list-type-select-label"
                 labelsAndValues={listTypeLabelsAndValues}
                 listTitle="List Type"
-                defaultValue={fields.listType}
+                defaultValue={fields.listType ? fields.listType : ""}
                 onChange={valueOnChangeDropdownList(fieldSetter, errorSetter, "listType")}
             />
             <ErrorText>{errorText(formErrors.listType)}</ErrorText>
