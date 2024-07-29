@@ -11,7 +11,7 @@
     "lint": "npm run typecheck && next lint --dir . --ignore-path .gitignore",
     "lint_fix": "npm run typecheck && next lint --fix --dir . --ignore-path .gitignore",
     "lint:ci": "next lint --dir . --ignore-path .gitignore && npm run typecheck",
-    "test": "npm run cypress:all && npm run jest:all",
+    "test": "npm run jest:all && npm run cypress:all",
     "test:component": "npm run cypress:component && npm run jest:component",
     "test:e2e": "cypress:e2e",
     "test:coverage": "npm run coverage:generate && npm run coverage:run_tests || npm run coverage:report",

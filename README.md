@@ -89,7 +89,7 @@ failed to start docker container: Error response from daemon: Ports are not avai
 * `npm run test` to run all tests. This will run Cypress component and integration and Jest component tests.
   * single out test suites with:
     * `npm run test:component` for Cypress and Jest component (unit) tests
-    * `npm run test:e2e` for just Cypress end-to-end tests
+    * `npm run cypress:e2e` for just Cypress end-to-end tests
     * `npm run cypress:component` for just Cypress component tests
     * `npm run jest:component` for just Jest component tests
     * `npm run test:coverage` for a full coverage report at the end
