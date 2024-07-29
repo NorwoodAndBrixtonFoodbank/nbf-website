@@ -38,10 +38,8 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
         setRowData(undefined);
     };
 
-    const cancelWikiItemEdit = async (): Promise<void> => {
-        !rowData.title && !rowData.content
-            ? await deleteWikiItem()
-            : setIsInEditMode(false);
+    const cancelWikiItemEdit = (): void => {
+        !rowData.title && !rowData.content ? deleteWikiItem() : setIsInEditMode(false);
     };
 
     const updateWikiItem = async (newTitle: string, newContent: string): Promise<void> => {
