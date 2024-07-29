@@ -41,22 +41,6 @@ jest.mock("@/app/parcels/ActionBar/Actions", () => {
     ));
 });
 
-// const MockActionBar: React.FC<ActionAndStatusBarProps> = ({
-//     fetchSelectedParcels: fetchSelectedParcels,
-//     updateParcelStatuses: onDeleteParcels,
-// }) => {
-//     return (
-//         <Localization>
-//             <StyleManager>
-//                 <ActionAndStatusBar
-//                     fetchSelectedParcels={fetchSelectedParcels}
-//                     updateParcelStatuses={onDeleteParcels}
-//                 />
-//             </StyleManager>
-//         </Localization>
-//     );
-// };
-
 export const mockData: ParcelsTableRow[] = [
     {
         clientId: "primaryKey1",
