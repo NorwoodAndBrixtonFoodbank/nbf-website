@@ -5,11 +5,17 @@ import { fetchLists, FetchListsErrorType } from "@/common/fetch";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
+import { ListName } from "@/app/lists/ListDataview";
 
 export interface Item {
     description: string;
     quantity: string;
     notes: string;
+}
+
+export interface ItemExtendedWithListType {
+    itemOutputContent: Item;
+    listType: ListName;
 }
 
 export interface ShoppingListPdfData {
@@ -24,7 +30,7 @@ export interface ShoppingListPdfData {
 
 type PrepareItemsListResult =
     | {
-          data: Item[];
+          data: ItemExtendedWithListType[];
           error: null;
       }
     | {
@@ -80,7 +86,7 @@ export const prepareItemsListForHousehold = async (
     if (error) {
         return { data: null, error: error };
     }
-    const itemsList: Item[] = [];
+    const itemsList: ItemExtendedWithListType[] = [];
     for (const row of listData) {
         const { data: listItemData, error: listItemError } = await getQuantityAndNotes(
             row,
@@ -90,9 +96,20 @@ export const prepareItemsListForHousehold = async (
             return { data: null, error: listItemError };
         }
         itemsList.push({
-            description: row.item_name,
-            ...listItemData,
+            itemOutputContent: { description: row.item_name, ...listItemData },
+            listType: row.list_type,
         });
     }
     return { data: itemsList, error: null };
+};
+
+export const filterItemsbyListType = (
+    itemsList: ItemExtendedWithListType[],
+    listType: ListName
+): Item[] => {
+    const filteredItems: Item[] = [];
+    for (const item of itemsList) {
+        listType === item.listType && filteredItems.push(item.itemOutputContent);
+    }
+    return filteredItems;
 };
