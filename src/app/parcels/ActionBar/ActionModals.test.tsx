@@ -66,7 +66,7 @@ describe("Actions", () => {
                 headerId="test-modal-header"
             />
         );
-        expect(screen.queryByText("Test Modal")).not.toBeInTheDocument();
+        expect(screen.queryByText("TestModal")).not.toBeInTheDocument();
     });
 
     // Can add more tests
