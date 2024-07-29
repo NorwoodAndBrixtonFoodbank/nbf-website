@@ -23,7 +23,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
     setIsInEditMode,
     sortedRows,
 }) => {
-    const deleteWikiItemWithoutConfirmation = async (): Promise<void> => {
+    const deleteWikiItem = async (): Promise<void> => {
         const deleteResponse = (await supabase
             .from("wiki")
             .delete()
@@ -40,7 +40,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
 
     const cancelWikiItemEdit = async (): Promise<void> => {
         !rowData.title && !rowData.content
-            ? await deleteWikiItemWithoutConfirmation()
+            ? await deleteWikiItem()
             : setIsInEditMode(false);
     };
 
@@ -50,7 +50,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                 "Saving an item to be empty will delete it. Are you sure?"
             );
             if (deleteUpdateConfirmation) {
-                deleteWikiItemWithoutConfirmation();
+                deleteWikiItem();
             }
         } else {
             const updateConfirmation: boolean = confirm("Confirm update of this item?");
@@ -80,13 +80,13 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
         }
     };
 
-    const deleteWikiItem = async (): Promise<void> => {
+    const deleteWikiItemWithConfirmation = async (): Promise<void> => {
         if (!rowData.title && !rowData.content) {
-            deleteWikiItemWithoutConfirmation();
+            deleteWikiItem();
         } else {
             const confirmation: boolean = confirm("Confirm deletion of this item?");
             if (confirmation) {
-                deleteWikiItemWithoutConfirmation();
+                deleteWikiItem();
             }
         }
     };
@@ -116,7 +116,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                     />
                 </div>
 
-                <WikiEditModeButton onClick={deleteWikiItem}>
+                <WikiEditModeButton onClick={deleteWikiItemWithConfirmation}>
                     <DeleteIcon />
                 </WikiEditModeButton>
                 <WikiEditModeButton
