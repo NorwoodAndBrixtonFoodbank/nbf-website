@@ -1,14 +1,12 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/react";
 import { expect, it } from "@jest/globals";
 import "@testing-library/jest-dom/jest-globals";
-import ActionAndStatusBar, {
-    ActionAndStatusBarProps,
-} from "@/app/parcels/ActionBar/ActionAndStatusBar";
-import { ParcelsTableRow } from "../parcelsTable/types";
+import ActionAndStatusBar from "@/app/parcels/ActionBar/ActionAndStatusBar";
+import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 import StyleManager from "@/app/themes";
 import Localization from "@/app/Localization";
-import { SaveParcelStatusResult } from "./Statuses";
+import { SaveParcelStatusResult } from "@/app/parcels/ActionBar/Statuses";
 
 jest.mock("@/supabaseClient", () => {
     return { default: jest.fn() };
@@ -43,21 +41,21 @@ jest.mock("@/app/parcels/ActionBar/Actions", () => {
     ));
 });
 
-export const MockActionBar: React.FC<ActionAndStatusBarProps> = ({
-    fetchSelectedParcels: fetchSelectedParcels,
-    updateParcelStatuses: onDeleteParcels,
-}) => {
-    return (
-        <Localization>
-            <StyleManager>
-                <ActionAndStatusBar
-                    fetchSelectedParcels={fetchSelectedParcels}
-                    updateParcelStatuses={onDeleteParcels}
-                />
-            </StyleManager>
-        </Localization>
-    );
-};
+// const MockActionBar: React.FC<ActionAndStatusBarProps> = ({
+//     fetchSelectedParcels: fetchSelectedParcels,
+//     updateParcelStatuses: onDeleteParcels,
+// }) => {
+//     return (
+//         <Localization>
+//             <StyleManager>
+//                 <ActionAndStatusBar
+//                     fetchSelectedParcels={fetchSelectedParcels}
+//                     updateParcelStatuses={onDeleteParcels}
+//                 />
+//             </StyleManager>
+//         </Localization>
+//     );
+// };
 
 export const mockData: ParcelsTableRow[] = [
     {
@@ -120,7 +118,7 @@ export const mockData: ParcelsTableRow[] = [
     },
 ];
 
-describe("Parcels - Action Bar", () => {
+describe("Parcels - Action and Status Bar", () => {
     let parcelIds: string[] = ["123456789", "123456aaaa789"];
     const onDeleteParcels = async (): Promise<SaveParcelStatusResult> => {
         parcelIds = [];
@@ -128,13 +126,17 @@ describe("Parcels - Action Bar", () => {
     };
 
     beforeEach(() => {
+        cleanup();
         render(
-            <MockActionBar
-                fetchSelectedParcels={async () =>
-                    await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))
-                }
-                updateParcelStatuses={onDeleteParcels}
-            />
+            <Localization>
+                <StyleManager>
+                    <ActionAndStatusBar
+                        fetchSelectedParcels={async () =>
+                            await mockData.filter((parcel) => parcelIds.includes(parcel.parcelId))}
+                        updateParcelStatuses={onDeleteParcels}
+                    />
+                </StyleManager>
+            </Localization>
         );
     });
 
@@ -144,7 +146,7 @@ describe("Parcels - Action Bar", () => {
     });
 
     it("should open the status menu when the status button is clicked", async () => {
-        const statusButton = screen.getByTestId("#status-button");
+        const statusButton : HTMLElement = screen.getByTestId("#status-button");
         fireEvent.click(statusButton);
 
         await waitFor(() => {
@@ -155,7 +157,7 @@ describe("Parcels - Action Bar", () => {
     });
 
     it("should open the action menu when the item button is clicked", async () => {
-        const statusButton = screen.getByTestId("#action-button");
+        const statusButton : HTMLElement = screen.getByTestId("#action-button");
         fireEvent.click(statusButton);
 
         await waitFor(() => {

@@ -2,14 +2,14 @@ import React from "react";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { expect, it } from "@jest/globals";
 import "@testing-library/jest-dom/jest-globals";
-import GeneralActionModal from "./ActionModals/GeneralActionModal";
+import GeneralActionModal from "@/app/parcels/ActionBar/ActionModals/GeneralActionModal";
 import StyleManager from "@/app/themes";
 import Localization from "@/app/Localization";
 
-const mockOnClose = jest.fn();
-const mockOnSubmit = jest.fn();
-const mockContentAboveButton = <p>Test Content</p>;
-const mockActionButton = (
+const mockOnClose : jest.Mock = jest.fn();
+const mockOnSubmit : jest.Mock = jest.fn();
+const mockContentAboveButton : React.JSX.Element = <p>Test Content</p>;
+const mockActionButton : React.JSX.Element = (
     <button data-testid="action-button" onClick={mockOnSubmit}>
         Download Shopping List
     </button>
@@ -17,6 +17,7 @@ const mockActionButton = (
 
 describe("Actions", () => {
     beforeEach(() => {
+        cleanup();
         render(
             <Localization>
                 <StyleManager>

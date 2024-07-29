@@ -1,10 +1,10 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { expect, it } from "@jest/globals";
 import "@testing-library/jest-dom/jest-globals";
-import StatusesModal from "./StatusesModal";
+import StatusesModal from "@/app/parcels/ActionBar/StatusesModal";
 import dayjs from "dayjs";
-import { ParcelsTableRow } from "../parcelsTable/types";
+import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 import StyleManager from "@/app/themes";
 import Localization from "@/app/Localization";
 
@@ -69,13 +69,14 @@ const mockData: ParcelsTableRow[] = [
     },
 ];
 
-const mockSelectedParcels = mockData;
+const mockSelectedParcels : ParcelsTableRow[] = mockData;
 
-const mockOnClose = jest.fn();
-const mockOnSubmit = jest.fn();
+const mockOnClose : jest.Mock = jest.fn();
+const mockOnSubmit : jest.Mock = jest.fn();
 
 describe("StatusesModal component", () => {
     beforeEach(() => {
+        cleanup();
         jest.useFakeTimers();
         jest.setSystemTime(new Date("2024-01-01T12:00:00"));
         jest.clearAllMocks();
