@@ -1,7 +1,11 @@
 "use client";
 
 import { DbWikiRow } from "@/databaseUtils";
-import { WikiItemAccordionSurface, WikiUpdateDataButton } from "@/app/info/StyleComponents";
+import {
+    WikiItemAccordionSurface,
+    WikiItemDetailsTextBreaker,
+    WikiUpdateDataButton,
+} from "@/app/info/StyleComponents";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { convertContentToElements } from "@/app/info/WikiItems";
@@ -34,7 +38,11 @@ const WikiItemDisplay: React.FC<DefaultViewProps> = ({ rowData, openEditMode }) 
                     >
                         <h2>{rowData.title}</h2>
                     </AccordionSummary>
-                    <AccordionDetails>{convertContentToElements(rowData.content)}</AccordionDetails>
+                    <AccordionDetails>
+                        <WikiItemDetailsTextBreaker>
+                            {convertContentToElements(rowData.content)}
+                        </WikiItemDetailsTextBreaker>
+                    </AccordionDetails>
                 </Accordion>
             </WikiItemAccordionSurface>
         </>
