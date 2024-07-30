@@ -119,7 +119,10 @@ const buildLastStatusFilter = async (): Promise<ParcelsFilter<string[]>> => {
     const lastStatusSearch: ParcelsFilterMethod<string[]> = (query, state) => {
         if (state.length === 0) {
             // Default is to show everything that's not deleted
-            return query.neq("last_status_event_name", "Parcel Deleted");
+            return query.or(
+                // eslint-disable-next-line quotes
+                'last_status_event_name.neq."Parcel Deleted",last_status_event_name.is.null'
+            );
         } else if (state.includes(labelForNoStatus)) {
             return query.or(
                 `last_status_event_name.is.null,last_status_event_name.in.("",${state.join(",")})`
