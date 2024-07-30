@@ -7,8 +7,8 @@ import {
 } from "@/app/clients/getExpandedClientDetails";
 import { formatDatetimeAsDate } from "@/common/format";
 import { DbParcelRow } from "@/databaseUtils";
-import convertParcelDbtoParcelRow, { processLastStatus } from "./convertParcelDBtoParcelRow";
-import { CongestionChargeDetails, ParcelsTableRow } from "./types";
+import convertParcelDbtoParcelRow, { processLastStatus } from "@/app/parcels/parcelsTable/convertParcelDBtoParcelRow";
+import { CongestionChargeDetails, ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 import React from "react";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { expect, it } from "@jest/globals";
@@ -153,6 +153,82 @@ describe("Parcels Page", () => {
                     address_postcode: "POSTCODE",
                 })
             ).toEqual("Address Line 1, TOWN, POSTCODE");
+        });
+
+        it("formatHouseholdFromFamilyDetails()", () => {
+            expect(
+                formatHouseholdFromFamilyDetails([
+                    { birth_year: 1988, gender: "female" },
+                    { birth_year: 2019, gender: "male" },
+                    { birth_year: 2000, gender: "other" },
+                ])
+            ).toEqual("Family of 3 Occupants (2 adults, 1 child)");
+
+            expect(
+                formatHouseholdFromFamilyDetails([
+                    { birth_year: 1988, gender: "female" },
+                    { birth_year: 2019, gender: "male" },
+                    { birth_year: 2020, gender: "female" },
+                    { birth_year: 2009, gender: "other" },
+                ])
+            ).toEqual("Family of 4 Occupants (1 adult, 3 children)");
+
+            expect(
+                formatHouseholdFromFamilyDetails([{ birth_year: 2008, gender: "female" }])
+            ).toEqual("Single Occupant (1 adult)");
+
+            expect(formatHouseholdFromFamilyDetails([{ birth_year: 2009, gender: "male" }])).toEqual(
+                "Single Occupant (1 child)"
+            );
+        });
+
+        it("formatBreakdownOfChildrenFromFamilyDetails()", () => {
+            const currentYear = new Date().getFullYear();
+            expect(
+                formatBreakdownOfChildrenFromFamilyDetails([
+                    { birth_year: 1988, birth_month: null, gender: "female" },
+                    { birth_year: 2019, birth_month: null, gender: "male" },
+                    { birth_year: 2020, birth_month: null, gender: "female" },
+                    { birth_year: 2009, birth_month: null, gender: "other" },
+                ])
+            ).toEqual(`${currentYear-2019}-years-old male, ${currentYear-2020}-years-old female, ${currentYear-2009}-years-old other`);
+
+            expect(
+                formatBreakdownOfChildrenFromFamilyDetails([
+                    { birth_year: 1988, birth_month: null, gender: "female" },
+                    { birth_year: 2009, birth_month: null, gender: "female" },
+                ])
+            ).toEqual(`${currentYear-2009}-years-old female`);
+
+            expect(
+                formatBreakdownOfChildrenFromFamilyDetails([
+                    { birth_year: 1988, birth_month: null, gender: "female" },
+                    { birth_year: 1998, birth_month: null, gender: "male" },
+                ])
+            ).toEqual("No Children");
+        });
+
+        it("processEventsDetails()", () => {
+            expect(
+                processEventsDetails([
+                    {
+                        new_parcel_status: "Event 1",
+                        timestamp: "2023-08-04T13:30:00+00:00",
+                        event_data: "",
+                    },
+                    {
+                        new_parcel_status: "Event 2",
+                        timestamp: "2023-06-04T15:30:00+00:00",
+                        event_data: "Message",
+                    },
+                ])
+            ).toStrictEqual([
+                { eventInfo: "Event 1 ", timestamp: new Date("2023-08-04T13:30:00+00:00") },
+                {
+                    eventInfo: "Event 2  (Message)",
+                    timestamp: new Date("2023-06-04T15:30:00+00:00"),
+                },
+            ]);
         });
 
     });
