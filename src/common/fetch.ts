@@ -29,6 +29,7 @@ type UserProfileDataAndError =
 
 export interface ParcelWithCollectionCentreAndPackingSlot {
     client_id: string;
+    list_type?: ListType;
     collection_centre: CollectionCentre | null;
     collection_datetime: string | null;
     packing_date: string | null;
@@ -200,6 +201,10 @@ export type ListType = Database["public"]["Enums"]["list_type"];
 
 export const LIST_TYPES_ARRAY: ListType[] = ["regular", "hotel"] as const;
 
+export type FetchClientError = { type: FetchClientErrorType; logId: string };
+
+export type ListTypeLabelsAndValues = [string, string][];
+
 type FetchClientResponse =
     | {
           data: Schema["clients"];
@@ -207,7 +212,7 @@ type FetchClientResponse =
       }
     | {
           data: null;
-          error: { type: FetchClientErrorType; logId: string };
+          error: FetchClientError;
       };
 
 export type FetchClientErrorType = "clientFetchFailed" | "noMatchingClients";

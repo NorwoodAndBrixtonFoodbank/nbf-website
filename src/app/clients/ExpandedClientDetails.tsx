@@ -16,6 +16,7 @@ import { ErrorSecondaryText } from "../errorStylingandMessages";
 import { CircularProgress } from "@mui/material";
 import { Centerer } from "@/components/Modal/ModalFormStyles";
 import { updateClientNotes } from "./updateClientNotes";
+import { capitaliseWords } from "@/common/format";
 
 interface Props {
     clientId: string;
@@ -89,6 +90,9 @@ const ExpandedClientDetails: React.FC<Props> = ({ clientId, displayClientsParcel
                 onCancel: onCancelNotes,
                 onSave: onSaveNotes,
             },
+        };
+        clientDetailsForDataViewer["defaultList"] = {
+            value: capitaliseWords(clientDetails["defaultList"]),
         };
         clientDetailsForDataViewer["isActive"] = {
             value: clientDetails["isActive"],

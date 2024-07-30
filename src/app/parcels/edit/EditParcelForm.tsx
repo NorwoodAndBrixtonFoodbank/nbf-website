@@ -4,21 +4,25 @@ import React, { useEffect, useState } from "react";
 import ParcelForm, { initialParcelFields, ParcelErrors, ParcelFields } from "../form/ParcelForm";
 import {
     CollectionCentresLabelsAndValues,
+    fetchClient,
+    FetchClientError,
     FetchCollectionCentresError,
     fetchPackingSlotsInfo,
     fetchParcel,
     FetchParcelError,
     getActiveCollectionCentres,
+    ListTypeLabelsAndValues,
     PackingSlotsError,
     PackingSlotsLabelsAndValues,
     ParcelWithCollectionCentreAndPackingSlot,
+    LIST_TYPES_ARRAY,
 } from "@/common/fetch";
 import supabase from "@/supabaseClient";
 import { Errors } from "@/components/Form/formFunctions";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import Title from "@/components/Title/Title";
 import { updateParcel } from "@/app/parcels/form/submitFormHelpers";
-import { formatDatetimeAsTime } from "@/common/format";
+import { formatDatetimeAsTime, capitaliseWords } from "@/common/format";
 
 interface EditParcelFormProps {
     parcelId: string;
@@ -30,6 +34,7 @@ const prepareParcelDataForForm = (
 ): ParcelFields => {
     return {
         clientId: parcelData.client_id,
+        listType: parcelData.list_type,
         voucherNumber: parcelData.voucher_number,
         packingDate: parcelData.packing_date,
         packingSlot: parcelData.packing_slot?.primary_key,
@@ -45,7 +50,7 @@ const prepareParcelDataForForm = (
 };
 
 const getErrorMessage = (
-    error: FetchCollectionCentresError | PackingSlotsError | FetchParcelError
+    error: FetchCollectionCentresError | PackingSlotsError | FetchParcelError | FetchClientError
 ): string => {
     let errorMessage: string;
     switch (error.type) {
@@ -61,6 +66,12 @@ const getErrorMessage = (
         case "noMatchingParcels":
             errorMessage = "No parcel in the database matches the selected parcel.";
             break;
+        case "clientFetchFailed":
+            errorMessage = "Unable to fetch client data. Please refresh the page.";
+            break;
+        case "noMatchingClients":
+            errorMessage = "No matching clients with client ID. Please refresh the page.";
+            break;
     }
     return `${errorMessage} Log Id: ${error.logId}`;
 };
@@ -72,12 +83,42 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
     const [collectionCentres, setCollectionCentres] = useState<CollectionCentresLabelsAndValues>(
         []
     );
+    const [listTypeLabelsAndValues, setListTypeLabelsAndValues] = useState<ListTypeLabelsAndValues>(
+        []
+    );
     const [packingSlots, setPackingSlots] = useState<PackingSlotsLabelsAndValues>([]);
     const [packingSlotIsShown, setPackingSlotsIsShown] = useState<boolean | undefined>(true);
     const [collectionCentreIsShown, setCollectionCentreIsShown] = useState<boolean>(true);
     const [error, setError] = useState<
-        FetchCollectionCentresError | PackingSlotsError | FetchParcelError | null
+        FetchCollectionCentresError | PackingSlotsError | FetchParcelError | FetchClientError | null
     >(null);
+
+    useEffect(() => {
+        (async () => {
+            if (!initialFormFields.clientId) {
+                setListTypeLabelsAndValues(
+                    LIST_TYPES_ARRAY.map((listType) => [capitaliseWords(listType), listType])
+                );
+            } else {
+                const { data: clientData, error: clientError } = await fetchClient(
+                    initialFormFields.clientId,
+                    supabase
+                );
+                if (clientError) {
+                    setError(clientError);
+                    setIsLoading(false);
+                    return;
+                }
+                setListTypeLabelsAndValues(
+                    LIST_TYPES_ARRAY.map((listType) =>
+                        clientData.default_list === listType
+                            ? [capitaliseWords(listType) + " (default)", listType]
+                            : [capitaliseWords(listType), listType]
+                    )
+                );
+            }
+        })();
+    }, [initialFormFields.clientId]);
 
     useEffect(() => {
         (async () => {
@@ -113,11 +154,13 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
             );
             setPackingSlotsIsShown(parcelData.packing_slot?.is_shown);
             setCollectionCentreIsShown(parcelData.collection_centre?.is_shown === true);
+
             setIsLoading(false);
         })();
     }, [parcelId]);
 
     const initialFormErrors: ParcelErrors = {
+        listType: Errors.none,
         voucherNumber: Errors.none,
         packingDate: Errors.none,
         packingSlot: packingSlotIsShown ? Errors.none : Errors.invalidPackingSlot,
@@ -142,6 +185,7 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
                     deliveryPrimaryKey={deliveryKey}
                     collectionCentresLabelsAndValues={collectionCentres}
                     packingSlotsLabelsAndValues={packingSlots}
+                    listTypeLabelsAndValues={listTypeLabelsAndValues}
                 />
             )}
         </>
