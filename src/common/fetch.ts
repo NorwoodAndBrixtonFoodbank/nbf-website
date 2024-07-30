@@ -29,7 +29,7 @@ type UserProfileDataAndError =
 
 export interface ParcelWithCollectionCentreAndPackingSlot {
     client_id: string;
-    list_type: ListName | "";
+    list_type: ListType | "";
     collection_centre: CollectionCentre | null;
     collection_datetime: string | null;
     packing_date: string | null;
@@ -204,10 +204,6 @@ export const LIST_TYPES_ARRAY: ListType[] = ["regular", "hotel"] as const;
 export type FetchClientError = { type: FetchClientErrorType; logId: string };
 
 export type ListTypeLabelsAndValues = [string, string][];
-
-export type ListName = Database["public"]["Enums"]["list_type"];
-
-export const listTypes = ["regular", "hotel"] as ListName[];
 
 type FetchClientResponse =
     | {

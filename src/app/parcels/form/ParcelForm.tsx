@@ -38,7 +38,7 @@ import {
     getActiveTimeSlotsForCollectionCentre,
     ListTypeLabelsAndValues,
     PackingSlotsLabelsAndValues,
-    ListName,
+    ListType,
 } from "@/common/fetch";
 import getExpandedClientDetails, {
     ExpandedClientData,
@@ -56,7 +56,7 @@ import ListTypeCard from "./formSections/ListTypeCard";
 
 export interface ParcelFields extends Fields {
     clientId: string | null;
-    listType: ListName | "";
+    listType: ListType | "";
     voucherNumber: string | null;
     packingDate: string | null;
     packingSlot: string | undefined;
@@ -266,7 +266,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
 
         const parcelRecord = {
             client_id: clientId || fields.clientId || "",
-            list_type: fields.listType as ListName,
+            list_type: fields.listType as ListType,
             packing_date: packingDate,
             packing_slot: fields.packingSlot,
             voucher_number: fields.voucherNumber,

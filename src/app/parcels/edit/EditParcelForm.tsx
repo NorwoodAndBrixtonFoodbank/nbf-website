@@ -15,7 +15,7 @@ import {
     PackingSlotsError,
     PackingSlotsLabelsAndValues,
     ParcelWithCollectionCentreAndPackingSlot,
-    listTypes,
+    LIST_TYPES_ARRAY,
 } from "@/common/fetch";
 import supabase from "@/supabaseClient";
 import { Errors } from "@/components/Form/formFunctions";
@@ -97,7 +97,7 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
         (async () => {
             if (!initialFormFields.clientId) {
                 setListTypeLabelsAndValues(
-                    listTypes.map((listType) => [capitaliseWords(listType), listType])
+                    LIST_TYPES_ARRAY.map((listType) => [capitaliseWords(listType), listType])
                 );
             } else {
                 const { data: clientData, error: clientError } = await fetchClient(
@@ -110,7 +110,7 @@ const EditParcelForm = ({ parcelId }: EditParcelFormProps): React.ReactElement =
                     return;
                 }
                 setListTypeLabelsAndValues(
-                    listTypes.map((listType) =>
+                    LIST_TYPES_ARRAY.map((listType) =>
                         clientData.default_list === listType
                             ? [capitaliseWords(listType) + " (default)", listType]
                             : [capitaliseWords(listType), listType]

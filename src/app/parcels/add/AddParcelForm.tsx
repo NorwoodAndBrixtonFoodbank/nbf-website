@@ -15,7 +15,7 @@ import {
     fetchClient,
     fetchPackingSlotsInfo,
     getActiveCollectionCentres,
-    listTypes,
+    LIST_TYPES_ARRAY,
 } from "@/common/fetch";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import supabase from "@/supabaseClient";
@@ -95,7 +95,7 @@ const AddParcels = ({ clientId }: AddParcelProps): React.ReactElement => {
             }
             initialParcelFields.listType = clientData.default_list;
             setListTypeLabelsAndValues(
-                listTypes.map((listType) =>
+                LIST_TYPES_ARRAY.map((listType) =>
                     clientData.default_list === listType
                         ? [capitaliseWords(listType) + " (default)", listType]
                         : [capitaliseWords(listType), listType]

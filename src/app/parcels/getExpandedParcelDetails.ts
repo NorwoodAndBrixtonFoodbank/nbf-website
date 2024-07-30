@@ -15,6 +15,7 @@ import {
     convertDataToDataForDataViewer,
 } from "@/components/DataViewer/DataViewer";
 import { formatEventName } from "./format";
+import { ListType } from "@/common/fetch";
 
 type FetchExpandedParcelDetailsResult =
     | {
@@ -46,6 +47,7 @@ const getExpandedParcelDetails = async (
         packing_date,
         created_at,
         collection_datetime,
+        list_type,
         packing_slot: packing_slots (
             name
          ),
@@ -120,6 +122,7 @@ const getExpandedParcelDetails = async (
                     isActive: true,
                     voucherNumber: rawParcelDetails.voucher_number ?? "",
                     fullName: client.full_name ?? "",
+                    listType: rawParcelDetails.list_type,
                     address: formatAddressFromClientDetails(client),
                     deliveryInstructions: client.delivery_instructions ?? "",
                     phoneNumber: client.phone_number ?? "",
@@ -148,6 +151,7 @@ const getExpandedParcelDetails = async (
                 address: formatAddressFromClientDetails(client),
                 deliveryInstructions: client.delivery_instructions,
                 phoneNumber: client.phone_number,
+                listType: rawParcelDetails.list_type,
                 household: formatHouseholdFromFamilyDetails(client.family),
                 adults: formatBreakdownOfAdultsFromFamilyDetails(client.family),
                 children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
@@ -186,6 +190,7 @@ interface ParcelDataForActiveClient extends ParcelDataIndependentOfClient {
     household: string;
     adults: string;
     children: string;
+    listType: ListType;
 }
 
 type ExpandedParcelData = ParcelDataForActiveClient | ParcelDataForInactiveClient;

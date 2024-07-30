@@ -4,7 +4,7 @@ import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { ParcelCardProps } from "../ParcelForm";
-import { ListTypeLabelsAndValues, ListName } from "@/common/fetch";
+import { ListTypeLabelsAndValues, ListType } from "@/common/fetch";
 
 interface ListTypeCardProps extends ParcelCardProps {
     listTypeLabelsAndValues: ListTypeLabelsAndValues;
@@ -17,12 +17,12 @@ const ListTypeCard: React.FC<ListTypeCardProps> = ({
     fields,
     listTypeLabelsAndValues,
 }) => {
-    const [clientDefaultList, setClientDefaultList] = useState<ListName | null>(null);
+    const [clientDefaultList, setClientDefaultList] = useState<ListType | null>(null);
 
     useEffect(() => {
         const defaultArray = listTypeLabelsAndValues.find(([label, _]) => {
             return label.includes("default");
-        }) as [string, ListName];
+        }) as [string, ListType];
         setClientDefaultList(defaultArray ? defaultArray[1] : null);
     }, [listTypeLabelsAndValues]);
 

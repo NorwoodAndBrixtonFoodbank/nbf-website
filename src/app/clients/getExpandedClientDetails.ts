@@ -8,7 +8,7 @@ import {
     getChildAgeUsingBirthYearAndMonth,
     isAdultUsingBirthYear,
 } from "@/common/getAgesOfFamily";
-import { ListName } from "@/common/fetch";
+import { ListType } from "@/common/fetch";
 
 const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
     const rawClientDetails = await getRawClientDetails(clientId);
@@ -88,7 +88,7 @@ export interface ExpandedClientData {
     extraInformation: string;
     notes: string | null;
     isActive: boolean;
-    defaultList: ListName;
+    defaultList: ListType;
 }
 
 export const rawDataToExpandedClientDetails = (client: RawClientDetails): ExpandedClientData => {
