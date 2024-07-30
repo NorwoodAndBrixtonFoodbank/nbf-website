@@ -9,6 +9,10 @@ export const WikiItemPositioner = styled.div`
     min-width: 100%;
 `;
 
+export const WikiItemDetailsTextBreaker = styled.div`
+    word-break: break-all;
+`;
+
 export const WikiUpdateDataButton = styled.button`
     border: none;
     background-color: rgba(0, 0, 0, 0);
