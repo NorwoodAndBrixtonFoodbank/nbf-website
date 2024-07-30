@@ -7,10 +7,10 @@ import {
 } from "@/app/clients/getExpandedClientDetails";
 import { formatDatetimeAsDate } from "@/common/format";
 import { DbParcelRow } from "@/databaseUtils";
-import convertParcelDbtoParcelRow, { processLastStatus } from "@/app/parcels/parcelsTable/convertParcelDBtoParcelRow";
+import convertParcelDbtoParcelRow, {
+    processLastStatus,
+} from "@/app/parcels/parcelsTable/convertParcelDBtoParcelRow";
 import { CongestionChargeDetails, ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
-import React from "react";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { expect, it } from "@jest/globals";
 import "@testing-library/jest-dom/jest-globals";
 
@@ -177,9 +177,9 @@ describe("Parcels Page", () => {
                 formatHouseholdFromFamilyDetails([{ birth_year: 2008, gender: "female" }])
             ).toEqual("Single Occupant (1 adult)");
 
-            expect(formatHouseholdFromFamilyDetails([{ birth_year: 2009, gender: "male" }])).toEqual(
-                "Single Occupant (1 child)"
-            );
+            expect(
+                formatHouseholdFromFamilyDetails([{ birth_year: 2009, gender: "male" }])
+            ).toEqual("Single Occupant (1 child)");
         });
 
         it("formatBreakdownOfChildrenFromFamilyDetails()", () => {
@@ -191,14 +191,16 @@ describe("Parcels Page", () => {
                     { birth_year: 2020, birth_month: null, gender: "female" },
                     { birth_year: 2009, birth_month: null, gender: "other" },
                 ])
-            ).toEqual(`${currentYear-2019}-years-old male, ${currentYear-2020}-years-old female, ${currentYear-2009}-years-old other`);
+            ).toEqual(
+                `${currentYear - 2019}-years-old male, ${currentYear - 2020}-years-old female, ${currentYear - 2009}-years-old other`
+            );
 
             expect(
                 formatBreakdownOfChildrenFromFamilyDetails([
                     { birth_year: 1988, birth_month: null, gender: "female" },
                     { birth_year: 2009, birth_month: null, gender: "female" },
                 ])
-            ).toEqual(`${currentYear-2009}-years-old female`);
+            ).toEqual(`${currentYear - 2009}-years-old female`);
 
             expect(
                 formatBreakdownOfChildrenFromFamilyDetails([
@@ -230,6 +232,5 @@ describe("Parcels Page", () => {
                 },
             ]);
         });
-
     });
 });
