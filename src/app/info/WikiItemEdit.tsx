@@ -14,14 +14,16 @@ interface WikiItemEditProps {
     rowData: DbWikiRow;
     setRowData: (row?: DbWikiRow) => void;
     setIsInEditMode: (isInEditMode: boolean) => void;
-    sortedRows: DbWikiRow[];
+    appendNewRow: (newRow: DbWikiRow, index: number) => void;
+    removeRow: (row: DbWikiRow) => number;
 }
 
 const WikiItemEdit: React.FC<WikiItemEditProps> = ({
     rowData,
     setRowData,
     setIsInEditMode,
-    sortedRows,
+    appendNewRow,
+    removeRow,
 }) => {
     const deleteWikiItem = async (): Promise<void> => {
         const deleteResponse = (await supabase
@@ -31,10 +33,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
         if (deleteResponse.error) {
             logErrorReturnLogId("error deleting wiki row item", deleteResponse.error);
         }
-        const indexToRemove: number = sortedRows.findIndex(
-            (row) => row.wiki_key === rowData.wiki_key
-        );
-        sortedRows.splice(indexToRemove, 1);
+        removeRow(rowData);
         setRowData(undefined);
     };
 
@@ -67,11 +66,9 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                         row_order: rowData.row_order,
                         wiki_key: rowData.wiki_key,
                     };
+                    const index: number = removeRow(rowData);
                     setRowData(updatedRow);
-                    if (!rowData.title && !rowData.content) {
-                        sortedRows.splice(-1, 1);
-                    }
-                    sortedRows.push(updatedRow);
+                    appendNewRow(updatedRow, index);
                 }
             }
             setIsInEditMode(false);

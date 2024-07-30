@@ -8,10 +8,11 @@ import AdminManagerDependentView from "@/app/info/AdminManagerDependentView";
 
 interface EditProps {
     row?: DbWikiRow;
-    sortedRows: DbWikiRow[];
+    appendNewRow: (newRow: DbWikiRow, index: number) => void;
+    removeRow: (row: DbWikiRow) => number;
 }
 
-const EditModeDependentItem: React.FC<EditProps> = ({ row, sortedRows }) => {
+const EditModeDependentItem: React.FC<EditProps> = ({ row, appendNewRow, removeRow }) => {
     const [rowData, setrowData] = useState<DbWikiRow | undefined>(row);
     const [isInEditMode, setIsInEditMode] = useState<boolean>(false);
     return (
@@ -23,7 +24,8 @@ const EditModeDependentItem: React.FC<EditProps> = ({ row, sortedRows }) => {
                             rowData={rowData}
                             setRowData={setrowData}
                             setIsInEditMode={setIsInEditMode}
-                            sortedRows={sortedRows}
+                            appendNewRow={appendNewRow}
+                            removeRow={removeRow}
                         />
                     </AdminManagerDependentView>
                 ) : (

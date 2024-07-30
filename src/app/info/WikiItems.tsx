@@ -2,7 +2,7 @@
 
 import { DbWikiRow } from "@/databaseUtils";
 import { WikiItemPositioner } from "@/app/info/StyleComponents";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import EditModeDependentItem from "@/app/info/EditModeDependentItem";
 import AdminManagerDependentView from "@/app/info/AdminManagerDependentView";
 import AddWikiItemButton from "@/app/info/AddWikiItemButton";
@@ -13,7 +13,8 @@ interface WikiItemsProps {
 
 interface WikiItemProps {
     row: DbWikiRow;
-    sortedRows: DbWikiRow[];
+    appendNewRow: (newRow: DbWikiRow, index: number) => void;
+    removeRow: (row: DbWikiRow) => number;
 }
 
 interface ContentPart {
@@ -48,20 +49,20 @@ export const convertContentToElements = (rowContent: string): React.JSX.Element[
     });
 };
 
-const WikiItem: React.FC<WikiItemProps> = ({ row, sortedRows }) => {
+const WikiItem: React.FC<WikiItemProps> = ({ row, appendNewRow, removeRow }) => {
     return (
         <WikiItemPositioner>
-            <EditModeDependentItem row={row} sortedRows={sortedRows} />
+            <EditModeDependentItem row={row} appendNewRow={appendNewRow} removeRow={removeRow} />
         </WikiItemPositioner>
     );
 };
 
 const WikiItems: React.FC<WikiItemsProps> = ({ rows }) => {
-    const [sortedRows, setSortedRows] = React.useState<DbWikiRow[]>(
-        rows.slice().sort((r1: DbWikiRow, r2: DbWikiRow) => {
-            return r1.row_order > r2.row_order ? 1 : -1;
-        })
-    );
+    const sortedRows: DbWikiRow[] = rows.slice().sort((r1: DbWikiRow, r2: DbWikiRow) => {
+        return r1.row_order > r2.row_order ? 1 : -1;
+    });
+
+    const [displayRows, setDisplayRows] = React.useState<DbWikiRow[]>(sortedRows);
 
     const wikiItemsEndRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
@@ -70,15 +71,58 @@ const WikiItems: React.FC<WikiItemsProps> = ({ rows }) => {
                 behavior: "smooth",
             });
         }
-    }, [sortedRows]);
+    }, [displayRows]);
 
+    const [doesEmptyRowExist, setDoesEmptyRowExist] = useState<boolean>(false);
+
+    useMemo(() => {
+        setDoesEmptyRowExist(
+            displayRows.filter((row) => {
+                return !row.title && !row.content;
+            }).length !== 0
+        );
+    }, [displayRows]);
+
+    const appendNewRow = (newRow: DbWikiRow, index: number): void => {
+        if (index === -1) {
+            index = displayRows.length;
+        }
+
+        setDisplayRows((DisplayRows) => {
+            const temp = DisplayRows.slice();
+            temp.splice(index, 0, newRow);
+            return temp;
+        });
+    };
+
+    const removeRow = (row: DbWikiRow): number => {
+        const indexToRemove: number = displayRows.findIndex(
+            (sortedRow) => row.wiki_key === sortedRow.wiki_key
+        );
+        setDisplayRows((DisplayRows) => {
+            const temp = DisplayRows.slice();
+            temp.splice(indexToRemove, 1);
+            return temp;
+        });
+        return indexToRemove;
+    };
     return (
         <>
             <AdminManagerDependentView>
-                <AddWikiItemButton sortedRows={sortedRows} setSortedRows={setSortedRows} />
+                <AddWikiItemButton
+                    doesEmptyRowExist={doesEmptyRowExist}
+                    appendNewRow={appendNewRow}
+                />
             </AdminManagerDependentView>
-            {sortedRows.map((row: DbWikiRow) => {
-                return <WikiItem row={row} sortedRows={sortedRows} key={row.wiki_key} />;
+            {displayRows.map((row: DbWikiRow) => {
+                return (
+                    <WikiItem
+                        row={row}
+                        appendNewRow={appendNewRow}
+                        removeRow={removeRow}
+                        key={row.wiki_key}
+                    />
+                );
             })}
             <div ref={wikiItemsEndRef} />
         </>

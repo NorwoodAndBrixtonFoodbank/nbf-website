@@ -19,17 +19,16 @@ interface WikiRowQueryFailureType {
 export type WikiRowQueryType = WikiRowQuerySuccessType | WikiRowQueryFailureType;
 
 interface AddWikiItemButtonProps {
-    sortedRows: DbWikiRow[];
-    setSortedRows: (rows: DbWikiRow[]) => void;
+    doesEmptyRowExist: boolean;
+    appendNewRow: (newRow: DbWikiRow, index: number) => void;
 }
 
-const AddWikiItemButton: React.FC<AddWikiItemButtonProps> = ({ sortedRows, setSortedRows }) => {
+const AddWikiItemButton: React.FC<AddWikiItemButtonProps> = ({
+    doesEmptyRowExist,
+    appendNewRow,
+}) => {
     const addWikiItem = async (): Promise<void> => {
-        if (
-            sortedRows.filter((row) => {
-                return !row.title && !row.content;
-            }).length === 0
-        ) {
+        if (!doesEmptyRowExist) {
             const { data, error } = (await supabase
                 .from("wiki")
                 .insert({})
@@ -37,7 +36,7 @@ const AddWikiItemButton: React.FC<AddWikiItemButtonProps> = ({ sortedRows, setSo
                 .single()) as WikiRowQueryType;
             error
                 ? logErrorReturnLogId("error inserting and fetching new data", error)
-                : setSortedRows([...sortedRows, data]);
+                : appendNewRow(data, -1);
         }
     };
 
