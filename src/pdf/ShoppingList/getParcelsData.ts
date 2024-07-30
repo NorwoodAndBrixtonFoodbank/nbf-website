@@ -1,7 +1,6 @@
-import { FetchParcelError, fetchParcel } from "@/common/fetch";
+import { FetchParcelError, fetchParcel, ListType } from "@/common/fetch";
 import supabase from "@/supabaseClient";
 import { formatDateToDate } from "@/common/format";
-import { ListName } from "@/app/lists/ListDataview";
 
 export interface ParcelInfo {
     voucherNumber: string;
@@ -9,7 +8,7 @@ export interface ParcelInfo {
     packingSlot: string;
     collectionDate: string;
     collectionSite: string;
-    listType: ListName;
+    listType: ListType;
 }
 
 interface ParcelInfoAndClientId {
