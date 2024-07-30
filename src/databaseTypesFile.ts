@@ -713,18 +713,21 @@ export type Database = {
       wiki: {
         Row: {
           content: string
-          order: number
+          row_order: number
           title: string
+          wiki_key: string
         }
         Insert: {
           content?: string
-          order?: number
+          row_order?: number
           title?: string
+          wiki_key?: string
         }
         Update: {
           content?: string
-          order?: number
+          row_order?: number
           title?: string
+          wiki_key?: string
         }
         Relationships: []
       }
