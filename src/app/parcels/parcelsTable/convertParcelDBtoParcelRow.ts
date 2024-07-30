@@ -4,7 +4,7 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { DbParcelRow, ViewSchema } from "@/databaseUtils";
 import { parcelsPageDeletedClientDisplayName } from "./format";
 
-type ProcessParcelDataResult =
+export type ProcessParcelDataResult =
     | {
           parcelTableRows: ParcelsTableRow[];
           error: null;

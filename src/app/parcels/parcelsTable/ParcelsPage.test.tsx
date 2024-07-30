@@ -13,12 +13,13 @@ import convertParcelDbtoParcelRow, {
 import { CongestionChargeDetails, ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 import { expect, it } from "@jest/globals";
 import "@testing-library/jest-dom/jest-globals";
+import { ProcessParcelDataResult } from "@/app/parcels/parcelsTable/convertParcelDBtoParcelRow";
 
 jest.mock("@/supabaseClient", () => {
     return { default: jest.fn() };
 });
 
-const logID = "a2adb0ba-873e-506b-abd1-8cd1782923c8";
+const logID : string = "a2adb0ba-873e-506b-abd1-8cd1782923c8";
 jest.mock("@/logger/logger", () => ({
     logErrorReturnLogId: jest.fn(() => Promise.resolve(logID)),
 }));
@@ -60,10 +61,10 @@ const sampleCongestionChargeData: CongestionChargeDetails[] = [
 describe("Parcels Page", () => {
     describe("Backend Processing for Table Data", () => {
         it("Fields are set correctly", async () => {
-            const { parcelTableRows } = await convertParcelDbtoParcelRow(
+            const { parcelTableRows } : ProcessParcelDataResult = await convertParcelDbtoParcelRow(
                 sampleProcessingData,
                 sampleCongestionChargeData
-            );
+            ) 
 
             const expected: ParcelsTableRow[] = [
                 {
@@ -183,7 +184,7 @@ describe("Parcels Page", () => {
         });
 
         it("formatBreakdownOfChildrenFromFamilyDetails()", () => {
-            const currentYear = new Date().getFullYear();
+            const currentYear : number = new Date().getFullYear();
             expect(
                 formatBreakdownOfChildrenFromFamilyDetails([
                     { birth_year: 1988, birth_month: null, gender: "female" },
