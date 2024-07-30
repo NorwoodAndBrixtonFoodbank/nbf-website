@@ -56,7 +56,7 @@ import ListTypeCard from "./formSections/ListTypeCard";
 
 export interface ParcelFields extends Fields {
     clientId: string | null;
-    listType: ListType | undefined;
+    listType?: ListType;
     voucherNumber: string | null;
     packingDate: string | null;
     packingSlot: string | undefined;
