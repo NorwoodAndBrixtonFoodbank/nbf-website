@@ -23,7 +23,6 @@ jest.mock("@/app/parcels/ActionBar/Statuses", () => {
             <button data-testid="#status-button">Statuses</button>
             <div data-testid="#status-menu">
                 <button>Parcel Denied</button>
-                {/* Add more status options as needed */}
             </div>
         </div>
     ));
@@ -35,7 +34,6 @@ jest.mock("@/app/parcels/ActionBar/Actions", () => {
             <button data-testid="#action-button">Actions</button>
             <div data-testid="#action-menu">
                 <button>Download Shopping List</button>
-                {/* Add more status options as needed */}
             </div>
         </div>
     ));
@@ -151,6 +149,4 @@ describe("Parcels - Action and Status Bar", () => {
             expect(screen.getByText("Download Shopping List")).toBeInTheDocument();
         });
     });
-
-    // Can add more tests
 });

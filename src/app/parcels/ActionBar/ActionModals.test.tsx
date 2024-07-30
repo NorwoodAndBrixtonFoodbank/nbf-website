@@ -69,6 +69,4 @@ describe("Actions", () => {
         );
         expect(screen.queryByText("Test Content")).not.toBeInTheDocument();
     });
-
-    // Can add more tests
 });

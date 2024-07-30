@@ -115,6 +115,4 @@ describe("StatusesModal component", () => {
 
         expect(mockOnSubmit).toHaveBeenCalledWith(mockDate);
     });
-
-    // Can add more tests
 });
