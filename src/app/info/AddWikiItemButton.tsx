@@ -28,16 +28,17 @@ const AddWikiItemButton: React.FC<AddWikiItemButtonProps> = ({
     appendNewRow,
 }) => {
     const addWikiItem = async (): Promise<void> => {
-        if (!doesEmptyRowExist) {
-            const { data, error } = (await supabase
-                .from("wiki")
-                .insert({})
-                .select()
-                .single()) as WikiRowQueryType;
-            error
-                ? logErrorReturnLogId("error inserting and fetching new data", error)
-                : appendNewRow(data, -1);
+        if (doesEmptyRowExist) {
+            return;
         }
+        const { data, error } = (await supabase
+            .from("wiki")
+            .insert({})
+            .select()
+            .single()) as WikiRowQueryType;
+        error
+            ? logErrorReturnLogId("error inserting and fetching new data", error)
+            : appendNewRow(data, -1);
     };
 
     return (

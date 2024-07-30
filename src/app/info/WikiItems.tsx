@@ -2,7 +2,7 @@
 
 import { DbWikiRow } from "@/databaseUtils";
 import { WikiItemPositioner } from "@/app/info/StyleComponents";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import EditModeDependentItem from "@/app/info/EditModeDependentItem";
 import AdminManagerDependentView from "@/app/info/AdminManagerDependentView";
 import AddWikiItemButton from "@/app/info/AddWikiItemButton";
@@ -73,15 +73,10 @@ const WikiItems: React.FC<WikiItemsProps> = ({ rows }) => {
         }
     }, [displayRows]);
 
-    const [doesEmptyRowExist, setDoesEmptyRowExist] = useState<boolean>(false);
-
-    useMemo(() => {
-        setDoesEmptyRowExist(
-            displayRows.filter((row) => {
-                return !row.title && !row.content;
-            }).length !== 0
-        );
-    }, [displayRows]);
+    const doesEmptyRowExist: boolean = useMemo(
+        () => displayRows.some((row) => !row.title && !row.content),
+        [displayRows]
+    );
 
     const appendNewRow = (newRow: DbWikiRow, index: number): void => {
         if (index === -1) {

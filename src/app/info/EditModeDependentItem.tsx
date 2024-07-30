@@ -17,7 +17,7 @@ const EditModeDependentItem: React.FC<EditProps> = ({ row, appendNewRow, removeR
     const [isInEditMode, setIsInEditMode] = useState<boolean>(false);
     return (
         <>
-            {rowData !== undefined &&
+            {rowData &&
                 (isInEditMode || (rowData.title === "" && rowData.content === "") ? (
                     <AdminManagerDependentView>
                         <WikiItemEdit
