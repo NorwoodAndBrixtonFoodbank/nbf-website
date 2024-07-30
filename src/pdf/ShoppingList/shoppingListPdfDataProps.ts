@@ -83,6 +83,9 @@ export const prepareItemsListForHousehold = async (
     }
     const itemsList: Item[] = [];
     for (const row of listData) {
+        if (row.list_type !== listType) {
+            continue;
+        }
         const { data: listItemData, error: listItemError } = await getQuantityAndNotes(
             row,
             householdSize
@@ -90,11 +93,10 @@ export const prepareItemsListForHousehold = async (
         if (listItemError) {
             return { data: null, error: listItemError };
         }
-        row.list_type === listType &&
-            itemsList.push({
-                description: row.item_name,
-                ...listItemData,
-            });
+        itemsList.push({
+            description: row.item_name,
+            ...listItemData,
+        });
     }
     return { data: itemsList, error: null };
 };
