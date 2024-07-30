@@ -56,7 +56,7 @@ import ListTypeCard from "./formSections/ListTypeCard";
 
 export interface ParcelFields extends Fields {
     clientId: string | null;
-    listType: ListType | null;
+    listType: ListType | undefined;
     voucherNumber: string | null;
     packingDate: string | null;
     packingSlot: string | undefined;
@@ -82,7 +82,7 @@ export type ParcelCardProps = CardProps<ParcelFields, ParcelErrors>;
 
 export const initialParcelFields: ParcelFields = {
     clientId: null,
-    listType: null,
+    listType: undefined,
     voucherNumber: "",
     packingDate: null,
     packingSlot: "",
@@ -266,7 +266,7 @@ const ParcelForm: React.FC<ParcelFormProps> = ({
 
         const parcelRecord = {
             client_id: clientId || fields.clientId || "",
-            list_type: fields.listType as ListType,
+            list_type: fields.listType,
             packing_date: packingDate,
             packing_slot: fields.packingSlot,
             voucher_number: fields.voucherNumber,

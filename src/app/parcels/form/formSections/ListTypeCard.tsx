@@ -41,7 +41,7 @@ const ListTypeCard: React.FC<ListTypeCardProps> = ({
                 selectLabelId="list-type-select-label"
                 labelsAndValues={listTypeLabelsAndValues}
                 listTitle="List Type"
-                defaultValue={fields.listType ?? undefined}
+                defaultValue={fields.listType}
                 onChange={valueOnChangeDropdownList(fieldSetter, errorSetter, "listType")}
             />
             <ErrorText>{errorText(formErrors.listType)}</ErrorText>

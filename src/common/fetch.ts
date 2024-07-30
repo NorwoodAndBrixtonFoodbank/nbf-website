@@ -29,7 +29,7 @@ type UserProfileDataAndError =
 
 export interface ParcelWithCollectionCentreAndPackingSlot {
     client_id: string;
-    list_type: ListType | null;
+    list_type: ListType | undefined;
     collection_centre: CollectionCentre | null;
     collection_datetime: string | null;
     packing_date: string | null;
