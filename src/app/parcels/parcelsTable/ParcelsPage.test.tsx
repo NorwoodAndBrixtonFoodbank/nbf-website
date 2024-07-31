@@ -13,7 +13,6 @@ import convertParcelDbtoParcelRow, {
 } from "@/app/parcels/parcelsTable/convertParcelDBtoParcelRow";
 import { CongestionChargeDetails, ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 import { expect, it } from "@jest/globals";
-import "@testing-library/jest-dom/jest-globals";
 
 jest.mock("@/supabaseClient", () => {
     return { default: jest.fn() };
