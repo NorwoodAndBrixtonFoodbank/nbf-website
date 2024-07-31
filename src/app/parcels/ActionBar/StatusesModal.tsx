@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import Button from "@mui/material/Button/Button";
+import Button from "@mui/material/Button";
 import Modal from "@/components/Modal/Modal";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";

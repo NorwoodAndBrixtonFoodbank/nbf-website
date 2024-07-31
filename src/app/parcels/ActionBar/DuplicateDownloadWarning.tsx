@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Alert from "@mui/material/Alert/Alert";
+import Alert from "@mui/material/Alert";
 import styled from "styled-components";
 import { displayPostcodeForHomelessClient } from "@/common/format";
 
