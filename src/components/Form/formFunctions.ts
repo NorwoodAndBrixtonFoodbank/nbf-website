@@ -96,7 +96,9 @@ export const onChangeText = <SpecificFields extends Fields>(
     return (event) => {
         const input = event.target.value;
         const errorType = getErrorType(
-            (key === "telephoneNumber") || (key === "phoneNumber") ? input.replaceAll(/[\s-()]/g, "") : input,
+            key === "telephoneNumber" || key === "phoneNumber"
+                ? input.replaceAll(/[\s-()]/g, "")
+                : input,
             required,
             regex,
             additionalCondition
