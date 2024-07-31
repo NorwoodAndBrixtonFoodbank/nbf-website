@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Remove files irrelevant files that may cause TypeScript errors
+      - name: Remove irrelevant files that may cause TypeScript errors
         run:
           rm -f ./supabase/seed/seed.mts
 
@@ -28,7 +28,7 @@ jobs:
         run: npm run lint:ci
 
   component_tests:
-    name: Run component tests
+    name: Run Cypress component tests
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
@@ -47,15 +47,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Remove files irrelevant files that may cause TypeScript errors
+      - name: Remove irrelevant files that may cause TypeScript errors
         run:
           rm -f ./supabase/seed/seed.mts
 
       - name: Compile
         run: npm run build
 
-      - name: Run component tests
-        run: npm run test:component
+      - name: Run Cypress component tests
+        run: npm run cypress:component
 
       - name: Upload Screenshots
         uses: actions/upload-artifact@v3
@@ -74,7 +74,7 @@ jobs:
           retention-days: 1
 
   e2e_tests:
-    name: Run end-to-end tests
+    name: Run Cypress end-to-end tests
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
@@ -105,15 +105,15 @@ jobs:
       - name: Create bucket for the local Supabase instance
         run: npx ts-node supabase/tools/createStorage.ts
 
-      - name: Remove files irrelevant files that may cause TypeScript errors
+      - name: Remove irrelevant files that may cause TypeScript errors
         run:
           rm -f ./supabase/seed/seed.mts
 
       - name: Compile
         run: npm run build
 
-      - name: Run e2e tests
-        run: npm run test:e2e
+      - name: Run Cypress e2e tests
+        run: npm run cypress:e2e
 
       - name: Upload Screenshots
         uses: actions/upload-artifact@v3
@@ -130,3 +130,19 @@ jobs:
           name: videos
           path: cypress/videos
           retention-days: 1
+
+  jest_tests:
+    name: Run Jest tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+
+      - name: Install npm
+        uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        run: npm ci
+  
+      - name: Run jest tests
+        run: npm run jest:all

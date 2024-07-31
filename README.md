@@ -11,7 +11,8 @@ have been delivered to clients.
 * [NextJS](https://nextjs.org/docs) for full-stack application ('App Router')
 * [Styled Components](https://styled-components.com/docs) for CSS (CSS-in-JS)
 * [Material UI](https://mui.com/material-ui/getting-started/) for component library
-* [Cypress](https://docs.cypress.io/guides/overview/why-cypress) for both component unit tests and integration tests (may add Jest in the future!)
+* [Cypress](https://docs.cypress.io/guides/overview/why-cypress) for both component unit tests and integration tests
+* [Jest](https://jestjs.io/docs/getting-started) for component unit tests
 * [AWS Amplify](https://aws.amazon.com/amplify/) for hosting the frontend website
   * Amplify automatically watches the repo for changes and deploys from specific branches
 * [AWS CloudWatch](https://aws.amazon.com/cloudwatch/) for logging errors and warnings
@@ -85,10 +86,12 @@ failed to start docker container: Error response from daemon: Ports are not avai
   
 * `npm run build` to make an optimised build - you'll need to do this before running tests.
 
-* `npm run test` to run all tests. This will run both component and integration tests.
+* `npm run test` to run all tests. This will run Cypress component and integration and Jest component tests.
   * single out test suites with:
-    * `npm run test:component` for just component (unit) tests
-    * `npm run test:e2e` for just end-to-end tests
+    * `npm run test:component` for Cypress and Jest component (unit) tests
+    * `npm run test:e2e` for just Cypress end-to-end tests
+    * `npm run cypress:component` for just Cypress component tests
+    * `npm run jest:component` for just Jest component tests
     * `npm run test:coverage` for a full coverage report at the end
   * open the Cypress UI to see individual results with `npm run cypress:open`
 
