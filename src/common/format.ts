@@ -10,7 +10,8 @@ export const displayNameForDeletedClient = "Deleted Client";
 
 export const displayNameForNullDriverName = "Unknown Driver";
 
-export const phoneNumberRegex = /^([+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6})?$/;
+// Following characters excluded from regex as are removed before checking format matches: ( ) - \s
+export const phoneNumberRegex = /^([0][0-9]{9-12}|[+][0-9]{7,15})?$/;
 // Regex source: https://ihateregex.io/expr/phone/
 
 export const formatCamelCaseKey = (objectKey: string): string => {
