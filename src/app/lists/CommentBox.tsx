@@ -106,14 +106,16 @@ const CommentBox: React.FC<CommentProps> = ({ originalComment }) => {
         <Wrapper>
             <HeaderAndButtonContainer>
                 <h2>Comments</h2>
-                {hasUnsavedChanges && <ButtonContainer>
-                    <Button variant="outlined" onClick={() => setValue(originalComment)}>
-                        Cancel
-                    </Button>
-                    <Button variant="contained" onClick={onSubmit}>
-                        Save
-                    </Button>
-                </ButtonContainer>}
+                {hasUnsavedChanges && (
+                    <ButtonContainer>
+                        <Button variant="outlined" onClick={() => setValue(originalComment)}>
+                            Cancel
+                        </Button>
+                        <Button variant="contained" onClick={onSubmit}>
+                            Save
+                        </Button>
+                    </ButtonContainer>
+                )}
             </HeaderAndButtonContainer>
             <CommentBoxContainer>
                 <FreeFormTextInput
