@@ -39,6 +39,8 @@ import Title from "@/components/Title/Title";
 import ClientNotesCard from "@/app/clients/form/formSections/ClientNotes";
 import { getCurrentYear } from "@/common/date";
 import { youngestAdultBirthYear } from "@/app/clients/form/birthYearDropdown";
+import ListTypeCard from "./formSections/ListTypeCard";
+import { ListType } from "@/common/fetch";
 
 interface Props {
     initialFields: ClientFields;
@@ -60,6 +62,7 @@ export interface ClientFields extends Fields {
     numberOfAdults: number;
     children: Person[];
     numberOfChildren: number;
+    listType: ListType | null;
     dietaryRequirements: BooleanGroup;
     feminineProducts: BooleanGroup;
     babyProducts: boolean | null;
@@ -81,6 +84,7 @@ export interface ClientErrors extends FormErrors<ClientFields> {
     addressPostcode: Errors;
     numberOfAdults: Errors;
     numberOfChildren: Errors;
+    listType: Errors;
     nappySize: Errors;
 }
 
@@ -94,6 +98,7 @@ const formSections = [
     AddressCard,
     NumberAdultsCard,
     NumberChildrenCard,
+    ListTypeCard,
     DietaryRequirementCard,
     FeminineProductCard,
     BabyProductCard,

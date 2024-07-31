@@ -4,6 +4,7 @@ import supabase from "@/supabaseClient";
 import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 import { ClientFields } from "./ClientForm";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
+import { ListType } from "@/common/fetch";
 
 type FamilyDatabaseInsertRecord = Omit<InsertSchema["families"], "family_id">;
 type ClientDatabaseInsertRecord = InsertSchema["clients"];
@@ -39,6 +40,7 @@ const formatClientRecord = (
         address_town: fields.addressTown,
         address_county: fields.addressCounty,
         address_postcode: fields.addressPostcode,
+        default_list: fields.listType as ListType,
         dietary_requirements: checkboxGroupToArray(fields.dietaryRequirements),
         feminine_products: checkboxGroupToArray(fields.feminineProducts),
         baby_food: fields.babyProducts,

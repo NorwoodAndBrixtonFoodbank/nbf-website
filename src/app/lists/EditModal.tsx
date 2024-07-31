@@ -3,7 +3,8 @@
 import Modal from "@/components/Modal/Modal";
 import React, { useState } from "react";
 import styled from "styled-components";
-import { ListName, SnackBarDiv } from "@/app/lists/ListDataview";
+import { SnackBarDiv } from "@/app/lists/ListDataview";
+import { ListType } from "@/common/fetch";
 import TextInput from "@/components/DataInput/FreeFormTextInput";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
@@ -17,7 +18,7 @@ import { capitaliseWords } from "@/common/format";
 interface Props {
     onClose: () => void;
     data: EditModalState;
-    currentList: ListName;
+    currentList: ListType;
 }
 
 // null => add, undefined => modal closed
@@ -135,7 +136,7 @@ const EditModal: React.FC<Props> = ({ data, onClose, currentList }) => {
         return { error: null };
     };
 
-    const onSubmit = async (currentList: ListName): Promise<void> => {
+    const onSubmit = async (currentList: ListType): Promise<void> => {
         if (toSubmit === null) {
             return;
         }

@@ -1,7 +1,7 @@
 import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import { ClientSummary, RequirementSummary } from "@/common/formatClientsData";
 import { HouseholdSummary } from "@/common/formatFamiliesData";
-import { fetchLists, FetchListsErrorType } from "@/common/fetch";
+import { fetchLists, FetchListsErrorType, ListType } from "@/common/fetch";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
@@ -74,7 +74,8 @@ const getQuantityAndNotes = async (
 };
 
 export const prepareItemsListForHousehold = async (
-    householdSize: number
+    householdSize: number,
+    listType: ListType
 ): Promise<PrepareItemsListResult> => {
     const { data: listData, error } = await fetchLists(supabase);
     if (error) {
@@ -82,6 +83,9 @@ export const prepareItemsListForHousehold = async (
     }
     const itemsList: Item[] = [];
     for (const row of listData) {
+        if (row.list_type !== listType) {
+            continue;
+        }
         const { data: listItemData, error: listItemError } = await getQuantityAndNotes(
             row,
             householdSize

@@ -1,4 +1,4 @@
-import { FetchParcelError, fetchParcel } from "@/common/fetch";
+import { FetchParcelError, fetchParcel, ListType } from "@/common/fetch";
 import supabase from "@/supabaseClient";
 import { formatDateToDate } from "@/common/format";
 
@@ -8,6 +8,7 @@ export interface ParcelInfo {
     packingSlot: string;
     collectionDate: string;
     collectionSite: string;
+    listType: ListType;
 }
 
 interface ParcelInfoAndClientId {
@@ -51,6 +52,7 @@ export const prepareParcelInfo = async (
         packingSlot: data.packing_slot?.name ?? "",
         collectionDate: formatDateToDateTime(data.collection_datetime),
         collectionSite: data.collection_centre?.name ?? "",
+        listType: data.list_type,
     };
     if (parcelInfo.collectionSite === "Delivery") {
         parcelInfo.collectionSite = "N/A - Delivery";
