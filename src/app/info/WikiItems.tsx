@@ -123,13 +123,13 @@ const WikiItems: React.FC<WikiItemsProps> = ({ rows }) => {
         return indexToRemove;
     };
 
-    const [isSwapping, setIsSwapping] = useState(false);
+    const [isSwapMode, setIsSwapMode] = useState(false);
 
     const swapRows = async (row1: DbWikiRow, upwards: boolean): Promise<void> => {
-        if (isSwapping) {
+        if (isSwapMode) {
             return;
         }
-        setIsSwapping(true);
+        setIsSwapMode(true);
 
         const rowIndex1 = displayRows.findIndex((row) => {
             return row.wiki_key == row1.wiki_key;
@@ -137,7 +137,7 @@ const WikiItems: React.FC<WikiItemsProps> = ({ rows }) => {
         const rowIndex2 = rowIndex1 + (upwards ? -1 : 1);
 
         if (rowIndex2 < 0 || rowIndex2 >= displayRows.length) {
-            setIsSwapping(false);
+            setIsSwapMode(false);
             return;
         }
 
@@ -179,7 +179,7 @@ const WikiItems: React.FC<WikiItemsProps> = ({ rows }) => {
                 content: { ...auditLog.content, newRow_order: row2.row_order },
             });
         }
-        setIsSwapping(false);
+        setIsSwapMode(false);
 
         reorderRows(row1, row2);
     };
