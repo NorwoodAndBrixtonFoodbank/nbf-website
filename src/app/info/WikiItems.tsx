@@ -9,8 +9,8 @@ import AddWikiItemButton from "@/app/info/AddWikiItemButton";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
-import { TextValueContainer } from "../admin/auditLogTable/auditLogModal/AuditLogModalRow";
-import { ErrorSecondaryText } from "../errorStylingandMessages";
+import { TextValueContainer } from "@/app/admin/auditLogTable/auditLogModal/AuditLogModalRow";
+import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 
 interface WikiItemsProps {
     rows: DbWikiRow[];
