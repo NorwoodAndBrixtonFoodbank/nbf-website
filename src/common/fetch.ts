@@ -1,4 +1,4 @@
-import { Schema } from "@/databaseUtils";
+import { DbWikiRow, Schema } from "@/databaseUtils";
 import { Supabase } from "@/supabaseUtils";
 import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 import { PostgrestError } from "@supabase/supabase-js";
@@ -375,3 +375,14 @@ export const fetchUserProfile = async (
 
     return { data: data, error: null };
 };
+
+interface WikiRowsQuerySuccessType {
+    data: DbWikiRow[];
+    error: null;
+}
+interface WikiRowsQueryFailureType {
+    data: null;
+    error: PostgrestError;
+}
+
+export type WikiRowsQueryType = WikiRowsQuerySuccessType | WikiRowsQueryFailureType;

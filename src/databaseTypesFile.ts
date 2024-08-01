@@ -28,6 +28,7 @@ export type Database = {
           status_order: string | null
           wasSuccess: boolean
           website_data: string | null
+          wiki_id: string | null
         }
         Insert: {
           action: string
@@ -47,6 +48,7 @@ export type Database = {
           status_order?: string | null
           wasSuccess: boolean
           website_data?: string | null
+          wiki_id?: string | null
         }
         Update: {
           action?: string
@@ -66,6 +68,7 @@ export type Database = {
           status_order?: string | null
           wasSuccess?: boolean
           website_data?: string | null
+          wiki_id?: string | null
         }
         Relationships: [
           {
@@ -172,6 +175,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "website_data"
             referencedColumns: ["name"]
+          },
+          {
+            foreignKeyName: "public_audit_log_wiki_id_fkey"
+            columns: ["wiki_id"]
+            isOneToOne: false
+            referencedRelation: "wiki"
+            referencedColumns: ["wiki_key"]
           },
         ]
       }
@@ -1013,6 +1023,13 @@ export type Database = {
         Args: {
           id1: string
           id2: string
+        }
+        Returns: undefined
+      }
+      swap_two_wiki_rows: {
+        Args: {
+          key1: string
+          key2: string
         }
         Returns: undefined
       }

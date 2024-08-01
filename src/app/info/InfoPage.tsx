@@ -1,23 +1,11 @@
 import React from "react";
 import WikiItems from "@/app/info/WikiItems";
-import { DbWikiRow } from "@/databaseUtils";
-import { PostgrestError } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/databaseTypesFile";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
-
-interface WikiRowsQuerySuccessType {
-    data: DbWikiRow[];
-    error: null;
-}
-interface WikiRowsQueryFailureType {
-    data: null;
-    error: PostgrestError;
-}
-
-export type WikiRowsQueryType = WikiRowsQuerySuccessType | WikiRowsQueryFailureType;
+import { WikiRowsQueryType } from "@/common/fetch";
 
 async function getWikiRows(): Promise<WikiRowsQueryType> {
     const cookieStore: ReadonlyRequestCookies = cookies();

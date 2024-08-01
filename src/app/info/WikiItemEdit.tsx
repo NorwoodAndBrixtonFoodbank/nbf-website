@@ -1,7 +1,12 @@
 "use client";
 
 import { DbWikiRow } from "@/databaseUtils";
-import { WikiEditModeButton, WikiItemAccordionSurface } from "@/app/info/StyleComponents";
+import {
+    ReorderArrowDiv,
+    WikiEditModeButton,
+    WikiItemAccordionSurface,
+    WikiUpdateDataButton,
+} from "@/app/info/StyleComponents";
 import { TextField } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -9,6 +14,8 @@ import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { WikiRowQueryType } from "@/app/info/AddWikiItemButton";
+import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
+import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 
 interface WikiItemEditProps {
     rowData: DbWikiRow;
@@ -16,6 +23,8 @@ interface WikiItemEditProps {
     setIsInEditMode: (isInEditMode: boolean) => void;
     appendNewRow: (newRow: DbWikiRow, index: number) => void;
     removeRow: (row: DbWikiRow) => number;
+    swapRows: (row1: DbWikiRow, upwards: boolean) => void;
+    setErrorMessage: (error: string | null) => void;
 }
 
 const WikiItemEdit: React.FC<WikiItemEditProps> = ({
@@ -24,6 +33,8 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
     setIsInEditMode,
     appendNewRow,
     removeRow,
+    swapRows,
+    setErrorMessage,
 }) => {
     const deleteWikiItem = async (): Promise<void> => {
         const deleteResponse = (await supabase
@@ -31,7 +42,11 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
             .delete()
             .match({ wiki_key: rowData.wiki_key })) as WikiRowQueryType;
         if (deleteResponse.error) {
-            logErrorReturnLogId("error deleting wiki row item", deleteResponse.error);
+            const logId = await logErrorReturnLogId(
+                "error deleting wiki row item",
+                deleteResponse.error
+            );
+            setErrorMessage(`Failed to delete wiki item. Log ID: ${logId}`);
         }
         removeRow(rowData);
         setRowData(undefined);
@@ -58,7 +73,11 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                     wiki_key: rowData.wiki_key,
                 })) as WikiRowQueryType;
                 if (updateResponse.error) {
-                    logErrorReturnLogId("error updating wiki row item", updateResponse.error);
+                    const logId = await logErrorReturnLogId(
+                        "error updating wiki row item",
+                        updateResponse.error
+                    );
+                    setErrorMessage(`Failed to update wiki item. Log ID: ${logId}`);
                 } else {
                     const updatedRow: DbWikiRow = {
                         title: newTitle,
@@ -88,6 +107,23 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
 
     return (
         <>
+            <ReorderArrowDiv>
+                <WikiUpdateDataButton
+                    onClick={() => {
+                        swapRows(rowData, true);
+                    }}
+                >
+                    <KeyboardDoubleArrowUpIcon />
+                </WikiUpdateDataButton>
+                <WikiUpdateDataButton
+                    onClick={() => {
+                        swapRows(rowData, false);
+                    }}
+                >
+                    <KeyboardDoubleArrowDownIcon />
+                </WikiUpdateDataButton>
+            </ReorderArrowDiv>
+
             <WikiEditModeButton onClick={cancelWikiItemEdit}>
                 <CancelIcon />
             </WikiEditModeButton>

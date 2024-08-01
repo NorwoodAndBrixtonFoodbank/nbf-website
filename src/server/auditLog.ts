@@ -22,6 +22,7 @@ export interface AuditLog {
     parcelId?: string;
     profileId?: string;
     websiteData?: string;
+    wikiId?: string;
 }
 
 export async function sendAuditLog(auditLogProps: AuditLog): Promise<void> {
@@ -47,6 +48,7 @@ export async function sendAuditLog(auditLogProps: AuditLog): Promise<void> {
         wasSuccess: auditLogProps.wasSuccess,
         log_id: auditLogProps.logId,
         website_data: auditLogProps.websiteData,
+        wiki_id: auditLogProps.wikiId,
     };
 
     const supabase = getSupabaseServerComponentClient();
