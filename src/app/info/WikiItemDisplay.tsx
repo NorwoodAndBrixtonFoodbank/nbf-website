@@ -2,25 +2,45 @@
 
 import { DbWikiRow } from "@/databaseUtils";
 import {
+    ReorderArrowDiv,
     WikiItemAccordionSurface,
     WikiItemDetailsTextBreaker,
     WikiUpdateDataButton,
 } from "@/app/info/StyleComponents";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { convertContentToElements } from "@/app/info/WikiItems";
+import { convertContentToElements, DirectionString } from "@/app/info/WikiItems";
 import AdminManagerDependentView from "@/app/info/AdminManagerDependentView";
 import EditIcon from "@mui/icons-material/Edit";
+import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
+import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 
 interface DefaultViewProps {
     rowData: DbWikiRow;
     openEditMode: () => void;
+    swapRows: (row1: DbWikiRow, direction: DirectionString) => void;
 }
 
-const WikiItemDisplay: React.FC<DefaultViewProps> = ({ rowData, openEditMode }) => {
+const WikiItemDisplay: React.FC<DefaultViewProps> = ({ rowData, openEditMode, swapRows }) => {
     return (
         <>
             <AdminManagerDependentView>
+                <ReorderArrowDiv>
+                    <WikiUpdateDataButton
+                        onClick={() => {
+                            swapRows(rowData, "up");
+                        }}
+                    >
+                        <KeyboardDoubleArrowUpIcon />
+                    </WikiUpdateDataButton>
+                    <WikiUpdateDataButton
+                        onClick={() => {
+                            swapRows(rowData, "down");
+                        }}
+                    >
+                        <KeyboardDoubleArrowDownIcon />
+                    </WikiUpdateDataButton>
+                </ReorderArrowDiv>
                 <WikiUpdateDataButton
                     onClick={() => {
                         openEditMode();

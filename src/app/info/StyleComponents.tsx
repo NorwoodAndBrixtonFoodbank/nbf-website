@@ -22,6 +22,14 @@ export const WikiUpdateDataButton = styled.button`
     }
 `;
 
+export const ReorderArrowDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    vertical-align: middle;
+`;
+
 export const StyledPaper = styled(Paper)`
     margin: 1rem;
     padding: 1rem;
