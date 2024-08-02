@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { DbWikiRow } from "@/databaseUtils";
 import {
     ReorderArrowDiv,
@@ -152,6 +153,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                     onClick={() => {
                         swapRows(rowData, "up");
                     }}
+                    data-testid={`swap-up ${rowData.row_order}`}
                 >
                     <KeyboardDoubleArrowUpIcon />
                 </WikiUpdateDataButton>
@@ -159,12 +161,16 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                     onClick={() => {
                         swapRows(rowData, "down");
                     }}
+                    data-testid={`swap-down ${rowData.row_order}`}
                 >
                     <KeyboardDoubleArrowDownIcon />
                 </WikiUpdateDataButton>
             </ReorderArrowDiv>
 
-            <WikiEditModeButton onClick={cancelWikiItemEdit}>
+            <WikiEditModeButton
+                onClick={cancelWikiItemEdit}
+                data-testid={`cancel ${rowData.row_order}`}
+            >
                 <CancelIcon />
             </WikiEditModeButton>
 
@@ -187,7 +193,10 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                     />
                 </div>
 
-                <WikiEditModeButton onClick={deleteWikiItemWithConfirmation}>
+                <WikiEditModeButton
+                    onClick={deleteWikiItemWithConfirmation}
+                    data-testid={`delete ${rowData.row_order}`}
+                >
                     <DeleteIcon />
                 </WikiEditModeButton>
                 <WikiEditModeButton
@@ -200,6 +209,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                         ) as HTMLInputElement;
                         updateWikiItem(title_input.value, content_input.value);
                     }}
+                    data-testid={`update ${rowData.row_order}`}
                 >
                     <SaveIcon />
                 </WikiEditModeButton>

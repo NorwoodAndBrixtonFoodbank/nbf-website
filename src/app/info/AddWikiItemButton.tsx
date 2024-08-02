@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { DbWikiRow } from "@/databaseUtils";
 import { ButtonMargin } from "@/app/info/StyleComponents";
 import { Button } from "@mui/material";

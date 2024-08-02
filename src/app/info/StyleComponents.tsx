@@ -2,6 +2,7 @@
 
 import { Paper } from "@mui/material";
 import styled from "styled-components";
+import React from "react";
 
 export const WikiItemPositioner = styled.div`
     display: flex;
