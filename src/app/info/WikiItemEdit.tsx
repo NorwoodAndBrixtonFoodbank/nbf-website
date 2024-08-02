@@ -17,6 +17,7 @@ import { WikiRowQueryType } from "@/app/info/AddWikiItemButton";
 import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
+import { DirectionString } from "@/app/info/WikiItems";
 
 interface WikiItemEditProps {
     rowData: DbWikiRow;
@@ -24,7 +25,7 @@ interface WikiItemEditProps {
     setIsInEditMode: (isInEditMode: boolean) => void;
     appendNewRow: (newRow: DbWikiRow, index: number) => void;
     removeRow: (row: DbWikiRow) => number;
-    swapRows: (row1: DbWikiRow, upwards: boolean) => void;
+    swapRows: (row1: DbWikiRow, direction: DirectionString) => void;
     setErrorMessage: (error: string | null) => void;
 }
 
@@ -67,9 +68,9 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                 ...auditLog,
                 wasSuccess: true,
             });
+            removeRow(rowData);
+            setRowData(undefined);
         }
-        removeRow(rowData);
-        setRowData(undefined);
     };
 
     const cancelWikiItemEdit = (): void => {
@@ -149,14 +150,14 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
             <ReorderArrowDiv>
                 <WikiUpdateDataButton
                     onClick={() => {
-                        swapRows(rowData, true);
+                        swapRows(rowData, "up");
                     }}
                 >
                     <KeyboardDoubleArrowUpIcon />
                 </WikiUpdateDataButton>
                 <WikiUpdateDataButton
                     onClick={() => {
-                        swapRows(rowData, false);
+                        swapRows(rowData, "down");
                     }}
                 >
                     <KeyboardDoubleArrowDownIcon />

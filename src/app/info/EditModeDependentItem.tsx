@@ -5,12 +5,13 @@ import { useState } from "react";
 import WikiItemDisplay from "@/app/info/WikiItemDisplay";
 import WikiItemEdit from "@/app/info/WikiItemEdit";
 import AdminManagerDependentView from "@/app/info/AdminManagerDependentView";
+import { DirectionString } from "@/app/info/WikiItems";
 
 interface EditProps {
     row?: DbWikiRow;
     appendNewRow: (newRow: DbWikiRow, index: number) => void;
     removeRow: (row: DbWikiRow) => number;
-    swapRows: (row1: DbWikiRow, upwards: boolean) => void;
+    swapRows: (row1: DbWikiRow, direction: DirectionString) => void;
     setErrorMessage: (error: string | null) => void;
 }
 

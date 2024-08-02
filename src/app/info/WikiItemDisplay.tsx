@@ -9,7 +9,7 @@ import {
 } from "@/app/info/StyleComponents";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { convertContentToElements } from "@/app/info/WikiItems";
+import { convertContentToElements, DirectionString } from "@/app/info/WikiItems";
 import AdminManagerDependentView from "@/app/info/AdminManagerDependentView";
 import EditIcon from "@mui/icons-material/Edit";
 import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
@@ -18,7 +18,7 @@ import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrow
 interface DefaultViewProps {
     rowData: DbWikiRow;
     openEditMode: () => void;
-    swapRows: (row1: DbWikiRow, upwards: boolean) => void;
+    swapRows: (row1: DbWikiRow, direction: DirectionString) => void;
 }
 
 const WikiItemDisplay: React.FC<DefaultViewProps> = ({ rowData, openEditMode, swapRows }) => {
@@ -28,14 +28,14 @@ const WikiItemDisplay: React.FC<DefaultViewProps> = ({ rowData, openEditMode, sw
                 <ReorderArrowDiv>
                     <WikiUpdateDataButton
                         onClick={() => {
-                            swapRows(rowData, true);
+                            swapRows(rowData, "up");
                         }}
                     >
                         <KeyboardDoubleArrowUpIcon />
                     </WikiUpdateDataButton>
                     <WikiUpdateDataButton
                         onClick={() => {
-                            swapRows(rowData, false);
+                            swapRows(rowData, "down");
                         }}
                     >
                         <KeyboardDoubleArrowDownIcon />

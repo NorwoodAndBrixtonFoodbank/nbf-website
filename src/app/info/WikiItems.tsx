@@ -2,7 +2,7 @@
 
 import { DbWikiRow } from "@/databaseUtils";
 import { WikiItemPositioner } from "@/app/info/StyleComponents";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import EditModeDependentItem from "@/app/info/EditModeDependentItem";
 import AdminManagerDependentView from "@/app/info/AdminManagerDependentView";
 import AddWikiItemButton from "@/app/info/AddWikiItemButton";
@@ -20,7 +20,7 @@ interface WikiItemProps {
     row: DbWikiRow;
     appendNewRow: (newRow: DbWikiRow, index: number) => void;
     removeRow: (row: DbWikiRow) => number;
-    swapRows: (row1: DbWikiRow, upwards: boolean) => void;
+    swapRows: (row1: DbWikiRow, direction: DirectionString) => void;
     setErrorMessage: (errorMessage: string | null) => void;
 }
 
@@ -29,6 +29,8 @@ interface ContentPart {
     key: string;
     href?: string;
 }
+
+export type DirectionString = "up" | "down";
 
 export const convertContentToElements = (rowContent: string): React.JSX.Element[] => {
     const rowContentParts = rowContent.split(/(\[.*\]\(.*\)|<.*>)/);
@@ -74,6 +76,33 @@ const WikiItem: React.FC<WikiItemProps> = ({
             />
         </WikiItemPositioner>
     );
+};
+
+const swapTwoRowsInDisplayRows = (
+    displayRows: DbWikiRow[],
+    row1: DbWikiRow,
+    row2: DbWikiRow
+): DbWikiRow[] => {
+    const wiki_keys = displayRows.map((displayRows) => displayRows.wiki_key);
+
+    const row1Index = wiki_keys.indexOf(row1.wiki_key);
+    const row2Index = wiki_keys.indexOf(row2.wiki_key);
+
+    const row1Item = displayRows[row1Index];
+    const row1Order = row1Item.row_order;
+
+    const row2Item = displayRows[row2Index];
+    const row2Order = row2Item.row_order;
+
+    row1Item.row_order = row2Order;
+    row2Item.row_order = row1Order;
+
+    const newDisplayRows = [...displayRows];
+
+    newDisplayRows[row1Index] = row2Item;
+    newDisplayRows[row2Index] = row1Item;
+
+    return newDisplayRows;
 };
 
 const WikiItems: React.FC<WikiItemsProps> = ({ rows }) => {
@@ -123,21 +152,13 @@ const WikiItems: React.FC<WikiItemsProps> = ({ rows }) => {
         return indexToRemove;
     };
 
-    const [isSwapMode, setIsSwapMode] = useState(false);
-
-    const swapRows = async (row1: DbWikiRow, upwards: boolean): Promise<void> => {
-        if (isSwapMode) {
-            return;
-        }
-        setIsSwapMode(true);
-
+    const swapRows = async (row1: DbWikiRow, direction: DirectionString): Promise<void> => {
         const rowIndex1 = displayRows.findIndex((row) => {
             return row.wiki_key == row1.wiki_key;
         });
-        const rowIndex2 = rowIndex1 + (upwards ? -1 : 1);
+        const rowIndex2 = rowIndex1 + (direction === "up" ? -1 : 1);
 
         if (rowIndex2 < 0 || rowIndex2 >= displayRows.length) {
-            setIsSwapMode(false);
             return;
         }
 
@@ -179,32 +200,16 @@ const WikiItems: React.FC<WikiItemsProps> = ({ rows }) => {
                 content: { ...auditLog.content, newRowOrder: row2.row_order },
             });
         }
-        setIsSwapMode(false);
 
-        reorderRows(row1, row2);
+        reorderDisplayRows(displayRows, row1, row2);
     };
 
-    const reorderRows = (row1: DbWikiRow, row2: DbWikiRow): void => {
-        const wiki_keys = displayRows.map((displayRows) => displayRows.wiki_key);
-
-        const row1Index = wiki_keys.indexOf(row1.wiki_key);
-        const row2Index = wiki_keys.indexOf(row2.wiki_key);
-
-        const row1Item = displayRows[row1Index];
-        const row1Order = row1Item.row_order;
-
-        const row2Item = displayRows[row2Index];
-        const row2Order = row2Item.row_order;
-
-        row1Item.row_order = row2Order;
-        row2Item.row_order = row1Order;
-
-        const newDisplayRows = [...displayRows];
-
-        newDisplayRows[row1Index] = row2Item;
-        newDisplayRows[row2Index] = row1Item;
-
-        setDisplayRows(newDisplayRows);
+    const reorderDisplayRows = (
+        displayRows: DbWikiRow[],
+        row1: DbWikiRow,
+        row2: DbWikiRow
+    ): void => {
+        setDisplayRows(swapTwoRowsInDisplayRows(displayRows, row1, row2));
     };
 
     return (
