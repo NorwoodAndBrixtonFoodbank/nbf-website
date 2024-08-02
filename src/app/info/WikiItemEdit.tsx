@@ -10,12 +10,13 @@ import {
 import { TextField } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CancelIcon from "@mui/icons-material/Cancel";
-import SaveAltIcon from "@mui/icons-material/SaveAlt";
+import SaveIcon from "@mui/icons-material/Save";
 import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { WikiRowQueryType } from "@/app/info/AddWikiItemButton";
 import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
+import { AuditLog, sendAuditLog } from "@/server/auditLog";
 
 interface WikiItemEditProps {
     rowData: DbWikiRow;
@@ -41,12 +42,31 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
             .from("wiki")
             .delete()
             .match({ wiki_key: rowData.wiki_key })) as WikiRowQueryType;
+
+        const auditLog = {
+            action: "delete a wiki item",
+            content: {
+                itemName: rowData.title,
+                itemPrimaryKey: rowData.wiki_key,
+            },
+        } as const satisfies Partial<AuditLog>;
+
         if (deleteResponse.error) {
             const logId = await logErrorReturnLogId(
                 "error deleting wiki row item",
                 deleteResponse.error
             );
             setErrorMessage(`Failed to delete wiki item. Log ID: ${logId}`);
+            void sendAuditLog({
+                ...auditLog,
+                wasSuccess: false,
+                logId: logId,
+            });
+        } else {
+            void sendAuditLog({
+                ...auditLog,
+                wasSuccess: true,
+            });
         }
         removeRow(rowData);
         setRowData(undefined);
@@ -72,12 +92,27 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                     content: newContent,
                     wiki_key: rowData.wiki_key,
                 })) as WikiRowQueryType;
+
+                const auditLog = {
+                    action: "edit a wiki item",
+                    wikiId: rowData.wiki_key,
+                    content: {
+                        itemTitle: newTitle,
+                        itemContent: newContent,
+                        rowOrder: rowData.row_order,
+                    },
+                } as const satisfies Partial<AuditLog>;
                 if (updateResponse.error) {
                     const logId = await logErrorReturnLogId(
                         "error updating wiki row item",
                         updateResponse.error
                     );
                     setErrorMessage(`Failed to update wiki item. Log ID: ${logId}`);
+                    void sendAuditLog({
+                        ...auditLog,
+                        wasSuccess: false,
+                        logId: logId,
+                    });
                 } else {
                     const updatedRow: DbWikiRow = {
                         title: newTitle,
@@ -88,6 +123,10 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                     const index: number = removeRow(rowData);
                     setRowData(updatedRow);
                     appendNewRow(updatedRow, index);
+                    void sendAuditLog({
+                        ...auditLog,
+                        wasSuccess: true,
+                    });
                 }
             }
             setIsInEditMode(false);
@@ -161,7 +200,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                         updateWikiItem(title_input.value, content_input.value);
                     }}
                 >
-                    <SaveAltIcon />
+                    <SaveIcon />
                 </WikiEditModeButton>
             </WikiItemAccordionSurface>
         </>

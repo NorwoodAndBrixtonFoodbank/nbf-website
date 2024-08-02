@@ -153,7 +153,7 @@ const WikiItems: React.FC<WikiItemsProps> = ({ rows }) => {
             wikiId: row1.wiki_key,
             content: {
                 itemName: row1.title,
-                oldRow_order: row1.row_order,
+                oldRowOrder: row1.row_order,
             },
         } as const satisfies Partial<AuditLog>;
 
@@ -176,7 +176,7 @@ const WikiItems: React.FC<WikiItemsProps> = ({ rows }) => {
             void sendAuditLog({
                 ...auditLog,
                 wasSuccess: true,
-                content: { ...auditLog.content, newRow_order: row2.row_order },
+                content: { ...auditLog.content, newRowOrder: row2.row_order },
             });
         }
         setIsSwapMode(false);
