@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { BatchGridDisplayRow } from "./BatchParcelDataGrid";
 
 const mockData: BatchGridDisplayRow[] = [
@@ -27,7 +28,7 @@ const mockData: BatchGridDisplayRow[] = [
         collectionInfo: "",
     },
     {
-        id: 1,
+        id: crypto.randomUUID(),
         rowName: 1,
         fullName: "John Doe",
         phoneNumber: "0123456789",
@@ -52,7 +53,7 @@ const mockData: BatchGridDisplayRow[] = [
         collectionInfo: "Test centre, date, slot",
     },
     {
-        id: 2,
+        id: crypto.randomUUID(),
         rowName: 2,
         fullName: "Jane Smiths",
         phoneNumber: "9876543210",

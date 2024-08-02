@@ -2,10 +2,11 @@
 
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { randomUUID } from "crypto";
 import React from "react";
 
 export interface BatchGridDisplayRow {
-    id: number;
+    id: string | 0;
     rowName: number;
     fullName: string;
     phoneNumber: string;
@@ -40,7 +41,7 @@ export const batchGridDisplayColumns: GridColDef<BatchGridDisplayRow[][number]>[
             if (params.row.id === 0 && params.field === "rowName") {
                 return <Button variant="contained">Apply Column</Button>;
             }
-            return params.row.id;
+            return params.row.rowName;
         },
     },
     {
@@ -184,7 +185,7 @@ interface BatchParcelDataGridProps {
 }
 
 export const defaultData: BatchGridDisplayRow[] = Array.from({ length: 2 }, (_, index) => ({
-    id: index,
+    id: crypto.randomUUID(),
     rowName: index,
     fullName: "",
     phoneNumber: "",
@@ -208,6 +209,7 @@ export const defaultData: BatchGridDisplayRow[] = Array.from({ length: 2 }, (_, 
     shippingMethod: "",
     collectionInfo: "",
 }));
+defaultData[0].id = 0;
 
 const BatchParcelDataGrid: React.FC<BatchParcelDataGridProps> = ({ rows }) => {
     return (
