@@ -4,9 +4,9 @@ import React from "react";
 import { DbWikiRow } from "@/databaseUtils";
 import { ButtonMargin } from "@/app/info/StyleComponents";
 import { Button } from "@mui/material";
-import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { PostgrestError } from "@supabase/supabase-js";
+import { insertSupabaseCall } from "./supabaseCall";
 
 interface WikiRowQuerySuccessType {
     data: DbWikiRow;
@@ -32,19 +32,17 @@ const AddWikiItemButton: React.FC<AddWikiItemButtonProps> = ({
         if (doesEmptyRowExist) {
             return;
         }
-        const { data, error } = (await supabase
-            .from("wiki")
-            .insert({})
-            .select()
-            .single()) as WikiRowQueryType;
-        error
-            ? logErrorReturnLogId("error inserting and fetching new data", error)
-            : appendNewRow(data, -1);
+
+        const insertResponse = await insertSupabaseCall();
+
+        insertResponse.error
+            ? logErrorReturnLogId("error inserting and fetching new data", insertResponse.error)
+            : appendNewRow(insertResponse.data, -1);
     };
 
     return (
         <ButtonMargin>
-            <Button variant="contained" onClick={addWikiItem}>
+            <Button variant="contained" onClick={addWikiItem} data-testid="#add">
                 + Add
             </Button>
         </ButtonMargin>

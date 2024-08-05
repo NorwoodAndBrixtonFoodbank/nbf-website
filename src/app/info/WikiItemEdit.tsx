@@ -12,13 +12,12 @@ import { TextField } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SaveIcon from "@mui/icons-material/Save";
-import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { WikiRowQueryType } from "@/app/info/AddWikiItemButton";
 import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { DirectionString } from "@/app/info/WikiItems";
+import { deleteSupabaseCall, updateSupabaseCall } from "./supabaseCall";
 
 interface WikiItemEditProps {
     rowData: DbWikiRow;
@@ -39,11 +38,11 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
     swapRows,
     setErrorMessage,
 }) => {
+    const [titleValue, setTitleValue] = React.useState(rowData.title);
+    const [contentValue, setContentValue] = React.useState(rowData.content);
+
     const deleteWikiItem = async (): Promise<void> => {
-        const deleteResponse = (await supabase
-            .from("wiki")
-            .delete()
-            .match({ wiki_key: rowData.wiki_key })) as WikiRowQueryType;
+        const deleteError = await deleteSupabaseCall(rowData.wiki_key);
 
         const auditLog = {
             action: "delete a wiki item",
@@ -53,11 +52,8 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
             },
         } as const satisfies Partial<AuditLog>;
 
-        if (deleteResponse.error) {
-            const logId = await logErrorReturnLogId(
-                "error deleting wiki row item",
-                deleteResponse.error
-            );
+        if (deleteError) {
+            const logId = await logErrorReturnLogId("error deleting wiki row item", deleteError);
             setErrorMessage(`Failed to delete wiki item. Log ID: ${logId}`);
             void sendAuditLog({
                 ...auditLog,
@@ -89,11 +85,11 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
         } else {
             const updateConfirmation: boolean = confirm("Confirm update of this item?");
             if (updateConfirmation) {
-                const updateResponse = (await supabase.from("wiki").upsert({
-                    title: newTitle,
-                    content: newContent,
-                    wiki_key: rowData.wiki_key,
-                })) as WikiRowQueryType;
+                const updateError = await updateSupabaseCall(
+                    newTitle,
+                    newContent,
+                    rowData.wiki_key
+                );
 
                 const auditLog = {
                     action: "edit a wiki item",
@@ -104,10 +100,10 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                         rowOrder: rowData.row_order,
                     },
                 } as const satisfies Partial<AuditLog>;
-                if (updateResponse.error) {
+                if (updateError) {
                     const logId = await logErrorReturnLogId(
                         "error updating wiki row item",
-                        updateResponse.error
+                        updateError
                     );
                     setErrorMessage(`Failed to update wiki item. Log ID: ${logId}`);
                     void sendAuditLog({
@@ -146,6 +142,14 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
         }
     };
 
+    const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        setTitleValue(event.target.value);
+    };
+
+    const handleContentChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        setContentValue(event.target.value);
+    };
+
     return (
         <>
             <ReorderArrowDiv>
@@ -179,19 +183,21 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                     id={`title_input_${rowData.wiki_key}`}
                     variant="outlined"
                     label="title"
-                    defaultValue={rowData.title}
+                    onChange={handleTitleChange}
+                    value={titleValue}
+                    inputProps={{ "data-testid": `title ${rowData.row_order}` }}
                 />
-                <div>
-                    <TextField
-                        id={`content_input_${rowData.wiki_key}`}
-                        label="Content"
-                        defaultValue={rowData.content}
-                        multiline
-                        rows={4}
-                        margin="normal"
-                        fullWidth={true}
-                    />
-                </div>
+                <TextField
+                    id={`content_input_${rowData.wiki_key}`}
+                    label="Content"
+                    value={contentValue}
+                    onChange={handleContentChange}
+                    multiline
+                    rows={4}
+                    margin="normal"
+                    fullWidth={true}
+                    inputProps={{ "data-testid": `content ${rowData.row_order}` }}
+                />
 
                 <WikiEditModeButton
                     onClick={deleteWikiItemWithConfirmation}
