@@ -4,7 +4,7 @@ import { Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React from "react";
 
-interface BatchGridDisplayRow {
+export interface BatchGridDisplayRow {
     id: number;
     rowName: number;
     fullName: string;
@@ -30,7 +30,7 @@ interface BatchGridDisplayRow {
     collectionInfo: string;
 }
 
-const columns: GridColDef<BatchGridDisplayRow[][number]>[] = [
+export const batchGridDisplayColumns: GridColDef<BatchGridDisplayRow[][number]>[] = [
     {
         field: "rowName",
         headerName: "Row Name",
@@ -174,11 +174,16 @@ const columns: GridColDef<BatchGridDisplayRow[][number]>[] = [
     },
 ];
 
-const styledColumns: GridColDef<(typeof mockData)[number]>[] = columns.map((column) => {
-    return { ...column, headerAlign: "center", align: "center" };
-});
+const styledBatchGridDisplayColumns: GridColDef<BatchGridDisplayRow[][number]>[] =
+    batchGridDisplayColumns.map((column) => {
+        return { ...column, headerAlign: "center", align: "center" };
+    });
 
-const mockData: BatchGridDisplayRow[] = Array.from({ length: 6 }, (_, index) => ({
+interface BatchParcelDataGridProps {
+    rows: BatchGridDisplayRow[];
+}
+
+export const defaultData: BatchGridDisplayRow[] = Array.from({ length: 2 }, (_, index) => ({
     id: index,
     rowName: index,
     fullName: "",
@@ -204,40 +209,11 @@ const mockData: BatchGridDisplayRow[] = Array.from({ length: 6 }, (_, index) => 
     collectionInfo: "",
 }));
 
-mockData[1] = {
-    ...mockData[1],
-    fullName: "John Doe",
-    phoneNumber: "0123456789",
-    address: "123 Main Street, Anytown, USA",
-    adults: 3,
-    children: 1,
-    listType: "Hotel",
-    dietaryRequirements: "Vegetarian",
-    feminineProducts: "Yes, tampons",
-    babyProducts: "Yes, nappySize = 7",
-    petFood: "No",
-    otherItems: "No",
-    deliveryInstructions: "N/A",
-    extraInformation: "No",
-    attentionFlag: "No",
-    signpostingCall: "No",
-    notes: "No",
-    voucherNumber: "1234567890",
-    packingDate: "2022-01-01",
-    packingSlot: "AM",
-    shippingMethod: "Collection",
-    collectionInfo: "Test centre, date, slot",
-};
-
-interface BatchParcelDataGridProps {
-    rows?: BatchGridDisplayRow[];
-}
-
-const BatchParcelDataGrid: React.FC<BatchParcelDataGridProps> = ({ rows = mockData }) => {
+const BatchParcelDataGrid: React.FC<BatchParcelDataGridProps> = ({ rows }) => {
     return (
         <DataGrid
             rows={rows}
-            columns={styledColumns}
+            columns={styledBatchGridDisplayColumns}
             sx={{
                 "& .MuiDataGrid-cell": {
                     border: "1px solid",
