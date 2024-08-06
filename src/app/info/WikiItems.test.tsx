@@ -18,26 +18,6 @@ jest.mock("@/server/auditLog", () => ({
     sendAuditLog: jest.fn(),
 }));
 
-jest.mock("@/supabaseClient", async () => {
-    return {
-        default: jest.fn(() =>
-            Promise.resolve({
-                from: jest.fn(() =>
-                    Promise.resolve({
-                        upsert: jest.fn(() => Promise.resolve({ data: null, error: null })),
-                        delete: jest.fn(() =>
-                            Promise.resolve({
-                                match: jest.fn(() => Promise.resolve({ data: null, error: null })),
-                            })
-                        ),
-                    })
-                ),
-                rpc: jest.fn(),
-            })
-        ),
-    };
-});
-
 jest.mock("@/app/info/supabaseCall", () => ({
     reorderSupabaseCall: jest.fn(),
     deleteSupabaseCall: jest.fn(),
