@@ -1,4 +1,3 @@
-import { randomUUID } from "crypto";
 import { BatchGridDisplayRow } from "./BatchParcelDataGrid";
 
 const mockData: BatchGridDisplayRow[] = [

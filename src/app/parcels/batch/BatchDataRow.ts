@@ -1,8 +1,6 @@
 import { ListType } from "@/common/fetch";
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { Person } from "@/components/Form/formFunctions";
-import { UUID } from "crypto";
-import { useReducer } from "react";
 
 interface Address {
     addressLine1: string;
@@ -29,7 +27,15 @@ interface CollectionInfo {
 }
 
 interface OverrideClient {
-    [key: string]: any;
+    [key: string]:
+        | string
+        | null
+        | Address
+        | AdultInfo
+        | ChildrenInfo
+        | ListType
+        | BooleanGroup
+        | boolean;
     phoneNumber: string | null;
     address: Address | null;
     adultInfo: AdultInfo | null;
@@ -49,7 +55,15 @@ interface OverrideClient {
 }
 
 interface BatchClient {
-    [key: string]: any;
+    [key: string]:
+        | string
+        | null
+        | Address
+        | AdultInfo
+        | ChildrenInfo
+        | ListType
+        | BooleanGroup
+        | boolean;
     fullName: string;
     phoneNumber: string;
     address: Address;
@@ -70,7 +84,7 @@ interface BatchClient {
 }
 
 interface OverrideParcel {
-    [key: string]: any;
+    [key: string]: string | null | CollectionInfo;
     voucherNumber: string | null;
     packingDate: string | null;
     packingSlot: string | null;
@@ -79,7 +93,7 @@ interface OverrideParcel {
 }
 
 interface BatchParcel {
-    [key: string]: any;
+    [key: string]: string | null | CollectionInfo;
     voucherNumber: string | null;
     packingDate: string;
     packingSlot: string;
@@ -94,7 +108,7 @@ interface OverrideData {
 
 interface BatchData {
     client: BatchClient;
-    clientReadOnly: boolean
+    clientReadOnly: boolean;
     parcel: BatchParcel | null;
 }
 
@@ -114,7 +128,7 @@ interface BatchTableDataState {
 }
 
 interface BatchActionType {
-    type: 'update_cell' | 'add_row' | 'delete_row' | 'override_column' | 'use_existing_client';
+    type: "update_cell" | "add_row" | "delete_row" | "override_column" | "use_existing_client";
     payload?: BatchActionPayload;
 }
 
@@ -125,84 +139,112 @@ interface BatchActionPayload {
     newOverrideRow?: OverrideDataRow;
 }
 
-interface FieldNameClient {client: keyof BatchClient, parcel: null};
-interface FieldNameParcel {client: null, parcel: keyof BatchParcel};
+interface FieldNameClient {
+    client: keyof BatchClient;
+    parcel: null;
+}
+interface FieldNameParcel {
+    client: null;
+    parcel: keyof BatchParcel;
+}
 type FieldName = FieldNameClient | FieldNameParcel;
 
 const getOverridenFields = (allFields: OverrideClient | OverrideParcel): string[] => {
     return Object.entries(allFields)
-                .filter(([_, value]) => value)
-                .reduce((acc, [key, _]) => {
-                    return [...acc, key];
-                }, [] as string[]);
-}
+        .filter(([_, value]) => value)
+        .reduce((acc, [key, _]) => {
+            return [...acc, key];
+        }, [] as string[]);
+};
 
-export const reducer = (state: BatchTableDataState, action: BatchActionType) : BatchTableDataState => {
+export const reducer = (
+    state: BatchTableDataState,
+    action: BatchActionType
+): BatchTableDataState => {
     switch (action.type) {
-        case 'update_cell':{
-            if(action.payload && action.payload.newRow) {
-                const {rowId, newRow} = action.payload;
-                const updatedRows: BatchDataRow[] = state.batchDataRows.map((row) => {return row.id === rowId ? newRow : row;})
+        case "update_cell": {
+            if (action.payload && action.payload.newRow) {
+                const { rowId, newRow } = action.payload;
+                const updatedRows: BatchDataRow[] = state.batchDataRows.map((row) => {
+                    return row.id === rowId ? newRow : row;
+                });
                 return {
                     ...state,
-                    batchDataRows: updatedRows
-                }
+                    batchDataRows: updatedRows,
+                };
             } else {
                 return state;
             }
-        };   
-        case 'add_row': {
-            return state.batchDataRows.length < 99 ? {
-                ...state,
-                batchDataRows: [...state.batchDataRows, {id: crypto.randomUUID(), clientId: null, data: null }]
-            } : state;
-        };
-        case 'delete_row': {
-            return action.payload?.rowId !== 0 ? {
-                ...state,
-                batchDataRows: state.batchDataRows.filter(row => row.id !== action.payload?.rowId)
-            } : state;
-        };
-        case 'override_column': {
+        }
+        case "add_row": {
+            return state.batchDataRows.length < 99
+                ? {
+                      ...state,
+                      batchDataRows: [
+                          ...state.batchDataRows,
+                          { id: crypto.randomUUID(), clientId: null, data: null },
+                      ],
+                  }
+                : state;
+        }
+        case "delete_row": {
+            return action.payload?.rowId !== 0
+                ? {
+                      ...state,
+                      batchDataRows: state.batchDataRows.filter(
+                          (row) => row.id !== action.payload?.rowId
+                      ),
+                  }
+                : state;
+        }
+        case "override_column": {
             if (action.payload?.newOverrideRow) {
-                const overriddenClientFields = getOverridenFields(action.payload?.newOverrideRow.data.client) 
-                const overriddenParcelFields = getOverridenFields(action.payload?.newOverrideRow.data.parcel)
-                const {newOverrideRow} = action.payload;
+                const overriddenClientFields = getOverridenFields(
+                    action.payload?.newOverrideRow.data.client
+                );
+                const overriddenParcelFields = getOverridenFields(
+                    action.payload?.newOverrideRow.data.parcel
+                );
+                const { newOverrideRow } = action.payload;
                 return {
                     ...state,
                     batchDataRows: state.batchDataRows.map((row) => {
-                        const newRow = {...row};
-                        if(newRow.data) {
+                        const newRow = { ...row };
+                        if (newRow.data) {
                             for (const field in newRow.data.client) {
-                                if(overriddenClientFields.includes(field)) {
+                                if (overriddenClientFields.includes(field)) {
                                     newRow.data.client[field] = newOverrideRow.data.client[field];
                                 }
                             }
                             for (const field in newRow.data.parcel) {
-                                if(overriddenParcelFields.includes(field)) {
+                                if (overriddenParcelFields.includes(field)) {
                                     newRow.data.parcel[field] = newOverrideRow.data.parcel[field];
                                 }
                             }
                         }
                         return newRow;
-                    })
-                }
-            }
-            
-        };
-        case 'use_existing_client': {
-            if(action.payload && action.payload.newRow) {
-                const {rowId, newRow} = action.payload;
-                const updatedRows: BatchDataRow[] = state.batchDataRows.map((row) => {return row.id === rowId ? newRow : row;})
-                return {
-                    ...state,
-                    batchDataRows: updatedRows
-                }
+                    }),
+                };
             } else {
                 return state;
             }
-        };
+        }
+        case "use_existing_client": {
+            if (action.payload && action.payload.newRow) {
+                const { rowId, newRow } = action.payload;
+                const updatedRows: BatchDataRow[] = state.batchDataRows.map((row) => {
+                    return row.id === rowId ? newRow : row;
+                });
+                return {
+                    ...state,
+                    batchDataRows: updatedRows,
+                };
+            } else {
+                return state;
+            }
+        }
+        default: {
+            return state;
+        }
     }
-}
-
-
+};
