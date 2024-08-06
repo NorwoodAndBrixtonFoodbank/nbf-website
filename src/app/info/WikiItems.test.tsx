@@ -96,9 +96,9 @@ describe("Wiki items component", () => {
                 name: "+ Add",
             })
         );
-        expect(screen.getByTestId("edit 1"));
-        expect(screen.getByTestId("swap-up 1"));
-        expect(screen.getByTestId("swap-down 2"));
+        expect(screen.getByTestId("#edit-1"));
+        expect(screen.getByTestId("#swap-up-1"));
+        expect(screen.getByTestId("#swap-down-2"));
     });
 
     it("has edit button for manager users, and on click, has update and delete buttons", () => {
@@ -109,12 +109,12 @@ describe("Wiki items component", () => {
                 </RoleUpdateContext.Provider>
             </StyleManager>
         );
-        fireEvent.click(screen.getByTestId("edit 1"));
-        expect(screen.getByTestId("cancel 1"));
-        expect(screen.getByTestId("update 1"));
-        expect(screen.getByTestId("delete 1"));
-        expect(screen.getByTestId("swap-up 1"));
-        expect(screen.getByTestId("swap-down 1"));
+        fireEvent.click(screen.getByTestId("#edit-1"));
+        expect(screen.getByTestId("#cancel-1"));
+        expect(screen.getByTestId("#update-1"));
+        expect(screen.getByTestId("#delete-1"));
+        expect(screen.getByTestId("#swap-up-1"));
+        expect(screen.getByTestId("#swap-down-1"));
     });
 
     it("does not render the add, reorder, or edit buttons for volunteers", () => {
@@ -130,9 +130,9 @@ describe("Wiki items component", () => {
                 name: "+ Add",
             })
         ).toBeNull();
-        expect(screen.queryByTestId("swap-up 1")).toBeNull();
-        expect(screen.queryByTestId("swap-down 2")).toBeNull();
-        expect(screen.queryByTestId("edit 1")).toBeNull();
+        expect(screen.queryByTestId("#swap-up-1")).toBeNull();
+        expect(screen.queryByTestId("#swap-down-2")).toBeNull();
+        expect(screen.queryByTestId("#edit-1")).toBeNull();
     });
 
     it("renders the wiki rows", () => {
@@ -169,7 +169,7 @@ describe("Wiki items component", () => {
                 </RoleUpdateContext.Provider>
             </StyleManager>
         );
-        await user.click(screen.getByTestId("swap-up 2"));
+        await user.click(screen.getByTestId("#swap-up-2"));
         expect(mockData[0].row_order).toBe(2);
         expect(mockData[1].row_order).toBe(1);
     });
@@ -184,8 +184,8 @@ describe("Wiki items component", () => {
                 </RoleUpdateContext.Provider>
             </StyleManager>
         );
-        await user.click(screen.getByTestId("edit 2"));
-        await user.click(screen.getByTestId("swap-up 2"));
+        await user.click(screen.getByTestId("#edit-2"));
+        await user.click(screen.getByTestId("#swap-up-2"));
         expect(mockData[0].row_order).toBe(2);
         expect(mockData[1].row_order).toBe(1);
     });
@@ -200,8 +200,8 @@ describe("Wiki items component", () => {
                 </RoleUpdateContext.Provider>
             </StyleManager>
         );
-        await user.click(screen.getByTestId("edit 1"));
-        await user.click(screen.getByTestId("delete 1"));
+        await user.click(screen.getByTestId("#edit-1"));
+        await user.click(screen.getByTestId("#delete-1"));
         expect(screen.queryByText("Test 1")).toBeNull();
     });
 
@@ -215,12 +215,12 @@ describe("Wiki items component", () => {
                 </RoleUpdateContext.Provider>
             </StyleManager>
         );
-        await user.click(screen.getByTestId("edit 1"));
-        const titleInput = screen.getByTestId("title 1");
+        await user.click(screen.getByTestId("#edit-1"));
+        const titleInput = screen.getByTestId("#title-1");
         fireEvent.change(titleInput, { target: { value: "Updated Test 1" } });
-        const contentInput = screen.getByTestId("content 1");
+        const contentInput = screen.getByTestId("#content-1");
         fireEvent.change(contentInput, { target: { value: "Updated Test content 1" } });
-        await user.click(screen.getByTestId("update 1"));
+        await user.click(screen.getByTestId("#update-1"));
         expect(screen.queryByText("Test 1")).toBeNull();
         expect(screen.getByText("Updated Test 1")).toBeInTheDocument();
         expect(screen.queryByText("Test content 1")).toBeNull();
@@ -238,11 +238,11 @@ describe("Wiki items component", () => {
             </StyleManager>
         );
         await user.click(screen.getByTestId("#add"));
-        const titleInput = screen.getByTestId("title 3");
+        const titleInput = screen.getByTestId("#title-3");
         fireEvent.change(titleInput, { target: { value: "Added test title" } });
-        const contentInput = screen.getByTestId("content 3");
+        const contentInput = screen.getByTestId("#content-3");
         fireEvent.change(contentInput, { target: { value: "Added test content" } });
-        await user.click(screen.getByTestId("update 3"));
+        await user.click(screen.getByTestId("#update-3"));
         expect(screen.getByText("Added test title")).toBeInTheDocument();
         expect(screen.getByText("Added test content")).toBeInTheDocument();
     });
@@ -257,12 +257,12 @@ describe("Wiki items component", () => {
                 </RoleUpdateContext.Provider>
             </StyleManager>
         );
-        await user.click(screen.getByTestId("edit 1"));
-        const titleInput = screen.getByTestId("title 1");
+        await user.click(screen.getByTestId("#edit-1"));
+        const titleInput = screen.getByTestId("#title-1");
         fireEvent.change(titleInput, { target: { value: "Updated Test 1" } });
-        const contentInput = screen.getByTestId("content 1");
+        const contentInput = screen.getByTestId("#content-1");
         fireEvent.change(contentInput, { target: { value: "Updated Test content 1" } });
-        await user.click(screen.getByTestId("cancel 1"));
+        await user.click(screen.getByTestId("#cancel-1"));
         expect(screen.queryByText("Updated Test 1")).toBeNull();
         expect(screen.getByText("Test 1")).toBeInTheDocument();
         expect(screen.queryByText("Updated Test content 1")).toBeNull();
@@ -280,8 +280,8 @@ describe("Wiki items component", () => {
             </StyleManager>
         );
         await user.click(screen.getByTestId("#add"));
-        await user.click(screen.getByTestId("update 3"));
-        expect(screen.queryByTestId("swap-up 3")).toBeNull();
+        await user.click(screen.getByTestId("#update-3"));
+        expect(screen.queryByTestId("#swap-up-3")).toBeNull();
     });
 
     it("does not add a second new item if one is already present", async () => {
@@ -296,6 +296,6 @@ describe("Wiki items component", () => {
         );
         await user.click(screen.getByTestId("#add"));
         await user.click(screen.getByTestId("#add"));
-        expect(screen.queryByTestId("swap-up 4")).toBeNull();
+        expect(screen.queryByTestId("#swap-up-4")).toBeNull();
     });
 });

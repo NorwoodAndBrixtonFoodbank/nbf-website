@@ -10,7 +10,7 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { TextValueContainer } from "@/app/admin/auditLogTable/auditLogModal/AuditLogModalRow";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-import { reorderSupabaseCall } from "./supabaseCall";
+import { reorderSupabaseCall } from "@/app/info/supabaseCall";
 
 interface WikiItemsProps {
     rows: DbWikiRow[];

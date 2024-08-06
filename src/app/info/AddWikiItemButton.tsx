@@ -6,7 +6,7 @@ import { ButtonMargin } from "@/app/info/StyleComponents";
 import { Button } from "@mui/material";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { PostgrestError } from "@supabase/supabase-js";
-import { insertSupabaseCall } from "./supabaseCall";
+import { insertSupabaseCall } from "@/app/info/supabaseCall";
 
 interface WikiRowQuerySuccessType {
     data: DbWikiRow;

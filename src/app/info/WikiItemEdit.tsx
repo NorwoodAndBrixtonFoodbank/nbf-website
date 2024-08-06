@@ -17,7 +17,7 @@ import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { DirectionString } from "@/app/info/WikiItems";
-import { deleteSupabaseCall, updateSupabaseCall } from "./supabaseCall";
+import { deleteSupabaseCall, updateSupabaseCall } from "@/app/info/supabaseCall";
 
 interface WikiItemEditProps {
     rowData: DbWikiRow;
@@ -157,7 +157,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                     onClick={() => {
                         swapRows(rowData, "up");
                     }}
-                    data-testid={`swap-up ${rowData.row_order}`}
+                    data-testid={`#swap-up-${rowData.row_order}`}
                 >
                     <KeyboardDoubleArrowUpIcon />
                 </WikiUpdateDataButton>
@@ -165,7 +165,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                     onClick={() => {
                         swapRows(rowData, "down");
                     }}
-                    data-testid={`swap-down ${rowData.row_order}`}
+                    data-testid={`#swap-down-${rowData.row_order}`}
                 >
                     <KeyboardDoubleArrowDownIcon />
                 </WikiUpdateDataButton>
@@ -173,7 +173,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
 
             <WikiEditModeButton
                 onClick={cancelWikiItemEdit}
-                data-testid={`cancel ${rowData.row_order}`}
+                data-testid={`#cancel-${rowData.row_order}`}
             >
                 <CancelIcon />
             </WikiEditModeButton>
@@ -185,7 +185,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                     label="title"
                     onChange={handleTitleChange}
                     value={titleValue}
-                    inputProps={{ "data-testid": `title ${rowData.row_order}` }}
+                    inputProps={{ "data-testid": `#title-${rowData.row_order}` }}
                 />
                 <TextField
                     id={`content_input_${rowData.wiki_key}`}
@@ -196,12 +196,12 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                     rows={4}
                     margin="normal"
                     fullWidth={true}
-                    inputProps={{ "data-testid": `content ${rowData.row_order}` }}
+                    inputProps={{ "data-testid": `#content-${rowData.row_order}` }}
                 />
 
                 <WikiEditModeButton
                     onClick={deleteWikiItemWithConfirmation}
-                    data-testid={`delete ${rowData.row_order}`}
+                    data-testid={`#delete-${rowData.row_order}`}
                 >
                     <DeleteIcon />
                 </WikiEditModeButton>
@@ -215,7 +215,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                         ) as HTMLInputElement;
                         updateWikiItem(title_input.value, content_input.value);
                     }}
-                    data-testid={`update ${rowData.row_order}`}
+                    data-testid={`#update-${rowData.row_order}`}
                 >
                     <SaveIcon />
                 </WikiEditModeButton>

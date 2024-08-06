@@ -1,6 +1,6 @@
 import supabase from "@/supabaseClient";
 import { PostgrestError } from "@supabase/supabase-js";
-import { WikiRowQueryType } from "./AddWikiItemButton";
+import { WikiRowQueryType } from "@/app/info/AddWikiItemButton";
 
 export async function reorderSupabaseCall(
     key1: string,
