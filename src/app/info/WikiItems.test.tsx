@@ -25,7 +25,7 @@ jest.mock("@/app/info/supabaseCall", () => ({
     insertSupabaseCall: jest.fn(() => ({
         data: {
             content: "",
-            row_order: 3,
+            row_order: 4,
             title: "",
             wiki_key: "9bc00a7c-e552-40e5-889b-e6ae2cb184f1",
         },
@@ -33,7 +33,7 @@ jest.mock("@/app/info/supabaseCall", () => ({
     })),
 }));
 
-const mRandomUUID = jest.fn().mockReturnValue("058049b5-7a7f-4f81-bf56-6dc9654e5a40");
+const mRandomUUID = jest.fn().mockReturnValue("058049b5-7a7f-4f81-bf56-6dc9654e4a40");
 Object.defineProperty(window, "crypto", {
     value: { randomUUID: mRandomUUID },
 });
@@ -53,6 +53,12 @@ describe("Wiki items component", () => {
                 content: "Test content 1",
                 wiki_key: "058049b5-7a7f-4f81-bf56-6dc9654e5a40",
                 row_order: 1,
+            },
+            {
+                title: "Test 3",
+                content: "Test content 3",
+                wiki_key: "9bc00a7c-e552-40e5-889b-e6ae2cb184g3",
+                row_order: 3,
             },
             {
                 title: "Test 2",
@@ -79,7 +85,44 @@ describe("Wiki items component", () => {
         expect(screen.getByTestId("#edit-1"));
         expect(screen.getByTestId("#swap-up-1"));
         expect(screen.getByTestId("#swap-down-2"));
+        expect(screen.getByTestId("#swap-down-3"));
     });
+
+    it("renders the add, edit, reorder buttons for managers in display mode", () => {
+        render(
+            <StyleManager>
+                <RoleUpdateContext.Provider value={{ role: "manager", setRole: jest.fn() }}>
+                    <WikiItems rows={mockData} />
+                </RoleUpdateContext.Provider>
+            </StyleManager>
+        );
+        expect(
+            screen.getByRole("button", {
+                name: "+ Add",
+            })
+        );
+        expect(screen.getByTestId("#edit-1"));
+        expect(screen.getByTestId("#swap-up-1"));
+        expect(screen.getByTestId("#swap-down-2"));
+        expect(screen.getByTestId("#swap-down-3"));
+    });
+
+    it("has edit button for admin users, and on click, has update and delete buttons", () => {
+        render(
+            <StyleManager>
+                <RoleUpdateContext.Provider value={{ role: "admin", setRole: jest.fn() }}>
+                    <WikiItems rows={mockData} />
+                </RoleUpdateContext.Provider>
+            </StyleManager>
+        );
+        fireEvent.click(screen.getByTestId("#edit-1"));
+        expect(screen.getByTestId("#cancel-1"));
+        expect(screen.getByTestId("#update-1"));
+        expect(screen.getByTestId("#delete-1"));
+        expect(screen.getByTestId("#swap-up-1"));
+        expect(screen.getByTestId("#swap-down-1"));
+    });
+
 
     it("has edit button for manager users, and on click, has update and delete buttons", () => {
         render(
@@ -115,31 +158,38 @@ describe("Wiki items component", () => {
         expect(screen.queryByTestId("#edit-1")).toBeNull();
     });
 
+    it("does not render the add, reorder, or edit buttons for staff", () => {
+        render(
+            <StyleManager>
+                <RoleUpdateContext.Provider value={{ role: "staff", setRole: jest.fn() }}>
+                    <WikiItems rows={mockData} />
+                </RoleUpdateContext.Provider>
+            </StyleManager>
+        );
+        expect(
+            screen.queryByRole("button", {
+                name: "+ Add",
+            })
+        ).toBeNull();
+        expect(screen.queryByTestId("#swap-up-1")).toBeNull();
+        expect(screen.queryByTestId("#swap-down-2")).toBeNull();
+        expect(screen.queryByTestId("#edit-1")).toBeNull();
+    });
+
     it("renders the wiki rows", () => {
         render(
             <StyleManager>
-                <RoleUpdateContext.Provider value={{ role: "admin", setRole: jest.fn() }}>
+                <RoleUpdateContext.Provider value={{ role: "volunteer", setRole: jest.fn() }}>
                     <WikiItems rows={mockData} />
                 </RoleUpdateContext.Provider>
             </StyleManager>
         );
         expect(screen.getByText("Test 1")).toBeInTheDocument();
         expect(screen.getByText("Test 2")).toBeInTheDocument();
+        expect(screen.getByText("Test 3")).toBeInTheDocument();
     });
 
-    it("opens a wiki item when clicked", () => {
-        render(
-            <StyleManager>
-                <RoleUpdateContext.Provider value={{ role: "admin", setRole: jest.fn() }}>
-                    <WikiItems rows={mockData} />
-                </RoleUpdateContext.Provider>
-            </StyleManager>
-        );
-        fireEvent.click(screen.getByText("Test 1"));
-        expect(screen.getByText("Test content 1")).toBeInTheDocument();
-    });
-
-    it("reorders the wiki items when reorder buttons are clicked in display mode", async () => {
+    it("reorders the wiki items when reorder buttons are clicked in display mode for admins", async () => {
         const user = userEvent.setup();
 
         render(
@@ -151,10 +201,27 @@ describe("Wiki items component", () => {
         );
         await user.click(screen.getByTestId("#swap-up-2"));
         expect(mockData[0].row_order).toBe(2);
-        expect(mockData[1].row_order).toBe(1);
+        expect(mockData[2].row_order).toBe(1);
+        expect(mockData[1].row_order).toBe(3);
     });
 
-    it("reorders the wiki items when reorder buttons are clicked in edit mode", async () => {
+    it("reorders the wiki items when reorder buttons are clicked in display mode for managers", async () => {
+        const user = userEvent.setup();
+
+        render(
+            <StyleManager>
+                <RoleUpdateContext.Provider value={{ role: "manager", setRole: jest.fn() }}>
+                    <WikiItems rows={mockData} />
+                </RoleUpdateContext.Provider>
+            </StyleManager>
+        );
+        await user.click(screen.getByTestId("#swap-up-2"));
+        expect(mockData[0].row_order).toBe(2);
+        expect(mockData[2].row_order).toBe(1);
+        expect(mockData[1].row_order).toBe(3);
+    });
+
+    it("reorders the wiki items when reorder buttons are clicked in edit mode for admins", async () => {
         const user = userEvent.setup();
 
         render(
@@ -167,10 +234,28 @@ describe("Wiki items component", () => {
         await user.click(screen.getByTestId("#edit-2"));
         await user.click(screen.getByTestId("#swap-up-2"));
         expect(mockData[0].row_order).toBe(2);
-        expect(mockData[1].row_order).toBe(1);
+        expect(mockData[2].row_order).toBe(1);
+        expect(mockData[1].row_order).toBe(3);
     });
 
-    it("deletes a wiki item when its delete button is clicked", async () => {
+    it("reorders the wiki items when reorder buttons are clicked in edit mode for managers", async () => {
+        const user = userEvent.setup();
+
+        render(
+            <StyleManager>
+                <RoleUpdateContext.Provider value={{ role: "manager", setRole: jest.fn() }}>
+                    <WikiItems rows={mockData} />
+                </RoleUpdateContext.Provider>
+            </StyleManager>
+        );
+        await user.click(screen.getByTestId("#edit-2"));
+        await user.click(screen.getByTestId("#swap-up-2"));
+        expect(mockData[0].row_order).toBe(2);
+        expect(mockData[2].row_order).toBe(1);
+        expect(mockData[1].row_order).toBe(3);
+    });
+
+    it("deletes a wiki item when its delete button is clicked by an admin", async () => {
         const user = userEvent.setup();
 
         render(
@@ -184,8 +269,23 @@ describe("Wiki items component", () => {
         await user.click(screen.getByTestId("#delete-1"));
         expect(screen.queryByText("Test 1")).toBeNull();
     });
+    
+    it("deletes a wiki item when its delete button is clicked by a manager", async () => {
+        const user = userEvent.setup();
 
-    it("edits a wiki item when its edit button is clicked", async () => {
+        render(
+            <StyleManager>
+                <RoleUpdateContext.Provider value={{ role: "manager", setRole: jest.fn() }}>
+                    <WikiItems rows={mockData} />
+                </RoleUpdateContext.Provider>
+            </StyleManager>
+        );
+        await user.click(screen.getByTestId("#edit-1"));
+        await user.click(screen.getByTestId("#delete-1"));
+        expect(screen.queryByText("Test 1")).toBeNull();
+    });
+
+    it("edits a wiki item when its edit button is clicked by an admin", async () => {
         const user = userEvent.setup();
 
         render(
@@ -207,7 +307,29 @@ describe("Wiki items component", () => {
         expect(screen.getByText("Updated Test content 1")).toBeInTheDocument();
     });
 
-    it("adds an item when the add button is clicked", async () => {
+    it("edits a wiki item when its edit button is clicked by a manager", async () => {
+        const user = userEvent.setup();
+
+        render(
+            <StyleManager>
+                <RoleUpdateContext.Provider value={{ role: "manager", setRole: jest.fn() }}>
+                    <WikiItems rows={mockData} />
+                </RoleUpdateContext.Provider>
+            </StyleManager>
+        );
+        await user.click(screen.getByTestId("#edit-1"));
+        const titleInput = screen.getByTestId("#title-1");
+        fireEvent.change(titleInput, { target: { value: "Updated Test 1" } });
+        const contentInput = screen.getByTestId("#content-1");
+        fireEvent.change(contentInput, { target: { value: "Updated Test content 1" } });
+        await user.click(screen.getByTestId("#update-1"));
+        expect(screen.queryByText("Test 1")).toBeNull();
+        expect(screen.getByText("Updated Test 1")).toBeInTheDocument();
+        expect(screen.queryByText("Test content 1")).toBeNull();
+        expect(screen.getByText("Updated Test content 1")).toBeInTheDocument();
+    });
+
+    it("adds an item when the add button is clicked by an admin", async () => {
         const user = userEvent.setup();
 
         render(
@@ -218,16 +340,36 @@ describe("Wiki items component", () => {
             </StyleManager>
         );
         await user.click(screen.getByTestId("#add"));
-        const titleInput = screen.getByTestId("#title-3");
+        const titleInput = screen.getByTestId("#title-4");
         fireEvent.change(titleInput, { target: { value: "Added test title" } });
-        const contentInput = screen.getByTestId("#content-3");
+        const contentInput = screen.getByTestId("#content-4");
         fireEvent.change(contentInput, { target: { value: "Added test content" } });
-        await user.click(screen.getByTestId("#update-3"));
+        await user.click(screen.getByTestId("#update-4"));
         expect(screen.getByText("Added test title")).toBeInTheDocument();
         expect(screen.getByText("Added test content")).toBeInTheDocument();
     });
 
-    it("cancels an edit when the cancel button is clicked", async () => {
+    it("adds an item when the add button is clicked by a manager", async () => {
+        const user = userEvent.setup();
+
+        render(
+            <StyleManager>
+                <RoleUpdateContext.Provider value={{ role: "manager", setRole: jest.fn() }}>
+                    <WikiItems rows={mockData} />
+                </RoleUpdateContext.Provider>
+            </StyleManager>
+        );
+        await user.click(screen.getByTestId("#add"));
+        const titleInput = screen.getByTestId("#title-4");
+        fireEvent.change(titleInput, { target: { value: "Added test title" } });
+        const contentInput = screen.getByTestId("#content-4");
+        fireEvent.change(contentInput, { target: { value: "Added test content" } });
+        await user.click(screen.getByTestId("#update-4"));
+        expect(screen.getByText("Added test title")).toBeInTheDocument();
+        expect(screen.getByText("Added test content")).toBeInTheDocument();
+    });
+
+    it("cancels an edit when the cancel button is clicked by an admin", async () => {
         const user = userEvent.setup();
 
         render(
@@ -249,22 +391,29 @@ describe("Wiki items component", () => {
         expect(screen.getByText("Test content 1")).toBeInTheDocument();
     });
 
-    it("deletes an empty item when it is saved", async () => {
+    it("cancels an edit when the cancel button is clicked by a manager", async () => {
         const user = userEvent.setup();
 
         render(
             <StyleManager>
-                <RoleUpdateContext.Provider value={{ role: "admin", setRole: jest.fn() }}>
+                <RoleUpdateContext.Provider value={{ role: "manager", setRole: jest.fn() }}>
                     <WikiItems rows={mockData} />
                 </RoleUpdateContext.Provider>
             </StyleManager>
         );
-        await user.click(screen.getByTestId("#add"));
-        await user.click(screen.getByTestId("#update-3"));
-        expect(screen.queryByTestId("#swap-up-3")).toBeNull();
+        await user.click(screen.getByTestId("#edit-1"));
+        const titleInput = screen.getByTestId("#title-1");
+        fireEvent.change(titleInput, { target: { value: "Updated Test 1" } });
+        const contentInput = screen.getByTestId("#content-1");
+        fireEvent.change(contentInput, { target: { value: "Updated Test content 1" } });
+        await user.click(screen.getByTestId("#cancel-1"));
+        expect(screen.queryByText("Updated Test 1")).toBeNull();
+        expect(screen.getByText("Test 1")).toBeInTheDocument();
+        expect(screen.queryByText("Updated Test content 1")).toBeNull();
+        expect(screen.getByText("Test content 1")).toBeInTheDocument();
     });
 
-    it("does not add a second new item if one is already present", async () => {
+    it("deletes an empty item when it is saved by an admin", async () => {
         const user = userEvent.setup();
 
         render(
@@ -275,7 +424,57 @@ describe("Wiki items component", () => {
             </StyleManager>
         );
         await user.click(screen.getByTestId("#add"));
-        await user.click(screen.getByTestId("#add"));
+        expect(screen.getAllByTestId("#swap-up-4"));
+        await user.click(screen.getByTestId("#update-4"));
         expect(screen.queryByTestId("#swap-up-4")).toBeNull();
+    });
+
+    it("deletes an empty item when it is saved by a manager", async () => {
+        const user = userEvent.setup();
+
+        render(
+            <StyleManager>
+                <RoleUpdateContext.Provider value={{ role: "manager", setRole: jest.fn() }}>
+                    <WikiItems rows={mockData} />
+                </RoleUpdateContext.Provider>
+            </StyleManager>
+        );
+        await user.click(screen.getByTestId("#add"));
+        expect(screen.getAllByTestId("#swap-up-4"));
+        await user.click(screen.getByTestId("#update-4"));
+        expect(screen.queryByTestId("#swap-up-4")).toBeNull();
+    });
+
+
+    it("only adds one item when add is clicked, and does not add a second new item if one is already present for admins", async () => {
+        const user = userEvent.setup();
+
+        render(
+            <StyleManager>
+                <RoleUpdateContext.Provider value={{ role: "admin", setRole: jest.fn() }}>
+                    <WikiItems rows={mockData} />
+                </RoleUpdateContext.Provider>
+            </StyleManager>
+        );
+        await user.click(screen.getByTestId("#add"));
+        expect(screen.getAllByTestId("#swap-up-4").length).toBe(1);
+        await user.click(screen.getByTestId("#add"));
+        expect(screen.getAllByTestId("#swap-up-4").length).toBe(1);
+    });
+
+    it("only adds one item when add is clicked, and does not add a second new item if one is already present for managers", async () => {
+        const user = userEvent.setup();
+
+        render(
+            <StyleManager>
+                <RoleUpdateContext.Provider value={{ role: "manager", setRole: jest.fn() }}>
+                    <WikiItems rows={mockData} />
+                </RoleUpdateContext.Provider>
+            </StyleManager>
+        );
+        await user.click(screen.getByTestId("#add"));
+        expect(screen.getAllByTestId("#swap-up-4").length).toBe(1);
+        await user.click(screen.getByTestId("#add"));
+        expect(screen.getAllByTestId("#swap-up-4").length).toBe(1);
     });
 });
