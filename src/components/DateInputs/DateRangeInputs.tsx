@@ -40,7 +40,12 @@ const DateRangeInputs: React.FC<Props> = (props) => {
 
     const setFromValue = (fromValue: Dayjs | null): void => {
         setLocalFromValue(fromValue);
-        if (fromValue && localToValue && fromValue > localToValue && fromValue >= reasonableMinDate) {
+        if (
+            fromValue &&
+            localToValue &&
+            fromValue > localToValue &&
+            fromValue >= reasonableMinDate
+        ) {
             setLocalToValue(fromValue);
             setRangeIfPossible(fromValue, fromValue);
         } else {
