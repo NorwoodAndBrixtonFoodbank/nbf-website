@@ -5,7 +5,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React from "react";
 
 export interface BatchGridDisplayRow {
-    id: string | 0;
+    id: number;
     rowName: number;
     fullName: string;
     phoneNumber: string;
@@ -184,7 +184,7 @@ interface BatchParcelDataGridProps {
 }
 
 export const defaultData: BatchGridDisplayRow[] = Array.from({ length: 2 }, (_, index) => ({
-    id: crypto.randomUUID(),
+    id: index,
     rowName: index,
     fullName: "",
     phoneNumber: "",
@@ -208,7 +208,6 @@ export const defaultData: BatchGridDisplayRow[] = Array.from({ length: 2 }, (_, 
     shippingMethod: "",
     collectionInfo: "",
 }));
-defaultData[0].id = 0;
 
 const BatchParcelDataGrid: React.FC<BatchParcelDataGridProps> = ({ rows }) => {
     return (

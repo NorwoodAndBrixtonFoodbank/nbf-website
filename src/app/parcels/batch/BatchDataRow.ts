@@ -1,6 +1,9 @@
+import { AuditLogModalRowResponse } from "@/app/admin/auditLogTable/auditLogModal/types";
 import { ListType } from "@/common/fetch";
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { Person } from "@/components/Form/formFunctions";
+import { logErrorReturnLogId } from "@/logger/logger";
+import supabase from "@/supabaseClient";
 
 interface Address {
     addressLine1: string;
@@ -106,37 +109,36 @@ interface OverrideData {
     parcel: OverrideParcel;
 }
 
-interface BatchData {
+interface BatchEditData {
     client: BatchClient;
     clientReadOnly: boolean;
     parcel: BatchParcel | null;
 }
-
 interface OverrideDataRow {
     data: OverrideData;
 }
 
 interface BatchDataRow {
-    id: string;
+    id: number;
     clientId: string | null;
-    data: BatchData | null;
+    data: BatchEditData | null;
 }
 
-interface BatchTableDataState {
+export interface BatchTableDataState {
     overrideDataRow: OverrideDataRow;
     batchDataRows: BatchDataRow[];
 }
 
-interface BatchActionType {
+export interface BatchActionType {
     type: "update_cell" | "add_row" | "delete_row" | "override_column" | "use_existing_client";
     payload?: BatchActionPayload;
 }
 
 interface BatchActionPayload {
-    rowId?: string | 0;
-    fieldName?: FieldName;
+    rowId?: number;
     newRow?: BatchDataRow;
     newOverrideRow?: OverrideDataRow;
+    existingClientId?: string;
 }
 
 interface FieldNameClient {
@@ -157,10 +159,84 @@ const getOverridenFields = (allFields: OverrideClient | OverrideParcel): string[
         }, [] as string[]);
 };
 
-export const reducer = (
+function createBooleanGroupFromStrings(strings: string[] | null): BooleanGroup {
+    const result: BooleanGroup = {};
+    if (strings) {
+        strings.forEach((str) => {
+            result[str] = true;
+        });
+    }
+    return result;
+}
+
+const getNappySize = (info: string | null): string | null => {
+    if (info) {
+        const match = info.match(/Nappy Size:\s*(\d+)/);
+        if (match) {
+            return match[1];
+        }
+    }
+    return null;
+};
+
+const parseExtraInfo = (info: string | null): string | null => {
+    if (info) {
+        const match = info.match(/Nappy Size:\s*\d+,\s*Extra Information:\s*(.*)/);
+        if (match) {
+            return match[1];
+        }
+    }
+    return info;
+};
+
+const getExistingClientData = async (clientId: string): Promise<BatchClient | null> => {
+    const { data, error } = await supabase
+        .from("clients")
+        .select("*")
+        .eq("primary_key", clientId)
+        .single();
+    if (error) {
+        logErrorReturnLogId("Error with fetch: clients", { error: error });
+        return null;
+    } else {
+        return {
+            fullName: data.full_name ?? "",
+            phoneNumber: data.phone_number ?? "",
+            address: {
+                addressLine1: data.address_1 ?? "",
+                addressLine2: data?.address_2 ?? "",
+                addressTown: data?.address_town ?? "",
+                addressCounty: data?.address_county ?? "",
+                addressPostcode: data?.address_postcode ?? "",
+            },
+            adultInfo: {
+                adults: [],
+                numberOfAdults: 0,
+            },
+            childrenInfo: {
+                children: [],
+                numberOfChildren: 0,
+            },
+            listType: data.default_list ?? "standard",
+            dietaryRequirements: createBooleanGroupFromStrings(data.dietary_requirements),
+            feminineProducts: createBooleanGroupFromStrings(data.feminine_products),
+            babyProducts: data.baby_food,
+            nappySize: getNappySize(data.extra_information),
+            petFood: createBooleanGroupFromStrings(data.pet_food),
+            otherItems: createBooleanGroupFromStrings(data.other_items),
+            deliveryInstructions: data.delivery_instructions,
+            extraInformation: parseExtraInfo(data.extra_information),
+            attentionFlag: data.flagged_for_attention ?? false,
+            signpostingCall: data.signposting_call_required ?? false,
+            notes: data.notes,
+        };
+    }
+};
+
+export const reducer = async (
     state: BatchTableDataState,
     action: BatchActionType
-): BatchTableDataState => {
+): Promise<BatchTableDataState> => {
     switch (action.type) {
         case "update_cell": {
             if (action.payload && action.payload.newRow) {
@@ -182,7 +258,16 @@ export const reducer = (
                       ...state,
                       batchDataRows: [
                           ...state.batchDataRows,
-                          { id: crypto.randomUUID(), clientId: null, data: null },
+                          {
+                              id:
+                                  Math.max(
+                                      ...state.batchDataRows.map((row) => {
+                                          return row.id;
+                                      })
+                                  ) + 1,
+                              clientId: null,
+                              data: null,
+                          },
                       ],
                   }
                 : state;
@@ -230,18 +315,31 @@ export const reducer = (
             }
         }
         case "use_existing_client": {
-            if (action.payload && action.payload.newRow) {
-                const { rowId, newRow } = action.payload;
-                const updatedRows: BatchDataRow[] = state.batchDataRows.map((row) => {
-                    return row.id === rowId ? newRow : row;
-                });
-                return {
-                    ...state,
-                    batchDataRows: updatedRows,
-                };
-            } else {
-                return state;
+            if (action.payload) {
+                const { rowId, existingClientId } = action.payload;
+                if (rowId && existingClientId) {
+                    const existingClientBatchData = await getExistingClientData(existingClientId);
+                    if (existingClientBatchData) {
+                        const newRow: BatchDataRow = {
+                            id: rowId,
+                            clientId: existingClientId,
+                            data: {
+                                client: existingClientBatchData,
+                                clientReadOnly: true,
+                                parcel: null,
+                            },
+                        };
+                        const updatedRows: BatchDataRow[] = state.batchDataRows.map((row) => {
+                            return row.id === rowId ? newRow : row;
+                        });
+                        return {
+                            ...state,
+                            batchDataRows: updatedRows,
+                        };
+                    }
+                }
             }
+            return state;
         }
         default: {
             return state;
