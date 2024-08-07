@@ -38,29 +38,30 @@ const DateRangeInputs: React.FC<Props> = (props) => {
         }
     };
 
+    const shouldSetDatesToBeEqual = (from: Dayjs | null, to: Dayjs | null): boolean => {
+        return from !== null && to !== null && from > to && areDatesAfterMinDate(from, to);
+    };
+
     const setFromValue = (fromValue: Dayjs | null): void => {
         setLocalFromValue(fromValue);
-        if (
-            fromValue &&
-            localToValue &&
-            fromValue > localToValue &&
-            fromValue >= reasonableMinDate
-        ) {
-            setLocalToValue(fromValue);
-            setRangeIfPossible(fromValue, fromValue);
-        } else {
-            setRangeIfPossible(fromValue, localToValue);
+
+        if (!shouldSetDatesToBeEqual(fromValue, localToValue)) {
+            return setRangeIfPossible(fromValue, localToValue);
         }
+
+        setLocalToValue(fromValue);
+        setRangeIfPossible(fromValue, fromValue);
     };
 
     const setToValue = (toValue: Dayjs | null): void => {
         setLocalToValue(toValue);
-        if (toValue && localFromValue && toValue < localFromValue && toValue >= reasonableMinDate) {
-            setLocalFromValue(toValue);
-            setRangeIfPossible(toValue, toValue);
-        } else {
-            setRangeIfPossible(localFromValue, toValue);
+
+        if (!shouldSetDatesToBeEqual(localFromValue, toValue)) {
+            return setRangeIfPossible(localFromValue, toValue);
         }
+
+        setLocalFromValue(toValue);
+        setRangeIfPossible(toValue, toValue);
     };
 
     return (
