@@ -123,7 +123,6 @@ describe("Wiki items component", () => {
         expect(screen.getByTestId("#swap-down-1"));
     });
 
-
     it("has edit button for manager users, and on click, has update and delete buttons", () => {
         render(
             <StyleManager>
@@ -269,7 +268,7 @@ describe("Wiki items component", () => {
         await user.click(screen.getByTestId("#delete-1"));
         expect(screen.queryByText("Test 1")).toBeNull();
     });
-    
+
     it("deletes a wiki item when its delete button is clicked by a manager", async () => {
         const user = userEvent.setup();
 
@@ -444,7 +443,6 @@ describe("Wiki items component", () => {
         await user.click(screen.getByTestId("#update-4"));
         expect(screen.queryByTestId("#swap-up-4")).toBeNull();
     });
-
 
     it("only adds one item when add is clicked, and does not add a second new item if one is already present for admins", async () => {
         const user = userEvent.setup();
