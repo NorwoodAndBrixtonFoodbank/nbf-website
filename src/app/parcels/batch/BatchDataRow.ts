@@ -170,7 +170,7 @@ const getNappySize = (info: string | null): string | null => {
 
 const getChildrenAndAdults = async (
     familyId: string
-): Promise<{ adults: Person[]; children: Person[] }> => {
+): Promise<{ adults: Person[]; children: Person[] } | null> => {
     const { data, error } = await getFamilySupabaseCall(familyId);
 
     const adults: Person[] = [];
@@ -181,7 +181,7 @@ const getChildrenAndAdults = async (
 
     if (error) {
         logErrorReturnLogId("Error with fetch: family_members", { error: error });
-        return { adults: [], children: [] };
+        return null;
     } else if (data) {
         data.forEach((person) => {
             const formattedPerson: Person = {
@@ -189,16 +189,19 @@ const getChildrenAndAdults = async (
                 birthYear: person.birth_year,
                 birthMonth: person.birth_month,
             };
-            if (!formattedPerson.birthMonth) {
-                currentYear - formattedPerson.birthYear >= 16
+
+            const yearsDiff = currentYear - formattedPerson.birthYear;
+
+            if (yearsDiff == 16) {
+                !formattedPerson.birthMonth
                     ? adults.push(formattedPerson)
-                    : children.push(formattedPerson);
+                    : currentMonth >= formattedPerson.birthMonth
+                      ? adults.push(formattedPerson)
+                      : children.push(formattedPerson);
+            } else if (yearsDiff < 16) {
+                children.push(formattedPerson);
             } else {
-                currentYear - formattedPerson.birthYear > 16 ||
-                (currentYear - formattedPerson.birthYear === 16 &&
-                    currentMonth >= formattedPerson.birthMonth)
-                    ? adults.push(formattedPerson)
-                    : children.push(formattedPerson);
+                adults.push(formattedPerson);
             }
         });
     } else {
@@ -225,7 +228,11 @@ const getExistingClientData = async (clientId: string): Promise<BatchClient | nu
         logErrorReturnLogId("Error with fetch: clients", { error: error });
         return null;
     } else if (data) {
-        const { adults, children } = await getChildrenAndAdults(data.family_id);
+        const ChildrenAndAdults = await getChildrenAndAdults(data.family_id);
+        if (!ChildrenAndAdults) {
+            return null;
+        }
+        const { adults, children } = ChildrenAndAdults;
         return {
             fullName: data.full_name ?? "",
             phoneNumber: data.phone_number ?? "",
