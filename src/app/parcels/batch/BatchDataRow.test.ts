@@ -1,7 +1,42 @@
-import { init } from "next/dist/compiled/webpack/webpack";
-import { BatchActionType, reducer } from "./BatchDataRow";
-import { mockTableDataState } from "./mockData";
+import { BatchActionType, reducer } from "@/app/parcels/batch/BatchDataRow";
+import {
+    mockExistingClientRow,
+    mockExistingClientRowWithNappySize,
+    mockExistingFamily,
+    mockExistingNappyFamily,
+    mockTableDataState,
+} from "@/app/parcels/batch/mockData";
 import { expect, it } from "@jest/globals";
+
+jest.mock("@/app/parcels/batch/supabaseCalls", () => ({
+    getClientSupabaseCall: jest.fn((clientId: string) =>
+        clientId === "dcb54bc0-b0d3-57fa-bf9b-f1c4da6931a9"
+            ? {
+                  data: mockExistingClientRow,
+                  error: null,
+              }
+            : {
+                  data: mockExistingClientRowWithNappySize,
+                  error: null,
+              }
+    ),
+    getFamilySupabaseCall: jest.fn((familyId: string) =>
+        familyId === "family-test-id"
+            ? {
+                  data: mockExistingFamily,
+                  error: null,
+              }
+            : {
+                  data: mockExistingNappyFamily,
+                  error: null,
+              }
+    ),
+}));
+
+const logID = "a2adb0ba-873e-506b-abd1-8cd1782923c8";
+jest.mock("@/logger/logger", () => ({
+    logErrorReturnLogId: jest.fn(() => Promise.resolve(logID)),
+}));
 
 describe("reducer", () => {
     it("should update a cell in the batch data", async () => {
@@ -135,5 +170,62 @@ describe("reducer", () => {
         );
     });
 
-    it("should autofill for an exisiting client", async () => {});
+    it("should autofill for an exisiting client and format result correctly", async () => {
+        const actionAddRow: BatchActionType = {
+            type: "add_row",
+        };
+
+        const lastRowEmptyState1 = await reducer(mockTableDataState, actionAddRow);
+
+        const actionUseExistingClient: BatchActionType = {
+            type: "use_existing_client",
+            payload: {
+                rowId: 3,
+                existingClientId: "dcb54bc0-b0d3-57fa-bf9b-f1c4da6931a9",
+            },
+        };
+        const existingClientState = await reducer(lastRowEmptyState1, actionUseExistingClient);
+        expect(existingClientState.batchDataRows[2].data?.client.fullName).toBe("Test Person");
+        expect(existingClientState.batchDataRows[2].data?.client.address).toStrictEqual({
+            addressLine1: "3454 Test St",
+            addressLine2: "",
+            addressTown: "Test Town",
+            addressCounty: "Test County",
+            addressPostcode: "TE5T 1NG",
+        });
+        expect(existingClientState.batchDataRows[2].data?.client.adultInfo).toStrictEqual({
+            adults: [
+                { gender: "male", birthYear: 1980, birthMonth: null },
+                { gender: "female", birthYear: 1985, birthMonth: null },
+                { gender: "female", birthYear: 2008, birthMonth: 7 },
+            ],
+            numberOfAdults: 3,
+        });
+
+        const lastRowEmptyState2 = await reducer(existingClientState, actionAddRow);
+
+        const actionUseExistingNappyClient: BatchActionType = {
+            type: "use_existing_client",
+            payload: {
+                rowId: 4,
+                existingClientId: "44d14896-357b-5e91-ab64-2ca95b6a2faa",
+            },
+        };
+
+        const existingNappyClientState = await reducer(
+            lastRowEmptyState2,
+            actionUseExistingNappyClient
+        );
+        expect(existingNappyClientState.batchDataRows[3].data?.client.fullName).toBe(
+            "Test Nappy Person"
+        );
+        expect(existingNappyClientState.batchDataRows[3].data?.client.nappySize).toBe("10");
+        expect(existingNappyClientState.batchDataRows[3].data?.client.extraInformation).toBe(
+            "I love nappies"
+        );
+        expect(existingNappyClientState.batchDataRows[3].data?.client.adultInfo).toStrictEqual({
+            adults: [{ gender: "male", birthYear: 1980, birthMonth: null }],
+            numberOfAdults: 1,
+        });
+    });
 });

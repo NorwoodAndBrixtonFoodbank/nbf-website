@@ -1,9 +1,8 @@
-import { AuditLogModalRowResponse } from "@/app/admin/auditLogTable/auditLogModal/types";
 import { ListType } from "@/common/fetch";
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { Person } from "@/components/Form/formFunctions";
 import { logErrorReturnLogId } from "@/logger/logger";
-import supabase from "@/supabaseClient";
+import { getFamilySupabaseCall, getClientSupabaseCall } from "@/app/parcels/batch/supabaseCalls";
 
 interface Address {
     addressLine1: string;
@@ -141,16 +140,6 @@ interface BatchActionPayload {
     existingClientId?: string;
 }
 
-interface FieldNameClient {
-    client: keyof BatchClient;
-    parcel: null;
-}
-interface FieldNameParcel {
-    client: null;
-    parcel: keyof BatchParcel;
-}
-type FieldName = FieldNameClient | FieldNameParcel;
-
 const getOverridenFields = (allFields: OverrideClient | OverrideParcel): string[] => {
     return Object.entries(allFields)
         .filter(([_, value]) => value)
@@ -179,6 +168,46 @@ const getNappySize = (info: string | null): string | null => {
     return null;
 };
 
+const getChildrenAndAdults = async (
+    familyId: string
+): Promise<{ adults: Person[]; children: Person[] }> => {
+    const { data, error } = await getFamilySupabaseCall(familyId);
+
+    const adults: Person[] = [];
+    const children: Person[] = [];
+
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth();
+
+    if (error) {
+        logErrorReturnLogId("Error with fetch: family_members", { error: error });
+        return { adults: [], children: [] };
+    } else if (data) {
+        data.forEach((person) => {
+            const formattedPerson: Person = {
+                gender: person.gender,
+                birthYear: person.birth_year,
+                birthMonth: person.birth_month,
+            };
+            if (!formattedPerson.birthMonth) {
+                currentYear - formattedPerson.birthYear >= 16
+                    ? adults.push(formattedPerson)
+                    : children.push(formattedPerson);
+            } else {
+                currentYear - formattedPerson.birthYear > 16 ||
+                (currentYear - formattedPerson.birthYear === 16 &&
+                    currentMonth >= formattedPerson.birthMonth)
+                    ? adults.push(formattedPerson)
+                    : children.push(formattedPerson);
+            }
+        });
+    } else {
+        return { adults: [], children: [] };
+    }
+
+    return { adults, children };
+};
+
 const parseExtraInfo = (info: string | null): string | null => {
     if (info) {
         const match = info.match(/Nappy Size:\s*\d+,\s*Extra Information:\s*(.*)/);
@@ -190,15 +219,13 @@ const parseExtraInfo = (info: string | null): string | null => {
 };
 
 const getExistingClientData = async (clientId: string): Promise<BatchClient | null> => {
-    const { data, error } = await supabase
-        .from("clients")
-        .select("*")
-        .eq("primary_key", clientId)
-        .single();
+    const { data, error } = await getClientSupabaseCall(clientId);
+
     if (error) {
         logErrorReturnLogId("Error with fetch: clients", { error: error });
         return null;
-    } else {
+    } else if (data) {
+        const { adults, children } = await getChildrenAndAdults(data.family_id);
         return {
             fullName: data.full_name ?? "",
             phoneNumber: data.phone_number ?? "",
@@ -210,14 +237,14 @@ const getExistingClientData = async (clientId: string): Promise<BatchClient | nu
                 addressPostcode: data?.address_postcode ?? "",
             },
             adultInfo: {
-                adults: [],
-                numberOfAdults: 0,
+                adults: adults,
+                numberOfAdults: adults.length,
             },
             childrenInfo: {
-                children: [],
-                numberOfChildren: 0,
+                children: children,
+                numberOfChildren: children.length,
             },
-            listType: data.default_list ?? "standard",
+            listType: data.default_list ?? "regular",
             dietaryRequirements: createBooleanGroupFromStrings(data.dietary_requirements),
             feminineProducts: createBooleanGroupFromStrings(data.feminine_products),
             babyProducts: data.baby_food,
@@ -230,6 +257,8 @@ const getExistingClientData = async (clientId: string): Promise<BatchClient | nu
             signpostingCall: data.signposting_call_required ?? false,
             notes: data.notes,
         };
+    } else {
+        return null;
     }
 };
 

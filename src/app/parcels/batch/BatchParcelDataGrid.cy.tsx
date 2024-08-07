@@ -2,7 +2,8 @@ import BatchParcelDataGrid, {
     BatchGridDisplayRow,
     batchGridDisplayColumns,
 } from "@/app/parcels/batch/BatchParcelDataGrid";
-import { mockDisplayData } from "./mockData";
+import { mockDisplayData } from "@/app/parcels/batch/mockData";
+
 describe("BatchParcelDataGrid", () => {
     const fieldNames: string[] = batchGridDisplayColumns.map((column) => column.field);
     const columnWidths = batchGridDisplayColumns.map((column) => column.width) as number[];
