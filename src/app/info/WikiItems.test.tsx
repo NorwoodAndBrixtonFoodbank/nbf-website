@@ -101,7 +101,7 @@ describe("Wiki items component", () => {
     );
 
     it.each(adminAndManagerRoles)(
-        "has edit button for admin and manager users, and on click, has update and delete buttons",
+        "has edit button for admin and manager users, and on click, has update, cancel, and delete buttons",
         ({ role }) => {
             render(
                 <StyleManager>
@@ -236,7 +236,7 @@ describe("Wiki items component", () => {
     );
 
     it.each(adminAndManagerRoles)(
-        "adds an item when the add button is clicked by an admin or a manager",
+        "adds an item with contents by an admin or a manager",
         async ({ role }) => {
             const user = userEvent.setup();
 
@@ -303,6 +303,25 @@ describe("Wiki items component", () => {
     );
 
     it.each(adminAndManagerRoles)(
+        "deletes an empty item when it is canceled by an admin or a manager",
+        async ({ role }) => {
+            const user = userEvent.setup();
+
+            render(
+                <StyleManager>
+                    <RoleUpdateContext.Provider value={{ role: role, setRole: jest.fn() }}>
+                        <WikiItems rows={mockData} />
+                    </RoleUpdateContext.Provider>
+                </StyleManager>
+            );
+            await user.click(screen.getByTestId("#add"));
+            expect(screen.getByTestId("#swap-up-4")).toBeVisible();
+            await user.click(screen.getByTestId("#cancel-4"));
+            expect(screen.queryByTestId("#swap-up-4")).not.toBeInTheDocument();
+        }
+    );
+
+    it.each(adminAndManagerRoles)(
         "only adds one item when add is clicked, and does not add a second new item if one is already present for admins and managers",
         async ({ role }) => {
             const user = userEvent.setup();
@@ -318,6 +337,47 @@ describe("Wiki items component", () => {
             expect(screen.getAllByTestId("#swap-up-4").length).toBe(1);
             await user.click(screen.getByTestId("#add"));
             expect(screen.getAllByTestId("#swap-up-4").length).toBe(1);
+        }
+    );
+
+    it.each(adminAndManagerRoles)(
+        "does not allow the user to reorder the first item up or the last item down for admins and managers",
+        async ({ role }) => {
+            const user = userEvent.setup();
+
+            render(
+                <StyleManager>
+                    <RoleUpdateContext.Provider value={{ role: role, setRole: jest.fn() }}>
+                        <WikiItems rows={mockData} />
+                    </RoleUpdateContext.Provider>
+                </StyleManager>
+            );
+            await user.click(screen.getByTestId("#swap-up-1"));
+            expect(mockData[0].row_order).toBe(1);
+            expect(mockData[1].row_order).toBe(3);
+            expect(mockData[2].row_order).toBe(2);
+            await user.click(screen.getByTestId("#swap-down-3"));
+            expect(mockData[0].row_order).toBe(1);
+            expect(mockData[1].row_order).toBe(3);
+            expect(mockData[2].row_order).toBe(2);
+        }
+    );
+
+    it.each(adminAndManagerRoles)(
+        "does not delete an item if the user does not confirm the deletion for admins and managers",
+        async ({ role }) => {
+            const user = userEvent.setup();
+            jest.spyOn(window, "confirm").mockImplementation(() => false);
+            render(
+                <StyleManager>
+                    <RoleUpdateContext.Provider value={{ role: role, setRole: jest.fn() }}>
+                        <WikiItems rows={mockData} />
+                    </RoleUpdateContext.Provider>
+                </StyleManager>
+            );
+            await user.click(screen.getByTestId("#edit-1"));
+            await user.click(screen.getByTestId("#delete-1"));
+            expect(screen.getByTestId("#title-1")).toBeInTheDocument();
         }
     );
 });
