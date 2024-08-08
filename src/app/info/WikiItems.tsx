@@ -10,7 +10,7 @@ import { logErrorReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { TextValueContainer } from "@/app/admin/auditLogTable/auditLogModal/AuditLogModalRow";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-import { reorderSupabaseCall } from "@/app/info/supabaseCall";
+import { reorderTwoItemsInWikiTable } from "@/app/info/supabaseHelpers";
 
 interface WikiItemsProps {
     rows: DbWikiRow[];
@@ -164,7 +164,7 @@ const WikiItems: React.FC<WikiItemsProps> = ({ rows }) => {
 
         const row2 = displayRows[rowIndex2];
 
-        const reorderError = await reorderSupabaseCall(row1.wiki_key, row2.wiki_key);
+        const reorderError = await reorderTwoItemsInWikiTable(row1.wiki_key, row2.wiki_key);
 
         const auditLog = {
             action: `move a wiki item ${row1.row_order <= row2.row_order ? "down" : "up"}`,

@@ -17,7 +17,7 @@ import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { DirectionString } from "@/app/info/WikiItems";
-import { deleteSupabaseCall, updateSupabaseCall } from "@/app/info/supabaseCall";
+import { deleteItemInWikiTable, updateItemInWikiTable } from "@/app/info/supabaseHelpers";
 
 interface WikiItemEditProps {
     rowData: DbWikiRow;
@@ -42,7 +42,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
     const [contentValue, setContentValue] = React.useState(rowData.content);
 
     const deleteWikiItem = async (): Promise<void> => {
-        const deleteError = await deleteSupabaseCall(rowData.wiki_key);
+        const deleteError = await deleteItemInWikiTable(rowData.wiki_key);
 
         const auditLog = {
             action: "delete a wiki item",
@@ -85,7 +85,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
         } else {
             const updateConfirmation: boolean = confirm("Confirm update of this item?");
             if (updateConfirmation) {
-                const updateError = await updateSupabaseCall(
+                const updateError = await updateItemInWikiTable(
                     newTitle,
                     newContent,
                     rowData.wiki_key

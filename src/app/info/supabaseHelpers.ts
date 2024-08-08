@@ -2,7 +2,7 @@ import supabase from "@/supabaseClient";
 import { PostgrestError } from "@supabase/supabase-js";
 import { WikiRowQueryType } from "@/app/info/AddWikiItemButton";
 
-export async function reorderSupabaseCall(
+export async function reorderTwoItemsInWikiTable(
     key1: string,
     key2: string
 ): Promise<PostgrestError | null> {
@@ -14,7 +14,7 @@ export async function reorderSupabaseCall(
     return error;
 }
 
-export async function deleteSupabaseCall(wiki_key: string): Promise<PostgrestError | null> {
+export async function deleteItemInWikiTable(wiki_key: string): Promise<PostgrestError | null> {
     const deleteResponse = (await supabase
         .from("wiki")
         .delete()
@@ -23,7 +23,7 @@ export async function deleteSupabaseCall(wiki_key: string): Promise<PostgrestErr
     return deleteResponse.error;
 }
 
-export async function updateSupabaseCall(
+export async function updateItemInWikiTable(
     newTitle: string,
     newContent: string,
     key: string
@@ -37,7 +37,7 @@ export async function updateSupabaseCall(
     return updateResponse.error;
 }
 
-export async function insertSupabaseCall(): Promise<WikiRowQueryType> {
+export async function createItemInWikiTable(): Promise<WikiRowQueryType> {
     const insertResponse = (await supabase
         .from("wiki")
         .insert({})
