@@ -3,7 +3,7 @@ import { GoTrueAdminApi } from "@supabase/gotrue-js";
 
 export function getSupabaseAdminAuthClient(): GoTrueAdminApi {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl) {
         throw new Error("Supabase URL is not specified");
