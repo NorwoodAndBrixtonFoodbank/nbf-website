@@ -21,12 +21,12 @@ const DateRangeInputs: React.FC<Props> = (props) => {
     const [localToValue, setLocalToValue] = useState<Dayjs | null>(props.range.to);
     const [hasErrorState, setHasErrorState] = useState<boolean>(false);
 
-    const isRangeValid = (from: Dayjs, to: Dayjs): boolean => {
-        return from >= reasonableMinDate && to >= reasonableMinDate && from <= to;
+    const areDatesAfterMinDate = (from: Dayjs, to: Dayjs): boolean => {
+        return from >= reasonableMinDate && to >= reasonableMinDate;
     };
 
     const setRangeIfPossible = (from: Dayjs | null, to: Dayjs | null): void => {
-        if (from && to && isRangeValid(from, to)) {
+        if (from && to && areDatesAfterMinDate(from, to)) {
             setHasErrorState(false);
 
             props.setRange({
@@ -38,14 +38,30 @@ const DateRangeInputs: React.FC<Props> = (props) => {
         }
     };
 
+    const shouldSetDatesToBeEqual = (from: Dayjs | null, to: Dayjs | null): boolean => {
+        return from !== null && to !== null && from > to && areDatesAfterMinDate(from, to);
+    };
+
     const setFromValue = (fromValue: Dayjs | null): void => {
         setLocalFromValue(fromValue);
-        setRangeIfPossible(fromValue, localToValue);
+
+        if (!shouldSetDatesToBeEqual(fromValue, localToValue)) {
+            return setRangeIfPossible(fromValue, localToValue);
+        }
+
+        setLocalToValue(fromValue);
+        setRangeIfPossible(fromValue, fromValue);
     };
 
     const setToValue = (toValue: Dayjs | null): void => {
         setLocalToValue(toValue);
-        setRangeIfPossible(localFromValue, toValue);
+
+        if (!shouldSetDatesToBeEqual(localFromValue, toValue)) {
+            return setRangeIfPossible(localFromValue, toValue);
+        }
+
+        setLocalFromValue(toValue);
+        setRangeIfPossible(toValue, toValue);
     };
 
     return (
