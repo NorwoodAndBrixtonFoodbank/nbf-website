@@ -1,5 +1,5 @@
 import { Schema } from "@/databaseUtils";
-import { BatchTableDataState } from "@/app/parcels/batch/BatchDataRow";
+import { BatchTableDataState } from "@/app/parcels/batch/BatchTypes";
 import { BatchGridDisplayRow } from "@/app/parcels/batch/BatchParcelDataGrid";
 
 export const mockDisplayData: BatchGridDisplayRow[] = [
@@ -191,6 +191,8 @@ export const mockTableDataState: BatchTableDataState = {
             },
         },
     ],
+    clientOverrides: [],
+    parcelOverrides: [],
 };
 
 export const mockExistingClientRow: Schema["clients"] = {
