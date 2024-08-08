@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { DbWikiRow } from "@/databaseUtils";
 import {
     ReorderArrowDiv,
@@ -30,6 +31,7 @@ const WikiItemDisplay: React.FC<DefaultViewProps> = ({ rowData, openEditMode, sw
                         onClick={() => {
                             swapRows(rowData, "up");
                         }}
+                        data-testid={"#swap-up-" + rowData.row_order}
                     >
                         <KeyboardDoubleArrowUpIcon />
                     </WikiUpdateDataButton>
@@ -37,6 +39,7 @@ const WikiItemDisplay: React.FC<DefaultViewProps> = ({ rowData, openEditMode, sw
                         onClick={() => {
                             swapRows(rowData, "down");
                         }}
+                        data-testid={"#swap-down-" + rowData.row_order}
                     >
                         <KeyboardDoubleArrowDownIcon />
                     </WikiUpdateDataButton>
@@ -45,6 +48,7 @@ const WikiItemDisplay: React.FC<DefaultViewProps> = ({ rowData, openEditMode, sw
                     onClick={() => {
                         openEditMode();
                     }}
+                    data-testid={"#edit-" + rowData.row_order}
                 >
                     <EditIcon />
                 </WikiUpdateDataButton>

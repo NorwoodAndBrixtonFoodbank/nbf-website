@@ -49,7 +49,7 @@ export const roleCanAccessPage = (role: UserRole | null, url: string): boolean =
     return accessList.some((page) => url.startsWith(page));
 };
 
-interface RoleUpdateContextType {
+export interface RoleUpdateContextType {
     role: UserRole | null;
     setRole: (_role: UserRole | null) => void;
 }

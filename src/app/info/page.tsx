@@ -1,5 +1,5 @@
+import React, { ReactElement } from "react";
 import { Metadata } from "next";
-import { ReactElement } from "react";
 import InfoPage from "@/app/info/InfoPage";
 import Title from "@/components/Title/Title";
 

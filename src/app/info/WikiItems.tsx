@@ -6,11 +6,11 @@ import React, { useEffect, useMemo, useRef } from "react";
 import EditModeDependentItem from "@/app/info/EditModeDependentItem";
 import AdminManagerDependentView from "@/app/info/AdminManagerDependentView";
 import AddWikiItemButton from "@/app/info/AddWikiItemButton";
-import supabase from "@/supabaseClient";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { TextValueContainer } from "@/app/admin/auditLogTable/auditLogModal/AuditLogModalRow";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import { reorderTwoItemsInWikiTable } from "@/app/info/supabaseHelpers";
 
 interface WikiItemsProps {
     rows: DbWikiRow[];
@@ -164,10 +164,7 @@ const WikiItems: React.FC<WikiItemsProps> = ({ rows }) => {
 
         const row2 = displayRows[rowIndex2];
 
-        const { error } = await supabase.rpc("swap_two_wiki_rows", {
-            key1: row1.wiki_key,
-            key2: row2.wiki_key,
-        });
+        const reorderError = await reorderTwoItemsInWikiTable(row1.wiki_key, row2.wiki_key);
 
         const auditLog = {
             action: `move a wiki item ${row1.row_order <= row2.row_order ? "down" : "up"}`,
@@ -178,11 +175,11 @@ const WikiItems: React.FC<WikiItemsProps> = ({ rows }) => {
             },
         } as const satisfies Partial<AuditLog>;
 
-        if (error) {
+        if (reorderError) {
             const logId = await logErrorReturnLogId(
                 "Error with supabase function swap_two_wiki_rows",
                 {
-                    error: error,
+                    error: reorderError,
                 }
             );
             setErrorMessage(`Failed to swap rows. Log ID: ${logId}`);
