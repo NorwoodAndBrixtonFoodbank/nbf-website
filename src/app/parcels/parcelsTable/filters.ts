@@ -19,7 +19,12 @@ import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import dayjs from "dayjs";
 import { parcelTableHeaderKeysAndLabels } from "./headers";
 import { DbParcelRow } from "@/databaseUtils";
-import { fullNameSearch, phoneSearch, postcodeSearch } from "@/common/databaseFilters";
+import {
+    dbFilterWithSubstringQueries,
+    fullNameSearch,
+    phoneSearch,
+    postcodeSearch,
+} from "@/common/databaseFilters";
 
 const parcelsFullNameSearch: ParcelsFilterMethod<string> = fullNameSearch<DbParcelRow>(
     "client_full_name",
@@ -31,43 +36,46 @@ const parcelsPostcodeSearch: ParcelsFilterMethod<string> = postcodeSearch<DbParc
     "client_is_active"
 );
 
-const familySearch: ParcelsFilterMethod<string> = (query, state) => {
-    if (state === "") {
-        return query;
+const familySearch: ParcelsFilterMethod<string> = dbFilterWithSubstringQueries<DbParcelRow>(
+    (substring) => {
+        const clientIsActiveColumnLabel = "client_is_active";
+        const familyCountColumnLabel = "family_count";
+
+        if (substring === "-") {
+            return `${clientIsActiveColumnLabel}.is.false`;
+        }
+        if ("single".includes(substring.toLowerCase())) {
+            return `and(${clientIsActiveColumnLabel}.is.true, ${familyCountColumnLabel}.lte.1)`;
+        }
+        if ("family of".includes(substring.toLowerCase())) {
+            return `and(${clientIsActiveColumnLabel}.is.true, ${familyCountColumnLabel}.gte.2)`;
+        }
+
+        const substringAsNumber = Number(substring);
+        if (Number.isNaN(substringAsNumber) || substringAsNumber === 0) {
+            return `and(${clientIsActiveColumnLabel}.is.true, ${familyCountColumnLabel}.eq.-1)`;
+        }
+        if (substringAsNumber >= 10) {
+            return `and(${clientIsActiveColumnLabel}.is.true, ${familyCountColumnLabel}.gte.10)`;
+        }
+        return `and(${clientIsActiveColumnLabel}.is.true, ${familyCountColumnLabel}.eq.${substringAsNumber})`;
     }
-    if (state === "-") {
-        return query.eq("client_is_active", false);
-    }
-    if ("single".includes(state.toLowerCase())) {
-        return query.lte("family_count", 1);
-    }
-    if ("family of".includes(state.toLowerCase())) {
-        return query.gte("family_count", 2);
-    }
-    const stateAsNumber = Number(state);
-    if (Number.isNaN(stateAsNumber) || stateAsNumber === 0) {
-        return query.eq("family_count", -1);
-    }
-    if (stateAsNumber >= 10) {
-        return query.gte("family_count", 10);
-    }
-    if (stateAsNumber === 1) {
-        return query.eq("family_count", 1);
-    }
-    return query.eq("family_count", Number(state));
-};
+);
 
 const parcelsPhoneSearch: ParcelsFilterMethod<string> = phoneSearch<DbParcelRow>(
     "client_phone_number",
     "client_is_active"
 );
 
-const voucherSearch: ParcelsFilterMethod<string> = (query, state) => {
-    if (state === "?") {
-        return query.ilike("voucher_number", "");
+const voucherSearch: ParcelsFilterMethod<string> = dbFilterWithSubstringQueries<DbParcelRow>(
+    (substring) => {
+        const voucherColumnLabel = "voucher_number";
+        if (substring === "?") {
+            return `${voucherColumnLabel}.ilike.""`;
+        }
+        return `${voucherColumnLabel}.ilike.%${substring}%`;
     }
-    return query.ilike("voucher_number", `%${state}%`);
-};
+);
 
 const buildDateFilter = (initialState: DateRangeState): ParcelsFilter<DateRangeState> => {
     const dateSearch: ParcelsFilterMethod<DateRangeState> = (query, state) => {
