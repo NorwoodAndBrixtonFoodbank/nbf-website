@@ -1,6 +1,7 @@
 import { Schema } from "@/databaseUtils";
 import { BatchTableDataState } from "@/app/parcels/batch/BatchTypes";
 import { BatchGridDisplayRow } from "@/app/parcels/batch/BatchParcelDataGrid";
+import dayjs from "dayjs";
 
 export const mockDisplayData: BatchGridDisplayRow[] = [
     {
@@ -220,8 +221,8 @@ export const mockExistingClientRow: Schema["clients"] = {
     default_list: "regular",
 };
 
-const currentYear = new Date().getFullYear();
-const currentMonth = new Date().getMonth();
+const currentYear = dayjs().year();
+const currentMonth = dayjs().month();
 
 export const mockExistingFamily: Schema["families"][] = [
     {

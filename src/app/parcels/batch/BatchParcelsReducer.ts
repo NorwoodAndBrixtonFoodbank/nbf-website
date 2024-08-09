@@ -1,7 +1,8 @@
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { Person } from "@/components/Form/formFunctions";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { callGetFamily, callGetClient } from "@/app/parcels/batch/supabaseHelpers";
+import { getClientFromClients, getAllPeopleFromFamily } from "@/app/parcels/batch/supabaseHelpers";
+import { NAPPY_SIZE_LABEL, EXTRA_INFORMATION_LABEL } from "@/app/clients/form/labels";
 import {
     BatchTableDataState,
     BatchActionType,
@@ -13,6 +14,7 @@ import {
     parcelOverrideCellValueType,
     BatchParcel,
 } from "@/app/parcels/batch/BatchTypes";
+import dayjs from "dayjs";
 
 const getOverridenFieldsAndValues = (
     allFields: OverrideClient | OverrideParcel
@@ -45,7 +47,7 @@ function createBooleanGroupFromStrings(strings: string[] | null): BooleanGroup {
 
 const getNappySize = (info: string | null): string | null => {
     if (info) {
-        const match = info.match(/Nappy Size:\s*(\d+)/);
+        const match = info.match(new RegExp(`${NAPPY_SIZE_LABEL}(\\d+)`));
         if (match) {
             return match[1];
         }
@@ -56,13 +58,12 @@ const getNappySize = (info: string | null): string | null => {
 const getChildrenAndAdults = async (
     familyId: string
 ): Promise<{ adults: Person[]; children: Person[] } | null> => {
-    const { data, error } = await callGetFamily(familyId);
+    const { data, error } = await getAllPeopleFromFamily(familyId);
 
     const adults: Person[] = [];
     const children: Person[] = [];
 
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth();
+    const currentDate = dayjs().startOf("day");
 
     if (error) {
         logErrorReturnLogId("Error with fetch: family_members", { error: error });
@@ -78,27 +79,25 @@ const getChildrenAndAdults = async (
             birthMonth: person.birth_month,
         };
 
-        const yearsDiff = currentYear - formattedPerson.birthYear;
-
-        if (yearsDiff == 16) {
-            !formattedPerson.birthMonth
-                ? adults.push(formattedPerson)
-                : currentMonth >= formattedPerson.birthMonth
-                  ? adults.push(formattedPerson)
-                  : children.push(formattedPerson);
-        } else if (yearsDiff < 16) {
+        const birthDate = dayjs()
+            .year(formattedPerson.birthYear)
+            .month(formattedPerson.birthMonth || 0)
+            .startOf("month");
+        const age = currentDate.diff(birthDate, "year");
+        if (age < 16) {
             children.push(formattedPerson);
         } else {
             adults.push(formattedPerson);
         }
     });
-
     return { adults, children };
 };
 
 const parseExtraInfo = (info: string | null): string | null => {
     if (info) {
-        const match = info.match(/Nappy Size:\s*\d+,\s*Extra Information:\s*(.*)/);
+        const match = info.match(
+            new RegExp(`${NAPPY_SIZE_LABEL}\\d+,\\s*${EXTRA_INFORMATION_LABEL}(.*)`)
+        );
         if (match) {
             return match[1];
         }
@@ -107,7 +106,7 @@ const parseExtraInfo = (info: string | null): string | null => {
 };
 
 const getClientDataForBatchParcels = async (clientId: string): Promise<BatchClient | null> => {
-    const { data, error } = await callGetClient(clientId);
+    const { data, error } = await getClientFromClients(clientId);
 
     if (error) {
         logErrorReturnLogId("Error with fetch: clients", { error: error });

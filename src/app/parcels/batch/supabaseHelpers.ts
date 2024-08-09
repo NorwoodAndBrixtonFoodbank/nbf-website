@@ -2,7 +2,7 @@ import { Schema } from "@/databaseUtils";
 import supabase from "@/supabaseClient";
 import { PostgrestError } from "@supabase/supabase-js";
 
-export const callGetClient = async (
+export const getClientFromClients = async (
     clientId: string
 ): Promise<{ data: Schema["clients"] | null; error: PostgrestError | null }> => {
     const { data, error } = await supabase
@@ -13,7 +13,7 @@ export const callGetClient = async (
     return { data, error };
 };
 
-export const callGetFamily = async (
+export const getAllPeopleFromFamily = async (
     familyId: string
 ): Promise<{ data: Schema["families"][] | null; error: PostgrestError | null }> => {
     const { data, error } = await supabase

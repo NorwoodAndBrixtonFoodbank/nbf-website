@@ -10,7 +10,7 @@ import { expect, it } from "@jest/globals";
 import { BatchActionType } from "@/app/parcels/batch/BatchTypes";
 
 jest.mock("@/app/parcels/batch/supabaseHelpers", () => ({
-    callGetClient: jest.fn((clientId: string) =>
+    getClientFromClients: jest.fn((clientId: string) =>
         clientId === "dcb54bc0-b0d3-57fa-bf9b-f1c4da6931a9"
             ? {
                   data: mockExistingClientRow,
@@ -21,7 +21,7 @@ jest.mock("@/app/parcels/batch/supabaseHelpers", () => ({
                   error: null,
               }
     ),
-    callGetFamily: jest.fn((familyId: string) =>
+    getAllPeopleFromFamily: jest.fn((familyId: string) =>
         familyId === "family-test-id"
             ? {
                   data: mockExistingFamily,
@@ -329,7 +329,7 @@ describe("reducer", () => {
         expect(noColumnOverridenState.clientOverrides).toEqual([]);
     });
 
-    it("should autofill for an exisiting client and format result correctly", async () => {
+    it("should autofill for an existing client and format result correctly", async () => {
         const actionAddRow: BatchActionType = {
             type: "add_row",
         };
