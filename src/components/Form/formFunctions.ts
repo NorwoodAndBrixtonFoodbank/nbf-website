@@ -95,7 +95,14 @@ export const onChangeText = <SpecificFields extends Fields>(
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
-        const errorType = getErrorType(input, required, regex, additionalCondition);
+        const errorType = getErrorType(
+            key === "telephoneNumber" || key === "phoneNumber"
+                ? input.replaceAll(/[\s-()]/g, "")
+                : input,
+            required,
+            regex,
+            additionalCondition
+        );
         errorSetter({ [key]: errorType } as { [key in keyof FormErrors<SpecificFields>]: Errors });
         if (errorType === Errors.none) {
             const newValue = formattingFunction ? formattingFunction(input) : input;
