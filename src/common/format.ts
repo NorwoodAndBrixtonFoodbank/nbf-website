@@ -12,7 +12,6 @@ export const displayNameForNullDriverName = "Unknown Driver";
 
 // Following characters excluded from regex as are removed before checking format matches: ( ) - \s
 export const phoneNumberRegex = /^((0|\+44)\d{9,11}|\+(?!44)\d{7,15})?$/;
-// Regex source: https://ihateregex.io/expr/phone/
 
 export const formatCamelCaseKey = (objectKey: string): string => {
     const withSpace = objectKey.replaceAll(/([a-z])([A-Z])/g, "$1 $2");
