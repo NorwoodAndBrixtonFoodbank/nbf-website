@@ -21,6 +21,7 @@ import { parcelTableHeaderKeysAndLabels } from "./headers";
 import { DbParcelRow } from "@/databaseUtils";
 import {
     dbFilterWithSubstringQueries,
+    familySearch,
     fullNameSearch,
     phoneSearch,
     postcodeSearch,
@@ -36,30 +37,9 @@ const parcelsPostcodeSearch: ParcelsFilterMethod<string> = postcodeSearch<DbParc
     "client_is_active"
 );
 
-const familySearch: ParcelsFilterMethod<string> = dbFilterWithSubstringQueries<DbParcelRow>(
-    (substring) => {
-        const clientIsActiveColumnLabel = "client_is_active";
-        const familyCountColumnLabel = "family_count";
-
-        if (substring === "-") {
-            return `${clientIsActiveColumnLabel}.is.false`;
-        }
-        if ("single".includes(substring.toLowerCase())) {
-            return `and(${clientIsActiveColumnLabel}.is.true, ${familyCountColumnLabel}.lte.1)`;
-        }
-        if ("family of".includes(substring.toLowerCase())) {
-            return `and(${clientIsActiveColumnLabel}.is.true, ${familyCountColumnLabel}.gte.2)`;
-        }
-
-        const substringAsNumber = Number(substring);
-        if (Number.isNaN(substringAsNumber) || substringAsNumber === 0) {
-            return `and(${clientIsActiveColumnLabel}.is.true, ${familyCountColumnLabel}.eq.-1)`;
-        }
-        if (substringAsNumber >= 10) {
-            return `and(${clientIsActiveColumnLabel}.is.true, ${familyCountColumnLabel}.gte.10)`;
-        }
-        return `and(${clientIsActiveColumnLabel}.is.true, ${familyCountColumnLabel}.eq.${substringAsNumber})`;
-    }
+const parcelsFamilySearch: ParcelsFilterMethod<string> = familySearch(
+    "family_count",
+    "client_is_active"
 );
 
 const parcelsPhoneSearch: ParcelsFilterMethod<string> = phoneSearch<DbParcelRow>(
@@ -246,7 +226,7 @@ const buildFilters = async (): Promise<{
             key: "familyCategory",
             label: "Family",
             headers: parcelTableHeaderKeysAndLabels,
-            method: familySearch,
+            method: parcelsFamilySearch,
         }),
         buildServerSideTextFilter({
             key: "phoneNumber",

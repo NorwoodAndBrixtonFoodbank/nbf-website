@@ -60,3 +60,29 @@ export const phoneSearch = <DbData extends DbClientRow | DbParcelRow>(
         return `and(${clientIsActiveColumnLabel}.is.true, ${phoneColumnLabel}.ilike.%${substring}%)`;
     });
 };
+
+export const familySearch = <DbData extends DbClientRow | DbParcelRow>(
+    familyCountColumnLabel: Extract<keyof DbData, "family_count">,
+    clientIsActiveColumnLabel: Extract<keyof DbData, "is_active" | "client_is_active">
+): ServerSideFilterMethod<DbData, string> => {
+    return dbFilterWithSubstringQueries((substring) => {
+        if (substring === "-") {
+            return `${clientIsActiveColumnLabel}.is.false`;
+        }
+        if ("single".includes(substring.toLowerCase())) {
+            return `and(${clientIsActiveColumnLabel}.is.true, ${familyCountColumnLabel}.lte.1)`;
+        }
+        if ("family of".includes(substring.toLowerCase())) {
+            return `and(${clientIsActiveColumnLabel}.is.true, ${familyCountColumnLabel}.gte.2)`;
+        }
+
+        const substringAsNumber = Number(substring);
+        if (Number.isNaN(substringAsNumber) || substringAsNumber === 0) {
+            return `and(${clientIsActiveColumnLabel}.is.true, ${familyCountColumnLabel}.eq.-1)`;
+        }
+        if (substringAsNumber >= 10) {
+            return `and(${clientIsActiveColumnLabel}.is.true, ${familyCountColumnLabel}.gte.10)`;
+        }
+        return `and(${clientIsActiveColumnLabel}.is.true, ${familyCountColumnLabel}.eq.${substringAsNumber})`;
+    });
+};
