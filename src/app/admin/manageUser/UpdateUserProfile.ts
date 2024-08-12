@@ -10,6 +10,7 @@ interface UpdateUserProfile {
     firstName?: string;
     lastName?: string;
     phoneNumber?: string;
+    email?: string;
 }
 
 export async function updateUserProfile(
@@ -19,6 +20,10 @@ export async function updateUserProfile(
         .from("profiles")
         .update({
             role: userDetails.role,
+            first_name: userDetails.firstName,
+            last_name: userDetails.lastName,
+            telephone_number: userDetails.phoneNumber,
+            email: userDetails.email,
         })
         .eq("primary_key", userDetails.profileId)
         .single();
@@ -30,6 +35,7 @@ export async function updateUserProfile(
             firstName: userDetails.firstName,
             lastName: userDetails.lastName,
             phoneNumber: userDetails.phoneNumber,
+            email: userDetails.email,
         },
         profileId: userDetails.profileId,
     };

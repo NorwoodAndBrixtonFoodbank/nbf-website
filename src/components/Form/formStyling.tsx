@@ -36,6 +36,32 @@ export const StyledCard = styled(Paper)`
     }
 `;
 
+export const UserFormStyledForm = styled.form`
+    padding: 2em;
+    width: 1000px;
+    display: flex;
+    gap: 1em;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+`;
+
+export const UserFormStyledCard = styled(Paper)`
+    display: flex;
+    flex-direction: row;
+    padding: 2em;
+    width: 100%;
+    height: 80%;
+    border-radius: 10px;
+    background-color: ${(props) => props.theme.main.background[0]};
+    color: ${(props) => props.theme.main.foreground[0]};
+
+    & > div {
+        width: 100%;
+        margin: 0.15em 0;
+    }
+`;
+
 export const StyledName = styled.div`
     display: flex;
     align-items: center;

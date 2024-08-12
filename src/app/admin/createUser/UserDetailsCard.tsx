@@ -1,19 +1,20 @@
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import { errorExists, errorText } from "@/components/Form/formFunctions";
-import GenericFormCard from "@/components/Form/GenericFormCard";
 import React from "react";
-import { InviteUserCardProps } from "./CreateUserForm";
+import { UserFormProps } from "@/app/admin/createUser/CreateUserForm";
 import { phoneNumberRegex } from "@/common/format";
 import onChangeText from "@/app/admin/createUser/onChangetextDeferredError";
+import UserFormCard from "@/app/admin/createUser/CardFormat";
 
-const UserDetailsCard: React.FC<InviteUserCardProps> = ({
+const UserDetailsCard: React.FC<UserFormProps> = ({
     fields,
     fieldSetter,
     formErrors,
     errorSetter,
+    InvitedUserSetter,
 }) => {
     return (
-        <GenericFormCard
+        <UserFormCard
             title="User Details"
             text="Please enter the relevant information for the new user."
             required
@@ -24,7 +25,15 @@ const UserDetailsCard: React.FC<InviteUserCardProps> = ({
                 error={errorExists(formErrors.firstName)}
                 helperText={errorText(formErrors.firstName)}
                 value={fields.firstName}
-                onChange={onChangeText(fieldSetter, errorSetter, "firstName", true)}
+                onChange={onChangeText(
+                    fieldSetter,
+                    errorSetter,
+                    "firstName",
+                    true,
+                    undefined,
+                    InvitedUserSetter
+                )}
+                fullWidth={true}
             />
             <FreeFormTextInput
                 id="new-user-last-name"
@@ -32,7 +41,15 @@ const UserDetailsCard: React.FC<InviteUserCardProps> = ({
                 error={errorExists(formErrors.lastName)}
                 helperText={errorText(formErrors.lastName)}
                 value={fields.lastName}
-                onChange={onChangeText(fieldSetter, errorSetter, "lastName", true)}
+                onChange={onChangeText(
+                    fieldSetter,
+                    errorSetter,
+                    "lastName",
+                    true,
+                    undefined,
+                    InvitedUserSetter
+                )}
+                fullWidth={true}
             />
             <FreeFormTextInput
                 id="new-user-phone-number"
@@ -45,10 +62,12 @@ const UserDetailsCard: React.FC<InviteUserCardProps> = ({
                     errorSetter,
                     "telephoneNumber",
                     false,
-                    phoneNumberRegex
+                    phoneNumberRegex,
+                    InvitedUserSetter
                 )}
+                fullWidth={true}
             />
-        </GenericFormCard>
+        </UserFormCard>
     );
 };
 

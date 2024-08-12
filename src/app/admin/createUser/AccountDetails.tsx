@@ -1,20 +1,21 @@
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import { errorExists, errorText } from "@/components/Form/formFunctions";
-import GenericFormCard from "@/components/Form/GenericFormCard";
 import React from "react";
-import { InviteUserCardProps } from "@/app/admin/createUser/CreateUserForm";
+import { UserFormProps } from "@/app/admin/createUser/CreateUserForm";
 import onChangeText from "@/app/admin/createUser/onChangetextDeferredError";
+import UserFormCard from "@/app/admin/createUser/CardFormat";
 
 const emailRegex = /^\S+@\S+$/;
 
-const AccountDetails: React.FC<InviteUserCardProps> = ({
+const AccountDetails: React.FC<UserFormProps> = ({
     fields,
     fieldSetter,
     formErrors,
     errorSetter,
+    InvitedUserSetter,
 }) => {
     return (
-        <GenericFormCard
+        <UserFormCard
             title="Account Details"
             text="Please enter the email for the new user."
             required
@@ -26,10 +27,18 @@ const AccountDetails: React.FC<InviteUserCardProps> = ({
                     error={errorExists(formErrors.email)}
                     helperText={errorText(formErrors.email)}
                     value={fields.email}
-                    onChange={onChangeText(fieldSetter, errorSetter, "email", true, emailRegex)}
+                    onChange={onChangeText(
+                        fieldSetter,
+                        errorSetter,
+                        "email",
+                        true,
+                        emailRegex,
+                        InvitedUserSetter
+                    )}
+                    fullWidth={true}
                 />
             </>
-        </GenericFormCard>
+        </UserFormCard>
     );
 };
 

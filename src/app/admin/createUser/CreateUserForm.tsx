@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { CenterComponent, StyledForm } from "@/components/Form/formStyling";
+import { CenterComponent, UserFormStyledForm } from "@/components/Form/formStyling";
 import Button from "@mui/material/Button";
 import AccountDetails from "@/app/admin/createUser/AccountDetails";
 import UserRoleCard from "@/app/admin/createUser/UserRoleCard";
@@ -28,9 +28,14 @@ export interface InviteUserFields extends Record<string, UserRole | string> {
     lastName: string;
     telephoneNumber: string;
 }
+
 type InviteUserErrors = Required<FormErrors<InviteUserFields>>;
 
 export type InviteUserCardProps = CardProps<InviteUserFields, InviteUserErrors>;
+
+export interface UserFormProps extends InviteUserCardProps {
+    InvitedUserSetter: (user: User | null) => void;
+}
 
 const initialFieldValues: InviteUserFields = {
     email: "",
@@ -59,7 +64,7 @@ const getServerErrorMessage = (serverError: InviteUserError): string => {
     }
 };
 
-const formSections = [AccountDetails, UserRoleCard, UserDetailsCard];
+const formSections = [AccountDetails, UserDetailsCard, UserRoleCard];
 
 const CreateUserForm: React.FC = () => {
     const [fields, setFields] = useState(initialFieldValues);
@@ -109,8 +114,8 @@ const CreateUserForm: React.FC = () => {
 
     return (
         <CenterComponent>
-            <StyledForm>
-                {formSections.map((Card, index) => {
+            <UserFormStyledForm>
+                {formSections.map((Card: React.FC<UserFormProps>, index) => {
                     return (
                         <Card
                             key={index} // eslint-disable-line react/no-array-index-key
@@ -118,6 +123,7 @@ const CreateUserForm: React.FC = () => {
                             fieldSetter={fieldSetter}
                             formErrors={formErrors}
                             errorSetter={errorSetter}
+                            InvitedUserSetter={setInvitedUser}
                         />
                     );
                 })}
@@ -140,7 +146,7 @@ const CreateUserForm: React.FC = () => {
                     <Alert severity="error">{`${getServerErrorMessage(serverError)} Log ID: ${serverError.logId}`}</Alert>
                 )}
                 {formError && <Alert severity="error">{formError}</Alert>}
-            </StyledForm>
+            </UserFormStyledForm>
         </CenterComponent>
     );
 };
