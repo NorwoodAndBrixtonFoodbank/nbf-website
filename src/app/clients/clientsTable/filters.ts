@@ -1,7 +1,12 @@
 import { buildServerSideTextFilter } from "@/components/Tables/TextFilter";
 import clientsHeaders from "./headers";
 import { ClientsFilter, ClientsFilterMethod } from "./types";
-import { fullNameSearch, phoneSearch, postcodeSearch } from "@/common/databaseFilters";
+import {
+    familySearch,
+    fullNameSearch,
+    phoneSearch,
+    postcodeSearch,
+} from "@/common/databaseFilters";
 import { DbClientRow } from "@/databaseUtils";
 
 const clientsFullNameSearch: ClientsFilterMethod = fullNameSearch<DbClientRow>(
@@ -19,12 +24,20 @@ const clientsPhoneSearch: ClientsFilterMethod = phoneSearch<DbClientRow>(
     "is_active"
 );
 
+const clientsFamilySearch: ClientsFilterMethod = familySearch("family_count", "is_active");
+
 const clientsFilters: ClientsFilter[] = [
     buildServerSideTextFilter({
         key: "fullName",
         label: "Name",
         headers: clientsHeaders,
         method: clientsFullNameSearch,
+    }),
+    buildServerSideTextFilter({
+        key: "familyCategory",
+        label: "Family",
+        headers: clientsHeaders,
+        method: clientsFamilySearch,
     }),
     buildServerSideTextFilter({
         key: "addressPostcode",
