@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import GeneralActionModal, { ActionModalProps, maxParcelsToShow } from "./GeneralActionModal";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
@@ -9,6 +9,14 @@ import { ShoppingListPdfError } from "@/pdf/ShoppingList/getShoppingListData";
 import { sendAuditLog } from "@/server/auditLog";
 import DuplicateDownloadWarning from "@/app/parcels/ActionBar/DuplicateDownloadWarning";
 import { getDuplicateDownloadedPostcodes } from "@/app/parcels/ActionBar/ActionModals/getDuplicateDownloadedPostcodes";
+import { ParcelsTableRow } from "../../parcelsTable/types";
+
+interface ContentProps {
+    selectedParcels: ParcelsTableRow[];
+    onPdfCreationCompleted: () => void;
+    onPdfCreationFailed: (pdfError: ShoppingListPdfError) => void;
+    duplicateDownloadedPostcodes: (string | null)[];
+}
 
 const getPdfErrorMessage = (error: ShoppingListPdfError): string => {
     let errorMessage: string;
@@ -43,6 +51,36 @@ const getPdfErrorMessage = (error: ShoppingListPdfError): string => {
             break;
     }
     return `${errorMessage} LogId: ${error.logId}`;
+};
+
+const ModalContent: React.FC<ContentProps> = ({
+    selectedParcels,
+    duplicateDownloadedPostcodes,
+    onPdfCreationCompleted,
+    onPdfCreationFailed,
+}) => {
+    const elementToFocusRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        elementToFocusRef.current?.focus();
+    });
+
+    return (
+        <>
+            <SelectedParcelsOverview
+                parcels={selectedParcels}
+                maxParcelsToShow={maxParcelsToShow}
+            />
+            {duplicateDownloadedPostcodes.length > 0 && (
+                <DuplicateDownloadWarning postcodes={duplicateDownloadedPostcodes} />
+            )}
+            <ShoppingListPdfButton
+                parcels={selectedParcels}
+                onPdfCreationCompleted={onPdfCreationCompleted}
+                onPdfCreationFailed={onPdfCreationFailed}
+            />
+        </>
+    );
 };
 
 const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
@@ -103,26 +141,16 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
             onClose={onClose}
             errorMessage={errorMessage}
             successMessage={successMessage}
-            actionShown={!actionCompleted}
-            actionButton={
-                <ShoppingListPdfButton
-                    parcels={props.selectedParcels}
+        >
+            {!actionCompleted && (
+                <ModalContent
+                    selectedParcels={props.selectedParcels}
+                    duplicateDownloadedPostcodes={duplicateDownloadedPostcodes}
                     onPdfCreationCompleted={onPdfCreationCompleted}
                     onPdfCreationFailed={onPdfCreationFailed}
                 />
-            }
-            contentAboveButton={
-                <>
-                    <SelectedParcelsOverview
-                        parcels={props.selectedParcels}
-                        maxParcelsToShow={maxParcelsToShow}
-                    />
-                    {duplicateDownloadedPostcodes.length > 0 && (
-                        <DuplicateDownloadWarning postcodes={duplicateDownloadedPostcodes} />
-                    )}
-                </>
-            }
-        />
+            )}
+        </GeneralActionModal>
     );
 };
 

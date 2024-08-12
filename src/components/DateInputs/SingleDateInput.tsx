@@ -10,22 +10,27 @@ export interface DateInputProps {
     setDate: (date: Dayjs) => void;
 }
 
-const SingleDateInput: React.FC<DateInputProps> = (dateInputProps) => {
-    const setSingleDate = (date: Dayjs | null): void => {
-        if (date) {
-            dateInputProps.setDate(date);
-        }
-    };
+const SingleDateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
+    (dateInputProps, elementToFocusRef) => {
+        const setSingleDate = (date: Dayjs | null): void => {
+            if (date) {
+                dateInputProps.setDate(date);
+            }
+        };
 
-    return (
-        <>
-            <DatePicker
-                onChange={(date) => setSingleDate(date)}
-                minDate={reasonableMinDate}
-                label="Date"
-            />
-        </>
-    );
-};
+        return (
+            <>
+                <DatePicker
+                    onChange={(date) => setSingleDate(date)}
+                    minDate={reasonableMinDate}
+                    label="Date"
+                    inputRef={elementToFocusRef}
+                />
+            </>
+        );
+    }
+);
+
+SingleDateInput.displayName = "SingleDateInput";
 
 export default SingleDateInput;

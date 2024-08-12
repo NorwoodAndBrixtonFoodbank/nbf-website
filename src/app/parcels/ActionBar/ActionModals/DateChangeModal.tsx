@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import GeneralActionModal, {
     ActionModalProps,
     ConfirmButtons,
@@ -8,18 +8,70 @@ import GeneralActionModal, {
 } from "./GeneralActionModal";
 import { Button } from "@mui/material";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
-import SingleDateInput, { DateInputProps } from "@/components/DateInputs/SingleDateInput";
+import SingleDateInput from "@/components/DateInputs/SingleDateInput";
 import dayjs, { Dayjs } from "dayjs";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import { getDbDate } from "@/common/format";
 import { getUpdateErrorMessage, packingDateOrSlotUpdate } from "./CommonDateAndSlot";
+import { ParcelsTableRow } from "../../parcelsTable/types";
 
-const DateChangeInput: React.FC<DateInputProps> = ({ setDate }) => {
+interface DateChangeProps {
+    setDate: (date: Dayjs) => void;
+}
+
+interface ContentProps {
+    onClose: () => void;
+    onDateSubmit: () => void;
+    setDate: (date: Dayjs) => void;
+    selectedParcels: ParcelsTableRow[];
+    maxParcelsToShow: number;
+    warningMessage: string;
+}
+
+const DateChangeInput = React.forwardRef<HTMLInputElement, DateChangeProps>(
+    (props, elementToFocusRef) => {
+        return (
+            <>
+                <Heading>What date would you like to change to?</Heading>
+                <SingleDateInput setDate={props.setDate} ref={elementToFocusRef} />
+            </>
+        );
+    }
+);
+
+DateChangeInput.displayName = "DateChangeInput";
+
+const ModalContent: React.FC<ContentProps> = ({
+    onClose,
+    onDateSubmit,
+    setDate,
+    selectedParcels,
+    maxParcelsToShow,
+    warningMessage,
+}) => {
+    const elementToFocusRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        elementToFocusRef.current?.focus();
+    }, []);
+
     return (
-        <>
-            <Heading>What date would you like to change to?</Heading>
-            <SingleDateInput setDate={setDate} />
-        </>
+        <form onSubmit={onDateSubmit}>
+            <DateChangeInput setDate={setDate} ref={elementToFocusRef} />
+            <SelectedParcelsOverview
+                parcels={selectedParcels}
+                maxParcelsToShow={maxParcelsToShow}
+            />
+            <WarningMessage>{warningMessage}</WarningMessage>
+            <ConfirmButtons>
+                <Button variant="contained" onClick={onClose}>
+                    Cancel
+                </Button>
+                <Button variant="contained" type="submit">
+                    Change
+                </Button>
+            </ConfirmButtons>
+        </form>
     );
 };
 
@@ -79,28 +131,18 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
             onClose={onClose}
             errorMessage={errorMessage}
             successMessage={successMessage}
-            actionShown={!actionCompleted}
-            actionButton={
-                <ConfirmButtons>
-                    <Button variant="contained" onClick={onClose}>
-                        Cancel
-                    </Button>
-                    <Button variant="contained" onClick={onDateSubmit}>
-                        Change
-                    </Button>
-                </ConfirmButtons>
-            }
-            contentAboveButton={
-                <>
-                    <DateChangeInput setDate={setDate} />
-                    <SelectedParcelsOverview
-                        parcels={props.selectedParcels}
-                        maxParcelsToShow={maxParcelsToShow}
-                    />
-                    <WarningMessage>{warningMessage}</WarningMessage>
-                </>
-            }
-        />
+        >
+            {!actionCompleted && (
+                <ModalContent
+                    onClose={onClose}
+                    onDateSubmit={onDateSubmit}
+                    setDate={setDate}
+                    selectedParcels={props.selectedParcels}
+                    maxParcelsToShow={maxParcelsToShow}
+                    warningMessage={warningMessage}
+                />
+            )}
+        </GeneralActionModal>
     );
 };
 export default DateChangeModal;

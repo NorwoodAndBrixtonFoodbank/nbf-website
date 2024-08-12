@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import GeneralActionModal, {
     Heading,
     maxParcelsToShow,
@@ -15,23 +15,39 @@ import { getStatusErrorMessageWithLogId } from "../Statuses";
 import { sendAuditLog } from "@/server/auditLog";
 import DuplicateDownloadWarning from "@/app/parcels/ActionBar/DuplicateDownloadWarning";
 import { getDuplicateDownloadedPostcodes } from "@/app/parcels/ActionBar/ActionModals/getDuplicateDownloadedPostcodes";
+import { ParcelsTableRow } from "../../parcelsTable/types";
 
 interface ShippingLabelsInputProps {
     onLabelQuantityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const ShippingLabelsInput: React.FC<ShippingLabelsInputProps> = ({ onLabelQuantityChange }) => {
-    return (
-        <>
-            <Heading>Shipping Labels</Heading>
-            <FreeFormTextInput
-                type="number"
-                onChange={onLabelQuantityChange}
-                label="Quantity (required)"
-            />
-        </>
-    );
-};
+interface ContentProps {
+    isInputValid: boolean;
+    selectedParcels: ParcelsTableRow[];
+    labelQuantity: number;
+    onPdfCreationCompleted: () => void;
+    onPdfCreationFailed: (pdfError: ShippingLabelError) => void;
+    onLabelQuantityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    duplicateDownloadedPostcodes: (string | null)[];
+}
+
+const ShippingLabelsInput = React.forwardRef<HTMLInputElement, ShippingLabelsInputProps>(
+    (props, elementToFocusRef) => {
+        return (
+            <>
+                <Heading>Shipping Labels</Heading>
+                <FreeFormTextInput
+                    type="number"
+                    onChange={props.onLabelQuantityChange}
+                    label="Quantity (required)"
+                    ref={elementToFocusRef}
+                />
+            </>
+        );
+    }
+);
+
+ShippingLabelsInput.displayName = "ShippingLabelsInput";
 
 const getPdfErrorMessage = (error: ShippingLabelError): string => {
     let errorMessage: string;
@@ -53,6 +69,45 @@ const getPdfErrorMessage = (error: ShippingLabelError): string => {
     return `${errorMessage} LogId: ${error.logId}`;
 };
 
+const ModalContent: React.FC<ContentProps> = ({
+    isInputValid,
+    selectedParcels,
+    labelQuantity,
+    onPdfCreationCompleted,
+    onPdfCreationFailed,
+    onLabelQuantityChange,
+    duplicateDownloadedPostcodes,
+}) => {
+    const elementToFocusRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        elementToFocusRef.current?.focus();
+    }, []);
+
+    return (
+        <>
+            <ShippingLabelsInput
+                onLabelQuantityChange={onLabelQuantityChange}
+                ref={elementToFocusRef}
+            />
+            <SelectedParcelsOverview
+                parcels={selectedParcels}
+                maxParcelsToShow={maxParcelsToShow}
+            />
+            {duplicateDownloadedPostcodes.length > 0 && (
+                <DuplicateDownloadWarning postcodes={duplicateDownloadedPostcodes} />
+            )}
+            <ShippingLabelsPdfButton
+                disabled={!isInputValid}
+                parcels={selectedParcels}
+                labelQuantity={labelQuantity}
+                onPdfCreationCompleted={onPdfCreationCompleted}
+                onPdfCreationFailed={onPdfCreationFailed}
+            />
+        </>
+    );
+};
+
 const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -62,9 +117,12 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
         (string | null)[]
     >([]);
 
-    const onLabelQuantityChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setLabelQuantity(parseInt(event.target.value, 10) ?? 0);
-    };
+    const onLabelQuantityChange = useCallback(
+        (event: React.ChangeEvent<HTMLInputElement>): void => {
+            setLabelQuantity(parseInt(event.target.value, 10) ?? 0);
+        },
+        [setLabelQuantity]
+    );
 
     const isInputValid = labelQuantity > 0;
 
@@ -74,7 +132,10 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
         setErrorMessage(null);
     };
 
-    const parcelIds = props.selectedParcels.map((parcel) => parcel.parcelId);
+    const parcelIds = useMemo(
+        () => props.selectedParcels.map((parcel) => parcel.parcelId),
+        [props.selectedParcels]
+    );
 
     const onPdfCreationCompleted = async (): Promise<void> => {
         const { error } = await props.updateParcelStatuses(
@@ -118,6 +179,7 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
             setDuplicateDownloadedPostcodes,
             setErrorMessage
         );
+        console.log("useEffect getDuplicateDownlaodsPostcodes");
     }, [parcelIds]);
 
     return (
@@ -126,29 +188,19 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
             onClose={onClose}
             errorMessage={errorMessage}
             successMessage={successMessage}
-            actionShown={!actionCompleted}
-            actionButton={
-                <ShippingLabelsPdfButton
-                    disabled={!isInputValid}
-                    parcels={props.selectedParcels}
+        >
+            {!actionCompleted && (
+                <ModalContent
+                    isInputValid={isInputValid}
+                    selectedParcels={props.selectedParcels}
                     labelQuantity={labelQuantity}
                     onPdfCreationCompleted={onPdfCreationCompleted}
                     onPdfCreationFailed={onPdfCreationFailed}
+                    onLabelQuantityChange={onLabelQuantityChange}
+                    duplicateDownloadedPostcodes={duplicateDownloadedPostcodes}
                 />
-            }
-            contentAboveButton={
-                <>
-                    <ShippingLabelsInput onLabelQuantityChange={onLabelQuantityChange} />
-                    <SelectedParcelsOverview
-                        parcels={props.selectedParcels}
-                        maxParcelsToShow={maxParcelsToShow}
-                    />
-                    {duplicateDownloadedPostcodes.length > 0 && (
-                        <DuplicateDownloadWarning postcodes={duplicateDownloadedPostcodes} />
-                    )}
-                </>
-            }
-        />
+            )}
+        </GeneralActionModal>
     );
 };
 

@@ -1,11 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import GeneralActionModal, { ActionModalProps, maxParcelsToShow } from "./GeneralActionModal";
 import DayOverviewPdfButton, { DayOverviewPdfError } from "@/pdf/DayOverview/DayOverviewPdfButton";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import { sendAuditLog } from "@/server/auditLog";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
+import { ParcelsTableRow } from "../../parcelsTable/types";
+
+interface ContentProps {
+    selectedParcels: ParcelsTableRow[];
+    maxParcelsToShow: number;
+    onPdfCreationCompleted: () => void;
+    onPdfCreationFailed: (pdfError: DayOverviewPdfError) => void;
+}
 
 const getPdfErrorMessage = (error: DayOverviewPdfError): string => {
     let errorMessage: string;
@@ -18,6 +26,33 @@ const getPdfErrorMessage = (error: DayOverviewPdfError): string => {
             break;
     }
     return `${errorMessage} LogId: ${error.logId}`;
+};
+
+const ModalContent: React.FC<ContentProps> = ({
+    selectedParcels,
+    maxParcelsToShow,
+    onPdfCreationCompleted,
+    onPdfCreationFailed,
+}) => {
+    const elementToFocusRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        elementToFocusRef.current?.focus();
+    }, []);
+
+    return (
+        <>
+            <SelectedParcelsOverview
+                parcels={selectedParcels}
+                maxParcelsToShow={maxParcelsToShow}
+            />
+            <DayOverviewPdfButton
+                parcels={selectedParcels}
+                onPdfCreationCompleted={onPdfCreationCompleted}
+                onPdfCreationFailed={onPdfCreationFailed}
+            />
+        </>
+    );
 };
 
 const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
@@ -64,21 +99,16 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
             onClose={onClose}
             errorMessage={errorMessage}
             successMessage={successMessage}
-            actionShown={actionShown}
-            actionButton={
-                <DayOverviewPdfButton
-                    parcels={props.selectedParcels}
+        >
+            {actionShown && (
+                <ModalContent
+                    selectedParcels={props.selectedParcels}
+                    maxParcelsToShow={maxParcelsToShow}
                     onPdfCreationCompleted={onPdfCreationCompleted}
                     onPdfCreationFailed={onPdfCreationFailed}
                 />
-            }
-            contentAboveButton={
-                <SelectedParcelsOverview
-                    parcels={props.selectedParcels}
-                    maxParcelsToShow={maxParcelsToShow}
-                />
-            }
-        />
+            )}
+        </GeneralActionModal>
     );
 };
 

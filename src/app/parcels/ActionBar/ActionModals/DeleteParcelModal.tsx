@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
-import GeneralActionModal, {
+import React, { useEffect, useRef, useState } from "react";
+import {
+    GeneralActionModal,
     ConfirmButtons,
     Heading,
     maxParcelsToShow,
@@ -10,6 +11,48 @@ import GeneralActionModal, {
 import { Button } from "@mui/material";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
+import { ParcelsTableRow } from "../../parcelsTable/types";
+
+interface ContentProps {
+    onClose: () => void;
+    onDeleteParcels: () => void;
+    numberOfParcelsToDelete: number;
+    selectedParcels: ParcelsTableRow[];
+}
+
+const ModalContent: React.FC<ContentProps> = ({
+    onClose,
+    onDeleteParcels,
+    numberOfParcelsToDelete,
+    selectedParcels,
+}) => {
+    const elementToFocusRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        elementToFocusRef.current?.focus();
+    }, []);
+
+    return (
+        <>
+            <Heading>
+                Are you sure you want to delete the selected parcel{" "}
+                {numberOfParcelsToDelete === 1 ? "request" : "requests"}?
+            </Heading>
+            <SelectedParcelsOverview
+                parcels={selectedParcels}
+                maxParcelsToShow={maxParcelsToShow}
+            />
+            <ConfirmButtons>
+                <Button variant="contained" onClick={onClose}>
+                    Cancel
+                </Button>
+                <Button variant="contained" onClick={onDeleteParcels} ref={elementToFocusRef}>
+                    Delete
+                </Button>
+            </ConfirmButtons>
+        </>
+    );
+};
 
 const DeleteParcelModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
@@ -39,30 +82,16 @@ const DeleteParcelModal: React.FC<ActionModalProps> = (props) => {
             onClose={onClose}
             errorMessage={errorMessage}
             successMessage={successMessage}
-            actionShown={!actionCompleted}
-            actionButton={
-                <ConfirmButtons>
-                    <Button variant="contained" onClick={onClose}>
-                        Cancel
-                    </Button>
-                    <Button variant="contained" onClick={() => onDeleteParcels()}>
-                        Delete
-                    </Button>
-                </ConfirmButtons>
-            }
-            contentAboveButton={
-                <>
-                    <Heading>
-                        Are you sure you want to delete the selected parcel{" "}
-                        {numberOfParcelsToDelete === 1 ? "request" : "requests"}?
-                    </Heading>
-                    <SelectedParcelsOverview
-                        parcels={props.selectedParcels}
-                        maxParcelsToShow={maxParcelsToShow}
-                    />
-                </>
-            }
-        />
+        >
+            {!actionCompleted && (
+                <ModalContent
+                    selectedParcels={props.selectedParcels}
+                    numberOfParcelsToDelete={numberOfParcelsToDelete}
+                    onClose={onClose}
+                    onDeleteParcels={onDeleteParcels}
+                />
+            )}
+        </GeneralActionModal>
     );
 };
 export default DeleteParcelModal;

@@ -13,10 +13,21 @@ import supabase from "@/supabaseClient";
 import { PackingSlotsLabelsAndValues, fetchPackingSlotsInfo } from "@/common/fetch";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { getUpdateErrorMessage, packingDateOrSlotUpdate } from "./CommonDateAndSlot";
+import { ParcelsTableRow } from "../../parcelsTable/types";
 
 interface SlotInputProps {
     packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues;
     setSlot: (slot: string) => void;
+}
+
+interface ContentProps {
+    displayModal: boolean;
+    onClose: () => void;
+    onSlotSubmit: () => void;
+    packingSlots: [string, string][];
+    setSlot: (slot: string) => void;
+    selectedParcels: ParcelsTableRow[];
+    warningMessage: string;
 }
 
 const SlotChangeInput: React.FC<SlotInputProps> = ({ packingSlotsLabelsAndValues, setSlot }) => {
@@ -36,15 +47,50 @@ const SlotChangeInput: React.FC<SlotInputProps> = ({ packingSlotsLabelsAndValues
     );
 };
 
+const ModalContent: React.FC<ContentProps> = ({
+    displayModal,
+    packingSlots,
+    setSlot,
+    selectedParcels,
+    warningMessage,
+    onClose,
+    onSlotSubmit,
+}) => {
+    return displayModal ? (
+        <>
+            <SlotChangeInput packingSlotsLabelsAndValues={packingSlots} setSlot={setSlot} />
+            <SelectedParcelsOverview
+                parcels={selectedParcels}
+                maxParcelsToShow={maxParcelsToShow}
+            />
+            <WarningMessage>{warningMessage}</WarningMessage>
+            <ConfirmButtons>
+                <Button variant="contained" onClick={onClose}>
+                    Cancel
+                </Button>
+                <Button variant="contained" onClick={onSlotSubmit}>
+                    Change
+                </Button>
+            </ConfirmButtons>
+        </>
+    ) : (
+        <></>
+    );
+};
+
 const SlotChangeModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const [packingSlots, setPackingSlots] = useState<[string, string][]>([]);
-    const [slot, setSlot] = useState<string>("");
     const [displayModal, setDisplayModal] = useState<boolean>(true);
     const [warningMessage, setWarningMessage] = useState<string>("");
+
+    let slot = "";
+    const setSlot = (newSlot: string): void => {
+        slot = newSlot;
+    };
 
     (async () => {
         const { data: packingSlotsData, error: packingSlotsError } =
@@ -108,39 +154,19 @@ const SlotChangeModal: React.FC<ActionModalProps> = (props) => {
             onClose={onClose}
             errorMessage={errorMessage}
             successMessage={successMessage}
-            actionShown={!actionCompleted}
-            actionButton={
-                displayModal ? (
-                    <ConfirmButtons>
-                        <Button variant="contained" onClick={onClose}>
-                            Cancel
-                        </Button>
-                        <Button variant="contained" onClick={onSlotSubmit}>
-                            Change
-                        </Button>
-                    </ConfirmButtons>
-                ) : (
-                    <></>
-                )
-            }
-            contentAboveButton={
-                displayModal ? (
-                    <>
-                        <SlotChangeInput
-                            packingSlotsLabelsAndValues={packingSlots}
-                            setSlot={setSlot}
-                        />
-                        <SelectedParcelsOverview
-                            parcels={props.selectedParcels}
-                            maxParcelsToShow={maxParcelsToShow}
-                        />
-                        <WarningMessage>{warningMessage}</WarningMessage>
-                    </>
-                ) : (
-                    <></>
-                )
-            }
-        />
+        >
+            {!actionCompleted && (
+                <ModalContent
+                    displayModal={displayModal}
+                    packingSlots={packingSlots}
+                    setSlot={setSlot}
+                    selectedParcels={props.selectedParcels}
+                    warningMessage={warningMessage}
+                    onClose={onClose}
+                    onSlotSubmit={onSlotSubmit}
+                />
+            )}
+        </GeneralActionModal>
     );
 };
 

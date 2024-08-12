@@ -8,12 +8,6 @@ import Localization from "@/app/Localization";
 
 const mockOnClose: jest.Mock = jest.fn();
 const mockOnSubmit: jest.Mock = jest.fn();
-const mockContentAboveButton: React.JSX.Element = <p>Test Content</p>;
-const mockActionButton: React.JSX.Element = (
-    <button data-testid="action-button" onClick={mockOnSubmit}>
-        Download Shopping List
-    </button>
-);
 
 describe("Actions", () => {
     beforeEach(() => {
@@ -24,14 +18,16 @@ describe("Actions", () => {
                     <GeneralActionModal
                         onClose={mockOnClose}
                         errorMessage={null}
-                        actionShown={true}
                         successMessage={null}
-                        actionButton={mockActionButton}
-                        contentAboveButton={mockContentAboveButton}
                         header="TestModal"
                         isOpen={true}
-                        headerId="test-modal-header"
-                    />
+                        headerId="headerId"
+                    >
+                        <p> Test Content </p>
+                        <button data-testid="action-button" onClick={mockOnSubmit}>
+                            Download Shopping List
+                        </button>
+                    </GeneralActionModal>
                 </StyleManager>
             </Localization>
         );
@@ -58,14 +54,16 @@ describe("Actions", () => {
             <GeneralActionModal
                 onClose={mockOnClose}
                 errorMessage={null}
-                actionShown={true}
                 successMessage={null}
-                actionButton={mockActionButton}
-                contentAboveButton={mockContentAboveButton}
                 header="TestModal"
                 isOpen={false}
                 headerId="test-modal-header"
-            />
+            >
+                <p> Test Content </p>
+                <button data-testid="action-button" onClick={mockOnSubmit}>
+                    Download Shopping List
+                </button>
+            </GeneralActionModal>
         );
         expect(screen.queryByText("Test Content")).not.toBeInTheDocument();
     });
