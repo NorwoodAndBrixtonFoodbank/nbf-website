@@ -105,7 +105,7 @@ const ModalContent: React.FC<ContentProps> = ({
     }, []);
 
     return (
-        <>
+        <form>
             <DriverOverviewInput
                 onDateChange={onDateChange}
                 onDriverNameChange={onDriverNameChange}
@@ -125,7 +125,7 @@ const ModalContent: React.FC<ContentProps> = ({
                 onPdfCreationFailed={onPdfCreationFailed}
                 disabled={!isInputValid}
             />
-        </>
+        </form>
     );
 };
 

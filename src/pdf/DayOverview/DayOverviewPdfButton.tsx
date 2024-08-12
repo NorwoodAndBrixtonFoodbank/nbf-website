@@ -153,6 +153,7 @@ const DayOverviewPdfButton = ({
             pdfComponent={DayOverviewPdf}
             onPdfCreationCompleted={onPdfCreationCompleted}
             onPdfCreationFailed={onPdfCreationFailed}
+            focusOnButton={true}
         />
     );
 };

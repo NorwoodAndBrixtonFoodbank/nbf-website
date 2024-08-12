@@ -179,6 +179,7 @@ const ShippingLabelsPdfButton = ({
             onPdfCreationCompleted={onPdfCreationCompleted}
             disabled={disabled}
             onPdfCreationFailed={onPdfCreationFailed}
+            formSubmitButton={true}
         />
     );
 };

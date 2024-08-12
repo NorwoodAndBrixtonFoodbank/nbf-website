@@ -85,7 +85,7 @@ const ModalContent: React.FC<ContentProps> = ({
     }, []);
 
     return (
-        <>
+        <form>
             <ShippingLabelsInput
                 onLabelQuantityChange={onLabelQuantityChange}
                 ref={elementToFocusRef}
@@ -104,7 +104,7 @@ const ModalContent: React.FC<ContentProps> = ({
                 onPdfCreationCompleted={onPdfCreationCompleted}
                 onPdfCreationFailed={onPdfCreationFailed}
             />
-        </>
+        </form>
     );
 };
 

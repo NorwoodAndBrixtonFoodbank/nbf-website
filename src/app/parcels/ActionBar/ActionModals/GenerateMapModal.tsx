@@ -80,13 +80,13 @@ const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
             successMessage={successMessage}
         >
             {!actionCompleted && (
-                    <ModalContent
-                        uniquePostcodes={uniquePostcodes}
-                        setErrorMessage={setErrorMessage}
-                        setActionCompleted={setActionCompleted}
-                        mapsLinkForSelectedParcels={mapsLinkForSelectedParcels}
-                        setSuccessMessage={setSuccessMessage}
-                    />
+                <ModalContent
+                    uniquePostcodes={uniquePostcodes}
+                    setErrorMessage={setErrorMessage}
+                    setActionCompleted={setActionCompleted}
+                    mapsLinkForSelectedParcels={mapsLinkForSelectedParcels}
+                    setSuccessMessage={setSuccessMessage}
+                />
             )}
         </GeneralActionModal>
     );

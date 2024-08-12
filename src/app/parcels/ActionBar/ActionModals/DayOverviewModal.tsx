@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import GeneralActionModal, { ActionModalProps, maxParcelsToShow } from "./GeneralActionModal";
 import DayOverviewPdfButton, { DayOverviewPdfError } from "@/pdf/DayOverview/DayOverviewPdfButton";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
@@ -34,12 +34,6 @@ const ModalContent: React.FC<ContentProps> = ({
     onPdfCreationCompleted,
     onPdfCreationFailed,
 }) => {
-    const elementToFocusRef = useRef<HTMLButtonElement>(null);
-
-    useEffect(() => {
-        elementToFocusRef.current?.focus();
-    }, []);
-
     return (
         <>
             <SelectedParcelsOverview

@@ -206,6 +206,7 @@ const DriverOverviewPdfButton = ({
             onPdfCreationCompleted={onPdfCreationCompleted}
             onPdfCreationFailed={onPdfCreationFailed}
             disabled={disabled}
+            formSubmitButton={true}
         />
     );
 };
