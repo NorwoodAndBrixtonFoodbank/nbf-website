@@ -40,7 +40,7 @@ export const batchGridDisplayColumns: GridColDef<BatchGridDisplayRow[][number]>[
             if (params.row.id === 0 && params.field === "rowName") {
                 return <Button variant="contained">Apply Column</Button>;
             }
-            return params.row.id;
+            return params.row.rowName;
         },
     },
     {

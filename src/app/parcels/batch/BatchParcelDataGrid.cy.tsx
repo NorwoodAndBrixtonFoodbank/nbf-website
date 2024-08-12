@@ -2,7 +2,8 @@ import BatchParcelDataGrid, {
     BatchGridDisplayRow,
     batchGridDisplayColumns,
 } from "@/app/parcels/batch/BatchParcelDataGrid";
-import mockData from "./mockData";
+import { mockDisplayData } from "@/app/parcels/batch/mockData";
+
 describe("BatchParcelDataGrid", () => {
     const fieldNames: string[] = batchGridDisplayColumns.map((column) => column.field);
     const columnWidths = batchGridDisplayColumns.map((column) => column.width) as number[];
@@ -10,7 +11,7 @@ describe("BatchParcelDataGrid", () => {
 
     beforeEach(() => {
         cy.viewport(totalWidth + 50, 300);
-        cy.mount(<BatchParcelDataGrid rows={mockData} />);
+        cy.mount(<BatchParcelDataGrid rows={mockDisplayData} />);
     });
 
     it("should display the expected column headers", () => {
@@ -29,8 +30,8 @@ describe("BatchParcelDataGrid", () => {
                     .children()
                     .each(($item: JQuery<HTMLElement>, fieldIndex: number) => {
                         const fieldName = fieldNames[fieldIndex] as keyof BatchGridDisplayRow;
-                        mockData[rowIndex][fieldName] &&
-                            cy.wrap($item).contains(mockData[rowIndex][fieldName]);
+                        mockDisplayData[rowIndex][fieldName] &&
+                            cy.wrap($item).contains(mockDisplayData[rowIndex][fieldName]);
                     });
             });
     });

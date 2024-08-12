@@ -5,6 +5,7 @@ import { logErrorReturnLogId, logWarningReturnLogId } from "@/logger/logger";
 import { ClientFields } from "./ClientForm";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { ListType } from "@/common/fetch";
+import { EXTRA_INFORMATION_LABEL, NAPPY_SIZE_LABEL } from "@/app/clients/form/labels";
 
 type FamilyDatabaseInsertRecord = Omit<InsertSchema["families"], "family_id">;
 type ClientDatabaseInsertRecord = InsertSchema["clients"];
@@ -30,7 +31,7 @@ const formatClientRecord = (
     const extraInformationWithNappy =
         fields.nappySize === ""
             ? fields.extraInformation
-            : `Nappy Size: ${fields.nappySize}, Extra Information: ${fields.extraInformation}`;
+            : `${NAPPY_SIZE_LABEL}${fields.nappySize}, ${EXTRA_INFORMATION_LABEL}${fields.extraInformation}`;
 
     return {
         full_name: fields.fullName,
