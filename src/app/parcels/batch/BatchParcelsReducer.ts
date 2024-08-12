@@ -7,12 +7,18 @@ import {
     BatchParcel,
 } from "@/app/parcels/batch/BatchTypes";
 import { getOverridenFieldsAndValues } from "@/app/parcels/batch/clientSideReducerHelpers";
+import { saveTableState } from "./BatchParcelDataGrid";
 
 export const batchParcelsReducer = (
     state: BatchTableDataState,
     action: BatchActionType
 ): BatchTableDataState => {
+    let newState: BatchTableDataState;
     switch (action.type) {
+        case "initialise_table_state": {
+            newState = action.initialTableStatePayload.initialState;
+            break;
+        }
         case "update_cell": {
             const { rowId, fieldNameClient, fieldNameParcel, newClientValue, newParcelValue } =
                 action.updateCellPayload;
@@ -28,12 +34,13 @@ export const batchParcelsReducer = (
             } else {
                 return state;
             }
-            return {
+            newState = {
                 ...state,
                 batchDataRows: state.batchDataRows.map((row) =>
                     row.id === rowId ? rowToUpdate : row
                 ),
             };
+            break;
         }
         case "add_row": {
             const newId: number =
@@ -42,7 +49,7 @@ export const batchParcelsReducer = (
                         return row.id;
                     })
                 ) + 1;
-            return state.batchDataRows.length < 99
+            newState = state.batchDataRows.length < 99
                 ? {
                       ...state,
                       batchDataRows: [
@@ -55,15 +62,17 @@ export const batchParcelsReducer = (
                       ],
                   }
                 : state;
+            break;
         }
         case "delete_row": {
             const { rowId } = action.deleteRowPayload;
-            return rowId !== 0
+            newState = rowId !== 0
                 ? {
                       ...state,
                       batchDataRows: state.batchDataRows.filter((row) => row.id !== rowId),
                   }
                 : state;
+            break;
         }
         case "override_column": {
             const { newOverrideRow } = action.overrideColumnPayload;
@@ -76,11 +85,12 @@ export const batchParcelsReducer = (
             const overriddenParcelFieldsAndValues = getOverridenFieldsAndValues(
                 newOverrideRow.data.parcel
             ) as { field: keyof BatchParcel; value: parcelOverrideCellValueType }[];
-            return {
+            newState = {
                 ...state,
                 clientOverrides: overriddenClientFieldsAndValues,
                 parcelOverrides: overriddenParcelFieldsAndValues,
             };
+            break;
         }
         case "remove_override_column": {
             const { clientField, parcelField } = action.removeOverrideColumnPayload;
@@ -90,18 +100,20 @@ export const batchParcelsReducer = (
             const updatedParcelOverrides = state.parcelOverrides.filter(
                 (override) => override.field !== parcelField
             );
-            return {
+            newState =  {
                 ...state,
                 clientOverrides: updatedClientOverrides,
                 parcelOverrides: updatedParcelOverrides,
             };
+            break;
         }
         case "remove_all_overrides": {
-            return {
+            newState = {
                 ...state,
                 clientOverrides: [],
                 parcelOverrides: [],
             };
+            break;
         }
         case "use_existing_client": {
             // const { rowId, existingClientId } = action.useExistingClientPayload;
@@ -131,6 +143,9 @@ export const batchParcelsReducer = (
             return state;
         }
     }
+
+    saveTableState(newState);
+    return newState;
 };
 
 export default batchParcelsReducer;

@@ -5,7 +5,8 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useReducer } from "react";
 import { BatchTableDataState } from "@/app/parcels/batch/BatchTypes";
 import batchParcelsReducer from "@/app/parcels/batch/BatchParcelsReducer";
-import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";
+import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";;
+import { json } from "stream/consumers";
 
 export interface BatchGridDisplayRow {
     id: number;
@@ -188,16 +189,25 @@ export const defaultTableState: BatchTableDataState = {
     overrideDataRow: {
         data: null,
     },
-    batchDataRows: [
-        {
-            id: 1,
-            clientId: "1",
-            data: null,
-        },
-    ],
+    batchDataRows: [{
+        id: 1,
+        clientId: null,
+        data: null
+    }],
     clientOverrides: [],
     parcelOverrides: [],
 };
+
+const LOCAL_STORAGE_KEY : string = "batchTableDataState";
+
+const getInitialTableState = () : BatchTableDataState => {
+    const storedTableState : string | null = localStorage.getItem(LOCAL_STORAGE_KEY)
+    return storedTableState ? JSON.parse(storedTableState) : defaultTableState as BatchTableDataState;
+}
+
+export const saveTableState = (tableState: BatchTableDataState) => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tableState));
+}
 
 const BatchParcelDataGrid: React.FC<BatchParcelDataGridProps> = ({ initialTableState }) => {
     const [tableState, _] = useReducer(batchParcelsReducer, initialTableState);
