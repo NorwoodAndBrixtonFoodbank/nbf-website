@@ -1,11 +1,13 @@
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { errorExists, errorText, onChangeText } from "@/components/Form/formFunctions";
+import { errorExists, errorText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import React from "react";
 import { InviteUserCardProps } from "./CreateUserForm";
 import { phoneNumberRegex } from "@/common/format";
+import onChangeText from "@/app/admin/createUser/onChangetextDeferredError";
 
 const UserDetailsCard: React.FC<InviteUserCardProps> = ({
+    fields,
     fieldSetter,
     formErrors,
     errorSetter,
@@ -21,6 +23,7 @@ const UserDetailsCard: React.FC<InviteUserCardProps> = ({
                 label="First Name"
                 error={errorExists(formErrors.firstName)}
                 helperText={errorText(formErrors.firstName)}
+                value={fields.firstName}
                 onChange={onChangeText(fieldSetter, errorSetter, "firstName", true)}
             />
             <FreeFormTextInput
@@ -28,6 +31,7 @@ const UserDetailsCard: React.FC<InviteUserCardProps> = ({
                 label="Last Name"
                 error={errorExists(formErrors.lastName)}
                 helperText={errorText(formErrors.lastName)}
+                value={fields.lastName}
                 onChange={onChangeText(fieldSetter, errorSetter, "lastName", true)}
             />
             <FreeFormTextInput
@@ -35,6 +39,7 @@ const UserDetailsCard: React.FC<InviteUserCardProps> = ({
                 label="Telephone Number"
                 error={errorExists(formErrors.telephoneNumber)}
                 helperText={errorText(formErrors.telephoneNumber)}
+                value={fields.telephoneNumber}
                 onChange={onChangeText(
                     fieldSetter,
                     errorSetter,

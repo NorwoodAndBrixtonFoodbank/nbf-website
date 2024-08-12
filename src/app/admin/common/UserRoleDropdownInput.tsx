@@ -11,7 +11,8 @@ const roleLabelsAndValues: [string, UserRole][] = [
 ];
 
 interface Props {
-    defaultValue: UserRole;
+    // defaultValue: UserRole;
+    value: UserRole;
     onChange: SelectChangeEventHandler<UserRole>;
 }
 
@@ -20,7 +21,7 @@ const UserRoleDropdownInput = (props: Props): React.ReactElement => {
         <DropdownListInput
             selectLabelId="user-role-select-label"
             listTitle="User Role"
-            defaultValue={props.defaultValue}
+            value={props.value}
             labelsAndValues={roleLabelsAndValues}
             onChange={props.onChange}
         />

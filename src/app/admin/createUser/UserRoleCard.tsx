@@ -5,11 +5,11 @@ import UserRoleDropdownInput from "@/app/admin/common/UserRoleDropdownInput";
 import { InviteUserCardProps } from "./CreateUserForm";
 import { UserRole } from "@/databaseUtils";
 
-const UserRoleCard: React.FC<InviteUserCardProps> = ({ fieldSetter }) => {
+const UserRoleCard: React.FC<InviteUserCardProps> = ({ fields, fieldSetter }) => {
     return (
         <GenericFormCard title="User Role" required>
             <UserRoleDropdownInput
-                defaultValue="volunteer"
+                value={fields.role}
                 onChange={getDropdownListHandler<UserRole>(
                     (userRole: UserRole) => fieldSetter({ role: userRole }),
                     (value: UserRole | string): value is UserRole =>

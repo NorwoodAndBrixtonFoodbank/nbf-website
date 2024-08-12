@@ -99,10 +99,12 @@ const CreateUserForm: React.FC = () => {
 
         setFormError(Errors.none);
         setSubmitDisabled(false);
+
         setInvitedUser(data);
         void logInfoReturnLogId(
             `User ${fields.email} with role ${fields.role} invited successfully.`
         );
+        setFields(initialFieldValues);
     };
 
     return (
