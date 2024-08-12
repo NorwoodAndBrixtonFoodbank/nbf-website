@@ -21,7 +21,7 @@ interface DateChangeProps {
 
 interface ContentProps {
     onClose: () => void;
-    onDateSubmit: () => void;
+    onDateSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
     setDate: (date: Dayjs) => void;
     selectedParcels: ParcelsTableRow[];
     maxParcelsToShow: number;
@@ -56,7 +56,7 @@ const ModalContent: React.FC<ContentProps> = ({
     }, []);
 
     return (
-        <form onSubmit={onDateSubmit}>
+        <form onSubmit={(event) => onDateSubmit(event)}>
             <DateChangeInput setDate={setDate} ref={elementToFocusRef} />
             <SelectedParcelsOverview
                 parcels={selectedParcels}
@@ -83,7 +83,8 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
     const [date, setDate] = useState<Dayjs>();
     const [warningMessage, setWarningMessage] = useState<string>("");
 
-    const onDateSubmit = async (): Promise<void> => {
+    const onDateSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+        event.preventDefault();
         if (!date) {
             setWarningMessage("Please choose a valid packing date.");
             return;

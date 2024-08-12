@@ -49,7 +49,8 @@ const PdfButton = <Data, ErrorType extends string>({
     focusOnButton = false,
     formSubmitButton = false,
 }: Props<Data, ErrorType>): React.ReactElement => {
-    const onClick = async (): Promise<void> => {
+    const onClick = async (event: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+        event.preventDefault();
         const { data, error } = await fetchDataAndFileName();
         if (error) {
             onPdfCreationFailed(error);
@@ -69,7 +70,7 @@ const PdfButton = <Data, ErrorType extends string>({
     return (
         <Button
             variant="contained"
-            onClick={onClick}
+            onClick={(event) => onClick(event)}
             disabled={disabled}
             ref={elementToFocusRef}
             type={formSubmitButton ? "submit" : undefined}

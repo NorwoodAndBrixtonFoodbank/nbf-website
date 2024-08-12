@@ -179,7 +179,6 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
             setDuplicateDownloadedPostcodes,
             setErrorMessage
         );
-        console.log("useEffect getDuplicateDownlaodsPostcodes");
     }, [parcelIds]);
 
     return (
