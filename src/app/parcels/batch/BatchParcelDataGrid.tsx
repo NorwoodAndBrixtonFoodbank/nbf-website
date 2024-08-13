@@ -3,19 +3,12 @@
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useReducer } from "react";
-import {
-    Address,
-    BatchDataRow,
-    BatchTableDataState,
-    CollectionInfo,
-    OverrideDataRow,
-} from "@/app/parcels/batch/BatchTypes";
+import { BatchTableDataState } from "@/app/parcels/batch/BatchTypes";
 import batchParcelsReducer from "@/app/parcels/batch/BatchParcelsReducer";
-import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
+import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";
 
 export interface BatchGridDisplayRow {
     id: number;
-    rowName: number;
     fullName: string;
     phoneNumber: string;
     address: string;
@@ -41,15 +34,15 @@ export interface BatchGridDisplayRow {
 
 export const batchGridDisplayColumns: GridColDef<BatchGridDisplayRow[][number]>[] = [
     {
-        field: "rowName",
-        headerName: "Row Name",
+        field: "id",
+        headerName: "Row Number",
         width: 150,
         editable: false,
         renderCell: (params) => {
-            if (params.row.id === 0 && params.field === "rowName") {
+            if (params.row.id === 0 && params.field === "id") {
                 return <Button variant="contained">Apply Column</Button>;
             }
-            return params.row.rowName;
+            return params.row.id;
         },
     },
     {
@@ -190,186 +183,6 @@ const styledBatchGridDisplayColumns: GridColDef<BatchGridDisplayRow[][number]>[]
 interface BatchParcelDataGridProps {
     initialTableState: BatchTableDataState;
 }
-
-const getEmptyRow = (id: number): BatchGridDisplayRow => {
-    return {
-        id: id,
-        rowName: id,
-        fullName: "",
-        phoneNumber: "",
-        address: "",
-        adults: null,
-        children: null,
-        listType: "",
-        dietaryRequirements: "",
-        feminineProducts: "",
-        babyProducts: "",
-        petFood: "",
-        otherItems: "",
-        deliveryInstructions: "",
-        extraInformation: "",
-        attentionFlag: "",
-        signpostingCall: "",
-        notes: "",
-        voucherNumber: "",
-        packingDate: "",
-        packingSlot: "",
-        shippingMethod: "",
-        collectionInfo: "",
-    };
-};
-
-const addressToString = (address: Address | null): string | null => {
-    if (!address) {
-        return null;
-    }
-    const addressArray: string[] = [];
-    for (const key in address) {
-        if (address[key] !== null) {
-            addressArray.push(address[key]);
-        }
-    }
-    return addressArray.join(", ");
-};
-
-const collectionInfoToString = (collectionInfo: CollectionInfo): string => {
-    const { collectionDate, collectionSlot, collectionCentreId } = collectionInfo;
-    return `${collectionDate}, ${collectionSlot}, ${collectionCentreId}`;
-};
-
-const booleanGroupToString = (booleanGroup: BooleanGroup): string => {
-    const trueKeys: string[] = Object.keys(booleanGroup).filter((key) => booleanGroup[key]);
-    return trueKeys.join(", ");
-};
-
-const overrideDataToOverrideDisplayRow = (dataRow: OverrideDataRow): BatchGridDisplayRow => {
-    if (!dataRow.data) {
-        return getEmptyRow(0);
-    }
-    const {
-        phoneNumber,
-        address,
-        adultInfo,
-        childrenInfo,
-        listType,
-        dietaryRequirements,
-        feminineProducts,
-        babyProducts,
-        nappySize,
-        petFood,
-        otherItems,
-        deliveryInstructions,
-        extraInformation,
-        attentionFlag,
-        signpostingCall,
-        notes,
-    } = dataRow.data.client;
-    const { voucherNumber, packingDate, packingSlot, shippingMethod, collectionInfo } =
-        dataRow.data.parcel;
-    return {
-        id: 0,
-        rowName: 0,
-        fullName: "",
-        phoneNumber: phoneNumber ?? "",
-        address: addressToString(address) ?? "",
-        adults: adultInfo ? adultInfo.numberOfAdults : null,
-        children: childrenInfo ? childrenInfo.numberOfChildren : null,
-        listType: listType ?? "",
-        dietaryRequirements: dietaryRequirements ? booleanGroupToString(dietaryRequirements) : "",
-        feminineProducts: feminineProducts ? booleanGroupToString(feminineProducts) : "",
-        babyProducts: babyProducts
-            ? `Yes, Nappy Size: ${nappySize}`
-            : babyProducts === false
-              ? "No"
-              : "",
-        petFood: petFood ? booleanGroupToString(petFood) : "",
-        otherItems: otherItems ? booleanGroupToString(otherItems) : "",
-        deliveryInstructions: deliveryInstructions ?? "",
-        extraInformation: extraInformation ?? "",
-        attentionFlag: attentionFlag ? "Yes" : attentionFlag === false ? "No" : "",
-        signpostingCall: signpostingCall ? "Yes" : signpostingCall === false ? "No" : "",
-        notes: notes ?? "",
-        voucherNumber: voucherNumber ?? "",
-        packingDate: packingDate ?? "",
-        packingSlot: packingSlot ?? "",
-        shippingMethod: shippingMethod ?? "",
-        collectionInfo: collectionInfo ? collectionInfoToString(collectionInfo) : "",
-    };
-};
-
-const batchDataToBatchDisplayRow = (dataRow: BatchDataRow): BatchGridDisplayRow | null => {
-    if (!dataRow.data) {
-        return getEmptyRow(dataRow.id);
-    }
-    const {
-        fullName,
-        phoneNumber,
-        address,
-        adultInfo,
-        childrenInfo,
-        listType,
-        dietaryRequirements,
-        feminineProducts,
-        babyProducts,
-        nappySize,
-        petFood,
-        otherItems,
-        deliveryInstructions,
-        extraInformation,
-        attentionFlag,
-        signpostingCall,
-        notes,
-    } = dataRow.data.client;
-    const {
-        voucherNumber = "",
-        packingDate = "",
-        packingSlot = "",
-        shippingMethod = "",
-        collectionInfo = "",
-    } = dataRow.data.parcel || {};
-
-    return {
-        id: dataRow.id,
-        rowName: dataRow.id,
-        fullName: fullName ?? "",
-        phoneNumber: phoneNumber ?? "",
-        address: addressToString(address) ?? "",
-        adults: adultInfo ? adultInfo.numberOfAdults : null,
-        children: childrenInfo ? childrenInfo.numberOfChildren : null,
-        listType: listType ?? "",
-        dietaryRequirements: dietaryRequirements ? booleanGroupToString(dietaryRequirements) : "",
-        feminineProducts: feminineProducts ? booleanGroupToString(feminineProducts) : "",
-        babyProducts: babyProducts
-            ? `Yes, Nappy Size: ${nappySize}`
-            : babyProducts === false
-              ? "No"
-              : "",
-        petFood: petFood ? booleanGroupToString(petFood) : "",
-        otherItems: otherItems ? booleanGroupToString(otherItems) : "",
-        deliveryInstructions: deliveryInstructions ?? "",
-        extraInformation: extraInformation ?? "",
-        attentionFlag: attentionFlag ? "Yes" : attentionFlag === false ? "No" : "",
-        signpostingCall: signpostingCall ? "Yes" : signpostingCall === false ? "No" : "",
-        notes: notes ?? "",
-        voucherNumber: voucherNumber ?? "",
-        packingDate: packingDate ?? "",
-        packingSlot: packingSlot ?? "",
-        shippingMethod: shippingMethod ?? "",
-        collectionInfo: collectionInfo ? collectionInfoToString(collectionInfo) : "",
-    };
-};
-
-const tableStateToBatchDisplayRows = (tableState: BatchTableDataState): BatchGridDisplayRow[] => {
-    const displayRows: BatchGridDisplayRow[] = [];
-    displayRows.push(overrideDataToOverrideDisplayRow(tableState.overrideDataRow));
-    tableState.batchDataRows.forEach((row) => {
-        const displayRow = batchDataToBatchDisplayRow(row);
-        if (displayRow) {
-            displayRows.push(displayRow);
-        }
-    });
-    return displayRows;
-};
 
 export const defaultTableState: BatchTableDataState = {
     overrideDataRow: {
