@@ -45,7 +45,6 @@ export interface AuditLogRow {
     content: Json;
     createdAt: string;
     eventId: string;
-    listHotelId: string;
     listId: string;
     logId: string;
     packingSlotId: string;
@@ -71,7 +70,6 @@ export const convertAuditLogPlusRowsToAuditLogRows = (
         content: auditLogPlusRow.content ?? "",
         createdAt: auditLogPlusRow.created_at ?? "",
         eventId: auditLogPlusRow.event_id ?? "",
-        listHotelId: auditLogPlusRow.list_hotel_id ?? "",
         listId: auditLogPlusRow.list_id ?? "",
         logId: auditLogPlusRow.log_id ?? "",
         packingSlotId: auditLogPlusRow.packing_slot_id ?? "",
