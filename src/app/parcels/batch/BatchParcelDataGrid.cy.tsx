@@ -1,8 +1,10 @@
 import BatchParcelDataGrid, {
-    batchGridDisplayColumns,
+    getBatchGridDisplayColumns,
 } from "@/app/parcels/batch/BatchParcelDataGrid";
 import { mockTableDataState } from "@/app/parcels/batch/mockData";
 import { writeLocalTableState } from "@/app/parcels/batch/useLocalStorage";
+import { useReducer } from "react";
+import batchParcelsReducer from "@/app/parcels/batch/BatchParcelsReducer";
 
 const expectedDisplayRows = [
     ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""],
@@ -57,6 +59,8 @@ const expectedDisplayRows = [
 ];
 
 describe("BatchParcelDataGrid", () => {
+    const [state, dispatch] = useReducer(batchParcelsReducer, mockTableDataState);
+    const batchGridDisplayColumns = getBatchGridDisplayColumns(state, dispatch);
     const columnWidths = batchGridDisplayColumns.map((column) => column.width) as number[];
     const totalWidth = columnWidths.reduce((acc, width) => acc + width, 0);
 

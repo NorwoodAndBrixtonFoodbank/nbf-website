@@ -35,7 +35,7 @@ const getEmptyRow = (id: number): BatchGridDisplayRow => {
     };
 };
 
-const addressToString = (address: Address | null): string | null => {
+export const addressToString = (address: Address | null): string | null => {
     if (!address) {
         return null;
     }

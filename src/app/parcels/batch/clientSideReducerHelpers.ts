@@ -1,14 +1,17 @@
 import { NAPPY_SIZE_LABEL, EXTRA_INFORMATION_LABEL } from "@/app/clients/form/labels";
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import {
+    BatchDataRow,
+    BatchTableDataState,
     OverrideClient,
-    OverrideParcel,
+    OverrideDataRow,
+    ParcelData,
     clientOverrideCellValueType,
     parcelOverrideCellValueType,
 } from "@/app/parcels/batch/BatchTypes";
 
 export const getOverridenFieldsAndValues = (
-    allFields: OverrideClient | OverrideParcel
+    allFields: OverrideClient | ParcelData
 ): (
     | { field: string; value: clientOverrideCellValueType }
     | { field: string; value: parcelOverrideCellValueType }
@@ -56,4 +59,13 @@ export const parseExtraInfo = (info: string | null): string | null => {
         }
     }
     return info;
+};
+
+export const getRowToBeUpdated = (
+    rowId: number,
+    state: BatchTableDataState
+): BatchDataRow | OverrideDataRow | undefined => {
+    return rowId === 0
+        ? state.overrideDataRow
+        : state.batchDataRows.find((row) => row.id === rowId);
 };

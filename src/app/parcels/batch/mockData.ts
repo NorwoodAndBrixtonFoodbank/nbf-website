@@ -1,38 +1,10 @@
 import { Schema } from "@/databaseUtils";
 import { BatchTableDataState } from "@/app/parcels/batch/BatchTypes";
 import dayjs from "dayjs";
+import { emptyBatchEditData, emptyOverrideData } from "@/app/parcels/batch/EmptyData";
 
 export const mockTableDataState: BatchTableDataState = {
-    overrideDataRow: {
-        data: {
-            client: {
-                fullName: null,
-                phoneNumber: null,
-                address: null,
-                adultInfo: null,
-                childrenInfo: null,
-                listType: null,
-                dietaryRequirements: null,
-                feminineProducts: null,
-                babyProducts: null,
-                nappySize: null,
-                petFood: null,
-                otherItems: null,
-                deliveryInstructions: null,
-                extraInformation: null,
-                attentionFlag: null,
-                signpostingCall: null,
-                notes: null,
-            },
-            parcel: {
-                voucherNumber: null,
-                packingDate: null,
-                packingSlot: null,
-                shippingMethod: null,
-                collectionInfo: null,
-            },
-        },
-    },
+    overrideDataRow: { data: emptyOverrideData },
     batchDataRows: [
         {
             id: 1,
@@ -70,7 +42,7 @@ export const mockTableDataState: BatchTableDataState = {
                     notes: null,
                 },
                 clientReadOnly: false,
-                parcel: null,
+                parcel: emptyBatchEditData.parcel,
             },
         },
         {
@@ -109,7 +81,7 @@ export const mockTableDataState: BatchTableDataState = {
                     notes: null,
                 },
                 clientReadOnly: false,
-                parcel: null,
+                parcel: emptyBatchEditData.parcel,
             },
         },
     ],

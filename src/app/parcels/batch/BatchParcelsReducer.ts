@@ -4,9 +4,15 @@ import {
     BatchClient,
     clientOverrideCellValueType,
     parcelOverrideCellValueType,
-    BatchParcel,
+    ParcelData,
+    OverrideDataRow,
+    BatchDataRow,
 } from "@/app/parcels/batch/BatchTypes";
-import { getOverridenFieldsAndValues } from "@/app/parcels/batch/clientSideReducerHelpers";
+import {
+    getOverridenFieldsAndValues,
+    getRowToBeUpdated,
+} from "@/app/parcels/batch/clientSideReducerHelpers";
+import { emptyBatchEditData } from "@/app/parcels/batch/EmptyData";
 
 export const batchParcelsReducer = (
     state: BatchTableDataState,
@@ -17,26 +23,31 @@ export const batchParcelsReducer = (
             return action.payload.initialTableState;
         }
         case "update_cell": {
-            const { rowId, fieldNameClient, fieldNameParcel, newClientValue, newParcelValue } =
-                action.updateCellPayload;
-            const rowToUpdate = state.batchDataRows.find((row) => row.id === rowId);
-            if (!rowToUpdate || !rowToUpdate.data) {
+            const { rowId, newValueAndFieldName } = action.updateCellPayload;
+            const rowToUpdate = getRowToBeUpdated(rowId, state);
+            if (!rowToUpdate) {
                 return state;
             }
-            //checks for !== undefined because newClientValue/newParcelValue can be null
-            if (fieldNameClient && newClientValue !== undefined) {
-                rowToUpdate.data.client[fieldNameClient] = newClientValue;
-            } else if (fieldNameParcel && newParcelValue !== undefined && rowToUpdate.data.parcel) {
-                rowToUpdate.data.parcel[fieldNameParcel] = newParcelValue;
+            if (newValueAndFieldName.type == "client") {
+                rowToUpdate.data.client[newValueAndFieldName.fieldName] =
+                    newValueAndFieldName.newValue;
+            } else if (newValueAndFieldName.type == "parcel" && rowToUpdate.data.parcel) {
+                rowToUpdate.data.parcel[newValueAndFieldName.fieldName] =
+                    newValueAndFieldName.newValue;
             } else {
                 return state;
             }
-            return {
-                ...state,
-                batchDataRows: state.batchDataRows.map((row) =>
-                    row.id === rowId ? rowToUpdate : row
-                ),
-            };
+            return rowId === 0
+                ? {
+                      ...state,
+                      overrideDataRow: rowToUpdate as OverrideDataRow,
+                  }
+                : {
+                      ...state,
+                      batchDataRows: state.batchDataRows.map((row) =>
+                          row.id === rowId ? rowToUpdate : row
+                      ) as BatchDataRow[],
+                  };
         }
         case "add_row": {
             const newId: number =
@@ -53,7 +64,7 @@ export const batchParcelsReducer = (
                           {
                               id: newId,
                               clientId: null,
-                              data: null,
+                              data: emptyBatchEditData,
                           },
                       ],
                   }
@@ -78,7 +89,7 @@ export const batchParcelsReducer = (
             ) as { field: keyof BatchClient; value: clientOverrideCellValueType }[];
             const overriddenParcelFieldsAndValues = getOverridenFieldsAndValues(
                 newOverrideRow.data.parcel
-            ) as { field: keyof BatchParcel; value: parcelOverrideCellValueType }[];
+            ) as { field: keyof ParcelData; value: parcelOverrideCellValueType }[];
             return {
                 ...state,
                 clientOverrides: overriddenClientFieldsAndValues,
@@ -107,6 +118,28 @@ export const batchParcelsReducer = (
             };
         }
         case "use_existing_client": {
+            // const { rowId, existingClientId } = action.useExistingClientPayload;
+            // const existingClientBatchData = await getClientDataForBatchParcels(existingClientId);
+            // if (!existingClientBatchData) {
+            //     return state;
+            // }
+            // const newRow: BatchDataRow = {
+            //     id: rowId,
+            //     clientId: existingClientId,
+            //     data: {
+            //         client: existingClientBatchData,
+            //         clientReadOnly: true,
+            //         parcel: null,
+            //     },
+            // };
+            // const updatedRows: BatchDataRow[] = state.batchDataRows.map((row) => {
+            //     return row.id === rowId ? newRow : row;
+            // });
+            // return {
+            //     ...state,
+            //     batchDataRows: updatedRows,
+            // };
+            throw Error("Not implemented"); // TODO
             // const { rowId, existingClientId } = action.useExistingClientPayload;
             // const existingClientBatchData = await getClientDataForBatchParcels(existingClientId);
             // if (!existingClientBatchData) {

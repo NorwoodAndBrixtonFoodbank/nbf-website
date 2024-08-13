@@ -8,6 +8,7 @@ import {
 } from "@/app/parcels/batch/mockData";
 import { expect, it } from "@jest/globals";
 import { BatchActionType } from "@/app/parcels/batch/BatchTypes";
+import { emptyBatchEditData } from "./EmptyData";
 
 jest.mock("@/app/parcels/batch/supabaseHelpers", () => ({
     getClientFromClients: jest.fn((clientId: string) =>
@@ -45,21 +46,24 @@ describe("reducer", () => {
             type: "update_cell",
             updateCellPayload: {
                 rowId: mockTableDataState.batchDataRows[0].id,
-                fieldNameClient: "address",
-                newClientValue: {
-                    addressLine1: "123 New Street",
-                    addressLine2: null,
-                    addressTown: "Anytown",
-                    addressCounty: "USA",
-                    addressPostcode: "12345",
+                newValueAndFieldName: {
+                    type: "client",
+                    fieldName: "address",
+                    newValue: {
+                        addressLine1: "123 New Street",
+                        addressLine2: null,
+                        addressTown: "Anytown",
+                        addressCounty: "USA",
+                        addressPostcode: "12345",
+                    },
                 },
             },
         };
         const newState = await batchParcelsReducer(mockTableDataState, action);
-        expect(newState.batchDataRows[0].data?.client.address.addressLine1).toEqual(
+        expect(newState.batchDataRows[0].data.client.address?.addressLine1).toEqual(
             "123 New Street"
         );
-        expect(newState.batchDataRows[0].data?.client.fullName).toEqual("John Doe");
+        expect(newState.batchDataRows[0].data.client.fullName).toEqual("John Doe");
     });
     it("should add a new row to the batch data", async () => {
         const action: BatchActionType = {
@@ -70,13 +74,13 @@ describe("reducer", () => {
 
         expect(newState.batchDataRows.length).toBe(3);
         expect(newState.batchDataRows[2].id).toBe(3);
-        expect(newState.batchDataRows[2].data?.client.fullName).toBe(undefined);
+        expect(newState.batchDataRows[2].data.client.fullName).toBe(null);
     });
     it("should not add a new row if 99 rows already exist", async () => {
         const ninetyNineEmptyBatchTableRows = Array.from({ length: 99 }, (index: number) => ({
             id: index + 1,
             clientId: null,
-            data: null,
+            data: emptyBatchEditData,
         }));
         const fullBatchTableState = {
             overrideDataRow: {
@@ -131,7 +135,7 @@ describe("reducer", () => {
         const newState = await batchParcelsReducer(mockTableDataState, action);
 
         expect(newState.batchDataRows.length).toBe(1);
-        expect(newState.batchDataRows[0].data?.client.fullName).toBe("Jane Smiths");
+        expect(newState.batchDataRows[0].data.client.fullName).toBe("Jane Smiths");
     });
 
     it("should override a column in the override data", async () => {
@@ -349,15 +353,15 @@ describe("reducer", () => {
             lastRowEmptyState1,
             actionUseExistingClient
         );
-        expect(existingClientState.batchDataRows[2].data?.client.fullName).toBe("Test Person");
-        expect(existingClientState.batchDataRows[2].data?.client.address).toStrictEqual({
+        expect(existingClientState.batchDataRows[2].data.client.fullName).toBe("Test Person");
+        expect(existingClientState.batchDataRows[2].data.client.address).toStrictEqual({
             addressLine1: "3454 Test St",
             addressLine2: "",
             addressTown: "Test Town",
             addressCounty: "Test County",
             addressPostcode: "TE5T 1NG",
         });
-        expect(existingClientState.batchDataRows[2].data?.client.adultInfo).toStrictEqual({
+        expect(existingClientState.batchDataRows[2].data.client.adultInfo).toStrictEqual({
             adults: [
                 { gender: "male", birthYear: 1980, birthMonth: null },
                 { gender: "female", birthYear: 1985, birthMonth: null },
@@ -380,14 +384,14 @@ describe("reducer", () => {
             lastRowEmptyState2,
             actionUseExistingNappyClient
         );
-        expect(existingNappyClientState.batchDataRows[3].data?.client.fullName).toBe(
+        expect(existingNappyClientState.batchDataRows[3].data.client.fullName).toBe(
             "Test Nappy Person"
         );
-        expect(existingNappyClientState.batchDataRows[3].data?.client.nappySize).toBe("10");
-        expect(existingNappyClientState.batchDataRows[3].data?.client.extraInformation).toBe(
+        expect(existingNappyClientState.batchDataRows[3].data.client.nappySize).toBe("10");
+        expect(existingNappyClientState.batchDataRows[3].data.client.extraInformation).toBe(
             "I love nappies"
         );
-        expect(existingNappyClientState.batchDataRows[3].data?.client.adultInfo).toStrictEqual({
+        expect(existingNappyClientState.batchDataRows[3].data.client.adultInfo).toStrictEqual({
             adults: [{ gender: "male", birthYear: 1980, birthMonth: null }],
             numberOfAdults: 1,
         });

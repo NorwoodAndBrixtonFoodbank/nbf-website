@@ -1,7 +1,6 @@
 import { ListType } from "@/common/fetch";
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { Person } from "@/components/Form/formFunctions";
-
 export interface Address {
     [key: string]: string | null;
     addressLine1: string;
@@ -55,36 +54,9 @@ export interface OverrideClient {
     notes: string | null;
 }
 
-export interface BatchClient {
-    [key: string]:
-        | string
-        | null
-        | Address
-        | AdultInfo
-        | ChildrenInfo
-        | ListType
-        | BooleanGroup
-        | boolean;
-    fullName: string;
-    phoneNumber: string;
-    address: Address;
-    adultInfo: AdultInfo;
-    childrenInfo: ChildrenInfo;
-    listType: ListType;
-    dietaryRequirements: BooleanGroup;
-    feminineProducts: BooleanGroup;
-    babyProducts: boolean | null;
-    nappySize: string | null;
-    petFood: BooleanGroup;
-    otherItems: BooleanGroup;
-    deliveryInstructions: string | null;
-    extraInformation: string | null;
-    attentionFlag: boolean;
-    signpostingCall: boolean;
-    notes: string | null;
-}
+export type BatchClient = OverrideClient & { fullName: string | null };
 
-export interface OverrideParcel {
+export interface ParcelData {
     [key: string]: string | null | CollectionInfo;
     voucherNumber: string | null;
     packingDate: string | null;
@@ -93,33 +65,24 @@ export interface OverrideParcel {
     collectionInfo: CollectionInfo | null;
 }
 
-export interface BatchParcel {
-    [key: string]: string | null | CollectionInfo;
-    voucherNumber: string | null;
-    packingDate: string;
-    packingSlot: string;
-    shippingMethod: string;
-    collectionInfo: CollectionInfo | null;
-}
-
 export interface OverrideData {
     client: OverrideClient;
-    parcel: OverrideParcel;
+    parcel: ParcelData;
 }
 
 export interface BatchEditData {
     client: BatchClient;
     clientReadOnly: boolean;
-    parcel: BatchParcel | null;
+    parcel: ParcelData;
 }
 export interface OverrideDataRow {
-    data: OverrideData | null;
+    data: OverrideData;
 }
 
 export interface BatchDataRow {
     id: number;
     clientId: string | null;
-    data: BatchEditData | null;
+    data: BatchEditData;
 }
 
 export type clientCellValueType =
@@ -146,17 +109,25 @@ export interface BatchTableDataState {
         value: clientOverrideCellValueType;
     }[];
     parcelOverrides: {
-        field: keyof BatchParcel;
+        field: keyof ParcelData;
         value: parcelOverrideCellValueType;
     }[];
 }
 
+interface ClientNewValueAndFieldName {
+    type: "client";
+    newValue: clientCellValueType;
+    fieldName: keyof BatchClient;
+}
+
+interface ParcelNewValueAndFieldName {
+    type: "parcel";
+    newValue: parcelCellValueType;
+    fieldName: keyof ParcelData;
+}
 interface updateCellPayload {
     rowId: number;
-    newClientValue?: clientCellValueType;
-    newParcelValue?: parcelCellValueType;
-    fieldNameClient?: keyof BatchClient;
-    fieldNameParcel?: keyof BatchParcel;
+    newValueAndFieldName: ClientNewValueAndFieldName | ParcelNewValueAndFieldName;
 }
 interface deleteRowPayload {
     rowId: number;
@@ -171,7 +142,7 @@ type removeOverrideColumnPayload =
       }
     | {
           clientField?: undefined;
-          parcelField: keyof BatchParcel;
+          parcelField: keyof ParcelData;
       };
 interface useExistingClientPayload {
     rowId: number;
