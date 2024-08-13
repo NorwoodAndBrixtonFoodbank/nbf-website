@@ -20,22 +20,4 @@ const LinkButton: React.FC<Props> = ({ children, link, disabled = false }) => {
     );
 };
 
-const AutoLinkButton: React.FC<Props> = ({ children, link, disabled = false }) => {
-    return (
-        <ButtonWrap>
-            <UnstyledLink href={link}>
-                <Button
-                    color="primary"
-                    variant="contained"
-                    disabled={disabled}
-                    sx={{ boxShadow: "rgba(256, 256, 256, 1) 0px 0px 10px 3px" }}
-                >
-                    {children}
-                </Button>
-            </UnstyledLink>
-        </ButtonWrap>
-    );
-};
-
 export default LinkButton;
-export { AutoLinkButton };
