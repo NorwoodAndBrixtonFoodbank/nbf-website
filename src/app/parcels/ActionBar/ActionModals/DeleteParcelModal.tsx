@@ -8,10 +8,11 @@ import {
     maxParcelsToShow,
     ActionModalProps,
 } from "./GeneralActionModal";
-import { Button } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import { ParcelsTableRow } from "../../parcelsTable/types";
+import { Centerer } from "@/components/Modal/ModalFormStyles";
 
 interface ContentProps {
     onClose: () => void;
@@ -26,11 +27,17 @@ const ModalContent: React.FC<ContentProps> = ({
     numberOfParcelsToDelete,
     selectedParcels,
 }) => {
-    const elementToFocusRef = useRef<HTMLButtonElement>(null);
+    const modalElementToFocusRef = useRef<HTMLButtonElement>(null);
+    const confirmDialogueFocusRef = useRef<HTMLButtonElement>(null);
+    const [isConfirmationDialogueOpen, setIsConfirmationDialogueOpen] = useState(false);
 
     useEffect(() => {
-        elementToFocusRef.current?.focus();
-    }, []);
+        setTimeout(() => {
+            isConfirmationDialogueOpen
+                ? confirmDialogueFocusRef.current?.focus()
+                : modalElementToFocusRef.current?.focus();
+        }, 0);
+    }, [isConfirmationDialogueOpen]);
 
     return (
         <>
@@ -46,10 +53,30 @@ const ModalContent: React.FC<ContentProps> = ({
                 <Button variant="contained" onClick={onClose}>
                     Cancel
                 </Button>
-                <Button variant="contained" onClick={onDeleteParcels} ref={elementToFocusRef}>
+                <Button
+                    variant="contained"
+                    onClick={() => setIsConfirmationDialogueOpen(true)}
+                    ref={modalElementToFocusRef}
+                >
                     Delete
                 </Button>
             </ConfirmButtons>
+            <Dialog
+                open={isConfirmationDialogueOpen}
+                onClose={() => setIsConfirmationDialogueOpen(false)}
+            >
+                <DialogTitle id="alert-dialog-title">
+                    Please confirm you wish to delete the selected parcel/s.
+                </DialogTitle>
+                <Centerer>
+                    <DialogActions>
+                        <Button onClick={() => setIsConfirmationDialogueOpen(false)}>Cancel</Button>
+                        <Button onClick={onDeleteParcels} ref={confirmDialogueFocusRef}>
+                            Confirm
+                        </Button>
+                    </DialogActions>
+                </Centerer>
+            </Dialog>
         </>
     );
 };
