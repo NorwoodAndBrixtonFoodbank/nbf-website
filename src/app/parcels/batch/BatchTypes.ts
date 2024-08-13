@@ -3,6 +3,7 @@ import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { Person } from "@/components/Form/formFunctions";
 
 export interface Address {
+    [key: string]: string | null;
     addressLine1: string;
     addressLine2: string | null;
     addressTown: string;
@@ -112,7 +113,7 @@ export interface BatchEditData {
     parcel: BatchParcel | null;
 }
 export interface OverrideDataRow {
-    data: OverrideData;
+    data: OverrideData | null;
 }
 
 export interface BatchDataRow {

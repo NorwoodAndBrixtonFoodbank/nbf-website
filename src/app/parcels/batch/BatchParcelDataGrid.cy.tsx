@@ -1,17 +1,67 @@
 import BatchParcelDataGrid, {
-    BatchGridDisplayRow,
     batchGridDisplayColumns,
 } from "@/app/parcels/batch/BatchParcelDataGrid";
-import { mockDisplayData } from "@/app/parcels/batch/mockData";
+import { mockTableDataState } from "@/app/parcels/batch/mockData";
+
+const expectedDisplayRows = [
+    ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""],
+    [
+        1,
+        "John Doe",
+        "0123456789",
+        "123 Main St, Anytown, USA, 12345",
+        0,
+        0,
+        "hotel",
+        "vegan",
+        "",
+        "",
+        "",
+        "",
+        "Leave at 10 am",
+        "No special requests",
+        "Yes",
+        "No",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+    ],
+    [
+        2,
+        "Jane Smiths",
+        "9876543210",
+        "456 Elm St, Anytown, USA, 54321",
+        0,
+        0,
+        "regular",
+        "gluten-free",
+        "tampons",
+        "No",
+        "cat",
+        "",
+        "Leave at 12 pm",
+        "No special requests",
+        "No",
+        "Yes",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+    ],
+];
 
 describe("BatchParcelDataGrid", () => {
-    const fieldNames: string[] = batchGridDisplayColumns.map((column) => column.field);
     const columnWidths = batchGridDisplayColumns.map((column) => column.width) as number[];
     const totalWidth = columnWidths.reduce((acc, width) => acc + width, 0);
 
     beforeEach(() => {
         cy.viewport(totalWidth + 50, 300);
-        cy.mount(<BatchParcelDataGrid rows={mockDisplayData} />);
+        cy.mount(<BatchParcelDataGrid initialTableState={mockTableDataState} />);
     });
 
     it("should display the expected column headers", () => {
@@ -29,9 +79,8 @@ describe("BatchParcelDataGrid", () => {
                 cy.wrap($row)
                     .children()
                     .each(($item: JQuery<HTMLElement>, fieldIndex: number) => {
-                        const fieldName = fieldNames[fieldIndex] as keyof BatchGridDisplayRow;
-                        mockDisplayData[rowIndex][fieldName] &&
-                            cy.wrap($item).contains(mockDisplayData[rowIndex][fieldName]);
+                        expectedDisplayRows[rowIndex][fieldIndex] &&
+                            cy.wrap($item).contains(expectedDisplayRows[rowIndex][fieldIndex]);
                     });
             });
     });

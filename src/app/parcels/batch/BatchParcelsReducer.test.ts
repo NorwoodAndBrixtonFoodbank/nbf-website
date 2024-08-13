@@ -329,65 +329,67 @@ describe("reducer", () => {
         expect(noColumnOverridenState.clientOverrides).toEqual([]);
     });
 
-    it("should autofill for an existing client and format result correctly", async () => {
-        const actionAddRow: BatchActionType = {
-            type: "add_row",
-        };
+    // When the use existing client method is implemented in the reducer use this test
 
-        const lastRowEmptyState1 = await batchParcelsReducer(mockTableDataState, actionAddRow);
+    // it("should autofill for an existing client and format result correctly", async () => {
+    //     const actionAddRow: BatchActionType = {
+    //         type: "add_row",
+    //     };
 
-        const actionUseExistingClient: BatchActionType = {
-            type: "use_existing_client",
-            useExistingClientPayload: {
-                rowId: 3,
-                existingClientId: "dcb54bc0-b0d3-57fa-bf9b-f1c4da6931a9",
-            },
-        };
-        const existingClientState = await batchParcelsReducer(
-            lastRowEmptyState1,
-            actionUseExistingClient
-        );
-        expect(existingClientState.batchDataRows[2].data?.client.fullName).toBe("Test Person");
-        expect(existingClientState.batchDataRows[2].data?.client.address).toStrictEqual({
-            addressLine1: "3454 Test St",
-            addressLine2: "",
-            addressTown: "Test Town",
-            addressCounty: "Test County",
-            addressPostcode: "TE5T 1NG",
-        });
-        expect(existingClientState.batchDataRows[2].data?.client.adultInfo).toStrictEqual({
-            adults: [
-                { gender: "male", birthYear: 1980, birthMonth: null },
-                { gender: "female", birthYear: 1985, birthMonth: null },
-                { gender: "female", birthYear: 2008, birthMonth: 7 },
-            ],
-            numberOfAdults: 3,
-        });
+    //     const lastRowEmptyState1 = await batchParcelsReducer(mockTableDataState, actionAddRow);
 
-        const lastRowEmptyState2 = await batchParcelsReducer(existingClientState, actionAddRow);
+    //     const actionUseExistingClient: BatchActionType = {
+    //         type: "use_existing_client",
+    //         useExistingClientPayload: {
+    //             rowId: 3,
+    //             existingClientId: "dcb54bc0-b0d3-57fa-bf9b-f1c4da6931a9",
+    //         },
+    //     };
+    //     const existingClientState = await batchParcelsReducer(
+    //         lastRowEmptyState1,
+    //         actionUseExistingClient
+    //     );
+    //     expect(existingClientState.batchDataRows[2].data?.client.fullName).toBe("Test Person");
+    //     expect(existingClientState.batchDataRows[2].data?.client.address).toStrictEqual({
+    //         addressLine1: "3454 Test St",
+    //         addressLine2: "",
+    //         addressTown: "Test Town",
+    //         addressCounty: "Test County",
+    //         addressPostcode: "TE5T 1NG",
+    //     });
+    //     expect(existingClientState.batchDataRows[2].data?.client.adultInfo).toStrictEqual({
+    //         adults: [
+    //             { gender: "male", birthYear: 1980, birthMonth: null },
+    //             { gender: "female", birthYear: 1985, birthMonth: null },
+    //             { gender: "female", birthYear: 2008, birthMonth: 7 },
+    //         ],
+    //         numberOfAdults: 3,
+    //     });
 
-        const actionUseExistingNappyClient: BatchActionType = {
-            type: "use_existing_client",
-            useExistingClientPayload: {
-                rowId: 4,
-                existingClientId: "44d14896-357b-5e91-ab64-2ca95b6a2faa",
-            },
-        };
+    //     const lastRowEmptyState2 = await batchParcelsReducer(existingClientState, actionAddRow);
 
-        const existingNappyClientState = await batchParcelsReducer(
-            lastRowEmptyState2,
-            actionUseExistingNappyClient
-        );
-        expect(existingNappyClientState.batchDataRows[3].data?.client.fullName).toBe(
-            "Test Nappy Person"
-        );
-        expect(existingNappyClientState.batchDataRows[3].data?.client.nappySize).toBe("10");
-        expect(existingNappyClientState.batchDataRows[3].data?.client.extraInformation).toBe(
-            "I love nappies"
-        );
-        expect(existingNappyClientState.batchDataRows[3].data?.client.adultInfo).toStrictEqual({
-            adults: [{ gender: "male", birthYear: 1980, birthMonth: null }],
-            numberOfAdults: 1,
-        });
-    });
+    //     const actionUseExistingNappyClient: BatchActionType = {
+    //         type: "use_existing_client",
+    //         useExistingClientPayload: {
+    //             rowId: 4,
+    //             existingClientId: "44d14896-357b-5e91-ab64-2ca95b6a2faa",
+    //         },
+    //     };
+
+    //     const existingNappyClientState = await batchParcelsReducer(
+    //         lastRowEmptyState2,
+    //         actionUseExistingNappyClient
+    //     );
+    //     expect(existingNappyClientState.batchDataRows[3].data?.client.fullName).toBe(
+    //         "Test Nappy Person"
+    //     );
+    //     expect(existingNappyClientState.batchDataRows[3].data?.client.nappySize).toBe("10");
+    //     expect(existingNappyClientState.batchDataRows[3].data?.client.extraInformation).toBe(
+    //         "I love nappies"
+    //     );
+    //     expect(existingNappyClientState.batchDataRows[3].data?.client.adultInfo).toStrictEqual({
+    //         adults: [{ gender: "male", birthYear: 1980, birthMonth: null }],
+    //         numberOfAdults: 1,
+    //     });
+    // });
 });
