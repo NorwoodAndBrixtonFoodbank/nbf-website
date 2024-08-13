@@ -2,11 +2,13 @@
 
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import React from "react";
+import { useReducer } from "react";
+import { BatchTableDataState } from "@/app/parcels/batch/BatchTypes";
+import batchParcelsReducer from "@/app/parcels/batch/BatchParcelsReducer";
+import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";
 
 export interface BatchGridDisplayRow {
     id: number;
-    rowName: number;
     fullName: string;
     phoneNumber: string;
     address: string;
@@ -32,15 +34,15 @@ export interface BatchGridDisplayRow {
 
 export const batchGridDisplayColumns: GridColDef<BatchGridDisplayRow[][number]>[] = [
     {
-        field: "rowName",
-        headerName: "Row Name",
+        field: "id",
+        headerName: "Row Number",
         width: 150,
         editable: false,
         renderCell: (params) => {
-            if (params.row.id === 0 && params.field === "rowName") {
+            if (params.row.id === 0 && params.field === "id") {
                 return <Button variant="contained">Apply Column</Button>;
             }
-            return params.row.rowName;
+            return params.row.id;
         },
     },
     {
@@ -123,7 +125,6 @@ export const batchGridDisplayColumns: GridColDef<BatchGridDisplayRow[][number]>[
         width: 200,
         editable: true,
     },
-
     {
         field: "attentionFlag",
         headerName: "Attention Flag",
@@ -180,39 +181,32 @@ const styledBatchGridDisplayColumns: GridColDef<BatchGridDisplayRow[][number]>[]
     });
 
 interface BatchParcelDataGridProps {
-    rows: BatchGridDisplayRow[];
+    initialTableState: BatchTableDataState;
 }
 
-export const defaultData: BatchGridDisplayRow[] = Array.from({ length: 2 }, (_, index) => ({
-    id: index,
-    rowName: index,
-    fullName: "",
-    phoneNumber: "",
-    address: "",
-    adults: null,
-    children: null,
-    listType: "",
-    dietaryRequirements: "",
-    feminineProducts: "",
-    babyProducts: "",
-    petFood: "",
-    otherItems: "",
-    deliveryInstructions: "",
-    extraInformation: "",
-    attentionFlag: "",
-    signpostingCall: "",
-    notes: "",
-    voucherNumber: "",
-    packingDate: "",
-    packingSlot: "",
-    shippingMethod: "",
-    collectionInfo: "",
-}));
+export const defaultTableState: BatchTableDataState = {
+    overrideDataRow: {
+        data: null,
+    },
+    batchDataRows: [
+        {
+            id: 1,
+            clientId: "1",
+            data: null,
+        },
+    ],
+    clientOverrides: [],
+    parcelOverrides: [],
+};
 
-const BatchParcelDataGrid: React.FC<BatchParcelDataGridProps> = ({ rows }) => {
+const BatchParcelDataGrid: React.FC<BatchParcelDataGridProps> = ({ initialTableState }) => {
+    const [tableState, _] = useReducer(batchParcelsReducer, initialTableState);
+
+    const displayRows: BatchGridDisplayRow[] = tableStateToBatchDisplayRows(tableState);
+
     return (
         <DataGrid
-            rows={rows}
+            rows={displayRows}
             columns={styledBatchGridDisplayColumns}
             sx={{
                 "& .MuiDataGrid-cell": {
@@ -236,6 +230,7 @@ const BatchParcelDataGrid: React.FC<BatchParcelDataGridProps> = ({ rows }) => {
                 borderColor: "rgba(81, 81, 81, 0.9)",
                 margin: "1rem",
             }}
+            hideFooter
         />
     );
 };
