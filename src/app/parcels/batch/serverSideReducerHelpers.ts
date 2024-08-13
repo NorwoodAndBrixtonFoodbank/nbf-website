@@ -1,55 +1,13 @@
-import { NAPPY_SIZE_LABEL, EXTRA_INFORMATION_LABEL } from "@/app/clients/form/labels";
-import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { Person } from "@/components/Form/formFunctions";
-import { logErrorReturnLogId } from "@/logger/logger";
-import dayjs from "dayjs";
-import {
-    OverrideClient,
-    OverrideParcel,
-    clientOverrideCellValueType,
-    parcelOverrideCellValueType,
-    BatchClient,
-} from "@/app/parcels/batch/BatchTypes";
 import { getAllPeopleFromFamily, getClientFromClients } from "@/app/parcels/batch/supabaseHelpers";
-
-export const getOverridenFieldsAndValues = (
-    allFields: OverrideClient | OverrideParcel
-): (
-    | { field: string; value: clientOverrideCellValueType }
-    | { field: string; value: parcelOverrideCellValueType }
-)[] => {
-    return Object.entries(allFields)
-        .filter(([_, value]) => value)
-        .reduce(
-            (acc, [key, value]) => {
-                return [...acc, { field: key, value: value }];
-            },
-            [] as (
-                | { field: string; value: clientOverrideCellValueType }
-                | { field: string; value: parcelOverrideCellValueType }
-            )[]
-        );
-};
-
-function createBooleanGroupFromStrings(strings: string[] | null): BooleanGroup {
-    const result: BooleanGroup = {};
-    if (strings) {
-        strings.forEach((str) => {
-            result[str] = true;
-        });
-    }
-    return result;
-}
-
-const getNappySize = (info: string | null): string | null => {
-    if (info) {
-        const match = info.match(new RegExp(`${NAPPY_SIZE_LABEL}(\\d+)`));
-        if (match) {
-            return match[1];
-        }
-    }
-    return null;
-};
+import dayjs from "dayjs";
+import { logErrorReturnLogId } from "@/logger/logger";
+import { BatchClient } from "@/app/parcels/batch/BatchTypes";
+import {
+    createBooleanGroupFromStrings,
+    getNappySize,
+    parseExtraInfo,
+} from "@/app/parcels/batch/clientSideReducerHelpers";
 
 const getChildrenAndAdults = async (
     familyId: string
@@ -87,18 +45,6 @@ const getChildrenAndAdults = async (
         }
     });
     return { adults, children };
-};
-
-const parseExtraInfo = (info: string | null): string | null => {
-    if (info) {
-        const match = info.match(
-            new RegExp(`${NAPPY_SIZE_LABEL}\\d+,\\s*${EXTRA_INFORMATION_LABEL}(.*)`)
-        );
-        if (match) {
-            return match[1];
-        }
-    }
-    return info;
 };
 
 export const getClientDataForBatchParcels = async (

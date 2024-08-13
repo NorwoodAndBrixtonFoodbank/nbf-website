@@ -6,7 +6,7 @@ import {
     parcelOverrideCellValueType,
     BatchParcel,
 } from "@/app/parcels/batch/BatchTypes";
-import { getOverridenFieldsAndValues } from "./reducerHelpers";
+import { getOverridenFieldsAndValues } from "@/app/parcels/batch/clientSideReducerHelpers";
 
 export const batchParcelsReducer = (
     state: BatchTableDataState,
