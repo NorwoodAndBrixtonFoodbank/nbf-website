@@ -47,6 +47,8 @@ const DriverOverviewInput = React.forwardRef<HTMLInputElement, DriverOverviewInp
                     onChange={props.onDriverNameChange}
                     label="Driver's Name (required)"
                     ref={elementToFocusRef}
+                    fullWidth
+                    margin="normal"
                 />
                 <DatePicker
                     defaultValue={dayjs()}
@@ -58,6 +60,7 @@ const DriverOverviewInput = React.forwardRef<HTMLInputElement, DriverOverviewInp
                             props.setDateValid();
                         }
                     }}
+                    slotProps={{ textField: { fullWidth: true, margin: "normal" } }}
                     disablePast
                 />
             </>

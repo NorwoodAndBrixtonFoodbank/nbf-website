@@ -37,7 +37,10 @@ const loginWithRetry = (iteration = 0): void => {
 
     cy.url().then((url) => {
         if (url.includes("login")) {
-            cy.get("button[type='submit']").contains("Sign in").should('not.be.disabled').trigger("click");
+            cy.get("button[type='submit']")
+                .contains("Sign in")
+                .should("not.be.disabled")
+                .trigger("click");
             cy.wait(Math.pow(2, iteration) * 500);
             loginWithRetry(iteration + 1);
         }

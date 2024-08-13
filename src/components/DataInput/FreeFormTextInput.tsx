@@ -16,6 +16,7 @@ interface Props {
     minRows?: number;
     className?: string;
     fullWidth?: boolean;
+    margin?: "dense" | "normal" | "none";
 }
 
 const FreeFormTextInput = React.forwardRef<HTMLInputElement, Props>((props, focusRef) => {
