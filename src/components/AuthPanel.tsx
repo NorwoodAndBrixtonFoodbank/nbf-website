@@ -108,44 +108,46 @@ const AuthPanel: React.FC<AuthPanelProps> = ({
         <MiddleDiv elevation={5} id="login-panel">
             <Title>{title}</Title>
 
-            <AuthInputSection>
-                {emailField && (
-                    <TextField
-                        id="email"
-                        label="Email address"
-                        variant="outlined"
-                        type="email"
-                        value={emailField.text}
-                        onChange={(event) => emailField.setText(event.target.value)}
-                    />
-                )}
+            <form>
+                <AuthInputSection>
+                    {emailField && (
+                        <TextField
+                            id="email"
+                            label="Email address"
+                            variant="outlined"
+                            type="email"
+                            value={emailField.text}
+                            onChange={(event) => emailField.setText(event.target.value)}
+                        />
+                    )}
 
-                {passwordField && (
-                    <TextField
-                        id="password"
-                        type="password"
-                        label="Your Password"
-                        variant="outlined"
-                        value={passwordField.text}
-                        onChange={(event) => passwordField.setText(event.target.value)}
-                    />
-                )}
+                    {passwordField && (
+                        <TextField
+                            id="password"
+                            type="password"
+                            label="Your Password"
+                            variant="outlined"
+                            value={passwordField.text}
+                            onChange={(event) => passwordField.setText(event.target.value)}
+                        />
+                    )}
 
-                <Button variant="contained" onClick={onSubmit}>
-                    {submitText}
-                </Button>
+                    <Button variant="contained" type="submit" onClick={onSubmit}>
+                        {submitText}
+                    </Button>
 
-                {authLinks &&
-                    authLinks.map((authLink) => (
-                        <AuthLinkElement key={authLink.label} href={authLink.href}>
-                            {authLink.label}
-                        </AuthLinkElement>
-                    ))}
+                    {authLinks &&
+                        authLinks.map((authLink) => (
+                            <AuthLinkElement key={authLink.label} href={authLink.href}>
+                                {authLink.label}
+                            </AuthLinkElement>
+                        ))}
 
-                {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+                    {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
 
-                {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
-            </AuthInputSection>
+                    {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
+                </AuthInputSection>
+            </form>
         </MiddleDiv>
     );
 };
