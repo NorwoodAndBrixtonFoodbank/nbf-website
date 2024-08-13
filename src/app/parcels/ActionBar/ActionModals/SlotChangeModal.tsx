@@ -42,6 +42,7 @@ const SlotChangeInput: React.FC<SlotInputProps> = ({ packingSlotsLabelsAndValues
                 onChange={(event) => {
                     setSlot(event.target.value);
                 }}
+                focusOnDropdown={true}
             />
         </>
     );
