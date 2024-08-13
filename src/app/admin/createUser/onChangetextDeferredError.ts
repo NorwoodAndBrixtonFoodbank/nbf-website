@@ -2,7 +2,7 @@ import { Errors, Fields, FormErrors, getErrorType, Setter } from "@/components/F
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 import { User } from "@supabase/gotrue-js";
 
-const onChangeText = <SpecificFields extends Fields>(
+const onChangeTextDeferredError = <SpecificFields extends Fields>(
     fieldSetter: Setter<SpecificFields>,
     errorSetter: Setter<FormErrors<SpecificFields>> | Setter<Required<FormErrors<SpecificFields>>>,
     key: keyof SpecificFields,
@@ -26,4 +26,4 @@ const onChangeText = <SpecificFields extends Fields>(
     };
 };
 
-export default onChangeText;
+export default onChangeTextDeferredError;

@@ -2,7 +2,7 @@ import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import { errorExists, errorText } from "@/components/Form/formFunctions";
 import React from "react";
 import { UserFormProps } from "@/app/admin/createUser/CreateUserForm";
-import onChangeText from "@/app/admin/createUser/onChangetextDeferredError";
+import onChangeTextDeferredError from "@/app/admin/createUser/onChangetextDeferredError";
 import UserFormCard from "@/app/admin/createUser/CardFormat";
 
 const emailRegex = /^\S+@\S+$/;
@@ -27,7 +27,7 @@ const AccountDetails: React.FC<UserFormProps> = ({
                     error={errorExists(formErrors.email)}
                     helperText={errorText(formErrors.email)}
                     value={fields.email}
-                    onChange={onChangeText(
+                    onChange={onChangeTextDeferredError(
                         fieldSetter,
                         errorSetter,
                         "email",

@@ -16,8 +16,10 @@ import {
     createSetter,
     Errors,
     FormErrors,
+    onChangeText,
+    errorExists,
+    errorText,
 } from "@/components/Form/formFunctions";
-import onChangeText from "@/app/admin/createUser/onChangetextDeferredError";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import { InviteUserFields } from "@/app/admin/createUser/CreateUserForm";
 import { phoneNumberRegex } from "@/common/format";
@@ -35,10 +37,10 @@ function isValidUserRole(userRole: DisplayedUserRole): userRole is UserRole {
 const emailRegex = /^\S+@\S+$/;
 
 const initialFormErrors: InviteUserErrors = {
-    email: Errors.initial,
+    email: Errors.none,
     role: Errors.none,
-    firstName: Errors.initial,
-    lastName: Errors.initial,
+    firstName: Errors.none,
+    lastName: Errors.none,
     telephoneNumber: Errors.none,
 };
 
@@ -119,7 +121,9 @@ const EditUserForm: React.FC<Props> = (props) => {
                 <FreeFormTextInput
                     id="edit-user-email-address"
                     label="Email"
-                    value={fields.email}
+                    defaultValue={fields.email}
+                    error={errorExists(formErrors.email)}
+                    helperText={errorText(formErrors.email)}
                     onChange={onChangeText(fieldSetter, errorSetter, "email", true, emailRegex)}
                     fullWidth={true}
                 />
@@ -129,7 +133,9 @@ const EditUserForm: React.FC<Props> = (props) => {
                 <FreeFormTextInput
                     id="edit-user-first-name"
                     label="First Name"
-                    value={fields.firstName}
+                    defaultValue={fields.firstName}
+                    error={errorExists(formErrors.firstName)}
+                    helperText={errorText(formErrors.firstName)}
                     onChange={onChangeText(fieldSetter, errorSetter, "firstName", true)}
                     fullWidth={true}
                 />
@@ -139,7 +145,9 @@ const EditUserForm: React.FC<Props> = (props) => {
                 <FreeFormTextInput
                     id="edit-user-last-name"
                     label="Last Name"
-                    value={fields.lastName}
+                    defaultValue={fields.lastName}
+                    error={errorExists(formErrors.lastName)}
+                    helperText={errorText(formErrors.lastName)}
                     onChange={onChangeText(fieldSetter, errorSetter, "lastName", true)}
                     fullWidth={true}
                 />
@@ -149,7 +157,9 @@ const EditUserForm: React.FC<Props> = (props) => {
                 <FreeFormTextInput
                     id="edit-user-phone-number"
                     label="Phone Number"
-                    value={fields.telephoneNumber}
+                    defaultValue={fields.telephoneNumber}
+                    error={errorExists(formErrors.telephoneNumber)}
+                    helperText={errorText(formErrors.telephoneNumber)}
                     onChange={onChangeText(
                         fieldSetter,
                         errorSetter,

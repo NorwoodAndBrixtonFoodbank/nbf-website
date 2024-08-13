@@ -37,7 +37,6 @@ export const StyledCard = styled(Paper)`
 `;
 
 export const UserFormStyledForm = styled.form`
-    padding: 2em;
     width: 1000px;
     display: flex;
     gap: 1em;

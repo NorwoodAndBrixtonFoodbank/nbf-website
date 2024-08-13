@@ -1,7 +1,7 @@
 import React from "react";
-import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 import { UserRole } from "@/databaseUtils";
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 
 const roleLabelsAndValues: [string, UserRole][] = [
     ["Volunteer", "volunteer"],
@@ -11,10 +11,38 @@ const roleLabelsAndValues: [string, UserRole][] = [
 ];
 
 interface Props {
-    // defaultValue: UserRole;
     value: UserRole;
     onChange: SelectChangeEventHandler<UserRole>;
 }
+
+interface DropDownListInputProps<Value> {
+    labelsAndValues: [string, string][];
+    listTitle?: string;
+    value?: Value;
+    onChange?: (event: SelectChangeEvent<Value>) => void;
+    selectLabelId: string;
+}
+
+const DropdownListInput = <Value,>(props: DropDownListInputProps<Value>): React.ReactElement => {
+    return (
+        <FormControl fullWidth>
+            <InputLabel id={props.selectLabelId}>{props.listTitle}</InputLabel>
+            <Select
+                value={props.value ?? undefined}
+                onChange={props.onChange}
+                labelId={props.selectLabelId}
+            >
+                {props.labelsAndValues.map(([label, value]) => {
+                    return (
+                        <MenuItem key={value} value={value}>
+                            {label}
+                        </MenuItem>
+                    );
+                })}
+            </Select>
+        </FormControl>
+    );
+};
 
 const UserRoleDropdownInput = (props: Props): React.ReactElement => {
     return (

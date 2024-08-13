@@ -3,7 +3,7 @@ import { errorExists, errorText } from "@/components/Form/formFunctions";
 import React from "react";
 import { UserFormProps } from "@/app/admin/createUser/CreateUserForm";
 import { phoneNumberRegex } from "@/common/format";
-import onChangeText from "@/app/admin/createUser/onChangetextDeferredError";
+import onChangeTextDeferredError from "@/app/admin/createUser/onChangetextDeferredError";
 import UserFormCard from "@/app/admin/createUser/CardFormat";
 
 const UserDetailsCard: React.FC<UserFormProps> = ({
@@ -25,7 +25,7 @@ const UserDetailsCard: React.FC<UserFormProps> = ({
                 error={errorExists(formErrors.firstName)}
                 helperText={errorText(formErrors.firstName)}
                 value={fields.firstName}
-                onChange={onChangeText(
+                onChange={onChangeTextDeferredError(
                     fieldSetter,
                     errorSetter,
                     "firstName",
@@ -41,7 +41,7 @@ const UserDetailsCard: React.FC<UserFormProps> = ({
                 error={errorExists(formErrors.lastName)}
                 helperText={errorText(formErrors.lastName)}
                 value={fields.lastName}
-                onChange={onChangeText(
+                onChange={onChangeTextDeferredError(
                     fieldSetter,
                     errorSetter,
                     "lastName",
@@ -57,7 +57,7 @@ const UserDetailsCard: React.FC<UserFormProps> = ({
                 error={errorExists(formErrors.telephoneNumber)}
                 helperText={errorText(formErrors.telephoneNumber)}
                 value={fields.telephoneNumber}
-                onChange={onChangeText(
+                onChange={onChangeTextDeferredError(
                     fieldSetter,
                     errorSetter,
                     "telephoneNumber",
