@@ -13,10 +13,20 @@ import supabase from "@/supabaseClient";
 import { PackingSlotsLabelsAndValues, fetchPackingSlotsInfo } from "@/common/fetch";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { getUpdateErrorMessage, packingDateOrSlotUpdate } from "./CommonDateAndSlot";
+import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 
 interface SlotInputProps {
     packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues;
     setSlot: (slot: string) => void;
+}
+
+interface ContentProps {
+    onClose: () => void;
+    onSlotSubmit: () => void;
+    packingSlots: [string, string][];
+    setSlot: (slot: string) => void;
+    selectedParcels: ParcelsTableRow[];
+    warningMessage: string;
 }
 
 const SlotChangeInput: React.FC<SlotInputProps> = ({ packingSlotsLabelsAndValues, setSlot }) => {
@@ -31,7 +41,36 @@ const SlotChangeInput: React.FC<SlotInputProps> = ({ packingSlotsLabelsAndValues
                 onChange={(event) => {
                     setSlot(event.target.value);
                 }}
+                focusOnDropdown={true}
             />
+        </>
+    );
+};
+
+const SlotChangeModalContent: React.FC<ContentProps> = ({
+    packingSlots,
+    setSlot,
+    selectedParcels,
+    warningMessage,
+    onClose,
+    onSlotSubmit,
+}) => {
+    return (
+        <>
+            <SlotChangeInput packingSlotsLabelsAndValues={packingSlots} setSlot={setSlot} />
+            <SelectedParcelsOverview
+                parcels={selectedParcels}
+                maxParcelsToShow={maxParcelsToShow}
+            />
+            <WarningMessage>{warningMessage}</WarningMessage>
+            <ConfirmButtons>
+                <Button variant="contained" onClick={onClose}>
+                    Cancel
+                </Button>
+                <Button variant="contained" onClick={onSlotSubmit}>
+                    Change
+                </Button>
+            </ConfirmButtons>
         </>
     );
 };
@@ -108,39 +147,18 @@ const SlotChangeModal: React.FC<ActionModalProps> = (props) => {
             onClose={onClose}
             errorMessage={errorMessage}
             successMessage={successMessage}
-            actionShown={!actionCompleted}
-            actionButton={
-                displayModal ? (
-                    <ConfirmButtons>
-                        <Button variant="contained" onClick={onClose}>
-                            Cancel
-                        </Button>
-                        <Button variant="contained" onClick={onSlotSubmit}>
-                            Change
-                        </Button>
-                    </ConfirmButtons>
-                ) : (
-                    <></>
-                )
-            }
-            contentAboveButton={
-                displayModal ? (
-                    <>
-                        <SlotChangeInput
-                            packingSlotsLabelsAndValues={packingSlots}
-                            setSlot={setSlot}
-                        />
-                        <SelectedParcelsOverview
-                            parcels={props.selectedParcels}
-                            maxParcelsToShow={maxParcelsToShow}
-                        />
-                        <WarningMessage>{warningMessage}</WarningMessage>
-                    </>
-                ) : (
-                    <></>
-                )
-            }
-        />
+        >
+            {!actionCompleted && displayModal && (
+                <SlotChangeModalContent
+                    packingSlots={packingSlots}
+                    setSlot={setSlot}
+                    selectedParcels={props.selectedParcels}
+                    warningMessage={warningMessage}
+                    onClose={onClose}
+                    onSlotSubmit={onSlotSubmit}
+                />
+            )}
+        </GeneralActionModal>
     );
 };
 

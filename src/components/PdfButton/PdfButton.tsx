@@ -1,8 +1,8 @@
 "use client";
 
-import { NoSsr, Button } from "@mui/material";
+import { Button } from "@mui/material";
 import { pdf } from "@react-pdf/renderer";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { saveAs } from "file-saver";
 import { PdfDataFetchResponse } from "@/pdf/common";
 
@@ -13,6 +13,8 @@ interface Props<Data, ErrorType extends string> {
     formatName?: boolean;
     disabled?: boolean;
     onPdfCreationFailed: (error: { type: ErrorType; logId: string }) => void;
+    focusOnButton?: boolean;
+    formSubmitButton?: boolean;
 }
 
 const makePaddedString = (inputNumber: number): string => {
@@ -44,8 +46,11 @@ const PdfButton = <Data, ErrorType extends string>({
     formatName = true,
     disabled = false,
     onPdfCreationFailed,
+    focusOnButton = false,
+    formSubmitButton = false,
 }: Props<Data, ErrorType>): React.ReactElement => {
-    const onClick = async (): Promise<void> => {
+    const onClick = async (event: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+        event.preventDefault();
         const { data, error } = await fetchDataAndFileName();
         if (error) {
             onPdfCreationFailed(error);
@@ -55,12 +60,23 @@ const PdfButton = <Data, ErrorType extends string>({
         saveAs(blob, formatName ? formatFileName(data.fileName) : data.fileName);
         onPdfCreationCompleted();
     };
+
+    const buttonToFocusRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        focusOnButton && buttonToFocusRef.current?.focus();
+    }, [focusOnButton]);
+
     return (
-        <NoSsr>
-            <Button variant="contained" onClick={onClick} disabled={disabled}>
-                Download PDF
-            </Button>
-        </NoSsr>
+        <Button
+            variant="contained"
+            onClick={(event) => onClick(event)}
+            disabled={disabled}
+            ref={buttonToFocusRef}
+            type={formSubmitButton ? "submit" : undefined}
+        >
+            Download PDF
+        </Button>
     );
 };
 

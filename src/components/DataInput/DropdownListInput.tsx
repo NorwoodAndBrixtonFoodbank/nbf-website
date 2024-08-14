@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { MenuItem, InputLabel, Select, FormControl, SelectChangeEvent } from "@mui/material";
 
 interface Props<Value> {
@@ -9,9 +9,16 @@ interface Props<Value> {
     defaultValue?: Value;
     onChange?: (event: SelectChangeEvent<Value>) => void;
     selectLabelId: string;
+    focusOnDropdown?: boolean;
 }
 
 const DropdownListInput = <Value,>(props: Props<Value>): React.ReactElement => {
+    const dropdownInputFocusRef = React.useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        props.focusOnDropdown && dropdownInputFocusRef.current?.focus();
+    }, [props.focusOnDropdown]);
+
     return (
         <FormControl fullWidth>
             <InputLabel id={props.selectLabelId}>{props.listTitle}</InputLabel>
@@ -19,6 +26,7 @@ const DropdownListInput = <Value,>(props: Props<Value>): React.ReactElement => {
                 defaultValue={props.defaultValue ?? undefined}
                 onChange={props.onChange}
                 labelId={props.selectLabelId}
+                inputRef={dropdownInputFocusRef}
             >
                 {props.labelsAndValues.map(([label, value]) => {
                     return (

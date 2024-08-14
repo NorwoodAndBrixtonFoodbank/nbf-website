@@ -16,9 +16,12 @@ interface Props {
     minRows?: number;
     className?: string;
     fullWidth?: boolean;
+    margin?: "dense" | "normal" | "none";
 }
 
-const FreeFormTextInput: React.FC<Props> = (props) => {
-    return <TextField {...props} />;
-};
+const FreeFormTextInput = React.forwardRef<HTMLInputElement, Props>((props, focusRef) => {
+    return <TextField {...props} inputRef={focusRef} />;
+});
 export default FreeFormTextInput;
+
+FreeFormTextInput.displayName = "FreeFormTextInput";

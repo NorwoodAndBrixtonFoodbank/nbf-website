@@ -13,13 +13,10 @@ export interface ActionModalProps extends Omit<React.ComponentProps<typeof Modal
     actionName: ActionName;
 }
 
-interface GeneralActionModalProps extends Omit<React.ComponentProps<typeof Modal>, "children"> {
+interface GeneralActionModalProps extends React.ComponentProps<typeof Modal> {
     onClose: () => void;
     errorMessage: string | null;
-    actionShown: boolean;
     successMessage: string | null;
-    actionButton: React.ReactNode;
-    contentAboveButton?: React.ReactNode;
 }
 
 export const maxParcelsToShow = 5;
@@ -54,26 +51,27 @@ export const WarningMessage = styled.div`
     color: red;
 `;
 
-const GeneralActionModal: React.FC<GeneralActionModalProps> = (props) => {
+export const GeneralActionModal: React.FC<GeneralActionModalProps> = ({
+    onClose,
+    successMessage,
+    errorMessage,
+    children,
+    ...rest
+}) => {
     return (
-        <Modal {...props} onClose={props.onClose}>
+        <Modal {...rest} onClose={onClose}>
             <ModalInner>
-                {props.successMessage && (
+                {successMessage && (
                     <Centerer>
-                        <Heading>{props.successMessage}</Heading>
+                        <Heading>{successMessage}</Heading>
                     </Centerer>
                 )}
-                {props.errorMessage && (
+                {errorMessage && (
                     <Centerer>
-                        <ErrorSecondaryText>{props.errorMessage}</ErrorSecondaryText>
+                        <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>
                     </Centerer>
                 )}
-                {props.actionShown && (
-                    <>
-                        {props.contentAboveButton}
-                        <Centerer>{props.actionButton}</Centerer>
-                    </>
-                )}
+                {children}
             </ModalInner>
         </Modal>
     );

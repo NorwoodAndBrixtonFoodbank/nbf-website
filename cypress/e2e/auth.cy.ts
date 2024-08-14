@@ -23,7 +23,7 @@ describe("Authentication tests", () => {
         cy.get("input[type='email']").should("have.value", email);
         cy.get("input[type='password']").should("have.value", password);
 
-        cy.get("button[type='button']").contains("Sign in").click();
+        cy.get("button[type='submit']").contains("Sign in").trigger("click");
 
         cy.url(extendedTimeout).should("include", "/parcels");
     });

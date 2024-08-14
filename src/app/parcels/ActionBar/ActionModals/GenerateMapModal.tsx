@@ -1,8 +1,52 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import GeneralActionModal, { ActionModalProps } from "./GeneralActionModal";
 import { Button } from "@mui/material";
+
+interface ContentProps {
+    uniquePostcodes: string[];
+    setErrorMessage: (message: string) => void;
+    setActionCompleted: (completed: boolean) => void;
+    mapsLinkForSelectedParcels: string;
+    setSuccessMessage: (message: string) => void;
+}
+
+const GenerateMapModalContent: React.FC<ContentProps> = ({
+    uniquePostcodes,
+    setErrorMessage,
+    setActionCompleted,
+    mapsLinkForSelectedParcels,
+    setSuccessMessage,
+}) => {
+    const generateMapButtonFocusRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        generateMapButtonFocusRef.current?.focus();
+    }, []);
+
+    return (
+        <Button
+            variant="contained"
+            onClick={() => {
+                if (uniquePostcodes.length === 0) {
+                    setErrorMessage("No selected parcels have addresses.");
+                    setActionCompleted(true);
+                    return;
+                }
+                const openInNewTab = (url: string): void => {
+                    window.open(url, "_blank", "noopener, noreferrer");
+                };
+                openInNewTab(mapsLinkForSelectedParcels);
+                setSuccessMessage("Map Generated");
+                setActionCompleted(true);
+            }}
+            ref={generateMapButtonFocusRef}
+        >
+            Generate Map
+        </Button>
+    );
+};
 
 const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
@@ -34,28 +78,17 @@ const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
             onClose={onClose}
             errorMessage={errorMessage}
             successMessage={successMessage}
-            actionShown={!actionCompleted}
-            actionButton={
-                <Button
-                    variant="contained"
-                    onClick={() => {
-                        if (uniquePostcodes.length === 0) {
-                            setErrorMessage("No selected parcels have addresses.");
-                            setActionCompleted(true);
-                            return;
-                        }
-                        const openInNewTab = (url: string): void => {
-                            window.open(url, "_blank", "noopener, noreferrer");
-                        };
-                        openInNewTab(mapsLinkForSelectedParcels);
-                        setSuccessMessage("Map Generated");
-                        setActionCompleted(true);
-                    }}
-                >
-                    Generate Map
-                </Button>
-            }
-        />
+        >
+            {!actionCompleted && (
+                <GenerateMapModalContent
+                    uniquePostcodes={uniquePostcodes}
+                    setErrorMessage={setErrorMessage}
+                    setActionCompleted={setActionCompleted}
+                    mapsLinkForSelectedParcels={mapsLinkForSelectedParcels}
+                    setSuccessMessage={setSuccessMessage}
+                />
+            )}
+        </GeneralActionModal>
     );
 };
 

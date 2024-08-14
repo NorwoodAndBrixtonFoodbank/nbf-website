@@ -37,6 +37,7 @@ const ShoppingListPdfButton = ({
             pdfComponent={ShoppingListPdf}
             onPdfCreationCompleted={onPdfCreationCompleted}
             onPdfCreationFailed={onPdfCreationFailed}
+            focusOnButton={true}
         />
     );
 };

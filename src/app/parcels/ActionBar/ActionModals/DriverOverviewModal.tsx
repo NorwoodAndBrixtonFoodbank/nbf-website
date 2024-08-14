@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import GeneralActionModal, {
     Heading,
     maxParcelsToShow,
@@ -16,6 +16,7 @@ import DriverOverviewPdfButton, {
 } from "@/pdf/DriverOverview/DriverOverviewPdfButton";
 import { sendAuditLog } from "@/server/auditLog";
 import { displayNameForNullDriverName } from "@/common/format";
+import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 
 interface DriverOverviewInputProps {
     onDateChange: (newDate: Dayjs | null) => void;
@@ -24,31 +25,50 @@ interface DriverOverviewInputProps {
     setDateInvalid: () => void;
 }
 
-const DriverOverviewInput: React.FC<DriverOverviewInputProps> = ({
-    onDateChange,
-    onDriverNameChange,
-    setDateValid,
-    setDateInvalid,
-}) => {
-    return (
-        <>
-            <Heading>Delivery Information</Heading>
-            <FreeFormTextInput onChange={onDriverNameChange} label="Driver's Name (required)" />
-            <DatePicker
-                defaultValue={dayjs()}
-                onChange={onDateChange}
-                onError={(error) => {
-                    if (error) {
-                        setDateInvalid();
-                    } else {
-                        setDateValid();
-                    }
-                }}
-                disablePast
-            />
-        </>
-    );
-};
+interface ContentProps {
+    selectedParcels: ParcelsTableRow[];
+    date: Dayjs;
+    driverName: string | null;
+    onPdfCreationCompleted: () => void;
+    onPdfCreationFailed: (pdfError: DriverOverviewError) => void;
+    isInputValid: boolean | null;
+    onDateChange: (newDate: Dayjs | null) => void;
+    onDriverNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    setIsDateValid: (valid: boolean) => void;
+    maxParcelsToShow: number;
+}
+
+const DriverOverviewInput = React.forwardRef<HTMLInputElement, DriverOverviewInputProps>(
+    (props, driverNameInputFocusRef) => {
+        return (
+            <>
+                <Heading>Delivery Information</Heading>
+                <FreeFormTextInput
+                    onChange={props.onDriverNameChange}
+                    label="Driver's Name (required)"
+                    ref={driverNameInputFocusRef}
+                    fullWidth
+                    margin="normal"
+                />
+                <DatePicker
+                    defaultValue={dayjs()}
+                    onChange={props.onDateChange}
+                    onError={(error) => {
+                        if (error) {
+                            props.setDateInvalid();
+                        } else {
+                            props.setDateValid();
+                        }
+                    }}
+                    slotProps={{ textField: { fullWidth: true, margin: "normal" } }}
+                    disablePast
+                />
+            </>
+        );
+    }
+);
+
+DriverOverviewInput.displayName = "DriverOverviewInput";
 
 const getPdfErrorMessage = (error: DriverOverviewError): string => {
     let errorMessage: string;
@@ -69,6 +89,49 @@ const getPdfErrorMessage = (error: DriverOverviewError): string => {
     return `${errorMessage} LogId: ${error.logId}`;
 };
 
+const DriverOverviewModalContent: React.FC<ContentProps> = ({
+    onDateChange,
+    onDriverNameChange,
+    setIsDateValid,
+    selectedParcels,
+    maxParcelsToShow,
+    date,
+    driverName,
+    onPdfCreationCompleted,
+    onPdfCreationFailed,
+    isInputValid,
+}) => {
+    const driverNameInputFocusRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        driverNameInputFocusRef.current?.focus();
+    }, []);
+
+    return (
+        <form>
+            <DriverOverviewInput
+                onDateChange={onDateChange}
+                onDriverNameChange={onDriverNameChange}
+                setDateValid={() => setIsDateValid(true)}
+                setDateInvalid={() => setIsDateValid(false)}
+                ref={driverNameInputFocusRef}
+            />
+            <SelectedParcelsOverview
+                parcels={selectedParcels}
+                maxParcelsToShow={maxParcelsToShow}
+            />
+            <DriverOverviewPdfButton
+                parcels={selectedParcels}
+                date={date}
+                driverName={driverName}
+                onPdfCreationCompleted={onPdfCreationCompleted}
+                onPdfCreationFailed={onPdfCreationFailed}
+                disabled={!isInputValid}
+            />
+        </form>
+    );
+};
+
 const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
     const [actionCompleted, setActionCompleted] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -79,7 +142,7 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
 
     const [isDateValid, setIsDateValid] = useState(true);
 
-    const isInputValid = isDateValid && driverName;
+    const isInputValid = isDateValid && driverName !== null;
 
     const onDriverNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         const trimmedDriverName = event.target.value.trim();
@@ -143,32 +206,22 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
             onClose={onClose}
             errorMessage={errorMessage}
             successMessage={successMessage}
-            actionShown={!actionCompleted}
-            actionButton={
-                <DriverOverviewPdfButton
-                    parcels={props.selectedParcels}
+        >
+            {!actionCompleted && (
+                <DriverOverviewModalContent
+                    onDateChange={onDateChange}
+                    onDriverNameChange={onDriverNameChange}
+                    setIsDateValid={setIsDateValid}
+                    selectedParcels={props.selectedParcels}
+                    maxParcelsToShow={maxParcelsToShow}
                     date={date}
                     driverName={driverName}
                     onPdfCreationCompleted={onPdfCreationCompleted}
                     onPdfCreationFailed={onPdfCreationFailed}
-                    disabled={!isInputValid}
+                    isInputValid={isInputValid}
                 />
-            }
-            contentAboveButton={
-                <>
-                    <DriverOverviewInput
-                        onDateChange={onDateChange}
-                        onDriverNameChange={onDriverNameChange}
-                        setDateValid={() => setIsDateValid(true)}
-                        setDateInvalid={() => setIsDateValid(false)}
-                    />
-                    <SelectedParcelsOverview
-                        parcels={props.selectedParcels}
-                        maxParcelsToShow={maxParcelsToShow}
-                    />
-                </>
-            }
-        />
+            )}
+        </GeneralActionModal>
     );
 };
 
