@@ -13,10 +13,10 @@ interface Props<Value> {
 }
 
 const DropdownListInput = <Value,>(props: Props<Value>): React.ReactElement => {
-    const elementToFocusRef = React.useRef<HTMLInputElement>(null);
+    const dropdownInputFocusRef = React.useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        props.focusOnDropdown && elementToFocusRef.current?.focus();
+        props.focusOnDropdown && dropdownInputFocusRef.current?.focus();
     }, [props.focusOnDropdown]);
 
     return (
@@ -26,7 +26,7 @@ const DropdownListInput = <Value,>(props: Props<Value>): React.ReactElement => {
                 defaultValue={props.defaultValue ?? undefined}
                 onChange={props.onChange}
                 labelId={props.selectLabelId}
-                inputRef={elementToFocusRef}
+                inputRef={dropdownInputFocusRef}
             >
                 {props.labelsAndValues.map(([label, value]) => {
                     return (

@@ -25,11 +25,11 @@ interface ContentProps {
 }
 
 const DateChangeInput = React.forwardRef<HTMLInputElement, DateInputProps>(
-    (props, elementToFocusRef) => {
+    (props, dateChangeInputRef) => {
         return (
             <>
                 <Heading>What date would you like to change to?</Heading>
-                <SingleDateInput setDate={props.setDate} ref={elementToFocusRef} />
+                <SingleDateInput setDate={props.setDate} ref={dateChangeInputRef} />
             </>
         );
     }
@@ -45,15 +45,15 @@ const DateChangeModalContent: React.FC<ContentProps> = ({
     maxParcelsToShow,
     warningMessage,
 }) => {
-    const elementToFocusRef = useRef<HTMLInputElement>(null);
+    const dateChangeInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        elementToFocusRef.current?.focus();
+        dateChangeInputRef.current?.focus();
     }, []);
 
     return (
         <form onSubmit={(event) => onDateSubmit(event)}>
-            <DateChangeInput setDate={setDate} ref={elementToFocusRef} />
+            <DateChangeInput setDate={setDate} ref={dateChangeInputRef} />
             <SelectedParcelsOverview
                 parcels={selectedParcels}
                 maxParcelsToShow={maxParcelsToShow}

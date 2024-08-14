@@ -39,14 +39,14 @@ interface ContentProps {
 }
 
 const DriverOverviewInput = React.forwardRef<HTMLInputElement, DriverOverviewInputProps>(
-    (props, elementToFocusRef) => {
+    (props, driverNameInputFocusRef) => {
         return (
             <>
                 <Heading>Delivery Information</Heading>
                 <FreeFormTextInput
                     onChange={props.onDriverNameChange}
                     label="Driver's Name (required)"
-                    ref={elementToFocusRef}
+                    ref={driverNameInputFocusRef}
                     fullWidth
                     margin="normal"
                 />
@@ -101,10 +101,10 @@ const DriverOverviewModalContent: React.FC<ContentProps> = ({
     onPdfCreationFailed,
     isInputValid,
 }) => {
-    const elementToFocusRef = useRef<HTMLInputElement>(null);
+    const driverNameInputFocusRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        elementToFocusRef.current?.focus();
+        driverNameInputFocusRef.current?.focus();
     }, []);
 
     return (
@@ -114,7 +114,7 @@ const DriverOverviewModalContent: React.FC<ContentProps> = ({
                 onDriverNameChange={onDriverNameChange}
                 setDateValid={() => setIsDateValid(true)}
                 setDateInvalid={() => setIsDateValid(false)}
-                ref={elementToFocusRef}
+                ref={driverNameInputFocusRef}
             />
             <SelectedParcelsOverview
                 parcels={selectedParcels}

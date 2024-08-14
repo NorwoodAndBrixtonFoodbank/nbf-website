@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import GeneralActionModal, { ActionModalProps, maxParcelsToShow } from "./GeneralActionModal";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
@@ -59,12 +59,6 @@ const ShoppingListModalContent: React.FC<ContentProps> = ({
     onPdfCreationCompleted,
     onPdfCreationFailed,
 }) => {
-    const elementToFocusRef = useRef<HTMLButtonElement>(null);
-
-    useEffect(() => {
-        elementToFocusRef.current?.focus();
-    });
-
     return (
         <>
             <SelectedParcelsOverview

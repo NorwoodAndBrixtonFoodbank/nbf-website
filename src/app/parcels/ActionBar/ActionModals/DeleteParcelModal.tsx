@@ -26,15 +26,15 @@ const DeleteParcelModalContent: React.FC<ContentProps> = ({
     numberOfParcelsToDelete,
     selectedParcels,
 }) => {
-    const modalElementToFocusRef = useRef<HTMLButtonElement>(null);
-    const confirmDialogueFocusRef = useRef<HTMLButtonElement>(null);
+    const modalDeleteButtonFocusRef = useRef<HTMLButtonElement>(null);
+    const confirmDialogueConfirmButtonFocusRef = useRef<HTMLButtonElement>(null);
     const [isConfirmationDialogueOpen, setIsConfirmationDialogueOpen] = useState(false);
 
     useEffect(() => {
         setTimeout(() => {
             isConfirmationDialogueOpen
-                ? confirmDialogueFocusRef.current?.focus()
-                : modalElementToFocusRef.current?.focus();
+                ? confirmDialogueConfirmButtonFocusRef.current?.focus()
+                : modalDeleteButtonFocusRef.current?.focus();
         }, 0);
     }, [isConfirmationDialogueOpen]);
 
@@ -55,7 +55,7 @@ const DeleteParcelModalContent: React.FC<ContentProps> = ({
                 <Button
                     variant="contained"
                     onClick={() => setIsConfirmationDialogueOpen(true)}
-                    ref={modalElementToFocusRef}
+                    ref={modalDeleteButtonFocusRef}
                 >
                     Delete
                 </Button>
@@ -70,7 +70,10 @@ const DeleteParcelModalContent: React.FC<ContentProps> = ({
                 <Centerer>
                     <DialogActions>
                         <Button onClick={() => setIsConfirmationDialogueOpen(false)}>Cancel</Button>
-                        <Button onClick={onDeleteParcels} ref={confirmDialogueFocusRef}>
+                        <Button
+                            onClick={onDeleteParcels}
+                            ref={confirmDialogueConfirmButtonFocusRef}
+                        >
                             Confirm
                         </Button>
                     </DialogActions>

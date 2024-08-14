@@ -11,7 +11,7 @@ export interface DateInputProps {
 }
 
 const SingleDateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
-    (dateInputProps, elementToFocusRef) => {
+    (dateInputProps, dateInputFocusRef) => {
         const setSingleDate = (date: Dayjs | null): void => {
             if (date) {
                 dateInputProps.setDate(date);
@@ -24,7 +24,7 @@ const SingleDateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
                     onChange={(date) => setSingleDate(date)}
                     minDate={reasonableMinDate}
                     label="Date"
-                    inputRef={elementToFocusRef}
+                    inputRef={dateInputFocusRef}
                 />
             </>
         );

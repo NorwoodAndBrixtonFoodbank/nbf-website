@@ -21,7 +21,6 @@ interface SlotInputProps {
 }
 
 interface ContentProps {
-    displayModal: boolean;
     onClose: () => void;
     onSlotSubmit: () => void;
     packingSlots: [string, string][];
@@ -49,7 +48,6 @@ const SlotChangeInput: React.FC<SlotInputProps> = ({ packingSlotsLabelsAndValues
 };
 
 const SlotChangeModalContent: React.FC<ContentProps> = ({
-    displayModal,
     packingSlots,
     setSlot,
     selectedParcels,
@@ -58,24 +56,22 @@ const SlotChangeModalContent: React.FC<ContentProps> = ({
     onSlotSubmit,
 }) => {
     return (
-        displayModal && (
-            <>
-                <SlotChangeInput packingSlotsLabelsAndValues={packingSlots} setSlot={setSlot} />
-                <SelectedParcelsOverview
-                    parcels={selectedParcels}
-                    maxParcelsToShow={maxParcelsToShow}
-                />
-                <WarningMessage>{warningMessage}</WarningMessage>
-                <ConfirmButtons>
-                    <Button variant="contained" onClick={onClose}>
-                        Cancel
-                    </Button>
-                    <Button variant="contained" onClick={onSlotSubmit}>
-                        Change
-                    </Button>
-                </ConfirmButtons>
-            </>
-        )
+        <>
+            <SlotChangeInput packingSlotsLabelsAndValues={packingSlots} setSlot={setSlot} />
+            <SelectedParcelsOverview
+                parcels={selectedParcels}
+                maxParcelsToShow={maxParcelsToShow}
+            />
+            <WarningMessage>{warningMessage}</WarningMessage>
+            <ConfirmButtons>
+                <Button variant="contained" onClick={onClose}>
+                    Cancel
+                </Button>
+                <Button variant="contained" onClick={onSlotSubmit}>
+                    Change
+                </Button>
+            </ConfirmButtons>
+        </>
     );
 };
 
@@ -152,9 +148,8 @@ const SlotChangeModal: React.FC<ActionModalProps> = (props) => {
             errorMessage={errorMessage}
             successMessage={successMessage}
         >
-            {!actionCompleted && (
+            {!actionCompleted && displayModal && (
                 <SlotChangeModalContent
-                    displayModal={displayModal}
                     packingSlots={packingSlots}
                     setSlot={setSlot}
                     selectedParcels={props.selectedParcels}

@@ -61,10 +61,10 @@ const PdfButton = <Data, ErrorType extends string>({
         onPdfCreationCompleted();
     };
 
-    const elementToFocusRef = useRef<HTMLButtonElement>(null);
+    const buttonToFocusRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
-        focusOnButton && elementToFocusRef.current?.focus();
+        focusOnButton && buttonToFocusRef.current?.focus();
     }, [focusOnButton]);
 
     return (
@@ -72,7 +72,7 @@ const PdfButton = <Data, ErrorType extends string>({
             variant="contained"
             onClick={(event) => onClick(event)}
             disabled={disabled}
-            ref={elementToFocusRef}
+            ref={buttonToFocusRef}
             type={formSubmitButton ? "submit" : undefined}
         >
             Download PDF

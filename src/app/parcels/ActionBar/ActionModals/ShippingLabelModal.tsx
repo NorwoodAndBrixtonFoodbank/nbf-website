@@ -32,7 +32,7 @@ interface ContentProps {
 }
 
 const ShippingLabelsInput = React.forwardRef<HTMLInputElement, ShippingLabelsInputProps>(
-    (props, elementToFocusRef) => {
+    (props, quantityInputFocusRef) => {
         return (
             <>
                 <Heading>Shipping Labels</Heading>
@@ -40,7 +40,7 @@ const ShippingLabelsInput = React.forwardRef<HTMLInputElement, ShippingLabelsInp
                     type="number"
                     onChange={props.onLabelQuantityChange}
                     label="Quantity (required)"
-                    ref={elementToFocusRef}
+                    ref={quantityInputFocusRef}
                 />
             </>
         );
@@ -78,17 +78,17 @@ const ShippingLabelModalContent: React.FC<ContentProps> = ({
     onLabelQuantityChange,
     duplicateDownloadedPostcodes,
 }) => {
-    const elementToFocusRef = useRef<HTMLInputElement>(null);
+    const quantityInputFocusRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        elementToFocusRef.current?.focus();
+        quantityInputFocusRef.current?.focus();
     }, []);
 
     return (
         <form>
             <ShippingLabelsInput
                 onLabelQuantityChange={onLabelQuantityChange}
-                ref={elementToFocusRef}
+                ref={quantityInputFocusRef}
             />
             <SelectedParcelsOverview
                 parcels={selectedParcels}

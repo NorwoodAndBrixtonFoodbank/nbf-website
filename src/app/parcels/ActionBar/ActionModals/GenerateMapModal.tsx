@@ -19,10 +19,10 @@ const GenerateMapModalContent: React.FC<ContentProps> = ({
     mapsLinkForSelectedParcels,
     setSuccessMessage,
 }) => {
-    const elementToFocusRef = useRef<HTMLButtonElement>(null);
+    const generateMapButtonFocusRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
-        elementToFocusRef.current?.focus();
+        generateMapButtonFocusRef.current?.focus();
     }, []);
 
     return (
@@ -41,7 +41,7 @@ const GenerateMapModalContent: React.FC<ContentProps> = ({
                 setSuccessMessage("Map Generated");
                 setActionCompleted(true);
             }}
-            ref={elementToFocusRef}
+            ref={generateMapButtonFocusRef}
         >
             Generate Map
         </Button>
