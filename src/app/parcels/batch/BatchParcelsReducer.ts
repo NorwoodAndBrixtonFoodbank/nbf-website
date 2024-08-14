@@ -6,8 +6,11 @@ import {
     parcelOverrideCellValueType,
     BatchParcel,
 } from "@/app/parcels/batch/BatchTypes";
-import { getOverridenFieldsAndValues } from "@/app/parcels/batch/clientSideReducerHelpers";
-import { saveTableState } from "./BatchParcelDataGrid";
+import {
+    getInitialTableState,
+    getOverridenFieldsAndValues,
+    setTableState,
+} from "@/app/parcels/batch/clientSideReducerHelpers";
 
 export const batchParcelsReducer = (
     state: BatchTableDataState,
@@ -16,7 +19,7 @@ export const batchParcelsReducer = (
     let newState: BatchTableDataState;
     switch (action.type) {
         case "initialise_table_state": {
-            newState = action.initialTableStatePayload.initialState;
+            newState = getInitialTableState();
             break;
         }
         case "update_cell": {
@@ -49,29 +52,31 @@ export const batchParcelsReducer = (
                         return row.id;
                     })
                 ) + 1;
-            newState = state.batchDataRows.length < 99
-                ? {
-                      ...state,
-                      batchDataRows: [
-                          ...state.batchDataRows,
-                          {
-                              id: newId,
-                              clientId: null,
-                              data: null,
-                          },
-                      ],
-                  }
-                : state;
+            newState =
+                state.batchDataRows.length < 99
+                    ? {
+                          ...state,
+                          batchDataRows: [
+                              ...state.batchDataRows,
+                              {
+                                  id: newId,
+                                  clientId: null,
+                                  data: null,
+                              },
+                          ],
+                      }
+                    : state;
             break;
         }
         case "delete_row": {
             const { rowId } = action.deleteRowPayload;
-            newState = rowId !== 0
-                ? {
-                      ...state,
-                      batchDataRows: state.batchDataRows.filter((row) => row.id !== rowId),
-                  }
-                : state;
+            newState =
+                rowId !== 0
+                    ? {
+                          ...state,
+                          batchDataRows: state.batchDataRows.filter((row) => row.id !== rowId),
+                      }
+                    : state;
             break;
         }
         case "override_column": {
@@ -100,7 +105,7 @@ export const batchParcelsReducer = (
             const updatedParcelOverrides = state.parcelOverrides.filter(
                 (override) => override.field !== parcelField
             );
-            newState =  {
+            newState = {
                 ...state,
                 clientOverrides: updatedClientOverrides,
                 parcelOverrides: updatedParcelOverrides,
@@ -144,7 +149,7 @@ export const batchParcelsReducer = (
         }
     }
 
-    saveTableState(newState);
+    setTableState(newState);
     return newState;
 };
 

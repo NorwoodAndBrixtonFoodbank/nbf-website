@@ -2,13 +2,14 @@
 
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useReducer } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { BatchTableDataState } from "@/app/parcels/batch/BatchTypes";
 import batchParcelsReducer from "@/app/parcels/batch/BatchParcelsReducer";
-import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";;
-import { json } from "stream/consumers";
+import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";
+import React from "react";
 
 export interface BatchGridDisplayRow {
+    [key: string]: string | number | null;
     id: number;
     fullName: string;
     phoneNumber: string;
@@ -189,28 +190,27 @@ export const defaultTableState: BatchTableDataState = {
     overrideDataRow: {
         data: null,
     },
-    batchDataRows: [{
-        id: 1,
-        clientId: null,
-        data: null
-    }],
+    batchDataRows: [
+        {
+            id: 1,
+            clientId: null,
+            data: null,
+        },
+    ],
     clientOverrides: [],
     parcelOverrides: [],
 };
 
-const LOCAL_STORAGE_KEY : string = "batchTableDataState";
-
-const getInitialTableState = () : BatchTableDataState => {
-    const storedTableState : string | null = localStorage.getItem(LOCAL_STORAGE_KEY)
-    return storedTableState ? JSON.parse(storedTableState) : defaultTableState as BatchTableDataState;
-}
-
-export const saveTableState = (tableState: BatchTableDataState) => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tableState));
-}
-
 const BatchParcelDataGrid: React.FC<BatchParcelDataGridProps> = ({ initialTableState }) => {
-    const [tableState, _] = useReducer(batchParcelsReducer, initialTableState);
+    const dataGridInitialLoad = useRef(true);
+    const [tableState, dispatch] = useReducer(batchParcelsReducer, initialTableState);
+
+    useEffect(() => {
+        if (dataGridInitialLoad.current) {
+            dispatch({ type: "initialise_table_state" });
+            dataGridInitialLoad.current = false;
+        }
+    }, []);
 
     const displayRows: BatchGridDisplayRow[] = tableStateToBatchDisplayRows(tableState);
 

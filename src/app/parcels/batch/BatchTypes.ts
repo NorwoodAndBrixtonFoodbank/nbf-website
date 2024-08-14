@@ -151,10 +151,6 @@ export interface BatchTableDataState {
     }[];
 }
 
-interface initialTableStatePayload {
-    initialState: BatchTableDataState;
-}
-
 interface updateCellPayload {
     rowId: number;
     newClientValue?: clientCellValueType;
@@ -184,7 +180,6 @@ interface useExistingClientPayload {
 
 interface BatchActionInitialTableState {
     type: "initialise_table_state";
-    initialTableStatePayload: initialTableStatePayload;
 }
 interface BatchActionUpdateCell {
     type: "update_cell";
