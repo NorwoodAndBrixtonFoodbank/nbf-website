@@ -53,7 +53,7 @@ const getPdfErrorMessage = (error: ShoppingListPdfError): string => {
     return `${errorMessage} LogId: ${error.logId}`;
 };
 
-const ModalContent: React.FC<ContentProps> = ({
+const ShoppingListModalContent: React.FC<ContentProps> = ({
     selectedParcels,
     duplicateDownloadedPostcodes,
     onPdfCreationCompleted,
@@ -143,7 +143,7 @@ const ShoppingListModal: React.FC<ActionModalProps> = (props) => {
             successMessage={successMessage}
         >
             {!actionCompleted && (
-                <ModalContent
+                <ShoppingListModalContent
                     selectedParcels={props.selectedParcels}
                     duplicateDownloadedPostcodes={duplicateDownloadedPostcodes}
                     onPdfCreationCompleted={onPdfCreationCompleted}

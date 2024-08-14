@@ -16,7 +16,7 @@ import DriverOverviewPdfButton, {
 } from "@/pdf/DriverOverview/DriverOverviewPdfButton";
 import { sendAuditLog } from "@/server/auditLog";
 import { displayNameForNullDriverName } from "@/common/format";
-import { ParcelsTableRow } from "../../parcelsTable/types";
+import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 
 interface DriverOverviewInputProps {
     onDateChange: (newDate: Dayjs | null) => void;
@@ -89,7 +89,7 @@ const getPdfErrorMessage = (error: DriverOverviewError): string => {
     return `${errorMessage} LogId: ${error.logId}`;
 };
 
-const ModalContent: React.FC<ContentProps> = ({
+const DriverOverviewModalContent: React.FC<ContentProps> = ({
     onDateChange,
     onDriverNameChange,
     setIsDateValid,
@@ -208,7 +208,7 @@ const DriverOverviewModal: React.FC<ActionModalProps> = (props) => {
             successMessage={successMessage}
         >
             {!actionCompleted && (
-                <ModalContent
+                <DriverOverviewModalContent
                     onDateChange={onDateChange}
                     onDriverNameChange={onDriverNameChange}
                     setIsDateValid={setIsDateValid}

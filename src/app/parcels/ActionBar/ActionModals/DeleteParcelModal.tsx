@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import {
-    GeneralActionModal,
+import GeneralActionModal, {
     ConfirmButtons,
     Heading,
     maxParcelsToShow,
@@ -21,7 +20,7 @@ interface ContentProps {
     selectedParcels: ParcelsTableRow[];
 }
 
-const ModalContent: React.FC<ContentProps> = ({
+const DeleteParcelModalContent: React.FC<ContentProps> = ({
     onClose,
     onDeleteParcels,
     numberOfParcelsToDelete,
@@ -111,7 +110,7 @@ const DeleteParcelModal: React.FC<ActionModalProps> = (props) => {
             successMessage={successMessage}
         >
             {!actionCompleted && (
-                <ModalContent
+                <DeleteParcelModalContent
                     selectedParcels={props.selectedParcels}
                     numberOfParcelsToDelete={numberOfParcelsToDelete}
                     onClose={onClose}

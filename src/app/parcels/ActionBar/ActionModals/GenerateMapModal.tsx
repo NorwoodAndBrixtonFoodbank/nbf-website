@@ -12,7 +12,7 @@ interface ContentProps {
     setSuccessMessage: (message: string) => void;
 }
 
-const ModalContent: React.FC<ContentProps> = ({
+const GenerateMapModalContent: React.FC<ContentProps> = ({
     uniquePostcodes,
     setErrorMessage,
     setActionCompleted,
@@ -80,7 +80,7 @@ const GenerateMapModal: React.FC<ActionModalProps> = (props) => {
             successMessage={successMessage}
         >
             {!actionCompleted && (
-                <ModalContent
+                <GenerateMapModalContent
                     uniquePostcodes={uniquePostcodes}
                     setErrorMessage={setErrorMessage}
                     setActionCompleted={setActionCompleted}

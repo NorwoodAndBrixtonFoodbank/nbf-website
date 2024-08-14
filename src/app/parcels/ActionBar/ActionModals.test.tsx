@@ -21,7 +21,7 @@ describe("Actions", () => {
                         successMessage={null}
                         header="TestModal"
                         isOpen={true}
-                        headerId="headerId"
+                        headerId="test-modal-header"
                     >
                         <p> Test Content </p>
                         <button data-testid="action-button" onClick={mockOnSubmit}>

@@ -6,7 +6,7 @@ import DayOverviewPdfButton, { DayOverviewPdfError } from "@/pdf/DayOverview/Day
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import { sendAuditLog } from "@/server/auditLog";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
-import { ParcelsTableRow } from "../../parcelsTable/types";
+import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 
 interface ContentProps {
     selectedParcels: ParcelsTableRow[];
@@ -28,7 +28,7 @@ const getPdfErrorMessage = (error: DayOverviewPdfError): string => {
     return `${errorMessage} LogId: ${error.logId}`;
 };
 
-const ModalContent: React.FC<ContentProps> = ({
+const DayOverviewModalContent: React.FC<ContentProps> = ({
     selectedParcels,
     maxParcelsToShow,
     onPdfCreationCompleted,
@@ -95,7 +95,7 @@ const DayOverviewModal: React.FC<ActionModalProps> = (props) => {
             successMessage={successMessage}
         >
             {actionShown && (
-                <ModalContent
+                <DayOverviewModalContent
                     selectedParcels={props.selectedParcels}
                     maxParcelsToShow={maxParcelsToShow}
                     onPdfCreationCompleted={onPdfCreationCompleted}

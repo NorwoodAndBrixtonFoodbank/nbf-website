@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { useTheme } from "styled-components";
+import styled, { DefaultTheme, useTheme } from "styled-components";
 import Title from "@/components/Title/Title";
 import { NavBarHeight } from "@/components/NavigationBar/NavigationBar";
 import Paper from "@mui/material/Paper";
@@ -46,10 +46,29 @@ const MiddleDiv = styled(Paper)`
     }
 `;
 
-const AuthInputSection = styled.div`
+const AuthInputSection = styled.form`
     display: flex;
     flex-direction: column;
     gap: 10px;
+`;
+
+const AuthLinkElement = styled(Link)<{ theme: DefaultTheme }>`
+    color: ${(props) => props.theme.main.lighterForeground[0]};
+    font-size: 13px;
+    text-align: center;
+`;
+
+const ErrorMessage = styled.span<{ theme: DefaultTheme }>`
+    color: ${(props) => props.theme.error};
+    font-size: 13px;
+    text-align: center;
+    white-space: pre-line;
+`;
+
+const SuccessMessage = styled.span<{ theme: DefaultTheme }>`
+    color: ${(props) => props.theme.main.foreground[0]};
+    font-size: 13px;
+    text-align: center;
 `;
 
 interface AuthPanelProps {
@@ -85,69 +104,47 @@ const AuthPanel: React.FC<AuthPanelProps> = ({
 }) => {
     const theme = useTheme();
 
-    const AuthLinkElement = styled(Link)`
-        color: ${theme.main.lighterForeground[0]};
-        font-size: 13px;
-        text-align: center;
-    `;
-
-    const ErrorMessage = styled.span`
-        color: ${theme.error};
-        font-size: 13px;
-        text-align: center;
-        white-space: pre-line;
-    `;
-
-    const SuccessMessage = styled.span`
-        color: ${theme.main.foreground[0]};
-        font-size: 13px;
-        text-align: center;
-    `;
-
     return (
         <MiddleDiv elevation={5} id="login-panel">
             <Title>{title}</Title>
+            <AuthInputSection>
+                {emailField && (
+                    <TextField
+                        id="email"
+                        label="Email address"
+                        variant="outlined"
+                        type="email"
+                        value={emailField.text}
+                        onChange={(event) => emailField.setText(event.target.value)}
+                    />
+                )}
 
-            <form>
-                <AuthInputSection>
-                    {emailField && (
-                        <TextField
-                            id="email"
-                            label="Email address"
-                            variant="outlined"
-                            type="email"
-                            value={emailField.text}
-                            onChange={(event) => emailField.setText(event.target.value)}
-                        />
-                    )}
+                {passwordField && (
+                    <TextField
+                        id="password"
+                        type="password"
+                        label="Your Password"
+                        variant="outlined"
+                        value={passwordField.text}
+                        onChange={(event) => passwordField.setText(event.target.value)}
+                    />
+                )}
 
-                    {passwordField && (
-                        <TextField
-                            id="password"
-                            type="password"
-                            label="Your Password"
-                            variant="outlined"
-                            value={passwordField.text}
-                            onChange={(event) => passwordField.setText(event.target.value)}
-                        />
-                    )}
+                <Button variant="contained" type="submit" onClick={onSubmit}>
+                    {submitText}
+                </Button>
 
-                    <Button variant="contained" type="submit" onClick={onSubmit}>
-                        {submitText}
-                    </Button>
+                {authLinks &&
+                    authLinks.map((authLink) => (
+                        <AuthLinkElement key={authLink.label} href={authLink.href} theme={theme}>
+                            {authLink.label}
+                        </AuthLinkElement>
+                    ))}
 
-                    {authLinks &&
-                        authLinks.map((authLink) => (
-                            <AuthLinkElement key={authLink.label} href={authLink.href}>
-                                {authLink.label}
-                            </AuthLinkElement>
-                        ))}
+                {errorMessage && <ErrorMessage theme={theme}>{errorMessage}</ErrorMessage>}
 
-                    {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-
-                    {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
-                </AuthInputSection>
-            </form>
+                {successMessage && <SuccessMessage theme={theme}>{successMessage}</SuccessMessage>}
+            </AuthInputSection>
         </MiddleDiv>
     );
 };

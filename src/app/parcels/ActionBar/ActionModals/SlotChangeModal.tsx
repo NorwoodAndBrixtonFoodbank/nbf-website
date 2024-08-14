@@ -13,7 +13,7 @@ import supabase from "@/supabaseClient";
 import { PackingSlotsLabelsAndValues, fetchPackingSlotsInfo } from "@/common/fetch";
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { getUpdateErrorMessage, packingDateOrSlotUpdate } from "./CommonDateAndSlot";
-import { ParcelsTableRow } from "../../parcelsTable/types";
+import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 
 interface SlotInputProps {
     packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues;
@@ -48,7 +48,7 @@ const SlotChangeInput: React.FC<SlotInputProps> = ({ packingSlotsLabelsAndValues
     );
 };
 
-const ModalContent: React.FC<ContentProps> = ({
+const SlotChangeModalContent: React.FC<ContentProps> = ({
     displayModal,
     packingSlots,
     setSlot,
@@ -57,25 +57,25 @@ const ModalContent: React.FC<ContentProps> = ({
     onClose,
     onSlotSubmit,
 }) => {
-    return displayModal ? (
-        <>
-            <SlotChangeInput packingSlotsLabelsAndValues={packingSlots} setSlot={setSlot} />
-            <SelectedParcelsOverview
-                parcels={selectedParcels}
-                maxParcelsToShow={maxParcelsToShow}
-            />
-            <WarningMessage>{warningMessage}</WarningMessage>
-            <ConfirmButtons>
-                <Button variant="contained" onClick={onClose}>
-                    Cancel
-                </Button>
-                <Button variant="contained" onClick={onSlotSubmit}>
-                    Change
-                </Button>
-            </ConfirmButtons>
-        </>
-    ) : (
-        <></>
+    return (
+        displayModal && (
+            <>
+                <SlotChangeInput packingSlotsLabelsAndValues={packingSlots} setSlot={setSlot} />
+                <SelectedParcelsOverview
+                    parcels={selectedParcels}
+                    maxParcelsToShow={maxParcelsToShow}
+                />
+                <WarningMessage>{warningMessage}</WarningMessage>
+                <ConfirmButtons>
+                    <Button variant="contained" onClick={onClose}>
+                        Cancel
+                    </Button>
+                    <Button variant="contained" onClick={onSlotSubmit}>
+                        Change
+                    </Button>
+                </ConfirmButtons>
+            </>
+        )
     );
 };
 
@@ -85,13 +85,9 @@ const SlotChangeModal: React.FC<ActionModalProps> = (props) => {
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const [packingSlots, setPackingSlots] = useState<[string, string][]>([]);
+    const [slot, setSlot] = useState<string>("");
     const [displayModal, setDisplayModal] = useState<boolean>(true);
     const [warningMessage, setWarningMessage] = useState<string>("");
-
-    let slot = "";
-    const setSlot = (newSlot: string): void => {
-        slot = newSlot;
-    };
 
     (async () => {
         const { data: packingSlotsData, error: packingSlotsError } =
@@ -157,7 +153,7 @@ const SlotChangeModal: React.FC<ActionModalProps> = (props) => {
             successMessage={successMessage}
         >
             {!actionCompleted && (
-                <ModalContent
+                <SlotChangeModalContent
                     displayModal={displayModal}
                     packingSlots={packingSlots}
                     setSlot={setSlot}

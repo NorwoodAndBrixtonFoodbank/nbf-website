@@ -8,16 +8,12 @@ import GeneralActionModal, {
 } from "./GeneralActionModal";
 import { Button } from "@mui/material";
 import SelectedParcelsOverview from "../SelectedParcelsOverview";
-import SingleDateInput from "@/components/DateInputs/SingleDateInput";
+import SingleDateInput, { DateInputProps } from "@/components/DateInputs/SingleDateInput";
 import dayjs, { Dayjs } from "dayjs";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import { getDbDate } from "@/common/format";
 import { getUpdateErrorMessage, packingDateOrSlotUpdate } from "./CommonDateAndSlot";
-import { ParcelsTableRow } from "../../parcelsTable/types";
-
-interface DateChangeProps {
-    setDate: (date: Dayjs) => void;
-}
+import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 
 interface ContentProps {
     onClose: () => void;
@@ -28,7 +24,7 @@ interface ContentProps {
     warningMessage: string;
 }
 
-const DateChangeInput = React.forwardRef<HTMLInputElement, DateChangeProps>(
+const DateChangeInput = React.forwardRef<HTMLInputElement, DateInputProps>(
     (props, elementToFocusRef) => {
         return (
             <>
@@ -41,7 +37,7 @@ const DateChangeInput = React.forwardRef<HTMLInputElement, DateChangeProps>(
 
 DateChangeInput.displayName = "DateChangeInput";
 
-const ModalContent: React.FC<ContentProps> = ({
+const DateChangeModalContent: React.FC<ContentProps> = ({
     onClose,
     onDateSubmit,
     setDate,
@@ -134,7 +130,7 @@ const DateChangeModal: React.FC<ActionModalProps> = (props) => {
             successMessage={successMessage}
         >
             {!actionCompleted && (
-                <ModalContent
+                <DateChangeModalContent
                     onClose={onClose}
                     onDateSubmit={onDateSubmit}
                     setDate={setDate}

@@ -15,7 +15,7 @@ import { getStatusErrorMessageWithLogId } from "../Statuses";
 import { sendAuditLog } from "@/server/auditLog";
 import DuplicateDownloadWarning from "@/app/parcels/ActionBar/DuplicateDownloadWarning";
 import { getDuplicateDownloadedPostcodes } from "@/app/parcels/ActionBar/ActionModals/getDuplicateDownloadedPostcodes";
-import { ParcelsTableRow } from "../../parcelsTable/types";
+import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 
 interface ShippingLabelsInputProps {
     onLabelQuantityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -69,7 +69,7 @@ const getPdfErrorMessage = (error: ShippingLabelError): string => {
     return `${errorMessage} LogId: ${error.logId}`;
 };
 
-const ModalContent: React.FC<ContentProps> = ({
+const ShippingLabelModalContent: React.FC<ContentProps> = ({
     isInputValid,
     selectedParcels,
     labelQuantity,
@@ -189,7 +189,7 @@ const ShippingLabelModal: React.FC<ActionModalProps> = (props) => {
             successMessage={successMessage}
         >
             {!actionCompleted && (
-                <ModalContent
+                <ShippingLabelModalContent
                     isInputValid={isInputValid}
                     selectedParcels={props.selectedParcels}
                     labelQuantity={labelQuantity}
