@@ -2,11 +2,11 @@
 
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useEffect, useReducer, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { BatchTableDataState } from "@/app/parcels/batch/BatchTypes";
 import batchParcelsReducer from "@/app/parcels/batch/BatchParcelsReducer";
 import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";
-import React from "react";
+import { useLocalStorage } from "@/app/parcels/batch/useLocalStorage";
 
 export interface BatchGridDisplayRow {
     [key: string]: string | number | null;
@@ -202,17 +202,14 @@ export const defaultTableState: BatchTableDataState = {
 };
 
 const BatchParcelDataGrid: React.FC<BatchParcelDataGridProps> = ({ initialTableState }) => {
-    const dataGridInitialLoad = useRef(true);
-    const [tableState, dispatch] = useReducer(batchParcelsReducer, initialTableState);
+    const [tableState, _] = useLocalStorage(batchParcelsReducer, initialTableState);
+    const [displayRows, setDisplayRows] = useState<BatchGridDisplayRow[]>(
+        tableStateToBatchDisplayRows(initialTableState)
+    );
 
     useEffect(() => {
-        if (dataGridInitialLoad.current) {
-            dispatch({ type: "initialise_table_state" });
-            dataGridInitialLoad.current = false;
-        }
-    }, []);
-
-    const displayRows: BatchGridDisplayRow[] = tableStateToBatchDisplayRows(tableState);
+        setDisplayRows(tableStateToBatchDisplayRows(tableState));
+    }, [tableState]);
 
     return (
         <DataGrid

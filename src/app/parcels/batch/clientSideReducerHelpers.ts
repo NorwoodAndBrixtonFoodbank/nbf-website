@@ -1,24 +1,11 @@
 import { NAPPY_SIZE_LABEL, EXTRA_INFORMATION_LABEL } from "@/app/clients/form/labels";
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import {
-    BatchTableDataState,
     OverrideClient,
     OverrideParcel,
     clientOverrideCellValueType,
     parcelOverrideCellValueType,
 } from "@/app/parcels/batch/BatchTypes";
-import { defaultTableState } from "./BatchParcelDataGrid";
-
-const LOCAL_STORAGE_KEY = "batchTableDataState";
-
-export const getInitialTableState = (): BatchTableDataState => {
-    const storedTableState: string | null = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return storedTableState ? JSON.parse(storedTableState) : defaultTableState;
-};
-
-export const setTableState = (tableState: BatchTableDataState): void => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tableState));
-};
 
 export const getOverridenFieldsAndValues = (
     allFields: OverrideClient | OverrideParcel

@@ -178,8 +178,13 @@ interface useExistingClientPayload {
     existingClientId: string;
 }
 
+interface initialiseTableStatePayload {
+    initialTableState: BatchTableDataState;
+}
+
 interface BatchActionInitialTableState {
     type: "initialise_table_state";
+    payload: initialiseTableStatePayload;
 }
 interface BatchActionUpdateCell {
     type: "update_cell";
