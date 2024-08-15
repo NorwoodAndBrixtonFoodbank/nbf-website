@@ -12,7 +12,6 @@ import ParcelAuditLogModalRow from "./auditLogModalRows/Parcel";
 import ClientAuditLogModalRow from "./auditLogModalRows/Client";
 import ListsAuditLogModalRow from "./auditLogModalRows/Lists";
 import EventAuditLogModalRow from "./auditLogModalRows/Event";
-import ListsHotelAuditLogModalRow from "./auditLogModalRows/ListsHotel";
 import ProfileAuditLogModalRow from "./auditLogModalRows/Profile";
 import PackingSlotAuditLogModalRow from "./auditLogModalRows/PackingSlot";
 import StatusOrderAuditLogModalRow from "./auditLogModalRows/StatusOrder";
@@ -70,11 +69,6 @@ const AuditLogModal: React.FC<AuditLogModalProps> = ({ selectedAuditLogRow, onCl
                     )}
                     {selectedAuditLogRow.listId && (
                         <ListsAuditLogModalRow listsId={selectedAuditLogRow.listId} />
-                    )}
-                    {selectedAuditLogRow.listHotelId && (
-                        <ListsHotelAuditLogModalRow
-                            listsHotelId={selectedAuditLogRow.listHotelId}
-                        />
                     )}
                     {selectedAuditLogRow.packingSlotId && (
                         <PackingSlotAuditLogModalRow

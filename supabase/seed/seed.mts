@@ -20,7 +20,6 @@ import {
     eventNamesWithNumberData,
 } from "./eventsSeed.mjs";
 import { collectionCentres } from "./collectionCentresSeed.mjs";
-import { listsHotels } from "./listsHotelsSeed.mjs";
 import { packingSlots } from "./packingSlotsSeed.mjs";
 import {
     earliestParcelOrEventDate,
@@ -101,8 +100,6 @@ async function generateSeed(): Promise<void> {
     await seed.collectionCentres(collectionCentres);
 
     await seed.lists(listsSeedRequired);
-
-    await seed.listsHotels(listsHotels);
 
     await seed.parcels(
         (generate) =>

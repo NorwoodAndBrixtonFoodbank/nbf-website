@@ -18,7 +18,6 @@ export type Database = {
           content: Json | null
           created_at: string
           event_id: string | null
-          list_hotel_id: string | null
           list_id: string | null
           log_id: string | null
           packing_slot_id: string | null
@@ -38,7 +37,6 @@ export type Database = {
           content?: Json | null
           created_at?: string
           event_id?: string | null
-          list_hotel_id?: string | null
           list_id?: string | null
           log_id?: string | null
           packing_slot_id?: string | null
@@ -58,7 +56,6 @@ export type Database = {
           content?: Json | null
           created_at?: string
           event_id?: string | null
-          list_hotel_id?: string | null
           list_id?: string | null
           log_id?: string | null
           packing_slot_id?: string | null
@@ -118,13 +115,6 @@ export type Database = {
             columns: ["collection_centre_id"]
             isOneToOne: false
             referencedRelation: "collection_centres"
-            referencedColumns: ["primary_key"]
-          },
-          {
-            foreignKeyName: "public_audit_log_list_hotel_id_fkey"
-            columns: ["list_hotel_id"]
-            isOneToOne: false
-            referencedRelation: "lists_hotel"
             referencedColumns: ["primary_key"]
           },
           {
@@ -466,84 +456,6 @@ export type Database = {
         }
         Relationships: []
       }
-      lists_hotel: {
-        Row: {
-          item_name: string
-          notes_for_1: string | null
-          notes_for_10: string | null
-          notes_for_2: string | null
-          notes_for_3: string | null
-          notes_for_4: string | null
-          notes_for_5: string | null
-          notes_for_6: string | null
-          notes_for_7: string | null
-          notes_for_8: string | null
-          notes_for_9: string | null
-          primary_key: string
-          quantity_for_1: string
-          quantity_for_10: string
-          quantity_for_2: string
-          quantity_for_3: string
-          quantity_for_4: string
-          quantity_for_5: string
-          quantity_for_6: string
-          quantity_for_7: string
-          quantity_for_8: string
-          quantity_for_9: string
-          row_order: number
-        }
-        Insert: {
-          item_name?: string
-          notes_for_1?: string | null
-          notes_for_10?: string | null
-          notes_for_2?: string | null
-          notes_for_3?: string | null
-          notes_for_4?: string | null
-          notes_for_5?: string | null
-          notes_for_6?: string | null
-          notes_for_7?: string | null
-          notes_for_8?: string | null
-          notes_for_9?: string | null
-          primary_key?: string
-          quantity_for_1?: string
-          quantity_for_10?: string
-          quantity_for_2?: string
-          quantity_for_3?: string
-          quantity_for_4?: string
-          quantity_for_5?: string
-          quantity_for_6?: string
-          quantity_for_7?: string
-          quantity_for_8?: string
-          quantity_for_9?: string
-          row_order?: number
-        }
-        Update: {
-          item_name?: string
-          notes_for_1?: string | null
-          notes_for_10?: string | null
-          notes_for_2?: string | null
-          notes_for_3?: string | null
-          notes_for_4?: string | null
-          notes_for_5?: string | null
-          notes_for_6?: string | null
-          notes_for_7?: string | null
-          notes_for_8?: string | null
-          notes_for_9?: string | null
-          primary_key?: string
-          quantity_for_1?: string
-          quantity_for_10?: string
-          quantity_for_2?: string
-          quantity_for_3?: string
-          quantity_for_4?: string
-          quantity_for_5?: string
-          quantity_for_6?: string
-          quantity_for_7?: string
-          quantity_for_8?: string
-          quantity_for_9?: string
-          row_order?: number
-        }
-        Relationships: []
-      }
       packing_slots: {
         Row: {
           is_shown: boolean
@@ -755,7 +667,6 @@ export type Database = {
           content: Json | null
           created_at: string | null
           event_id: string | null
-          list_hotel_id: string | null
           list_id: string | null
           log_id: string | null
           packing_slot_id: string | null
@@ -821,13 +732,6 @@ export type Database = {
             columns: ["collection_centre_id"]
             isOneToOne: false
             referencedRelation: "collection_centres"
-            referencedColumns: ["primary_key"]
-          },
-          {
-            foreignKeyName: "public_audit_log_list_hotel_id_fkey"
-            columns: ["list_hotel_id"]
-            isOneToOne: false
-            referencedRelation: "lists_hotel"
             referencedColumns: ["primary_key"]
           },
           {
