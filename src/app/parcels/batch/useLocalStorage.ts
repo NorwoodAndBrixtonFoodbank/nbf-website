@@ -10,7 +10,7 @@ export const getInitialTableState = (
     return storedTableState ? JSON.parse(storedTableState) : defaultInitialState;
 };
 
-export const setLocalTableState = (tableState: BatchTableDataState): void => {
+export const writeLocalTableState = (tableState: BatchTableDataState): void => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tableState));
 };
 
@@ -18,22 +18,22 @@ export const useLocalStorage = (
     reducer: React.Reducer<BatchTableDataState, BatchActionType>,
     defaultState: BatchTableDataState
 ): [BatchTableDataState, React.Dispatch<BatchActionType>] => {
-    const dataGridInitialLoad = useRef<boolean>(true);
+    const isDataGridInitialLoad = useRef<boolean>(true);
     const [tableState, dispatch] = useReducer(reducer, defaultState);
 
     useEffect(() => {
-        if (dataGridInitialLoad.current) {
+        if (isDataGridInitialLoad.current) {
             dispatch({
                 type: "initialise_table_state",
                 payload: { initialTableState: getInitialTableState(defaultState) },
             });
-            dataGridInitialLoad.current = false;
+            isDataGridInitialLoad.current = false;
             return;
         }
     }, [defaultState]);
 
     useEffect(() => {
-        setLocalTableState(tableState);
+        writeLocalTableState(tableState);
     }, [tableState]);
 
     return [tableState, dispatch];

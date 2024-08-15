@@ -2,7 +2,7 @@ import BatchParcelDataGrid, {
     batchGridDisplayColumns,
 } from "@/app/parcels/batch/BatchParcelDataGrid";
 import { mockTableDataState } from "@/app/parcels/batch/mockData";
-import { setLocalTableState } from "@/app/parcels/batch/useLocalStorage";
+import { writeLocalTableState } from "@/app/parcels/batch/useLocalStorage";
 
 const expectedDisplayRows = [
     ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""],
@@ -62,7 +62,7 @@ describe("BatchParcelDataGrid", () => {
 
     beforeEach(() => {
         cy.viewport(totalWidth + 50, 300);
-        setLocalTableState(mockTableDataState);
+        writeLocalTableState(mockTableDataState);
         cy.mount(<BatchParcelDataGrid />);
     });
 

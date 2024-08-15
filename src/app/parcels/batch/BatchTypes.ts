@@ -182,7 +182,7 @@ interface initialiseTableStatePayload {
     initialTableState: BatchTableDataState;
 }
 
-interface BatchActionInitialTableState {
+interface BatchActionInitialiseTableState {
     type: "initialise_table_state";
     payload: initialiseTableStatePayload;
 }
@@ -221,4 +221,4 @@ export type BatchActionType =
     | BatchActionUseExistingClient
     | BatchActionRemoveOverrideColumn
     | BatchActionRemoveAllOverrides
-    | BatchActionInitialTableState;
+    | BatchActionInitialiseTableState;
