@@ -7,7 +7,12 @@ export const getInitialTableState = (
     defaultInitialState: BatchTableDataState
 ): BatchTableDataState => {
     const storedTableState: string | null = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return storedTableState ? JSON.parse(storedTableState) : defaultInitialState;
+    try {
+        return storedTableState ? JSON.parse(storedTableState) : defaultInitialState;
+    } catch (error) {
+        console.error("Error parsing local storage data", error);
+        return defaultInitialState;
+    }
 };
 
 export const writeLocalTableState = (tableState: BatchTableDataState): void => {
