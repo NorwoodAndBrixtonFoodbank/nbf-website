@@ -2,6 +2,7 @@ import BatchParcelDataGrid, {
     batchGridDisplayColumns,
 } from "@/app/parcels/batch/BatchParcelDataGrid";
 import { mockTableDataState } from "@/app/parcels/batch/mockData";
+import { setLocalTableState } from "@/app/parcels/batch/useLocalStorage";
 
 const expectedDisplayRows = [
     ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""],
@@ -61,7 +62,8 @@ describe("BatchParcelDataGrid", () => {
 
     beforeEach(() => {
         cy.viewport(totalWidth + 50, 300);
-        cy.mount(<BatchParcelDataGrid initialTableState={mockTableDataState} />);
+        setLocalTableState(mockTableDataState);
+        cy.mount(<BatchParcelDataGrid />);
     });
 
     it("should display the expected column headers", () => {

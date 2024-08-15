@@ -182,10 +182,6 @@ const styledBatchGridDisplayColumns: GridColDef<BatchGridDisplayRow[][number]>[]
         return { ...column, headerAlign: "center", align: "center" };
     });
 
-interface BatchParcelDataGridProps {
-    initialTableState: BatchTableDataState;
-}
-
 export const defaultTableState: BatchTableDataState = {
     overrideDataRow: {
         data: null,
@@ -201,10 +197,10 @@ export const defaultTableState: BatchTableDataState = {
     parcelOverrides: [],
 };
 
-const BatchParcelDataGrid: React.FC<BatchParcelDataGridProps> = ({ initialTableState }) => {
-    const [tableState, _] = useLocalStorage(batchParcelsReducer, initialTableState);
+const BatchParcelDataGrid: React.FC = () => {
+    const [tableState, _] = useLocalStorage(batchParcelsReducer, defaultTableState);
     const [displayRows, setDisplayRows] = useState<BatchGridDisplayRow[]>(
-        tableStateToBatchDisplayRows(initialTableState)
+        tableStateToBatchDisplayRows(defaultTableState)
     );
 
     useEffect(() => {
