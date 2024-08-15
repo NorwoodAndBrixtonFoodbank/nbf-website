@@ -2,12 +2,14 @@
 
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useReducer } from "react";
+import React, { useMemo } from "react";
 import { BatchTableDataState } from "@/app/parcels/batch/BatchTypes";
 import batchParcelsReducer from "@/app/parcels/batch/BatchParcelsReducer";
 import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";
+import { useLocalStorage } from "@/app/parcels/batch/useLocalStorage";
 
 export interface BatchGridDisplayRow {
+    [key: string]: string | number | null;
     id: number;
     fullName: string;
     phoneNumber: string;
@@ -180,10 +182,6 @@ const styledBatchGridDisplayColumns: GridColDef<BatchGridDisplayRow[][number]>[]
         return { ...column, headerAlign: "center", align: "center" };
     });
 
-interface BatchParcelDataGridProps {
-    initialTableState: BatchTableDataState;
-}
-
 export const defaultTableState: BatchTableDataState = {
     overrideDataRow: {
         data: null,
@@ -191,7 +189,7 @@ export const defaultTableState: BatchTableDataState = {
     batchDataRows: [
         {
             id: 1,
-            clientId: "1",
+            clientId: null,
             data: null,
         },
     ],
@@ -199,10 +197,12 @@ export const defaultTableState: BatchTableDataState = {
     parcelOverrides: [],
 };
 
-const BatchParcelDataGrid: React.FC<BatchParcelDataGridProps> = ({ initialTableState }) => {
-    const [tableState, _] = useReducer(batchParcelsReducer, initialTableState);
+const BatchParcelDataGrid: React.FC = () => {
+    const [tableState, _] = useLocalStorage(batchParcelsReducer, defaultTableState);
 
-    const displayRows: BatchGridDisplayRow[] = tableStateToBatchDisplayRows(tableState);
+    const displayRows = useMemo(() => {
+        return tableStateToBatchDisplayRows(tableState);
+    }, [tableState]);
 
     return (
         <DataGrid

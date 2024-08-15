@@ -177,6 +177,15 @@ interface useExistingClientPayload {
     rowId: number;
     existingClientId: string;
 }
+
+interface initialiseTableStatePayload {
+    initialTableState: BatchTableDataState;
+}
+
+interface BatchActionInitialiseTableState {
+    type: "initialise_table_state";
+    payload: initialiseTableStatePayload;
+}
 interface BatchActionUpdateCell {
     type: "update_cell";
     updateCellPayload: updateCellPayload;
@@ -211,4 +220,5 @@ export type BatchActionType =
     | BatchActionOverrideColumn
     | BatchActionUseExistingClient
     | BatchActionRemoveOverrideColumn
-    | BatchActionRemoveAllOverrides;
+    | BatchActionRemoveAllOverrides
+    | BatchActionInitialiseTableState;

@@ -13,6 +13,9 @@ export const batchParcelsReducer = (
     action: BatchActionType
 ): BatchTableDataState => {
     switch (action.type) {
+        case "initialise_table_state": {
+            return action.payload.initialTableState;
+        }
         case "update_cell": {
             const { rowId, fieldNameClient, fieldNameParcel, newClientValue, newParcelValue } =
                 action.updateCellPayload;
