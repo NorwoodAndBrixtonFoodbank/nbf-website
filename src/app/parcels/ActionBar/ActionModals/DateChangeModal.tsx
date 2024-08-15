@@ -60,7 +60,7 @@ const DateChangeModalContent: React.FC<ContentProps> = ({
             />
             <WarningMessage>{warningMessage}</WarningMessage>
             <ConfirmButtons>
-                <Button variant="contained" onClick={onClose}>
+                <Button variant="outlined" onClick={onClose}>
                     Cancel
                 </Button>
                 <Button variant="contained" type="submit">

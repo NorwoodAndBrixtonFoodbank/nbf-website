@@ -49,7 +49,7 @@ const DeleteParcelModalContent: React.FC<ContentProps> = ({
                 maxParcelsToShow={maxParcelsToShow}
             />
             <ConfirmButtons>
-                <Button variant="contained" onClick={onClose}>
+                <Button variant="outlined" onClick={onClose}>
                     Cancel
                 </Button>
                 <Button
