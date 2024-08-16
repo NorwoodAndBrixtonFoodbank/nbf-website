@@ -12,6 +12,7 @@ export const WikiItemPositioner = styled.div`
 
 export const WikiItemDetailsTextBreaker = styled.div`
     word-break: break-all;
+    white-space: pre-line;
 `;
 
 export const WikiUpdateDataButton = styled.button`
