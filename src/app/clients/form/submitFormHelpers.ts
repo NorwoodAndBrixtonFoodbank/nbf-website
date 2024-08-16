@@ -7,9 +7,9 @@ import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { ListType } from "@/common/fetch";
 import { EXTRA_INFORMATION_LABEL, NAPPY_SIZE_LABEL } from "@/app/clients/form/labels";
 
-type FamilyDatabaseInsertRecord = Omit<InsertSchema["families"], "family_id">;
-type ClientDatabaseInsertRecord = InsertSchema["clients"];
-type ClientDatabaseUpdateRecord = UpdateSchema["clients"];
+export type FamilyDatabaseInsertRecord = Omit<InsertSchema["families"], "family_id">;
+export type ClientDatabaseInsertRecord = InsertSchema["clients"];
+export type ClientDatabaseUpdateRecord = UpdateSchema["clients"];
 
 const personToFamilyRecordWithoutFamilyId = (person: Person): FamilyDatabaseInsertRecord => {
     return {
@@ -19,13 +19,16 @@ const personToFamilyRecordWithoutFamilyId = (person: Person): FamilyDatabaseInse
     };
 };
 
-const getFamilyMembers = (adults: Person[], children: Person[]): FamilyDatabaseInsertRecord[] => {
+export const getFamilyMembers = (
+    adults: Person[],
+    children: Person[]
+): FamilyDatabaseInsertRecord[] => {
     const peopleToInsert = children.concat(adults);
 
     return peopleToInsert.map((person) => personToFamilyRecordWithoutFamilyId(person));
 };
 
-const formatClientRecord = (
+export const formatClientRecord = (
     fields: ClientFields
 ): ClientDatabaseInsertRecord | ClientDatabaseUpdateRecord => {
     const extraInformationWithNappy =
@@ -57,7 +60,7 @@ const formatClientRecord = (
 };
 
 type addClientErrors = "failedToInsertClientAndFamily";
-type addClientResult =
+export type addClientResult =
     | { clientId: string; error: null }
     | {
           clientId: null;
