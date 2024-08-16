@@ -74,7 +74,17 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
                     root: {
                         transition: "none",
                         textTransform: "none",
+                        "&:hover": {
+                            opacity: 0.7,
+                        },
+                        "&:focus": {
+                            opacity: 0.7,
+                            boxShadow: `0px 0px 0px 2px ${chosenTheme.primary.foreground[0]}`,
+                        },
                     },
+                },
+                defaultProps: {
+                    disableFocusRipple: true,
                 },
             },
             MuiInputLabel: {
