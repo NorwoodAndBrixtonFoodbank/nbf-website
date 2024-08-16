@@ -1,14 +1,14 @@
-import UserFormCard from "@/app/admin/createUser/CardFormat";
 import React from "react";
 import { getDropdownListHandler } from "@/components/DataInput/inputHandlerFactories";
-import UserRoleDropdownInput from "@/app/admin/common/UserRoleDropdownInput";
+import UserRoleSelect from "@/app/admin/common/UserRoleSelect";
 import { InviteUserCardProps } from "@/app/admin/createUser/CreateUserForm";
 import { UserRole } from "@/databaseUtils";
+import GenericFormCard from "@/components/Form/GenericFormCard";
 
 const UserRoleCard: React.FC<InviteUserCardProps> = ({ fields, fieldSetter }) => {
     return (
-        <UserFormCard title="User Role" required>
-            <UserRoleDropdownInput
+        <GenericFormCard title="User Role" required={true} compactVariant={true}>
+            <UserRoleSelect
                 value={fields.role}
                 onChange={getDropdownListHandler<UserRole>(
                     (userRole: UserRole) => fieldSetter({ role: userRole }),
@@ -16,7 +16,7 @@ const UserRoleCard: React.FC<InviteUserCardProps> = ({ fields, fieldSetter }) =>
                         (value as UserRole) !== undefined
                 )}
             />
-        </UserFormCard>
+        </GenericFormCard>
     );
 };
 

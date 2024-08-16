@@ -1,23 +1,23 @@
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { errorExists, errorText } from "@/components/Form/formFunctions";
+import { errorExists, errorText, onChangeTextDeferredError } from "@/components/Form/formFunctions";
 import React from "react";
 import { UserFormProps } from "@/app/admin/createUser/CreateUserForm";
 import { phoneNumberRegex } from "@/common/format";
-import onChangeTextDeferredError from "@/app/admin/createUser/onChangetextDeferredError";
-import UserFormCard from "@/app/admin/createUser/CardFormat";
+import GenericFormCard from "@/components/Form/GenericFormCard";
 
 const UserDetailsCard: React.FC<UserFormProps> = ({
     fields,
     fieldSetter,
     formErrors,
     errorSetter,
-    InvitedUserSetter,
+    clearInvitedUser,
 }) => {
     return (
-        <UserFormCard
+        <GenericFormCard
             title="User Details"
             text="Please enter the relevant information for the new user."
-            required
+            required={true}
+            compactVariant={true}
         >
             <FreeFormTextInput
                 id="new-user-first-name"
@@ -31,9 +31,8 @@ const UserDetailsCard: React.FC<UserFormProps> = ({
                     "firstName",
                     true,
                     undefined,
-                    InvitedUserSetter
+                    clearInvitedUser
                 )}
-                fullWidth={true}
             />
             <FreeFormTextInput
                 id="new-user-last-name"
@@ -47,9 +46,8 @@ const UserDetailsCard: React.FC<UserFormProps> = ({
                     "lastName",
                     true,
                     undefined,
-                    InvitedUserSetter
+                    clearInvitedUser
                 )}
-                fullWidth={true}
             />
             <FreeFormTextInput
                 id="new-user-phone-number"
@@ -63,11 +61,10 @@ const UserDetailsCard: React.FC<UserFormProps> = ({
                     "telephoneNumber",
                     false,
                     phoneNumberRegex,
-                    InvitedUserSetter
+                    clearInvitedUser
                 )}
-                fullWidth={true}
             />
-        </UserFormCard>
+        </GenericFormCard>
     );
 };
 

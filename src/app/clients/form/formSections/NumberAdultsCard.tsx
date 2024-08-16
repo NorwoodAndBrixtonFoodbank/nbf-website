@@ -12,7 +12,7 @@ import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 import { FormText, StyledCard } from "@/components/Form/formStyling";
 import { ClientCardProps, ClientSetter } from "../ClientForm";
-import DropdownListInput from "@/components/DataInput/DropdownListInput";
+import { UncontrolledSelect } from "@/components/DataInput/DropDownSelect";
 import { getAdultBirthYears } from "@/app/clients/form/birthYearDropdown";
 
 const MINIMUM_NUMBER_OF_ADULTS = 1;
@@ -79,7 +79,7 @@ const NumberAdultsCard: React.FC<ClientCardProps> = ({
                     return (
                         <StyledCard key={adult.primaryKey}>
                             <FormText>Adult {index + 1}</FormText>
-                            <DropdownListInput
+                            <UncontrolledSelect
                                 selectLabelId="adult-gender-select-label"
                                 labelsAndValues={[
                                     ["Male", "male"],
@@ -95,7 +95,7 @@ const NumberAdultsCard: React.FC<ClientCardProps> = ({
                                     "gender"
                                 )}
                             />
-                            <DropdownListInput
+                            <UncontrolledSelect
                                 selectLabelId="adult-birth-year-select-label"
                                 labelsAndValues={getAdultBirthYears().map((year) => [
                                     `${year}`,

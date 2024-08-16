@@ -1,7 +1,7 @@
 import { UserRole } from "@/databaseUtils";
 import React, { useState } from "react";
 import { EditHeader, EditOption } from "@/app/admin/manageUser/ManageUserModal";
-import UserRoleDropdownInput from "@/app/admin/common/UserRoleDropdownInput";
+import UserRoleSelect from "@/app/admin/common/UserRoleSelect";
 import { getDropdownListHandler } from "@/components/DataInput/inputHandlerFactories";
 import { DisplayedUserRole, UserRow } from "@/app/admin/usersTable/types";
 import Button from "@mui/material/Button";
@@ -51,16 +51,15 @@ const EditUserForm: React.FC<Props> = (props) => {
         ? props.userToEdit.userRole
         : "volunteer";
 
-    const initialFirstName: string =
-        props.userToEdit.firstName !== null ? props.userToEdit.firstName : "";
+    const initialFirstName: string = props.userToEdit.firstName ? props.userToEdit.firstName : "";
 
-    const initialLastName: string =
-        props.userToEdit.lastName !== null ? props.userToEdit.lastName : "";
+    const initialLastName: string = props.userToEdit.lastName ? props.userToEdit.lastName : "";
 
-    const initialEmail: string = props.userToEdit.email !== null ? props.userToEdit.email : "";
+    const initialEmail: string = props.userToEdit.email ? props.userToEdit.email : "";
 
-    const initialPhone: string =
-        props.userToEdit.telephoneNumber !== null ? props.userToEdit.telephoneNumber : "";
+    const initialPhone: string = props.userToEdit.telephoneNumber
+        ? props.userToEdit.telephoneNumber
+        : "";
 
     const initialFieldValuesOnEdit: InviteUserFields = {
         email: initialEmail,
@@ -172,7 +171,7 @@ const EditUserForm: React.FC<Props> = (props) => {
             </EditOption>
             <EditOption>
                 <EditHeader>Role</EditHeader>
-                <UserRoleDropdownInput
+                <UserRoleSelect
                     value={initialRole}
                     onChange={getDropdownListHandler<UserRole>(
                         (userRole: UserRole) => fieldSetter({ role: userRole }),

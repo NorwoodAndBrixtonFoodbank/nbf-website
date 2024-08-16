@@ -10,9 +10,15 @@ export const CenterComponent = styled.div`
     margin-bottom: 1rem;
 `;
 
-export const StyledForm = styled.form`
+export const StyledForm = styled.form<{ $compact?: boolean }>`
+    ${(props) =>
+        props.$compact
+            ? `
+    width: 1000px;`
+            : `
     padding: 2em;
-    max-width: 1500px;
+    max-width: 1500px;`}
+
     display: flex;
     gap: 1em;
     justify-content: center;
@@ -20,44 +26,50 @@ export const StyledForm = styled.form`
     flex-direction: column;
 `;
 
-export const StyledCard = styled(Paper)`
-    display: flex;
-    flex-direction: column;
-    padding: 2em;
+export const StyledCard = styled(Paper)<{ $compact?: boolean }>`
     width: 100%;
+    display: flex;
+    padding: 2em;
     height: 80%;
     border-radius: 10px;
     background-color: ${(props) => props.theme.main.background[0]};
     color: ${(props) => props.theme.main.foreground[0]};
-
+    flex-direction: ${(props) => (props.$compact === undefined ? "column" : props.$compact ? "row" : "column")};
     & > div {
         width: 100%;
         margin: 0.15em 0;
     }
+}
 `;
 
-export const UserFormStyledForm = styled.form`
-    width: 1000px;
+export const RequiredAsterisk = styled.span`
+    color: ${(props) => props.theme.error};
+
+    &:before {
+        content: "*";
+    }
+`;
+
+export const FormHeader = styled.div<{ $compact?: boolean }>`
+    ${(props) =>
+        props.$compact &&
+        `
+    flex: 0 0 50%;
+    padding-right: 5rem;
+    `}
+`;
+
+export const FormInput = styled.div<{ $compact?: boolean }>`
+    ${(props) =>
+        props.$compact &&
+        `
+    flex: 0 0 50%;
     display: flex;
-    gap: 1em;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
-`;
-
-export const UserFormStyledCard = styled(Paper)`
-    display: flex;
-    flex-direction: row;
-    padding: 2em;
-    width: 100%;
-    height: 80%;
-    border-radius: 10px;
-    background-color: ${(props) => props.theme.main.background[0]};
-    color: ${(props) => props.theme.main.foreground[0]};
-
+    gap: 1rem;
+    `}
     & > div {
         width: 100%;
-        margin: 0.15em 0;
     }
 `;
 

@@ -3,7 +3,7 @@ The following document contains information on how to use the input handler fact
 
 * `<FreeFormTextInput />`
 * `<RadioGroupInput />`
-* `<DropdownListInput />`
+* `<UncontrolledSelect />`
 * `<CheckboxInput />`
 
 Each component has an `onChange` prop used to handle change events on the values of the input component -  for example, when someone clicks an option on a dropdown list. 
@@ -30,14 +30,14 @@ const [bool, setBool] = useState(false);
 ````
 
 \
-Similarly, for a `<DropdownListInput />` component:
+Similarly, for a `<UncontrolledSelect />` component:
 
 ```typescript jsx
 const [selectedValue, setSelectedValue] = useState("");
 ```
 
 ```typescript jsx
-<DropdownListInput
+<UncontrolledSelect
     labelsAndValues={[
         ["Option 1", "value_1"],
         ["Option 2", "value_2"],

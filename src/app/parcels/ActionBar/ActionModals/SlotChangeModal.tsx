@@ -11,7 +11,7 @@ import SelectedParcelsOverview from "../SelectedParcelsOverview";
 import { getStatusErrorMessageWithLogId } from "../Statuses";
 import supabase from "@/supabaseClient";
 import { PackingSlotsLabelsAndValues, fetchPackingSlotsInfo } from "@/common/fetch";
-import DropdownListInput from "@/components/DataInput/DropdownListInput";
+import { UncontrolledSelect } from "@/components/DataInput/DropDownSelect";
 import { getUpdateErrorMessage, packingDateOrSlotUpdate } from "./CommonDateAndSlot";
 import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 
@@ -33,7 +33,7 @@ const SlotChangeInput: React.FC<SlotInputProps> = ({ packingSlotsLabelsAndValues
     return (
         <>
             <Heading>What slot would you like to change to?</Heading>
-            <DropdownListInput
+            <UncontrolledSelect
                 selectLabelId="packing-slot-select-label"
                 labelsAndValues={packingSlotsLabelsAndValues}
                 listTitle="Packing Slot"

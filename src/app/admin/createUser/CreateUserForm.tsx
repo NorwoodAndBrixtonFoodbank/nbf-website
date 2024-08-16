@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { CenterComponent, UserFormStyledForm } from "@/components/Form/formStyling";
+import { CenterComponent, StyledForm } from "@/components/Form/formStyling";
 import Button from "@mui/material/Button";
-import AccountDetails from "@/app/admin/createUser/AccountDetails";
+import AccountDetailsCard from "@/app/admin/createUser/AccountDetailsCard";
 import UserRoleCard from "@/app/admin/createUser/UserRoleCard";
 import {
     checkErrorOnSubmit,
@@ -34,7 +34,7 @@ type InviteUserErrors = Required<FormErrors<InviteUserFields>>;
 export type InviteUserCardProps = CardProps<InviteUserFields, InviteUserErrors>;
 
 export interface UserFormProps extends InviteUserCardProps {
-    InvitedUserSetter: (user: User | null) => void;
+    clearInvitedUser: () => void;
 }
 
 const initialFieldValues: InviteUserFields = {
@@ -63,8 +63,6 @@ const getServerErrorMessage = (serverError: InviteUserError): string => {
             return "Failed to create a profile for the new user. Please try again later.";
     }
 };
-
-const formSections = [AccountDetails, UserDetailsCard, UserRoleCard];
 
 const CreateUserForm: React.FC = () => {
     const [fields, setFields] = useState(initialFieldValues);
@@ -114,20 +112,27 @@ const CreateUserForm: React.FC = () => {
 
     return (
         <CenterComponent>
-            <UserFormStyledForm>
-                {formSections.map((Card: React.FC<UserFormProps>, index) => {
-                    return (
-                        <Card
-                            key={index} // eslint-disable-line react/no-array-index-key
-                            fields={fields}
-                            fieldSetter={fieldSetter}
-                            formErrors={formErrors}
-                            errorSetter={errorSetter}
-                            InvitedUserSetter={setInvitedUser}
-                        />
-                    );
-                })}
-
+            <StyledForm $compact={true}>
+                <AccountDetailsCard
+                    fields={fields}
+                    fieldSetter={fieldSetter}
+                    formErrors={formErrors}
+                    errorSetter={errorSetter}
+                    clearInvitedUser={() => setInvitedUser(null)}
+                />
+                <UserDetailsCard
+                    fields={fields}
+                    fieldSetter={fieldSetter}
+                    formErrors={formErrors}
+                    errorSetter={errorSetter}
+                    clearInvitedUser={() => setInvitedUser(null)}
+                />
+                <UserRoleCard
+                    fields={fields}
+                    fieldSetter={fieldSetter}
+                    formErrors={formErrors}
+                    errorSetter={errorSetter}
+                />
                 <Button
                     startIcon={<FontAwesomeIcon icon={faUserPlus} />}
                     variant="contained"
@@ -136,7 +141,6 @@ const CreateUserForm: React.FC = () => {
                 >
                     Invite User
                 </Button>
-
                 {invitedUser && (
                     <Alert severity="success">
                         User <b>{invitedUser.email}</b> invited successfully.
@@ -146,7 +150,7 @@ const CreateUserForm: React.FC = () => {
                     <Alert severity="error">{`${getServerErrorMessage(serverError)} Log ID: ${serverError.logId}`}</Alert>
                 )}
                 {formError && <Alert severity="error">{formError}</Alert>}
-            </UserFormStyledForm>
+            </StyledForm>
         </CenterComponent>
     );
 };
