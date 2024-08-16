@@ -7,6 +7,8 @@ import { BatchTableDataState } from "@/app/parcels/batch/BatchTypes";
 import batchParcelsReducer from "@/app/parcels/batch/BatchParcelsReducer";
 import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";
 import { useLocalStorage } from "@/app/parcels/batch/useLocalStorage";
+import { mockTableDataState } from "./mockData";
+import submitTableData from "./submitTableData";
 
 export interface BatchGridDisplayRow {
     [key: string]: string | number | null;
@@ -42,7 +44,7 @@ export const batchGridDisplayColumns: GridColDef<BatchGridDisplayRow[][number]>[
         editable: false,
         renderCell: (params) => {
             if (params.row.id === 0 && params.field === "id") {
-                return <Button variant="contained">Apply Column</Button>;
+                return <Button variant="contained" sx={{minWidth:"120px"}}>Apply Column</Button>;
             }
             return params.row.id;
         },
@@ -198,40 +200,62 @@ export const defaultTableState: BatchTableDataState = {
 };
 
 const BatchParcelDataGrid: React.FC = () => {
-    const [tableState, _] = useLocalStorage(batchParcelsReducer, defaultTableState);
+    const [tableState, dispatch] = useLocalStorage(batchParcelsReducer, defaultTableState);
 
     const displayRows = useMemo(() => {
         return tableStateToBatchDisplayRows(tableState);
     }, [tableState]);
 
     return (
-        <DataGrid
-            rows={displayRows}
-            columns={styledBatchGridDisplayColumns}
-            sx={{
-                "& .MuiDataGrid-cell": {
+        <>
+            <DataGrid
+                rows={displayRows}
+                columns={styledBatchGridDisplayColumns}
+                onCellEditStop={(params) => {
+                    console.log(params.id);
+                    if (params.id === 1) {
+                        dispatch({
+                            type: "initialise_table_state",
+                            payload: { initialTableState: mockTableDataState },
+                        });
+                    } else if (params.id === 2) {
+                        dispatch({
+                            type: "initialise_table_state",
+                            payload: { initialTableState: defaultTableState },
+                        });
+                    }
+                }}
+                sx={{
+                    "& .MuiDataGrid-cell": {
+                        border: "1px solid",
+                        borderColor: "rgba(81, 81, 81, 0.5)",
+                    },
+                    "& .MuiDataGrid-columnHeaders": {
+                        borderBottom: "3px solid",
+                        borderTop: "2px solid",
+                        borderColor: "rgba(81, 81, 81, 0.9)",
+                    },
+                    "& .MuiDataGrid-columnHeader": {
+                        borderLeft: "1px solid",
+                        borderRight: "1px solid",
+                        borderColor: "rgba(81, 81, 81, 0.5)",
+                    },
+                    "& .MuiDataGrid-columnHeaderTitle": {
+                        fontWeight: "bold",
+                    },
                     border: "1px solid",
-                    borderColor: "rgba(81, 81, 81, 0.5)",
-                },
-                "& .MuiDataGrid-columnHeaders": {
-                    borderBottom: "3px solid",
-                    borderTop: "2px solid",
                     borderColor: "rgba(81, 81, 81, 0.9)",
-                },
-                "& .MuiDataGrid-columnHeader": {
-                    borderLeft: "1px solid",
-                    borderRight: "1px solid",
-                    borderColor: "rgba(81, 81, 81, 0.5)",
-                },
-                "& .MuiDataGrid-columnHeaderTitle": {
-                    fontWeight: "bold",
-                },
-                border: "1px solid",
-                borderColor: "rgba(81, 81, 81, 0.9)",
-                margin: "1rem",
-            }}
-            hideFooter
-        />
+                    margin: "1rem",
+                }}
+                hideFooter
+            />
+            <Button 
+            onSubmit = {submitTableData(tableState)}
+            variant="contained"
+            sx={{marginLeft: "1rem", minWidth : '120px'}}>
+                Submit 
+            </Button>
+        </>
     );
 };
 
