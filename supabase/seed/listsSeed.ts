@@ -1,4 +1,3 @@
-/* eslint no-undef: 0 */
 interface SnapletList {
     itemName: string;
     rowOrder: number;

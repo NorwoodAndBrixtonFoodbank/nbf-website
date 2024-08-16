@@ -18,7 +18,7 @@ REPLACE_THIS_LINE
 If you have made any changes to the database...
   - [ ] The migration files are up-to-date with my final set up (`npx supabase db diff -f <name_of_migration>` should create nothing at this point)
   - [ ] I have updated the typescript definitions for the database with `npm run generate_types:local`
-  - [ ] I have modified the seed in `supabase/seed/seed.mts` if appropriate
+  - [ ] I have modified the seed in `supabase/seed/seed.ts` if appropriate
   - [ ] If I have modified the seed, I have also generated the seed with `npm run db:generate_seed` 
   - [ ] With my final set up, I can run `npm run reset_supabase` without any errors.
   - [ ] (Just before merging the ticket) I have updated the timestamps of the new migration files so that they are after all existing migration files.

@@ -106,7 +106,7 @@ failed to start docker container: Error response from daemon: Ports are not avai
   * create one test user of each role
   * upload the congestion charge postcodes to the local Supabase storage
 
-* `npm run db:generate_seed` to generate `supabase/seed.sql` based on `supabase/seed/seed.mts`
+* `npm run db:generate_seed` to generate `supabase/seed.sql` based on `supabase/seed/seed.ts`
   * This does not automatically put the data in the database. You'll need to run `npm run dev:reset_supabase`
 
 * If you set the environment variable `ANALZYE=true` in your shell before building the app, Next will create reports
@@ -149,7 +149,7 @@ You can regenerate the types
   ```
 
 #### Create sample data in tables
-- Create sample data by updating supabase/seed/seed.mts
+- Create sample data by updating supabase/seed/seed.ts
 - Login to snaplet
   ```shell
   npx snaplet auth setup
@@ -160,7 +160,7 @@ You can regenerate the types
   npx snaplet generate
   ```
 - If error with createSeedClient, close IDE and restart
-- Then generate `supabase/seed.sql` from `supabase/seed/seed.mts`
+- Then generate `supabase/seed.sql` from `supabase/seed/seed.ts`
   ```shell
   npm run db:generate_seed
   ```

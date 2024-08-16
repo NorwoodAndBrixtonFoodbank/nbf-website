@@ -7,7 +7,7 @@ frontend:
     build:
       commands:
         - env | grep -e CLOUDWATCH_ -e SUPABASE_SERVICE_ROLE_KEY >> .env.production
-        - rm -f ./supabase/seed/seed.mts
+        - rm -f ./supabase/seed/seed.ts
         - npm run build
   artifacts:
     baseDirectory: .next
