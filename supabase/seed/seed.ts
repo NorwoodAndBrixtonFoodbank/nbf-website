@@ -5,7 +5,7 @@ which only gets generated after running npx snaplet generate with local database
 
 import { createSeedClient } from "@snaplet/seed";
 import { copycat } from "@snaplet/copycat";
-import { listsSeedRequired } from "./listsSeed.mjs";
+import { listsSeedRequired } from "./listsSeed";
 import {
     booleansWeightedToTrue,
     possibleDietaryRequirements,
@@ -13,22 +13,22 @@ import {
     possibleOtherItems,
     possibleParcelPostCodes,
     possiblePets,
-} from "./clientsSeed.mjs";
+} from "./clientsSeed";
 import {
     eventNamesWithDriverData,
     eventNamesWithNoData,
     eventNamesWithNumberData,
-} from "./eventsSeed.mjs";
-import { collectionCentres } from "./collectionCentresSeed.mjs";
-import { packingSlots } from "./packingSlotsSeed.mjs";
+} from "./eventsSeed";
+import { collectionCentres } from "./collectionCentresSeed";
+import { packingSlots } from "./packingSlotsSeed";
 import {
     earliestParcelOrEventDate,
     farFutureDate,
     getPseudoRandomDateBetween,
     latestEventDate,
     parcelCreationDateTime,
-} from "./dateData.mjs";
-import { genders } from "./families.mjs";
+} from "./dateData";
+import { genders } from "./families";
 
 generateSeed();
 

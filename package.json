@@ -27,7 +27,7 @@
     "reset_supabase": "supabase db reset --local && ts-node supabase/tools/createUserForEachRole.ts && ts-node supabase/tools/createStorage.ts",
     "generate_types:local": "supabase gen types typescript --local --schema public > src/databaseTypesFile.ts",
     "generate_types:remote": "supabase gen types typescript --schema public > src/databaseTypesFile.ts",
-    "db:generate_seed": "npx tsx supabase/seed/seed.mts > supabase/seed.sql",
+    "db:generate_seed": "npx ts-node supabase/seed/seed.ts > supabase/seed.sql",
     "post_checkout": "npm install && npx supabase stop && npx supabase start && npm run reset_supabase && npx snaplet generate"
   },
   "nyc": {
