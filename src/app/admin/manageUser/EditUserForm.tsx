@@ -51,15 +51,13 @@ const EditUserForm: React.FC<Props> = (props) => {
         ? props.userToEdit.userRole
         : "volunteer";
 
-    const initialFirstName: string = props.userToEdit.firstName ? props.userToEdit.firstName : "";
+    const initialFirstName: string = props.userToEdit.firstName ?? "";
 
-    const initialLastName: string = props.userToEdit.lastName ? props.userToEdit.lastName : "";
+    const initialLastName: string = props.userToEdit.lastName ?? "";
 
-    const initialEmail: string = props.userToEdit.email ? props.userToEdit.email : "";
+    const initialEmail: string = props.userToEdit.email ?? "";
 
-    const initialPhone: string = props.userToEdit.telephoneNumber
-        ? props.userToEdit.telephoneNumber
-        : "";
+    const initialPhone: string = props.userToEdit.telephoneNumber ?? "";
 
     const initialFieldValuesOnEdit: InviteUserFields = {
         email: initialEmail,
