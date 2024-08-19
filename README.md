@@ -12,7 +12,7 @@ have been delivered to clients.
 * [Styled Components](https://styled-components.com/docs) for CSS (CSS-in-JS)
 * [Material UI](https://mui.com/material-ui/getting-started/) for component library
 * [Cypress](https://docs.cypress.io/guides/overview/why-cypress) for both component unit tests and integration tests
-* [Jest](https://jestjs.io/docs/getting-started) for component unit tests
+* [Jest](https://jestjs.io/docs/getting-started) for component and unit tests
 * [AWS Amplify](https://aws.amazon.com/amplify/) for hosting the frontend website
   * Amplify automatically watches the repo for changes and deploys from specific branches
 * [AWS CloudWatch](https://aws.amazon.com/cloudwatch/) for logging errors and warnings
