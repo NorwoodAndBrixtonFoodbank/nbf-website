@@ -33,6 +33,8 @@ if (error) {
 ```
 This forces the caller of the function to explicitly deal with errors before using the data.
 
+We use this pattern because it's used by the supabase client, and it's a good pattern to follow in general.
+
 ## NextJS design choices
 * Pages are server-side
     * Any state/styled-components should be placed in the components/ folder and have a "use client" directive at the top
