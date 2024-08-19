@@ -25,6 +25,23 @@ interface AddressInputFields {
     addressPostcode?: string;
 }
 
+const getInitialAddressFields = (
+    id: number,
+    tableState: BatchTableDataState
+): AddressInputFields => {
+    const currentRowAddress: Address | null =
+        id === 0
+            ? tableState.overrideDataRow.data.client.address
+            : tableState.batchDataRows[id - 1].data.client.address;
+    return {
+        addressLine1: currentRowAddress?.addressLine1,
+        addressLine2: currentRowAddress?.addressLine2 ?? undefined,
+        addressTown: currentRowAddress?.addressTown,
+        addressCounty: currentRowAddress?.addressCounty ?? undefined,
+        addressPostcode: currentRowAddress?.addressPostcode,
+    };
+};
+
 type AddressEditCellInputProps = {
     tableState: BatchTableDataState;
     id: number;
@@ -38,33 +55,9 @@ const AddressEditCellInput: React.FC<AddressEditCellInputProps> = ({
     dispatchBatchTableAction,
     simulateEscapeKeyPress,
 }) => {
-    const defaultAddressLine1: string | undefined =
-        id !== 0
-            ? tableState.batchDataRows[id - 1].data.client.address?.addressLine1 ?? undefined
-            : tableState.overrideDataRow.data.client.address?.addressLine1 ?? undefined;
-    const defaultAddressLine2: string | undefined =
-        id !== 0
-            ? tableState.batchDataRows[id - 1].data.client.address?.addressLine2 ?? undefined
-            : tableState.overrideDataRow.data.client.address?.addressLine2 ?? undefined;
-    const defaultAddressTown: string | undefined =
-        id !== 0
-            ? tableState.batchDataRows[id - 1].data.client.address?.addressTown ?? undefined
-            : tableState.overrideDataRow.data.client.address?.addressTown ?? undefined;
-    const defaultAddressCounty: string | undefined =
-        id !== 0
-            ? tableState.batchDataRows[id - 1].data.client.address?.addressCounty ?? undefined
-            : tableState.overrideDataRow.data.client.address?.addressCounty ?? undefined;
-    const defatulAddressPostcode: string | undefined =
-        id !== 0
-            ? tableState.batchDataRows[id - 1].data.client.address?.addressPostcode ?? undefined
-            : tableState.overrideDataRow.data.client.address?.addressPostcode ?? undefined;
-    const [addressInputFields, setAddressInputFields] = useState<AddressInputFields>({
-        addressLine1: defaultAddressLine1,
-        addressLine2: defaultAddressLine2,
-        addressTown: defaultAddressTown,
-        addressCounty: defaultAddressCounty,
-        addressPostcode: defatulAddressPostcode,
-    });
+    const [addressInputFields, setAddressInputFields] = useState<AddressInputFields>(
+        getInitialAddressFields(id, tableState)
+    );
 
     const [clientHasNoAddress, setClientHasNoAddress] = useState<boolean>(false);
     const [isPostcodeNotValid, setIsPostcodeNotValid] = useState<boolean>(false);
@@ -108,6 +101,23 @@ const AddressEditCellInput: React.FC<AddressEditCellInputProps> = ({
             });
         }
         simulateEscapeKeyPress();
+    };
+
+    const checkInputValidity = (): boolean => {
+        let valid = true;
+        if (isAddressLine1Empty || !addressInputFields?.addressLine1) {
+            valid = false;
+            setIsAddressLine1Empty(true);
+        }
+        if (isAddressTownEmpty || !addressInputFields?.addressTown) {
+            valid = false;
+            setIsAddressTownEmpty(true);
+        }
+        if (isPostcodeNotValid || !addressInputFields?.addressPostcode?.match(postcodeRegex)) {
+            valid = false;
+            setIsPostcodeNotValid(true);
+        }
+        return valid;
     };
 
     return (
@@ -183,23 +193,8 @@ const AddressEditCellInput: React.FC<AddressEditCellInputProps> = ({
                 <Button
                     variant="contained"
                     onClick={() => {
-                        let valid = true;
-                        if (isAddressLine1Empty || !addressInputFields?.addressLine1) {
-                            valid = false;
-                            setIsAddressLine1Empty(true);
-                        }
-                        if (isAddressTownEmpty || !addressInputFields?.addressTown) {
-                            valid = false;
-                            setIsAddressTownEmpty(true);
-                        }
-                        if (
-                            isPostcodeNotValid ||
-                            !addressInputFields?.addressPostcode?.match(postcodeRegex)
-                        ) {
-                            valid = false;
-                            setIsPostcodeNotValid(true);
-                        }
-                        if (valid || clientHasNoAddress) {
+                        const areInputsValid: boolean = checkInputValidity();
+                        if (areInputsValid || clientHasNoAddress) {
                             dispatchInputFieldData();
                         }
                     }}

@@ -5,6 +5,9 @@ import { BatchActionType, BatchTableDataState } from "@/app/parcels/batch/BatchT
 import { addressToString } from "@/app/parcels/batch/displayHelpers";
 import AddressEditCellInput from "@/app/parcels/batch/AddressEditCellInput";
 
+export interface GridRenderAddressCellParams extends GridRenderCellParams {
+    id: number;
+}
 interface AddressEditCellProps {
     gridRenderCellParams: GridRenderCellParams;
     tableState: BatchTableDataState;
@@ -20,7 +23,7 @@ const AddressEditCell: React.FC<AddressEditCellProps> = ({
     const apiRef = useGridApiContext();
     const [popoverAnchorEl, setPopoverAnchorEl] = useState<null | HTMLElement>(null);
     const gridCellReference = useRef<HTMLDivElement>(null);
-    const open = Boolean(popoverAnchorEl);
+    const open = popoverAnchorEl !== null;
     useEffect(() => {
         setPopoverAnchorEl(gridCellReference.current);
     }, []);
@@ -39,22 +42,22 @@ const AddressEditCell: React.FC<AddressEditCellProps> = ({
         <div ref={gridCellReference}>
             <div>
                 {addressToString(
-                    id !== 0
-                        ? tableState.batchDataRows[id - 1].data.client.address ?? null
-                        : tableState.overrideDataRow.data.client.address ?? null
+                    id === 0
+                        ? tableState.overrideDataRow.data.client.address
+                        : tableState.batchDataRows[id - 1].data.client.address
                 ) ?? ""}
             </div>
             <Popover
-                open={open && Boolean(popoverAnchorEl)}
+                open={open}
                 onClose={() => {
                     apiRef.current.setEditCellValue({
                         id: id,
                         field: gridRenderCellParams.field,
                         value:
                             addressToString(
-                                id !== 0
-                                    ? tableState.batchDataRows[id - 1].data.client.address ?? null
-                                    : tableState.overrideDataRow.data.client.address ?? null
+                                id === 0
+                                    ? tableState.overrideDataRow.data.client.address
+                                    : tableState.batchDataRows[id - 1].data.client.address
                             ) ?? "",
                     });
                     simulateEscapeKeyPress();

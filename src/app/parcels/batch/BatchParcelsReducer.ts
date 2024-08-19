@@ -140,28 +140,6 @@ export const batchParcelsReducer = (
             //     batchDataRows: updatedRows,
             // };
             throw Error("Not implemented"); // TODO
-            // const { rowId, existingClientId } = action.useExistingClientPayload;
-            // const existingClientBatchData = await getClientDataForBatchParcels(existingClientId);
-            // if (!existingClientBatchData) {
-            //     return state;
-            // }
-            // const newRow: BatchDataRow = {
-            //     id: rowId,
-            //     clientId: existingClientId,
-            //     data: {
-            //         client: existingClientBatchData,
-            //         clientReadOnly: true,
-            //         parcel: null,
-            //     },
-            // };
-            // const updatedRows: BatchDataRow[] = state.batchDataRows.map((row) => {
-            //     return row.id === rowId ? newRow : row;
-            // });
-            // return {
-            //     ...state,
-            //     batchDataRows: updatedRows,
-            // };
-            throw Error("Not implemented"); // TODO
         }
         default: {
             return state;

@@ -1,6 +1,5 @@
-import BatchParcelDataGrid, {
-    getCenteredBatchGridDisplayColumns,
-} from "@/app/parcels/batch/BatchParcelDataGrid";
+import BatchParcelDataGrid from "@/app/parcels/batch/BatchParcelDataGrid";
+import getCenteredBatchGridDisplayColumns from "@/app/parcels/batch/getCenteredBatchGridDisplayColumns";
 import { mockTableDataState } from "@/app/parcels/batch/mockData";
 import { writeLocalTableState } from "@/app/parcels/batch/useLocalStorage";
 import { BatchActionType } from "./BatchTypes";
