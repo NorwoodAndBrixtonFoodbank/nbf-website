@@ -1,6 +1,6 @@
 "use client";
 
-import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import React, { useMemo } from "react";
 import { useLocalStorage } from "@/app/parcels/batch/useLocalStorage";
 import { phoneNumberValidation } from "@/app/parcels/batch/FieldValidationFunctions";
@@ -8,10 +8,10 @@ import { Button } from "@mui/material";
 import { BatchTableDataState, BatchActionType } from "@/app/parcels/batch/BatchTypes";
 import batchParcelsReducer from "@/app/parcels/batch/BatchParcelsReducer";
 import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";
-import StyledBatchParcelDataGrid from "@/app/parcels/batch/StyledBatchParcelDataGrid";
 import AddressEditCell from "@/app/parcels/batch/AddressEditCell";
 import { ADDRESS_WIDTH } from "@/app/parcels/batch/ColumnWidths";
 import { emptyBatchEditData, emptyOverrideData } from "@/app/parcels/batch/EmptyData";
+import { DefaultTheme, useTheme } from "styled-components";
 export interface BatchGridDisplayRow {
     [key: string]: string | number | null;
     id: number;
@@ -38,18 +38,17 @@ export interface BatchGridDisplayRow {
     collectionInfo: string;
 }
 
-export const getBatchGridDisplayColumns = (
+export const getCenteredBatchGridDisplayColumns = (
     tableState: BatchTableDataState,
     dispatch: React.Dispatch<BatchActionType>
 ): GridColDef[] => {
-    console.log("table state", tableState);
-    return [
+    const batchGridDisplayColumns = [
         {
             field: "id",
             headerName: "Row Number",
             width: 150,
             editable: false,
-            renderCell: (gridRenderCellParams) => {
+            renderCell: (gridRenderCellParams: GridRenderCellParams) => {
                 if (gridRenderCellParams.row.id === 0 && gridRenderCellParams.field === "id") {
                     return <Button variant="contained">Apply Column</Button>;
                 }
@@ -196,13 +195,6 @@ export const getBatchGridDisplayColumns = (
             editable: true,
         },
     ];
-};
-
-const getCenteredBatchGridDisplayColumns = (
-    tableState: BatchTableDataState,
-    dispatch: React.Dispatch<BatchActionType>
-): GridColDef[] => {
-    const batchGridDisplayColumns: GridColDef[] = getBatchGridDisplayColumns(tableState, dispatch);
     return batchGridDisplayColumns.map((column) => {
         return { ...column, headerAlign: "center", align: "center" };
     });
@@ -228,15 +220,44 @@ const BatchParcelDataGrid: React.FC = () => {
     const displayRows = useMemo(() => {
         return tableStateToBatchDisplayRows(tableState);
     }, [tableState]);
-    const styledBatchGridDisplayColumns: GridColDef[] = getCenteredBatchGridDisplayColumns(
+    const theme: DefaultTheme = useTheme();
+    const centeredBatchGridDisplayColumns: GridColDef[] = getCenteredBatchGridDisplayColumns(
         tableState,
         dispatch
     );
-    // console.log(styledBatchGridDisplayColumns);
     return (
-        <StyledBatchParcelDataGrid
+        <DataGrid
             rows={displayRows}
-            columns={styledBatchGridDisplayColumns}
+            columns={centeredBatchGridDisplayColumns}
+            sx={{
+                "& .MuiDataGrid-cell": {
+                    border: "1px solid",
+                    borderColor: `${theme.main.border}`,
+                    "& .MuiInputBase-root": {
+                        height: "100%",
+                    },
+                },
+                "& .MuiDataGrid-columnHeaders": {
+                    borderBottom: "3px solid",
+                    borderTop: "2px solid",
+                    borderColor: `${theme.main.border}`,
+                },
+                "& .MuiDataGrid-columnHeader": {
+                    borderLeft: "1px solid",
+                    borderRight: "1px solid",
+                    borderColor: `${theme.main.border}`,
+                },
+                "& .MuiDataGrid-columnHeaderTitle": {
+                    fontWeight: "bold",
+                },
+                "& .Mui-error": {
+                    backgroundColor: `${theme.error}`,
+                    color: `${theme.text}`,
+                },
+                border: "1px solid",
+                borderColor: `${theme.main.border}`,
+                margin: "1rem",
+            }}
             hideFooter
         />
     );

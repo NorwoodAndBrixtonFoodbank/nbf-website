@@ -1,10 +1,20 @@
 import BatchParcelDataGrid, {
-    getBatchGridDisplayColumns,
+    getCenteredBatchGridDisplayColumns,
 } from "@/app/parcels/batch/BatchParcelDataGrid";
 import { mockTableDataState } from "@/app/parcels/batch/mockData";
 import { writeLocalTableState } from "@/app/parcels/batch/useLocalStorage";
-import { useReducer } from "react";
-import batchParcelsReducer from "@/app/parcels/batch/BatchParcelsReducer";
+import { BatchActionType } from "./BatchTypes";
+import { Dispatch } from "react";
+import { ThemeProvider } from "styled-components";
+import { lightTheme } from "@/app/themes";
+
+const ThemeProvidedBatchParcelDataGrid: React.FC = () => {
+    return (
+        <ThemeProvider theme={lightTheme}>
+            <BatchParcelDataGrid />
+        </ThemeProvider>
+    );
+};
 
 const expectedDisplayRows = [
     ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""],
@@ -58,16 +68,22 @@ const expectedDisplayRows = [
     ],
 ];
 
+const mockDispatch: Dispatch<BatchActionType> = () => {
+    return;
+};
+
 describe("BatchParcelDataGrid", () => {
-    const [state, dispatch] = useReducer(batchParcelsReducer, mockTableDataState);
-    const batchGridDisplayColumns = getBatchGridDisplayColumns(state, dispatch);
+    const batchGridDisplayColumns = getCenteredBatchGridDisplayColumns(
+        mockTableDataState,
+        mockDispatch
+    );
     const columnWidths = batchGridDisplayColumns.map((column) => column.width) as number[];
     const totalWidth = columnWidths.reduce((acc, width) => acc + width, 0);
 
     beforeEach(() => {
         cy.viewport(totalWidth + 50, 300);
         writeLocalTableState(mockTableDataState);
-        cy.mount(<BatchParcelDataGrid />);
+        cy.mount(<ThemeProvidedBatchParcelDataGrid />);
     });
 
     it("should display the expected column headers", () => {
