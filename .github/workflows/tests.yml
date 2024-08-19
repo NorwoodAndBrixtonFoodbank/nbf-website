@@ -1,8 +1,8 @@
 name: Tests
 on: workflow_call
 jobs:
-  component_tests:
-    name: Run Cypress component tests
+  cypress_component_tests:
+    name: Cypress component
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
@@ -47,8 +47,8 @@ jobs:
           path: cypress/videos
           retention-days: 1
 
-  e2e_tests:
-    name: Run Cypress e2e tests
+  cypress_e2e_tests:
+    name: Cypress e2e
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
@@ -106,7 +106,7 @@ jobs:
           retention-days: 1
 
   jest_tests:
-    name: Run Jest tests
+    name: Jest
     runs-on: ubuntu-latest
     steps:
       - name: Checkout this repo
