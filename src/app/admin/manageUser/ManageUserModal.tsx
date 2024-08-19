@@ -78,7 +78,13 @@ const ManageUserModal: React.FC<Props> = (props) => {
             isOpen
             onClose={onCancel}
         >
-            <ManageModalContent>{modes[manageMode].content}</ManageModalContent>
+            <ManageModalContent>
+                <EditOption>
+                    <EditHeader>User</EditHeader>
+                    {props.userToEdit.email}
+                </EditOption>
+                {modes[manageMode].content}
+            </ManageModalContent>
         </Modal>
     );
 };

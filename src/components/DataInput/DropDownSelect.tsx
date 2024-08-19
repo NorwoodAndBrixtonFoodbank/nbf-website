@@ -3,17 +3,35 @@
 import React, { useEffect } from "react";
 import { MenuItem, InputLabel, Select, FormControl, SelectChangeEvent } from "@mui/material";
 
-interface Props<Value> {
+interface GenericProps<ValueType> {
     labelsAndValues: [string, string][];
     listTitle?: string;
-    defaultValue?: Value;
-    value?: Value;
-    onChange?: (event: SelectChangeEvent<Value>) => void;
+    defaultValue?: ValueType;
+    value?: ValueType;
+    onChange?: (event: SelectChangeEvent<ValueType>) => void;
     selectLabelId: string;
     focusOnDropdown?: boolean;
 }
 
-const GenericSelect = <Value,>(props: Props<Value>): React.ReactElement => {
+interface ControlledProps<ValueType> {
+    labelsAndValues: [string, string][];
+    listTitle?: string;
+    value?: ValueType;
+    onChange?: (event: SelectChangeEvent<ValueType>) => void;
+    selectLabelId: string;
+    focusOnDropdown?: boolean;
+}
+
+interface UncontrolledProps<ValueType> {
+    labelsAndValues: [string, string][];
+    listTitle?: string;
+    defaultValue?: ValueType;
+    onChange?: (event: SelectChangeEvent<ValueType>) => void;
+    selectLabelId: string;
+    focusOnDropdown?: boolean;
+}
+
+const GenericSelect = <ValueType,>(props: GenericProps<ValueType>): React.ReactElement => {
     const dropdownInputFocusRef = React.useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -42,7 +60,9 @@ const GenericSelect = <Value,>(props: Props<Value>): React.ReactElement => {
     );
 };
 
-export const ControlledSelect = <Value,>(props: Props<Value>): React.ReactElement => {
+export const ControlledSelect = <ValueType,>(
+    props: ControlledProps<ValueType>
+): React.ReactElement => {
     return (
         <GenericSelect
             selectLabelId={props.selectLabelId}
@@ -54,7 +74,9 @@ export const ControlledSelect = <Value,>(props: Props<Value>): React.ReactElemen
     );
 };
 
-export const UncontrolledSelect = <Value,>(props: Props<Value>): React.ReactElement => {
+export const UncontrolledSelect = <ValueType,>(
+    props: UncontrolledProps<ValueType>
+): React.ReactElement => {
     return (
         <GenericSelect
             selectLabelId={props.selectLabelId}

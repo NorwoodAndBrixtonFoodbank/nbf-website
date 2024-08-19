@@ -34,7 +34,6 @@ interface Props {
 function isValidUserRole(userRole: DisplayedUserRole): userRole is UserRole {
     return userRole !== "UNKNOWN";
 }
-const emailRegex = /^\S+@\S+$/;
 
 const initialFormErrors: InviteUserErrors = {
     email: Errors.none,
@@ -113,18 +112,6 @@ const EditUserForm: React.FC<Props> = (props) => {
 
     return (
         <>
-            <EditOption>
-                <EditHeader>Email Address</EditHeader>
-                <FreeFormTextInput
-                    id="edit-user-email-address"
-                    label="Email"
-                    defaultValue={fields.email}
-                    error={errorExists(formErrors.email)}
-                    helperText={errorText(formErrors.email)}
-                    onChange={onChangeText(fieldSetter, errorSetter, "email", true, emailRegex)}
-                    fullWidth={true}
-                />
-            </EditOption>
             <EditOption>
                 <EditHeader>First Name</EditHeader>
                 <FreeFormTextInput

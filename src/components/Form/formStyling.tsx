@@ -14,7 +14,7 @@ export const StyledForm = styled.form<{ $compact?: boolean }>`
     ${(props) =>
         props.$compact
             ? `
-    width: 1000px;`
+    width: 70%;`
             : `
     padding: 2em;
     max-width: 1500px;`}
@@ -34,7 +34,7 @@ export const StyledCard = styled(Paper)<{ $compact?: boolean }>`
     border-radius: 10px;
     background-color: ${(props) => props.theme.main.background[0]};
     color: ${(props) => props.theme.main.foreground[0]};
-    flex-direction: ${(props) => (props.$compact === undefined ? "column" : props.$compact ? "row" : "column")};
+    flex-direction: ${(props) => (props.$compact ? "row" : "column")};
     & > div {
         width: 100%;
         margin: 0.15em 0;
