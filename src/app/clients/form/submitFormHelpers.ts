@@ -19,7 +19,10 @@ const personToFamilyRecordWithoutFamilyId = (person: Person): FamilyDatabaseInse
     };
 };
 
-export const getFamilyMembers = (adults: Person[], children: Person[]): FamilyDatabaseInsertRecord[] => {
+export const getFamilyMembers = (
+    adults: Person[],
+    children: Person[]
+): FamilyDatabaseInsertRecord[] => {
     const peopleToInsert = children.concat(adults);
 
     return peopleToInsert.map((person) => personToFamilyRecordWithoutFamilyId(person));
@@ -71,8 +74,6 @@ export const submitAddClientForm = async (fields: ClientFields): Promise<addClie
         clientrecord: clientRecord,
         familymembers: familyMembers,
     });
-
-    console.log("adding client")
 
     const auditLog = {
         action: "add a client",

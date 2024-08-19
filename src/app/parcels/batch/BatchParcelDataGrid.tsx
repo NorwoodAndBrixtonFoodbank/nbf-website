@@ -211,20 +211,6 @@ const BatchParcelDataGrid: React.FC = () => {
             <DataGrid
                 rows={displayRows}
                 columns={styledBatchGridDisplayColumns}
-                onCellEditStop={(params) => {
-                    console.log(params.id);
-                    if (params.id === 1) {
-                        dispatch({
-                            type: "initialise_table_state",
-                            payload: { initialTableState: mockTableDataState },
-                        });
-                    } else if (params.id === 2) {
-                        dispatch({
-                            type: "initialise_table_state",
-                            payload: { initialTableState: defaultTableState },
-                        });
-                    }
-                }}
                 sx={{
                     "& .MuiDataGrid-cell": {
                         border: "1px solid",
@@ -250,10 +236,10 @@ const BatchParcelDataGrid: React.FC = () => {
                 hideFooter
             />
             <Button 
-            onSubmit = {submitTableData(tableState)}
-            variant="contained"
-            sx={{marginLeft: "1rem", minWidth : '120px'}}>
-                Submit 
+                onClick = {() => submitTableData(tableState)}
+                variant="contained"
+                sx={{marginLeft: "1rem", minWidth : '120px'}}>
+                    Submit 
             </Button>
         </>
     );
