@@ -16,6 +16,7 @@ import { sendAuditLog } from "@/server/auditLog";
 import DuplicateDownloadWarning from "@/app/parcels/ActionBar/DuplicateDownloadWarning";
 import { getDuplicateDownloadedPostcodes } from "@/app/parcels/ActionBar/ActionModals/getDuplicateDownloadedPostcodes";
 import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
+import { Centerer } from "@/components/Modal/ModalFormStyles";
 
 interface ShippingLabelsInputProps {
     onLabelQuantityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -97,13 +98,15 @@ const ShippingLabelModalContent: React.FC<ContentProps> = ({
             {duplicateDownloadedPostcodes.length > 0 && (
                 <DuplicateDownloadWarning postcodes={duplicateDownloadedPostcodes} />
             )}
-            <ShippingLabelsPdfButton
-                disabled={!isInputValid}
-                parcels={selectedParcels}
-                labelQuantity={labelQuantity}
-                onPdfCreationCompleted={onPdfCreationCompleted}
-                onPdfCreationFailed={onPdfCreationFailed}
-            />
+            <Centerer>
+                <ShippingLabelsPdfButton
+                    disabled={!isInputValid}
+                    parcels={selectedParcels}
+                    labelQuantity={labelQuantity}
+                    onPdfCreationCompleted={onPdfCreationCompleted}
+                    onPdfCreationFailed={onPdfCreationFailed}
+                />
+            </Centerer>
         </form>
     );
 };

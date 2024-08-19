@@ -14,7 +14,6 @@ import { ParcelsTableRow } from "../../parcelsTable/types";
 import DeleteButton from "@/components/Buttons/DeleteButton";
 import DeleteConfirmationDialog from "@/components/Modal/DeleteConfirmationDialog";
 import { ButtonWrap } from "@/components/Buttons/GeneralButtonParts";
-import { Centerer } from "@/components/Modal/ModalFormStyles";
 
 interface ContentProps {
     onClose: () => void;
@@ -51,21 +50,19 @@ const DeleteParcelModalContent: React.FC<ContentProps> = ({
                 parcels={selectedParcels}
                 maxParcelsToShow={maxParcelsToShow}
             />
-            <Centerer>
-                <ConfirmButtons>
-                    <ButtonWrap>
-                        <Button variant="outlined" onClick={onClose}>
-                            Cancel
-                        </Button>
-                    </ButtonWrap>
-                    <DeleteButton
-                        onClick={() => setIsConfirmationDialogueOpen(true)}
-                        ref={modalDeleteButtonFocusRef}
-                    >
-                        Delete
-                    </DeleteButton>
-                </ConfirmButtons>
-            </Centerer>
+            <ConfirmButtons>
+                <ButtonWrap>
+                    <Button variant="outlined" onClick={onClose}>
+                        Cancel
+                    </Button>
+                </ButtonWrap>
+                <DeleteButton
+                    onClick={() => setIsConfirmationDialogueOpen(true)}
+                    ref={modalDeleteButtonFocusRef}
+                >
+                    Delete
+                </DeleteButton>
+            </ConfirmButtons>
             <DeleteConfirmationDialog
                 isOpen={isConfirmationDialogueOpen}
                 onClose={() => setIsConfirmationDialogueOpen(false)}

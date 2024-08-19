@@ -17,6 +17,7 @@ import DriverOverviewPdfButton, {
 import { sendAuditLog } from "@/server/auditLog";
 import { displayNameForNullDriverName } from "@/common/format";
 import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
+import { Centerer } from "@/components/Modal/ModalFormStyles";
 
 interface DriverOverviewInputProps {
     onDateChange: (newDate: Dayjs | null) => void;
@@ -120,14 +121,16 @@ const DriverOverviewModalContent: React.FC<ContentProps> = ({
                 parcels={selectedParcels}
                 maxParcelsToShow={maxParcelsToShow}
             />
-            <DriverOverviewPdfButton
-                parcels={selectedParcels}
-                date={date}
-                driverName={driverName}
-                onPdfCreationCompleted={onPdfCreationCompleted}
-                onPdfCreationFailed={onPdfCreationFailed}
-                disabled={!isInputValid}
-            />
+            <Centerer>
+                <DriverOverviewPdfButton
+                    parcels={selectedParcels}
+                    date={date}
+                    driverName={driverName}
+                    onPdfCreationCompleted={onPdfCreationCompleted}
+                    onPdfCreationFailed={onPdfCreationFailed}
+                    disabled={!isInputValid}
+                />
+            </Centerer>
         </form>
     );
 };

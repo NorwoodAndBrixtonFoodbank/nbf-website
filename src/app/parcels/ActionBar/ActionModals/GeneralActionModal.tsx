@@ -31,6 +31,8 @@ export const ConfirmButtons = styled.div`
     flex-direction: row;
     gap: 2rem;
     align-items: stretch;
+    display: flex;
+    justify-content: center;
 `;
 
 export const Paragraph = styled.p`
