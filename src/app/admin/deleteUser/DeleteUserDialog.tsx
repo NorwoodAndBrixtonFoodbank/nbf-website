@@ -1,24 +1,10 @@
-import Button from "@mui/material/Button";
-import DeleteIcon from "@mui/icons-material/Delete";
-import React from "react";
+import React, { useState } from "react";
 import { UserRow } from "../usersTable/types";
-import styled from "styled-components";
-import Modal from "@/components/Modal/Modal";
-import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import { SetAlertOptions } from "@/app/admin/common/SuccessFailureAlert";
 import { logInfoReturnLogId } from "@/logger/logger";
 import { adminDeleteUser, DeleteUserErrorType } from "@/server/adminDeleteUser";
-
-const DangerDialog = styled(Modal)`
-    .MuiPaper-root > div:first-child {
-        background-color: ${(props) => props.theme.error};
-        text-transform: uppercase;
-    }
-
-    button {
-        text-transform: uppercase;
-    }
-`;
+import ConfirmDeleteModal from "@/components/Modal/ConfirmDialog";
+import DeleteConfirmationDialog from "@/components/Modal/DeleteConfirmationDialog";
 
 interface Props {
     userToDelete: UserRow | null;
@@ -38,6 +24,8 @@ const getErrorMessage = (errorType: DeleteUserErrorType): string => {
 };
 
 const DeleteUserDialog: React.FC<Props> = (props) => {
+    const [isConfirmationDialogueOpen, setIsConfirmationDialogueOpen] = useState<boolean>(false);
+
     if (props.userToDelete === null) {
         return <></>;
     }
@@ -75,29 +63,21 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
     };
 
     return (
-        <DangerDialog
-            header="Delete User"
-            headerId="deleteUserDialog"
-            isOpen
-            onClose={onDeleteCancel}
-        >
-            Are you sure you want to delete user <b>{props.userToDelete.email}</b>
-            ?
-            <br />
-            <OptionButtonsDiv>
-                <Button
-                    color="error"
-                    variant="outlined"
-                    startIcon={<DeleteIcon />}
-                    onClick={onDeleteConfirm}
-                >
-                    Confirm
-                </Button>
-                <Button color="secondary" onClick={onDeleteCancel}>
-                    Cancel
-                </Button>
-            </OptionButtonsDiv>
-        </DangerDialog>
+        <>
+            <ConfirmDeleteModal
+                isOpen
+                message={`Are you sure you want to delete user ${props.userToDelete.email}?`}
+                onCancel={onDeleteCancel}
+                onConfirm={() => setIsConfirmationDialogueOpen(true)}
+            />
+            <DeleteConfirmationDialog
+                isOpen={isConfirmationDialogueOpen}
+                onClose={() => setIsConfirmationDialogueOpen(false)}
+                onClickCancel={() => setIsConfirmationDialogueOpen(false)}
+                onClickConfirm={onDeleteConfirm}
+                deletionText={`You are about to delete this user: ${props.userToDelete.email}`}
+            />
+        </>
     );
 };
 

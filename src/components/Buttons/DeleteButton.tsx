@@ -7,14 +7,16 @@ interface Props {
     onClick: () => void;
 }
 
-const DeleteButton: React.FC<Props> = ({ children, onClick }) => {
+const DeleteButton = React.forwardRef<HTMLButtonElement, Props>(({ children, onClick }, ref) => {
     return (
         <ButtonWrap>
-            <Button onClick={onClick} color="error" variant="contained">
+            <Button onClick={onClick} color="error" variant="contained" ref={ref}>
                 {children}
             </Button>
         </ButtonWrap>
     );
-};
+});
+
+DeleteButton.displayName = "DeleteButton";
 
 export default DeleteButton;
