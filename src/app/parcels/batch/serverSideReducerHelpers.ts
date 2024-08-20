@@ -2,7 +2,7 @@ import { Person } from "@/components/Form/formFunctions";
 import { getAllPeopleFromFamily, getClientFromClients } from "@/app/parcels/batch/supabaseHelpers";
 import dayjs from "dayjs";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { BatchClient } from "@/app/parcels/batch/BatchTypes";
+import { BatchClient } from "@/app/parcels/batch/batchTypes";
 import {
     createBooleanGroupFromStrings,
     getNappySize,

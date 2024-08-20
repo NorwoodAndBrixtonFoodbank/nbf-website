@@ -1,12 +1,12 @@
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
-import { BatchGridDisplayRow } from "@/app/parcels/batch/BatchParcelDataGrid";
+import { BatchGridDisplayRow } from "@/app/parcels/batch/displayComponents/BatchParcelDataGrid";
 import {
     CollectionInfo,
     OverrideDataRow,
     BatchDataRow,
     BatchTableDataState,
     Address,
-} from "@/app/parcels/batch/BatchTypes";
+} from "@/app/parcels/batch/batchTypes";
 
 const getEmptyRow = (id: number): BatchGridDisplayRow => {
     return {
@@ -35,7 +35,7 @@ const getEmptyRow = (id: number): BatchGridDisplayRow => {
     };
 };
 
-const addressToString = (address: Address | null): string | null => {
+export const addressToString = (address: Address | null): string | null => {
     if (!address) {
         return null;
     }
