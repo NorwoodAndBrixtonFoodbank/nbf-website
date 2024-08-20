@@ -86,6 +86,7 @@ export interface ClientErrors extends FormErrors<ClientFields> {
     numberOfChildren: Errors;
     listType: Errors;
     nappySize: Errors;
+    deliveryInstructions: Errors;
 }
 
 export type ClientSetter = Setter<ClientFields>;

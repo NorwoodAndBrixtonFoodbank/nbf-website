@@ -1,10 +1,16 @@
 import React from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { getDefaultTextValue, onChangeText } from "@/components/Form/formFunctions";
+import {
+    errorExists,
+    errorText,
+    getDefaultTextValue,
+    onChangeText,
+} from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ClientCardProps } from "../ClientForm";
 
 const DeliveryInstructionsCard: React.FC<ClientCardProps> = ({
+    formErrors,
     errorSetter,
     fieldSetter,
     fields,
@@ -14,6 +20,8 @@ const DeliveryInstructionsCard: React.FC<ClientCardProps> = ({
             <FreeFormTextInput
                 label="For example, The doorbell does not work. Use the door code: xxxx."
                 defaultValue={getDefaultTextValue(fields, "deliveryInstructions")}
+                error={errorExists(formErrors.deliveryInstructions)}
+                helperText={errorText(formErrors.deliveryInstructions)}
                 onChange={onChangeText(fieldSetter, errorSetter, "deliveryInstructions")}
             />
         </GenericFormCard>

@@ -40,6 +40,7 @@ const AddClients: () => React.ReactElement = () => {
         numberOfChildren: Errors.initial,
         listType: Errors.initial,
         nappySize: Errors.none,
+        deliveryInstructions: Errors.none,
     };
 
     return (

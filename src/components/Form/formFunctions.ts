@@ -23,6 +23,7 @@ export enum Errors {
     invalidPackingSlot = "The previous packing slot is no longer available, please select a new packing slot.",
     invalidCollectionCentre = "The previous collection centre is no longer available, please select a new collection centre.",
     noCollectionSlotsSet = "There are no collection slots set for this collection centre, please select a different collection centre or contact admin.",
+    deliveryInstructions = "Please enter delivery instructions below 320 words.",
 }
 
 export const numberRegex = /^\d+$/;
@@ -69,12 +70,15 @@ export const getErrorType = (
     input: string,
     required?: boolean,
     regex?: RegExp,
-    additionalCondition?: (value: string) => boolean
+    additionalCondition?: (value: string) => boolean,
+    deliveryInstructionsOverflow?: boolean
 ): Errors => {
     if (input == "") {
         return required ? Errors.required : Errors.none;
     }
-
+    if (deliveryInstructionsOverflow) {
+        return Errors.deliveryInstructions;
+    }
     if (
         (regex !== undefined && !input.match(regex)) ||
         (additionalCondition !== undefined && !additionalCondition(input))
@@ -102,7 +106,8 @@ export const onChangeText = <SpecificFields extends Fields>(
                 : input,
             required,
             regex,
-            additionalCondition
+            additionalCondition,
+            key === "deliveryInstructions" && input.length > 320
         );
         errorSetter({ [key]: errorType } as { [key in keyof FormErrors<SpecificFields>]: Errors });
         if (errorType === Errors.none) {
