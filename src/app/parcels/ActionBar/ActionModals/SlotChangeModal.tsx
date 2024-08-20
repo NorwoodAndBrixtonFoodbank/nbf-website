@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import GeneralActionModal, {
     ActionModalProps,
-    ConfirmButtons,
     Heading,
     WarningMessage,
     maxParcelsToShow,
@@ -14,6 +13,7 @@ import { PackingSlotsLabelsAndValues, fetchPackingSlotsInfo } from "@/common/fet
 import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { getUpdateErrorMessage, packingDateOrSlotUpdate } from "./CommonDateAndSlot";
 import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
+import { ConfirmButtons } from "@/components/Buttons/GeneralButtonParts";
 
 interface SlotInputProps {
     packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues;

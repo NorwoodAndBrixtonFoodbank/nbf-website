@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import GeneralActionModal, {
-    ConfirmButtons,
     Heading,
     maxParcelsToShow,
     ActionModalProps,
@@ -13,7 +12,7 @@ import { getStatusErrorMessageWithLogId } from "../Statuses";
 import { ParcelsTableRow } from "../../parcelsTable/types";
 import DeleteButton from "@/components/Buttons/DeleteButton";
 import DeleteConfirmationDialog from "@/components/Modal/DeleteConfirmationDialog";
-import { ButtonWrap } from "@/components/Buttons/GeneralButtonParts";
+import { ButtonWrap, ConfirmButtons } from "@/components/Buttons/GeneralButtonParts";
 
 interface ContentProps {
     onClose: () => void;

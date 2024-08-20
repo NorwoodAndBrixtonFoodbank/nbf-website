@@ -26,11 +26,3 @@ export const ContentDiv = styled.div`
 export const ButtonsDiv = styled.div`
     flex: 0 0 10%;
 `;
-
-export const ConfirmButtons = styled.div`
-    display: flex;
-    flex-direction: row;
-    gap: 2rem;
-    align-items: stretch;
-    margin: 1rem;
-`;

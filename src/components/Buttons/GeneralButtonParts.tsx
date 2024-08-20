@@ -17,4 +17,7 @@ export const ConfirmButtons = styled.div`
     flex-direction: row;
     gap: 2rem;
     align-items: stretch;
+    display: flex;
+    justify-content: center;
+    margin: 1rem;
 `;

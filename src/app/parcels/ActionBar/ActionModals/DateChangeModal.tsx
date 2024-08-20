@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import GeneralActionModal, {
     ActionModalProps,
-    ConfirmButtons,
     Heading,
     WarningMessage,
     maxParcelsToShow,
@@ -14,6 +13,7 @@ import { getStatusErrorMessageWithLogId } from "../Statuses";
 import { getDbDate } from "@/common/format";
 import { getUpdateErrorMessage, packingDateOrSlotUpdate } from "./CommonDateAndSlot";
 import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
+import { ConfirmButtons } from "@/components/Buttons/GeneralButtonParts";
 
 interface ContentProps {
     onClose: () => void;

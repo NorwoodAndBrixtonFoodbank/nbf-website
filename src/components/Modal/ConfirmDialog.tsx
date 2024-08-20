@@ -6,7 +6,7 @@ import styled from "styled-components";
 import Button from "@mui/material/Button/Button";
 import { Centerer } from "./ModalFormStyles";
 import DeleteButton from "../Buttons/DeleteButton";
-import { ButtonWrap } from "../Buttons/GeneralButtonParts";
+import { ButtonWrap, ConfirmButtons } from "../Buttons/GeneralButtonParts";
 
 interface Props {
     isOpen: boolean;
@@ -22,13 +22,6 @@ const ModalInner = styled.div`
     align-items: stretch;
     text-align: center;
     font-size: 1.5rem;
-`;
-
-export const ConfirmButtons = styled.div`
-    display: flex;
-    flex-direction: row;
-    gap: 2rem;
-    align-items: stretch;
 `;
 
 const ConfirmDeleteModal: React.FC<Props> = ({ isOpen, message, onCancel, onConfirm }) => {
