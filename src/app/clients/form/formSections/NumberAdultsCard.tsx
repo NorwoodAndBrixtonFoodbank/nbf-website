@@ -14,9 +14,7 @@ import { FormText, StyledCard } from "@/components/Form/formStyling";
 import { ClientCardProps, ClientSetter } from "@/app/clients/form/ClientForm";
 import { UncontrolledSelect } from "@/components/DataInput/DropDownSelect";
 import { getAdultBirthYears } from "@/app/clients/form/birthYearDropdown";
-
-const MINIMUM_NUMBER_OF_ADULTS = 1;
-const MAXIMUM_NUMBER_OF_ADULTS = 20;
+import { MAXIMUM_NUMBER_OF_ADULTS, MINIMUM_NUMBER_OF_ADULTS } from "@/app/clients/form/bounds";
 
 const numberOfAdultsRange = (value: string): boolean => {
     return (

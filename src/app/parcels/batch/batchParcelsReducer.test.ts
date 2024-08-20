@@ -8,7 +8,7 @@ import {
 } from "@/app/parcels/batch/mockData";
 import { expect, it } from "@jest/globals";
 import { BatchActionType } from "@/app/parcels/batch/batchTypes";
-import { emptyBatchEditData } from "./emptyData";
+import { emptyBatchEditData } from "@/app/parcels/batch/emptyData";
 
 jest.mock("@/app/parcels/batch/supabaseHelpers", () => ({
     getClientFromClients: jest.fn((clientId: string) =>
@@ -300,7 +300,7 @@ describe("reducer", () => {
                             listType: null,
                             dietaryRequirements: null,
                             feminineProducts: null,
-                            babyProducts: true,
+                            babyProducts: "Yes",
                             nappySize: "10",
                             petFood: null,
                             otherItems: null,

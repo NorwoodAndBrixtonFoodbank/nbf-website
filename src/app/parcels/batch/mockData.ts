@@ -70,7 +70,7 @@ export const mockTableDataState: BatchTableDataState = {
                     listType: "regular",
                     dietaryRequirements: { "gluten-free": true },
                     feminineProducts: { tampons: true, pads: false },
-                    babyProducts: false,
+                    babyProducts: "No",
                     nappySize: null,
                     petFood: { cat: true, dog: false },
                     otherItems: { toothpaste: false, toothbrush: false },

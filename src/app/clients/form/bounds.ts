@@ -1,0 +1,2 @@
+export const MINIMUM_NUMBER_OF_ADULTS = 1;
+export const MAXIMUM_NUMBER_OF_ADULTS = 20;

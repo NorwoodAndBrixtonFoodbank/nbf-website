@@ -24,7 +24,11 @@ export interface CollectionInfo {
     collectionDate: string;
     collectionSlot: string;
     collectionCentreId: string;
+    collectionCentreName: string;
+    collectionCentreAcronymn: string;
 }
+
+type BabyProductsType = "Yes" | "No" | "Don't Know";
 
 export interface OverrideClient {
     [key: string]:
@@ -43,7 +47,7 @@ export interface OverrideClient {
     listType: ListType | null;
     dietaryRequirements: BooleanGroup | null;
     feminineProducts: BooleanGroup | null;
-    babyProducts: boolean | null;
+    babyProducts: BabyProductsType | null;
     nappySize: string | null;
     petFood: BooleanGroup | null;
     otherItems: BooleanGroup | null;
