@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { RoleUpdateContext, pathsNotRequiringLogin } from "@/app/roles";
@@ -14,15 +14,11 @@ interface Props {
 export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
     const supabase = createClientComponentClient<DatabaseAutoType>();
     const router = useRouter();
-    const pathname = usePathname();
     const [loggedIn, setLoggedIn] = useState<boolean>();
+    const pathname = usePathname();
     const { setRole } = useContext(RoleUpdateContext);
 
-    // This fixes issues with navigation when the user has signed in but then signed out and caching still allows them to
-    // access pages. It also fixes authentication flow issues on sign in and sign out
-    const toRedirectTo = (): string | null => {
-        const pathname = window.location.pathname;
-
+    const getRedirectRoute = useCallback((): string | null => {
         if (loggedIn === undefined) {
             return null;
         }
@@ -40,19 +36,19 @@ export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
         }
 
         return null;
-    };
+    }, [loggedIn, pathname]);
 
-    const onRouteChange = (): void => {
-        const redirect = toRedirectTo();
+    const onRouteChange = useCallback((): void => {
+        const redirect = getRedirectRoute();
         if (redirect) {
             router.push(redirect);
         }
-    };
+    }, [router, getRedirectRoute]);
 
-    const findUserRole: () => Promise<void> = async () => {
-        const {
-            data: { user },
-        } = await supabase.auth.getUser();
+    const setUserRole = useCallback(async () => {
+        const user = await supabase.auth
+            .getSession()
+            .then((response) => response.data.session?.user ?? null);
 
         let userRole: UserRole | null;
 
@@ -68,7 +64,7 @@ export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
             }
         }
         setRole(userRole);
-    };
+    }, [setRole, supabase.auth]);
 
     useEffect(() => {
         const {
@@ -82,9 +78,8 @@ export const AuthRouting: React.FC<Props> = ({ children = <></> }) => {
 
     useEffect(() => {
         onRouteChange();
-        void findUserRole();
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- We don't need onRouteChange in the dependency array
-    }, [loggedIn, pathname, router]);
+        void setUserRole();
+    }, [onRouteChange, setUserRole, pathname]);
 
     return <>{children}</>;
 };
