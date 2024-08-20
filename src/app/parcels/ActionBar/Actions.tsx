@@ -2,7 +2,6 @@
 
 import React, { useContext, useState } from "react";
 import Menu from "@mui/material/Menu";
-import MenuList from "@mui/material/MenuList";
 import MenuItem from "@mui/material/MenuItem";
 import { ParcelsTableRow } from "../parcelsTable/types";
 import { ActionModalProps } from "./ActionModals/GeneralActionModal";
@@ -180,22 +179,16 @@ const Actions: React.FC<Props> = ({
                     onClose={() => setActionAnchorElement(null)}
                     anchorEl={actionAnchorElement}
                 >
-                    <MenuList id="action-menu">
-                        {availableActionsForUserRole.map(({ actionName }) => {
-                            return (
-                                <MenuItem
-                                    key={actionName}
-                                    onClick={onMenuItemClick(
-                                        actionName,
-                                        isNotAtLeastOne,
-                                        errorMessage
-                                    )}
-                                >
-                                    {actionName}
-                                </MenuItem>
-                            );
-                        })}
-                    </MenuList>
+                    {availableActionsForUserRole.map(({ actionName }) => {
+                        return (
+                            <MenuItem
+                                key={actionName}
+                                onClick={onMenuItemClick(actionName, isNotAtLeastOne, errorMessage)}
+                            >
+                                {actionName}
+                            </MenuItem>
+                        );
+                    })}
                 </Menu>
             )}
         </>
