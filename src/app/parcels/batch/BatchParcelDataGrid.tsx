@@ -7,7 +7,6 @@ import { BatchTableDataState } from "@/app/parcels/batch/BatchTypes";
 import batchParcelsReducer from "@/app/parcels/batch/BatchParcelsReducer";
 import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";
 import { useLocalStorage } from "@/app/parcels/batch/useLocalStorage";
-import { mockTableDataState } from "./mockData";
 import submitTableData from "./submitTableData";
 
 export interface BatchGridDisplayRow {
@@ -44,7 +43,11 @@ export const batchGridDisplayColumns: GridColDef<BatchGridDisplayRow[][number]>[
         editable: false,
         renderCell: (params) => {
             if (params.row.id === 0 && params.field === "id") {
-                return <Button variant="contained" sx={{minWidth:"120px"}}>Apply Column</Button>;
+                return (
+                    <Button variant="contained" sx={{ minWidth: "120px" }}>
+                        Apply Column
+                    </Button>
+                );
             }
             return params.row.id;
         },
@@ -200,7 +203,9 @@ export const defaultTableState: BatchTableDataState = {
 };
 
 const BatchParcelDataGrid: React.FC = () => {
-    const [tableState, dispatch] = useLocalStorage(batchParcelsReducer, defaultTableState);
+    const [tableState, _] = useLocalStorage(batchParcelsReducer, defaultTableState);
+
+    // writeLocalTableState(testData);
 
     const displayRows = useMemo(() => {
         return tableStateToBatchDisplayRows(tableState);
@@ -235,11 +240,12 @@ const BatchParcelDataGrid: React.FC = () => {
                 }}
                 hideFooter
             />
-            <Button 
-                onClick = {() => submitTableData(tableState)}
+            <Button
+                onClick={() => submitTableData(tableState)}
                 variant="contained"
-                sx={{marginLeft: "1rem", minWidth : '120px'}}>
-                    Submit 
+                sx={{ marginLeft: "1rem", minWidth: "120px" }}
+            >
+                Submit
             </Button>
         </>
     );

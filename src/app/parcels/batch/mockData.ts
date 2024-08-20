@@ -49,8 +49,13 @@ export const mockTableDataState: BatchTableDataState = {
                         addressPostcode: "12345",
                     },
                     adultInfo: {
-                        adults: [],
-                        numberOfAdults: 0,
+                        adults: [
+                            {
+                                gender: "male",
+                                birthYear: 1973,
+                            },
+                        ],
+                        numberOfAdults: 1,
                     },
                     childrenInfo: {
                         children: [],
@@ -90,6 +95,174 @@ export const mockTableDataState: BatchTableDataState = {
                     adultInfo: {
                         adults: [],
                         numberOfAdults: 0,
+                    },
+                    childrenInfo: {
+                        children: [],
+                        numberOfChildren: 0,
+                    },
+                    listType: "regular",
+                    dietaryRequirements: { "gluten-free": true },
+                    feminineProducts: { tampons: true, pads: false },
+                    babyProducts: false,
+                    nappySize: null,
+                    petFood: { cat: true, dog: false },
+                    otherItems: { toothpaste: false, toothbrush: false },
+                    deliveryInstructions: "Leave at 12 pm",
+                    extraInformation: "No special requests",
+                    attentionFlag: false,
+                    signpostingCall: true,
+                    notes: null,
+                },
+                clientReadOnly: false,
+                parcel: null,
+            },
+        },
+    ],
+    clientOverrides: [],
+    parcelOverrides: [],
+};
+
+export const batchSubmitTestData: BatchTableDataState = {
+    overrideDataRow: {
+        data: {
+            client: {
+                fullName: null,
+                phoneNumber: null,
+                address: null,
+                adultInfo: null,
+                childrenInfo: null,
+                listType: null,
+                dietaryRequirements: null,
+                feminineProducts: null,
+                babyProducts: null,
+                nappySize: null,
+                petFood: null,
+                otherItems: null,
+                deliveryInstructions: null,
+                extraInformation: null,
+                attentionFlag: null,
+                signpostingCall: null,
+                notes: null,
+            },
+            parcel: {
+                voucherNumber: null,
+                packingDate: null,
+                packingSlot: null,
+                shippingMethod: null,
+                collectionInfo: null,
+            },
+        },
+    },
+    batchDataRows: [
+        {
+            id: 1,
+            clientId: "1",
+            data: {
+                client: {
+                    fullName: "John Doe",
+                    phoneNumber: "0123456789",
+                    address: {
+                        addressLine1: "123 Main St",
+                        addressLine2: null,
+                        addressTown: "Anytown",
+                        addressCounty: "USA",
+                        addressPostcode: "12345",
+                    },
+                    adultInfo: {
+                        adults: [
+                            {
+                                gender: "male",
+                                birthYear: 1973,
+                            },
+                        ],
+                        numberOfAdults: 1,
+                    },
+                    childrenInfo: {
+                        children: [],
+                        numberOfChildren: 0,
+                    },
+                    listType: "hotel",
+                    dietaryRequirements: { vegan: true },
+                    feminineProducts: { tampons: false, pads: false },
+                    babyProducts: null,
+                    nappySize: null,
+                    petFood: { cat: false, dog: false },
+                    otherItems: { toothpaste: false, toothbrush: false },
+                    deliveryInstructions: "Leave at 10 am",
+                    extraInformation: "No special requests",
+                    attentionFlag: true,
+                    signpostingCall: false,
+                    notes: null,
+                },
+                clientReadOnly: false,
+                parcel: null,
+            },
+        },
+        {
+            id: 2,
+            clientId: "2",
+            data: {
+                client: {
+                    fullName: "Jane Smiths",
+                    phoneNumber: "9876543210",
+                    address: {
+                        addressLine1: "456 Elm St",
+                        addressLine2: null,
+                        addressTown: "Anytown",
+                        addressCounty: "USA",
+                        addressPostcode: "54321",
+                    },
+                    adultInfo: {
+                        adults: [],
+                        numberOfAdults: 0,
+                    },
+                    childrenInfo: {
+                        children: [],
+                        numberOfChildren: 0,
+                    },
+                    listType: "regular",
+                    dietaryRequirements: { "gluten-free": true },
+                    feminineProducts: { tampons: true, pads: false },
+                    babyProducts: false,
+                    nappySize: null,
+                    petFood: { cat: true, dog: false },
+                    otherItems: { toothpaste: false, toothbrush: false },
+                    deliveryInstructions: "Leave at 12 pm",
+                    extraInformation: "No special requests",
+                    attentionFlag: false,
+                    signpostingCall: true,
+                    notes: null,
+                },
+                clientReadOnly: false,
+                parcel: null,
+            },
+        },
+        {
+            id: 3,
+            clientId: null,
+            data: {
+                client: {
+                    fullName: "New test no client id",
+                    phoneNumber: "23508723",
+                    address: {
+                        addressLine1: "TEST",
+                        addressLine2: null,
+                        addressTown: "TEST",
+                        addressCounty: "TEST",
+                        addressPostcode: "54321",
+                    },
+                    adultInfo: {
+                        adults: [
+                            {
+                                gender: "male",
+                                birthYear: 1973,
+                            },
+                            {
+                                gender: "female",
+                                birthYear: 1975,
+                            },
+                        ],
+                        numberOfAdults: 2,
                     },
                     childrenInfo: {
                         children: [],

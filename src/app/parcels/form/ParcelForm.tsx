@@ -134,7 +134,7 @@ const noCollectionFormSections = [
     ShippingMethodCard,
 ];
 
-const mergeDateAndTime = (date: string, time: string): Dayjs => {
+export const mergeDateAndTime = (date: string, time: string): Dayjs => {
     // dayjs objects are immutable so the setter methods return a new object
     dayjs.extend(customParseFormat);
     const dayjsTime = dayjs(time, "HH:mm:ss");
