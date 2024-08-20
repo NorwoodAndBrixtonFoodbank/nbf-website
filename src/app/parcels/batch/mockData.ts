@@ -214,7 +214,7 @@ export const batchSubmitTestData: BatchTableDataState = {
             clientId: null,
             data: {
                 client: {
-                    fullName: "New test no client id",
+                    fullName: "New client, with parcel",
                     phoneNumber: "23508723",
                     address: {
                         addressLine1: "TEST",
@@ -254,7 +254,17 @@ export const batchSubmitTestData: BatchTableDataState = {
                     notes: null,
                 },
                 clientReadOnly: false,
-                parcel: null,
+                parcel: {
+                    voucherNumber: "123456",
+                    packingDate: "2024-08-21",
+                    packingSlot: "ce32dd76-44e5-5eea-9774-12d23f20e850",
+                    shippingMethod: "Collection",
+                    collectionInfo: {
+                        collectionDate: "2024-08-21",
+                        collectionSlot: "12:00:00",
+                        collectionCentreId: "52897912-3ff4-5cea-8b8b-7b3e94c4663a",
+                    },
+                },
             },
         },
     ],

@@ -6,8 +6,9 @@ import React, { useMemo } from "react";
 import { BatchTableDataState } from "@/app/parcels/batch/batchTypes";
 import batchParcelsReducer from "@/app/parcels/batch/batchParcelsReducer";
 import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";
-import { useLocalStorage } from "@/app/parcels/batch/useLocalStorage";
-import submitTableData from "./submitTableData";
+import { useLocalStorage, writeLocalTableState } from "@/app/parcels/batch/useLocalStorage";
+import submitBatchTableData from "./submitTableData";
+import { batchSubmitTestData } from "./mockData";
 import { emptyOverrideData, emptyBatchEditData } from "./emptyData";
 
 export interface BatchGridDisplayRow {
@@ -206,7 +207,7 @@ const styledBatchGridDisplayColumns: GridColDef<BatchGridDisplayRow[][number]>[]
 const BatchParcelDataGrid: React.FC = () => {
     const [tableState, _] = useLocalStorage(batchParcelsReducer, defaultTableState);
 
-    // writeLocalTableState(testData);
+    writeLocalTableState(batchSubmitTestData);
 
     const displayRows = useMemo(() => {
         return tableStateToBatchDisplayRows(tableState);
@@ -242,7 +243,7 @@ const BatchParcelDataGrid: React.FC = () => {
                 hideFooter
             />
             <Button
-                onClick={() => submitTableData(tableState)}
+                onClick={() => submitBatchTableData(tableState)}
                 variant="contained"
                 sx={{ marginLeft: "1rem", minWidth: "120px" }}
             >

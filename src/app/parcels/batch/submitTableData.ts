@@ -100,6 +100,7 @@ const batchParcelToParcelRecord = (
     const collectionInfo: CollectionInfo | null = parcel.collectionInfo;
 
     if (collectionInfo) {
+        console.log("collectionInfo", collectionInfo)
         const collectionDateTime = mergeDateAndTime(
             collectionInfo.collectionDate,
             collectionInfo.collectionSlot
@@ -115,6 +116,8 @@ const batchParcelToParcelRecord = (
             voucher_number: parcel.voucherNumber,
         };
     }
+
+    console.log("no collection info", parcel)   
 
     return {
         client_id: clientId,
@@ -142,8 +145,12 @@ const submitBatchTableData = async (tableState: BatchTableDataState): Promise<vo
         const listType = client.listType;
 
         if (parcel && clientId) {
+            console.log("staring adding parcel", parcel)
+            console.log("client id", clientId)
             const parcelRecord = batchParcelToParcelRecord(parcel, clientId, listType);
-            await insertParcel(parcelRecord);
+            console.log(parcelRecord)
+            const {parcelId , error } = await insertParcel(parcelRecord);
+            console.log("parcel added", parcelId)
         }
     }
 };
