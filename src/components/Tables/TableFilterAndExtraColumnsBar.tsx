@@ -63,7 +63,8 @@ export function filtersToComponents<Data, Filter extends FilterBase<Data, State>
             };
             setFilters(newFilters);
         };
-        return filter.filterComponent(filter.state, onFilter);
+
+        return filter.filterComponent(filter.state, onFilter, filter.isDisabled);
     });
 }
 

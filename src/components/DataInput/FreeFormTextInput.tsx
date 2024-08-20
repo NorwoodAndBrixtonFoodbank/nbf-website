@@ -17,10 +17,11 @@ interface Props {
     className?: string;
     fullWidth?: boolean;
     margin?: "dense" | "normal" | "none";
+    isDisabled?: boolean;
 }
 
 const FreeFormTextInput = React.forwardRef<HTMLInputElement, Props>((props, focusRef) => {
-    return <TextField {...props} inputRef={focusRef} />;
+    return <TextField {...props} inputRef={focusRef} disabled={props.isDisabled} />;
 });
 export default FreeFormTextInput;
 

@@ -22,7 +22,7 @@ import {
 } from "./fetchParcelTableData";
 import { StatusType, saveParcelStatus, SaveParcelStatusResult } from "../ActionBar/Statuses";
 import { useRouter, useSearchParams } from "next/navigation";
-import { CircularProgress } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import { ErrorSecondaryText } from "../../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import buildFilters from "@/app/parcels/parcelsTable/filters";
@@ -92,6 +92,8 @@ const ParcelsPage: React.FC = () => {
     const parcelsTableFetchAbortController = useRef<AbortController | null>(null);
 
     const selectedParcelMessage = getSelectedParcelCountMessage(checkedParcelIds.length);
+
+    const [isPackingManagerView, setIsPackingManagerView] = useState<boolean>(true);
 
     const fetchAndSetClientDetailsForSelectedParcel = useCallback(async (): Promise<void> => {
         if (parcelId === null) {
@@ -301,10 +303,27 @@ const ParcelsPage: React.FC = () => {
         );
     };
 
+    const packingManagerViewPrimaryFilters = primaryFilters.map((filter) => {
+        if (
+            filter.key !== "packingDate" &&
+            filter.key !== "packingSlot" &&
+            filter.key !== "lastStatus"
+        ) {
+            return filter;
+        }
+        return { ...filter, isDisabled: true };
+    });
+
     return (
         <>
             <PreTableControls>
                 <ActionsContainer>
+                    <Button variant="contained" onClick={() => setIsPackingManagerView(false)}>
+                        All parcels
+                    </Button>
+                    <Button variant="contained" onClick={() => setIsPackingManagerView(true)}>
+                        Packing manager view
+                    </Button>
                     {selectedParcelMessage && <span>{selectedParcelMessage}</span>}
 
                     <ActionAndStatusBar
@@ -350,7 +369,11 @@ const ParcelsPage: React.FC = () => {
                             filterConfig={{
                                 primaryFiltersShown: true,
                                 additionalFiltersShown: true,
-                                primaryFilters: primaryFilters,
+                                primaryFilters: isPackingManagerView
+                                    ? packingManagerViewPrimaryFilters
+                                    : primaryFilters,
+                                // primaryFilters: primaryFilters,
+                                // primaryFilters: primaryFilters.filter(item => (item.key !== "packingDate") && (item.key !== "packingSlot") && (item.key !== "lastStatus")),
                                 additionalFilters: additionalFilters,
                                 setPrimaryFilters: setPrimaryFilters,
                                 setAdditionalFilters: setAdditionalFilters,

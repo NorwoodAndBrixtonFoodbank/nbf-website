@@ -14,6 +14,7 @@ export interface DateRangeState {
 interface Props {
     range: DateRangeState;
     setRange: (range: DateRangeState) => void;
+    isDisabled?: boolean;
 }
 
 const DateRangeInputs: React.FC<Props> = (props) => {
@@ -76,6 +77,7 @@ const DateRangeInputs: React.FC<Props> = (props) => {
                         error: hasErrorState,
                     },
                 }}
+                disabled={props.isDisabled}
             />
             <DatePicker
                 onChange={(value) => setToValue(value)}
@@ -87,6 +89,7 @@ const DateRangeInputs: React.FC<Props> = (props) => {
                         error: hasErrorState,
                     },
                 }}
+                disabled={props.isDisabled}
             />
         </>
     );

@@ -14,6 +14,7 @@ interface ChecklistFilterProps<
     initialCheckedKeys: string[];
     method: ServerSideFilterMethod<DbData, string[]>;
     shouldPersistOnClear?: boolean;
+    isDisabled?: boolean;
 }
 
 export const serverSideChecklistFilter = <
@@ -26,6 +27,7 @@ export const serverSideChecklistFilter = <
     initialCheckedKeys,
     method,
     shouldPersistOnClear = false,
+    isDisabled = false,
 }: ChecklistFilterProps<Data, DbData>): ServerSideFilter<Data, string[], DbData> => {
     return {
         key: key,
@@ -33,11 +35,13 @@ export const serverSideChecklistFilter = <
         initialState: initialCheckedKeys,
         method,
         shouldPersistOnClear: shouldPersistOnClear,
+        isDisabled: isDisabled,
         areStatesIdentical: (stateA, stateB) =>
             stateA.length === stateB.length && stateA.every((optionA) => stateB.includes(optionA)),
         filterComponent: function (
             state: string[],
-            setState: (state: string[]) => void
+            setState: (state: string[]) => void,
+            isDisabled: boolean
         ): React.ReactNode {
             const onChangeCheckbox = (event: React.ChangeEvent<HTMLInputElement>): void => {
                 const checkboxKey = event.target.name as string;
@@ -60,6 +64,7 @@ export const serverSideChecklistFilter = <
                     groupLabel={filterLabel}
                     onChange={onChangeCheckbox}
                     anySelected={anySelected}
+                    isDisabled={isDisabled}
                 />
             );
         },
