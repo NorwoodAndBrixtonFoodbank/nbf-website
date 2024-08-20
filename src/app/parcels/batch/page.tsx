@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import React from "react";
 import Title from "@/components/Title/Title";
-import BatchParcelDataGrid from "@/app/parcels/batch/BatchParcelDataGrid";
+import BatchParcelDataGrid from "@/app/parcels/batch/displayComponents/BatchParcelDataGrid";
 
 const Batch: () => Promise<React.ReactElement> = async () => {
     return (

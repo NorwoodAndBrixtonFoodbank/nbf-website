@@ -10,6 +10,7 @@ export const displayNameForDeletedClient = "Deleted Client";
 
 export const displayNameForNullDriverName = "Unknown Driver";
 
+export const phoneNumberFormatSymbolsRegex = /[\s-()]/g;
 // Following characters excluded from regex as are removed before checking format matches: ( ) - \s
 export const phoneNumberRegex = /^((0|\+44)\d{9,11}|\+(?!44)\d{7,15})?$/;
 

@@ -1,9 +1,9 @@
 import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
-import { BatchActionType, BatchTableDataState } from "@/app/parcels/batch/BatchTypes";
+import { BatchActionType, BatchTableDataState } from "@/app/parcels/batch/batchTypes";
 import { Button } from "@mui/material";
-import { phoneNumberValidation } from "@/app/parcels/batch/FieldValidationFunctions";
-import { ADDRESS_WIDTH } from "@/app/parcels/batch/ColumnWidths";
-import AddressEditCell from "@/app/parcels/batch/AddressEditCell";
+import { phoneNumberValidation } from "@/app/parcels/batch/fieldValidationFunctions";
+import { ADDRESS_WIDTH } from "@/app/parcels/batch/columnWidths";
+import AddressEditCell from "@/app/parcels/batch/displayComponents/AddressEditCell";
 
 const getCenteredBatchGridDisplayColumns = (
     tableState: BatchTableDataState,

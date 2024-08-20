@@ -7,12 +7,12 @@ import {
     ParcelData,
     OverrideDataRow,
     BatchDataRow,
-} from "@/app/parcels/batch/BatchTypes";
+} from "@/app/parcels/batch/batchTypes";
 import {
     getOverridenFieldsAndValues,
     getRowToBeUpdated,
 } from "@/app/parcels/batch/clientSideReducerHelpers";
-import { emptyBatchEditData } from "@/app/parcels/batch/EmptyData";
+import { emptyBatchEditData } from "@/app/parcels/batch/emptyData";
 
 export const batchParcelsReducer = (
     state: BatchTableDataState,

@@ -3,10 +3,10 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useMemo } from "react";
 import { useLocalStorage } from "@/app/parcels/batch/useLocalStorage";
-import { BatchTableDataState } from "@/app/parcels/batch/BatchTypes";
-import batchParcelsReducer from "@/app/parcels/batch/BatchParcelsReducer";
+import { BatchTableDataState } from "@/app/parcels/batch/batchTypes";
+import batchParcelsReducer from "@/app/parcels/batch/batchParcelsReducer";
 import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";
-import { emptyBatchEditData, emptyOverrideData } from "@/app/parcels/batch/EmptyData";
+import { emptyBatchEditData, emptyOverrideData } from "@/app/parcels/batch/emptyData";
 import { DefaultTheme, useTheme } from "styled-components";
 import getCenteredBatchGridDisplayColumns from "@/app/parcels/batch/getCenteredBatchGridDisplayColumns";
 export interface BatchGridDisplayRow {

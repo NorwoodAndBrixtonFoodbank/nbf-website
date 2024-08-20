@@ -1,4 +1,4 @@
-import batchParcelsReducer from "@/app/parcels/batch/BatchParcelsReducer";
+import batchParcelsReducer from "@/app/parcels/batch/batchParcelsReducer";
 import {
     mockExistingClientRow,
     mockExistingClientRowWithNappySize,
@@ -7,8 +7,8 @@ import {
     mockTableDataState,
 } from "@/app/parcels/batch/mockData";
 import { expect, it } from "@jest/globals";
-import { BatchActionType } from "@/app/parcels/batch/BatchTypes";
-import { emptyBatchEditData } from "./EmptyData";
+import { BatchActionType } from "@/app/parcels/batch/batchTypes";
+import { emptyBatchEditData } from "./emptyData";
 
 jest.mock("@/app/parcels/batch/supabaseHelpers", () => ({
     getClientFromClients: jest.fn((clientId: string) =>

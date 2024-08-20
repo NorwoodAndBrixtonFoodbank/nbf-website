@@ -1,3 +1,4 @@
+import { phoneNumberFormatSymbolsRegex } from "@/common/format";
 import {
     BooleanGroup,
     ChangeEventHandler,
@@ -97,7 +98,7 @@ export const onChangeText = <SpecificFields extends Fields>(
         const input = event.target.value;
         const errorType = getErrorType(
             key === "telephoneNumber" || key === "phoneNumber"
-                ? input.replaceAll(/[\s-()]/g, "")
+                ? input.replaceAll(phoneNumberFormatSymbolsRegex, "")
                 : input,
             required,
             regex,

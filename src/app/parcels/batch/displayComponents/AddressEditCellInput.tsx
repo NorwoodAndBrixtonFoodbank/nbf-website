@@ -2,9 +2,9 @@ import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import { CenterComponent, GappedDiv } from "@/components/Form/formStyling";
 import { Button, Checkbox, FormControlLabel } from "@mui/material";
 import { useState } from "react";
-import { Address, BatchActionType, BatchTableDataState } from "@/app/parcels/batch/BatchTypes";
+import { Address, BatchActionType, BatchTableDataState } from "@/app/parcels/batch/batchTypes";
 import styled from "styled-components";
-import { ADDRESS_WIDTH } from "@/app/parcels/batch/ColumnWidths";
+import { ADDRESS_WIDTH } from "@/app/parcels/batch/columnWidths";
 import { postcodeRegex } from "@/app/clients/form/formSections/AddressCard";
 
 const GappedDivMargin = styled(GappedDiv)`
@@ -17,18 +17,7 @@ const TopFreeFormTextInput = styled(FreeFormTextInput)`
     margin-top: 0.5rem;
 `;
 
-interface AddressInputFields {
-    addressLine1?: string;
-    addressLine2?: string;
-    addressTown?: string;
-    addressCounty?: string;
-    addressPostcode?: string;
-}
-
-const getInitialAddressFields = (
-    id: number,
-    tableState: BatchTableDataState
-): AddressInputFields => {
+const getInitialAddressFields = (id: number, tableState: BatchTableDataState): Partial<Address> => {
     const currentRowAddress: Address | null =
         id === 0
             ? tableState.overrideDataRow.data.client.address
@@ -55,7 +44,7 @@ const AddressEditCellInput: React.FC<AddressEditCellInputProps> = ({
     dispatchBatchTableAction,
     simulateEscapeKeyPress,
 }) => {
-    const [addressInputFields, setAddressInputFields] = useState<AddressInputFields>(
+    const [addressInputFields, setAddressInputFields] = useState<Partial<Address>>(
         getInitialAddressFields(id, tableState)
     );
 

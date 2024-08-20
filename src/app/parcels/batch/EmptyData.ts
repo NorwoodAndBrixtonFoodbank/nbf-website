@@ -1,4 +1,4 @@
-import { BatchEditData, OverrideData } from "@/app/parcels/batch/BatchTypes";
+import { BatchEditData, OverrideData } from "@/app/parcels/batch/batchTypes";
 
 export const emptyBatchEditData: BatchEditData = {
     client: {

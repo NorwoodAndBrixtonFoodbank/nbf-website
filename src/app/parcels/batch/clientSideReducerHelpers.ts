@@ -8,7 +8,7 @@ import {
     ParcelData,
     clientOverrideCellValueType,
     parcelOverrideCellValueType,
-} from "@/app/parcels/batch/BatchTypes";
+} from "@/app/parcels/batch/batchTypes";
 
 export const getOverridenFieldsAndValues = (
     allFields: OverrideClient | ParcelData

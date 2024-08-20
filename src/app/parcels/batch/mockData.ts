@@ -1,7 +1,7 @@
 import { Schema } from "@/databaseUtils";
-import { BatchTableDataState } from "@/app/parcels/batch/BatchTypes";
+import { BatchTableDataState } from "@/app/parcels/batch/batchTypes";
 import dayjs from "dayjs";
-import { emptyBatchEditData, emptyOverrideData } from "@/app/parcels/batch/EmptyData";
+import { emptyBatchEditData, emptyOverrideData } from "@/app/parcels/batch/emptyData";
 
 export const mockTableDataState: BatchTableDataState = {
     overrideDataRow: { data: emptyOverrideData },

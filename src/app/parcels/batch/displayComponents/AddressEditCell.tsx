@@ -1,9 +1,9 @@
 import { Popover } from "@mui/material";
 import { GridRenderCellParams, useGridApiContext } from "@mui/x-data-grid";
-import { useEffect, useRef, useState } from "react";
-import { BatchActionType, BatchTableDataState } from "@/app/parcels/batch/BatchTypes";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { BatchActionType, BatchTableDataState } from "@/app/parcels/batch/batchTypes";
 import { addressToString } from "@/app/parcels/batch/displayHelpers";
-import AddressEditCellInput from "@/app/parcels/batch/AddressEditCellInput";
+import AddressEditCellInput from "@/app/parcels/batch/displayComponents/AddressEditCellInput";
 
 export interface GridRenderAddressCellParams extends GridRenderCellParams {
     id: number;
@@ -19,11 +19,11 @@ const AddressEditCell: React.FC<AddressEditCellProps> = ({
     tableState,
     dispatchBatchTableAction,
 }) => {
+    // cast is safe as BatchDataRow and OverrideDataRow id property is always a number not a string
     const id = gridRenderCellParams.id as number;
     const apiRef = useGridApiContext();
     const [popoverAnchorEl, setPopoverAnchorEl] = useState<null | HTMLElement>(null);
     const gridCellReference = useRef<HTMLDivElement>(null);
-    const open = popoverAnchorEl !== null;
     useEffect(() => {
         setPopoverAnchorEl(gridCellReference.current);
     }, []);
@@ -38,27 +38,28 @@ const AddressEditCell: React.FC<AddressEditCellProps> = ({
             gridCellReference.current.dispatchEvent(event);
         }
     };
+
+    const getCurrentRowAddressString = useCallback(
+        (id: number): string | null => {
+            const currentRowAddress =
+                id === 0
+                    ? tableState.overrideDataRow.data.client.address
+                    : tableState.batchDataRows[id - 1].data.client.address;
+            return addressToString(currentRowAddress) ?? "";
+        },
+        [tableState.batchDataRows, tableState.overrideDataRow.data.client.address]
+    );
+
     return (
         <div ref={gridCellReference}>
-            <div>
-                {addressToString(
-                    id === 0
-                        ? tableState.overrideDataRow.data.client.address
-                        : tableState.batchDataRows[id - 1].data.client.address
-                ) ?? ""}
-            </div>
+            <div>{getCurrentRowAddressString(id)}</div>
             <Popover
-                open={open}
+                open={popoverAnchorEl !== null}
                 onClose={() => {
                     apiRef.current.setEditCellValue({
                         id: id,
                         field: gridRenderCellParams.field,
-                        value:
-                            addressToString(
-                                id === 0
-                                    ? tableState.overrideDataRow.data.client.address
-                                    : tableState.batchDataRows[id - 1].data.client.address
-                            ) ?? "",
+                        value: getCurrentRowAddressString(id),
                     });
                     simulateEscapeKeyPress();
                 }}
