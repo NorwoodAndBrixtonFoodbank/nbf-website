@@ -545,6 +545,10 @@ const TableStyling = styled.div<{
     & > div {
         border-radius: 1rem;
         background-color: transparent;
+        :focus {
+            border: 2px solid ${(props) => props.theme.main.foreground[0]};
+            border-radius: 9px;
+        }
 
         // the pagination bar
         > nav {
