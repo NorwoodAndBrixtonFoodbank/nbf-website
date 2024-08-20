@@ -10,7 +10,6 @@ const nextConfig = {
         styledComponents: true,
     },
     experimental: {
-        newNextLinkBehavior: true,
         serverActions: true,
     },
     async redirects() {
