@@ -3,7 +3,7 @@ import { errorText, valueOnChangeDropdownList } from "@/components/Form/formFunc
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
 import { ParcelCardProps } from "../ParcelForm";
-import DropdownListInput from "@/components/DataInput/DropdownListInput";
+import { UncontrolledSelect } from "@/components/DataInput/DropDownSelect";
 import { CollectionTimeSlotsLabelsAndValues } from "@/common/fetch";
 
 interface CollectionSlotsCardProps extends ParcelCardProps {
@@ -24,7 +24,7 @@ const CollectionSlotCard: React.FC<CollectionSlotsCardProps> = ({
             text="What time is the client collecting their parcel?"
         >
             <>
-                <DropdownListInput
+                <UncontrolledSelect
                     selectLabelId="collection-slot-select-label"
                     labelsAndValues={collectionTimeSlotsLabelsAndValues}
                     listTitle="Collection Slot"

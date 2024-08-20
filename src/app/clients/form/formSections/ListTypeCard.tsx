@@ -2,7 +2,7 @@ import React from "react";
 import { errorText, valueOnChangeDropdownList } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
-import DropdownListInput from "@/components/DataInput/DropdownListInput";
+import { UncontrolledSelect } from "@/components/DataInput/DropDownSelect";
 import { ClientCardProps } from "../ClientForm";
 import { LIST_TYPES_ARRAY } from "@/common/fetch";
 import { capitaliseWords } from "@/common/format";
@@ -26,7 +26,7 @@ const ListTypeCard: React.FC<ClientCardProps> = ({
             required={true}
             text="Which list should be used by default to pack parcels for this client?"
         >
-            <DropdownListInput
+            <UncontrolledSelect
                 selectLabelId="list-type-select-label"
                 labelsAndValues={listTypeLabelsAndValues}
                 listTitle="List Type"

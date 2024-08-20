@@ -2,7 +2,7 @@ import React from "react";
 import { errorText, valueOnChangeDropdownList } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
-import DropdownListInput from "@/components/DataInput/DropdownListInput";
+import { UncontrolledSelect } from "@/components/DataInput/DropDownSelect";
 import { PackingSlotsLabelsAndValues } from "@/common/fetch";
 import { ParcelCardProps } from "../ParcelForm";
 
@@ -23,7 +23,7 @@ const PackingSlotsCard: React.FC<PackingSlotsCardProps> = ({
             required={true}
             text="Which slot does the parcel need to be packed in?"
         >
-            <DropdownListInput
+            <UncontrolledSelect
                 selectLabelId="packing-slot-select-label"
                 labelsAndValues={packingSlotsLabelsAndValues}
                 listTitle="Packing Slot"

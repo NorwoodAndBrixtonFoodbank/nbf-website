@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { errorText, valueOnChangeDropdownList } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
-import DropdownListInput from "@/components/DataInput/DropdownListInput";
+import { UncontrolledSelect } from "@/components/DataInput/DropDownSelect";
 import { ParcelCardProps } from "../ParcelForm";
 import { ListTypeLabelsAndValues, ListType } from "@/common/fetch";
 
@@ -36,7 +36,7 @@ const ListTypeCard: React.FC<ListTypeCardProps> = ({
                     : "Which list should be used to pack this parcel?"
             }
         >
-            <DropdownListInput
+            <UncontrolledSelect
                 key={fields.listType}
                 selectLabelId="list-type-select-label"
                 labelsAndValues={listTypeLabelsAndValues}

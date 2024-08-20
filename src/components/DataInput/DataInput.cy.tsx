@@ -1,6 +1,6 @@
 import React from "react";
 import CheckboxInput from "@/components/DataInput/CheckboxInput";
-import DropdownListInput from "@/components/DataInput/DropdownListInput";
+import { UncontrolledSelect } from "@/components/DataInput/DropDownSelect";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import RadioGroupInput from "@/components/DataInput/RadioGroupInput";
 import {
@@ -27,7 +27,7 @@ describe("Data Input Components", () => {
             />
         );
         cy.mount(
-            <DropdownListInput
+            <UncontrolledSelect
                 selectLabelId="select-label"
                 labelsAndValues={[
                     ["A", "a"],
@@ -94,7 +94,7 @@ describe("Data Input Components", () => {
         cy.mount(<FreeFormTextInput />);
         cy.mount(<PasswordInput />);
         cy.mount(
-            <DropdownListInput
+            <UncontrolledSelect
                 selectLabelId="select-label"
                 labelsAndValues={[
                     ["A", "a"],
@@ -229,7 +229,7 @@ describe("Data Input Components", () => {
             };
 
             cy.mount(
-                <DropdownListInput
+                <UncontrolledSelect
                     selectLabelId="select-label"
                     labelsAndValues={[
                         ["A", "a"],

@@ -1,15 +1,15 @@
-import GenericFormCard from "@/components/Form/GenericFormCard";
 import React from "react";
 import { getDropdownListHandler } from "@/components/DataInput/inputHandlerFactories";
-import UserRoleDropdownInput from "@/app/admin/common/UserRoleDropdownInput";
-import { InviteUserCardProps } from "./CreateUserForm";
+import UserRoleSelect from "@/app/admin/common/UserRoleSelect";
+import { InviteUserCardProps } from "@/app/admin/createUser/CreateUserForm";
 import { UserRole } from "@/databaseUtils";
+import GenericFormCard from "@/components/Form/GenericFormCard";
 
-const UserRoleCard: React.FC<InviteUserCardProps> = ({ fieldSetter }) => {
+const UserRoleCard: React.FC<InviteUserCardProps> = ({ fields, fieldSetter }) => {
     return (
-        <GenericFormCard title="User Role" required>
-            <UserRoleDropdownInput
-                defaultValue="volunteer"
+        <GenericFormCard title="User Role" required={true} compactVariant={true}>
+            <UserRoleSelect
+                value={fields.role}
                 onChange={getDropdownListHandler<UserRole>(
                     (userRole: UserRole) => fieldSetter({ role: userRole }),
                     (value: UserRole | string): value is UserRole =>

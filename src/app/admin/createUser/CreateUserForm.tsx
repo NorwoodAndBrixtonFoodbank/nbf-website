@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { CenterComponent, StyledForm } from "@/components/Form/formStyling";
 import Button from "@mui/material/Button";
-import AccountDetails from "@/app/admin/createUser/AccountDetails";
+import AccountDetailsCard from "@/app/admin/createUser/AccountDetailsCard";
 import UserRoleCard from "@/app/admin/createUser/UserRoleCard";
 import {
     checkErrorOnSubmit,
@@ -28,9 +28,14 @@ export interface InviteUserFields extends Record<string, UserRole | string> {
     lastName: string;
     telephoneNumber: string;
 }
+
 type InviteUserErrors = Required<FormErrors<InviteUserFields>>;
 
 export type InviteUserCardProps = CardProps<InviteUserFields, InviteUserErrors>;
+
+export interface UserFormProps extends InviteUserCardProps {
+    clearInvitedUser: () => void;
+}
 
 const initialFieldValues: InviteUserFields = {
     email: "",
@@ -58,8 +63,6 @@ const getServerErrorMessage = (serverError: InviteUserError): string => {
             return "Failed to create a profile for the new user. Please try again later.";
     }
 };
-
-const formSections = [AccountDetails, UserRoleCard, UserDetailsCard];
 
 const CreateUserForm: React.FC = () => {
     const [fields, setFields] = useState(initialFieldValues);
@@ -99,27 +102,37 @@ const CreateUserForm: React.FC = () => {
 
         setFormError(Errors.none);
         setSubmitDisabled(false);
+
         setInvitedUser(data);
         void logInfoReturnLogId(
             `User ${fields.email} with role ${fields.role} invited successfully.`
         );
+        setFields(initialFieldValues);
     };
 
     return (
         <CenterComponent>
-            <StyledForm>
-                {formSections.map((Card, index) => {
-                    return (
-                        <Card
-                            key={index} // eslint-disable-line react/no-array-index-key
-                            fields={fields}
-                            fieldSetter={fieldSetter}
-                            formErrors={formErrors}
-                            errorSetter={errorSetter}
-                        />
-                    );
-                })}
-
+            <StyledForm $compact={true}>
+                <AccountDetailsCard
+                    fields={fields}
+                    fieldSetter={fieldSetter}
+                    formErrors={formErrors}
+                    errorSetter={errorSetter}
+                    clearInvitedUser={() => setInvitedUser(null)}
+                />
+                <UserDetailsCard
+                    fields={fields}
+                    fieldSetter={fieldSetter}
+                    formErrors={formErrors}
+                    errorSetter={errorSetter}
+                    clearInvitedUser={() => setInvitedUser(null)}
+                />
+                <UserRoleCard
+                    fields={fields}
+                    fieldSetter={fieldSetter}
+                    formErrors={formErrors}
+                    errorSetter={errorSetter}
+                />
                 <Button
                     startIcon={<FontAwesomeIcon icon={faUserPlus} />}
                     variant="contained"
@@ -128,7 +141,6 @@ const CreateUserForm: React.FC = () => {
                 >
                     Invite User
                 </Button>
-
                 {invitedUser && (
                     <Alert severity="success">
                         User <b>{invitedUser.email}</b> invited successfully.

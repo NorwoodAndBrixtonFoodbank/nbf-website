@@ -8,7 +8,7 @@ import {
     Person,
     Gender,
 } from "@/components/Form/formFunctions";
-import DropdownListInput from "@/components/DataInput/DropdownListInput";
+import { UncontrolledSelect } from "@/components/DataInput/DropDownSelect";
 import { StyledCard, FormText } from "@/components/Form/formStyling";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
@@ -86,7 +86,7 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                     return (
                         <StyledCard key={child.primaryKey}>
                             <FormText>Child {index + 1}</FormText>
-                            <DropdownListInput
+                            <UncontrolledSelect
                                 selectLabelId="children-gender-select-label"
                                 labelsAndValues={[
                                     ["Male", "male"],
@@ -102,7 +102,7 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                                     "gender"
                                 )}
                             />
-                            <DropdownListInput
+                            <UncontrolledSelect
                                 selectLabelId="children-birth-year-select-label"
                                 labelsAndValues={getChildBirthYears().map((year) => [
                                     `${year}`,
@@ -117,7 +117,7 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                                     "birthYear"
                                 )}
                             />
-                            <DropdownListInput
+                            <UncontrolledSelect
                                 selectLabelId="children-birth-month-select-label"
                                 labelsAndValues={
                                     child.birthYear === getCurrentYear()

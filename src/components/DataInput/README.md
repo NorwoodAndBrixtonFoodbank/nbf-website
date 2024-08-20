@@ -3,7 +3,8 @@ The following document contains information on how to use the input handler fact
 
 * `<FreeFormTextInput />`
 * `<RadioGroupInput />`
-* `<DropdownListInput />`
+* `<ControlledSelect />`
+* `<UncontrolledSelect />`
 * `<CheckboxInput />`
 
 Each component has an `onChange` prop used to handle change events on the values of the input component -  for example, when someone clicks an option on a dropdown list. 
@@ -30,20 +31,30 @@ const [bool, setBool] = useState(false);
 ````
 
 \
-Similarly, for a `<DropdownListInput />` component:
+Similarly, for a `<UncontrolledSelect />` or a `<ControlledSelect />` component:
 
 ```typescript jsx
 const [selectedValue, setSelectedValue] = useState("");
 ```
 
+\
+Note that a `<UncontrolledSelect />` component takes in defaultValue, as it is a one-way implementation.
+
 ```typescript jsx
-<DropdownListInput
-    labelsAndValues={[
-        ["Option 1", "value_1"],
-        ["Option 2", "value_2"],
-        ["Option 3", "value_3"],
-    ]}
+<UncontrolledSelect
     listTitle="w"
+    defaultValue="value_1"
+    onChange={getDropdownListHandler(setSelectedValue)}
+/>
+```
+
+\
+For a `<ControlledSelect />` component, the argument takes in value instead of defaultValue. The value prop is used to set the display value of the dropdown list.
+
+```typescript jsx
+<ControlledSelect
+    listTitle="w"
+    value="value_1"
     onChange={getDropdownListHandler(setSelectedValue)}
 />
 ```

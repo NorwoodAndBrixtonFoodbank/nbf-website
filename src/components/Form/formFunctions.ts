@@ -64,7 +64,7 @@ export const createSetter = <SpecificFields extends Fields>(
     };
 };
 
-const getErrorType = (
+export const getErrorType = (
     input: string,
     required?: boolean,
     regex?: RegExp,
@@ -110,6 +110,32 @@ export const onChangeText = <SpecificFields extends Fields>(
                 [key in keyof SpecificFields]: SpecificFields[key];
             });
         }
+    };
+};
+
+export const onChangeTextDeferredError = <SpecificFields extends Fields>(
+    fieldSetter: Setter<SpecificFields>,
+    errorSetter: Setter<FormErrors<SpecificFields>> | Setter<Required<FormErrors<SpecificFields>>>,
+    key: keyof SpecificFields,
+    required?: boolean,
+    regex?: RegExp,
+    clearInvitedUser?: () => void,
+    formattingFunction?: (value: string) => SpecificFields[keyof SpecificFields],
+    additionalCondition?: (value: string) => boolean
+): SelectChangeEventHandler => {
+    return (event) => {
+        if (clearInvitedUser) {
+            clearInvitedUser();
+        }
+        const input = event.target.value;
+        const errorType = getErrorType(input, required, regex, additionalCondition);
+        errorSetter({ [key]: errorType } as {
+            [key in keyof FormErrors<SpecificFields>]: Errors;
+        });
+        const newValue = formattingFunction ? formattingFunction(input) : input;
+        fieldSetter({ [key]: newValue } as {
+            [key in keyof SpecificFields]: SpecificFields[key];
+        });
     };
 };
 

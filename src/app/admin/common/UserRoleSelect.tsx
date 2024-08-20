@@ -1,7 +1,7 @@
 import React from "react";
-import DropdownListInput from "@/components/DataInput/DropdownListInput";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 import { UserRole } from "@/databaseUtils";
+import { ControlledSelect } from "@/components/DataInput/DropDownSelect";
 
 const roleLabelsAndValues: [string, UserRole][] = [
     ["Volunteer", "volunteer"],
@@ -11,20 +11,20 @@ const roleLabelsAndValues: [string, UserRole][] = [
 ];
 
 interface Props {
-    defaultValue: UserRole;
+    value: UserRole;
     onChange: SelectChangeEventHandler<UserRole>;
 }
 
-const UserRoleDropdownInput = (props: Props): React.ReactElement => {
+const UserRoleSelect = (props: Props): React.ReactElement => {
     return (
-        <DropdownListInput
+        <ControlledSelect
             selectLabelId="user-role-select-label"
             listTitle="User Role"
-            defaultValue={props.defaultValue}
+            value={props.value}
             labelsAndValues={roleLabelsAndValues}
             onChange={props.onChange}
         />
     );
 };
 
-export default UserRoleDropdownInput;
+export default UserRoleSelect;
