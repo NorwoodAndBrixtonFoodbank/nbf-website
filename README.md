@@ -137,6 +137,8 @@ You can either
   ```
   and write sql queries yourself (not recommended)
 
+*WARNING*: If you're recreating a view in your migration, make sure you create it `with(security_invoker = true)`, or the view is publicly available.
+
 #### Update the TypeScript database type definition
 You can regenerate the types
 - from the local database
