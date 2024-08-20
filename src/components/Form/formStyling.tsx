@@ -30,7 +30,7 @@ export const StyledCard = styled(Paper)<{ $compact?: boolean }>`
     width: 100%;
     display: flex;
     padding: 2em;
-    height: 80%;
+    height: auto;
     border-radius: 10px;
     background-color: ${(props) => props.theme.main.background[0]};
     color: ${(props) => props.theme.main.foreground[0]};
