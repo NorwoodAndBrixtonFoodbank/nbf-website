@@ -16,8 +16,8 @@ interface GenericProps<ValueType> {
 interface ControlledProps<ValueType> {
     labelsAndValues: [string, string][];
     listTitle?: string;
-    value?: ValueType;
-    onChange?: (event: SelectChangeEvent<ValueType>) => void;
+    value: ValueType;
+    onChange: (event: SelectChangeEvent<ValueType>) => void;
     selectLabelId: string;
     focusOnDropdown?: boolean;
 }
