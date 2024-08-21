@@ -79,7 +79,7 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
                         },
                         "&:focus": {
                             opacity: 0.7,
-                            boxShadow: `0px 0px 0px 2px ${chosenTheme.primary.foreground[0]}`,
+                            border: `2px solid ${chosenTheme.primary.foreground[0]}`,
                         },
                     },
                 },
