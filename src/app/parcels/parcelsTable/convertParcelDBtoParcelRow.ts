@@ -59,6 +59,7 @@ const convertParcelDbtoParcelRow = async (
                     : null,
                 packingSlot: parcel.packing_slot_name,
                 lastStatus: processLastStatus(parcel),
+                allStatuses: parcel.all_events,
                 voucherNumber: parcel.voucher_number,
                 packingDate: parcel.packing_date ? new Date(parcel.packing_date) : null,
                 iconsColumn: {

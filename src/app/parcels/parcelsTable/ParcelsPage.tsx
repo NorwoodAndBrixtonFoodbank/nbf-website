@@ -1,7 +1,7 @@
 "use client";
 
 import { BreakPointConfig, Row, ServerPaginatedTable } from "@/components/Tables/Table";
-import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "styled-components";
 import { ParcelsTableRow, ParcelsSortState, ParcelsFilter, SelectedClientDetails } from "./types";
 import ExpandedParcelDetails from "@/app/parcels/ExpandedParcelDetails";
@@ -43,7 +43,7 @@ import {
 import { PreTableControls, parcelTableColumnStyleOptions } from "./styles";
 import { DbParcelRow } from "@/databaseUtils";
 import { searchForBreakPoints } from "./conditionalStyling";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { DateRangeState } from "@/components/DateInputs/DateRangeInputs";
 
 const ParcelsPage: React.FC = () => {
@@ -93,7 +93,7 @@ const ParcelsPage: React.FC = () => {
 
     const selectedParcelMessage = getSelectedParcelCountMessage(checkedParcelIds.length);
 
-    const [isPackingManagerView, setIsPackingManagerView] = useState<boolean>(true);
+    const [isPackingManagerView, setIsPackingManagerView] = useState<boolean>(false);
 
     const fetchAndSetClientDetailsForSelectedParcel = useCallback(async (): Promise<void> => {
         if (parcelId === null) {
@@ -130,8 +130,38 @@ const ParcelsPage: React.FC = () => {
         })();
     }, []);
 
+    const today = useMemo(() => dayjs().hour(0).minute(0).second(0).millisecond(0), []);
+    const yesterday = useMemo(
+        () => today.subtract(1, "day").hour(0).minute(0).second(0).millisecond(0),
+        [today]
+    );
+
+    const packingManagerViewPrimaryFilters = useMemo(
+        () =>
+            primaryFilters.map((filter) => {
+                if (
+                    filter.key !== "packingDate" &&
+                    filter.key !== "packingSlot" &&
+                    filter.key !== "lastStatus"
+                ) {
+                    return filter;
+                }
+                if (filter.key === "packingDate") {
+                    return {
+                        ...filter,
+                        state: { from: yesterday, to: today },
+                        isDisabled: true,
+                    } as ParcelsFilter<DateRangeState>;
+                }
+                return { ...filter, isDisabled: true };
+            }),
+        [primaryFilters, today, yesterday]
+    );
+
     const fetchAndDisplayParcelsData = useCallback(async (): Promise<void> => {
-        const allFilters = [...primaryFilters, ...additionalFilters];
+        const allFilters = isPackingManagerView
+            ? [...packingManagerViewPrimaryFilters, ...additionalFilters]
+            : [...primaryFilters, ...additionalFilters];
 
         if (parcelsTableFetchAbortController.current) {
             parcelsTableFetchAbortController.current.abort("stale request");
@@ -178,7 +208,15 @@ const ParcelsPage: React.FC = () => {
             parcelsTableFetchAbortController.current = null;
             setIsLoading(false);
         }
-    }, [additionalFilters, endPoint, primaryFilters, sortState, startPoint]);
+    }, [
+        additionalFilters,
+        endPoint,
+        primaryFilters,
+        sortState,
+        startPoint,
+        isPackingManagerView,
+        packingManagerViewPrimaryFilters,
+    ]);
 
     useEffect(() => {
         if (!areFiltersLoadingForFirstTime) {
@@ -303,25 +341,42 @@ const ParcelsPage: React.FC = () => {
         );
     };
 
-    const packingManagerViewPrimaryFilters = primaryFilters.map((filter) => {
-        if (
-            filter.key !== "packingDate" &&
-            filter.key !== "packingSlot" &&
-            filter.key !== "lastStatus"
-        ) {
-            return filter;
+    const packingManagerViewDataPortion: ParcelsTableRow[] = parcelsDataPortion.filter((parcel) => {
+        if (dayjs(parcel.packingDate) === today && parcel.packingSlot !== "AM") {
+            return;
         }
-        return { ...filter, isDisabled: true };
+        if (dayjs(parcel.packingDate) === yesterday && parcel.packingSlot !== "PM") {
+            return;
+        }
+        if (!parcel.allStatuses) {
+            return;
+        }
+        if (parcel.allStatuses.includes("Out for Delivery")) {
+            return;
+        }
+        if (
+            parcel.allStatuses.includes("Shipping Labels Downloaded") &&
+            parcel.allStatuses.includes("Shopping List Downloaded") &&
+            parcel.allStatuses.includes("Called and Confirmed")
+        ) {
+            return parcel;
+        }
     });
 
     return (
         <>
             <PreTableControls>
                 <ActionsContainer>
-                    <Button variant="contained" onClick={() => setIsPackingManagerView(false)}>
+                    <Button
+                        variant={isPackingManagerView ? "outlined" : "contained"}
+                        onClick={() => setIsPackingManagerView(false)}
+                    >
                         All parcels
                     </Button>
-                    <Button variant="contained" onClick={() => setIsPackingManagerView(true)}>
+                    <Button
+                        variant={isPackingManagerView ? "contained" : "outlined"}
+                        onClick={() => setIsPackingManagerView(true)}
+                    >
                         Packing manager view
                     </Button>
                     {selectedParcelMessage && <span>{selectedParcelMessage}</span>}
@@ -345,7 +400,11 @@ const ParcelsPage: React.FC = () => {
                             DbParcelRow,
                             string | DateRangeState | string[]
                         >
-                            dataPortion={parcelsDataPortion}
+                            dataPortion={
+                                isPackingManagerView
+                                    ? packingManagerViewDataPortion
+                                    : parcelsDataPortion
+                            }
                             isLoading={isLoading}
                             paginationConfig={{
                                 enablePagination: true,
@@ -372,8 +431,6 @@ const ParcelsPage: React.FC = () => {
                                 primaryFilters: isPackingManagerView
                                     ? packingManagerViewPrimaryFilters
                                     : primaryFilters,
-                                // primaryFilters: primaryFilters,
-                                // primaryFilters: primaryFilters.filter(item => (item.key !== "packingDate") && (item.key !== "packingSlot") && (item.key !== "lastStatus")),
                                 additionalFilters: additionalFilters,
                                 setPrimaryFilters: setPrimaryFilters,
                                 setAdditionalFilters: setAdditionalFilters,
