@@ -1,14 +1,15 @@
 "use client";
 
-import { Button } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Modal } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { BatchTableDataState } from "@/app/parcels/batch/BatchTypes";
 import batchParcelsReducer from "@/app/parcels/batch/BatchParcelsReducer";
 import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";
 import { useLocalStorage, writeLocalTableState } from "@/app/parcels/batch/useLocalStorage";
-import submitBatchTableData from "./submitTableData";
+import submitBatchTableData, { AddBatchError, resetBatchTableData } from "./submitTableData";
 import { batchSubmitTestData } from "./mockData";
+import { useRouter } from "next/navigation";
 
 export interface BatchGridDisplayRow {
     [key: string]: string | number | null;
@@ -204,13 +205,41 @@ export const defaultTableState: BatchTableDataState = {
 };
 
 const BatchParcelDataGrid: React.FC = () => {
-    const [tableState, _] = useLocalStorage(batchParcelsReducer, defaultTableState);
+    const [tableState, dispatch] = useLocalStorage(batchParcelsReducer, defaultTableState);
+    const [dialogVisible, setDialogVisible] = useState(false);
+    const [dialogMessage, setDialogMessage] = useState("");
+    const [errors, setErrors] = useState<AddBatchError[]>([]);
+    const router = useRouter();
 
     writeLocalTableState(batchSubmitTestData);
 
     const displayRows = useMemo(() => {
         return tableStateToBatchDisplayRows(tableState);
     }, [tableState]);
+
+    const handleSubmit = async () : Promise<void> => {
+        // const errors = await submitBatchTableData(tableState);
+        // setErrors(errors);
+        // dispatch({ type: "initialise_table_state", payload: { initialTableState: resettedState } });
+
+        if (errors.length == 0) {
+            setDialogMessage(`Successfully submitted ${tableState.batchDataRows.length} row(s)`);
+        } else {
+            setDialogMessage("Errors encountered during submission. Please review the errors");
+        }
+
+        setDialogVisible(true);
+    };
+
+    const handleReset = () => {
+        const newState = resetBatchTableData(tableState, errors);
+        dispatch({ type: "initialise_table_state", payload: { initialTableState: newState } });
+        setDialogVisible(false);
+    };
+
+    const handleReturnToParcels = () => {
+        router.push("/parcels");
+    };
 
     return (
         <>
@@ -242,12 +271,83 @@ const BatchParcelDataGrid: React.FC = () => {
                 hideFooter
             />
             <Button
-                onClick={() => submitBatchTableData(tableState)}
+                onClick={handleSubmit}
                 variant="contained"
                 sx={{ marginLeft: "1rem", minWidth: "120px" }}
             >
                 Submit
             </Button>
+            <Dialog
+                open={dialogVisible}
+                onClose={handleReset}
+                sx={{
+                    "& .MuiDialog-paper": {
+                        padding: "1rem",
+                        borderRadius: "15px",
+                        boxShadow: "0 3px 5px rgba(0,0,0,0.8)",
+                        margin: "auto",
+                        borderColor: errors.length == 0 ? "#a8d49c" : "ff0000",
+                        borderWidth: "1px", 
+                        borderStyle: "solid",
+                    },
+                }}
+            >
+                <DialogTitle
+                    sx={{
+                        fontSize: "1.2rem",
+                        fontWeight: "bold",
+                        textAlign: "center",
+                        color: "#a8d49c",
+                    }}
+                >
+                    {dialogMessage}
+                </DialogTitle>
+                {/* <DialogContent>
+                    
+                </DialogContent> */}
+                <DialogActions>
+                    {errors.length > 0 ? (
+                        <>
+                            <ul>
+                                {errors.map((error) => {
+                                    return (
+                                        <li key={error.rowId}>
+                                            Error on row {error.rowId}: {error.error.type}
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                            <Button
+                                variant="contained"
+                                onClick={() => {
+                                    setDialogVisible(false);
+                                    handleReset();
+                                }}
+                            >
+                                Close
+                            </Button>
+                        </>
+                    ) : (
+                        <>
+                            <Button
+                                variant="contained"
+                                sx={{ margin: "1rem", minWidth: "120px" }}
+                                onClick={handleReset}
+                            >
+                                Reset and Add More
+                            </Button>
+                            <Button
+                                variant="contained"
+                                sx={{ margin: "1rem", minWidth: "120px" }}
+                                onClick={handleReturnToParcels}
+                            >
+                                Return to the Parcels Page
+                            </Button>
+                        </>
+                    )}
+                    {/* <Button onClick={() => setDialogVisible(false)}>Close</Button> */}
+                </DialogActions>
+            </Dialog>
         </>
     );
 };

@@ -1,10 +1,12 @@
 import {
     BatchClient,
+    BatchDataRow,
     BatchParcel,
     BatchTableDataState,
     CollectionInfo,
 } from "@/app/parcels/batch/BatchTypes";
 import {
+    addClientResult,
     ClientDatabaseInsertRecord,
     FamilyDatabaseInsertRecord,
     getFamilyMembers,
@@ -14,9 +16,15 @@ import { checkboxGroupToArray } from "@/components/Form/formFunctions";
 import supabase from "@/supabaseClient";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { insertParcel, ParcelDatabaseInsertRecord } from "@/app/parcels/form/submitFormHelpers";
+import {
+    insertParcel,
+    InsertParcelReturnType,
+    ParcelDatabaseInsertRecord,
+} from "@/app/parcels/form/submitFormHelpers";
 import { mergeDateAndTime } from "@/app/parcels/form/ParcelForm";
 import { ListType } from "@/common/fetch";
+import { PostgrestError } from "@supabase/supabase-js";
+import { defaultTableState } from "./BatchParcelDataGrid";
 
 const batchClientToClientRecord = (client: BatchClient): ClientDatabaseInsertRecord => {
     const extraInformationWithNappy =
@@ -58,7 +66,10 @@ const batchClientToInsertRecords = (
     return { clientRecord, familyMembers };
 };
 
-const submitClientRowToDb = async (client: BatchClient, rowId: number): Promise<string | null> => {
+const submitClientRowToDb = async (
+    client: BatchClient,
+    rowId: number
+): Promise<addClientResult> => {
     const { clientRecord, familyMembers } = batchClientToInsertRecords(client);
 
     const { data: clientId, error } = await supabase.rpc("insert_client_and_family", {
@@ -66,30 +77,19 @@ const submitClientRowToDb = async (client: BatchClient, rowId: number): Promise<
         familymembers: familyMembers,
     });
 
-    const auditLog = {
-        action: "add client",
-        content: {
-            clientDetails: clientRecord,
-            familyMembers: familyMembers,
-        },
-    } as const satisfies Partial<AuditLog>;
-
     if (error) {
-        console.log(`Error processing row ${rowId}:`, error);
-        const logId = await logErrorReturnLogId(`Error processing row ${rowId}:`, {
-            error,
-        });
-        await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
-        return null;
+        const logId = await logErrorReturnLogId(
+            "Error with inserting new client and their family",
+            {
+                error,
+            }
+        );
+        return { clientId: null, error: { type: "failedToInsertClientAndFamily", logId } };
     }
 
-    await sendAuditLog({
-        ...auditLog,
-        wasSuccess: true,
-        clientId: clientId,
-    });
-    console.log(`Client ${clientId}, ${clientRecord.full_name} added successfully`);
-    return clientId;
+    console.log(`Row ${rowId}: Client ${client.fullName}, ${clientId} added successfully`);
+
+    return { clientId: clientId, error: null };
 };
 
 const batchParcelToParcelRecord = (
@@ -100,7 +100,6 @@ const batchParcelToParcelRecord = (
     const collectionInfo: CollectionInfo | null = parcel.collectionInfo;
 
     if (collectionInfo) {
-        console.log("collectionInfo", collectionInfo)
         const collectionDateTime = mergeDateAndTime(
             collectionInfo.collectionDate,
             collectionInfo.collectionSlot
@@ -117,8 +116,6 @@ const batchParcelToParcelRecord = (
         };
     }
 
-    console.log("no collection info", parcel)   
-
     return {
         client_id: clientId,
         list_type: listType,
@@ -128,31 +125,84 @@ const batchParcelToParcelRecord = (
     };
 };
 
-const submitBatchTableData = async (tableState: BatchTableDataState): Promise<void> => {
+const submitParcelRowToDb = async (
+    parcelRecord: ParcelDatabaseInsertRecord
+): Promise<InsertParcelReturnType> => {
+    const { data, error } = await supabase
+        .from("parcels")
+        .insert(parcelRecord)
+        .select("primary_key")
+        .single();
+
+    if (error) {
+        const logId = await logErrorReturnLogId("Error with insert: parcel data", error);
+        return { parcelId: null, error: { type: "failedToInsertParcel", logId } };
+    }
+
+    return { parcelId: data.primary_key, error: null };
+};
+
+export type AddBatchError = { rowId: number; error: { type: string; logId: string } };
+
+export const resetBatchTableData = (
+    tableState: BatchTableDataState,
+    errors: AddBatchError[]
+): BatchTableDataState => {
+    if (errors.length === 0) {
+        return defaultTableState;
+    }
+
+    const errorRowIds: number[] = errors.map((error) => error.rowId);
+
+    const newBatchDataRows: BatchDataRow[] = tableState.batchDataRows.filter((dataRow) => {
+        return errorRowIds.includes(dataRow.id);
+    });
+
+    return {
+        ...tableState,
+        batchDataRows: newBatchDataRows,
+    };
+};
+
+const submitBatchTableData = async (tableState: BatchTableDataState): Promise<AddBatchError[]> => {
+    const errors: AddBatchError[] = [];
+
     for (const dataRow of tableState.batchDataRows) {
         if (!dataRow.data) {
-            console.log("error data does not exist");
             continue;
         }
 
         const { client, parcel } = dataRow.data;
         const rowId: number = dataRow.id;
 
-        const clientId = dataRow.clientId
-            ? dataRow.clientId
+        const { clientId, error: clientError } = dataRow.clientId
+            ? { clientId: dataRow.clientId, error: null }
             : await submitClientRowToDb(client, rowId);
+
+        if (clientError) {
+            errors.push({ rowId, error: clientError });
+            continue;
+        }
 
         const listType = client.listType;
 
-        if (parcel && clientId) {
-            console.log("staring adding parcel", parcel)
-            console.log("client id", clientId)
-            const parcelRecord = batchParcelToParcelRecord(parcel, clientId, listType);
-            console.log(parcelRecord)
-            const {parcelId , error } = await insertParcel(parcelRecord);
-            console.log("parcel added", parcelId)
+        if (!parcel) {
+            continue;
+        }
+
+        const parcelRecord: ParcelDatabaseInsertRecord = batchParcelToParcelRecord(
+            parcel,
+            clientId,
+            listType
+        );
+        const { error: parcelError } = await submitParcelRowToDb(parcelRecord);
+
+        if (parcelError) {
+            errors.push({ rowId, error: parcelError });
         }
     }
+
+    return errors;
 };
 
 export default submitBatchTableData;
