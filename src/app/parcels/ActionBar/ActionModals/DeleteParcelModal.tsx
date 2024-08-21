@@ -12,7 +12,7 @@ import { getStatusErrorMessageWithLogId } from "../Statuses";
 import { ParcelsTableRow } from "../../parcelsTable/types";
 import DeleteButton from "@/components/Buttons/DeleteButton";
 import DeleteConfirmationDialog from "@/components/Modal/DeleteConfirmationDialog";
-import { ButtonWrap, ConfirmButtons } from "@/components/Buttons/GeneralButtonParts";
+import { ConfirmButtons } from "@/components/Buttons/GeneralButtonParts";
 
 interface ContentProps {
     onClose: () => void;
@@ -50,11 +50,9 @@ const DeleteParcelModalContent: React.FC<ContentProps> = ({
                 maxParcelsToShow={maxParcelsToShow}
             />
             <ConfirmButtons>
-                <ButtonWrap>
-                    <Button variant="outlined" onClick={onClose}>
-                        Cancel
-                    </Button>
-                </ButtonWrap>
+                <Button variant="outlined" onClick={onClose}>
+                    Cancel
+                </Button>
                 <DeleteButton
                     onClick={() => setIsConfirmationDialogueOpen(true)}
                     ref={modalDeleteButtonFocusRef}

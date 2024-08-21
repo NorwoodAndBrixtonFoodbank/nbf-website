@@ -6,7 +6,7 @@ import styled from "styled-components";
 import Button from "@mui/material/Button/Button";
 import { Centerer } from "./ModalFormStyles";
 import DeleteButton from "../Buttons/DeleteButton";
-import { ButtonWrap, ConfirmButtons } from "../Buttons/GeneralButtonParts";
+import { ConfirmButtons } from "../Buttons/GeneralButtonParts";
 
 interface Props {
     isOpen: boolean;
@@ -39,11 +39,9 @@ const ConfirmDeleteModal: React.FC<Props> = ({ isOpen, message, onCancel, onConf
                 {message}
                 <Centerer>
                     <ConfirmButtons>
-                        <ButtonWrap>
-                            <Button variant="outlined" onClick={onCancel}>
-                                Cancel
-                            </Button>
-                        </ButtonWrap>
+                        <Button variant="outlined" onClick={onCancel}>
+                            Cancel
+                        </Button>
                         <DeleteButton onClick={onConfirm} ref={deleteButtonFocusRef}>
                             Delete
                         </DeleteButton>

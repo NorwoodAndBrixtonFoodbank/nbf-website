@@ -31,6 +31,7 @@ import { clientIdParam } from "./constants";
 import { getIsClientActiveErrorMessage, getDeleteClientErrorMessage } from "./format";
 import { getClientParcelsDetails } from "../getClientParcelsData";
 import { saveParcelStatus } from "@/app/parcels/ActionBar/Statuses";
+import { ConfirmButtons } from "@/components/Buttons/GeneralButtonParts";
 
 const ClientsPage: React.FC = () => {
     const [isLoadingForFirstTime, setIsLoadingForFirstTime] = useState(true);
@@ -230,15 +231,19 @@ const ClientsPage: React.FC = () => {
                         footer={
                             isSelectedClientActive && (
                                 <Centerer>
-                                    <LinkButton link={`/clients/edit/${clientId}`}>
-                                        Edit Client
-                                    </LinkButton>
-                                    <LinkButton link={`/parcels/add/${clientId}`}>
-                                        Add Parcel
-                                    </LinkButton>
-                                    <DeleteButton onClick={() => setIsDeleteClientDialogOpen(true)}>
-                                        Delete Client
-                                    </DeleteButton>
+                                    <ConfirmButtons>
+                                        <LinkButton link={`/clients/edit/${clientId}`}>
+                                            Edit Client
+                                        </LinkButton>
+                                        <LinkButton link={`/parcels/add/${clientId}`}>
+                                            Add Parcel
+                                        </LinkButton>
+                                        <DeleteButton
+                                            onClick={() => setIsDeleteClientDialogOpen(true)}
+                                        >
+                                            Delete Client
+                                        </DeleteButton>
+                                    </ConfirmButtons>
                                 </Centerer>
                             )
                         }

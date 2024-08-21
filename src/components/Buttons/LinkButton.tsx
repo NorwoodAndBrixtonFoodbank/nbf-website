@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "@mui/material/Button";
-import { ButtonWrap, UnstyledLink } from "@/components/Buttons/GeneralButtonParts";
+import { UnstyledLink } from "@/components/Buttons/GeneralButtonParts";
 
 interface Props {
     children?: React.ReactNode;
@@ -10,13 +10,11 @@ interface Props {
 
 const LinkButton: React.FC<Props> = ({ children, link, disabled = false }) => {
     return (
-        <ButtonWrap>
-            <UnstyledLink href={link}>
-                <Button color="primary" variant="contained" disabled={disabled}>
-                    {children}
-                </Button>
-            </UnstyledLink>
-        </ButtonWrap>
+        <UnstyledLink href={link}>
+            <Button color="primary" variant="contained" disabled={disabled}>
+                {children}
+            </Button>
+        </UnstyledLink>
     );
 };
 
