@@ -8,6 +8,12 @@ export const UnstyledLink = styled(Link)`
     display: contents;
 `;
 
-export const ButtonWrap = styled.div`
+export const ConfirmButtons = styled.div`
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    align-items: stretch;
+    display: flex;
+    justify-content: center;
     margin: 1rem;
 `;

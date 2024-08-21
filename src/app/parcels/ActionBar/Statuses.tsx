@@ -3,7 +3,6 @@
 import supabase from "@/supabaseClient";
 import React, { useEffect, useState } from "react";
 import Menu from "@mui/material/Menu";
-import MenuList from "@mui/material/MenuList";
 import MenuItem from "@mui/material/MenuItem";
 import dayjs, { Dayjs } from "dayjs";
 import { ParcelsTableRow } from "../parcelsTable/types";
@@ -205,21 +204,19 @@ const Statuses: React.FC<Props> = ({
                 onClose={() => setStatusAnchorElement(null)}
                 anchorEl={statusAnchorElement}
             >
-                <MenuList id="status-menu">
-                    {parcelStatuses &&
-                        parcelStatuses
-                            .filter((status) => !nonMenuStatuses.includes(status))
-                            .map((status) => {
-                                return (
-                                    <MenuItem
-                                        key={userFacingStatusString(status)}
-                                        onClick={onMenuItemClick(status)}
-                                    >
-                                        {userFacingStatusString(status)}
-                                    </MenuItem>
-                                );
-                            })}
-                </MenuList>
+                {parcelStatuses &&
+                    parcelStatuses
+                        .filter((status) => !nonMenuStatuses.includes(status))
+                        .map((status) => {
+                            return (
+                                <MenuItem
+                                    key={userFacingStatusString(status)}
+                                    onClick={onMenuItemClick(status)}
+                                >
+                                    {userFacingStatusString(status)}
+                                </MenuItem>
+                            );
+                        })}
             </Menu>
         </>
     );

@@ -1,9 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Modal from "@/components/Modal/Modal";
 import styled from "styled-components";
 import Button from "@mui/material/Button/Button";
+import { Centerer } from "./ModalFormStyles";
+import DeleteButton from "../Buttons/DeleteButton";
+import { ConfirmButtons } from "../Buttons/GeneralButtonParts";
 
 interface Props {
     isOpen: boolean;
@@ -21,21 +24,32 @@ const ModalInner = styled.div`
     font-size: 1.5rem;
 `;
 
-const Text = styled.p`
-    font-size: 1.2rem;
-`;
+const ConfirmDeleteModal: React.FC<Props> = ({ isOpen, message, onCancel, onConfirm }) => {
+    const deleteButtonFocusRef = React.useRef<HTMLButtonElement>(null);
 
-const ConfirmDialog: React.FC<Props> = ({ isOpen, message, onCancel, onConfirm }) => {
+    useEffect(() => {
+        setTimeout(() => {
+            deleteButtonFocusRef.current?.focus();
+        }, 0);
+    }, [isOpen]);
+
     return (
-        <Modal isOpen={isOpen} onClose={onCancel} header="Confirm" headerId="confirmDialog">
+        <Modal isOpen={isOpen} onClose={onCancel} header="Confirm" headerId="confirmDeleteModal">
             <ModalInner>
-                <Text>{message}</Text>
-                <Button onClick={onConfirm} variant="contained" color="primary">
-                    Confirm
-                </Button>
+                {message}
+                <Centerer>
+                    <ConfirmButtons>
+                        <Button variant="outlined" onClick={onCancel}>
+                            Cancel
+                        </Button>
+                        <DeleteButton onClick={onConfirm} ref={deleteButtonFocusRef}>
+                            Delete
+                        </DeleteButton>
+                    </ConfirmButtons>
+                </Centerer>
             </ModalInner>
         </Modal>
     );
 };
 
-export default ConfirmDialog;
+export default ConfirmDeleteModal;

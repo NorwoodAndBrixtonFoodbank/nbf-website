@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import GeneralActionModal, {
     ActionModalProps,
-    ConfirmButtons,
     Heading,
     WarningMessage,
     maxParcelsToShow,
@@ -14,6 +13,7 @@ import { PackingSlotsLabelsAndValues, fetchPackingSlotsInfo } from "@/common/fet
 import { UncontrolledSelect } from "@/components/DataInput/DropDownSelect";
 import { getUpdateErrorMessage, packingDateOrSlotUpdate } from "./CommonDateAndSlot";
 import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
+import { ConfirmButtons } from "@/components/Buttons/GeneralButtonParts";
 
 interface SlotInputProps {
     packingSlotsLabelsAndValues: PackingSlotsLabelsAndValues;
@@ -64,7 +64,7 @@ const SlotChangeModalContent: React.FC<ContentProps> = ({
             />
             <WarningMessage>{warningMessage}</WarningMessage>
             <ConfirmButtons>
-                <Button variant="contained" onClick={onClose}>
+                <Button variant="outlined" onClick={onClose}>
                     Cancel
                 </Button>
                 <Button variant="contained" onClick={onSlotSubmit}>

@@ -10,7 +10,7 @@ import styled from "styled-components";
 import EditModal, { EditModalState } from "@/app/lists/EditModal";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
-import ConfirmDialog from "@/components/Modal/ConfirmDialog";
+import ConfirmDeleteModal from "@/components/Modal/ConfirmDialog";
 import Snackbar from "@mui/material/Snackbar/Snackbar";
 import Alert from "@mui/material/Alert/Alert";
 import Button from "@mui/material/Button";
@@ -21,6 +21,7 @@ import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { ClientSideFilter } from "@/components/Tables/Filters";
 import { ListType } from "@/common/fetch";
+import DeleteConfirmationDialog from "@/components/Modal/DeleteConfirmationDialog";
 
 export type ListFilter = ClientSideFilter<ListRow, string>;
 
@@ -135,6 +136,8 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
     const [toDelete, setToDelete] = useState<number | null>(null);
     // need another setState otherwise the modal content changes before the close animation finishes
     const [toDeleteModalOpen, setToDeleteModalOpen] = useState<boolean>(false);
+    const [isDeleteConfirmationDialogueOpen, setIsDeleteConfirmationDialogueOpen] =
+        useState<boolean>(false);
     const [listData, setListData] = useState<ListRow[]>(listOfIngredients);
 
     if (listOfIngredients === null) {
@@ -271,15 +274,22 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
 
     return (
         <>
-            <ConfirmDialog
+            <ConfirmDeleteModal
                 message={`Are you sure you want to delete ${
                     toDelete !== null ? listData[toDelete].itemName : ""
                 }?`}
                 isOpen={toDeleteModalOpen}
-                onConfirm={onConfirmDeletion}
+                onConfirm={() => setIsDeleteConfirmationDialogueOpen(true)}
                 onCancel={() => {
                     setToDeleteModalOpen(false);
                 }}
+            />
+            <DeleteConfirmationDialog
+                deletionText={`You are about to delete ${toDelete !== null ? listData[toDelete].itemName : ""}`}
+                isOpen={isDeleteConfirmationDialogueOpen}
+                onClose={() => setIsDeleteConfirmationDialogueOpen(false)}
+                onClickCancel={() => setIsDeleteConfirmationDialogueOpen(false)}
+                onClickConfirm={onConfirmDeletion}
             />
 
             <Snackbar

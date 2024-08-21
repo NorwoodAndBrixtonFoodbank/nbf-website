@@ -26,13 +26,6 @@ export const Heading = styled.div`
     margin: 0.3rem;
 `;
 
-export const ConfirmButtons = styled.div`
-    display: flex;
-    flex-direction: row;
-    gap: 2rem;
-    align-items: stretch;
-`;
-
 export const Paragraph = styled.p`
     font-size: 1rem;
     margin: 0.3rem;

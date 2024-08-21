@@ -18,7 +18,7 @@ import { CircularProgress } from "@mui/material";
 import { ErrorSecondaryText } from "../../errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { displayPostcodeForHomelessClient } from "@/common/format";
-import ConfirmDialog from "@/components/Modal/ConfirmDialog";
+import DeleteConfirmationDialog from "@/components/Modal/DeleteConfirmationDialog";
 import DeleteButton from "@/components/Buttons/DeleteButton";
 import deleteClient from "../deleteClient";
 import { getIsClientActive } from "../getExpandedClientDetails";
@@ -31,6 +31,7 @@ import { clientIdParam } from "./constants";
 import { getIsClientActiveErrorMessage, getDeleteClientErrorMessage } from "./format";
 import { getClientParcelsDetails } from "../getClientParcelsData";
 import { saveParcelStatus } from "@/app/parcels/ActionBar/Statuses";
+import { ConfirmButtons } from "@/components/Buttons/GeneralButtonParts";
 
 const ClientsPage: React.FC = () => {
     const [isLoadingForFirstTime, setIsLoadingForFirstTime] = useState(true);
@@ -230,15 +231,19 @@ const ClientsPage: React.FC = () => {
                         footer={
                             isSelectedClientActive && (
                                 <Centerer>
-                                    <LinkButton link={`/clients/edit/${clientId}`}>
-                                        Edit Client
-                                    </LinkButton>
-                                    <LinkButton link={`/parcels/add/${clientId}`}>
-                                        Add Parcel
-                                    </LinkButton>
-                                    <DeleteButton onClick={() => setIsDeleteClientDialogOpen(true)}>
-                                        Delete Client
-                                    </DeleteButton>
+                                    <ConfirmButtons>
+                                        <LinkButton link={`/clients/edit/${clientId}`}>
+                                            Edit Client
+                                        </LinkButton>
+                                        <LinkButton link={`/parcels/add/${clientId}`}>
+                                            Add Parcel
+                                        </LinkButton>
+                                        <DeleteButton
+                                            onClick={() => setIsDeleteClientDialogOpen(true)}
+                                        >
+                                            Delete Client
+                                        </DeleteButton>
+                                    </ConfirmButtons>
                                 </Centerer>
                             )
                         }
@@ -269,11 +274,12 @@ const ClientsPage: React.FC = () => {
                             </ButtonsDiv>
                         </OutsideDiv>
                     </Modal>
-                    <ConfirmDialog
+                    <DeleteConfirmationDialog
                         isOpen={isDeleteClientDialogOpen}
-                        message="Are you sure you want to delete this client? This action cannot be undone."
-                        onCancel={() => setIsDeleteClientDialogOpen(false)}
-                        onConfirm={onDeleteClient}
+                        onClose={() => setIsDeleteClientDialogOpen(false)}
+                        onClickCancel={() => setIsDeleteClientDialogOpen(false)}
+                        onClickConfirm={onDeleteClient}
+                        deletionText="You are about to delete this client. This action cannot be undone."
                     />
                 </>
             )}
