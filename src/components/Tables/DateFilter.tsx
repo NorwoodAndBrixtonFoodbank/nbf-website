@@ -22,7 +22,7 @@ const areDateRangesIdentical = (
     );
 };
 
-const areDaysIdentical = (dayA: dayjs.Dayjs | null, dayB: dayjs.Dayjs | null): boolean => {
+export const areDaysIdentical = (dayA: dayjs.Dayjs | null, dayB: dayjs.Dayjs | null): boolean => {
     return dayA && dayB ? dayA.isSame(dayB) : dayA === dayB;
 };
 

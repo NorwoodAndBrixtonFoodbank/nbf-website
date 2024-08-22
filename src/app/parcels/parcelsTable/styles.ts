@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 
-export const PreTableControls = styled.div`
+export const PreTableControlsStyling = styled.div`
     margin: 1rem;
     display: flex;
     flex-wrap: wrap;

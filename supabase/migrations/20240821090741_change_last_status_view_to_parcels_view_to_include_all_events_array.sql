@@ -6,7 +6,7 @@ drop view if exists "public"."parcels_plus";
 
 drop view if exists "public"."last_status";
 
-create or replace view "public"."parcels_events" as  WITH latest_events AS (
+create or replace view "public"."parcels_events" WITH (security_invoker = true) as  WITH latest_events AS (
          SELECT e.parcel_id,
             e.new_parcel_status AS last_event_name,
             e."timestamp" AS last_event_timestamp,
@@ -34,7 +34,7 @@ create or replace view "public"."parcels_events" as  WITH latest_events AS (
   ORDER BY p.primary_key;
 
 
-create or replace view "public"."parcels_plus" as  SELECT parcels.primary_key AS parcel_id,
+create or replace view "public"."parcels_plus" WITH (security_invoker = true) as  SELECT parcels.primary_key AS parcel_id,
     parcels.collection_datetime,
     parcels.packing_date,
     parcels.created_at,
@@ -66,7 +66,7 @@ create or replace view "public"."parcels_plus" as  SELECT parcels.primary_key AS
   ORDER BY parcels.packing_date DESC;
 
 
-create or replace view "public"."completed_parcels" as  WITH completed_events AS (
+create or replace view "public"."completed_parcels" WITH (security_invoker = true) as  WITH completed_events AS (
          SELECT events.parcel_id,
             max(events."timestamp") AS completed_timestamp
            FROM events
@@ -84,7 +84,7 @@ create or replace view "public"."completed_parcels" as  WITH completed_events AS
      LEFT JOIN clients ON ((parcels_plus.client_id = clients.primary_key)));
 
 
-create or replace view "public"."reports" as  WITH first_completed_parcel AS (
+create or replace view "public"."reports" WITH (security_invoker = true) as  WITH first_completed_parcel AS (
          SELECT min(completed_parcels_1.completed_timestamp) AS start_date
            FROM completed_parcels completed_parcels_1
         ), list_of_weeks AS (
