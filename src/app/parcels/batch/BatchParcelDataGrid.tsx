@@ -1,17 +1,16 @@
 "use client";
 
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Modal } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useMemo } from "react";
 import { BatchTableDataState } from "@/app/parcels/batch/batchTypes";
 import batchParcelsReducer from "@/app/parcels/batch/batchParcelsReducer";
 import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";
-import { useLocalStorage, writeLocalTableState } from "@/app/parcels/batch/useLocalStorage";
+import { useLocalStorage } from "@/app/parcels/batch/useLocalStorage";
 import submitBatchTableData, { AddBatchRowError, displayUnsubmittedRows } from "./submitTableData";
 import { batchSubmitTestData } from "./mockData";
 import { emptyOverrideData, emptyBatchEditData } from "./emptyData";
 import { useRouter } from "next/navigation";
-import { set } from "cypress/types/lodash";
 
 export interface BatchGridDisplayRow {
     [key: string]: string | number | null;
@@ -213,21 +212,12 @@ const BatchParcelDataGrid: React.FC = () => {
     const [submitErrors, setSubmitErrors] = useState<AddBatchRowError[]>([]);
     const router = useRouter();
 
-    writeLocalTableState(batchSubmitTestData);
-
     const displayRows = useMemo(() => {
         return tableStateToBatchDisplayRows(tableState);
     }, [tableState]);
 
     const handleSubmit = async (): Promise<void> => {
-        // const errors = await submitBatchTableData(tableState);
-        // setErrors(errors);
-
-        const submitErrors: AddBatchRowError[] = [
-            // { rowId: 1, error: { type: "failedToInsertClientAndFamily", logId: "123" } },
-            // { rowId: 2, error: { type: "failedToInsertClientAndFamily", logId: "124" } },
-        ];
-
+        const { errors: submitErrors } = await submitBatchTableData(tableState);
         setSubmitErrors(submitErrors);
 
         if (submitErrors.length == 0) {
@@ -297,7 +287,6 @@ const BatchParcelDataGrid: React.FC = () => {
             </Button>
             <Dialog
                 open={dialogVisible}
-                // onClose={handleReset}
                 sx={{
                     "& .MuiDialog-paper": {
                         padding: "1rem",
