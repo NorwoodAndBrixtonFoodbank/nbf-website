@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { DefaultTheme, useTheme } from "styled-components";
+import styled, { DefaultTheme } from "styled-components";
 import Title from "@/components/Title/Title";
 import { NavBarHeight } from "@/components/NavigationBar/NavigationBar";
 import Paper from "@mui/material/Paper";
