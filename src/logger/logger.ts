@@ -11,7 +11,7 @@ type LogEvent = (message: string, meta?: Record<string, unknown>, error?: Error)
 
 export const logErrorReturnLogId: LogEvent = (message, meta, error) => {
     const logId = uuid();
-    logger.error(message, { ...meta, logId, error });
+    logger.error(message, { ...meta, logId, error: JSON.stringify(error) });
     return Promise.resolve(logId);
 };
 

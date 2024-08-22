@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { DefaultTheme, useTheme } from "styled-components";
+import styled, { DefaultTheme } from "styled-components";
 import Title from "@/components/Title/Title";
 import { NavBarHeight } from "@/components/NavigationBar/NavigationBar";
 import Paper from "@mui/material/Paper";
@@ -102,8 +102,6 @@ const AuthPanel: React.FC<AuthPanelProps> = ({
     errorMessage,
     successMessage,
 }) => {
-    const theme = useTheme();
-
     return (
         <MiddleDiv elevation={5} id="login-panel">
             <Title>{title}</Title>
@@ -136,14 +134,14 @@ const AuthPanel: React.FC<AuthPanelProps> = ({
 
                 {authLinks &&
                     authLinks.map((authLink) => (
-                        <AuthLinkElement key={authLink.label} href={authLink.href} theme={theme}>
+                        <AuthLinkElement key={authLink.label} href={authLink.href}>
                             {authLink.label}
                         </AuthLinkElement>
                     ))}
 
-                {errorMessage && <ErrorMessage theme={theme}>{errorMessage}</ErrorMessage>}
+                {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
 
-                {successMessage && <SuccessMessage theme={theme}>{successMessage}</SuccessMessage>}
+                {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
             </AuthInputSection>
         </MiddleDiv>
     );
