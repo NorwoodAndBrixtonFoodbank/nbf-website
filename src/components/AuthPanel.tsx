@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styled, { DefaultTheme } from "styled-components";
 import Title from "@/components/Title/Title";
 import { NavBarHeight } from "@/components/NavigationBar/NavigationBar";
@@ -102,6 +102,14 @@ const AuthPanel: React.FC<AuthPanelProps> = ({
     errorMessage,
     successMessage,
 }) => {
+    const safeSubmit = useCallback(
+        (event: React.MouseEvent<HTMLButtonElement>) => {
+            event.preventDefault();
+            onSubmit();
+        },
+        [onSubmit]
+    );
+
     return (
         <MiddleDiv elevation={5} id="login-panel">
             <Title>{title}</Title>
@@ -128,7 +136,7 @@ const AuthPanel: React.FC<AuthPanelProps> = ({
                     />
                 )}
 
-                <Button variant="contained" type="submit" onClick={onSubmit}>
+                <Button variant="contained" type="submit" onClick={safeSubmit}>
                     {submitText}
                 </Button>
 
