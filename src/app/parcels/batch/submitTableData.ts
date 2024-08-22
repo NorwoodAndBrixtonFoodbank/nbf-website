@@ -17,13 +17,11 @@ import supabase from "@/supabaseClient";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { logErrorReturnLogId } from "@/logger/logger";
 import {
-    insertParcel,
     InsertParcelReturnType,
     ParcelDatabaseInsertRecord,
 } from "@/app/parcels/form/submitFormHelpers";
 import { mergeDateAndTime } from "@/app/parcels/form/ParcelForm";
 import { ListType } from "@/common/fetch";
-import { PostgrestError } from "@supabase/supabase-js";
 import { defaultTableState } from "./BatchParcelDataGrid";
 
 const batchClientToClientRecord = (client: BatchClient): ClientDatabaseInsertRecord => {
@@ -142,11 +140,11 @@ const submitParcelRowToDb = async (
     return { parcelId: data.primary_key, error: null };
 };
 
-export type AddBatchError = { rowId: number; error: { type: string; logId: string } };
+export interface AddBatchRowError { rowId: number; error: { type: string; logId: string } };
 
-export const resetBatchTableData = (
+export const displayUnsubmittedRows = (
     tableState: BatchTableDataState,
-    errors: AddBatchError[]
+    errors: AddBatchRowError[]
 ): BatchTableDataState => {
     if (errors.length === 0) {
         return defaultTableState;
@@ -164,8 +162,16 @@ export const resetBatchTableData = (
     };
 };
 
-const submitBatchTableData = async (tableState: BatchTableDataState): Promise<AddBatchError[]> => {
-    const errors: AddBatchError[] = [];
+export interface SubmitBatchResult {
+    errors: AddBatchRowError[];
+    newClientIds: string[];
+    newParcelIds: string[];
+};
+
+const submitBatchTableData = async (tableState: BatchTableDataState): Promise<SubmitBatchResult> => {
+    const errors: AddBatchRowError[] = [];
+    const newClientIds: string[] = [];
+    const newParcelIds: string[] = [];  
 
     for (const dataRow of tableState.batchDataRows) {
         if (!dataRow.data) {
@@ -177,7 +183,11 @@ const submitBatchTableData = async (tableState: BatchTableDataState): Promise<Ad
 
         const { clientId, error: clientError } = dataRow.clientId
             ? { clientId: dataRow.clientId, error: null }
-            : await submitClientRowToDb(client, rowId);
+            : await (async () => {
+                const result = await submitClientRowToDb(client, rowId);
+                result.clientId && newClientIds.push(result.clientId);
+                return result;
+            })();
 
         if (clientError) {
             errors.push({ rowId, error: clientError });
@@ -195,14 +205,17 @@ const submitBatchTableData = async (tableState: BatchTableDataState): Promise<Ad
             clientId,
             listType
         );
-        const { error: parcelError } = await submitParcelRowToDb(parcelRecord);
+        const { parcelId, error: parcelError } = await submitParcelRowToDb(parcelRecord);
 
         if (parcelError) {
             errors.push({ rowId, error: parcelError });
+            continue;
         }
+
+        parcelId && newParcelIds.push(parcelId);
     }
 
-    return errors;
+    return {errors, newClientIds, newParcelIds};
 };
 
 export default submitBatchTableData;
