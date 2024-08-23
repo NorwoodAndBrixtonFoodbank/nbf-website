@@ -23,7 +23,7 @@ export enum Errors {
     invalidPackingSlot = "The previous packing slot is no longer available, please select a new packing slot.",
     invalidCollectionCentre = "The previous collection centre is no longer available, please select a new collection centre.",
     noCollectionSlotsSet = "There are no collection slots set for this collection centre, please select a different collection centre or contact admin.",
-    deliveryInstructions = "Please enter delivery instructions below 320 words.",
+    deliveryInstructions = "Please enter delivery instructions below 320 characters.",
 }
 
 export const numberRegex = /^\d+$/;
@@ -66,23 +66,23 @@ export const createSetter = <SpecificFields extends Fields>(
     };
 };
 
-export const getErrorType = (
+export const getErrorType = <SpecificFields extends Fields>(
     input: string,
+    key: keyof SpecificFields,
     required?: boolean,
     regex?: RegExp,
-    additionalCondition?: (value: string) => boolean,
-    deliveryInstructionsOverflow?: boolean
+    additionalCondition?: (value: string) => boolean
 ): Errors => {
     if (input == "") {
         return required ? Errors.required : Errors.none;
-    }
-    if (deliveryInstructionsOverflow) {
-        return Errors.deliveryInstructions;
     }
     if (
         (regex !== undefined && !input.match(regex)) ||
         (additionalCondition !== undefined && !additionalCondition(input))
     ) {
+        if (key === "deliveryInstructions") {
+            return Errors.deliveryInstructions;
+        }
         return Errors.invalid;
     }
 
@@ -104,10 +104,10 @@ export const onChangeText = <SpecificFields extends Fields>(
             key === "telephoneNumber" || key === "phoneNumber"
                 ? input.replaceAll(phoneNumberFormatSymbolsRegex, "")
                 : input,
+            key,
             required,
             regex,
-            additionalCondition,
-            key === "deliveryInstructions" && input.length > 320
+            additionalCondition
         );
         errorSetter({ [key]: errorType } as { [key in keyof FormErrors<SpecificFields>]: Errors });
         if (errorType === Errors.none) {
@@ -134,7 +134,7 @@ export const onChangeTextDeferredError = <SpecificFields extends Fields>(
             clearInvitedUser();
         }
         const input = event.target.value;
-        const errorType = getErrorType(input, required, regex, additionalCondition);
+        const errorType = getErrorType(input, key, required, regex, additionalCondition);
         errorSetter({ [key]: errorType } as {
             [key in keyof FormErrors<SpecificFields>]: Errors;
         });

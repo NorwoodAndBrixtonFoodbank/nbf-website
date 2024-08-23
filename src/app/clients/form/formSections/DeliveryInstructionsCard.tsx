@@ -7,7 +7,7 @@ import {
     onChangeText,
 } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
-import { ClientCardProps } from "../ClientForm";
+import { ClientCardProps } from "@/app/clients/form/ClientForm";
 
 const DeliveryInstructionsCard: React.FC<ClientCardProps> = ({
     formErrors,
@@ -22,7 +22,17 @@ const DeliveryInstructionsCard: React.FC<ClientCardProps> = ({
                 defaultValue={getDefaultTextValue(fields, "deliveryInstructions")}
                 error={errorExists(formErrors.deliveryInstructions)}
                 helperText={errorText(formErrors.deliveryInstructions)}
-                onChange={onChangeText(fieldSetter, errorSetter, "deliveryInstructions")}
+                onChange={onChangeText(
+                    fieldSetter,
+                    errorSetter,
+                    "deliveryInstructions",
+                    undefined,
+                    undefined,
+                    undefined,
+                    (input) => {
+                        return input.length <= 320;
+                    }
+                )}
             />
         </GenericFormCard>
     );

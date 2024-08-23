@@ -21,7 +21,7 @@ export interface ShippingLabelData {
     delivery_instructions?: string;
 }
 
-// This is a hard requirement because of the foodbank's printer settings, note that height is adjustable but preferably set at 62mm
+// The height is a hard requirement, fixed at 62mm, the width is technically adjustable but preferred at 150mm
 const LABEL_SIZE_MM = { width: 150, height: 62 };
 
 const pixelsPerMmAt72Dpi = 72 / 25.4;
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
     },
-    leftCol: { flexBasis: "33%", textAlign: "left" },
+    leftCol: { flexBasis: "32%", textAlign: "left" },
     middleCol: { flex: 1, textAlign: "left" },
     headingText: { fontFamily: "Helvetica-Bold", textTransform: "uppercase" },
     largeText: {
@@ -86,7 +86,7 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
     return (
         <Page size={LABEL_SIZE_PIXELS} style={styles.page}>
             <View style={styles.cardWrapper} wrap={true}>
-                <View style={[styles.leftCol, { flexDirection: "column" }]}>
+                <View style={[styles.leftCol, { flexDirection: "column", marginRight: "3px" }]}>
                     <View style={styles.firstRow}>
                         <Text style={[styles.headingText, { flexWrap: "wrap" }]}>Name: </Text>
                     </View>
