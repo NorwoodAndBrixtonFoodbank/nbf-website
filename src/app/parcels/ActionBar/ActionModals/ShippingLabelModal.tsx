@@ -6,12 +6,12 @@ import GeneralActionModal, {
     maxParcelsToShow,
     ActionModalProps,
 } from "./GeneralActionModal";
-import SelectedParcelsOverview from "../SelectedParcelsOverview";
+import SelectedParcelsOverview from "@/app/parcels/ActionBar/SelectedParcelsOverview";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import ShippingLabelsPdfButton, {
     ShippingLabelError,
 } from "@/pdf/ShippingLabels/ShippingLabelsPdfButton";
-import { getStatusErrorMessageWithLogId } from "../Statuses";
+import { getStatusErrorMessageWithLogId } from "@/app/parcels/ActionBar/Statuses";
 import { sendAuditLog } from "@/server/auditLog";
 import DuplicateDownloadWarning from "@/app/parcels/ActionBar/DuplicateDownloadWarning";
 import { getDuplicateDownloadedPostcodes } from "@/app/parcels/ActionBar/ActionModals/getDuplicateDownloadedPostcodes";

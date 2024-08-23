@@ -11,7 +11,7 @@ import {
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { SelectChangeEventHandler } from "@/components/DataInput/inputHandlerFactories";
 import { FormText, StyledCard } from "@/components/Form/formStyling";
-import { ClientCardProps, ClientSetter } from "../ClientForm";
+import { ClientCardProps, ClientSetter } from "@/app/clients/form/ClientForm";
 import { UncontrolledSelect } from "@/components/DataInput/DropDownSelect";
 import { getAdultBirthYears } from "@/app/clients/form/birthYearDropdown";
 

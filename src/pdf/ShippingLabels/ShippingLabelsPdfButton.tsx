@@ -5,7 +5,7 @@ import supabase from "@/supabaseClient";
 import PdfButton from "@/components/PdfButton/PdfButton";
 import ShippingLabelsPdf, { ShippingLabelData } from "@/pdf/ShippingLabels/ShippingLabelsPdf";
 import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
-import { PdfDataFetchResponse } from "../common";
+import { PdfDataFetchResponse } from "@/pdf/common";
 import { Schema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { displayNameForDeletedClient } from "@/common/format";

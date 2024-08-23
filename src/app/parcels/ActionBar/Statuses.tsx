@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import dayjs, { Dayjs } from "dayjs";
-import { ParcelsTableRow } from "../parcelsTable/types";
+import { ParcelsTableRow } from "@/app/parcels/parcelsTable/types";
 import StatusesModal from "@/app/parcels/ActionBar/StatusesModal";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { sendAuditLog } from "@/server/auditLog";
