@@ -74,8 +74,11 @@ const getParcelsForDelivery = async (parcelIds: string[]): Promise<ParcelsForDel
         }
 
         let labelCount = 0;
-        if (parcel.events && parcel.events.length > 0 && parcel.events[0].event_data) {
-            labelCount = Number.parseInt(parcel.events[0].event_data);
+        if (parcel.events && parcel.events.length > 0) {
+            const lastEventDataValue = parcel.events.slice(-1)[0].event_data;
+            if (lastEventDataValue) {
+                labelCount = Number.parseInt(lastEventDataValue);
+            }
         }
 
         dataWithNonNullClients.push({
