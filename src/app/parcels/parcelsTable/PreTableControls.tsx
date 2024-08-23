@@ -1,10 +1,9 @@
-import { ActionsContainer } from "@/components/Form/formStyling";
+import { ActionsContainer, PreTableControlsContainer } from "@/components/Form/formStyling";
 import { Button } from "@mui/material";
 import ActionAndStatusBar from "../ActionBar/ActionAndStatusBar";
 import { ParcelsTableRow } from "./types";
 import { Dayjs } from "dayjs";
 import { SaveParcelStatusResult, StatusType } from "../ActionBar/Statuses";
-import { PreTableControlsStyling } from "./styles";
 
 interface PreTableControlsProps {
     isPackingManagerView: boolean;
@@ -22,7 +21,7 @@ interface PreTableControlsProps {
 
 const PreTableControls: React.FC<PreTableControlsProps> = (props) => {
     return (
-        <PreTableControlsStyling>
+        <PreTableControlsContainer>
             <Button
                 variant={props.isPackingManagerView ? "outlined" : "contained"}
                 onClick={() => props.setIsPackingManagerView(false)}
@@ -35,15 +34,14 @@ const PreTableControls: React.FC<PreTableControlsProps> = (props) => {
             >
                 Packing manager view
             </Button>
+            {props.selectedParcelMessage && <span>{props.selectedParcelMessage}</span>}
             <ActionsContainer>
-                {props.selectedParcelMessage && <span>{props.selectedParcelMessage}</span>}
-
                 <ActionAndStatusBar
                     fetchSelectedParcels={props.getCheckedParcelsData}
                     updateParcelStatuses={props.updateParcelStatuses}
                 />
             </ActionsContainer>
-        </PreTableControlsStyling>
+        </PreTableControlsContainer>
     );
 };
 

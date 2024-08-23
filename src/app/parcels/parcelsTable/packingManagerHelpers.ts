@@ -3,7 +3,7 @@ import { ParcelsFilter, ParcelsTableRow } from "./types";
 import dayjs from "dayjs";
 import { DateRangeState } from "@/components/DateInputs/DateRangeInputs";
 
-export const shouldParcelBePacked = (
+export const shouldBeInPackingManagerView = (
     parcel: ParcelsTableRow,
     today: dayjs.Dayjs,
     yesterday: dayjs.Dayjs

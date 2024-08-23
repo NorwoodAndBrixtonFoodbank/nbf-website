@@ -105,7 +105,8 @@ export const GappedDiv = styled.div`
     gap: 1em;
 `;
 
-export const ActionsContainer = styled(Paper)`
+export const PreTableControlsContainer = styled(Paper)`
+    margin: 1rem;
     flex-grow: 1;
     display: flex;
     flex-wrap: wrap;
@@ -115,4 +116,10 @@ export const ActionsContainer = styled(Paper)`
     align-items: center;
     border-radius: 0.5rem;
     background-color: ${(props) => props.theme.main.background[5]};
+`;
+
+export const ActionsContainer = styled.div`
+    margin-left: auto;
+    gap: 0.5rem;
+    display: flex;
 `;

@@ -31,10 +31,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dayjs from "dayjs";
 import {
     shouldFilterBeDisabled,
-    shouldParcelBePacked,
+    shouldBeInPackingManagerView,
 } from "@/app/parcels/parcelsTable/packingManagerHelpers";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
     getClientIdAndIsActive,
     getParcelIds,
@@ -50,7 +49,6 @@ interface ParcelsTableProps {
     checkedParcelIds: string[];
     setCheckedParcelIds: (ids: string[]) => void;
     setModalIsOpen: (isOpen: boolean) => void;
-    router: AppRouterInstance;
     sortState: ParcelsSortState;
     setSortState: (sortState: ParcelsSortState) => void;
     primaryFilters: (
@@ -81,7 +79,6 @@ const ParcelsTable: React.FC<ParcelsTableProps> = ({
     checkedParcelIds,
     setCheckedParcelIds,
     setModalIsOpen,
-    router,
     sortState,
     setSortState,
     primaryFilters,
@@ -113,6 +110,8 @@ const ParcelsTable: React.FC<ParcelsTableProps> = ({
     const endPoint = currentPage * parcelCountPerPage - 1;
 
     const parcelsTableFetchAbortController = useRef<AbortController | null>(null);
+
+    const router = useRouter();
 
     const today = useMemo(() => dayjs().startOf("day"), []);
     const yesterday = useMemo(() => today.subtract(1, "day"), [today]);
@@ -231,7 +230,7 @@ const ParcelsTable: React.FC<ParcelsTableProps> = ({
         parcelsDataPortion: ParcelsTableRow[]
     ): ParcelsTableRow[] => {
         return parcelsDataPortion.filter((parcel) => {
-            if (shouldParcelBePacked(parcel, today, yesterday)) {
+            if (shouldBeInPackingManagerView(parcel, today, yesterday)) {
                 return parcel;
             }
         });

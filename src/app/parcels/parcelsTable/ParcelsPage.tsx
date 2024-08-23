@@ -14,7 +14,6 @@ import {
     saveParcelStatus,
     SaveParcelStatusResult,
 } from "@/app/parcels/ActionBar/Statuses";
-import { useRouter } from "next/navigation";
 import buildFilters from "@/app/parcels/parcelsTable/filters";
 import { getSelectedParcelCountMessage } from "@/app/parcels/parcelsTable/format";
 import { Dayjs } from "dayjs";
@@ -34,7 +33,6 @@ const ParcelsPage: React.FC = () => {
     const [checkedParcelIds, setCheckedParcelIds] = useState<string[]>([]);
 
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-    const router = useRouter();
 
     const [sortState, setSortState] = useState<ParcelsSortState>({ sortEnabled: false });
 
@@ -119,7 +117,6 @@ const ParcelsPage: React.FC = () => {
                         checkedParcelIds={checkedParcelIds}
                         setCheckedParcelIds={setCheckedParcelIds}
                         setModalIsOpen={setModalIsOpen}
-                        router={router}
                         sortState={sortState}
                         setSortState={setSortState}
                         primaryFilters={primaryFilters}
@@ -132,7 +129,6 @@ const ParcelsPage: React.FC = () => {
                         isPackingManagerView={isPackingManagerView}
                     />
                     <ParcelsModal
-                        router={router}
                         modalIsOpen={modalIsOpen}
                         setModalIsOpen={setModalIsOpen}
                         selectedParcelId={selectedParcelId}
