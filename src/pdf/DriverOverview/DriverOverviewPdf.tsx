@@ -4,7 +4,7 @@ import React from "react";
 import { Text, Document, Page, View, StyleSheet, Image } from "@react-pdf/renderer";
 import { displayNameForNullDriverName, displayPostcodeForHomelessClient } from "@/common/format";
 import { faTruck, faShoePrints, IconDefinition } from "@fortawesome/free-solid-svg-icons";
-import FontAwesomeIconPdfComponent from "../FontAwesomeIconPdfComponent";
+import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
 
 export interface DriverOverviewRowData {
     name: string;
@@ -161,11 +161,11 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                 <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
                     <Text>Packing Date</Text>
                 </View>
-                <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
-                    <Text>Instructions</Text>
-                </View>
                 <View style={[styles.tableColumn, styles.numberOfLabelsColumnWidth]}>
                     <Text>Number of Parcels</Text>
+                </View>
+                <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
+                    <Text>Instructions</Text>
                 </View>
             </View>
         );
@@ -205,11 +205,11 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                 <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
                     <Text>{rowData.packingDate || "No recorded date"}</Text>
                 </View>
-                <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
-                    <Text>{rowData.instructions}</Text>
-                </View>
                 <View style={[styles.tableColumn, styles.numberOfLabelsColumnWidth]}>
                     <Text>{rowData.numberOfLabels || "No labels downloaded"}</Text>
+                </View>
+                <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
+                    <Text>{rowData.instructions}</Text>
                 </View>
             </View>
         );
@@ -248,7 +248,7 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
 
     return (
         <Document>
-            <Page size="A4" style={[styles.container, styles.flexColumn]}>
+            <Page size="A4" orientation="landscape" style={[styles.container, styles.flexColumn]}>
                 <View style={[styles.infoAndLogoContainer, styles.flexRow]}>
                     <View style={styles.informationContainer}>
                         <Text style={styles.h1text}>Driver Overview</Text>
