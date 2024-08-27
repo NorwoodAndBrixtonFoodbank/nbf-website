@@ -156,7 +156,7 @@ export const batchSubmitTestData: BatchTableDataState = {
                     listType: "hotel",
                     dietaryRequirements: { vegan: true },
                     feminineProducts: { tampons: false, pads: false },
-                    babyProducts: null,
+                    babyProducts: false,
                     nappySize: null,
                     petFood: { cat: false, dog: false },
                     otherItems: { toothpaste: false, toothbrush: false },
@@ -172,13 +172,13 @@ export const batchSubmitTestData: BatchTableDataState = {
                     packingDate: null,
                     packingSlot: null,
                     shippingMethod: null,
-                    collectionInfo: null
+                    collectionInfo: null,
                 },
             },
         },
         {
             id: 2,
-            clientId: "2",
+            clientId: null,
             data: {
                 client: {
                     fullName: "Jane Smiths",
@@ -191,8 +191,13 @@ export const batchSubmitTestData: BatchTableDataState = {
                         addressPostcode: "54321",
                     },
                     adultInfo: {
-                        adults: [],
-                        numberOfAdults: 0,
+                        adults: [
+                            {
+                                gender: "female",
+                                birthYear: 1995,
+                            },
+                        ],
+                        numberOfAdults: 1,
                     },
                     childrenInfo: {
                         children: [],
@@ -212,15 +217,13 @@ export const batchSubmitTestData: BatchTableDataState = {
                     notes: null,
                 },
                 clientReadOnly: false,
-                parcel: 
-                    {
-                        voucherNumber: "789012",
-                        packingDate: "2024-08-22",
-                        packingSlot: "ce32dd76-44e5-5eea-9774-12d23f20e850",
-                        shippingMethod: "Delivery",
-                        collectionInfo: null,
-                    }
-                ,
+                parcel: {
+                    voucherNumber: "789012",
+                    packingDate: "2024-08-22",
+                    packingSlot: "ce32dd76-44e5-5eea-9774-12d23f20e850",
+                    shippingMethod: "Delivery",
+                    collectionInfo: null,
+                },
             },
         },
         {

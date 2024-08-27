@@ -4,6 +4,7 @@ import {
     ParcelData,
     BatchTableDataState,
     CollectionInfo,
+    BatchEditData,
 } from "@/app/parcels/batch/batchTypes";
 import {
     addClientResult,
@@ -24,6 +25,7 @@ import { mergeDateAndTime } from "@/app/parcels/form/ParcelForm";
 import { ListType } from "@/common/fetch";
 import { defaultTableState } from "@/app/parcels/batch/displayComponents/BatchParcelDataGrid";
 import { Json } from "@/databaseTypesFile";
+import { emptyBatchEditData } from "./emptyData";
 
 const batchClientToClientRecord = (client: BatchClient): ClientDatabaseInsertRecord => {
     const extraInformationWithNappy =
@@ -40,7 +42,8 @@ const batchClientToClientRecord = (client: BatchClient): ClientDatabaseInsertRec
         address_county: client.address && client.address.addressCounty,
         address_postcode: client.address && client.address.addressPostcode,
         default_list: client.listType || undefined,
-        dietary_requirements: client.dietaryRequirements && checkboxGroupToArray(client.dietaryRequirements),
+        dietary_requirements:
+            client.dietaryRequirements && checkboxGroupToArray(client.dietaryRequirements),
         feminine_products: client.feminineProducts && checkboxGroupToArray(client.feminineProducts),
         baby_food: client.babyProducts,
         pet_food: client.petFood && checkboxGroupToArray(client.petFood),
@@ -56,16 +59,11 @@ const batchClientToClientRecord = (client: BatchClient): ClientDatabaseInsertRec
 const batchClientToInsertRecords = (
     client: BatchClient
 ): { clientRecord: ClientDatabaseInsertRecord; familyMembers: FamilyDatabaseInsertRecord[] } => {
-    const adults : Person[] = client.adultInfo?.adults || [];
-    const children : Person[] = client.childrenInfo?.children || [];
-
-
+    const adults: Person[] = client.adultInfo?.adults || [];
+    const children: Person[] = client.childrenInfo?.children || [];
 
     const clientRecord: ClientDatabaseInsertRecord = batchClientToClientRecord(client);
-    const familyMembers: FamilyDatabaseInsertRecord[] = getFamilyMembers(
-        adults,
-        children,
-    );
+    const familyMembers: FamilyDatabaseInsertRecord[] = getFamilyMembers(adults, children);
 
     return { clientRecord, familyMembers };
 };
@@ -146,13 +144,44 @@ const submitParcelRowToDb = async (
     return { parcelId: data.primary_key, error: null };
 };
 
-const checkForValidParcelData = (parcel: ParcelData) : boolean => {
-    const hasRequiredFields : boolean = parcel.packingDate !== null && parcel.packingSlot !== null  && parcel.shippingMethod !== null;
+const checkForRequiredClientData = (client: BatchClient): boolean => {
+    const hasRequiredFields: boolean =
+        client.fullName !== null &&
+        client.address !== null &&
+        client.adultInfo !== null &&
+        client.childrenInfo !== null &&
+        client.listType !== null &&
+        client.babyProducts !== null &&
+        client.deliveryInstructions !== null &&
+        client.extraInformation !== null &&
+        client.attentionFlag !== null &&
+        client.signpostingCall !== null &&
+        client.signpostingCall !== null &&
+        client.attentionFlag !== null;
 
-    const hasCollectionInfo : boolean = parcel.shippingMethod !== 'collection' || (parcel.shippingMethod === 'collection' && parcel.collectionInfo !== null);
+    return hasRequiredFields;
+};
 
-    return hasRequiredFields && hasCollectionInfo;
-}
+const checkForRequiredParcelData = (parcel: ParcelData): boolean => {
+    const hasRequiredFields: boolean =
+        parcel.packingDate !== null &&
+        parcel.packingSlot !== null &&
+        parcel.shippingMethod !== null;
+
+    const validCollectionOrDelivery: boolean =
+        parcel.shippingMethod !== "Collection" ||
+        (parcel.shippingMethod === "Collection" && parcel.collectionInfo !== null);
+
+    return hasRequiredFields && validCollectionOrDelivery;
+};
+
+const checkForEmptyParcel = (parcel: ParcelData): boolean => {
+    return Object.values(parcel).every((value) => value == null);
+};
+
+const checkForEmptyRow = (data: BatchEditData): boolean => {
+    return data === emptyBatchEditData;
+};
 
 export interface AddBatchRowError {
     [key: string]: Json;
@@ -197,17 +226,30 @@ const submitBatchTableData = async (
     const newParcelIds: string[] = [];
 
     for (const dataRow of tableState.batchDataRows) {
-        if (!dataRow.data) {
+        const { client, parcel } = dataRow.data;
+        const rowId: number = dataRow.id;
+
+        if (checkForEmptyRow(dataRow.data)) {
             continue;
         }
 
-        const { client, parcel } = dataRow.data;
-        const rowId: number = dataRow.id;
+        // comments will be completed in the next PR
+        if (!checkForRequiredClientData(client)) {
+            // const logId = await logErrorReturnLogId("Client has missing data");
+            // errors.push({
+            //     rowId,
+            //     error: {
+            //         type: "missingRequiredClientData",
+            //         logId: logId,
+            //     },
+            // });
+            continue;
+        }
 
         const { clientId, error: clientError } = dataRow.clientId
             ? { clientId: dataRow.clientId, error: null }
             : await (async () => {
-                  const result : addClientResult = await submitClientRowToDb(client, rowId);
+                  const result: addClientResult = await submitClientRowToDb(client, rowId);
                   result.clientId && newClientIds.push(result.clientId);
                   return result;
               })();
@@ -217,17 +259,30 @@ const submitBatchTableData = async (
             continue;
         }
 
-        const listType : ListType = client.listType || "regular";
+        const listType: ListType = client.listType || "regular";
 
-        if (!parcel.packingDate || !parcel.packingSlot || !parcel.shippingMethod) {
+        if (checkForEmptyParcel(parcel)) {
+            continue;
+        }
+
+        if (!checkForRequiredParcelData(parcel)) {
+            // const logId = await logErrorReturnLogId("Parcel has missing data");
+            // errors.push({
+            //     rowId,
+            //     error: {
+            //         type: "missingRequiredParcelData",
+            //         logId: logId,
+            //     },
+            // });
             continue;
         }
 
         const parcelRecord: ParcelDatabaseInsertRecord = batchParcelToParcelRecord(
             parcel,
             clientId,
-            listType,
+            listType
         );
+
         const { parcelId, error: parcelError } = await submitParcelRowToDb(parcelRecord);
 
         if (parcelError) {

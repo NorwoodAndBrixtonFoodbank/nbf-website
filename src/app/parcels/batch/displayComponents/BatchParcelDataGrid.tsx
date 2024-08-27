@@ -3,7 +3,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useMemo, useState } from "react";
-import { useLocalStorage, writeLocalTableState } from "@/app/parcels/batch/useLocalStorage";
+import { useLocalStorage } from "@/app/parcels/batch/useLocalStorage";
 import { BatchTableDataState } from "@/app/parcels/batch/batchTypes";
 import batchParcelsReducer from "@/app/parcels/batch/batchParcelsReducer";
 import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";
@@ -11,8 +11,11 @@ import { emptyBatchEditData, emptyOverrideData } from "@/app/parcels/batch/empty
 import { DefaultTheme, useTheme } from "styled-components";
 import getCenteredBatchGridDisplayColumns from "@/app/parcels/batch/getCenteredBatchGridDisplayColumns";
 import { useRouter } from "next/navigation";
-import submitBatchTableData, { AddBatchRowError, displayUnsubmittedRows } from "@/app/parcels/batch/submitTableData";
-import { batchSubmitTestData, mockTableDataState } from "../mockData";
+import submitBatchTableData, {
+    AddBatchRowError,
+    displayUnsubmittedRows,
+} from "@/app/parcels/batch/submitTableData";
+
 export interface BatchGridDisplayRow {
     [key: string]: string | number | null;
     id: number;
@@ -61,8 +64,6 @@ const BatchParcelDataGrid: React.FC = () => {
     const [submitErrors, setSubmitErrors] = useState<AddBatchRowError[]>([]);
     const router = useRouter();
 
-    writeLocalTableState(batchSubmitTestData);
-
     const displayRows = useMemo(() => {
         return tableStateToBatchDisplayRows(tableState);
     }, [tableState]);
@@ -77,18 +78,19 @@ const BatchParcelDataGrid: React.FC = () => {
     );
 
     const handleSubmit = async (): Promise<void> => {
-        console.log(tableState.batchDataRows)
+        console.log(tableState.batchDataRows);
         const { errors: submitErrors } = await submitBatchTableData(tableState);
-        console.log(submitErrors)
+        console.log(submitErrors);
         setSubmitErrors(submitErrors);
 
+        // comments will be updated and changed to be more specific in the next PR
         if (submitErrors.length == 0) {
-            setDialogMessage(`Successfully submitted ${tableState.batchDataRows.length} row(s)`);
+            // setDialogMessage(`Successfully submitted ${tableState.batchDataRows.length} row(s)`);
+            setDialogMessage("Successfully submitted these rows");
             handleReset();
         } else {
-            setDialogMessage(
-                `There were ${submitErrors.length} error(s) encountered during submission.`
-            );
+            // setDialogMessage(`There were ${submitErrors.length} error(s) encountered during submission.`);
+            setDialogMessage("Errors encountered during submission.");
             handleUnsubmittedRows(submitErrors);
         }
 
