@@ -1,10 +1,10 @@
 import {
     BatchClient,
     BatchDataRow,
-    BatchParcel,
+    ParcelData,
     BatchTableDataState,
     CollectionInfo,
-} from "@/app/parcels/batch/BatchTypes";
+} from "@/app/parcels/batch/batchTypes";
 import {
     addClientResult,
     ClientDatabaseInsertRecord,
@@ -12,7 +12,7 @@ import {
     getFamilyMembers,
 } from "@/app/clients/form/submitFormHelpers";
 import { EXTRA_INFORMATION_LABEL, NAPPY_SIZE_LABEL } from "@/app/clients/form/labels";
-import { checkboxGroupToArray } from "@/components/Form/formFunctions";
+import { checkboxGroupToArray, Person } from "@/components/Form/formFunctions";
 import supabase from "@/supabaseClient";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { logErrorReturnLogId } from "@/logger/logger";
@@ -22,7 +22,7 @@ import {
 } from "@/app/parcels/form/submitFormHelpers";
 import { mergeDateAndTime } from "@/app/parcels/form/ParcelForm";
 import { ListType } from "@/common/fetch";
-import { defaultTableState } from "./BatchParcelDataGrid";
+import { defaultTableState } from "@/app/parcels/batch/displayComponents/BatchParcelDataGrid";
 import { Json } from "@/databaseTypesFile";
 
 const batchClientToClientRecord = (client: BatchClient): ClientDatabaseInsertRecord => {
@@ -34,17 +34,17 @@ const batchClientToClientRecord = (client: BatchClient): ClientDatabaseInsertRec
     return {
         full_name: client.fullName,
         phone_number: client.phoneNumber,
-        address_1: client.address.addressLine1,
-        address_2: client.address.addressLine2,
-        address_town: client.address.addressTown,
-        address_county: client.address.addressCounty,
-        address_postcode: client.address.addressPostcode,
-        default_list: client.listType,
-        dietary_requirements: checkboxGroupToArray(client.dietaryRequirements),
-        feminine_products: checkboxGroupToArray(client.feminineProducts),
+        address_1: client.address && client.address.addressLine1,
+        address_2: client.address && client.address.addressLine2,
+        address_town: client.address && client.address.addressTown,
+        address_county: client.address && client.address.addressCounty,
+        address_postcode: client.address && client.address.addressPostcode,
+        default_list: client.listType || undefined,
+        dietary_requirements: client.dietaryRequirements && checkboxGroupToArray(client.dietaryRequirements),
+        feminine_products: client.feminineProducts && checkboxGroupToArray(client.feminineProducts),
         baby_food: client.babyProducts,
-        pet_food: checkboxGroupToArray(client.petFood),
-        other_items: checkboxGroupToArray(client.otherItems),
+        pet_food: client.petFood && checkboxGroupToArray(client.petFood),
+        other_items: client.otherItems && checkboxGroupToArray(client.otherItems),
         delivery_instructions: client.deliveryInstructions,
         extra_information: extraInformationWithNappy,
         signposting_call_required: client.signpostingCall,
@@ -56,10 +56,15 @@ const batchClientToClientRecord = (client: BatchClient): ClientDatabaseInsertRec
 const batchClientToInsertRecords = (
     client: BatchClient
 ): { clientRecord: ClientDatabaseInsertRecord; familyMembers: FamilyDatabaseInsertRecord[] } => {
+    const adults : Person[] = client.adultInfo?.adults || [];
+    const children : Person[] = client.childrenInfo?.children || [];
+
+
+
     const clientRecord: ClientDatabaseInsertRecord = batchClientToClientRecord(client);
     const familyMembers: FamilyDatabaseInsertRecord[] = getFamilyMembers(
-        client.adultInfo.adults,
-        client.childrenInfo.children
+        adults,
+        children,
     );
 
     return { clientRecord, familyMembers };
@@ -92,7 +97,7 @@ const submitClientRowToDb = async (
 };
 
 const batchParcelToParcelRecord = (
-    parcel: BatchParcel,
+    parcel: ParcelData,
     clientId: string,
     listType: ListType
 ): ParcelDatabaseInsertRecord => {
@@ -140,6 +145,14 @@ const submitParcelRowToDb = async (
 
     return { parcelId: data.primary_key, error: null };
 };
+
+const checkForValidParcelData = (parcel: ParcelData) : boolean => {
+    const hasRequiredFields : boolean = parcel.packingDate !== null && parcel.packingSlot !== null  && parcel.shippingMethod !== null;
+
+    const hasCollectionInfo : boolean = parcel.shippingMethod !== 'collection' || (parcel.shippingMethod === 'collection' && parcel.collectionInfo !== null);
+
+    return hasRequiredFields && hasCollectionInfo;
+}
 
 export interface AddBatchRowError {
     [key: string]: Json;
@@ -194,7 +207,7 @@ const submitBatchTableData = async (
         const { clientId, error: clientError } = dataRow.clientId
             ? { clientId: dataRow.clientId, error: null }
             : await (async () => {
-                  const result = await submitClientRowToDb(client, rowId);
+                  const result : addClientResult = await submitClientRowToDb(client, rowId);
                   result.clientId && newClientIds.push(result.clientId);
                   return result;
               })();
@@ -204,16 +217,16 @@ const submitBatchTableData = async (
             continue;
         }
 
-        const listType = client.listType;
+        const listType : ListType = client.listType || "regular";
 
-        if (!parcel) {
+        if (!parcel.packingDate || !parcel.packingSlot || !parcel.shippingMethod) {
             continue;
         }
 
         const parcelRecord: ParcelDatabaseInsertRecord = batchParcelToParcelRecord(
             parcel,
             clientId,
-            listType
+            listType,
         );
         const { parcelId, error: parcelError } = await submitParcelRowToDb(parcelRecord);
 

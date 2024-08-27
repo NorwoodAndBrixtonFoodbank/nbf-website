@@ -167,7 +167,13 @@ export const batchSubmitTestData: BatchTableDataState = {
                     notes: null,
                 },
                 clientReadOnly: false,
-                parcel: null,
+                parcel: {
+                    voucherNumber: null,
+                    packingDate: null,
+                    packingSlot: null,
+                    shippingMethod: null,
+                    collectionInfo: null
+                },
             },
         },
         {
@@ -206,7 +212,15 @@ export const batchSubmitTestData: BatchTableDataState = {
                     notes: null,
                 },
                 clientReadOnly: false,
-                parcel: null,
+                parcel: 
+                    {
+                        voucherNumber: "789012",
+                        packingDate: "2024-08-22",
+                        packingSlot: "ce32dd76-44e5-5eea-9774-12d23f20e850",
+                        shippingMethod: "Delivery",
+                        collectionInfo: null,
+                    }
+                ,
             },
         },
         {
