@@ -82,6 +82,11 @@ interface LabelCardProps {
     quantity: number;
 }
 
+const convertDateFormat = (date: string): string => {
+    const dateArray = date.split("-");
+    return `${dateArray[2]}/${dateArray[1]}/${dateArray[0]}`;
+};
+
 const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
     return (
         <Page size={LABEL_SIZE_PIXELS} style={styles.page}>
@@ -125,17 +130,26 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                 </View>
                 <View style={[styles.middleCol, { flexDirection: "column" }]}>
                     <View style={styles.firstRow}>
-                        <Text style={styles.headingText}>Contact: </Text>
-                        <Text>{data.phone_number}</Text>
                         <View style={{ flexDirection: "row" }}>
-                            <Text style={styles.headingText}>Packed: </Text>
-                            <Text>{data.packing_date}</Text>
+                            <Text style={styles.headingText}>Contact: </Text>
+                            <Text>{data.phone_number}</Text>
                         </View>
+                        <Text style={styles.headingText}>Packed:</Text>
                     </View>
-                    <View style={[styles.secondRow, { marginTop: "3px" }]}>
+                    <View
+                        style={[
+                            styles.secondRow,
+                            {
+                                // marginTop: "3px",
+                                justifyContent: "space-between",
+                                flexDirection: "row",
+                            },
+                        ]}
+                    >
                         <Text style={[styles.headingText, { right: 0 }]}>
                             Delivery Instructions:{" "}
                         </Text>
+                        <Text>{convertDateFormat(data.packing_date)}</Text>
                     </View>
                     <View style={styles.thirdRow}>
                         <Text style={styles.deliveryInstructionText}>
