@@ -68,10 +68,7 @@ const batchClientToInsertRecords = (
     return { clientRecord, familyMembers };
 };
 
-const submitClientRowToDb = async (
-    client: BatchClient,
-    rowId: number
-): Promise<addClientResult> => {
+const submitClientRowToDb = async (client: BatchClient): Promise<addClientResult> => {
     const { clientRecord, familyMembers } = batchClientToInsertRecords(client);
 
     const { data: clientId, error } = await supabase.rpc("insert_client_and_family", {
@@ -88,8 +85,6 @@ const submitClientRowToDb = async (
         );
         return { clientId: null, error: { type: "failedToInsertClientAndFamily", logId } };
     }
-
-    console.log(`Row ${rowId}: Client ${client.fullName}, ${clientId} added successfully`);
 
     return { clientId: clientId, error: null };
 };
@@ -144,7 +139,7 @@ const submitParcelRowToDb = async (
     return { parcelId: data.primary_key, error: null };
 };
 
-const checkForRequiredClientData = (client: BatchClient): boolean => {
+const checkRequiredClientDataIsNotEmpty = (client: BatchClient): boolean => {
     const hasRequiredFields: boolean =
         client.fullName !== null &&
         client.address !== null &&
@@ -162,7 +157,7 @@ const checkForRequiredClientData = (client: BatchClient): boolean => {
     return hasRequiredFields;
 };
 
-const checkForRequiredParcelData = (parcel: ParcelData): boolean => {
+const checkRequiredParcelDataIsNotEmpty = (parcel: ParcelData): boolean => {
     const hasRequiredFields: boolean =
         parcel.packingDate !== null &&
         parcel.packingSlot !== null &&
@@ -175,11 +170,11 @@ const checkForRequiredParcelData = (parcel: ParcelData): boolean => {
     return hasRequiredFields && validCollectionOrDelivery;
 };
 
-const checkForEmptyParcel = (parcel: ParcelData): boolean => {
+const checkParcelDataIsNotEmpty = (parcel: ParcelData): boolean => {
     return Object.values(parcel).every((value) => value == null);
 };
 
-const checkForEmptyRow = (data: BatchEditData): boolean => {
+const checkRowIsNotEmpty = (data: BatchEditData): boolean => {
     return data === emptyBatchEditData;
 };
 
@@ -229,12 +224,12 @@ const submitBatchTableData = async (
         const { client, parcel } = dataRow.data;
         const rowId: number = dataRow.id;
 
-        if (checkForEmptyRow(dataRow.data)) {
+        if (checkRowIsNotEmpty(dataRow.data)) {
             continue;
         }
 
         // comments will be completed in the next PR
-        if (!checkForRequiredClientData(client)) {
+        if (!checkRequiredClientDataIsNotEmpty(client)) {
             // const logId = await logErrorReturnLogId("Client has missing data");
             // errors.push({
             //     rowId,
@@ -249,7 +244,7 @@ const submitBatchTableData = async (
         const { clientId, error: clientError } = dataRow.clientId
             ? { clientId: dataRow.clientId, error: null }
             : await (async () => {
-                  const result: addClientResult = await submitClientRowToDb(client, rowId);
+                  const result: addClientResult = await submitClientRowToDb(client);
                   result.clientId && newClientIds.push(result.clientId);
                   return result;
               })();
@@ -261,11 +256,11 @@ const submitBatchTableData = async (
 
         const listType: ListType = client.listType || "regular";
 
-        if (checkForEmptyParcel(parcel)) {
+        if (checkParcelDataIsNotEmpty(parcel)) {
             continue;
         }
 
-        if (!checkForRequiredParcelData(parcel)) {
+        if (!checkRequiredParcelDataIsNotEmpty(parcel)) {
             // const logId = await logErrorReturnLogId("Parcel has missing data");
             // errors.push({
             //     rowId,

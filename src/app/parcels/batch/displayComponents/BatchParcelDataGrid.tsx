@@ -78,9 +78,7 @@ const BatchParcelDataGrid: React.FC = () => {
     );
 
     const handleSubmit = async (): Promise<void> => {
-        console.log(tableState.batchDataRows);
         const { errors: submitErrors } = await submitBatchTableData(tableState);
-        console.log(submitErrors);
         setSubmitErrors(submitErrors);
 
         // comments will be updated and changed to be more specific in the next PR
