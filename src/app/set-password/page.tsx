@@ -71,16 +71,13 @@ export default function Page(): ReactElement {
             return;
         }
 
-        try {
-            await updatePassword(password);
-        } catch (error) {
-            if (error instanceof AuthError) {
-                setErrorMessage(error.message);
+        updatePassword(password).then(({ errorMessage}) => {
+            if (errorMessage) {
+                setErrorMessage(errorMessage);
+            } else {
+                router.push("/");
             }
-            return;
-        }
-
-        router.push("/");
+        });
     };
 
     return (
