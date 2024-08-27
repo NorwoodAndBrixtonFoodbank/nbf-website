@@ -11,13 +11,15 @@ interface ButtonGroupFilterProps<Data> {
     filterOptions: string[];
     initialActiveFilter: string;
     method: ClientSideFilterMethod<Data, string>;
-    shouldPersistOnClear: boolean;
+    shouldPersistOnClear?: boolean;
+    isDisabled?: boolean;
 }
 
 interface ButtonProps {
     activeFilter: string;
     buttonLabel: string;
     setState: (state: string) => void;
+    isDisabled?: boolean;
 }
 
 const FilterButton: React.FC<ButtonProps> = (buttonProps) => {
@@ -27,6 +29,7 @@ const FilterButton: React.FC<ButtonProps> = (buttonProps) => {
             color="primary"
             variant={isActive ? "contained" : "outlined"}
             onClick={() => buttonProps.setState(buttonProps.buttonLabel)}
+            disabled={buttonProps.isDisabled}
         >
             {capitaliseWords(buttonProps.buttonLabel)}
         </Button>
@@ -40,6 +43,7 @@ export const buttonGroupFilter = <Data,>({
     initialActiveFilter,
     method,
     shouldPersistOnClear = false,
+    isDisabled = false,
 }: ButtonGroupFilterProps<Data>): ClientSideFilter<Data, string> => {
     return {
         key: key,
@@ -48,10 +52,12 @@ export const buttonGroupFilter = <Data,>({
         method: method,
         areStatesIdentical: (stateA, stateB) => stateA === stateB,
         shouldPersistOnClear: shouldPersistOnClear,
+        isDisabled: isDisabled,
 
         filterComponent: function (
             state: string,
-            setState: (state: string) => void
+            setState: (state: string) => void,
+            isDisabled: boolean
         ): React.ReactNode {
             return (
                 <>
@@ -62,6 +68,7 @@ export const buttonGroupFilter = <Data,>({
                             activeFilter={state}
                             buttonLabel={optionName}
                             setState={setState}
+                            isDisabled={isDisabled}
                         />
                     ))}
                 </>

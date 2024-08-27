@@ -1,79 +1,40 @@
 "use client";
 
-import { BreakPointConfig, Row, ServerPaginatedTable } from "@/components/Tables/Table";
-import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { useTheme } from "styled-components";
-import { ParcelsTableRow, ParcelsSortState, ParcelsFilter, SelectedClientDetails } from "./types";
-import ExpandedParcelDetails from "@/app/parcels/ExpandedParcelDetails";
-import ExpandedParcelDetailsFallback from "@/app/parcels/ExpandedParcelDetailsFallback";
-import Icon from "@/components/Icons/Icon";
-import { faBoxArchive } from "@fortawesome/free-solid-svg-icons";
-import Modal from "@/components/Modal/Modal";
-import TableSurface from "@/components/Tables/TableSurface";
-import ActionAndStatusBar from "@/app/parcels/ActionBar/ActionAndStatusBar";
-import { Centerer, ContentDiv, OutsideDiv } from "@/components/Modal/ModalFormStyles";
-import LinkButton from "@/components/Buttons/LinkButton";
+import React, { useEffect, useState } from "react";
+import {
+    ParcelsTableRow,
+    ParcelsSortState,
+    ParcelsFilter,
+    SelectedClientDetails,
+} from "@/app/parcels/parcelsTable/types";
 import supabase from "@/supabaseClient";
+import { getParcelsByIds } from "@/app/parcels/parcelsTable/fetchParcelTableData";
 import {
-    getClientIdAndIsActive,
-    getParcelIds,
-    getParcelsByIds,
-    getParcelsDataAndCount,
-} from "./fetchParcelTableData";
-import { StatusType, saveParcelStatus, SaveParcelStatusResult } from "../ActionBar/Statuses";
-import { useRouter, useSearchParams } from "next/navigation";
-import { CircularProgress } from "@mui/material";
-import { ErrorSecondaryText } from "../../errorStylingandMessages";
-import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
+    StatusType,
+    saveParcelStatus,
+    SaveParcelStatusResult,
+} from "@/app/parcels/ActionBar/Statuses";
 import buildFilters from "@/app/parcels/parcelsTable/filters";
-import { ActionsContainer } from "@/components/Form/formStyling";
-import parcelsSortableColumns, { defaultParcelsSortConfig } from "./sortableColumns";
-import {
-    parcelIdParam,
-    defaultNumberOfParcelsPerPage,
-    numberOfParcelsPerPageOptions,
-} from "./constants";
-import { parcelTableHeaderKeysAndLabels, defaultShownHeaders, toggleableHeaders } from "./headers";
-import {
-    getSelectedParcelCountMessage,
-    getParcelDataErrorMessage,
-    parcelTableColumnDisplayFunctions,
-    getClientIdAndIsActiveErrorMessage,
-} from "./format";
-import { PreTableControls, parcelTableColumnStyleOptions } from "./styles";
-import { DbParcelRow } from "@/databaseUtils";
-import { searchForBreakPoints } from "./conditionalStyling";
+import { getSelectedParcelCountMessage } from "@/app/parcels/parcelsTable/format";
 import { Dayjs } from "dayjs";
 import { DateRangeState } from "@/components/DateInputs/DateRangeInputs";
+import PreTableControls from "@/app/parcels/parcelsTable/PreTableControls";
+import ParcelsTable from "@/app/parcels/parcelsTable/ParcelsTable";
+import ParcelsModal from "@/app/parcels/parcelsTable/ParcelsModal";
+import { Centerer } from "@/components/Modal/ModalFormStyles";
+import { CircularProgress } from "@mui/material";
+import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 
 const ParcelsPage: React.FC = () => {
-    const [isLoading, setIsLoading] = useState(true);
-    const [parcelsDataPortion, setParcelsDataPortion] = useState<ParcelsTableRow[]>([]);
-    const [filteredParcelCount, setFilteredParcelCount] = useState<number>(0);
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
     const [selectedClientDetails, setSelectedClientDetails] =
         useState<SelectedClientDetails | null>(null);
-    const [parcelRowBreakPointConfig, setParcelRowBreakPointConfig] = useState<BreakPointConfig[]>(
-        []
-    );
 
     const [checkedParcelIds, setCheckedParcelIds] = useState<string[]>([]);
-    const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
-    const fetchParcelsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-    const theme = useTheme();
-    const router = useRouter();
-
-    const searchParams = useSearchParams();
-    const parcelId = searchParams.get(parcelIdParam);
 
     const [sortState, setSortState] = useState<ParcelsSortState>({ sortEnabled: false });
-
-    const [parcelCountPerPage, setParcelCountPerPage] = useState(defaultNumberOfParcelsPerPage);
-    const [currentPage, setCurrentPage] = useState(1);
-    const startPoint = (currentPage - 1) * parcelCountPerPage;
-    const endPoint = currentPage * parcelCountPerPage - 1;
 
     const [primaryFilters, setPrimaryFilters] = useState<
         (ParcelsFilter<string> | ParcelsFilter<DateRangeState> | ParcelsFilter<string[]>)[]
@@ -89,34 +50,9 @@ const ParcelsPage: React.FC = () => {
 
     const [modalErrorMessage, setModalErrorMessage] = useState<string | null>(null);
 
-    const parcelsTableFetchAbortController = useRef<AbortController | null>(null);
-
     const selectedParcelMessage = getSelectedParcelCountMessage(checkedParcelIds.length);
 
-    const fetchAndSetClientDetailsForSelectedParcel = useCallback(async (): Promise<void> => {
-        if (parcelId === null) {
-            return;
-        }
-
-        const { data, error } = await getClientIdAndIsActive(parcelId);
-        if (error) {
-            setModalErrorMessage(getClientIdAndIsActiveErrorMessage(error));
-        } else {
-            setSelectedClientDetails(data);
-        }
-    }, [parcelId]);
-
-    useEffect(() => {
-        if (parcelId) {
-            setSelectedParcelId(parcelId);
-            setModalIsOpen(true);
-        }
-    }, [parcelId]);
-
-    useEffect(() => {
-        setSelectedClientDetails(null);
-        void fetchAndSetClientDetailsForSelectedParcel();
-    }, [fetchAndSetClientDetailsForSelectedParcel]);
+    const [isPackingManagerView, setIsPackingManagerView] = useState<boolean>(false);
 
     useEffect(() => {
         (async () => {
@@ -127,148 +63,6 @@ const ParcelsPage: React.FC = () => {
             setAreFiltersLoadingForFirstTime(false);
         })();
     }, []);
-
-    const fetchAndDisplayParcelsData = useCallback(async (): Promise<void> => {
-        const allFilters = [...primaryFilters, ...additionalFilters];
-
-        if (parcelsTableFetchAbortController.current) {
-            parcelsTableFetchAbortController.current.abort("stale request");
-        }
-
-        parcelsTableFetchAbortController.current = new AbortController();
-
-        if (parcelsTableFetchAbortController.current) {
-            setErrorMessage(null);
-            setIsLoading(true);
-
-            const { data, error } = await getParcelsDataAndCount(
-                supabase,
-                allFilters,
-                sortState,
-                parcelsTableFetchAbortController.current.signal,
-                startPoint,
-                endPoint
-            );
-
-            if (error) {
-                const newErrorMessage = getParcelDataErrorMessage(error.type);
-                if (newErrorMessage !== null) {
-                    setErrorMessage(`${newErrorMessage} Log ID: ${error.logId}`);
-                }
-            } else {
-                setParcelsDataPortion(data.parcelTableRows);
-                setFilteredParcelCount(data.count);
-                if (sortState.sortEnabled && sortState.column.headerKey) {
-                    setParcelRowBreakPointConfig(
-                        searchForBreakPoints(sortState.column.headerKey, data.parcelTableRows)
-                    );
-                } else {
-                    // The user hasn't request a specific sort, so breakpoints are as per default sorting
-                    setParcelRowBreakPointConfig(
-                        searchForBreakPoints(
-                            defaultParcelsSortConfig.defaultColumnHeaderKey as keyof ParcelsTableRow,
-                            data.parcelTableRows
-                        )
-                    );
-                }
-            }
-
-            parcelsTableFetchAbortController.current = null;
-            setIsLoading(false);
-        }
-    }, [additionalFilters, endPoint, primaryFilters, sortState, startPoint]);
-
-    useEffect(() => {
-        if (!areFiltersLoadingForFirstTime) {
-            void fetchAndDisplayParcelsData();
-        }
-    }, [areFiltersLoadingForFirstTime, fetchAndDisplayParcelsData]);
-
-    const loadCountAndDataWithTimer = (): void => {
-        if (fetchParcelsTimer.current) {
-            clearTimeout(fetchParcelsTimer.current);
-            fetchParcelsTimer.current = null;
-        }
-
-        setIsLoading(true);
-        fetchParcelsTimer.current = setTimeout(() => {
-            void fetchAndDisplayParcelsData();
-        }, 500);
-    };
-
-    useEffect(() => {
-        const subscriptionChannel = supabase
-            .channel("parcels-table-changes")
-            .on(
-                "postgres_changes",
-                { event: "*", schema: "public", table: "parcels" },
-                loadCountAndDataWithTimer
-            )
-            .on(
-                "postgres_changes",
-                { event: "*", schema: "public", table: "events" },
-                loadCountAndDataWithTimer
-            )
-            .on(
-                "postgres_changes",
-                { event: "*", schema: "public", table: "families" },
-                loadCountAndDataWithTimer
-            )
-            .on(
-                "postgres_changes",
-                { event: "*", schema: "public", table: "collection_centres" },
-                loadCountAndDataWithTimer
-            )
-            .on(
-                "postgres_changes",
-                { event: "*", schema: "public", table: "clients" },
-                loadCountAndDataWithTimer
-            )
-            .subscribe((status, err) => {
-                if (subscriptionStatusRequiresErrorMessage(status, err, "parcels and related")) {
-                    setErrorMessage("Error fetching data, please reload");
-                } else {
-                    setErrorMessage(null);
-                }
-            });
-
-        return () => {
-            void supabase.removeChannel(subscriptionChannel);
-        };
-    });
-
-    const selectOrDeselectRow = (parcelId: string): void => {
-        setCheckedParcelIds((currentIndices) => {
-            if (currentIndices.includes(parcelId)) {
-                return currentIndices.filter((dummyParcelId) => dummyParcelId !== parcelId);
-            }
-            return currentIndices.concat([parcelId]);
-        });
-    };
-
-    const toggleAllCheckBox = async (): Promise<void> => {
-        if (isAllCheckBoxSelected) {
-            setCheckedParcelIds([]);
-            setAllCheckBoxSelected(false);
-        } else {
-            setCheckedParcelIds(
-                await getParcelIds(supabase, primaryFilters.concat(additionalFilters), sortState)
-            );
-            setAllCheckBoxSelected(true);
-        }
-    };
-
-    useEffect(() => {
-        const allChecked = checkedParcelIds.length === filteredParcelCount;
-        if (allChecked !== isAllCheckBoxSelected) {
-            setAllCheckBoxSelected(allChecked);
-        }
-    }, [filteredParcelCount, checkedParcelIds, isAllCheckBoxSelected]);
-
-    const onParcelTableRowClick = (row: Row<ParcelsTableRow>): void => {
-        setSelectedParcelId(row.data.parcelId);
-        router.push(`/parcels?${parcelIdParam}=${row.data.parcelId}`);
-    };
 
     const updateParcelStatuses = async (
         parcels: ParcelsTableRow[],
@@ -303,16 +97,13 @@ const ParcelsPage: React.FC = () => {
 
     return (
         <>
-            <PreTableControls>
-                <ActionsContainer>
-                    {selectedParcelMessage && <span>{selectedParcelMessage}</span>}
-
-                    <ActionAndStatusBar
-                        fetchSelectedParcels={getCheckedParcelsData}
-                        updateParcelStatuses={updateParcelStatuses}
-                    />
-                </ActionsContainer>
-            </PreTableControls>
+            <PreTableControls
+                isPackingManagerView={isPackingManagerView}
+                setIsPackingManagerView={setIsPackingManagerView}
+                selectedParcelMessage={selectedParcelMessage}
+                getCheckedParcelsData={getCheckedParcelsData}
+                updateParcelStatuses={updateParcelStatuses}
+            />
             {areFiltersLoadingForFirstTime ? (
                 <Centerer>
                     <CircularProgress aria-label="table-initial-progress-bar" />
@@ -320,108 +111,30 @@ const ParcelsPage: React.FC = () => {
             ) : (
                 <>
                     {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
-                    <TableSurface>
-                        <ServerPaginatedTable<
-                            ParcelsTableRow,
-                            DbParcelRow,
-                            string | DateRangeState | string[]
-                        >
-                            dataPortion={parcelsDataPortion}
-                            isLoading={isLoading}
-                            paginationConfig={{
-                                enablePagination: true,
-                                filteredCount: filteredParcelCount,
-                                onPageChange: setCurrentPage,
-                                onPerPageChange: setParcelCountPerPage,
-                                defaultRowsPerPage: defaultNumberOfParcelsPerPage,
-                                rowsPerPageOptions: numberOfParcelsPerPageOptions,
-                            }}
-                            headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
-                            columnDisplayFunctions={parcelTableColumnDisplayFunctions}
-                            columnStyleOptions={parcelTableColumnStyleOptions}
-                            onRowClick={onParcelTableRowClick}
-                            sortConfig={{
-                                sortPossible: true,
-                                sortableColumns: parcelsSortableColumns,
-                                setSortState: setSortState,
-                            }}
-                            defaultSortConfig={defaultParcelsSortConfig}
-                            rowBreakPointConfigs={parcelRowBreakPointConfig}
-                            filterConfig={{
-                                primaryFiltersShown: true,
-                                additionalFiltersShown: true,
-                                primaryFilters: primaryFilters,
-                                additionalFilters: additionalFilters,
-                                setPrimaryFilters: setPrimaryFilters,
-                                setAdditionalFilters: setAdditionalFilters,
-                            }}
-                            defaultShownHeaders={defaultShownHeaders}
-                            toggleableHeaders={toggleableHeaders}
-                            checkboxConfig={{
-                                displayed: true,
-                                selectedRowIds: checkedParcelIds,
-                                isAllCheckboxChecked: isAllCheckBoxSelected,
-                                onCheckboxClicked: (parcelData) =>
-                                    selectOrDeselectRow(parcelData.parcelId),
-                                onAllCheckboxClicked: () => toggleAllCheckBox(),
-                                isRowChecked: (parcelData) =>
-                                    checkedParcelIds.includes(parcelData.parcelId),
-                            }}
-                            editableConfig={{ editable: false }}
-                            pointerOnHover={true}
-                        />
-                    </TableSurface>
-                    <Modal
-                        header={
-                            <>
-                                <Icon
-                                    icon={faBoxArchive}
-                                    color={theme.primary.largeForeground[2]}
-                                />{" "}
-                                Parcel Details
-                            </>
-                        }
-                        isOpen={modalIsOpen}
-                        onClose={() => {
-                            setModalIsOpen(false);
-                            router.push("/parcels");
-                        }}
-                        headerId="expandedParcelDetailsModal"
-                        footer={
-                            <Centerer>
-                                <LinkButton link={`/parcels/edit/${selectedParcelId}`}>
-                                    Edit Parcel
-                                </LinkButton>
-                                {selectedClientDetails && (
-                                    <>
-                                        <LinkButton
-                                            link={`/clients?clientId=${selectedClientDetails.clientId}`}
-                                            disabled={!selectedClientDetails.isClientActive}
-                                        >
-                                            See Client Details
-                                        </LinkButton>
-                                        <LinkButton
-                                            link={`/clients/edit/${selectedClientDetails.clientId}`}
-                                            disabled={!selectedClientDetails.isClientActive}
-                                        >
-                                            Edit Client Details
-                                        </LinkButton>
-                                    </>
-                                )}
-                            </Centerer>
-                        }
-                    >
-                        <OutsideDiv>
-                            <ContentDiv>
-                                <Suspense fallback={<ExpandedParcelDetailsFallback />}>
-                                    <ExpandedParcelDetails parcelId={selectedParcelId} />
-                                </Suspense>
-                            </ContentDiv>
-                            {modalErrorMessage && (
-                                <ErrorSecondaryText>{modalErrorMessage}</ErrorSecondaryText>
-                            )}
-                        </OutsideDiv>
-                    </Modal>
+                    <ParcelsTable
+                        setSelectedParcelId={setSelectedParcelId}
+                        setSelectedClientDetails={setSelectedClientDetails}
+                        checkedParcelIds={checkedParcelIds}
+                        setCheckedParcelIds={setCheckedParcelIds}
+                        setModalIsOpen={setModalIsOpen}
+                        sortState={sortState}
+                        setSortState={setSortState}
+                        primaryFilters={primaryFilters}
+                        setPrimaryFilters={setPrimaryFilters}
+                        additionalFilters={additionalFilters}
+                        setAdditionalFilters={setAdditionalFilters}
+                        areFiltersLoadingForFirstTime={areFiltersLoadingForFirstTime}
+                        setErrorMessage={setErrorMessage}
+                        setModalErrorMessage={setModalErrorMessage}
+                        isPackingManagerView={isPackingManagerView}
+                    />
+                    <ParcelsModal
+                        modalIsOpen={modalIsOpen}
+                        setModalIsOpen={setModalIsOpen}
+                        selectedParcelId={selectedParcelId}
+                        selectedClientDetails={selectedClientDetails}
+                        modalErrorMessage={modalErrorMessage}
+                    />
                 </>
             )}
         </>

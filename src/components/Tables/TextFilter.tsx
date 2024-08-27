@@ -17,6 +17,7 @@ interface ServerSideTextFilterProps<Data, DbData extends Record<string, unknown>
     initialValue?: string;
     method: ServerSideFilterMethod<DbData, string>;
     shouldPersistOnClear?: boolean;
+    isDisabled?: boolean;
 }
 
 const TextFilterStyling = styled.div`
@@ -31,6 +32,7 @@ export const buildServerSideTextFilter = <Data, DbData extends Record<string, un
     initialValue = "",
     method,
     shouldPersistOnClear = false,
+    isDisabled = false,
 }: ServerSideTextFilterProps<Data, DbData>): ServerSideFilter<Data, string, DbData> => {
     return {
         state: initialValue,
@@ -38,7 +40,8 @@ export const buildServerSideTextFilter = <Data, DbData extends Record<string, un
         key: key,
         method: method,
         shouldPersistOnClear: shouldPersistOnClear,
-        filterComponent: (state, setState) => {
+        isDisabled: isDisabled,
+        filterComponent: (state, setState, isDisabled) => {
             return (
                 <TextFilterStyling key={label}>
                     <FreeFormTextInput
@@ -48,6 +51,7 @@ export const buildServerSideTextFilter = <Data, DbData extends Record<string, un
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                             setState(event.target.value);
                         }}
+                        isDisabled={isDisabled}
                     />
                 </TextFilterStyling>
             );
@@ -63,6 +67,7 @@ interface ClientSideTextFilterProps<Data> {
     initialValue?: string;
     method: ClientSideFilterMethod<Data, string>;
     shouldPersistOnClear?: boolean;
+    isDisabled?: boolean;
 }
 
 export const buildClientSideTextFilter = <Data,>({
@@ -71,6 +76,7 @@ export const buildClientSideTextFilter = <Data,>({
     initialValue = "",
     method,
     shouldPersistOnClear = false,
+    isDisabled = false,
 }: ClientSideTextFilterProps<Data>): ClientSideFilter<Data, string> => {
     return {
         state: initialValue,
@@ -78,6 +84,7 @@ export const buildClientSideTextFilter = <Data,>({
         key: key,
         method: method,
         shouldPersistOnClear: shouldPersistOnClear,
+        isDisabled: isDisabled,
         filterComponent: (state, setState) => {
             return (
                 <TextFilterStyling key={label}>

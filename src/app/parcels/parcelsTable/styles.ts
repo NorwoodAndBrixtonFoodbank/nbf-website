@@ -1,14 +1,3 @@
-import { styled } from "styled-components";
-
-export const PreTableControls = styled.div`
-    margin: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    align-items: stretch;
-    justify-content: space-between;
-`;
-
 export const parcelTableColumnStyleOptions = {
     iconsColumn: {
         maxWidth: "4rem",

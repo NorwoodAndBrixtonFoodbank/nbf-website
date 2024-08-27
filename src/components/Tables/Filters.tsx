@@ -27,11 +27,16 @@ export type ClientSideFilterMethod<Data, State> = (
 
 interface BasicFilter<Data, State> {
     key: keyof Data;
-    filterComponent: (state: State, setState: (state: State) => void) => React.ReactNode;
+    filterComponent: (
+        state: State,
+        setState: (state: State) => void,
+        isDisabled: boolean
+    ) => React.ReactNode;
     state: State;
     initialState: State;
     areStatesIdentical: (stateA: State, stateB: State) => boolean;
     shouldPersistOnClear: boolean;
+    isDisabled: boolean;
 }
 
 export interface ServerSideFilter<Data, State, DbData extends Record<string, unknown>>

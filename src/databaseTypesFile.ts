@@ -128,15 +128,15 @@ export type Database = {
             foreignKeyName: "public_audit_log_parcel_id_fkey"
             columns: ["parcel_id"]
             isOneToOne: false
-            referencedRelation: "last_status"
-            referencedColumns: ["parcel_id"]
+            referencedRelation: "parcels"
+            referencedColumns: ["primary_key"]
           },
           {
             foreignKeyName: "public_audit_log_parcel_id_fkey"
             columns: ["parcel_id"]
             isOneToOne: false
-            referencedRelation: "parcels"
-            referencedColumns: ["primary_key"]
+            referencedRelation: "parcels_events"
+            referencedColumns: ["parcel_id"]
           },
           {
             foreignKeyName: "public_audit_log_parcel_id_fkey"
@@ -317,15 +317,15 @@ export type Database = {
             foreignKeyName: "public_events_parcel_id_fkey"
             columns: ["parcel_id"]
             isOneToOne: false
-            referencedRelation: "last_status"
-            referencedColumns: ["parcel_id"]
+            referencedRelation: "parcels"
+            referencedColumns: ["primary_key"]
           },
           {
             foreignKeyName: "public_events_parcel_id_fkey"
             columns: ["parcel_id"]
             isOneToOne: false
-            referencedRelation: "parcels"
-            referencedColumns: ["primary_key"]
+            referencedRelation: "parcels_events"
+            referencedColumns: ["parcel_id"]
           },
           {
             foreignKeyName: "public_events_parcel_id_fkey"
@@ -752,7 +752,7 @@ export type Database = {
             foreignKeyName: "public_audit_log_parcel_id_fkey"
             columns: ["parcel_id"]
             isOneToOne: false
-            referencedRelation: "last_status"
+            referencedRelation: "parcels_events"
             referencedColumns: ["parcel_id"]
           },
           {
@@ -815,7 +815,7 @@ export type Database = {
             foreignKeyName: "public_events_parcel_id_fkey"
             columns: ["parcel_id"]
             isOneToOne: false
-            referencedRelation: "last_status"
+            referencedRelation: "parcels_events"
             referencedColumns: ["parcel_id"]
           },
           {
@@ -834,18 +834,19 @@ export type Database = {
         }
         Relationships: []
       }
-      last_status: {
+      parcels_events: {
         Row: {
-          event_data: string | null
-          event_name: string | null
+          all_events: string[] | null
+          last_event_data: string | null
+          last_event_name: string | null
+          last_event_timestamp: string | null
+          last_event_workflow_order: number | null
           parcel_id: string | null
-          timestamp: string | null
-          workflow_order: number | null
         }
         Relationships: [
           {
             foreignKeyName: "public_events_new_parcel_status_fkey"
-            columns: ["event_name"]
+            columns: ["last_event_name"]
             isOneToOne: false
             referencedRelation: "status_order"
             referencedColumns: ["event_name"]
@@ -854,6 +855,7 @@ export type Database = {
       }
       parcels_plus: {
         Row: {
+          all_events: string[] | null
           client_address_postcode: string | null
           client_flagged_for_attention: boolean | null
           client_full_name: string | null

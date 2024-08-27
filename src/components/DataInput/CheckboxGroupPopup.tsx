@@ -12,6 +12,7 @@ interface Props {
     groupLabel?: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     anySelected?: () => boolean;
+    isDisabled?: boolean;
 }
 
 const ContainerDiv = styled.div`
@@ -42,7 +43,7 @@ const CheckboxGroupPopup: React.FC<Props> = (props) => {
             <Button
                 variant="outlined"
                 onClick={(event) => setPopoverAnchorElement(event.currentTarget)}
-                disabled={!props.labelsAndKeys.length}
+                disabled={!props.labelsAndKeys.length || props.isDisabled}
                 type="button"
                 endIcon={
                     props.anySelected && props.anySelected() ? <FilterAlt /> : <ArrowDropDown />
