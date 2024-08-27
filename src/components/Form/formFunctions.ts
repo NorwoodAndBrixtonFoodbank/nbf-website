@@ -66,12 +66,11 @@ export const createSetter = <SpecificFields extends Fields>(
     };
 };
 
-export const getErrorType = <SpecificFields extends Fields>(
+export const getErrorType = (
     input: string,
-    key: keyof SpecificFields,
     required?: boolean,
     regex?: RegExp,
-    additionalCondition?: (value: string) => boolean
+    additionalCondition?: (value: string, maxCharacters?: number) => boolean
 ): Errors => {
     if (input == "") {
         return required ? Errors.required : Errors.none;
@@ -80,9 +79,6 @@ export const getErrorType = <SpecificFields extends Fields>(
         (regex !== undefined && !input.match(regex)) ||
         (additionalCondition !== undefined && !additionalCondition(input))
     ) {
-        if (key === "deliveryInstructions") {
-            return Errors.deliveryInstructions;
-        }
         return Errors.invalid;
     }
 
@@ -96,7 +92,7 @@ export const onChangeText = <SpecificFields extends Fields>(
     required?: boolean,
     regex?: RegExp,
     formattingFunction?: (value: string) => SpecificFields[keyof SpecificFields],
-    additionalCondition?: (value: string) => boolean
+    additionalCondition?: (value: string, maxCharacters?: number) => boolean
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
@@ -104,7 +100,6 @@ export const onChangeText = <SpecificFields extends Fields>(
             key === "telephoneNumber" || key === "phoneNumber"
                 ? input.replaceAll(phoneNumberFormatSymbolsRegex, "")
                 : input,
-            key,
             required,
             regex,
             additionalCondition
@@ -134,7 +129,7 @@ export const onChangeTextDeferredError = <SpecificFields extends Fields>(
             clearInvitedUser();
         }
         const input = event.target.value;
-        const errorType = getErrorType(input, key, required, regex, additionalCondition);
+        const errorType = getErrorType(input, required, regex, additionalCondition);
         errorSetter({ [key]: errorType } as {
             [key in keyof FormErrors<SpecificFields>]: Errors;
         });
