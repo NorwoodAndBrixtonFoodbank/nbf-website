@@ -69,12 +69,11 @@ export const getErrorType = (
     input: string,
     required?: boolean,
     regex?: RegExp,
-    additionalCondition?: (value: string) => boolean
+    additionalCondition?: (value: string, maxCharacters?: number) => boolean
 ): Errors => {
     if (input == "") {
         return required ? Errors.required : Errors.none;
     }
-
     if (
         (regex !== undefined && !input.match(regex)) ||
         (additionalCondition !== undefined && !additionalCondition(input))
@@ -92,7 +91,7 @@ export const onChangeText = <SpecificFields extends Fields>(
     required?: boolean,
     regex?: RegExp,
     formattingFunction?: (value: string) => SpecificFields[keyof SpecificFields],
-    additionalCondition?: (value: string) => boolean
+    additionalCondition?: (value: string, maxCharacters?: number) => boolean
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;

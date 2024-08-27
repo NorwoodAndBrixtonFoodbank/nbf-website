@@ -7,7 +7,7 @@ import {
     onChangeText,
 } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
-import { ClientCardProps } from "../ClientForm";
+import { ClientCardProps } from "@/app/clients/form/ClientForm";
 
 const FullNameCard: React.FC<ClientCardProps> = ({
     formErrors,

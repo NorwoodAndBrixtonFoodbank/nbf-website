@@ -67,6 +67,7 @@ const EditClients: ({ params }: EditClientsParameters) => React.ReactElement = (
         numberOfChildren: Errors.none,
         nappySize: Errors.none,
         listType: Errors.none,
+        deliveryInstructions: Errors.none,
     };
 
     return (

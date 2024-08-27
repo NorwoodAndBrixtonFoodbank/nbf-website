@@ -21,12 +21,15 @@ export interface ShippingLabelData {
     delivery_instructions?: string;
 }
 
-const mmToPixels = (mm: number): number => {
-    const pixelsPerMmAt72Dpi = 72 / 25.4;
-    return mm * pixelsPerMmAt72Dpi;
-};
+// The height is a hard requirement, fixed at 62mm, the width is technically adjustable but preferred at 150mm
+const LABEL_SIZE_MM = { width: 150, height: 62 };
 
-const labelSizePixels = { width: mmToPixels(150), height: mmToPixels(62) };
+const pixelsPerMmAt72Dpi = 72 / 25.4;
+
+const LABEL_SIZE_PIXELS = {
+    width: LABEL_SIZE_MM.width * pixelsPerMmAt72Dpi,
+    height: LABEL_SIZE_MM.height * pixelsPerMmAt72Dpi,
+};
 
 const styles = StyleSheet.create({
     page: {
@@ -39,26 +42,23 @@ const styles = StyleSheet.create({
         border: "1.5pt solid black",
         height: "100%",
         display: "flex",
-        flexDirection: "column",
+        flexDirection: "row",
         padding: "0.2cm",
     },
-    topRow: {
+    firstRow: {
         justifyContent: "space-between",
-        flexBasis: "20%",
         display: "flex",
         flexDirection: "row",
+        maxHeight: "38%",
     },
-    middleRow: { flex: 1, display: "flex", flexDirection: "row" },
-    bottomRow: {
-        justifyContent: "space-between",
-        flexBasis: "30%",
+    secondRow: { display: "flex" },
+    thirdRow: { flex: 1, display: "flex", flexDirection: "column" },
+    fourthRow: {
         display: "flex",
         flexDirection: "row",
     },
     leftCol: { flexBasis: "32%", textAlign: "left" },
     middleCol: { flex: 1, textAlign: "left" },
-    rightCol: { flexBasis: "28%", textAlign: "right" },
-    bottomAlign: { marginTop: "21px" },
     headingText: { fontFamily: "Helvetica-Bold", textTransform: "uppercase" },
     largeText: {
         fontSize: "26pt",
@@ -67,6 +67,12 @@ const styles = StyleSheet.create({
     mediumText: {
         fontSize: "19pt",
         lineHeight: 1,
+    },
+    fullNameText: { display: "flex", flexDirection: "row", flexWrap: "wrap", maxWidth: "100%" },
+    deliveryInstructionText: {
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "wrap",
     },
 });
 
@@ -78,27 +84,18 @@ interface LabelCardProps {
 
 const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
     return (
-        <Page size={labelSizePixels} style={styles.page}>
+        <Page size={LABEL_SIZE_PIXELS} style={styles.page}>
             <View style={styles.cardWrapper} wrap={true}>
-                <View style={[styles.topRow]}>
-                    <View style={[styles.leftCol, { flexDirection: "row" }]}>
-                        <Text style={styles.headingText}>Name: </Text>
-                        <Text>{data.full_name}</Text>
+                <View style={[styles.leftCol, { flexDirection: "column", marginRight: "3px" }]}>
+                    <View style={styles.firstRow}>
+                        <Text style={[styles.headingText, { flexWrap: "wrap" }]}>Name: </Text>
                     </View>
-                    <View style={[styles.middleCol, { flexDirection: "row" }]}>
-                        <Text style={styles.headingText}>Contact: </Text>
-                        <Text>{data.phone_number}</Text>
+                    <View style={[styles.secondRow, { marginBottom: "10px" }]}>
+                        <Text style={[styles.fullNameText, { flexWrap: "wrap" }]}>
+                            {data.full_name}
+                        </Text>
                     </View>
-                    <View style={[styles.rightCol]}>
-                        <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-                            <Text style={[styles.headingText]}>Packed:</Text>
-                            <Text> </Text>
-                            <Text>{data.packing_date}</Text>
-                        </View>
-                    </View>
-                </View>
-                <View style={styles.middleRow}>
-                    <View style={styles.leftCol}>
+                    <View style={styles.thirdRow}>
                         {data.address_postcode && (
                             <>
                                 <Text>
@@ -120,25 +117,37 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                             </>
                         )}
                     </View>
-                    <View style={styles.middleCol}>
-                        <Text style={styles.headingText}>Delivery Instructions: </Text>
-                        <Text>{data.delivery_instructions}</Text>
-                    </View>
-                </View>
-                <View style={[styles.bottomRow]}>
-                    <View style={[styles.leftCol, { marginTop: "15px" }]}>
+                    <View style={styles.fourthRow}>
                         <Text style={styles.largeText}>
                             {data.address_postcode ?? displayPostcodeForHomelessClient}
                         </Text>
                     </View>
-                    <View style={[styles.middleCol, { flexDirection: "row" }]}>
-                        <View style={[styles.bottomAlign]}>
+                </View>
+                <View style={[styles.middleCol, { flexDirection: "column" }]}>
+                    <View style={styles.firstRow}>
+                        <Text style={styles.headingText}>Contact: </Text>
+                        <Text>{data.phone_number}</Text>
+                        <View style={{ flexDirection: "row" }}>
+                            <Text style={styles.headingText}>Packed: </Text>
+                            <Text>{data.packing_date}</Text>
+                        </View>
+                    </View>
+                    <View style={[styles.secondRow, { marginTop: "3px" }]}>
+                        <Text style={[styles.headingText, { right: 0 }]}>
+                            Delivery Instructions:{" "}
+                        </Text>
+                    </View>
+                    <View style={styles.thirdRow}>
+                        <Text style={styles.deliveryInstructionText}>
+                            {data.delivery_instructions}
+                        </Text>
+                    </View>
+                    <View
+                        style={[styles.fourthRow, { bottom: 0, justifyContent: "space-between" }]}
+                    >
+                        <View style={{ flexDirection: "row" }}>
                             <Text style={styles.mediumText}>{data.packing_slot} </Text>
-                        </View>
-                        <View style={{ marginTop: "auto" }}>
-                            <Text style={{ fontWeight: "bold", fontSize: "25pt" }}>|</Text>
-                        </View>
-                        <View style={[styles.bottomAlign, { flexDirection: "row" }]}>
+                            <Text style={{ fontWeight: "bold", fontSize: "20pt" }}>|</Text>
                             <Text style={styles.mediumText}>
                                 {" "}
                                 {data.collection_centre === "DLVR"
@@ -149,11 +158,11 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                                 faIcon={data.collection_centre === "DLVR" ? faTruck : faShoePrints}
                             ></FontAwesomeIconPdfComponent>
                         </View>
-                    </View>
-                    <View style={[styles.rightCol, styles.bottomAlign]}>
-                        <Text style={styles.mediumText}>
-                            {index + 1} of {quantity}
-                        </Text>
+                        <View style={{ alignSelf: "flex-end" }}>
+                            <Text style={styles.mediumText}>
+                                {index + 1} of {quantity}
+                            </Text>
+                        </View>
                     </View>
                 </View>
             </View>

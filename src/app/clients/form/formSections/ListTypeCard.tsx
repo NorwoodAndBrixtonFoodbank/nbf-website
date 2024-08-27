@@ -3,7 +3,7 @@ import { errorText, valueOnChangeDropdownList } from "@/components/Form/formFunc
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
 import { UncontrolledSelect } from "@/components/DataInput/DropDownSelect";
-import { ClientCardProps } from "../ClientForm";
+import { ClientCardProps } from "@/app/clients/form/ClientForm";
 import { LIST_TYPES_ARRAY } from "@/common/fetch";
 import { capitaliseWords } from "@/common/format";
 
