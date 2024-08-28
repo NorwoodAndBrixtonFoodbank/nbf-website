@@ -183,7 +183,14 @@ const BatchParcelDataGrid: React.FC = () => {
                 variant="contained"
                 sx={{ marginLeft: "1rem", minWidth: "120px" }}
             >
-                Submit
+                Submit to DB
+            </Button>
+            <Button
+                onClick={() => dispatch({ type: "add_row" })}
+                variant="contained"
+                sx={{ marginLeft: "1rem", minWidth: "120px" }}
+            >
+                Add new row
             </Button>
             <Dialog
                 open={dialogVisible}
