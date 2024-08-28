@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     },
     pdfInfoSection: {
         flexDirection: "row",
+        marginBottom: "15px",
     },
     pdfInfoLeftColumn: {
         width: "80%",
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
     },
     infoCell: {
         width: "100%",
-        paddingTop: "5pt",
+        padding: "5pt",
         borderStyle: "solid",
         border: "1pt",
     },
@@ -93,16 +94,12 @@ const styles = StyleSheet.create({
     keyText: {
         fontSize: "11pt",
         fontFamily: "Helvetica-Bold",
-        textAlign: "left",
         paddingLeft: "2pt",
     },
     normalText: {
         fontSize: "11pt",
         fontFamily: "Helvetica",
         paddingLeft: "2pt",
-    },
-    inputText: {
-        paddingTop: "10pt",
     },
     tableCell: {
         borderStyle: "solid",
@@ -117,14 +114,22 @@ interface OneLineProps {
 
 const OneLine: React.FC<OneLineProps> = ({ header, value }) => {
     console.log("OneLine", header, value);
+    if (
+        (header === "NUMBER OF BABIES" && value === "0") ||
+        (header === "AGE AND GENDER OF CHILDREN" && value === "None")
+    ) {
+        return null;
+    }
     const displayValue =
         header === "LIST TYPE"
             ? capitalize(value)
             : header === "HOUSEHOLD SIZE" && value === "1 (1 Adult 0 Child)"
               ? "Single (1 Adult 0 Child)"
-              : header === "AGE AND GENDER OF ADULTS"
-                ? value.replace(/M/g, "Male").replace(/F/g, "Female")
-                : value;
+              : header === "AGE AND GENDER OF ADULTS" || header === "AGE AND GENDER OF CHILDREN"
+                ? value.replace(/M/g, "Male").replace(/F/g, "Female").replace(/O/g, "Other")
+                : header === "BABY PRODUCTS REQUIRED" && value.includes("No")
+                  ? "None"
+                  : value;
     return (
         <Text style={styles.keyText}>
             {header}: <Text style={styles.normalText}>{displayValue}</Text>
@@ -194,7 +199,7 @@ const DisplayAsBlockNoBorder: React.FC<BlockProps> = (data: BlockProps) => {
 
 const DisplayAsBlock: React.FC<BlockProps> = (data: BlockProps) => {
     return (
-        <View style={styles.infoCell}>
+        <View style={[styles.infoCell]}>
             {Object.entries(data).map(([propKey, propValue]) => (
                 <OneLine key={propKey} header={formatCamelCaseKey(propKey)} value={propValue} />
             ))}
@@ -279,21 +284,21 @@ const SingleShoppingList: React.FC<SingleShoppingListProps> = ({ parcelData }) =
                 </View>
                 <View style={styles.flexColumn} wrap={false}>
                     <View style={[styles.flexRow, styles.infoCell]}>
-                        <Text style={[styles.keyText, { paddingTop: "5pt" }]}>
-                            Warehouse Manager Notes
-                        </Text>
+                        <Text style={[styles.keyText]}>Warehouse Manager Notes</Text>
                     </View>
                     <View style={[styles.flexRow, styles.infoCell]}>
                         <Text style={styles.normalText}>{parcelData.endNotes}</Text>
                     </View>
                     <View style={[styles.flexRow, styles.infoCell]}>
-                        <Text style={[styles.keyText, styles.inputText]}>Date Packed:</Text>
+                        <Text style={[styles.keyText, { alignSelf: "center" }]}>Date Packed:</Text>
                     </View>
                     <View style={[styles.flexRow, styles.infoCell]}>
-                        <Text style={[styles.keyText, styles.inputText]}>Packer Name:</Text>
+                        <Text style={[styles.keyText, { alignSelf: "center" }]}>Packer Name:</Text>
                     </View>
                     <View style={[styles.flexRow, styles.infoCell]}>
-                        <Text style={[styles.keyText, styles.inputText]}>Packer Signature:</Text>
+                        <Text style={[styles.keyText, { alignSelf: "center" }]}>
+                            Packer Signature:
+                        </Text>
                     </View>
                 </View>
             </View>
