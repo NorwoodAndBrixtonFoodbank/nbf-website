@@ -140,7 +140,6 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                         style={[
                             styles.secondRow,
                             {
-                                // marginTop: "3px",
                                 justifyContent: "space-between",
                                 flexDirection: "row",
                             },
