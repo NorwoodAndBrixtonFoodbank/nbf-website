@@ -2,6 +2,7 @@ import { LIST_TYPES_ARRAY } from "@/common/fetch";
 import { buttonGroupFilter, filterRowbyButton } from "../ButtonFilter";
 import { buildClientSideTextFilter, filterRowByText } from "../TextFilter";
 import { TableHeaders } from "../Table";
+import { ClientSideFilter } from "../Filters";
 
 export interface MockTableProps<Data> {
     mockData: Data[];
@@ -11,7 +12,7 @@ export interface MockTableProps<Data> {
 
 interface TestableContent {
     isCheckboxIncluded?: boolean;
-    filterFlags?: { isPrimaryFilterIncluded: boolean; isAdditionalFilterIncluded: boolean };
+    filters?: { primaryFilters: ClientSideFilter<TestData, string>[]; additionalFilters: ClientSideFilter<TestData, string>[] };
     isPaginationIncluded?: boolean;
     sortingFlags?: { isSortingOptionsIncluded: boolean; isDefaultSortIncluded: boolean };
     editableFlags?: { isEditIncluded: boolean; isDeleteIncluded: boolean; isSwapIncluded: boolean };
@@ -41,13 +42,13 @@ export const fakeData: TestData[] = [
         id: "1",
     },
     {
-        full_name: "Harper Garrett",
+        full_name: "Harper",
         phone_number: "2171786554",
         type: "regular",
         id: "2",
     },
     {
-        full_name: "Adrian Key",
+        full_name: "Adrian",
         phone_number: "3650099130",
         type: "hotel",
         id: "3",

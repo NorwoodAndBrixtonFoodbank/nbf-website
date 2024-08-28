@@ -218,8 +218,8 @@ const StyledIconButton = styled(IconButton)`
 
 const defaultColumnStyleOptions = {
     grow: 1,
-    minwidth: "2rem",
-    maxwidth: "20rem",
+    minWidth: "2rem",
+    maxWidth: "20rem",
 } as const;
 
 const Table = <

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
     fullNameTextFilterTest,
     MockTableProps,
@@ -21,12 +21,13 @@ import { ClientSideSortMethod } from "../sortMethods";
 import { SortOrder } from "react-data-table-component";
 import { ClientSideFilter } from "../Filters";
 
+
 export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
     mockData,
     mockHeaders,
     testableContent: {
         isCheckboxIncluded = false,
-        filterFlags = { isPrimaryFilterIncluded: false, isAdditionalFilterIncluded: false },
+        filters = undefined,
         isPaginationIncluded = false,
         sortingFlags = { isSortingOptionsIncluded: false, isDefaultSortIncluded: false },
         editableFlags = { isEditIncluded: false, isDeleteIncluded: false, isSwapIncluded: false },
@@ -78,41 +79,30 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
         : { displayed: false };
 
     //Filters setup
-    const [primaryFilters, setPrimaryFilters] = useState<ClientSideFilter<TestData, string>[]>([
-        fullNameTextFilterTest,
-    ]);
+    const [primaryFilters, setPrimaryFilters] = useState<ClientSideFilter<TestData, string>[]>(
+        filters ? filters.primaryFilters : []
+    );
     const [additionalFilters, setAdditionalFilters] = useState<
         ClientSideFilter<TestData, string>[]
-    >([typeButtonFilterTest]);
+    >(filters ? filters.additionalFilters : []);
 
     const filterConfig: FilterConfig<ClientSideFilter<TestData, string>> =
-        filterFlags.isPrimaryFilterIncluded && filterFlags.isAdditionalFilterIncluded
+        filters
             ? {
                   primaryFiltersShown: true,
-                  primaryFilters: primaryFilters,
-                  setPrimaryFilters: setPrimaryFilters,
+                  primaryFilters,
+                  setPrimaryFilters,
                   additionalFiltersShown: true,
-                  additionalFilters: additionalFilters,
-                  setAdditionalFilters: setAdditionalFilters,
+                  additionalFilters,
+                  setAdditionalFilters,
               }
-            : filterFlags.isPrimaryFilterIncluded
-              ? {
-                    primaryFiltersShown: true,
-                    primaryFilters: primaryFilters,
-                    setPrimaryFilters: setPrimaryFilters,
-                    additionalFiltersShown: false,
-                }
-              : { primaryFiltersShown: false, additionalFiltersShown: false };
+            : { primaryFiltersShown: false, additionalFiltersShown: false };
 
     //Pagination setup
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const startPoint = (currentPage - 1) * perPage;
     const endPoint = currentPage * perPage - 1;
-
-    useEffect(() => {
-        setTestDataPortion(mockData.slice(startPoint, endPoint + 1));
-    }, [startPoint, endPoint, mockData]);
 
     const paginationConfig: PaginationConfig = isPaginationIncluded
         ? {
@@ -122,6 +112,22 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
               onPerPageChange: setPerPage,
           }
         : { enablePagination: false };
+
+        useEffect(() => {
+            const primaryFilteredData = mockData.filter((row) => {
+                return primaryFilters.every((filter) => {
+                    return filter.method(row, filter.state, filter.key);
+                });
+            })
+            const secondaryFilteredData = primaryFilteredData.filter((row) => {
+                return additionalFilters.every((filter) => {
+                    return filter.method(row, filter.state, filter.key);
+                });
+            });
+            setTestDataPortion(
+                secondaryFilteredData.slice(startPoint, endPoint + 1)
+            );
+        }, [primaryFilters, additionalFilters, startPoint, endPoint, mockData]);
 
     //Sorting setup
     const [sortState, setSortState] = useState<SortState<TestData, ClientSideSortMethod>>({
