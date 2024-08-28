@@ -128,17 +128,17 @@ export const batchSubmitTestData: BatchTableDataState = {
     batchDataRows: [
         {
             id: 1,
-            clientId: "1",
+            clientId: null,
             data: {
                 client: {
                     fullName: "John Doe",
-                    phoneNumber: "0123456789",
+                    phoneNumber: "07822235203",
                     address: {
                         addressLine1: "123 Main St",
                         addressLine2: null,
-                        addressTown: "Anytown",
-                        addressCounty: "USA",
-                        addressPostcode: "12345",
+                        addressTown: "London",
+                        addressCounty: null,
+                        addressPostcode: "E1 6AA",
                     },
                     adultInfo: {
                         adults: [
@@ -181,14 +181,14 @@ export const batchSubmitTestData: BatchTableDataState = {
             clientId: null,
             data: {
                 client: {
-                    fullName: "Jane Smiths",
-                    phoneNumber: "9876543210",
+                    fullName: "Jane Smith",
+                    phoneNumber: "07426030199",
                     address: {
                         addressLine1: "456 Elm St",
                         addressLine2: null,
-                        addressTown: "Anytown",
-                        addressCounty: "USA",
-                        addressPostcode: "54321",
+                        addressTown: "London",
+                        addressCounty: null,
+                        addressPostcode: "SE1 5QT",
                     },
                     adultInfo: {
                         adults: [
@@ -205,7 +205,7 @@ export const batchSubmitTestData: BatchTableDataState = {
                     },
                     listType: "regular",
                     dietaryRequirements: { "gluten-free": true },
-                    feminineProducts: { tampons: true, pads: false },
+                    feminineProducts: { tampons: false, pads: false },
                     babyProducts: false,
                     nappySize: null,
                     petFood: { cat: true, dog: false },
@@ -219,10 +219,14 @@ export const batchSubmitTestData: BatchTableDataState = {
                 clientReadOnly: false,
                 parcel: {
                     voucherNumber: "789012",
-                    packingDate: "2024-08-22",
+                    packingDate: "2024-08-28",
                     packingSlot: "ce32dd76-44e5-5eea-9774-12d23f20e850",
-                    shippingMethod: "Delivery",
-                    collectionInfo: null,
+                    shippingMethod: "Collection",
+                    collectionInfo: {
+                        collectionDate: "2024-08-28",
+                        collectionSlot: "10:45:00",
+                        collectionCentreId: "fa185fd2-fcfa-539b-b733-1d353c62fa8e",
+                    },
                 },
             },
         },
@@ -231,14 +235,14 @@ export const batchSubmitTestData: BatchTableDataState = {
             clientId: null,
             data: {
                 client: {
-                    fullName: "New client, with parcel",
-                    phoneNumber: "23508723",
+                    fullName: "Joe Brown",
+                    phoneNumber: "07822031259",
                     address: {
-                        addressLine1: "TEST",
+                        addressLine1: "789 Oak St",
                         addressLine2: null,
-                        addressTown: "TEST",
-                        addressCounty: "TEST",
-                        addressPostcode: "54321",
+                        addressTown: "London",
+                        addressCounty: null,
+                        addressPostcode: "SE2 4HY",
                     },
                     adultInfo: {
                         adults: [
@@ -273,11 +277,11 @@ export const batchSubmitTestData: BatchTableDataState = {
                 clientReadOnly: false,
                 parcel: {
                     voucherNumber: "123456",
-                    packingDate: "2024-08-21",
+                    packingDate: "2024-08-28",
                     packingSlot: "ce32dd76-44e5-5eea-9774-12d23f20e850",
                     shippingMethod: "Collection",
                     collectionInfo: {
-                        collectionDate: "2024-08-21",
+                        collectionDate: "2024-08-28",
                         collectionSlot: "12:00:00",
                         collectionCentreId: "52897912-3ff4-5cea-8b8b-7b3e94c4663a",
                     },

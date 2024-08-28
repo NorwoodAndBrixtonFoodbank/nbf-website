@@ -13,10 +13,20 @@ interface Props {
 
 const NavBarButton: React.FC<Props> = (props) => {
     const pathname = usePathname();
-    const active = pathname?.startsWith(props.link) ?? false;
+
+    const active = pathname
+        ? pathname.startsWith("/parcels/batch")
+            ? props.link === "/parcels/batch"
+            : pathname.startsWith(props.link)
+        : false;
+
     return (
         <UnstyledLink key={props.page} href={props.link}>
-            <Button color="primary" variant={active ? "contained" : "outlined"}>
+            <Button
+                color="primary"
+                variant={active ? "contained" : "outlined"}
+                style={{ whiteSpace: "nowrap" }}
+            >
                 {props.page}
             </Button>
         </UnstyledLink>
