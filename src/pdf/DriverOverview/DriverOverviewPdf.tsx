@@ -257,8 +257,12 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
 
     const deliveriesHeader: React.JSX.Element = createHeader(Method.Delivery);
     const collectionsHeader: React.JSX.Element = createHeader(Method.Collection);
-    const collections: React.JSX.Element[] = data.tableData.collections.map(createRow);
-    const deliveries: React.JSX.Element[] = data.tableData.deliveries.map(createRow);
+    const collections: React.JSX.Element[] = data.tableData.collections
+        .filter((row) => row.name !== "Deleted Client")
+        .map(createRow);
+    const deliveries: React.JSX.Element[] = data.tableData.deliveries
+        .filter((row) => row.name !== "Deleted Client")
+        .map(createRow);
 
     const collectionsTable = createTable(
         "Collections",
