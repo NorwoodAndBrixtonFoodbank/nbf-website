@@ -13,7 +13,7 @@ import {
 import { expect, it } from "@jest/globals";
 import { TableWrapperForTest } from "./TableWrapperForTests";
 
-describe("Table display", () => {
+describe("Table display without features", () => {
     beforeEach(() => {
         render(
             <StyleManager>
@@ -39,6 +39,13 @@ describe("Table display", () => {
         fakeData.forEach((data) => {
             expect(screen.getByText(data.full_name)).toBeInTheDocument();
         });
+    });
+
+    it("should render the table without checkboxes", () => {
+        for (let index = 0; index < fakeMidData.length; index++) {
+            const checkbox = screen.queryByLabelText(`Select row ${index}`);
+            expect(checkbox).toBeNull();
+        }
     });
 });
 
@@ -67,7 +74,7 @@ describe("Table checkboxes", () => {
         }
     });
 
-    it("should allow checkboxes to be clicked and have no impact on other checkboxes", () => {
+    it("should allow checkboxes to be toggled on and off and have no impact on other checkboxes", () => {
         fakeMidData.forEach((_, index) => {
             const checkbox = within(screen.getByLabelText(`Select row ${index}`)).getByRole(
                 "checkbox"
@@ -102,7 +109,7 @@ describe("Table checkboxes", () => {
         });
     });
 
-    it("checkall box triggered when all rows checkboxes are checked", () => {
+    it("should have checkall box triggered when all rows checkboxes are checked", () => {
         for (let index = 0; index < fakeMidData.length; index++) {
             fireEvent.click(
                 within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
@@ -111,5 +118,18 @@ describe("Table checkboxes", () => {
         expect(
             within(screen.getByLabelText("Select all rows")).getByRole("checkbox")
         ).toBeChecked();
+    });
+
+    it("should have checkall box unchecked when one row is unchecked", () => {
+        const selectAllCheckbox = within(screen.getByLabelText("Select all rows")).getByRole(
+            "checkbox"
+        );
+        fireEvent.click(selectAllCheckbox);
+        expect(selectAllCheckbox).toBeChecked();
+        const row1Checkbox = within(screen.getByLabelText("Select row 0")).getByRole("checkbox");
+        expect(row1Checkbox).toBeChecked();
+        fireEvent.click(row1Checkbox);
+        expect(row1Checkbox).not.toBeChecked();
+        expect(selectAllCheckbox).not.toBeChecked();
     });
 });

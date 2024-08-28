@@ -1,4 +1,4 @@
-import { expect, it } from "@jest/globals";
+import { expect } from "@jest/globals";
 import "@testing-library/jest-dom/jest-globals";
 test("should load environment variable CLOUDWATCH_LOG_GROUP from .env.test", () => {
     expect(process.env.CLOUDWATCH_LOG_GROUP).toBe("Nonsense");

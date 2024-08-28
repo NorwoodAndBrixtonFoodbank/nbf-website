@@ -19,7 +19,7 @@ import {
 } from "../Table";
 import { ClientSideSortMethod } from "../sortMethods";
 import { SortOrder } from "react-data-table-component";
-import { ClientSideFilter, DistributeClientFilter } from "../Filters";
+import { ClientSideFilter } from "../Filters";
 
 export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
     mockData,
@@ -89,16 +89,16 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
         filterFlags.isPrimaryFilterIncluded && filterFlags.isAdditionalFilterIncluded
             ? {
                   primaryFiltersShown: true,
-                  primaryFilters: [fullNameTextFilterTest],
+                  primaryFilters: primaryFilters,
                   setPrimaryFilters: setPrimaryFilters,
                   additionalFiltersShown: true,
-                  additionalFilters: [typeButtonFilterTest],
+                  additionalFilters: additionalFilters,
                   setAdditionalFilters: setAdditionalFilters,
               }
             : filterFlags.isPrimaryFilterIncluded
               ? {
                     primaryFiltersShown: true,
-                    primaryFilters: [fullNameTextFilterTest],
+                    primaryFilters: primaryFilters,
                     setPrimaryFilters: setPrimaryFilters,
                     additionalFiltersShown: false,
                 }

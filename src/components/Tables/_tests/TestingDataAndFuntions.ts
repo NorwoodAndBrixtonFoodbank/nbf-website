@@ -1,8 +1,7 @@
 import { LIST_TYPES_ARRAY } from "@/common/fetch";
 import { buttonGroupFilter, filterRowbyButton } from "../ButtonFilter";
 import { buildClientSideTextFilter, filterRowByText } from "../TextFilter";
-import { CheckboxConfig, ClientPaginatedTable, TableHeaders } from "../Table";
-import { useEffect, useState } from "react";
+import { TableHeaders } from "../Table";
 
 export interface MockTableProps<Data> {
     mockData: Data[];
