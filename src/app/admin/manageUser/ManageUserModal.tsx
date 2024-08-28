@@ -33,6 +33,7 @@ const ManageUserModal: React.FC<Props> = (props) => {
     const onEditConfirm = (alertOptions: AlertOptions): void => {
         props.setAlertOptions(alertOptions);
         props.setUserToEdit(null);
+        setManageMode("options");
     };
 
     const onCancel = (): void => {

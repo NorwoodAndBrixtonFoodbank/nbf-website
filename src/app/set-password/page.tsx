@@ -71,7 +71,7 @@ export default function Page(): ReactElement {
             return;
         }
 
-        updatePassword(password).then(({ errorMessage}) => {
+        updatePassword(password).then(({ errorMessage }) => {
             if (errorMessage) {
                 setErrorMessage(errorMessage);
             } else {
