@@ -333,14 +333,18 @@ const ParcelsTable: React.FC<ParcelsTableProps> = ({
                         : parcelsDataPortion
                 }
                 isLoading={isLoading}
-                paginationConfig={{
-                    enablePagination: true,
-                    filteredCount: filteredParcelCount,
-                    onPageChange: setCurrentPage,
-                    onPerPageChange: setParcelCountPerPage,
-                    defaultRowsPerPage: defaultNumberOfParcelsPerPage,
-                    rowsPerPageOptions: numberOfParcelsPerPageOptions,
-                }}
+                paginationConfig={
+                    isPackingManagerView
+                        ? { enablePagination: false }
+                        : {
+                              enablePagination: true,
+                              filteredCount: filteredParcelCount,
+                              onPageChange: setCurrentPage,
+                              onPerPageChange: setParcelCountPerPage,
+                              defaultRowsPerPage: defaultNumberOfParcelsPerPage,
+                              rowsPerPageOptions: numberOfParcelsPerPageOptions,
+                          }
+                }
                 headerKeysAndLabels={parcelTableHeaderKeysAndLabels}
                 columnDisplayFunctions={parcelTableColumnDisplayFunctions}
                 columnStyleOptions={parcelTableColumnStyleOptions}
@@ -351,7 +355,7 @@ const ParcelsTable: React.FC<ParcelsTableProps> = ({
                     setSortState: setSortState,
                 }}
                 defaultSortConfig={defaultParcelsSortConfig}
-                rowBreakPointConfigs={parcelRowBreakPointConfig}
+                rowBreakPointConfigs={isPackingManagerView ? undefined : parcelRowBreakPointConfig}
                 filterConfig={{
                     primaryFiltersShown: true,
                     additionalFiltersShown: true,
