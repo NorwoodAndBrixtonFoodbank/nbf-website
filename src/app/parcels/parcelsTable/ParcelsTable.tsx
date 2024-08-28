@@ -27,7 +27,7 @@ import { parcelTableColumnStyleOptions } from "@/app/parcels/parcelsTable/styles
 import parcelsSortableColumns, {
     defaultParcelsSortConfig,
 } from "@/app/parcels/parcelsTable/sortableColumns";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dayjs from "dayjs";
 import {
     shouldFilterBeDisabled,
@@ -190,7 +190,6 @@ const ParcelsTable: React.FC<ParcelsTableProps> = ({
                 }
             } else {
                 setParcelsDataPortion(data.parcelTableRows);
-                setFilteredParcelCount(data.count);
                 if (sortState.sortEnabled && sortState.column.headerKey) {
                     setParcelRowBreakPointConfig(
                         searchForBreakPoints(sortState.column.headerKey, data.parcelTableRows)
@@ -226,15 +225,22 @@ const ParcelsTable: React.FC<ParcelsTableProps> = ({
         }
     }, [areFiltersLoadingForFirstTime, fetchAndDisplayParcelsData]);
 
-    const packingManagerViewDataPortion = (
-        parcelsDataPortion: ParcelsTableRow[]
-    ): ParcelsTableRow[] => {
-        return parcelsDataPortion.filter((parcel) => {
-            if (shouldBeInPackingManagerView(parcel, today, yesterday)) {
-                return parcel;
-            }
-        });
-    };
+    const packingManagerViewDataPortion = React.useCallback(
+        (parcelsDataPortion: ParcelsTableRow[]): ParcelsTableRow[] => {
+            return parcelsDataPortion.filter((parcel) => {
+                if (shouldBeInPackingManagerView(parcel, today, yesterday)) {
+                    return parcel;
+                }
+            });
+        },
+        [today, yesterday]
+    );
+
+    useEffect(() => {
+        isPackingManagerView
+            ? setFilteredParcelCount(packingManagerViewDataPortion(parcelsDataPortion).length)
+            : setFilteredParcelCount(parcelsDataPortion.length);
+    }, [isPackingManagerView, parcelsDataPortion, packingManagerViewDataPortion]);
 
     const loadCountAndDataWithTimer = (): void => {
         if (fetchParcelsTimer.current) {
@@ -351,7 +357,7 @@ const ParcelsTable: React.FC<ParcelsTableProps> = ({
                     setSortState: setSortState,
                 }}
                 defaultSortConfig={defaultParcelsSortConfig}
-                rowBreakPointConfigs={parcelRowBreakPointConfig}
+                rowBreakPointConfigs={isPackingManagerView ? undefined : parcelRowBreakPointConfig}
                 filterConfig={{
                     primaryFiltersShown: true,
                     additionalFiltersShown: true,

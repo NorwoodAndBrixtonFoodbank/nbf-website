@@ -23,7 +23,7 @@ const areDateRangesIdentical = (
 };
 
 export const areDaysIdentical = (dayA: dayjs.Dayjs | null, dayB: dayjs.Dayjs | null): boolean => {
-    return dayA && dayB ? dayA.isSame(dayB) : dayA === dayB;
+    return dayA && dayB ? dayA.isSame(dayB, "day") : dayA === dayB;
 };
 
 export const serverSideDateFilter = <Data, DbData extends Record<string, unknown>>({
