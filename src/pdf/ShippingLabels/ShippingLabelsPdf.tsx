@@ -159,7 +159,7 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                     <View
                         style={[styles.fourthRow, { bottom: 0, justifyContent: "space-between" }]}
                     >
-                        <View style={{ flexDirection: "row" }}>
+                        <View style={{ flexDirection: "row", alignItems: "center", bottom: 0 }}>
                             <Text style={styles.mediumText}>{data.packing_slot} </Text>
                             <Text style={{ fontWeight: "bold", fontSize: "20pt" }}>|</Text>
                             <Text style={styles.mediumText}>
@@ -172,7 +172,7 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                                 faIcon={data.collection_centre === "DLVR" ? faTruck : faShoePrints}
                             ></FontAwesomeIconPdfComponent>
                         </View>
-                        <View style={{ alignSelf: "flex-end" }}>
+                        <View style={{ right: 0, alignSelf: "center", bottom: 0 }}>
                             <Text style={styles.mediumText}>
                                 {index + 1} of {quantity}
                             </Text>
