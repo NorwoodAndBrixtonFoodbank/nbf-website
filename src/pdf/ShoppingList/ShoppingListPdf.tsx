@@ -7,6 +7,7 @@ import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import { Item, ShoppingListPdfData } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
 import { faTruck, faShoePrints } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
+import { capitalize } from "lodash";
 
 export type BlockProps = ParcelInfo | HouseholdSummary | RequirementSummary;
 
@@ -19,6 +20,7 @@ const styles = StyleSheet.create({
     page: {
         width: "97%",
         lineHeight: "1.2pt",
+        flexDirection: "column",
     },
     flexRow: {
         display: "flex",
@@ -28,12 +30,19 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
     },
+    pdfInfoSection: {
+        flexDirection: "row",
+    },
+    pdfInfoLeftColumn: {
+        width: "80%",
+        flexDirection: "column",
+    },
     pdfHeader: {
         justifyContent: "space-between",
     },
     logoStyling: {
         maxWidth: "20%",
-        alignSelf: "center",
+        alignSelf: "flex-start",
     },
     infoCellNoBorder: {
         width: "100%",
@@ -107,9 +116,18 @@ interface OneLineProps {
 }
 
 const OneLine: React.FC<OneLineProps> = ({ header, value }) => {
+    console.log("OneLine", header, value);
+    const displayValue =
+        header === "LIST TYPE"
+            ? capitalize(value)
+            : header === "HOUSEHOLD SIZE" && value === "1 (1 Adult 0 Child)"
+              ? "Single (1 Adult 0 Child)"
+              : header === "AGE AND GENDER OF ADULTS"
+                ? value.replace(/M/g, "Male").replace(/F/g, "Female")
+                : value;
     return (
         <Text style={styles.keyText}>
-            {header}: <Text style={styles.normalText}>{value}</Text>
+            {header}: <Text style={styles.normalText}>{displayValue}</Text>
         </Text>
     );
 };
@@ -223,27 +241,33 @@ const SingleShoppingList: React.FC<SingleShoppingListProps> = ({ parcelData }) =
     return (
         <Page size="A4" style={styles.sheet}>
             <View style={styles.page}>
-                <View style={[styles.flexRow, styles.pdfHeader]}>
-                    <View style={styles.flexColumn}>
-                        <View style={styles.flexRow}>
-                            <Text style={styles.title}>Shopping List</Text>
-                            <Text style={styles.title}>|</Text>
-                            <FontAwesomeIconPdfComponent
-                                faIcon={
-                                    parcelData.parcelInfo.collectionSite === "N/A - Delivery"
-                                        ? faTruck
-                                        : faShoePrints
-                                }
-                            ></FontAwesomeIconPdfComponent>
+                <View style={styles.pdfInfoSection}>
+                    <View style={styles.pdfInfoLeftColumn}>
+                        <View style={[styles.flexRow, styles.pdfHeader]}>
+                            <View style={styles.flexColumn}>
+                                <View style={styles.flexRow}>
+                                    <Text style={styles.title}>Shopping List</Text>
+                                    <Text style={styles.title}>|</Text>
+                                    <FontAwesomeIconPdfComponent
+                                        faIcon={
+                                            parcelData.parcelInfo.collectionSite ===
+                                            "N/A - Delivery"
+                                                ? faTruck
+                                                : faShoePrints
+                                        }
+                                    ></FontAwesomeIconPdfComponent>
+                                </View>
+                                <Text style={styles.subtitle}>
+                                    POSTCODE:{" "}
+                                    {parcelData.postcode ?? displayPostcodeForHomelessClient}
+                                </Text>
+                            </View>
                         </View>
-                        <Text style={styles.subtitle}>
-                            POSTCODE: {parcelData.postcode ?? displayPostcodeForHomelessClient}
-                        </Text>
+                        <DisplayAsBlockNoBorder {...parcelData.parcelInfo} />
                     </View>
                     {/* eslint-disable-next-line jsx-a11y/alt-text -- React-PDF Image doesn't  have alt text property*/}
                     <Image src="/logo.png" style={[styles.flexRow, styles.logoStyling]} />
                 </View>
-                <DisplayAsBlockNoBorder {...parcelData.parcelInfo} />
                 <DisplayClientSummary {...parcelData.clientSummary} />
                 <View style={styles.flexRow}>
                     <DisplayAsBlock {...parcelData.householdSummary} />
