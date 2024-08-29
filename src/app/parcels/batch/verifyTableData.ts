@@ -1,11 +1,5 @@
 import { logErrorReturnLogId } from "@/logger/logger";
-import {
-    BatchClient,
-    ParcelData,
-    BatchEditData,
-    BatchTableDataState,
-} from "@/app/parcels/batch/batchTypes";
-import { getEmptyBatchEditData } from "@/app/parcels/batch/emptyData";
+import { BatchClient, ParcelData, BatchTableDataState } from "@/app/parcels/batch/batchTypes";
 import { AddBatchRowError } from "@/app/parcels/batch/submitTableData";
 
 const checkRequiredClientDataIsNotEmpty = (client: BatchClient): boolean => {
@@ -41,10 +35,6 @@ export const checkParcelDataIsNotEmpty = (parcel: ParcelData): boolean => {
     return Object.values(parcel).every((value) => value == null);
 };
 
-const isRowEmpty = (data: BatchEditData): boolean => {
-    return data === getEmptyBatchEditData();
-};
-
 export const verifyBatchTableData = async (
     tableState: BatchTableDataState
 ): Promise<AddBatchRowError[]> => {
@@ -53,19 +43,6 @@ export const verifyBatchTableData = async (
     for (const dataRow of tableState.batchDataRows) {
         const { client, parcel } = dataRow.data;
         const rowId: number = dataRow.id;
-
-        if (isRowEmpty(dataRow.data)) {
-            const logId = await logErrorReturnLogId("Empty Row");
-            confirmationErrors.push({
-                rowId,
-                error: {
-                    type: "rowIsEmpty",
-                    logId: logId,
-                },
-                displayMessage: "Empty Rows",
-            });
-            continue;
-        }
 
         if (!checkRequiredClientDataIsNotEmpty(client)) {
             const logId = await logErrorReturnLogId("Client has missing data");
