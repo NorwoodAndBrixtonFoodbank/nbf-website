@@ -66,6 +66,11 @@ describe("Table without features", () => {
         expect(screen.queryByLabelText("Next Page")).toBeNull();
         expect(screen.queryByLabelText("Last Page")).toBeNull();
     });
+
+    it("should have no action on row click", () => {
+        fireEvent.click(screen.getByText("Tom"));
+        expect(screen.queryByText("row clicked Tom")).toBeNull();
+    })
 });
 
 describe("Table with checkboxes", () => {
@@ -551,5 +556,35 @@ describe("Table with toggleable headers", () => {
         fireEvent.click(screen.getByText("Less"));
 
         expect(screen.queryByText(last_header[1])).toBeNull();
+    })
+})
+
+describe("Table with action on row click", () => {
+    beforeEach(() => {
+        render(
+            <StyleManager>
+                <TableWrapperForTest
+                    mockData={fakeMidData}
+                    mockHeaders={fakeDataHeaders}
+                    testableContent={{ isRowClickIncluded: true }}
+                />
+            </StyleManager>
+        );
+    });
+
+    afterEach(cleanup);
+
+    it("should complete row click action when clicked", () => {
+        expect(screen.queryByText(`row clicked ${fakeMidData[0].full_name}`)).toBeNull();
+        fireEvent.click(screen.getByText(fakeMidData[0].full_name));
+        expect(screen.getByText(`row clicked ${fakeMidData[0].full_name}`)).toBeInTheDocument();
+    });
+
+    it("should have every row be clickable", () => {
+        fakeMidData.forEach((data) => {
+            expect(screen.queryByText(`row clicked ${data.full_name}`)).toBeNull();
+            fireEvent.click(screen.getByText(data.full_name));
+            expect(screen.getByText(`row clicked ${data.full_name}`)).toBeInTheDocument();
+        });
     })
 })
