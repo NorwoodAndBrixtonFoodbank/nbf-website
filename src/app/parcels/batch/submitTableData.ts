@@ -4,7 +4,6 @@ import {
     ParcelData,
     BatchTableDataState,
     CollectionInfo,
-    BatchEditData,
 } from "@/app/parcels/batch/batchTypes";
 import {
     addClientResult,
@@ -25,7 +24,7 @@ import { mergeDateAndTime } from "@/app/parcels/form/ParcelForm";
 import { ListType } from "@/common/fetch";
 import { defaultTableState } from "@/app/parcels/batch/displayComponents/BatchParcelDataGrid";
 import { Json } from "@/databaseTypesFile";
-import { emptyBatchEditData } from "./emptyData";
+import { checkParcelDataIsNotEmpty } from "@/app/parcels/batch/verifyTableData";
 
 const batchClientToClientRecord = (client: BatchClient): ClientDatabaseInsertRecord => {
     const extraInformationWithNappy =
@@ -139,45 +138,6 @@ const submitParcelRowToDb = async (
     return { parcelId: data.primary_key, error: null };
 };
 
-const checkRequiredClientDataIsNotEmpty = (client: BatchClient): boolean => {
-    const hasRequiredFields: boolean =
-        client.fullName !== null &&
-        client.address !== null &&
-        client.adultInfo !== null &&
-        client.childrenInfo !== null &&
-        client.listType !== null &&
-        client.babyProducts !== null &&
-        client.deliveryInstructions !== null &&
-        client.extraInformation !== null &&
-        client.attentionFlag !== null &&
-        client.signpostingCall !== null &&
-        client.signpostingCall !== null &&
-        client.attentionFlag !== null;
-
-    return hasRequiredFields;
-};
-
-const checkRequiredParcelDataIsNotEmpty = (parcel: ParcelData): boolean => {
-    const hasRequiredFields: boolean =
-        parcel.packingDate !== null &&
-        parcel.packingSlot !== null &&
-        parcel.shippingMethod !== null;
-
-    const validCollectionOrDelivery: boolean =
-        parcel.shippingMethod !== "Collection" ||
-        (parcel.shippingMethod === "Collection" && parcel.collectionInfo !== null);
-
-    return hasRequiredFields && validCollectionOrDelivery;
-};
-
-const checkParcelDataIsNotEmpty = (parcel: ParcelData): boolean => {
-    return Object.values(parcel).every((value) => value == null);
-};
-
-const checkRowIsNotEmpty = (data: BatchEditData): boolean => {
-    return data === emptyBatchEditData;
-};
-
 export interface AddBatchRowError {
     [key: string]: Json;
     rowId: number;
@@ -185,9 +145,10 @@ export interface AddBatchRowError {
         type: string;
         logId: string;
     };
+    displayMessage: string;
 }
 
-export const displayUnsubmittedRows = (
+export const filterUnsubmittedRows = (
     tableState: BatchTableDataState,
     errors: AddBatchRowError[]
 ): BatchTableDataState => {
@@ -208,7 +169,7 @@ export const displayUnsubmittedRows = (
 };
 
 export interface SubmitBatchResult {
-    errors: AddBatchRowError[];
+    submitErrors: AddBatchRowError[];
     newClientIds: string[];
     newParcelIds: string[];
 }
@@ -216,30 +177,13 @@ export interface SubmitBatchResult {
 const submitBatchTableData = async (
     tableState: BatchTableDataState
 ): Promise<SubmitBatchResult> => {
-    const errors: AddBatchRowError[] = [];
+    const submitErrors: AddBatchRowError[] = [];
     const newClientIds: string[] = [];
     const newParcelIds: string[] = [];
 
     for (const dataRow of tableState.batchDataRows) {
         const { client, parcel } = dataRow.data;
         const rowId: number = dataRow.id;
-
-        if (checkRowIsNotEmpty(dataRow.data)) {
-            continue;
-        }
-
-        // comments will be completed in the next PR
-        if (!checkRequiredClientDataIsNotEmpty(client)) {
-            // const logId = await logErrorReturnLogId("Client has missing data");
-            // errors.push({
-            //     rowId,
-            //     error: {
-            //         type: "missingRequiredClientData",
-            //         logId: logId,
-            //     },
-            // });
-            continue;
-        }
 
         const { clientId, error: clientError } = dataRow.clientId
             ? { clientId: dataRow.clientId, error: null }
@@ -250,25 +194,17 @@ const submitBatchTableData = async (
               })();
 
         if (clientError) {
-            errors.push({ rowId, error: clientError });
+            submitErrors.push({
+                rowId,
+                error: clientError,
+                displayMessage: "Client Submission Error",
+            });
             continue;
         }
 
         const listType: ListType = client.listType || "regular";
 
         if (checkParcelDataIsNotEmpty(parcel)) {
-            continue;
-        }
-
-        if (!checkRequiredParcelDataIsNotEmpty(parcel)) {
-            // const logId = await logErrorReturnLogId("Parcel has missing data");
-            // errors.push({
-            //     rowId,
-            //     error: {
-            //         type: "missingRequiredParcelData",
-            //         logId: logId,
-            //     },
-            // });
             continue;
         }
 
@@ -281,7 +217,11 @@ const submitBatchTableData = async (
         const { parcelId, error: parcelError } = await submitParcelRowToDb(parcelRecord);
 
         if (parcelError) {
-            errors.push({ rowId, error: parcelError });
+            submitErrors.push({
+                rowId,
+                error: parcelError,
+                displayMessage: "Parcel Submission Error",
+            });
             continue;
         }
 
@@ -291,20 +231,20 @@ const submitBatchTableData = async (
     const auditLog = {
         action: "add a batch",
         content: {
-            errors: errors,
+            submitErrors: submitErrors,
             newClientIds: newClientIds,
             newParcelIds: newParcelIds,
         },
     } as const satisfies Partial<AuditLog>;
 
-    if (errors.length > 0) {
+    if (submitErrors.length > 0) {
         const logId = await logErrorReturnLogId("Error with adding a batch");
         await sendAuditLog({ ...auditLog, wasSuccess: false, logId });
     } else {
         await sendAuditLog({ ...auditLog, wasSuccess: true });
     }
 
-    return { errors, newClientIds, newParcelIds };
+    return { submitErrors, newClientIds, newParcelIds };
 };
 
 export default submitBatchTableData;

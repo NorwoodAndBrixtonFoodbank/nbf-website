@@ -3,7 +3,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useMemo, useState } from "react";
-import { useLocalStorage } from "@/app/parcels/batch/useLocalStorage";
+import { useLocalStorage, writeLocalTableState } from "@/app/parcels/batch/useLocalStorage";
 import { BatchTableDataState } from "@/app/parcels/batch/batchTypes";
 import batchParcelsReducer from "@/app/parcels/batch/batchParcelsReducer";
 import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";
@@ -13,8 +13,10 @@ import getCenteredBatchGridDisplayColumns from "@/app/parcels/batch/getCenteredB
 import { useRouter } from "next/navigation";
 import submitBatchTableData, {
     AddBatchRowError,
-    displayUnsubmittedRows,
+    filterUnsubmittedRows,
 } from "@/app/parcels/batch/submitTableData";
+import { batchSubmitTestData } from "@/app/parcels/batch/mockData";
+import { verifyBatchTableData } from "@/app/parcels/batch/verifyTableData";
 
 export interface BatchGridDisplayRow {
     [key: string]: string | number | null;
@@ -57,12 +59,26 @@ export const defaultTableState: BatchTableDataState = {
     parcelOverrides: [],
 };
 
+const countErrorTypes = (errors: AddBatchRowError[]): Record<string, number> => {
+    return errors.reduce(
+        (acc, rowError) => {
+            acc[rowError.displayMessage] = (acc[rowError.displayMessage] || 0) + 1;
+            return acc;
+        },
+        {} as Record<string, number>
+    );
+};
+
 const BatchParcelDataGrid: React.FC = () => {
     const [tableState, dispatch] = useLocalStorage(batchParcelsReducer, defaultTableState);
-    const [dialogVisible, setDialogVisible] = useState(false);
+    const [isConfirmationDialogVisible, setIsConfirmationDialogVisible] = useState(false);
+    const [isSuccessDialogVisible, setIsSuccessDialogVisible] = useState(false);
     const [dialogMessage, setDialogMessage] = useState("");
+    const [confirmationErrors, setConfirmationErrors] = useState<AddBatchRowError[]>([]);
     const [submitErrors, setSubmitErrors] = useState<AddBatchRowError[]>([]);
     const router = useRouter();
+
+    writeLocalTableState(batchSubmitTestData);
 
     const displayRows = useMemo(() => {
         return tableStateToBatchDisplayRows(tableState);
@@ -77,8 +93,14 @@ const BatchParcelDataGrid: React.FC = () => {
         setIsRowCollection
     );
 
+    const handleVerification = async (): Promise<void> => {
+        const confirmationErrors = await verifyBatchTableData(tableState);
+        setConfirmationErrors(confirmationErrors);
+        setIsConfirmationDialogVisible(true);
+    };
+
     const handleSubmit = async (): Promise<void> => {
-        const { errors: submitErrors } = await submitBatchTableData(tableState);
+        const { submitErrors } = await submitBatchTableData(tableState);
         setSubmitErrors(submitErrors);
 
         // comments will be updated and changed to be more specific in the next PR
@@ -92,10 +114,13 @@ const BatchParcelDataGrid: React.FC = () => {
             handleUnsubmittedRows(submitErrors);
         }
 
-        setDialogVisible(true);
+        setIsConfirmationDialogVisible(false);
+        setIsSuccessDialogVisible(true);
     };
 
     const handleReset = (): void => {
+        setConfirmationErrors([]);
+        setSubmitErrors([]);
         dispatch({
             type: "initialise_table_state",
             payload: { initialTableState: defaultTableState },
@@ -103,7 +128,7 @@ const BatchParcelDataGrid: React.FC = () => {
     };
 
     const handleUnsubmittedRows = (submitErrors: AddBatchRowError[]): void => {
-        const newState = displayUnsubmittedRows(tableState, submitErrors);
+        const newState = filterUnsubmittedRows(tableState, submitErrors);
         dispatch({ type: "initialise_table_state", payload: { initialTableState: newState } });
     };
 
@@ -178,13 +203,15 @@ const BatchParcelDataGrid: React.FC = () => {
                 }}
                 hideFooter
             />
+
             <Button
-                onClick={handleSubmit}
+                onClick={handleVerification}
                 variant="contained"
                 sx={{ marginLeft: "1rem", minWidth: "120px" }}
             >
-                Submit to DB
+                Submit Data
             </Button>
+
             <Button
                 onClick={() => dispatch({ type: "add_row" })}
                 variant="contained"
@@ -192,8 +219,69 @@ const BatchParcelDataGrid: React.FC = () => {
             >
                 Add new row
             </Button>
+
             <Dialog
-                open={dialogVisible}
+                open={isConfirmationDialogVisible}
+                sx={{
+                    "& .MuiDialog-paper": {
+                        padding: "1rem",
+                        borderRadius: "15px",
+                        boxShadow: "0 3px 5px rgba(0,0,0,0.8)",
+                        margin: "auto",
+                        borderColor: confirmationErrors.length == 0 ? "#a8d49c" : "#990f0f",
+                        borderWidth: "1px",
+                        borderStyle: "solid",
+                    },
+                }}
+            >
+                <DialogTitle
+                    sx={{
+                        fontSize: "1.2rem",
+                        textAlign: "center",
+                    }}
+                >
+                    Are you sure you want to submit these rows?
+                </DialogTitle>
+
+                {confirmationErrors.length !== 0 && (
+                    <DialogContent>
+                        <ul>
+                            {Object.entries(countErrorTypes(confirmationErrors)).map(
+                                ([errorType, count]) => (
+                                    <li key={errorType}>
+                                        {errorType}: {count} row(s)
+                                    </li>
+                                )
+                            )}
+                        </ul>
+                    </DialogContent>
+                )}
+                <DialogActions sx={{ justifyContent: "center" }}>
+                    <>
+                        <Button
+                            variant="contained"
+                            sx={{ margin: "1rem", minWidth: "120px" }}
+                            onClick={() => {
+                                setIsConfirmationDialogVisible(false);
+                            }}
+                        >
+                            Close
+                        </Button>
+                        {confirmationErrors.length == 0 && (
+                            <Button
+                                variant="contained"
+                                onClick={handleSubmit}
+                                sx={{ margin: "1rem", minWidth: "120px" }}
+                            >
+                                Submit
+                            </Button>
+                        )}
+                    </>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={isSuccessDialogVisible}
                 sx={{
                     "& .MuiDialog-paper": {
                         padding: "1rem",
@@ -214,7 +302,7 @@ const BatchParcelDataGrid: React.FC = () => {
                 >
                     {dialogMessage}
                 </DialogTitle>
-                {submitErrors.length !== 0 && (
+                {submitErrors.length > 0 && (
                     <DialogContent sx={{ textAlign: "center" }}>
                         An unexpected error occurred and some rows did not submit.
                         <br />
@@ -229,14 +317,14 @@ const BatchParcelDataGrid: React.FC = () => {
                                 sx={{ margin: "1rem", minWidth: "120px" }}
                                 onClick={() => {
                                     handleReset();
-                                    setDialogVisible(false);
+                                    setIsSuccessDialogVisible(false);
                                 }}
                             >
                                 Reset rows and start again
                             </Button>
                             <Button
                                 variant="contained"
-                                onClick={() => setDialogVisible(false)}
+                                onClick={() => setIsSuccessDialogVisible(false)}
                                 sx={{ margin: "1rem", minWidth: "120px" }}
                             >
                                 View unsubmitted rows
@@ -247,7 +335,7 @@ const BatchParcelDataGrid: React.FC = () => {
                             <Button
                                 variant="contained"
                                 sx={{ margin: "1rem", minWidth: "120px" }}
-                                onClick={() => setDialogVisible(false)}
+                                onClick={() => setIsSuccessDialogVisible(false)}
                             >
                                 Add more rows
                             </Button>
