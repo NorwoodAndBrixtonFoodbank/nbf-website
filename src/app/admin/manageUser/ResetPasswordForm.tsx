@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { EditHeader, EditOption } from "@/app/admin/manageUser/ManageUserModal";
 import Button from "@mui/material/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -28,65 +28,67 @@ const ErrorMessage = styled.span<{ theme: DefaultTheme }>`
     color: ${(props) => props.theme.error};
 `;
 
+const updatePassword = async (
+    userId: string,
+    newPassword: string
+): Promise<UpdatePasswordResponse> => {
+    const response = await adminUpdateUserEmailAndPassword({
+        userId: userId,
+        attributes: { password: newPassword },
+    });
+
+    if (response.error) {
+        void logErrorReturnLogId(`Error resetting password userId: ${userId}`, {
+            response,
+        });
+        return { errorMessage: response.error["Failed to update user"] };
+    }
+    return { errorMessage: null };
+};
+
 const ResetPasswordForm: React.FC<Props> = ({ userToEdit, onCancel, onConfirm }) => {
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const updatePassword = async (
-        userId: string,
-        newPassword: string
-    ): Promise<UpdatePasswordResponse> => {
-        const response = await adminUpdateUserEmailAndPassword({
-            userId: userId,
-            attributes: { password: newPassword },
-        });
-
-        if (response.error) {
-            void logErrorReturnLogId(`Error resetting password userId: ${userId}`, {
-                response,
-            });
-            return { errorMessage: response.error["Failed to update user"] };
-        }
-        return { errorMessage: null };
-    };
-
-    const onConfirmPassword = (): void => {
-        updatePassword(userToEdit.userId, password).then(({ errorMessage }) => {
-            console.log(errorMessage);
-            setErrorMessage(errorMessage);
-            if (errorMessage) {
+    const onConfirmPassword = useCallback(
+        (event: React.MouseEvent<HTMLButtonElement>): void => {
+            event.preventDefault();
+            updatePassword(userToEdit.userId, password).then(({ errorMessage }) => {
                 setErrorMessage(errorMessage);
-            } else {
-                onConfirm({
-                    success: true,
-                    message: (
-                        <>
-                            Password for <b>{userToEdit.email}</b> updated successfully.
-                        </>
-                    ),
-                });
-                void logInfoReturnLogId(`Password for ${userToEdit.email} updated successfully`);
-            }
-        });
-    };
+                if (errorMessage) {
+                    setErrorMessage(errorMessage);
+                } else {
+                    onConfirm({
+                        success: true,
+                        message: (
+                            <>
+                                Password for <b>{userToEdit.email}</b> updated successfully.
+                            </>
+                        ),
+                    });
+                    void logInfoReturnLogId(
+                        `Password for ${userToEdit.email} updated successfully`
+                    );
+                }
+            });
+        },
+        [onConfirm, password, userToEdit.email, userToEdit.userId]
+    );
 
-    const safeSubmit = (event: React.MouseEvent<HTMLButtonElement>): void => {
-        event.preventDefault();
-        onConfirmPassword();
-    };
+    const onChange = useMemo(() => getPasswordHandler(setPassword), []);
 
     return (
         <form>
             <EditOption>
                 <EditHeader>Password </EditHeader>
-                <PasswordInput label="New Password" onChange={getPasswordHandler(setPassword)} />
+                <PasswordInput label="New Password" onChange={onChange} />
             </EditOption>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
             <OptionButtonsDiv>
                 <Button
                     variant="outlined"
                     startIcon={<FontAwesomeIcon icon={faKey} />}
-                    onClick={safeSubmit}
+                    onClick={onConfirmPassword}
                 >
                     Confirm Password
                 </Button>
