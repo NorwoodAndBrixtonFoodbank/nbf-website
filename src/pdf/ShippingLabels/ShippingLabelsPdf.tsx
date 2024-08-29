@@ -64,12 +64,8 @@ const styles = StyleSheet.create({
     },
     secondRow: { display: "flex" },
     thirdRow: { flex: 1, display: "flex", flexDirection: "column" },
-    fourthRow: {
-        display: "flex",
-        flexDirection: "row",
-    },
     leftCol: { flexBasis: "32%", textAlign: "left" },
-    middleCol: { flex: 1, textAlign: "left" },
+    rightCol: { flex: 1, textAlign: "left" },
     headingText: { fontFamily: "Helvetica-Bold", textTransform: "uppercase" },
     largeText: {
         fontSize: "26pt",
@@ -143,7 +139,7 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                                 )}
                             </View>
                         </View>
-                        <View style={[styles.middleCol, { flexDirection: "column" }]}>
+                        <View style={[styles.rightCol, { flexDirection: "column" }]}>
                             <View style={styles.firstRow}>
                                 <View style={{ flexDirection: "row" }}>
                                     <Text style={styles.headingText}>Contact: </Text>

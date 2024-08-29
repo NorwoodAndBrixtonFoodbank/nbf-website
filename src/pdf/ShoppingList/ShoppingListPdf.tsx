@@ -117,7 +117,6 @@ interface OneLineProps {
 }
 
 const OneLine: React.FC<OneLineProps> = ({ header, value }) => {
-    console.log("OneLine", header, value);
     if (
         (header === "NUMBER OF BABIES" && value === "0") ||
         (header === "AGE AND GENDER OF CHILDREN" && value === "None")
@@ -161,7 +160,6 @@ const TableHeadings: React.FC = () => {
 };
 
 const ItemToRow: React.FC<Item> = (item) => {
-    // @ts-ignore
     return (
         <View style={[styles.flexRow, styles.tableRow]} wrap={false}>
             <View style={styles.tableDone} />
@@ -204,7 +202,7 @@ const DisplayAsBlockNoBorder: React.FC<BlockProps> = (data: BlockProps) => {
 
 const DisplayAsBlock: React.FC<BlockProps> = (data: BlockProps) => {
     return (
-        <View style={[styles.infoCell]}>
+        <View style={styles.infoCell}>
             {Object.entries(data).map(([propKey, propValue]) => (
                 <OneLine key={propKey} header={formatCamelCaseKey(propKey)} value={propValue} />
             ))}
