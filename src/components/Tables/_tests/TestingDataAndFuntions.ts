@@ -12,10 +12,13 @@ export interface MockTableProps<Data> {
 
 interface TestableContent {
     isCheckboxIncluded?: boolean;
-    filters?: { primaryFilters: ClientSideFilter<TestData, string>[]; additionalFilters: ClientSideFilter<TestData, string>[] };
+    filters?: {
+        primaryFilters: ClientSideFilter<TestData, string>[];
+        additionalFilters: ClientSideFilter<TestData, string>[];
+    };
     isPaginationIncluded?: boolean;
     sortingFlags?: { isSortingOptionsIncluded: boolean; isDefaultSortIncluded: boolean };
-    editableFlags?: { isEditIncluded: boolean; isDeleteIncluded: boolean; isSwapIncluded: boolean };
+    isRowEditableIncluded?: boolean;
     isHeaderTogglesIncluded?: boolean;
     isColumnDisplayFunctionsIncluded?: boolean;
     isRowClickIncluded?: boolean;

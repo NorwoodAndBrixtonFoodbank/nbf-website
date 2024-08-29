@@ -21,7 +21,6 @@ import { ClientSideSortMethod } from "../sortMethods";
 import { SortOrder } from "react-data-table-component";
 import { ClientSideFilter } from "../Filters";
 
-
 export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
     mockData,
     mockHeaders,
@@ -30,7 +29,7 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
         filters = undefined,
         isPaginationIncluded = false,
         sortingFlags = { isSortingOptionsIncluded: false, isDefaultSortIncluded: false },
-        editableFlags = { isEditIncluded: false, isDeleteIncluded: false, isSwapIncluded: false },
+        isRowEditableIncluded = false,
         isHeaderTogglesIncluded = false,
         isColumnDisplayFunctionsIncluded = false,
         isRowClickIncluded = false,
@@ -86,17 +85,16 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
         ClientSideFilter<TestData, string>[]
     >(filters ? filters.additionalFilters : []);
 
-    const filterConfig: FilterConfig<ClientSideFilter<TestData, string>> =
-        filters
-            ? {
-                  primaryFiltersShown: true,
-                  primaryFilters,
-                  setPrimaryFilters,
-                  additionalFiltersShown: true,
-                  additionalFilters,
-                  setAdditionalFilters,
-              }
-            : { primaryFiltersShown: false, additionalFiltersShown: false };
+    const filterConfig: FilterConfig<ClientSideFilter<TestData, string>> = filters
+        ? {
+              primaryFiltersShown: true,
+              primaryFilters,
+              setPrimaryFilters,
+              additionalFiltersShown: true,
+              additionalFilters,
+              setAdditionalFilters,
+          }
+        : { primaryFiltersShown: false, additionalFiltersShown: false };
 
     //Pagination setup
     const [perPage, setPerPage] = useState(7);
@@ -114,21 +112,19 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
           }
         : { enablePagination: false };
 
-        useEffect(() => {
-            const primaryFilteredData = mockData.filter((row) => {
-                return primaryFilters.every((filter) => {
-                    return filter.method(row, filter.state, filter.key);
-                });
-            })
-            const secondaryFilteredData = primaryFilteredData.filter((row) => {
-                return additionalFilters.every((filter) => {
-                    return filter.method(row, filter.state, filter.key);
-                });
+    useEffect(() => {
+        const primaryFilteredData = mockData.filter((row) => {
+            return primaryFilters.every((filter) => {
+                return filter.method(row, filter.state, filter.key);
             });
-            setTestDataPortion(
-                secondaryFilteredData.slice(startPoint, endPoint + 1)
-            );
-        }, [primaryFilters, additionalFilters, startPoint, endPoint, mockData]);
+        });
+        const secondaryFilteredData = primaryFilteredData.filter((row) => {
+            return additionalFilters.every((filter) => {
+                return filter.method(row, filter.state, filter.key);
+            });
+        });
+        setTestDataPortion(secondaryFilteredData.slice(startPoint, endPoint + 1));
+    }, [primaryFilters, additionalFilters, startPoint, endPoint, mockData]);
 
     //Sorting setup
     const [sortState, setSortState] = useState<SortState<TestData, ClientSideSortMethod>>({
@@ -179,31 +175,20 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
     }, [sortState, testDataPortion]);
 
     //Editable setup
-    const editableConfig: EditableConfig<TestData> = {
-        editable:
-            editableFlags.isEditIncluded ||
-            editableFlags.isDeleteIncluded ||
-            editableFlags.isSwapIncluded,
-        setDataPortion: setTestDataPortion,
-        onEdit: editableFlags.isEditIncluded
-            ? (row_num) => {
+    const editableConfig: EditableConfig<TestData> = isRowEditableIncluded
+        ? {
+              editable: true,
+              setDataPortion: setTestDataPortion,
+              onEdit: (row_num) => {
                   setShownText("Edit clicked: " + row_num);
-              }
-            : undefined,
-        onDelete: editableFlags.isDeleteIncluded
-            ? (row_num) => {
+              },
+              onDelete: (row_num) => {
                   setShownText("Delete clicked: " + row_num);
-              }
-            : undefined,
-        onSwapRows: editableFlags.isSwapIncluded
-            ? async (row1, row2) => {
-                  async () => {
-                      setShownText("Swapped rows: " + row1 + " and " + row2);
-                  };
-              }
-            : undefined,
-        isDeletable: editableFlags.isDeleteIncluded ? (row) => row.id != "0" : undefined,
-    };
+              },
+              onSwapRows: async (_, __) => {},
+              isDeletable: (row) => row.id != "0",
+          }
+        : { editable: false };
 
     //Header toggles setup
     const defaultShownHeaders: (keyof TestData)[] | undefined = isHeaderTogglesIncluded

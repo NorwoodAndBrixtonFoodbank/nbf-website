@@ -1,6 +1,14 @@
 import React from "react";
 import "@testing-library/jest-dom/jest-globals";
-import { render, cleanup, screen, fireEvent, within, getByLabelText } from "@testing-library/react";
+import {
+    render,
+    cleanup,
+    screen,
+    fireEvent,
+    within,
+    getByLabelText,
+    act,
+} from "@testing-library/react";
 import { ClientPaginatedTable } from "@/components/Tables/Table";
 import StyleManager from "@/app/themes";
 import {
@@ -70,7 +78,22 @@ describe("Table without features", () => {
     it("should have no action on row click", () => {
         fireEvent.click(screen.getByText("Tom"));
         expect(screen.queryByText("row clicked Tom")).toBeNull();
-    })
+    });
+
+    it("shouldn't render edit, delete or swap row buttons", () => {
+        fakeData.forEach((_, index) => {
+            expect(screen.queryByTestId(`edit row ${index}`)).toBeNull();
+        });
+
+        fakeData.forEach((_, index) => {
+            expect(screen.queryByTestId(`delete row ${index}`)).toBeNull();
+        });
+
+        fakeData.forEach((_, index) => {
+            expect(screen.queryByTestId(`move up row ${index}`)).toBeNull();
+            expect(screen.queryByTestId(`move down row ${index}`)).toBeNull();
+        });
+    });
 });
 
 describe("Table with checkboxes", () => {
@@ -163,10 +186,15 @@ describe("Table with primary filters", () => {
         render(
             <StyleManager>
                 <TableWrapperForTest
-                mockData={fakeMidData}
-                mockHeaders={fakeDataHeaders}
-                testableContent={{ filters: { primaryFilters: [fullNameTextFilterTest, typeButtonFilterTest], additionalFilters: [] }}}
-            />
+                    mockData={fakeMidData}
+                    mockHeaders={fakeDataHeaders}
+                    testableContent={{
+                        filters: {
+                            primaryFilters: [fullNameTextFilterTest, typeButtonFilterTest],
+                            additionalFilters: [],
+                        },
+                    }}
+                />
             </StyleManager>
         );
     });
@@ -189,18 +217,24 @@ describe("Table with primary filters", () => {
 
     it("should render table with default filters", () => {
         fakeMidData.forEach((data) => {
-            data.type === "regular" ? expect(screen.getByText(data.full_name)).toBeInTheDocument() : expect(screen.queryByText(data.full_name)).toBeNull();
+            data.type === "regular"
+                ? expect(screen.getByText(data.full_name)).toBeInTheDocument()
+                : expect(screen.queryByText(data.full_name)).toBeNull();
         });
     });
 
     it("should have button filter correctly select table rows by type", () => {
         fireEvent.click(screen.getByText("Hotel"));
         fakeMidData.forEach((data) => {
-            data.type === "regular" ? expect(screen.queryByText(data.full_name)).toBeNull() : expect(screen.getByText(data.full_name)).toBeInTheDocument();
+            data.type === "regular"
+                ? expect(screen.queryByText(data.full_name)).toBeNull()
+                : expect(screen.getByText(data.full_name)).toBeInTheDocument();
         });
         fireEvent.click(screen.getByText("Regular"));
         fakeMidData.forEach((data) => {
-            data.type === "regular" ? expect(screen.getByText(data.full_name)).toBeInTheDocument() : expect(screen.queryByText(data.full_name)).toBeNull();
+            data.type === "regular"
+                ? expect(screen.getByText(data.full_name)).toBeInTheDocument()
+                : expect(screen.queryByText(data.full_name)).toBeNull();
         });
     });
 
@@ -211,15 +245,18 @@ describe("Table with primary filters", () => {
         fireEvent.click(hotelButton);
         fireEvent.change(nameInput, { target: { value: "Sam" } });
         fakeMidData.forEach((data) => {
-            data.full_name === "Sam" ? expect(screen.getByText(data.full_name)).toBeInTheDocument() : expect(screen.queryByText(data.full_name)).toBeNull();
+            data.full_name === "Sam"
+                ? expect(screen.getByText(data.full_name)).toBeInTheDocument()
+                : expect(screen.queryByText(data.full_name)).toBeNull();
         });
         fireEvent.click(clearButton);
         fakeMidData.forEach((data) => {
-            data.type === "regular" ? expect(screen.queryByText(data.full_name)).toBeNull() : expect(screen.getByText(data.full_name)).toBeInTheDocument();
+            data.type === "regular"
+                ? expect(screen.queryByText(data.full_name)).toBeNull()
+                : expect(screen.getByText(data.full_name)).toBeInTheDocument();
         });
     });
-    
-})
+});
 
 describe("Table with primary and secondary filters", () => {
     beforeEach(() => {
@@ -228,7 +265,12 @@ describe("Table with primary and secondary filters", () => {
                 <TableWrapperForTest
                     mockData={fakeMidData}
                     mockHeaders={fakeDataHeaders}
-                    testableContent={{filters: { primaryFilters: [fullNameTextFilterTest], additionalFilters: [typeButtonFilterTest]}}}
+                    testableContent={{
+                        filters: {
+                            primaryFilters: [fullNameTextFilterTest],
+                            additionalFilters: [typeButtonFilterTest],
+                        },
+                    }}
                 />
             </StyleManager>
         );
@@ -238,7 +280,7 @@ describe("Table with primary and secondary filters", () => {
 
     it("should render the table with more filters button", () => {
         expect(screen.getByText("More")).toBeInTheDocument();
-    })
+    });
 
     it("should have more filters button toggle additional filters on and off", () => {
         const moreButton = screen.getByText("More");
@@ -248,8 +290,8 @@ describe("Table with primary and secondary filters", () => {
         expect(screen.getByText("Less")).toBeInTheDocument();
         fireEvent.click(moreButton);
         expect(screen.queryByText("Regular")).toBeNull();
-    })
-})
+    });
+});
 
 describe("Table with primary filters and checkboxes", () => {
     beforeEach(() => {
@@ -258,7 +300,13 @@ describe("Table with primary filters and checkboxes", () => {
                 <TableWrapperForTest
                     mockData={fakeMidData}
                     mockHeaders={fakeDataHeaders}
-                    testableContent={{ isCheckboxIncluded: true, filters: { primaryFilters: [fullNameTextFilterTest], additionalFilters: [] } }}
+                    testableContent={{
+                        isCheckboxIncluded: true,
+                        filters: {
+                            primaryFilters: [fullNameTextFilterTest],
+                            additionalFilters: [],
+                        },
+                    }}
                 />
             </StyleManager>
         );
@@ -272,26 +320,20 @@ describe("Table with primary filters and checkboxes", () => {
                 within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
             ).not.toBeChecked();
         }
-        const checkbox = within(screen.getByLabelText(`Select row 0`)).getByRole(
-            "checkbox"
-        );
+        const checkbox = within(screen.getByLabelText("Select row 0")).getByRole("checkbox");
         fireEvent.click(checkbox);
-        expect(
-            within(screen.getByLabelText(`Select row 0`)).getByRole("checkbox")
-        ).toBeChecked();
+        expect(within(screen.getByLabelText("Select row 0")).getByRole("checkbox")).toBeChecked();
         const nameInput = screen.getByLabelText("Name");
         fireEvent.change(nameInput, { target: { value: "Sam" } });
         const clearButton = screen.getByText("Clear");
         fireEvent.click(clearButton);
-        expect(
-            within(screen.getByLabelText(`Select row 0`)).getByRole("checkbox")
-        ).toBeChecked();
+        expect(within(screen.getByLabelText("Select row 0")).getByRole("checkbox")).toBeChecked();
         for (let index = 1; index < fakeMidData.length; index++) {
             expect(
                 within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
             ).not.toBeChecked();
         }
-    })
+    });
 });
 
 describe("Table with pagination", () => {
@@ -305,7 +347,7 @@ describe("Table with pagination", () => {
                 />
             </StyleManager>
         );
-    })
+    });
 
     afterEach(cleanup);
 
@@ -321,7 +363,7 @@ describe("Table with pagination", () => {
     it("should move to next page to view next set of rows", () => {
         const nextButton = screen.getByLabelText("Next Page");
         fireEvent.click(nextButton);
-        fakeData.slice(7,14).forEach((data) => {
+        fakeData.slice(7, 14).forEach((data) => {
             expect(screen.getByText(data.full_name)).toBeInTheDocument();
         });
         fakeData.slice(0, 7).forEach((data) => {
@@ -365,10 +407,10 @@ describe("Table with pagination", () => {
     it("should move to final page when last page button is clicked and first page when first page button is clicked", () => {
         fireEvent.change(screen.getByLabelText("Rows per page:"), { target: { value: 5 } });
         fireEvent.click(screen.getByLabelText("Last Page"));
-        fakeData.slice(fakeData.length-5).forEach((data) => {
+        fakeData.slice(fakeData.length - 5).forEach((data) => {
             expect(screen.getByText(data.full_name)).toBeInTheDocument();
         });
-        fakeData.slice(0, fakeData.length-5).forEach((data) => {
+        fakeData.slice(0, fakeData.length - 5).forEach((data) => {
             expect(screen.queryByText(data.full_name)).toBeNull();
         });
         fireEvent.click(screen.getByLabelText("First Page"));
@@ -402,13 +444,9 @@ describe("Table with pagination and checkboxes", () => {
                 within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
             ).not.toBeChecked();
         }
-        const checkbox = within(screen.getByLabelText(`Select row 0`)).getByRole(
-            "checkbox"
-        );
+        const checkbox = within(screen.getByLabelText("Select row 0")).getByRole("checkbox");
         fireEvent.click(checkbox);
-        expect(
-            within(screen.getByLabelText(`Select row 0`)).getByRole("checkbox")
-        ).toBeChecked();
+        expect(within(screen.getByLabelText("Select row 0")).getByRole("checkbox")).toBeChecked();
         const nextButton = screen.getByLabelText("Next Page");
         fireEvent.click(nextButton);
         for (let index = 0; index < 7; index++) {
@@ -418,9 +456,7 @@ describe("Table with pagination and checkboxes", () => {
         }
         const prevButton = screen.getByLabelText("Previous Page");
         fireEvent.click(prevButton);
-        expect(
-            within(screen.getByLabelText(`Select row 0`)).getByRole("checkbox")
-        ).toBeChecked();
+        expect(within(screen.getByLabelText("Select row 0")).getByRole("checkbox")).toBeChecked();
         for (let index = 1; index < 7; index++) {
             expect(
                 within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
@@ -429,30 +465,20 @@ describe("Table with pagination and checkboxes", () => {
     });
 
     it("should have checkboxes unaffected by change in rows per page", () => {
-        fireEvent.click(within(screen.getByLabelText(`Select row 0`)).getByRole(
-            "checkbox"
-        ));
-        fireEvent.click(within(screen.getByLabelText(`Select row 6`)).getByRole(
-            "checkbox"
-        ));
+        fireEvent.click(within(screen.getByLabelText("Select row 0")).getByRole("checkbox"));
+        fireEvent.click(within(screen.getByLabelText("Select row 6")).getByRole("checkbox"));
 
         for (let index = 1; index < 6; index++) {
             expect(
                 within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
             ).not.toBeChecked();
         }
-        expect(
-            within(screen.getByLabelText(`Select row 0`)).getByRole("checkbox")
-        ).toBeChecked();
-        expect(
-            within(screen.getByLabelText(`Select row 6`)).getByRole("checkbox")
-        ).toBeChecked();
+        expect(within(screen.getByLabelText("Select row 0")).getByRole("checkbox")).toBeChecked();
+        expect(within(screen.getByLabelText("Select row 6")).getByRole("checkbox")).toBeChecked();
 
         fireEvent.change(screen.getByLabelText("Rows per page:"), { target: { value: 5 } });
 
-        expect(
-            within(screen.getByLabelText(`Select row 0`)).getByRole("checkbox")
-        ).toBeChecked();
+        expect(within(screen.getByLabelText("Select row 0")).getByRole("checkbox")).toBeChecked();
         for (let index = 1; index < 5; index++) {
             expect(
                 within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
@@ -466,12 +492,8 @@ describe("Table with pagination and checkboxes", () => {
                 within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
             ).not.toBeChecked();
         }
-        expect(
-            within(screen.getByLabelText(`Select row 0`)).getByRole("checkbox")
-        ).toBeChecked();
-        expect(
-            within(screen.getByLabelText(`Select row 6`)).getByRole("checkbox")
-        ).toBeChecked();
+        expect(within(screen.getByLabelText("Select row 0")).getByRole("checkbox")).toBeChecked();
+        expect(within(screen.getByLabelText("Select row 6")).getByRole("checkbox")).toBeChecked();
     });
 });
 
@@ -497,9 +519,10 @@ describe("Table with toggleable headers", () => {
     });
 
     it("should render with only default shown headers", () => {
-
         fakeDataHeaders.forEach((header, index) => {
-            index < fakeDataHeaders.length -1 ? expect(screen.getByText(header[1])).toBeInTheDocument() : expect(screen.queryByText(header[1])).toBeNull();
+            index < fakeDataHeaders.length - 1
+                ? expect(screen.getByText(header[1])).toBeInTheDocument()
+                : expect(screen.queryByText(header[1])).toBeNull();
         });
 
         fireEvent.click(screen.getByText("More"));
@@ -511,10 +534,14 @@ describe("Table with toggleable headers", () => {
                 case 0:
                     break;
                 case fakeDataHeaders.length - 1:
-                    expect(within(screen.getByTestId(`option: ${header[0]}`)).getByRole("checkbox")).not.toBeChecked()
+                    expect(
+                        within(screen.getByTestId(`option: ${header[0]}`)).getByRole("checkbox")
+                    ).not.toBeChecked();
                     break;
                 default:
-                    expect(within(screen.getByTestId(`option: ${header[0]}`)).getByRole("checkbox")).toBeChecked()
+                    expect(
+                        within(screen.getByTestId(`option: ${header[0]}`)).getByRole("checkbox")
+                    ).toBeChecked();
                     break;
             }
         });
@@ -526,9 +553,10 @@ describe("Table with toggleable headers", () => {
         const selectColumnsButton = screen.getByText("Select Columns");
         fireEvent.click(selectColumnsButton);
         fakeDataHeaders.forEach((header, index) => {
-            index === 0 ? expect(screen.queryByTestId(`option: ${header[0]}`)).toBeNull() : expect(screen.getByTestId(`option: ${header[0]}`)).toBeInTheDocument();
+            index === 0
+                ? expect(screen.queryByTestId(`option: ${header[0]}`)).toBeNull()
+                : expect(screen.getByTestId(`option: ${header[0]}`)).toBeInTheDocument();
         });
-        
     });
 
     it("should have headers be toggled on and off", () => {
@@ -539,9 +567,13 @@ describe("Table with toggleable headers", () => {
         fireEvent.click(screen.getByText("More"));
         fireEvent.click(screen.getByText("Select Columns"));
 
-        expect(within(screen.getByTestId(`option: ${last_header[0]}`)).getByRole("checkbox")).not.toBeChecked();
+        expect(
+            within(screen.getByTestId(`option: ${last_header[0]}`)).getByRole("checkbox")
+        ).not.toBeChecked();
         fireEvent.click(screen.getByTestId(`option: ${last_header[0]}`));
-        expect(within(screen.getByTestId(`option: ${last_header[0]}`)).getByRole("checkbox")).toBeChecked();
+        expect(
+            within(screen.getByTestId(`option: ${last_header[0]}`)).getByRole("checkbox")
+        ).toBeChecked();
         fireEvent.click(screen.getByText("Select Columns"));
         fireEvent.click(screen.getByText("Less"));
 
@@ -549,15 +581,19 @@ describe("Table with toggleable headers", () => {
 
         fireEvent.click(screen.getByText("More"));
         fireEvent.click(screen.getByText("Select Columns"));
-        expect(within(screen.getByTestId(`option: ${last_header[0]}`)).getByRole("checkbox")).toBeChecked();
+        expect(
+            within(screen.getByTestId(`option: ${last_header[0]}`)).getByRole("checkbox")
+        ).toBeChecked();
         fireEvent.click(screen.getByTestId(`option: ${last_header[0]}`));
-        expect(within(screen.getByTestId(`option: ${last_header[0]}`)).getByRole("checkbox")).not.toBeChecked();
+        expect(
+            within(screen.getByTestId(`option: ${last_header[0]}`)).getByRole("checkbox")
+        ).not.toBeChecked();
         fireEvent.click(screen.getByText("Select Columns"));
         fireEvent.click(screen.getByText("Less"));
 
         expect(screen.queryByText(last_header[1])).toBeNull();
-    })
-})
+    });
+});
 
 describe("Table with action on row click", () => {
     beforeEach(() => {
@@ -586,5 +622,81 @@ describe("Table with action on row click", () => {
             fireEvent.click(screen.getByText(data.full_name));
             expect(screen.getByText(`row clicked ${data.full_name}`)).toBeInTheDocument();
         });
-    })
-})
+    });
+});
+
+describe("Table with rows that can be edited", () => {
+    beforeEach(() => {
+        render(
+            <StyleManager>
+                <TableWrapperForTest
+                    mockData={fakeMidData}
+                    mockHeaders={fakeDataHeaders}
+                    testableContent={{ isRowEditableIncluded: true }}
+                />
+            </StyleManager>
+        );
+    });
+
+    afterEach(cleanup);
+
+    it("should render edit button on every row", () => {
+        fakeMidData.forEach((_, index) => {
+            expect(screen.getByTestId(`edit row ${index}`)).toBeInTheDocument();
+        });
+    });
+
+    it("should render delete button on every row except first", () => {
+        expect(screen.queryByTestId("delete row 0")).toBeNull();
+        fakeMidData.forEach((_, index) => {
+            index !== 0 ?? expect(screen.getByTestId(`delete row ${index}`)).toBeInTheDocument();
+        });
+    });
+
+    it("should render up and down reorder buttons on every row", () => {
+        fakeMidData.forEach((_, index) => {
+            expect(screen.getByTestId(`move up row ${index}`)).toBeInTheDocument();
+            expect(screen.getByTestId(`move down row ${index}`)).toBeInTheDocument();
+        });
+    });
+
+    it("should have edit button perform edit action", () => {
+        expect(screen.queryByText("Edit clicked: 0")).toBeNull();
+        expect(screen.queryByText("Edit clicked: 1")).toBeNull();
+        act(() => fireEvent.click(screen.getByTestId("edit row 0")));
+        expect(screen.getByText("Edit clicked: 0")).toBeInTheDocument();
+        expect(screen.queryByText("Edit clicked: 1")).toBeNull();
+        act(() => fireEvent.click(screen.getByTestId("edit row 1")));
+        expect(screen.getByText("Edit clicked: 1")).toBeInTheDocument();
+        expect(screen.queryByText("Edit clicked: 0")).toBeNull();
+    });
+
+    it("should have delete button perform delete action", () => {
+        expect(screen.queryByText("Delete clicked: 1")).toBeNull();
+        expect(screen.queryByText("Delete clicked: 2")).toBeNull();
+        act(() => fireEvent.click(screen.getByTestId("delete row 1")));
+        expect(screen.getByText("Delete clicked: 1")).toBeInTheDocument();
+        expect(screen.queryByText("Delete clicked: 2")).toBeNull();
+        act(() => fireEvent.click(screen.getByTestId("delete row 2")));
+        expect(screen.getByText("Delete clicked: 2")).toBeInTheDocument();
+        expect(screen.queryByText("Delete clicked: 1")).toBeNull();
+    });
+
+    it("should swap rows when row swap buttons are clicked", async () => {
+        expect(screen.queryByText(fakeMidData[0].full_name)).toHaveProperty("id", "cell-2-0");
+        expect(screen.queryByText(fakeMidData[1].full_name)).toHaveProperty("id", "cell-2-1");
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("move up row 1"));
+        });
+        expect(screen.queryByText(fakeMidData[0].full_name)).toHaveProperty("id", "cell-2-1");
+        expect(screen.queryByText(fakeMidData[1].full_name)).toHaveProperty("id", "cell-2-0");
+    });
+
+    it("should swap rows without affecting deletable status", async () => {
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("move up row 1"));
+        });
+        expect(screen.queryByTestId("delete row 1")).toBeNull();
+        expect(screen.getByTestId("delete row 0")).toBeInTheDocument();
+    });
+});
