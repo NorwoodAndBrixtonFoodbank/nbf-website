@@ -700,3 +700,25 @@ describe("Table with rows that can be edited", () => {
         expect(screen.getByTestId("delete row 0")).toBeInTheDocument();
     });
 });
+
+describe("Table with column display functions", () => {
+    beforeEach(() => {
+        render(
+            <StyleManager>
+                <TableWrapperForTest
+                    mockData={fakeMidData}
+                    mockHeaders={fakeDataHeaders}
+                    testableContent={{ isColumnDisplayFunctionsIncluded: true }}
+                />
+            </StyleManager>
+        );
+    });
+
+    afterEach(cleanup);
+
+    it("should render the table with column display functions", () => {
+        fakeMidData.forEach((data) => {
+            expect(screen.getByText(data.full_name.toUpperCase())).toBeInTheDocument();
+        });
+    });
+})

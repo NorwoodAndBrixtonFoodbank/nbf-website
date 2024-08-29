@@ -20,6 +20,7 @@ import {
 import { ClientSideSortMethod } from "../sortMethods";
 import { SortOrder } from "react-data-table-component";
 import { ClientSideFilter } from "../Filters";
+import { is } from "cypress/types/bluebird";
 
 export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
     mockData,
@@ -213,6 +214,11 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
           }
         : undefined;
 
+    //Create column display functions
+    const columnDisplayFunction = isColumnDisplayFunctionsIncluded ? {
+        full_name: (fullName: TestData["full_name"]) => fullName.toUpperCase(),
+    } : undefined;
+
     //Render table with mock content
     return (
         <>
@@ -228,6 +234,7 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
                 defaultShownHeaders={defaultShownHeaders}
                 toggleableHeaders={toggleableHeaders}
                 onRowClick={onRowClick}
+                columnDisplayFunctions={columnDisplayFunction}
             />
             <p>{shownText}</p>
         </>
