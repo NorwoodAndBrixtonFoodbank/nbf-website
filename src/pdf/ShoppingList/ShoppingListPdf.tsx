@@ -105,6 +105,10 @@ const styles = StyleSheet.create({
         borderStyle: "solid",
         border: "1pt",
     },
+    itemList: {
+        alignItems: "center",
+        padding: "5pt",
+    },
 });
 
 interface OneLineProps {
@@ -157,17 +161,18 @@ const TableHeadings: React.FC = () => {
 };
 
 const ItemToRow: React.FC<Item> = (item) => {
+    // @ts-ignore
     return (
         <View style={[styles.flexRow, styles.tableRow]} wrap={false}>
             <View style={styles.tableDone} />
-            <View style={styles.tableItemDescription}>
-                <Text style={styles.normalText}>{item.description}</Text>
+            <View style={[styles.tableItemDescription, { justifyContent: "center" }]}>
+                <Text style={[styles.normalText, { padding: "2pt" }]}>{item.description}</Text>
             </View>
-            <View style={styles.tableQuantity}>
-                <Text style={styles.normalText}>{item.quantity}</Text>
+            <View style={[styles.tableQuantity, { justifyContent: "center" }]}>
+                <Text style={[styles.normalText, { padding: "2pt" }]}>{item.quantity}</Text>
             </View>
-            <View style={styles.tableNotes}>
-                <Text style={styles.normalText}>{item.notes}</Text>
+            <View style={[styles.tableNotes, { justifyContent: "center" }]}>
+                <Text style={[styles.normalText, { padding: "2pt" }]}>{item.notes}</Text>
             </View>
         </View>
     );
