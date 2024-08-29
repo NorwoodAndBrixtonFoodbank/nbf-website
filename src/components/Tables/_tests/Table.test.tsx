@@ -23,6 +23,7 @@ import {
 import { expect, it } from "@jest/globals";
 import { TableWrapperForTest } from "./TableWrapperForTests";
 import userEvent from "@testing-library/user-event";
+import { SortOrder } from "react-data-table-component";
 
 describe("Table without features", () => {
     beforeEach(() => {
@@ -722,3 +723,35 @@ describe("Table with column display functions", () => {
         });
     });
 })
+
+describe("Table with sorting", () => {
+    const mockSortMethod = jest.fn();
+    
+    beforeEach(() => {
+        render(
+            <StyleManager>
+                <TableWrapperForTest
+                    mockData={fakeMidData}
+                    mockHeaders={fakeDataHeaders}
+                    testableContent={{ sortingFlags: { isSortingOptionsIncluded: true, isDefaultSortIncluded: false, sortMethod: mockSortMethod } }}
+                />
+            </StyleManager>
+        );
+    })
+
+    afterEach(cleanup);
+
+    it("should not trigger sort function when sorting a disable sort column", () => {
+        fireEvent.click(screen.getByText(fakeDataHeaders[1][1]));
+        expect(mockSortMethod).not.toHaveBeenCalled();
+    });
+
+    it("should trigger sort function with correct asc or desc argument", () => {  
+        fireEvent.click(screen.getByText(fakeDataHeaders[0][1]));
+        expect(mockSortMethod).toHaveBeenCalledWith("asc");
+        fireEvent.click(screen.getByText("Name"));
+        expect(mockSortMethod).toHaveBeenCalledWith("desc");
+    });
+
+    
+});

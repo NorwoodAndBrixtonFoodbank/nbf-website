@@ -3,6 +3,7 @@ import { buttonGroupFilter, filterRowbyButton } from "../ButtonFilter";
 import { buildClientSideTextFilter, filterRowByText } from "../TextFilter";
 import { TableHeaders } from "../Table";
 import { ClientSideFilter } from "../Filters";
+import { SortOrder } from "react-data-table-component/dist/DataTable/types";
 
 export interface MockTableProps<Data> {
     mockData: Data[];
@@ -17,7 +18,7 @@ interface TestableContent {
         additionalFilters: ClientSideFilter<TestData, string>[];
     };
     isPaginationIncluded?: boolean;
-    sortingFlags?: { isSortingOptionsIncluded: boolean; isDefaultSortIncluded: boolean };
+    sortingFlags?: { isSortingOptionsIncluded: boolean; isDefaultSortIncluded: boolean; sortMethod: (sortOrder: SortOrder) => void };
     isRowEditableIncluded?: boolean;
     isHeaderTogglesIncluded?: boolean;
     isColumnDisplayFunctionsIncluded?: boolean;

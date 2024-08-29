@@ -29,7 +29,7 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
         isCheckboxIncluded = false,
         filters = undefined,
         isPaginationIncluded = false,
-        sortingFlags = { isSortingOptionsIncluded: false, isDefaultSortIncluded: false },
+        sortingFlags = { isSortingOptionsIncluded: false, isDefaultSortIncluded: false, sortMethod: undefined },
         isRowEditableIncluded = false,
         isHeaderTogglesIncluded = false,
         isColumnDisplayFunctionsIncluded = false,
@@ -140,16 +140,7 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
         .filter((key, index) => key !== "id" && index % 2 == 0)) {
         sortableColumns.push({
             key: key,
-            sortMethod: (sortDirection: SortOrder) => {
-                const ascendingData = [...testDataPortion].sort((rowA, rowB) =>
-                    rowA.full_name > rowB.full_name ? 1 : rowB.full_name > rowA.full_name ? -1 : 0
-                );
-                if (sortDirection === "asc") {
-                    setTestDataPortion(ascendingData);
-                } else {
-                    setTestDataPortion([...ascendingData].reverse());
-                }
-            },
+            sortMethod: sortingFlags.sortMethod ? sortingFlags.sortMethod : (_)=>{},
         });
     }
 
