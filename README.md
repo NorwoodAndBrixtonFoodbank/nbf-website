@@ -177,7 +177,7 @@ You can regenerate the types
 - [Deploy a migration](https://supabase.com/docs/guides/cli/managing-environments?environment=ci#deploy-a-migration)
 
 ## Other docs
-- [How We Use Supabase](.docs/how-we-use-supabase.md)
+- [How We Use Supabase](./docs/how-we-use-supabase.md)
 - [Password Reset Flow](./docs/password-reset-flow.md)
 - [Invite User Flow](./docs/invite-user-flow.md)
 - [Release Instructions](./docs/release.md)
