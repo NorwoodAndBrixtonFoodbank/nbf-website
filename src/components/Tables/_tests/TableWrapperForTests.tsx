@@ -99,7 +99,7 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
             : { primaryFiltersShown: false, additionalFiltersShown: false };
 
     //Pagination setup
-    const [perPage, setPerPage] = useState(10);
+    const [perPage, setPerPage] = useState(7);
     const [currentPage, setCurrentPage] = useState(1);
     const startPoint = (currentPage - 1) * perPage;
     const endPoint = currentPage * perPage - 1;
@@ -110,6 +110,7 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
               filteredCount: mockData.length,
               onPageChange: setCurrentPage,
               onPerPageChange: setPerPage,
+              rowsPerPageOptions: [5, 7, 10],
           }
         : { enablePagination: false };
 

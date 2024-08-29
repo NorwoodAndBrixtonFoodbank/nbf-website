@@ -15,7 +15,6 @@ import {
 import { expect, it } from "@jest/globals";
 import { TableWrapperForTest } from "./TableWrapperForTests";
 import userEvent from "@testing-library/user-event";
-import { ex } from "@fullcalendar/core/internal-common";
 
 describe("Table without features", () => {
     beforeEach(() => {
@@ -168,6 +167,7 @@ describe("Table with primary filters", () => {
     it("should have text filter correctly select table rows by first names that match input", async () => {
         const user = userEvent.setup();
         const nameInput = screen.getByLabelText("Name");
+        expect(screen.getByText("Tom")).toBeInTheDocument();
         expect(screen.queryByText("Harper")).toBeInTheDocument();
         await user.type(nameInput, "Tom");
         expect(screen.getByText("Tom")).toBeInTheDocument();
@@ -182,7 +182,6 @@ describe("Table with primary filters", () => {
 
     it("should have button filter correctly select table rows by type", () => {
         fireEvent.click(screen.getByText("Hotel"));
-        console.log(screen.getByText("Hotel"))
         fakeMidData.forEach((data) => {
             data.type === "regular" ? expect(screen.queryByText(data.full_name)).toBeNull() : expect(screen.getByText(data.full_name)).toBeInTheDocument();
         });
@@ -280,4 +279,185 @@ describe("Table with primary filters and checkboxes", () => {
             ).not.toBeChecked();
         }
     })
+});
+
+describe("Table with pagination", () => {
+    beforeEach(() => {
+        render(
+            <StyleManager>
+                <TableWrapperForTest
+                    mockData={fakeData}
+                    mockHeaders={fakeDataHeaders}
+                    testableContent={{ isPaginationIncluded: true }}
+                />
+            </StyleManager>
+        );
+    })
+
+    afterEach(cleanup);
+
+    it("should render table with only 7 rows", () => {
+        fakeData.slice(0, 7).forEach((data) => {
+            expect(screen.getByText(data.full_name)).toBeInTheDocument();
+        });
+        fakeData.slice(7).forEach((data) => {
+            expect(screen.queryByText(data.full_name)).toBeNull();
+        });
+    });
+
+    it("should move to next page to view next set of rows", () => {
+        const nextButton = screen.getByLabelText("Next Page");
+        fireEvent.click(nextButton);
+        fakeData.slice(7,14).forEach((data) => {
+            expect(screen.getByText(data.full_name)).toBeInTheDocument();
+        });
+        fakeData.slice(0, 7).forEach((data) => {
+            expect(screen.queryByText(data.full_name)).toBeNull();
+        });
+        fakeData.slice(14).forEach((data) => {
+            expect(screen.queryByText(data.full_name)).toBeNull();
+        });
+    });
+
+    it("should move to previous page to view previous set of rows", () => {
+        const nextButton = screen.getByLabelText("Next Page");
+        const previousButton = screen.getByLabelText("Previous Page");
+        fireEvent.click(nextButton);
+        fireEvent.click(previousButton);
+        fakeData.slice(0, 7).forEach((data) => {
+            expect(screen.getByText(data.full_name)).toBeInTheDocument();
+        });
+        fakeData.slice(7).forEach((data) => {
+            expect(screen.queryByText(data.full_name)).toBeNull();
+        });
+    });
+
+    it("should allow change in number of rows per page", () => {
+        fireEvent.change(screen.getByLabelText("Rows per page:"), { target: { value: 5 } });
+        fakeData.slice(0, 5).forEach((data) => {
+            expect(screen.getByText(data.full_name)).toBeInTheDocument();
+        });
+        fakeData.slice(5).forEach((data) => {
+            expect(screen.queryByText(data.full_name)).toBeNull();
+        });
+        fireEvent.change(screen.getByLabelText("Rows per page:"), { target: { value: 7 } });
+        fakeData.slice(0, 7).forEach((data) => {
+            expect(screen.getByText(data.full_name)).toBeInTheDocument();
+        });
+        fakeData.slice(7).forEach((data) => {
+            expect(screen.queryByText(data.full_name)).toBeNull();
+        });
+    });
+
+    it("should move to final page when last page button is clicked and first page when first page button is clicked", () => {
+        fireEvent.change(screen.getByLabelText("Rows per page:"), { target: { value: 5 } });
+        fireEvent.click(screen.getByLabelText("Last Page"));
+        fakeData.slice(fakeData.length-5).forEach((data) => {
+            expect(screen.getByText(data.full_name)).toBeInTheDocument();
+        });
+        fakeData.slice(0, fakeData.length-5).forEach((data) => {
+            expect(screen.queryByText(data.full_name)).toBeNull();
+        });
+        fireEvent.click(screen.getByLabelText("First Page"));
+        fakeData.slice(0, 5).forEach((data) => {
+            expect(screen.getByText(data.full_name)).toBeInTheDocument();
+        });
+        fakeData.slice(5).forEach((data) => {
+            expect(screen.queryByText(data.full_name)).toBeNull();
+        });
+    });
+});
+
+describe("Table with pagination and checkboxes", () => {
+    beforeEach(() => {
+        render(
+            <StyleManager>
+                <TableWrapperForTest
+                    mockData={fakeData}
+                    mockHeaders={fakeDataHeaders}
+                    testableContent={{ isPaginationIncluded: true, isCheckboxIncluded: true }}
+                />
+            </StyleManager>
+        );
+    });
+
+    afterEach(cleanup);
+
+    it("should have checkboxes unaffected by pagination", () => {
+        for (let index = 0; index < 7; index++) {
+            expect(
+                within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
+            ).not.toBeChecked();
+        }
+        const checkbox = within(screen.getByLabelText(`Select row 0`)).getByRole(
+            "checkbox"
+        );
+        fireEvent.click(checkbox);
+        expect(
+            within(screen.getByLabelText(`Select row 0`)).getByRole("checkbox")
+        ).toBeChecked();
+        const nextButton = screen.getByLabelText("Next Page");
+        fireEvent.click(nextButton);
+        for (let index = 0; index < 7; index++) {
+            expect(
+                within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
+            ).not.toBeChecked();
+        }
+        const prevButton = screen.getByLabelText("Previous Page");
+        fireEvent.click(prevButton);
+        expect(
+            within(screen.getByLabelText(`Select row 0`)).getByRole("checkbox")
+        ).toBeChecked();
+        for (let index = 1; index < 7; index++) {
+            expect(
+                within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
+            ).not.toBeChecked();
+        }
+    });
+
+    it("should have checkboxes unaffected by change in rows per page", () => {
+        fireEvent.click(within(screen.getByLabelText(`Select row 0`)).getByRole(
+            "checkbox"
+        ));
+        fireEvent.click(within(screen.getByLabelText(`Select row 6`)).getByRole(
+            "checkbox"
+        ));
+
+        for (let index = 1; index < 6; index++) {
+            expect(
+                within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
+            ).not.toBeChecked();
+        }
+        expect(
+            within(screen.getByLabelText(`Select row 0`)).getByRole("checkbox")
+        ).toBeChecked();
+        expect(
+            within(screen.getByLabelText(`Select row 6`)).getByRole("checkbox")
+        ).toBeChecked();
+
+        fireEvent.change(screen.getByLabelText("Rows per page:"), { target: { value: 5 } });
+
+        expect(
+            within(screen.getByLabelText(`Select row 0`)).getByRole("checkbox")
+        ).toBeChecked();
+        for (let index = 1; index < 5; index++) {
+            expect(
+                within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
+            ).not.toBeChecked();
+        }
+
+        fireEvent.change(screen.getByLabelText("Rows per page:"), { target: { value: 7 } });
+
+        for (let index = 1; index < 6; index++) {
+            expect(
+                within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
+            ).not.toBeChecked();
+        }
+        expect(
+            within(screen.getByLabelText(`Select row 0`)).getByRole("checkbox")
+        ).toBeChecked();
+        expect(
+            within(screen.getByLabelText(`Select row 6`)).getByRole("checkbox")
+        ).toBeChecked();
+    });
 });
