@@ -51,12 +51,20 @@ describe("Table without features", () => {
         }
     });
 
-    it("should render the table without filters", () => {
+    it("should render the table without filters or more filters button", () => {
         expect(screen.queryByLabelText("Name")).toBeNull();
         expect(screen.queryByText("Hotel")).toBeNull();
         expect(screen.queryByText("Regular")).toBeNull();
         expect(screen.queryByText("More")).toBeNull();
         expect(screen.queryByText("Clear")).toBeNull();
+    });
+
+    it("should render the table without pagination", () => {
+        expect(screen.queryByLabelText("Rows per page:")).toBeNull();
+        expect(screen.queryByLabelText("First Page")).toBeNull();
+        expect(screen.queryByLabelText("Previous Page")).toBeNull();
+        expect(screen.queryByLabelText("Next Page")).toBeNull();
+        expect(screen.queryByLabelText("Last Page")).toBeNull();
     });
 });
 
@@ -461,3 +469,87 @@ describe("Table with pagination and checkboxes", () => {
         ).toBeChecked();
     });
 });
+
+describe("Table with toggleable headers", () => {
+    beforeEach(() => {
+        render(
+            <StyleManager>
+                <TableWrapperForTest
+                    mockData={fakeSmallerData}
+                    mockHeaders={fakeDataHeaders}
+                    testableContent={{ isHeaderTogglesIncluded: true }}
+                />
+            </StyleManager>
+        );
+    });
+
+    afterEach(cleanup);
+
+    it("should render the table with toggleable headers", () => {
+        const moreButton = screen.getByText("More");
+        fireEvent.click(moreButton);
+        expect(screen.getByText("Select Columns")).toBeInTheDocument();
+    });
+
+    it("should render with only default shown headers", () => {
+
+        fakeDataHeaders.forEach((header, index) => {
+            index < fakeDataHeaders.length -1 ? expect(screen.getByText(header[1])).toBeInTheDocument() : expect(screen.queryByText(header[1])).toBeNull();
+        });
+
+        fireEvent.click(screen.getByText("More"));
+        const selectColumnsButton = screen.getByText("Select Columns");
+        fireEvent.click(selectColumnsButton);
+
+        fakeDataHeaders.forEach((header, index) => {
+            switch (index) {
+                case 0:
+                    break;
+                case fakeDataHeaders.length - 1:
+                    expect(within(screen.getByTestId(`option: ${header[0]}`)).getByRole("checkbox")).not.toBeChecked()
+                    break;
+                default:
+                    expect(within(screen.getByTestId(`option: ${header[0]}`)).getByRole("checkbox")).toBeChecked()
+                    break;
+            }
+        });
+    });
+
+    it("should only have toggleable headers in the select columns dropdown", () => {
+        const moreButton = screen.getByText("More");
+        fireEvent.click(moreButton);
+        const selectColumnsButton = screen.getByText("Select Columns");
+        fireEvent.click(selectColumnsButton);
+        fakeDataHeaders.forEach((header, index) => {
+            index === 0 ? expect(screen.queryByTestId(`option: ${header[0]}`)).toBeNull() : expect(screen.getByTestId(`option: ${header[0]}`)).toBeInTheDocument();
+        });
+        
+    });
+
+    it("should have headers be toggled on and off", () => {
+        const last_header = fakeDataHeaders[fakeDataHeaders.length - 1];
+
+        expect(screen.queryByText(last_header[1])).toBeNull();
+
+        fireEvent.click(screen.getByText("More"));
+        fireEvent.click(screen.getByText("Select Columns"));
+
+        expect(within(screen.getByTestId(`option: ${last_header[0]}`)).getByRole("checkbox")).not.toBeChecked();
+        fireEvent.click(screen.getByTestId(`option: ${last_header[0]}`));
+        expect(within(screen.getByTestId(`option: ${last_header[0]}`)).getByRole("checkbox")).toBeChecked();
+        fireEvent.click(screen.getByText("Select Columns"));
+        fireEvent.click(screen.getByText("Less"));
+
+        expect(screen.getByText(last_header[1])).toBeInTheDocument();
+
+        fireEvent.click(screen.getByText("More"));
+        fireEvent.click(screen.getByText("Select Columns"));
+        expect(within(screen.getByTestId(`option: ${last_header[0]}`)).getByRole("checkbox")).toBeChecked();
+        fireEvent.click(screen.getByTestId(`option: ${last_header[0]}`));
+        expect(within(screen.getByTestId(`option: ${last_header[0]}`)).getByRole("checkbox")).not.toBeChecked();
+        fireEvent.click(screen.getByText("Select Columns"));
+        fireEvent.click(screen.getByText("Less"));
+
+        expect(screen.queryByText(last_header[1])).toBeNull();
+    })
+})
