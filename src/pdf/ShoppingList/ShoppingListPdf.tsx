@@ -2,12 +2,15 @@ import React from "react";
 import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
 import { ClientSummary, RequirementSummary } from "@/common/formatClientsData";
 import { HouseholdSummary } from "@/common/formatFamiliesData";
-import { formatCamelCaseKey, displayPostcodeForHomelessClient } from "@/common/format";
+import {
+    formatCamelCaseKey,
+    displayPostcodeForHomelessClient,
+    capitaliseWords,
+} from "@/common/format";
 import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import { Item, ShoppingListPdfData } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
 import { faTruck, faShoePrints } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
-import { capitalize } from "lodash";
 
 export type BlockProps = ParcelInfo | HouseholdSummary | RequirementSummary;
 
@@ -116,23 +119,31 @@ interface OneLineProps {
     value: string;
 }
 
-const OneLine: React.FC<OneLineProps> = ({ header, value }) => {
-    if (
+const shouldDisplay = (header: string, value: string): boolean => {
+    return !(
         (header === "NUMBER OF BABIES" && value === "0") ||
         (header === "AGE AND GENDER OF CHILDREN" && value === "None")
-    ) {
-        return null;
+    );
+};
+
+const getDisplayValue = (header: string, value: string): string => {
+    switch (header) {
+        case "LIST TYPE":
+            return capitaliseWords(value);
+        case "HOUSEHOLD SIZE":
+            return value === "1 (1 Adult 0 Child)" ? "Single (1 Adult 0 Child)" : value;
+        case "AGE AND GENDER OF ADULTS":
+        case "AGE AND GENDER OF CHILDREN":
+            return value.replace(/M/g, "Male").replace(/F/g, "Female").replace(/O/g, "Other");
+        case "BABY PRODUCTS REQUIRED":
+            return value.includes("No") ? "None" : value;
+        default:
+            return value;
     }
-    const displayValue =
-        header === "LIST TYPE"
-            ? capitalize(value)
-            : header === "HOUSEHOLD SIZE" && value === "1 (1 Adult 0 Child)"
-              ? "Single (1 Adult 0 Child)"
-              : header === "AGE AND GENDER OF ADULTS" || header === "AGE AND GENDER OF CHILDREN"
-                ? value.replace(/M/g, "Male").replace(/F/g, "Female").replace(/O/g, "Other")
-                : header === "BABY PRODUCTS REQUIRED" && value.includes("No")
-                  ? "None"
-                  : value;
+};
+
+const OneLine: React.FC<OneLineProps> = ({ header, value }) => {
+    const displayValue = getDisplayValue(header, value);
     return (
         <Text style={styles.keyText}>
             {header}: <Text style={styles.normalText}>{displayValue}</Text>
@@ -193,9 +204,13 @@ const DisplayItemsList: React.FC<DisplayItemsListProps> = ({ itemsList }) => {
 const DisplayAsBlockNoBorder: React.FC<BlockProps> = (data: BlockProps) => {
     return (
         <View style={styles.infoCellNoBorder}>
-            {Object.entries(data).map(([propKey, propValue]) => (
-                <OneLine key={propKey} header={formatCamelCaseKey(propKey)} value={propValue} />
-            ))}
+            {Object.entries(data)
+                .filter(([propKey, propValue]) =>
+                    shouldDisplay(formatCamelCaseKey(propKey), propValue)
+                )
+                .map(([propKey, propValue]) => (
+                    <OneLine key={propKey} header={formatCamelCaseKey(propKey)} value={propValue} />
+                ))}
         </View>
     );
 };
@@ -203,9 +218,13 @@ const DisplayAsBlockNoBorder: React.FC<BlockProps> = (data: BlockProps) => {
 const DisplayAsBlock: React.FC<BlockProps> = (data: BlockProps) => {
     return (
         <View style={styles.infoCell}>
-            {Object.entries(data).map(([propKey, propValue]) => (
-                <OneLine key={propKey} header={formatCamelCaseKey(propKey)} value={propValue} />
-            ))}
+            {Object.entries(data)
+                .filter(([propKey, propValue]) =>
+                    shouldDisplay(formatCamelCaseKey(propKey), propValue)
+                )
+                .map(([propKey, propValue]) => (
+                    <OneLine key={propKey} header={formatCamelCaseKey(propKey)} value={propValue} />
+                ))}
         </View>
     );
 };

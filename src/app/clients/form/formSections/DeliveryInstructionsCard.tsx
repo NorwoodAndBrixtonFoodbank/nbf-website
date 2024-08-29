@@ -21,7 +21,7 @@ const DeliveryInstructionsCard: React.FC<ClientCardProps> = ({
         <GenericFormCard
             title="Delivery Instructions"
             required={false}
-            text="Please input not more than 380 characters."
+            text={`Please input not more than ${MAX_CHARACTERS} characters.`}
         >
             <FreeFormTextInput
                 label="For example, The doorbell does not work. Use the door code: xxxx."

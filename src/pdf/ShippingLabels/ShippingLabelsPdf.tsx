@@ -3,6 +3,7 @@ import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { displayPostcodeForHomelessClient } from "@/common/format";
 import { faShoePrints, faTruck } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
+import dayjs from "dayjs";
 export interface ShippingLabelData {
     label_quantity: number;
     parcel_id: string;
@@ -89,14 +90,11 @@ interface LabelCardProps {
     quantity: number;
 }
 
-const convertDateFormat = (date: string): string => {
-    const dateArray = date.split("-");
-    return `${dateArray[2]}/${dateArray[1]}/${dateArray[0]}`;
-};
-
 const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
-    return (
-        data.full_name !== "Deleted Client" && (
+    if (data.full_name === "Deleted Client") {
+        return null;
+    } else {
+        return (
             <Page size={LABEL_SIZE_PIXELS} style={styles.page}>
                 <View style={styles.cardWrapper} wrap={true}>
                     <View style={styles.firstHorizontalBlock}>
@@ -159,7 +157,7 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                                 <Text style={[styles.headingText, { right: 0 }]}>
                                     Delivery Instructions:{" "}
                                 </Text>
-                                <Text>{convertDateFormat(data.packing_date)}</Text>
+                                <Text>{dayjs(data.packing_date).format("DD/MM/YYYY")}</Text>
                             </View>
                             <View style={styles.thirdRow}>
                                 <Text style={styles.deliveryInstructionText}>
@@ -193,8 +191,8 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
                     </View>
                 </View>
             </Page>
-        )
-    );
+        );
+    }
 };
 
 export interface ShippingLabelsPdfProps {
