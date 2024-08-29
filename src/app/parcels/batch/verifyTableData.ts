@@ -5,7 +5,7 @@ import {
     BatchEditData,
     BatchTableDataState,
 } from "@/app/parcels/batch/batchTypes";
-import { emptyBatchEditData } from "@/app/parcels/batch/emptyData";
+import { getEmptyBatchEditData } from "@/app/parcels/batch/emptyData";
 import { AddBatchRowError } from "@/app/parcels/batch/submitTableData";
 
 const checkRequiredClientDataIsNotEmpty = (client: BatchClient): boolean => {
@@ -42,7 +42,7 @@ export const checkParcelDataIsNotEmpty = (parcel: ParcelData): boolean => {
 };
 
 const isRowEmpty = (data: BatchEditData): boolean => {
-    return data === emptyBatchEditData;
+    return data === getEmptyBatchEditData();
 };
 
 export const verifyBatchTableData = async (

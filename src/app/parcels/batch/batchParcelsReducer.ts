@@ -12,7 +12,7 @@ import {
     getOverridenFieldsAndValues,
     getRowToBeUpdated,
 } from "@/app/parcels/batch/clientSideReducerHelpers";
-import { emptyBatchEditData } from "@/app/parcels/batch/emptyData";
+import { getEmptyBatchEditData } from "@/app/parcels/batch/emptyData";
 
 export const batchParcelsReducer = (
     state: BatchTableDataState,
@@ -64,7 +64,7 @@ export const batchParcelsReducer = (
                           {
                               id: newId,
                               clientId: null,
-                              data: emptyBatchEditData,
+                              data: getEmptyBatchEditData(),
                           },
                       ],
                   }

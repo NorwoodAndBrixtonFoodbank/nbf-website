@@ -1,10 +1,10 @@
 import { Schema } from "@/databaseUtils";
 import { BatchTableDataState } from "@/app/parcels/batch/batchTypes";
 import dayjs from "dayjs";
-import { emptyBatchEditData, emptyOverrideData } from "@/app/parcels/batch/emptyData";
+import { getEmptyBatchEditData, getEmptyOverrideData } from "@/app/parcels/batch/emptyData";
 
 export const mockTableDataState: BatchTableDataState = {
-    overrideDataRow: { data: emptyOverrideData },
+    overrideDataRow: { data: getEmptyOverrideData() },
     batchDataRows: [
         {
             id: 1,
@@ -47,7 +47,7 @@ export const mockTableDataState: BatchTableDataState = {
                     notes: null,
                 },
                 clientReadOnly: false,
-                parcel: emptyBatchEditData.parcel,
+                parcel: getEmptyBatchEditData().parcel,
             },
         },
         {
@@ -86,7 +86,7 @@ export const mockTableDataState: BatchTableDataState = {
                     notes: null,
                 },
                 clientReadOnly: false,
-                parcel: emptyBatchEditData.parcel,
+                parcel: getEmptyBatchEditData().parcel,
             },
         },
     ],

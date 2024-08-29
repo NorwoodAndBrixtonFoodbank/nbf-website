@@ -3,11 +3,11 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useMemo, useState } from "react";
-import { useLocalStorage, writeLocalTableState } from "@/app/parcels/batch/useLocalStorage";
+import { useLocalStorage } from "@/app/parcels/batch/useLocalStorage";
 import { BatchTableDataState } from "@/app/parcels/batch/batchTypes";
 import batchParcelsReducer from "@/app/parcels/batch/batchParcelsReducer";
 import { tableStateToBatchDisplayRows } from "@/app/parcels/batch/displayHelpers";
-import { emptyBatchEditData, emptyOverrideData } from "@/app/parcels/batch/emptyData";
+import { getEmptyBatchEditData, getEmptyOverrideData } from "@/app/parcels/batch/emptyData";
 import { DefaultTheme, useTheme } from "styled-components";
 import getCenteredBatchGridDisplayColumns from "@/app/parcels/batch/getCenteredBatchGridDisplayColumns";
 import { useRouter } from "next/navigation";
@@ -15,7 +15,6 @@ import submitBatchTableData, {
     AddBatchRowError,
     filterUnsubmittedRows,
 } from "@/app/parcels/batch/submitTableData";
-import { batchSubmitTestData } from "@/app/parcels/batch/mockData";
 import { verifyBatchTableData } from "@/app/parcels/batch/verifyTableData";
 
 export interface BatchGridDisplayRow {
@@ -46,13 +45,13 @@ export interface BatchGridDisplayRow {
 
 export const defaultTableState: BatchTableDataState = {
     overrideDataRow: {
-        data: emptyOverrideData,
+        data: getEmptyOverrideData(),
     },
     batchDataRows: [
         {
             id: 1,
             clientId: null,
-            data: emptyBatchEditData,
+            data: getEmptyBatchEditData(),
         },
     ],
     clientOverrides: [],
@@ -77,8 +76,6 @@ const BatchParcelDataGrid: React.FC = () => {
     const [confirmationErrors, setConfirmationErrors] = useState<AddBatchRowError[]>([]);
     const [submitErrors, setSubmitErrors] = useState<AddBatchRowError[]>([]);
     const router = useRouter();
-
-    writeLocalTableState(batchSubmitTestData);
 
     const displayRows = useMemo(() => {
         return tableStateToBatchDisplayRows(tableState);

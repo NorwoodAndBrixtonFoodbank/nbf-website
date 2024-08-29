@@ -8,7 +8,7 @@ import {
 } from "@/app/parcels/batch/mockData";
 import { expect, it } from "@jest/globals";
 import { BatchActionType } from "@/app/parcels/batch/batchTypes";
-import { emptyBatchEditData } from "@/app/parcels/batch/emptyData";
+import { getEmptyBatchEditData } from "@/app/parcels/batch/emptyData";
 
 jest.mock("@/app/parcels/batch/supabaseHelpers", () => ({
     getClientFromClients: jest.fn((clientId: string) =>
@@ -80,7 +80,7 @@ describe("reducer", () => {
         const ninetyNineEmptyBatchTableRows = Array.from({ length: 99 }, (index: number) => ({
             id: index + 1,
             clientId: null,
-            data: emptyBatchEditData,
+            data: getEmptyBatchEditData(),
         }));
         const fullBatchTableState = {
             overrideDataRow: {
