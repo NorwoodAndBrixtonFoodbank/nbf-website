@@ -752,6 +752,29 @@ describe("Table with sorting", () => {
         fireEvent.click(screen.getByText("Name"));
         expect(mockSortMethod).toHaveBeenCalledWith("desc");
     });
+});
 
+describe("Table with default sort", () => {
+    const mockSortMethod = jest.fn();
     
+    beforeEach(() => {
+        render(
+            <StyleManager>
+                <TableWrapperForTest
+                    mockData={fakeMidData}
+                    mockHeaders={fakeDataHeaders}
+                    testableContent={{ sortingFlags: { isSortingOptionsIncluded: true, isDefaultSortIncluded: true, sortMethod: mockSortMethod } }}
+                />
+            </StyleManager>
+        );
+    })
+
+    afterEach(cleanup);
+
+    it("should show sorted when loads", () => {
+        //if it is already sorted by ascending then clicking the header again should sort by descending
+        fireEvent.click(screen.getByText(fakeDataHeaders[0][1]));
+        expect(mockSortMethod).toHaveBeenCalledWith("desc");
+    });
+
 });
