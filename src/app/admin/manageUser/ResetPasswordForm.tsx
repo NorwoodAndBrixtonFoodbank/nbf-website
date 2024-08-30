@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { EditHeader, EditOption } from "@/app/admin/manageUser/ManageUserModal";
 import Button from "@mui/material/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,7 +8,6 @@ import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import PasswordInput from "@/components/DataInput/PasswordInput";
 import { UserRow } from "../usersTable/types";
 import { faKey } from "@fortawesome/free-solid-svg-icons/faKey";
-import { getPasswordHandler } from "@/components/DataInput/inputHandlerFactories";
 import { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
 import { adminUpdateUserEmailAndPassword } from "@/server/adminUpdateUser";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
@@ -55,9 +54,7 @@ const ResetPasswordForm: React.FC<Props> = ({ userToEdit, onCancel, onConfirm })
             event.preventDefault();
             updatePassword(userToEdit.userId, password).then(({ errorMessage }) => {
                 setErrorMessage(errorMessage);
-                if (errorMessage) {
-                    setErrorMessage(errorMessage);
-                } else {
+                if (!errorMessage) {
                     onConfirm({
                         success: true,
                         message: (
@@ -75,7 +72,9 @@ const ResetPasswordForm: React.FC<Props> = ({ userToEdit, onCancel, onConfirm })
         [onConfirm, password, userToEdit.email, userToEdit.userId]
     );
 
-    const onChange = useMemo(() => getPasswordHandler(setPassword), []);
+    const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(event.target.value);
+    }, []);
 
     return (
         <form>
