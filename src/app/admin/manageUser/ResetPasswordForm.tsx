@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { EditHeader, EditOption } from "@/app/admin/manageUser/ManageUserModal";
 import Button from "@mui/material/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,17 +8,10 @@ import OptionButtonsDiv from "@/app/admin/common/OptionButtonsDiv";
 import PasswordInput from "@/components/DataInput/PasswordInput";
 import { UserRow } from "../usersTable/types";
 import { faKey } from "@fortawesome/free-solid-svg-icons/faKey";
-import { getPasswordHandler } from "@/components/DataInput/inputHandlerFactories";
 import { AlertOptions } from "@/app/admin/common/SuccessFailureAlert";
-import Tooltip from "@mui/material/Tooltip";
-import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons/faCircleQuestion";
-import {
-    checkPassword,
-    getPasswordRuleList,
-    userPasswordRules,
-} from "@/app/admin/common/passwordConfig";
 import { adminUpdateUserEmailAndPassword } from "@/server/adminUpdateUser";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
+import styled, { DefaultTheme } from "styled-components";
 
 interface Props {
     userToEdit: UserRow;
@@ -26,62 +19,79 @@ interface Props {
     onConfirm: (alertOptions: AlertOptions) => void;
 }
 
-const ResetPasswordForm: React.FC<Props> = (props) => {
-    const [password, setPassword] = useState("");
-    const passwordIsValid = checkPassword(password, userPasswordRules) === null;
+interface UpdatePasswordResponse {
+    errorMessage: string | null;
+}
 
-    const onConfirmPassword = async (): Promise<void> => {
-        const response = await adminUpdateUserEmailAndPassword({
-            userId: props.userToEdit.userId,
-            attributes: { password },
+const ErrorMessage = styled.span<{ theme: DefaultTheme }>`
+    color: ${(props) => props.theme.error};
+`;
+
+const updatePassword = async (
+    userId: string,
+    newPassword: string
+): Promise<UpdatePasswordResponse> => {
+    const response = await adminUpdateUserEmailAndPassword({
+        userId: userId,
+        attributes: { password: newPassword },
+    });
+
+    if (response.error) {
+        void logErrorReturnLogId(`Error resetting password userId: ${userId}`, {
+            response,
         });
+        return { errorMessage: response.error["Failed to update user"] };
+    }
+    return { errorMessage: null };
+};
 
-        if (response.error === null) {
-            props.onConfirm({
-                success: true,
-                message: (
-                    <>
-                        Password for <b>{props.userToEdit.email}</b> updated successfully.
-                    </>
-                ),
+const ResetPasswordForm: React.FC<Props> = ({ userToEdit, onCancel, onConfirm }) => {
+    const [password, setPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const onConfirmPassword = useCallback(
+        (event: React.MouseEvent<HTMLButtonElement>): void => {
+            event.preventDefault();
+            updatePassword(userToEdit.userId, password).then(({ errorMessage }) => {
+                setErrorMessage(errorMessage);
+                if (!errorMessage) {
+                    onConfirm({
+                        success: true,
+                        message: (
+                            <>
+                                Password for <b>{userToEdit.email}</b> updated successfully.
+                            </>
+                        ),
+                    });
+                    void logInfoReturnLogId(
+                        `Password for ${userToEdit.email} updated successfully`
+                    );
+                }
             });
-            void logInfoReturnLogId(`Password for ${props.userToEdit.email} updated successfully`);
-        } else {
-            const logId = await logErrorReturnLogId(
-                `Error resetting password userId: ${props.userToEdit.userId}`
-            );
-            props.onConfirm({
-                success: false,
-                message: <>Reset password operation failed. Log ID: {logId}</>,
-            });
-        }
-    };
+        },
+        [onConfirm, password, userToEdit.email, userToEdit.userId]
+    );
+
+    const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(event.target.value);
+    }, []);
 
     return (
         <form>
             <EditOption>
-                <EditHeader>
-                    Password{" "}
-                    <Tooltip title={getPasswordRuleList(userPasswordRules)}>
-                        <FontAwesomeIcon size="xs" icon={faCircleQuestion} />
-                    </Tooltip>
-                </EditHeader>
-                <PasswordInput
-                    label="New Password"
-                    onChange={getPasswordHandler(setPassword)}
-                    error={password.length > 0 && !passwordIsValid}
-                />
+                <EditHeader>Password </EditHeader>
+                <PasswordInput label="New Password" onChange={onChange} />
             </EditOption>
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
             <OptionButtonsDiv>
                 <Button
                     variant="outlined"
-                    disabled={!passwordIsValid}
                     startIcon={<FontAwesomeIcon icon={faKey} />}
                     onClick={onConfirmPassword}
                 >
                     Confirm Password
                 </Button>
-                <Button color="secondary" onClick={props.onCancel}>
+                <Button color="secondary" onClick={onCancel}>
                     Cancel
                 </Button>
             </OptionButtonsDiv>
