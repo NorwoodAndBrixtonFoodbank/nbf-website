@@ -3,6 +3,7 @@ import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { displayPostcodeForHomelessClient } from "@/common/format";
 import { faShoePrints, faTruck } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
+import dayjs from "dayjs";
 export interface ShippingLabelData {
     label_quantity: number;
     parcel_id: string;
@@ -42,8 +43,19 @@ const styles = StyleSheet.create({
         border: "1.5pt solid black",
         height: "100%",
         display: "flex",
-        flexDirection: "row",
+        flexDirection: "column",
         padding: "0.2cm",
+    },
+    firstHorizontalBlock: {
+        flexDirection: "row",
+        height: "90%",
+    },
+    secondHorizontalBlock: {
+        flexDirection: "row",
+        width: "100%",
+        display: "flex",
+        justifyContent: "space-between",
+        bottom: 0,
     },
     firstRow: {
         justifyContent: "space-between",
@@ -53,12 +65,8 @@ const styles = StyleSheet.create({
     },
     secondRow: { display: "flex" },
     thirdRow: { flex: 1, display: "flex", flexDirection: "column" },
-    fourthRow: {
-        display: "flex",
-        flexDirection: "row",
-    },
     leftCol: { flexBasis: "32%", textAlign: "left" },
-    middleCol: { flex: 1, textAlign: "left" },
+    rightCol: { flex: 1, textAlign: "left" },
     headingText: { fontFamily: "Helvetica-Bold", textTransform: "uppercase" },
     largeText: {
         fontSize: "26pt",
@@ -86,83 +94,89 @@ const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) =>
     return (
         <Page size={LABEL_SIZE_PIXELS} style={styles.page}>
             <View style={styles.cardWrapper} wrap={true}>
-                <View style={[styles.leftCol, { flexDirection: "column", marginRight: "3px" }]}>
-                    <View style={styles.firstRow}>
-                        <Text style={[styles.headingText, { flexWrap: "wrap" }]}>Name: </Text>
+                <View style={styles.firstHorizontalBlock}>
+                    <View style={[styles.leftCol, { flexDirection: "column", marginRight: "3px" }]}>
+                        <View style={styles.firstRow}>
+                            <Text style={[styles.headingText, { flexWrap: "wrap" }]}>Name: </Text>
+                        </View>
+                        <View style={[styles.secondRow, { marginBottom: "10px" }]}>
+                            <Text style={[styles.fullNameText, { flexWrap: "wrap" }]}>
+                                {data.full_name}
+                            </Text>
+                        </View>
+                        <View style={styles.thirdRow}>
+                            {data.address_postcode && (
+                                <>
+                                    <Text>
+                                        {data.address_1}
+                                        <br />
+                                    </Text>
+                                    <Text>
+                                        {data.address_2}
+                                        <br />
+                                    </Text>
+                                    <Text>
+                                        {data.address_town}
+                                        <br />
+                                    </Text>
+                                    <Text>
+                                        {data.address_county}
+                                        <br />
+                                    </Text>
+                                </>
+                            )}
+                        </View>
                     </View>
-                    <View style={[styles.secondRow, { marginBottom: "10px" }]}>
-                        <Text style={[styles.fullNameText, { flexWrap: "wrap" }]}>
-                            {data.full_name}
-                        </Text>
-                    </View>
-                    <View style={styles.thirdRow}>
-                        {data.address_postcode && (
-                            <>
-                                <Text>
-                                    {data.address_1}
-                                    <br />
-                                </Text>
-                                <Text>
-                                    {data.address_2}
-                                    <br />
-                                </Text>
-                                <Text>
-                                    {data.address_town}
-                                    <br />
-                                </Text>
-                                <Text>
-                                    {data.address_county}
-                                    <br />
-                                </Text>
-                            </>
-                        )}
-                    </View>
-                    <View style={styles.fourthRow}>
-                        <Text style={styles.largeText}>
-                            {data.address_postcode ?? displayPostcodeForHomelessClient}
-                        </Text>
+                    <View style={[styles.rightCol, { flexDirection: "column" }]}>
+                        <View style={styles.firstRow}>
+                            <View style={{ flexDirection: "row" }}>
+                                <Text style={styles.headingText}>Contact: </Text>
+                                <Text>{data.phone_number}</Text>
+                            </View>
+                            <Text style={styles.headingText}>Packed:</Text>
+                        </View>
+                        <View
+                            style={[
+                                styles.secondRow,
+                                {
+                                    justifyContent: "space-between",
+                                    flexDirection: "row",
+                                },
+                            ]}
+                        >
+                            <Text style={[styles.headingText, { right: 0 }]}>
+                                Delivery Instructions:{" "}
+                            </Text>
+                            <Text>{dayjs(data.packing_date).format("DD/MM/YYYY")}</Text>
+                        </View>
+                        <View style={styles.thirdRow}>
+                            <Text style={styles.deliveryInstructionText}>
+                                {data.delivery_instructions}
+                            </Text>
+                        </View>
                     </View>
                 </View>
-                <View style={[styles.middleCol, { flexDirection: "column" }]}>
-                    <View style={styles.firstRow}>
-                        <Text style={styles.headingText}>Contact: </Text>
-                        <Text>{data.phone_number}</Text>
-                        <View style={{ flexDirection: "row" }}>
-                            <Text style={styles.headingText}>Packed: </Text>
-                            <Text>{data.packing_date}</Text>
-                        </View>
-                    </View>
-                    <View style={[styles.secondRow, { marginTop: "3px" }]}>
-                        <Text style={[styles.headingText, { right: 0 }]}>
-                            Delivery Instructions:{" "}
+                <View style={styles.secondHorizontalBlock}>
+                    <Text style={[styles.largeText, { alignSelf: "center", bottom: 0 }]}>
+                        {data.address_postcode ?? displayPostcodeForHomelessClient}
+                    </Text>
+                    <View style={{ flexDirection: "row", alignItems: "center", bottom: 0 }}>
+                        <Text style={styles.mediumText}>{data.packing_slot} </Text>
+                        <Text style={{ fontWeight: "bold", fontSize: "20pt" }}>|</Text>
+                        <Text style={styles.mediumText}>
+                            {" "}
+                            {data.collection_centre === "DLVR"
+                                ? "Delivery "
+                                : data.collection_centre + " "}
                         </Text>
+                        <FontAwesomeIconPdfComponent
+                            faIcon={data.collection_centre === "DLVR" ? faTruck : faShoePrints}
+                        ></FontAwesomeIconPdfComponent>
                     </View>
-                    <View style={styles.thirdRow}>
-                        <Text style={styles.deliveryInstructionText}>
-                            {data.delivery_instructions}
+                    <View style={{ right: 0, alignSelf: "center", bottom: 0 }}>
+                        <Text style={styles.mediumText}>
+                            {index + 1} of {quantity}
                         </Text>
-                    </View>
-                    <View
-                        style={[styles.fourthRow, { bottom: 0, justifyContent: "space-between" }]}
-                    >
-                        <View style={{ flexDirection: "row" }}>
-                            <Text style={styles.mediumText}>{data.packing_slot} </Text>
-                            <Text style={{ fontWeight: "bold", fontSize: "20pt" }}>|</Text>
-                            <Text style={styles.mediumText}>
-                                {" "}
-                                {data.collection_centre === "DLVR"
-                                    ? "Delivery "
-                                    : data.collection_centre + " "}
-                            </Text>
-                            <FontAwesomeIconPdfComponent
-                                faIcon={data.collection_centre === "DLVR" ? faTruck : faShoePrints}
-                            ></FontAwesomeIconPdfComponent>
-                        </View>
-                        <View style={{ alignSelf: "flex-end" }}>
-                            <Text style={styles.mediumText}>
-                                {index + 1} of {quantity}
-                            </Text>
-                        </View>
                     </View>
                 </View>
             </View>
@@ -183,16 +197,18 @@ const ShippingLabelsForSingleParcel: React.FC<ShippingLabelsForSingleParcelProps
 }) => {
     return (
         parcelDataForShippingLabel.label_quantity > 0 &&
-        [...Array(parcelDataForShippingLabel.label_quantity)].map((_, index: number) => {
-            return (
-                <SingleLabelCard
-                    key={index} // eslint-disable-line react/no-array-index-key
-                    data={parcelDataForShippingLabel}
-                    index={index}
-                    quantity={parcelDataForShippingLabel.label_quantity}
-                />
-            );
-        })
+        [...Array(parcelDataForShippingLabel.label_quantity)]
+            .filter(() => parcelDataForShippingLabel.full_name !== "Deleted Client")
+            .map((_, index: number) => {
+                return (
+                    <SingleLabelCard
+                        key={index} // eslint-disable-line react/no-array-index-key
+                        data={parcelDataForShippingLabel}
+                        index={index}
+                        quantity={parcelDataForShippingLabel.label_quantity}
+                    />
+                );
+            })
     );
 };
 

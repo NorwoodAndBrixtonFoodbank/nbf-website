@@ -9,7 +9,7 @@ import {
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ClientCardProps } from "@/app/clients/form/ClientForm";
 
-const MAX_CHARACTERS = 320;
+const MAX_CHARACTERS = 380;
 
 const DeliveryInstructionsCard: React.FC<ClientCardProps> = ({
     formErrors,
@@ -21,7 +21,7 @@ const DeliveryInstructionsCard: React.FC<ClientCardProps> = ({
         <GenericFormCard
             title="Delivery Instructions"
             required={false}
-            text="Please input not more than 320 characters."
+            text={`Please input not more than ${MAX_CHARACTERS} characters.`}
         >
             <FreeFormTextInput
                 label="For example, The doorbell does not work. Use the door code: xxxx."

@@ -2,7 +2,11 @@ import React from "react";
 import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
 import { ClientSummary, RequirementSummary } from "@/common/formatClientsData";
 import { HouseholdSummary } from "@/common/formatFamiliesData";
-import { formatCamelCaseKey, displayPostcodeForHomelessClient } from "@/common/format";
+import {
+    formatCamelCaseKey,
+    displayPostcodeForHomelessClient,
+    capitaliseWords,
+} from "@/common/format";
 import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import { Item, ShoppingListPdfData } from "@/pdf/ShoppingList/shoppingListPdfDataProps";
 import { faTruck, faShoePrints } from "@fortawesome/free-solid-svg-icons";
@@ -19,6 +23,7 @@ const styles = StyleSheet.create({
     page: {
         width: "97%",
         lineHeight: "1.2pt",
+        flexDirection: "column",
     },
     flexRow: {
         display: "flex",
@@ -28,19 +33,27 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
     },
+    pdfInfoSection: {
+        flexDirection: "row",
+        marginBottom: "15px",
+    },
+    pdfInfoLeftColumn: {
+        width: "80%",
+        flexDirection: "column",
+    },
     pdfHeader: {
         justifyContent: "space-between",
     },
     logoStyling: {
         maxWidth: "20%",
-        alignSelf: "center",
+        alignSelf: "flex-start",
     },
     infoCellNoBorder: {
         width: "100%",
     },
     infoCell: {
         width: "100%",
-        paddingTop: "5pt",
+        padding: "5pt",
         borderStyle: "solid",
         border: "1pt",
     },
@@ -84,7 +97,6 @@ const styles = StyleSheet.create({
     keyText: {
         fontSize: "11pt",
         fontFamily: "Helvetica-Bold",
-        textAlign: "left",
         paddingLeft: "2pt",
     },
     normalText: {
@@ -92,12 +104,13 @@ const styles = StyleSheet.create({
         fontFamily: "Helvetica",
         paddingLeft: "2pt",
     },
-    inputText: {
-        paddingTop: "10pt",
-    },
     tableCell: {
         borderStyle: "solid",
         border: "1pt",
+    },
+    itemList: {
+        alignItems: "center",
+        padding: "5pt",
     },
 });
 
@@ -106,10 +119,34 @@ interface OneLineProps {
     value: string;
 }
 
+const shouldDisplay = (header: string, value: string): boolean => {
+    return !(
+        (header === "NUMBER OF BABIES" && value === "0") ||
+        (header === "AGE AND GENDER OF CHILDREN" && value === "None")
+    );
+};
+
+const getDisplayValue = (header: string, value: string): string => {
+    switch (header) {
+        case "LIST TYPE":
+            return capitaliseWords(value);
+        case "HOUSEHOLD SIZE":
+            return value === "1 (1 Adult 0 Child)" ? "Single (1 Adult 0 Child)" : value;
+        case "AGE AND GENDER OF ADULTS":
+        case "AGE AND GENDER OF CHILDREN":
+            return value.replace(/M/g, "Male").replace(/F/g, "Female").replace(/O/g, "Other");
+        case "BABY PRODUCTS REQUIRED":
+            return value.includes("No") ? "None" : value;
+        default:
+            return value;
+    }
+};
+
 const OneLine: React.FC<OneLineProps> = ({ header, value }) => {
+    const displayValue = getDisplayValue(header, value);
     return (
         <Text style={styles.keyText}>
-            {header}: <Text style={styles.normalText}>{value}</Text>
+            {header}: <Text style={styles.normalText}>{displayValue}</Text>
         </Text>
     );
 };
@@ -137,14 +174,14 @@ const ItemToRow: React.FC<Item> = (item) => {
     return (
         <View style={[styles.flexRow, styles.tableRow]} wrap={false}>
             <View style={styles.tableDone} />
-            <View style={styles.tableItemDescription}>
-                <Text style={styles.normalText}>{item.description}</Text>
+            <View style={[styles.tableItemDescription, { justifyContent: "center" }]}>
+                <Text style={[styles.normalText, { padding: "2pt" }]}>{item.description}</Text>
             </View>
-            <View style={styles.tableQuantity}>
-                <Text style={styles.normalText}>{item.quantity}</Text>
+            <View style={[styles.tableQuantity, { justifyContent: "center" }]}>
+                <Text style={[styles.normalText, { padding: "2pt" }]}>{item.quantity}</Text>
             </View>
-            <View style={styles.tableNotes}>
-                <Text style={styles.normalText}>{item.notes}</Text>
+            <View style={[styles.tableNotes, { justifyContent: "center" }]}>
+                <Text style={[styles.normalText, { padding: "2pt" }]}>{item.notes}</Text>
             </View>
         </View>
     );
@@ -167,9 +204,13 @@ const DisplayItemsList: React.FC<DisplayItemsListProps> = ({ itemsList }) => {
 const DisplayAsBlockNoBorder: React.FC<BlockProps> = (data: BlockProps) => {
     return (
         <View style={styles.infoCellNoBorder}>
-            {Object.entries(data).map(([propKey, propValue]) => (
-                <OneLine key={propKey} header={formatCamelCaseKey(propKey)} value={propValue} />
-            ))}
+            {Object.entries(data)
+                .filter(([propKey, propValue]) =>
+                    shouldDisplay(formatCamelCaseKey(propKey), propValue)
+                )
+                .map(([propKey, propValue]) => (
+                    <OneLine key={propKey} header={formatCamelCaseKey(propKey)} value={propValue} />
+                ))}
         </View>
     );
 };
@@ -177,9 +218,13 @@ const DisplayAsBlockNoBorder: React.FC<BlockProps> = (data: BlockProps) => {
 const DisplayAsBlock: React.FC<BlockProps> = (data: BlockProps) => {
     return (
         <View style={styles.infoCell}>
-            {Object.entries(data).map(([propKey, propValue]) => (
-                <OneLine key={propKey} header={formatCamelCaseKey(propKey)} value={propValue} />
-            ))}
+            {Object.entries(data)
+                .filter(([propKey, propValue]) =>
+                    shouldDisplay(formatCamelCaseKey(propKey), propValue)
+                )
+                .map(([propKey, propValue]) => (
+                    <OneLine key={propKey} header={formatCamelCaseKey(propKey)} value={propValue} />
+                ))}
         </View>
     );
 };
@@ -223,27 +268,33 @@ const SingleShoppingList: React.FC<SingleShoppingListProps> = ({ parcelData }) =
     return (
         <Page size="A4" style={styles.sheet}>
             <View style={styles.page}>
-                <View style={[styles.flexRow, styles.pdfHeader]}>
-                    <View style={styles.flexColumn}>
-                        <View style={styles.flexRow}>
-                            <Text style={styles.title}>Shopping List</Text>
-                            <Text style={styles.title}>|</Text>
-                            <FontAwesomeIconPdfComponent
-                                faIcon={
-                                    parcelData.parcelInfo.collectionSite === "N/A - Delivery"
-                                        ? faTruck
-                                        : faShoePrints
-                                }
-                            ></FontAwesomeIconPdfComponent>
+                <View style={styles.pdfInfoSection}>
+                    <View style={styles.pdfInfoLeftColumn}>
+                        <View style={[styles.flexRow, styles.pdfHeader]}>
+                            <View style={styles.flexColumn}>
+                                <View style={styles.flexRow}>
+                                    <Text style={styles.title}>Shopping List</Text>
+                                    <Text style={styles.title}>|</Text>
+                                    <FontAwesomeIconPdfComponent
+                                        faIcon={
+                                            parcelData.parcelInfo.collectionSite ===
+                                            "N/A - Delivery"
+                                                ? faTruck
+                                                : faShoePrints
+                                        }
+                                    ></FontAwesomeIconPdfComponent>
+                                </View>
+                                <Text style={styles.subtitle}>
+                                    POSTCODE:{" "}
+                                    {parcelData.postcode ?? displayPostcodeForHomelessClient}
+                                </Text>
+                            </View>
                         </View>
-                        <Text style={styles.subtitle}>
-                            POSTCODE: {parcelData.postcode ?? displayPostcodeForHomelessClient}
-                        </Text>
+                        <DisplayAsBlockNoBorder {...parcelData.parcelInfo} />
                     </View>
                     {/* eslint-disable-next-line jsx-a11y/alt-text -- React-PDF Image doesn't  have alt text property*/}
                     <Image src="/logo.png" style={[styles.flexRow, styles.logoStyling]} />
                 </View>
-                <DisplayAsBlockNoBorder {...parcelData.parcelInfo} />
                 <DisplayClientSummary {...parcelData.clientSummary} />
                 <View style={styles.flexRow}>
                     <DisplayAsBlock {...parcelData.householdSummary} />
@@ -255,21 +306,21 @@ const SingleShoppingList: React.FC<SingleShoppingListProps> = ({ parcelData }) =
                 </View>
                 <View style={styles.flexColumn} wrap={false}>
                     <View style={[styles.flexRow, styles.infoCell]}>
-                        <Text style={[styles.keyText, { paddingTop: "5pt" }]}>
-                            Warehouse Manager Notes
-                        </Text>
+                        <Text style={[styles.keyText]}>Warehouse Manager Notes</Text>
                     </View>
                     <View style={[styles.flexRow, styles.infoCell]}>
                         <Text style={styles.normalText}>{parcelData.endNotes}</Text>
                     </View>
                     <View style={[styles.flexRow, styles.infoCell]}>
-                        <Text style={[styles.keyText, styles.inputText]}>Date Packed:</Text>
+                        <Text style={[styles.keyText, { alignSelf: "center" }]}>Date Packed:</Text>
                     </View>
                     <View style={[styles.flexRow, styles.infoCell]}>
-                        <Text style={[styles.keyText, styles.inputText]}>Packer Name:</Text>
+                        <Text style={[styles.keyText, { alignSelf: "center" }]}>Packer Name:</Text>
                     </View>
                     <View style={[styles.flexRow, styles.infoCell]}>
-                        <Text style={[styles.keyText, styles.inputText]}>Packer Signature:</Text>
+                        <Text style={[styles.keyText, { alignSelf: "center" }]}>
+                            Packer Signature:
+                        </Text>
                     </View>
                 </View>
             </View>

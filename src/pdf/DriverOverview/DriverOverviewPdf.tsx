@@ -4,7 +4,7 @@ import React from "react";
 import { Text, Document, Page, View, StyleSheet, Image } from "@react-pdf/renderer";
 import { displayNameForNullDriverName, displayPostcodeForHomelessClient } from "@/common/format";
 import { faTruck, faShoePrints, IconDefinition } from "@fortawesome/free-solid-svg-icons";
-import FontAwesomeIconPdfComponent from "../FontAwesomeIconPdfComponent";
+import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
 
 export interface DriverOverviewRowData {
     name: string;
@@ -56,55 +56,51 @@ const styles = StyleSheet.create({
         width: "100%",
     },
     informationContainer: {
-        border: "2 solid black",
-        alignSelf: "flex-start",
+        border: "1 solid black",
         margin: 10,
         padding: 10,
+        width: "100%",
+        alignItems: "center",
+        lineHeight: 1.5,
     },
     h1text: {
         fontSize: 24,
-        paddingLeft: 10,
         paddingRight: 20,
         paddingBottom: 5,
     },
     h2text: {
-        fontSize: 12,
-        paddingLeft: 10,
+        fontSize: 14,
+    },
+    h3text: {
+        fontSize: 10,
     },
     logoStyling: {
         maxHeight: 60,
         maxWidth: 102, // maintains aspect ratio of logo
-        alignSelf: "center",
+        align: "left",
         marginRight: 15,
     },
     warningSection: {
         width: "100%",
         paddingBottom: 10,
     },
-    h3text: {
-        fontSize: 8,
-        paddingLeft: 15,
-        paddingTop: 5,
-    },
     tableContainer: {
         width: "100%",
     },
     tableSection: {
         width: "100%",
-        borderTop: "none",
-        borderBottom: "1px solid black",
         marginBottom: "15px",
     },
     tableRow: {
         width: "100%",
-        fontSize: 8,
+        fontSize: 10,
         borderLeft: "1px solid black",
-        borderRight: "1px solid black",
+        borderBottom: "1px solid black",
+        lineHeight: 1.5,
     },
     tableColumn: {
         padding: 5,
-        border: "1 solid black",
-        margin: 0.3,
+        borderRight: "1px solid black",
     },
     flexColumn: {
         flexDirection: "column",
@@ -116,9 +112,11 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     tableHeader: {
-        border: "1 solid black",
-        borderBottom: "none",
         fontSize: 12,
+        borderLeft: "1px solid black",
+        borderBottom: "1px solid black",
+        borderTop: "1px solid black",
+        height: 40,
     },
     nameColumnWidth: {
         width: "15%",
@@ -127,28 +125,45 @@ const styles = StyleSheet.create({
         width: "20%",
     },
     contactColumnWidth: {
-        width: "20%",
+        width: "15%",
     },
     packingDateColumnWidth: {
-        width: "20%",
-    },
-    instructionsColumnWidth: {
-        width: "20%",
+        width: "13%",
     },
     numberOfLabelsColumnWidth: {
-        width: "20%",
+        width: "8%",
+    },
+    instructionsColumnWidth: {
+        width: "40%",
     },
     collectionOrDeliveryHeader: {
         marginRight: "5px",
         marginBottom: "5px",
         alignSelf: "flex-start",
+        fontSize: 15,
+        backgroundColor: "#d3d3d3",
+    },
+    DriverOverviewBoard: {
+        flexDirection: "row",
+        width: "100%",
+        justifyContent: "space-between",
     },
 });
 
 const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
     const createHeader = (category: Method): React.JSX.Element => {
         return (
-            <View style={[styles.tableHeader, styles.flexRow]}>
+            <View
+                style={[
+                    styles.tableHeader,
+                    styles.flexRow,
+                    {
+                        textDecoration: "underline",
+                        fontFamily: "Helvetica-Bold",
+                        fontSize: 13,
+                    },
+                ]}
+            >
                 <View style={[styles.tableColumn, styles.nameColumnWidth]}>
                     <Text>Name</Text>
                 </View>
@@ -161,11 +176,11 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                 <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
                     <Text>Packing Date</Text>
                 </View>
+                <View style={[styles.tableColumn, styles.numberOfLabelsColumnWidth]}>
+                    <Text>Parcels</Text>
+                </View>
                 <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
                     <Text>Instructions</Text>
-                </View>
-                <View style={[styles.tableColumn, styles.numberOfLabelsColumnWidth]}>
-                    <Text>Number of Parcels</Text>
                 </View>
             </View>
         );
@@ -205,11 +220,11 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
                 <View style={[styles.tableColumn, styles.packingDateColumnWidth]}>
                     <Text>{rowData.packingDate || "No recorded date"}</Text>
                 </View>
-                <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
-                    <Text>{rowData.instructions}</Text>
-                </View>
                 <View style={[styles.tableColumn, styles.numberOfLabelsColumnWidth]}>
                     <Text>{rowData.numberOfLabels || "No labels downloaded"}</Text>
+                </View>
+                <View style={[styles.tableColumn, styles.instructionsColumnWidth]}>
+                    <Text>{rowData.instructions}</Text>
                 </View>
             </View>
         );
@@ -224,7 +239,14 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
         return (
             <View style={styles.tableContainer}>
                 <View style={[styles.h2text, styles.collectionOrDeliveryHeader, styles.flexRow]}>
-                    <Text style={[styles.collectionOrDeliveryHeader]}>{name}</Text>
+                    <Text
+                        style={[
+                            styles.collectionOrDeliveryHeader,
+                            { fontFamily: "Helvetica-Bold" },
+                        ]}
+                    >
+                        {name}
+                    </Text>
                     <FontAwesomeIconPdfComponent faIcon={icon}></FontAwesomeIconPdfComponent>
                 </View>
                 <View style={[styles.flexColumn, { width: "100%" }]}>{header}</View>
@@ -235,8 +257,12 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
 
     const deliveriesHeader: React.JSX.Element = createHeader(Method.Delivery);
     const collectionsHeader: React.JSX.Element = createHeader(Method.Collection);
-    const collections: React.JSX.Element[] = data.tableData.collections.map(createRow);
-    const deliveries: React.JSX.Element[] = data.tableData.deliveries.map(createRow);
+    const collections: React.JSX.Element[] = data.tableData.collections
+        .filter((row) => row.name !== "Deleted Client")
+        .map(createRow);
+    const deliveries: React.JSX.Element[] = data.tableData.deliveries
+        .filter((row) => row.name !== "Deleted Client")
+        .map(createRow);
 
     const collectionsTable = createTable(
         "Collections",
@@ -248,27 +274,38 @@ const DriverOverviewCard: React.FC<DriverOverviewCardProps> = ({ data }) => {
 
     return (
         <Document>
-            <Page size="A4" style={[styles.container, styles.flexColumn]}>
-                <View style={[styles.infoAndLogoContainer, styles.flexRow]}>
-                    <View style={styles.informationContainer}>
-                        <Text style={styles.h1text}>Driver Overview</Text>
-                        <Text style={styles.h2text}>
+            <Page size="A4" orientation="landscape" style={[styles.container, styles.flexColumn]}>
+                <View style={styles.DriverOverviewBoard}>
+                    <View style={{ flexDirection: "column", fontFamily: "Helvetica-Bold" }}>
+                        <Text style={[styles.h1text, { marginBottom: "20px" }]}>
+                            Driver Overview
+                        </Text>
+                        <Text style={[styles.h2text, { marginBottom: "20px" }]}>
                             Driver Name: {data.driverName ?? displayNameForNullDriverName}
                         </Text>
-                        <Text style={styles.h2text}>Date: {data.date.toLocaleDateString()} </Text>
+                        <Text style={[styles.h3text, { marginBottom: "20px" }]}>
+                            Date: {data.date.toLocaleDateString()}{" "}
+                        </Text>
                     </View>
                     {/* eslint-disable-next-line -- needed to remove the need for alt text on the logo */}
                     <Image src="/logo.png" style={styles.logoStyling}></Image>
                 </View>
-                <View style={styles.warningSection}>
-                    <Text style={styles.h3text}>{data.message}</Text>
-                    <Text style={[styles.h3text, { fontFamily: "Helvetica-Bold" }]}>
+                {deliveries.length && deliveriesTable}
+                {collections.length && collectionsTable}
+                <View style={[styles.informationContainer, { alignSelf: "center" }]}>
+                    <Text style={[styles.h3text, { textAlign: "center", marginBottom: "5px" }]}>
+                        {data.message}
+                    </Text>
+                    <Text
+                        style={[
+                            styles.h3text,
+                            { fontFamily: "Helvetica-Bold", textAlign: "center" },
+                        ]}
+                    >
                         THIS SHEET MUST BE DESTROYED OR RETURNED TO THE WAREHOUSE IMMEDIATELY ON
                         COMPLETION OF DELIVERIES
                     </Text>
                 </View>
-                {deliveries.length && deliveriesTable}
-                {collections.length && collectionsTable}
             </Page>
         </Document>
     );
