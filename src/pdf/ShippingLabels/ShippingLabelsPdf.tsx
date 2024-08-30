@@ -91,108 +91,97 @@ interface LabelCardProps {
 }
 
 const SingleLabelCard: React.FC<LabelCardProps> = ({ data, index, quantity }) => {
-    if (data.full_name === "Deleted Client") {
-        return null;
-    } else {
-        return (
-            <Page size={LABEL_SIZE_PIXELS} style={styles.page}>
-                <View style={styles.cardWrapper} wrap={true}>
-                    <View style={styles.firstHorizontalBlock}>
-                        <View
-                            style={[
-                                styles.leftCol,
-                                { flexDirection: "column", marginRight: "3px" },
-                            ]}
-                        >
-                            <View style={styles.firstRow}>
-                                <Text style={[styles.headingText, { flexWrap: "wrap" }]}>
-                                    Name:{" "}
-                                </Text>
-                            </View>
-                            <View style={[styles.secondRow, { marginBottom: "10px" }]}>
-                                <Text style={[styles.fullNameText, { flexWrap: "wrap" }]}>
-                                    {data.full_name}
-                                </Text>
-                            </View>
-                            <View style={styles.thirdRow}>
-                                {data.address_postcode && (
-                                    <>
-                                        <Text>
-                                            {data.address_1}
-                                            <br />
-                                        </Text>
-                                        <Text>
-                                            {data.address_2}
-                                            <br />
-                                        </Text>
-                                        <Text>
-                                            {data.address_town}
-                                            <br />
-                                        </Text>
-                                        <Text>
-                                            {data.address_county}
-                                            <br />
-                                        </Text>
-                                    </>
-                                )}
-                            </View>
+    return (
+        <Page size={LABEL_SIZE_PIXELS} style={styles.page}>
+            <View style={styles.cardWrapper} wrap={true}>
+                <View style={styles.firstHorizontalBlock}>
+                    <View style={[styles.leftCol, { flexDirection: "column", marginRight: "3px" }]}>
+                        <View style={styles.firstRow}>
+                            <Text style={[styles.headingText, { flexWrap: "wrap" }]}>Name: </Text>
                         </View>
-                        <View style={[styles.rightCol, { flexDirection: "column" }]}>
-                            <View style={styles.firstRow}>
-                                <View style={{ flexDirection: "row" }}>
-                                    <Text style={styles.headingText}>Contact: </Text>
-                                    <Text>{data.phone_number}</Text>
-                                </View>
-                                <Text style={styles.headingText}>Packed:</Text>
-                            </View>
-                            <View
-                                style={[
-                                    styles.secondRow,
-                                    {
-                                        justifyContent: "space-between",
-                                        flexDirection: "row",
-                                    },
-                                ]}
-                            >
-                                <Text style={[styles.headingText, { right: 0 }]}>
-                                    Delivery Instructions:{" "}
-                                </Text>
-                                <Text>{dayjs(data.packing_date).format("DD/MM/YYYY")}</Text>
-                            </View>
-                            <View style={styles.thirdRow}>
-                                <Text style={styles.deliveryInstructionText}>
-                                    {data.delivery_instructions}
-                                </Text>
-                            </View>
+                        <View style={[styles.secondRow, { marginBottom: "10px" }]}>
+                            <Text style={[styles.fullNameText, { flexWrap: "wrap" }]}>
+                                {data.full_name}
+                            </Text>
+                        </View>
+                        <View style={styles.thirdRow}>
+                            {data.address_postcode && (
+                                <>
+                                    <Text>
+                                        {data.address_1}
+                                        <br />
+                                    </Text>
+                                    <Text>
+                                        {data.address_2}
+                                        <br />
+                                    </Text>
+                                    <Text>
+                                        {data.address_town}
+                                        <br />
+                                    </Text>
+                                    <Text>
+                                        {data.address_county}
+                                        <br />
+                                    </Text>
+                                </>
+                            )}
                         </View>
                     </View>
-                    <View style={styles.secondHorizontalBlock}>
-                        <Text style={[styles.largeText, { alignSelf: "center", bottom: 0 }]}>
-                            {data.address_postcode ?? displayPostcodeForHomelessClient}
-                        </Text>
-                        <View style={{ flexDirection: "row", alignItems: "center", bottom: 0 }}>
-                            <Text style={styles.mediumText}>{data.packing_slot} </Text>
-                            <Text style={{ fontWeight: "bold", fontSize: "20pt" }}>|</Text>
-                            <Text style={styles.mediumText}>
-                                {" "}
-                                {data.collection_centre === "DLVR"
-                                    ? "Delivery "
-                                    : data.collection_centre + " "}
-                            </Text>
-                            <FontAwesomeIconPdfComponent
-                                faIcon={data.collection_centre === "DLVR" ? faTruck : faShoePrints}
-                            ></FontAwesomeIconPdfComponent>
+                    <View style={[styles.rightCol, { flexDirection: "column" }]}>
+                        <View style={styles.firstRow}>
+                            <View style={{ flexDirection: "row" }}>
+                                <Text style={styles.headingText}>Contact: </Text>
+                                <Text>{data.phone_number}</Text>
+                            </View>
+                            <Text style={styles.headingText}>Packed:</Text>
                         </View>
-                        <View style={{ right: 0, alignSelf: "center", bottom: 0 }}>
-                            <Text style={styles.mediumText}>
-                                {index + 1} of {quantity}
+                        <View
+                            style={[
+                                styles.secondRow,
+                                {
+                                    justifyContent: "space-between",
+                                    flexDirection: "row",
+                                },
+                            ]}
+                        >
+                            <Text style={[styles.headingText, { right: 0 }]}>
+                                Delivery Instructions:{" "}
+                            </Text>
+                            <Text>{dayjs(data.packing_date).format("DD/MM/YYYY")}</Text>
+                        </View>
+                        <View style={styles.thirdRow}>
+                            <Text style={styles.deliveryInstructionText}>
+                                {data.delivery_instructions}
                             </Text>
                         </View>
                     </View>
                 </View>
-            </Page>
-        );
-    }
+                <View style={styles.secondHorizontalBlock}>
+                    <Text style={[styles.largeText, { alignSelf: "center", bottom: 0 }]}>
+                        {data.address_postcode ?? displayPostcodeForHomelessClient}
+                    </Text>
+                    <View style={{ flexDirection: "row", alignItems: "center", bottom: 0 }}>
+                        <Text style={styles.mediumText}>{data.packing_slot} </Text>
+                        <Text style={{ fontWeight: "bold", fontSize: "20pt" }}>|</Text>
+                        <Text style={styles.mediumText}>
+                            {" "}
+                            {data.collection_centre === "DLVR"
+                                ? "Delivery "
+                                : data.collection_centre + " "}
+                        </Text>
+                        <FontAwesomeIconPdfComponent
+                            faIcon={data.collection_centre === "DLVR" ? faTruck : faShoePrints}
+                        ></FontAwesomeIconPdfComponent>
+                    </View>
+                    <View style={{ right: 0, alignSelf: "center", bottom: 0 }}>
+                        <Text style={styles.mediumText}>
+                            {index + 1} of {quantity}
+                        </Text>
+                    </View>
+                </View>
+            </View>
+        </Page>
+    );
 };
 
 export interface ShippingLabelsPdfProps {
@@ -208,16 +197,18 @@ const ShippingLabelsForSingleParcel: React.FC<ShippingLabelsForSingleParcelProps
 }) => {
     return (
         parcelDataForShippingLabel.label_quantity > 0 &&
-        [...Array(parcelDataForShippingLabel.label_quantity)].map((_, index: number) => {
-            return (
-                <SingleLabelCard
-                    key={index} // eslint-disable-line react/no-array-index-key
-                    data={parcelDataForShippingLabel}
-                    index={index}
-                    quantity={parcelDataForShippingLabel.label_quantity}
-                />
-            );
-        })
+        [...Array(parcelDataForShippingLabel.label_quantity)]
+            .filter(() => parcelDataForShippingLabel.full_name !== "Deleted Client")
+            .map((_, index: number) => {
+                return (
+                    <SingleLabelCard
+                        key={index} // eslint-disable-line react/no-array-index-key
+                        data={parcelDataForShippingLabel}
+                        index={index}
+                        quantity={parcelDataForShippingLabel.label_quantity}
+                    />
+                );
+            })
     );
 };
 
