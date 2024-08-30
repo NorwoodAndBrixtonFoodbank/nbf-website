@@ -185,3 +185,4 @@ You can regenerate the types
 - [Design Choices](./docs/design-choices.md)
 - [E2E Testing](./docs/e2e-testing.md)
 - [Disaster Recovery Plan](./docs/disaster-recovery-plan.md)
+- [Loggings](./docs/logging.md)
