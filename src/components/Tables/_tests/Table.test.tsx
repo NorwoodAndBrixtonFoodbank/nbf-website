@@ -1,14 +1,6 @@
 import React from "react";
 import "@testing-library/jest-dom/jest-globals";
-import {
-    render,
-    cleanup,
-    screen,
-    fireEvent,
-    within,
-    getByLabelText,
-    act,
-} from "@testing-library/react";
+import { render, cleanup, screen, fireEvent, within, act } from "@testing-library/react";
 import { ClientPaginatedTable } from "@/components/Tables/Table";
 import StyleManager from "@/app/themes";
 import {
@@ -23,7 +15,6 @@ import {
 import { expect, it } from "@jest/globals";
 import { TableWrapperForTest } from "./TableWrapperForTests";
 import userEvent from "@testing-library/user-event";
-import { SortOrder } from "react-data-table-component";
 
 describe("Table without features", () => {
     beforeEach(() => {
@@ -722,22 +713,28 @@ describe("Table with column display functions", () => {
             expect(screen.getByText(data.full_name.toUpperCase())).toBeInTheDocument();
         });
     });
-})
+});
 
 describe("Table with sorting", () => {
     const mockSortMethod = jest.fn();
-    
+
     beforeEach(() => {
         render(
             <StyleManager>
                 <TableWrapperForTest
                     mockData={fakeMidData}
                     mockHeaders={fakeDataHeaders}
-                    testableContent={{ sortingFlags: { isSortingOptionsIncluded: true, isDefaultSortIncluded: false, sortMethod: mockSortMethod } }}
+                    testableContent={{
+                        sortingFlags: {
+                            isSortingOptionsIncluded: true,
+                            isDefaultSortIncluded: false,
+                            sortMethod: mockSortMethod,
+                        },
+                    }}
                 />
             </StyleManager>
         );
-    })
+    });
 
     afterEach(cleanup);
 
@@ -746,7 +743,7 @@ describe("Table with sorting", () => {
         expect(mockSortMethod).not.toHaveBeenCalled();
     });
 
-    it("should trigger sort function with correct asc or desc argument", () => {  
+    it("should trigger sort function with correct asc or desc argument", () => {
         fireEvent.click(screen.getByText(fakeDataHeaders[0][1]));
         expect(mockSortMethod).toHaveBeenCalledWith("asc");
         fireEvent.click(screen.getByText("Name"));
@@ -756,18 +753,24 @@ describe("Table with sorting", () => {
 
 describe("Table with default sort", () => {
     const mockSortMethod = jest.fn();
-    
+
     beforeEach(() => {
         render(
             <StyleManager>
                 <TableWrapperForTest
                     mockData={fakeMidData}
                     mockHeaders={fakeDataHeaders}
-                    testableContent={{ sortingFlags: { isSortingOptionsIncluded: true, isDefaultSortIncluded: true, sortMethod: mockSortMethod } }}
+                    testableContent={{
+                        sortingFlags: {
+                            isSortingOptionsIncluded: true,
+                            isDefaultSortIncluded: true,
+                            sortMethod: mockSortMethod,
+                        },
+                    }}
                 />
             </StyleManager>
         );
-    })
+    });
 
     afterEach(cleanup);
 
@@ -776,5 +779,4 @@ describe("Table with default sort", () => {
         fireEvent.click(screen.getByText(fakeDataHeaders[0][1]));
         expect(mockSortMethod).toHaveBeenCalledWith("desc");
     });
-
 });

@@ -18,7 +18,11 @@ interface TestableContent {
         additionalFilters: ClientSideFilter<TestData, string>[];
     };
     isPaginationIncluded?: boolean;
-    sortingFlags?: { isSortingOptionsIncluded: boolean; isDefaultSortIncluded: boolean; sortMethod: (sortOrder: SortOrder) => void };
+    sortingFlags?: {
+        isSortingOptionsIncluded: boolean;
+        isDefaultSortIncluded: boolean;
+        sortMethod: (sortOrder: SortOrder) => void;
+    };
     isRowEditableIncluded?: boolean;
     isHeaderTogglesIncluded?: boolean;
     isColumnDisplayFunctionsIncluded?: boolean;

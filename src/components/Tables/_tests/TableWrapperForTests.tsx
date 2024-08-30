@@ -1,10 +1,5 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import {
-    fullNameTextFilterTest,
-    MockTableProps,
-    TestData,
-    typeButtonFilterTest,
-} from "./TestingDataAndFuntions";
+import React, { useEffect, useState } from "react";
+import { MockTableProps, TestData } from "./TestingDataAndFuntions";
 import {
     CheckboxConfig,
     ClientPaginatedTable,
@@ -20,7 +15,6 @@ import {
 import { ClientSideSortMethod } from "../sortMethods";
 import { SortOrder } from "react-data-table-component";
 import { ClientSideFilter } from "../Filters";
-import { is } from "cypress/types/bluebird";
 
 export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
     mockData,
@@ -29,7 +23,11 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
         isCheckboxIncluded = false,
         filters = undefined,
         isPaginationIncluded = false,
-        sortingFlags = { isSortingOptionsIncluded: false, isDefaultSortIncluded: false, sortMethod: undefined },
+        sortingFlags = {
+            isSortingOptionsIncluded: false,
+            isDefaultSortIncluded: false,
+            sortMethod: undefined,
+        },
         isRowEditableIncluded = false,
         isHeaderTogglesIncluded = false,
         isColumnDisplayFunctionsIncluded = false,
@@ -140,7 +138,7 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
         .filter((key, index) => key !== "id" && index % 2 == 0)) {
         sortableColumns.push({
             key: key,
-            sortMethod: sortingFlags.sortMethod ? sortingFlags.sortMethod : (_)=>{},
+            sortMethod: sortingFlags.sortMethod ? sortingFlags.sortMethod : () => undefined,
         });
     }
 
@@ -177,7 +175,7 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
               onDelete: (row_num) => {
                   setShownText("Delete clicked: " + row_num);
               },
-              onSwapRows: async (_, __) => {},
+              onSwapRows: async () => undefined,
               isDeletable: (row) => row.id != "0",
           }
         : { editable: false };
@@ -206,9 +204,11 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
         : undefined;
 
     //Create column display functions
-    const columnDisplayFunction = isColumnDisplayFunctionsIncluded ? {
-        full_name: (fullName: TestData["full_name"]) => fullName.toUpperCase(),
-    } : undefined;
+    const columnDisplayFunction = isColumnDisplayFunctionsIncluded
+        ? {
+              full_name: (fullName: TestData["full_name"]) => fullName.toUpperCase(),
+          }
+        : undefined;
 
     //Render table with mock content
     return (
