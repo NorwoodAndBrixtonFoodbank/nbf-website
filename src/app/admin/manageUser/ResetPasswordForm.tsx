@@ -88,6 +88,7 @@ const ResetPasswordForm: React.FC<Props> = ({ userToEdit, onCancel, onConfirm })
                     variant="outlined"
                     startIcon={<FontAwesomeIcon icon={faKey} />}
                     onClick={onConfirmPassword}
+                    type="submit"
                 >
                     Confirm Password
                 </Button>
