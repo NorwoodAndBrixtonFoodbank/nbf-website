@@ -1,17 +1,10 @@
 import { LIST_TYPES_ARRAY } from "@/common/fetch";
 import { buttonGroupFilter, filterRowbyButton } from "../ButtonFilter";
 import { buildClientSideTextFilter, filterRowByText } from "../TextFilter";
-import { TableHeaders } from "../Table";
 import { ClientSideFilter } from "../Filters";
 import { SortOrder } from "react-data-table-component/dist/DataTable/types";
 
-export interface MockTableProps<Data> {
-    mockData: Data[];
-    mockHeaders: TableHeaders<Data>;
-    testableContent: TestableContent;
-}
-
-interface TestableContent {
+export interface TestTableWrapperConfig {
     isCheckboxIncluded?: boolean;
     filters?: {
         primaryFilters: ClientSideFilter<TestData, string>[];
@@ -138,10 +131,6 @@ export const fakeDataHeaders = [
     ["phone_number", "Phone Number"],
     ["type", "Type"],
 ] as const;
-
-export const selectorForRowCheckboxWithAriaLabel = (ariaLabel: string): string => {
-    return "span[aria-label='" + ariaLabel + "'] > input[type='checkbox']";
-};
 
 export const fullNameTextFilterTest = buildClientSideTextFilter<TestData>({
     key: "full_name",

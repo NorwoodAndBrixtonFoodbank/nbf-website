@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { MockTableProps, TestData } from "./TestingDataAndFuntions";
+import { TestTableWrapperConfig, TestData } from "./testHelpers";
 import {
     CheckboxConfig,
     ClientPaginatedTable,
@@ -11,12 +11,19 @@ import {
     SortConfig,
     SortOptions,
     SortState,
+    TableHeaders,
 } from "../Table";
 import { ClientSideSortMethod } from "../sortMethods";
 import { SortOrder } from "react-data-table-component";
 import { ClientSideFilter } from "../Filters";
 
-export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
+interface MockTableProps {
+    mockData: TestData[];
+    mockHeaders: TableHeaders<TestData>;
+    testableContent: TestTableWrapperConfig;
+}
+
+const WrappedTableForTest: React.FC<MockTableProps> = ({
     mockData,
     mockHeaders,
     testableContent: {
@@ -34,12 +41,10 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
         isRowClickIncluded = false,
     },
 }) => {
-    //to show text on page when action occurs
     const [shownText, setShownText] = useState<string>("");
 
     const [testDataPortion, setTestDataPortion] = useState<TestData[]>(mockData);
 
-    //Checkbox setup
     const [checkedRowIds, setCheckedRowIds] = useState<string[]>([]);
     const [isAllCheckBoxSelected, setAllCheckBoxSelected] = useState(false);
 
@@ -64,7 +69,7 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
                   });
               },
               onAllCheckboxClicked: () => {
-                  if (isAllCheckBoxSelected === true) {
+                  if (isAllCheckBoxSelected) {
                       setCheckedRowIds([]);
                       setAllCheckBoxSelected(false);
                   } else {
@@ -76,7 +81,6 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
           }
         : { displayed: false };
 
-    //Filters setup
     const [primaryFilters, setPrimaryFilters] = useState<ClientSideFilter<TestData, string>[]>(
         filters ? filters.primaryFilters : []
     );
@@ -95,7 +99,6 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
           }
         : { primaryFiltersShown: false, additionalFiltersShown: false };
 
-    //Pagination setup
     const [perPage, setPerPage] = useState(7);
     const [currentPage, setCurrentPage] = useState(1);
     const startPoint = (currentPage - 1) * perPage;
@@ -125,7 +128,6 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
         setTestDataPortion(secondaryFilteredData.slice(startPoint, endPoint + 1));
     }, [primaryFilters, additionalFilters, startPoint, endPoint, mockData]);
 
-    //Sorting setup
     const [sortState, setSortState] = useState<SortState<TestData, ClientSideSortMethod>>({
         sortEnabled: false,
     });
@@ -164,7 +166,6 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
         }
     }, [sortState, testDataPortion]);
 
-    //Editable setup
     const editableConfig: EditableConfig<TestData> = isRowEditableIncluded
         ? {
               editable: true,
@@ -180,7 +181,6 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
           }
         : { editable: false };
 
-    //Header toggles setup
     const defaultShownHeaders: (keyof TestData)[] | undefined = isHeaderTogglesIncluded
         ? mockHeaders
               .map(([key, _]) => {
@@ -188,6 +188,7 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
               })
               .slice(0, mockHeaders.length - 1)
         : undefined;
+
     const toggleableHeaders: (keyof TestData)[] | undefined = isHeaderTogglesIncluded
         ? mockHeaders
               .map(([key, _]) => {
@@ -196,21 +197,18 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
               .slice(1, mockHeaders.length)
         : undefined;
 
-    //Create onRowClick function
     const onRowClick: OnRowClickFunction<TestData> | undefined = isRowClickIncluded
         ? (row) => {
               setShownText("row clicked " + row.data[mockHeaders[0][0]]);
           }
         : undefined;
 
-    //Create column display functions
     const columnDisplayFunction = isColumnDisplayFunctionsIncluded
         ? {
               full_name: (fullName: TestData["full_name"]) => fullName.toUpperCase(),
           }
         : undefined;
 
-    //Render table with mock content
     return (
         <>
             <ClientPaginatedTable
@@ -231,3 +229,5 @@ export const TableWrapperForTest: React.FC<MockTableProps<TestData>> = ({
         </>
     );
 };
+
+export default WrappedTableForTest;

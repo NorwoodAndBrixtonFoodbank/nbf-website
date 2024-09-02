@@ -365,7 +365,7 @@ const Table = <
                                 onClick={() => swapRows(row.rowId, true)}
                                 aria-label="reorder row upwards"
                                 disabled={isSwapping}
-                                data-testid={"move up row " + row.rowId}
+                                data-testid={`button-move-row-up-${row.rowId}`}
                             >
                                 <StyledIcon icon={faAnglesUp} />
                             </StyledIconButton>
@@ -374,7 +374,7 @@ const Table = <
                             <StyledIconButton
                                 onClick={() => editableConfig.onEdit?.(row.rowId)}
                                 aria-label="edit"
-                                data-testid={"edit row " + row.rowId}
+                                data-testid={`button-edit-row-${row.rowId}`}
                             >
                                 <StyledIcon icon={faPenToSquare} />
                             </StyledIconButton>
@@ -384,7 +384,7 @@ const Table = <
                                 onClick={() => swapRows(row.rowId, false)}
                                 aria-label="reorder row downwards"
                                 disabled={isSwapping}
-                                data-testid={"move down row " + row.rowId}
+                                data-testid={`button-move-row-down-${row.rowId}`}
                             >
                                 <StyledIcon icon={faAnglesDown} />
                             </StyledIconButton>
@@ -397,7 +397,7 @@ const Table = <
                                     }
                                 }}
                                 aria-label="delete"
-                                data-testid={"delete row " + row.rowId}
+                                data-testid={`button-delete-row-${row.rowId}`}
                             >
                                 <StyledIcon icon={faTrashAlt} />
                             </StyledIconButton>

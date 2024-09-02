@@ -25,7 +25,7 @@ const CheckboxGroupInput: React.FC<Props> = (props) => {
                                     name={key}
                                     onChange={props.onChange}
                                     defaultChecked={props.defaultCheckedKeys?.includes(key)}
-                                    data-testid={"option: " + key}
+                                    data-testid={`option-${key}`}
                                 />
                             }
                         />
