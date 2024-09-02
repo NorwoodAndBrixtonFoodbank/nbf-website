@@ -1,4 +1,7 @@
 import { TextDecoder, TextEncoder } from "node:util";
+import { config } from "dotenv";
+
+config({ path: ".env.test" });
 
 Object.defineProperties(globalThis, {
     TextDecoder: { value: TextDecoder },
