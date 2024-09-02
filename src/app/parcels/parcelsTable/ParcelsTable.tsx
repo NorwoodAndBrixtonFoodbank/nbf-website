@@ -92,7 +92,6 @@ const ParcelsTable: React.FC<ParcelsTableProps> = ({
 }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [parcelsDataPortion, setParcelsDataPortion] = useState<ParcelsTableRow[]>([]);
-    const [filteredParcelCount, setFilteredParcelCount] = useState<number>(0);
 
     const [parcelRowBreakPointConfig, setParcelRowBreakPointConfig] = useState<BreakPointConfig[]>(
         []
@@ -190,7 +189,6 @@ const ParcelsTable: React.FC<ParcelsTableProps> = ({
                 }
             } else {
                 setParcelsDataPortion(data.parcelTableRows);
-                setFilteredParcelCount(data.count);
                 if (sortState.sortEnabled && sortState.column.headerKey) {
                     setParcelRowBreakPointConfig(
                         searchForBreakPoints(sortState.column.headerKey, data.parcelTableRows)
@@ -226,15 +224,17 @@ const ParcelsTable: React.FC<ParcelsTableProps> = ({
         }
     }, [areFiltersLoadingForFirstTime, fetchAndDisplayParcelsData]);
 
-    const packingManagerViewDataPortion = (
-        parcelsDataPortion: ParcelsTableRow[]
-    ): ParcelsTableRow[] => {
-        return parcelsDataPortion.filter((parcel) => {
-            if (shouldBeInPackingManagerView(parcel, today, yesterday)) {
-                return parcel;
-            }
-        });
-    };
+    const packingManagerViewDataPortion = useMemo(
+        () =>
+            parcelsDataPortion.filter((parcel) =>
+                shouldBeInPackingManagerView(parcel, today, yesterday)
+            ),
+        [parcelsDataPortion, today, yesterday]
+    );
+
+    const filteredParcelCount = isPackingManagerView
+        ? packingManagerViewDataPortion.length
+        : parcelsDataPortion.length;
 
     const loadCountAndDataWithTimer = (): void => {
         if (fetchParcelsTimer.current) {
@@ -328,9 +328,7 @@ const ParcelsTable: React.FC<ParcelsTableProps> = ({
         <TableSurface>
             <ServerPaginatedTable<ParcelsTableRow, DbParcelRow, string | DateRangeState | string[]>
                 dataPortion={
-                    isPackingManagerView
-                        ? packingManagerViewDataPortion(parcelsDataPortion)
-                        : parcelsDataPortion
+                    isPackingManagerView ? packingManagerViewDataPortion : parcelsDataPortion
                 }
                 isLoading={isLoading}
                 paginationConfig={{
@@ -351,7 +349,7 @@ const ParcelsTable: React.FC<ParcelsTableProps> = ({
                     setSortState: setSortState,
                 }}
                 defaultSortConfig={defaultParcelsSortConfig}
-                rowBreakPointConfigs={parcelRowBreakPointConfig}
+                rowBreakPointConfigs={isPackingManagerView ? undefined : parcelRowBreakPointConfig}
                 filterConfig={{
                     primaryFiltersShown: true,
                     additionalFiltersShown: true,
