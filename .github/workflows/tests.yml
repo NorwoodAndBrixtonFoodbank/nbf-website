@@ -7,10 +7,7 @@ jobs:
     env:
       NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{secrets.SUPABASE_LOCAL_ANON_KEY}}
-      CLOUDWATCH_LOG_GROUP: ${{secrets.AWS_CLOUDWATCH_LOG_GROUP}}
-      CLOUDWATCH_LOG_STREAM: ${{secrets.AWS_CLOUDWATCH_LOG_STREAM}}
-      CLOUDWATCH_ACCESS_KEY: ${{secrets.AWS_CLOUDWATCH_ACCESS_KEY}}
-      CLOUDWATCH_SECRET_ACCESS_KEY: ${{secrets.AWS_CLOUDWATCH_SECRET_ACCESS_KEY}}
+      NEXT_PUBLIC_ENVIRONMENT: test
     steps:
       - name: Checkout this repo
         uses: actions/checkout@v4
@@ -56,10 +53,7 @@ jobs:
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{secrets.SUPABASE_LOCAL_ANON_KEY}}
       NEXT_PUBLIC_CYPRESS_TEST_USER: admin@example.com
       NEXT_PUBLIC_CYPRESS_TEST_PASS: admin123
-      CLOUDWATCH_LOG_GROUP: ${{secrets.AWS_CLOUDWATCH_LOG_GROUP}}
-      CLOUDWATCH_LOG_STREAM: ${{secrets.AWS_CLOUDWATCH_LOG_STREAM}}
-      CLOUDWATCH_ACCESS_KEY: ${{secrets.AWS_CLOUDWATCH_ACCESS_KEY}}
-      CLOUDWATCH_SECRET_ACCESS_KEY: ${{secrets.AWS_CLOUDWATCH_SECRET_ACCESS_KEY}}
+      NEXT_PUBLIC_ENVIRONMENT: test
     steps:
       - name: Checkout this repo
         uses: actions/checkout@v4
