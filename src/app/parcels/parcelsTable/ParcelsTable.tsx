@@ -224,13 +224,13 @@ const ParcelsTable: React.FC<ParcelsTableProps> = ({
         }
     }, [areFiltersLoadingForFirstTime, fetchAndDisplayParcelsData]);
 
-    const packingManagerViewDataPortion = useMemo(() => {
-        return parcelsDataPortion.filter((parcel) => {
-            if (shouldBeInPackingManagerView(parcel, today, yesterday)) {
-                return parcel;
-            }
-        });
-    }, [parcelsDataPortion, today, yesterday]);
+    const packingManagerViewDataPortion = useMemo(
+        () =>
+            parcelsDataPortion.filter((parcel) =>
+                shouldBeInPackingManagerView(parcel, today, yesterday)
+            ),
+        [parcelsDataPortion, today, yesterday]
+    );
 
     const filteredParcelCount = isPackingManagerView
         ? packingManagerViewDataPortion.length
