@@ -25,8 +25,9 @@
 - If they already were running or the above doesn't work, then run `npm run post_checkout` and `npm run dev`
 
 ### E2E tests fail locally but not on the pipeline
-- Known issue, tests randomly fail. Try running the tests again a couple of times.
-- See the test audit on Confluence for more information.
+- Some tests modify the database and may fail if repeatedly run
+- Tests need to be run on fresh data
+- To resolve this run `npm post_checkout; npm run build; npm run test:e2e`
 
 ### Tests failing on GitHub: Failed to start Supabase container
 - You may get a failed Start local Supabase instance:
