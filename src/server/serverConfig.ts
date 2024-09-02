@@ -1,5 +1,6 @@
 interface ServerConfig {
-    cloudWatch: CloudWatchConfig;
+    environment: string;
+    cloudWatch: CloudWatchConfig | null;
 }
 
 interface CloudWatchConfig {
@@ -7,38 +8,43 @@ interface CloudWatchConfig {
     logStreamName: string;
     accessKey: string;
     secretAccessKey: string;
+    logLevel: string;
 }
 
-export const serverConfig: ServerConfig = {
-    cloudWatch: getCloudWatchConfig(),
+const PROD_LIKE_ENVIRONMENTS = ["production", "staging", "dev"];
+
+const getRequiredEnvironmentVariable = (variableName: string): string => {
+    const value = process.env[variableName];
+    if (value === undefined) {
+        throw new Error(`Environment variable ${variableName} is not found in environment`);
+    }
+    return value;
 };
 
-function getCloudWatchConfig(): CloudWatchConfig {
-    const logGroupName = process.env.CLOUDWATCH_LOG_GROUP;
-    const logStreamName = process.env.CLOUDWATCH_LOG_STREAM;
-    const accessKey = process.env.CLOUDWATCH_ACCESS_KEY;
-    const secretAccessKey = process.env.CLOUDWATCH_SECRET_ACCESS_KEY;
+function getServerConfig(): ServerConfig {
+    const environment = getRequiredEnvironmentVariable("NEXT_PUBLIC_ENVIRONMENT");
+    return { environment, cloudWatch: getCloudWatchConfig(environment) };
+}
 
-    if (!logGroupName) {
-        throw new Error("CloudWatch log group name is not found in environment");
+function getCloudWatchConfig(environment: string): CloudWatchConfig | null {
+    if (!PROD_LIKE_ENVIRONMENTS.includes(environment)) {
+        return null;
     }
-
-    if (!logStreamName) {
-        throw new Error("CloudWatch log stream name is not found in environment");
-    }
-
-    if (!accessKey) {
-        throw new Error("CloudWatch access key is not found in environment");
-    }
-
-    if (!secretAccessKey) {
-        throw new Error("CloudWatch secret access key is not found in environment");
-    }
+    const logGroupName = getRequiredEnvironmentVariable("CLOUDWATCH_LOG_GROUP");
+    const logStreamName = getRequiredEnvironmentVariable("CLOUDWATCH_LOG_STREAM");
+    const accessKey = getRequiredEnvironmentVariable("CLOUDWATCH_ACCESS_KEY");
+    const secretAccessKey = getRequiredEnvironmentVariable("CLOUDWATCH_SECRET_ACCESS_KEY");
+    const logLevel = environment === "production" ? "warn" : "info";
 
     return {
         logGroupName,
         logStreamName,
         accessKey,
         secretAccessKey,
+        logLevel,
     };
 }
+
+const serverConfig = getServerConfig();
+
+export default serverConfig;
