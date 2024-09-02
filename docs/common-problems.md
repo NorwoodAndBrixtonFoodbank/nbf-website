@@ -24,10 +24,6 @@
 - Make sure all docker containers are running; if not, start them
 - If they already were running or the above doesn't work, then run `npm run post_checkout` and `npm run dev`
 
-### Component tests failing
-- Known issue
-- Cypress component tests don't cope with server components / server actions on Next.js currently
-
 ### E2E tests fail locally but not on the pipeline
 - Some tests modify the database and may fail if repeatedly run
 - Tests need to be run on fresh data
