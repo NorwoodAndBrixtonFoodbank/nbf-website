@@ -62,9 +62,8 @@ const DeleteParcelModalContent: React.FC<ContentProps> = ({
             </ConfirmButtons>
             <DeleteConfirmationDialog
                 isOpen={isConfirmationDialogueOpen}
-                onClose={() => setIsConfirmationDialogueOpen(false)}
-                onClickCancel={() => setIsConfirmationDialogueOpen(false)}
-                onClickConfirm={onDeleteParcels}
+                closeModal={() => setIsConfirmationDialogueOpen(false)}
+                onConfirm={onDeleteParcels}
                 deletionText={`You are about to delete ${
                     numberOfParcelsToDelete === 1 ? "this parcel" : "these parcels"
                 }`}

@@ -1,20 +1,18 @@
 import { Dialog, DialogTitle, DialogActions, Button } from "@mui/material";
 import { Centerer } from "./ModalFormStyles";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 
 interface DeleteConfirmationDialogueProps {
     isOpen: boolean;
-    onClose: () => void;
-    onClickCancel: () => void;
-    onClickConfirm: () => void;
+    closeModal: () => void;
+    onConfirm: () => void;
     deletionText: string;
 }
 
 const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogueProps> = ({
     isOpen,
-    onClose,
-    onClickCancel,
-    onClickConfirm,
+    closeModal,
+    onConfirm,
     deletionText,
 }) => {
     const confirmButtonFocusRef = React.useRef<HTMLButtonElement>(null);
@@ -25,12 +23,17 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogueProps> = ({
         }, 0);
     }, [isOpen]);
 
+    const onClickConfirm = useCallback(() => {
+        onConfirm();
+        closeModal();
+    }, [onConfirm, closeModal]);
+
     return (
-        <Dialog open={isOpen} onClose={onClose}>
+        <Dialog open={isOpen} onClose={closeModal}>
             <DialogTitle id="alert-dialog-title">{deletionText}</DialogTitle>
             <Centerer>
                 <DialogActions>
-                    <Button onClick={onClickCancel}>Cancel</Button>
+                    <Button onClick={closeModal}>Cancel</Button>
                     <Button onClick={onClickConfirm} ref={confirmButtonFocusRef}>
                         Confirm
                     </Button>

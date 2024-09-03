@@ -153,7 +153,6 @@ const ClientsPage: React.FC = () => {
 
     const onDeleteClient = async (): Promise<void> => {
         if (clientId) {
-            setDeleteClientErrorMessage(null);
             const deletedClientsParcels = await getClientParcelsDetails(clientId);
             const { error: deleteClientParcelError } = await saveParcelStatus(
                 deletedClientsParcels.map((parcel) => parcel.parcelId),
@@ -169,6 +168,8 @@ const ClientsPage: React.FC = () => {
                 setDeleteClientErrorMessage(getDeleteClientErrorMessage(deleteClientError));
                 return;
             }
+            setDeleteClientErrorMessage(null);
+            router.push("/clients");
         }
     };
 
@@ -276,9 +277,8 @@ const ClientsPage: React.FC = () => {
                     </Modal>
                     <DeleteConfirmationDialog
                         isOpen={isDeleteClientDialogOpen}
-                        onClose={() => setIsDeleteClientDialogOpen(false)}
-                        onClickCancel={() => setIsDeleteClientDialogOpen(false)}
-                        onClickConfirm={onDeleteClient}
+                        closeModal={() => setIsDeleteClientDialogOpen(false)}
+                        onConfirm={onDeleteClient}
                         deletionText="You are about to delete this client. This action cannot be undone."
                     />
                 </>

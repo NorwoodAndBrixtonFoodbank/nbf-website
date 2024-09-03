@@ -72,9 +72,8 @@ const DeleteUserDialog: React.FC<Props> = (props) => {
             />
             <DeleteConfirmationDialog
                 isOpen={isConfirmationDialogueOpen}
-                onClose={() => setIsConfirmationDialogueOpen(false)}
-                onClickCancel={() => setIsConfirmationDialogueOpen(false)}
-                onClickConfirm={onDeleteConfirm}
+                closeModal={() => setIsConfirmationDialogueOpen(false)}
+                onConfirm={onDeleteConfirm}
                 deletionText={`You are about to delete this user: ${props.userToDelete.email}`}
             />
         </>
