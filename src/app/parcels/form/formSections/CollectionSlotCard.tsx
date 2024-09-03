@@ -1,5 +1,5 @@
 import React from "react";
-import { errorText, valueOnChangeDropdownList } from "@/components/Form/formFunctions";
+import { getErrorText, valueOnChangeDropdownList } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
 import { ParcelCardProps } from "../ParcelForm";
@@ -31,7 +31,7 @@ const CollectionSlotCard: React.FC<CollectionSlotsCardProps> = ({
                     defaultValue={fields.collectionSlot ? fields.collectionSlot : ""}
                     onChange={valueOnChangeDropdownList(fieldSetter, errorSetter, "collectionSlot")}
                 />
-                <ErrorText>{errorText(formErrors.collectionSlot)}</ErrorText>
+                <ErrorText>{getErrorText(formErrors.collectionSlot)}</ErrorText>
             </>
         </GenericFormCard>
     );

@@ -195,35 +195,29 @@ interface ShippingLabelsForSingleParcelProps {
 const ShippingLabelsForSingleParcel: React.FC<ShippingLabelsForSingleParcelProps> = ({
     parcelDataForShippingLabel,
 }) => {
-    return (
-        parcelDataForShippingLabel.label_quantity > 0 &&
-        [...Array(parcelDataForShippingLabel.label_quantity)]
-            .filter(() => parcelDataForShippingLabel.full_name !== "Deleted Client")
-            .map((_, index: number) => {
-                return (
-                    <SingleLabelCard
-                        key={index} // eslint-disable-line react/no-array-index-key
-                        data={parcelDataForShippingLabel}
-                        index={index}
-                        quantity={parcelDataForShippingLabel.label_quantity}
-                    />
-                );
-            })
-    );
+    return new Array(parcelDataForShippingLabel.label_quantity).fill(0).map((_, index: number) => (
+        <SingleLabelCard
+            key={index} // eslint-disable-line react/no-array-index-key
+            data={parcelDataForShippingLabel}
+            index={index}
+            quantity={parcelDataForShippingLabel.label_quantity}
+        />
+    ));
 };
 
 const ShippingLabelsPdf: React.FC<ShippingLabelsPdfProps> = ({ data }) => {
     return (
         <Document>
-            {data.map((parcelData: ShippingLabelData, index) => {
-                return (
-                    <ShippingLabelsForSingleParcel
-                        parcelDataForShippingLabel={parcelData}
-                        // eslint-disable-next-line react/no-array-index-key
-                        key={index}
-                    />
-                );
-            })}
+            {data
+                .filter((parcelData) => parcelData.full_name !== "Deleted Client")
+                .map((parcelData) => {
+                    return (
+                        <ShippingLabelsForSingleParcel
+                            parcelDataForShippingLabel={parcelData}
+                            key={parcelData.parcel_id}
+                        />
+                    );
+                })}
         </Document>
     );
 };

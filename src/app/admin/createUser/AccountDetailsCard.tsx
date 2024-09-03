@@ -1,5 +1,9 @@
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { errorExists, errorText, onChangeTextDeferredError } from "@/components/Form/formFunctions";
+import {
+    errorExists,
+    getErrorText,
+    onChangeTextDeferredError,
+} from "@/components/Form/formFunctions";
 import React from "react";
 import { UserFormProps } from "@/app/admin/createUser/CreateUserForm";
 import GenericFormCard from "@/components/Form/GenericFormCard";
@@ -23,7 +27,7 @@ const AccountDetailsCard: React.FC<UserFormProps> = ({
                 id="new-user-email-address"
                 label="Email"
                 error={errorExists(formErrors.email)}
-                helperText={errorText(formErrors.email)}
+                helperText={getErrorText(formErrors.email)}
                 value={fields.email}
                 onChange={onChangeTextDeferredError(
                     fieldSetter,

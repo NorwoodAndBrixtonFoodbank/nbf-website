@@ -287,9 +287,8 @@ const ListsDataView: React.FC<ListDataViewProps> = ({
             <DeleteConfirmationDialog
                 deletionText={`You are about to delete ${toDelete !== null ? listData[toDelete].itemName : ""}`}
                 isOpen={isDeleteConfirmationDialogueOpen}
-                onClose={() => setIsDeleteConfirmationDialogueOpen(false)}
-                onClickCancel={() => setIsDeleteConfirmationDialogueOpen(false)}
-                onClickConfirm={onConfirmDeletion}
+                closeModal={() => setIsDeleteConfirmationDialogueOpen(false)}
+                onConfirm={onConfirmDeletion}
             />
 
             <Snackbar

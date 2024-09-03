@@ -1,5 +1,5 @@
 import React from "react";
-import { onChangeDate, errorText } from "@/components/Form/formFunctions";
+import { onChangeDate, getErrorText } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { DatePicker } from "@mui/x-date-pickers";
 import { ErrorText } from "@/components/Form/formStyling";
@@ -27,7 +27,7 @@ const CollectionDateCard: React.FC<ParcelCardProps> = ({
                     value={fields.collectionDate ? dayjs(fields.collectionDate) : null}
                     disablePast
                 />
-                <ErrorText>{errorText(formErrors.collectionDate)}</ErrorText>
+                <ErrorText>{getErrorText(formErrors.collectionDate)}</ErrorText>
             </>
         </GenericFormCard>
     );

@@ -2,7 +2,7 @@ import React from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import {
     errorExists,
-    errorText,
+    getErrorText,
     numberRegex,
     Person,
     Gender,
@@ -62,16 +62,13 @@ const NumberAdultsCard: React.FC<ClientCardProps> = ({
                         fields.numberOfAdults !== 0 ? fields.numberOfAdults.toString() : undefined
                     }
                     error={errorExists(formErrors.numberOfAdults)}
-                    helperText={errorText(formErrors.numberOfAdults)}
-                    onChange={onChangeText(
-                        fieldSetter,
-                        errorSetter,
-                        "numberOfAdults",
-                        true,
-                        numberRegex,
-                        parseInt,
-                        numberOfAdultsRange
-                    )}
+                    helperText={getErrorText(formErrors.numberOfAdults)}
+                    onChange={onChangeText(fieldSetter, errorSetter, "numberOfAdults", {
+                        required: true,
+                        regex: numberRegex,
+                        formattingFunction: parseInt,
+                        additionalCondition: numberOfAdultsRange,
+                    })}
                 />
                 {fields.adults.map((adult: Person, index: number) => {
                     return (

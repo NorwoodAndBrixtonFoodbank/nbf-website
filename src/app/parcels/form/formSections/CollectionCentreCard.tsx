@@ -1,5 +1,5 @@
 import React from "react";
-import { errorText, valueOnChangeDropdownList } from "@/components/Form/formFunctions";
+import { getErrorText, valueOnChangeDropdownList } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
 import { UncontrolledSelect } from "@/components/DataInput/DropDownSelect";
@@ -34,7 +34,7 @@ const CollectionCentreCard: React.FC<CollectionCentreCardProps> = ({
                         "collectionCentre"
                     )}
                 />
-                <ErrorText>{errorText(formErrors.collectionCentre)}</ErrorText>
+                <ErrorText>{getErrorText(formErrors.collectionCentre)}</ErrorText>
             </>
         </GenericFormCard>
     );

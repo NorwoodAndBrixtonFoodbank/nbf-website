@@ -2,7 +2,7 @@ import React from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import {
     errorExists,
-    errorText,
+    getErrorText,
     getDefaultTextValue,
     onChangeText,
 } from "@/components/Form/formFunctions";
@@ -22,8 +22,8 @@ const FullNameCard: React.FC<ClientCardProps> = ({
                 label="Name"
                 defaultValue={getDefaultTextValue(fields, "fullName")}
                 error={errorExists(formErrors.fullName)}
-                helperText={errorText(formErrors.fullName)}
-                onChange={onChangeText(fieldSetter, errorSetter, "fullName", true)}
+                helperText={getErrorText(formErrors.fullName)}
+                onChange={onChangeText(fieldSetter, errorSetter, "fullName", { required: true })}
             />
         </GenericFormCard>
     );
