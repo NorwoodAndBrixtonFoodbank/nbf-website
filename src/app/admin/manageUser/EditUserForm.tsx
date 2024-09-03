@@ -18,7 +18,7 @@ import {
     FormErrors,
     onChangeText,
     errorExists,
-    errorText,
+    getErrorText,
 } from "@/components/Form/formFunctions";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import { InviteUserFields } from "@/app/admin/createUser/CreateUserForm";
@@ -119,8 +119,10 @@ const EditUserForm: React.FC<Props> = (props) => {
                     label="First Name"
                     defaultValue={fields.firstName}
                     error={errorExists(formErrors.firstName)}
-                    helperText={errorText(formErrors.firstName)}
-                    onChange={onChangeText(fieldSetter, errorSetter, "firstName", true)}
+                    helperText={getErrorText(formErrors.firstName)}
+                    onChange={onChangeText(fieldSetter, errorSetter, "firstName", {
+                        required: true,
+                    })}
                     fullWidth={true}
                 />
             </EditOption>
@@ -131,8 +133,10 @@ const EditUserForm: React.FC<Props> = (props) => {
                     label="Last Name"
                     defaultValue={fields.lastName}
                     error={errorExists(formErrors.lastName)}
-                    helperText={errorText(formErrors.lastName)}
-                    onChange={onChangeText(fieldSetter, errorSetter, "lastName", true)}
+                    helperText={getErrorText(formErrors.lastName)}
+                    onChange={onChangeText(fieldSetter, errorSetter, "lastName", {
+                        required: true,
+                    })}
                     fullWidth={true}
                 />
             </EditOption>
@@ -143,14 +147,11 @@ const EditUserForm: React.FC<Props> = (props) => {
                     label="Phone Number"
                     defaultValue={fields.telephoneNumber}
                     error={errorExists(formErrors.telephoneNumber)}
-                    helperText={errorText(formErrors.telephoneNumber)}
-                    onChange={onChangeText(
-                        fieldSetter,
-                        errorSetter,
-                        "telephoneNumber",
-                        true,
-                        phoneNumberRegex
-                    )}
+                    helperText={getErrorText(formErrors.telephoneNumber)}
+                    onChange={onChangeText(fieldSetter, errorSetter, "telephoneNumber", {
+                        required: true,
+                        regex: phoneNumberRegex,
+                    })}
                     fullWidth={true}
                 />
             </EditOption>

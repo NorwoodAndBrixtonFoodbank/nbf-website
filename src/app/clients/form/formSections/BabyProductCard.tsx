@@ -3,7 +3,7 @@ import RadioGroupInput from "@/components/DataInput/RadioGroupInput";
 import {
     Errors,
     errorExists,
-    errorText,
+    getErrorText,
     onChangeText,
     getDefaultTextValue,
 } from "@/components/Form/formFunctions";
@@ -58,18 +58,16 @@ const BabyProductCard: React.FC<ClientCardProps> = ({
                     defaultValue={getBabyDefaultValue(fields.babyProducts)}
                     onChange={getBaby(fieldSetter, errorSetter)}
                 />
-                {fields.babyProducts ? (
-                    <>
-                        <FreeFormTextInput
-                            error={errorExists(formErrors.nappySize)}
-                            helperText={errorText(formErrors.nappySize)}
-                            label="Nappy Size"
-                            defaultValue={getDefaultTextValue(fields, "nappySize")}
-                            onChange={onChangeText(fieldSetter, errorSetter, "nappySize", true)}
-                        />
-                    </>
-                ) : (
-                    <></>
+                {fields.babyProducts && (
+                    <FreeFormTextInput
+                        error={errorExists(formErrors.nappySize)}
+                        helperText={getErrorText(formErrors.nappySize)}
+                        label="Nappy Size"
+                        defaultValue={getDefaultTextValue(fields, "nappySize")}
+                        onChange={onChangeText(fieldSetter, errorSetter, "nappySize", {
+                            required: true,
+                        })}
+                    />
                 )}
             </>
         </GenericFormCard>

@@ -1,5 +1,5 @@
 import React from "react";
-import { errorText, valueOnChangeRadioGroup } from "@/components/Form/formFunctions";
+import { getErrorText, valueOnChangeRadioGroup } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import RadioGroupInput from "@/components/DataInput/RadioGroupInput";
 import { ErrorText } from "@/components/Form/formStyling";
@@ -24,7 +24,7 @@ const ShippingMethodCard: React.FC<ParcelCardProps> = ({
                     onChange={valueOnChangeRadioGroup(fieldSetter, errorSetter, "shippingMethod")}
                     value={fields.shippingMethod ?? undefined}
                 ></RadioGroupInput>
-                <ErrorText>{errorText(formErrors.shippingMethod)}</ErrorText>
+                <ErrorText>{getErrorText(formErrors.shippingMethod)}</ErrorText>
             </>
         </GenericFormCard>
     );

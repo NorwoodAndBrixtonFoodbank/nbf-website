@@ -1,5 +1,5 @@
 import React from "react";
-import { errorText, valueOnChangeDropdownList } from "@/components/Form/formFunctions";
+import { getErrorText, valueOnChangeDropdownList } from "@/components/Form/formFunctions";
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
 import { UncontrolledSelect } from "@/components/DataInput/DropDownSelect";
@@ -33,7 +33,7 @@ const ListTypeCard: React.FC<ClientCardProps> = ({
                 defaultValue={fields.listType ?? ""}
                 onChange={valueOnChangeDropdownList(fieldSetter, errorSetter, "listType")}
             />
-            <ErrorText>{errorText(formErrors.listType)}</ErrorText>
+            <ErrorText>{getErrorText(formErrors.listType)}</ErrorText>
         </GenericFormCard>
     );
 };

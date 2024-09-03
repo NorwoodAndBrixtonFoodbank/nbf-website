@@ -2,7 +2,7 @@ import React from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import {
     errorExists,
-    errorText,
+    getErrorText,
     getDefaultTextValue,
     onChangeText,
 } from "@/components/Form/formFunctions";
@@ -27,15 +27,12 @@ const PhoneNumberCard: React.FC<ClientCardProps> = ({
                 label="Phone Number"
                 defaultValue={getDefaultTextValue(fields, "phoneNumber")}
                 error={errorExists(formErrors.phoneNumber)}
-                helperText={errorText(formErrors.phoneNumber)}
-                onChange={onChangeText(
-                    fieldSetter,
-                    errorSetter,
-                    "phoneNumber",
-                    false,
-                    phoneNumberRegex,
-                    formatPhoneNumber
-                )}
+                helperText={getErrorText(formErrors.phoneNumber)}
+                onChange={onChangeText(fieldSetter, errorSetter, "phoneNumber", {
+                    required: false,
+                    regex: phoneNumberRegex,
+                    formattingFunction: formatPhoneNumber,
+                })}
             />
         </GenericFormCard>
     );

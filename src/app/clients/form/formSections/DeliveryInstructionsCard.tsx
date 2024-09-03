@@ -2,7 +2,7 @@ import React from "react";
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import {
     errorExists,
-    errorText,
+    getErrorText,
     getDefaultTextValue,
     onChangeText,
 } from "@/components/Form/formFunctions";
@@ -21,24 +21,17 @@ const DeliveryInstructionsCard: React.FC<ClientCardProps> = ({
         <GenericFormCard
             title="Delivery Instructions"
             required={false}
-            text={`Please input not more than ${MAX_CHARACTERS} characters.`}
+            text="For example: The doorbell does not work, use the door code: 123456."
         >
             <FreeFormTextInput
-                label="For example, The doorbell does not work. Use the door code: xxxx."
+                label="Delivery Instructions"
                 defaultValue={getDefaultTextValue(fields, "deliveryInstructions")}
                 error={errorExists(formErrors.deliveryInstructions)}
-                helperText={errorText(formErrors.deliveryInstructions)}
-                onChange={onChangeText(
-                    fieldSetter,
-                    errorSetter,
-                    "deliveryInstructions",
-                    undefined,
-                    undefined,
-                    undefined,
-                    (input, maxCharacters = MAX_CHARACTERS) => {
-                        return input.length <= maxCharacters;
-                    }
-                )}
+                helperText={getErrorText(formErrors.deliveryInstructions, MAX_CHARACTERS)}
+                onChange={onChangeText(fieldSetter, errorSetter, "deliveryInstructions", {
+                    maxCharacters: MAX_CHARACTERS,
+                })}
+                multiline
             />
         </GenericFormCard>
     );

@@ -3,7 +3,7 @@ import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
 import {
     Errors,
     errorExists,
-    errorText,
+    getErrorText,
     getDefaultTextValue,
     onChangeText,
 } from "@/components/Form/formFunctions";
@@ -59,43 +59,43 @@ const AddressCard: React.FC<ClientCardProps> = ({
                             label="Address Line 1*"
                             defaultValue={getDefaultTextValue(fields, "addressLine1")}
                             error={errorExists(formErrors.addressLine1)}
-                            helperText={errorText(formErrors.addressLine1)}
-                            onChange={onChangeText(fieldSetter, errorSetter, "addressLine1", true)}
+                            helperText={getErrorText(formErrors.addressLine1)}
+                            onChange={onChangeText(fieldSetter, errorSetter, "addressLine1", {
+                                required: true,
+                            })}
                         />
                         <FreeFormTextInput
                             label="Address Line 2"
                             defaultValue={getDefaultTextValue(fields, "addressLine2")}
-                            onChange={onChangeText(fieldSetter, errorSetter, "addressLine2", false)}
+                            onChange={onChangeText(fieldSetter, errorSetter, "addressLine2", {
+                                required: false,
+                            })}
                         />
                         <FreeFormTextInput
                             label="Town"
                             defaultValue={getDefaultTextValue(fields, "addressTown")}
-                            onChange={onChangeText(fieldSetter, errorSetter, "addressTown", false)}
+                            onChange={onChangeText(fieldSetter, errorSetter, "addressTown", {
+                                required: false,
+                            })}
                         />
                         <FreeFormTextInput
                             label="County"
                             defaultValue={getDefaultTextValue(fields, "addressCounty")}
-                            onChange={onChangeText(
-                                fieldSetter,
-                                errorSetter,
-                                "addressCounty",
-                                false
-                            )}
+                            onChange={onChangeText(fieldSetter, errorSetter, "addressCounty", {
+                                required: false,
+                            })}
                         />
                         <FreeFormTextInput
                             id="client-address-postcode"
                             label="Postcode* (For example, SE11 5QY)"
                             defaultValue={getDefaultTextValue(fields, "addressPostcode")}
                             error={errorExists(formErrors.addressPostcode)}
-                            helperText={errorText(formErrors.addressPostcode)}
-                            onChange={onChangeText(
-                                fieldSetter,
-                                errorSetter,
-                                "addressPostcode",
-                                true,
-                                postcodeRegex,
-                                formatPostcode
-                            )}
+                            helperText={getErrorText(formErrors.addressPostcode)}
+                            onChange={onChangeText(fieldSetter, errorSetter, "addressPostcode", {
+                                required: true,
+                                regex: postcodeRegex,
+                                formattingFunction: formatPostcode,
+                            })}
                         />
                     </>
                 )}

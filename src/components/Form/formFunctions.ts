@@ -20,6 +20,7 @@ export enum Errors {
     submit = "Please ensure all fields have been entered correctly. Required fields are labelled with an asterisk.",
     external = "Please try again later.",
     pastDate = "Please enter a date in the future.",
+    tooLong = "The text is too long, reduce the number of characters.",
     invalidPackingSlot = "The previous packing slot is no longer available, please select a new packing slot.",
     invalidCollectionCentre = "The previous collection centre is no longer available, please select a new collection centre.",
     noCollectionSlotsSet = "There are no collection slots set for this collection centre, please select a different collection centre or contact admin.",
@@ -44,12 +45,6 @@ export interface Person {
     primaryKey?: string;
 }
 
-export interface NumberAdultsByGender {
-    numberFemales: number;
-    numberMales: number;
-    numberUnknownGender: number;
-}
-
 export type Fields = Record<string, unknown>;
 
 export type FormErrors<SpecificFields extends Fields> = {
@@ -65,11 +60,12 @@ export const createSetter = <SpecificFields extends Fields>(
     };
 };
 
-export const getErrorType = (
+const getErrorType = (
     input: string,
     required?: boolean,
     regex?: RegExp,
-    additionalCondition?: (value: string, maxCharacters?: number) => boolean
+    additionalCondition?: (value: string) => boolean,
+    maxCharacters?: number
 ): Errors => {
     if (input == "") {
         return required ? Errors.required : Errors.none;
@@ -81,17 +77,26 @@ export const getErrorType = (
         return Errors.invalid;
     }
 
+    if (maxCharacters !== undefined && input.length > maxCharacters) {
+        return Errors.tooLong;
+    }
+
     return Errors.none;
 };
+
+interface OnChangeTextOptions<SpecificFields> {
+    required?: boolean;
+    regex?: RegExp;
+    formattingFunction?: (value: string) => SpecificFields[keyof SpecificFields];
+    additionalCondition?: (value: string) => boolean;
+    maxCharacters?: number;
+}
 
 export const onChangeText = <SpecificFields extends Fields>(
     fieldSetter: Setter<SpecificFields>,
     errorSetter: Setter<FormErrors<SpecificFields>> | Setter<Required<FormErrors<SpecificFields>>>,
     key: keyof SpecificFields,
-    required?: boolean,
-    regex?: RegExp,
-    formattingFunction?: (value: string) => SpecificFields[keyof SpecificFields],
-    additionalCondition?: (value: string, maxCharacters?: number) => boolean
+    options?: OnChangeTextOptions<SpecificFields>
 ): SelectChangeEventHandler => {
     return (event) => {
         const input = event.target.value;
@@ -99,13 +104,16 @@ export const onChangeText = <SpecificFields extends Fields>(
             key === "telephoneNumber" || key === "phoneNumber"
                 ? input.replaceAll(phoneNumberFormatSymbolsRegex, "")
                 : input,
-            required,
-            regex,
-            additionalCondition
+            options?.required,
+            options?.regex,
+            options?.additionalCondition,
+            options?.maxCharacters
         );
         errorSetter({ [key]: errorType } as { [key in keyof FormErrors<SpecificFields>]: Errors });
         if (errorType === Errors.none) {
-            const newValue = formattingFunction ? formattingFunction(input) : input;
+            const newValue = options?.formattingFunction
+                ? options.formattingFunction(input)
+                : input;
             fieldSetter({ [key]: newValue } as {
                 [key in keyof SpecificFields]: SpecificFields[key];
             });
@@ -121,14 +129,15 @@ export const onChangeTextDeferredError = <SpecificFields extends Fields>(
     regex?: RegExp,
     clearInvitedUser?: () => void,
     formattingFunction?: (value: string) => SpecificFields[keyof SpecificFields],
-    additionalCondition?: (value: string) => boolean
+    additionalCondition?: (value: string) => boolean,
+    maxCharacters?: number
 ): SelectChangeEventHandler => {
     return (event) => {
         if (clearInvitedUser) {
             clearInvitedUser();
         }
         const input = event.target.value;
-        const errorType = getErrorType(input, required, regex, additionalCondition);
+        const errorType = getErrorType(input, required, regex, additionalCondition, maxCharacters);
         errorSetter({ [key]: errorType } as {
             [key in keyof FormErrors<SpecificFields>]: Errors;
         });
@@ -230,8 +239,20 @@ export const errorExists = (errorType: Errors): boolean => {
     return errorType !== Errors.initial && errorType !== Errors.none;
 };
 
-export const errorText = (errorType: Errors): string => {
-    return errorType === Errors.initial ? Errors.none : errorType;
+export const getErrorText = (errorType: Errors, maxCharacters?: number): string => {
+    switch (errorType) {
+        case Errors.initial: {
+            return Errors.none;
+        }
+        case Errors.tooLong: {
+            const additionalInfo =
+                maxCharacters === undefined ? "" : `Maximum ${maxCharacters} characters.`;
+            return `${Errors.tooLong} ${additionalInfo}`;
+        }
+        default: {
+            return errorType;
+        }
+    }
 };
 
 export const checkboxGroupToArray = (checkedBoxes: BooleanGroup): string[] => {
