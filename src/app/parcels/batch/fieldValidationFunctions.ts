@@ -1,11 +1,7 @@
-import { GridEditCellProps, GridPreProcessEditCellProps } from "@mui/x-data-grid";
+import { GridPreProcessEditCellProps } from "@mui/x-data-grid";
 import { phoneNumberRegex, phoneNumberFormatSymbolsRegex } from "@/common/format";
 
-export const phoneNumberValidation = (params: GridPreProcessEditCellProps): GridEditCellProps => {
+export const isPhoneNumberValid = (params: GridPreProcessEditCellProps): boolean => {
     const unformattedInput = params.props.value.replaceAll(phoneNumberFormatSymbolsRegex, "");
-    const hasError = unformattedInput.match(phoneNumberRegex) === null;
-    return {
-        ...params.props,
-        error: hasError,
-    };
+    return unformattedInput.match(phoneNumberRegex) === null;
 };

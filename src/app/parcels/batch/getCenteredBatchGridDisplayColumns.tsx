@@ -1,19 +1,54 @@
-import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import { GridColDef, GridPreProcessEditCellProps, GridRenderCellParams } from "@mui/x-data-grid";
 import { BatchActionType, BatchTableDataState } from "@/app/parcels/batch/batchTypes";
 import { Button } from "@mui/material";
-import { phoneNumberValidation } from "@/app/parcels/batch/fieldValidationFunctions";
-import { ADDRESS_WIDTH } from "@/app/parcels/batch/columnWidths";
+import { isPhoneNumberValid } from "@/app/parcels/batch/fieldValidationFunctions";
+import {
+    ADDRESS_WIDTH,
+    BABY_PRODUCTS_WIDTH,
+    MULTILINE_POPOVER_WIDTH,
+    DIETARY_REQUIREMENTS_WIDTH,
+    FEMININE_PRODUCTS_WIDTH,
+    LIST_TYPE_WIDTH,
+    OTHER_ITEMS_WIDTH,
+    PET_FOOD_WIDTH,
+    BOOLEAN_CLIENT_WIDTH,
+    SHIPPING_METHOD_WIDTH,
+    PACKING_SLOT_WIDTH,
+    COLLECTION_INFO_WIDTH,
+    PERSON_WIDTH,
+    ROW_NUMBER_WIDTH,
+    FULL_NAME_WIDTH,
+    PHONE_NUMBER_WIDTH,
+    VOUCHER_NUMBER_WIDTH,
+    PACKING_DATE_WIDTH,
+} from "@/app/parcels/batch/columnWidths";
 import AddressEditCell from "@/app/parcels/batch/displayComponents/AddressEditCell";
+import ListTypeEditCell from "@/app/parcels/batch/displayComponents/ListTypeEditCell";
+import BooleanGroupEditCell from "@/app/parcels/batch/displayComponents/BooleanGroupEditCell";
+import { DIETARY_REQS_LABELS_AND_KEYS } from "@/app/clients/form/formSections/DietaryRequirementCard";
+import { FEMININE_PRODUCTS_LABELS_AND_KEYS } from "@/app/clients/form/formSections/FeminineProductCard";
+import { PET_FOOD_LABELS_AND_KEYS } from "@/app/clients/form/formSections/PetFoodCard";
+import { OTHER_ITEMS_LABELS_AND_KEYS } from "@/app/clients/form/formSections/OtherItemsCard";
+import BabyProductsEditCell from "@/app/parcels/batch/displayComponents/BabyProductsEditCell";
+import TextFieldEditCell from "@/app/parcels/batch/displayComponents/MultilinePopoverEditCell";
+import BooleanClientEditCell from "@/app/parcels/batch/displayComponents/BooleanClientEditCell";
+import ShippingMethodEditCell from "@/app/parcels/batch/displayComponents/ShippingMethodEditCell";
+import PackingDateEditCell from "@/app/parcels/batch/displayComponents/PackingDateEditCell";
+import PackingSlotEditCell from "@/app/parcels/batch/displayComponents/PackingSlotEditCell";
+import CollectionInfoEditCell from "@/app/parcels/batch/displayComponents/CollectionInfoEditCell";
+import PersonEditCell from "@/app/parcels/batch/displayComponents/PersonEditCell";
 
 const getCenteredBatchGridDisplayColumns = (
     tableState: BatchTableDataState,
-    dispatch: React.Dispatch<BatchActionType>
+    dispatch: React.Dispatch<BatchActionType>,
+    isRowCollection: { [key: number]: boolean },
+    setIsRowCollection: React.Dispatch<React.SetStateAction<{ [key: number]: boolean }>>
 ): GridColDef[] => {
     const batchGridDisplayColumns = [
         {
             field: "id",
             headerName: "Row Number",
-            width: 150,
+            width: ROW_NUMBER_WIDTH,
             editable: false,
             renderCell: (gridRenderCellParams: GridRenderCellParams) => {
                 if (gridRenderCellParams.row.id === 0 && gridRenderCellParams.field === "id") {
@@ -25,15 +60,34 @@ const getCenteredBatchGridDisplayColumns = (
         {
             field: "fullName",
             headerName: "Full Name",
-            width: 150,
+            width: FULL_NAME_WIDTH,
             editable: true,
         },
         {
             field: "phoneNumber",
             headerName: "Phone Number",
-            width: 150,
+            width: PHONE_NUMBER_WIDTH,
             editable: true,
-            preProcessEditCellProps: phoneNumberValidation,
+            preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
+                const hasError: boolean = isPhoneNumberValid(params);
+                if (!hasError) {
+                    dispatch({
+                        type: "update_cell",
+                        updateCellPayload: {
+                            rowId: params.id as number,
+                            newValueAndFieldName: {
+                                type: "client",
+                                newValue: params.props.value,
+                                fieldName: "phoneNumber",
+                            },
+                        },
+                    });
+                }
+                return {
+                    ...params.props,
+                    error: hasError,
+                };
+            },
         },
         {
             field: "address",
@@ -55,111 +109,286 @@ const getCenteredBatchGridDisplayColumns = (
             field: "adults",
             headerName: "Adults",
             type: "number",
-            width: 110,
+            width: PERSON_WIDTH,
             editable: true,
+            renderEditCell: (gridRenderCellParams: GridRenderCellParams): React.ReactNode => {
+                return (
+                    <PersonEditCell
+                        gridRenderCellParams={gridRenderCellParams}
+                        dispatchBatchTableAction={dispatch}
+                        tableState={tableState}
+                        personField="adultInfo"
+                    />
+                );
+            },
         },
         {
             field: "children",
             headerName: "Children",
             type: "number",
-            width: 110,
+            width: PERSON_WIDTH,
             editable: true,
+            renderEditCell: (gridRenderCellParams: GridRenderCellParams): React.ReactNode => {
+                return (
+                    <PersonEditCell
+                        gridRenderCellParams={gridRenderCellParams}
+                        dispatchBatchTableAction={dispatch}
+                        tableState={tableState}
+                        personField="childrenInfo"
+                    />
+                );
+            },
         },
         {
             field: "listType",
             headerName: "List Type",
-            width: 150,
+            width: LIST_TYPE_WIDTH,
             editable: true,
+            renderEditCell: (gridRenderCellParams: GridRenderCellParams): React.ReactNode => {
+                return (
+                    <ListTypeEditCell
+                        gridRenderCellParams={gridRenderCellParams}
+                        dispatchBatchTableAction={dispatch}
+                        tableState={tableState}
+                    />
+                );
+            },
         },
         {
             field: "dietaryRequirements",
             headerName: "Dietary Requirements",
-            width: 200,
+            width: DIETARY_REQUIREMENTS_WIDTH,
             editable: true,
+            renderEditCell: (gridRenderCellParams: GridRenderCellParams): React.ReactNode => {
+                return (
+                    <BooleanGroupEditCell
+                        gridRenderCellParams={gridRenderCellParams}
+                        dispatchBatchTableAction={dispatch}
+                        tableState={tableState}
+                        clientField="dietaryRequirements"
+                        fieldWidth={DIETARY_REQUIREMENTS_WIDTH}
+                        booleanGroupLabelAndKeys={DIETARY_REQS_LABELS_AND_KEYS}
+                    />
+                );
+            },
         },
         {
             field: "feminineProducts",
             headerName: "Feminine Products",
-            width: 150,
+            width: FEMININE_PRODUCTS_WIDTH,
             editable: true,
+            renderEditCell: (gridRenderCellParams: GridRenderCellParams): React.ReactNode => {
+                return (
+                    <BooleanGroupEditCell
+                        gridRenderCellParams={gridRenderCellParams}
+                        dispatchBatchTableAction={dispatch}
+                        tableState={tableState}
+                        clientField="feminineProducts"
+                        fieldWidth={FEMININE_PRODUCTS_WIDTH}
+                        booleanGroupLabelAndKeys={FEMININE_PRODUCTS_LABELS_AND_KEYS}
+                    />
+                );
+            },
         },
         {
             field: "babyProducts",
             headerName: "Baby Products",
-            width: 150,
+            width: BABY_PRODUCTS_WIDTH,
             editable: true,
+            renderEditCell: (gridRenderCellParams: GridRenderCellParams): React.ReactNode => {
+                return (
+                    <BabyProductsEditCell
+                        gridRenderCellParams={gridRenderCellParams}
+                        dispatchBatchTableAction={dispatch}
+                        tableState={tableState}
+                    />
+                );
+            },
         },
         {
             field: "petFood",
             headerName: "Pet Food",
-            width: 110,
+            width: PET_FOOD_WIDTH,
             editable: true,
+            renderEditCell: (gridRenderCellParams: GridRenderCellParams): React.ReactNode => {
+                return (
+                    <BooleanGroupEditCell
+                        gridRenderCellParams={gridRenderCellParams}
+                        dispatchBatchTableAction={dispatch}
+                        tableState={tableState}
+                        clientField="petFood"
+                        fieldWidth={PET_FOOD_WIDTH}
+                        booleanGroupLabelAndKeys={PET_FOOD_LABELS_AND_KEYS}
+                    />
+                );
+            },
         },
         {
             field: "otherItems",
             headerName: "Other Items",
-            width: 200,
+            width: OTHER_ITEMS_WIDTH,
             editable: true,
+            renderEditCell: (gridRenderCellParams: GridRenderCellParams): React.ReactNode => {
+                return (
+                    <BooleanGroupEditCell
+                        gridRenderCellParams={gridRenderCellParams}
+                        dispatchBatchTableAction={dispatch}
+                        tableState={tableState}
+                        clientField="otherItems"
+                        fieldWidth={OTHER_ITEMS_WIDTH}
+                        booleanGroupLabelAndKeys={OTHER_ITEMS_LABELS_AND_KEYS}
+                    />
+                );
+            },
         },
         {
             field: "deliveryInstructions",
             headerName: "Delivery Instructions",
-            width: 200,
+            width: MULTILINE_POPOVER_WIDTH,
             editable: true,
+            renderEditCell: (gridRenderCellParams: GridRenderCellParams): React.ReactNode => {
+                return (
+                    <TextFieldEditCell
+                        gridRenderCellParams={gridRenderCellParams}
+                        dispatchBatchTableAction={dispatch}
+                        tableState={tableState}
+                        multilinePopoverField="deliveryInstructions"
+                    />
+                );
+            },
         },
         {
             field: "extraInformation",
             headerName: "Extra Information",
-            width: 200,
+            width: MULTILINE_POPOVER_WIDTH,
             editable: true,
+            renderEditCell: (gridRenderCellParams: GridRenderCellParams): React.ReactNode => {
+                return (
+                    <TextFieldEditCell
+                        gridRenderCellParams={gridRenderCellParams}
+                        dispatchBatchTableAction={dispatch}
+                        tableState={tableState}
+                        multilinePopoverField="extraInformation"
+                    />
+                );
+            },
         },
         {
             field: "attentionFlag",
             headerName: "Attention Flag",
-            width: 150,
+            width: BOOLEAN_CLIENT_WIDTH,
             editable: true,
+            renderEditCell: (gridRenderCellParams: GridRenderCellParams): React.ReactNode => {
+                return (
+                    <BooleanClientEditCell
+                        gridRenderCellParams={gridRenderCellParams}
+                        dispatchBatchTableAction={dispatch}
+                        tableState={tableState}
+                        field="attentionFlag"
+                    />
+                );
+            },
         },
         {
             field: "signpostingCall",
             headerName: "Signposting Call",
-            width: 150,
+            width: BOOLEAN_CLIENT_WIDTH,
             editable: true,
+            renderEditCell: (gridRenderCellParams: GridRenderCellParams): React.ReactNode => {
+                return (
+                    <BooleanClientEditCell
+                        gridRenderCellParams={gridRenderCellParams}
+                        dispatchBatchTableAction={dispatch}
+                        tableState={tableState}
+                        field="signpostingCall"
+                    />
+                );
+            },
         },
         {
             field: "notes",
             headerName: "Notes",
-            width: 200,
+            width: MULTILINE_POPOVER_WIDTH,
             editable: true,
+            renderEditCell: (gridRenderCellParams: GridRenderCellParams): React.ReactNode => {
+                return (
+                    <TextFieldEditCell
+                        gridRenderCellParams={gridRenderCellParams}
+                        dispatchBatchTableAction={dispatch}
+                        tableState={tableState}
+                        multilinePopoverField="notes"
+                    />
+                );
+            },
         },
         {
             field: "voucherNumber",
             headerName: "Voucher Number",
-            width: 150,
+            width: VOUCHER_NUMBER_WIDTH,
             editable: true,
         },
         {
             field: "packingDate",
             headerName: "Packing Date",
-            width: 150,
+            width: PACKING_DATE_WIDTH,
             editable: true,
+            renderEditCell: (gridRenderCellParams: GridRenderCellParams): React.ReactNode => {
+                return (
+                    <PackingDateEditCell
+                        gridRenderCellParams={gridRenderCellParams}
+                        dispatchBatchTableAction={dispatch}
+                        tableState={tableState}
+                    />
+                );
+            },
         },
         {
             field: "packingSlot",
             headerName: "Packing Slot",
-            width: 150,
+            width: PACKING_SLOT_WIDTH,
             editable: true,
+            renderEditCell: (gridRenderCellParams: GridRenderCellParams): React.ReactNode => {
+                return (
+                    <PackingSlotEditCell
+                        gridRenderCellParams={gridRenderCellParams}
+                        dispatchBatchTableAction={dispatch}
+                        tableState={tableState}
+                    />
+                );
+            },
         },
         {
             field: "shippingMethod",
             headerName: "Shipping Method",
-            width: 150,
+            width: SHIPPING_METHOD_WIDTH,
             editable: true,
+            renderEditCell: (gridRenderCellParams: GridRenderCellParams): React.ReactNode => {
+                return (
+                    <ShippingMethodEditCell
+                        gridRenderCellParams={gridRenderCellParams}
+                        dispatchBatchTableAction={dispatch}
+                        tableState={tableState}
+                        setIsRowCollection={setIsRowCollection}
+                    />
+                );
+            },
         },
         {
             field: "collectionInfo",
             headerName: "Collection Info",
-            width: 200,
+            width: COLLECTION_INFO_WIDTH,
             editable: true,
+            renderEditCell: (gridRenderCellParams: GridRenderCellParams): React.ReactNode => {
+                return (
+                    <CollectionInfoEditCell
+                        gridRenderCellParams={gridRenderCellParams}
+                        dispatchBatchTableAction={dispatch}
+                        tableState={tableState}
+                        isRowCollection={isRowCollection}
+                        setIsRowCollection={setIsRowCollection}
+                    />
+                );
+            },
         },
     ];
     return batchGridDisplayColumns.map((column) => {

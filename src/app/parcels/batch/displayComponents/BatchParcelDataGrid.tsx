@@ -1,7 +1,6 @@
 "use client";
-
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useLocalStorage } from "@/app/parcels/batch/useLocalStorage";
 import { BatchTableDataState } from "@/app/parcels/batch/batchTypes";
 import batchParcelsReducer from "@/app/parcels/batch/batchParcelsReducer";
@@ -56,46 +55,80 @@ const BatchParcelDataGrid: React.FC = () => {
         return tableStateToBatchDisplayRows(tableState);
     }, [tableState]);
     const theme: DefaultTheme = useTheme();
+    const [isRowCollection, setIsRowCollection] = useState<{ [key: number]: boolean }>({});
     const centeredBatchGridDisplayColumns: GridColDef[] = getCenteredBatchGridDisplayColumns(
         tableState,
-        dispatch
+        dispatch,
+        isRowCollection,
+        setIsRowCollection
     );
     return (
-        <DataGrid
-            rows={displayRows}
-            columns={centeredBatchGridDisplayColumns}
-            // using sx rather than styled-components as otherwise throws an error when iterating through columns
-            sx={{
-                "& .MuiDataGrid-cell": {
+        <>
+            <DataGrid
+                rows={displayRows}
+                columns={centeredBatchGridDisplayColumns}
+                // only dispatches if a validated string field is updated
+                processRowUpdate={(newRow: BatchGridDisplayRow, oldRow: BatchGridDisplayRow) => {
+                    if (newRow.fullName !== oldRow.fullName) {
+                        dispatch({
+                            type: "update_cell",
+                            updateCellPayload: {
+                                rowId: newRow.id,
+                                newValueAndFieldName: {
+                                    type: "client",
+                                    newValue: newRow.fullName,
+                                    fieldName: "fullName",
+                                },
+                            },
+                        });
+                    }
+                    if (newRow.voucherNumber !== oldRow.voucherNumber) {
+                        dispatch({
+                            type: "update_cell",
+                            updateCellPayload: {
+                                rowId: newRow.id,
+                                newValueAndFieldName: {
+                                    type: "parcel",
+                                    newValue: newRow.voucherNumber,
+                                    fieldName: "voucherNumber",
+                                },
+                            },
+                        });
+                    }
+                    return newRow;
+                }}
+                // using sx rather than styled-components as otherwise throws an error when iterating through columns
+                sx={{
+                    "& .MuiDataGrid-cell": {
+                        border: "1px solid",
+                        borderColor: `${theme.main.border}`,
+                        "& .MuiInputBase-root": {
+                            height: "100%",
+                        },
+                    },
+                    "& .MuiDataGrid-columnHeaders": {
+                        borderBottom: "3px solid",
+                        borderTop: "2px solid",
+                        borderColor: `${theme.main.border}`,
+                    },
+                    "& .MuiDataGrid-columnHeader": {
+                        borderLeft: "1px solid",
+                        borderRight: "1px solid",
+                        borderColor: `${theme.main.border}`,
+                    },
+                    "& .MuiDataGrid-columnHeaderTitle": {
+                        fontWeight: "bold",
+                    },
+                    "& .Mui-error": {
+                        backgroundColor: `${theme.error}`,
+                    },
                     border: "1px solid",
                     borderColor: `${theme.main.border}`,
-                    "& .MuiInputBase-root": {
-                        height: "100%",
-                    },
-                },
-                "& .MuiDataGrid-columnHeaders": {
-                    borderBottom: "3px solid",
-                    borderTop: "2px solid",
-                    borderColor: `${theme.main.border}`,
-                },
-                "& .MuiDataGrid-columnHeader": {
-                    borderLeft: "1px solid",
-                    borderRight: "1px solid",
-                    borderColor: `${theme.main.border}`,
-                },
-                "& .MuiDataGrid-columnHeaderTitle": {
-                    fontWeight: "bold",
-                },
-                "& .Mui-error": {
-                    backgroundColor: `${theme.error}`,
-                    color: `${theme.text}`,
-                },
-                border: "1px solid",
-                borderColor: `${theme.main.border}`,
-                margin: "1rem",
-            }}
-            hideFooter
-        />
+                    margin: "1rem",
+                }}
+                hideFooter
+            />
+        </>
     );
 };
 

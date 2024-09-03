@@ -5,6 +5,11 @@ import RadioGroupInput from "@/components/DataInput/RadioGroupInput";
 import { ErrorText } from "@/components/Form/formStyling";
 import { ParcelCardProps } from "../ParcelForm";
 
+export const SHIPPING_METHOD_LABELS_AND_VALUES: [string, string][] = [
+    ["Delivery", "Delivery"],
+    ["Collection", "Collection"],
+];
+
 const ShippingMethodCard: React.FC<ParcelCardProps> = ({
     errorSetter,
     fieldSetter,
@@ -15,10 +20,7 @@ const ShippingMethodCard: React.FC<ParcelCardProps> = ({
         <GenericFormCard title="Shipping Method" required={true}>
             <>
                 <RadioGroupInput
-                    labelsAndValues={[
-                        ["Delivery", "Delivery"],
-                        ["Collection", "Collection"],
-                    ]}
+                    labelsAndValues={SHIPPING_METHOD_LABELS_AND_VALUES}
                     onChange={valueOnChangeRadioGroup(fieldSetter, errorSetter, "shippingMethod")}
                     value={fields.shippingMethod ?? undefined}
                 ></RadioGroupInput>

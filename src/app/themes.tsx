@@ -120,6 +120,7 @@ export const lightTheme: DefaultTheme = {
     error: "#c01622",
     shadow: "#e2e2e2",
     rainbow: rainbowColours,
+    text: "#2d2d2d",
 };
 
 export const darkTheme: DefaultTheme = {
@@ -144,6 +145,7 @@ export const darkTheme: DefaultTheme = {
     shadow: "#282828",
     error: "#ff7361",
     rainbow: rainbowColours,
+    text: "#d9d9d9",
 };
 
 interface Props {

@@ -4,6 +4,11 @@ import { checkboxGroupToArray, onChangeCheckbox } from "@/components/Form/formFu
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ClientCardProps } from "../ClientForm";
 
+export const PET_FOOD_LABELS_AND_KEYS: [string, string][] = [
+    ["Cat", "Cat"],
+    ["Dog", "Dog"],
+];
+
 const PetFoodCard: React.FC<ClientCardProps> = ({ fieldSetter, fields }) => {
     return (
         <GenericFormCard
@@ -12,10 +17,7 @@ const PetFoodCard: React.FC<ClientCardProps> = ({ fieldSetter, fields }) => {
             text="Tick all that apply. Specify any other requests in the 'Extra Information' section."
         >
             <CheckboxGroupInput
-                labelsAndKeys={[
-                    ["Cat", "Cat"],
-                    ["Dog", "Dog"],
-                ]}
+                labelsAndKeys={PET_FOOD_LABELS_AND_KEYS}
                 onChange={onChangeCheckbox(fieldSetter, fields.petFood, "petFood")}
                 defaultCheckedKeys={checkboxGroupToArray(fields.petFood)}
             />

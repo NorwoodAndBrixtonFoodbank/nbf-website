@@ -7,6 +7,8 @@ import {
     BatchTableDataState,
     Address,
 } from "@/app/parcels/batch/batchTypes";
+import { RefObject } from "react";
+import { capitaliseWords } from "@/common/format";
 
 const getEmptyRow = (id: number): BatchGridDisplayRow => {
     return {
@@ -48,12 +50,18 @@ export const addressToString = (address: Address | null): string | null => {
     return addressArray.join(", ");
 };
 
-const collectionInfoToString = (collectionInfo: CollectionInfo): string => {
-    const { collectionDate, collectionSlot, collectionCentreId } = collectionInfo;
-    return `${collectionDate}, ${collectionSlot}, ${collectionCentreId}`;
+export const collectionInfoToString = (collectionInfo: CollectionInfo | null): string => {
+    if (!collectionInfo) {
+        return "";
+    }
+    const { collectionDate, collectionSlot, collectionCentreAcronymn } = collectionInfo;
+    return `${collectionDate}, ${collectionSlot.slice(0, -3)}, ${collectionCentreAcronymn}`;
 };
 
-const booleanGroupToString = (booleanGroup: BooleanGroup): string => {
+export const booleanGroupToString = (booleanGroup: BooleanGroup | null): string => {
+    if (!booleanGroup) {
+        return "";
+    }
     const trueKeys: string[] = Object.keys(booleanGroup).filter((key) => booleanGroup[key]);
     return trueKeys.join(", ");
 };
@@ -87,16 +95,19 @@ const overrideDataToOverrideDisplayRow = (dataRow: OverrideDataRow): BatchGridDi
         fullName: "",
         phoneNumber: phoneNumber ?? "",
         address: addressToString(address) ?? "",
-        adults: adultInfo ? adultInfo.numberOfAdults : null,
-        children: childrenInfo ? childrenInfo.numberOfChildren : null,
-        listType: listType ?? "",
+        adults: adultInfo ? (adultInfo.numberOfAdults ? adultInfo.numberOfAdults : null) : null,
+        children: childrenInfo
+            ? childrenInfo.numberOfChildren
+                ? childrenInfo.numberOfChildren
+                : null
+            : null,
+        listType: listType ? capitaliseWords(listType) : "",
         dietaryRequirements: dietaryRequirements ? booleanGroupToString(dietaryRequirements) : "",
         feminineProducts: feminineProducts ? booleanGroupToString(feminineProducts) : "",
-        babyProducts: babyProducts
-            ? `Yes, Nappy Size: ${nappySize}`
-            : babyProducts === false
-              ? "No"
-              : "",
+        babyProducts:
+            babyProducts === "Yes"
+                ? `Yes${nappySize ? ", Nappy Size: " + nappySize : ""}`
+                : babyProducts ?? "",
         petFood: petFood ? booleanGroupToString(petFood) : "",
         otherItems: otherItems ? booleanGroupToString(otherItems) : "",
         deliveryInstructions: deliveryInstructions ?? "",
@@ -108,7 +119,7 @@ const overrideDataToOverrideDisplayRow = (dataRow: OverrideDataRow): BatchGridDi
         packingDate: packingDate ?? "",
         packingSlot: packingSlot ?? "",
         shippingMethod: shippingMethod ?? "",
-        collectionInfo: collectionInfo ? collectionInfoToString(collectionInfo) : "",
+        collectionInfo: collectionInfoToString(collectionInfo),
     };
 };
 
@@ -140,7 +151,7 @@ const batchDataToBatchDisplayRow = (dataRow: BatchDataRow): BatchGridDisplayRow 
         packingDate = "",
         packingSlot = "",
         shippingMethod = "",
-        collectionInfo = "",
+        collectionInfo = null,
     } = dataRow.data.parcel || {};
 
     return {
@@ -148,16 +159,19 @@ const batchDataToBatchDisplayRow = (dataRow: BatchDataRow): BatchGridDisplayRow 
         fullName: fullName ?? "",
         phoneNumber: phoneNumber ?? "",
         address: addressToString(address) ?? "",
-        adults: adultInfo ? adultInfo.numberOfAdults : null,
-        children: childrenInfo ? childrenInfo.numberOfChildren : null,
-        listType: listType ?? "",
+        adults: adultInfo ? (adultInfo.numberOfAdults ? adultInfo.numberOfAdults : null) : null,
+        children: childrenInfo
+            ? childrenInfo.numberOfChildren
+                ? childrenInfo.numberOfChildren
+                : null
+            : null,
+        listType: listType ? capitaliseWords(listType) : "",
         dietaryRequirements: dietaryRequirements ? booleanGroupToString(dietaryRequirements) : "",
         feminineProducts: feminineProducts ? booleanGroupToString(feminineProducts) : "",
-        babyProducts: babyProducts
-            ? `Yes, Nappy Size: ${nappySize}`
-            : babyProducts === false
-              ? "No"
-              : "",
+        babyProducts:
+            babyProducts === "Yes"
+                ? `Yes${nappySize ? ", Nappy Size: " + nappySize : ""}`
+                : babyProducts ?? "",
         petFood: petFood ? booleanGroupToString(petFood) : "",
         otherItems: otherItems ? booleanGroupToString(otherItems) : "",
         deliveryInstructions: deliveryInstructions ?? "",
@@ -169,7 +183,7 @@ const batchDataToBatchDisplayRow = (dataRow: BatchDataRow): BatchGridDisplayRow 
         packingDate: packingDate ?? "",
         packingSlot: packingSlot ?? "",
         shippingMethod: shippingMethod ?? "",
-        collectionInfo: collectionInfo ? collectionInfoToString(collectionInfo) : "",
+        collectionInfo: collectionInfoToString(collectionInfo),
     };
 };
 
@@ -185,4 +199,15 @@ export const tableStateToBatchDisplayRows = (
         }
     });
     return displayRows;
+};
+
+//this keypress is to exit edit mode for the current cell. the built in method setCellMode is part of the pro version so this workaround is used instead
+export const simulateEscapeKeyPress = (gridCellReference: RefObject<HTMLDivElement>): void => {
+    const event = new KeyboardEvent("keydown", {
+        bubbles: true,
+        key: "Escape",
+    });
+    if (gridCellReference.current) {
+        gridCellReference.current.dispatchEvent(event);
+    }
 };

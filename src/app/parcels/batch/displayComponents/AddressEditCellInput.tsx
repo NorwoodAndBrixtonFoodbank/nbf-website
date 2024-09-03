@@ -1,21 +1,14 @@
 import FreeFormTextInput from "@/components/DataInput/FreeFormTextInput";
-import { CenterComponent, GappedDiv } from "@/components/Form/formStyling";
+import { CenterComponent } from "@/components/Form/formStyling";
 import { Button, Checkbox, FormControlLabel } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Address, BatchActionType, BatchTableDataState } from "@/app/parcels/batch/batchTypes";
-import styled from "styled-components";
 import { ADDRESS_WIDTH } from "@/app/parcels/batch/columnWidths";
 import { postcodeRegex } from "@/app/clients/form/formSections/AddressCard";
-
-const GappedDivMargin = styled(GappedDiv)`
-    margin: 1rem;
-    width: calc(${ADDRESS_WIDTH}px - 2rem);
-    overflow: clip;
-`;
-
-const TopFreeFormTextInput = styled(FreeFormTextInput)`
-    margin-top: 0.5rem;
-`;
+import {
+    EditCellGappedDivMargin,
+    TopAddressFreeFormTextInput,
+} from "@/app/parcels/batch/displayComponents/EditCellStyledComponents";
 
 const getInitialAddressFields = (id: number, tableState: BatchTableDataState): Partial<Address> => {
     const currentRowAddress: Address | null =
@@ -31,18 +24,16 @@ const getInitialAddressFields = (id: number, tableState: BatchTableDataState): P
     };
 };
 
-type AddressEditCellInputProps = {
+export interface AddressEditCellInputProps {
     tableState: BatchTableDataState;
     id: number;
     dispatchBatchTableAction: React.Dispatch<BatchActionType>;
-    simulateEscapeKeyPress: () => void;
-};
+}
 
 const AddressEditCellInput: React.FC<AddressEditCellInputProps> = ({
     tableState,
     id,
     dispatchBatchTableAction,
-    simulateEscapeKeyPress,
 }) => {
     const [addressInputFields, setAddressInputFields] = useState<Partial<Address>>(
         getInitialAddressFields(id, tableState)
@@ -68,9 +59,9 @@ const AddressEditCellInput: React.FC<AddressEditCellInputProps> = ({
                         fieldName: "address",
                         newValue: {
                             addressLine1: addressInputFields.addressLine1 ?? "",
-                            addressLine2: addressInputFields.addressLine2 ?? null,
+                            addressLine2: addressInputFields.addressLine2 || null,
                             addressTown: addressInputFields.addressTown ?? "",
-                            addressCounty: addressInputFields.addressCounty ?? null,
+                            addressCounty: addressInputFields.addressCounty || null,
                             addressPostcode: addressInputFields.addressPostcode ?? "",
                         } as Address,
                     },
@@ -89,7 +80,6 @@ const AddressEditCellInput: React.FC<AddressEditCellInputProps> = ({
                 },
             });
         }
-        simulateEscapeKeyPress();
     };
 
     const checkInputValidity = (): boolean => {
@@ -109,11 +99,18 @@ const AddressEditCellInput: React.FC<AddressEditCellInputProps> = ({
         return valid;
     };
 
+    const topAddressInputFocusRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        topAddressInputFocusRef.current?.focus();
+    }, []);
+
     return (
-        <GappedDivMargin>
+        <EditCellGappedDivMargin width={ADDRESS_WIDTH}>
             {!clientHasNoAddress && (
                 <>
-                    <TopFreeFormTextInput
+                    <TopAddressFreeFormTextInput
+                        inputRef={topAddressInputFocusRef}
                         label="Address Line 1 *"
                         defaultValue={addressInputFields.addressLine1 ?? ""}
                         onChange={(event) => {
@@ -134,6 +131,7 @@ const AddressEditCellInput: React.FC<AddressEditCellInputProps> = ({
                                 addressLine2: event.target.value,
                             });
                         }}
+                        tabIndex={1}
                     />
                     <FreeFormTextInput
                         label="Town *"
@@ -146,6 +144,7 @@ const AddressEditCellInput: React.FC<AddressEditCellInputProps> = ({
                             setIsAddressTownEmpty(!event.target.value);
                         }}
                         error={isAddressTownEmpty}
+                        tabIndex={2}
                     />
                     <FreeFormTextInput
                         label="County"
@@ -156,6 +155,7 @@ const AddressEditCellInput: React.FC<AddressEditCellInputProps> = ({
                                 addressCounty: event.target.value,
                             });
                         }}
+                        tabIndex={3}
                     />
                     <FreeFormTextInput
                         id="client-address-postcode"
@@ -171,12 +171,14 @@ const AddressEditCellInput: React.FC<AddressEditCellInputProps> = ({
                             });
                         }}
                         error={isPostcodeNotValid}
+                        tabIndex={4}
                     />
                 </>
             )}
             <FormControlLabel
                 control={<Checkbox checked={clientHasNoAddress} onChange={handleCheckCheckbox} />}
                 label="No address"
+                tabIndex={5}
             />
             <CenterComponent>
                 <Button
@@ -187,11 +189,12 @@ const AddressEditCellInput: React.FC<AddressEditCellInputProps> = ({
                             dispatchInputFieldData();
                         }
                     }}
+                    tabIndex={6}
                 >
                     Submit
                 </Button>
             </CenterComponent>
-        </GappedDivMargin>
+        </EditCellGappedDivMargin>
     );
 };
 
