@@ -14,11 +14,7 @@ interface Props {
 const NavBarButton: React.FC<Props> = (props) => {
     const pathname = usePathname();
 
-    const active = pathname
-        ? pathname.startsWith("/parcels/batch")
-            ? props.link === "/parcels/batch"
-            : pathname.startsWith(props.link)
-        : false;
+    const active = pathname.startsWith(props.link);
 
     return (
         <UnstyledLink key={props.page} href={props.link}>
