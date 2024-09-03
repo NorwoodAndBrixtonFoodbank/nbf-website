@@ -14,7 +14,7 @@ import {
     faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { Checkbox, CircularProgress, NoSsr } from "@mui/material";
-import IconButton from "@mui/material/IconButton/IconButton";
+import IconButton from "@mui/material/IconButton";
 import React, { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import styled, { useTheme } from "styled-components";
@@ -365,6 +365,7 @@ const Table = <
                                 onClick={() => swapRows(row.rowId, true)}
                                 aria-label="reorder row upwards"
                                 disabled={isSwapping}
+                                data-testid={`button-move-row-up-${row.rowId}`}
                             >
                                 <StyledIcon icon={faAnglesUp} />
                             </StyledIconButton>
@@ -373,6 +374,7 @@ const Table = <
                             <StyledIconButton
                                 onClick={() => editableConfig.onEdit?.(row.rowId)}
                                 aria-label="edit"
+                                data-testid={`button-edit-row-${row.rowId}`}
                             >
                                 <StyledIcon icon={faPenToSquare} />
                             </StyledIconButton>
@@ -382,6 +384,7 @@ const Table = <
                                 onClick={() => swapRows(row.rowId, false)}
                                 aria-label="reorder row downwards"
                                 disabled={isSwapping}
+                                data-testid={`button-move-row-down-${row.rowId}`}
                             >
                                 <StyledIcon icon={faAnglesDown} />
                             </StyledIconButton>
@@ -394,6 +397,7 @@ const Table = <
                                     }
                                 }}
                                 aria-label="delete"
+                                data-testid={`button-delete-row-${row.rowId}`}
                             >
                                 <StyledIcon icon={faTrashAlt} />
                             </StyledIconButton>

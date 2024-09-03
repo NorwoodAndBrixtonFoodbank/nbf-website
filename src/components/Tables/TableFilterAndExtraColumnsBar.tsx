@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import Button from "@mui/material/Button";
 import { TableHeaders } from "@/components/Tables/Table";
 import styled from "styled-components";
@@ -64,7 +64,12 @@ export function filtersToComponents<Data, Filter extends FilterBase<Data, State>
             setFilters(newFilters);
         };
 
-        return filter.filterComponent(filter.state, onFilter, filter.isDisabled);
+        return (
+            // eslint-disable-next-line react/no-array-index-key
+            <Fragment key={index}>
+                {filter.filterComponent(filter.state, onFilter, filter.isDisabled)}
+            </Fragment>
+        );
     });
 }
 
@@ -158,7 +163,7 @@ function TableFilterAndExtraColumnsBar<Data, Filter extends FilterBase<Data, Sta
                         {hasAdditionalFilters && <FilterAltOutlined />}
                         <FilterContainer>
                             {props.additionalFilters &&
-                                props.additionalFilters?.length !== 0 &&
+                                props.additionalFilters.length !== 0 &&
                                 props.setAdditionalFilters && (
                                     <>
                                         {filtersToComponents<Data, Filter, State>(

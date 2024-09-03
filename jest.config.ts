@@ -1,8 +1,11 @@
 import type { Config } from "jest";
 import tsconfig from "./tsconfig.json";
 
-tsconfig.compilerOptions.jsx = "react";
-tsconfig.compilerOptions.target = "esnext";
+const jestTsConfig = {
+    ...tsconfig.compilerOptions,
+    jsx: "react",
+    target: "esnext",
+};
 
 const config: Config = {
     moduleNameMapper: {
@@ -16,7 +19,7 @@ const config: Config = {
         "^.+\\.(ts|tsx)?$": [
             "ts-jest",
             {
-                tsconfig: tsconfig.compilerOptions,
+                tsconfig: jestTsConfig,
             },
         ],
     },
