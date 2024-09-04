@@ -17,7 +17,9 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { DatabaseAutoType } from "@/databaseUtils";
 
-export const NavBarHeight = "4rem";
+export const NavBarHeight = "3.5rem";
+
+const MENU_BREAKPOINT = "1024px";
 
 const StyledSwipeableDrawer = styled(SwipeableDrawer)`
     & .MuiPaper-root {
@@ -75,7 +77,7 @@ const NavElementContainer = styled.div`
 
 const MobileNavMenuContainer = styled(NavElementContainer)`
     justify-content: start;
-    @media (min-width: 800px) {
+    @media (min-width: ${MENU_BREAKPOINT}) {
         display: none;
     }
 `;
@@ -84,14 +86,14 @@ const LogoElementContainer = styled(NavElementContainer)`
     justify-content: center;
     height: 100%;
     object-fit: cover;
-    @media (min-width: 800px) {
+    @media (min-width: ${MENU_BREAKPOINT}) {
         justify-content: start;
     }
 `;
 
 const DesktopButtonContainer = styled(NavElementContainer)`
     display: none;
-    @media (min-width: 800px) {
+    @media (min-width: ${MENU_BREAKPOINT}) {
         display: flex;
         gap: 1rem;
     }
@@ -132,7 +134,7 @@ const RoleDependent: React.FC<RoleProps> = ({ children, pathname }) => {
     return <>{roleCanAccessPage(role, pathname) && children}</>;
 };
 
-const pages = [
+const PAGES = [
     ["Parcels", "/parcels"],
     ["Clients", "/clients"],
     ["Batch Creation", "/batch-create"],
@@ -170,7 +172,7 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
             <LoginDependent>
                 <StyledSwipeableDrawer open={drawer} onClose={closeDrawer} onOpen={openDrawer}>
                     <DrawerInner>
-                        {pages.map(([page, link]) => (
+                        {PAGES.map(([page, link]) => (
                             <RoleDependent key={page} pathname={link}>
                                 <DrawerButtonWrapper>
                                     <UnstyledLink
@@ -203,7 +205,7 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
                         </UnstyledLink>
                     </LogoElementContainer>
                     <DesktopButtonContainer>
-                        {pages.map(([page, link]) => (
+                        {PAGES.map(([page, link]) => (
                             <RoleDependent key={page} pathname={link}>
                                 <NavBarButton link={link} page={page} />
                             </RoleDependent>

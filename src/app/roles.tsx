@@ -15,12 +15,13 @@ export const pathsNotRequiringLogin = [
 ] as const;
 
 const pathsShownToAllAuthenticatedUsers = [
+    "/batch-create",
     "/calendar",
     "/clients",
-    "/parcels",
-    "/update-password",
-    "/set-password",
     "/info",
+    "/parcels",
+    "/set-password",
+    "/update-password",
 ] as const;
 
 const pathsOnlyShownToStaffAndAbove = ["/lists", "/reports"] as const;
