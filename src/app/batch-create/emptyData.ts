@@ -1,4 +1,4 @@
-import { BatchEditData, OverrideData } from "@/app/batch-create/batchTypes";
+import { BatchEditData, OverrideData } from "@/app/batch-create/types";
 
 export const getEmptyBatchEditData = (): BatchEditData => {
     return {

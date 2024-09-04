@@ -7,11 +7,11 @@ import {
     ParcelData,
     OverrideDataRow,
     BatchDataRow,
-} from "@/app/batch-create/batchTypes";
+} from "@/app/batch-create/types";
 import {
     getOverridenFieldsAndValues,
     getRowToBeUpdated,
-} from "@/app/batch-create/clientSideReducerHelpers";
+} from "@/app/batch-create/helpers/clientSideReducerHelpers";
 import { getEmptyBatchEditData } from "@/app/batch-create/emptyData";
 
 export const batchParcelsReducer = (

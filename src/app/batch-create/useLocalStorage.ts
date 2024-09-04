@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useRef } from "react";
-import { BatchActionType, BatchTableDataState } from "@/app/batch-create/batchTypes";
+import { BatchActionType, BatchTableDataState } from "@/app/batch-create/types";
 
 const LOCAL_STORAGE_KEY = "batchTableDataState";
 

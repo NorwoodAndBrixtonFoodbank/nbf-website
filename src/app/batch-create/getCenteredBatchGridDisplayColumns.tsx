@@ -1,7 +1,7 @@
 import { GridColDef, GridPreProcessEditCellProps, GridRenderCellParams } from "@mui/x-data-grid";
-import { BatchActionType, BatchTableDataState } from "@/app/batch-create/batchTypes";
+import { BatchActionType, BatchTableDataState } from "@/app/batch-create/types";
 import { Button } from "@mui/material";
-import { isPhoneNumberValid } from "@/app/batch-create/fieldValidationFunctions";
+import { isPhoneNumberValid } from "@/app/batch-create/helpers/fieldValidationFunctions";
 import {
     ADDRESS_WIDTH,
     BABY_PRODUCTS_WIDTH,
@@ -22,21 +22,21 @@ import {
     VOUCHER_NUMBER_WIDTH,
     PACKING_DATE_WIDTH,
 } from "@/app/batch-create/columnWidths";
-import AddressEditCell from "@/app/batch-create/displayComponents/AddressEditCell";
-import ListTypeEditCell from "@/app/batch-create/displayComponents/ListTypeEditCell";
-import BooleanGroupEditCell from "@/app/batch-create/displayComponents/BooleanGroupEditCell";
+import AddressEditCell from "@/app/batch-create/inputComponents/AddressEditCell";
+import ListTypeEditCell from "@/app/batch-create/inputComponents/ListTypeEditCell";
+import BooleanGroupEditCell from "@/app/batch-create/inputComponents/BooleanGroupEditCell";
 import { DIETARY_REQS_LABELS_AND_KEYS } from "@/app/clients/form/formSections/DietaryRequirementCard";
 import { FEMININE_PRODUCTS_LABELS_AND_KEYS } from "@/app/clients/form/formSections/FeminineProductCard";
 import { PET_FOOD_LABELS_AND_KEYS } from "@/app/clients/form/formSections/PetFoodCard";
 import { OTHER_ITEMS_LABELS_AND_KEYS } from "@/app/clients/form/formSections/OtherItemsCard";
-import BabyProductsEditCell from "@/app/batch-create/displayComponents/BabyProductsEditCell";
-import TextFieldEditCell from "@/app/batch-create/displayComponents/MultilinePopoverEditCell";
-import BooleanClientEditCell from "@/app/batch-create/displayComponents/BooleanClientEditCell";
-import ShippingMethodEditCell from "@/app/batch-create/displayComponents/ShippingMethodEditCell";
-import PackingDateEditCell from "@/app/batch-create/displayComponents/PackingDateEditCell";
-import PackingSlotEditCell from "@/app/batch-create/displayComponents/PackingSlotEditCell";
-import CollectionInfoEditCell from "@/app/batch-create/displayComponents/CollectionInfoEditCell";
-import PersonEditCell from "@/app/batch-create/displayComponents/PersonEditCell";
+import BabyProductsEditCell from "@/app/batch-create/inputComponents/BabyProductsEditCell";
+import TextFieldEditCell from "@/app/batch-create/inputComponents/MultilinePopoverEditCell";
+import BooleanClientEditCell from "@/app/batch-create/inputComponents/BooleanClientEditCell";
+import ShippingMethodEditCell from "@/app/batch-create/inputComponents/ShippingMethodEditCell";
+import PackingDateEditCell from "@/app/batch-create/inputComponents/PackingDateEditCell";
+import PackingSlotEditCell from "@/app/batch-create/inputComponents/PackingSlotEditCell";
+import CollectionInfoEditCell from "@/app/batch-create/inputComponents/CollectionInfoEditCell";
+import PersonEditCell from "@/app/batch-create/inputComponents/PersonEditCell";
 
 const getCenteredBatchGridDisplayColumns = (
     tableState: BatchTableDataState,
