@@ -50,12 +50,10 @@ export const batchParcelsReducer = (
                   };
         }
         case "add_row": {
-            const newId: number =
-                Math.max(
-                    ...state.batchDataRows.map((row) => {
-                        return row.id;
-                    })
-                ) + 1;
+            const existingIds = state.batchDataRows.map((row) => {
+                return row.id;
+            });
+            const newId: number = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
             return state.batchDataRows.length < 99
                 ? {
                       ...state,
@@ -75,7 +73,11 @@ export const batchParcelsReducer = (
             return rowId !== 0
                 ? {
                       ...state,
-                      batchDataRows: state.batchDataRows.filter((row) => row.id !== rowId),
+                      batchDataRows: state.batchDataRows
+                          .filter((row) => row.id !== rowId)
+                          .map((row, index) => {
+                              return { ...row, id: index + 1 };
+                          }),
                   }
                 : state;
         }

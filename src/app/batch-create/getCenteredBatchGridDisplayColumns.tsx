@@ -37,6 +37,7 @@ import PackingDateEditCell from "@/app/batch-create/inputComponents/PackingDateE
 import PackingSlotEditCell from "@/app/batch-create/inputComponents/PackingSlotEditCell";
 import CollectionInfoEditCell from "@/app/batch-create/inputComponents/CollectionInfoEditCell";
 import PersonEditCell from "@/app/batch-create/inputComponents/PersonEditCell";
+import RowIdComponent from "@/app/batch-create/inputComponents/rowIdComponent";
 
 const getCenteredBatchGridDisplayColumns = (
     tableState: BatchTableDataState,
@@ -52,9 +53,13 @@ const getCenteredBatchGridDisplayColumns = (
             editable: false,
             renderCell: (gridRenderCellParams: GridRenderCellParams) => {
                 if (gridRenderCellParams.row.id === 0 && gridRenderCellParams.field === "id") {
-                    return <Button variant="contained">Apply Column</Button>;
+                    return (
+                        <Button variant="contained" disabled={true}>
+                            Apply Column
+                        </Button>
+                    );
                 }
-                return gridRenderCellParams.row.id;
+                return <RowIdComponent rowId={gridRenderCellParams.row.id} dispatch={dispatch} />;
             },
         },
         {

@@ -24,10 +24,7 @@ const NavBarButton: React.FC<Props> = (props) => {
 
     return (
         <UnstyledLink key={props.page} href={props.link}>
-            <NavBarStyledButton
-                color="primary"
-                variant={active ? "contained" : "outlined"}
-            >
+            <NavBarStyledButton color="primary" variant={active ? "contained" : "outlined"}>
                 {props.page}
             </NavBarStyledButton>
         </UnstyledLink>

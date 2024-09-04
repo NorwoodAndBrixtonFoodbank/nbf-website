@@ -129,9 +129,13 @@ const BatchParcelDataGrid: React.FC = () => {
                         backgroundColor: `${theme.error}`,
                         color: `${theme.text}`,
                     },
+                    "& .MuiDataGrid-virtualScroller": {
+                        overflowY: "scroll",
+                    },
                     border: "1px solid",
                     borderColor: `${theme.main.border}`,
                     margin: "1rem",
+                    maxHeight: "80vh",
                 }}
                 hideFooter
             />

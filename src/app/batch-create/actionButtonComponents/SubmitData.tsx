@@ -60,7 +60,7 @@ const SubmitDataButton = ({
     setConfirmationErrors,
     submitErrors,
     setSubmitErrors,
-}: SubmitDataButtonProps) => {
+}: SubmitDataButtonProps): React.ReactElement => {
     const [isConfirmationDialogVisible, setIsConfirmationDialogVisible] = useState(false);
     const [postSubmissionDialogMessage, setPostSubmissionDialogMessage] = useState<string | null>(
         null
@@ -71,7 +71,7 @@ const SubmitDataButton = ({
             setConfirmationErrors(confirmationErrors);
             setIsConfirmationDialogVisible(true);
         },
-        [tableState, setConfirmationErrors, setIsConfirmationDialogVisible]
+        [setConfirmationErrors, setIsConfirmationDialogVisible]
     );
 
     const handleSubmit = async (): Promise<void> => {
@@ -118,7 +118,7 @@ const ConfirmSubmissionDialog = ({
     setIsDialogVisible,
     confirmationErrors,
     handleSubmit,
-}: ConfirmSubmissionDialogProps) => {
+}: ConfirmSubmissionDialogProps): React.ReactElement => {
     const hasErrors = confirmationErrors.length > 0;
     const message = hasErrors
         ? "Errors were found, please fix before submission"
@@ -161,8 +161,8 @@ const PostSubmissionDialog = ({
     message,
     closeDialog,
     submitErrors,
-    handleReset,
-}: PostSubmissionDialogProps) => {
+    resetTable,
+}: PostSubmissionDialogProps): React.ReactElement => {
     const router = useRouter();
     const hasErrors = submitErrors.length > 0;
     return (
@@ -181,7 +181,7 @@ const PostSubmissionDialog = ({
                         <Button
                             variant="contained"
                             onClick={() => {
-                                handleReset();
+                                resetTable();
                                 closeDialog();
                             }}
                         >
