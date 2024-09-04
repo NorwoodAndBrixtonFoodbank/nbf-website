@@ -1,7 +1,7 @@
 import { GridRenderCellParams } from "@mui/x-data-grid";
 import { BatchActionType, BatchTableDataState } from "@/app/batch-create/batchTypes";
 import EditCellPopover from "@/app/batch-create/displayComponents/EditCellPopover";
-import MultilinePopoverEditCellInput from "@/app/batch-create/displayComponents/MultilinePopoverEditCellInput";
+import MultilinePopoverInputField from "@/app/batch-create/displayComponents/MultilinePopoverInputField";
 import { useMemo } from "react";
 
 export type MultilinePopoverField = "deliveryInstructions" | "extraInformation" | "notes";
@@ -11,6 +11,7 @@ interface MultilinePopoverEditCellProps {
     dispatchBatchTableAction: React.Dispatch<BatchActionType>;
     tableState: BatchTableDataState;
     multilinePopoverField: MultilinePopoverField;
+    maxCharacters?: number;
 }
 
 const MultilinePopoverEditCell: React.FC<MultilinePopoverEditCellProps> = ({
@@ -18,6 +19,7 @@ const MultilinePopoverEditCell: React.FC<MultilinePopoverEditCellProps> = ({
     dispatchBatchTableAction,
     tableState,
     multilinePopoverField,
+    maxCharacters
 }) => {
     const id = gridRenderCellParams.id as number;
 
@@ -43,11 +45,12 @@ const MultilinePopoverEditCell: React.FC<MultilinePopoverEditCellProps> = ({
             cellValueString={currentRowFieldDataString}
             dispatchBatchTableAction={dispatchBatchTableAction}
         >
-            <MultilinePopoverEditCellInput
+            <MultilinePopoverInputField
                 id={id}
                 dispatchBatchTableAction={dispatchBatchTableAction}
                 initialText={currentRowFieldDataString}
                 multilinePopoverField={multilinePopoverField}
+                maxCharacters={maxCharacters ?? 500}
             />
         </EditCellPopover>
     );
