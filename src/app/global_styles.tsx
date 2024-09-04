@@ -78,6 +78,7 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
                         border: "2px solid transparent",
                         "&:hover": {
                             opacity: 0.7,
+                            borderWidth: "2px",
                         },
                         "&:focus": {
                             opacity: 0.7,
