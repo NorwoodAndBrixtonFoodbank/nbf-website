@@ -19,8 +19,7 @@ const NavBarStyledButton = styled(Button)`
 
 const NavBarButton: React.FC<Props> = (props) => {
     const pathname = usePathname();
-
-    const active = pathname.startsWith(props.link);
+    const active = pathname?.startsWith(props.link) ?? false;
 
     return (
         <UnstyledLink key={props.page} href={props.link}>
