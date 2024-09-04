@@ -74,12 +74,14 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
                     root: {
                         transition: "none",
                         textTransform: "none",
+                        boxSizing: "border-box",
+                        border: "2px solid transparent",
                         "&:hover": {
                             opacity: 0.7,
                         },
                         "&:focus": {
                             opacity: 0.7,
-                            border: `2px solid ${chosenTheme.primary.foreground[0]}`,
+                            borderColor: `${chosenTheme.primary.foreground[0]}`,
                         },
                     },
                 },
