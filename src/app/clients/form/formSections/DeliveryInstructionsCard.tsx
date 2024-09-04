@@ -9,7 +9,7 @@ import {
 import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ClientCardProps } from "@/app/clients/form/ClientForm";
 
-const MAX_CHARACTERS = 380;
+export const MAX_CHARACTERS = 380;
 
 const DeliveryInstructionsCard: React.FC<ClientCardProps> = ({
     formErrors,

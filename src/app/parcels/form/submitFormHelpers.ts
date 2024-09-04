@@ -6,11 +6,11 @@ import { AuditLog, sendAuditLog } from "@/server/auditLog";
 export type WriteParcelToDatabaseFunction = UpdateParcel | InsertParcel;
 export type WriteParcelToDatabaseErrors = InsertParcelErrorType | UpdateParcelErrorType;
 
-type ParcelDatabaseInsertRecord = InsertSchema["parcels"];
+export type ParcelDatabaseInsertRecord = InsertSchema["parcels"];
 type ParcelDatabaseUpdateRecord = UpdateSchema["parcels"];
 
 type InsertParcelErrorType = "failedToInsertParcel";
-type InsertParcelReturnType = {
+export type InsertParcelReturnType = {
     error: { type: InsertParcelErrorType; logId: string } | null;
     parcelId: string | null;
 };
