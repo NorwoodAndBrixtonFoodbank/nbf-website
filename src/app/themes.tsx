@@ -174,6 +174,13 @@ const preferenceIsDark = (themePreference: ThemePreference, systemTheme: SystemT
     }
 };
 
+const shouldForwardProp = (propName: string, target: unknown): boolean => {
+    if (typeof target === "string") {
+        return isPropValid(propName) as boolean;
+    }
+    return true;
+};
+
 /*
  * Makes a styled-components global registry to get server-side inserted CSS
  * Adapted from https://nextjs.org/docs/app/building-your-application/styling/css-in-js#styled-components
@@ -210,9 +217,12 @@ const StyleManager: React.FC<Props> = ({ children }) => {
 
     const themedChildren =
         typeof window !== "undefined" ? (
-            children
+            <StyleSheetManager shouldForwardProp={shouldForwardProp}>{children}</StyleSheetManager>
         ) : (
-            <StyleSheetManager sheet={serverStyleSheet.instance} shouldForwardProp={isPropValid}>
+            <StyleSheetManager
+                sheet={serverStyleSheet.instance}
+                shouldForwardProp={shouldForwardProp}
+            >
                 {children}
             </StyleSheetManager>
         );

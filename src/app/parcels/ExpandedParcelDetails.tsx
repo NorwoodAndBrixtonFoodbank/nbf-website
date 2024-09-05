@@ -9,7 +9,7 @@ import getExpandedParcelDetails, {
 } from "@/app/parcels/getExpandedParcelDetails";
 import EventTable, { EventTableRow } from "./EventTable";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
-import { styled } from "styled-components";
+import styled from "styled-components";
 
 const DeletedText = styled.div`
     font-weight: 600;

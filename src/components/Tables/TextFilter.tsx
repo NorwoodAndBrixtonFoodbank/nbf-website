@@ -51,7 +51,7 @@ export const buildServerSideTextFilter = <Data, DbData extends Record<string, un
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                             setState(event.target.value);
                         }}
-                        isDisabled={isDisabled}
+                        disabled={isDisabled}
                     />
                 </TextFilterStyling>
             );
