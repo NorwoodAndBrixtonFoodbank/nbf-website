@@ -11,7 +11,7 @@ import {
     ExpandedClientParcelDetails,
     getClientParcelsDetails,
 } from "@/app/clients/getClientParcelsData";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import { ErrorSecondaryText } from "../errorStylingandMessages";
 import { CircularProgress } from "@mui/material";
 import { Centerer } from "@/components/Modal/ModalFormStyles";
