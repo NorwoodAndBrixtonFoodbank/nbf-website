@@ -114,7 +114,7 @@ export const lightTheme: DefaultTheme = {
     },
     accent: {
         background: "#1b385f",
-        foreground: WHITE,
+        foreground: BLACK,
         largeForeground: WHITE,
     },
     error: "#c01622",
@@ -139,7 +139,7 @@ export const darkTheme: DefaultTheme = {
     },
     accent: {
         background: "#b8cbe9",
-        foreground: "#2d2d2d",
+        foreground: WHITE,
         largeForeground: "#2d2d2d",
     },
     shadow: "#282828",
@@ -214,13 +214,6 @@ const StyleManager: React.FC<Props> = ({ children }) => {
     const themeToggle = (dark: boolean): void => {
         setThemePreference(dark ? "dark" : "light");
     };
-
-    const themedChildren =
-        typeof window !== "undefined" ? (
-            <StyleSheetManager shouldForwardProp={shouldForwardProp}>{children}</StyleSheetManager>
-        ) : (
-            <StyleSheetManager sheet={serverStyleSheet.instance}>{children}</StyleSheetManager>
-        );
 
     return (
         <ThemeUpdateContext.Provider value={themeToggle}>

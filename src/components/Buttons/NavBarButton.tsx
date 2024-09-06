@@ -15,7 +15,6 @@ interface Props {
 const NavBarStyledButton = styled(Button)`
     padding: 0.2rem 0.6rem;
     white-space: nowrap;
-    border-color: ${(props) => props.theme.primary.background[0]};
 `;
 
 const NavBarButton: React.FC<Props> = (props) => {
