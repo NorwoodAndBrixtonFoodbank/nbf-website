@@ -219,12 +219,7 @@ const StyleManager: React.FC<Props> = ({ children }) => {
         typeof window !== "undefined" ? (
             <StyleSheetManager shouldForwardProp={shouldForwardProp}>{children}</StyleSheetManager>
         ) : (
-            <StyleSheetManager
-                sheet={serverStyleSheet.instance}
-                shouldForwardProp={shouldForwardProp}
-            >
-                {children}
-            </StyleSheetManager>
+            <StyleSheetManager sheet={serverStyleSheet.instance}>{children}</StyleSheetManager>
         );
 
     return (
@@ -232,7 +227,16 @@ const StyleManager: React.FC<Props> = ({ children }) => {
             <ThemeProvider
                 theme={preferenceIsDark(themePreference, systemTheme) ? darkTheme : lightTheme}
             >
-                <MaterialAndGlobalStyle>{themedChildren}</MaterialAndGlobalStyle>
+                <MaterialAndGlobalStyle>
+                    <StyleSheetManager
+                        shouldForwardProp={shouldForwardProp}
+                        sheet={
+                            typeof window === "undefined" ? serverStyleSheet.instance : undefined
+                        }
+                    >
+                        {children}
+                    </StyleSheetManager>
+                </MaterialAndGlobalStyle>
             </ThemeProvider>
         </ThemeUpdateContext.Provider>
     );
