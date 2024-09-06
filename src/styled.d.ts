@@ -56,5 +56,6 @@ declare module "styled-components" {
         error: string;
         shadow: string;
         rainbow: RainbowPalette;
+        text: string;
     }
 }

@@ -43,6 +43,10 @@ export default defineConfig({
         setupNodeEvents(on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) {
             on("task", {
                 readPdf,
+                log: (message: unknown) => {
+                    console.log(message);
+                    return null;
+                },
             });
             return config;
         },

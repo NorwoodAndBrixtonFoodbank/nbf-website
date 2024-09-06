@@ -75,14 +75,12 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
                         transition: "none",
                         textTransform: "none",
                         boxSizing: "border-box",
-                        border: "2px solid transparent",
                         "&:hover": {
                             opacity: 0.7,
-                            borderWidth: "2px",
                         },
                         "&:focus": {
                             opacity: 0.7,
-                            borderColor: `${chosenTheme.primary.foreground[0]}`,
+                            boxShadow: `inset 0 0 0 2px ${chosenTheme.main.foreground[0]}`,
                         },
                     },
                 },
