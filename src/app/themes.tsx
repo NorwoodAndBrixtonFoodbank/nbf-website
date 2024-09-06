@@ -114,7 +114,7 @@ export const lightTheme: DefaultTheme = {
     },
     accent: {
         background: "#1b385f",
-        foreground: BLACK,
+        foreground: WHITE,
         largeForeground: WHITE,
     },
     error: "#c01622",
@@ -139,7 +139,7 @@ export const darkTheme: DefaultTheme = {
     },
     accent: {
         background: "#b8cbe9",
-        foreground: WHITE,
+        foreground: "#2d2d2d",
         largeForeground: "#2d2d2d",
     },
     shadow: "#282828",

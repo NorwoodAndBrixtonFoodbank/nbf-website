@@ -80,7 +80,7 @@ const materialTheme = (chosenTheme: DefaultTheme): Theme =>
                         },
                         "&:focus": {
                             opacity: 0.7,
-                            boxShadow: `inset 0 0 0 2px ${chosenTheme.accent.foreground}`,
+                            boxShadow: `inset 0 0 0 2px ${chosenTheme.main.foreground[0]}`,
                         },
                     },
                 },
