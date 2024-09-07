@@ -6,7 +6,7 @@ frontend:
         - npm ci
     build:
       commands:
-        - env | grep -e CLOUDWATCH_ -e SUPABASE_SERVICE_ROLE_KEY >> .env.production
+        - env | grep -e CLOUDWATCH_ -e SUPABASE_SERVICE_ROLE_KEY -e NEXT_PUBLIC_ENVIRONMENT >> .env.production
         - rm -f ./supabase/seed/seed.ts
         - npm run build
   artifacts:
