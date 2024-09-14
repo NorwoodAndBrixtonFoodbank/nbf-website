@@ -16,29 +16,29 @@ const middleware: NextMiddleware = async (req: NextRequest) => {
         return res;
     }
 
-    const currentPathRequiresLogin = pathsNotRequiringLogin.every(
-        (pathNotRequiringLogin) => !req.nextUrl.pathname.startsWith(pathNotRequiringLogin)
-    );
-
-    if (!user && currentPathRequiresLogin) {
-        return NextResponse.redirect(new URL("/login", req.url));
-    }
-
-    if (user && req.nextUrl.pathname === "/login") {
-        return NextResponse.redirect(new URL("/", req.url));
-    }
-
     let userRole: UserRole | null;
 
     if (user === null) {
         userRole = null;
     } else {
         const { role, error } = await fetchUserRole(user.id);
-        if (error) {
-            userRole = null;
-        } else {
-            userRole = role;
-        }
+        userRole = error ? null : role;
+    }
+
+    // auth.getUser() still returns a user record after an admin has deleted this user's account
+    // so we check whether there's user profile role associated with the user id
+    const loggedInAndHasProfile = !!user && !!userRole;
+
+    const currentPathRequiresLogin = pathsNotRequiringLogin.every(
+        (pathNotRequiringLogin) => !req.nextUrl.pathname.startsWith(pathNotRequiringLogin)
+    );
+
+    if (!loggedInAndHasProfile && currentPathRequiresLogin) {
+        return NextResponse.redirect(new URL("/login", req.url));
+    }
+
+    if (loggedInAndHasProfile && req.nextUrl.pathname === "/login") {
+        return NextResponse.redirect(new URL("/", req.url));
     }
 
     if (!roleCanAccessPage(userRole, req.nextUrl.pathname)) {
