@@ -147,20 +147,13 @@ const getExpandedParcelDetails = async (
             expandedParcelData: {
                 isActive: false,
                 voucherNumber: rawParcelDetails.voucher_number ?? "",
-                fullName: client.full_name,
-                address: formatAddressFromClientDetails(client),
-                deliveryInstructions: client.delivery_instructions,
-                phoneNumber: client.phone_number,
                 listType: rawParcelDetails.list_type,
-                household: formatHouseholdFromFamilyDetails(client.family),
-                adults: formatBreakdownOfAdultsFromFamilyDetails(client.family),
-                children: formatBreakdownOfChildrenFromFamilyDetails(client.family),
                 packingDate: formatDatetimeAsDate(rawParcelDetails.packing_date),
                 packingSlot: rawParcelDetails.packing_slot?.name ?? "",
                 method: rawParcelDetails.collection_centre?.is_shown
                     ? rawParcelDetails.collection_centre?.name
                     : `${rawParcelDetails.collection_centre?.name} (inactive)`,
-                collectionDateTime: rawParcelDetails.collection_datetime,
+                collectionDateTime: formatDateTime(rawParcelDetails.collection_datetime),
                 createdAt: formatDateTime(rawParcelDetails.created_at),
             },
             events: processEventsDetails(rawParcelDetails.events),
@@ -174,6 +167,7 @@ interface ParcelDataIndependentOfClient extends Data {
     packingDate: string;
     packingSlot: string;
     method: string;
+    collectionDateTime: string;
     createdAt: string;
     listType: ListType;
 }
