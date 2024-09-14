@@ -21,7 +21,9 @@ export const getUsersDataAndCount = async (
     sortState: UsersSortState,
     abortSignal: AbortSignal
 ): Promise<GetUsersReturnType> => {
-    let query = supabase.from("profiles").select("*") as DbQuery<Schema["profiles"]>;
+    let query = supabase.from("profiles").select("*").not("user_id", "is", null) as DbQuery<
+        Schema["profiles"]
+    >;
 
     if (sortState.sortEnabled && sortState.column.sortMethod) {
         query = sortState.column.sortMethod(sortState.sortDirection, query);
