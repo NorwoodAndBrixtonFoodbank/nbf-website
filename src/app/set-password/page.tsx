@@ -20,16 +20,36 @@ export default function Page(): ReactElement {
     useEffect(() => {
         (async () => {
             const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            const errorCode = hashParams.get("error_code");
+            const errorDescription = hashParams.get("error_description");
+
             accessToken.current = hashParams.get("access_token");
             refreshToken.current = hashParams.get("refresh_token");
 
+            let localErrorString = "";
+            if (errorCode && errorCode.startsWith("4")) {
+                localErrorString = "An error has occurred";
+                if (errorDescription) {
+                    localErrorString += ": " + errorDescription;
+                }
+            }
+
             if (!accessToken.current) {
                 void logErrorReturnLogId("Failed to validate new user: no access token");
-                router.push("/");
+                if (localErrorString === "") {
+                    localErrorString = "An error has occurred. Please contact the admin.";
+                }
             }
             if (!refreshToken.current) {
                 void logErrorReturnLogId("Failed to validate new user: no refresh token");
-                router.push("/");
+                if (localErrorString === "") {
+                    localErrorString = "An error has occurred. Please contact the admin.";
+                }
+            }
+
+            if (localErrorString !== "") {
+                setErrorMessage(localErrorString);
+                return;
             }
 
             const supabase = createClientComponentClient();
