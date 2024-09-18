@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Row, ServerPaginatedTable } from "@/components/Tables/Table";
 import supabase from "@/supabaseClient";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
-import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import { fetchAuditLog, fetchAuditLogCount } from "./fetchAuditLogData";
 import { auditLogTableHeaderKeysAndLabels } from "./columns";
 import { getAuditLogErrorMessage, auditLogTableColumnDisplayFunctions } from "./format";
@@ -16,6 +15,7 @@ import { AuditLogRow, AuditLogSortState, convertAuditLogPlusRowsToAuditLogRows }
 import { auditLogTableSortableColumns } from "./sortFunctions";
 import AuditLogModal from "./auditLogModal/AuditLogModal";
 import { DbAuditLogRow } from "@/databaseUtils";
+import FloatingToast from "@/components/FloatingToast";
 
 const AuditLogTable: React.FC = () => {
     const [auditLogDataPortion, setAuditLogDataPortion] = useState<AuditLogRow[]>([]);
@@ -80,7 +80,13 @@ const AuditLogTable: React.FC = () => {
 
     return (
         <>
-            {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
+            {errorMessage && (
+                <FloatingToast
+                    message={errorMessage}
+                    severity="warning"
+                    variant="filled"
+                ></FloatingToast>
+            )}
             <ServerPaginatedTable<AuditLogRow, DbAuditLogRow, never>
                 dataPortion={auditLogDataPortion}
                 headerKeysAndLabels={auditLogTableHeaderKeysAndLabels}

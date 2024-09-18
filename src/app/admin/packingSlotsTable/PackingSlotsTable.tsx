@@ -29,10 +29,10 @@ import {
 import { LinearProgress } from "@mui/material";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
-import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import Header from "../websiteDataTable/Header";
 import StyledDataGrid from "../common/StyledDataGrid";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
+import FloatingToast from "@/components/FloatingToast";
 
 interface EditToolbarProps {
     setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
@@ -420,7 +420,13 @@ const PackingSlotsTable: React.FC = () => {
 
     return (
         <>
-            {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
+            {errorMessage && (
+                <FloatingToast
+                    message={errorMessage}
+                    severity="warning"
+                    variant="filled"
+                ></FloatingToast>
+            )}
             {rows && (
                 <StyledDataGrid
                     rows={rows}

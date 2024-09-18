@@ -46,6 +46,7 @@ import { useTheme } from "styled-components";
 import { formatDayjsToHoursAndMinutes, formatTimeStringToHoursAndMinutes } from "@/common/format";
 import { DesktopTimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
+import FloatingToast from "@/components/FloatingToast";
 
 export interface CollectionCentresTableRow {
     acronym: Schema["collection_centres"]["acronym"];
@@ -503,7 +504,13 @@ const CollectionCentresTable: React.FC = () => {
 
     return (
         <>
-            {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
+            {errorMessage && (
+                <FloatingToast
+                    message={errorMessage}
+                    severity="warning"
+                    variant="filled"
+                ></FloatingToast>
+            )}
             {rows && (
                 <StyledDataGrid
                     rows={rows}

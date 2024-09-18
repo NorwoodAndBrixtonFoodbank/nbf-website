@@ -6,7 +6,6 @@ import TableSurface from "@/components/Tables/TableSurface";
 import supabase from "@/supabaseClient";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { CircularProgress } from "@mui/material";
-import { ErrorSecondaryText } from "../../errorStylingandMessages";
 import reportsHeaders from "./headers";
 import { ReportsTableRow, ReportsSortState } from "./types";
 import { DbReportRow } from "@/databaseUtils";
@@ -14,6 +13,7 @@ import getReportsDataAndCount from "./getReportsData";
 import reportsSortableColumns from "./sortableColumns";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import { reportsTableColumnStyleOptions } from "@/app/reports/reportsTable/styles";
+import FloatingToast from "@/components/FloatingToast";
 
 const ReportsPage: React.FC = () => {
     const [isLoadingForFirstTime, setIsLoadingForFirstTime] = useState(true);
@@ -98,7 +98,13 @@ const ReportsPage: React.FC = () => {
                 </Centerer>
             ) : (
                 <>
-                    {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
+                    {errorMessage && (
+                        <FloatingToast
+                            message={errorMessage}
+                            severity="warning"
+                            variant="filled"
+                        ></FloatingToast>
+                    )}
                     <TableSurface>
                         <ServerPaginatedTable<ReportsTableRow, DbReportRow, never>
                             dataPortion={reportsDataPortion}
