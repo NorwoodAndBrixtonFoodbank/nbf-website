@@ -23,8 +23,12 @@ The data backup file is encrypted to protect sensitive information. The encrypte
   ```
 - Deploy edge functions (see GitHub workflow for commands)
 - Upload the congestion charge text file to bucket manually
-- Update the email provider settings to match the original Supabase instance
-- Update the email templates to match the original Supabase instance
+- Update the following project settings to match the original Supabase instance:
+  - auth, notably time-box user sessions
+  - SMTP
+- Update the auth configuration settings to match the original Supabase instance:
+  - email provider settings
+  - email templates
 - Update .env.local and add this to Keeper
 - Change the environment variables on Amplify and redeploy the code.
 
