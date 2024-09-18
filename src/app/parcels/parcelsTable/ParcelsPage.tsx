@@ -23,7 +23,7 @@ import ParcelsTable from "@/app/parcels/parcelsTable/ParcelsTable";
 import ParcelsModal from "@/app/parcels/parcelsTable/ParcelsModal";
 import { Centerer } from "@/components/Modal/ModalFormStyles";
 import { CircularProgress } from "@mui/material";
-import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
+import FloatingToast from "@/components/FloatingToast";
 
 const ParcelsPage: React.FC = () => {
     const [selectedParcelId, setSelectedParcelId] = useState<string | null>(null);
@@ -110,7 +110,13 @@ const ParcelsPage: React.FC = () => {
                 </Centerer>
             ) : (
                 <>
-                    {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
+                    {errorMessage && (
+                        <FloatingToast
+                            message={errorMessage}
+                            severity="warning"
+                            variant="filled"
+                        ></FloatingToast>
+                    )}
                     <ParcelsTable
                         setSelectedParcelId={setSelectedParcelId}
                         setSelectedClientDetails={setSelectedClientDetails}

@@ -20,10 +20,10 @@ import { LinearProgress } from "@mui/material";
 import { fetchWebsiteData, updateDbWebsiteData } from "./fetchWebsiteData";
 import EditableTextAreaForDataGrid from "./EditableTextAreaForDataGrid";
 import { logErrorReturnLogId } from "@/logger/logger";
-import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import { subscriptionStatusRequiresErrorMessage } from "@/common/subscriptionStatusRequiresErrorMessage";
 import Header from "./Header";
 import StyledDataGrid from "../common/StyledDataGrid";
+import FloatingToast from "@/components/FloatingToast";
 
 export interface WebsiteDataRow {
     dbName: string;
@@ -225,7 +225,13 @@ const WebsiteDataTable: React.FC = () => {
 
     return (
         <>
-            {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
+            {errorMessage && (
+                <FloatingToast
+                    message={errorMessage}
+                    severity="warning"
+                    variant="filled"
+                ></FloatingToast>
+            )}
             {rows && (
                 <StyledDataGrid
                     rows={rows}

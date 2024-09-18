@@ -32,6 +32,7 @@ import { getIsClientActiveErrorMessage, getDeleteClientErrorMessage } from "./fo
 import { getClientParcelsDetails } from "../getClientParcelsData";
 import { saveParcelStatus } from "@/app/parcels/ActionBar/Statuses";
 import { ConfirmButtons } from "@/components/Buttons/GeneralButtonParts";
+import FloatingToast from "@/components/FloatingToast";
 
 const ClientsPage: React.FC = () => {
     const [isLoadingForFirstTime, setIsLoadingForFirstTime] = useState(true);
@@ -181,7 +182,13 @@ const ClientsPage: React.FC = () => {
                 </Centerer>
             ) : (
                 <>
-                    {errorMessage && <ErrorSecondaryText>{errorMessage}</ErrorSecondaryText>}
+                    {errorMessage && (
+                        <FloatingToast
+                            message={errorMessage}
+                            severity="warning"
+                            variant="filled"
+                        ></FloatingToast>
+                    )}
                     <TableSurface>
                         <ServerPaginatedTable<ClientsTableRow, DbClientRow, string>
                             dataPortion={clientsDataPortion}
