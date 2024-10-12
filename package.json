@@ -46,6 +46,11 @@
       ".tsx"
     ]
   },
+  "browserslist": [
+    "defaults",
+    "Safari >= 13.1.2",
+    "Chrome >= 116"
+  ],
   "dependencies": {
     "@emotion/is-prop-valid": "^1.2.1",
     "@emotion/react": "^11.11.1",
