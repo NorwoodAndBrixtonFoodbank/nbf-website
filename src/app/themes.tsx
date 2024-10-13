@@ -202,6 +202,9 @@ const StyleManager: React.FC<Props> = ({ children }) => {
     const [systemTheme, setSystemTheme] = useState<SystemTheme>("light");
 
     useEffect(() => {
+        // Not included in standard polyfills from core-js
+        import("mediaquerylist.addeventlistener/polyfill");
+
         const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
         const listener = (event: MediaQueryListEvent): void => {
             setSystemTheme(event.matches ? "dark" : "light");
