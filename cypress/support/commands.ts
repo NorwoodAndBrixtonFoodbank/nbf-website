@@ -95,7 +95,13 @@ Cypress.on("uncaught:exception", (err) => {
     const str = err.toString();
     // NEXT_REDIRECT triggers when the client side router interrupts a cypress command
     // 419 is the same error but when minified in the production build
-    if (str.includes("NEXT_REDIRECT") || str.includes("419")) {
+    //
+    // 418 is hydration errors in production build - a known issue with Cypress, Next, React 18
+    if (
+        str.includes("NEXT_REDIRECT") ||
+        str.includes("Minified React error #419") ||
+        str.includes("Minified React error #418")
+    ) {
         return false;
     }
 
