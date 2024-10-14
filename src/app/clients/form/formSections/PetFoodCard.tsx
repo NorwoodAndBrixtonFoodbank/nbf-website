@@ -19,7 +19,7 @@ const PetFoodCard: React.FC<ClientCardProps> = ({ fieldSetter, fields }) => {
             <CheckboxGroupInput
                 labelsAndKeys={PET_FOOD_LABELS_AND_KEYS}
                 onChange={onChangeCheckbox(fieldSetter, fields.petFood, "petFood")}
-                defaultCheckedKeys={checkboxGroupToArray(fields.petFood)}
+                checkedKeys={checkboxGroupToArray(fields.petFood)}
             />
         </GenericFormCard>
     );
