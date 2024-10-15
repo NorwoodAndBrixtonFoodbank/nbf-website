@@ -1,6 +1,6 @@
 import React from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { expect, it } from "@jest/globals";
+import { afterEach, expect, it } from "@jest/globals";
 import "@testing-library/jest-dom/jest-globals";
 import CheckboxGroupInput from "./CheckboxGroupInput";
 import { getCheckboxGroupHandler } from "./inputHandlerFactories";

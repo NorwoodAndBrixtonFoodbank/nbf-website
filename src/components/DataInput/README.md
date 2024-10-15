@@ -6,6 +6,7 @@ The following document contains information on how to use the input handler fact
 * `<ControlledSelect />`
 * `<UncontrolledSelect />`
 * `<CheckboxInput />`
+* `<CheckboxGroupInput>`
 
 Each component has an `onChange` prop used to handle change events on the values of the input component -  for example, when someone clicks an option on a dropdown list. 
 
