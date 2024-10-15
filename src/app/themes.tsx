@@ -181,6 +181,29 @@ const shouldForwardProp = (propName: string, target: unknown): boolean => {
     return true;
 };
 
+const polyfillMediaQueryList = (mql: MediaQueryList): void => {
+    // This is necessary because Safari <14 has incompatible MediaQueryList implementation.
+    // This is not included in the standard core-js polyfills
+
+    if (!mql.addEventListener && mql.addListener) {
+        mql.addEventListener = <K extends keyof MediaQueryListEventMap>(
+            type: K,
+            listener: (this: MediaQueryList, ev: MediaQueryListEventMap[K]) => unknown
+        ): void => {
+            mql.addListener(listener);
+        };
+    }
+
+    if (!mql.removeEventListener && mql.removeListener) {
+        mql.removeEventListener = <K extends keyof MediaQueryListEventMap>(
+            type: K,
+            listener: (this: MediaQueryList, ev: MediaQueryListEventMap[K]) => unknown
+        ): void => {
+            mql.removeListener(listener);
+        };
+    }
+};
+
 /*
  * Makes a styled-components global registry to get server-side inserted CSS
  * Adapted from https://nextjs.org/docs/app/building-your-application/styling/css-in-js#styled-components
@@ -203,10 +226,13 @@ const StyleManager: React.FC<Props> = ({ children }) => {
 
     useEffect(() => {
         const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+        polyfillMediaQueryList(mediaQuery);
+
         const listener = (event: MediaQueryListEvent): void => {
             setSystemTheme(event.matches ? "dark" : "light");
         };
         setSystemTheme(mediaQuery.matches ? "dark" : "light");
+
         mediaQuery.addEventListener("change", listener);
         return () => mediaQuery.removeEventListener("change", listener);
     }, []);
