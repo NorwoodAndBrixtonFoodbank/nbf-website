@@ -29,6 +29,7 @@ const RadioGroupInput: React.FC<Props> = (props) => {
                             label={label}
                             value={value}
                             control={<Radio />}
+                            data-testid={`option-${value}`}
                         />
                     );
                 })}
