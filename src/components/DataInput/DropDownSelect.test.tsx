@@ -1,6 +1,6 @@
 import React from "react";
 import { cleanup, render, screen, within } from "@testing-library/react";
-import { expect, it } from "@jest/globals";
+import { afterEach, expect, it } from "@jest/globals";
 import "@testing-library/jest-dom/jest-globals";
 import { UncontrolledSelect } from "./DropDownSelect";
 import { getDropdownListHandler } from "./inputHandlerFactories";
