@@ -1,4 +1,4 @@
-import { LIST_TYPES_ARRAY, ListTypeLabelsAndValues } from "@/common/fetch";
+import { LIST_TYPES_ARRAY, ListTypeLabelsAndValues } from "@/common/databaseListTypes";
 import { capitaliseWords } from "@/common/format";
 import { BatchActionType } from "@/app/batch-create/types";
 import {

@@ -4,7 +4,7 @@ import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
 import { UncontrolledSelect } from "@/components/DataInput/DropDownSelect";
 import { ClientCardProps } from "@/app/clients/form/ClientForm";
-import { LIST_TYPES_ARRAY } from "@/common/fetch";
+import { LIST_TYPES_ARRAY } from "@/common/databaseListTypes";
 import { capitaliseWords } from "@/common/format";
 
 type ListTypeLabelsAndValues = [string, string][];

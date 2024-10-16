@@ -20,7 +20,7 @@ import CommentBox from "@/app/lists/CommentBox";
 import { logErrorReturnLogId, logInfoReturnLogId } from "@/logger/logger";
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { ClientSideFilter } from "@/components/Tables/Filters";
-import { ListType } from "@/common/fetch";
+import { ListType } from "@/common/databaseListTypes";
 import DeleteConfirmationDialog from "@/components/Modal/DeleteConfirmationDialog";
 
 export type ListFilter = ClientSideFilter<ListRow, string>;

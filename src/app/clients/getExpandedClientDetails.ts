@@ -8,7 +8,7 @@ import {
     getChildAgeUsingBirthYearAndMonth,
     isAdultUsingBirthYear,
 } from "@/common/getAgesOfFamily";
-import { ListType } from "@/common/fetch";
+import { ListType } from "@/common/databaseListTypes";
 
 const getExpandedClientDetails = async (clientId: string): Promise<ExpandedClientData> => {
     const rawClientDetails = await getRawClientDetails(clientId);

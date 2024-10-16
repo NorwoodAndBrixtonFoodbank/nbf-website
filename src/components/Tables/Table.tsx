@@ -13,8 +13,7 @@ import {
     faPenToSquare,
     faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { Checkbox, CircularProgress, NoSsr } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
+import { Checkbox, CircularProgress, IconButton, NoSsr } from "@mui/material";
 import React, { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import styled, { useTheme } from "styled-components";

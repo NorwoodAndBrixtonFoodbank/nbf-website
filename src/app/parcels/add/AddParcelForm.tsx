@@ -9,14 +9,13 @@ import {
     CollectionCentresLabelsAndValues,
     FetchClientError,
     FetchCollectionCentresError,
-    ListTypeLabelsAndValues,
     PackingSlotsError,
     PackingSlotsLabelsAndValues,
     fetchClient,
     fetchPackingSlotsInfo,
     getActiveCollectionCentres,
-    LIST_TYPES_ARRAY,
 } from "@/common/fetch";
+import { LIST_TYPES_ARRAY, ListTypeLabelsAndValues } from "@/common/databaseListTypes";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";
 import supabase from "@/supabaseClient";
 import Title from "@/components/Title/Title";
