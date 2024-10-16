@@ -1,7 +1,8 @@
 import { ParcelInfo } from "@/pdf/ShoppingList/getParcelsData";
 import { ClientSummary, RequirementSummary } from "@/common/formatClientsData";
 import { HouseholdSummary } from "@/common/formatFamiliesData";
-import { fetchLists, FetchListsErrorType, ListType } from "@/common/fetch";
+import { fetchLists, FetchListsErrorType } from "@/common/fetch";
+import { ListType } from "@/common/databaseListTypes";
 import supabase from "@/supabaseClient";
 import { Schema } from "@/databaseUtils";
 import { logErrorReturnLogId } from "@/logger/logger";

@@ -20,7 +20,7 @@ const FeminineProductCard: React.FC<ClientCardProps> = ({ fieldSetter, fields })
                     fields.feminineProducts,
                     "feminineProducts"
                 )}
-                defaultCheckedKeys={checkboxGroupToArray(fields.feminineProducts)}
+                checkedKeys={checkboxGroupToArray(fields.feminineProducts)}
             />
         </GenericFormCard>
     );

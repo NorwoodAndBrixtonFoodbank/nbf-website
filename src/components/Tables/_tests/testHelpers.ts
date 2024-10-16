@@ -1,4 +1,4 @@
-import { LIST_TYPES_ARRAY } from "@/common/fetch";
+import { LIST_TYPES_ARRAY } from "@/common/databaseListTypes";
 import { buttonGroupFilter, filterRowbyButton } from "../ButtonFilter";
 import { buildClientSideTextFilter, filterRowByText } from "../TextFilter";
 import { ClientSideFilter } from "../Filters";

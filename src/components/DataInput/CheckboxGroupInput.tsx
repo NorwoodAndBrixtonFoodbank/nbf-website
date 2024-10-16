@@ -4,6 +4,7 @@ import React from "react";
 import { Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel } from "@mui/material";
 
 interface Props {
+    checkedKeys?: string[];
     defaultCheckedKeys?: string[];
     labelsAndKeys: [string, string][];
     groupLabel?: string;
@@ -24,7 +25,16 @@ const CheckboxGroupInput: React.FC<Props> = (props) => {
                                 <Checkbox
                                     name={key}
                                     onChange={props.onChange}
-                                    defaultChecked={props.defaultCheckedKeys?.includes(key)}
+                                    checked={
+                                        props.checkedKeys
+                                            ? props.checkedKeys.includes(key)
+                                            : undefined
+                                    }
+                                    defaultChecked={
+                                        props.defaultCheckedKeys
+                                            ? props.defaultCheckedKeys.includes(key)
+                                            : undefined
+                                    }
                                     data-testid={`option-${key}`}
                                 />
                             }

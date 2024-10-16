@@ -1,4 +1,5 @@
-import { FetchParcelError, fetchParcel, ListType } from "@/common/fetch";
+import { FetchParcelError, fetchParcel } from "@/common/fetch";
+import { ListType } from "@/common/databaseListTypes";
 import supabase from "@/supabaseClient";
 import { formatDateToDate } from "@/common/format";
 

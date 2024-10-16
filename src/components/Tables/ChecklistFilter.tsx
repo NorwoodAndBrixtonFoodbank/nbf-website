@@ -60,7 +60,7 @@ export const serverSideChecklistFilter = <
                 <CheckboxGroupPopup
                     key={filterLabel}
                     labelsAndKeys={itemLabelsAndKeys}
-                    defaultCheckedKeys={state}
+                    checkedKeys={state}
                     groupLabel={filterLabel}
                     onChange={onChangeCheckbox}
                     anySelected={anySelected}

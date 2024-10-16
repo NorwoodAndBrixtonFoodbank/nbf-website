@@ -1,4 +1,7 @@
 import React from "react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, expect, it } from "@jest/globals";
+import "@testing-library/jest-dom/jest-globals";
 import Modal, { ModalProps } from "@/components/Modal/Modal";
 import StyleManager from "@/app/themes";
 
@@ -11,8 +14,12 @@ const StyledModal: React.FC<ModalProps> = (props) => {
 };
 
 describe("General Modal Component", () => {
+    afterEach(() => {
+        cleanup();
+    });
+
     it("renders", () => {
-        cy.mount(
+        render(
             <StyledModal
                 header="Modal Header"
                 headerId="testModal"
@@ -25,7 +32,7 @@ describe("General Modal Component", () => {
     });
 
     it("modal can be opened", () => {
-        cy.mount(
+        render(
             <StyledModal
                 header="Modal Header"
                 headerId="testModal"
@@ -36,12 +43,12 @@ describe("General Modal Component", () => {
             </StyledModal>
         );
 
-        cy.contains("Modal Header");
-        cy.contains("Modal Content");
+        expect(screen.getByText("Modal Header")).toBeVisible();
+        expect(screen.getByText("Modal Content")).toBeVisible();
     });
 
     it("modal can be closed", () => {
-        cy.mount(
+        render(
             <StyledModal
                 header="Modal Header"
                 headerId="testModal"
@@ -52,14 +59,14 @@ describe("General Modal Component", () => {
             </StyledModal>
         );
 
-        cy.contains("Modal Header").should("not.exist");
-        cy.contains("Modal Content").should("not.exist");
+        expect(screen.queryByText("Modal Header")).toBeNull();
+        expect(screen.queryByText("Modal Content")).toBeNull();
     });
 
     it("modal close button works", () => {
-        const onCloseSpy = cy.spy().as("onCloseSpy");
+        const onCloseSpy = jest.fn();
 
-        cy.mount(
+        render(
             <StyledModal
                 header="Modal Header"
                 headerId="testModal"
@@ -70,7 +77,8 @@ describe("General Modal Component", () => {
             </StyledModal>
         );
 
-        cy.get("svg").parent("button").click();
-        cy.get("@onCloseSpy").should("have.been.calledOnce");
+        fireEvent.click(screen.getByLabelText("Close Button"));
+
+        expect(onCloseSpy).toHaveBeenCalled();
     });
 });

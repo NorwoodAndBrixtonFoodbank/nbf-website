@@ -31,7 +31,7 @@ const DietaryRequirementCard: React.FC<ClientCardProps> = ({ fieldSetter, fields
                     fields.dietaryRequirements,
                     "dietaryRequirements"
                 )}
-                defaultCheckedKeys={checkboxGroupToArray(fields.dietaryRequirements)}
+                checkedKeys={checkboxGroupToArray(fields.dietaryRequirements)}
             />
         </GenericFormCard>
     );

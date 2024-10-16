@@ -33,7 +33,7 @@ const ColumnTogglePopup = <Data,>({
                     headers.find(([headerKey]) => headerKey === key)?.[1] ?? key.toString();
                 return [headerLabel, key as string];
             })}
-            defaultCheckedKeys={shownHeaderKeys.map((key) => key as string)}
+            checkedKeys={shownHeaderKeys.map((key) => key as string)}
             groupLabel="Select Columns"
             onChange={onChangeCheckbox}
         />

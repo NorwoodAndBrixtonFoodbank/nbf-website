@@ -11,12 +11,11 @@ import {
     fetchParcel,
     FetchParcelError,
     getActiveCollectionCentres,
-    ListTypeLabelsAndValues,
     PackingSlotsError,
     PackingSlotsLabelsAndValues,
     ParcelWithCollectionCentreAndPackingSlot,
-    LIST_TYPES_ARRAY,
 } from "@/common/fetch";
+import { LIST_TYPES_ARRAY, ListTypeLabelsAndValues } from "@/common/databaseListTypes";
 import supabase from "@/supabaseClient";
 import { Errors } from "@/components/Form/formFunctions";
 import { ErrorSecondaryText } from "@/app/errorStylingandMessages";

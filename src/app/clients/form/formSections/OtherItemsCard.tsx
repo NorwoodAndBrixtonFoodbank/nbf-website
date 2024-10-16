@@ -19,7 +19,7 @@ const OtherItemsCard: React.FC<ClientCardProps> = ({ fieldSetter, fields }) => {
             <CheckboxGroupInput
                 labelsAndKeys={OTHER_ITEMS_LABELS_AND_KEYS}
                 onChange={onChangeCheckbox(fieldSetter, fields.otherItems, "otherItems")}
-                defaultCheckedKeys={checkboxGroupToArray(fields.otherItems)}
+                checkedKeys={checkboxGroupToArray(fields.otherItems)}
             />
         </GenericFormCard>
     );

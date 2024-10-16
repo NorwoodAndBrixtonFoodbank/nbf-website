@@ -1,4 +1,4 @@
-import { ListType } from "@/common/fetch";
+import { ListType } from "@/common/databaseListTypes";
 import { BooleanGroup } from "@/components/DataInput/inputHandlerFactories";
 import { Person } from "@/components/Form/formFunctions";
 export interface Address {

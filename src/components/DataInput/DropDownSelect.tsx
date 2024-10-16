@@ -44,7 +44,7 @@ const GenericSelect = <ValueType,>(props: GenericProps<ValueType>): React.ReactE
         <FormControl fullWidth>
             <InputLabel id={props.selectLabelId}>{props.listTitle}</InputLabel>
             <Select
-                defaultValue={props.defaultValue ?? undefined}
+                defaultValue={props.defaultValue ?? ("" as ValueType)}
                 value={props.value ?? undefined}
                 onChange={props.onChange}
                 labelId={props.selectLabelId}

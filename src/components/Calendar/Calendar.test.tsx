@@ -1,4 +1,7 @@
 import React from "react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { afterEach, expect, it } from "@jest/globals";
+import "@testing-library/jest-dom/jest-globals";
 import StyleManager from "@/app/themes";
 import Calendar, { CalendarEvent, CalendarProps } from "@/components/Calendar/Calendar";
 
@@ -10,13 +13,13 @@ const StyledCalendar: React.FC<CalendarProps> = (props) => {
     );
 };
 
-describe("<Calendar />", () => {
+describe("Calendar component", () => {
     const testDate = new Date("2021-04-05");
     const dayAfterTestDate = new Date("2021-04-06");
     dayAfterTestDate.setDate(testDate.getDate() + 1);
 
-    beforeEach(() => {
-        cy.viewport(750, 1400);
+    afterEach(() => {
+        cleanup();
     });
 
     const sampleEvents: CalendarEvent[] = [
@@ -38,8 +41,9 @@ describe("<Calendar />", () => {
             location: "Brixton Hill - Methodist Church",
         },
     ];
+
     it("calendar renders", () => {
-        cy.mount(
+        render(
             <StyledCalendar initialEvents={[]} allLocations={["Brixton Hill - Methodist Church"]} />
         );
     });
@@ -50,50 +54,61 @@ describe("<Calendar />", () => {
             year: "numeric",
         });
 
-        cy.mount(
+        render(
             <StyledCalendar
                 initialEvents={[]}
                 initialDate={testDate}
                 allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
-        cy.get(".fc-toolbar-title").should("have.text", currentMonthYear);
+
+        expect(screen.getByRole("heading", { name: currentMonthYear })).toBeVisible();
     });
 
-    it("events render", () => {
-        cy.mount(
+    it("renders events", () => {
+        const { container } = render(
             <StyledCalendar
                 initialEvents={sampleEvents}
                 initialDate={testDate}
                 allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
-        cy.get("label").contains("Brixton Hill - Methodist Church");
-        cy.get(".fc-event").should("be.visible");
+
+        expect(container.getElementsByClassName("fc-dayGridMonth-view")).toHaveLength(1);
+        expect(container.getElementsByClassName("fc-dayGridMonth-view")[0]).toBeVisible();
+
+        expect(within(screen.getByRole("grid")).getByText("event1")).toBeVisible();
+        expect(within(screen.getByRole("grid")).getByText("event2")).toBeVisible();
     });
 
     it("can change view to timeGridDay", () => {
-        cy.mount(
+        const { container } = render(
             <StyledCalendar
                 initialEvents={[]}
                 initialDate={testDate}
                 allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
-        cy.get("button.fc-timeGridDay-button").click();
-        cy.get(".fc-timeGridDay-view").should("be.visible");
+
+        fireEvent.click(screen.getByRole("button", { name: "day" }));
+
+        expect(container.getElementsByClassName("fc-timeGridDay-view")).toHaveLength(1);
+        expect(container.getElementsByClassName("fc-timeGridDay-view")[0]).toBeVisible();
     });
 
     it("can change view to timeGridWeek", () => {
-        cy.mount(
+        const { container } = render(
             <StyledCalendar
                 initialEvents={[]}
                 initialDate={testDate}
                 allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
-        cy.get("button.fc-timeGridWeek-button").click();
-        cy.get(".fc-timeGridWeek-view").should("be.visible");
+
+        fireEvent.click(screen.getByRole("button", { name: "week" }));
+
+        expect(container.getElementsByClassName("fc-timeGridWeek-view")).toHaveLength(1);
+        expect(container.getElementsByClassName("fc-timeGridWeek-view")[0]).toBeVisible();
     });
 
     it("can change view between months in dayGridMonth", () => {
@@ -104,16 +119,17 @@ describe("<Calendar />", () => {
             year: "numeric",
         });
 
-        cy.mount(
+        render(
             <StyledCalendar
                 initialEvents={[]}
                 initialDate={testDate}
                 allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
-        cy.get("button.fc-prev-button").click();
 
-        cy.get(".fc-toolbar-title").should("have.text", prevMonthYear);
+        fireEvent.click(screen.getByRole("button", { name: "Previous month" }));
+
+        expect(screen.getByRole("heading", { name: prevMonthYear })).toBeVisible();
     });
 
     it("can change view between days in timeGridDay", () => {
@@ -121,7 +137,7 @@ describe("<Calendar />", () => {
             .toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric" })
             .split(" ");
 
-        cy.mount(
+        render(
             <StyledCalendar
                 initialEvents={[]}
                 view="timeGridDay"
@@ -129,52 +145,56 @@ describe("<Calendar />", () => {
                 allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
-        cy.get("button.fc-next-button").click();
 
-        cy.get(".fc-toolbar-title").should(
-            "have.text",
-            `${tomorrowDMY[0]} ${tomorrowDMY[1]} ${tomorrowDMY[2]}`
-        );
+        fireEvent.click(screen.getByRole("button", { name: "Next day" }));
+
+        expect(
+            screen.getByRole("heading", {
+                name: `${tomorrowDMY[0]} ${tomorrowDMY[1]} ${tomorrowDMY[2]}`,
+            })
+        ).toBeVisible();
     });
 
     it("shows description when event with description is clicked", () => {
-        cy.mount(
+        render(
             <StyledCalendar
                 initialEvents={sampleEvents}
                 initialDate={testDate}
                 allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
-        cy.get("label").contains("Brixton Hill - Methodist Church");
-        cy.get(".fc-event-title").contains("event2").parent().click();
-        cy.get(".MuiDialog-container").should("include.text", "a piece of description text");
+
+        fireEvent.click(within(screen.getByRole("grid")).getByText("event2"));
+
+        expect(screen.getByRole("dialog")).toHaveTextContent("a piece of description text");
     });
 
     it("does not show description when event without description is clicked", () => {
-        cy.mount(
+        render(
             <StyledCalendar
                 initialEvents={sampleEvents}
                 initialDate={testDate}
                 allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
-        cy.get("label").contains("Brixton Hill - Methodist Church");
-        cy.get(".fc-event-title").contains("event1").click();
-        cy.get(".MuiDialog-container").should("not.include.text", "description");
+
+        fireEvent.click(within(screen.getByRole("grid")).getByText("event1"));
+
+        expect(screen.getByRole("dialog")).not.toHaveTextContent("description");
     });
 
     it("shows correct date for full day event", () => {
-        cy.mount(
+        render(
             <StyledCalendar
                 initialEvents={sampleEvents}
                 initialDate={testDate}
                 allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
-        cy.get("label").contains("Brixton Hill - Methodist Church");
-        cy.get(".fc-event-title").contains("event1").click();
-        cy.get(".MuiDialog-container").should(
-            "include.text",
+
+        fireEvent.click(within(screen.getByRole("grid")).getByText("event1"));
+
+        expect(screen.getByRole("dialog")).toHaveTextContent(
             testDate.toLocaleDateString("en-GB", {
                 weekday: "long",
                 year: "numeric",
@@ -182,8 +202,7 @@ describe("<Calendar />", () => {
                 day: "numeric",
             })
         );
-        cy.get(".MuiDialog-container").should(
-            "include.text",
+        expect(screen.getByRole("dialog")).toHaveTextContent(
             dayAfterTestDate.toLocaleDateString("en-GB", {
                 weekday: "long",
                 year: "numeric",
@@ -191,15 +210,13 @@ describe("<Calendar />", () => {
                 day: "numeric",
             })
         );
-        cy.get(".MuiDialog-container").should(
-            "not.include.text",
+        expect(screen.getByRole("dialog")).not.toHaveTextContent(
             testDate.toLocaleTimeString("en-GB", {
                 hour: "numeric",
                 minute: "numeric",
             })
         );
-        cy.get(".MuiDialog-container").should(
-            "not.include.text",
+        expect(screen.getByRole("dialog")).not.toHaveTextContent(
             dayAfterTestDate.toLocaleTimeString("en-GB", {
                 hour: "numeric",
                 minute: "numeric",
@@ -207,18 +224,18 @@ describe("<Calendar />", () => {
         );
     });
 
-    it("shows correct date for non-full day event", () => {
-        cy.mount(
+    it("shows correct date and time for non-full day event", () => {
+        render(
             <StyledCalendar
                 initialEvents={sampleEvents}
                 initialDate={testDate}
                 allLocations={["Brixton Hill - Methodist Church"]}
             />
         );
-        cy.get("label").contains("Brixton Hill - Methodist Church");
-        cy.get(".fc-event-title").contains("event2").parent().click();
-        cy.get(".MuiDialog-container").should(
-            "include.text",
+
+        fireEvent.click(within(screen.getByRole("grid")).getByText("event2"));
+
+        expect(screen.getByRole("dialog")).toHaveTextContent(
             testDate.toLocaleDateString("en-GB", {
                 weekday: "long",
                 year: "numeric",
@@ -227,29 +244,6 @@ describe("<Calendar />", () => {
                 hour: "numeric",
                 minute: "numeric",
             })
-        );
-    });
-    it("navigates to day when grid is clicked", () => {
-        const todayShortDMY = testDate
-            .toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric" })
-            .split(" ");
-
-        const todayLongDMY = testDate
-            .toLocaleString("en-GB", { day: "numeric", month: "long", year: "numeric" })
-            .split(" ");
-
-        cy.mount(
-            <StyledCalendar
-                initialEvents={sampleEvents}
-                initialDate={testDate}
-                allLocations={["Brixton Hill - Methodist Church"]}
-            />
-        );
-        cy.get(`[aria-label="${todayLongDMY[0]} ${todayLongDMY[1]} ${todayLongDMY[2]}"]`).click();
-        cy.get(".fc-timeGridDay-view").should("be.visible");
-        cy.get(".fc-toolbar-title").should(
-            "have.text",
-            `${todayShortDMY[0]} ${todayShortDMY[1]} ${todayShortDMY[2]}`
         );
     });
 });

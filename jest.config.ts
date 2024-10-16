@@ -14,6 +14,9 @@ const config: Config = {
     },
     moduleFileExtensions: ["js", "jsx", "tsx", "ts"],
     testEnvironment: "jsdom",
+    testEnvironmentOptions: {
+        customExportConditions: [], // workaround for fullcalendar: https://fullcalendar.io/docs/react#jest
+    },
     setupFiles: ["./jest.setup.ts"],
     transform: {
         "^.+\\.(ts|tsx)?$": [
@@ -22,6 +25,7 @@ const config: Config = {
                 tsconfig: jestTsConfig,
             },
         ],
+        "^.+\\.svg$": "jest-transformer-svg",
     },
     modulePaths: ["<rootDir>/src", "<rootDir>/node_modules"],
 };

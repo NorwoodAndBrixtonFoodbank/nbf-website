@@ -15,7 +15,7 @@ import {
     convertDataToDataForDataViewer,
 } from "@/components/DataViewer/DataViewer";
 import { formatEventName } from "./format";
-import { ListType } from "@/common/fetch";
+import { ListType } from "@/common/databaseListTypes";
 
 type FetchExpandedParcelDetailsResult =
     | {

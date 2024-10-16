@@ -8,8 +8,8 @@ import {
     FetchListsError,
     fetchListsComment,
     fetchLists,
-    LIST_TYPES_ARRAY,
 } from "@/common/fetch";
+import { LIST_TYPES_ARRAY } from "@/common/databaseListTypes";
 import ListsDataView, {
     ListRow,
     listsHeaderKeysAndLabels,

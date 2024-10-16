@@ -4,7 +4,7 @@ import GenericFormCard from "@/components/Form/GenericFormCard";
 import { ErrorText } from "@/components/Form/formStyling";
 import { UncontrolledSelect } from "@/components/DataInput/DropDownSelect";
 import { ParcelCardProps } from "../ParcelForm";
-import { ListTypeLabelsAndValues, ListType } from "@/common/fetch";
+import { ListTypeLabelsAndValues, ListType } from "@/common/databaseListTypes";
 
 interface ListTypeCardProps extends ParcelCardProps {
     listTypeLabelsAndValues: ListTypeLabelsAndValues;

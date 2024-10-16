@@ -8,9 +8,9 @@ import styled from "styled-components";
 
 interface Props {
     labelsAndKeys: [string, string][];
-    defaultCheckedKeys?: string[];
+    checkedKeys?: string[];
     groupLabel?: string;
-    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     anySelected?: () => boolean;
     isDisabled?: boolean;
 }
@@ -34,7 +34,7 @@ const CheckboxGroupPopup: React.FC<Props> = (props) => {
                     <ContainerDiv>
                         <CheckboxGroupInput
                             labelsAndKeys={props.labelsAndKeys}
-                            defaultCheckedKeys={props.defaultCheckedKeys ?? []}
+                            checkedKeys={props.checkedKeys ?? []}
                             onChange={props.onChange}
                         />
                     </ContainerDiv>
