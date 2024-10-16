@@ -2,7 +2,7 @@
 
 import React from "react";
 import LogoutIcon from "@mui/icons-material/Logout";
-import IconButton from "@mui/material/IconButton/IconButton";
+import { IconButton } from "@mui/material";
 
 interface Props {
     onClick: () => void;

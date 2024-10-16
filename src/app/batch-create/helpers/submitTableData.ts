@@ -21,7 +21,7 @@ import {
     ParcelDatabaseInsertRecord,
 } from "@/app/parcels/form/submitFormHelpers";
 import { mergeDateAndTime } from "@/app/parcels/form/ParcelForm";
-import { ListType } from "@/common/fetch";
+import { ListType } from "@/common/databaseListTypes";
 import { defaultTableState } from "@/app/batch-create/BatchParcelDataGrid";
 import { Json } from "@/databaseTypesFile";
 import { checkParcelDataIsNotEmpty } from "@/app/batch-create/helpers/verifyTableData";
