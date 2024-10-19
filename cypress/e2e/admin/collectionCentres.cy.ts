@@ -35,7 +35,7 @@ describe("Edit a collection centre on admins page", () => {
 
         // Find the newly-created row and edit it
         cy.get("@ccTable")
-            .contains(".MuiDataGrid-cellContent", newCollectionCentreName)
+            .contains(newCollectionCentreName)
             .parents(".MuiDataGrid-row")
             .as("newlyAddedRow");
 
