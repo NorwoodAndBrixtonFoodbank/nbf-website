@@ -502,9 +502,8 @@ const Table = <
                         onSort={handleSort}
                         defaultSortFieldId={defaultSortConfig?.defaultColumnHeaderKey}
                         progressComponent={
-                            <Centerer role="rowgroup">
+                            <Centerer role="row">
                                 <CircularProgress
-                                    role="row"
                                     aria-label="table-progress-bar"
                                     aria-busy={true}
                                 />
