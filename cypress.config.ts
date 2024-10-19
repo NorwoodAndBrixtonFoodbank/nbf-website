@@ -1,6 +1,5 @@
 import registerCodeCoverageTasks from "@cypress/code-coverage/task";
 import { defineConfig } from "cypress";
-import readPdf from "./cypress/support/readPdf";
 
 import * as dotenv from "dotenv";
 
@@ -38,24 +37,5 @@ export default defineConfig({
         baseUrl: "http://localhost:3200",
         video: true,
         screenshotOnRunFailure: true,
-    },
-    component: {
-        setupNodeEvents(on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) {
-            on("task", {
-                readPdf,
-                log: (message: unknown) => {
-                    console.log(message);
-                    return null;
-                },
-            });
-            return config;
-        },
-        devServer: {
-            framework: "next",
-            bundler: "webpack",
-        },
-        specPattern: "src/**/*.cy.{ts,tsx}",
-        video: false,
-        screenshotOnRunFailure: false,
     },
 });
