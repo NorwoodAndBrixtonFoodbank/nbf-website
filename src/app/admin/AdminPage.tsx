@@ -41,13 +41,13 @@ export const auditLogIcon = faRectangleList;
 const AdminPage: React.FC = () => {
     const adminPanels: Panel[] = [
         {
-            panelTitle: "Users Table",
+            panelTitle: "Users",
             panelIcon: faUsers,
             panelContent: <UsersTable />,
         },
         { panelTitle: "Create User", panelIcon: faUserPlus, panelContent: <CreateUserForm /> },
         {
-            panelTitle: "Collection Centres Table",
+            panelTitle: "Collection Centres",
             panelIcon: faBuildingCircleArrowRight,
             panelContent: <CollectionCentresTable />,
         },
@@ -74,7 +74,10 @@ const AdminPage: React.FC = () => {
                 return (
                     <TableSurface key={panelTitle}>
                         <Accordion elevation={0}>
-                            <AccordionSummary expandIcon={<ExpandMore />}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMore />}
+                                aria-label={`Section: ${panelTitle}`}
+                            >
                                 <PanelIcon size="2x" icon={panelIcon} />
                                 <PanelTitle>{panelTitle}</PanelTitle>
                             </AccordionSummary>

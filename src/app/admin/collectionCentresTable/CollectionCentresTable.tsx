@@ -514,6 +514,7 @@ const CollectionCentresTable: React.FC = () => {
             {rows && (
                 <StyledDataGrid
                     rows={rows}
+                    aria-label="Collection Centres Table"
                     columns={collectionCentreColumns}
                     editMode="row"
                     rowModesModel={rowModesModel}
