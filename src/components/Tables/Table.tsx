@@ -434,7 +434,7 @@ const Table = <
     const rows = dataPortion.map((data, index) => ({ rowId: index, data }));
 
     return (
-        <>
+        <div aria-live="polite">
             <TableFilterAndExtraColumnsBar<
                 Data,
                 PaginationType extends PaginationTypeEnum.Client
@@ -502,8 +502,9 @@ const Table = <
                         onSort={handleSort}
                         defaultSortFieldId={defaultSortConfig?.defaultColumnHeaderKey}
                         progressComponent={
-                            <Centerer role="row">
+                            <Centerer role="rowgroup">
                                 <CircularProgress
+                                    role="row"
                                     aria-label="table-progress-bar"
                                     aria-busy={true}
                                 />
@@ -515,7 +516,7 @@ const Table = <
                     />
                 </NoSsr>
             </TableStyling>
-        </>
+        </div>
     );
 };
 
