@@ -90,9 +90,9 @@ const startEditingCollectionCentreRow = (collectionCentreName: string): void => 
 };
 
 const uncheckIsShownInRowBeingEditedAndSave = (): void => {
-    cy.get('div[aria-label="Collection Centres Table"]')
+    cy.get('div[aria-label="Collection Centres Table"]') // eslint-disable-line quotes
         .find(".MuiDataGrid-row--editing")
-        .as("rowBeingEdited"); // eslint-disable-line quotes
+        .as("rowBeingEdited");
 
     cy.get("@rowBeingEdited")
         .find('[data-field="isShown"]') // eslint-disable-line quotes
