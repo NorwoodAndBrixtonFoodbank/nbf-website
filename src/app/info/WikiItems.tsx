@@ -1,5 +1,6 @@
 "use client";
 
+import { v4 as uuidv4 } from "uuid";
 import { DbWikiRow } from "@/databaseUtils";
 import { WikiItemPositioner } from "@/app/info/StyleComponents";
 import React, { useEffect, useMemo, useRef } from "react";
@@ -39,12 +40,12 @@ export const convertContentToElements = (rowContent: string): React.JSX.Element[
             const plainPart = part.slice(1, -1);
             if (plainPart.includes("](")) {
                 const items = plainPart.split(/\]\(/);
-                return { content: items[0], href: items[1], key: crypto.randomUUID() };
+                return { content: items[0], href: items[1], key: uuidv4() };
             } else {
-                return { content: plainPart, href: plainPart, key: crypto.randomUUID() };
+                return { content: plainPart, href: plainPart, key: uuidv4() };
             }
         } else {
-            return { content: part, key: crypto.randomUUID() };
+            return { content: part, key: uuidv4() };
         }
     });
     return contentParts.map((part: ContentPart) => {

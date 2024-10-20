@@ -43,9 +43,9 @@ jest.mock("@/app/info/supabaseHelpers", () => ({
 }));
 
 const mRandomUUID = jest.fn().mockReturnValue("058049b5-7a7f-4f81-bf56-6dc9654e4a40");
-Object.defineProperty(window, "crypto", {
-    value: { randomUUID: mRandomUUID },
-});
+jest.mock("uuid", () => ({
+    v4: jest.fn(() => mRandomUUID),
+}));
 
 const mScrollIntoViewMock = jest.fn();
 window.HTMLElement.prototype.scrollIntoView = mScrollIntoViewMock;

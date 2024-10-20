@@ -2,7 +2,7 @@ name: Feature request
 description: Suggest a feature
 labels: ["enhancement"]
 assignees:
-  - Stuart-Knowles-SW
+  - stonelink
 body:
   - type: markdown
     attributes:
