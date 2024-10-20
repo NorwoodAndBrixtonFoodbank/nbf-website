@@ -359,7 +359,7 @@ const CollectionCentresTable: React.FC = () => {
             if (newCollectionCentreError) {
                 return { ...newRow, name: "", acronym: "", isShown: false };
             }
-            return { ...newRow, id: newCollectionCentreData.collectionCentreId };
+            return { ...newRow, id: newCollectionCentreData.collectionCentreId, isNew: false };
         } else {
             const { error: updateCollectionCentreError } = await updateCollectionCentre(newRow);
             if (updateCollectionCentreError) {
