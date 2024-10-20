@@ -18,6 +18,7 @@ import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrow
 import { AuditLog, sendAuditLog } from "@/server/auditLog";
 import { DirectionString } from "@/app/info/WikiItems";
 import { deleteItemInWikiTable, updateItemInWikiTable } from "@/app/info/supabaseHelpers";
+import { useTheme } from "styled-components";
 
 interface WikiItemEditProps {
     rowData: DbWikiRow;
@@ -40,6 +41,8 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
 }) => {
     const [titleValue, setTitleValue] = React.useState(rowData.title);
     const [contentValue, setContentValue] = React.useState(rowData.content);
+
+    const theme = useTheme();
 
     const deleteWikiItem = async (): Promise<void> => {
         const deleteError = await deleteItemInWikiTable(rowData.wiki_key);
@@ -133,6 +136,7 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
 
     const deleteWikiItemWithConfirmation = async (): Promise<void> => {
         if (!rowData.title && !rowData.content) {
+            const confirmation: boolean = confirm("Confirm discard of this item?");
             deleteWikiItem();
         } else {
             const confirmation: boolean = confirm("Confirm deletion of this item?");
@@ -200,12 +204,6 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                 />
 
                 <WikiEditModeButton
-                    onClick={deleteWikiItemWithConfirmation}
-                    data-testid={`#delete-${rowData.row_order}`}
-                >
-                    <DeleteIcon />
-                </WikiEditModeButton>
-                <WikiEditModeButton
                     onClick={() => {
                         const title_input = document.getElementById(
                             `title_input_${rowData.wiki_key}`
@@ -217,7 +215,13 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
                     }}
                     data-testid={`#update-${rowData.row_order}`}
                 >
-                    <SaveIcon />
+                    <SaveIcon sx={{ color: theme.primary.background[3] }} />
+                </WikiEditModeButton>
+                <WikiEditModeButton
+                    onClick={deleteWikiItemWithConfirmation}
+                    data-testid={`#delete-${rowData.row_order}`}
+                >
+                    <DeleteIcon />
                 </WikiEditModeButton>
             </WikiItemAccordionSurface>
         </>
