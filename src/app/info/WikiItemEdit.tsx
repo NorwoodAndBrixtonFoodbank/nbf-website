@@ -137,7 +137,9 @@ const WikiItemEdit: React.FC<WikiItemEditProps> = ({
     const deleteWikiItemWithConfirmation = async (): Promise<void> => {
         if (!rowData.title && !rowData.content) {
             const confirmation: boolean = confirm("Confirm discard of this item?");
-            deleteWikiItem();
+            if (confirmation) {
+                deleteWikiItem();
+            }
         } else {
             const confirmation: boolean = confirm("Confirm deletion of this item?");
             if (confirmation) {
