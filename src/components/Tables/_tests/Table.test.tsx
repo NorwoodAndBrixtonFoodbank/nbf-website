@@ -112,17 +112,11 @@ describe("Generic Table component", () => {
 
         it("should allow checkboxes to be toggled on and off and have no impact on other checkboxes", () => {
             fakeMidData.forEach((_, index) => {
-                const checkbox = within(screen.getByLabelText(`Select row ${index}`)).getByRole(
-                    "checkbox"
-                );
+                const checkbox = screen.getByLabelText(`Select row ${index}`);
                 fireEvent.click(checkbox);
                 expect(checkbox).toBeChecked();
                 if (index > 0) {
-                    expect(
-                        within(screen.getByLabelText(`Select row ${index - 1}`)).getByRole(
-                            "checkbox"
-                        )
-                    ).not.toBeChecked();
+                    expect(screen.getByLabelText(`Select row ${index - 1}`)).not.toBeChecked();
                 }
                 fireEvent.click(checkbox);
                 expect(checkbox).not.toBeChecked();
@@ -130,44 +124,35 @@ describe("Generic Table component", () => {
         });
 
         it("should have checkall box that toggles every checkbox", () => {
-            const selectAllCheckbox = within(screen.getByLabelText("Select all rows")).getByRole(
-                "checkbox"
-            );
+            const selectAllCheckbox = screen.getByLabelText("Select all rows");
+
             fireEvent.click(selectAllCheckbox);
             for (let index = 0; index < fakeMidData.length; index++) {
-                expect(
-                    within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
-                ).toBeChecked();
+                expect(screen.getByLabelText(`Select row ${index}`)).toBeChecked();
             }
+
             fireEvent.click(selectAllCheckbox);
             fakeMidData.forEach((_, index) => {
-                expect(
-                    within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
-                ).not.toBeChecked();
+                expect(screen.getByLabelText(`Select row ${index}`)).not.toBeChecked();
             });
         });
 
         it("should have checkall box triggered when all rows checkboxes are checked", () => {
             for (let index = 0; index < fakeMidData.length; index++) {
-                fireEvent.click(
-                    within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
-                );
+                fireEvent.click(screen.getByLabelText(`Select row ${index}`));
             }
-            expect(
-                within(screen.getByLabelText("Select all rows")).getByRole("checkbox")
-            ).toBeChecked();
+            expect(screen.getByLabelText("Select all rows")).toBeChecked();
         });
 
         it("should have checkall box unchecked when one row is unchecked", () => {
-            const selectAllCheckbox = within(screen.getByLabelText("Select all rows")).getByRole(
-                "checkbox"
-            );
+            const selectAllCheckbox = screen.getByLabelText("Select all rows");
+
             fireEvent.click(selectAllCheckbox);
             expect(selectAllCheckbox).toBeChecked();
-            const row1Checkbox = within(screen.getByLabelText("Select row 0")).getByRole(
-                "checkbox"
-            );
+
+            const row1Checkbox = screen.getByLabelText("Select row 0");
             expect(row1Checkbox).toBeChecked();
+
             fireEvent.click(row1Checkbox);
             expect(row1Checkbox).not.toBeChecked();
             expect(selectAllCheckbox).not.toBeChecked();
@@ -303,26 +288,18 @@ describe("Generic Table component", () => {
 
         it("should have checkboxes unaffected by filtering", () => {
             for (let index = 0; index < fakeMidData.length; index++) {
-                expect(
-                    within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
-                ).not.toBeChecked();
+                expect(screen.getByLabelText(`Select row ${index}`)).not.toBeChecked();
             }
-            const checkbox = within(screen.getByLabelText("Select row 0")).getByRole("checkbox");
+            const checkbox = screen.getByLabelText("Select row 0");
             fireEvent.click(checkbox);
-            expect(
-                within(screen.getByLabelText("Select row 0")).getByRole("checkbox")
-            ).toBeChecked();
+            expect(screen.getByLabelText("Select row 0")).toBeChecked();
             const nameInput = screen.getByLabelText("Name");
             fireEvent.change(nameInput, { target: { value: "Sam" } });
             const clearButton = screen.getByText("Clear");
             fireEvent.click(clearButton);
-            expect(
-                within(screen.getByLabelText("Select row 0")).getByRole("checkbox")
-            ).toBeChecked();
+            expect(screen.getByLabelText("Select row 0")).toBeChecked();
             for (let index = 1; index < fakeMidData.length; index++) {
-                expect(
-                    within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
-                ).not.toBeChecked();
+                expect(screen.getByLabelText(`Select row ${index}`)).not.toBeChecked();
             }
         });
     });
@@ -427,74 +404,51 @@ describe("Generic Table component", () => {
 
         it("should have checkboxes unaffected by pagination", () => {
             for (let index = 0; index < 7; index++) {
-                expect(
-                    within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
-                ).not.toBeChecked();
+                expect(screen.getByLabelText(`Select row ${index}`)).not.toBeChecked();
             }
-            const checkbox = within(screen.getByLabelText("Select row 0")).getByRole("checkbox");
+            const checkbox = screen.getByLabelText("Select row 0");
             fireEvent.click(checkbox);
-            expect(
-                within(screen.getByLabelText("Select row 0")).getByRole("checkbox")
-            ).toBeChecked();
+            expect(screen.getByLabelText("Select row 0")).toBeChecked();
+
             const nextButton = screen.getByLabelText("Next Page");
             fireEvent.click(nextButton);
             for (let index = 0; index < 7; index++) {
-                expect(
-                    within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
-                ).not.toBeChecked();
+                expect(screen.getByLabelText(`Select row ${index}`)).not.toBeChecked();
             }
+
             const prevButton = screen.getByLabelText("Previous Page");
             fireEvent.click(prevButton);
-            expect(
-                within(screen.getByLabelText("Select row 0")).getByRole("checkbox")
-            ).toBeChecked();
+            expect(screen.getByLabelText("Select row 0")).toBeChecked();
+
             for (let index = 1; index < 7; index++) {
-                expect(
-                    within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
-                ).not.toBeChecked();
+                expect(screen.getByLabelText(`Select row ${index}`)).not.toBeChecked();
             }
         });
 
         it("should have checkboxes unaffected by change in rows per page", () => {
-            fireEvent.click(within(screen.getByLabelText("Select row 0")).getByRole("checkbox"));
-            fireEvent.click(within(screen.getByLabelText("Select row 6")).getByRole("checkbox"));
+            fireEvent.click(screen.getByLabelText("Select row 0"));
+            fireEvent.click(screen.getByLabelText("Select row 6"));
 
             for (let index = 1; index < 6; index++) {
-                expect(
-                    within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
-                ).not.toBeChecked();
+                expect(screen.getByLabelText(`Select row ${index}`)).not.toBeChecked();
             }
-            expect(
-                within(screen.getByLabelText("Select row 0")).getByRole("checkbox")
-            ).toBeChecked();
-            expect(
-                within(screen.getByLabelText("Select row 6")).getByRole("checkbox")
-            ).toBeChecked();
+            expect(screen.getByLabelText("Select row 0")).toBeChecked();
+            expect(screen.getByLabelText("Select row 6")).toBeChecked();
 
             fireEvent.change(screen.getByLabelText("Rows per page:"), { target: { value: 5 } });
 
-            expect(
-                within(screen.getByLabelText("Select row 0")).getByRole("checkbox")
-            ).toBeChecked();
+            expect(screen.getByLabelText("Select row 0")).toBeChecked();
             for (let index = 1; index < 5; index++) {
-                expect(
-                    within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
-                ).not.toBeChecked();
+                expect(screen.getByLabelText(`Select row ${index}`)).not.toBeChecked();
             }
 
             fireEvent.change(screen.getByLabelText("Rows per page:"), { target: { value: 7 } });
 
             for (let index = 1; index < 6; index++) {
-                expect(
-                    within(screen.getByLabelText(`Select row ${index}`)).getByRole("checkbox")
-                ).not.toBeChecked();
+                expect(screen.getByLabelText(`Select row ${index}`)).not.toBeChecked();
             }
-            expect(
-                within(screen.getByLabelText("Select row 0")).getByRole("checkbox")
-            ).toBeChecked();
-            expect(
-                within(screen.getByLabelText("Select row 6")).getByRole("checkbox")
-            ).toBeChecked();
+            expect(screen.getByLabelText("Select row 0")).toBeChecked();
+            expect(screen.getByLabelText("Select row 6")).toBeChecked();
         });
     });
 

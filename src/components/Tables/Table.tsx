@@ -412,7 +412,7 @@ const Table = <
         columns.unshift({
             name: (
                 <Checkbox
-                    aria-label="Select all rows"
+                    inputProps={{ "aria-label": "Select all rows" }}
                     checked={checkboxConfig.isAllCheckboxChecked}
                     onChange={() =>
                         checkboxConfig.onAllCheckboxClicked(checkboxConfig.isAllCheckboxChecked)
@@ -421,7 +421,7 @@ const Table = <
             ),
             cell: (row: Row<Data>) => (
                 <Checkbox
-                    aria-label={`Select row ${row.rowId}`}
+                    inputProps={{ "aria-label": `Select row ${row.rowId}` }}
                     checked={checkboxConfig.isRowChecked(row.data)}
                     onChange={() => checkboxConfig.onCheckboxClicked(row.data)}
                 />
