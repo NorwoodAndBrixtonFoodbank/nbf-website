@@ -2,7 +2,10 @@ describe("Accessibility tests in light mode", () => {
     it("Checks clients page", () => {
         cy.login();
         cy.visit("/clients");
-        cy.get("h1", { timeout: 5000 }).should("exist");
+
+        // Ensure data table has loaded and then that content has loaded
+        cy.get('[role="table"]', { timeout: 5000 }).should("exist"); // eslint-disable-line quotes
+        cy.get('[aria-label="table-progress-bar"]', { timeout: 5000 }).should("not.exist"); // eslint-disable-line quotes
 
         cy.checkAccessibility();
     });
@@ -17,7 +20,10 @@ describe("Accessibility tests in light mode", () => {
     it("Checks parcels page", () => {
         cy.login();
         cy.visit("/parcels");
-        cy.get("h1", { timeout: 5000 }).should("exist");
+
+        // Ensure data table has loaded and then that content has loaded
+        cy.get('[role="table"]', { timeout: 5000 }).should("exist"); // eslint-disable-line quotes
+        cy.get('[aria-label="table-progress-bar"]', { timeout: 5000 }).should("not.exist"); // eslint-disable-line quotes
 
         cy.checkAccessibility({
             rules: {
@@ -57,12 +63,7 @@ describe("Accessibility tests in light mode", () => {
         cy.visit("/admin");
         cy.get("h1").should("exist");
 
-        cy.checkAccessibility({
-            // TODO Fix duplicate IDs issue in Table component (react-data-table-component)
-            rules: {
-                "duplicate-id": { enabled: false },
-            },
-        });
+        cy.checkAccessibility();
     });
 
     it("Checks login page", () => {
@@ -76,7 +77,10 @@ describe("Accessibility tests in dark mode", () => {
     it("Checks clients page", () => {
         cy.login();
         cy.visit("/clients");
-        cy.get("h1", { timeout: 5000 }).should("exist");
+
+        // Ensure data table has loaded and then that content has loaded
+        cy.get('[role="table"]', { timeout: 5000 }).should("exist"); // eslint-disable-line quotes
+        cy.get('[aria-label="table-progress-bar"]', { timeout: 5000 }).should("not.exist"); // eslint-disable-line quotes
         cy.get("label[aria-label='Theme Switch']").click();
 
         cy.checkAccessibility();
@@ -93,7 +97,10 @@ describe("Accessibility tests in dark mode", () => {
     it("Checks parcels page", () => {
         cy.login();
         cy.visit("/parcels");
-        cy.get("h1", { timeout: 5000 }).should("exist");
+
+        // Ensure data table has loaded and then that content has loaded
+        cy.get('[role="table"]', { timeout: 5000 }).should("exist"); // eslint-disable-line quotes
+        cy.get('[aria-label="table-progress-bar"]', { timeout: 5000 }).should("not.exist"); // eslint-disable-line quotes
         cy.get("label[aria-label='Theme Switch']").click();
 
         cy.checkAccessibility({
@@ -138,12 +145,7 @@ describe("Accessibility tests in dark mode", () => {
         cy.get("h1", { timeout: 5000 }).should("exist");
         cy.get("label[aria-label='Theme Switch']").click();
 
-        cy.checkAccessibility({
-            // TODO Fix duplicate IDs issue in Table component (react-data-table-component)
-            rules: {
-                "duplicate-id": { enabled: false },
-            },
-        });
+        cy.checkAccessibility();
     });
 
     it("Checks login page", () => {

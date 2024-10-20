@@ -13,8 +13,7 @@ import {
     faPenToSquare,
     faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { Checkbox, CircularProgress, NoSsr } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
+import { Checkbox, CircularProgress, IconButton, NoSsr } from "@mui/material";
 import React, { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import styled, { useTheme } from "styled-components";
@@ -413,7 +412,7 @@ const Table = <
         columns.unshift({
             name: (
                 <Checkbox
-                    aria-label="Select all rows"
+                    inputProps={{ "aria-label": "Select all rows" }}
                     checked={checkboxConfig.isAllCheckboxChecked}
                     onChange={() =>
                         checkboxConfig.onAllCheckboxClicked(checkboxConfig.isAllCheckboxChecked)
@@ -422,7 +421,7 @@ const Table = <
             ),
             cell: (row: Row<Data>) => (
                 <Checkbox
-                    aria-label={`Select row ${row.rowId}`}
+                    inputProps={{ "aria-label": `Select row ${row.rowId}` }}
                     checked={checkboxConfig.isRowChecked(row.data)}
                     onChange={() => checkboxConfig.onCheckboxClicked(row.data)}
                 />
@@ -435,7 +434,7 @@ const Table = <
     const rows = dataPortion.map((data, index) => ({ rowId: index, data }));
 
     return (
-        <>
+        <div aria-live="polite">
             <TableFilterAndExtraColumnsBar<
                 Data,
                 PaginationType extends PaginationTypeEnum.Client
@@ -517,7 +516,7 @@ const Table = <
                     />
                 </NoSsr>
             </TableStyling>
-        </>
+        </div>
     );
 };
 

@@ -36,10 +36,9 @@ import {
     CollectionCentresLabelsAndValues,
     CollectionTimeSlotsLabelsAndValues,
     getActiveTimeSlotsForCollectionCentre,
-    ListTypeLabelsAndValues,
     PackingSlotsLabelsAndValues,
-    ListType,
 } from "@/common/fetch";
+import { ListType, ListTypeLabelsAndValues } from "@/common/databaseListTypes";
 import getExpandedClientDetails, {
     ExpandedClientData,
 } from "@/app/clients/getExpandedClientDetails";

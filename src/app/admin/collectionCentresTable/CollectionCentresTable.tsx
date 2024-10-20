@@ -359,7 +359,7 @@ const CollectionCentresTable: React.FC = () => {
             if (newCollectionCentreError) {
                 return { ...newRow, name: "", acronym: "", isShown: false };
             }
-            return { ...newRow, id: newCollectionCentreData.collectionCentreId };
+            return { ...newRow, id: newCollectionCentreData.collectionCentreId, isNew: false };
         } else {
             const { error: updateCollectionCentreError } = await updateCollectionCentre(newRow);
             if (updateCollectionCentreError) {
@@ -514,6 +514,7 @@ const CollectionCentresTable: React.FC = () => {
             {rows && (
                 <StyledDataGrid
                     rows={rows}
+                    aria-label="Collection Centres Table"
                     columns={collectionCentreColumns}
                     editMode="row"
                     rowModesModel={rowModesModel}

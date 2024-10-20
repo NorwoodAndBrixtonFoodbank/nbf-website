@@ -8,114 +8,98 @@ describe("Edit a collection centre on admins page", () => {
 
     it("Adds a collection centre and hides it successfully", () => {
         toggleCollectionCentreSection();
-        assertCollectionCentreName({
-            rowIndex: 2,
-            collectionCentreName: "Brixton Hill - Methodist Church",
-        });
-        clickOnAddButton();
-        getNumberOfAriaRows().then((lastRow) => {
-            const newCollectionCentreName = `z${uuidv4()}`; //makes sure it is the last entry
-            addCollectionCentreName(lastRow, newCollectionCentreName);
-            addCollectionCentreAcronym(lastRow, newCollectionCentreName);
-            clickOnSaveButton(lastRow);
-            assertCollectionCentreName({
-                rowIndex: lastRow,
-                collectionCentreName: newCollectionCentreName,
-            });
-            clickOnEditButton(lastRow);
-            uncheckIsShownCheckbox(lastRow);
-            clickOnSaveButton(lastRow);
-            collectionCentreIsHidden(lastRow);
-        });
+        cy.get('div[aria-label="Collection Centres Table"]') // eslint-disable-line quotes
+            .find(".MuiDataGrid-row", { timeout: 5000 })
+            .should("be.visible");
+
+        const newCollectionCentreName = `${uuidv4()}`;
+        cy.get('div[aria-label="Collection Centres Table"]') // eslint-disable-line quotes
+            .find(newCollectionCentreName)
+            .should("not.exist"); // If this fails then the random UUID is already there
+
+        startAddingNewCollectionCentre();
+        cy.get('div[aria-label="Collection Centres Table"]') // eslint-disable-line quotes
+            .find(".MuiDataGrid-row--editing", { timeout: 5000 })
+            .should("exist");
+
+        fillOutNewCollectionCentreRowAndSave(newCollectionCentreName);
+        cy.get('div[aria-label="Collection Centres Table"]') // eslint-disable-line quotes
+            .contains(".MuiDataGrid-cellContent", newCollectionCentreName, { timeout: 5000 })
+            .should("exist");
+
+        startEditingCollectionCentreRow(newCollectionCentreName);
+        cy.get('div[aria-label="Collection Centres Table"]') // eslint-disable-line quotes
+            .find(".MuiDataGrid-row--editing", { timeout: 5000 })
+            .should("exist");
+
+        uncheckIsShownInRowBeingEditedAndSave();
+        cy.get('div[aria-label="Collection Centres Table"]') // eslint-disable-line quotes
+            .contains(".MuiDataGrid-cellContent", newCollectionCentreName, { timeout: 5000 })
+            .should("exist");
+
+        // Check the cc row appears as 'not shown'
+        cy.get('div[aria-label="Collection Centres Table"]') // eslint-disable-line quotes
+            .contains(newCollectionCentreName, { timeout: 5000 })
+            .parents(".MuiDataGrid-row")
+            .as("newlyEditedRow");
+
+        cy.get("@newlyEditedRow")
+            .find('[data-field="isShown"]') // eslint-disable-line quotes
+            .find('[data-testid="CloseIcon"]') // eslint-disable-line quotes
+            .should("exist");
     });
 });
 
-const collectionCentresTableText = "collection centres table";
-function toggleCollectionCentreSection(): void {
-    cy.contains(collectionCentresTableText, { matchCase: false }).click();
-}
+const toggleCollectionCentreSection = (): void => {
+    cy.get('[aria-label="Section: Collection Centres"]').click(); // eslint-disable-line quotes
+};
 
-function assertCollectionCentreName({
-    rowIndex,
-    collectionCentreName,
-}: {
-    rowIndex: number;
-    collectionCentreName: string;
-}): void {
-    cy.contains(collectionCentresTableText, { matchCase: false })
-        .parents(".MuiPaper-root")
-        .find(`[aria-rowindex="${rowIndex}"]`) // eslint-disable-line quotes
-        .find('[data-field="name"]') // eslint-disable-line quotes
-        .should(($slotName) => {
-            expect($slotName).to.contain(collectionCentreName);
-        });
-}
-
-function clickOnAddButton(): void {
-    cy.contains(collectionCentresTableText, { matchCase: false })
-        .parents(".MuiPaper-root")
+const startAddingNewCollectionCentre = (): void => {
+    cy.get('div[aria-label="Collection Centres Table"]') // eslint-disable-line quotes
         .find('[data-testid="AddIcon"]') // eslint-disable-line quotes
         .click();
-}
+};
 
-function getNumberOfAriaRows(): Cypress.Chainable<number> {
-    return cy
-        .contains(collectionCentresTableText, { matchCase: false })
-        .parents(".MuiPaper-root")
-        .get('[aria-colcount="4"]') // eslint-disable-line quotes
-        .invoke("attr", "aria-rowcount")
-        .then((ariaRowCount) => {
-            const rowCount: number = parseInt(ariaRowCount as string, 10);
-            return cy.wrap(rowCount);
-        });
-}
+const fillOutNewCollectionCentreRowAndSave = (newCollectionCentreName: string): void => {
+    cy.get('div[aria-label="Collection Centres Table"]') // eslint-disable-line quotes
+        .find(".MuiDataGrid-row--editing")
+        .as("newRow");
 
-function addCollectionCentreName(rowIndex: number, text: string): void {
-    cy.contains(collectionCentresTableText, { matchCase: false })
-        .parents(".MuiPaper-root")
-        .find(`[aria-rowindex="${rowIndex}"]`)
-        .get('[data-field="name"]') // eslint-disable-line quotes
+    cy.get("@newRow")
+        .find('[data-field="name"]') // eslint-disable-line quotes
         .find('input[type="text"]') // eslint-disable-line quotes
-        .type(text);
-}
+        .type(newCollectionCentreName);
 
-function addCollectionCentreAcronym(rowIndex: number, text: string): void {
-    cy.contains(collectionCentresTableText, { matchCase: false })
-        .parents(".MuiPaper-root")
-        .find(`[aria-rowindex="${rowIndex}"]`)
-        .get('[data-field="acronym"]') // eslint-disable-line quotes
+    cy.get("@newRow")
+        .find('[data-field="acronym"]') // eslint-disable-line quotes
         .find('input[type="text"]') // eslint-disable-line quotes
-        .type(text);
-}
+        .type(newCollectionCentreName);
 
-function clickOnEditButton(rowIndex: number): void {
-    cy.contains(collectionCentresTableText, { matchCase: false })
-        .parents(".MuiPaper-root")
-        .find(`[aria-rowindex="${rowIndex}"]`)
-        .find('[data-testid="EditIcon"]') // eslint-disable-line quotes
-        .click();
-}
-
-function uncheckIsShownCheckbox(rowIndex: number): void {
-    cy.contains(collectionCentresTableText, { matchCase: false })
-        .parents(".MuiPaper-root")
-        .find(`[aria-rowindex="${rowIndex}"]`)
-        .find('[type="checkbox"]') // eslint-disable-line quotes
-        .uncheck();
-}
-
-function clickOnSaveButton(rowIndex: number): void {
-    cy.contains(collectionCentresTableText, { matchCase: false })
-        .parents(".MuiPaper-root")
-        .find(`[aria-rowindex="${rowIndex}"]`)
+    cy.get("@newRow")
         .find('[data-testid="SaveIcon"]') // eslint-disable-line quotes
         .click();
-}
+};
 
-function collectionCentreIsHidden(rowIndex: number): void {
-    cy.contains(collectionCentresTableText, { matchCase: false })
-        .parents(".MuiPaper-root")
-        .find(`[aria-rowindex="${rowIndex}"]`)
-        .find('[data-testid="CloseIcon"]') // eslint-disable-line quotes
-        .should("exist");
-}
+const startEditingCollectionCentreRow = (collectionCentreName: string): void => {
+    cy.get('div[aria-label="Collection Centres Table"]') // eslint-disable-line quotes
+        .contains(collectionCentreName)
+        .parents(".MuiDataGrid-row")
+        .as("newlyAddedRow");
+
+    cy.get("@newlyAddedRow").find('[data-testid="EditIcon"]').click(); // eslint-disable-line quotes
+};
+
+const uncheckIsShownInRowBeingEditedAndSave = (): void => {
+    cy.get('div[aria-label="Collection Centres Table"]') // eslint-disable-line quotes
+        .find(".MuiDataGrid-row--editing")
+        .as("rowBeingEdited");
+
+    cy.get("@rowBeingEdited")
+        .find('[data-field="isShown"]') // eslint-disable-line quotes
+        .find('[type="checkbox"]') // eslint-disable-line quotes
+        .uncheck();
+
+    cy.get("@rowBeingEdited")
+        .find('[data-testid="SaveIcon"]') // eslint-disable-line quotes
+        .click();
+};

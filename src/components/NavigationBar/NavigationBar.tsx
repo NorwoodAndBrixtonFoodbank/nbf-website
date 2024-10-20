@@ -1,19 +1,17 @@
 "use client";
 
 import React, { useContext, useState } from "react";
-import AppBar from "@mui/material/AppBar";
+import { AppBar, Button, SwipeableDrawer } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import LogoutIcon from "@mui/icons-material/Logout";
 import Link from "next/link";
 import styled from "styled-components";
-import Button from "@mui/material/Button";
 import LightDarkSlider from "@/components/NavigationBar/LightDarkSlider";
 import SignOutButton from "@/components/NavigationBar/SignOutButton";
 import NavBarButton from "@/components/Buttons/NavBarButton";
 import { usePathname } from "next/navigation";
 import { RoleUpdateContext, roleCanAccessPage } from "@/app/roles";
 import Modal from "@/components/Modal/Modal";
-import LogoutIcon from "@mui/icons-material/Logout";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { DatabaseAutoType } from "@/databaseUtils";
 
@@ -171,7 +169,7 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
         <>
             <LoginDependent>
                 <StyledSwipeableDrawer open={drawer} onClose={closeDrawer} onOpen={openDrawer}>
-                    <DrawerInner>
+                    <DrawerInner data-testid="mobile-buttons">
                         {PAGES.map(([page, link]) => (
                             <RoleDependent key={page} pathname={link}>
                                 <DrawerButtonWrapper>
@@ -204,7 +202,7 @@ const NavigationBar: React.FC<Props> = ({ children }) => {
                             <Logo alt="Lambeth Foodbank Logo" src="/logo.webp" />
                         </UnstyledLink>
                     </LogoElementContainer>
-                    <DesktopButtonContainer>
+                    <DesktopButtonContainer data-testid="desktop-buttons">
                         {PAGES.map(([page, link]) => (
                             <RoleDependent key={page} pathname={link}>
                                 <NavBarButton link={link} page={page} />

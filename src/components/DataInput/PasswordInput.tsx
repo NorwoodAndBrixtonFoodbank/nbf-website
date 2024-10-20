@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { InputAdornment, TextField } from "@mui/material";
-import IconButton from "@mui/material/IconButton/IconButton";
+import { InputAdornment, TextField, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 interface Props {
