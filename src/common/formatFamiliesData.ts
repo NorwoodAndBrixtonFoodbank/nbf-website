@@ -2,8 +2,8 @@ import { Person } from "@/components/Form/formFunctions";
 import { Schema } from "@/databaseUtils";
 import { displayList } from "@/common/format";
 import {
-    getAdultAgeUsingBirthYear,
-    getChildAgeUsingBirthYearAndMonth,
+    getAdultAgeStringUsingBirthYear,
+    getChildAgeStringUsingBirthYearAndMonth,
     isAdultPerson,
     isChildPerson,
 } from "@/common/getAgesOfFamily";
@@ -17,7 +17,7 @@ export interface HouseholdSummary {
     ageAndGenderOfChildren: string;
 }
 
-const getPerson = (person: Person, age: string): string => {
+const getPersonSummary = (person: Person, age: string): string => {
     let gender;
     switch (person.gender) {
         case "male":
@@ -75,16 +75,19 @@ export const prepareHouseholdSummary = (familyData: Schema["families"][]): House
         genderBreakdown: `${femaleText} ${maleText} ${otherText}`,
         ageAndGenderOfAdults: displayList(
             formattedAdults.map((adult) =>
-                getPerson(adult, getAdultAgeUsingBirthYear(adult.birthYear, true))
+                getPersonSummary(
+                    adult,
+                    getAdultAgeStringUsingBirthYear(adult.birthYear ?? null, true)
+                )
             )
         ),
         numberOfBabies: numberBabies.toString(),
         ageAndGenderOfChildren: displayList(
             formattedChildren.map((child) =>
-                getPerson(
+                getPersonSummary(
                     child,
-                    getChildAgeUsingBirthYearAndMonth(
-                        child.birthYear,
+                    getChildAgeStringUsingBirthYearAndMonth(
+                        child.birthYear ?? null,
                         child.birthMonth ?? null,
                         true
                     )

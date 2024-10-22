@@ -72,7 +72,7 @@ const NumberAdultsCard: React.FC<ClientCardProps> = ({
                 />
                 {fields.adults.map((adult: Person, index: number) => {
                     return (
-                        <StyledCard key={adult.primaryKey}>
+                        <StyledCard key={adult.primaryKey ?? `new-adult-${index}`}>
                             <FormText>Adult {index + 1}</FormText>
                             <UncontrolledSelect
                                 selectLabelId="adult-gender-select-label"
@@ -96,8 +96,8 @@ const NumberAdultsCard: React.FC<ClientCardProps> = ({
                                     `${year}`,
                                     `${year}`,
                                 ])}
-                                listTitle="Year of Birth"
-                                defaultValue={adult.birthYear.toString()}
+                                listTitle="Year of Birth (optional)"
+                                defaultValue={adult.birthYear?.toString()}
                                 onChange={setAdultsFields(
                                     fieldSetter,
                                     fields.adults,

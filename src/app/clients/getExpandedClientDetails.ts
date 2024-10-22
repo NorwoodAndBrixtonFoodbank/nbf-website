@@ -4,8 +4,8 @@ import { DatabaseError } from "@/app/errorClasses";
 import { logErrorReturnLogId } from "@/logger/logger";
 import { displayPostcodeForHomelessClient } from "@/common/format";
 import {
-    getAdultAgeUsingBirthYear,
-    getChildAgeUsingBirthYearAndMonth,
+    getAdultAgeStringUsingBirthYear,
+    getChildAgeStringUsingBirthYearAndMonth,
     isAdultUsingBirthYear,
 } from "@/common/getAgesOfFamily";
 import { ListType } from "@/common/databaseListTypes";
@@ -169,7 +169,7 @@ export const formatBreakdownOfAdultsFromFamilyDetails = (
 
     for (const familyMember of family) {
         if (isAdultUsingBirthYear(familyMember.birth_year)) {
-            const age = getAdultAgeUsingBirthYear(familyMember.birth_year, false);
+            const age = getAdultAgeStringUsingBirthYear(familyMember.birth_year, false);
             adultDetails.push(`${age} ${familyMember.gender}`);
         }
     }
@@ -188,7 +188,7 @@ export const formatBreakdownOfChildrenFromFamilyDetails = (
 
     for (const familyMember of family) {
         if (!isAdultUsingBirthYear(familyMember.birth_year)) {
-            const age = getChildAgeUsingBirthYearAndMonth(
+            const age = getChildAgeStringUsingBirthYearAndMonth(
                 familyMember.birth_year,
                 familyMember.birth_month,
                 false

@@ -148,7 +148,6 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
             .map((_item) => {
                 return {
                     gender: "other",
-                    birthYear: parseInt(youngestAdultBirthYear()),
                 };
             });
         fieldSetter({ adults: [...fields.adults, ...extraAdults] });
