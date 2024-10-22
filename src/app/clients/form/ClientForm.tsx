@@ -38,7 +38,6 @@ import { submitAddClientForm, submitEditClientForm } from "@/app/clients/form/su
 import Title from "@/components/Title/Title";
 import ClientNotesCard from "@/app/clients/form/formSections/ClientNotes";
 import { getCurrentYear } from "@/common/date";
-import { youngestAdultBirthYear } from "@/app/clients/form/birthYearDropdown";
 import ListTypeCard from "@/app/clients/form/formSections/ListTypeCard";
 import { ListType } from "@/common/databaseListTypes";
 
