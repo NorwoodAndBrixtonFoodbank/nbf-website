@@ -12,7 +12,10 @@ import { Item, ShoppingListPdfData } from "@/pdf/ShoppingList/shoppingListPdfDat
 import { faTruck, faShoePrints } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIconPdfComponent from "@/pdf/FontAwesomeIconPdfComponent";
 
-export type BlockProps = ParcelInfo | HouseholdSummary | RequirementSummary;
+type BlockProps = {
+    data: ParcelInfo | HouseholdSummary | RequirementSummary;
+    noWrap?: boolean;
+};
 
 const styles = StyleSheet.create({
     sheet: {
@@ -35,7 +38,7 @@ const styles = StyleSheet.create({
     },
     pdfInfoSection: {
         flexDirection: "row",
-        marginBottom: "15px",
+        marginBottom: "5px",
     },
     pdfInfoLeftColumn: {
         width: "80%",
@@ -53,7 +56,7 @@ const styles = StyleSheet.create({
     },
     infoCell: {
         width: "100%",
-        padding: "5pt",
+        padding: "1pt",
         borderStyle: "solid",
         border: "1pt",
     },
@@ -61,27 +64,27 @@ const styles = StyleSheet.create({
         textAlign: "left",
     },
     tableItemDescription: {
-        paddingVertical: "2pt",
-        width: "30%",
-        border: "1pt",
+        paddingVertical: "1pt",
+        width: "34%",
+        border: "0.5pt",
         borderStyle: "solid",
     },
     tableQuantity: {
-        paddingVertical: "2pt",
+        paddingVertical: "1pt",
         width: "20%",
-        border: "1pt",
+        border: "0.5pt",
         borderStyle: "solid",
     },
     tableNotes: {
-        paddingVertical: "2pt",
+        paddingVertical: "1pt",
         width: "40%",
-        border: "1pt",
+        border: "0.5pt",
         borderStyle: "solid",
     },
     tableDone: {
-        paddingVertical: "2pt",
-        width: "10%",
-        border: "1pt",
+        paddingVertical: "1pt",
+        width: "6%",
+        border: "0.5pt",
         borderStyle: "solid",
     },
     title: {
@@ -92,7 +95,8 @@ const styles = StyleSheet.create({
     subtitle: {
         fontSize: "16pt",
         fontFamily: "Helvetica-Bold",
-        paddingTop: "2pt",
+        marginTop: "5px",
+        marginBottom: "5px",
     },
     keyText: {
         fontSize: "11pt",
@@ -104,9 +108,13 @@ const styles = StyleSheet.create({
         fontFamily: "Helvetica",
         paddingLeft: "2pt",
     },
+    nonWrappingText: {
+        maxLines: 1,
+        textOverflow: "ellipsis",
+    },
     tableCell: {
         borderStyle: "solid",
-        border: "1pt",
+        border: "0.5pt",
     },
     itemList: {
         alignItems: "center",
@@ -117,6 +125,7 @@ const styles = StyleSheet.create({
 interface OneLineProps {
     header: string;
     value: string;
+    noWrap?: boolean;
 }
 
 const shouldDisplay = (header: string, value: string): boolean => {
@@ -142,10 +151,12 @@ const getDisplayValue = (header: string, value: string): string => {
     }
 };
 
-const OneLine: React.FC<OneLineProps> = ({ header, value }) => {
+const OneLine: React.FC<OneLineProps> = ({ header, value, noWrap }) => {
     const displayValue = getDisplayValue(header, value);
+    const lineStyles = noWrap === true ? [styles.keyText, styles.nonWrappingText] : styles.keyText;
+
     return (
-        <Text style={styles.keyText}>
+        <Text style={lineStyles}>
             {header}: <Text style={styles.normalText}>{displayValue}</Text>
         </Text>
     );
@@ -201,29 +212,39 @@ const DisplayItemsList: React.FC<DisplayItemsListProps> = ({ itemsList }) => {
     );
 };
 
-const DisplayAsBlockNoBorder: React.FC<BlockProps> = (data: BlockProps) => {
+const DisplayAsBlockNoBorder: React.FC<BlockProps> = (props: BlockProps) => {
     return (
         <View style={styles.infoCellNoBorder}>
-            {Object.entries(data)
+            {Object.entries(props.data)
                 .filter(([propKey, propValue]) =>
                     shouldDisplay(formatCamelCaseKey(propKey), propValue)
                 )
                 .map(([propKey, propValue]) => (
-                    <OneLine key={propKey} header={formatCamelCaseKey(propKey)} value={propValue} />
+                    <OneLine
+                        key={propKey}
+                        header={formatCamelCaseKey(propKey)}
+                        value={propValue}
+                        noWrap={props.noWrap}
+                    />
                 ))}
         </View>
     );
 };
 
-const DisplayAsBlock: React.FC<BlockProps> = (data: BlockProps) => {
+const DisplayAsBlock: React.FC<BlockProps> = (props: BlockProps) => {
     return (
         <View style={styles.infoCell}>
-            {Object.entries(data)
+            {Object.entries(props.data)
                 .filter(([propKey, propValue]) =>
                     shouldDisplay(formatCamelCaseKey(propKey), propValue)
                 )
                 .map(([propKey, propValue]) => (
-                    <OneLine key={propKey} header={formatCamelCaseKey(propKey)} value={propValue} />
+                    <OneLine
+                        key={propKey}
+                        header={formatCamelCaseKey(propKey)}
+                        value={propValue}
+                        noWrap={props.noWrap}
+                    />
                 ))}
         </View>
     );
@@ -290,15 +311,15 @@ const SingleShoppingList: React.FC<SingleShoppingListProps> = ({ parcelData }) =
                                 </Text>
                             </View>
                         </View>
-                        <DisplayAsBlockNoBorder {...parcelData.parcelInfo} />
+                        <DisplayAsBlockNoBorder data={parcelData.parcelInfo} noWrap={true} />
                     </View>
                     {/* eslint-disable-next-line jsx-a11y/alt-text -- React-PDF Image doesn't  have alt text property*/}
                     <Image src="/logo.png" style={[styles.flexRow, styles.logoStyling]} />
                 </View>
                 <DisplayClientSummary {...parcelData.clientSummary} />
                 <View style={styles.flexRow}>
-                    <DisplayAsBlock {...parcelData.householdSummary} />
-                    <DisplayAsBlock {...parcelData.requirementSummary} />
+                    <DisplayAsBlock data={parcelData.householdSummary} />
+                    <DisplayAsBlock data={parcelData.requirementSummary} />
                 </View>
                 <View>
                     <TableHeadings />
