@@ -203,7 +203,7 @@ describe("Parcels Page", () => {
                     },
                     { birth_year: 2020, birth_month: 4, recorded_as_child: true, gender: "other" },
                 ])
-            ).toEqual("Family of 4 Occupants (1 adults, 3 children)");
+            ).toEqual("Family of 4 Occupants (1 adult, 3 children)");
 
             expect(
                 formatHouseholdFromFamilyDetails([
