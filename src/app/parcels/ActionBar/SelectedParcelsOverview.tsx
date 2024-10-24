@@ -8,9 +8,13 @@ const Heading = styled.div`
     margin: 0.3rem;
 `;
 
+const ListContainer = styled.div`
+    max-height: 40vh;
+    overflow-y: auto;
+`;
+
 const ListItem = styled.p<{ emphasised?: boolean }>`
-    margin-left: 1rem;
-    padding: 0.5rem 0;
+    margin: 0.5rem 0 0.5rem 1rem;
     ${(props) =>
         props.emphasised &&
         `
@@ -26,18 +30,22 @@ interface ShowParcelsProps {
 const SelectedParcelsOverview: React.FC<ShowParcelsProps> = (props) => {
     return (
         <>
-            <Heading>{props.parcels.length === 1 ? "Parcel" : "Parcels"} selected:</Heading>
-            {props.parcels.slice(0, props.maxParcelsToShow).map((parcel) => (
-                <ListItem key={parcel.parcelId}>
-                    {getParcelOverviewString(
-                        parcel.addressPostcode,
-                        parcel.fullName,
-                        parcel.collectionDatetime,
-                        parcel.clientIsActive
-                    )}
-                </ListItem>
-            ))}
-            {props.parcels.length > props.maxParcelsToShow && <ListItem emphasised>...</ListItem>}
+            <Heading>
+                {props.parcels.length.toString()}{" "}
+                {props.parcels.length === 1 ? "Parcel" : "Parcels"} selected:
+            </Heading>
+            <ListContainer>
+                {props.parcels.map((parcel) => (
+                    <ListItem key={parcel.parcelId}>
+                        {getParcelOverviewString(
+                            parcel.addressPostcode,
+                            parcel.fullName,
+                            parcel.collectionDatetime,
+                            parcel.clientIsActive
+                        )}
+                    </ListItem>
+                ))}
+            </ListContainer>
         </>
     );
 };
