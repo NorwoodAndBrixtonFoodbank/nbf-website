@@ -11,7 +11,6 @@ import { getCurrentYear } from "@/common/date";
 
 export interface HouseholdSummary {
     householdSize: string;
-    genderBreakdown: string;
     ageAndGenderOfAdults: string;
     numberOfBabies: string;
     ageAndGenderOfChildren: string;
@@ -58,21 +57,15 @@ export const prepareHouseholdSummary = (familyData: Schema["families"][]): House
     const numberBabies = familyData.filter(
         (member) => member.birth_year === getCurrentYear()
     ).length;
-    const numberFemales = familyData.filter((member) => member.gender === "female").length;
-    const numberMales = familyData.filter((member) => member.gender === "male").length;
 
     const adultText = `${householdSize} (${convertPlural(
         householdSize - formattedChildren.length,
         "Adult"
     )}`;
-    const childText = `${formattedChildren.length} Child${formattedChildren.length ? "ren" : ""})`;
-    const femaleText = `${convertPlural(numberFemales, "Female")}`;
-    const maleText = `${convertPlural(numberMales, "Male")}`;
-    const otherText = `${convertPlural(householdSize - numberFemales - numberMales, "Other")}`;
+    const childText = `${formattedChildren.length} Child${formattedChildren.length === 1 ? "" : "ren"})`;
 
     return {
         householdSize: `${adultText} ${childText}`,
-        genderBreakdown: `${femaleText} ${maleText} ${otherText}`,
         ageAndGenderOfAdults: displayList(
             formattedAdults.map((adult) =>
                 getPerson(adult, getAdultAgeUsingBirthYear(adult.birthYear, true))
