@@ -4,8 +4,8 @@ import { displayList } from "@/common/format";
 import {
     getAdultAgeStringUsingBirthYear,
     getChildAgeStringUsingBirthYearAndMonth,
-    isAdultPerson,
-    isChildPerson,
+    isAdultFamilyMember,
+    isChildFamilyMember,
 } from "@/common/getAgesOfFamily";
 import { getCurrentYear } from "@/common/date";
 
@@ -47,13 +47,14 @@ export const getFormattedPeople = (
             gender: person.gender,
             birthMonth: person.birth_month,
             birthYear: person.birth_year,
+            recordedAsChild: person.recorded_as_child,
         };
     });
 };
 
 export const prepareHouseholdSummary = (familyData: Schema["families"][]): HouseholdSummary => {
-    const formattedChildren: Person[] = getFormattedPeople(familyData, isChildPerson);
-    const formattedAdults: Person[] = getFormattedPeople(familyData, isAdultPerson);
+    const formattedChildren: Person[] = getFormattedPeople(familyData, isChildFamilyMember);
+    const formattedAdults: Person[] = getFormattedPeople(familyData, isAdultFamilyMember);
     const householdSize = familyData.length;
     const numberBabies = familyData.filter(
         (member) => member.birth_year === getCurrentYear()

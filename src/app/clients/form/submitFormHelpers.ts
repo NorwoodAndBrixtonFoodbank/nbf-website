@@ -16,14 +16,25 @@ const personToFamilyRecordWithoutFamilyId = (person: Person): FamilyDatabaseInse
         gender: person.gender,
         birth_year: person.birthYear,
         birth_month: person.birthMonth ?? null,
+        recorded_as_child: person.recordedAsChild ?? null,
     };
 };
 
-export const getFamilyMembers = (
+export const getFamilyMembersForDatabase = (
     adults: Person[],
     children: Person[]
 ): FamilyDatabaseInsertRecord[] => {
-    const peopleToInsert = children.concat(adults);
+    const peopleToInsert = children
+        .map((child) => {
+            child.recordedAsChild = true;
+            return child;
+        })
+        .concat(
+            adults.map((adult) => {
+                adult.recordedAsChild = false;
+                return adult;
+            })
+        );
 
     return peopleToInsert.map((person) => personToFamilyRecordWithoutFamilyId(person));
 };
@@ -69,7 +80,7 @@ export type addClientResult =
 
 export const submitAddClientForm = async (fields: ClientFields): Promise<addClientResult> => {
     const clientRecord = formatClientRecord(fields);
-    const familyMembers = getFamilyMembers(fields.adults, fields.children);
+    const familyMembers = getFamilyMembersForDatabase(fields.adults, fields.children);
     const { data: clientId, error } = await supabase.rpc("insert_client_and_family", {
         clientrecord: clientRecord,
         familymembers: familyMembers,
@@ -116,7 +127,7 @@ export const submitEditClientForm = async (
     primaryKey: string
 ): Promise<editClientResult> => {
     const clientRecord = formatClientRecord(fields);
-    const familyMembers = getFamilyMembers(fields.adults, fields.children);
+    const familyMembers = getFamilyMembersForDatabase(fields.adults, fields.children);
 
     const { data: clientDataAndCount, error: updateClientError } = await supabase.rpc(
         "update_client_and_family",

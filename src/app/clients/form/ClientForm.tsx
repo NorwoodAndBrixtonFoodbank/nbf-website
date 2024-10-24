@@ -37,7 +37,6 @@ import Button from "@mui/material/Button";
 import { submitAddClientForm, submitEditClientForm } from "@/app/clients/form/submitFormHelpers";
 import Title from "@/components/Title/Title";
 import ClientNotesCard from "@/app/clients/form/formSections/ClientNotes";
-import { getCurrentYear } from "@/common/date";
 import ListTypeCard from "@/app/clients/form/formSections/ListTypeCard";
 import { ListType } from "@/common/databaseListTypes";
 
@@ -130,7 +129,7 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
             .map((_item) => {
                 return {
                     gender: "other",
-                    birthYear: getCurrentYear(),
+                    recordedAsChild: true,
                 };
             });
         fieldSetter({ children: [...fields.children, ...extraChildren] });
@@ -147,6 +146,7 @@ const ClientForm: React.FC<Props> = ({ initialFields, initialFormErrors, editCon
             .map((_item) => {
                 return {
                     gender: "other",
+                    recordedAsChild: false,
                 };
             });
         fieldSetter({ adults: [...fields.adults, ...extraAdults] });

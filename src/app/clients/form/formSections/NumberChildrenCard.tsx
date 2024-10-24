@@ -105,12 +105,8 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                                     `${year}`,
                                     `${year}`,
                                 ])}
-                                listTitle="Year of Birth (required)"
-                                defaultValue={
-                                    child.birthYear
-                                        ? child.birthYear.toString()
-                                        : getCurrentYear().toString()
-                                }
+                                listTitle="Year of Birth (optional)"
+                                defaultValue={child.birthYear?.toString()}
                                 onChange={setChildrenFields(
                                     fieldSetter,
                                     fields.children,

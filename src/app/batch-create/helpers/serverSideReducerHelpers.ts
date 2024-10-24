@@ -34,6 +34,7 @@ const getChildrenAndAdults = async (
             gender: person.gender,
             birthYear: person.birth_year,
             birthMonth: person.birth_month,
+            recordedAsChild: person.recorded_as_child,
         };
 
         if (formattedPerson.birthYear) {

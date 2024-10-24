@@ -42,6 +42,7 @@ export interface Person {
     gender: Gender;
     birthYear?: number | null;
     birthMonth?: number | null;
+    recordedAsChild?: boolean | null;
     primaryKey?: string;
 }
 
