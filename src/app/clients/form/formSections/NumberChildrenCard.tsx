@@ -81,7 +81,7 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                 />
                 {fields.children.map((child: Person, index: number) => {
                     return (
-                        <StyledCard key={child.primaryKey}>
+                        <StyledCard key={child.primaryKey ?? `new-child-${index}`}>
                             <FormText>Child {index + 1}</FormText>
                             <UncontrolledSelect
                                 selectLabelId="children-gender-select-label"
@@ -105,8 +105,8 @@ const NumberChildrenCard: React.FC<ClientCardProps> = ({
                                     `${year}`,
                                     `${year}`,
                                 ])}
-                                listTitle="Year of Birth"
-                                defaultValue={child.birthYear.toString()}
+                                listTitle="Year of Birth (optional)"
+                                defaultValue={child.birthYear?.toString()}
                                 onChange={setChildrenFields(
                                     fieldSetter,
                                     fields.children,
